@@ -1,4 +1,4 @@
-import { MenuList, Stack } from "@mui/material";
+import { MenuList, Stack, TextField } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
@@ -7,12 +7,17 @@ import { NS_BUDGETING, NS_COMMON } from "constant/index";
 import moment from "moment";
 import { useTranslations } from "next-intl";
 import { useBudgetTimeAdd } from "queries/budgeting/time-range";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
 import { useProjects } from "store/project/selectors";
 import { getMessageErrorByAPI, uuid } from "utils/index";
 import { TTimeRanges } from "./Time";
+import * as React from "react";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
 type Props = {
   open: boolean;
@@ -22,6 +27,8 @@ type Props = {
 };
 
 export const ModalAddTime = ({ open, onClose, projectId, data }: Props) => {
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const budgetT = useTranslations(NS_BUDGETING);
   const commonT = useTranslations(NS_COMMON);
 
@@ -69,6 +76,15 @@ export const ModalAddTime = ({ open, onClose, projectId, data }: Props) => {
       onGetProjects({});
     }
   }, [open]);
+
+  useEffect(() => {
+    if (!startTime || !endTime) return;
+    const start = moment(startTime, "HH:mm");
+    const end = moment(endTime, "HH:mm");
+    const duration = moment.duration(end.diff(start));
+    const hours = duration.asHours();
+    setValue("timeRanges", hours);
+  }, [startTime, endTime]);
 
   const sxInput = {
     height: 58,
@@ -134,12 +150,22 @@ export const ModalAddTime = ({ open, onClose, projectId, data }: Props) => {
               title={budgetT("dialog.startTime")}
               sx={{ width: "50%" }}
               name="name"
+              onChange={(e) => {
+                const value = e.target.value;
+                setStartTime(value);
+              }}
+              value={startTime}
             />
             <Input
               rootSx={sxInput}
               title={budgetT("dialog.endTime")}
               sx={{ width: "50%" }}
               name="name"
+              onChange={(e) => {
+                const value = e.target.value;
+                setEndTime(value);
+              }}
+              value={endTime}
             />
           </Stack>
           <Textarea label={budgetT("dialog.note")} {...register("note")} />

@@ -49,7 +49,6 @@ export const BudgetDetail = () => {
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
   const [dateFilter, setDateFilter] = useState<any>("");
   const { id } = useParams();
-
   const budgetDetailQuery = useBudgetByIdQuery(String(id));
   const budgetT = useTranslations(NS_BUDGETING);
 
@@ -69,6 +68,7 @@ export const BudgetDetail = () => {
     window["timeoutHideLoadingTab"] = setTimeout(hideLoadingTab, 500);
   };
 
+  console.log(budget);
   if (!budget) return <></>;
 
   return (
@@ -228,7 +228,7 @@ export const BudgetDetail = () => {
       <ModalAddTime
         open={isOpenModalTime}
         onClose={hideModalTime}
-        projectId={budget.project.id}
+        budgetId={budget.id}
       />
       {/* <ModalExpense
         open={true}

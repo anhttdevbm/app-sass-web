@@ -6,8 +6,8 @@ export const BudgetingLang: BudgetingDictionary = {
     titleDetail: "Detail Budget",
   },
   toolbar: {
-    date: "Ngày",
-    addTime: "Giờ",
+    date: "Day",
+    addTime: "Time",
     addExpense: "Expense",
     addInvoice: "Invoice",
     serviceEdit: "Edit",

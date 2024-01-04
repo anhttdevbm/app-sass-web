@@ -8,7 +8,7 @@ import {
   Popper,
   Stack,
   TableRow,
-  Typography
+  Typography,
 } from "@mui/material";
 import Avatar from "components/Avatar";
 import { IconButton, Text } from "components/shared";
@@ -21,7 +21,7 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import {
   useBudgetGetTimeRangeQuery,
-  useBudgetTimeRemove
+  useBudgetTimeRemove,
 } from "queries/budgeting/time-range";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -113,8 +113,8 @@ export const Time = () => {
     });
   };
   useEffect(() => {
-    if (!serviceQuery || !serviceQuery.data?.docs) return;
-    const sectionData = serviceQuery.data.docs;
+    if (!serviceQuery || !serviceQuery.data?.data?.docs) return;
+    const sectionData = serviceQuery.data.data.docs;
     setValue(
       "times",
       sectionData.map((doc) => ({
