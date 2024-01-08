@@ -249,26 +249,39 @@ const Information = () => {
         justifyContent="space-between"
         spacing={2}
       >
-        <TextField
-          onBlur={removeEditable}
-          onMouseLeave={removeEditable}
-          value={taskName}
-          onKeyDown={onKeyDownTaskName}
-          fullWidth
-          variant="filled"
-          size="small"
-          onChange={changeNameTask}
-          sx={{
-            "& >div": {
-              bgcolor: "transparent!important",
-            },
-            "& input": {
-              fontSize: 15,
-              paddingTop: "0px !important",
-            },
-            width: "60% !important",
-          }}
-        />
+        {editName ? (
+          <TextField
+            onBlur={removeEditable}
+            onMouseLeave={removeEditable}
+            value={taskName}
+            onKeyDown={onKeyDownTaskName}
+            fullWidth
+            variant="filled"
+            size="small"
+            onChange={changeNameTask}
+            sx={{
+              "& >div": {
+                bgcolor: "transparent!important",
+              },
+              "& input": {
+                fontSize: 15,
+                paddingTop: "0px !important",
+              },
+              width: "60% !important",
+            }}
+          />
+        ) : (
+          <Text
+            variant={"h5"}
+            color="text.primary"
+            sx={{ wordBreak: "break-word" }}
+            onMouseEnter={() => {
+              setEditName(true);
+            }}
+          >
+            {taskName}
+          </Text>
+        )}
 
         <Stack direction="row" alignItems="center" spacing={1}>
           <Text variant="caption" color="grey.400">

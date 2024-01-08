@@ -29,6 +29,7 @@ import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 import TrashIcon from "icons/TrashIcon";
 import { Budgets } from "store/billing/reducer";
+import FixedLayout from "components/FixedLayout";
 
 const billingFormTranslatePrefix = "list.form";
 type IProps = {
@@ -299,6 +300,7 @@ const FormStepOne = (props: IProps) => {
         <TableLayout
           headerList={headerList}
           // pending={isFetching}
+          maxHeight={500}
           width={"100%"}
           py={2}
           headerProps={{

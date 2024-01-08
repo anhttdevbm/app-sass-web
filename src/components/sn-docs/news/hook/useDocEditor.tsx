@@ -22,7 +22,7 @@ export default function useDocEditor() {
   }, 1000);
 
   const anchorRef = useRef(0);
-  return useEditor({
+  const editor = useEditor({
     content: doc?.contentRow,
    // emitUpdate: true,
     extensions: getExtensions({
@@ -50,4 +50,9 @@ export default function useDocEditor() {
     },
   });
 
+  useEffect(() => {
+    editor?.commands?.setContent(doc?.contentRow)
+  }, [doc?.contentRow])
+
+  return editor;
 }

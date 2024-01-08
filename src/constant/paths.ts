@@ -55,7 +55,7 @@ export const BILLING_PATH = "/billing";
 export const BILLING_CREATE_PATH = "/billing/create";
 export const BILLING_INFO_PATH = "/billing/{id}";
 export const BILLING_DETAIL_PATH = "/billing/detail";
-export const BILLING_EXPORT_PATH = "/billing/export";
+export const BILLING_EXPORT_PATH = "/billing/export/{id}";
 
 // Landing
 export const LANDING_HOME_PATH = "/landing";

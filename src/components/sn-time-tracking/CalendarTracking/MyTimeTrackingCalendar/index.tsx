@@ -766,6 +766,10 @@ const TrackingCalendar: React.FC<IProps> = () => {
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 selectable={true}
                 select={handleDateSelect}
+                selectConstraint={{
+                  startTime: "00:01",
+                  endTime: "23:59",
+                }}
                 eventResize={({ event, endDelta }) => {
                   const date = dayjs(event.start).format("YYYY-MM-DD") || "";
                   const time =

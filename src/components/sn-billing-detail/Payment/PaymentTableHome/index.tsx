@@ -28,7 +28,7 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Due date
+            {billingT("detail.form.payment.table.dueDate")}
           </Text>
         ),
         align: "left",
@@ -36,7 +36,7 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Total Invoice
+            {billingT("detail.form.payment.table.totalInvoice")}
           </Text>
         ),
         align: "left",
@@ -44,7 +44,7 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Paid
+            {billingT("detail.form.payment.table.paid")}
           </Text>
         ),
         align: "left",
@@ -52,14 +52,14 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Left to Pay
+            {billingT("detail.form.payment.table.leftToPay")}
           </Text>
         ),
       },
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Paid
+            {billingT("detail.form.payment.table.paid")}
           </Text>
         ),
         align: "left",
@@ -68,7 +68,7 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Left to Pay
+            {billingT("detail.form.payment.table.leftToPay")}
           </Text>
         ),
       },
@@ -80,7 +80,7 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Due date
+            {billingT("detail.form.payment.table.dueDate")}
           </Text>
         ),
         align: "left",
@@ -88,7 +88,7 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Total Invoice
+            {billingT("detail.form.payment.table.totalInvoice")}
           </Text>
         ),
         align: "left",
@@ -96,7 +96,7 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Paid
+            {billingT("detail.form.payment.table.paid")}
           </Text>
         ),
         align: "left",
@@ -104,23 +104,23 @@ const PaymentTableTop = (props: IProps) => {
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Left to Pay
+            {billingT("detail.form.payment.table.leftToPay")}
           </Text>
         ),
       },
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Paid
+            {billingT("detail.form.payment.table.paid")}
           </Text>
         ),
         align: "left",
-        id: "paid",
+        key: "paid",
       },
       {
         value: (
           <Text variant={"body2"} sx={{ color: "#fff" }}>
-            Left to Pay
+            {billingT("detail.form.payment.table.leftToPay")}
           </Text>
         ),
       },

@@ -25,7 +25,6 @@ type TabItemProps = {
   value: string;
   editForm?: boolean;
   item?: Billing;
-  arrService?: Service[];
   arrBudgets?: Budgets[];
   user: User;
   form: FormikProps<Billing>;
@@ -37,15 +36,15 @@ type TabItemProps = {
 
 type TabListProps = {
   item?: Billing;
-  arrService?: Service[];
   arrBudgets?: Budgets[];
   user: User;
 };
 
 const TabInfo = (props: TabListProps) => {
-  const { arrService, item, user, arrBudgets } = props;
+  const { item, user, arrBudgets } = props;
   // const { id } = useParams() as { id: string };
   // const pathname = usePathname();
+  const billingT = useTranslations(NS_BILLING);
   const { onUpdateBilling, updateStatus } = useBillings();
   const [value, setValue] = useState("Invoice");
   const [editForm, setEditForm] = useState<boolean>(false);
@@ -54,6 +53,21 @@ const TabInfo = (props: TabListProps) => {
   const [billFromInfo, setBillFromInfo] = useState<Bill>({
     fullNameCompany: user?.company,
   });
+
+  const TABS = [
+    {
+      label: billingT("detail.form.invoice.title.invoice"),
+      value: "Invoice",
+    },
+    {
+      label: billingT("detail.form.feed.title.Feed"),
+      value: "Feed",
+    },
+    {
+      label: billingT("detail.form.payment.title.payments"),
+      value: "Payment",
+    },
+  ];
 
   const formik = useFormik<Billing>({
     enableReinitialize: true,
@@ -146,7 +160,7 @@ const TabInfo = (props: TabListProps) => {
                       setEditForm(true);
                     }}
                   >
-                    Edit
+                    {billingT("detail.form.top.button.edit")}
                   </Button>
                 )}
 
@@ -158,13 +172,13 @@ const TabInfo = (props: TabListProps) => {
                         setEditForm(false);
                       }}
                     >
-                      Cancel
+                      {billingT("detail.form.top.button.cancel")}
                     </Button>
                     <Button
                       variant="contained"
                       onClick={() => formik.handleSubmit()}
                     >
-                      Save Change
+                      {billingT("detail.form.top.button.saveChange")}
                     </Button>
                   </>
                 )}
@@ -177,7 +191,6 @@ const TabInfo = (props: TabListProps) => {
               {...tab}
               label={tab.label}
               editForm={editForm}
-              arrService={arrService}
               item={item}
               user={user}
               arrBudgets={arrBudgets}
@@ -202,7 +215,6 @@ const TabItem = (props: TabItemProps) => {
     label,
     value,
     editForm,
-    arrService,
     item,
     user,
     arrBudgets,
@@ -237,7 +249,6 @@ const TabItem = (props: TabItemProps) => {
         <TabInvoice
           title={label}
           editForm={editForm}
-          arrService={arrService}
           item={item}
           user={user}
           arrBudgets={arrBudgets}
@@ -255,9 +266,3 @@ const TabItem = (props: TabItemProps) => {
     </TabPanel>
   );
 };
-
-const TABS = [
-  { label: "Invoice", value: "Invoice" },
-  { label: "Feed", value: "Feed" },
-  { label: "Payments", value: "Payment" },
-];

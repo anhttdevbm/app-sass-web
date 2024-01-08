@@ -647,9 +647,8 @@ const TrackingCalendar: React.FC<IProps> = () => {
                                   gap: "12px",
                                 }}
                               >
-                                <Avatar sx={{ width: 20, height: 20 }} />
-
-                                {event?.extendedProps?.project?.name}
+                                <Avatar sx={{ width: 20, height: 20 }} src={event?.extendedProps?.avatar} />
+                                {event?.extendedProps?.project?.name || "No Project"}
                               </Box>
                             </StyledTableCell>
 

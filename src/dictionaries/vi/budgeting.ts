@@ -2,42 +2,42 @@ import { BudgetingDictionary } from "dictionaries/types/BudgetingDictionary";
 
 export const BudgetingLang: BudgetingDictionary = {
     head: {
-        title: 'Budgeting',
-        titleDetail: 'Detail Budget',
+        title: 'Ngân sách',
+        titleDetail: 'Chi tiết ngân sách',
     },
     toolbar: {
-        date: 'Date',
-        addTime: 'Time',
-        addExpense: 'Expense',
-        addInvoice: 'Invoice',
-        serviceEdit: 'Edit',
-		search: 'Search'
+        date: 'Ngày',
+        addTime: 'Tạo giờ',
+        addExpense: 'Tạo chi phí',
+        addInvoice: 'Tạo hóa đơn',
+        serviceEdit: 'Sửa',
+		search: 'Tìm kiếm'
     },
     status: {
-        open: 'Open',
-        close: 'Close',
+        open: 'Đang mở',
+        close: 'Đã giao hàng',
     },
     actionStatus: {
-        create: 'Budget was created',
-		create_service: "Budget service was created"
+        create: 'Đã tạo ngân sách',
+		create_service: "Đã tạo dịch vụ của ngân sách"
     },
     tabTime: {
-        service: 'Service',
-        person: 'Person',
-        notes: 'Notes',
-        time: 'Time',
-        billable: 'Billable',
+        service: 'Dịch vụ',
+        person: 'Người tạo',
+        notes: 'Ghi chú',
+        time: 'Giờ',
+        billable: 'Có thể lập hóa đơn',
         edit: 'Chỉnh sửa',
         delete: 'Xóa'
     },
     tabExpenses: {
-        service: 'Service',
-        description: 'Description',
-        date: 'Date',
+        service: 'Dịch vụ',
+        description: 'Mô tả',
+        date: 'Ngày',
         att: 'Att.',
-        paymentStatus: 'Payment Status',
-        totalCost: 'Total Cost',
-        billable: 'Billable',
+        paymentStatus: 'Trạng thái thanh toán',
+        totalCost: 'Tổng chi phí',
+        billable: 'Có thể lập hóa đơn',
     },
     tabInvoice: {
         subject: 'Subject',

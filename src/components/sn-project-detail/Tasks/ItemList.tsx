@@ -60,6 +60,7 @@ import {
 import Content from "./components/Content";
 import Description from "./components/Description";
 import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
+import useWindowSize from "hooks/useWindowSize";
 
 const ItemList = () => {
   const {
@@ -229,20 +230,20 @@ const ItemList = () => {
         width: "32.5%",
         align: "left",
       },
-      { value: commonT("form.title.assigner"), width: "20%", align: "left" },
+      { value: commonT("form.title.assigner"), width: "18%", align: "left" },
       {
         value: commonT("form.title.startDate"),
         width: "12.5%",
-        align: "center",
+        align: "left",
       },
-      { value: commonT("form.title.endDate"), width: "12.5%", align: "center" },
-      { value: commonT("status"), width: "10.5%" },
+      { value: commonT("form.title.endDate"), width: "12.5%", align: "left" },
+      { value: commonT("status"), width: "10.5%", align: "left" },
       {
         value: commonT("form.title.description"),
         width: "10%",
         align: "center",
       },
-      { value: "", width: "2%", align: "center" },
+      { value: "", width: "4%", align: "center" },
     ],
     [commonT, projectT],
   );
@@ -272,11 +273,13 @@ const ItemList = () => {
     [commonT, projectT],
   );
 
+  const windowSize = useWindowSize();
+
   const headerList = useMemo(() => {
     if (isMdSmaller) return [];
     if (isXlSmaller) return desktopHeaderList;
     if (isXlBigger) return xlHeaderList;
-  }, [desktopHeaderList, isMdSmaller]) as CellProps[];
+  }, [windowSize]) as CellProps[];
 
   const onSetTask = (
     taskData?: Task,
@@ -1068,6 +1071,12 @@ const ItemList = () => {
           width="100%"
           height="48px"
           bgcolor={noData ? "background.paper" : "background.default"}
+          sx={{
+            "* > th": {
+              padding: "0px",
+              textAlign: "left",
+            },
+          }}
         >
           <FormControlLabel
             control={<CheckBoxCustom {...checkboxProps} />}
@@ -1120,7 +1129,7 @@ const ItemList = () => {
                         task={task}
                       >
                         <Droppable droppableId={task.id}>
-                          {(provided) => (
+                          {(provided, snapshot) => (
                             <Stack
                               ref={provided.innerRef}
                               {...provided.droppableProps}
@@ -1179,9 +1188,19 @@ const ItemList = () => {
                                     justifyContent: "start",
                                     width: "100%",
                                     paddingLeft: 0,
+                                    paddingRight: 0,
                                     "* > p ": {
                                       color: "unset",
                                       fontWeight: "normal!important",
+                                    },
+                                    "* > div": {
+                                      padding: "0px!important",
+                                    },
+                                    "* > div > div": {
+                                      margin: "0px!important",
+                                    },
+                                    "* > div > div > img": {
+                                      marginRight: "10px!important",
                                     },
                                   }}
                                 >
@@ -1329,8 +1348,7 @@ const ItemList = () => {
                                   />
                                 </Content>
                               </Stack>
-                              {/* {!isHide && ( */}
-                              {
+                              {!isHide && (
                                 <>
                                   <Droppable droppableId={task.id}>
                                     {(taskDropProvided, snapshot) => (
@@ -1570,6 +1588,19 @@ const ItemList = () => {
                                                             fontWeight:
                                                               "normal!important",
                                                           },
+                                                          "* > div": {
+                                                            padding:
+                                                              "0px!important",
+                                                          },
+                                                          "* > div > div": {
+                                                            margin:
+                                                              "0px!important",
+                                                          },
+                                                          "* > div > div > img":
+                                                            {
+                                                              marginRight:
+                                                                "10px!important",
+                                                            },
                                                         }}
                                                       >
                                                         <AssignerTask
@@ -1771,7 +1802,7 @@ const ItemList = () => {
                                     </Text>
                                   )}
                                 </>
-                              }
+                              )}
                             </Stack>
                           )}
                         </Droppable>

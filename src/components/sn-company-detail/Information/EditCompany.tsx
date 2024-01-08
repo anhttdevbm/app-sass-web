@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo, useMemo } from "react";
 import PencilIcon from "icons/PencilIcon";
 import { IconButton } from "components/shared";
@@ -73,7 +74,7 @@ const EditCompany = () => {
     "created_by"
   ])
 
-  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).created_by.avatar.link } as CompanyData
+  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).created_by?.avatar?.link } as CompanyData
 
   return (
     <>

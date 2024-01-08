@@ -4,10 +4,18 @@ import useBreakpoint from "hooks/useBreakpoint";
 // import MoveDotIcon from "icons/MoveDotIcon";
 import CheckBoxCustom from "components/shared/CheckBoxCustom";
 import MoveTagIcon from "icons/MoveTagIcon";
-import { Dispatch, memo, SetStateAction, useMemo } from "react";
+import {
+  Dispatch,
+  memo,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { Task } from "store/project/reducer";
 import { checkIsMobile } from "utils/index";
+import snResetPassword from "components/sn-reset-password";
 type DraggableTaskProps = {
   id: string;
   index: number;
@@ -42,22 +50,56 @@ const DraggableTask = (props: DraggableTaskProps) => {
 
   const isMobile = useMemo(() => checkIsMobile(), []);
 
-  const onToggle = () => {
+  const [isToggle, setIsToggle] = useState<boolean>(false);
+
+  // const onToggle = () => {
+  //   setHideIds((prevIds) => {
+  //     const newIds = [...prevIds];
+  //     const indexSelected = newIds.findIndex((idValue) => idValue === id);
+  //     if (indexSelected === -1) {
+  //       newIds.push(id);
+  //     } else {
+  //       newIds.splice(indexSelected, 1);
+  //     }
+  //     return newIds;
+  //   });
+  // };
+
+  const onHandlerHide = () => {
+    setHideIds((prevIds) => {
+      const newIds = [...prevIds];
+      const indexSelected = newIds.findIndex((idValue) => idValue === id);
+
+      if (indexSelected !== -1) {
+        newIds.splice(indexSelected, 1);
+      }
+
+      return newIds;
+    });
+  };
+
+  const onHandlerShow = () => {
     setHideIds((prevIds) => {
       const newIds = [...prevIds];
       const indexSelected = newIds.findIndex((idValue) => idValue === id);
       if (indexSelected === -1) {
         newIds.push(id);
-      } else {
-        newIds.splice(indexSelected, 1);
       }
       return newIds;
     });
   };
 
+  useEffect(() => {
+    if (isToggle) onHandlerShow();
+    else onHandlerHide();
+  }, [isToggle]);
+
   return (
     <Draggable draggableId={id} index={index}>
       {(provided, snapshot) => {
+        if (snapshot.isDragging) setIsToggle(true);
+        else setIsToggle(false);
+
         return (
           <Box
             ref={provided.innerRef}
