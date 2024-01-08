@@ -51,8 +51,13 @@ const Comments = (props: CommentsProps) => {
   return isFetching ? (
     <Loading open={false} />
   ) : (
-    <Stack sx={{ mt: 3 }} spacing={2}>
-      <Stack direction="row" justifyContent="flex-end" alignItems="center">
+    <Stack spacing={2}>
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="center"
+        sx={{ position: "sticky", zIndex: 1, top: 241, background: "#fff" }}
+      >
         <Text>{billingT("detail.form.feed.title.show")}:</Text>
         <Dropdown
           onChange={(name, value) => {
