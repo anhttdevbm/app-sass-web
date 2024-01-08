@@ -4,7 +4,7 @@ export const salesLang: SalesDictionary = {
   list: {
     title: "Giao dịch",
     head: {
-      title: "Sales | Taskcover",
+      title: "Giao dịch | Taskcover",
     },
     filter: {
       decending: "Giảm dần",
