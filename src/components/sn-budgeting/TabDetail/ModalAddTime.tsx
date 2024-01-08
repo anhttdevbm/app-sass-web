@@ -177,8 +177,8 @@ export const ModalAddTime = ({
 
           <Select
             options={services.map((service: TSection) => ({
-              value: service.id,
-              label: service.name,
+              value: service?.id || "",
+              label: service?.name || "",
             }))}
             title={budgetT("dialog.service")}
             name="service"
