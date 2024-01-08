@@ -352,13 +352,13 @@ const TabInvoice = (props: TabProps) => {
               </Stack>
             </Box>
           </Grid>
-          <Grid item xs={4} my={2}>
+          <Grid item xs={4} my={1}>
             <Box
               sx={{
                 border: "1px solid #ECECF3",
                 p: 2,
                 borderRadius: 4,
-                height: 200,
+                height: 198,
               }}
             >
               <Stack direction={"row"} gap={2} justifyContent={"space-between"}>
@@ -400,13 +400,13 @@ const TabInvoice = (props: TabProps) => {
               </Stack>
             </Box>
           </Grid>
-          <Grid item xs={4} my={2}>
+          <Grid item xs={4} my={1}>
             <Box
               sx={{
                 border: "1px solid #ECECF3",
                 p: 2,
                 borderRadius: 4,
-                height: 200,
+                height: 198,
               }}
             >
               <Stack direction={"row"} gap={2} justifyContent={"space-between"}>
