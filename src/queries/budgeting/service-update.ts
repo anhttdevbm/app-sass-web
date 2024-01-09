@@ -1,6 +1,7 @@
 import { Endpoint } from "api";
 import { saleClientInstance } from "../../api/client";
 import { useMutation } from "react-query";
+import { getPath } from "utils/index";
 
 const BUDGET_SERVICE_UPDATE_MUTATION_QK = 'budget_service_update_mutation_query_key';
 
@@ -27,7 +28,10 @@ export type TBudgetServiceUpdateForm = {
 }
 
 export const budgetServiceUpdate = (form: TBudgetServiceUpdateForm) => {
-  return saleClientInstance.put(Endpoint.BUDGET_SERVICE_UPDATE, form);
+  const url: string = getPath(Endpoint.BUDGET_SERVICE_UPDATE, undefined, {
+    id: form.sections[0].id,
+  });
+  return saleClientInstance.put(url, form);
 }
 
 export const useBudgetServiceUpdate = () => {

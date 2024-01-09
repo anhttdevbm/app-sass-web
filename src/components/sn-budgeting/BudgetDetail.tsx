@@ -84,7 +84,7 @@ export const BudgetDetail = () => {
   useEffect(() => {
     if (serviceQuery) {
       const services: any[] = [];
-      const sectionData: TSection[] = serviceQuery.data?.map((section) => {
+      const sectionData: TSection[] = serviceQuery?.data?.data?.map((section) => {
         const service = section.services[0];
         services.push(service);
         return {
@@ -101,10 +101,9 @@ export const BudgetDetail = () => {
       setServiceList(services);
       setSections(sectionData);
     }
-  }, [serviceQuery]);
+  }, [JSON.stringify(serviceQuery)]);
 
   useEffect(() => {
-    console.log("budgetDetailQuery", budgetDetailQuery);
     if (budgetDetailQuery) {
       setBudget(budgetDetailQuery.data);
     }
@@ -185,7 +184,6 @@ export const BudgetDetail = () => {
       setSelectedService(service);
     },
     openModalTime: (data?: any) => {
-      console.log('data', data);
       setSelectedTime(data);
       openModalTime();
     },

@@ -3,15 +3,25 @@ import { saleClientInstance } from "../../api/client";
 import { useMutation } from "react-query";
 import { getPath } from "utils/index";
 
-export const budgetServiceDelete = (sectionId: string) => {
-  const url: string = getPath(Endpoint.BUDGET_SECTION_DELETE, undefined, {
-    id: sectionId,
-  });
-  return saleClientInstance.delete(url);
+interface TDeleteSection {
+  budgetId: string;
+  sectionId?: string;
+  serviceId?: string;
 }
 
-export const useBudgetServiceDelete = () => {
+export const budgetSectionDelete = (data: TDeleteSection) => {
+  const url: string = getPath(
+    Endpoint.BUDGET_SECTION_DELETE,
+    { section_id: data.sectionId, service_id: data.serviceId },
+    {
+      id: data.budgetId,
+    },
+  );
+  return saleClientInstance.delete(url);
+};
+
+export const useBudgetSectionDelete = () => {
   return useMutation({
-    mutationFn: budgetServiceDelete
+    mutationFn: budgetSectionDelete,
   });
-}
+};
