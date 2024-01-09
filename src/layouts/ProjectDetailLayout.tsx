@@ -77,8 +77,7 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
   return (
     <Wrapper
       sx={{
-        overflowX: "hidden",
-        overflowY: "auto",
+        overflow: "hidden",
       }}
       id={SCROLL_ID}
       overflow="auto"
@@ -86,9 +85,7 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
     >
       <Stack
         position="relative"
-        // top={0}
         zIndex={12}
-        // bgcolor="background.paper"
         bgcolor={isDarkMode ? "background.default" : "background.paper"}
       >
         <TopContent />

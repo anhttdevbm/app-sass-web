@@ -92,7 +92,7 @@ const ItemList = () => {
 
   const { initQuery, isReady } = useQueryParams();
   const { push } = useRouter();
-  const { isXlSmaller, isMdSmaller, isLgSmaller, isXlBigger } = useBreakpoint();
+  const { isXlSmaller, isMdSmaller, isXlBigger, isLgBigger } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
   const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
@@ -230,20 +230,20 @@ const ItemList = () => {
         width: "32.5%",
         align: "left",
       },
-      { value: commonT("form.title.assigner"), width: "18%", align: "left" },
+      { value: commonT("form.title.assigner"), width: "16.5%", align: "left" },
       {
         value: commonT("form.title.startDate"),
-        width: "12.5%",
+        width: "100px",
         align: "left",
       },
-      { value: commonT("form.title.endDate"), width: "12.5%", align: "left" },
-      { value: commonT("status"), width: "10.5%", align: "left" },
+      { value: commonT("form.title.endDate"), width: "100px", align: "left" },
+      { value: commonT("status"), width: "100px", align: "left" },
       {
         value: commonT("form.title.description"),
-        width: "10%",
+        width: "12%",
         align: "center",
       },
-      { value: "", width: "4%", align: "center" },
+      { value: "", width: "2%", align: "center" },
     ],
     [commonT, projectT],
   );
@@ -252,23 +252,21 @@ const ItemList = () => {
     () => [
       {
         value: projectT("detailTasks.form.title.name"),
-        width: "45%",
+        width: "47%",
         align: "left",
       },
-      { value: commonT("form.title.assigner"), width: "15%", align: "left" },
+      { value: commonT("form.title.assigner"), width: "13.75%", align: "left" },
       {
         value: commonT("form.title.startDate"),
-        width: "9",
-        align: "center",
+        width: "100px",
       },
-      { value: commonT("form.title.endDate"), width: "9", align: "center" },
-      { value: commonT("status"), width: "7", align: "center" },
+      { value: commonT("form.title.endDate"), width: "100px" },
+      { value: commonT("status"), width: "100px" },
       {
         value: commonT("form.title.description"),
-        width: "13%",
-        align: "center",
+        width: "16%",
       },
-      { value: "", width: "2%", align: "center" },
+      { value: "", width: "1%", align: "center" },
     ],
     [commonT, projectT],
   );
@@ -279,7 +277,7 @@ const ItemList = () => {
     if (isMdSmaller) return [];
     if (isXlSmaller) return desktopHeaderList;
     if (isXlBigger) return xlHeaderList;
-  }, [windowSize]) as CellProps[];
+  }, [windowSize.width]) as CellProps[];
 
   const onSetTask = (
     taskData?: Task,
@@ -1081,7 +1079,7 @@ const ItemList = () => {
           <FormControlLabel
             control={<CheckBoxCustom {...checkboxProps} />}
             label={checkboxLabel}
-            style={{ marginLeft: "0px" }}
+            style={{ marginLeft: "16px" }}
           />
         </TableLayout>
       </Stack>
