@@ -163,8 +163,8 @@ const TrackingCalendar: React.FC<IProps> = () => {
                   note: data?.note,
                 },
               };
-              if (data.type === "Work time") totalUserWorkTime += data.duration;
-              else totalUserBreakTime += data.duration;
+              if (data.type === "Work time") totalUserWorkTime += data?.duration || 0;
+              else totalUserBreakTime += data?.duration || 0;
 
               result.push(newEvent);
             }
