@@ -132,7 +132,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
               xs: "12px",
             },
             minHeight: minHeight,
-            height: '60vh', overflow: "scroll"
+           
           }}
           id="is-edit-text"
           className={` ${styles.page_content} ${
@@ -166,7 +166,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
           </form>
           <div
             className={`${styles.editor}`}
-            style={{ pointerEvents: canEdit ? "auto" : "none",}}
+            style={{ pointerEvents: canEdit ? "auto" : "none",  height: '50vh', overflowY: "scroll"}}
           >
             <Tiptap editor={editor} disabled={!canEdit} />
           </div>
