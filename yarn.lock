@@ -2538,6 +2538,11 @@
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
+"@types/lodash@^4.14.202":
+  version "4.14.202"
+  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.202.tgz"
+  integrity sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==
+
 "@types/node@>=12.12.47", "@types/node@>=13.7.0", "@types/node@^20.3.0":
   version "20.4.8"
   resolved "https://registry.npmjs.org/@types/node/-/node-20.4.8.tgz"
@@ -3381,7 +3386,7 @@ cosmiconfig@^8.1.3:
 
 create-react-class@^15.5.2:
   version "15.7.0"
-  resolved "https://registry.yarnpkg.com/create-react-class/-/create-react-class-15.7.0.tgz#7499d7ca2e69bb51d13faf59bd04f0c65a1d6c1e"
+  resolved "https://registry.npmjs.org/create-react-class/-/create-react-class-15.7.0.tgz"
   integrity sha512-QZv4sFWG9S5RUvkTYWbflxeZX+JG7Cz0Tn33rQBJ+WFQTqTfUTjMjiv9tnfXazjsO5r0KhPs+AqCjyrQX6h2ng==
   dependencies:
     loose-envify "^1.3.1"
@@ -4274,7 +4279,7 @@ fraction.js@^4.3.6:
 
 froala-editor@4.1.4:
   version "4.1.4"
-  resolved "https://registry.yarnpkg.com/froala-editor/-/froala-editor-4.1.4.tgz#6eebb465fd610f2d9cbcf6b9ac45abcff534469a"
+  resolved "https://registry.npmjs.org/froala-editor/-/froala-editor-4.1.4.tgz"
   integrity sha512-oWF8SZNtLvfweURV5T0WYO69ZQpB1LQiGO2e6zoYRAlOwmqlW5yqLWfGi0tfn99qOgZ/4dxqBBDxqfOsRCQFiA==
 
 fs-constants@^1.0.0:
@@ -6017,7 +6022,7 @@ react-flatpickr@^3.10.13:
 
 react-froala-wysiwyg@^4.1.4:
   version "4.1.4"
-  resolved "https://registry.yarnpkg.com/react-froala-wysiwyg/-/react-froala-wysiwyg-4.1.4.tgz#f029eda00fed1cd6d81b43669d7b6f7b0bf92072"
+  resolved "https://registry.npmjs.org/react-froala-wysiwyg/-/react-froala-wysiwyg-4.1.4.tgz"
   integrity sha512-gykUmilMhq7uGqPDrFPEvCUE6KAa6ZdBL6Cp9joCm9RA/M2nio150Ug/DGFO1zGYEBMpXDeL7JaFaOhkxldSAA==
   dependencies:
     create-react-class "^15.5.2"

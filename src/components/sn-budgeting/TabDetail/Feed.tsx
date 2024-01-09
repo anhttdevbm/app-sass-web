@@ -5,9 +5,9 @@ import {
   TBudgetFeeds,
   useBudgetGetFeedQuery,
 } from "../../../queries/budgeting/get-feed";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TBudget } from "store/project/budget/action";
-import { Alert, Box, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";
@@ -59,7 +59,7 @@ export const Feed = ({ budget }: { budget: TBudget }) => {
                 }),
               }}
             >
-              <Avatar size={40} src={budget.created_by.avatar.link} />
+              <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
               <Stack px="10px">
                 <Text fontSize="16px" fontWeight="bold" mb="5px">
                   {budgetT(`actionStatus.${FeedAction[feed.action]}`)}

@@ -71,7 +71,8 @@ export const BudgetDetail = () => {
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
   const [dateFilter, setDateFilter] = useState<any>("");
   const [sections, setSections] = useState<TSection[]>([]);
-  const [selectedService, setSelectedService] = useState<TSection | null>();
+  const [servicesList, setServiceList] = useState<TSection[]>([]);
+  const [selectedService, setSelectedService] = useState<any | null>();
   const [selectedTime, setSelectedTime] = useState<TTimeRanges | null>();
 
   const { id } = useParams();
@@ -82,11 +83,14 @@ export const BudgetDetail = () => {
   const budgetT = useTranslations(NS_BUDGETING);
   useEffect(() => {
     if (serviceQuery) {
-      const sectionData: TSection[] = serviceQuery.data?.map((section) => {
+      const services: any[] = [];
+      const sectionData: TSection[] = serviceQuery?.data?.data?.map((section) => {
+        const service = section.services[0];
+        services.push(service);
         return {
           id: section.id,
           name: section.name,
-          service: "",
+          service: service,
           workingTime: "0 / 0 hrs",
           price: "0",
           cost: "0",
@@ -94,12 +98,12 @@ export const BudgetDetail = () => {
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, at nam! Id!",
         } as TSection;
       });
+      setServiceList(services);
       setSections(sectionData);
     }
-  }, [serviceQuery]);
+  }, [JSON.stringify(serviceQuery)]);
 
   useEffect(() => {
-    console.log("budgetDetailQuery", budgetDetailQuery);
     if (budgetDetailQuery) {
       setBudget(budgetDetailQuery.data);
     }
@@ -176,7 +180,7 @@ export const BudgetDetail = () => {
   }, [activeTab, isEditService]);
 
   useImperativeHandle(budgetDetailRef, () => ({
-    setSelectedServiceData: (service: TSection | null) => {
+    setSelectedServiceData: (service: any | null) => {
       setSelectedService(service);
     },
     openModalTime: (data?: any) => {
@@ -200,7 +204,7 @@ export const BudgetDetail = () => {
         sx={{ overflow: "auto !important" }}
       >
         <Stack direction="row" alignItems="center">
-          <Avatar size={40} src={budget.created_by.avatar.link} />
+          <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
           <Stack pl="7px">
             <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
               {budget.project.name}
@@ -296,11 +300,11 @@ export const BudgetDetail = () => {
       </Stack>
       <ModalAddTime
         serviceId={selectedService?.id || ""}
-        sections={sections}
+        services={servicesList}
         open={isOpenModalTime}
         onClose={hideModalTime}
         projectId={budget.project.id}
-        data={selectedTime}
+        timeData={selectedTime}
       />
       <ModalExpense
         open={isOpenModalExpense}

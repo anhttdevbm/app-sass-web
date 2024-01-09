@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   ButtonBase,
@@ -16,7 +17,6 @@ import { TimePicker } from "@mui/x-date-pickers";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
 import { Button, Select, Text } from "components/shared";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
-import { Option } from "constant/types";
 import CalendarIcon from "icons/CalendarIcon";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ import { usePositions } from "store/company/selectors";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
 import { useTranslations } from "next-intl";
-import { NS_BUDGETING } from "constant/index";
+import { NS_BUDGETING, NS_COMMON } from "constant/index";
 import { uuid } from "utils/index";
 import PlusIcon from "icons/PlusIcon";
 import TrashIcon from "icons/TrashIcon";
@@ -32,6 +32,11 @@ import ConfirmDialog from "components/ConfirmDialog";
 import useToggle from "hooks/useToggle";
 import dayjs, { Dayjs } from "dayjs";
 import { TError, TErrors, TSectionData } from "./ServiceUtil";
+import { useBudgetSectionDelete } from "queries/budgeting/section-delete";
+import { useParams } from "next/navigation";
+import { useSnackbar } from "store/app/selectors";
+import { serviceSectionRef } from "./ServiceSection";
+import _ from "lodash";
 
 type TForm = {
   data: TSectionData[];
@@ -42,6 +47,7 @@ type Props = {
   updateValue: (index: number, data: TSectionData[]) => void;
   errors: TErrors;
   serviceData: any[];
+  deletedServices: any[];
 };
 
 export const ServiceSectionRow = ({
@@ -49,15 +55,20 @@ export const ServiceSectionRow = ({
   updateValue,
   errors,
   serviceData,
+  deletedServices,
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [indexWaitDelete, setIndexWaitDelete] = useState<number | null>(null);
   const [isOpenConfirm, openConfirm, closeConfirm] = useToggle();
-  const budgetT = useTranslations(NS_BUDGETING);
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
   const { register, control, setValue, watch, getValues } = useForm<TForm>();
   const { onGetPositions } = usePositions();
   const { positionOptions } = useGetOptions();
+  const budgetSectionDelete = useBudgetSectionDelete();
+  const { id: budgetId } = useParams();
+  const { onAddSnackbar } = useSnackbar();
+  const budgetT = useTranslations(NS_BUDGETING);
+  const commonT = useTranslations(NS_COMMON);
 
   const { fields, append, remove } = useFieldArray({
     name: "data",
@@ -142,7 +153,8 @@ export const ServiceSectionRow = ({
         unit: service.unit,
         tracking: { time: 0, booking: 0 },
         estimate: dayjs().hour(hour).minute(minute).toString(),
-      });
+        serviceId: service.id,
+      } as any);
     });
   }, [serviceData]);
 
@@ -155,6 +167,7 @@ export const ServiceSectionRow = ({
       unit: "hour",
       tracking: { time: 0, booking: 0 },
       estimate: "",
+      isNewService: true,
     });
   };
 
@@ -169,7 +182,14 @@ export const ServiceSectionRow = ({
   };
 
   const acceptDelete = () => {
-    remove(Number(indexWaitDelete));
+    if (indexWaitDelete || indexWaitDelete === 0) {
+      const selectedService = fields[indexWaitDelete];
+      serviceSectionRef.current?.setDeletedServices(
+        _.concat(deletedServices, [selectedService]),
+      );
+      setIndexWaitDelete(indexWaitDelete);
+      remove(Number(indexWaitDelete));
+    }
     cancelConfirmDelete();
   };
 
@@ -212,7 +232,7 @@ export const ServiceSectionRow = ({
         overflow="visible"
       >
         {fields.map((field, index) => {
-          let errs = errors[fieldIndex] ?? [];
+          const errs = errors[fieldIndex] ?? [];
           const billStatus =
             watch(`data.${index}.billingType`) === "billable"
               ? billingBillable
@@ -238,7 +258,12 @@ export const ServiceSectionRow = ({
               <BodyCell sx={{ p: 1 }}>
                 <Select
                   size="small"
-                  options={positionOptions as Option[]}
+                  // options={positionOptions as Option[]}
+                  options={[
+                    { label: "Dev", value: "Dev" },
+                    { label: "QC", value: "QC" },
+                    { label: "BA", value: "BA" },
+                  ]}
                   onChangeValue={(value) => {
                     setValue(`data.${index}.type`, String(value));
                   }}

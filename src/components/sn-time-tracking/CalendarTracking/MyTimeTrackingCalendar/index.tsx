@@ -205,10 +205,10 @@ const TrackingCalendar: React.FC<IProps> = () => {
   useEffect(() => {
     _.forEach(myTime, (timesheet) => {
       const idEvent = timesheet?.id;
-      getSameWorker({ id: idEvent }).then(async (res) => {
+      getSameWorker({ id: idEvent || "" }).then(async (res) => {
         const cloneObject = _.cloneDeep(sameTime);
 
-        cloneObject[idEvent] = res || [];
+        cloneObject[idEvent || ""] = res || [];
         setSameTime((state) => ({ ...state, ...cloneObject }));
       });
     });
@@ -240,8 +240,8 @@ const TrackingCalendar: React.FC<IProps> = () => {
             note: timesheet?.note,
           },
         };
-        if (timesheet.type === "Work time") totalWorkTime += timesheet.duration;
-        else totalBreakTime += timesheet.duration;
+        if (timesheet.type === "Work time") totalWorkTime += timesheet?.duration || 0;
+        else totalBreakTime += timesheet?.duration || 0;
 
         result.push(newEvent);
       });

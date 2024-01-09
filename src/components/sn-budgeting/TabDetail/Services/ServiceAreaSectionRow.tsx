@@ -69,7 +69,7 @@ function ServiceAreaSectionRow({
                 budgetDetailRef.current?.setSelectedServiceData(null);
                 setAnchorEl(null);
               } else {
-                budgetDetailRef.current?.setSelectedServiceData(section);
+                budgetDetailRef.current?.setSelectedServiceData(section?.service);
                 setAnchorEl(e.currentTarget);
               }
             }}

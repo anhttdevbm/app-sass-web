@@ -35,7 +35,9 @@ import { budgetDetailRef } from "../BudgetDetail";
 export type TTimeRanges = {
   id: string;
   _id: string;
+  docId: string;
   service: string;
+  date: string;
   createdAt: string;
   name: string;
   person: {
@@ -85,21 +87,25 @@ export const Time = () => {
   useEffect(() => {
     if (!timeQuery || !timeQuery.data?.data?.docs) return;
 
-    const times = (timeQuery.data?.data?.docs || []).map((doc) => ({
-      _id: doc.id,
-      createdAt: doc.createdAt,
-      note: doc.note,
-      timeRanges: doc.timeRanges,
-      billableTime: doc.billableTime,
-      name: doc.services?.name,
-      person: {
-        avatar: doc.created_by?.avatar?.link,
-        fullname: doc.created_by?.fullname,
-      },
-    }));
+    const times = (timeQuery.data?.data?.docs || []).map((doc) => {
+      return {
+        _id: doc.id,
+        docId: doc.id,
+        createdAt: doc?.createdAt,
+        date: doc?.date,
+        note: doc?.note,
+        service: doc?.services?.id,
+        timeRanges: doc.timeRanges,
+        billableTime: doc.billableTime,
+        name: doc?.services?.name,
+        person: {
+          avatar: doc?.created_by?.avatar?.link,
+          fullname: doc?.created_by?.fullname,
+        },
+      };
+    });
 
-    setValue('times', times);
-
+    setValue("times", times);
   }, [JSON.stringify(timeQuery)]);
 
   const handleRemoveTimeRange = async (id: string, index: number) => {
@@ -192,7 +198,7 @@ export const Time = () => {
                               fontSize="medium"
                             />
                             <Text ml={2} variant="body2" color="grey.400">
-                              {budgetT('tabTime.edit')}
+                              {budgetT("tabTime.edit")}
                             </Text>
                           </MenuItem>
                           <MenuItem
@@ -204,7 +210,7 @@ export const Time = () => {
                           >
                             <TrashIcon color="error" fontSize="medium" />
                             <Text ml={2} variant="body2" color="error.main">
-                              {budgetT('tabTime.delete')}
+                              {budgetT("tabTime.delete")}
                             </Text>
                           </MenuItem>
                         </MenuList>

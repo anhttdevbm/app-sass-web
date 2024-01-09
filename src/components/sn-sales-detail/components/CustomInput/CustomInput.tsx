@@ -59,7 +59,7 @@ const CustomInput = (props: CustomInputProps, ref) => {
     helperText,
     isRound,
     rules,
-    name,
+    name = "",
     type = "string",
 
     defaultValue,
@@ -145,7 +145,7 @@ const CustomInput = (props: CustomInputProps, ref) => {
                 multiline={multiline}
                 placeholder={placeholder}
                 onPaste={(e) => handleFilterNumberOnPaste(e)}
-                error={get(errors, `${name}.message`)}
+                error={get(errors, `${name}.message`) as string | undefined}
                 sx={{
                   width: "100%",
                   "& .MuiInputBase-root": {

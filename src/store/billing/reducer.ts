@@ -384,7 +384,7 @@ const billingSlice = createSlice({
       .addCase(getServiceBudget.fulfilled, (state, { payload }) => {
         // const { items, ...paging } = action.payload;
 
-        state.serviceBudgets = payload?.sections;
+        state.serviceBudgets = payload;
 
         state.status = DataStatus.SUCCEEDED;
         state.error = undefined;

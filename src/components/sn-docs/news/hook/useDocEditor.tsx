@@ -22,14 +22,14 @@ export default function useDocEditor() {
   }, 1000);
 
   const anchorRef = useRef(0);
-  return useEditor({
+  const editor = useEditor({
     content: doc?.contentRow,
    // emitUpdate: true,
     extensions: getExtensions({
       openLinkModal: () => setIsAddingNewLink(true),
       onCommentActivated: (commentId: string) => {
         if (commentId) {
-          console.log(commentId);
+
           setActiveCommentId(commentId);
           setOpenComment(true);
         }
@@ -50,4 +50,9 @@ export default function useDocEditor() {
     },
   });
 
+  useEffect(() => {
+    editor?.commands?.setContent(doc?.contentRow)
+  }, [doc?.contentRow])
+
+  return editor;
 }

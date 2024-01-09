@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from "react-query";
 import { saleClientInstance } from "../../api/client";
 import { getPath } from "utils/index";
@@ -13,11 +14,11 @@ export const budgetGetServiceQuery = (id: string): Promise<any> => {
 };
 
 export const useBudgetGetServiceQuery = (id: string): any | undefined => {
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: [BUDGET_GET_SERVICE_QK, id],
     queryFn: () => budgetGetServiceQuery(id),
     retry: 0,
     staleTime: Infinity,
   });
-  return data;
+  return { data, refetch };
 };

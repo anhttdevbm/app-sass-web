@@ -27,7 +27,7 @@ import useDocEditor from "../hook/useDocEditor";
 import { NewPageContext } from "../context/NewPageContext";
 import { DocAccessibility } from "constant/enums";
 import styled from "@emotion/styled";
-
+import { TextSelection } from 'prosemirror-state';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
@@ -73,22 +73,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     }
   }, [description, name, content, project_id]);
 
-  // useEffect(() => {
-
-  //     console.log('vodđ', content)
-  //     const interval = setInterval(() => {
-  //       editor?.commands.setContent(content);
-  //       clearInterval(interval)
-  //     }, 500)
-  //    return clearInterval(interval)
-
-  // }, []);
-  //console.log('ngoai', content)
   const editor = useDocEditor() as Editor;
-
-  // useEffect(() => {
-  //   editor?.commands.setContent(content);
-  // }, [content]);
 
   useEffect(() => {
     const updateMinHeight = () => {
@@ -147,7 +132,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
               xs: "12px",
             },
             minHeight: minHeight,
-            height: '60vh', overflow: "scroll"
+           
           }}
           id="is-edit-text"
           className={` ${styles.page_content} ${
@@ -181,7 +166,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
           </form>
           <div
             className={`${styles.editor}`}
-            style={{ pointerEvents: canEdit ? "auto" : "none",}}
+            style={{ pointerEvents: canEdit ? "auto" : "none",  height: '50vh', overflowY: "scroll"}}
           >
             <Tiptap editor={editor} disabled={!canEdit} />
           </div>

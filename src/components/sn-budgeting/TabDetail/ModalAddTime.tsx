@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MenuList, Stack } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
-import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
 import { NS_BUDGETING, NS_COMMON } from "constant/index";
 import moment from "moment";
@@ -10,7 +10,6 @@ import { TBudgetTimeAdd, TBudgetTimeUpdate, useBudgetTimeAdd, useBudgetTimeUpdat
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
-import { useProjects } from "store/project/selectors";
 import { getMessageErrorByAPI, uuid } from "utils/index";
 import { TTimeRanges } from "./Time";
 import { useParams } from "next/navigation";
@@ -19,18 +18,20 @@ import { ReactDatePickerProps } from "react-datepicker";
 import { DateTimePicker } from "components/shared/DatePicker";
 
 type Props = {
-  sections: TSection[];
+  services: any[];
   open: boolean;
   onClose: () => void;
-  // projectId: string;
-  data?: TTimeRanges | null;
+  projectId: string;
+  timeData?: TTimeRanges | null;
   serviceId: string | null;
 };
 
 const defaultValues: TTimeRanges = {
   _id: uuid(),
+  docId: "",
   id: "",
   service: "",
+  date: "",
   createdAt: "",
   name: "",
   person: {
@@ -47,17 +48,16 @@ const defaultValues: TTimeRanges = {
 export const ModalAddTime = ({
   open,
   onClose,
-  // projectId,
-  data,
-  sections = [],
+  projectId,
+  timeData,
+  services = [],
   serviceId,
 }: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
   const commonT = useTranslations(NS_COMMON);
   const { id } = useParams();
 
-  const { items: projects, onGetProjects } = useProjects();
-  const { projectOptions } = useGetOptions();
+  // const { items: projects, onGetProjects } = useProjects();
   const budgetTimeAdd = useBudgetTimeAdd();
   const budgetTimeUpdate = useBudgetTimeUpdate();
   const { onAddSnackbar } = useSnackbar();
@@ -71,7 +71,7 @@ export const ModalAddTime = ({
 
   const { register, control, handleSubmit, setValue, getValues, reset, watch } =
     useForm<TTimeRanges>({
-      defaultValues: data || defaultValues,
+      defaultValues: timeData || defaultValues,
     });
   
   useEffect(() => {
@@ -80,14 +80,14 @@ export const ModalAddTime = ({
       return;
     };
 
-    if (!projects || projects.length === 0) {
-      onGetProjects({});
-    }
+    // if (!projects || projects.length === 0) {
+    //   onGetProjects({});
+    // }
 
-    if (data) {
-      reset(data);
+    if (timeData) {
+      reset(timeData);
     }
-  }, [open, JSON.stringify(data)]);
+  }, [open, JSON.stringify(timeData)]);
 
   useEffect(() => {
     setValue("service", serviceId || "");
@@ -95,9 +95,9 @@ export const ModalAddTime = ({
 
   useEffect(() => {
     if (watch('startTime') && watch('endTime')) {
-      const gap = moment(watch('endTime')).diff(moment(watch('startTime')), 'hours');
+      const gap = moment(watch('endTime')).diff(moment(watch('startTime')), 'minutes');
       if (gap > 0) {
-        setValue('timeRanges', gap);
+        setValue('timeRanges', gap / 60);
       }
     }
   }, [watch('startTime'), watch('endTime')]);
@@ -109,12 +109,11 @@ export const ModalAddTime = ({
       note: formValue.note,
       timeRanges: formValue.timeRanges,
       billableTime: formValue.billableTime,
-      startTime: formValue.startTime ? moment(formValue.startTime).format("HH:mm") : "",
-      endTime: formValue.endTime ? moment(formValue.endTime).format("HH:mm") : "",
-    };
+      date: formValue.date ? moment(formValue.date).format("YYYY-MM-DD") : ""
+    } as TBudgetTimeAdd;
 
-    if (!!data) {
-      data['id'] = formValue.id || "";
+    if (!!timeData) {
+      data['id'] = formValue.docId || "";
       budgetTimeUpdate.mutate(data as TBudgetTimeUpdate, {
         onSuccess() {
           onAddSnackbar("Success", "success");
@@ -139,26 +138,26 @@ export const ModalAddTime = ({
 
   return (
     <FormLayout
-      label={!!data ? budgetT("dialog.titleModalUpdate") : budgetT("dialog.titleModalAdd")}
+      label={!!timeData ? budgetT("dialog.titleModalUpdate") : budgetT("dialog.titleModalAdd")}
       pending={false}
       submitWhenEnter={false}
       open={open}
       onClose={onClose}
       cancelText={budgetT("dialog.cancelBtnText")}
-      submitText={!!data ? budgetT("dialog.updateBtnText") : budgetT("dialog.addBtnText")}
+      submitText={!!timeData ? budgetT("dialog.updateBtnText") : budgetT("dialog.addBtnText")}
       onSubmit={handleSubmit(onSubmit)}
     >
       <Stack overflow="auto">
         <MenuList component={Stack} spacing={2}>
           <Controller
             control={control}
-            name="createdAt"
+            name="date"
             render={({ field: { onChange, value } }) => (
               <DatePicker
                 title={budgetT("dialog.date")}
                 rootSx={sxInput}
                 fullWidth
-                name="createdAt"
+                name="date"
                 value={value}
                 onChange={(_: string, newDate: Date | undefined) => {
                   onChange(newDate ? moment(newDate).format() : "");
@@ -177,12 +176,12 @@ export const ModalAddTime = ({
           /> */}
 
           <Select
-            options={sections.map((section: TSection) => ({
-              value: section.id,
-              label: section.name,
+            options={services.map((service: TSection) => ({
+              value: service?.id || "",
+              label: service?.name || "",
             }))}
             title={budgetT("dialog.service")}
-            name="section"
+            name="service"
             rootSx={sxInput}
             fullWidth
             onChange={(e) => {

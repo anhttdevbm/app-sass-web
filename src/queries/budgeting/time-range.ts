@@ -16,8 +16,7 @@ export interface TBudgetTimeAdd {
   note: string;
   timeRanges: number;
   billableTime: number;
-  startTime: string;
-  endTime: string;
+  date: string;
 }
 
 export interface TBudgetTimeUpdate {
@@ -27,8 +26,7 @@ export interface TBudgetTimeUpdate {
   note: string;
   timeRanges: number;
   billableTime: number;
-  startTime: string;
-  endTime: string;
+  date: string;
 }
 
 export const budgetGetTimeRangeQuery = (id: string): Promise<any> => {
@@ -75,7 +73,10 @@ export const budgetTimeUpdate = (form: TBudgetTimeUpdate) => {
   const url: string = getPath(Endpoint.BUDGET_TIME_RANGES_UPDATE, undefined, {
     id: form.id,
   });
-  return saleClientInstance.put(url, form);
+  const data: any = {...form};
+  delete data.id;
+  delete data.date;
+  return saleClientInstance.put(url, data);
 }
 
 export const useBudgetTimeUpdate = () => {

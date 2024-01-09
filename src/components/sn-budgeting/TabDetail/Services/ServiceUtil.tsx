@@ -58,10 +58,11 @@ export type TSectionData = {
   unit: string;
   tracking: { time: number; booking: number };
   estimate: string;
+  isNewService?: boolean;
 };
 
 export type TSectionForm = {
-  sections: (TSection & { data: TSectionData[] })[];
+  sections: (TSection & { data: TSectionData[] } & { sectionId?: string, isNewSection?: boolean })[];
 };
 
 export type TError = { itemIndex: number; fieldName: string; errorMgs: string };

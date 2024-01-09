@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import {
   getMyTimeSheet,
@@ -31,6 +32,7 @@ import { subDays } from "date-fns";
 import dayjs from "dayjs";
 
 export interface MyTimeSheet {
+  project?: any;
   created_time?: string;
   day?: string;
   duration?: number;

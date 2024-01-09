@@ -2,31 +2,75 @@
 import {
   Box,
   ButtonBase,
+  FormControl,
+  InputLabel,
   MenuItem,
   MenuList,
   Popover,
+  Select,
   Stack,
   popoverClasses,
 } from "@mui/material";
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import { NS_DOCS } from "constant/index";
-import { SelectMembers } from "components/sn-projects/components";
-import { useFormik } from "formik";
 import ChevronIcon from "icons/ChevronIcon";
+import { Search } from "components/Filters";
+import MemberItem from "components/sn-projects/components/MemberItem";
+import { useEmployeeOptions } from "store/company/selectors";
+import { usePositionOptions } from "store/global/selectors";
 
 const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
+  const {
+    items,
+    filters,
+    onGetOptions: onGetEmployeeOptions,
+  } = useEmployeeOptions();
+  const { onGetOptions } = usePositionOptions();
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const onChangeField = (name: string, newValue?: any) => {
-    onChange(name, newValue);
+  const [members, setMembers] = useState<any>([]);
+  //const [name, setName] = useState<any>([]);
+  const ignoreItems = useMemo(() => {
+    return items;
+  }, [items]);
+  const onChangeMembers = (id: string, fullname: string) => {
+    const indexSelected = members.findIndex((item) => item.id === id);
+
+    const newData = [...members];
+    if (indexSelected === -1) {
+      newData.push({ id, fullname });
+    } else {
+      newData.splice(indexSelected, 1);
+    }
+    setMembers(newData);
+    onChange("user_id", newData)
   };
+  const onChangeSearch = (name: string, newValue?: string | number) => {
+    onGetEmployeeOptions({ pageIndex: 1, pageSize: 10, [name]: newValue });
+  };
+
+  const fetchUser = () => {
+    const params = {
+      pageIndex: 1,
+      pageSize: 10,
+    };
+    onGetEmployeeOptions({ ...params });
+  };
+
+  useEffect(() => {
+    onGetOptions({ pageIndex: 1, pageSize: 10 });
+  }, [onGetOptions]);
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   return (
     <>
@@ -77,12 +121,25 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
             borderRadius: 1,
           }}
         >
-          <SelectMembers
-            name="user_id"
-            value={queries?.user_id}
-            onChange={onChangeField}
-            // ignoreId={queries?.owner}
+          <Search
+            name="email"
+            value={filters?.email}
+            //placeholder={commonT("searchBy", { name: "email" })}
+            onEnter={onChangeSearch}
+            emitWhenEnter
           />
+          {ignoreItems.map((item) => {
+            const isChecked = members.some((member) => item.id === member.id);
+            return (
+              <MenuItem key={item.id}>
+                <MemberItem
+                  {...item}
+                  onChange={onChangeMembers}
+                  checked={isChecked}
+                />
+              </MenuItem>
+            );
+          })}
         </Stack>
       </Popover>
     </>

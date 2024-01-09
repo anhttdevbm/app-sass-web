@@ -15,18 +15,15 @@ import useTheme from "hooks/useTheme";
 import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 import styled from "@emotion/styled";
-import { useDispatch } from "react-redux";
-import { setContentRow } from "store/docs/reducer";
-import { DOCS_API_URL } from "constant/index";
-import axiosBaseQuery from "store/axiosBaseQuery";
+
 import axios from "axios";
 
 export const RowGroup = (props) => {
   const { items, title } = props;
-  const dispatch = useDispatch();
+  
   const { isMdSmaller } = useBreakpoint();
   const { isDarkMode } = useTheme();
-  const api = axiosBaseQuery({ baseUrl: DOCS_API_URL });
+ 
 
   return (
     <TableRow>
@@ -45,18 +42,7 @@ export const RowGroup = (props) => {
             {Array.isArray(items) &&
               items.map((doc) => {
                 return (
-                  <TableRow onClick={async () => {
-                    const result: any = await api({
-                      url: `/docs/detail/${doc.id}`,
-                      method: 'GET', 
-                      //@ts-ignore
-                    }, {}, {});
-                    if (result.error) {
-                      console.error('Error:', result.error);
-                    } else {
-                      dispatch(setContentRow(result?.data?.content));
-                    } 
-                  }}>
+                  <TableRow >
                     {!isMdSmaller ? (
                       <DesktopCells item={doc} />
                     ) : (
