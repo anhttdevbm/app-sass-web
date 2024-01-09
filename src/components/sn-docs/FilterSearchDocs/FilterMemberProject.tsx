@@ -25,6 +25,7 @@ import ChevronIcon from "icons/ChevronIcon";
 const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -105,7 +106,20 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
             borderRadius: 1,
           }}
         >
-          <TextFieldSelect
+           {projectOptions.map((item) => { 
+            return (
+              <MenuItem key={item.value} onClick={() => {
+                  onChange("project", item.value);
+                  handleClose();
+                  setSelectedItem(item.value)
+              }}
+              sx={{backgroundColor: item?.value === selectedItem ? '#dddddd' : ''}}
+              >
+               {item?.label}
+              </MenuItem>
+            );
+          })}
+          {/* <TextFieldSelect
             value={queries?.project}
             onChange={(e) => {
               onChange("project", e.target.value);
@@ -113,7 +127,7 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
             options={projectOptions}
             label={timeT("modal.Project")}
             sx={{ flex: 1 }}
-          />
+          /> */}
         </Stack>
       </Popover>
     </>
