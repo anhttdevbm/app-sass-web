@@ -103,7 +103,7 @@ const AccountInfoHeader = ({
                 >
                   <Avatar
                     alt="Avatar"
-                    size={35}
+                    size={36}
                     style={{
                       border: "4px solid ",
                       borderColor: "background.default",
@@ -115,7 +115,7 @@ const AccountInfoHeader = ({
                   />
                   <Avatar
                     alt="Avatar"
-                    size={35}
+                    size={36}
                     style={{
                       border: "3px solid ",
                       borderColor: "background.default",
@@ -310,6 +310,7 @@ const AccountInfoHeader = ({
               padding: 1,
               borderBottom: "1px solid #ECECF3",
               backgroundColor: "#3699FF",
+              height: "72px",
             }}
           >
             <IconButton

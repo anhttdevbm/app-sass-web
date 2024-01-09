@@ -211,8 +211,8 @@ const ChatListTemp = () => {
       )}
       <Box
         position="fixed"
-        bottom="3rem"
-        right="5rem"
+        bottom="2rem"
+        right="4rem"
         sx={{
           backgroundColor: "#3699FF",
           width: "50px",

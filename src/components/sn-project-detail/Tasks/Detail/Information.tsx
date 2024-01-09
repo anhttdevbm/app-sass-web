@@ -268,6 +268,7 @@ const Information = () => {
                 paddingTop: "0px !important",
               },
               width: "60% !important",
+              // wordBreak: "break-word",
             }}
           />
         ) : (
