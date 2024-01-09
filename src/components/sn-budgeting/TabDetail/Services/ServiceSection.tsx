@@ -262,46 +262,6 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
         (oldSection) => oldSection.id === section.sectionId,
       );
 
-      // const updateServiceList: any = [];
-      // const newServiceList: any = _.map(
-      //   _.get(section, "data", []),
-      //   (service) => {
-      //     const estimateTime: string[] | number = service?.estimate
-      //       ? service?.estimate?.split(":")
-      //       : [];
-
-      //     if (!service.isNewService) {
-      //       updateServiceList.push(service);
-      //       return null;
-      //     }
-
-      //     return {
-      //       name: _.get(service, "name", ""),
-      //       desc: "",
-      //       serviceType: _.get(service, "type", ""),
-      //       billType: _.get(service, "billingType", ""),
-      //       unit: _.get(service, "unit", ""),
-      //       estimate: service?.estimate
-      //         ? parseInt(estimateTime[0]) * 60 + parseInt(estimateTime[1])
-      //         : null,
-      //       qty: 0,
-      //       price: 0,
-      //       discount: 0,
-      //       markUp: 0,
-      //       timeTracking: _.get(service, "tracking.time") === 1,
-      //       bookingTracking: _.get(service, "tracking.booking") === 1,
-      //       tolBudget: 0,
-      //     };
-      //   },
-      // );
-
-      // if (_.compact(newServiceList).length > 0) {
-      //   newServices.push({
-      //     title: _.get(section, "title", ""),
-      //     data: _.compact(newServiceList),
-      //   });
-      // }
-
       const services = _.map(_.get(section, "data", []), (service) => {
         const estimateTime: string[] | number = service?.estimate
           ? service?.estimate?.split(":")

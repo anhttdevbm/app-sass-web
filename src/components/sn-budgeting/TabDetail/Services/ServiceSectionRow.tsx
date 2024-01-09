@@ -189,18 +189,6 @@ export const ServiceSectionRow = ({
       );
       setIndexWaitDelete(indexWaitDelete);
       remove(Number(indexWaitDelete));
-      // budgetSectionDelete.mutateAsync({
-      //   budgetId: String(budgetId),
-      //   serviceId: selectedService[0]?.sectionId
-      // }, {
-      //   onSuccess: () => {
-      //     remove(Number(indexWaitDelete));
-      //     setIndexWaitDelete(null);
-      //   },
-      //   onError: (error) => {
-      //     onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-      //   }
-      // })
     }
     cancelConfirmDelete();
   };
