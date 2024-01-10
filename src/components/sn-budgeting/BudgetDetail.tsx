@@ -79,16 +79,6 @@ export type TBudgetService = {
   tolBudget?: number;
 };
 
-export type TSection = {
-  id: string;
-  name: string;
-  service: string;
-  workingTime: string;
-  price: string;
-  cost: string;
-  description: string;
-};
-
 export const budgetDetailRef = createRef<any>();
 
 export const BudgetDetail = () => {
@@ -103,7 +93,7 @@ export const BudgetDetail = () => {
   const [dateFilter, setDateFilter] = useState<any>("");
   const [sections, setSections] = useState<TBudgetSection[]>([]);
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
-  const [selectedService, setSelectedService] = useState<any | null>();
+  const [selectedService, setSelectedService] = useState<TBudgetService | null>();
   const [selectedTime, setSelectedTime] = useState<TTimeRanges | null>();
 
   const { id } = useParams();
@@ -204,7 +194,7 @@ export const BudgetDetail = () => {
   }, [activeTab, isEditService]);
 
   useImperativeHandle(budgetDetailRef, () => ({
-    setSelectedServiceData: (service: any | null) => {
+    setSelectedServiceData: (service: TBudgetService | null) => {
       setSelectedService(service);
     },
     openModalTime: (data?: any) => {
@@ -364,6 +354,9 @@ export const BudgetDetail = () => {
                 sections={sections}
                 isEdit={isEditService}
                 onCloseEdit={offEditService}
+                refetch={() => {
+                  serviceQuery.refetch();
+                }}
               />
             )}
           </Box>
@@ -384,11 +377,13 @@ export const BudgetDetail = () => {
         </Box>
       </Stack>
       <ModalAddTime
-        serviceId={selectedService?.id || ""}
+        serviceId={_.get(selectedService, 'id', '')}
         services={servicesList}
         open={isOpenModalTime}
-        onClose={hideModalTime}
-        projectId={budget.project.id}
+        onClose={() => {
+          setSelectedService(null);
+          hideModalTime();
+        }}
         timeData={selectedTime}
       />
       <ModalExpense

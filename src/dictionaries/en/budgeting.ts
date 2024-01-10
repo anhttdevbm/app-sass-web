@@ -67,6 +67,7 @@ export const BudgetingLang: BudgetingDictionary = {
       price: "Price",
       discount: "Discount",
       totalBudget: "Total Budget",
+      description: 'Description',
     },
   },
   dialog: {

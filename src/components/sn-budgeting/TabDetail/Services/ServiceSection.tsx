@@ -27,16 +27,17 @@ import {
   TBudgetServiceUpdateForm,
   useBudgetServiceUpdate,
 } from "queries/budgeting/service-update";
-import { TBudgetSection, TBudgetService, budgetDetailRef } from "components/sn-budgeting/BudgetDetail";
+import { TBudgetSection, TBudgetService } from "components/sn-budgeting/BudgetDetail";
 
 type Props = {
   sectionsList: TBudgetSection[];
   onCloseEdit?: () => void;
+  refetch?: () => void;
 };
 
 export const serviceSectionRef = createRef<any>();
 
-export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [] }: Props) => {
+export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refetch = () => {} }: Props) => {
   const { id: budgetId } = useParams();
   const { onAddSnackbar } = useSnackbar();
 
@@ -63,7 +64,7 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [] }: Pr
 
   useEffect(() => {
     const sectionList = _.map(sectionsList,
-      (section, index: number) => {
+      (section) => {
         return {
           id: uuid(),
           title: section.name,
@@ -156,11 +157,13 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [] }: Pr
         return section?.isNewSection;
       });
   
-      // add sections
-      createSections(newSections);
-  
       // update sections
       handleUpdateSections(updateSections);
+
+      // add sections
+      if (newSections.length > 0) {
+        createSections(newSections);
+      }
   
       // delete sections
       if (deletedSections.length > 0) {
@@ -177,12 +180,11 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [] }: Pr
       }
 
       onAddSnackbar("Update services successful!", "success");
-      budgetDetailRef.current?.refetchServiceQuery();
       onCloseEdit();
     } catch (err) {
       onAddSnackbar("Update services failed!", "error");
     } finally {
-      budgetDetailRef.current?.refetchServiceQuery();
+      refetch();
     }
   };
 
@@ -244,7 +246,7 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [] }: Pr
       form.sections.push({ name: title, services: service });
     });
 
-    budgetServiceAdd.mutate(form, {
+    budgetServiceAdd.mutateAsync(form, {
       onSuccess() {
         onAddSnackbar("Success", "success");
       },

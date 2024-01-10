@@ -13,15 +13,15 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI, uuid } from "utils/index";
 import { TTimeRanges } from "./Time";
 import { useParams } from "next/navigation";
-import { TSection } from "../BudgetDetail";
+import { TBudgetService } from "../BudgetDetail";
 import { ReactDatePickerProps } from "react-datepicker";
 import { DateTimePicker } from "components/shared/DatePicker";
+import _ from "lodash";
 
 type Props = {
   services: any[];
   open: boolean;
   onClose: () => void;
-  projectId: string;
   timeData?: TTimeRanges | null;
   serviceId: string | null;
 };
@@ -48,7 +48,6 @@ const defaultValues: TTimeRanges = {
 export const ModalAddTime = ({
   open,
   onClose,
-  projectId,
   timeData,
   services = [],
   serviceId,
@@ -57,7 +56,6 @@ export const ModalAddTime = ({
   const commonT = useTranslations(NS_COMMON);
   const { id } = useParams();
 
-  // const { items: projects, onGetProjects } = useProjects();
   const budgetTimeAdd = useBudgetTimeAdd();
   const budgetTimeUpdate = useBudgetTimeUpdate();
   const { onAddSnackbar } = useSnackbar();
@@ -79,10 +77,6 @@ export const ModalAddTime = ({
       reset(defaultValues);
       return;
     };
-
-    // if (!projects || projects.length === 0) {
-    //   onGetProjects({});
-    // }
 
     if (timeData) {
       reset(timeData);
@@ -172,19 +166,10 @@ export const ModalAddTime = ({
             )}
           />
 
-          {/* <Select
-            options={projectOptions}
-            title={budgetT("dialog.project")}
-            name="project_id"
-            rootSx={sxInput}
-            fullWidth
-            value={projectId}
-          /> */}
-
           <Select
-            options={services.map((service: TSection) => ({
-              value: service?.id || "",
-              label: service?.name || "",
+            options={services.map((service: TBudgetService) => ({
+              value: _.get(service, 'id', ''),
+              label: _.get(service, 'name', ''),
             }))}
             title={budgetT("dialog.service")}
             name="service"

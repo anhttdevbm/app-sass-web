@@ -8,6 +8,7 @@ import { TBudgetSection } from "../BudgetDetail";
 type Props = {
   isEdit?: boolean;
   onCloseEdit?: () => void;
+  refetch?: () => void;
   sections: TBudgetSection[];
 };
 
@@ -15,9 +16,10 @@ export const Service = ({
   isEdit = false,
   sections = [],
   onCloseEdit,
+  refetch,
 }: Props) => {
   return isEdit ? (
-    <ServiceSection sectionsList={sections} onCloseEdit={onCloseEdit} />
+    <ServiceSection sectionsList={sections} onCloseEdit={onCloseEdit} refetch={refetch} />
   ) : (
     <Box>
       <ServiceAreaTotal />

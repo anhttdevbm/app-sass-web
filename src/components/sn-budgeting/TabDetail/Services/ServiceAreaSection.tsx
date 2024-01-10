@@ -29,7 +29,6 @@ export const ServiceAreaSection = ({
 }: {
   sections: TBudgetSection[];
 }) => {
-  console.log("sections", sections);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const budgetT = useTranslations(NS_BUDGETING);
 
@@ -85,15 +84,32 @@ export const ServiceAreaSection = ({
   ];
 
   return (
-    <Box>
+    <>
       {_.map(sections, (section: TBudgetSection, index) => {
         return (
-          <Box key={index} sx={{ mb: 2 }}>
+          <Stack
+            key={index}
+            sx={{
+              mb: 2,
+              overflow: {
+                xs: "auto",
+              },
+              pr: 1,
+            }}
+          >
             <Typography variant="h4" sx={{ p: 2 }}>
               {_.get(section, "name", "")}
             </Typography>
             <TableLayout
-              headerList={headerList} noData={false} titleColor="grey.300"
+              headerList={headerList}
+              noData={false}
+              titleColor="grey.300"
+              maxHeight={920}
+              headerProps={{
+                sx: {
+                  px: 2,
+                },
+              }}
               sx={{
                 minHeight: 100,
                 minWidth: {
@@ -121,7 +137,7 @@ export const ServiceAreaSection = ({
                 },
               )}
             </TableLayout>
-          </Box>
+          </Stack>
         );
       })}
 
@@ -199,6 +215,6 @@ export const ServiceAreaSection = ({
           </Grow>
         )}
       </Popper>
-    </Box>
+    </>
   );
 };
