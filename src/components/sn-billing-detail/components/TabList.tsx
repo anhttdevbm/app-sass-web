@@ -2,7 +2,7 @@ import { Box, Button, Stack, StackProps, Tab } from "@mui/material";
 import { NS_BILLING } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import TabInvoice from "../Invoice";
@@ -19,6 +19,9 @@ import { User } from "constant/types";
 import { useBillings } from "store/billing/selectors";
 import { FormikProps, useFormik } from "formik";
 import { Padding } from "@mui/icons-material";
+import { BillingData } from "store/billing/actions";
+import { BILLING_PATH } from "constant/paths";
+import { useRouter } from "next-intl/client";
 
 type TabItemProps = {
   label: string;
@@ -45,7 +48,8 @@ const TabInfo = (props: TabListProps) => {
   // const { id } = useParams() as { id: string };
   // const pathname = usePathname();
   const billingT = useTranslations(NS_BILLING);
-  const { onUpdateBilling, updateStatus } = useBillings();
+  const { onUpdateBilling, updateStatus, onCreateBilling, createStatus } =
+    useBillings();
   const [value, setValue] = useState("Invoice");
   const [editForm, setEditForm] = useState<boolean>(false);
   const [billToInfo, setBillToInfo] = useState<Bill>({});
@@ -53,6 +57,7 @@ const TabInfo = (props: TabListProps) => {
   const [billFromInfo, setBillFromInfo] = useState<Bill>({
     fullNameCompany: user?.company,
   });
+  const { push } = useRouter();
 
   const TABS = [
     {
@@ -74,15 +79,40 @@ const TabInfo = (props: TabListProps) => {
     initialValues: {},
     onSubmit(values, formikHelpers) {
       // setDataUpdate
-      const data = {
-        ...values,
-        // ...billToInfo,
-        id: item?.id,
-        billTo: billToInfo,
-        billFrom: billFromInfo,
-      } as BillingDataUpdate;
-      handleSaveValue(data ?? {});
-      setIsSubmit(true);
+
+      if (item?.duplicate) {
+        const arrUserId = item.user?.map((item) => {
+          return { id: item?.id };
+        });
+        const arrBudgetId = item.budget?.map((item) => {
+          return { id: item?.id };
+        });
+        const arrServiceId = item.budgetService?.map((item) => {
+          return { id: item?.id };
+        });
+
+        const data = {
+          budget: arrBudgetId,
+          user: arrUserId,
+          budgetService: arrServiceId,
+          invoiceMethod: 2,
+          vat: item?.vat,
+          amount: item?.amount,
+          amount_unpaid: item?.amount_unpaid,
+        };
+        handleCreateData(data);
+        setIsSubmit(true);
+      } else {
+        const data = {
+          ...values,
+          // ...billToInfo,
+          id: item?.id,
+          billTo: billToInfo,
+          billFrom: billFromInfo,
+        } as BillingDataUpdate;
+        handleSaveValue(data ?? {});
+        setIsSubmit(true);
+      }
     },
   });
 
@@ -98,13 +128,28 @@ const TabInfo = (props: TabListProps) => {
     onUpdateBilling(data);
   };
 
+  const handleCreateData = (data: BillingData) => {
+    onCreateBilling(data);
+  };
+
   useEffect(() => {
-    if (updateStatus && isSubmit) {
+    if (updateStatus && isSubmit && !item?.duplicate) {
       formik.resetForm();
       setEditForm(false);
       setIsSubmit(false);
     }
   }, [updateStatus, isSubmit]);
+
+  useEffect(() => {
+    if (createStatus && isSubmit && item?.duplicate) {
+      formik.resetForm();
+      setEditForm(false);
+      setIsSubmit(false);
+      localStorage.removeItem("duplicateBill");
+      push(BILLING_PATH);
+    }
+  }, [createStatus, isSubmit]);
+
   return (
     <>
       <Stack
