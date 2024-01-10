@@ -6,7 +6,7 @@ import PlusIcon from "icons/PlusIcon";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { getMessageErrorByAPI, uuid } from "utils/index";
 import { ServiceSectionRow } from "./ServiceSectionRow";
-import { TErrors, TSectionData, TSectionForm } from "./ServiceUtil";
+import { TErrors, TSectionForm } from "./ServiceUtil";
 import { createRef, useEffect, useImperativeHandle, useState } from "react";
 import {
   TBudgetServiceForm,
@@ -17,7 +17,6 @@ import dayjs from "dayjs";
 import { NS_BUDGETING, NS_COMMON } from "constant/index";
 import { useSnackbar } from "store/app/selectors";
 import { useTranslations } from "next-intl";
-import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
 import ConfirmDialog from "components/ConfirmDialog";
 import useToggle from "hooks/useToggle";
 import TrashIcon from "icons/TrashIcon";
@@ -28,28 +27,28 @@ import {
   TBudgetServiceUpdateForm,
   useBudgetServiceUpdate,
 } from "queries/budgeting/service-update";
+import { TBudgetSection, TBudgetService, budgetDetailRef } from "components/sn-budgeting/BudgetDetail";
 
 type Props = {
+  sectionsList: TBudgetSection[];
   onCloseEdit?: () => void;
 };
 
 export const serviceSectionRef = createRef<any>();
 
-export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
+export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [] }: Props) => {
   const { id: budgetId } = useParams();
   const { onAddSnackbar } = useSnackbar();
 
   const commonT = useTranslations(NS_COMMON);
   const budgetT = useTranslations(NS_BUDGETING);
 
-  const serviceQuery = useBudgetGetServiceQuery(String(budgetId));
   const budgetServiceAdd = useBudgetServiceAdd();
   const budgetServiceUpdate = useBudgetServiceUpdate();
   const budgetSectionDelete = useBudgetSectionDelete();
 
   const [isOpenConfirm, openConfirm, closeConfirm] = useToggle();
   const [errors, setErrors] = useState<TErrors>({});
-  const [services, setServices] = useState<any[]>([]);
   const [deletedSections, setDeletedSections] = useState<string[]>([]);
   const [indexWaitDelete, setIndexWaitDelete] = useState<number | null>(null);
   const [deletedServices, setDeletedServices] = useState<any[]>([]);
@@ -63,24 +62,19 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
   });
 
   useEffect(() => {
-    if (!serviceQuery || !serviceQuery?.data?.data) return;
-    const serviceData: any[] = [];
-    const sectionList = (serviceQuery?.data?.data || []).map(
+    const sectionList = _.map(sectionsList,
       (section, index: number) => {
-        serviceData[index] = section.services;
-
         return {
           id: uuid(),
           title: section.name,
           sectionId: section.id,
-          data: [],
+          data: section.services,
         };
       },
     );
 
     setValue("sections", sectionList);
-    setServices(serviceData);
-  }, [JSON.stringify(serviceQuery)]);
+  }, [sectionsList]);
 
   useImperativeHandle(serviceSectionRef, () => ({
     setDeletedServices: (newDeletedServices) => {
@@ -88,7 +82,7 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
     },
   }));
 
-  const handleChangeValue = (index: number, data: TSectionData[]) => {
+  const handleChangeValue = (index: number, data: TBudgetService[]) => {
     setValue(`sections.${index}.data`, data);
     clearTimeout(window["timeoutSubmitService"]);
     window["timeoutSubmitService"] = setTimeout(handleValidateServices, 500);
@@ -153,32 +147,42 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
       return;
     }
 
-    const updateSections: any = [];
-    const newSections = _.filter(sections, (section) => {
-      if (!section?.isNewSection) {
-        updateSections.push(section);
+    try {
+      const updateSections: any = [];
+      const newSections = _.filter(sections, (section) => {
+        if (!section?.isNewSection) {
+          updateSections.push(section);
+        }
+        return section?.isNewSection;
+      });
+  
+      // add sections
+      createSections(newSections);
+  
+      // update sections
+      handleUpdateSections(updateSections);
+  
+      // delete sections
+      if (deletedSections.length > 0) {
+        deletedSections.map((sectionId: string) => {
+          deleteSection(sectionId);
+        });
       }
-      return section?.isNewSection;
-    });
+  
+      // delete services
+      if (deletedServices.length > 0) {
+        deletedServices.map((serviceId: string) => {
+          deleteService(serviceId);
+        });
+      }
 
-    // add sections
-    createSections(newSections);
-
-    // update sections
-    handleUpdateSections(updateSections);
-
-    // delete sections
-    if (deletedSections.length > 0) {
-      deletedSections.map((sectionId: string) => {
-        deleteSection(sectionId);
-      });
-    }
-
-    // delete services
-    if (deletedServices.length > 0) {
-      deletedServices.map((serviceId: string) => {
-        deleteService(serviceId);
-      });
+      onAddSnackbar("Update services successful!", "success");
+      budgetDetailRef.current?.refetchServiceQuery();
+      onCloseEdit();
+    } catch (err) {
+      onAddSnackbar("Update services failed!", "error");
+    } finally {
+      budgetDetailRef.current?.refetchServiceQuery();
     }
   };
 
@@ -251,86 +255,89 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
   };
 
   const handleUpdateSections = (updateSections) => {
-    const oldSections = serviceQuery?.data?.data || [];
-    const oldServices = _.flattenDeep(
-      _.map(oldSections, (section) => _.get(section, "services", [])),
-    );
-    const newServices: any[] = [];
-    const sectionUpdateList: any[] = _.map(updateSections, (section) => {
-      const oldSectionData = _.find(
-        oldSections,
-        (oldSection) => oldSection.id === section.sectionId,
+    try {
+      const oldServices = _.flattenDeep(
+        _.map(sectionsList, (section) => _.get(section, "services", [])),
       );
-
-      const services = _.map(_.get(section, "data", []), (service) => {
-        const estimateTime: string[] | number = service?.estimate
-          ? service?.estimate?.split(":")
-          : [];
-
-        if (service?.isNewService) {
+  
+      const sectionUpdateList: any[] = _.map(updateSections, (section) => {
+        const oldSectionData = _.find(
+          sectionsList,
+          (oldSection) => oldSection.id === section.sectionId,
+        );
+  
+        const services = _.map(_.get(section, "data", []), (service) => {
+          const estimateTime: string[] | number = service?.estimate
+            ? service?.estimate?.split(":")
+            : [];
+   
+          if (service?.isNewService) {
+            return {
+              name: _.get(service, "name", ""),
+              desc: "",
+              serviceType: _.get(service, "type", ""),
+              billType: _.get(service, "billingType", ""),
+              unit: _.get(service, "unit", ""),
+              estimate: service?.estimate
+                ? parseInt(estimateTime[0]) * 60 + parseInt(estimateTime[1])
+                : null,
+              qty: 0,
+              price: 0,
+              discount: 0,
+              markUp: 0,
+              timeTracking: _.get(service, "timeTracking", false),
+              bookingTracking: _.get(service, "bookingTracking", false),
+              tolBudget: 0,
+              sectionId: _.get(section, "sectionId", ""),
+            };
+          }
+  
+          const oldServiceData = _.find(
+            oldServices,
+            (oldService) => oldService.id === service?.serviceId,
+          );
+  
           return {
+            id: _.get(oldServiceData, "id", ""),
             name: _.get(service, "name", ""),
-            desc: "",
+            sectionId: _.get(section, "sectionId", ""),
+            desc: _.get(oldServiceData, "desc", ""),
             serviceType: _.get(service, "type", ""),
             billType: _.get(service, "billingType", ""),
             unit: _.get(service, "unit", ""),
             estimate: service?.estimate
               ? parseInt(estimateTime[0]) * 60 + parseInt(estimateTime[1])
               : null,
-            qty: 0,
-            price: 0,
-            discount: 0,
-            markUp: 0,
-            timeTracking: _.get(service, "tracking.time") === 1,
-            bookingTracking: _.get(service, "tracking.booking") === 1,
-            tolBudget: 0,
-            sectionId: _.get(section, "sectionId", ""),
+            qty: _.get(oldServiceData, "qty", 0),
+            price: _.get(oldServiceData, "price", 0),
+            discount: _.get(oldServiceData, "discount", 0),
+            markUp: _.get(oldServiceData, "markUp", 0),
+            timeTracking: _.get(service, "timeTracking", false),
+            bookingTracking: _.get(service, "bookingTracking", false),
+            tolBudget: _.get(oldServiceData, "tolBudget", 0),
           };
-        }
-
-        const oldServiceData = _.find(
-          oldServices,
-          (oldService) => oldService.id === service?.serviceId,
-        );
-
+        });
+  
         return {
-          id: _.get(oldServiceData, "id", ""),
-          name: _.get(service, "name", ""),
-          sectionId: _.get(section, "sectionId", ""),
-          desc: _.get(oldServiceData, "desc", ""),
-          serviceType: _.get(service, "type", ""),
-          billType: _.get(service, "billingType", ""),
-          unit: _.get(service, "unit", ""),
-          estimate: service?.estimate
-            ? parseInt(estimateTime[0]) * 60 + parseInt(estimateTime[1])
-            : null,
-          qty: _.get(oldServiceData, "qty", 0),
-          price: _.get(oldServiceData, "price", 0),
-          discount: _.get(oldServiceData, "discount", 0),
-          markUp: _.get(oldServiceData, "markUp", 0),
-          timeTracking: _.get(service, "tracking.time") === 1,
-          bookingTracking: _.get(service, "tracking.booking") === 1,
-          tolBudget: _.get(oldServiceData, "tolBudget", 0),
+          services: _.compact(services),
+          sections: [
+            {
+              id: _.get(section, "sectionId", ""),
+              name: _.get(section, "title", ""),
+              start_date: oldSectionData?.start_date
+                ? moment(oldSectionData?.start_date).format("YYYY-MM-DD")
+                : "",
+            },
+          ],
         };
       });
-
-      return {
-        services: _.compact(services),
-        sections: [
-          {
-            id: _.get(section, "sectionId", ""),
-            name: _.get(section, "title", ""),
-            start_date: oldSectionData?.start_date
-              ? moment(oldSectionData?.start_date).format("YYYY-MM-DD")
-              : "",
-          },
-        ],
-      };
-    });
-
-    _.forEach(sectionUpdateList, (sectionUpdate: TBudgetServiceUpdateForm) => {
-      budgetServiceUpdate.mutateAsync(sectionUpdate, {});
-    });
+  
+      _.forEach(sectionUpdateList, (sectionUpdate: TBudgetServiceUpdateForm) => {
+        budgetServiceUpdate.mutateAsync(sectionUpdate, {});
+      });
+    } catch (error) {
+      onAddSnackbar("Success", "success");
+    }
   };
 
   const deleteSection = (sectionId: string) => {
@@ -348,7 +355,6 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
   };
 
   const resetState = () => {
-    setServices([]);
     setDeletedSections([]);
     setDeletedServices([]);
   };
@@ -376,8 +382,8 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
         </Button>
       </Stack>
       <Box>
-        {fields.map((field, index) => (
-          <Box key={field.id}>
+        {fields.map((section, index) => (
+          <Box key={section.id}>
             <Stack
               direction="row"
               justifyContent="space-between"
@@ -391,7 +397,7 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
                 py={1}
                 sx={{ color: "grey.300" }}
               >
-                {field.title}
+                {section.title}
               </Typography>
               <IconButton onClick={() => openConfirmDelete(index)}>
                 <TrashIcon
@@ -404,7 +410,7 @@ export const ServiceSection = ({ onCloseEdit = () => {} }: Props) => {
               fieldIndex={index}
               updateValue={handleChangeValue}
               errors={errors}
-              serviceData={services[index]}
+              serviceData={section?.data || []}
               deletedServices={deletedServices}
             />
           </Box>

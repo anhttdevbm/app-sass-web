@@ -103,36 +103,42 @@ export const ModalAddTime = ({
   }, [watch('startTime'), watch('endTime')]);
 
   const onSubmit = async (formValue: TTimeRanges) => {
-    const data = {
-      budget: id || "",
-      services: formValue.service,
-      note: formValue.note,
-      timeRanges: formValue.timeRanges,
-      billableTime: formValue.billableTime,
-      date: formValue.date ? moment(formValue.date).format("YYYY-MM-DD") : ""
-    } as TBudgetTimeAdd;
-
-    if (!!timeData) {
-      data['id'] = formValue.docId || "";
-      budgetTimeUpdate.mutate(data as TBudgetTimeUpdate, {
-        onSuccess() {
-          onAddSnackbar("Success", "success");
-          reset(defaultValues);
-        },
-        onError(error) {
-          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-        },
-      });
-    } else {
-      budgetTimeAdd.mutate(data, {
-        onSuccess() {
-          onAddSnackbar("Success", "success");
-          reset(defaultValues);
-        },
-        onError(error) {
-          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-        },
-      });
+    try {
+      const data = {
+        budget: id || "",
+        services: formValue.service,
+        note: formValue.note,
+        timeRanges: formValue.timeRanges,
+        billableTime: formValue.billableTime,
+        date: formValue.date ? moment(formValue.date).format("YYYY-MM-DD") : ""
+      } as TBudgetTimeAdd;
+  
+      if (!!timeData) {
+        data['id'] = formValue.docId || "";
+        budgetTimeUpdate.mutate(data as TBudgetTimeUpdate, {
+          onSuccess() {
+            onAddSnackbar("Success", "success");
+            reset(defaultValues);
+          },
+          onError(error) {
+            onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+          },
+        });
+      } else {
+        budgetTimeAdd.mutate(data, {
+          onSuccess() {
+            onAddSnackbar("Success", "success");
+            reset(defaultValues);
+          },
+          onError(error) {
+            onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+          },
+        });
+      }
+    } catch (err) {
+      onAddSnackbar(getMessageErrorByAPI(err, commonT), "error");
+    } finally {
+      onClose();
     }
   };
 

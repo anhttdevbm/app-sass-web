@@ -111,5 +111,8 @@ export const BudgetingLang: BudgetingDictionary = {
 	delete: {
 		titleConfirmDelete: "Xác Nhận Xóa",
 		contentConfirmDelete: "Bạn có chắc chắn muốn xóa?",
-	}
+	},
+    notifications: {
+        updateServiceSuccess: "Cập nhật dịch vụ thành công.",
+    }
 }

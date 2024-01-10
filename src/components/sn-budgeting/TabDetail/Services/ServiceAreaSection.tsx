@@ -7,6 +7,7 @@ import {
   MenuList,
   Popper,
   Stack,
+  Typography,
   popoverClasses,
 } from "@mui/material";
 import { CellProps, TableLayout } from "components/Table";
@@ -17,46 +18,113 @@ import { useState } from "react";
 import { Text } from "components/shared";
 import ServiceAreaSectionRow from "./ServiceAreaSectionRow";
 import {
-  TSection,
+  TBudgetSection,
+  TBudgetService,
   budgetDetailRef,
 } from "components/sn-budgeting/BudgetDetail";
+import _ from "lodash";
 
 export const ServiceAreaSection = ({
   sections = [],
 }: {
-  sections: TSection[];
+  sections: TBudgetSection[];
 }) => {
+  console.log("sections", sections);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const budgetT = useTranslations(NS_BUDGETING);
 
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
 
   const headerList: CellProps[] = [
-    { value: budgetT("tabService.section.serviceName"), align: "left" },
     {
-      value: budgetT("tabService.index.workingTime"),
-      align: "center",
-      data: "13,23 / 30 hrs",
+      value: budgetT("tabService.section.serviceName"),
+      align: "left",
+      minWidth: 350,
     },
-    { value: budgetT("tabService.index.price"), align: "center" },
-    { value: budgetT("tabService.index.cost"), align: "center" },
+    {
+      value: budgetT("tabService.section.position"),
+      align: "center",
+      minWidth: 60,
+    },
+    {
+      value: budgetT("tabService.section.billingType"),
+      align: "center",
+      minWidth: 120,
+    },
+    {
+      value: budgetT("tabService.section.unit"),
+      align: "center",
+      minWidth: 60,
+    },
+    {
+      value: budgetT("tabService.section.estimate"),
+      align: "center",
+      minWidth: 60,
+    },
+    {
+      value: budgetT("tabService.section.quantity"),
+      align: "center",
+      minWidth: 100,
+    },
+    {
+      value: budgetT("tabService.section.price"),
+      align: "center",
+      minWidth: 60,
+    },
+    {
+      value: budgetT("tabService.section.discount"),
+      align: "center",
+      minWidth: 60,
+    },
+    {
+      value: budgetT("tabService.section.totalBudget"),
+      align: "center",
+      minWidth: 100,
+    },
     { value: "", align: "left", width: "3%" },
   ];
 
   return (
     <Box>
-      <TableLayout headerList={headerList} noData={false} titleColor="grey.300">
-        {sections.map((data: TSection, index) => {
-          return (
-            <ServiceAreaSectionRow
-              key={`budget-sevice-section-${index}`}
-              section={data}
-              setAnchorEl={setAnchorEl}
-              anchorEl={anchorEl}
-            />
-          );
-        })}
-      </TableLayout>
+      {_.map(sections, (section: TBudgetSection, index) => {
+        return (
+          <Box key={index} sx={{ mb: 2 }}>
+            <Typography variant="h4" sx={{ p: 2 }}>
+              {_.get(section, "name", "")}
+            </Typography>
+            <TableLayout
+              headerList={headerList} noData={false} titleColor="grey.300"
+              sx={{
+                minHeight: 100,
+                minWidth: {
+                  md: 1320,
+                  xs: 1320,
+                  overflow: "visible",
+                },
+                width: "100%",
+                [`&.MuiTableCell-root :first-child`]: {
+                  pl: 4,
+                },
+              }}
+            >
+              {_.map(
+                _.get(section, "services", []),
+                (service: TBudgetService, serviceIndex: number | string) => {
+                  return (
+                    <ServiceAreaSectionRow
+                      key={`budget-sevice-section-${serviceIndex}`}
+                      service={service}
+                      setAnchorEl={setAnchorEl}
+                      anchorEl={anchorEl}
+                    />
+                  );
+                },
+              )}
+            </TableLayout>
+          </Box>
+        );
+      })}
+
       <Popper
         ref={refClickOutSide}
         anchorEl={anchorEl}

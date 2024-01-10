@@ -3,13 +3,12 @@ import { Box } from "@mui/material";
 import { ServiceAreaTotal } from "./Services/ServiceAreaTotal";
 import { ServiceAreaSection } from "./Services/ServiceAreaSection";
 import { ServiceSection } from "./Services/ServiceSection";
-import { TSection } from "../BudgetDetail";
+import { TBudgetSection } from "../BudgetDetail";
 
 type Props = {
   isEdit?: boolean;
-  services?: TSection[];
   onCloseEdit?: () => void;
-  sections: TSection[];
+  sections: TBudgetSection[];
 };
 
 export const Service = ({
@@ -18,7 +17,7 @@ export const Service = ({
   onCloseEdit,
 }: Props) => {
   return isEdit ? (
-    <ServiceSection onCloseEdit={onCloseEdit} />
+    <ServiceSection sectionsList={sections} onCloseEdit={onCloseEdit} />
   ) : (
     <Box>
       <ServiceAreaTotal />
