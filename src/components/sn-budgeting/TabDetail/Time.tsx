@@ -31,6 +31,7 @@ import { getMessageErrorByAPI } from "utils/index";
 import MoreDotIcon from "../../../icons/MoreDotIcon";
 import TrashIcon from "../../../icons/TrashIcon";
 import { budgetDetailRef } from "../BudgetDetail";
+import _ from "lodash";
 
 export type TTimeRanges = {
   id: string;
@@ -87,7 +88,7 @@ export const Time = () => {
   useEffect(() => {
     if (!timeQuery || !timeQuery.data?.data?.docs) return;
 
-    const times = (timeQuery.data?.data?.docs || []).map((doc) => {
+    const times: TTimeRanges[] = _.map(_.get(timeQuery, 'data.data.docs', []), (doc) => {
       return {
         _id: doc.id,
         docId: doc.id,
@@ -102,7 +103,7 @@ export const Time = () => {
           avatar: doc?.created_by?.avatar?.link,
           fullname: doc?.created_by?.fullname,
         },
-      };
+      } as TTimeRanges;
     });
 
     setValue("times", times);

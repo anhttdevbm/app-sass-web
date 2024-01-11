@@ -58,10 +58,16 @@ export const BudgetingLang: BudgetingDictionary = {
     section: {
       serviceName: "Service Name",
       serviceType: "Service Type",
-      billingType: "Billing Type",
+      billingType: "Bill Type",
       unit: "Unit",
       tracking: "Tracking",
       estimate: "Estimate",
+      position: "Position",
+      quantity: "Quantity",
+      price: "Price",
+      discount: "Discount",
+      totalBudget: "Total Budget",
+      description: 'Description',
     },
   },
   dialog: {
@@ -112,4 +118,7 @@ export const BudgetingLang: BudgetingDictionary = {
     titleConfirmDelete: "Confirm delete",
     contentConfirmDelete: "Are you sure confirm delete?",
   },
+  notifications: {
+    updateServiceSuccess: "Update Service Success",
+  }
 };

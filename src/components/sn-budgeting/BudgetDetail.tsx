@@ -38,6 +38,8 @@ import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Recurring } from "./TabDetail/Recurring";
 import { Service } from "./TabDetail/Service";
 import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
+import useTheme from "hooks/useTheme";
+import _ from "lodash";
 
 enum TABS {
   FEED = "Feed",
@@ -48,14 +50,33 @@ enum TABS {
   RECURRING = "Recurring",
 }
 
-export type TSection = {
+export type TBudgetSection = {
   id: string;
   name: string;
-  service: string;
-  workingTime: string;
-  price: string;
-  cost: string;
-  description: string;
+  budgetId: string;
+  createdAt: string;
+  start_date: string;
+  services: TBudgetService[];
+};
+
+export type TBudgetService = {
+  id: string;
+  name: string;
+  type: string;
+  billingType: string;
+  unit?: string;
+  bookingTracking?: boolean;
+  timeTracking?: boolean;
+  estimate?: string;
+  isNewService?: boolean;
+  desc?: string;
+  discount?: number;
+  markUp?: number;
+  price?: number;
+  qty?: number;
+  sectionId?: string;
+  serviceType?: string;
+  tolBudget?: number;
 };
 
 export const budgetDetailRef = createRef<any>();
@@ -70,36 +91,29 @@ export const BudgetDetail = () => {
   const [budget, setBudget] = useState<TBudget | null>(null);
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
   const [dateFilter, setDateFilter] = useState<any>("");
-  const [sections, setSections] = useState<TSection[]>([]);
-  const [servicesList, setServiceList] = useState<TSection[]>([]);
-  const [selectedService, setSelectedService] = useState<any | null>();
+  const [sections, setSections] = useState<TBudgetSection[]>([]);
+  const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
+  const [selectedService, setSelectedService] = useState<TBudgetService | null>();
   const [selectedTime, setSelectedTime] = useState<TTimeRanges | null>();
 
   const { id } = useParams();
+  const { isDarkMode } = useTheme();
 
   const budgetDetailQuery = useBudgetByIdQuery(String(id));
   const serviceQuery = useBudgetGetServiceQuery(String(id));
 
   const budgetT = useTranslations(NS_BUDGETING);
+
   useEffect(() => {
     if (serviceQuery) {
-      const services: any[] = [];
-      const sectionData: TSection[] = serviceQuery?.data?.data?.map((section) => {
-        const service = section.services[0];
-        services.push(service);
-        return {
-          id: section.id,
-          name: section.name,
-          service: service,
-          workingTime: "0 / 0 hrs",
-          price: "0",
-          cost: "0",
-          description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, at nam! Id!",
-        } as TSection;
-      });
-      setServiceList(services);
-      setSections(sectionData);
+      const services: any[] = _.map(
+        _.get(serviceQuery, "data.data", []),
+        (section) => {
+          return _.get(section, "services", []);
+        },
+      );
+      setServiceList(_.flattenDeep(services));
+      setSections(_.get(serviceQuery, "data.data", []));
     }
   }, [JSON.stringify(serviceQuery)]);
 
@@ -180,7 +194,7 @@ export const BudgetDetail = () => {
   }, [activeTab, isEditService]);
 
   useImperativeHandle(budgetDetailRef, () => ({
-    setSelectedServiceData: (service: any | null) => {
+    setSelectedServiceData: (service: TBudgetService | null) => {
       setSelectedService(service);
     },
     openModalTime: (data?: any) => {
@@ -190,127 +204,126 @@ export const BudgetDetail = () => {
     openModalExpense: (data?: any) => {
       openModalExpense();
     },
+    refetchServiceQuery: () => {
+      serviceQuery.refetch();
+    }
   }));
 
   if (!budget) return <></>;
 
   return (
     <Box ref={budgetDetailRef}>
-      <Stack
-        direction="row"
-        p="15px"
-        justifyContent="space-between"
-        borderBottom="1px solid #ECECF3"
-        sx={{ overflow: "auto !important" }}
+      <Box
+        sx={{
+          position: "sticky !important",
+          top: 0,
+          background: isDarkMode ? "#313130" : "white",
+          py: 2,
+          zIndex: 10,
+        }}
       >
-        <Stack direction="row" alignItems="center">
-          <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
-          <Stack pl="7px">
-            <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
-              {budget.project.name}
-            </Text>
-            <Text lineHeight={1.2}>{budget.name}</Text>
+        <Stack
+          direction="row"
+          p="15px"
+          justifyContent="space-between"
+          borderBottom="1px solid #ECECF3"
+        >
+          <Stack direction="row" alignItems="center">
+            <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
+            <Stack pl="7px">
+              <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
+                {budget.project.name}
+              </Text>
+              <Text lineHeight={1.2}>{budget.name}</Text>
+            </Stack>
+          </Stack>
+          <Stack direction="row" alignItems="center">
+            <DatePicker
+              onChange={(name, date) => {
+                if (!date) return;
+                setDateFilter(dayjs(date.toString()).format("YYYY-MM-DD"));
+              }}
+              name="name"
+              size="small"
+              value={dateFilter}
+            />
+            <IconButton sx={{ color: "grey.300" }}>
+              <EyeIcon sx={{ fontSize: "26px" }} />
+            </IconButton>
+            <IconButton sx={{ color: "grey.300" }}>
+              <ShareOutlinedIcon />
+            </IconButton>
+            <IconButton
+              sx={{ color: "grey.300" }}
+              onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}
+            >
+              <OpenSidebarIcon />
+            </IconButton>
+            <Link href={BUDGETING_PATH}>
+              <IconButton>
+                <CloseIcon fontSize="medium" sx={{ color: "grey.300" }} />
+              </IconButton>
+            </Link>
           </Stack>
         </Stack>
-        <Stack direction="row" alignItems="center">
-          <DatePicker
-            onChange={(name, date) => {
-              if (!date) return;
-              setDateFilter(dayjs(date.toString()).format("YYYY-MM-DD"));
-            }}
-            name="name"
-            size="small"
-            value={dateFilter}
-          />
-          <IconButton sx={{ color: "grey.300" }}>
-            <EyeIcon sx={{ fontSize: "26px" }} />
-          </IconButton>
-          <IconButton sx={{ color: "grey.300" }}>
-            <ShareOutlinedIcon />
-          </IconButton>
-          <IconButton
-            sx={{ color: "grey.300" }}
-            onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}
-          >
-            <OpenSidebarIcon />
-          </IconButton>
-          <Link href={BUDGETING_PATH}>
-            <IconButton>
-              <CloseIcon fontSize="medium" sx={{ color: "grey.300" }} />
-            </IconButton>
-          </Link>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          borderBottom="1px solid #ECECF3"
+        >
+          <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
+            <TextStatus
+              text="status.open"
+              color="success"
+              namespace={NS_BUDGETING}
+              sx={{ cursor: "pointer" }}
+            />
+            <Box
+              sx={{
+                display: "inline-block",
+                width: "20px",
+                height: "2px",
+                backgroundColor: "#BABCC6",
+              }}
+            />
+            <TextStatus
+              text="status.close"
+              color="error"
+              namespace={NS_BUDGETING}
+              sx={{ cursor: "pointer" }}
+            />
+          </Stack>
+          <Stack direction="row" alignItems="center">
+            {Object.keys(TABS).map((tab, index) => {
+              const currentTab = TABS[tab];
+              return (
+                <Box
+                  key={`budget-detail-tab-${index}`}
+                  p="15px"
+                  mx="2px"
+                  borderBottom="2px solid transparent"
+                  sx={{
+                    cursor: "pointer",
+                    transaction: "all .2s",
+                    ...(activeTab === currentTab && {
+                      color: "primary.main",
+                      borderColor: "primary.main",
+                    }),
+                    "&:hover": {
+                      color: "primary.main",
+                      borderColor: "primary.main",
+                    },
+                  }}
+                  onClick={() => changeActiveTab(currentTab)}
+                >
+                  {currentTab}
+                </Box>
+              );
+            })}
+            {ButtonAction}
+          </Stack>
         </Stack>
-      </Stack>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        borderBottom="1px solid #ECECF3"
-      >
-        <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
-          <TextStatus
-            text="status.open"
-            color="success"
-            namespace={NS_BUDGETING}
-            sx={{ cursor: "pointer" }}
-          />
-          <Box
-            sx={{
-              display: "inline-block",
-              width: "20px",
-              height: "2px",
-              backgroundColor: "#BABCC6",
-            }}
-          />
-          <TextStatus
-            text="status.close"
-            color="error"
-            namespace={NS_BUDGETING}
-            sx={{ cursor: "pointer" }}
-          />
-        </Stack>
-        <Stack direction="row" alignItems="center">
-          {Object.keys(TABS).map((tab, index) => {
-            const currentTab = TABS[tab];
-            return (
-              <Box
-                key={`budget-detail-tab-${index}`}
-                p="15px"
-                mx="2px"
-                borderBottom="2px solid transparent"
-                sx={{
-                  cursor: "pointer",
-                  transaction: "all .2s",
-                  ...(activeTab === currentTab && {
-                    color: "primary.main",
-                    borderColor: "primary.main",
-                  }),
-                  "&:hover": {
-                    color: "primary.main",
-                    borderColor: "primary.main",
-                  },
-                }}
-                onClick={() => changeActiveTab(currentTab)}
-              >
-                {currentTab}
-              </Box>
-            );
-          })}
-          {ButtonAction}
-        </Stack>
-      </Stack>
-      <ModalAddTime
-        serviceId={selectedService?.id || ""}
-        services={servicesList}
-        open={isOpenModalTime}
-        onClose={hideModalTime}
-        projectId={budget.project.id}
-        timeData={selectedTime}
-      />
-      <ModalExpense
-        open={isOpenModalExpense}
-        onClose={hideModalExpense}
-        projectId={budget.project.id}
-      />
+      </Box>
       <Stack direction="row">
         <Box
           position="relative"
@@ -341,6 +354,9 @@ export const BudgetDetail = () => {
                 sections={sections}
                 isEdit={isEditService}
                 onCloseEdit={offEditService}
+                refetch={() => {
+                  serviceQuery.refetch();
+                }}
               />
             )}
           </Box>
@@ -360,6 +376,21 @@ export const BudgetDetail = () => {
           <BudgetRightSidebar budget={budget} />
         </Box>
       </Stack>
+      <ModalAddTime
+        serviceId={_.get(selectedService, 'id', '')}
+        services={servicesList}
+        open={isOpenModalTime}
+        onClose={() => {
+          setSelectedService(null);
+          hideModalTime();
+        }}
+        timeData={selectedTime}
+      />
+      <ModalExpense
+        open={isOpenModalExpense}
+        onClose={hideModalExpense}
+        projectId={budget.project.id}
+      />
     </Box>
   );
 };

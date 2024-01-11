@@ -60,6 +60,12 @@ export type BudgetingDictionary = {
       unit: string;
       tracking: string;
       estimate: string;
+      position: string,
+      quantity: string,
+      price: string,
+      discount: string,
+      totalBudget: string,
+      description: string;
     };
   };
   dialog: {
@@ -110,4 +116,7 @@ export type BudgetingDictionary = {
     titleConfirmDelete: string;
     contentConfirmDelete: string;
   };
+  notifications: {
+    updateServiceSuccess: string;
+  }
 };

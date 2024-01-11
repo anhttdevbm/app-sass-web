@@ -1,4 +1,5 @@
 import { Stack, Typography } from "@mui/material";
+import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import { PropsWithChildren } from "react";
 
 export const H6 = ({ children }: PropsWithChildren) => {
@@ -62,7 +63,7 @@ export type TSectionData = {
 };
 
 export type TSectionForm = {
-  sections: (TSection & { data: TSectionData[] } & { sectionId?: string, isNewSection?: boolean })[];
+  sections: (TSection & { data: TBudgetService[] } & { sectionId?: string, isNewSection?: boolean })[];
 };
 
 export type TError = { itemIndex: number; fieldName: string; errorMgs: string };
