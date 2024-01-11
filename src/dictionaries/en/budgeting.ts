@@ -51,7 +51,7 @@ export const BudgetingLang: BudgetingDictionary = {
   tabService: {
     index: {
       name: "Name",
-      workingTime: "Working time",
+      workedTime: "Worked time",
       price: "Price",
       cost: "Cost",
     },

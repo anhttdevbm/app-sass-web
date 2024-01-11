@@ -49,7 +49,7 @@ export type BudgetingDictionary = {
   tabService: {
     index: {
       name: string;
-      workingTime: string;
+      workedTime: string;
       price: string;
       cost: string;
     };

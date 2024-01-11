@@ -41,37 +41,12 @@ export const ServiceAreaSection = ({
       minWidth: 350,
     },
     {
-      value: budgetT("tabService.section.position"),
-      align: "center",
-      minWidth: 60,
-    },
-    {
-      value: budgetT("tabService.section.billingType"),
-      align: "center",
-      minWidth: 120,
-    },
-    {
-      value: budgetT("tabService.section.unit"),
-      align: "center",
-      minWidth: 60,
-    },
-    {
       value: budgetT("tabService.section.estimate"),
       align: "center",
       minWidth: 60,
     },
     {
-      value: budgetT("tabService.section.quantity"),
-      align: "center",
-      minWidth: 100,
-    },
-    {
       value: budgetT("tabService.section.price"),
-      align: "center",
-      minWidth: 60,
-    },
-    {
-      value: budgetT("tabService.section.discount"),
       align: "center",
       minWidth: 60,
     },

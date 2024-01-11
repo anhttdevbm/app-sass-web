@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MenuList, Stack } from "@mui/material";
 import FormLayout from "components/FormLayout";
@@ -22,14 +23,14 @@ type Props = {
   services: any[];
   open: boolean;
   onClose: () => void;
+  refetch: () => void;
   timeData?: TTimeRanges | null;
   serviceId: string | null;
 };
 
 const defaultValues: TTimeRanges = {
-  _id: uuid(),
-  docId: "",
   id: "",
+  docId: "",
   service: "",
   date: "",
   createdAt: "",
@@ -48,6 +49,7 @@ const defaultValues: TTimeRanges = {
 export const ModalAddTime = ({
   open,
   onClose,
+  refetch = () => {},
   timeData,
   services = [],
   serviceId,
@@ -67,7 +69,7 @@ export const ModalAddTime = ({
     },
   };
 
-  const { register, control, handleSubmit, setValue, getValues, reset, watch } =
+  const { register, control, handleSubmit, setValue, reset, watch } =
     useForm<TTimeRanges>({
       defaultValues: timeData || defaultValues,
     });
@@ -111,8 +113,9 @@ export const ModalAddTime = ({
         data['id'] = formValue.docId || "";
         budgetTimeUpdate.mutate(data as TBudgetTimeUpdate, {
           onSuccess() {
-            onAddSnackbar("Success", "success");
+            onAddSnackbar("Update time successful", "success");
             reset(defaultValues);
+            refetch();
           },
           onError(error) {
             onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
@@ -121,8 +124,9 @@ export const ModalAddTime = ({
       } else {
         budgetTimeAdd.mutate(data, {
           onSuccess() {
-            onAddSnackbar("Success", "success");
+            onAddSnackbar("Create time successful", "success");
             reset(defaultValues);
+            refetch();
           },
           onError(error) {
             onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");

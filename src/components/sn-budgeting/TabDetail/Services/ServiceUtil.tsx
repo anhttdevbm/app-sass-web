@@ -20,7 +20,6 @@ export const ServiceBox = ({
 }: PropsWithChildren<{ remaining?: string }>) => {
   return (
     <Stack
-      width="calc(100% / 3)"
       p="10px"
       boxShadow="0 0 2px 1px rgba(0,0,0,0.1)"
       borderRadius="4px"
