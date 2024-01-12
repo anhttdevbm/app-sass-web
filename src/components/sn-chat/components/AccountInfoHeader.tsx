@@ -103,7 +103,7 @@ const AccountInfoHeader = ({
                 >
                   <Avatar
                     alt="Avatar"
-                    size={35}
+                    size={36}
                     style={{
                       border: "4px solid ",
                       borderColor: "background.default",
@@ -115,7 +115,7 @@ const AccountInfoHeader = ({
                   />
                   <Avatar
                     alt="Avatar"
-                    size={35}
+                    size={36}
                     style={{
                       border: "3px solid ",
                       borderColor: "background.default",
@@ -310,6 +310,7 @@ const AccountInfoHeader = ({
               padding: 1,
               borderBottom: "1px solid #ECECF3",
               backgroundColor: "#3699FF",
+              height: "72px",
             }}
           >
             <IconButton
@@ -330,7 +331,6 @@ const AccountInfoHeader = ({
                   <SearchIcon
                     sx={{
                       color: "#FFFFFF",
-                      // fontSize: "24px!important",
                     }}
                     onClick={() => {
                       onSetStep(STEP.SEARCH_CHAT_TEXT);
@@ -341,6 +341,7 @@ const AccountInfoHeader = ({
               <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
                 onClick={() => {
                   onSetStep(STEP.ADD_MEMBER, {
@@ -354,6 +355,7 @@ const AccountInfoHeader = ({
               <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
               >
                 <VideoCallIcon />
@@ -366,6 +368,7 @@ const AccountInfoHeader = ({
                   }}
                   sx={{
                     color: "white",
+                    padding: "6px",
                   }}
                 >
                   <InfoUserIcon />

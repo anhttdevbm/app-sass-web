@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 2000",
+    "start": "next start -p 2023",
     "lint": "next lint",
     "prepare": "husky install"
   },
@@ -78,7 +78,7 @@
     "firebase": "^10.4.0",
     "formik": "^2.4.1",
     "fuzzysort": "^2.0.4",
-    "highlight.js": "^11.8.0",
+    "highlight.js": "^11.9.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "linkify-html": "^4.1.1",
