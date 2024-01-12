@@ -49,6 +49,23 @@ export const BudgetingLang: BudgetingDictionary = {
     dueDate: "Due Date",
   },
   tabService: {
+    totalArea: {
+      time: {
+        title: 'TIME',
+        estimatedTime: 'Estimated time',
+        billableTime: 'Billable time',
+        workedTime: 'Worked time',
+        budgetedTime: 'Budgeted time',
+        remainingTime: 'Remaining time',
+      },
+      invoicing: {
+        title: 'INVOICING',
+        newInvoice: 'New invoice',
+        total: 'Total',
+        invoiced: 'Invoiced',
+        forInvoicing: 'For invoicing'
+      }
+    },
     index: {
       name: "Name",
       workedTime: "Worked time",

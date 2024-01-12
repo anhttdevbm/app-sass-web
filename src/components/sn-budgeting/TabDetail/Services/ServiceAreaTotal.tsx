@@ -1,34 +1,45 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { H6, PTag, ServiceBox } from "./ServiceUtil";
+import { NS_BUDGETING } from "constant/index";
+import { useTranslations } from "next-intl";
+import { BILLING_CREATE_PATH } from "constant/paths";
+import { useRouter } from "next-intl/client";
+import { useParams } from "next/navigation";
 
 export const ServiceAreaTotal = () => {
+  const budgetT = useTranslations(NS_BUDGETING);
+  const { push } = useRouter();
+  const { id } = useParams();
+
   return (
     <Box p="15px">
       <Stack gap={1} direction="row">
         <Box sx={{ flex: 1, "& .MuiStack-root": { height: "100%" } }}>
           <ServiceBox remaining="56%">
             <Stack direction="row" justifyContent="space-between">
-              <H6>TIME</H6>
+              <H6>{budgetT("tabService.totalArea.time.title")}</H6>
               <PTag>15 Jun, 2023</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-              <H6>Budgeted time</H6>
+              <H6>{budgetT("tabService.totalArea.time.budgetedTime")}</H6>
               <PTag>00:00</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-              <H6>Billable time</H6>
+              <H6>{budgetT("tabService.totalArea.time.billableTime")}</H6>
               <PTag>00:00</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-              <H6>Estimated time</H6>
+              <H6>{budgetT("tabService.totalArea.time.estimatedTime")}</H6>
               <PTag>00:00</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-              <H6>Worked time</H6>
+              <H6>{budgetT("tabService.totalArea.time.workedTime")}</H6>
               <PTag>00:00</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
-              <H6>Remaining time (56%)</H6>
+              <H6>
+                {budgetT("tabService.totalArea.time.remainingTime")} (56%)
+              </H6>
               <PTag>00:00</PTag>
             </Stack>
           </ServiceBox>
@@ -83,23 +94,88 @@ export const ServiceAreaTotal = () => {
           <Stack
             direction="column"
             gap={1}
-            sx={{ height: '100%', "& .MuiStack-root": { flexGrow: 1 } }}
+            sx={{ height: "100%", "& .MuiStack-root": { flexGrow: 1 } }}
           >
             <ServiceBox>
-              <Stack justifyContent="space-between" height="100%">
-                <H6>INVOICING</H6>
-                <Typography component="p" fontSize="small">
-                  Invoicing is not available for internal budgets.
+              <Stack
+                justifyContent="space-between"
+                height="100%"
+                direction="row"
+              >
+                <H6>{budgetT("tabService.totalArea.invoicing.title")}</H6>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    textTransform: "capitalize",
+                    color: "#693dfb",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    push(BILLING_CREATE_PATH + `?budget=${id}`);
+                  }}
+                >
+                  {budgetT("tabService.totalArea.invoicing.newInvoice")}
                 </Typography>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <H6>{budgetT("tabService.totalArea.invoicing.total")}</H6>
+                <PTag>$5.880,00</PTag>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <H6>
+                  {budgetT("tabService.totalArea.invoicing.invoiced")} (0%)
+                </H6>
+                <PTag>$0.00</PTag>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <H6>
+                  {budgetT("tabService.totalArea.invoicing.forInvoicing")}{" "}
+                  (100%)
+                </H6>
+                <PTag>$5.880,00</PTag>
               </Stack>
             </ServiceBox>
             <ServiceBox>
-              <Stack justifyContent="space-between" height="100%">
+              <Stack
+                justifyContent="space-between"
+                height="100%"
+                direction="row"
+              >
+                <H6>INVOICING</H6>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    textTransform: "capitalize",
+                    color: "#693dfb",
+                    cursor: "pointer",
+                  }}
+                >
+                  {budgetT("tabService.totalArea.invoicing.newInvoice")}
+                </Typography>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <H6>{budgetT("tabService.totalArea.invoicing.total")}</H6>
+                <PTag>$5.880,00</PTag>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <H6>
+                  {budgetT("tabService.totalArea.invoicing.invoiced")} (0%)
+                </H6>
+                <PTag>$0.00</PTag>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+                <H6>
+                  {budgetT("tabService.totalArea.invoicing.forInvoicing")}{" "}
+                  (100%)
+                </H6>
+                <PTag>$5.880,00</PTag>
+              </Stack>
+              {/* <Stack justifyContent="space-between" height="100%">
                 <H6>INVOICING</H6>
                 <Typography component="p" fontSize="small">
                   Invoicing is not available for internal budgets.
                 </Typography>
-              </Stack>
+              </Stack> */}
             </ServiceBox>
           </Stack>
         </Box>

@@ -55,6 +55,23 @@ export const BudgetingLang: BudgetingDictionary = {
 			price: "Price",
 			cost: "Cost",
 		},
+        totalArea: {
+            time: {
+              title: 'TIME',
+              estimatedTime: 'Estimated time',
+              billableTime: 'Billable time',
+              workedTime: 'Worked time',
+              budgetedTime: 'Budgeted time',
+              remainingTime: 'Remaining time',
+            },
+            invoicing: {
+                title: 'INVOICING',
+                newInvoice: 'New invoice',
+                total: 'Total',
+                invoiced: 'Invoiced',
+                forInvoicing: 'For invoicing'
+            }
+        },
 		section: {
 			serviceName: "Tên dịch vụ",
 			serviceType: "Loại dịch vụ",
