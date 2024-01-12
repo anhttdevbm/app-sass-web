@@ -68,6 +68,7 @@ const ProfileHeader = ({
     isChatDesktop,
     onCloseDrawer,
     onSetConversationInfo,
+    onGetChatAttachments,
   } = useChat();
   const commonT = useTranslations(NS_COMMON);
 
@@ -148,19 +149,21 @@ const ProfileHeader = ({
             }}
             sx={{
               color: "white",
+              padding: "6px",
             }}
           >
             <ProfileAdd />
           </IconButton>
           <IconButton
             onClick={() => {
-              onSetStep(STEP.ADD_GROUP, {
+              onSetStep(STEP.CONVENTION, {
                 isNew: true,
                 currentSelects: dataTransfer,
               });
             }}
             sx={{
               color: "white",
+              padding: "6px",
             }}
           >
             <VideoCallIcon />
@@ -171,6 +174,7 @@ const ProfileHeader = ({
               onClick={onShowProfile}
               sx={{
                 color: "white",
+                padding: "6px",
               }}
             >
               <InfoUserIcon />
@@ -345,7 +349,6 @@ const ProfileHeader = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          // padding: "11.5px",
           padding: "16px 16px 16px 4px",
           borderBottom: "1px solid #ECECF3",
           backgroundColor: "#3699FF",

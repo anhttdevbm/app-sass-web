@@ -1036,6 +1036,7 @@ const ItemList = () => {
     };
 
     fixedLayoutRef.current?.addEventListener("scroll", handleScroll);
+
     // Cleanup: remove event listener when component unmounts
     return () => {
       fixedLayoutRef.current?.removeEventListener("scroll", handleScroll);

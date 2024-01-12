@@ -193,7 +193,6 @@ const TimeCreate: React.FC<IProps> = ({
   const timeT = useTranslations(NS_TIME_TRACKING);
 
   const onSubmit = (data: FormData) => {
-    
     const resolveData = {
       ...data,
       project_id: data.type !== "Break time" ? data.project_id : "No Project",
@@ -202,6 +201,7 @@ const TimeCreate: React.FC<IProps> = ({
         .set("date", dayjs(data?.day).date())
         .format("YYYY-MM-DD HH:mm"),
     };
+
     if (selectedEvent?.extendedProps?.id) {
       onUpdateTimeSheet({
         ...resolveData,
@@ -221,7 +221,7 @@ const TimeCreate: React.FC<IProps> = ({
           onAddSnackbar("Update timesheet failure", "error");
           onClose();
         });
-    } else { 
+    } else {
       onCreateTimeSheet({
         ...resolveData,
         project_id: resolveData.project_id as string,
@@ -295,20 +295,20 @@ const TimeCreate: React.FC<IProps> = ({
           />
           {watch("type") === "Work time" && (
             <Controller
-            name="project_id"
-            control={control}
-            render={({ field }) => (
-              <TextFieldSelect
-                options={projectOptions}
-                label={timeT("modal.Project")}
-                sx={{ flex: 1 }}
-                // required
-                error={Boolean(errors?.project_id?.message)}
-                helperText={errors?.project_id?.message}
-                {...(field as any)}
-              />
-            )}
-          />
+              name="project_id"
+              control={control}
+              render={({ field }) => (
+                <TextFieldSelect
+                  options={projectOptions}
+                  label={timeT("modal.Project")}
+                  sx={{ flex: 1 }}
+                  // required
+                  error={Boolean(errors?.project_id?.message)}
+                  helperText={errors?.project_id?.message}
+                  {...(field as any)}
+                />
+              )}
+            />
           )}
           {/* <Controller
             name="position"
