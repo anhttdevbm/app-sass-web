@@ -73,7 +73,6 @@ export const BudgetingLang: BudgetingDictionary = {
             }
         },
 		section: {
-<<<<<<< HEAD
 			serviceName: "Tên dịch vụ",
 			serviceType: "Loại dịch vụ",
 			billingType: "Loại hóa đơn",
@@ -87,21 +86,6 @@ export const BudgetingLang: BudgetingDictionary = {
             description: "Mô tả",
 			estimate: "Ước lượng",
 		}
-=======
-            serviceName: "Tên dịch vụ",
-            serviceType: "Loại dịch vụ",
-            billingType: "Loại hóa đơn",
-            unit: "Đơn vị",
-            tracking: "Tracking",
-            estimate: "Estimate",
-            position: "Vị trí",
-            quantity: "Số lượng",
-            price: "Giá",
-            discount: "Giảm giá",
-            totalBudget: "Tổng ngân sách",
-            description: "Mô tả"
-        }
->>>>>>> 4776a1c87d2e6dfb1e71c313a4112396d30909ca
 	},
     dialog: {
         titleModalAdd: "Thêm thời gian",
