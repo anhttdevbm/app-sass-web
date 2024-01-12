@@ -50,25 +50,42 @@ export const BudgetingLang: BudgetingDictionary = {
     },
 	tabService: {
 		index: {
-			name: "Tên",
-			workingTime: "Thời gian làm việc",
+			name: "Tên dịch vụ",
+			workedTime: "Thời gian làm việc",
 			price: "Giá",
 			cost: "Chi phí",
 		},
+        totalArea: {
+            time: {
+              title: 'TIME',
+              estimatedTime: 'Estimated time',
+              billableTime: 'Billable time',
+              workedTime: 'Worked time',
+              budgetedTime: 'Budgeted time',
+              remainingTime: 'Remaining time',
+            },
+            invoicing: {
+                title: 'INVOICING',
+                newInvoice: 'New invoice',
+                total: 'Total',
+                invoiced: 'Invoiced',
+                forInvoicing: 'For invoicing'
+            }
+        },
 		section: {
-            serviceName: "Tên dịch vụ",
-            serviceType: "Loại dịch vụ",
-            billingType: "Loại hóa đơn",
-            unit: "Đơn vị",
-            tracking: "Tracking",
-            estimate: "Estimate",
-            position: "Vị trí",
-            quantity: "Số lượng",
-            price: "Giá",
-            discount: "Giảm giá",
-            totalBudget: "Tổng ngân sách",
-            description: "Mô tả"
-        }
+			serviceName: "Tên dịch vụ",
+			serviceType: "Loại dịch vụ",
+			billingType: "Loại hóa đơn",
+			unit: "Đơn vị",
+			tracking: "Tracking",
+			position: "Vị trí",
+			quantity: "Số lượng",
+			price: "Giá",
+			discount: "Giảm giá",
+			totalBudget: "Tổng chi phí",
+            description: "Mô tả",
+			estimate: "Ước lượng",
+		}
 	},
     dialog: {
         titleModalAdd: "Thêm thời gian",

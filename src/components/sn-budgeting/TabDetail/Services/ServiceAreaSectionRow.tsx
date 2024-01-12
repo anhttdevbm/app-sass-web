@@ -1,10 +1,9 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction } from "react";
 import {
   Stack,
   TableRow,
   TableCell,
-  Collapse,
-  Typography,
+  Collapse
 } from "@mui/material";
 import { BodyCell } from "components/Table";
 import { useState } from "react";
@@ -18,32 +17,12 @@ import _ from "lodash";
 import { NS_BUDGETING } from "constant/index";
 import { useTranslations } from "next-intl";
 import ChevronIcon from "icons/ChevronIcon";
-import useGetOptions from "store/billing/selectors";
 
 interface ServiceAreaSectionRowProps {
   service: TBudgetService;
   setAnchorEl: Dispatch<SetStateAction<HTMLButtonElement | null>>;
   anchorEl: HTMLButtonElement | null;
 }
-
-enum BudgetServiceBillType {
-  BILLABLE = "billable",
-  NON_BILLABLE = "non_billable",
-}
-
-const billingBillable = {
-  label: "Billable",
-  value: "billable",
-  color: "success.main",
-  bgcolor: "success.light",
-};
-
-const billingNonBillable = {
-  label: "Non Billable",
-  value: "non_billable",
-  color: "error.main",
-  bgcolor: "error.light",
-};
 
 function ServiceAreaSectionRow({
   service,
@@ -52,26 +31,6 @@ function ServiceAreaSectionRow({
 }: ServiceAreaSectionRowProps) {
   const budgetT = useTranslations(NS_BUDGETING);
   const [isCollapse, setIsCollapse] = useState(false);
-  const { positionOptions } = useGetOptions();
-
-  const position = useMemo(() => {
-    if (!service.serviceType) return "";
-    const result = positionOptions.find(
-      (item) => item.value === service.serviceType,
-    );
-    return result?.label || "";
-  }, [positionOptions]);
-
-  const billStatus = useMemo(() => {
-    switch (_.get(service, "billType", "") as BudgetServiceBillType) {
-      case BudgetServiceBillType.BILLABLE:
-        return billingBillable;
-      case BudgetServiceBillType.NON_BILLABLE:
-        return billingNonBillable;
-      default:
-        return {};
-    }
-  }, [service]);
 
   return (
     <>
@@ -129,30 +88,10 @@ function ServiceAreaSectionRow({
             />
           </Stack>
         </BodyCell>
-        <BodyCell sx={{ minWidth: 60 }}>{position}</BodyCell>
-        <BodyCell sx={{ minWidth: 120 }}>
-          {!_.isEmpty(billStatus) && (
-            <Typography
-              sx={{
-                bgcolor: _.get(billStatus, "bgcolor", "transparent"),
-                color: _.get(billStatus, "color", "transparent"),
-              }}
-            >
-              {_.get(billStatus, "label", "")}
-            </Typography>
-          )}
-        </BodyCell>
-        <BodyCell sx={{ minWidth: 60 }}>{_.get(service, "unit", "")}</BodyCell>
-        <BodyCell sx={{ minWidth: 60 }}>
-          {_.get(service, "estimate", 0)} pcs
-        </BodyCell>
         <BodyCell sx={{ minWidth: 100 }}>
-          ${_.get(service, "quantity", 0)} /day
+          {_.get(service, "estimate", 0)}
         </BodyCell>
-        <BodyCell sx={{ minWidth: 60 }}>{_.get(service, "price", 0)}h</BodyCell>
-        <BodyCell sx={{ minWidth: 60 }}>
-          {_.get(service, "discount", 0)} %
-        </BodyCell>
+        <BodyCell sx={{ minWidth: 60 }}>${_.get(service, "price", 0)}</BodyCell>
         <BodyCell sx={{ minWidth: 100, overflow: "visible" }}>
           ${_.get(service, "tolBudget", 0)}
         </BodyCell>

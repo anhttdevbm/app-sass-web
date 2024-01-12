@@ -49,9 +49,26 @@ export type BudgetingDictionary = {
   tabService: {
     index: {
       name: string;
-      workingTime: string;
+      workedTime: string;
       price: string;
       cost: string;
+    };
+    totalArea: {
+      time: {
+        title: string;
+        estimatedTime: string;
+        billableTime: string;
+        workedTime: string;
+        budgetedTime: string;
+        remainingTime: string;
+      };
+      invoicing: {
+        title: string;
+        newInvoice: string;
+        total: string;
+        invoiced: string;
+        forInvoicing: string;
+      };
     };
     section: {
       serviceName: string;
@@ -60,11 +77,11 @@ export type BudgetingDictionary = {
       unit: string;
       tracking: string;
       estimate: string;
-      position: string,
-      quantity: string,
-      price: string,
-      discount: string,
-      totalBudget: string,
+      position: string;
+      quantity: string;
+      price: string;
+      discount: string;
+      totalBudget: string;
       description: string;
     };
   };

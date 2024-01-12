@@ -40,6 +40,7 @@ import { Service } from "./TabDetail/Service";
 import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
 import useTheme from "hooks/useTheme";
 import _ from "lodash";
+import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
 
 enum TABS {
   FEED = "Feed",
@@ -91,9 +92,9 @@ export const BudgetDetail = () => {
   const [budget, setBudget] = useState<TBudget | null>(null);
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
   const [dateFilter, setDateFilter] = useState<any>("");
-  const [sections, setSections] = useState<TBudgetSection[]>([]);
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
-  const [selectedService, setSelectedService] = useState<TBudgetService | null>();
+  const [selectedService, setSelectedService] =
+    useState<TBudgetService | null>();
   const [selectedTime, setSelectedTime] = useState<TTimeRanges | null>();
 
   const { id } = useParams();
@@ -101,6 +102,7 @@ export const BudgetDetail = () => {
 
   const budgetDetailQuery = useBudgetByIdQuery(String(id));
   const serviceQuery = useBudgetGetServiceQuery(String(id));
+  const timeQuery = useBudgetGetTimeRangeQuery(String(id));
 
   const budgetT = useTranslations(NS_BUDGETING);
 
@@ -113,7 +115,6 @@ export const BudgetDetail = () => {
         },
       );
       setServiceList(_.flattenDeep(services));
-      setSections(_.get(serviceQuery, "data.data", []));
     }
   }, [JSON.stringify(serviceQuery)]);
 
@@ -197,8 +198,10 @@ export const BudgetDetail = () => {
     setSelectedServiceData: (service: TBudgetService | null) => {
       setSelectedService(service);
     },
-    openModalTime: (data?: any) => {
-      setSelectedTime(data);
+    setSelectedTimeData: (time: TTimeRanges | null) => {
+      setSelectedTime(time);
+    },
+    openModalTime: () => {
       openModalTime();
     },
     openModalExpense: (data?: any) => {
@@ -206,7 +209,7 @@ export const BudgetDetail = () => {
     },
     refetchServiceQuery: () => {
       serviceQuery.refetch();
-    }
+    },
   }));
 
   if (!budget) return <></>;
@@ -345,13 +348,21 @@ export const BudgetDetail = () => {
           </Stack>
           <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
-            {activeTab === TABS.TIME && <Time />}
+            {activeTab === TABS.TIME && (
+              <Time
+                timeList={_.get(timeQuery, "data.data.docs", [])}
+                selectedTime={selectedTime}
+                refetch={() => {
+                  timeQuery.refetch();
+                }}
+              />
+            )}
             {activeTab === TABS.EXPENSES && <Expenses />}
             {activeTab === TABS.INVOICES && <Invoice />}
             {activeTab === TABS.RECURRING && <Recurring />}
             {activeTab === TABS.SERVICES && (
               <Service
-                sections={sections}
+                sections={_.get(serviceQuery, "data.data", [])}
                 isEdit={isEditService}
                 onCloseEdit={offEditService}
                 refetch={() => {
@@ -377,14 +388,18 @@ export const BudgetDetail = () => {
         </Box>
       </Stack>
       <ModalAddTime
-        serviceId={_.get(selectedService, 'id', '')}
+        serviceId={_.get(selectedService, "id", "")}
         services={servicesList}
         open={isOpenModalTime}
         onClose={() => {
+          setSelectedTime(null);
           setSelectedService(null);
           hideModalTime();
         }}
         timeData={selectedTime}
+        refetch={() => {
+          timeQuery.refetch();
+        }}
       />
       <ModalExpense
         open={isOpenModalExpense}

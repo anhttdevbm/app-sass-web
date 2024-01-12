@@ -63,6 +63,10 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
   });
 
   useEffect(() => {
+    refetch();
+  }, []);
+
+  useEffect(() => {
     const sectionList = _.map(sectionsList,
       (section) => {
         return {
@@ -142,7 +146,7 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
     return !hasError;
   };
 
-  const onSubmit: SubmitHandler<TSectionForm> = ({ sections }) => {
+  const onSubmit: SubmitHandler<TSectionForm> = async ({ sections }) => {
     if (!handleValidateServices()) {
       onAddSnackbar("Please insert required field", "error");
       return;
@@ -158,24 +162,24 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
       });
   
       // update sections
-      handleUpdateSections(updateSections);
+      await handleUpdateSections(updateSections);
 
       // add sections
       if (newSections.length > 0) {
-        createSections(newSections);
+        await createSections(newSections);
       }
   
       // delete sections
       if (deletedSections.length > 0) {
-        deletedSections.map((sectionId: string) => {
-          deleteSection(sectionId);
+        deletedSections.map(async (sectionId: string) => {
+          await deleteSection(sectionId);
         });
       }
   
       // delete services
       if (deletedServices.length > 0) {
-        deletedServices.map((serviceId: string) => {
-          deleteService(serviceId);
+        deletedServices.map(async (serviceId: string) => {
+          await deleteService(serviceId);
         });
       }
 
@@ -183,8 +187,6 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
       onCloseEdit();
     } catch (err) {
       onAddSnackbar("Update services failed!", "error");
-    } finally {
-      refetch();
     }
   };
 
@@ -214,7 +216,7 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
     }
   };
 
-  const createSections = (newSections) => {
+  const createSections = async (newSections) => {
     const form: TBudgetServiceForm = {
       budget_id: String(budgetId),
       start_date: dayjs().format("YYYY-MM-DD"),
@@ -256,7 +258,7 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
     });
   };
 
-  const handleUpdateSections = (updateSections) => {
+  const handleUpdateSections = async (updateSections) => {
     try {
       const oldServices = _.flattenDeep(
         _.map(sectionsList, (section) => _.get(section, "services", [])),
@@ -342,14 +344,14 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
     }
   };
 
-  const deleteSection = (sectionId: string) => {
+  const deleteSection = async (sectionId: string) => {
     budgetSectionDelete.mutateAsync({
       budgetId: String(budgetId),
       sectionId: sectionId,
     });
   };
 
-  const deleteService = (serviceId: string) => {
+  const deleteService = async (serviceId: string) => {
     budgetSectionDelete.mutateAsync({
       budgetId: String(budgetId),
       serviceId: serviceId,
