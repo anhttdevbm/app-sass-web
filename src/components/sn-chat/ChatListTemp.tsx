@@ -161,7 +161,7 @@ const ChatListTemp = () => {
         top: 0,
         bottom: 0,
         right: 0,
-        zIndex: 200,
+        zIndex: 9999,
       }}
     >
       {show ? (

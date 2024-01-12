@@ -118,7 +118,7 @@ const SaleService = () => {
           sx={{
             position: isEdit ? "sticky" : "relative",
             top: 0,
-            zIndex: 1000,
+            zIndex: 20,
             padding: "20px 0px",
             backgroundColor: "background.paper",
           }}

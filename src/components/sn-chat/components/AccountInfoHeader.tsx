@@ -331,7 +331,6 @@ const AccountInfoHeader = ({
                   <SearchIcon
                     sx={{
                       color: "#FFFFFF",
-                      // fontSize: "24px!important",
                     }}
                     onClick={() => {
                       onSetStep(STEP.SEARCH_CHAT_TEXT);
@@ -342,6 +341,7 @@ const AccountInfoHeader = ({
               <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
                 onClick={() => {
                   onSetStep(STEP.ADD_MEMBER, {
@@ -355,6 +355,7 @@ const AccountInfoHeader = ({
               <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
               >
                 <VideoCallIcon />
@@ -367,6 +368,7 @@ const AccountInfoHeader = ({
                   }}
                   sx={{
                     color: "white",
+                    padding: "6px",
                   }}
                 >
                   <InfoUserIcon />
