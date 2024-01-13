@@ -36,6 +36,30 @@ export type BudgetingDictionary = {
     paymentStatus: string;
     totalCost: string;
     billable: string;
+    newExpenseForm: {
+      date: string;
+      owner: string;
+      service: string;
+      qty: string;
+      const: string;
+      currency: string;
+      totalCost: string;
+      markUp: string;
+      totalBillable: string;
+      description: string;
+      paymentStatus: string;
+      reimbursement: {
+        reimbursement: string;
+        reimbursementDate: string;
+      };
+      payment: {
+        dueDate: string,
+        paymentDate: string,
+        vendor: string;
+      };
+      status: string;
+      attachment: string;
+    };
   };
   tabInvoice: {
     subject: string;
@@ -119,6 +143,11 @@ export type BudgetingDictionary = {
     cancelBtnText: string;
     createBtnText: string;
     updateBtnText: string;
+    billable: string;
+    reimbursementDate: string;
+    dueDate: string;
+    paymentDate: string;
+    vendor: string;
   };
   dialogRecurring: {
     titleModalAdd: string;
