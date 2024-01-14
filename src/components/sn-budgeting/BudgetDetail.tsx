@@ -109,7 +109,7 @@ export const BudgetDetail = () => {
   useEffect(() => {
     if (serviceQuery) {
       const services: any[] = _.map(
-        _.get(serviceQuery, "data.data", []),
+        _.get(serviceQuery, "data.data.sections", []),
         (section) => {
           return _.get(section, "services", []);
         },
@@ -362,7 +362,7 @@ export const BudgetDetail = () => {
             {activeTab === TABS.RECURRING && <Recurring />}
             {activeTab === TABS.SERVICES && (
               <Service
-                sections={_.get(serviceQuery, "data.data", [])}
+                sections={_.get(serviceQuery, "data.data.sections", [])}
                 isEdit={isEditService}
                 onCloseEdit={offEditService}
                 refetch={() => {

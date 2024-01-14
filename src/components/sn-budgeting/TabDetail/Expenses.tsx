@@ -1,4 +1,5 @@
-import { Box, Stack, TableRow } from "@mui/material";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, Stack, TableRow, Typography } from "@mui/material";
 import { Button, Checkbox } from "components/shared";
 import { BadgeCustom } from "components/sn-budgeting/BadgeCustom";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
@@ -6,6 +7,7 @@ import { NS_BUDGETING } from "constant/index";
 import PlusIcon from "icons/PlusIcon";
 import UploadIcon from "icons/UploadIcon";
 import _ from "lodash";
+import moment from "moment";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
@@ -17,36 +19,11 @@ export type TExpense = {
   service: string;
   description: string;
   date: string;
-  att: string;
-  paymentStatus: string;
+  attachment: any[];
+  status: string;
   totalCost: string;
   billable: string;
 };
-
-const TemplateData: TExpense[] = [
-  {
-    id: "11111",
-    owner: '',
-    service: "Weebsite develop",
-    description: "User testing",
-    date: "8/07/2022",
-    att: "",
-    paymentStatus: "Paid",
-    totalCost: "$500.00",
-    billable: "$500.00",
-  },
-  {
-    id: "222222",
-    owner: '',
-    service: "Lorem",
-    description: "User 12",
-    date: "8/07/2022",
-    att: "",
-    paymentStatus: "Paid",
-    totalCost: "$500.00",
-    billable: "$500.00",
-  },
-];
 
 export const Expenses = () => {
   const [expenseSelected, setExpenseSelected] = useState<string[]>([]);
@@ -59,7 +36,7 @@ export const Expenses = () => {
 
   useEffect(() => {
     if (!_.isEmpty(budgetGetExpenseQuery)) {
-      setExpenses(_.get(budgetGetExpenseQuery, 'data.data.docs', []));
+      setExpenses(_.get(budgetGetExpenseQuery, "data.data.docs", []));
     }
   }, [JSON.stringify(budgetGetExpenseQuery)]);
 
@@ -144,7 +121,7 @@ export const Expenses = () => {
         </Button>
       </Stack>
       <TableLayout headerList={headerList} noData={false} titleColor="grey.300">
-        {expenses.map((data, index) => {
+        {expenses.map((data: any, index) => {
           const indexIdInExpenseSelected = expenseSelected.findIndex(
             (expenseId) => expenseId === data.id,
           );
@@ -158,13 +135,19 @@ export const Expenses = () => {
                 />
               </BodyCell>
               <BodyCell>
-                <b>{data.service}</b>
+                <b>{_.get(data, 'service.name', '')}</b>
               </BodyCell>
               <BodyCell>{data.description}</BodyCell>
-              <BodyCell>{data.date}</BodyCell>
-              <BodyCell>{data.att}</BodyCell>
+              <BodyCell>{data?.date ? moment(data.date).format('DD/MM/YYYY') : null}</BodyCell>
               <BodyCell>
-                <BadgeCustom color="success.main" text={data.paymentStatus} />
+                {_.map(_.get(data, 'attachment', []), (att, attIndex) => (
+                  <>
+                    <Typography key={attIndex}>{att}</Typography>
+                  </>
+                ))}
+              </BodyCell>
+              <BodyCell>
+                <BadgeCustom color="success.main" text={data.status} />
               </BodyCell>
               <BodyCell>{data.totalCost}</BodyCell>
               <BodyCell>{data.billable}</BodyCell>

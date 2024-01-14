@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Endpoint } from "api";
 import { saleClientInstance } from "api/client";
-import { PayStatus } from "constant/enums";
+import { ExpenseStatus, PayStatus } from "constant/enums";
 import { useMutation, useQuery } from "react-query";
 import { getPath } from "utils/index";
 
@@ -12,29 +12,29 @@ export type TBudgetExpense = any;
 export type TBudgetExpenses = TBudgetExpense[];
 
 export interface TBudgetExpenseAdd {
-  date: string;
+  date: string | null;
   owner: string;
   service: string;
-  budget: string;
+  budget: string | string[];
   qty: number;
   cost: number;
   currency: string;
   totalCost: number;
-  markup: number;
+  markUp: number;
   billable: number;
   description: string;
   company: string;
   reimbursement: {
     reimbursement: string;
-    reimbursementDate: string;
+    reimbursementDate: string | null;
   };
   payment: {
-    dueDate: string;
-    paymentDate: string;
+    dueDate: string | null;
+    paymentDate: string | null;
     vendor: string;
   };
-  status: PayStatus;
-  attachment: string;
+  status: ExpenseStatus;
+  attachment: any[];
 }
 
 const budgetGetExpenseQuery = (budgetId: string) => {
