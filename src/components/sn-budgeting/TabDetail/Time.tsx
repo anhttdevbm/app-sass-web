@@ -20,10 +20,8 @@ import { useOnClickOutside } from "hooks/useOnClickOutside";
 import EditIcon from "icons/EditIcon";
 import moment from "moment";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
 import {
-  useBudgetGetTimeRangeQuery,
-  useBudgetTimeRemove,
+  useBudgetTimeRemove
 } from "queries/budgeting/time-range";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";

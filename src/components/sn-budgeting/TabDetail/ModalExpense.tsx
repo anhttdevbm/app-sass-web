@@ -121,7 +121,7 @@ export const ModalExpense = ({
   const { options: currencyOptions, onGetOptions: onGetCurrencyOptions } =
     useCurrencyOptions();
 
-  const { control, handleSubmit, watch } = useForm<any>({
+  const { control, handleSubmit, watch, setValue } = useForm<any>({
     defaultValues: expenseData || defaultValues,
     resolver: yupResolver(
       yup.object({
@@ -130,10 +130,6 @@ export const ModalExpense = ({
       }),
     ),
   });
-
-  useEffect(() => {
-    onGetCurrencyOptions({ pageIndex: 1, pageSize: 100 });
-  }, []);
 
   const userInfo = useMemo(() => {
     const dataUser = {
@@ -150,6 +146,14 @@ export const ModalExpense = ({
     } as User;
     return dataUser;
   }, [user]);
+
+  useEffect(() => {
+    onGetCurrencyOptions({ pageIndex: 1, pageSize: 100 });
+  }, []);
+
+  useEffect(() => {
+    setValue("service", serviceId || "");
+  }, [serviceId]);
 
   const onSubmit = async (formValue: TExpenseAddForm) => {
     const data: any = {

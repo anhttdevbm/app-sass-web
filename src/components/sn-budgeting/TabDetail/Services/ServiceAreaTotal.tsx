@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, Typography } from "@mui/material";
 import { H6, PTag, ServiceBox } from "./ServiceUtil";
 import { NS_BUDGETING } from "constant/index";
@@ -5,8 +6,13 @@ import { useTranslations } from "next-intl";
 import { BILLING_CREATE_PATH } from "constant/paths";
 import { useRouter } from "next-intl/client";
 import { useParams } from "next/navigation";
+import _ from "lodash";
 
-export const ServiceAreaTotal = () => {
+interface Props {
+  serviceData: any;
+}
+
+export const ServiceAreaTotal = ({ serviceData }: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
   const { push } = useRouter();
   const { id } = useParams();
@@ -30,17 +36,17 @@ export const ServiceAreaTotal = () => {
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <H6>{budgetT("tabService.totalArea.time.estimatedTime")}</H6>
-              <PTag>00:00</PTag>
+              <PTag>{_.get(serviceData, 'allTime', '00:00')}</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <H6>{budgetT("tabService.totalArea.time.workedTime")}</H6>
-              <PTag>00:00</PTag>
+              <PTag>{_.get(serviceData, 'allTimeUsed', '00:00')}</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <H6>
                 {budgetT("tabService.totalArea.time.remainingTime")} (56%)
               </H6>
-              <PTag>00:00</PTag>
+              <PTag>{_.get(serviceData, 'remainingTime', '00:00')}</PTag>
             </Stack>
           </ServiceBox>
         </Box>
@@ -49,19 +55,19 @@ export const ServiceAreaTotal = () => {
           <Stack direction="column" gap={1}>
             <ServiceBox remaining="20%">
               <Stack direction="row" justifyContent="space-between">
-                <H6>PROFIT</H6>
+                <H6>{budgetT("tabService.totalArea.profit.title")}</H6>
                 <PTag>15 Jun, 2023</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <H6>Revenue</H6>
+                <H6>{budgetT("tabService.totalArea.profit.revenue")}</H6>
                 <PTag>$0,00</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <H6>Cost</H6>
+                <H6>{budgetT("tabService.totalArea.profit.cost")}</H6>
                 <PTag>$0,00</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <H6>Profit (20%)</H6>
+                <H6>{budgetT("tabService.totalArea.profit.profit")} (20%)</H6>
                 <PTag>$0,00</PTag>
               </Stack>
             </ServiceBox>
@@ -71,19 +77,19 @@ export const ServiceAreaTotal = () => {
                 justifyContent="space-between"
                 width="100%"
               >
-                <H6>BUDGET</H6>
+                <H6>{budgetT("tabService.totalArea.budget.title")}</H6>
                 <PTag>15 Jun, 2023</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <H6>Budget total</H6>
-                <PTag>$0,00</PTag>
+                <H6>{budgetT("tabService.totalArea.budget.budgetTotal")}</H6>
+                <PTag>{_.get(serviceData, 'allBudgetTotal', '$0,00')}</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <H6>Budget used</H6>
-                <PTag>$0,00</PTag>
+                <H6>{budgetT("tabService.totalArea.budget.budgetUsed")}</H6>
+                <PTag>{_.get(serviceData, 'allTimeUsed', '$0,00')}</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <H6>Budget remaining</H6>
+                <H6>{budgetT("tabService.totalArea.budget.budgetRemaining")}</H6>
                 <PTag>$0,00</PTag>
               </Stack>
             </ServiceBox>
@@ -170,12 +176,6 @@ export const ServiceAreaTotal = () => {
                 </H6>
                 <PTag>$5.880,00</PTag>
               </Stack>
-              {/* <Stack justifyContent="space-between" height="100%">
-                <H6>INVOICING</H6>
-                <Typography component="p" fontSize="small">
-                  Invoicing is not available for internal budgets.
-                </Typography>
-              </Stack> */}
             </ServiceBox>
           </Stack>
         </Box>
