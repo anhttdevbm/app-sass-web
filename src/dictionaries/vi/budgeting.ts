@@ -11,7 +11,7 @@ export const BudgetingLang: BudgetingDictionary = {
         addExpense: 'Tạo chi phí',
         addInvoice: 'Tạo hóa đơn',
         serviceEdit: 'Sửa',
-		search: 'Tìm kiếm'
+        search: 'Tìm kiếm'
     },
     status: {
         open: 'Đang mở',
@@ -19,7 +19,7 @@ export const BudgetingLang: BudgetingDictionary = {
     },
     actionStatus: {
         create: 'Đã tạo ngân sách',
-		create_service: "Đã tạo dịch vụ của ngân sách"
+        create_service: "Đã tạo dịch vụ của ngân sách"
     },
     tabTime: {
         service: 'Dịch vụ',
@@ -31,13 +31,37 @@ export const BudgetingLang: BudgetingDictionary = {
         delete: 'Xóa'
     },
     tabExpenses: {
-        service: 'Dịch vụ',
-        description: 'Mô tả',
-        date: 'Ngày',
-        att: 'Att.',
-        paymentStatus: 'Trạng thái thanh toán',
-        totalCost: 'Tổng chi phí',
-        billable: 'Có thể lập hóa đơn',
+        service: "Dịch vụ",
+        description: "Mô tả",
+        date: "Ngày",
+        att: "Att.",
+        paymentStatus: "Trạng thái thanh toán",
+        totalCost: "Tổng chi phí",
+        billable: "Lập hóa đơn?",
+        newExpenseForm: {
+            date: 'Ngày lập',
+            owner: 'Người lập',
+            service: 'Dịch vụ',
+            qty: 'Số lượng',
+            const: 'Chi phí',
+            currency: 'Tiền tệ',
+            totalCost: 'Tổng chi phí',
+            markUp: 'Đánh dấu lên',
+            totalBillable: 'Tổng số có thể thanh toán',
+            description: 'Mô tả',
+            paymentStatus: 'Trạng thái thanh toán',
+            reimbursement: {
+                reimbursement: 'Hoàvendorn trả',
+                reimbursementDate: 'Ngày hoàn trả',
+            },
+            payment: {
+                dueDate: 'Ngày đáo hạn',
+                paymentDate: 'Ngày thanh tóan',
+                vendor: 'Người bán',
+            },
+            status: 'Trạng thái',
+            attachment: 'Đính kèm',
+        },
     },
     tabInvoice: {
         subject: 'Subject',
@@ -48,21 +72,21 @@ export const BudgetingLang: BudgetingDictionary = {
         amountUnpaid: 'Amount unpaid',
         dueDate: 'Due Date',
     },
-	tabService: {
-		index: {
-			name: "Tên dịch vụ",
-			workedTime: "Thời gian làm việc",
-			price: "Giá",
-			cost: "Chi phí",
-		},
+    tabService: {
+        index: {
+            name: "Tên dịch vụ",
+            workedTime: "Thời gian làm việc",
+            price: "Giá",
+            cost: "Chi phí",
+        },
         totalArea: {
             time: {
-              title: 'TIME',
-              estimatedTime: 'Estimated time',
-              billableTime: 'Billable time',
-              workedTime: 'Worked time',
-              budgetedTime: 'Budgeted time',
-              remainingTime: 'Remaining time',
+                title: 'TIME',
+                estimatedTime: 'Estimated time',
+                billableTime: 'Billable time',
+                workedTime: 'Worked time',
+                budgetedTime: 'Budgeted time',
+                remainingTime: 'Remaining time',
             },
             invoicing: {
                 title: 'INVOICING',
@@ -72,21 +96,21 @@ export const BudgetingLang: BudgetingDictionary = {
                 forInvoicing: 'For invoicing'
             }
         },
-		section: {
-			serviceName: "Tên dịch vụ",
-			serviceType: "Loại dịch vụ",
-			billingType: "Loại hóa đơn",
-			unit: "Đơn vị",
-			tracking: "Tracking",
-			position: "Vị trí",
-			quantity: "Số lượng",
-			price: "Giá",
-			discount: "Giảm giá",
-			totalBudget: "Tổng chi phí",
+        section: {
+            serviceName: "Tên dịch vụ",
+            serviceType: "Loại dịch vụ",
+            billingType: "Loại hóa đơn",
+            unit: "Đơn vị",
+            tracking: "Tracking",
+            position: "Vị trí",
+            quantity: "Số lượng",
+            price: "Giá",
+            discount: "Giảm giá",
+            totalBudget: "Tổng chi phí",
             description: "Mô tả",
-			estimate: "Ước lượng",
-		}
-	},
+            estimate: "Ước lượng",
+        }
+    },
     dialog: {
         titleModalAdd: "Thêm thời gian",
         titleModalUpdate: "Cập nhật thời gian",
@@ -118,23 +142,28 @@ export const BudgetingLang: BudgetingDictionary = {
         description: "Description",
         reimbursement: "Reimbursement",
         payment: "Payment",
-        cancelBtnText: "Camcel",
+        cancelBtnText: "Cancel",
         createBtnText: "Create Expense",
         updateBtnText: "Update Expense",
-      },
-	dialogRecurring: {
-		titleModalAdd: 'Make this Recurring Budget',
-		cancelBtnText: 'Cancel',
+        billable: "Billable",
+        reimbursementDate: "Reimbursement Date",
+        dueDate: "Due date",
+        paymentDate: "Payment date",
+        vendor: "Vendor",
+    },
+    dialogRecurring: {
+        titleModalAdd: 'Make this Recurring Budget',
+        cancelBtnText: 'Cancel',
         addBtnText: 'Make recurring',
         editBtnText: 'Edit recurring',
-		recurringInterval: "Recurring Interval",
-		nextOccurrence: "Next Occurrence",
-		stopRecurring: "Stop Recurring",
-	},
-	delete: {
-		titleConfirmDelete: "Xác Nhận Xóa",
-		contentConfirmDelete: "Bạn có chắc chắn muốn xóa?",
-	},
+        recurringInterval: "Recurring Interval",
+        nextOccurrence: "Next Occurrence",
+        stopRecurring: "Stop Recurring",
+    },
+    delete: {
+        titleConfirmDelete: "Xác Nhận Xóa",
+        contentConfirmDelete: "Bạn có chắc chắn muốn xóa?",
+    },
     notifications: {
         updateServiceSuccess: "Cập nhật dịch vụ thành công.",
     }
