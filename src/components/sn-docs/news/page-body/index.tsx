@@ -29,7 +29,7 @@ import { NewPageContext } from "../context/NewPageContext";
 import { DocAccessibility } from "constant/enums";
 import styled from "@emotion/styled";
 import { useUpdateDocMutation } from "store/docs/api";
-
+import { TextSelection } from 'prosemirror-state';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
