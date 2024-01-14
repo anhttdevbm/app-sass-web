@@ -92,10 +92,12 @@ export interface IDocs {
   pageInfo: PageState | null;
   workspaceInfo: WorkspaceState | null;
   docInfo: any;
+  contentRow: string;
 }
 
 const initialState: IDocs = {
   docs: [],
+  contentRow: '',
   docsStatus: DataStatus.IDLE,
   docsPaging: DEFAULT_PAGING,
   docsFilters: {},
@@ -208,6 +210,9 @@ const docSlice = createSlice({
     changeProjectId: (state, action: PayloadAction<string>) => {
       state.project_id = action.payload;
     },
+    setContentRow: (state, action: PayloadAction<string>) => {
+      state.contentRow = action.payload;
+    },
     getDocDetails: (state, action: PayloadAction<any>) => {
       state.content = action.payload?.content || "";
       state.docInfo = action.payload || {};
@@ -286,6 +291,7 @@ export const {
   changeProjectId,
   changeDescription,
   changePermDoc,
+  setContentRow
 } = docSlice.actions;
 
 export default docSlice.reducer;

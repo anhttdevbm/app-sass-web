@@ -268,11 +268,12 @@ const Information = () => {
                 paddingTop: "0px !important",
               },
               width: "60% !important",
+              // wordBreak: "break-word",
             }}
           />
         ) : (
           <Text
-            variant="h5"
+            variant={"h5"}
             color="text.primary"
             sx={{ wordBreak: "break-word" }}
             onMouseEnter={() => {

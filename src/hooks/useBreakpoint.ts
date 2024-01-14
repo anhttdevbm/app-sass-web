@@ -14,6 +14,8 @@ const useBreakpoint = () => {
   const isMdSmaller = useMediaQuery(breakpoints.down("md"));
   const isLgSmaller = useMediaQuery(breakpoints.down("lg"));
   const isXlSmaller = useMediaQuery(breakpoints.down("xl"));
+  const isLgBigger = useMediaQuery(breakpoints.up("lg"));
+  const isXlBigger = useMediaQuery(breakpoints.up("xl"));
 
   const onGetBreakpoint = useCallback(() => {
     const currentBreakpoint = getCurrentBreakpoint(breakpoints.values) || "xs";
@@ -33,6 +35,8 @@ const useBreakpoint = () => {
     isMdSmaller,
     isLgSmaller,
     isXlSmaller,
+    isLgBigger,
+    isXlBigger,
   };
 };
 

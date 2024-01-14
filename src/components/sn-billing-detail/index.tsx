@@ -52,19 +52,6 @@ const InformationBillingPage = () => {
   }, [onGetBilling, updateStatus]);
 
   useEffect(() => {
-    if (!isReady) return;
-    onGetBudgets({ ...initQuery });
-  }, [initQuery, isReady, onGetBudgets]);
-
-  useEffect(() => {
-    if (budgets && budgets?.length > 0) {
-      budgets?.forEach((item) => {
-        onGetServiceBudgets(item.id ?? "");
-      });
-    }
-  }, [budgets]);
-
-  useEffect(() => {
     onGetOptions({ pageIndex: 1, pageSize: 20 });
   }, []);
 
@@ -85,12 +72,7 @@ const InformationBillingPage = () => {
         memberOptions={options}
       />
 
-      <TabInfo
-        arrService={arrService}
-        item={item}
-        user={userInfo}
-        arrBudgets={budgets}
-      />
+      <TabInfo item={item} user={userInfo} arrBudgets={budgets} />
     </Stack>
     // </FixedLayout>
   );

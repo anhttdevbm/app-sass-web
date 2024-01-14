@@ -60,7 +60,11 @@ const BillModal = (props: BillModalProps) => {
         minHeight: "auto",
       }}
       open={open ?? false}
-      label={isBillTo ? "Bill To" : "Bill From"}
+      label={
+        isBillTo
+          ? billingT("detail.form.invoice.bill.title.billTo")
+          : billingT("detail.form.invoice.bill.title.billFrom")
+      }
       //   submitText={billingT(`${salesFormTranslatePrefix}.button.export`)}
       cancelText={commonT("form.cancel")}
       onClose={() => handleClose?.() ?? null}
@@ -71,7 +75,7 @@ const BillModal = (props: BillModalProps) => {
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2}>
             <Input
-              title={"Full company name"}
+              title={billingT("detail.form.invoice.bill.fullCompanyName")}
               name="fullNameCompany"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -84,7 +88,7 @@ const BillModal = (props: BillModalProps) => {
               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
             />
             <Input
-              title={"Tax ID"}
+              title={billingT("detail.form.invoice.bill.taxID")}
               name="tax_id"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -101,7 +105,7 @@ const BillModal = (props: BillModalProps) => {
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2}>
             <Input
-              title={"Street"}
+              title={billingT("detail.form.invoice.bill.street")}
               name="street"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -119,7 +123,7 @@ const BillModal = (props: BillModalProps) => {
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2}>
             <Input
-              title={"City"}
+              title={billingT("detail.form.invoice.bill.city")}
               name="city"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -132,7 +136,7 @@ const BillModal = (props: BillModalProps) => {
               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
             />
             <Input
-              title={"ZIP / Postcode"}
+              title={billingT("detail.form.invoice.bill.postcode")}
               name="zipCode"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -149,7 +153,7 @@ const BillModal = (props: BillModalProps) => {
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2}>
             <Input
-              title={"State / County"}
+              title={billingT("detail.form.invoice.bill.state")}
               name="state"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -162,7 +166,7 @@ const BillModal = (props: BillModalProps) => {
               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
             />
             <Input
-              title={"Country"}
+              title={billingT("detail.form.invoice.bill.country")}
               name="country"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -181,7 +185,7 @@ const BillModal = (props: BillModalProps) => {
             <Stack direction={"row"} gap={2} alignItems={"center"} pb={2}>
               <Checkbox checked={formik.values?.save} />
               <Text variant={"body2"}>
-                {"Save as default billing for client"}
+                {billingT("detail.form.invoice.bill.save")}
               </Text>
             </Stack>
           </Grid>

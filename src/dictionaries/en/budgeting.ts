@@ -7,7 +7,7 @@ export const BudgetingLang: BudgetingDictionary = {
   },
   toolbar: {
     date: "Day",
-    addTime: "Time",
+    addTime: "Add time",
     addExpense: "Expense",
     addInvoice: "Invoice",
     serviceEdit: "Edit",
@@ -15,7 +15,7 @@ export const BudgetingLang: BudgetingDictionary = {
   },
   status: {
     open: "Open",
-    close: "Close",
+    close: "Delivered",
   },
   actionStatus: {
     create: "Budget was created",
@@ -27,6 +27,8 @@ export const BudgetingLang: BudgetingDictionary = {
     notes: "Notes",
     time: "Time",
     billable: "Billable",
+    edit: 'Edit',
+    delete: 'Delete'
   },
   tabExpenses: {
     service: "Service",
@@ -36,6 +38,30 @@ export const BudgetingLang: BudgetingDictionary = {
     paymentStatus: "Payment Status",
     totalCost: "Total Cost",
     billable: "Billable",
+    newExpenseForm: {
+      date: 'date',
+      owner: 'owner',
+      service: 'service',
+      qty: 'qty',
+      const: 'const',
+      currency: 'currency',
+      totalCost: 'totalCost',
+      markUp: 'markUp',
+      totalBillable: 'totalBillable',
+      description: 'description',
+      paymentStatus: 'paymentStatus',
+      reimbursement: {
+        reimbursement: 'reimbursement',
+        reimbursementDate: 'reimbursementDate',
+      },
+      payment: {
+        dueDate: 'dueDate',
+        paymentDate: 'paymentDate',
+        vendor: 'vendor',
+      },
+      status: 'status',
+      attachment: 'attachment',
+    },
   },
   tabInvoice: {
     subject: "Subject",
@@ -47,32 +73,59 @@ export const BudgetingLang: BudgetingDictionary = {
     dueDate: "Due Date",
   },
   tabService: {
+    totalArea: {
+      time: {
+        title: 'TIME',
+        estimatedTime: 'Estimated time',
+        billableTime: 'Billable time',
+        workedTime: 'Worked time',
+        budgetedTime: 'Budgeted time',
+        remainingTime: 'Remaining time',
+      },
+      invoicing: {
+        title: 'INVOICING',
+        newInvoice: 'New invoice',
+        total: 'Total',
+        invoiced: 'Invoiced',
+        forInvoicing: 'For invoicing'
+      }
+    },
     index: {
       name: "Name",
-      workingTime: "Working time",
+      workedTime: "Worked time",
       price: "Price",
       cost: "Cost",
     },
     section: {
       serviceName: "Service Name",
       serviceType: "Service Type",
-      billingType: "Billing Type",
+      billingType: "Bill Type",
       unit: "Unit",
       tracking: "Tracking",
       estimate: "Estimate",
+      position: "Position",
+      quantity: "Quantity",
+      price: "Price",
+      discount: "Discount",
+      totalBudget: "Total Budget",
+      description: 'Description',
     },
   },
   dialog: {
     titleModalAdd: "Add time entry",
-    date: "Ngày",
-    project: "Dự án",
-    timeRanger: "Khoảng thời gian",
-    startTime: "Giờ bắt đầu",
-    endTime: "Giờ kết thúc",
-    note: "Ghi chú",
-    cancelBtnText: "Hủy",
-    addBtnText: "Thêm",
-    editBtnText: "Sửa",
+    titleModalUpdate: "Update time entry",
+    date: 'Date',
+    project: 'Project',
+    timeRanger: 'Time Ranger',
+    startTime: 'Start Time',
+    endTime: 'End Time',
+    note: 'Note',
+    cancelBtnText: 'Cancel',
+    addBtnText: 'Add',
+    updateBtnText: 'Update',
+    editBtnText: 'Edit',
+    service: 'Service',
+    update: 'Update',
   },
   dialogExpense: {
     titleModalAdd: "New Expense",
@@ -92,6 +145,11 @@ export const BudgetingLang: BudgetingDictionary = {
     cancelBtnText: "Cancel",
     createBtnText: "Create Expense",
     updateBtnText: "Update Expense",
+    billable: "Billable",
+    reimbursementDate: "Reimbursement Date",
+    dueDate: "Due date",
+    paymentDate: "Payment date",
+    vendor: "Vendor",
   },
   dialogRecurring: {
     titleModalAdd: "Make this Recurring Budget",
@@ -106,4 +164,7 @@ export const BudgetingLang: BudgetingDictionary = {
     titleConfirmDelete: "Confirm delete",
     contentConfirmDelete: "Are you sure confirm delete?",
   },
+  notifications: {
+    updateServiceSuccess: "Update Service Success",
+  }
 };

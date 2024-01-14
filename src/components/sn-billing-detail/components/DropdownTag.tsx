@@ -70,6 +70,7 @@ const Dropdown = (props: DropdownProps) => {
             zIndex: 0,
             transform: "translateY(-50%)",
           },
+
           ...rootSx,
         }}
         name={name}
@@ -80,6 +81,11 @@ const Dropdown = (props: DropdownProps) => {
           renderValue(value) {
             const selected = options?.find((item) => item.value === value);
             return selected?.label ?? <TagIcon sx={{ color: "grey.400" }} />;
+          },
+          MenuProps: {
+            sx: {
+              height: "320px",
+            },
           },
         }}
         sx={{

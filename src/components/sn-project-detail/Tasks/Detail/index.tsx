@@ -130,10 +130,16 @@ const Detail = () => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-                flex: 1,
+                flex: "0 1 auto",
+                maxWidth: "230px",
 
                 "&:first-child": {
                   flex: "0 auto",
+                },
+
+                "&:last-child": {
+                  flex: 1,
+                  maxWidth: breadcrumbs_values.length >= 3 ? undefined : "100%",
                 },
               },
             }}

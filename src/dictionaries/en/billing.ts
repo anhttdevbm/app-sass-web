@@ -109,5 +109,142 @@ export const BillingLang: BillingDictionary = {
       },
     },
   },
-  detail: {},
+  detail: {
+    form: {
+      invoice: {
+        table: {
+          amount: "Amount",
+          description: "Description",
+          qty: "Qty",
+          rate: "Rate",
+          service_type: "Service type",
+          unit: "Unit",
+          discount: "Discount",
+        },
+        tableBudget: {
+          linkedBudget: "Linked budget",
+          timePeriod: "Time period",
+          invoicedwithoutTax: "Invoiced (without tax)",
+          leftForInvoicing: "Left for invoicing",
+        },
+        bill: {
+          fullCompanyName: "Full company name",
+          taxID: "Tax ID",
+          street: "Street",
+          city: "City",
+          postcode: "ZIP / Postcode",
+          state: "State / County",
+          country: "Country",
+          save: "Save as default billing for client",
+          title: {
+            billTo: "Bill To",
+            billFrom: "Bill From",
+          },
+        },
+        button: {
+          sentToClient: "Sent to client",
+          edit: "Edit",
+          addNewRow: "Add new row",
+          linkBudget: "Link budget",
+          option: {
+            viewPdf: "View PDF",
+            download: "Download",
+            replace: "Replace",
+          },
+          cancel: "Cancel",
+          save: "Save",
+        },
+        title: {
+          dateSent: "Date sent",
+          invoicePDF: "Invoice PDF",
+          billTo: "Bill to:",
+          billFrom: "Bill from:",
+          message: "The message displayed on the invoice",
+          subject: "Subject",
+          invoiceNumber: "Invoice number",
+          invoiceDate: "Invoice date",
+          dueDate: "Due date",
+          poNumber: "PO Number",
+          subtotal: "Subtotal:",
+          tax: "Tax",
+          total: "Total:",
+          name: "Name",
+          value: "Value (%)",
+          invoice: "Invoice",
+          vat: "VAT",
+        },
+      },
+      feed: {
+        table: {},
+        button: {
+          sendComment: "Sent Comment",
+          option: {
+            comments: "Comments",
+            attachments: "Attachments",
+            changes: "Changes",
+          },
+        },
+        title: {
+          writeYourComment: "Write your comment",
+          show: "Show",
+          paidOn: "Paid on set to ",
+          Feed: "Feed",
+        },
+      },
+      payment: {
+        table: {
+          dueDate: "Due date",
+          totalInvoice: "Total invoice",
+          paid: "Paid",
+          leftToPay: "Left to pay",
+        },
+        table2: {
+          status: "Status",
+          date: "Date",
+          overdue: "Overdue",
+          amount: "Amount",
+          note: "Note",
+        },
+        button: {
+          cancel: "Cancel",
+          updatePayment: "Update payment",
+          option: {
+            edit: "Edit",
+            delete: "Delete",
+          },
+        },
+        title: {
+          payments: "Payments",
+          editPayment: "Edit Payment",
+          amount: "Amount",
+          note: "Note",
+          paidOn: "Paid on",
+        },
+      },
+      top: {
+        button: {
+          markAsSent: "Mark as sent",
+          cancel: "Cancel",
+          saveChange: "Save change",
+          edit: "Edit",
+          option: {
+            duplicateInvoice: "Duplicate invoice",
+            createCreditNote: "Create credit note",
+            deleteInvoice: "Delete invoice",
+          },
+        },
+        title: {
+          paid: "Paid",
+        },
+      },
+    },
+  },
+  viewPdf: {
+    title: {},
+    button: {
+      insertComment: "Insert comment",
+      openNewTab: "Open new tab",
+      download: "Download",
+    },
+  },
 };

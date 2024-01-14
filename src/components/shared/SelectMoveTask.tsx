@@ -134,7 +134,8 @@ const SelectMoveTask = (props: SelectProps) => {
             MenuListProps: {
               sx: {
                 maxHeight: 300,
-                overflow: "hidden",
+                height: "250px",
+                overflowY: "auto",
               },
             },
           },
@@ -150,7 +151,19 @@ const SelectMoveTask = (props: SelectProps) => {
             sx={{
               px: 2,
               my: 1,
-              // height: "38px!important",
+              position: "sticky",
+              top: "8px",
+              right: 0,
+              zIndex: 100,
+              "&::before": {
+                width: "100%",
+                height: "40px",
+                content: "''",
+                position: "absolute",
+                top: "-8px",
+                left: 0,
+                backgroundColor: "background.default",
+              },
             }}
             name="email"
             onChange={onChangeSearch}
@@ -161,42 +174,41 @@ const SelectMoveTask = (props: SelectProps) => {
           />
         )}
 
-        <Box sx={{ height: "250px", overflowY: "auto" }}>
-          {optionList?.map((option) => (
-            <MenuItem
-              sx={{
-                ...defaultSx.item,
-                py: 1,
-                px: 2,
-                bgcolor: "white",
-                borderBottom: "1px solid #ccc",
-                display:
-                  (!hasValue && option.value === ID_PLACEHOLDER) ||
-                  value === ID_PLACEHOLDER
-                    ? "none"
-                    : undefined,
-                "&:last-child": {
-                  mb: 1,
-                },
-              }}
-              key={option.value}
-              value={option.value}
-            >
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Stack>
-                  <Text variant="body2" className="text-option">
-                    {option.label}
+        {optionList?.map((option) => (
+          <MenuItem
+            sx={{
+              ...defaultSx.item,
+              py: 1,
+              px: 2,
+              bgcolor: "background.primary",
+              borderBottom: "1px solid ",
+              borderColor: "background.primary",
+              display:
+                (!hasValue && option.value === ID_PLACEHOLDER) ||
+                value === ID_PLACEHOLDER
+                  ? "none"
+                  : undefined,
+              "&:last-child": {
+                mb: 1,
+              },
+            }}
+            key={option.value}
+            value={option.value}
+          >
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack>
+                <Text variant="body2" className="text-option">
+                  {option.label}
+                </Text>
+                {showSubText && (
+                  <Text variant="body2" className="sub">
+                    {option.subText}
                   </Text>
-                  {showSubText && (
-                    <Text variant="body2" className="sub">
-                      {option.subText}
-                    </Text>
-                  )}
-                </Stack>
+                )}
               </Stack>
-            </MenuItem>
-          ))}
-        </Box>
+            </Stack>
+          </MenuItem>
+        ))}
 
         {pending && (
           <MenuItem sx={defaultSx.item} value={ID_PENDING}>

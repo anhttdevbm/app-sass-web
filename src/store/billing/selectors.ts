@@ -258,6 +258,7 @@ export const useServiceBudgets = () => {
         });
       }
     });
+
     arrService?.push(...dataService);
   }
 

@@ -157,7 +157,8 @@ const sxConfig = {
   item: {
     fontSize: 14,
     color: "text.primary",
-    backgroundColor: "grey.50",
+    // backgroundColor: "grey.50",
+    backgroundColor: "primary.paper",
     lineHeight: "22px",
     "& > img": {
       mr: 1,

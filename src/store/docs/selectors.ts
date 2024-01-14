@@ -1,6 +1,6 @@
 import { Endpoint, client } from "api";
 import { DataStatus, HttpStatusCode } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN } from "constant/index";
+import { AN_ERROR_TRY_AGAIN, DOCS_API_URL } from "constant/index";
 import { useRouter } from "next-intl/client";
 import { useCallback, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
@@ -50,7 +50,7 @@ const useDocs = () => {
           // "project_id":"78537730-5155-11ee-a41a-97ec118da8c5",
         },
         {
-          baseURL: "http://103.196.145.232:6813/api/v1",
+          baseURL: DOCS_API_URL,
         },
       );
 
@@ -68,7 +68,7 @@ const useDocs = () => {
 
   const handleUpdateDoc = async (data, id) => {
     await client.put(Endpoint.DOCS + `/${id}`, data, {
-      baseURL: "http://103.196.145.232:6813/api/v1",
+      baseURL: "http://113.192.9.79:6813/api/v1",
     });
   };
 
@@ -77,7 +77,7 @@ const useDocs = () => {
       Endpoint.PERM_DOCS + id,
       {},
       {
-        baseURL: "http://103.196.145.232:6813/api/v1",
+        baseURL: DOCS_API_URL,
       },
     );
     const isView = resPrem.data.find((e) => e?.user?.id === IdUser);
@@ -93,7 +93,7 @@ const useDocs = () => {
       Endpoint.DETAIL_DOCS + id,
       {},
       {
-        baseURL: "http://103.196.145.232:6813/api/v1",
+        baseURL: DOCS_API_URL,
       },
     );
 

@@ -5,21 +5,22 @@ import { useTranslations } from "next-intl";
 import { Dropdown, DropdownProps } from "components/Filters";
 import { useMemberOptions } from "store/project/selectors";
 
-type AssignerTaskProps = Omit<DropdownProps, "options" | "name" | "onChange"> & {
-  onHandler: (newValue: string) => void
+type AssignerTaskProps = Omit<
+  DropdownProps,
+  "options" | "name" | "onChange"
+> & {
+  onHandler: (newValue: string) => void;
 };
 
 const AssignerTask = (props: AssignerTaskProps) => {
-  const {
-    options: initialOptions,
-  } = useMemberOptions();
+  const { options: initialOptions } = useMemberOptions();
   const commonT = useTranslations(NS_COMMON);
 
   const [options, setOptions] = useState(initialOptions);
 
   const { onHandler } = props;
   const handleAssigner = async (owner, newValue) => {
-    onHandler(newValue)
+    onHandler(newValue);
   };
 
   const onChangeSearch = (name: string, newValue?: string | number) => {
@@ -30,9 +31,10 @@ const AssignerTask = (props: AssignerTaskProps) => {
       return;
     }
 
-    const filtered = initialOptions.filter((option) =>
-      option?.label?.toLowerCase().includes(searchTerm) ||
-      option?.subText?.toLowerCase()?.includes(searchTerm)
+    const filtered = initialOptions.filter(
+      (option) =>
+        option?.label?.toLowerCase().includes(searchTerm) ||
+        option?.subText?.toLowerCase()?.includes(searchTerm),
     );
     setOptions(filtered);
   };
@@ -49,9 +51,9 @@ const AssignerTask = (props: AssignerTaskProps) => {
         minWidth: "0 !important",
         overflowX: "unset !important",
         width: "100% !important",
-        '* > svg': {
-          display: 'none'
-        }
+        "* > svg": {
+          display: "none",
+        },
       }}
       onChange={handleAssigner}
       {...props}

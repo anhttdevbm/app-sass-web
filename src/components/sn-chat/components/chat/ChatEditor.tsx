@@ -320,7 +320,7 @@ const ChatEditor = (props: EditorProps) => {
             },
 
             "&.ql-blank::before": {
-              paddingLeft: "30px",
+              paddingLeft: "16px",
               fontSize: "14px",
               color: "#999999",
             },
@@ -333,7 +333,7 @@ const ChatEditor = (props: EditorProps) => {
           },
         },
         "& .ql-formats": {
-          marginRight: "15px",
+          marginRight: "16px",
           display: "flex",
           gap: "8px",
           justifyContent: "center",

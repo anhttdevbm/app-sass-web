@@ -25,6 +25,8 @@ export type BudgetingDictionary = {
     notes: string;
     time: string;
     billable: string;
+    edit: string;
+    delete: string;
   };
   tabExpenses: {
     service: string;
@@ -34,6 +36,30 @@ export type BudgetingDictionary = {
     paymentStatus: string;
     totalCost: string;
     billable: string;
+    newExpenseForm: {
+      date: string;
+      owner: string;
+      service: string;
+      qty: string;
+      const: string;
+      currency: string;
+      totalCost: string;
+      markUp: string;
+      totalBillable: string;
+      description: string;
+      paymentStatus: string;
+      reimbursement: {
+        reimbursement: string;
+        reimbursementDate: string;
+      };
+      payment: {
+        dueDate: string,
+        paymentDate: string,
+        vendor: string;
+      };
+      status: string;
+      attachment: string;
+    };
   };
   tabInvoice: {
     subject: string;
@@ -47,9 +73,26 @@ export type BudgetingDictionary = {
   tabService: {
     index: {
       name: string;
-      workingTime: string;
+      workedTime: string;
       price: string;
       cost: string;
+    };
+    totalArea: {
+      time: {
+        title: string;
+        estimatedTime: string;
+        billableTime: string;
+        workedTime: string;
+        budgetedTime: string;
+        remainingTime: string;
+      };
+      invoicing: {
+        title: string;
+        newInvoice: string;
+        total: string;
+        invoiced: string;
+        forInvoicing: string;
+      };
     };
     section: {
       serviceName: string;
@@ -58,10 +101,17 @@ export type BudgetingDictionary = {
       unit: string;
       tracking: string;
       estimate: string;
+      position: string;
+      quantity: string;
+      price: string;
+      discount: string;
+      totalBudget: string;
+      description: string;
     };
   };
   dialog: {
     titleModalAdd: string;
+    titleModalUpdate: string;
     date: string;
     project: string;
     timeRanger: string;
@@ -70,7 +120,10 @@ export type BudgetingDictionary = {
     note: string;
     cancelBtnText: string;
     addBtnText: string;
+    updateBtnText: string;
     editBtnText: string;
+    service: string;
+    update: string;
   };
   dialogExpense: {
     titleModalAdd: string;
@@ -90,6 +143,11 @@ export type BudgetingDictionary = {
     cancelBtnText: string;
     createBtnText: string;
     updateBtnText: string;
+    billable: string;
+    reimbursementDate: string;
+    dueDate: string;
+    paymentDate: string;
+    vendor: string;
   };
   dialogRecurring: {
     titleModalAdd: string;
@@ -104,4 +162,7 @@ export type BudgetingDictionary = {
     titleConfirmDelete: string;
     contentConfirmDelete: string;
   };
+  notifications: {
+    updateServiceSuccess: string;
+  }
 };

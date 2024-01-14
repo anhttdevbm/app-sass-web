@@ -98,6 +98,8 @@ export const ProjectLang: ProjectDictionary = {
         newTaskPlace: "New move place",
       },
     },
+    unsaveMessage:
+      "Task description has not been saved, do you want to save it?",
     addNewTask: "Add new task",
     addNewSubTask: "New subtask",
     addNewSubTaskPlaceholder: "Add New Subtask",
@@ -136,7 +138,7 @@ export const ProjectLang: ProjectDictionary = {
       deleteTaskListSuccess: "Delete task list successfully!",
       deleteTasksSuccess: "Delete tasks successfully!",
       actionTaskSuccess: "Update {label} task successfully!",
-      taskNameIsRequired: 'Task name is required',
+      taskNameIsRequired: "Task name is required",
     },
   },
   taskDetail: {
@@ -172,6 +174,7 @@ export const ProjectLang: ProjectDictionary = {
     commentList: "Comments",
     showMore: "Show more",
     showLess: "Show less",
+
     form: {
       title: {
         newTask: "Move to task",
@@ -200,7 +203,7 @@ export const ProjectLang: ProjectDictionary = {
       start_date: "Budget start date",
       end_date: "Budget end date",
       owner: "Owner",
-      project_id: "Project ID",
+      project_id: "Project",
     },
     createBudgetSuccess: "Create new budget success!",
     table: {

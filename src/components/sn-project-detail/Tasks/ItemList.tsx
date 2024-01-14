@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 "use client";
 
-import { Box, CircularProgress, Stack } from "@mui/material";
+import { Box, CircularProgress, ClickAwayListener, Stack } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Date } from "components/Filters";
 import FixedLayoutTask from "components/FixedLayoutTask";
@@ -23,6 +23,7 @@ import useEventListener from "hooks/useEventListener";
 import useQueryParams from "hooks/useQueryParams";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
+import MoveListIcon from "icons/MoveListIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -37,10 +38,9 @@ import React, {
 } from "react";
 import {
   DragDropContext,
+  Draggable,
   DropResult,
   Droppable,
-  Draggable,
-  DragStart,
 } from "react-beautiful-dnd";
 import { useSnackbar } from "store/app/selectors";
 import { Task, TaskList } from "store/project/reducer";
@@ -59,10 +59,8 @@ import {
 } from "./components";
 import Content from "./components/Content";
 import Description from "./components/Description";
-import dayjs from "dayjs";
-import MoveListIcon from "icons/MoveListIcon";
-import { DescriptionTask } from "./Detail/components";
 import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
+import useWindowSize from "hooks/useWindowSize";
 
 const ItemList = () => {
   const {
@@ -94,7 +92,7 @@ const ItemList = () => {
 
   const { initQuery, isReady } = useQueryParams();
   const { push } = useRouter();
-  const { isMdSmaller } = useBreakpoint();
+  const { isXlSmaller, isMdSmaller, isXlBigger, isLgBigger } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
   const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
@@ -229,25 +227,57 @@ const ItemList = () => {
     () => [
       {
         value: projectT("detailTasks.form.title.name"),
-        width: "30%",
+        width: "32.5%",
         align: "left",
       },
-      { value: commonT("form.title.assigner"), width: "22.5%", align: "left" },
+      { value: commonT("form.title.assigner"), width: "16.5%", align: "left" },
       {
         value: commonT("form.title.startDate"),
-        width: "10%",
+        width: "100px",
+        align: "left",
       },
-      { value: commonT("form.title.endDate"), width: "10%" },
-      { value: commonT("status"), width: "10.5%" },
-      { value: commonT("form.title.description"), width: "15%" },
+      { value: commonT("form.title.endDate"), width: "100px", align: "left" },
+      { value: commonT("status"), width: "100px", align: "left" },
+      {
+        value: commonT("form.title.description"),
+        width: "12%",
+        align: "center",
+      },
       { value: "", width: "2%", align: "center" },
     ],
     [commonT, projectT],
   );
 
+  const xlHeaderList: CellProps[] = useMemo(
+    () => [
+      {
+        value: projectT("detailTasks.form.title.name"),
+        width: "47%",
+        align: "left",
+      },
+      { value: commonT("form.title.assigner"), width: "13.75%", align: "left" },
+      {
+        value: commonT("form.title.startDate"),
+        width: "100px",
+      },
+      { value: commonT("form.title.endDate"), width: "100px" },
+      { value: commonT("status"), width: "100px" },
+      {
+        value: commonT("form.title.description"),
+        width: "16%",
+      },
+      { value: "", width: "1%", align: "center" },
+    ],
+    [commonT, projectT],
+  );
+
+  const windowSize = useWindowSize();
+
   const headerList = useMemo(() => {
-    return isMdSmaller ? [] : desktopHeaderList;
-  }, [desktopHeaderList, isMdSmaller]) as CellProps[];
+    if (isMdSmaller) return [];
+    if (isXlSmaller) return desktopHeaderList;
+    if (isXlBigger) return xlHeaderList;
+  }, [windowSize.width]) as CellProps[];
 
   const onSetTask = (
     taskData?: Task,
@@ -988,22 +1018,9 @@ const ItemList = () => {
 
   const fixedLayoutRef = useRef<HTMLDivElement>(null);
 
+  //Handle close any popups when user scrolls
   useEffect(() => {
-    const handleScroll = (e) => {
-      // const popupEls = document.querySelectorAll(".MuiPopper-root");
-      // const datePopupEls = fixedLayoutRef.current?.querySelectorAll(
-      //   ".react-datepicker-popper",
-      // );
-      // popupEls.forEach((popup) => {
-      //   if (popup instanceof HTMLElement) {
-      //     popup.style.display = "none";
-      //   }
-      // });
-      // datePopupEls?.forEach((popup) => {
-      //   if (popup instanceof HTMLElement) {
-      //     popup.style.display = "none";
-      //   }
-      // });
+    const handleScroll = () => {
       const popupEl = document.querySelector(
         ".MuiPopper-root",
       ) as unknown as HTMLElement;
@@ -1019,6 +1036,7 @@ const ItemList = () => {
     };
 
     fixedLayoutRef.current?.addEventListener("scroll", handleScroll);
+
     // Cleanup: remove event listener when component unmounts
     return () => {
       fixedLayoutRef.current?.removeEventListener("scroll", handleScroll);
@@ -1052,11 +1070,17 @@ const ItemList = () => {
           width="100%"
           height="48px"
           bgcolor={noData ? "background.paper" : "background.default"}
+          sx={{
+            "* > th": {
+              padding: "0px",
+              textAlign: "left",
+            },
+          }}
         >
           <FormControlLabel
             control={<CheckBoxCustom {...checkboxProps} />}
             label={checkboxLabel}
-            style={{ marginLeft: "0px" }}
+            style={{ marginLeft: "16px" }}
           />
         </TableLayout>
       </Stack>
@@ -1104,7 +1128,7 @@ const ItemList = () => {
                         task={task}
                       >
                         <Droppable droppableId={task.id}>
-                          {(provided) => (
+                          {(provided, snapshot) => (
                             <Stack
                               ref={provided.innerRef}
                               {...provided.droppableProps}
@@ -1163,9 +1187,19 @@ const ItemList = () => {
                                     justifyContent: "start",
                                     width: "100%",
                                     paddingLeft: 0,
+                                    paddingRight: 0,
                                     "* > p ": {
                                       color: "unset",
                                       fontWeight: "normal!important",
+                                    },
+                                    "* > div": {
+                                      padding: "0px!important",
+                                    },
+                                    "* > div > div": {
+                                      margin: "0px!important",
+                                    },
+                                    "* > div > div > img": {
+                                      marginRight: "10px!important",
                                     },
                                   }}
                                 >
@@ -1313,8 +1347,7 @@ const ItemList = () => {
                                   />
                                 </Content>
                               </Stack>
-                              {/* {!isHide && ( */}
-                              {
+                              {!isHide && (
                                 <>
                                   <Droppable droppableId={task.id}>
                                     {(taskDropProvided, snapshot) => (
@@ -1377,9 +1410,13 @@ const ItemList = () => {
                                                             : "40px"
                                                         }`,
                                                         "border-left":
-                                                          "1px solid #1BC5BD",
+                                                          "1px solid",
                                                         "border-bottom":
-                                                          "1px solid #1BC5BD",
+                                                          "1px solid",
+                                                        borderColor: {
+                                                          md: "#1BC5BD",
+                                                          xs: "background.paper",
+                                                        },
                                                         content: "''",
                                                         width: "21px",
                                                         height: `${
@@ -1395,13 +1432,17 @@ const ItemList = () => {
                                                           (i + 1) * 40 + 17
                                                         }px`,
                                                         "border-top":
-                                                          "1px solid #1BC5BD",
+                                                          "1px solid",
                                                         "border-right":
-                                                          "1px solid #1BC5BD",
+                                                          "1px solid",
                                                         content: "''",
                                                         width: "5px",
                                                         height: "5px",
                                                         rotate: "45deg",
+                                                        borderColor: {
+                                                          md: "#1BC5BD",
+                                                          xs: "background.paper",
+                                                        },
                                                       },
                                                     }}
                                                   >
@@ -1430,7 +1471,11 @@ const ItemList = () => {
                                                             i * 40 + 0
                                                           }px`}`,
                                                           borderBottom:
-                                                            "1px solid #1BC5BD",
+                                                            "1px solid",
+                                                          borderColor: {
+                                                            md: "#1BC5BD",
+                                                            xs: "background.paper",
+                                                          },
                                                           content: "''",
                                                           width: "95%",
                                                           height: `1px`,
@@ -1522,7 +1567,7 @@ const ItemList = () => {
                                                             task.id,
                                                             subTask.id,
                                                             taskListItem.name,
-                                                            subTask.name,
+                                                            task.name,
                                                           )}
                                                           {...provided.dragHandleProps}
                                                         >
@@ -1542,6 +1587,19 @@ const ItemList = () => {
                                                             fontWeight:
                                                               "normal!important",
                                                           },
+                                                          "* > div": {
+                                                            padding:
+                                                              "0px!important",
+                                                          },
+                                                          "* > div > div": {
+                                                            margin:
+                                                              "0px!important",
+                                                          },
+                                                          "* > div > div > img":
+                                                            {
+                                                              marginRight:
+                                                                "10px!important",
+                                                            },
                                                         }}
                                                       >
                                                         <AssignerTask
@@ -1696,7 +1754,13 @@ const ItemList = () => {
                                                           },
                                                         }}
                                                       >
-                                                        <Description>
+                                                        <Description
+                                                          taskId={task.id}
+                                                          subTaskId={subTask.id}
+                                                          taskListId={
+                                                            taskListItem.id
+                                                          }
+                                                        >
                                                           {subTask.description}
                                                         </Description>
                                                       </Content>
@@ -1737,7 +1801,7 @@ const ItemList = () => {
                                     </Text>
                                   )}
                                 </>
-                              }
+                              )}
                             </Stack>
                           )}
                         </Droppable>

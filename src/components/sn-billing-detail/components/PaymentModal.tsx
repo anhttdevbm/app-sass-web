@@ -24,8 +24,8 @@ const BillModal = (props: Iprops) => {
         minHeight: "auto",
       }}
       open={open}
-      label={"Edit Payment"}
-      submitText={"Update Payment"}
+      label={billingT("detail.form.payment.title.editPayment")}
+      submitText={billingT("detail.form.payment.button.updatePayment")}
       cancelText={commonT("form.cancel")}
       onClose={handleClose}
       //   onSubmit={handleSubmit(onSubmit)}
@@ -35,7 +35,7 @@ const BillModal = (props: Iprops) => {
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2} pt={2}>
             <Input
-              title={"Amount"}
+              title={billingT("detail.form.payment.title.amount")}
               name="description"
               // onChange={formik.handleChange}
               // onBlur={formik.handleBlur}
@@ -48,7 +48,7 @@ const BillModal = (props: Iprops) => {
               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
             />
             <Input
-              title={"Paid on"}
+              title={billingT("detail.form.payment.title.paidOn")}
               name="description"
               // onChange={formik.handleChange}
               // onBlur={formik.handleBlur}
@@ -65,7 +65,7 @@ const BillModal = (props: Iprops) => {
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2} pb={2}>
             <Input
-              title={"Note"}
+              title={billingT("detail.form.payment.title.note")}
               name="description"
               // onChange={formik.handleChange}
               // onBlur={formik.handleBlur}

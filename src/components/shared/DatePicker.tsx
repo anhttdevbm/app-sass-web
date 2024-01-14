@@ -83,10 +83,10 @@ export const DateTimePicker = (props: DatePickerProps) => {
       required={required}
       disabled={disabled}
       name={name}
-      {...pickerProps}
       locale={locale}
       dateFormat="dd/MM/yyyy HH:mm"
       showTimeSelect={true}
+      {...pickerProps}
       customInput={<DatePickerInput {...rest} />}
     />
   );

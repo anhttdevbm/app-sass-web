@@ -4,7 +4,7 @@ import { BodyCell } from "components/Table";
 import {
   DATE_TIME_FORMAT_HYPHEN,
   DATE_TIME_FORMAT_SLASH,
-  DATE_LOCALE_FORMAT
+  DATE_LOCALE_FORMAT,
 } from "constant/index";
 import { formatDate, formatNumber } from "utils/index";
 import { Position } from "store/company/reducer";
@@ -13,6 +13,11 @@ import Avatar from "components/Avatar";
 import { Stack, TableRow } from "@mui/material";
 import Link from "next/link";
 import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
+import { setContentRow } from "store/docs/reducer";
+import { DOCS_API_URL } from "constant/index";
+import axiosBaseQuery from "store/axiosBaseQuery";
+import { useRouter } from "next-intl/client";
 
 type DesktopCellsProps = {
   item: any;
@@ -43,28 +48,53 @@ function formatTime(dateTimeString) {
 
 function getShortMonthName(month) {
   const monthNames = [
-    "Jan", "Feb", "Mar", "Apr",
-    "May", "Jun", "Jul", "Aug",
-    "Sep", "Oct", "Nov", "Dec"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
   return monthNames[month];
 }
 
 const DesktopCells = (props: DesktopCellsProps) => {
   const { item } = props;
-
+  const { push } = useRouter();
+  const dispatch = useDispatch();
+  const api = axiosBaseQuery({ baseUrl: DOCS_API_URL });
   return (
     <>
       <BodyCell align="left">
-        <Link href={`/documents/${item.id}`}>
+        <div
+        style={{cursor: 'pointer'}}
+          onClick={async () => {
+            const result: any = await api(
+              {
+                url: `/docs/detail/${item.id}`,
+                method: "GET",
+                //@ts-ignore
+              }, {}, {});
+            if (result.error) {
+              console.error("Error:", result.error);
+            } else {
+              await dispatch(setContentRow(result?.data?.content));
+              push(`/documents/${item.id}`);
+            }
+          }}
+        >
           <Text fontWeight={600} fontSize={14}>
             {item?.name}
           </Text>
-        </Link>
+        </div>
       </BodyCell>
-      <BodyCell>
-        {dayjs(item.updated_time).format(DATE_LOCALE_FORMAT)}
-      </BodyCell>
+      <BodyCell>{dayjs(item.updated_time).format(DATE_LOCALE_FORMAT)}</BodyCell>
       <BodyCell>{formatTime(item.updated_time)}</BodyCell>
       <BodyCell sx={{ py: "10px" }} align="center">
         {item?.created_by?.id ? (
