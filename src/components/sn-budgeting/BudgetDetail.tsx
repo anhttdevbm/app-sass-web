@@ -404,7 +404,8 @@ export const BudgetDetail = () => {
       <ModalExpense
         open={isOpenModalExpense}
         onClose={hideModalExpense}
-        projectId={budget.project.id}
+        services={servicesList}
+        serviceId={_.get(selectedService, "id", "")}
       />
     </Box>
   );

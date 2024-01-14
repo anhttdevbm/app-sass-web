@@ -5,7 +5,10 @@ import { BodyCell, CellProps, TableLayout } from "components/Table";
 import { NS_BUDGETING } from "constant/index";
 import PlusIcon from "icons/PlusIcon";
 import UploadIcon from "icons/UploadIcon";
+import _ from "lodash";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 export type TExpense = {
@@ -48,14 +51,19 @@ const TemplateData: TExpense[] = [
 export const Expenses = () => {
   const [expenseSelected, setExpenseSelected] = useState<string[]>([]);
   const [expenses, setExpenses] = useState<TExpense[]>([]);
+  const { id } = useParams();
 
   const budgetT = useTranslations(NS_BUDGETING);
 
-  useEffect(() => {
-    setExpenses(TemplateData);
-  }, []);
+  const budgetGetExpenseQuery = useBudgetGetExpenseQuery(String(id));
 
-  const handleSelecteAllExpense = (
+  useEffect(() => {
+    if (!_.isEmpty(budgetGetExpenseQuery)) {
+      setExpenses(_.get(budgetGetExpenseQuery, 'data.data.docs', []));
+    }
+  }, [JSON.stringify(budgetGetExpenseQuery)]);
+
+  const handleSelectAllExpense = (
     event: ChangeEvent<HTMLInputElement>,
     isChecked: boolean,
   ) => {
@@ -94,7 +102,7 @@ export const Expenses = () => {
         value: (
           <Checkbox
             checked={expenseSelected.length === expenses.length}
-            onChange={handleSelecteAllExpense}
+            onChange={handleSelectAllExpense}
           />
         ),
         align: "center",
