@@ -16,7 +16,7 @@ import OpenSidebarIcon from "icons/OpenSidebarIcon";
 import ShareIcon from "icons/ShareIcon";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useGetDocDetailQuery, useUpdateDocMutation } from "store/docs/api";
 import { useAppSelector } from "store/hooks";
 import { NewPageContext } from "../news/context/NewPageContext";
@@ -24,21 +24,32 @@ import { IDocDetail } from "./DocDetail";
 import ModalShare from "./LeftSlide/modal/ModalShare";
 import SelectProjectInDoc from "./SelectProjectInDoc";
 import useTheme from "hooks/useTheme";
+import { useDispatch } from "react-redux";
+import { changeId } from "store/docs/reducer";
 
 const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const [openShare, setOpenShare] = useState(false);
   const router = useRouter();
+  const currentId = useAppSelector((state) => state.doc.id);
   const { id } = useParams();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (!currentId) {
+      // Get id from params in Next
+      dispatch(changeId(id as string));
+    }
+  }, []);
+
   const { isDarkMode } = useTheme();
   const doc = useAppSelector((state) => state.doc);
   const docsT = useTranslations(NS_DOCS);
-  const { data: document } = useGetDocDetailQuery(id as string);
+  const { data: document } = useGetDocDetailQuery(currentId as string);
   const [updateDoc] = useUpdateDocMutation();
   const [valueCopy, copy] = useCopyToClipboard();
   const { isSmSmaller } = useBreakpoint();
   const { setOpenComment } = useContext(NewPageContext);
   const [debounceChange] = useDebounce((value: string) => {
-    updateDoc({ id: id as string, payload: { name: value } })
+    updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
   return (
@@ -164,7 +175,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 },
               }}
             >
-              <Text color={"success.main"}> 
+              <Text color={"success.main"}>
                 {DocAccessibility[doc.perm as keyof typeof DocAccessibility]}
               </Text>
               <Box
@@ -224,11 +235,13 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                     <OpenSidebarIcon />
                   </Box>
                 </Tooltip>
-                <Tooltip title={docsT("createDoc.more")}>
-                  <Box sx={styleButton}>
-                    <MoreIcon />
-                  </Box>
-                </Tooltip>
+                {currentId && id && currentId !== id && (
+                  <Tooltip title={docsT("createDoc.more")}>
+                    <Box sx={styleButton}>
+                      <MoreIcon />
+                    </Box>
+                  </Tooltip>
+                )}
               </Box>
             </Box>
           </Box>

@@ -46,6 +46,12 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     project_id,
   } = useAppSelector((state) => state.doc);
 
+  const { handleGetDocDetail } = useDocs();
+  const currentId = useAppSelector((state) => state.doc.id);
+  useEffect(() => {
+    handleGetDocDetail(currentId);
+  }, [currentId]);
+
   const [openChangeCover, setOpenChangeCover] = useState<boolean>(false);
   const { theme } = useContext(ThemeContext);
   const { openComment } = useContext(NewPageContext);

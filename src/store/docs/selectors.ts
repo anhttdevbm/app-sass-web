@@ -55,7 +55,9 @@ const useDocs = () => {
       );
 
       if (response?.status === HttpStatusCode.CREATED) {
-        dispatch(changeDocInfo(response.data));
+        console.log({data: response.data});
+        dispatch(changeId(response.data.id));
+        dispatch(getDocDetails(response.data.id));
         push(`/documents/${response.data.id}`);
       }
       setLoading(false);
