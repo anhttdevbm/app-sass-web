@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   Box,
   ButtonBase,
@@ -6,113 +7,115 @@ import {
   MenuList,
   Popper,
   Stack,
-  TableRow,
-  popoverClasses,
   Typography,
-  AccordionSummary,
-  Accordion,
-  AccordionDetails,
+  popoverClasses,
 } from "@mui/material";
-import { BodyCell, CellProps, TableLayout } from "components/Table";
+import { CellProps, TableLayout } from "components/Table";
 import { NS_BUDGETING } from "constant/index";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
-import ExpandCircleDownOutlinedIcon from "@mui/icons-material/ExpandCircleDownOutlined";
-import { PTag } from "./ServiceUtil";
-import { IconButton, Text } from "components/shared";
-import MoreDotIcon from "icons/MoreDotIcon";
-import { useParams } from "next/navigation";
-import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useState } from "react";
+import { Text } from "components/shared";
 import ServiceAreaSectionRow from "./ServiceAreaSectionRow";
+import {
+  TBudgetSection,
+  TBudgetService,
+  budgetDetailRef,
+} from "components/sn-budgeting/BudgetDetail";
+import _ from "lodash";
 
-export type TSection = {
-  id: string;
-  name: string;
-  workingTime: string;
-  price: string;
-  cost: string;
-  description: string;
-};
-
-const TemplateData: TSection[] = [
-  {
-    id: "aa11",
-    name: "Acquiring new clients",
-    workingTime: "8,23 / 20 hrs",
-    price: "$25,10",
-    cost: "$250,10",
-    description:
-      "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ratione reiciendis dolore eius eum temporibus magni vero voluptate. Quae eaque consectetur exercitationem necessitatibus ducimus atque eius! Dignissimos consequuntur rerum nemo quibusdam?",
-  },
-  {
-    id: "aa22",
-    name: "Acquiring new clients",
-    workingTime: "8,23 / 20 hrs",
-    price: "$25,10",
-    cost: "$250,10",
-    description:
-      "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ratione reiciendis dolore eius eum temporibus magni vero voluptate. Quae eaque consectetur exercitationem necessitatibus ducimus atque eius! Dignissimos consequuntur rerum nemo quibusdam?",
-  },
-];
 export const ServiceAreaSection = ({
-  onOpenEdit,
+  sections = [],
 }: {
-  onOpenEdit?: () => void;
+  sections: TBudgetSection[];
 }) => {
-  const [sections, setSections] = useState<TSection[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const { id: idBudget } = useParams();
-  const serviceQuery = useBudgetGetServiceQuery(String(idBudget));
-
   const budgetT = useTranslations(NS_BUDGETING);
-
-  useEffect(() => {
-    if (!serviceQuery) return;
-    const sectionData: TSection[] = [];
-    serviceQuery.data.sections?.map((section) => {
-      sectionData.push({
-        id: section.id,
-        name: section.name,
-        workingTime: "0 / 0 hrs",
-        price: "0",
-        cost: "0",
-        description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam, at nam! Id!",
-      });
-    });
-    setSections(sectionData);
-  }, [serviceQuery]);
 
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
 
   const headerList: CellProps[] = [
-    { value: budgetT("tabService.section.serviceName"), align: "left" },
     {
-      value: budgetT("tabService.index.workingTime"),
-      align: "center",
-      data: "13,23 / 30 hrs",
+      value: budgetT("tabService.section.serviceName"),
+      align: "left",
+      minWidth: 350,
     },
-    { value: budgetT("tabService.index.price"), align: "center" },
-    { value: budgetT("tabService.index.cost"), align: "center" },
+    {
+      value: budgetT("tabService.section.estimate"),
+      align: "center",
+      minWidth: 60,
+    },
+    {
+      value: budgetT("tabService.section.price"),
+      align: "center",
+      minWidth: 60,
+    },
+    {
+      value: budgetT("tabService.section.totalBudget"),
+      align: "center",
+      minWidth: 100,
+    },
     { value: "", align: "left", width: "3%" },
   ];
 
   return (
-    <Box>
-      <TableLayout headerList={headerList} noData={false} titleColor="grey.300">
-        {TemplateData.map((data, index) => {
-          return (
-            <ServiceAreaSectionRow
-              key={`budget-sevice-section-${index}`}
-              section={data}
-              setAnchorEl={setAnchorEl}
-              anchorEl={anchorEl}
-            />
-          );
-        })}
-      </TableLayout>
+    <>
+      {_.map(sections, (section: TBudgetSection, index) => {
+        return (
+          <Stack
+            key={index}
+            sx={{
+              mb: 2,
+              overflow: {
+                xs: "auto",
+              },
+              pr: 1,
+            }}
+          >
+            <Typography variant="h4" sx={{ p: 2 }}>
+              {_.get(section, "name", "")}
+            </Typography>
+            <TableLayout
+              headerList={headerList}
+              noData={false}
+              titleColor="grey.300"
+              maxHeight={920}
+              headerProps={{
+                sx: {
+                  px: 2,
+                },
+              }}
+              sx={{
+                minHeight: 100,
+                minWidth: {
+                  md: 1320,
+                  xs: 1320,
+                  overflow: "visible",
+                },
+                width: "100%",
+                [`&.MuiTableCell-root :first-child`]: {
+                  pl: 4,
+                },
+              }}
+            >
+              {_.map(
+                _.get(section, "services", []),
+                (service: TBudgetService, serviceIndex: number | string) => {
+                  return (
+                    <ServiceAreaSectionRow
+                      key={`budget-sevice-section-${serviceIndex}`}
+                      service={service}
+                      setAnchorEl={setAnchorEl}
+                      anchorEl={anchorEl}
+                    />
+                  );
+                },
+              )}
+            </TableLayout>
+          </Stack>
+        );
+      })}
+
       <Popper
         ref={refClickOutSide}
         anchorEl={anchorEl}
@@ -143,7 +146,9 @@ export const ServiceAreaSection = ({
             >
               <MenuList component={Box} sx={{ py: 0 }}>
                 <MenuItem
-                  onClick={() => {}}
+                  onClick={() => {
+                    budgetDetailRef.current?.openModalTime();
+                  }}
                   component={ButtonBase}
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >
@@ -152,7 +157,9 @@ export const ServiceAreaSection = ({
                   </Text>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => {}}
+                  onClick={() => {
+                    budgetDetailRef.current?.openModalExpense();
+                  }}
                   component={ButtonBase}
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >
@@ -183,6 +190,6 @@ export const ServiceAreaSection = ({
           </Grow>
         )}
       </Popper>
-    </Box>
+    </>
   );
 };

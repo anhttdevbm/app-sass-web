@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   ButtonBase,
@@ -16,7 +17,6 @@ import { TimePicker } from "@mui/x-date-pickers";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
 import { Button, Select, Text } from "components/shared";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
-import { Option } from "constant/types";
 import CalendarIcon from "icons/CalendarIcon";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -32,16 +32,21 @@ import ConfirmDialog from "components/ConfirmDialog";
 import useToggle from "hooks/useToggle";
 import dayjs, { Dayjs } from "dayjs";
 import { TError, TErrors, TSectionData } from "./ServiceUtil";
+import { serviceSectionRef } from "./ServiceSection";
+import _ from "lodash";
+import { Option } from "constant/types";
+import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 
 type TForm = {
-  data: TSectionData[];
+  data: TBudgetService[];
 };
 
 type Props = {
   fieldIndex: number;
-  updateValue: (index: number, data: TSectionData[]) => void;
+  updateValue: (index: number, data: TBudgetService[]) => void;
   errors: TErrors;
   serviceData: any[];
+  deletedServices: any[];
 };
 
 export const ServiceSectionRow = ({
@@ -49,15 +54,16 @@ export const ServiceSectionRow = ({
   updateValue,
   errors,
   serviceData,
+  deletedServices,
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [indexWaitDelete, setIndexWaitDelete] = useState<number | null>(null);
   const [isOpenConfirm, openConfirm, closeConfirm] = useToggle();
-  const budgetT = useTranslations(NS_BUDGETING);
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
   const { register, control, setValue, watch, getValues } = useForm<TForm>();
   const { onGetPositions } = usePositions();
   const { positionOptions } = useGetOptions();
+  const budgetT = useTranslations(NS_BUDGETING);
 
   const { fields, append, remove } = useFieldArray({
     name: "data",
@@ -122,7 +128,7 @@ export const ServiceSectionRow = ({
 
   useEffect(() => {
     const subscription = watch((value) => {
-      updateValue(fieldIndex, value.data as TSectionData[]);
+      updateValue(fieldIndex, value.data as TBudgetService[]);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
@@ -135,14 +141,13 @@ export const ServiceSectionRow = ({
       const minute = estimate - hour * 60;
 
       append({
+        ...service,
         id: uuid(),
-        name: service.name,
-        type: service.serviceType,
-        billingType: service.billType,
-        unit: service.unit,
-        tracking: { time: 0, booking: 0 },
+        serviceId: service.id,
         estimate: dayjs().hour(hour).minute(minute).toString(),
-      });
+        billingType: service.billType,
+        type: service.serviceType,
+      } as any);
     });
   }, [serviceData]);
 
@@ -153,9 +158,18 @@ export const ServiceSectionRow = ({
       type: "",
       billingType: "non_billable",
       unit: "hour",
-      tracking: { time: 0, booking: 0 },
       estimate: "",
-    });
+      bookingTracking: false,
+      timeTracking: false,
+      desc: "",
+      discount: 0,
+      markUp: 0,
+      price: 0,
+      qty: 0,
+      tolBudget: 0,
+      sectionId: _.get(serviceData, "sectionId", ""),
+      isNewService: true,
+    } as any);
   };
 
   const openConfirmDelete = (index: number) => {
@@ -169,15 +183,22 @@ export const ServiceSectionRow = ({
   };
 
   const acceptDelete = () => {
-    remove(Number(indexWaitDelete));
+    if (indexWaitDelete || indexWaitDelete === 0) {
+      const selectedService = fields[indexWaitDelete];
+      serviceSectionRef.current?.setDeletedServices(
+        _.concat(deletedServices, [_.get(selectedService, 'serviceId', '')]),
+      );
+      setIndexWaitDelete(indexWaitDelete);
+      remove(Number(indexWaitDelete));
+    }
     cancelConfirmDelete();
   };
 
-  const changeTracking = (index: number, type: "booking" | "time") => {
-    setValue(
-      `data.${index}.tracking.${type}`,
-      getValues(`data.${index}.tracking.${type}`) === 0 ? 1 : 0,
-    );
+  const changeTracking = (
+    index: number,
+    type: "bookingTracking" | "timeTracking",
+  ) => {
+    setValue(`data.${index}.${type}`, !getValues(`data.${index}.${type}`));
   };
 
   const changeTime = (index: number, time: Dayjs | null) => {
@@ -211,15 +232,15 @@ export const ServiceSectionRow = ({
         position="relative"
         overflow="visible"
       >
-        {fields.map((field, index) => {
-          let errs = errors[fieldIndex] ?? [];
+        {fields.map((service, index) => {
+          const errs = errors[fieldIndex] ?? [];
           const billStatus =
             watch(`data.${index}.billingType`) === "billable"
               ? billingBillable
               : billingNonBillable;
           const defautlEstimate = getValues(`data.${index}.estimate`);
           return (
-            <TableRow key={field.id}>
+            <TableRow key={service.id}>
               <BodyCell sx={{ p: 1 }}>
                 <TextField
                   size="small"
@@ -238,7 +259,12 @@ export const ServiceSectionRow = ({
               <BodyCell sx={{ p: 1 }}>
                 <Select
                   size="small"
-                  options={positionOptions as Option[]}
+                  // options={positionOptions as Option[]}
+                  options={[
+                    { label: "Dev", value: "Dev" },
+                    { label: "QC", value: "QC" },
+                    { label: "BA", value: "BA" },
+                  ]}
                   onChangeValue={(value) => {
                     setValue(`data.${index}.type`, String(value));
                   }}
@@ -302,18 +328,19 @@ export const ServiceSectionRow = ({
                       placement="top"
                       arrow
                       title={`Time tracking is ${
-                        watch(`data.${index}.tracking.time`) === 0
+                        !watch(`data.${index}.timeTracking`)
                           ? "disable"
                           : "enable"
                       }`}
                     >
-                      <IconButton onClick={() => changeTracking(index, "time")}>
+                      <IconButton
+                        onClick={() => changeTracking(index, "timeTracking")}
+                      >
                         <AccessTimeIcon
                           sx={{
-                            color:
-                              field.tracking.time === 0
-                                ? "grey.300"
-                                : "secondary.main",
+                            color: !watch(`data.${index}.timeTracking`)
+                              ? "grey.300"
+                              : "secondary.main",
                           }}
                         />
                       </IconButton>
@@ -324,20 +351,19 @@ export const ServiceSectionRow = ({
                       placement="top"
                       arrow
                       title={`Booking tracking is ${
-                        watch(`data.${index}.tracking.booking`) === 0
+                        !watch(`data.${index}.bookingTracking`)
                           ? "disable"
                           : "enable"
                       }`}
                     >
                       <IconButton
-                        onClick={() => changeTracking(index, "booking")}
+                        onClick={() => changeTracking(index, "bookingTracking")}
                       >
                         <CalendarIcon
                           sx={{
-                            color:
-                              field.tracking.booking === 0
-                                ? "grey.300"
-                                : "secondary.main",
+                            color: !watch(`data.${index}.bookingTracking`)
+                              ? "grey.300"
+                              : "secondary.main",
                           }}
                         />
                       </IconButton>

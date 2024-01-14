@@ -1,4 +1,5 @@
 import { Stack, Typography } from "@mui/material";
+import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import { PropsWithChildren } from "react";
 
 export const H6 = ({ children }: PropsWithChildren) => {
@@ -19,7 +20,6 @@ export const ServiceBox = ({
 }: PropsWithChildren<{ remaining?: string }>) => {
   return (
     <Stack
-      width="calc(100% / 3)"
       p="10px"
       boxShadow="0 0 2px 1px rgba(0,0,0,0.1)"
       borderRadius="4px"
@@ -58,10 +58,11 @@ export type TSectionData = {
   unit: string;
   tracking: { time: number; booking: number };
   estimate: string;
+  isNewService?: boolean;
 };
 
 export type TSectionForm = {
-  sections: (TSection & { data: TSectionData[] })[];
+  sections: (TSection & { data: TBudgetService[] } & { sectionId?: string, isNewSection?: boolean })[];
 };
 
 export type TError = { itemIndex: number; fieldName: string; errorMgs: string };

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   Box,
   ButtonBase,
@@ -29,37 +31,14 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import MoreDotIcon from "../../../icons/MoreDotIcon";
 import TrashIcon from "../../../icons/TrashIcon";
-
-type TTemplate = {
-  date: string;
-  service: string;
-  person: string;
-  notes: string;
-  time: string;
-  billable: string;
-};
-
-const TemplateData: TTemplate[] = [
-  {
-    date: "2023-12-04T16:21:21.156Z",
-    service: "Service",
-    person: "Persion",
-    notes: "Notes",
-    time: "13:14 / 13:14",
-    billable: "",
-  },
-  {
-    date: "2023-12-04T16:21:21.156Z",
-    service: "Service",
-    person: "Persion",
-    notes: "Notes",
-    time: "13:14 / 13:14",
-    billable: "",
-  },
-];
+import { budgetDetailRef } from "../BudgetDetail";
+import _ from "lodash";
 
 export type TTimeRanges = {
-  _id: string;
+  id: string;
+  docId: string;
+  service: string;
+  date: string;
   createdAt: string;
   name: string;
   person: {
@@ -69,26 +48,36 @@ export type TTimeRanges = {
   note: string;
   timeRanges: number;
   billableTime: number;
+  startTime: string | null;
+  endTime: string | null;
+  index?: number;
 };
 
 export type TForm = {
   times: TTimeRanges[];
 };
 
-export const Time = () => {
-  const budgetT = useTranslations(NS_BUDGETING);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const { id: budgetId } = useParams();
+interface Props {
+  timeList: TTimeRanges[];
+  selectedTime?: TTimeRanges | null;
+  refetch: () => void;
+}
+
+export const Time = ({ selectedTime, timeList = [], refetch = () => {} }: Props) => {
   const { onAddSnackbar } = useSnackbar();
-  const commonT = useTranslations(NS_COMMON);
-  const serviceQuery = useBudgetGetTimeRangeQuery(String(budgetId));
   const removeTimeRange = useBudgetTimeRemove();
 
-  const { control, setValue, handleSubmit, getValues } = useForm<TForm>();
-  const { fields, append, remove } = useFieldArray({
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const budgetT = useTranslations(NS_BUDGETING);
+  const commonT = useTranslations(NS_COMMON);
+
+  const { control, setValue } = useForm<TForm>();
+  const { fields, remove } = useFieldArray({
     name: "times",
     control,
   });
+
   const headerList: CellProps[] = [
     { value: "", align: "center" },
     { value: budgetT("tabTime.service"), align: "center" },
@@ -101,36 +90,45 @@ export const Time = () => {
 
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
 
-  const handleRemoveTimeRange = async (id: string, index: number) => {
-    removeTimeRange.mutate(id, {
+  useEffect(() => {
+    const times: TTimeRanges[] = _.map(
+      timeList,
+      (doc, index) => {
+        return {
+          index: index,
+          id: doc.id,
+          docId: doc.id,
+          createdAt: doc?.createdAt,
+          date: doc?.date,
+          note: doc?.note,
+          service: _.get(doc, "services.id", ""),
+          timeRanges: doc.timeRanges,
+          billableTime: doc.billableTime,
+          name: _.get(doc, "services.name", ""),
+          person: {
+            avatar: _.get(doc, "created_by.avatar.link", ""),
+            fullname: _.get(doc, "created_by.fullname", ""),
+          },
+        } as any;
+      },
+    );
+    
+    setValue("times", times);
+  }, [timeList]);
+
+  const handleRemoveTimeRange = async () => {
+    removeTimeRange.mutateAsync(_.get(selectedTime, 'docId', ''), {
       onSuccess() {
         onAddSnackbar("Success", "success");
-        remove(index);
+        remove(_.get(selectedTime, 'index'));
+        setAnchorEl(null);
+        refetch();
       },
       onError(error) {
         onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
       },
     });
   };
-  useEffect(() => {
-    if (!serviceQuery || !serviceQuery.data?.data?.docs) return;
-    const sectionData = serviceQuery.data.data.docs;
-    setValue(
-      "times",
-      sectionData.map((doc) => ({
-        _id: doc.id,
-        createdAt: doc.createdAt,
-        note: doc.note,
-        timeRanges: doc.timeRanges,
-        billableTime: doc.billableTime,
-        name: doc.services?.name,
-        person: {
-          avatar: doc.created_by?.avatar?.link,
-          fullname: doc.created_by?.fullname,
-        },
-      })),
-    );
-  }, [serviceQuery, setValue]);
 
   return (
     <>
@@ -150,88 +148,90 @@ export const Time = () => {
                   alignItems: "center",
                 }}
               >
-                <Avatar src={data.person.avatar} size={20} />
-                <Typography ml={1}>{data.person.fullname}</Typography>
+                <Avatar src={_.get(data, "person.avatar", "")} size={20} />
+                <Typography ml={1}>
+                  {_.get(data, "person.fullname", "")}
+                </Typography>
               </BodyCell>
-              <BodyCell>{data.note}</BodyCell>
-              <BodyCell>{data.timeRanges}</BodyCell>
-              <BodyCell>{data.billableTime}</BodyCell>
+              <BodyCell>{_.get(data, "note", "")}</BodyCell>
+              <BodyCell>{_.get(data, "timeRanges", "")}</BodyCell>
+              <BodyCell>{_.get(data, "billableTime", "")}</BodyCell>
               <BodyCell sx={{ p: 0 }}>
                 <IconButton
                   noPadding
                   onClick={(e) => {
                     if (Boolean(anchorEl)) {
+                      budgetDetailRef.current?.setSelectedTimeData(null);
                       setAnchorEl(null);
                     } else {
+                      budgetDetailRef.current?.setSelectedTimeData(data);
                       setAnchorEl(e.currentTarget);
                     }
                   }}
                 >
                   <MoreDotIcon fontSize="medium" sx={{ color: "grey.300" }} />
                 </IconButton>
-                <Popper
-                  ref={refClickOutSide}
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  sx={{
-                    [`& .${popoverClasses.paper}`]: {
-                      backgroundImage: "white",
-                      minWidth: 150,
-                      maxWidth: 250,
-                    },
-                    zIndex: 1000,
-                  }}
-                  transition
-                  placement={"bottom-end"}
-                >
-                  {({ TransitionProps }) => (
-                    <Grow {...TransitionProps} timeout={350}>
-                      <Stack
-                        py={2}
-                        sx={{
-                          boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.2)",
-                          border: "1px solid",
-                          borderTopWidth: 0,
-                          borderColor: "grey.100",
-                          borderRadius: 1,
-                          bgcolor: "background.paper",
-                        }}
-                      >
-                        <MenuList component={Box} sx={{ py: 0 }}>
-                          <MenuItem
-                            onClick={() => {}}
-                            component={ButtonBase}
-                            sx={{ width: "100%", py: 1, px: 2 }}
-                          >
-                            <EditIcon
-                              sx={{ color: "grey.400" }}
-                              fontSize="medium"
-                            />
-                            <Text ml={2} variant="body2" color="grey.400">
-                              Edit
-                            </Text>
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() =>
-                              handleRemoveTimeRange(data._id, index)
-                            }
-                            component={ButtonBase}
-                            sx={{ width: "100%", py: 1, px: 2 }}
-                          >
-                            <TrashIcon color="error" fontSize="medium" />
-                            <Text ml={2} variant="body2" color="error.main">
-                              Delete
-                            </Text>
-                          </MenuItem>
-                        </MenuList>
-                      </Stack>
-                    </Grow>
-                  )}
-                </Popper>
               </BodyCell>
             </TableRow>
           );
         })}
+
+        <Popper
+          ref={refClickOutSide}
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          sx={{
+            [`& .${popoverClasses.paper}`]: {
+              backgroundImage: "white",
+              minWidth: 150,
+              maxWidth: 250,
+            },
+            zIndex: 1000,
+          }}
+          transition
+          placement={"bottom-end"}
+        >
+          {({ TransitionProps }) => (
+            <Grow {...TransitionProps} timeout={350}>
+              <Stack
+                py={2}
+                sx={{
+                  boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.2)",
+                  border: "1px solid",
+                  borderTopWidth: 0,
+                  borderColor: "grey.100",
+                  borderRadius: 1,
+                  bgcolor: "background.paper",
+                }}
+              >
+                <MenuList component={Box} sx={{ py: 0 }}>
+                  <MenuItem
+                    onClick={() => {
+                      budgetDetailRef.current?.openModalTime();
+                    }}
+                    component={ButtonBase}
+                    sx={{ width: "100%", py: 1, px: 2 }}
+                  >
+                    <EditIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                    <Text ml={2} variant="body2" color="grey.400">
+                      {budgetT("tabTime.edit")}
+                    </Text>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => handleRemoveTimeRange()}
+                    component={ButtonBase}
+                    sx={{ width: "100%", py: 1, px: 2 }}
+                  >
+                    <TrashIcon color="error" fontSize="medium" />
+                    <Text ml={2} variant="body2" color="error.main">
+                      {budgetT("tabTime.delete")}
+                    </Text>
+                  </MenuItem>
+                </MenuList>
+              </Stack>
+            </Grow>
+          )}
+        </Popper>
       </TableLayout>
     </>
   );

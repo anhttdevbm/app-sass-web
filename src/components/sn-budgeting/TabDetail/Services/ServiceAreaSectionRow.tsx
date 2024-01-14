@@ -1,91 +1,110 @@
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import {
-  Box,
-  ButtonBase,
-  Grow,
-  MenuItem,
-  MenuList,
-  Popper,
   Stack,
   TableRow,
-  popoverClasses,
-  Typography,
-  AccordionSummary,
-  Accordion,
-  AccordionDetails,
   TableCell,
-  Collapse,
+  Collapse
 } from "@mui/material";
-import { BodyCell, CellProps, TableLayout } from "components/Table";
-import { NS_BUDGETING } from "constant/index";
-import { useOnClickOutside } from "hooks/useOnClickOutside";
-import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
-import ExpandCircleDownOutlinedIcon from "@mui/icons-material/ExpandCircleDownOutlined";
-import { PTag } from "./ServiceUtil";
+import { BodyCell } from "components/Table";
+import { useState } from "react";
 import { IconButton, Text } from "components/shared";
 import MoreDotIcon from "icons/MoreDotIcon";
-import { useParams } from "next/navigation";
-import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { TSection } from "./ServiceAreaSection";
+import {
+  TBudgetService,
+  budgetDetailRef,
+} from "components/sn-budgeting/BudgetDetail";
+import _ from "lodash";
+import { NS_BUDGETING } from "constant/index";
+import { useTranslations } from "next-intl";
+import ChevronIcon from "icons/ChevronIcon";
 
 interface ServiceAreaSectionRowProps {
-  section: TSection;
+  service: TBudgetService;
   setAnchorEl: Dispatch<SetStateAction<HTMLButtonElement | null>>;
   anchorEl: HTMLButtonElement | null;
 }
 
 function ServiceAreaSectionRow({
-  section,
+  service,
   anchorEl,
   setAnchorEl,
 }: ServiceAreaSectionRowProps) {
-  const { name, workingTime, price, cost, description } = section;
+  const budgetT = useTranslations(NS_BUDGETING);
   const [isCollapse, setIsCollapse] = useState(false);
 
   return (
-    <TableRow
-      sx={{
-        "& .MuiTableCell-root": {
-          borderBottom: "none",
-        },
-      }}
-    >
-      <TableRow>
-        <BodyCell align="left">
+    <>
+      <TableRow
+        sx={{
+          "& > *": { borderBottom: "none !important" },
+          minHeight: 100,
+          minWidth: {
+            md: 1320,
+            xs: 1320,
+            overflow: "visible",
+          },
+          width: "100%",
+        }}
+      >
+        <BodyCell
+          align="left"
+          sx={{
+            cursor: "pointer",
+            width: "350px !important",
+            minWidth: "350px !important",
+            maxWidth: "350px !important",
+            overflow: "visible",
+          }}
+        >
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="flex-start"
-            onClick={() => setIsCollapse((prev) => !prev)}
-            sx={{
-              cursor: "pointer",
-              "&:hover": { color: "primary.main" },
-              "&:hover svg": { color: "primary.main" },
-            }}
+            spacing={1}
+            width="100%"
+            onClick={() => setIsCollapse(!isCollapse)}
+            justifyContent="space-between"
           >
-            <ExpandCircleDownOutlinedIcon
+            <Text
+              variant="body1"
+              sx={{
+                pointerEvents: "none",
+                display: "block",
+                wordBreak: "break-word",
+                height: "fit-content",
+                boxSizing: "border-box",
+              }}
+            >
+              {service.name}
+            </Text>
+            <ChevronIcon
               sx={{
                 color: "grey.300",
-                mr: 1,
-                transform: isCollapse ? "rotate(180deg)" : "none",
+                transition: "all 0.3s ease-in-out",
               }}
+              style={{
+                transform: isCollapse ? "rotate(-180deg)" : "rotate(0deg)",
+              }}
+              fontSize="medium"
             />
-            <PTag>{name}</PTag>
           </Stack>
         </BodyCell>
-        <BodyCell>{workingTime}</BodyCell>
-        <BodyCell>{price}</BodyCell>
-        <BodyCell>{cost}</BodyCell>
+        <BodyCell sx={{ minWidth: 100 }}>
+          {_.get(service, "estimate", 0)}
+        </BodyCell>
+        <BodyCell sx={{ minWidth: 60 }}>${_.get(service, "price", 0)}</BodyCell>
+        <BodyCell sx={{ minWidth: 100, overflow: "visible" }}>
+          ${_.get(service, "tolBudget", 0)}
+        </BodyCell>
         <BodyCell>
           <IconButton
             noPadding
             sx={{ transform: "translateX(-50%)" }}
             onClick={(e) => {
               if (Boolean(anchorEl)) {
+                budgetDetailRef.current?.setSelectedServiceData(null);
                 setAnchorEl(null);
               } else {
+                budgetDetailRef.current?.setSelectedServiceData(service);
                 setAnchorEl(e.currentTarget);
               }
             }}
@@ -94,14 +113,54 @@ function ServiceAreaSectionRow({
           </IconButton>
         </BodyCell>
       </TableRow>
-      <TableRow>
-        <TableCell colSpan={12} sx={{ py: 0 }}>
-          <Collapse in={isCollapse} timeout="auto" unmountOnExit>
-            {description}
+      <TableRow
+        sx={{
+          mb: 1,
+        }}
+      >
+        <TableCell
+          colSpan={1}
+          sx={{
+            transition: "all 0.3s ease-in-out",
+            maxHeight: isCollapse ? "100%" : "0px",
+            py: isCollapse ? "16px" : 0,
+            pt: 0,
+            pb: "10px",
+          }}
+        >
+          <Collapse in={isCollapse} unmountOnExit>
+            <Stack
+              direction="column"
+              sx={{
+                width: "100%",
+              }}
+            >
+              <Text variant="caption" color="grey.300">
+                {budgetT("tabService.section.description")}
+              </Text>
+              <Text
+                variant="body2"
+                sx={{
+                  wordBreak: "break-word",
+                }}
+              >
+                {_.get(service, "desc", "")}
+              </Text>
+            </Stack>
           </Collapse>
         </TableCell>
+        <TableCell
+          colSpan={9}
+          sx={{
+            transition: "all 0.3s ease-in-out",
+            maxHeight: isCollapse ? "100%" : "0px",
+            py: isCollapse ? "16px" : 0,
+            pt: 0,
+            pb: "10px",
+          }}
+        ></TableCell>
       </TableRow>
-    </TableRow>
+    </>
   );
 }
 

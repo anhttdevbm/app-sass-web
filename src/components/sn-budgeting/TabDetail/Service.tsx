@@ -1,21 +1,29 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Box } from "@mui/material";
 import { ServiceAreaTotal } from "./Services/ServiceAreaTotal";
 import { ServiceAreaSection } from "./Services/ServiceAreaSection";
 import { ServiceSection } from "./Services/ServiceSection";
+import { TBudgetSection } from "../BudgetDetail";
 
 type Props = {
   isEdit?: boolean;
   onCloseEdit?: () => void;
-  onOpenEdit?: () => void;
+  refetch?: () => void;
+  sections: TBudgetSection[];
 };
 
-export const Service = ({ isEdit = false, onCloseEdit, onOpenEdit }: Props) => {
+export const Service = ({
+  isEdit = false,
+  sections = [],
+  onCloseEdit,
+  refetch,
+}: Props) => {
   return isEdit ? (
-    <ServiceSection onCloseEdit={onCloseEdit} />
+    <ServiceSection sectionsList={sections} onCloseEdit={onCloseEdit} refetch={refetch} />
   ) : (
     <Box>
       <ServiceAreaTotal />
-      <ServiceAreaSection onOpenEdit={onOpenEdit} />
+      <ServiceAreaSection sections={sections} />
     </Box>
   );
 };
