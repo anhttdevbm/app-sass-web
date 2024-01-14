@@ -141,7 +141,7 @@ const MoveTaskList = (props: MoveTaskListProps) => {
       onSubmit={formik.handleSubmit}
       {...rest}
     >
-      <Stack spacing={2} py={3} sx={{}}>
+      <Stack spacing={2} py={3}>
         <SelectMoveTask
           options={searchOptions}
           title={projectT("detailTasks.form.title.newTaskPlace")}

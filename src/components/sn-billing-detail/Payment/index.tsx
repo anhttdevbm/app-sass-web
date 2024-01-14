@@ -59,12 +59,12 @@ const TabPayment = (props: TabProps) => {
           >
             <Grid md={6}>
               <Text variant={"body2"} color={"#fff"}>
-                Paid
+                {billingT("detail.form.payment.table.paid")}
               </Text>
             </Grid>
             <Grid md={6}>
               <Text variant={"body2"} color={"#fff"}>
-                Left to Pay
+                {billingT("detail.form.payment.table.leftToPay")}
               </Text>
             </Grid>
           </Grid>

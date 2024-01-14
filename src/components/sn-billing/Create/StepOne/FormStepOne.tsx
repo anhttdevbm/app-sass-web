@@ -29,6 +29,10 @@ import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 import TrashIcon from "icons/TrashIcon";
 import { Budgets } from "store/billing/reducer";
+import FixedLayout from "components/FixedLayout";
+import { useSearchParams } from "next/navigation";
+import { useBudgetByIdQuery } from "queries/budgeting/get-by-id";
+import _ from "lodash";
 
 const billingFormTranslatePrefix = "list.form";
 type IProps = {
@@ -72,6 +76,9 @@ const FormStepOne = (props: IProps) => {
   const billingT = useTranslations(NS_BILLING);
   const { initQuery, isReady, query } = useQueryParams();
   const [selectedList, setSelectedList] = useState<Budgets[]>([]);
+  const searchParams = useSearchParams();
+  const budgetId = searchParams.get('budget');
+  const budgetDetailQuery = useBudgetByIdQuery(String(budgetId));
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
@@ -137,6 +144,13 @@ const FormStepOne = (props: IProps) => {
     ],
     [billingT],
   );
+
+  useEffect(() => {
+    const budgetData = _.get(budgetDetailQuery, 'data');
+    if (!!budgetData && !_.has(budgetData, 'errors')) {
+      handleNext([budgetData]);
+    }
+  }, [JSON.stringify(budgetDetailQuery)]);
 
   const onChangeAll = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -299,6 +313,7 @@ const FormStepOne = (props: IProps) => {
         <TableLayout
           headerList={headerList}
           // pending={isFetching}
+          maxHeight={500}
           width={"100%"}
           py={2}
           headerProps={{

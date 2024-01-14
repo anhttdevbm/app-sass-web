@@ -20,7 +20,8 @@ import { useFormik } from "formik";
 import { useEmployeeOptions } from "store/company/selectors";
 import ChevronIcon from "icons/ChevronIcon";
 import CalendarIcon from "icons/CalendarIcon";
-
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from 'dayjs'
 const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
@@ -28,12 +29,11 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
 
-  const [selectedOption, setSelectedOption] = useState<any>('option1');
+  const [selectedOption, setSelectedOption] = useState<any>("option1");
 
   const handleRadioChange = (value) => {
     setSelectedOption(value);
   };
-
 
   const commonT = useTranslations(NS_COMMON);
 
@@ -129,16 +129,20 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
             borderBottom: "1px solid",
             borderBottomColor: "grey.100",
           }}
-          onClick={() => handleRadioChange('option1')}
+          onClick={() => handleRadioChange("option1")}
         >
-          <Radio sx={{
-              '&.Mui-checked': {
-                color: '#1BC5BD', // Màu xanh khi được chọn
-                '&.Mui-disabled': {
-                  color: '#1BC5BD', // Màu xanh khi bị vô hiệu hóa (nếu cần)
+          <Radio
+            sx={{
+              "&.Mui-checked": {
+                color: "#1BC5BD", // Màu xanh khi được chọn
+                "&.Mui-disabled": {
+                  color: "#1BC5BD", // Màu xanh khi bị vô hiệu hóa (nếu cần)
                 },
               },
-            }} name="radio-buttons" checked={selectedOption === 'option1'} />
+            }}
+            name="radio-buttons"
+            checked={selectedOption === "option1"}
+          />
           <Typography>All time</Typography>
         </Box>
 
@@ -150,7 +154,6 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
             justifyContent: "space-between",
             flexWrap: "wrap",
           }}
-          
         >
           {daytimes?.map((item, index) => (
             <Box
@@ -163,14 +166,19 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
               }}
               onClick={() => handleRadioChange(item.name)}
             >
-              <Radio sx={{
-                '&.Mui-checked': {
-                  color: '#1BC5BD', // Màu xanh khi được chọn
-                  '&.Mui-disabled': {
-                    color: '#1BC5BD', // Màu xanh khi bị vô hiệu hóa (nếu cần)
+              <Radio
+                sx={{
+                  "&.Mui-checked": {
+                    color: "#1BC5BD", // Màu xanh khi được chọn
+                    "&.Mui-disabled": {
+                      color: "#1BC5BD", // Màu xanh khi bị vô hiệu hóa (nếu cần)
+                    },
                   },
-                },
-              }} checked={selectedOption === item.name} value={item?.name} name="radio-buttons" />
+                }}
+                checked={selectedOption === item.name}
+                value={item?.name}
+                name="radio-buttons"
+              />
               <Typography>{item?.name}</Typography>
             </Box>
           ))}
@@ -186,7 +194,23 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
           }}
         >
           <Radio value="option1" name="radio-buttons" />
-          <Typography sx={{ display: "flex", alignItems: "center" }}>Custom <CalendarIcon sx={{ paddingLeft: "4px" }} /></Typography>
+          <Typography sx={{ display: "flex", alignItems: "center" }}>
+            Custom{" "}
+          </Typography>
+          <DatePicker
+            sx={{
+              width: "160px",
+              marginLeft: "5px",
+              [`& .MuiInputBase-root`]: {
+                gap: 1,
+              },
+
+              "& .MuiOutlinedInput-input": {
+                padding: "5px",
+              },
+            }}
+            defaultValue={dayjs(new Date())}
+          />
         </Box>
 
         <Box
@@ -196,7 +220,11 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
             justifyContent: "space-between",
           }}
         >
-          <Button variant="outlined" sx={{ width: "50%", marginRight: "8px" }} color="primary">
+          <Button
+            variant="outlined"
+            sx={{ width: "50%", marginRight: "8px" }}
+            color="primary"
+          >
             Hủy
           </Button>
           <Button variant="contained" sx={{ width: "50%" }} color="primary">

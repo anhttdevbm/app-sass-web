@@ -107,6 +107,7 @@ export type ProjectDictionary = {
     assignee: string;
     processingDuplicate: string;
     nameWillBeExisted: string;
+    unsaveMessage: string;
     keys: {
       owner: string;
       start_date: string;
@@ -131,7 +132,7 @@ export type ProjectDictionary = {
       deleteTaskListSuccess: string;
       deleteTasksSuccess: string;
       actionTaskSuccess: string;
-      taskNameIsRequired: string,
+      taskNameIsRequired: string;
     };
   };
   taskDetail: {

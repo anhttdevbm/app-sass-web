@@ -1,6 +1,6 @@
 import { Stack, TableRow, TextField } from "@mui/material";
 import { BodyCell, StatusCell } from "components/Table";
-import { IconButton, Select, Text } from "components/shared";
+import { IconButton, Input, Select, Text } from "components/shared";
 import {
   COLOR_BILL_TYPE,
   SALE_BILL_TYPE_LABEL,
@@ -112,7 +112,7 @@ const ServiceTableItem = ({
                 <MoveDotIcon />
               </IconButton>
             )}
-            <TableRow sx={{ height: 46 }}>
+            <TableRow sx={{ height: 46, alignItems: "center" }}>
               <BodyCell align="left" size="small">
                 <LinkPopup OptionBudget={OptionBudget} service={service} />
               </BodyCell>
@@ -149,6 +149,8 @@ const ServiceTableItem = ({
                         [`& .MuiTypography-root:nth-child(2)`]: {
                           display: "none",
                         },
+                        height: 52,
+                        mt: 1,
                       },
                     }}
                   />
@@ -176,6 +178,7 @@ const ServiceTableItem = ({
                     value={service?.desc}
                     disabled={!isEdit}
                     name="desc"
+                    sx={{ height: 46 }}
                     key={service?.id}
                     id={service.id}
                     onChange={(e) => {
@@ -213,6 +216,8 @@ const ServiceTableItem = ({
                         [`& .MuiTypography-root:nth-child(2)`]: {
                           display: "none",
                         },
+                        height: 52,
+                        mt: 1,
                       },
                     }}
                   />
@@ -232,6 +237,7 @@ const ServiceTableItem = ({
                     name="qty"
                     key={service?.id}
                     id={service.id}
+                    sx={{ height: 46 }}
                     onChange={(e) => {
                       handleChangeValue(
                         service?.id,
@@ -260,6 +266,7 @@ const ServiceTableItem = ({
                     key={service?.id}
                     id={service.id}
                     type="number"
+                    sx={{ height: 46 }}
                     onChange={(e) => {
                       handleChangeValue(
                         service?.id,
@@ -290,6 +297,7 @@ const ServiceTableItem = ({
                     name="discount"
                     key={service?.id}
                     id={service.id}
+                    sx={{ height: 46 }}
                     onChange={(e) => {
                       handleChangeValue(
                         service?.id,
@@ -318,6 +326,7 @@ const ServiceTableItem = ({
                   <TextField
                     value={service.price}
                     name="price"
+                    sx={{ height: 46 }}
                     key={service?.id}
                     id={service.id}
                     onChange={(e) => {

@@ -27,36 +27,48 @@ const LinkBudgetTable = (props: IProps) => {
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: "Linked budget",
+        value: `${billingT("detail.form.invoice.tableBudget.linkedBudget")}`,
         align: "left",
       },
       {
-        value: "Time period",
+        value: `${billingT("detail.form.invoice.tableBudget.timePeriod")}`,
         align: "left",
       },
       {
-        value: "Invoiced (without tax)",
+        value: `${billingT(
+          "detail.form.invoice.tableBudget.invoicedwithoutTax",
+        )}`,
         align: "center",
       },
-      { value: "Left for invoicing" },
+      {
+        value: `${billingT(
+          "detail.form.invoice.tableBudget.leftForInvoicing",
+        )}`,
+      },
     ],
     [billingT],
   );
   const mobileHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: "Linked budget",
+        value: `${billingT("detail.form.invoice.tableBudget.linkedBudget")}`,
         align: "left",
       },
       {
-        value: "Time period",
+        value: `${billingT("detail.form.invoice.tableBudget.timePeriod")}`,
         align: "left",
       },
       {
-        value: "Invoiced (without tax)",
+        value: `${billingT(
+          "detail.form.invoice.tableBudget.invoicedwithoutTax",
+        )}`,
         align: "center",
       },
-      { value: "Left for invoicing" },
+      {
+        value: `${billingT(
+          "detail.form.invoice.tableBudget.leftForInvoicing",
+        )}`,
+      },
     ],
     [billingT],
   );

@@ -33,6 +33,7 @@ import SelectMultiple from "components/sn-billing/components/SelectMultiple";
 import { useAuth } from "store/app/selectors";
 import { BILLING_PATH } from "constant/paths";
 import { useRouter } from "next-intl/client";
+import FixedLayout from "components/FixedLayout";
 
 const billingFormTranslatePrefix = "list.form";
 
@@ -119,13 +120,16 @@ const FormStepTwo = (props: IProps) => {
       const arrBudgetId = budgets?.map((item) => {
         return { id: item.id };
       });
-
+      const arrServiceId = arrService?.map((item) => {
+        return { id: item.id };
+      });
       const data = {
         ...values,
-        budgetService: [],
-        invoiceNumber: "",
+        budgetService: arrServiceId,
+        // invoiceNumber: "",
         budget: arrBudgetId ?? [],
         user: [{ id: user?.id }],
+
         // status: "unpaid",
       };
       // delete data["express"];
@@ -253,8 +257,14 @@ const FormStepTwo = (props: IProps) => {
     formik.setFieldValue("invoiceMethod", value);
   };
 
+  useEffect(() => {
+    if (sumAmount) {
+      formik.setFieldValue("amount", sumAmount);
+      formik.setFieldValue("amount_unpaid", sumAmount);
+    }
+  }, [sumAmount]);
   return (
-    <>
+    <FixedLayout>
       <Box>
         <Stack
           direction="row"
@@ -535,6 +545,7 @@ const FormStepTwo = (props: IProps) => {
           <TableLayout
             headerList={headerList}
             // pending={isFetching}
+            maxHeight={350}
             width={"100%"}
             py={2}
             headerProps={{
@@ -563,7 +574,7 @@ const FormStepTwo = (props: IProps) => {
           </TableLayout>
         </Stack>
       </Box>
-    </>
+    </FixedLayout>
   );
 };
 const sxConfig = {

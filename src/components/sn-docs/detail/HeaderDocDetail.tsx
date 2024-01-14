@@ -190,9 +190,9 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   <Box
                     onClick={() => {
                       copy(window.location.href);
-                      setTimeout(() => {
-                        copy(null);
-                      }, 5000);
+                      // setTimeout(() => {
+                      //   copy(null);
+                      // }, 5000);
                     }}
                     sx={styleButton}
                   >

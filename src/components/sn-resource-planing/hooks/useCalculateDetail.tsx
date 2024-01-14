@@ -78,7 +78,9 @@ export const useGetTotalScheduleTime = () => {
         const isExist = acc.find((item) => item?.id === cur.sale_id);
         if (isExist) return acc;
         const sale = find(sales, { id: cur.sale_id });
-        acc.push(sale);
+        if (sale) {
+          acc.push(sale);
+        }
         return acc;
       }, [] as Sales[]);
 

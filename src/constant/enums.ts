@@ -138,3 +138,8 @@ export const DocAccessibility = {
   EDIT: "Can edit",
   COMMENT: "Can comment",
 } as const;
+
+export enum ExpenseStatus {
+  UNPAID = 'UNPAID',
+  PAID = 'PAID'
+}

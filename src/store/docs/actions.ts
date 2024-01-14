@@ -10,7 +10,7 @@ export const getDocs = createAsyncThunk(
   async ({ ...queries }: any) => {
     try {
       const response = await client.get(Endpoint.DOCS, queries, {
-        baseURL: "http://103.196.145.232:6813/api/v1",
+        baseURL: DOCS_API_URL,
       });
 
       if (response?.status === HttpStatusCode.OK) {

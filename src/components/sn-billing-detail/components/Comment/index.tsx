@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { Billing } from "store/billing/reducer";
 import { User } from "constant/types";
 import { useBillings } from "store/billing/selectors";
+import FixedLayout from "components/FixedLayout";
 
 type IProps = {
   billing: Billing;
@@ -23,18 +24,18 @@ const CommentSection = (props: IProps) => {
   }, [onGetCommentBilling]);
 
   return (
-    <Stack>
+    <FixedLayout px={2} pb={2}>
       <Stack
         sx={{ position: "sticky", zIndex: 1, top: 0, background: "#fff" }}
         py={2}
       >
         <Text color="text.main" mb={3} variant="h5" textTransform="uppercase">
-          {"Write your comment"}
+          {billingT("detail.form.feed.title.writeYourComment")}
         </Text>
         <CommentEditor billing={billing} user={user} />
       </Stack>
       <Comments comments={dataComment} />
-    </Stack>
+    </FixedLayout>
   );
 };
 
