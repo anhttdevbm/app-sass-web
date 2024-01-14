@@ -21,12 +21,14 @@ import useDebounce from "hooks/useDebounce";
 import {
   changeContentDoc,
   changeDescription,
+  changeTitle,
   resetDocDetail,
 } from "store/docs/reducer";
 import useDocEditor from "../hook/useDocEditor";
 import { NewPageContext } from "../context/NewPageContext";
 import { DocAccessibility } from "constant/enums";
 import styled from "@emotion/styled";
+import { useUpdateDocMutation } from "store/docs/api";
 import { TextSelection } from 'prosemirror-state';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
@@ -52,7 +54,15 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const dispatch = useDispatch();
   const [mounted, setMounted] = useState(false);
   const { handleUpdateDoc } = useDocs();
+
+  const [updateDoc] = useUpdateDocMutation();
+  const [debounceChange] = useDebounce((value: string) => {
+    updateDoc({ id: id as string, payload: { name: value } });
+  }, 200);
+
   const [handleTitleChange] = useDebounce((value: string): void => {
+    // debounceChange(value);
+    dispatch(changeTitle(value));
     dispatch(changeDescription(value));
   }, 200);
 
