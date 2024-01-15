@@ -48,6 +48,7 @@ const MyScheduleTab = () => {
   const { getMyBooking, myBooking, setMyBookingFilter } = useMyBooking();
   const [resources, setResources] = React.useState<IBookingItem[]>([]);
   const calendarRef = React.useRef<FullCalendar>(null);
+  const [selectedDateRange, setSelectedDateRange] = React.useState<Date[]>([]);
   const [selectedResource, setSelectedResource] = React.useState<string[]>([]);
   const [isOpenCreate, setIsOpenCreate] = React.useState(false);
   const { palette } = useTheme();
@@ -317,6 +318,22 @@ const MyScheduleTab = () => {
           slotDuration={{
             days: 1,
           }}
+          selectable={true}
+          select={(arg) => {
+            const { startStr, endStr, resource, view } = arg;
+
+            if (resource?._resource.extendedProps.type === 'end') {
+              view.calendar.unselect();
+              return;
+            };
+
+            setParentResource(resource?._resource.parentId || resource?._resource.id || "");
+            const start_date = dayjs(startStr).toDate();
+
+            const end_date = dayjs(endStr).subtract(1, 'day').toDate();
+            setSelectedDateRange([start_date, end_date]);
+            setIsOpenCreate(true);
+          }}
           resources={mappedResources as ResourceInput}
           events={mappedEvents as ResourceInput}
           slotLabelContent={(arg) => {
@@ -378,6 +395,7 @@ const MyScheduleTab = () => {
         resourceId={parentResource}
         onClose={() => setIsOpenCreate(false)}
         open={isOpenCreate}
+        selectedDateRange={selectedDateRange}
       />
       {/* Wait for the edit funcion is confirmed */}
       <EditBooking

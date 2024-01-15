@@ -92,7 +92,7 @@ const AllPeopleTab = () => {
 
   useEffect(() => {
     if (filters) {
-      setBookingAllFilter(filters);
+      setBookingAllFilter(filters); 
       setSelectedResource([]);
     }
   }, [filters]);
@@ -370,11 +370,17 @@ const AllPeopleTab = () => {
           }}
           duration={{ weeks: 1 }}
           select={(arg) => {
-            const { startStr, endStr } = arg;
+            const { startStr, endStr, resource, view } = arg;
 
+            if (resource?._resource.extendedProps.type === 'end') {
+              view.calendar.unselect();
+              return;
+            };
+
+            setParentResource(resource?._resource.parentId || resource?._resource.id || "");
             const start_date = dayjs(startStr).toDate();
 
-            const end_date = dayjs(endStr).toDate();
+            const end_date = dayjs(endStr).subtract(1, 'day').toDate();
             // if (!resource) return;
             setSelectedDateRange([start_date, end_date]);
             setIsOpenCreate(true);
@@ -460,6 +466,7 @@ const AllPeopleTab = () => {
               <EventContents event={event} setIsOpenEdit={setIsOpenEdit} />
             );
           }}
+          stickyFooterScrollbar={true}
           eventResize={handleEventChange(calendarRef, true)}
           eventDrop={handleEventChange(calendarRef, false)}
         />
