@@ -1,13 +1,14 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 
 const useDebounce = (
   callback: (...args: any[]) => unknown,
   timeout: number,
-): [(...args: any[]) => unknown, boolean] => {
+): [(...args: any[]) => unknown, boolean, () => void] => {
   const timerId = useRef<NodeJS.Timeout | null>(null);
   const [isDone, setIsDone] = useState(false);
   timeout = timeout || 0;
-  return [
+
+  const debouncedFunction = useCallback(
     (...args) => {
       if (timerId.current) {
         clearTimeout(timerId.current);
@@ -19,8 +20,18 @@ const useDebounce = (
         callback(...args);
       }, timeout);
     },
-    isDone,
-  ];
+    [callback, timeout],
+  );
+
+  const cancel = useCallback(() => {
+    if (timerId.current) {
+      clearTimeout(timerId.current);
+      timerId.current = null;
+      setIsDone(true);
+    }
+  }, []);
+
+  return [debouncedFunction, isDone, cancel];
 };
 
 export default useDebounce;

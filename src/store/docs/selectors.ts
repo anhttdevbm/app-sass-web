@@ -91,6 +91,8 @@ const useDocs = () => {
       return;
     }
 
+    console.log({id});
+
     const res = await client.get(
       Endpoint.DETAIL_DOCS + id,
       {},
@@ -100,6 +102,7 @@ const useDocs = () => {
     );
 
     if (res.status === HttpStatusCode.OK) {
+      console.log({data:res.data})
       dispatch(getDocDetails(res.data));
     }
   };
