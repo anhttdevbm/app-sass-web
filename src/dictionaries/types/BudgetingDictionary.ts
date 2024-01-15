@@ -86,6 +86,18 @@ export type BudgetingDictionary = {
         budgetedTime: string;
         remainingTime: string;
       };
+      profit: {
+        title: string;
+        revenue: string;
+        cost: string;
+        profit: string;
+      };
+      budget: {
+        title: string;
+        budgetTotal: string;
+        budgetUsed: string;
+        budgetRemaining: string;
+      };
       invoicing: {
         title: string;
         newInvoice: string;
@@ -124,6 +136,8 @@ export type BudgetingDictionary = {
     editBtnText: string;
     service: string;
     update: string;
+    exportView: string;
+    exportBtnText: string;
   };
   dialogExpense: {
     titleModalAdd: string;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Box } from "@mui/material";
 import { ServiceAreaTotal } from "./Services/ServiceAreaTotal";
@@ -10,6 +11,7 @@ type Props = {
   onCloseEdit?: () => void;
   refetch?: () => void;
   sections: TBudgetSection[];
+  serviceData: any;
 };
 
 export const Service = ({
@@ -17,12 +19,13 @@ export const Service = ({
   sections = [],
   onCloseEdit,
   refetch,
+  serviceData
 }: Props) => {
   return isEdit ? (
     <ServiceSection sectionsList={sections} onCloseEdit={onCloseEdit} refetch={refetch} />
   ) : (
     <Box>
-      <ServiceAreaTotal />
+      <ServiceAreaTotal serviceData={serviceData} />
       <ServiceAreaSection sections={sections} />
     </Box>
   );
