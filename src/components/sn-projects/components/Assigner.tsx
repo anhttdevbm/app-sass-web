@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useEmployeeOptions } from "store/company/selectors";
 
 import { NS_COMMON, NS_PROJECT } from "constant/index";
@@ -7,10 +7,6 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI, getPath } from "utils/index";
 
 import { useProjects } from "store/project/selectors";
-import { useParams } from "next/navigation";
-import { DEFAULT_PAGING } from "constant/index";
-import { Popover, Stack, Typography } from "@mui/material"; // Replace with the correct imports
-import { BodyCell } from "components/Table";
 import useQueryParams from "hooks/useQueryParams";
 import { Dropdown } from "components/Filters";
 
