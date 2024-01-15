@@ -6,7 +6,7 @@ import { NS_COMMON } from "constant/index";
 
 type TextStatusProps = {
   text: string;
-  color: AlertColor | "purple";
+  color: AlertColor | "purple" | "positive";
   width?: TextProps["minWidth"];
   namespace?: string;
 } & Omit<TextProps, "color">;

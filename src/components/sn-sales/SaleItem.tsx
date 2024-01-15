@@ -20,7 +20,7 @@ import {
 } from "utils/index";
 import { DATE_LOCALE_FORMAT, NS_SALES } from "constant/index";
 import Avatar from "components/Avatar";
-import { IconButton, Text } from "components/shared";
+import { IconButton, Input, Text } from "components/shared";
 import { Sales } from "store/sales/reducer";
 import useGetEmployeeOptions from "./hooks/useGetEmployeeOptions";
 import { useSaleDetail, useSales } from "store/sales/selectors";
@@ -48,8 +48,9 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
   const { onAddSnackbar } = useSnackbar();
   const [owner, setOwner] = useState<string>(item.owner?.id);
   const [stage, setStage] = useState<string>(item.status);
-  const [probability, setProbability] = useState<number>(item.probability + 1);
+  const [probability, setProbability] = useState<number>(item.probability);
   const rowRef = useRef(null);
+  const [isEditProb, setIsEditProb] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   const { onSetRevenue } = useSaleDetail();
@@ -98,7 +99,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
 
   useEffect(() => {
     setStage(item.status);
-    setProbability(item.probability + 1);
+    setProbability(item.probability);
     setOwner(item.owner?.id);
   }, [item.owner, item.status, item.probability]);
 
@@ -221,7 +222,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
         {`${time}h`}
       </BodyCell>
       <BodyCell align="right">
-        <Dropdown
+        {/* <Dropdown
           name="probability"
           rootSx={{
             width: "100%",
@@ -243,6 +244,60 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           value={probability}
           options={mappingProbabilityOptions}
         />
+         */}
+        {!isEditProb ? (
+          <Text
+            fontSize={14}
+            color="gray.400"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditProb(true);
+            }}
+          >
+            {probability}%
+          </Text>
+        ) : (
+          <Input
+            value={probability}
+            name="ss"
+            sx={{}}
+            onBlur={async () => {
+              if (probability !== item.probability)
+                await onSubmit({ probability: probability })
+                  .then(() => {
+                    setProbability(probability);
+                  })
+                  .catch(() => {
+                    setProbability(item.probability);
+                  });
+              setIsEditProb(false);
+            }}
+            autoFocus={isEditProb}
+            focused={isEditProb}
+            rootSx={{
+              alignContent: "right",
+              padding: "4px!important",
+            }}
+            type="number"
+            onKeyDown={async (e) => {
+              if (e.key === "Enter") {
+                await onSubmit({ probability: probability })
+                  .then(() => {
+                    setProbability(probability);
+                  })
+                  .catch(() => {
+                    setProbability(item.probability);
+                  })
+                  .finally(() => {
+                    setIsEditProb(false);
+                  });
+              }
+            }}
+            onChange={(e) => {
+              setProbability(Number(e.target.value));
+            }}
+          />
+        )}
       </BodyCell>
       <BodyCell align="left" padding={isFocused ? "none" : "normal"}>
         <Stack
