@@ -29,12 +29,14 @@ export declare type TDocumentGroup = {
   documents: Array<{ [key: string]: any }>;
 };
 
-const ItemList = () => {
+const ItemList = (isGrouped: boolean) => {
   const { push } = useRouter();
   const { isMdSmaller } = useBreakpoint();
   const pathname = usePathname();
   const { query } = useQueryParams();
-  const { data, isLoading } = useGetDocsQuery(query, {refetchOnMountOrArgChange: true,});
+  const { data, isLoading } = useGetDocsQuery(query, {
+    refetchOnMountOrArgChange: true,
+  });
   const searchParams = useSearchParams()!;
 
   const desktopHeaderList: CellProps[] = useMemo(
@@ -126,6 +128,7 @@ const ItemList = () => {
             sx: { px: { xs: 0.5, md: 2 } },
           }}
         >
+          {console.log(data)}
           {query?.group_by == DocGroupByEnum.CREATED_BY &&
             Array.isArray(data?.docs) &&
             data?.docs.map((item) => {
@@ -142,26 +145,29 @@ const ItemList = () => {
             data?.docs.map((item) => {
               return (
                 <RowGroup
-                key={item?._id}
-                title={
-                  item.groupInfo ? (
-                    <>
-                      <Stack direction="row" alignItems="center" spacing={1}>
-                        <Avatar
-                          size={32}
-                          alt={item.groupInfo.name}
-                          src={item.groupInfo.avatar.link}
-                          style={{ marginRight: "8px" }}
-                        />
-                        {`${item.groupInfo.name} #${item.groupInfo?.number || 0}`}
-                      </Stack>
-                    </>
-                  ) : (
-                    "No project"
-                  )
-                }
-                items={item.docs}
-              />
+                  isGrouped={isGrouped}
+                  key={item?._id}
+                  title={
+                    item.groupInfo ? (
+                      <>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Avatar
+                            size={32}
+                            alt={item.groupInfo.name}
+                            src={item.groupInfo.avatar.link}
+                            style={{ marginRight: "8px" }}
+                          />
+                          {`${item.groupInfo.name} #${
+                            item.groupInfo?.number || 0
+                          }`}
+                        </Stack>
+                      </>
+                    ) : (
+                      "No project"
+                    )
+                  }
+                  items={item.docs}
+                />
               );
             })}
         </TableLayout>

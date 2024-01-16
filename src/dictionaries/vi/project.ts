@@ -30,6 +30,7 @@ export const ProjectLang: ProjectDictionary = {
     },
   },
   tabList: {
+    documents: "Tài liệu",
     tasks: "Công việc",
     activities: "Hoạt động",
     budget: "Chi phí",

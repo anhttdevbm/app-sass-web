@@ -49,7 +49,7 @@ const Actions = () => {
     let newQueries = {
       ...queries,
       page: 1,
-      group_by: DocGroupByEnum.PROJECT_ID
+      group_by: DocGroupByEnum.PROJECT_ID,
     };
 
     if (queries?.user_id?.length > 0) {
