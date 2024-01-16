@@ -14,7 +14,7 @@ export const TEXT_STAGE_STATUS: { [key in SALE_STAGE]: string } = {
 
 export const COLOR_STAGE_STATUS: { [key in SALE_STAGE]: string } = {
   [SALE_STAGE.LEAD]: "warning",
-  [SALE_STAGE.PROPOSAL_SENT]: "info",
+  [SALE_STAGE.PROPOSAL_SENT]: "positive",
   [SALE_STAGE.PROSPECT]: "error",
   [SALE_STAGE.WAITING_APPROVE]: "success",
   [SALE_STAGE.NEGOTIATION]: "purple",
@@ -87,18 +87,26 @@ export const CURRENCY_SYMBOL: Record<CURRENCY_CODE, string> = {
 };
 
 export const EXPORT_TYPE_OPTIONS = {
-  PDF: "PDF",
-  CSV: "CSV",
-  XLS: "XLS",
+  PDF: "pdf",
+  CSV: "csv",
+  XLS: "xls",
 };
 
 export const EXPORT_ORIENTATION_OPTIONS = {
-  PORTRAIT: "PORTRAIT",
-  LANDSCAPE: "LANDSCAPE",
+  PORTRAIT: "portrait",
+  LANDSCAPE: "landscape",
 };
 
 export const EXPORT_PAGE_SIZE_OPTIONS = {
-  A4: "A4",
+  LETTER: "letter",
+  LEGAL: "legal",
+  TABLOID: "tabloid",
+  LEDGER: "ledger",
+  A0: "A0",
+  A1: "A1",
+  A2: "A2",
   A3: "A3",
+  A4: "A4",
   A5: "A5",
+  A6: "A6",
 };

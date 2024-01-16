@@ -162,7 +162,8 @@ const ResourceLabel = ({
         "&:hover": {
           background: "#E1F0FFB2",
         },
-        minWidth: 450,
+        overflowX: 'auto',
+        minWidth: 550,
       }}
     >
       <Grid

@@ -47,8 +47,18 @@ const InformationBillingPage = () => {
 
   const [newServices, setNewServices] = useState<Service[]>([]);
 
+  const dataDuplicate = localStorage.getItem("duplicateBill");
+
+  const duplicateBill = useMemo(() => {
+    if (!dataDuplicate) return;
+    const data = JSON.parse(dataDuplicate);
+    return data;
+  }, [dataDuplicate]);
+
   useEffect(() => {
-    onGetBilling(id.toString() ?? "");
+    if (id) {
+      onGetBilling(id.toString() ?? "");
+    }
   }, [onGetBilling, updateStatus]);
 
   useEffect(() => {
@@ -67,12 +77,16 @@ const InformationBillingPage = () => {
     <Stack>
       <TopContent
         tagsOptions={tagsOptions}
-        item={item}
+        item={id ? item : duplicateBill}
         user={userInfo}
         memberOptions={options}
       />
 
-      <TabInfo item={item} user={userInfo} arrBudgets={budgets} />
+      <TabInfo
+        item={id ? item : duplicateBill}
+        user={userInfo}
+        arrBudgets={budgets}
+      />
     </Stack>
     // </FixedLayout>
   );

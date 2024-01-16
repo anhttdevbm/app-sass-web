@@ -82,6 +82,18 @@ export const BudgetingLang: BudgetingDictionary = {
         budgetedTime: 'Budgeted time',
         remainingTime: 'Remaining time',
       },
+      profit: {
+        title: 'PROFIT',
+        revenue: "Revenue",
+        cost: "Cost", 
+        profit: "Profit ",
+      },
+      budget: {
+        title: 'BUDGET',
+        budgetTotal: "Budget Total",
+        budgetUsed: "Budget Used",
+        budgetRemaining: "Budget Remaining",
+      },
       invoicing: {
         title: 'INVOICING',
         newInvoice: 'New invoice',
@@ -126,6 +138,8 @@ export const BudgetingLang: BudgetingDictionary = {
     editBtnText: 'Edit',
     service: 'Service',
     update: 'Update',
+    exportView: 'Export View',
+    exportBtnText: 'Export',
   },
   dialogExpense: {
     titleModalAdd: "New Expense",

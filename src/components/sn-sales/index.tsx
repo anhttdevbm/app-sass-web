@@ -121,6 +121,7 @@ const SalesPage = () => {
         name: "owner.fullname",
         value: salesT("list.table.owner"),
         align: "left",
+
         width: "12%",
         sort: true,
         minWidth: 130,
@@ -131,11 +132,20 @@ const SalesPage = () => {
         align: "right",
         sort: true,
         component: (props) => (
-          <Stack {...props} alignItems="flex-end">
+          <Stack
+            {...props}
+            alignItems="flex-end"
+            sx={{
+              paddingTop: "4px",
+            }}
+          >
             <Text variant="h6" color="grey.400" noWrap>
               {salesT("list.table.revenue")}
             </Text>
-            <Text variant="h6">
+            <Text
+              variant="h6"
+              color={totalRevenue > 0 ? "primary.main" : "error.main"}
+            >
               {formatCurrency(totalRevenue, {
                 prefix: "$",
                 numberOfFixed: 2,
@@ -153,7 +163,13 @@ const SalesPage = () => {
         sort: true,
         component: (props) => {
           return (
-            <Stack {...props} alignItems="flex-end">
+            <Stack
+              {...props}
+              alignItems="flex-end"
+              sx={{
+                paddingTop: "4px",
+              }}
+            >
               <Text
                 variant="h6"
                 color="grey.400"
@@ -167,7 +183,10 @@ const SalesPage = () => {
               >
                 {salesT("list.table.pjRevenue")}
               </Text>
-              <Text variant="h6">
+              <Text
+                variant="h6"
+                color={totalRevenuePJ > 0 ? "primary.main" : "error.main"}
+              >
                 {formatCurrency(totalRevenuePJ, {
                   prefix: "$",
                   numberOfFixed: 2,
@@ -181,7 +200,31 @@ const SalesPage = () => {
       },
       {
         name: "estimate",
-        value: salesT("list.table.time"),
+        value: (
+          <Stack
+            alignItems="flex-end"
+            sx={{
+              paddingTop: "4px",
+            }}
+          >
+            <Text
+              variant="h6"
+              color="grey.400"
+              noWrap
+              sx={{
+                textOverflow: "ellipsis",
+                WebkitLineClamp: 1,
+                width: "100%",
+                overflow: "hidden",
+              }}
+            >
+              {salesT("list.table.time")}
+            </Text>
+            <Text variant="h6">
+              {formatNumber(totalTime, { numberOfFixed: 0 })}h
+            </Text>
+          </Stack>
+        ),
         align: "right",
         component: (props) => (
           <Stack {...props} alignItems="flex-end">
@@ -247,7 +290,12 @@ const SalesPage = () => {
         px={2}
         pending={isFetching && shouldLoad}
         headerProps={{
-          sx: { px: { xs: 2, md: 2 }, overflow: "auto" },
+          sx: {
+            px: { xs: 2, md: 2 },
+            overflow: "auto",
+            verticalAlign: "top",
+            py: "4px",
+          },
         }}
         containerHeaderProps={{
           sx: {

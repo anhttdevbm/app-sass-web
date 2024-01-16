@@ -56,7 +56,11 @@ const ExportModal = ({ open, onClose }: IProps) => {
   });
 
   const onSubmit = async () => {
-    await exportDeal().then(() => {
+    await exportDeal({
+      format: getValues("type"),
+      orientation: getValues("orientation"),
+      pageSize: getValues("pageSize"),
+    }).then(() => {
       onClose();
     });
   };
@@ -114,22 +118,7 @@ const ExportModal = ({ open, onClose }: IProps) => {
                   fullWidth
                   error={error?.message}
                   {...field}
-                  title={salesT(`${salesFormTranslatePrefix}.pageSize`)}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="includeAttachment"
-              render={({ field, fieldState: { error } }) => (
-                <Select
-                  options={INCLUDE_ATTACHMENT_TYPE}
-                  fullWidth
-                  error={error?.message}
-                  {...field}
-                  title={salesT(
-                    `${salesFormTranslatePrefix}.includeAttachment`,
-                  )}
+                  title={salesT(`${salesFormTranslatePrefix}.pagesize`)}
                 />
               )}
             />

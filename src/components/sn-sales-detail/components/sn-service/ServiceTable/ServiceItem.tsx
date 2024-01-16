@@ -111,7 +111,7 @@ const ServiceItem = ({ service, index, sectionIndex, sectionKey }: IProps) => {
             />
           </Stack>
         </BodyCell>
-        <BodyCell align="right">
+        <BodyCell align="center">
           <Text variant="body2">{position}</Text>
         </BodyCell>
         <BodyCell>
@@ -160,6 +160,21 @@ const ServiceItem = ({ service, index, sectionIndex, sectionKey }: IProps) => {
               boxSizing: "border-box",
             }}
           >
+            {`${service.estimate || 0}h`}
+          </Text>
+        </BodyCell>
+
+        <BodyCell align={ALIGN_CELL}>
+          <Text
+            variant="body2"
+            sx={{
+              pointerEvents: "none",
+              display: "block",
+              wordBreak: "break-word",
+              height: "fit-content",
+              boxSizing: "border-box",
+            }}
+          >
             {formatNumber(
               typeof service.qty === "string"
                 ? parseInt(service.qty)
@@ -191,20 +206,6 @@ const ServiceItem = ({ service, index, sectionIndex, sectionKey }: IProps) => {
                 numberOfFixed: 2,
               },
             )}
-          </Text>
-        </BodyCell>
-        <BodyCell align={ALIGN_CELL}>
-          <Text
-            variant="body2"
-            sx={{
-              pointerEvents: "none",
-              display: "block",
-              wordBreak: "break-word",
-              height: "fit-content",
-              boxSizing: "border-box",
-            }}
-          >
-            {`${service.estimate || 0}h`}
           </Text>
         </BodyCell>
         <BodyCell align={ALIGN_CELL}>

@@ -18,6 +18,7 @@ import useBreakpoint from "hooks/useBreakpoint";
 import { usePathname, useRouter } from "next-intl/client";
 import { useParams } from "next/navigation";
 import {
+  BILLING_DUPLICATE_PATH,
   BILLING_PATH,
   PROJECT_MEMBERS_PATH,
   PROJECT_TASKS_PATH,
@@ -152,6 +153,14 @@ const TopContent = (props: TopContentProps) => {
       onGetBilling(id);
     }
   }, [addUserStatus]);
+
+  const onDuplicate = () => {
+    localStorage.setItem(
+      "duplicateBill",
+      JSON.stringify({ ...item, duplicate: true }),
+    );
+    push(BILLING_DUPLICATE_PATH);
+  };
 
   return (
     <Stack gap={1} pt={2} ml={5}>
@@ -341,7 +350,12 @@ const TopContent = (props: TopContentProps) => {
               >
                 {option ===
                 billingT("detail.form.top.button.option.duplicateInvoice") ? (
-                  <Stack gap={2} direction={"row"} alignItems={"center"}>
+                  <Stack
+                    gap={2}
+                    direction={"row"}
+                    alignItems={"center"}
+                    onClick={() => onDuplicate()}
+                  >
                     <ContentCopyRounded />
                     <Text variant={"body2"}>
                       {billingT(

@@ -4,7 +4,7 @@ import { formErrorCode } from "api/formErrorCode";
 import Avatar from "components/Avatar";
 import { Dropdown } from "components/Filters";
 import Link from "components/Link";
-import { Button, Text } from "components/shared";
+import { Button, Input, Text } from "components/shared";
 import { useGetStageOptions } from "components/sn-sales-detail/hooks/useGetDealDetail";
 import LabelStatusCell from "components/sn-sales/components/LabelStatusCell";
 import {
@@ -38,14 +38,20 @@ const TabHeader = () => {
   const { salesFilters, pageIndex, pageSize } = useSales();
   const { push } = useRouter();
   const { onAddSnackbar } = useSnackbar();
+  const [isEditProb, setIsEditProb] = React.useState(false);
   const commonT = useTranslations(NS_COMMON);
   const salesT = useTranslations(NS_SALES);
 
-  const { control, handleSubmit, getValues } = useFormContext();
+  const { control, handleSubmit, getValues, watch } = useFormContext();
 
   const onSubmit = async (name, value) => {
     try {
-      await onUpdateDeal({ id: saleDetail?.id, [name]: value });
+      await onUpdateDeal({
+        id: saleDetail?.id,
+        [name]: Number.parseFloat(value),
+      }).catch((e) => {
+        throw e;
+      });
     } catch (error) {
       console.log(error);
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
@@ -163,7 +169,7 @@ const TabHeader = () => {
             );
           }}
         />
-        <Controller
+        {/* <Controller
           control={control}
           name="probability"
           defaultValue={(saleDetail?.probability || 0) + 1}
@@ -184,7 +190,83 @@ const TabHeader = () => {
               />
             );
           }}
-        />
+        /> */}
+
+        {!isEditProb ? (
+          <Text
+            fontSize={14}
+            color="gray.400"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditProb(true);
+            }}
+            sx={{
+              padding: "6px 8px",
+            }}
+          >
+            {`${salesT("list.table.probability")} - ${watch("probability")}`}%
+          </Text>
+        ) : (
+          <Controller
+            control={control}
+            name="probability"
+            defaultValue={saleDetail?.probability || 0}
+            render={({ field }) => {
+              const { onChange, value, ...rest } = field;
+              const onSelect = async (name: string, value: number) => {
+                await onSubmit(name, value)
+                  .then(() => {
+                    onChange(value);
+                  })
+                  .catch((e) => {
+                    onChange(saleDetail?.probability || 0);
+                    throw e;
+                  });
+              };
+              return (
+                <Stack direction="row">
+                  <Text
+                    fontSize={14}
+                    color="gray.400"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditProb(true);
+                    }}
+                    sx={{
+                      padding: "6px 8px",
+                    }}
+                  >
+                    {`${salesT("list.table.probability")} - `}
+                  </Text>
+                  <Input
+                    {...rest}
+                    value={value}
+                    onBlur={() => {
+                      if (value !== saleDetail?.probability)
+                        onSelect("probability", value);
+                      setIsEditProb(false);
+                    }}
+                    type="number"
+                    autoFocus={isEditProb}
+                    focused={isEditProb}
+                    rootSx={{
+                      width: "50px",
+                      alignContent: "right",
+                      padding: "4px!important",
+                    }}
+                    onKeyDown={async (e) => {
+                      if (e.key === "Enter") {
+                        onSelect("probability", value);
+                        setIsEditProb(false);
+                      }
+                    }}
+                    onChange={onChange}
+                  />
+                </Stack>
+              );
+            }}
+          />
+        )}
         {/* <Dropdown
           hasAll={false}
           value={saleDetail?.probability || 0 + 1}

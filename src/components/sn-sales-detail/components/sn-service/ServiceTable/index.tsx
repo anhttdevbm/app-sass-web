@@ -233,8 +233,8 @@ const ServiceTable = ({
                   sx={{
                     minHeight: 100,
                     minWidth: {
-                      md: isEdit ? 1625 : 1320,
-                      xs: isEdit ? "100%" : 1320,
+                      md: isEdit ? 1625 : 1120,
+                      xs: isEdit ? "100%" : 1120,
                       overflow: "visible",
                     },
                     width: "100%",

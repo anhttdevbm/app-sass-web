@@ -57,6 +57,7 @@ export const BILLING_CREATE_PATH = "/billing/create";
 export const BILLING_INFO_PATH = "/billing/{id}";
 export const BILLING_DETAIL_PATH = "/billing/detail";
 export const BILLING_EXPORT_PATH = "/billing/export/{id}";
+export const BILLING_DUPLICATE_PATH = "/billing/duplicate";
 
 // Landing
 export const LANDING_HOME_PATH = "/landing";
@@ -104,6 +105,7 @@ export const AUTHORIZED_PATHS = {
     BILLING_DETAIL_PATH,
     BILLING_EXPORT_PATH,
     BILLING_PATH,
+    BILLING_DUPLICATE_PATH,
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
@@ -154,6 +156,7 @@ export const AUTHORIZED_PATHS = {
     BILLING_DETAIL_PATH,
     BILLING_EXPORT_PATH,
     BILLING_PATH,
+    BILLING_DUPLICATE_PATH,
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,

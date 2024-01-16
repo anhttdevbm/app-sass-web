@@ -15,7 +15,7 @@ import { ModalExpense } from "components/sn-budgeting/TabDetail/ModalExpense";
 import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
 import TextStatus from "components/TextStatus";
 import { NS_BUDGETING } from "constant/index";
-import { BUDGETING_PATH } from "constant/paths";
+import { BILLING_CREATE_PATH, BUDGETING_PATH } from "constant/paths";
 import dayjs from "dayjs";
 import useToggle from "hooks/useToggle";
 import EditIcon from "icons/EditIcon";
@@ -41,6 +41,7 @@ import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
 import useTheme from "hooks/useTheme";
 import _ from "lodash";
 import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
+import { useRouter } from "next-intl/client";
 
 enum TABS {
   FEED = "Feed",
@@ -93,12 +94,12 @@ export const BudgetDetail = () => {
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
   const [dateFilter, setDateFilter] = useState<any>("");
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
-  const [selectedService, setSelectedService] =
-    useState<TBudgetService | null>();
+  const [selectedService, setSelectedService] = useState<TBudgetService | null>();
   const [selectedTime, setSelectedTime] = useState<TTimeRanges | null>();
 
   const { id } = useParams();
   const { isDarkMode } = useTheme();
+  const { push } = useRouter();
 
   const budgetDetailQuery = useBudgetByIdQuery(String(id));
   const serviceQuery = useBudgetGetServiceQuery(String(id));
@@ -109,7 +110,7 @@ export const BudgetDetail = () => {
   useEffect(() => {
     if (serviceQuery) {
       const services: any[] = _.map(
-        _.get(serviceQuery, "data.data", []),
+        _.get(serviceQuery, "data.data.sections", []),
         (section) => {
           return _.get(section, "services", []);
         },
@@ -164,12 +165,14 @@ export const BudgetDetail = () => {
       case TABS.INVOICES:
         return (
           <Button
-            onClick={() => {}}
             id="budget_add_new_invoice"
             startIcon={<PlusIcon />}
             variant="primary"
             size="small"
             sx={{ height: "40px", mx: "2px" }}
+            onClick={() => {
+              push(BILLING_CREATE_PATH + `?budget=${id}`);
+            }}
           >
             {budgetT("toolbar.addInvoice")}
           </Button>
@@ -204,11 +207,8 @@ export const BudgetDetail = () => {
     openModalTime: () => {
       openModalTime();
     },
-    openModalExpense: (data?: any) => {
+    openModalExpense: () => {
       openModalExpense();
-    },
-    refetchServiceQuery: () => {
-      serviceQuery.refetch();
     },
   }));
 
@@ -362,9 +362,10 @@ export const BudgetDetail = () => {
             {activeTab === TABS.RECURRING && <Recurring />}
             {activeTab === TABS.SERVICES && (
               <Service
-                sections={_.get(serviceQuery, "data.data", [])}
+                sections={_.get(serviceQuery, "data.data.sections", [])}
                 isEdit={isEditService}
                 onCloseEdit={offEditService}
+                serviceData={_.get(serviceQuery, "data.data")}
                 refetch={() => {
                   serviceQuery.refetch();
                 }}
@@ -403,7 +404,10 @@ export const BudgetDetail = () => {
       />
       <ModalExpense
         open={isOpenModalExpense}
-        onClose={hideModalExpense}
+        onClose={() => {
+          setSelectedService(null);
+          hideModalExpense();
+        }}
         services={servicesList}
         serviceId={_.get(selectedService, "id", "")}
       />
