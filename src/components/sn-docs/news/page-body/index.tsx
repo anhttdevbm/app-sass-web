@@ -37,7 +37,7 @@ import { TextSelection } from 'prosemirror-state';
 
 const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const pageInfo = useAppSelector((state) => state.doc.pageInfo);
-  const {
+  let {
     perm,
     content,
     id,
@@ -45,13 +45,15 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     description,
     project_id,
   } = useAppSelector((state) => state.doc);
+  const dispatch = useDispatch();
+  const { handleGetDocDetail } = useDocs();
+  const currentId = useAppSelector((state) => state.doc.id);
 
   const [openChangeCover, setOpenChangeCover] = useState<boolean>(false);
   const { theme } = useContext(ThemeContext);
   const { openComment } = useContext(NewPageContext);
   const [minHeight, setMinHeight] = useState("100vh");
   const { isDarkMode } = useTheme();
-  const dispatch = useDispatch();
   const [mounted, setMounted] = useState(false);
   const { handleUpdateDoc } = useDocs();
 
@@ -60,13 +62,37 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     updateDoc({ id: id as string, payload: { name: value } });
   }, 200);
 
-  const [handleTitleChange] = useDebounce((value: string): void => {
-    // debounceChange(value);
-    dispatch(changeTitle(value));
-    dispatch(changeDescription(value));
-  }, 200);
+  const [handleTitleChange, isTitleChangeDone, cancelTitleChange] = useDebounce(
+    (value: string): void => {
+      // debounceChange(value);
+      dispatch(changeTitle(value));
+      dispatch(changeDescription(value));
+    },
+    200,
+  );
 
   useEffect(() => {
+    cancelTitleChange();
+    console.log({ currentId });
+    // (async () => {
+    //   setMounted(false);
+    //   await handleGetDocDetail(currentId);
+    //   console.log("state", { content, name, description, project_id });
+    //   setMounted(true);
+    // })();
+  }, [currentId]);
+
+  const [textDescription, setTextDescription] = useState<string>("");
+
+  useEffect(() => {
+    console.log({
+      content,
+      name,
+      description,
+      project_id,
+      currentId,
+    });
+    setTextDescription(description);
     const data = {
       content: content,
       name: name || undefined,
@@ -81,7 +107,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     } else {
       setMounted(true);
     }
-  }, [description, name, content, project_id]);
+  }, [description, name, content, project_id, currentId]);
 
   const editor = useDocEditor() as Editor;
 
@@ -166,14 +192,19 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             <Textarea
               maxRows={3}
               id="title"
+              value={textDescription}
               disabled={!canEdit}
-              defaultValue={description}
+              // defaultValue={description}
               placeholder="Enter document title..."
-              onChange={(e) => handleTitleChange(e.target.value)}
+              onChange={(e) => {
+                setTextDescription(e.target.value);
+                handleTitleChange(e.target.value);
+              }}
               autoComplete="off"
               spellCheck="false"
             />
           </form>
+          {textDescription}
           <div
             className={`${styles.editor}`}
             style={{ pointerEvents: canEdit ? "auto" : "none",  height: '50vh', overflowY: "scroll"}}
