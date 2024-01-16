@@ -73,13 +73,13 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
 
   useEffect(() => {
     cancelTitleChange();
-    console.log({ currentId });
-    // (async () => {
-    //   setMounted(false);
-    //   await handleGetDocDetail(currentId);
-    //   console.log("state", { content, name, description, project_id });
-    //   setMounted(true);
-    // })();
+    // console.log({ currentId });
+    (async () => {
+      setMounted(false);
+      await handleGetDocDetail(currentId);
+      console.log("state", { content, name, description, project_id });
+      setMounted(true);
+    })();
   }, [currentId]);
 
   const [textDescription, setTextDescription] = useState<string>("");
