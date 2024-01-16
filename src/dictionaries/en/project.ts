@@ -31,6 +31,7 @@ export const ProjectLang: ProjectDictionary = {
     },
   },
   tabList: {
+    documents: "Documents",
     tasks: "Tasks",
     activities: "Activities",
     budget: "Budget",
@@ -63,6 +64,11 @@ export const ProjectLang: ProjectDictionary = {
         image: "Image",
       },
       noData: "No data",
+    },
+  },
+  detailDocuments: {
+    head: {
+      title: "Documents of Project | Taskcover",
     },
   },
   detailMembers: {

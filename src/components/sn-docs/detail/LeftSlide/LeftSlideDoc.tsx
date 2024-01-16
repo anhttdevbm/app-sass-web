@@ -14,6 +14,8 @@ import useTheme from "hooks/useTheme";
 import { useGetDocDetailQuery, useCreateDocMutation } from "store/docs/api";
 import { useParams } from "next/navigation";
 import { useDocs } from "store/docs/selectors";
+import { useDispatch } from "react-redux";
+import { changeId } from "store/docs/reducer";
 
 export interface LeftSlideDocProps {
   open: boolean;
@@ -64,12 +66,12 @@ const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
   const { handleGetDocDetail } = useDocs();
 
   const handleChangeDocument = (id) => {
+    // alert("-> " + id);
     handleGetDocDetail(id);
   };
 
   // Hàm xử lý khi nhấn nút "Thêm mục con"
   const handleAddChild = (parent, project_id) => {
-    alert(parent);
     const id = uuid();
     const newChild = {
       id: id,

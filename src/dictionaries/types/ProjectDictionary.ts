@@ -27,6 +27,7 @@ export type ProjectDictionary = {
     };
   };
   tabList: {
+    documents: string;
     tasks: string;
     activities: string;
     budget: string;
