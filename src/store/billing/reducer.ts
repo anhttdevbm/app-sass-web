@@ -157,6 +157,7 @@ export interface Billing {
   save?: boolean;
   billFrom?: any;
   billTo?: any;
+  duplicate?: boolean;
 }
 
 export interface Payment {
