@@ -16,7 +16,7 @@ export default function Page() {
   return (
     <Wrapper overflow="auto" inFrame>
       <Actions />
-      <ItemList />
+      <ItemList isGrouped={false} />
     </Wrapper>
   );
 }
