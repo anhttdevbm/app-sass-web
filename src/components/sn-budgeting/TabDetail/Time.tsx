@@ -20,10 +20,8 @@ import { useOnClickOutside } from "hooks/useOnClickOutside";
 import EditIcon from "icons/EditIcon";
 import moment from "moment";
 import { useTranslations } from "next-intl";
-import {
-  useBudgetTimeRemove
-} from "queries/budgeting/time-range";
-import { useEffect, useState } from "react";
+import { useBudgetTimeRemove } from "queries/budgeting/time-range";
+import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
@@ -61,7 +59,11 @@ interface Props {
   refetch: () => void;
 }
 
-export const Time = ({ selectedTime, timeList = [], refetch = () => {} }: Props) => {
+export const Time = ({
+  selectedTime,
+  timeList = [],
+  refetch = () => {},
+}: Props) => {
   const { onAddSnackbar } = useSnackbar();
   const removeTimeRange = useBudgetTimeRemove();
 
@@ -76,49 +78,60 @@ export const Time = ({ selectedTime, timeList = [], refetch = () => {} }: Props)
     control,
   });
 
-  const headerList: CellProps[] = [
-    { value: "", align: "center" },
-    { value: budgetT("tabTime.service"), align: "center" },
-    { value: budgetT("tabTime.person"), align: "center" },
-    { value: budgetT("tabTime.notes"), align: "center" },
-    { value: budgetT("tabTime.time"), data: "105:00", align: "center" },
-    { value: budgetT("tabTime.billable"), data: "105:00", align: "center" },
-    { value: "", align: "center", width: "5%" },
-  ];
+  const headerList: CellProps[] = useMemo(() => {
+    const totalTime: any = _.reduce(
+      timeList || [],
+      (total: number, timeItem: TTimeRanges) => total + (timeItem.timeRanges / 60),
+      0,
+    );
+
+    const totalBillable: any = _.reduce(
+      timeList || [],
+      (total: number, timeItem: TTimeRanges) => total + (timeItem.billableTime / 60),
+      0,
+    );
+
+    return [
+      { value: "", align: "center", width: "10%" },
+      { value: budgetT("tabTime.service"), align: "center", width: "20%" },
+      { value: budgetT("tabTime.person"), align: "center", width: "20%" },
+      { value: budgetT("tabTime.notes"), align: "center", width: "20%" },
+      { value: budgetT("tabTime.time"), align: "center", data: `${totalTime || 0}:00`, width: "10%" },
+      { value: budgetT("tabTime.billable"), align: "center", data: `${totalBillable || 0}:00`, width: "15%" },
+      { value: "", align: "center", width: "5%" },
+    ];
+  }, [timeList]);
 
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
 
   useEffect(() => {
-    const times: TTimeRanges[] = _.map(
-      timeList,
-      (doc, index) => {
-        return {
-          index: index,
-          id: doc.id,
-          docId: doc.id,
-          createdAt: doc?.createdAt,
-          date: doc?.date,
-          note: doc?.note,
-          service: _.get(doc, "services.id", ""),
-          timeRanges: doc.timeRanges,
-          billableTime: doc.billableTime,
-          name: _.get(doc, "services.name", ""),
-          person: {
-            avatar: _.get(doc, "created_by.avatar.link", ""),
-            fullname: _.get(doc, "created_by.fullname", ""),
-          },
-        } as any;
-      },
-    );
-    
+    const times: TTimeRanges[] = _.map(timeList, (doc, index) => {
+      return {
+        index: index,
+        id: doc.id,
+        docId: doc.id,
+        createdAt: doc?.createdAt,
+        date: doc?.date,
+        note: doc?.note,
+        service: _.get(doc, "services.id", ""),
+        timeRanges: doc.timeRanges,
+        billableTime: doc.billableTime,
+        name: _.get(doc, "services.name", ""),
+        person: {
+          avatar: _.get(doc, "created_by.avatar.link", ""),
+          fullname: _.get(doc, "created_by.fullname", ""),
+        },
+      } as any;
+    });
+
     setValue("times", times);
   }, [timeList]);
 
   const handleRemoveTimeRange = async () => {
-    removeTimeRange.mutateAsync(_.get(selectedTime, 'docId', ''), {
+    removeTimeRange.mutateAsync(_.get(selectedTime, "docId", ""), {
       onSuccess() {
         onAddSnackbar("Success", "success");
-        remove(_.get(selectedTime, 'index'));
+        remove(_.get(selectedTime, "index"));
         setAnchorEl(null);
         refetch();
       },
@@ -134,12 +147,12 @@ export const Time = ({ selectedTime, timeList = [], refetch = () => {} }: Props)
         {fields.map((data, index) => {
           return (
             <TableRow key={`budget-time-${index}`}>
-              <BodyCell>
+              <BodyCell sx={{ textAlign: "center" }}>
                 {`${moment(data.createdAt).format("DD MMM")}`}
                 <br></br>
                 {`${moment(data.createdAt).format("hh:mm")}`}
               </BodyCell>
-              <BodyCell>{data.name}</BodyCell>
+              <BodyCell sx={{ textAlign: "center" }}>{data.name}</BodyCell>
               <BodyCell
                 sx={{
                   display: "flex",
@@ -151,9 +164,15 @@ export const Time = ({ selectedTime, timeList = [], refetch = () => {} }: Props)
                   {_.get(data, "person.fullname", "")}
                 </Typography>
               </BodyCell>
-              <BodyCell>{_.get(data, "note", "")}</BodyCell>
-              <BodyCell>{_.get(data, "timeRanges", "")}</BodyCell>
-              <BodyCell>{_.get(data, "billableTime", "")}</BodyCell>
+              <BodyCell sx={{ textAlign: "center" }}>
+                {_.get(data, "note", "")}
+              </BodyCell>
+              <BodyCell sx={{ textAlign: "center" }}>
+                {_.get(data, "timeRanges", "")}
+              </BodyCell>
+              <BodyCell sx={{ textAlign: "center" }}>
+                {_.get(data, "billableTime", "")}
+              </BodyCell>
               <BodyCell sx={{ p: 0 }}>
                 <IconButton
                   noPadding

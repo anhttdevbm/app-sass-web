@@ -38,24 +38,24 @@ export const ServiceAreaSection = ({
     {
       value: budgetT("tabService.section.serviceName"),
       align: "left",
-      minWidth: 350,
+      width: "25%"
     },
     {
       value: budgetT("tabService.section.estimate"),
       align: "center",
-      minWidth: 60,
+      width: "25%"
     },
     {
       value: budgetT("tabService.section.price"),
       align: "center",
-      minWidth: 60,
+      width: "20%"
     },
     {
       value: budgetT("tabService.section.totalBudget"),
       align: "center",
-      minWidth: 100,
+      width: '20%'
     },
-    { value: "", align: "left", width: "3%" },
+    { value: "", align: "left", width: "10%" },
   ];
 
   return (
@@ -87,11 +87,11 @@ export const ServiceAreaSection = ({
               }}
               sx={{
                 minHeight: 100,
-                minWidth: {
-                  md: 1320,
-                  xs: 1320,
-                  overflow: "visible",
-                },
+                // minWidth: {
+                //   md: 1320,
+                //   xs: 1320,
+                //   overflow: "visible",
+                // },
                 width: "100%",
                 [`&.MuiTableCell-root :first-child`]: {
                   pl: 4,

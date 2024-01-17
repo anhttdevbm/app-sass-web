@@ -166,6 +166,7 @@ export const ModalAddTime = ({
                 onChange={(_: string, newDate: Date | undefined) => {
                   onChange(newDate ? moment(newDate).format() : "");
                 }}
+                pickerProps={{ autoComplete: "off" }}
               />
             )}
           />
@@ -184,6 +185,7 @@ export const ModalAddTime = ({
             }}
             disabled={!!serviceId}
             value={watch("service")}
+            autoComplete="off"
           />
 
           <Controller
@@ -196,6 +198,7 @@ export const ModalAddTime = ({
                 fullWidth
                 value={value}
                 onChange={onChange}
+                autoComplete="off"
               />
             )}
           />
@@ -214,6 +217,7 @@ export const ModalAddTime = ({
                   }}
                   pickerProps={
                     {
+                      autoComplete: "off",
                       dateFormat: "h:mm aa",
                       timeIntervals: 1,
                       showTimeSelect: true,
@@ -237,6 +241,7 @@ export const ModalAddTime = ({
                   }}
                   pickerProps={
                     {
+                      autoComplete: "off",
                       dateFormat: "h:mm aa",
                       timeIntervals: 1,
                       showTimeSelect: true,
@@ -247,7 +252,7 @@ export const ModalAddTime = ({
               )}
             />
           </Stack>
-          <Textarea label={budgetT("dialog.note")} {...register("note")} />
+          <Textarea label={budgetT("dialog.note")} {...register("note")} autoComplete="off" rows={4} sx={{ backgroundColor: 'transparent !important' }} />
         </MenuList>
       </Stack>
     </FormLayout>
