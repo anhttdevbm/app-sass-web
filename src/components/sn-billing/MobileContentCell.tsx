@@ -14,7 +14,7 @@ import FolderIcon from "../../icons/FolderIcon";
 
 type MobileContentCellProps = {
   item?: Billing;
-  onOpenModalExport: (value: Billing[]) => void;
+  onOpenModalExport: (value: Billing) => void;
 };
 
 type InformationItemProps = {
@@ -61,7 +61,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
         {item?.budget ? item?.budget[0]?.name : ""}
       </BodyCell>
       <BodyCell align="center">
-        <Button onClick={() => onOpenModalExport([item ?? {}])}>
+        <Button onClick={() => onOpenModalExport(item ?? {})}>
           <FolderIcon />
         </Button>
       </BodyCell>

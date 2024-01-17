@@ -44,6 +44,10 @@ const colorSchemes = {
         dark: "#04AA77", // OK
         contrastText: "#FFFFFF",
       },
+      positive: {
+        main: "#6993FF",
+        light: "#E1E9FF",
+      },
       purple: {
         main: "#8950FC",
         light: "#EEE5FF",

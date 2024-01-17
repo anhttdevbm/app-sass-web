@@ -17,6 +17,8 @@ import TextIcon from "icons/TextIcon";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import React, { memo, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setContentRow } from "store/docs/reducer";
 
 declare type TDocHistory = {
   _id: string;
@@ -31,14 +33,17 @@ declare type TDocHistory = {
 
 const HistoryDocItem: React.FC<{ data: TDocHistory }> = ({ data }) => {
   const docsT = useTranslations(NS_DOCS);
-
+  const dispatch = useDispatch();
+console.log(data, 'ff')
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        cursor: 'pointer'
       }}
+      onClick={() => dispatch(setContentRow(data?.new))}
     >
       <Box>
         <Text

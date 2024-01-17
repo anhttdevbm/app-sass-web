@@ -107,5 +107,47 @@ export type BillingDictionary = {
       };
     };
   };
-  detail: {};
+  detail: {
+    form: {
+      invoice: {
+        table: {
+          service_type: string;
+          description: string;
+          unit: string;
+          qty: string;
+          rate: string;
+          amount: string;
+          discount: string;
+        };
+        tableBudget: {
+          linkedBudget: string;
+          timePeriod: string;
+          invoicedwithoutTax: string;
+          leftForInvoicing: string;
+        };
+        bill: {};
+        button: {};
+        title: {};
+      };
+      feed: {
+        table: {};
+        button: {};
+        title: {};
+      };
+      payment: {
+        table: {};
+        table2: {};
+        button: {};
+        title: {};
+      };
+      top: {
+        button: {};
+        title: {};
+      };
+    };
+  };
+  viewPdf: {
+    title: {};
+    button: {};
+  };
 };

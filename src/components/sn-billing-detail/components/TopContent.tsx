@@ -15,9 +15,10 @@ import ChevronIcon from "icons/ChevronIcon";
 import { Button, IconButton, Select, Text } from "components/shared";
 import { useHeaderConfig } from "store/app/selectors";
 import useBreakpoint from "hooks/useBreakpoint";
-import { usePathname } from "next-intl/client";
+import { usePathname, useRouter } from "next-intl/client";
 import { useParams } from "next/navigation";
 import {
+  BILLING_DUPLICATE_PATH,
   BILLING_PATH,
   PROJECT_MEMBERS_PATH,
   PROJECT_TASKS_PATH,
@@ -30,6 +31,7 @@ import { Billing, Member } from "store/billing/reducer";
 import { Option, User } from "constant/types";
 import TrashIcon from "icons/TrashIcon";
 import {
+  CloseOutlined,
   ContentCopyRounded,
   Subtitles,
   SubtitlesOutlined,
@@ -40,12 +42,6 @@ import SelectMembers from "./SelectMembers";
 import { Dropdown } from "components/Filters";
 import DropdownTag from "./DropdownTag";
 import { useBillings } from "store/billing/selectors";
-
-const options = [
-  "Duplicate Invoice",
-  "Create Credit Invoice",
-  "Delete Invoice",
-];
 
 const ITEM_HEIGHT = 48;
 
@@ -63,11 +59,17 @@ const TopContent = (props: TopContentProps) => {
   const { isMdSmaller } = useBreakpoint();
   const billingT = useTranslations(NS_BILLING);
   const { id } = useParams() as { id: string };
-
+  const { push } = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [listUser, setListUser] = useState<Member[]>([]);
   const [tagSelected, setTagSelected] = useState<string>("");
   const open = Boolean(anchorEl);
+
+  const options = [
+    billingT("detail.form.top.button.option.duplicateInvoice"),
+    billingT("detail.form.top.button.option.createCreditNote"),
+    billingT("detail.form.top.button.option.deleteInvoice"),
+  ];
 
   const setMember = new Set<String>();
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -152,6 +154,14 @@ const TopContent = (props: TopContentProps) => {
     }
   }, [addUserStatus]);
 
+  const onDuplicate = () => {
+    localStorage.setItem(
+      "duplicateBill",
+      JSON.stringify({ ...item, duplicate: true }),
+    );
+    push(BILLING_DUPLICATE_PATH);
+  };
+
   return (
     <Stack gap={1} pt={2} ml={5}>
       <Stack
@@ -194,9 +204,10 @@ const TopContent = (props: TopContentProps) => {
           }}
         >
           <Text variant={"body2"} sx={{ color: "#1BC5BD" }}>
-            Paid
+            {billingT("detail.form.top.title.paid")}
           </Text>
         </Box>
+        <CloseOutlined onClick={() => push(BILLING_PATH)} />
       </Stack>
       <Stack
         direction="row"
@@ -217,7 +228,7 @@ const TopContent = (props: TopContentProps) => {
             size="small"
             variant="primary"
           >
-            Mark as sent
+            {billingT("detail.form.top.button.markAsSent")}
           </Button>
         </Stack>
         <Stack
@@ -337,17 +348,33 @@ const TopContent = (props: TopContentProps) => {
                 selected={option === "Pyxis"}
                 onClick={handleClose}
               >
-                {option === "Duplicate Invoice" ? (
-                  <Stack gap={2} direction={"row"} alignItems={"center"}>
+                {option ===
+                billingT("detail.form.top.button.option.duplicateInvoice") ? (
+                  <Stack
+                    gap={2}
+                    direction={"row"}
+                    alignItems={"center"}
+                    onClick={() => onDuplicate()}
+                  >
                     <ContentCopyRounded />
-                    <Text variant={"body2"}>Duplicate Invoice</Text>
+                    <Text variant={"body2"}>
+                      {billingT(
+                        "detail.form.top.button.option.duplicateInvoice",
+                      )}
+                    </Text>
                   </Stack>
-                ) : option === "Create Credit Invoice" ? (
+                ) : option ===
+                  billingT("detail.form.top.button.option.createCreditNote") ? (
                   <Stack gap={2} direction={"row"} alignItems={"center"}>
                     <SubtitlesOutlined />
-                    <Text variant={"body2"}>Create Credit Invoice</Text>
+                    <Text variant={"body2"}>
+                      {billingT(
+                        "detail.form.top.button.option.createCreditNote",
+                      )}
+                    </Text>
                   </Stack>
-                ) : option === "Delete Invoice" ? (
+                ) : option ===
+                  billingT("detail.form.top.button.option.deleteInvoice") ? (
                   <Stack
                     gap={2}
                     direction={"row"}
@@ -356,7 +383,7 @@ const TopContent = (props: TopContentProps) => {
                   >
                     <TrashIcon sx={{ fontSize: 25 }} />
                     <Text variant={"body2"} color={"red"}>
-                      Delete Invoice
+                      {billingT("detail.form.top.button.option.deleteInvoice")}
                     </Text>
                   </Stack>
                 ) : (

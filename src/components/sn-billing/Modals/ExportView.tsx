@@ -17,6 +17,8 @@ import { Billing } from "store/billing/reducer";
 import { getPath } from "utils/index";
 import { useBillings } from "store/billing/selectors";
 import { BillingDataExport } from "store/billing/actions";
+import { useSnackbar } from "store/app/selectors";
+
 // import useExportDeal from "../hooks/useExportDeal";
 
 interface IProps {
@@ -75,6 +77,7 @@ const ExportModal = ({ open, onClose, item }: IProps) => {
   const schema = yup.object().shape({
     type: yup.string(),
   });
+  const { onAddSnackbar } = useSnackbar();
 
   const { handleSubmit, control, reset, getValues } = useForm({});
 
@@ -91,6 +94,10 @@ const ExportModal = ({ open, onClose, item }: IProps) => {
     // if (selected.document && selected.document !== "") {
     //   push(BILLING_EXPORT_PATH);
     // }
+    if (!selected.document || selected.document.length === 0) {
+      onAddSnackbar("Bạn chưa chọn định dạng file!", "error");
+      return;
+    }
     if (selected && selected.document === "PDF") {
       const queries = { fileType: selected.orient, pageType: selected.page };
       onExportBilling(queries, item);
@@ -121,6 +128,7 @@ const ExportModal = ({ open, onClose, item }: IProps) => {
         cancelText={commonT("form.cancel")}
         onClose={onClose}
         onSubmit={handleSubmit(onSubmit)}
+
         //   submitting={isFetching}
       >
         <Stack gap={2} direction="column" sx={{ mb: 4 }}>
@@ -178,3 +186,6 @@ const ExportModal = ({ open, onClose, item }: IProps) => {
 };
 
 export default memo(ExportModal);
+function onAddSnackbar(arg0: any, arg1: string) {
+  throw new Error("Function not implemented.");
+}

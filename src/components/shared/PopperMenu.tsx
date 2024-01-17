@@ -32,15 +32,15 @@ export const PopperMenu = ({
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
   const [width, setWidth] = useState<number | string>(0);
 
-  useEffect(() => {
-    if (!anchorEl) {
-      setTimeout(() => {
-        setWidth(0);
-      }, 300);
-    } else {
-      setWidth(anchorEl.offsetWidth + "px");
-    }
-  }, [anchorEl]);
+  // useEffect(() => {
+  //   if (!anchorEl) {
+  //     setTimeout(() => {
+  //       setWidth(0);
+  //     }, 300);
+  //   } else {
+  //     setWidth(anchorEl.offsetWidth + "px");
+  //   }
+  // }, [anchorEl]);
 
   return (
     <Popper

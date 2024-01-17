@@ -1,9 +1,8 @@
 import { Stack } from "@mui/material";
-import { memo } from "react";
-import CommentSection from "../components/Comment";
-import { Text } from "components/shared";
-import { Billing } from "store/billing/reducer";
 import { User } from "constant/types";
+import { memo } from "react";
+import { Billing } from "store/billing/reducer";
+import CommentSection from "../components/Comment";
 
 type TabProps = {
   title: string;

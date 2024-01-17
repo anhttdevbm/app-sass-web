@@ -110,6 +110,7 @@ export const ProjectLang: ProjectDictionary = {
     selectedCount: "{value} đã chọn",
     assignee: "Người được giao",
     processingDuplicate: "Hệ thống đang xử lý sao chép...",
+    unsaveMessage: "Mô tả nhiệm vụ chưa được lưu, bạn có muốn lưu nó không?",
     nameWillBeExisted:
       "Tên công việc con bị trùng nhau, vui lòng đổi tên nó trước khi di chuyển.",
     keys: {
@@ -136,7 +137,7 @@ export const ProjectLang: ProjectDictionary = {
       deleteTaskListSuccess: "Xóa danh mục công việc thành công!",
       deleteTasksSuccess: "Xóa công việc thành công!",
       actionTaskSuccess: "Cập nhật {label} công việc thành công!",
-      taskNameIsRequired: 'Tên công việc không được bỏ trống',
+      taskNameIsRequired: "Tên công việc không được bỏ trống",
     },
   },
   taskDetail: {
@@ -200,7 +201,7 @@ export const ProjectLang: ProjectDictionary = {
       start_date: "Ngày bắt đầu",
       end_date: "Ngày kết thúc",
       owner: "Người tạo",
-      project_id: "Project ID",
+      project_id: "Dự án",
     },
     createBudgetSuccess: "Thêm chi phí mới thành công",
     table: {

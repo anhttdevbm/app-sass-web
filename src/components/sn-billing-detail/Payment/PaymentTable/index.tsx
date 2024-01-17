@@ -20,8 +20,6 @@ type IProps = {
   handleOpen: () => void;
 };
 
-const options = ["Edit", "Delete"];
-
 const ITEM_HEIGHT = 48;
 
 const PaymentTable = (props: IProps) => {
@@ -30,6 +28,11 @@ const PaymentTable = (props: IProps) => {
   const { isMdSmaller } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
+
+  const options = [
+    billingT("detail.form.payment.button.option.edit"),
+    billingT("detail.form.payment.button.option.delete"),
+  ];
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -42,24 +45,28 @@ const PaymentTable = (props: IProps) => {
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: "Status",
+        value: `${billingT("detail.form.payment.table2.status")}`,
         align: "left",
         width: "15%",
       },
       {
-        value: "Date",
+        value: `${billingT("detail.form.payment.table2.date")}`,
         align: "left",
         width: "15%",
       },
       {
-        value: "Overdue",
+        value: `${billingT("detail.form.payment.table2.overdue")}`,
         align: "left",
         width: "15%",
       },
-      { value: "Amount", align: "left", width: "15%" },
+      {
+        value: `${billingT("detail.form.payment.table2.amount")}`,
+        align: "left",
+        width: "15%",
+      },
 
       {
-        value: "Note",
+        value: `${billingT("detail.form.payment.table2.note")}`,
         align: "left",
         width: "15%",
       },
@@ -69,24 +76,28 @@ const PaymentTable = (props: IProps) => {
   const mobileHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: "Status",
+        value: `${billingT("detail.form.payment.table2.status")}`,
         align: "left",
         width: "15%",
       },
       {
-        value: "Date",
+        value: `${billingT("detail.form.payment.table2.date")}`,
         align: "left",
         width: "15%",
       },
       {
-        value: "Overdue",
+        value: `${billingT("detail.form.payment.table2.overdue")}`,
         align: "left",
         width: "15%",
       },
-      { value: "Amount", align: "left", width: "15%" },
+      {
+        value: `${billingT("detail.form.payment.table2.amount")}`,
+        align: "left",
+        width: "15%",
+      },
 
       {
-        value: "Note",
+        value: `${billingT("detail.form.payment.table2.note")}`,
         align: "left",
         width: "15%",
       },
@@ -172,13 +183,15 @@ const PaymentTable = (props: IProps) => {
                   selected={option === "Pyxis"}
                   onClick={handleClose}
                 >
-                  {option === "Edit" ? (
+                  {option ===
+                  billingT("detail.form.payment.button.option.edit") ? (
                     <Text variant={"body2"} onClick={() => handleOpen()}>
                       <Stack direction={"row"} alignItems={"center"} gap={2}>
                         <PencilUnderlineIcon /> {option}
                       </Stack>
                     </Text>
-                  ) : option === "Delete" ? (
+                  ) : option ===
+                    billingT("detail.form.payment.button.option.delete") ? (
                     <Text variant={"body2"} color={"red"}>
                       <Stack direction={"row"} alignItems={"center"} gap={2}>
                         <TrashIcon /> {option}

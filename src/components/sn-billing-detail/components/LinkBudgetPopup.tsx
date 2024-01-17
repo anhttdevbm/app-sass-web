@@ -8,7 +8,7 @@ import { formatNumber } from "utils/index";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { CURRENCY_CODE } from "constant/enums";
 import { Search } from "components/Filters";
-import { NS_COMMON } from "constant/index";
+import { NS_BILLING, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import PlusIcon from "icons/PlusIcon";
 
@@ -16,6 +16,7 @@ type IProps = {};
 const LinkBudgetPopup = (props: IProps) => {
   const {} = props;
   const commonT = useTranslations(NS_COMMON);
+  const billingT = useTranslations(NS_BILLING);
   return (
     <>
       <PopoverLayout
@@ -46,7 +47,7 @@ const LinkBudgetPopup = (props: IProps) => {
             >
               <PlusIcon sx={{ color: "#1BC5BD", mr: 1 }} />
               <Text variant={"body1"} color={"#1BC5BD"}>
-                Link Budget
+                {billingT("detail.form.invoice.button.linkBudget")}
               </Text>
             </Button>
           </Stack>

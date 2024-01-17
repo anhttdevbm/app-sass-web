@@ -71,40 +71,64 @@ const AccountInfoHeader = ({
             style={{ position: "relative", cursor: "pointer" }}
           >
             {avatar ? (
-              <Avatar
-                alt="Avatar"
-                size={40}
-                src={avatar || undefined}
-                onError={() => setAvatar(undefined)}
-              />
+              <>
+                <Avatar
+                  alt="Avatar"
+                  size={40}
+                  src={avatar || undefined}
+                  onError={() => setAvatar(undefined)}
+                />
+                <IconButton
+                  style={{
+                    width: 5,
+                    height: 5,
+                    position: "absolute",
+                    right: 2,
+                    bottom: 0,
+                    cursor: "unset",
+                  }}
+                >
+                  <PointOnline />
+                </IconButton>
+              </>
             ) : (
-              <ImageList
-                sx={{ width: 56, height: 56, margin: 0 }}
-                cols={2}
-                rowHeight={164}
-              >
-                <Avatar
-                  alt="Avatar"
-                  size={25}
-                  style={{
-                    borderRadius: "50%",
+              <>
+                <ImageList
+                  sx={{
+                    width: 50,
+                    height: 50,
+                    margin: 0,
+                    position: "relative",
                   }}
-                />
-                <Avatar
-                  alt="Avatar"
-                  size={25}
-                  style={{
-                    borderRadius: "5px",
-                  }}
-                />
-                <Avatar
-                  alt="Avatar"
-                  size={25}
-                  style={{
-                    borderRadius: "5px",
-                  }}
-                />
-                {usersCount - 3 > 0 ? (
+                >
+                  <Avatar
+                    alt="Avatar"
+                    size={36}
+                    style={{
+                      border: "4px solid ",
+                      borderColor: "background.default",
+                      borderRadius: "50%",
+                      position: "absolute",
+                      bottom: "10px",
+                      left: "10px",
+                    }}
+                  />
+                  <Avatar
+                    alt="Avatar"
+                    size={36}
+                    style={{
+                      border: "3px solid ",
+                      borderColor: "background.default",
+                      borderRadius: "50%",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                    }}
+                  />
+
+                  {/* Show how many members in group
+                
+                  {usersCount - 3 > 0 ? (
                   <Box
                     sx={{
                       textAlign: "center",
@@ -117,21 +141,22 @@ const AccountInfoHeader = ({
                       + {usersCount - 3}
                     </Typography>
                   </Box>
-                ) : null}
-              </ImageList>
+                ) : null} */}
+                </ImageList>
+                <IconButton
+                  style={{
+                    width: 5,
+                    height: 5,
+                    position: "absolute",
+                    right: 12,
+                    bottom: -6,
+                    cursor: "unset",
+                  }}
+                >
+                  <PointOnline />
+                </IconButton>
+              </>
             )}
-            <IconButton
-              style={{
-                width: 5,
-                height: 5,
-                position: "absolute",
-                right: -2,
-                bottom: -2,
-                cursor: "unset",
-              }}
-            >
-              <PointOnline />
-            </IconButton>
           </div>
           <Box
             onClick={() => {
@@ -147,7 +172,7 @@ const AccountInfoHeader = ({
             <Typography
               variant="inherit"
               fontWeight="bold"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", WebkitLineClamp: 1 }}
             >
               {dataTransfer?.fname
                 ? dataTransfer?.fname?.replaceAll("_", " ")
@@ -281,10 +306,11 @@ const AccountInfoHeader = ({
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
+              gap: "3px",
               padding: 1,
               borderBottom: "1px solid #ECECF3",
               backgroundColor: "#3699FF",
+              height: "72px",
             }}
           >
             <IconButton
@@ -299,13 +325,12 @@ const AccountInfoHeader = ({
             </IconButton>
             {_renderItemHeader(viewStep)}
 
-            <Box ml="auto">
+            <Box ml="auto" display="flex">
               {viewStep == STEP.CHAT_DETAIL_GROUP && (
                 <IconButton>
                   <SearchIcon
                     sx={{
                       color: "#FFFFFF",
-                      // fontSize: "24px!important",
                     }}
                     onClick={() => {
                       onSetStep(STEP.SEARCH_CHAT_TEXT);
@@ -316,6 +341,7 @@ const AccountInfoHeader = ({
               <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
                 onClick={() => {
                   onSetStep(STEP.ADD_MEMBER, {
@@ -329,23 +355,26 @@ const AccountInfoHeader = ({
               <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
               >
                 <VideoCallIcon />
               </IconButton>
+
+              {viewStep != STEP.CHAT_DETAIL_GROUP && viewStep != STEP.LIST && (
+                <IconButton
+                  onClick={() => {
+                    onSetStep(STEP.CHAT_DETAIL_GROUP);
+                  }}
+                  sx={{
+                    color: "white",
+                    padding: "6px",
+                  }}
+                >
+                  <InfoUserIcon />
+                </IconButton>
+              )}
             </Box>
-            {viewStep != STEP.CHAT_DETAIL_GROUP && viewStep != STEP.LIST && (
-              <IconButton
-                onClick={() => {
-                  onSetStep(STEP.CHAT_DETAIL_GROUP);
-                }}
-                sx={{
-                  color: "white",
-                }}
-              >
-                <InfoUserIcon />
-              </IconButton>
-            )}
           </Box>
         );
     }

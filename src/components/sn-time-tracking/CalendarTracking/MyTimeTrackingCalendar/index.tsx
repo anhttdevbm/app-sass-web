@@ -205,10 +205,10 @@ const TrackingCalendar: React.FC<IProps> = () => {
   useEffect(() => {
     _.forEach(myTime, (timesheet) => {
       const idEvent = timesheet?.id;
-      getSameWorker({ id: idEvent }).then(async (res) => {
+      getSameWorker({ id: idEvent || "" }).then(async (res) => {
         const cloneObject = _.cloneDeep(sameTime);
 
-        cloneObject[idEvent] = res || [];
+        cloneObject[idEvent || ""] = res || [];
         setSameTime((state) => ({ ...state, ...cloneObject }));
       });
     });
@@ -240,8 +240,8 @@ const TrackingCalendar: React.FC<IProps> = () => {
             note: timesheet?.note,
           },
         };
-        if (timesheet.type === "Work time") totalWorkTime += timesheet.duration;
-        else totalBreakTime += timesheet.duration;
+        if (timesheet.type === "Work time") totalWorkTime += timesheet?.duration || 0;
+        else totalBreakTime += timesheet?.duration || 0;
 
         result.push(newEvent);
       });
@@ -743,9 +743,14 @@ const TrackingCalendar: React.FC<IProps> = () => {
                 },
                 ".fc-day.fc-day-sun, .fc-day.fc-day-sat, .fc-timegrid-axis, colgroup":
                   {
-                    backgroundColor: "#FAFAFA",
-                    color: isDarkMode ? "#71717A" : "#fff",
+                    backgroundColor: isDarkMode ? "rgb(86, 86, 86)" : "#FAFAFA",
+                    ...(isDarkMode && {
+                      color: "#fff",
+                    }),
                   },
+                ".fc-timegrid-axis .fc-timegrid-axis-frame": {
+                  color: isDarkMode ? "#fff" : undefined,
+                },
                 "colgroup, colgroup col": {
                   width: "112px !important",
                 },
@@ -761,6 +766,10 @@ const TrackingCalendar: React.FC<IProps> = () => {
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 selectable={true}
                 select={handleDateSelect}
+                selectConstraint={{
+                  startTime: "00:01",
+                  endTime: "23:59",
+                }}
                 eventResize={({ event, endDelta }) => {
                   const date = dayjs(event.start).format("YYYY-MM-DD") || "";
                   const time =
@@ -1322,7 +1331,7 @@ const TrackingCalendar: React.FC<IProps> = () => {
                         fontSize: "12px",
                         lineHeight: "18px",
                         fontWeight: 400,
-                        color: "#666666",
+                        color: isDarkMode ? "#fff" : "#666666",
                       }}
                     >
                       {currentTime}

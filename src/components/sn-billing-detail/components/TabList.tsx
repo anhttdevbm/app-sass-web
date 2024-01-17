@@ -2,7 +2,7 @@ import { Box, Button, Stack, StackProps, Tab } from "@mui/material";
 import { NS_BILLING } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import TabInvoice from "../Invoice";
@@ -19,13 +19,15 @@ import { User } from "constant/types";
 import { useBillings } from "store/billing/selectors";
 import { FormikProps, useFormik } from "formik";
 import { Padding } from "@mui/icons-material";
+import { BillingData } from "store/billing/actions";
+import { BILLING_PATH } from "constant/paths";
+import { useRouter } from "next-intl/client";
 
 type TabItemProps = {
   label: string;
   value: string;
   editForm?: boolean;
   item?: Billing;
-  arrService?: Service[];
   arrBudgets?: Budgets[];
   user: User;
   form: FormikProps<Billing>;
@@ -37,16 +39,17 @@ type TabItemProps = {
 
 type TabListProps = {
   item?: Billing;
-  arrService?: Service[];
   arrBudgets?: Budgets[];
   user: User;
 };
 
 const TabInfo = (props: TabListProps) => {
-  const { arrService, item, user, arrBudgets } = props;
+  const { item, user, arrBudgets } = props;
   // const { id } = useParams() as { id: string };
   // const pathname = usePathname();
-  const { onUpdateBilling, updateStatus } = useBillings();
+  const billingT = useTranslations(NS_BILLING);
+  const { onUpdateBilling, updateStatus, onCreateBilling, createStatus } =
+    useBillings();
   const [value, setValue] = useState("Invoice");
   const [editForm, setEditForm] = useState<boolean>(false);
   const [billToInfo, setBillToInfo] = useState<Bill>({});
@@ -54,21 +57,62 @@ const TabInfo = (props: TabListProps) => {
   const [billFromInfo, setBillFromInfo] = useState<Bill>({
     fullNameCompany: user?.company,
   });
+  const { push } = useRouter();
+
+  const TABS = [
+    {
+      label: billingT("detail.form.invoice.title.invoice"),
+      value: "Invoice",
+    },
+    {
+      label: billingT("detail.form.feed.title.Feed"),
+      value: "Feed",
+    },
+    {
+      label: billingT("detail.form.payment.title.payments"),
+      value: "Payment",
+    },
+  ];
 
   const formik = useFormik<Billing>({
     enableReinitialize: true,
     initialValues: {},
     onSubmit(values, formikHelpers) {
       // setDataUpdate
-      const data = {
-        ...values,
-        // ...billToInfo,
-        id: item?.id,
-        billTo: billToInfo,
-        billFrom: billFromInfo,
-      } as BillingDataUpdate;
-      handleSaveValue(data ?? {});
-      setIsSubmit(true);
+
+      if (item?.duplicate) {
+        const arrUserId = item.user?.map((item) => {
+          return { id: item?.id };
+        });
+        const arrBudgetId = item.budget?.map((item) => {
+          return { id: item?.id };
+        });
+        const arrServiceId = item.budgetService?.map((item) => {
+          return { id: item?.id };
+        });
+
+        const data = {
+          budget: arrBudgetId,
+          user: arrUserId,
+          budgetService: arrServiceId,
+          invoiceMethod: 2,
+          vat: item?.vat,
+          amount: item?.amount,
+          amount_unpaid: item?.amount_unpaid,
+        };
+        handleCreateData(data);
+        setIsSubmit(true);
+      } else {
+        const data = {
+          ...values,
+          // ...billToInfo,
+          id: item?.id,
+          billTo: billToInfo,
+          billFrom: billFromInfo,
+        } as BillingDataUpdate;
+        handleSaveValue(data ?? {});
+        setIsSubmit(true);
+      }
     },
   });
 
@@ -84,13 +128,28 @@ const TabInfo = (props: TabListProps) => {
     onUpdateBilling(data);
   };
 
+  const handleCreateData = (data: BillingData) => {
+    onCreateBilling(data);
+  };
+
   useEffect(() => {
-    if (updateStatus && isSubmit) {
+    if (updateStatus && isSubmit && !item?.duplicate) {
       formik.resetForm();
       setEditForm(false);
       setIsSubmit(false);
     }
   }, [updateStatus, isSubmit]);
+
+  useEffect(() => {
+    if (createStatus && isSubmit && item?.duplicate) {
+      formik.resetForm();
+      setEditForm(false);
+      setIsSubmit(false);
+      localStorage.removeItem("duplicateBill");
+      push(BILLING_PATH);
+    }
+  }, [createStatus, isSubmit]);
+
   return (
     <>
       <Stack
@@ -146,7 +205,7 @@ const TabInfo = (props: TabListProps) => {
                       setEditForm(true);
                     }}
                   >
-                    Edit
+                    {billingT("detail.form.top.button.edit")}
                   </Button>
                 )}
 
@@ -158,13 +217,13 @@ const TabInfo = (props: TabListProps) => {
                         setEditForm(false);
                       }}
                     >
-                      Cancel
+                      {billingT("detail.form.top.button.cancel")}
                     </Button>
                     <Button
                       variant="contained"
                       onClick={() => formik.handleSubmit()}
                     >
-                      Save Change
+                      {billingT("detail.form.top.button.saveChange")}
                     </Button>
                   </>
                 )}
@@ -177,7 +236,6 @@ const TabInfo = (props: TabListProps) => {
               {...tab}
               label={tab.label}
               editForm={editForm}
-              arrService={arrService}
               item={item}
               user={user}
               arrBudgets={arrBudgets}
@@ -202,7 +260,6 @@ const TabItem = (props: TabItemProps) => {
     label,
     value,
     editForm,
-    arrService,
     item,
     user,
     arrBudgets,
@@ -237,7 +294,6 @@ const TabItem = (props: TabItemProps) => {
         <TabInvoice
           title={label}
           editForm={editForm}
-          arrService={arrService}
           item={item}
           user={user}
           arrBudgets={arrBudgets}
@@ -255,9 +311,3 @@ const TabItem = (props: TabItemProps) => {
     </TabPanel>
   );
 };
-
-const TABS = [
-  { label: "Invoice", value: "Invoice" },
-  { label: "Feed", value: "Feed" },
-  { label: "Payments", value: "Payment" },
-];

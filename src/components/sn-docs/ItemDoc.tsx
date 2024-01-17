@@ -16,10 +16,14 @@ import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 import styled from "@emotion/styled";
 
+import axios from "axios";
+
 export const RowGroup = (props) => {
   const { items, title, isGrouped } = props;
   const { isMdSmaller } = useBreakpoint();
   const { isDarkMode } = useTheme();
+ 
+
   return (
     <TableRow>
       <BodyCell align="left" padding="none" colSpan={4}>
@@ -39,7 +43,7 @@ export const RowGroup = (props) => {
             {Array.isArray(items) &&
               items.map((doc) => {
                 return (
-                  <TableRow>
+                  <TableRow key={doc}>
                     {!isMdSmaller ? (
                       <DesktopCells item={doc} />
                     ) : (

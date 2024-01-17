@@ -7,12 +7,15 @@ import { Billing } from "store/billing/reducer";
 import { formatNumber } from "utils/index";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { CURRENCY_CODE } from "constant/enums";
+import { NS_BILLING } from "constant/index";
+import { useTranslations } from "next-intl";
 
 type IProps = {
   form: FormikProps<Billing>;
 };
 const VatPopup = (props: IProps) => {
   const { form } = props;
+  const billingT = useTranslations(NS_BILLING);
   return (
     <>
       <PopoverLayout
@@ -21,14 +24,14 @@ const VatPopup = (props: IProps) => {
           <>
             <Stack direction={"row"} gap={2} p={2}>
               <Input
-                title="name"
+                title={billingT("detail.form.invoice.title.name")}
                 value={"VAT"}
                 disabled
                 rootSx={sxConfig.input}
                 fullWidth
               />
               <Input
-                title="Value (%)"
+                title={billingT("detail.form.invoice.title.value")}
                 rootSx={sxConfig.input}
                 fullWidth
                 name="vat"
@@ -44,7 +47,7 @@ const VatPopup = (props: IProps) => {
         }
         label={
           <Text variant={"body1"} color={"#1BC5BD"}>
-            Edit
+            {billingT("detail.form.invoice.button.edit")}
           </Text>
         }
       />

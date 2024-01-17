@@ -14,7 +14,7 @@ import FolderIcon from "../../icons/FolderIcon";
 type DesktopCellsProps = {
   item?: Billing;
   order: number;
-  onOpenModalExport: (value: Billing[]) => void;
+  onOpenModalExport: (value: Billing) => void;
 };
 
 const DesktopCells = (props: DesktopCellsProps) => {
@@ -62,7 +62,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
         {item?.budget ? item?.budget[0]?.name : ""}
       </BodyCell>
       <BodyCell align="center" sx={{ paddingRight: 4 }}>
-        <Button onClick={() => onOpenModalExport([item ?? {}])}>
+        <Button onClick={() => onOpenModalExport(item ?? {})}>
           <FolderIcon />
         </Button>
       </BodyCell>

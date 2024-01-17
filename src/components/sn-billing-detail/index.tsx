@@ -47,22 +47,19 @@ const InformationBillingPage = () => {
 
   const [newServices, setNewServices] = useState<Service[]>([]);
 
-  useEffect(() => {
-    onGetBilling(id.toString() ?? "");
-  }, [onGetBilling, updateStatus]);
+  const dataDuplicate = localStorage.getItem("duplicateBill");
+
+  const duplicateBill = useMemo(() => {
+    if (!dataDuplicate) return;
+    const data = JSON.parse(dataDuplicate);
+    return data;
+  }, [dataDuplicate]);
 
   useEffect(() => {
-    if (!isReady) return;
-    onGetBudgets({ ...initQuery });
-  }, [initQuery, isReady, onGetBudgets]);
-
-  useEffect(() => {
-    if (budgets && budgets?.length > 0) {
-      budgets?.forEach((item) => {
-        onGetServiceBudgets(item.id ?? "");
-      });
+    if (id) {
+      onGetBilling(id.toString() ?? "");
     }
-  }, [budgets]);
+  }, [onGetBilling, updateStatus]);
 
   useEffect(() => {
     onGetOptions({ pageIndex: 1, pageSize: 20 });
@@ -80,14 +77,13 @@ const InformationBillingPage = () => {
     <Stack>
       <TopContent
         tagsOptions={tagsOptions}
-        item={item}
+        item={id ? item : duplicateBill}
         user={userInfo}
         memberOptions={options}
       />
 
       <TabInfo
-        arrService={arrService}
-        item={item}
+        item={id ? item : duplicateBill}
         user={userInfo}
         arrBudgets={budgets}
       />

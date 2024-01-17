@@ -16,6 +16,7 @@ import NoneIcon from "icons/NoneIcon";
 import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
 import { useAppSelector } from "store/hooks";
+import { useParams, useSearchParams } from "next/navigation";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -34,6 +35,8 @@ const Actions = () => {
   const { perm } = useAppSelector((state) => state.doc);
   const pathname = usePathname();
   const { push } = useRouter();
+  const searchParams = useSearchParams();
+  console.log(searchParams.get('search_key'))
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
@@ -75,6 +78,10 @@ const Actions = () => {
     }
     setQueries(newFilter);
   }, [filters]);
+
+  useEffect(() => {
+    setQueries({search_key: searchParams.get('search_key')})
+  }, [searchParams.get('search_key')]);
 
   return (
     <>

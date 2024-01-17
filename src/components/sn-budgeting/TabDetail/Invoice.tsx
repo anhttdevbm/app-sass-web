@@ -65,7 +65,7 @@ export const Invoice = () => {
     event: ChangeEvent<HTMLInputElement>,
     isChecked: boolean,
   ) => {
-    const id: string = String(event.target.value);
+    const id = String(event.target.value);
 
     const indexIdInInvoiceSelected = invoiceSelected.findIndex(
       (expenseId) => expenseId === id,
