@@ -312,10 +312,6 @@ export const BudgetDetail = () => {
                       color: "primary.main",
                       borderColor: "primary.main",
                     }),
-                    "&:hover": {
-                      color: "primary.main",
-                      borderColor: "primary.main",
-                    },
                   }}
                   onClick={() => changeActiveTab(currentTab)}
                 >
@@ -383,6 +379,7 @@ export const BudgetDetail = () => {
             position: isOpenRightSidebar ? "relative" : "absolute",
             zIndex: isOpenRightSidebar ? 10 : -1,
             right: isOpenRightSidebar ? 0 : "-350px",
+            backgroundColor: isDarkMode ? "#313130" : "white",
           }}
         >
           <BudgetRightSidebar budget={budget} />

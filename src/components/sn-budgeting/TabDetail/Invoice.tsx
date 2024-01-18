@@ -92,23 +92,53 @@ export const Invoice = () => {
           />
         ),
         align: "center",
-        width: "3%",
+        width: "5%",
+        minWidth: 60,
       },
-      { value: budgetT("tabInvoice.subject"), align: "center" },
-      { value: budgetT("tabInvoice.invoiceNumber"), align: "center" },
-      { value: budgetT("tabInvoice.date"), align: "center" },
-      { value: budgetT("tabInvoice.att"), align: "center" },
+      {
+        value: budgetT("tabInvoice.subject"),
+        align: "center",
+        width: "15%",
+        minWidth: 150,
+      },
+      {
+        value: budgetT("tabInvoice.invoiceNumber"),
+        align: "center",
+        width: "15%",
+        minWidth: 150,
+      },
+      {
+        value: budgetT("tabInvoice.date"),
+        align: "center",
+        width: "10%",
+        minWidth: 120,
+      },
+      {
+        value: budgetT("tabInvoice.att"),
+        align: "center",
+        width: "10%",
+        minWidth: 60,
+      },
       {
         value: budgetT("tabInvoice.amountNoTax"),
-        data: "$56.000.000",
+        // data: "$56.000.000",
         align: "center",
+        width: "15%",
+        minWidth: 150,
       },
       {
         value: budgetT("tabInvoice.amountUnpaid"),
-        data: "$56.000.000",
+        // data: "$56.000.000",
         align: "center",
+        width: "15%",
+        minWidth: 150,
       },
-      { value: budgetT("tabInvoice.dueDate"), align: "center" },
+      {
+        value: budgetT("tabInvoice.dueDate"),
+        align: "center",
+        width: "15%",
+        minWidth: 120,
+      },
     ],
     [invoices, invoiceSelected],
   );
@@ -121,8 +151,20 @@ export const Invoice = () => {
             (inoviceId) => inoviceId === data.id,
           );
           return (
-            <TableRow key={`budget-invoice-${index}`}>
-              <BodyCell>
+            <TableRow
+              key={`budget-invoice-${index}`}
+              sx={{
+                "& > *": { borderBottom: "none !important" },
+                minHeight: 100,
+                minWidth: {
+                  md: 1320,
+                  xs: 1320,
+                  overflow: "visible",
+                },
+                width: "100%",
+              }}
+            >
+              <BodyCell sx={{ minWidth: 60 }}>
                 <Checkbox
                   checked={indexIdInInvoiceSelected !== -1}
                   value={data.id}
