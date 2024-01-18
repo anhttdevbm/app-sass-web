@@ -65,6 +65,11 @@ export const ProjectLang: ProjectDictionary = {
       noData: "Không có tệp nào",
     },
   },
+  detailDocuments: {
+    head: {
+      title: "Tài liệu trong dự án | Taskcover",
+    },
+  },
   detailMembers: {
     head: {
       title: "Thành viên dự án | Taskcover",
