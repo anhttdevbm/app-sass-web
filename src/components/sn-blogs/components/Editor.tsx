@@ -120,6 +120,7 @@ const Editor = (props: EditorProps) => {
         }
       });
     }
+    console.log(newFiles);
     setLoadedFiles(data);
     onChangeFiles && onChangeFiles(newFiles, data);
   };

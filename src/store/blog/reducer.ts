@@ -1,10 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { BlogData, BlogFormData, CommentBlogData, createBlogComment, createNewBlogs, deleteBlog, getAllBlogs, getBlogBySlug, getBlogComments, getRelatedBlog, updateBlog, updatePublished } from "./actions";
+import { BlogData, BlogFormData, CommentBlogData, TagData, createBlogComment, createNewBlogs, deleteBlog, getAllBlogs, getBlogBySlug, getBlogComments, getListBlogTags, getRelatedBlog, updateBlog, updatePublished } from "./actions";
 import { DataStatus } from "constant/enums";
 import { PagingItem } from "constant/types";
 import { GetBlogCategoryListQueries } from "store/blog-category/actions";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING, DEFAULT_PAGING_ITEM } from "constant/index";
 import { getFiltersFromQueries } from "utils/index";
+import { aC } from "@fullcalendar/core/internal-common";
 
 export interface CategoryBlog {
     id: string;
@@ -27,6 +28,7 @@ export interface BlogState {
     blog?: BlogData,
     relatedBlogs: BlogData[],
     listBlogComment: CommentBlogData[],
+    listBlogTag : TagData[],
 }
 type BlogStatistic = {
     searchKey?: string | undefined;
@@ -39,6 +41,7 @@ const initialState: BlogState = {
     blogsFilters: {},
     relatedBlogs: [],
     listBlogComment: [],
+    listBlogTag :[],
 }
 
 export const blogSlice = createSlice({
@@ -74,16 +77,14 @@ export const blogSlice = createSlice({
                 state.blogs.unshift(action.payload);
             }).addCase(getBlogBySlug.fulfilled, (state, action: PayloadAction<BlogData>) => {
                     state.blog = action.payload;
-            }).addCase(deleteBlog.fulfilled, (state, action: PayloadAction<string[]>) => {
-                state.blogsStatus = DataStatus.SUCCEEDED;
-                const deletedIds = action.payload;
-                deletedIds.forEach((deletedId) => {
-                  const indexDeleted = state.blogs.findIndex((item) => item.slug === deletedId);
-                  if (indexDeleted !== -1) {
-                    state.blogs.splice(indexDeleted, 1);
-                  }
-                });
-              })
+            }).addCase(deleteBlog.fulfilled, (state, action: PayloadAction<string>) => {
+              state.blogsStatus = DataStatus.SUCCEEDED;
+              const deletedId = action.payload;
+              const indexDeleted = state.blogs.findIndex((item) => item.slug === deletedId);
+              if (indexDeleted !== -1) {
+                state.blogs.splice(indexDeleted, 1);
+              }
+            })
               .addCase(deleteBlog.rejected, (state, action) => {
                 state.blogsStatus = DataStatus.FAILED;
                 state.blogsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
@@ -92,17 +93,16 @@ export const blogSlice = createSlice({
                 state.blogsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
               }).addCase(updatePublished.fulfilled, (state, action) => {
                 state.blogsStatus = DataStatus.SUCCEEDED;
-                const updatedBlogs = action.payload;
+                const updatedBlogList = action.payload;
                 state.blogs = state.blogs.map((blog) => {
-                  const updatedBlog = updatedBlogs.find((updated) => updated.id === blog.id);
-              
+                  const updatedBlog = updatedBlogList.find((updated) => updated.id === blog.id);
                   if (updatedBlog) {
                     return {
                       ...blog,
-                      ...updatedBlog,
+                      status: updatedBlog.status,
                     };
                   }
-                  return blog; 
+                  return blog;
                 });
               }).addCase(getBlogComments.fulfilled, (state, action) => {
                 state.listBlogComment = action.payload;
@@ -119,7 +119,10 @@ export const blogSlice = createSlice({
                 state.blog = action.payload;
               }).addCase(updateBlog.rejected, (state, action) => {
                 state.blogsStatus = DataStatus.FAILED;
-              });
+              }).addCase(getListBlogTags.fulfilled,(state, { payload })=>{
+                console.log(payload);
+                state.listBlogTag = payload;
+              })
       },
     },
 );

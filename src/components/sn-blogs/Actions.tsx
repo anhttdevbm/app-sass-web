@@ -5,7 +5,6 @@ import { Button, Text } from "components/shared"
 import useToggle from "hooks/useToggle";
 import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useMemo, useState } from "react";
-import { BLOG_STATUS } from "./helpers/helpers";
 import { BlogData, BlogFormData, BlogStatus } from "store/blog/actions";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import Form from "./components/Form";
@@ -29,7 +28,7 @@ const Actions = () => {
     const blogOptions = useMemo(
         () =>
             BLOG_STATUS_OPTIONS.map((item) => (
-                { ...item, label: item.label }
+                { ...item, label:  blogT(item.label) }
             )),
         [],
     );
@@ -43,9 +42,9 @@ const Actions = () => {
     };
 
     const onChangeQueries = (name: string, value: unknown) => {
-        if (name === "published") {
+        if (name === "status") {
             const addQueries = {
-                published: typeof value === "string" ? value : undefined,
+                status: typeof value === "string" ? value : undefined,
             };
             setQueries((prevQueries) => ({ ...prevQueries, ...addQueries }));
         } else {
@@ -113,9 +112,9 @@ const Actions = () => {
                     <Dropdown
                         placeholder={blogT("actions.status")}
                         options={blogOptions}
-                        name="published"
+                        name="status"
                         onChange={onChangeQueries}
-                        value={queries?.published !== undefined ? queries.published : null}
+                        value={queries?.status !== undefined ? queries.status : null}
                     />
                     <Button
                         size="extraSmall"
@@ -153,14 +152,15 @@ const Actions = () => {
 }
 export default memo(Actions);
 const BLOG_STATUS_OPTIONS = [
-    { label: BLOG_STATUS[BlogStatus.PUBLISHED], value: BlogStatus.PUBLISHED },
-    { label: BLOG_STATUS[BlogStatus.DRAFT], value: BlogStatus.DRAFT },
+    { label: BlogStatus[BlogStatus.PUBLISHED], value: BlogStatus.PUBLISHED },
+    { label: BlogStatus[BlogStatus.DRAFT], value: BlogStatus.DRAFT },
+    { label: BlogStatus[BlogStatus.HIDE], value: BlogStatus.HIDE },
 ];
 const INITIAL_VALUES = {
     title: "",
     content: "",
-    published: false,
     category: [],
     tag: [],
-    slug: ""
+    slug: "",
+    short_description:"",
 };

@@ -44,10 +44,15 @@ export const BlogLang: BlogDictionary = {
         statusBlog:"Trạng thái",
         slug:"Đường dẫn",
         created_time : "Ngày tạo",
-        relatedBlogs:"Bài viết liên quan"
+        relatedBlogs:"Bài viết liên quan",
+        short_description : "Mô tả",
+        notification: {
+            success: "Cập nhật trạng thái {label} thành công"
+        },
     },
     published: "Xuất bản",
     draft: "Bản nháp",
+    hide : "Ẩn",
     actions: {
         createBlog: "Thêm mới",
         search: "Tìm kiếm",
@@ -59,9 +64,10 @@ export const BlogLang: BlogDictionary = {
         },
         draft : "Nháp",
         published:"Xuất bản",
+        hide: "Ẩn",
         update:{
             title:"Bạn có muốn cập nhật trạng thái ?",
-            content:"Cập nhật trạng thái"
+            content:"Cập nhật trạng thái sang {label} "
         },
         updateBlog : "Cập nhật"
     },
@@ -75,13 +81,24 @@ export const BlogLang: BlogDictionary = {
         tag: "Nhãn dán",
         published: "Xuất bản",
         attachments: "Tệp đính kèm",
+        short_description : "Mô tả",
+        notification: {
+            success: "{label} bài viết thành công"
+        },
     },
     status: {
-        true: "Xuất bản",
-        false: "Nháp"
+        published: "Xuất bản",
+        draft: "Nháp",
+        hide : "Ẩn"
     },
     comment:{
         writeComment :"Viết bình luận",
         sendComment : "Gửi bình luận"
-    }
+    },
+    error:{
+        anErrorTryAgain : "Có lỗi xảy ra, vui lòng thử lại !"
+    },
+    PUBLISHED : "xuất bản",
+    DRAFT : "nháp",
+    HIDE : "ẩn"
 }

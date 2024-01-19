@@ -12,6 +12,7 @@ import {
     getAllBlogs,
     getBlogBySlug,
     getBlogComments,
+    getListBlogTags,
     getRelatedBlog,
     updateBlog,
     updatePublished,
@@ -20,15 +21,18 @@ import {
 import { DataStatus } from "constant/enums";
 import { clientStorage } from "utils/storage";
 import { ACCESS_TOKEN_STORAGE_KEY, IMAGES_ACCEPT } from "constant/index";
-import { Attachment } from "constant/types";
-import { object } from "yup";
+
 
 export const useBlogs = () => {
     const dispatch = useAppDispatch();
-    const { blogs: items, blogsStatus: status, blogsError: error, blogsFilters: filters, blog: item, relatedBlogs, listBlogComment } = useAppSelector(
-        (state) => state.blogs,
-        shallowEqual,
-    );
+    const { blogs: items, blogsStatus: status, 
+        blogsError: error, blogsFilters: filters, 
+        blog: item, relatedBlogs, 
+        listBlogComment, listBlogTag } =
+        useAppSelector(
+            (state) => state.blogs,
+            shallowEqual,
+        );
     const { page, size, totalItems, total_page } = useAppSelector(
         (state) => state.blogs.blogsPaging,
         shallowEqual,
@@ -46,6 +50,7 @@ export const useBlogs = () => {
     const onUpdateBlog = useCallback(
         async (blog: BlogFormData) => {
             try {
+                console.log(blog);
                 if (blog.backgroundUpload) {
                     const backgroundUploadResponse = await dispatch(
                         uploadFile({
@@ -54,16 +59,10 @@ export const useBlogs = () => {
                     );
                     blog.background = backgroundUploadResponse.payload.object;
                 }
-                if (blog.attachmentsUpload && blog.attachmentsUpload.length > 0) {
-                    const attachmentUploadPromises = blog.attachmentsUpload.map((file) =>
-                        dispatch(uploadFile({ file }))
-                    );
-                    const attachmentUploadResponses = await Promise.all(attachmentUploadPromises);
-                    blog.attachments = attachmentUploadResponses.map((response) => response.payload.object);
-                }
+                console.log(blog.attachments);
                 const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
                 var id = blog.id as string;
-                return await dispatch(updateBlog({ id ,blog, Token: Token ?? null })).unwrap();
+                return await dispatch(updateBlog({ id, blog, Token: Token ?? null })).unwrap();
             } catch (error) {
                 throw error;
             }
@@ -71,7 +70,7 @@ export const useBlogs = () => {
         [dispatch],
     );
 
-    
+
 
     const onGetBlogBySlug = useCallback(
         async (slug: string) => {
@@ -124,14 +123,6 @@ export const useBlogs = () => {
                     );
                     data.background = backgroundUploadResponse.payload.object;
                 }
-                // Upload attachmentsUpload
-                if (data.attachmentsUpload && data.attachmentsUpload.length > 0) {
-                    const attachmentUploadPromises = data.attachmentsUpload.map((file) =>
-                        dispatch(uploadFile({ file }))
-                    );
-                    const attachmentUploadResponses = await Promise.all(attachmentUploadPromises);
-                    data.attachments = attachmentUploadResponses.map((response) => response.payload.object);
-                }
                 const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
                 return await dispatch(createNewBlogs({ data, Token: Token ?? null })).unwrap();
             } catch (error) {
@@ -149,29 +140,44 @@ export const useBlogs = () => {
         [dispatch]
     );
 
-  const onDeleteBlog = useCallback(
-    async (blogIds: string[]) => {
-      try {
-        console.log("ids : " + blogIds);
-        const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
-        return await dispatch(deleteBlog({ ids: blogIds, Token: Token })).unwrap();
-      } catch (error) {
-        throw error;
-      }
-    },
-    [dispatch]
-  );
+    const onDeleteBlog = useCallback(
+        async (blogIds: string) => {
+            try {
+                console.log("ids : " + blogIds);
+                const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
+                return await dispatch(deleteBlog({ ids: blogIds, Token: Token })).unwrap();
+            } catch (error) {
+                throw error;
+            }
+        },
+        [dispatch]
+    );
 
-  const onUpdatePublished =  useCallback(
-    async(blogDataList: BlogData[],published:boolean)=>{
-        try {
-            const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
-            return await dispatch(updatePublished({ blogList: blogDataList,published:published, Token: Token })).unwrap();
-        } catch (error) {
-           throw error; 
-        }
-    },[dispatch]
-  )
+    const onUpdatePublished = useCallback(
+        async (blogIds: string[], published: string) => {
+            try {
+                const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
+                return await dispatch(updatePublished({ blogList: blogIds, status: published, Token: Token })).unwrap();
+            } catch (error) {
+                throw error;
+            }
+        }, [dispatch]
+    );
+
+    const onGetListTag = useCallback(
+        async () => {
+          try {
+            const result = await dispatch(getListBlogTags()).unwrap();
+            console.log(result);  // Log the result to check if data is fetched successfully
+          } catch (error) {
+            throw error;
+          }
+        },
+        [dispatch]
+      );
+      
+
+
     return {
         onGetBlogs,
         onUpdateBlog,
@@ -196,5 +202,7 @@ export const useBlogs = () => {
         onApproveOrReject,
         onDeleteBlog,
         onUpdatePublished,
+        onGetListTag,
+        listBlogTag,
     };
 };
