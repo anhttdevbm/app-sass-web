@@ -1,9 +1,8 @@
-import React, { memo, SyntheticEvent, useRef, useState } from "react";
+import React, { memo, SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Autocomplete, SxProps, MenuItem, Stack, Chip } from "@mui/material";
-import { Option } from "constant/types";
 import { Input, Text } from "components/shared";
 import ArrowDownIcon from "icons/ArrowDownIcon";
-import { uuid } from "utils/index";
+import { TagData } from "store/blog/actions";
 
 // Import necessary libraries and components
 
@@ -11,14 +10,14 @@ const ID_PLACEHOLDER = 'your-uuid-placeholder';
 
 interface SelectMultipleProps {
   limitTags?: number;
-  options: Option[];
+  options: TagData[];
   label: string;
-  onSelect: (event: SyntheticEvent<Element, Event>, value: Option[]) => void;
+  onSelect: (event: SyntheticEvent<Element, Event>, value: TagData[]) => void;
   loading?: boolean;
   onEndReached?: () => void;
   sx?: SxProps;
   error?: string;
-  value?: Option[];
+  value?: TagData[];
   onEnter?: (value: string | undefined) => void;
   onOpen?: () => void;
   onInputChange?: (value: string) => void;
@@ -51,19 +50,19 @@ const SelectMultiple: React.FC<SelectMultipleProps> = ({
   loading = true,
   value = [],
 }: SelectMultipleProps) => {
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const [selectedValues, setSelectedValues] = React.useState<Option[]>([]);
-
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedValues, setSelectedValues] = useState<TagData[]>([]);
   const selectedOptions = options.filter((option) =>
-    value.some((selectedOption) => selectedOption.label === option.label)
+    value.some((selectedOption) => selectedOption.tag === option.tag)
   );
-
+  useEffect(() => {
+    setSelectedValues(selectedOptions);
+  }, [selectedOptions]);
   return (
     <>
       <Autocomplete
-        getOptionLabel={(option) => option?.label || ''}
+        getOptionLabel={(option) => option?.tag || ''}
         multiple
-        autoSelect
         fullWidth
         onOpen={() => onOpen && onOpen()}
         onEnded={onEndReached}
@@ -73,7 +72,7 @@ const SelectMultiple: React.FC<SelectMultipleProps> = ({
             rootSx={{
               ...sx,
               cursor: 'pointer',
-              height: 50,
+              height: 56,
               marginTop: 0.5,
             }}
             inputRef={inputRef}
@@ -94,19 +93,16 @@ const SelectMultiple: React.FC<SelectMultipleProps> = ({
             {...props}
             sx={{
               ...defaultSx.item,
-              display: option.value === ID_PLACEHOLDER ? 'none' : undefined,
+              display: option.tag === ID_PLACEHOLDER ? 'none' : undefined,
             }}
-            key={option.value}
-            value={option.value}
+            key={option.tag}
+            value={option.tag}
           >
             <Stack direction="row" alignItems="center" spacing={1}>
-              {option.value !== ID_PLACEHOLDER && (
+              {option.tag !== ID_PLACEHOLDER && (
                 <Stack>
                   <Text variant="body2" className="text-option">
-                    {option.label}
-                  </Text>
-                  <Text variant="body2" className="sub">
-                    {option.subText}
+                    {option.tag}
                   </Text>
                 </Stack>
               )}
@@ -117,7 +113,8 @@ const SelectMultiple: React.FC<SelectMultipleProps> = ({
           <ArrowDownIcon
             sx={{
               transform: 'rotate(270deg)',
-              width: '16px',
+              width: '14px',
+              height:'14px'
             }}
             color="inherit"
           />
@@ -125,13 +122,14 @@ const SelectMultiple: React.FC<SelectMultipleProps> = ({
         renderTags={(value, getTagProps) =>
           value.map((option, index) => (
             <Chip
-              label={option.label}
+              label={option.tag}
               {...getTagProps({ index })}
               key={getTagProps({ index }).key}
               size="small"
               sx={{
                 color: 'black',
                 mt: 2,
+                mb: 1,
                 backgroundColor: ({ palette }) => palette?.primary.light,
               }}
             />
@@ -140,20 +138,15 @@ const SelectMultiple: React.FC<SelectMultipleProps> = ({
         loading={loading}
         options={options}
         onInputChange={(event, value) => onInputChange && onInputChange(value)}
-        isOptionEqualToValue={(option, value) => option.value === value.value}
+        isOptionEqualToValue={(option, value) => option.tag === value.tag}
         onChange={(event, selectedOptions) => {
-          const newValues: Option[] = selectedOptions.map((opt) => ({
-            label: opt.label,
-            value: opt.value,
-          }));
-          setSelectedValues(newValues);
-          onSelect(event, newValues);
+          setSelectedValues(selectedOptions as TagData[]);
+          onSelect(event, selectedOptions as TagData[]);
         }}
-        value={selectedOptions}
+        value={selectedValues}
       />
     </>
   );
 };
 
 export default memo(SelectMultiple);
-  

@@ -51,6 +51,7 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
           sx={{
             color: "black",
             mt: 2,
+            mb:1,
             backgroundColor: palette?.primary.light,
           }}
         />
@@ -72,7 +73,7 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
           rootSx={{
             ...sx,
             cursor: "pointer",
-            height: 50,
+            height: 56,
             marginTop: 0.5,
           }}
           inputRef={inputRef}
@@ -92,7 +93,8 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
         <ArrowDownIcon
           sx={{
             transform: "rotate(270deg)",
-            width: "16px",
+            width: '14px',
+            height:'14px'
           }}
           color="inherit"
         />

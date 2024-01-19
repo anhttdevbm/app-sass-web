@@ -45,9 +45,14 @@ export type BlogDictionary = {
         statusBlog: string,
         created_time : string,
         relatedBlogs:string,
+        short_description :  string,
+        notification : {
+            success : string,
+        }
     },
     published: string,
     draft: string,
+    hide : string,
     actions: {
         createBlog: string,
         search: string,
@@ -59,6 +64,7 @@ export type BlogDictionary = {
         },
         published:string,
         draft:string,
+        hide : string,
         update:{
             title:string,
             content:string,
@@ -75,13 +81,24 @@ export type BlogDictionary = {
         tag: string,
         published: string,
         attachments: string,
+        short_description : string,
+        notification: {
+            success: string
+        },
     },
     status: {
-        true: string,
-        false: string,
+        published: string,
+        draft: string,
+        hide : string,
     },
     comment : {
         writeComment :string;
         sendComment :string;
-    }
+    },
+    error:{
+        anErrorTryAgain : string
+    },
+    PUBLISHED : string,
+    DRAFT : string,
+    HIDE : string,
 }
