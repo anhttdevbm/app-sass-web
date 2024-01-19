@@ -22,6 +22,7 @@ import {
   changeContentDoc,
   changeDescription,
   changeTitle,
+  getDocDetails,
   resetDocDetail,
 } from "store/docs/reducer";
 import useDocEditor from "../hook/useDocEditor";
@@ -29,7 +30,7 @@ import { NewPageContext } from "../context/NewPageContext";
 import { DocAccessibility } from "constant/enums";
 import styled from "@emotion/styled";
 import { useUpdateDocMutation } from "store/docs/api";
-import { TextSelection } from 'prosemirror-state';
+import { TextSelection } from "prosemirror-state";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
@@ -58,50 +59,26 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const { handleUpdateDoc } = useDocs();
 
   const [updateDoc] = useUpdateDocMutation();
-  const [debounceChange] = useDebounce((value: string) => {
-    updateDoc({ id: id as string, payload: { name: value } });
+  const [debounceChange, isDone, cancel] = useDebounce((value: string) => {
+    alert("Update!");
+    updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
-  const [handleTitleChange, isTitleChangeDone, cancelTitleChange] = useDebounce(
-    (value: string): void => {
-      // debounceChange(value);
-      dispatch(changeTitle(value));
-      dispatch(changeDescription(value));
-    },
-    200,
-  );
-
   useEffect(() => {
-    cancelTitleChange();
-    // console.log({ currentId });
-    (async () => {
-      setMounted(false);
-      await handleGetDocDetail(currentId);
-      console.log("state", { content, name, description, project_id });
-      setMounted(true);
-    })();
+    cancel();
+    dispatch(getDocDetails(currentId));
   }, [currentId]);
 
-  const [textDescription, setTextDescription] = useState<string>("");
-
   useEffect(() => {
-    console.log({
-      content,
-      name,
-      description,
-      project_id,
-      currentId,
-    });
-    setTextDescription(description);
-    const data = {
-      content: content,
-      name: name || undefined,
-      description: description,
-      project_id: project_id,
-    };
+    // const data = {
+    //   content: content,
+    //   name: name || undefined,
+    //   description: description,
+    //   project_id: project_id,
+    // };
     if (mounted) {
       if (id) {
-        handleUpdateDoc(data, id);
+        // handleUpdateDoc(data, id);
       } else {
       }
     } else {
@@ -168,7 +145,6 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
               xs: "12px",
             },
             minHeight: minHeight,
-           
           }}
           id="is-edit-text"
           className={` ${styles.page_content} ${
@@ -189,25 +165,29 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             </LayoutSlider>
           )}
           <form className={`${styles.form_title}`}>
-            <Textarea
-              maxRows={3}
-              id="title"
-              value={textDescription}
-              disabled={!canEdit}
-              // defaultValue={description}
-              placeholder="Enter document title..."
-              onChange={(e) => {
-                setTextDescription(e.target.value);
-                handleTitleChange(e.target.value);
-              }}
-              autoComplete="off"
-              spellCheck="false"
-            />
+            {name && (
+              <Textarea
+                maxRows={3}
+                id="title"
+                disabled={!canEdit}
+                defaultValue={name}
+                placeholder="Enter document title..."
+                onChange={(e) => {
+                  debounceChange(e.target.value);
+                }}
+                autoComplete="off"
+                spellCheck="false"
+              />
+            )}
           </form>
-          {textDescription}
+          {JSON.stringify(content)}
           <div
             className={`${styles.editor}`}
-            style={{ pointerEvents: canEdit ? "auto" : "none",  height: '50vh', overflowY: "scroll"}}
+            style={{
+              pointerEvents: canEdit ? "auto" : "none",
+              height: "50vh",
+              overflowY: "scroll",
+            }}
           >
             <Tiptap editor={editor} disabled={!canEdit} />
           </div>

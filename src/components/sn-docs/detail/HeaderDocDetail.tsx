@@ -35,7 +35,6 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (!currentId) {
-      // Get id from params in Next
       dispatch(changeId(id as string));
     }
   }, []);
@@ -102,8 +101,9 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   border: "none",
                   backgroundColor: "transparent",
                 }}
+                disabled={true}
                 value={document?.name}
-                onChange={(e) => debounceChange(e.target.value)}
+                // onChange={(e) => debounceChange(e.target.value)}
               />
             </Box>
           )}
@@ -149,12 +149,16 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   },
                   padding: 0,
                   outline: "none",
+                  // Disable red error underline
                   border: "none",
                   backgroundColor: "transparent",
+                  // Hide cursor
+                  cursor: "default",
                 }}
-                defaultValue={document?.name}
+                spellCheck={false}
+                value={document?.name}
                 title={document?.name}
-                onChange={(e) => debounceChange(e.target.value)}
+                // onChange={(e) => debounceChange(e.target.value)}
               />
             </Box>
             <Box

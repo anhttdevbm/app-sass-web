@@ -7,13 +7,10 @@ import { changeContentDoc } from "store/docs/reducer";
 import { useContext, useEffect, useRef } from "react";
 
 export default function useDocEditor() {
-  const {
-    content,
-    setContent,
-    setIsAddingNewLink,
-    setActiveCommentId,
-    setOpenComment,
-  } = useContext(NewPageContext);
+  const { setContent, setIsAddingNewLink, setActiveCommentId, setOpenComment } =
+    useContext(NewPageContext);
+
+  const { content } = useAppSelector((state) => state.doc);
 
   const doc = useAppSelector((state) => state.doc);
   const dispatch = useAppDispatch();
@@ -23,13 +20,11 @@ export default function useDocEditor() {
 
   const anchorRef = useRef(0);
   const editor = useEditor({
-    content: doc?.contentRow,
-   // emitUpdate: true,
+    content: content, // emitUpdate: true,
     extensions: getExtensions({
       openLinkModal: () => setIsAddingNewLink(true),
       onCommentActivated: (commentId: string) => {
         if (commentId) {
-
           setActiveCommentId(commentId);
           setOpenComment(true);
         }
@@ -44,15 +39,16 @@ export default function useDocEditor() {
       },
     },
     onUpdate: async ({ editor, transaction }) => {
-      setContent(editor.getJSON());
-      anchorRef.current = transaction.selection.anchor;
-      await handleContentUpdate(editor.getHTML());
+      // setContent(editor.getJSON());
+      // anchorRef.current = transaction.selection.anchor;
+      // await handleContentUpdate(editor.getHTML());
+      // console.log(editor.getHTML());
     },
   });
 
   useEffect(() => {
-    editor?.commands?.setContent(doc?.contentRow)
-  }, [doc?.contentRow])
+    editor?.commands?.setContent(doc?.contentRow);
+  }, [doc?.contentRow]);
 
   return editor;
 }
