@@ -44,6 +44,11 @@ const UserInformation = () => {
   const onSubmit = async (values: UpdateUserInfoData) => {
     try {
       const newData = { ...values };
+      console.log("newData", newData);
+      console.log("type newData", typeof formik.values);
+      console.log("type avatar", typeof values["avatar"]);
+      console.log("value avatar", values["avatar"]);
+      
       if (typeof values["avatar"] === "object") {
         const avatarUrl: string = await client.upload(
           Endpoint.UPLOAD,
