@@ -1,14 +1,17 @@
-import { memo, useState, MouseEvent, useId } from "react";
+import { memo, useState, MouseEvent, useId, useRef, ChangeEvent, useMemo } from "react";
 import {
+  Box,
   ButtonBase,
+  DialogContent,
   Divider,
   Popover,
   popoverClasses,
+  Slider,
   Stack,
 } from "@mui/material";
 import { Button, Text } from "components/shared";
 import ChevronIcon from "icons/ChevronIcon";
-import { useAuth } from "store/app/selectors";
+import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import Link from "components/Link";
 import { UPGRADE_ACCOUNT_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
@@ -19,17 +22,109 @@ import { reset as projectReset } from "store/project/reducer";
 import { reset as managerReset } from "store/manager/reducer";
 import { reset as companyReset } from "store/company/reducer";
 import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_LAYOUT } from "constant/index";
+import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON, NS_LAYOUT } from "constant/index";
 import { Permission } from "constant/enums";
 import UserActions from "./UserActions";
+import useToggle from "hooks/useToggle";
+import AvatarEditor from "react-avatar-editor";
+import { useFormik } from "formik";
+import {  getMessageErrorByAPI } from "utils/index";
+import { UpdateUserInfoData } from "store/app/actions";
+import { Endpoint, client } from "api";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
+
 
 const AccountInfo = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const popoverId = useId();
   const { user, onSignOut: onSignOutAuth } = useAuth();
   const dispatch = useAppDispatch();
+  const accountT = useTranslations(NS_ACCOUNT);
   const commonT = useTranslations(NS_COMMON);
   const t = useTranslations(NS_LAYOUT);
+  const imageEdittorRef = useRef<AvatarEditor>(null);
+  const [imageScale, setImageScale] = useState(1.2);
+  const [openImageEditor, setOpenImageEditor] = useState<string | null>(null);
+  const { onUpdateUserInfo } = useUserInfo();
+
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
+
+  const [isEdit, onEditTrue, onEditFalse] = useToggle();
+  const { onAddSnackbar } = useSnackbar();
+
+  const onSubmit = async (values: UpdateUserInfoData) => {
+    try {
+      const newData = { ...values };
+      if (typeof values["avatar"] === "object") {
+        const avatarUrl: string = await client.upload(
+          Endpoint.UPLOAD,
+          values["avatar"] as unknown as File,
+        );
+        newData["avatar"] = [avatarUrl];
+      } else {
+        delete newData["avatar"];
+      }
+      await onUpdateUserInfo(newData);
+      onEditFalse();
+      onAddSnackbar(
+        accountT("accountInformation.notification.updateSuccess"),
+        "success",
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
+
+  const onCancel = () => {
+    formik.resetForm();
+    onEditFalse();
+  };
+
+  const initialValues = useMemo(
+    () => ({
+      avatar: user?.avatar?.link,
+    }),
+    [user],
+  ) as UpdateUserInfoData;
+
+  const formik = useFormik({
+    initialValues,
+    enableReinitialize: true,
+    onSubmit,
+  });
+
+  const onChooseFile = () => {
+    inputFileRef?.current?.click();
+  };
+
+  const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+    if (IMAGES_ACCEPT.includes(files[0].type)) {
+      setOpenImageEditor(URL.createObjectURL(files[0]));            
+      formik.setFieldValue("avatar", files[0]);
+    } else {
+      onAddSnackbar(commonT("form.notification.imageTypeInvalid"), "error");
+    }
+  };
+
+  const handleCropAvatar = () => {
+    const dataUrl = imageEdittorRef.current
+      ?.getImageScaledToCanvas()
+      .toDataURL();
+    fetch(dataUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const file = new File([blob], "avatar.png", { type: blob.type });        
+        formik.setFieldValue("avatar", file);
+      })
+      .then(() => {
+        onSubmit(formik.values);
+      })
+      .finally(() => {
+        setOpenImageEditor(null);
+      });
+  };
 
   const onOpen = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -110,7 +205,24 @@ const AccountInfo = () => {
           }}
         >
           <Stack direction="row" alignItems="center" spacing={1.5} py={2}>
-            <Avatar size={60} alt={user.fullname} src={user?.avatar?.link} />
+            <Avatar
+              size={60}
+              alt={user.fullname}
+              src={user?.avatar?.link}
+              onClick={isEdit ? onChooseFile : onEditTrue}
+            />
+            {isEdit && (
+              <>
+                <Box
+                  component="input"
+                  type="file"
+                  accept={IMAGES_ACCEPT.join(", ")}
+                  display="none"
+                  ref={inputFileRef}
+                  onChange={onChangeFile}
+                />
+              </>
+            )}
             <Stack flex={1} overflow="hidden">
               <Text
                 variant="h6"
@@ -151,6 +263,49 @@ const AccountInfo = () => {
           <UserActions onClose={onClose} />
         </Stack>
       </Popover>
+      <DefaultPopupLayout
+        open={!!openImageEditor}
+        title="Image editor"
+        onClose={() => setOpenImageEditor(null)}
+      >
+        <DialogContent>
+          <Stack alignItems="center" gap={2}>
+            <AvatarEditor
+              ref={imageEdittorRef}
+              image={openImageEditor}
+              width={300}
+              height={300}
+              border={50}
+              color={[255, 255, 255, 0.6]} // RGBA
+              borderRadius={300}
+              scale={imageScale}
+              rotate={0}
+            />
+
+            <Slider
+              onChange={(event: Event, newValue: number | number[]) => {
+                setImageScale(parseFloat(newValue.toString()));
+              }}
+              min={1}
+              max={2}
+              step={0.1}
+              defaultValue={imageScale}
+            />
+          </Stack>
+
+          <Stack direction="row" justifyContent="center" spacing={2}>
+            <Button
+              variant="secondary"
+              onClick={() => setOpenImageEditor(null)}
+            >
+              {commonT("cancel")}
+            </Button>
+            <Button variant="primary" onClick={handleCropAvatar}>
+              {commonT("crop")}
+            </Button>
+          </Stack>
+        </DialogContent>
+      </DefaultPopupLayout>
     </>
   );
 };
