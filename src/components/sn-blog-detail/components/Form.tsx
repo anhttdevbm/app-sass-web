@@ -19,6 +19,7 @@ import EditorView from "./EditorView";
 import { useBlogs } from "store/blog/selectors";
 import SelectCategoriescomplete from "./SelectCategories";
 import slugify from 'slugify';
+import SelectTagMultiple from "./SelectMultiple";
 
 type FormProps = {
   initialValues: BlogFormData;
@@ -37,19 +38,16 @@ const Form = (props: FormProps) => {
   const [data, setData] = useState<any | undefined>(undefined);
   const blogFormTranslatePrefix = "blogForm";
   const [backgroundChanged, setBackgroundChanged] = useState(false);
-  const { listBlogTag,onGetListTag:onGetTagsOptions } = useBlogs();
+  const { listBlogTag, onGetListTag } = useBlogs();
   const [tags, setTags] = useState<TagData[]>([]);
   const {
     items,
     onGetOptions: onGetCategoryOptions,
   } = useCategoryBlog();
   useEffect(() => {
+    onGetListTag();
     onGetCategoryOptions({ pageIndex: 1, pageSize: 50 });
-  }, [onGetCategoryOptions]);
-  
-  useEffect(() => {
-    setTags(listBlogTag);
-  }, [onGetTagsOptions, listBlogTag]);
+  }, [onGetCategoryOptions, onGetListTag]);
 
   // set value
   const label = useMemo(() => {
@@ -69,33 +67,38 @@ const Form = (props: FormProps) => {
       lower: true,
       remove: /[*+~.()'"!:@]/g, // Loại bỏ các ký tự đặc biệt không mong muốn
     });
-  
+
     formik.setFieldValue("title", nameValue);
     formik.setFieldValue("slug", slugValue);
   };
 
   const onSelect = (data) => {
-    console.log("Selected Data:", data);
-    formik.setFieldValue("tag", data.map((item) => item.tag));
+    const uniqueData = Array.from(new Set(data.map(item => item.tag))).map(tag => ({ tag }));
+    formik.setFieldValue("tag", uniqueData.map((item) => item.tag));
   };
 
   const onEnter = (value) => {
-    console.log("Entered Value:", value);
+    console.log(value);
     if (!value) return;
-
-    const tags = formik.values?.tag ?? [];
-    const isExisted = listBlogTag.find((item) => item.tag === value);
+    if ((tags == null || tags.length == 0)) {
+      setTags(listBlogTag);
+    }
+    const itemValues = formik.values?.tag ?? [];
+    const isExisted = itemValues.find((item) => item == value);
 
     if (isExisted) {
-      onSelect([...tags, isExisted]);
+      const updatedTags = itemValues.map(tag => ({ tag }));
+      onSelect([...updatedTags, { tag: value }]);
     } else {
       const newTagOption = {
         tag: value,
       };
       setTags((prevListBlogTag) => [...prevListBlogTag, newTagOption]);
-      onSelect([...tags, newTagOption]);
+      const updatedTags = itemValues.map(tag => ({ tag }));
+      onSelect([...updatedTags, { tag: value }]);
     }
   };
+
 
 
   const onChangeField = (name: string, newValue?: any) => {
@@ -235,18 +238,15 @@ const Form = (props: FormProps) => {
                 sx={sxConfig}
                 onSelect={(e, data) => onSelectCategory(data)}
                 value={formik.values.category?.map((tag) => ({
-                  id : tag
-                })) }
+                  id: tag
+                }))}
               />
             </Stack>
             <Stack style={{ marginBottom: 4, marginTop: 2 }}>
-              <SelectMultiple
-                limitTags={3}
-                options={tags}
+              <SelectTagMultiple items={tags.length > 0 && tags !== undefined ? tags : listBlogTag} label={blogT("blogForm.tag")}
+                sx={sxConfig}
                 onSelect={(e, data) => onSelect(data)}
                 onEnter={onEnter}
-                label={blogT("blogForm.tag")}
-                sx={sxConfig}
                 value={formik.values.tag?.map((tag) => ({ tag }))}
               />
             </Stack>
@@ -308,15 +308,29 @@ export default memo(Form);
 const sxConfig = {
   input: {
     height: 56,
+    maxWidth: '100%',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 };
 export const validationSchema = Yup.object().shape({
   title: Yup.string().required('form.error.required'),
   slug: Yup.string().required('form.error.required'),
   content: Yup.string().required('form.error.required'),
+  backgroundUpload: Yup.object().required('form.error.required'),
+  attachments: Yup.array()
+    .of(Yup.object({
+      name: Yup.string().required('form.error.required'),
+    }))
+    .min(1, 'form.error.required'),
   category: Yup.array()
     .of(Yup.string())
     .min(1, 'form.error.required'),
-  tag: Yup.array().of(Yup.string()),
+  tag: Yup.array()
+    .of(Yup.object({
+      name: Yup.string().required('form.error.required'),
+    }))
+    .min(1, 'form.error.required'),
   short_description: Yup.string().required("form.error.required"),
 });

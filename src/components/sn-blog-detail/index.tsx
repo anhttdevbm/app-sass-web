@@ -134,7 +134,7 @@ const BlogDetailSection = () => {
                                         backgroundSize: 'cover',
                                         backgroundRepeat: 'no-repeat',
                                         backgroundPosition: 'center',
-                                        backgroundImage: `url(${detailItem?.background_down?.link})`,
+                                        backgroundImage: `url(${detailItem?.background_down?.link || ''})`,
                                     }}>
                                     <Box
                                         sx={{
@@ -361,17 +361,17 @@ const AttachmentComponent = ({ attachment }) => (
     const attachmentPlaceholders = content.split(/<\/p>|<br\s*\/?>/).filter((item) => item.trim() !== '');
   
     return (
-      <div className="blog-post">
+        <div className="blog-post">
         {attachmentPlaceholders.map((placeholder, index) => (
           <React.Fragment key={index}>
             <div className="content" dangerouslySetInnerHTML={{ __html: parseHTML(placeholder) }} />
-            {index < attachments.length && (
+            {attachments && index < attachments.length && (
               <AttachmentComponent attachment={attachments[index]} />
             )}
           </React.Fragment>
         ))}
         {/* Handle the case where there are more attachments than placeholders */}
-        {attachments.slice(attachmentPlaceholders.length).map((attachment, index) => (
+        {attachments && attachments.slice(attachmentPlaceholders.length).map((attachment, index) => (
           <AttachmentComponent key={index} attachment={attachment} />
         ))}
       </div>
@@ -395,45 +395,3 @@ const AttachmentComponent = ({ attachment }) => (
     return result.join('');
   };
 export default memo(BlogDetailSection);
-type CommentItemProps = CommentBlogData;
-const CommentItem = (props: CommentItemProps) => {
-
-
-    return (
-        <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
-            <Stack direction="row" justifyContent="space-between" spacing={1}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <Stack>
-                        <Text variant="body2">{props.name ?? "--"}</Text>
-                        <Text variant="caption" color="grey.400">
-                            {props.email ?? "--"}
-                        </Text>
-                    </Stack>
-                </Stack>
-                <Text variant="body2" color="grey.400">
-                    {formatDate(props.created_time, "HH:mm - dd/MM/yyyy")}
-                </Text>
-            </Stack>
-
-            {!!props.content && (
-                <Box
-                    sx={{
-                        fontSize: 14,
-                        "& *": {
-                            marginBlockStart: 0,
-                            marginBlockEnd: 0,
-                            wordBreak: "break-all",
-                        },
-                        "& img": {
-                            maxWidth: "100%",
-                            height: "auto",
-                            objectFit: "contain",
-                        },
-                    }}
-                    className="html"
-                    dangerouslySetInnerHTML={{ __html: props.content }}
-                />
-            )}
-        </Stack>
-    );
-};

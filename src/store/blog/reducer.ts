@@ -120,7 +120,6 @@ export const blogSlice = createSlice({
               }).addCase(updateBlog.rejected, (state, action) => {
                 state.blogsStatus = DataStatus.FAILED;
               }).addCase(getListBlogTags.fulfilled,(state, { payload })=>{
-                console.log(payload);
                 state.listBlogTag = payload;
               })
       },
