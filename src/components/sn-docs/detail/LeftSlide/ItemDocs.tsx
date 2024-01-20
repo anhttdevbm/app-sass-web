@@ -90,6 +90,7 @@ const DocumentList: React.FC<TDocumentListProps> = ({
   onClick,
   handleChangeDocument,
 }) => {
+  console.log({ doc_data: data });
   return (
     <>
       <Document
