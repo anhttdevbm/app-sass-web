@@ -60,7 +60,6 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
 
   const [updateDoc] = useUpdateDocMutation();
   const [debounceChange, isDone, cancel] = useDebounce((value: string) => {
-    alert("Update!");
     updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
@@ -85,6 +84,23 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
       setMounted(true);
     }
   }, [description, name, content, project_id, currentId]);
+
+  useEffect(() => {
+    const data = {
+      content: content,
+      name: name || undefined,
+      description: description,
+      project_id: project_id,
+    };
+    if (mounted) {
+      if (id) {
+        handleUpdateDoc(data, id);
+      } else {
+      }
+    } else {
+      setMounted(true);
+    }
+  }, [content]);
 
   const editor = useDocEditor() as Editor;
 
@@ -180,7 +196,6 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
               />
             )}
           </form>
-          {JSON.stringify(content)}
           <div
             className={`${styles.editor}`}
             style={{
