@@ -39,7 +39,7 @@ const useDocs = () => {
     [dispatch],
   );
 
-  const onCreateDoc = async () => {
+  const onCreateDoc = async (projectId) => {
     setLoading(true);
     try {
       const response = await client.post(
@@ -47,7 +47,7 @@ const useDocs = () => {
         {
           name: "No Name",
           description: "",
-          // "project_id":"78537730-5155-11ee-a41a-97ec118da8c5",
+          project_id: projectId,
         },
         {
           baseURL: DOCS_API_URL,
