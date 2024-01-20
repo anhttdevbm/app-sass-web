@@ -36,7 +36,7 @@ const Actions = () => {
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
-  console.log(searchParams.get('search_key'))
+  console.log(searchParams.get("search_key"));
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
@@ -45,6 +45,13 @@ const Actions = () => {
 
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+  };
+  const { id } = useParams();
+
+  const handleCreateDoc = () => {
+    if (id && id !== undefined) {
+      onCreateDoc(id);
+    }
   };
 
   // console.log("queries", queries);
@@ -80,8 +87,8 @@ const Actions = () => {
   }, [filters]);
 
   useEffect(() => {
-    setQueries({search_key: searchParams.get('search_key')})
-  }, [searchParams.get('search_key')]);
+    setQueries({ search_key: searchParams.get("search_key") });
+  }, [searchParams.get("search_key")]);
 
   return (
     <>
@@ -102,7 +109,7 @@ const Actions = () => {
           <Text variant="h4" display={{ md: "none" }}>
             {docsT("title")}
           </Text>
-          <Box onClick={onCreateDoc}>
+          <Box onClick={handleCreateDoc}>
             <Button
               disabled={loading}
               startIcon={<PlusIcon />}

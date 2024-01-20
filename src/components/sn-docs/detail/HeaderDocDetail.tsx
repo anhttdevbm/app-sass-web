@@ -32,12 +32,17 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const router = useRouter();
   const currentId = useAppSelector((state) => state.doc.id);
   const { id } = useParams();
+
   const dispatch = useDispatch();
   useEffect(() => {
     if (!currentId) {
       dispatch(changeId(id as string));
     }
   }, []);
+
+  const { data: rootDocument } = useGetDocDetailQuery(id as string);
+
+  console.log("rootDocument", rootDocument);
 
   const { isDarkMode } = useTheme();
   const doc = useAppSelector((state) => state.doc);
@@ -102,7 +107,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   backgroundColor: "transparent",
                 }}
                 disabled={true}
-                value={document?.name}
+                value={rootDocument?.name}
                 // onChange={(e) => debounceChange(e.target.value)}
               />
             </Box>
@@ -156,8 +161,8 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   cursor: "default",
                 }}
                 spellCheck={false}
-                value={document?.name}
-                title={document?.name}
+                value={rootDocument?.name}
+                title={rootDocument?.name}
                 // onChange={(e) => debounceChange(e.target.value)}
               />
             </Box>
