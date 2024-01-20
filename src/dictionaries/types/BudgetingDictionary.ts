@@ -119,6 +119,8 @@ export type BudgetingDictionary = {
       discount: string;
       totalBudget: string;
       description: string;
+      addSection: string;
+      addItem: string;
     };
   };
   dialog: {

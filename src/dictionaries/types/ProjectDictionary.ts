@@ -62,6 +62,11 @@ export type ProjectDictionary = {
       noData: string;
     };
   };
+  detailDocuments: {
+    head: {
+      title: string,
+    },
+  },
   detailMembers: {
     head: {
       title: string;

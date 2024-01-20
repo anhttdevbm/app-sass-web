@@ -322,10 +322,13 @@ const BlogDetailSection = () => {
                                 slug: detailItem?.slug,
                                 content:detailItem?.content,
                                 tag:detailItem?.tag,
-                                published:detailItem?.published,
+                                status:detailItem?.status,
                                 backgroundUpload:background,
                                 category:detailItem?.categories?.map(a=>a.id),
                                 attachmentsUpload : files,
+                                attachments : detailItem?.attachments_down?.map(a=>a.object),
+                                background : detailItem?.background_down?.object,
+                                short_description :  detailItem?.short_description
                             } as  BlogFormData}
                             onSubmit={onUpdateBlog}
                         />
@@ -367,9 +370,14 @@ const AttachmentComponent = ({ attachment }) => (
             )}
           </React.Fragment>
         ))}
+        {/* Handle the case where there are more attachments than placeholders */}
+        {attachments.slice(attachmentPlaceholders.length).map((attachment, index) => (
+          <AttachmentComponent key={index} attachment={attachment} />
+        ))}
       </div>
     );
   };
+  
   
   const parseHTML = (htmlString: string) => {
     const parser = new DOMParser();

@@ -5,22 +5,21 @@ import {
   Box,
   Collapse,
   Grid,
+  IconButton,
   MenuList,
   Stack,
   Typography,
 } from "@mui/material";
 import FormLayout from "components/FormLayout";
-import { DatePicker, Input, Select } from "components/shared";
+import { DatePicker, Input, Select, Upload } from "components/shared";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
-import { NS_BUDGETING, NS_COMMON } from "constant/index";
+import { IMAGES_ACCEPT, NS_BUDGETING, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import InputLabelWrapper from "./InputLabelWrapper";
-import {
-  TBudgetExpense, useBudgetExpenseAdd
-} from "queries/budgeting/expense";
+import { TBudgetExpense, useBudgetExpenseAdd } from "queries/budgeting/expense";
 import moment from "moment";
 import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 import * as yup from "yup";
@@ -34,6 +33,9 @@ import { useCurrencyOptions } from "store/global/selectors";
 import { useParams } from "next/navigation";
 import { User } from "constant/types";
 import { getMessageErrorByAPI } from "utils/index";
+import AttachmentIcon from "@mui/icons-material/Attachment";
+import Image from "next/image";
+import UploadIcon from "icons/UploadIcon";
 
 type Props = {
   open: boolean;
@@ -66,6 +68,7 @@ interface TExpenseAddForm {
   vendor?: string;
   status: ExpenseStatus;
   attachment: AttachmentList[];
+  files?: any[];
 }
 
 const defaultValues: TExpenseAddForm = {
@@ -81,6 +84,7 @@ const defaultValues: TExpenseAddForm = {
   reimbursement: "no",
   status: ExpenseStatus.UNPAID,
   attachment: [],
+  files: [],
 };
 
 const sxInput = {
@@ -107,6 +111,8 @@ export const ModalExpense = ({
   const budgetExpenseAdd = useBudgetExpenseAdd();
   const { onAddSnackbar } = useSnackbar();
 
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
+
   const [isShowReimbursement, setIsShowReimbursement] =
     useState<boolean>(false);
   const [isShowPayment, setIsPayment] = useState<boolean>(false);
@@ -129,6 +135,11 @@ export const ModalExpense = ({
         owner: yup.string().required("Owner is required."),
       }),
     ),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    name: "files",
+    control,
   });
 
   const userInfo = useMemo(() => {
@@ -163,12 +174,12 @@ export const ModalExpense = ({
       owner: formValue?.owner || "",
       service: formValue?.service || "",
       budget: id || "",
-      qty: Number(_.get(formValue, 'qty', 0)),
-      cost: Number(_.get(formValue, 'cost', 0)),
+      qty: Number(_.get(formValue, "qty", 0)),
+      cost: Number(_.get(formValue, "cost", 0)),
       currency: formValue?.currency || "",
-      totalCost: Number(_.get(formValue, 'totalCost', 0)),
+      totalCost: Number(_.get(formValue, "totalCost", 0)),
       markup: 1,
-      billable: Number(_.get(formValue, 'billable', 0)),
+      billable: Number(_.get(formValue, "billable", 0)),
       description: formValue.description || "",
       company: userInfo.company,
       reimbursement: {
@@ -207,6 +218,21 @@ export const ModalExpense = ({
 
   const onGetEmployeeOptions = () => {
     onEndReachedEmployeeOptions();
+  };
+
+  const onChooseFile = () => {
+    inputFileRef?.current?.click();
+  };
+
+  const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event?.target?.files;
+    if (!files) return;
+    if (IMAGES_ACCEPT.includes(files[0].type)) {
+      setValue('attachment', _.concat())
+      append(URL.createObjectURL(files[0]));
+    } else {
+      onAddSnackbar(commonT("notification.imageTypeInvalid"), "error");
+    }
   };
 
   return (
@@ -253,6 +279,9 @@ export const ModalExpense = ({
                           autoComplete="off"
                           onChange={(_: string, newDate: Date | undefined) => {
                             onChange(newDate ? moment(newDate).format() : "");
+                          }}
+                          pickerProps={{
+                            autoComplete: "off",
                           }}
                         />
                       )}
@@ -535,7 +564,30 @@ export const ModalExpense = ({
               )}
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ position: "relative" }}>
+              <Stack
+                width={64}
+                height={64}
+                justifyContent="center"
+                alignItems="center"
+                className="rounded"
+                border="1px solid"
+                borderColor="grey.50"
+              >
+                {
+                  _.map(fields || [], (url: any, index) => (
+                    <Image
+                      key={index}
+                      src={url || ""}
+                      width={65}
+                      height={65}
+                      alt="Image"
+                      className="rounded"
+                    />
+                  ))
+                }
+              </Stack>
+
               <InputLabelWrapper label={budgetT("dialogExpense.description")}>
                 <Controller
                   control={control}
@@ -558,7 +610,25 @@ export const ModalExpense = ({
                     />
                   )}
                 />
+
+                <IconButton
+                  sx={{ position: "absolute", right: 20, bottom: 30 }}
+                  onClick={onChooseFile}
+                >
+                  <AttachmentIcon />
+                </IconButton>
               </InputLabelWrapper>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Box
+                type="file"
+                accept={IMAGES_ACCEPT.join(", ")}
+                component="input"
+                display="none"
+                onChange={onChangeFile}
+                ref={inputFileRef}
+              />
             </Grid>
 
             <Grid

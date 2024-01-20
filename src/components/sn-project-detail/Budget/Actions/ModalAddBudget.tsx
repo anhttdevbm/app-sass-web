@@ -48,7 +48,10 @@ const ModalAddBudget = (props: Props) => {
   const { projectOptions } = useGetOptions();
 
   useEffect(() => {
-    if (!rest.open) return;
+    if (!rest.open) {
+      formik.resetForm();
+      return
+    };
     if (!projects || projects.length === 0) {
       onGetProjects({});
     }
@@ -199,6 +202,7 @@ const ModalAddBudget = (props: Props) => {
               })}
               rootSx={sxInput}
               fullWidth
+              autoComplete="off"
             />
           )}
           <Input
@@ -213,6 +217,7 @@ const ModalAddBudget = (props: Props) => {
             error={commonT(touchedErrors?.name, {
               name: projectT("budget.form.name"),
             })}
+            autoComplete="off"
           />
           <Stack direction={{ sm: "row" }} spacing={2}>
             <DateTimePicker
@@ -237,6 +242,7 @@ const ModalAddBudget = (props: Props) => {
                 onClickOutside() {
                   toggleFocusInputDate(false);
                 },
+                autoComplete: "off"
               }}
             />
             <DateTimePicker
@@ -265,6 +271,7 @@ const ModalAddBudget = (props: Props) => {
                 onClickOutside() {
                   toggleFocusInputDate(false);
                 },
+                autoComplete: "off"
               }}
             />
           </Stack>
@@ -294,6 +301,7 @@ const ModalAddBudget = (props: Props) => {
               placeholder: commonT("searchBy", { name: "email" }),
             }}
             onOpen={() => onGetEmployeeOptions({ pageIndex: 1, pageSize: 20 })}
+            autoComplete="off"
           />
         </MenuList>
       </Stack>

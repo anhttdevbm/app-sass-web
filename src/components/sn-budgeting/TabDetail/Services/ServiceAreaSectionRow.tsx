@@ -1,10 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import {
-  Stack,
-  TableRow,
-  TableCell,
-  Collapse
-} from "@mui/material";
+import { Stack, TableRow, TableCell, Collapse } from "@mui/material";
 import { BodyCell } from "components/Table";
 import { useState } from "react";
 import { IconButton, Text } from "components/shared";
@@ -38,24 +33,10 @@ function ServiceAreaSectionRow({
         sx={{
           "& > *": { borderBottom: "none !important" },
           minHeight: 100,
-          minWidth: {
-            md: 1320,
-            xs: 1320,
-            overflow: "visible",
-          },
           width: "100%",
         }}
       >
-        <BodyCell
-          align="left"
-          sx={{
-            cursor: "pointer",
-            width: "350px !important",
-            minWidth: "350px !important",
-            maxWidth: "350px !important",
-            overflow: "visible",
-          }}
-        >
+        <BodyCell align="left">
           <Stack
             direction="row"
             alignItems="center"
@@ -88,13 +69,9 @@ function ServiceAreaSectionRow({
             />
           </Stack>
         </BodyCell>
-        <BodyCell sx={{ minWidth: 100 }}>
-          {_.get(service, "estimate", 0)}
-        </BodyCell>
-        <BodyCell sx={{ minWidth: 60 }}>${_.get(service, "price", 0)}</BodyCell>
-        <BodyCell sx={{ minWidth: 100, overflow: "visible" }}>
-          ${_.get(service, "tolBudget", 0)}
-        </BodyCell>
+        <BodyCell>{_.get(service, "estimate", 0)}</BodyCell>
+        <BodyCell>${_.get(service, "price", 0)}</BodyCell>
+        <BodyCell>${_.get(service, "tolBudget", 0)}</BodyCell>
         <BodyCell>
           <IconButton
             noPadding

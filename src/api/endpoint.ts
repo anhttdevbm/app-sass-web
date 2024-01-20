@@ -130,6 +130,8 @@ export const Endpoint = {
   BLOGS: "/post",
   DETAIL_BLOG: "/post/{id}",
   GET_BLOG_COMMENT: "/post/{id}/comment",
+  GET_BLOG_TAGS : "/post/tags",
+
   //carrer
   CAREER: "/job-post",
   UPADATECAREER: "/job-post/{id}",

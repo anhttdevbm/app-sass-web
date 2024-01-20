@@ -45,9 +45,14 @@ export const BlogLang: BlogDictionary = {
         slug: "Slug",
         created_time : "Create Time",
         relatedBlogs : "Related Blogs",
+        short_description : "Description",
+        notification: {
+            success: "Update status {label} successfully"
+        },
     },
     published: "Published",
     draft: "Draft",
+    hide : "Hide",
     actions: {
         createBlog: " Create new",
         search: "Search",
@@ -59,9 +64,10 @@ export const BlogLang: BlogDictionary = {
         },
         draft:"Draft",
         published : "Published",
+        hide : "Hide",
         update:{
             title:"Are you sure to update?",
-            content:"Update"
+            content:"Update blog to {label}"
         },
         updateBlog:"Update blog",
     },
@@ -75,14 +81,25 @@ export const BlogLang: BlogDictionary = {
         tag: "Tag",
         published: "Published",
         attachments: "Attachments",
+        short_description : "Description",
+        notification: {
+            success: "{label} blog successfully!"
+        },
     },
     status: {
-        true: "Published",
-        false: "Draft",
+        published: "Published",
+        draft: "Draft",
+        hide : "Hide"
     },
     comment:{
         writeComment: "Write comment ...",
         sendComment:"Send comment"
-    }
+    },
+    error:{
+        anErrorTryAgain : "An error occurred, please try again !"
+    },
+    PUBLISHED : "published",
+    DRAFT : "draft",
+    HIDE : "hide",    
 }
 

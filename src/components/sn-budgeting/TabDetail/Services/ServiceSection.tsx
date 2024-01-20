@@ -27,7 +27,12 @@ import {
   TBudgetServiceUpdateForm,
   useBudgetServiceUpdate,
 } from "queries/budgeting/service-update";
-import { TBudgetSection, TBudgetService } from "components/sn-budgeting/BudgetDetail";
+import {
+  TBudgetSection,
+  TBudgetService,
+} from "components/sn-budgeting/BudgetDetail";
+import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 type Props = {
   sectionsList: TBudgetSection[];
@@ -37,7 +42,11 @@ type Props = {
 
 export const serviceSectionRef = createRef<any>();
 
-export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refetch = () => {} }: Props) => {
+export const ServiceSection = ({
+  onCloseEdit = () => {},
+  sectionsList = [],
+  refetch = () => {},
+}: Props) => {
   const { id: budgetId } = useParams();
   const { onAddSnackbar } = useSnackbar();
 
@@ -63,22 +72,17 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
   });
 
   useEffect(() => {
-    refetch();
-  }, []);
-
-  useEffect(() => {
-    const sectionList = _.map(sectionsList,
-      (section) => {
-        return {
-          id: uuid(),
-          title: section.name,
-          sectionId: section.id,
-          data: section.services,
-        };
-      },
-    );
+    const sectionList = _.map(sectionsList, (section) => {
+      return {
+        id: uuid(),
+        title: section.name,
+        sectionId: section.id,
+        data: section.services,
+      };
+    });
 
     setValue("sections", sectionList);
+    refetch();
   }, [sectionsList]);
 
   useImperativeHandle(serviceSectionRef, () => ({
@@ -160,7 +164,7 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
         }
         return section?.isNewSection;
       });
-  
+
       // update sections
       await handleUpdateSections(updateSections);
 
@@ -168,14 +172,14 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
       if (newSections.length > 0) {
         await createSections(newSections);
       }
-  
+
       // delete sections
       if (deletedSections.length > 0) {
         deletedSections.map(async (sectionId: string) => {
           await deleteSection(sectionId);
         });
       }
-  
+
       // delete services
       if (deletedServices.length > 0) {
         deletedServices.map(async (serviceId: string) => {
@@ -263,18 +267,18 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
       const oldServices = _.flattenDeep(
         _.map(sectionsList, (section) => _.get(section, "services", [])),
       );
-  
+
       const sectionUpdateList: any[] = _.map(updateSections, (section) => {
         const oldSectionData = _.find(
           sectionsList,
           (oldSection) => oldSection.id === section.sectionId,
         );
-  
+
         const services = _.map(_.get(section, "data", []), (service) => {
           const estimateTime: string[] | number = service?.estimate
             ? service?.estimate?.split(":")
             : [];
-   
+
           if (service?.isNewService) {
             return {
               name: _.get(service, "name", ""),
@@ -295,12 +299,12 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
               sectionId: _.get(section, "sectionId", ""),
             };
           }
-  
+
           const oldServiceData = _.find(
             oldServices,
             (oldService) => oldService.id === service?.serviceId,
           );
-  
+
           return {
             id: _.get(oldServiceData, "id", ""),
             name: _.get(service, "name", ""),
@@ -321,7 +325,7 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
             tolBudget: _.get(oldServiceData, "tolBudget", 0),
           };
         });
-  
+
         return {
           services: _.compact(services),
           sections: [
@@ -335,10 +339,13 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
           ],
         };
       });
-  
-      _.forEach(sectionUpdateList, (sectionUpdate: TBudgetServiceUpdateForm) => {
-        budgetServiceUpdate.mutateAsync(sectionUpdate, {});
-      });
+
+      _.forEach(
+        sectionUpdateList,
+        (sectionUpdate: TBudgetServiceUpdateForm) => {
+          budgetServiceUpdate.mutateAsync(sectionUpdate, {});
+        },
+      );
     } catch (error) {
       onAddSnackbar("Success", "success");
     }
@@ -358,85 +365,110 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
     });
   };
 
+  const onDragEnd = () => {};
+
   const resetState = () => {
     setDeletedSections([]);
     setDeletedServices([]);
   };
 
   return (
-    <Box>
-      <Stack direction="row" gap={2} justifyContent="end" p="15px">
-        <Button
-          sx={{ bgcolor: "primary.light", color: "grey.400" }}
-          onClick={() => {
-            resetState();
-            onCloseEdit();
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSaveAllService}
-          sx={{
-            bgcolor: "primary.main",
-            "&:hover": { bgcolor: "primary.light", color: "primary.main" },
-          }}
-        >
-          Save changes
-        </Button>
-      </Stack>
-      <Box>
-        {fields.map((section, index) => (
-          <Box key={section.id}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography
-                component="h3"
-                fontSize={24}
-                fontWeight="bold"
-                px={2}
-                py={1}
-                sx={{ color: "grey.300" }}
+    <>
+      <ScrollViewProvider>
+        <Stack direction="row" gap={2} justifyContent="end" p="15px">
+          <Button
+            sx={{ bgcolor: "primary.light", color: "grey.400" }}
+            onClick={() => {
+              resetState();
+              onCloseEdit();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveAllService}
+            sx={{
+              bgcolor: "primary.main",
+              "&:hover": { bgcolor: "primary.light", color: "primary.main" },
+            }}
+          >
+            Save changes
+          </Button>
+        </Stack>
+
+        <Box>
+          {fields.map((section, index) => (
+            <Box key={section.id}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                {section.title}
-              </Typography>
-              <IconButton onClick={() => openConfirmDelete(index)}>
-                <TrashIcon
-                  fontSize="medium"
-                  sx={{ color: "error.main", cursor: "pointer" }}
-                />
-              </IconButton>
-            </Stack>
-            <ServiceSectionRow
-              fieldIndex={index}
-              updateValue={handleChangeValue}
-              errors={errors}
-              serviceData={section?.data || []}
-              deletedServices={deletedServices}
-            />
-          </Box>
-        ))}
-      </Box>
-      <Box>
-        <Button
-          startIcon={<PlusIcon />}
-          size="small"
-          sx={{ color: "secondary.main" }}
-          onClick={() =>
-            append({
-              id: uuid(),
-              title: "Section " + (fields.length + 1),
-              isNewSection: true,
-              data: [],
-            } as any)
-          }
-        >
-          Add section
-        </Button>
-      </Box>
+                <Typography
+                  component="h3"
+                  fontSize={24}
+                  fontWeight="bold"
+                  px={2}
+                  py={1}
+                  sx={{ color: "grey.300" }}
+                >
+                  {section.title}
+                </Typography>
+                <IconButton onClick={() => openConfirmDelete(index)}>
+                  <TrashIcon
+                    fontSize="medium"
+                    sx={{ color: "error.main", cursor: "pointer" }}
+                  />
+                </IconButton>
+              </Stack>
+              <Stack
+                sx={{
+                  height: "max-content",
+                }}
+              >
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <Droppable
+                    type="section"
+                    direction="vertical"
+                    droppableId={`sectionList`}
+                  >
+                    {(provided) => (
+                      <Box ref={provided.innerRef} {...provided.droppableProps}>
+                        <ServiceSectionRow
+                          fieldIndex={index}
+                          updateValue={handleChangeValue}
+                          errors={errors}
+                          serviceData={section?.data || []}
+                          sectionId={section.id}
+                          deletedServices={deletedServices}
+                        />
+                      </Box>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+              </Stack>
+            </Box>
+          ))}
+        </Box>
+
+        <Box>
+          <Button
+            startIcon={<PlusIcon />}
+            size="small"
+            sx={{ color: "secondary.main" }}
+            onClick={() =>
+              append({
+                id: uuid(),
+                title: "Section " + (fields.length + 1),
+                isNewSection: true,
+                data: [],
+              } as any)
+            }
+          >
+            {budgetT("tabService.section.addSection")}
+          </Button>
+        </Box>
+      </ScrollViewProvider>
       <ConfirmDialog
         open={isOpenConfirm}
         onClose={cancelConfirmDelete}
@@ -444,6 +476,6 @@ export const ServiceSection = ({ onCloseEdit = () => {}, sectionsList = [], refe
         title={budgetT("delete.titleConfirmDelete")}
         content={budgetT("delete.contentConfirmDelete")}
       />
-    </Box>
+    </>
   );
 };

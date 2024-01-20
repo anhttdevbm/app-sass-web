@@ -5,7 +5,7 @@ import { Text } from "components/shared";
 import { NS_BLOG, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import React, { memo } from "react";
-import { BlogData } from "store/blog/actions";
+import { BlogData, BlogStatus } from "store/blog/actions";
 import { BLOGS_DETAIL_PATH } from "constant/paths";
 import { formatDate, getPath } from "utils/index";
 
@@ -34,9 +34,11 @@ const MobileContentCell = (props: MobileContentCellProps) => {
                     <Text variant="h6">{item.title}</Text>
                 </Stack>
                 <InformationItem label={blogT("slug")}>
-                   {item.slug}
+                    {item.slug}
                 </InformationItem>
-
+                <InformationItem label={blogT("blogList.short_description")}>
+                    {item.short_description}
+                </InformationItem>
                 <InformationItem label={blogT("tag")}>
                     {item.tag?.map((tag, index) => (
                         <Text key={index}>{tag}</Text>
@@ -44,20 +46,13 @@ const MobileContentCell = (props: MobileContentCellProps) => {
                 </InformationItem>
                 <InformationItem label={blogT("created_time")}>{formatDate(item?.created_time, "HH:mm - dd/MM/yyyy")}</InformationItem>
                 <InformationItem label={blogT("blogList.statusBlog")}>
-                    {!item.published ? (
-                        <Chip
-                            size="small"
-                            label={blogT("status.false")}
-                            color="primary"
-                        />
+                    {item.status === BlogStatus.PUBLISHED ? (
+                        <Chip size="small" label={blogT("status.published")} color="success" />
+                    ) : item.status === BlogStatus.DRAFT ? (
+                        <Chip size="small" label={blogT("status.draft")} color="primary" />
                     ) : (
-                        <Chip
-                            size="small"
-                            label={blogT("status.true")}
-                            color="success"
-                        />
+                        <Chip size="small" label={blogT("status.hide")} color="default" />
                     )}
-
                 </InformationItem>
             </Stack>
 
