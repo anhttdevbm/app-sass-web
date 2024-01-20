@@ -202,23 +202,6 @@ const ItemList = () => {
             </IconButton>
             <IconButton
               size="small"
-              onClick={onApproveOrReject(BlogStatus.DRAFT)}
-              tooltip={blogT("actions.draft")}
-              sx={{
-                backgroundColor: "primary.light",
-                color: "text.primary",
-                p: { xs: "4px!important", md: 1 },
-                "&:hover svg": {
-                  color: "common.white",
-                },
-              }}
-              variant="contained"
-              disabled={!selectedList.length}
-            >
-              <CloseSquareIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
               onClick={onApproveOrReject(BlogStatus.HIDE)}
               tooltip={blogT("actions.hide")}
               sx={{

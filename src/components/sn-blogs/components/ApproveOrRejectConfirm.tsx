@@ -20,7 +20,6 @@ const ApproveOrRejectConfirm = (props: ApproveOrRejectConfirmProps) => {
   const commonT = useTranslations(NS_COMMON);  
   const blogT = useTranslations(NS_BLOG);
 
-console.log(action);
   const { onAddSnackbar } = useSnackbar();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 

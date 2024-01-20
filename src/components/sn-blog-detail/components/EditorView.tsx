@@ -84,7 +84,8 @@ const Editor = (props: EditorProps) => {
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [loadedFiles, setLoadedFiles] = useState<string[]>([]);
-  const [listDataFile, setListDataFile] = useState<string[]>(dataFile.filter((f) => f));
+  const [listDataFile, setListDataFile] = useState<string[]>(dataFile ? dataFile.filter((f) => f) : []);
+
   const urlFiles = useMemo(() => {
     return files.filter(file => file instanceof Blob)
       .map(file => URL.createObjectURL(file));

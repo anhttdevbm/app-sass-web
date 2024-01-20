@@ -168,7 +168,6 @@ export const useBlogs = () => {
         async () => {
           try {
             const result = await dispatch(getListBlogTags()).unwrap();
-            console.log(result);  // Log the result to check if data is fetched successfully
           } catch (error) {
             throw error;
           }
