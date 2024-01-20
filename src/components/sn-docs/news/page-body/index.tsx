@@ -60,7 +60,6 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
 
   const [updateDoc] = useUpdateDocMutation();
   const [debounceChange, isDone, cancel] = useDebounce((value: string) => {
-    alert("Update!");
     updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
