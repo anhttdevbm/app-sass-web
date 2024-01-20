@@ -86,6 +86,23 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     }
   }, [description, name, content, project_id, currentId]);
 
+  useEffect(() => {
+    const data = {
+      content: content,
+      name: name || undefined,
+      description: description,
+      project_id: project_id,
+    };
+    if (mounted) {
+      if (id) {
+        handleUpdateDoc(data, id);
+      } else {
+      }
+    } else {
+      setMounted(true);
+    }
+  }, [content]);
+
   const editor = useDocEditor() as Editor;
 
   useEffect(() => {
@@ -180,7 +197,6 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
               />
             )}
           </form>
-          {JSON.stringify(content)}
           <div
             className={`${styles.editor}`}
             style={{
