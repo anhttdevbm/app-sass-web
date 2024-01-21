@@ -41,7 +41,6 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
-  console.log(searchParams.get("search_key"));
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
@@ -49,6 +48,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   );
 
   const onChangeQueries = (name: string, value: any) => {
+    console.log(name, value);
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
   };
   const { id } = useParams();
