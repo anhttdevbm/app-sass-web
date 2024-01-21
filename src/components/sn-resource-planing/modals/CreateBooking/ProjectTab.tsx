@@ -12,7 +12,7 @@ import TextFieldSelect, {
   IOptionStructure,
 } from "components/shared/TextFieldSelect";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
-import React, { useEffect, useState } from "react";
+import React, { UIEvent, UIEventHandler, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import TextFieldInput from "components/shared/TextFieldInput";
@@ -22,7 +22,10 @@ import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
 import { Button, Tooltip } from "components/shared";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
-import { useBookingAll } from "store/resourcePlanning/selector";
+import {
+  useBookingAll,
+  useGetServiceBudget,
+} from "store/resourcePlanning/selector";
 import dayjs from "dayjs";
 import { BookingData } from "store/resourcePlanning/action";
 import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
@@ -30,7 +33,7 @@ import { useGetSchemas } from "../Schemas";
 import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import { StatusCell } from "components/Table";
 import TextStatus from "components/TextStatus";
-import { formatNumber } from "utils/index";
+import { debounce, formatNumber } from "utils/index";
 
 interface IProps {
   open: boolean;
@@ -86,6 +89,8 @@ const ProjectTab = ({
       watchProject("project_id"),
       resourceId,
     );
+  const { setProjectId, projectId, queries, setQueries, serviceBudgetOptions } =
+    useGetServiceBudget();
 
   const onSubmitProject = async (data) => {
     const cleanData: BookingData = {
@@ -111,6 +116,23 @@ const ProjectTab = ({
       setIsShowDetail(false);
     }
   }, [watchProject("sale_id"), isShowDetail]);
+
+  useEffect(() => {
+    if (watchProject("project_id")) {
+      setProjectId(watchProject("project_id"));
+    }
+  }, [watchProject("project_id")]);
+
+  const onScroll = debounce((e: any) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.target;
+
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      setQueries({
+        ...queries,
+        pageIndex: (queries.pageIndex ?? 0) + 1,
+      });
+    }
+  }, 250);
 
   return (
     <Grid2 container spacing={2} sx={{ mt: 1 }}>
@@ -154,13 +176,19 @@ const ProjectTab = ({
           render={({ field }) => (
             <TextFieldSelect
               value={field.value}
+              disabled={!watchProject("project_id")}
               onChange={(event) => {
                 field.onChange(event.target.value);
+              }}
+              MenuProps={{
+                PaperProps: {
+                  onScroll: onScroll,
+                },
               }}
               helperText={errorsProject.sale_id?.message}
               error={!!errorsProject.sale_id?.message}
               required
-              options={salesOptions as IOptionStructure[]}
+              options={serviceBudgetOptions as IOptionStructure[]}
               label={resourceT("form.services")}
               sx={{
                 "& .Muibox-root .MuiBox-root": {

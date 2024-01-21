@@ -23,6 +23,8 @@ const useGetEmployeeOptions = () => {
       pageIndex: 1,
       pageSize: 20,
       email: (value as string) || "",
+      fullname: (value as string) || "",
+      searchType: "or",
     });
   };
 
