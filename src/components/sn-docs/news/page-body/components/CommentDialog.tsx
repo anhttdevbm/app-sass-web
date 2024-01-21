@@ -41,12 +41,13 @@ export default function CommentDialog() {
 
   const handleAddComment = async () => {
     const newComment = new Comment(comment);
-    editor?.commands.setComment(newComment.position);
+    // position of doc comment!
+    // editor?.commands.setComment(newComment.position);
     const response = await addComment({
       ...newComment,
       docId: id as string,
     }).unwrap();
-    setActiveCommentId(newComment.position);
+    // setActiveCommentId(newComment.position);
     handleClose();
   };
   return (

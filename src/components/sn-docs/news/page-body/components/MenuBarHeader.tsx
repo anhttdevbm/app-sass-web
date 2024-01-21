@@ -325,8 +325,8 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
   const setComment = () => {
     const newComment = new Comment("");
     setComments([...comments, newComment]);
-    editor?.commands.setComment(newComment.position);
-    setActiveCommentId(newComment.position);
+    // editor?.commands.setComment(newComment.position);
+    // setActiveCommentId(newComment.position);
   };
 
   const canComment = useMemo(
@@ -376,7 +376,7 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
         },
 
         "button.active": {
-          bgcolor: isDarkMode ? "#1E1E1E" : "#E1F0FF",
+          bgcolor: isDarkMode ? "#1E1E1E" : "white",
         },
       }}
     >
