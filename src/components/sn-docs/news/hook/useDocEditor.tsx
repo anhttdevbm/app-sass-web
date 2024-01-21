@@ -4,16 +4,13 @@ import { getExtensions } from "../tiptap/extensions/starter-kit";
 import useDebounce from "hooks/useDebounce";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { changeContentDoc } from "store/docs/reducer";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 export default function useDocEditor() {
-  const {
-    content,
-    setContent,
-    setIsAddingNewLink,
-    setActiveCommentId,
-    setOpenComment,
-  } = useContext(NewPageContext);
+  const { setContent, setIsAddingNewLink, setActiveCommentId, setOpenComment } =
+    useContext(NewPageContext);
+
+  const { content } = useAppSelector((state) => state.doc);
 
   const doc = useAppSelector((state) => state.doc);
   const dispatch = useAppDispatch();
@@ -23,13 +20,11 @@ export default function useDocEditor() {
 
   const anchorRef = useRef(0);
   const editor = useEditor({
-    content: doc?.contentRow,
-   // emitUpdate: true,
+    content: content, // emitUpdate: true,
     extensions: getExtensions({
       openLinkModal: () => setIsAddingNewLink(true),
       onCommentActivated: (commentId: string) => {
         if (commentId) {
-
           setActiveCommentId(commentId);
           setOpenComment(true);
         }
@@ -51,8 +46,8 @@ export default function useDocEditor() {
   });
 
   useEffect(() => {
-    editor?.commands?.setContent(doc?.contentRow)
-  }, [doc?.contentRow])
+    editor?.commands?.setContent(content);
+  }, [content]);
 
   return editor;
 }

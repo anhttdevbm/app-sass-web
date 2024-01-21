@@ -6,7 +6,7 @@ import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { AN_ERROR_TRY_AGAIN, NS_BLOG, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { BlogData } from "store/blog/actions";
 
@@ -17,7 +17,8 @@ type ApproveOrRejectConfirmProps = ConfirmDialogProps & {
 
 const ApproveOrRejectConfirm = (props: ApproveOrRejectConfirmProps) => {
   const { items = [], onSubmit: onSubmitProps, action, ...rest } = props;
-  const commonT = useTranslations(NS_COMMON);
+  const commonT = useTranslations(NS_COMMON);  
+  const blogT = useTranslations(NS_BLOG);
 
   const { onAddSnackbar } = useSnackbar();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -29,12 +30,13 @@ const ApproveOrRejectConfirm = (props: ApproveOrRejectConfirmProps) => {
       const ids = onSubmitProps && (await onSubmitProps());
       if (ids?.length) {
         onAddSnackbar(
-          commonT("notification.success", { label: action }),
+          blogT("blogList.notification.success", { label: action }),
           "success",
         );
         props?.onClose();
       } else {
-        throw AN_ERROR_TRY_AGAIN;
+        onAddSnackbar( blogT(AN_ERROR_TRY_AGAIN),"error",);
+        props?.onClose()
       }
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");

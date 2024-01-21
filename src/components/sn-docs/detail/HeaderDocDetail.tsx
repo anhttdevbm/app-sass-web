@@ -32,13 +32,17 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const router = useRouter();
   const currentId = useAppSelector((state) => state.doc.id);
   const { id } = useParams();
+
   const dispatch = useDispatch();
   useEffect(() => {
     if (!currentId) {
-      // Get id from params in Next
       dispatch(changeId(id as string));
     }
   }, []);
+
+  const { data: rootDocument } = useGetDocDetailQuery(id as string);
+
+  console.log("rootDocument", rootDocument);
 
   const { isDarkMode } = useTheme();
   const doc = useAppSelector((state) => state.doc);
@@ -102,8 +106,9 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   border: "none",
                   backgroundColor: "transparent",
                 }}
-                value={document?.name}
-                onChange={(e) => debounceChange(e.target.value)}
+                disabled={true}
+                value={rootDocument?.name}
+                // onChange={(e) => debounceChange(e.target.value)}
               />
             </Box>
           )}
@@ -149,12 +154,16 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   },
                   padding: 0,
                   outline: "none",
+                  // Disable red error underline
                   border: "none",
                   backgroundColor: "transparent",
+                  // Hide cursor
+                  cursor: "default",
                 }}
-                defaultValue={document?.name}
-                title={document?.name}
-                onChange={(e) => debounceChange(e.target.value)}
+                spellCheck={false}
+                value={rootDocument?.name}
+                title={rootDocument?.name}
+                // onChange={(e) => debounceChange(e.target.value)}
               />
             </Box>
             <Box

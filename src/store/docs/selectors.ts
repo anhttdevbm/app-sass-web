@@ -39,7 +39,7 @@ const useDocs = () => {
     [dispatch],
   );
 
-  const onCreateDoc = async () => {
+  const onCreateDoc = async (projectId) => {
     setLoading(true);
     try {
       const response = await client.post(
@@ -47,7 +47,7 @@ const useDocs = () => {
         {
           name: "No Name",
           description: "",
-          // "project_id":"78537730-5155-11ee-a41a-97ec118da8c5",
+          project_id: projectId,
         },
         {
           baseURL: DOCS_API_URL,
@@ -55,7 +55,6 @@ const useDocs = () => {
       );
 
       if (response?.status === HttpStatusCode.CREATED) {
-        console.log({data: response.data});
         dispatch(changeId(response.data.id));
         dispatch(getDocDetails(response.data.id));
         push(`/documents/${response.data.id}`);
@@ -69,6 +68,7 @@ const useDocs = () => {
   };
 
   const handleUpdateDoc = async (data, id) => {
+    console.log("UPDATE!", data);
     await client.put(Endpoint.DOCS + `/${id}`, data, {
       baseURL: "http://113.192.9.79:6813/api/v1",
     });
