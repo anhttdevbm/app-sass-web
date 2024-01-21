@@ -41,7 +41,7 @@ import { niceBytes } from "utils/extension";
 type Props = {
   open: boolean;
   onClose: () => void;
-  expenseData?: TBudgetExpense;
+  expenseData?: TBudgetExpense | null;
   services: any[];
   serviceId: string;
 };
