@@ -24,7 +24,7 @@ import { useBudgetTimeRemove } from "queries/budgeting/time-range";
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI } from "utils/index";
+import { getMessageErrorByAPI, toHoursAndMinutes } from "utils/index";
 import MoreDotIcon from "../../../icons/MoreDotIcon";
 import TrashIcon from "../../../icons/TrashIcon";
 import { budgetDetailRef } from "../BudgetDetail";
@@ -79,16 +79,22 @@ export const Time = ({
   });
 
   const headerList: CellProps[] = useMemo(() => {
-    const totalTime: any = _.reduce(
-      timeList || [],
-      (total: number, timeItem: TTimeRanges) => total + (timeItem.timeRanges / 60),
-      0,
+    const totalTime: any = toHoursAndMinutes(
+      _.reduce(
+        timeList || [],
+        (total: number, timeItem: TTimeRanges) =>
+          total + timeItem.timeRanges * 60,
+        0,
+      ),
     );
 
-    const totalBillable: any = _.reduce(
-      timeList || [],
-      (total: number, timeItem: TTimeRanges) => total + (timeItem.billableTime / 60),
-      0,
+    const totalBillable: any = toHoursAndMinutes(
+      _.reduce(
+        timeList || [],
+        (total: number, timeItem: TTimeRanges) =>
+          total + timeItem.billableTime * 60,
+        0,
+      ),
     );
 
     return [
@@ -96,8 +102,22 @@ export const Time = ({
       { value: budgetT("tabTime.service"), align: "center", width: "20%" },
       { value: budgetT("tabTime.person"), align: "center", width: "20%" },
       { value: budgetT("tabTime.notes"), align: "center", width: "20%" },
-      { value: budgetT("tabTime.time"), align: "center", data: `${totalTime || 0}:00`, width: "10%" },
-      { value: budgetT("tabTime.billable"), align: "center", data: `${totalBillable || 0}:00`, width: "15%" },
+      {
+        value: budgetT("tabTime.time"),
+        align: "center",
+        data: `${totalTime.hours < 1 ? "00" : totalTime.hours}:${
+          totalTime.minutes < 1 ? "00" : totalTime.minutes
+        }`,
+        width: "10%",
+      },
+      {
+        value: budgetT("tabTime.billable"),
+        align: "center",
+        data: `${totalBillable.hours < 1 ? "00" : totalBillable.hours}:${
+          totalBillable.minutes < 1 ? "00" : totalBillable.minutes
+        }`,
+        width: "15%",
+      },
       { value: "", align: "center", width: "5%" },
     ];
   }, [timeList]);

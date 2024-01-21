@@ -7,7 +7,12 @@ import Textarea from "components/sn-time-tracking/Component/Textarea";
 import { NS_BUDGETING, NS_COMMON } from "constant/index";
 import moment from "moment";
 import { useTranslations } from "next-intl";
-import { TBudgetTimeAdd, TBudgetTimeUpdate, useBudgetTimeAdd, useBudgetTimeUpdate } from "queries/budgeting/time-range";
+import {
+  TBudgetTimeAdd,
+  TBudgetTimeUpdate,
+  useBudgetTimeAdd,
+  useBudgetTimeUpdate,
+} from "queries/budgeting/time-range";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
@@ -18,6 +23,7 @@ import { TBudgetService } from "../BudgetDetail";
 import { ReactDatePickerProps } from "react-datepicker";
 import { DateTimePicker } from "components/shared/DatePicker";
 import _ from "lodash";
+import InputLabelWrapper from "./InputLabelWrapper";
 
 type Props = {
   services: any[];
@@ -73,12 +79,12 @@ export const ModalAddTime = ({
     useForm<TTimeRanges>({
       defaultValues: timeData || defaultValues,
     });
-  
+
   useEffect(() => {
     if (!open) {
       reset(defaultValues);
       return;
-    };
+    }
 
     if (timeData) {
       reset(timeData);
@@ -90,13 +96,16 @@ export const ModalAddTime = ({
   }, [serviceId]);
 
   useEffect(() => {
-    if (watch('startTime') && watch('endTime')) {
-      const gap = moment(watch('endTime')).diff(moment(watch('startTime')), 'minutes');
+    if (watch("startTime") && watch("endTime")) {
+      const gap = moment(watch("endTime")).diff(
+        moment(watch("startTime")),
+        "minutes",
+      );
       if (gap > 0) {
-        setValue('timeRanges', gap / 60);
+        setValue("timeRanges", gap / 60);
       }
     }
-  }, [watch('startTime'), watch('endTime')]);
+  }, [watch("startTime"), watch("endTime")]);
 
   const onSubmit = async (formValue: TTimeRanges) => {
     try {
@@ -106,11 +115,11 @@ export const ModalAddTime = ({
         note: formValue.note,
         timeRanges: formValue.timeRanges,
         billableTime: formValue.billableTime,
-        date: formValue.date ? moment(formValue.date).format("YYYY-MM-DD") : ""
+        date: formValue.date ? moment(formValue.date).format("YYYY-MM-DD") : "",
       } as TBudgetTimeAdd;
-  
+
       if (!!timeData) {
-        data['id'] = formValue.docId || "";
+        data["id"] = formValue.docId || "";
         budgetTimeUpdate.mutate(data as TBudgetTimeUpdate, {
           onSuccess() {
             onAddSnackbar("Update time successful", "success");
@@ -142,13 +151,21 @@ export const ModalAddTime = ({
 
   return (
     <FormLayout
-      label={!!timeData ? budgetT("dialog.titleModalUpdate") : budgetT("dialog.titleModalAdd")}
+      label={
+        !!timeData
+          ? budgetT("dialog.titleModalUpdate")
+          : budgetT("dialog.titleModalAdd")
+      }
       pending={false}
       submitWhenEnter={false}
       open={open}
       onClose={onClose}
       cancelText={budgetT("dialog.cancelBtnText")}
-      submitText={!!timeData ? budgetT("dialog.updateBtnText") : budgetT("dialog.addBtnText")}
+      submitText={
+        !!timeData
+          ? budgetT("dialog.updateBtnText")
+          : budgetT("dialog.addBtnText")
+      }
       onSubmit={handleSubmit(onSubmit)}
     >
       <Stack overflow="auto">
@@ -173,8 +190,8 @@ export const ModalAddTime = ({
 
           <Select
             options={services.map((service: TBudgetService) => ({
-              value: _.get(service, 'id', ''),
-              label: _.get(service, 'name', ''),
+              value: _.get(service, "id", ""),
+              label: _.get(service, "name", ""),
             }))}
             title={budgetT("dialog.service")}
             name="service"
@@ -252,7 +269,34 @@ export const ModalAddTime = ({
               )}
             />
           </Stack>
-          <Textarea label={budgetT("dialog.note")} {...register("note")} autoComplete="off" rows={4} sx={{ backgroundColor: 'transparent !important' }} />
+
+          <InputLabelWrapper
+            label={budgetT("dialog.note")}
+            sx={{ "& label.MuiFormLabel-root": { display: "none" } }}
+          >
+            <Controller
+              control={control}
+              name="note"
+              render={({ field: { onChange, value } }) => (
+                <Textarea
+                  fullWidth
+                  value={value}
+                  minRows={4}
+                  onChange={onChange}
+                  autoComplete="off"
+                  sx={{
+                    backgroundColor: 'transparent !important',
+                    "& .MuiFormControl-root.MuiTextField-root": {
+                      borderColor: "#99999970 !important",
+                    },
+                    "& > *": {
+                      backgroundColor: "transparent !important",
+                    },
+                  }}
+                />
+              )}
+            />
+          </InputLabelWrapper>
         </MenuList>
       </Stack>
     </FormLayout>

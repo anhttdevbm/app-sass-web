@@ -50,8 +50,8 @@ const ModalAddBudget = (props: Props) => {
   useEffect(() => {
     if (!rest.open) {
       formik.resetForm();
-      return
-    };
+      return;
+    }
     if (!projects || projects.length === 0) {
       onGetProjects({});
     }
@@ -242,7 +242,7 @@ const ModalAddBudget = (props: Props) => {
                 onClickOutside() {
                   toggleFocusInputDate(false);
                 },
-                autoComplete: "off"
+                autoComplete: "off",
               }}
             />
             <DateTimePicker
@@ -271,7 +271,7 @@ const ModalAddBudget = (props: Props) => {
                 onClickOutside() {
                   toggleFocusInputDate(false);
                 },
-                autoComplete: "off"
+                autoComplete: "off",
               }}
             />
           </Stack>

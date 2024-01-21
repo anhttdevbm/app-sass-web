@@ -11,15 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import FormLayout from "components/FormLayout";
-import { DatePicker, Input, Select, Upload } from "components/shared";
+import { DatePicker, Input, Select } from "components/shared";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
 import { IMAGES_ACCEPT, NS_BUDGETING, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import InputLabelWrapper from "./InputLabelWrapper";
-import { TBudgetExpense, useBudgetExpenseAdd } from "queries/budgeting/expense";
+import { TBudgetExpense, useBudgetExpenseAdd, useBudgetExpenseUpdate } from "queries/budgeting/expense";
 import moment from "moment";
 import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 import * as yup from "yup";
@@ -32,10 +32,11 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useCurrencyOptions } from "store/global/selectors";
 import { useParams } from "next/navigation";
 import { User } from "constant/types";
-import { getMessageErrorByAPI } from "utils/index";
+import { getMessageErrorByAPI, uuid } from "utils/index";
 import AttachmentIcon from "@mui/icons-material/Attachment";
-import Image from "next/image";
-import UploadIcon from "icons/UploadIcon";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import ClearIcon from "@mui/icons-material/Clear";
+import { niceBytes } from "utils/extension";
 
 type Props = {
   open: boolean;
@@ -44,12 +45,6 @@ type Props = {
   services: any[];
   serviceId: string;
 };
-
-interface AttachmentList {
-  link: string;
-  name: string;
-  object: string;
-}
 
 interface TExpenseAddForm {
   date: string;
@@ -67,8 +62,7 @@ interface TExpenseAddForm {
   paymentDate?: string;
   vendor?: string;
   status: ExpenseStatus;
-  attachment: AttachmentList[];
-  files?: any[];
+  attachment: any[];
 }
 
 const defaultValues: TExpenseAddForm = {
@@ -84,7 +78,6 @@ const defaultValues: TExpenseAddForm = {
   reimbursement: "no",
   status: ExpenseStatus.UNPAID,
   attachment: [],
-  files: [],
 };
 
 const sxInput = {
@@ -109,6 +102,7 @@ export const ModalExpense = ({
   const { user } = useAuth();
 
   const budgetExpenseAdd = useBudgetExpenseAdd();
+  const budgetExpenseUpdate = useBudgetExpenseUpdate();
   const { onAddSnackbar } = useSnackbar();
 
   const inputFileRef = useRef<HTMLInputElement | null>(null);
@@ -127,19 +121,17 @@ export const ModalExpense = ({
   const { options: currencyOptions, onGetOptions: onGetCurrencyOptions } =
     useCurrencyOptions();
 
-  const { control, handleSubmit, watch, setValue } = useForm<any>({
+  const { control, handleSubmit, watch, setValue, reset } = useForm<
+    TExpenseAddForm | any
+  >({
     defaultValues: expenseData || defaultValues,
     resolver: yupResolver(
       yup.object({
         date: yup.string().required("Date is required."),
         owner: yup.string().required("Owner is required."),
+        service: yup.string().required("Service is required."),
       }),
     ),
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    name: "files",
-    control,
   });
 
   const userInfo = useMemo(() => {
@@ -163,8 +155,41 @@ export const ModalExpense = ({
   }, []);
 
   useEffect(() => {
+    if (!_.isEmpty(expenseData)) {
+      reset({
+        date: _.get(expenseData, "date", null),
+        owner: _.get(expenseData, "owner.id", ""),
+        service: _.get(expenseData, "serviceId", ""),
+        qty: _.get(expenseData, "qty", 0),
+        cost: _.get(expenseData, "cost", 0),
+        currency: _.get(expenseData, "currency", "USD"),
+        totalCost: _.get(expenseData, "totalCost", 0),
+        markup: _.get(expenseData, "markup", 0),
+        description: _.get(expenseData, "description", 0),
+        reimbursement: _.get(expenseData, "reimbursement.reimbursement", "no"),
+        reimbursementDate: _.get(
+          expenseData,
+          "reimbursement.reimbursementDate",
+          null,
+        ),
+        dueDate: _.get(expenseData, "payment.dueDate", null),
+        paymentDate: _.get(expenseData, "payment.paymentDate", null),
+        vendor: _.get(expenseData, "payment.vendor", "USD"),
+        status: _.get(expenseData, "status", ExpenseStatus.UNPAID),
+        attachment: _.get(expenseData, "attachment", []),
+      });
+    }
+  }, [expenseData]);
+
+  useEffect(() => {
     setValue("service", serviceId || "");
   }, [serviceId]);
+
+  useEffect(() => {
+    if (!open) {
+      reset(defaultValues);
+    }
+  }, [open]);
 
   const onSubmit = async (formValue: TExpenseAddForm) => {
     const data: any = {
@@ -201,15 +226,28 @@ export const ModalExpense = ({
       attachment: "",
     };
 
-    budgetExpenseAdd.mutateAsync(data, {
-      onSuccess: () => {
-        onAddSnackbar("Create expense successful", "success");
-        onClose();
-      },
-      onError(error) {
-        onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-      },
-    });
+    if (!_.isEmpty(expenseData)) {
+      data['id'] = _.get(expenseData, 'id', '');
+      budgetExpenseUpdate.mutateAsync(data, {
+        onSuccess: () => {
+          onAddSnackbar("Update expense successful", "success");
+          onClose();
+        },
+        onError(error) {
+          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+        },
+      });
+    } else {
+      budgetExpenseAdd.mutateAsync(data, {
+        onSuccess: () => {
+          onAddSnackbar("Create expense successful", "success");
+          onClose();
+        },
+        onError(error) {
+          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+        },
+      });
+    }
   };
 
   const onSearchMember = (name: string, value = "") => {
@@ -225,19 +263,43 @@ export const ModalExpense = ({
   };
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event?.target?.files;
+    const files: FileList | null = event?.target?.files;
     if (!files) return;
     if (IMAGES_ACCEPT.includes(files[0].type)) {
-      setValue('attachment', _.concat())
-      append(URL.createObjectURL(files[0]));
+      const url = URL.createObjectURL(files[0]);
+      setValue(
+        "attachment",
+        _.concat(watch("attachment") || [], [
+          {
+            id: uuid(),
+            link: url,
+            name: files[0].name,
+            size: niceBytes(files[0].size),
+          },
+        ]),
+      );
     } else {
       onAddSnackbar(commonT("notification.imageTypeInvalid"), "error");
     }
   };
 
+  const handleRemoveFile = (file) => {
+    setValue(
+      "attachment",
+      _.filter(
+        watch("attachment"),
+        (attachmentFile) => attachmentFile?.id !== file?.id,
+      ),
+    );
+  };
+
   return (
     <FormLayout
-      label={budgetT("dialogExpense.titleModalAdd")}
+      label={
+        !_.isEmpty(expenseData)
+          ? budgetT("dialogExpense.titleModalDetail")
+          : budgetT("dialogExpense.titleModalAdd")
+      }
       pending={false}
       submitWhenEnter={false}
       bottomProps={{
@@ -248,7 +310,11 @@ export const ModalExpense = ({
       open={open}
       onClose={onClose}
       cancelText={budgetT("dialogExpense.cancelBtnText")}
-      submitText={budgetT("dialogExpense.createBtnText")}
+      submitText={
+        !_.isEmpty(expenseData)
+          ? budgetT("dialogExpense.updateBtnText")
+          : budgetT("dialogExpense.createBtnText")
+      }
       onSubmit={handleSubmit(onSubmit)}
     >
       <Stack overflow="auto">
@@ -419,7 +485,13 @@ export const ModalExpense = ({
                         <Select
                           error={error?.message}
                           fullWidth
-                          options={currencyOptions}
+                          options={_.map(currencyOptions || [], (currency) => ({
+                            ...currency,
+                            label: `${currency.label} ${
+                              CURRENCY_SYMBOL[currency.value]
+                            }`,
+                            value: currency.value,
+                          }))}
                           autoComplete="off"
                           sx={{
                             "& .MuiInputBase-root.MuiOutlinedInput-root": {
@@ -525,11 +597,24 @@ export const ModalExpense = ({
                       label={budgetT("dialogExpense.totalCost")}
                       sx={{ width: "50%" }}
                     >
-                      <Input
-                        rootSx={sxInput}
-                        autoComplete="off"
-                        onlyContent
+                      <Controller
+                        control={control}
                         name="totalCost"
+                        render={({ field: { onChange, value } }) => (
+                          <Input
+                            rootSx={sxInput}
+                            fullWidth
+                            value={value}
+                            onChange={onChange}
+                            autoComplete="off"
+                            sx={{
+                              "& .MuiInputBase-root.MuiOutlinedInput-root": {
+                                backgroundColor: "transparent !important",
+                                borderColor: "#99999970 !important",
+                              },
+                            }}
+                          />
+                        )}
                       />
                     </InputLabelWrapper>
 
@@ -538,25 +623,57 @@ export const ModalExpense = ({
                       label={budgetT("dialogExpense.markup")}
                       sx={{ width: "40%" }}
                     >
-                      <Input
-                        rootSx={sxInput}
-                        autoComplete="off"
-                        onlyContent
+                      <Controller
+                        control={control}
                         name="markup"
+                        render={({ field: { onChange, value } }) => (
+                          <Input
+                            rootSx={sxInput}
+                            fullWidth
+                            value={value}
+                            onChange={onChange}
+                            autoComplete="off"
+                            InputProps={{
+                              endAdornment: "%",
+                            }}
+                            sx={{
+                              "& .MuiInputBase-root.MuiOutlinedInput-root": {
+                                backgroundColor: "transparent !important",
+                                borderColor: "#99999970 !important",
+                              },
+                            }}
+                          />
+                        )}
                       />
                     </InputLabelWrapper>
                   </Stack>
                   <Stack direction="row" width={"50%"} alignItems="center">
                     <ArrowForwardIcon sx={{ width: "10%" }} color="disabled" />
                     <InputLabelWrapper
-                      label={budgetT("dialogExpense.totalCost")}
+                      label={budgetT("dialogExpense.totalBillable")}
                       sx={{ width: "90%" }}
                     >
-                      <Input
-                        rootSx={sxInput}
-                        onlyContent
-                        autoComplete="off"
-                        name="totalCost"
+                      <Controller
+                        control={control}
+                        name="totalBillable"
+                        render={({ field: { onChange, value } }) => (
+                          <Input
+                            rootSx={sxInput}
+                            fullWidth
+                            value={value}
+                            onChange={onChange}
+                            InputProps={{
+                              endAdornment: watch("currency"),
+                            }}
+                            autoComplete="off"
+                            sx={{
+                              "& .MuiInputBase-root.MuiOutlinedInput-root": {
+                                backgroundColor: "transparent !important",
+                                borderColor: "#99999970 !important",
+                              },
+                            }}
+                          />
+                        )}
                       />
                     </InputLabelWrapper>
                   </Stack>
@@ -564,50 +681,34 @@ export const ModalExpense = ({
               )}
             </Grid>
 
-            <Grid item xs={12} sx={{ position: "relative" }}>
-              <Stack
-                width={64}
-                height={64}
-                justifyContent="center"
-                alignItems="center"
-                className="rounded"
-                border="1px solid"
-                borderColor="grey.50"
+            <Grid item xs={12} sx={{ position: "relative", mt: 1 }}>
+              <InputLabelWrapper
+                label={budgetT("dialogExpense.description")}
+                sx={{ "& label.MuiFormLabel-root": { display: "none" } }}
               >
-                {
-                  _.map(fields || [], (url: any, index) => (
-                    <Image
-                      key={index}
-                      src={url || ""}
-                      width={65}
-                      height={65}
-                      alt="Image"
-                      className="rounded"
-                    />
-                  ))
-                }
-              </Stack>
-
-              <InputLabelWrapper label={budgetT("dialogExpense.description")}>
                 <Controller
                   control={control}
                   name="description"
                   render={({ field: { onChange, value } }) => (
-                    <Textarea
-                      fullWidth
-                      value={value}
-                      minRows={6}
-                      onChange={onChange}
-                      autoComplete="off"
-                      sx={{
-                        "& .MuiFormControl-root.MuiTextField-root": {
-                          borderColor: "#99999970 !important",
-                        },
-                        "& > *": {
-                          backgroundColor: "transparent !important",
-                        },
-                      }}
-                    />
+                    <>
+                      <Textarea
+                        fullWidth
+                        value={value}
+                        minRows={6}
+                        onChange={onChange}
+                        autoComplete="off"
+                        sx={{
+                          backgroundColor: "gray.50",
+                          "& .MuiFormControl-root.MuiTextField-root": {
+                            border: "1px solid #99999970 !important",
+                            borderRadius: "4px",
+                          },
+                          "& > *": {
+                            backgroundColor: "transparent !important",
+                          },
+                        }}
+                      />
+                    </>
                   )}
                 />
 
@@ -621,6 +722,34 @@ export const ModalExpense = ({
             </Grid>
 
             <Grid item xs={12}>
+              {!_.isEmpty(watch("attachment")) && (
+                <Box width="100%">
+                  {_.map(watch("attachment") || [], (attachmentFile, index) => (
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      key={index}
+                      sx={{ border: "1px solid #99999970", px: 2, py: 1 }}
+                    >
+                      <Typography>
+                        {_.get(attachmentFile, "name", "")}
+                      </Typography>
+
+                      <Stack direction="row" alignItems="center">
+                        <Typography sx={{ mr: 1 }}>
+                          {_.get(attachmentFile, "size", "")}
+                        </Typography>
+
+                        <IconButton onClick={() => handleRemoveFile(attachmentFile)}>
+                          <ClearIcon />
+                        </IconButton>
+                      </Stack>
+                    </Stack>
+                  ))}
+                </Box>
+              )}
+
               <Box
                 type="file"
                 accept={IMAGES_ACCEPT.join(", ")}
