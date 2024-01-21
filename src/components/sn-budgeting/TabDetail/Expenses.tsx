@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { budgetDetailRef } from "../BudgetDetail";
 
 export type TExpense = {
   id: string;
@@ -74,6 +75,16 @@ export const Expenses = () => {
   };
 
   const headerList = useMemo((): CellProps[] => {
+    const totalCost = _.reduce(
+      expenses || [],
+      (total, expense) => total + Number(expense.totalCost || 0),
+      0,
+    );
+    const billable = _.reduce(
+      expenses || [],
+      (total, expense) => total + Number(expense.billable || 0),
+      0,
+    );
     return [
       {
         value: (
@@ -100,13 +111,13 @@ export const Expenses = () => {
       },
       {
         value: budgetT("tabExpenses.totalCost"),
-        // data: "$56.000.000",
+        data: `$${totalCost}`,
         align: "center",
         width: "15%",
       },
       {
         value: budgetT("tabExpenses.billable"),
-        // data: "$56.000.000",
+        data: `$${billable}`,
         align: "center",
         width: "10%",
       },
@@ -150,7 +161,15 @@ export const Expenses = () => {
                 />
               </BodyCell>
               <BodyCell>
-                <b>{_.get(data, "service.name", "")}</b>
+                <Typography
+                  sx={{ fontWeight: 700, cursor: "pointer" }}
+                  onClick={() => {
+                    budgetDetailRef.current?.setSelectedExpense(data);
+                    budgetDetailRef.current?.openModalExpense();
+                  }}
+                >
+                  {_.get(data, "service.name", "")}
+                </Typography>
               </BodyCell>
               <BodyCell>{data.description}</BodyCell>
               <BodyCell>
