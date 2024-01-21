@@ -1,8 +1,10 @@
+import { getServiceBudget } from "./../billing/actions";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Endpoint, client } from "api";
 import { SORT_OPTIONS } from "constant/enums";
 import { RESOURCE_API_URL } from "constant/index";
 import { Dispatch } from "react";
+import { Service } from "store/sales/reducer";
 
 export interface IBookingAllFitler {
   search_key?: string;
@@ -128,6 +130,30 @@ export const deleteBookingResource = createAsyncThunk(
         },
       );
       return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getBudgetServices = createAsyncThunk(
+  "resource/getBudgetServices",
+  async (params: { project_id: string; budgets: string[] }, { dispatch }) => {
+    try {
+      const sectionsDispatch = [] as Promise<any>[];
+
+      params.budgets.forEach((budget) => {
+        sectionsDispatch.push(dispatch(getServiceBudget(budget)).unwrap());
+      });
+
+      const response = await Promise.all(sectionsDispatch).then((res) => {
+        const service = res.reduce((acc, cur) => {
+          acc.push(...cur.sections);
+          return acc;
+        }, []);
+        return service;
+      });
+      return response;
     } catch (error) {
       throw error;
     }

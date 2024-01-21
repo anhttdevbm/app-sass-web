@@ -80,12 +80,11 @@ export const getEmployees = createAsyncThunk(
 
 export const getEmployeeOptions = createAsyncThunk(
   "company/getEmployeeOptions",
-  async (queries: BaseQueries & { email?: string }) => {
+  async (queries: BaseQueries & { email?: string; fullname?: string }) => {
     queries = serverQueries({ ...queries, sort: "created_time=-1" }, [
       "email",
       "fullname",
     ]) as GetEmployeeListQueries;
-
     try {
       const response = await client.get(Endpoint.COMPANY_MEMBERS, queries, {
         baseURL: AUTH_API_URL,
@@ -333,16 +332,15 @@ export const updateMyCompany = createAsyncThunk(
       });
 
       if (response?.status === HttpStatusCode.OK) {
-
         const result = {
           ...myCompany,
           ...response.data,
           avatar: myCompany.avatar,
-          owner: {...myCompany.owner},
-          created_by: {...myCompany.created_by},
-        }
+          owner: { ...myCompany.owner },
+          created_by: { ...myCompany.created_by },
+        };
 
-        return result
+        return result;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {

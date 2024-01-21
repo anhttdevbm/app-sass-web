@@ -35,6 +35,8 @@ import LockIcon from "icons/LockIcon";
 import UnlockIcon from "icons/UnlockIcon";
 import ServiceItemAction from "./components/ItemsAction";
 import { Action } from "components/sn-sales-detail/components/TodoList/SubItem";
+import { debounce } from "lodash";
+import InputDropdown from "./components/InputDropdown";
 
 interface IProps {
   setShouldLoad: (value: boolean) => void;
@@ -51,6 +53,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
   const [probability, setProbability] = useState<number>(item.probability);
   const rowRef = useRef(null);
   const [isEditProb, setIsEditProb] = useState(false);
+  const [isEditOwner, setIsEditOwner] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   const { onSetRevenue } = useSaleDetail();
@@ -171,8 +174,12 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
         ></LabelStatusCell>
       </BodyCell>
       <BodyCell align="left">
-        <Dropdown
+        {/* <Dropdown
           name="owner"
+          onClose={(e) => {
+            e.stopPropagation();
+            onSearchEmployee("", "");
+          }}
           rootSx={{
             width: "100%",
             px: "0!important",
@@ -198,13 +205,69 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           }}
           size="small"
           hasAll={false}
+          onBlur={(e) => {
+            e.stopPropagation();
+            onSearchEmployee("", "");
+          }}
           onEndReached={onEndReachedEmployeeOptions}
           onChangeSearch={(name, value) => {
             onSearchEmployee(name, value as string);
           }}
           value={owner}
           options={mappedOwners}
-        />
+        /> */}
+        {!isEditOwner ? (
+          <Text
+            fontSize={14}
+            color="gray.400"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditOwner(true);
+            }}
+          >
+            {mappedowner.label}
+          </Text>
+        ) : (
+          <InputDropdown
+            onBlur={(e) => {
+              e.stopPropagation();
+              setIsEditOwner(false);
+              onSearchEmployee("", "");
+            }}
+            isOpen={isEditOwner}
+            onEndReached={onEndReachedEmployeeOptions}
+            onInputChange={(value) => {
+              onSearchEmployee("owner", value as string);
+            }}
+            sx={{
+              width: "100%",
+              py: "2",
+              px: "2!important",
+              [`& .MuiSelect-select`]: {
+                mr: "17px!important",
+              },
+              [`& .MuiSelect-icon`]: {
+                fontSize: "10px!important",
+                right: "-5px!important",
+              },
+              [`& .MuiTypography-root`]: {
+                WebkitLineClamp: 2,
+                width: "90px",
+                textOverflow: "ellipsis",
+              },
+            }}
+            // onChange={(name, value) => {
+            //   onSubmit({ owner: value });
+            //   setOwner(value);
+            // }}
+            value={mappedowner}
+            onSelect={(e, data) => {
+              onSubmit({ owner: data?.value || undefined });
+              setOwner(data?.value || "");
+            }}
+            options={mappedOwners}
+          />
+        )}
       </BodyCell>
       <BodyCell align="right">
         {formatCurrency(item.revenue, {
@@ -254,7 +317,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
               setIsEditProb(true);
             }}
           >
-            {probability}%
+            {formatNumber(probability, { numberOfFixed: 2, suffix: "%" })}
           </Text>
         ) : (
           <Input
