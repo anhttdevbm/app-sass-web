@@ -26,6 +26,7 @@ import SelectProjectInDoc from "./SelectProjectInDoc";
 import useTheme from "hooks/useTheme";
 import { useDispatch } from "react-redux";
 import { changeId } from "store/docs/reducer";
+import Avatar from "components/Avatar";
 
 const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const [openShare, setOpenShare] = useState(false);
@@ -42,14 +43,12 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
 
   const { data: rootDocument } = useGetDocDetailQuery(id as string);
 
-  console.log("rootDocument", rootDocument);
-
   const { isDarkMode } = useTheme();
   const doc = useAppSelector((state) => state.doc);
   const docsT = useTranslations(NS_DOCS);
   const { data: document } = useGetDocDetailQuery(currentId as string);
   const [updateDoc] = useUpdateDocMutation();
-  const [valueCopy, copy] = useCopyToClipboard();
+  const [valueCopy, copy, isCopied] = useCopyToClipboard();
   const { isSmSmaller } = useBreakpoint();
   const { setOpenComment } = useContext(NewPageContext);
   const [debounceChange] = useDebounce((value: string) => {
@@ -184,6 +183,9 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 },
               }}
             >
+              {rootDocument && (
+                <Avatar size={32} src={rootDocument?.owner?.avatar?.link} />
+              )}
               <Text color={"success.main"}>
                 {DocAccessibility[doc.perm as keyof typeof DocAccessibility]}
               </Text>
@@ -203,9 +205,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   </Box>
                 </Tooltip>
                 <Tooltip
-                  title={
-                    valueCopy ? "Đã sao chép" : docsT("createDoc.copyLink")
-                  }
+                  title={isCopied ? "Đã sao chép" : docsT("createDoc.copyLink")}
                 >
                   <Box
                     onClick={() => {
@@ -272,6 +272,20 @@ export default HeaderDocDetail;
 
 export function useCopyToClipboard() {
   const [copiedText, setCopiedText] = useState<any>(null);
+  const [isCopied, setIsCopied] = useState(false);
+
+  // Reset the isCopied state after 3 seconds
+  useEffect(() => {
+    if (isCopied) {
+      const timeout = setTimeout(() => {
+        setIsCopied(false);
+      }, 1000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [isCopied]);
 
   const copy = async (text) => {
     if (!navigator?.clipboard) {
@@ -282,6 +296,8 @@ export function useCopyToClipboard() {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedText(text);
+      setIsCopied(true);
+
       return true;
     } catch (error) {
       setCopiedText(null);
@@ -289,5 +305,5 @@ export function useCopyToClipboard() {
     }
   };
 
-  return [copiedText, copy];
+  return [copiedText, copy, isCopied];
 }

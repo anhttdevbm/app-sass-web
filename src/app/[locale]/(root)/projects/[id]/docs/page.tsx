@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Page() {
   return (
     <>
-      <Actions />
+      <Actions isProjectTabMode={true} />
       <ItemList isGrouped={true} />
     </>
   );

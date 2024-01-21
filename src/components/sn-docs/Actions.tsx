@@ -27,7 +27,12 @@ function convertStringToArray(inputString) {
 
   return resultArray;
 }
-const Actions = () => {
+
+type ActionProps = {
+  isProjectTabMode: boolean;
+};
+
+const Actions = ({ isProjectTabMode }: ActionProps) => {
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
   const docsT = useTranslations(NS_DOCS);
@@ -36,7 +41,6 @@ const Actions = () => {
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
-  console.log(searchParams.get("search_key"));
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
@@ -44,12 +48,13 @@ const Actions = () => {
   );
 
   const onChangeQueries = (name: string, value: any) => {
+    console.log(name, value);
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
   };
   const { id } = useParams();
 
   const handleCreateDoc = () => {
-    if (id && id !== undefined) {
+    if (id && id !== undefined && isProjectTabMode) {
       onCreateDoc(id);
     }
   };
