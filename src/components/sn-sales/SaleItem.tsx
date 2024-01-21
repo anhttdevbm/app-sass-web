@@ -263,7 +263,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
             value={mappedowner}
             onSelect={(e, data) => {
               onSubmit({ owner: data?.value || undefined });
-              setOwner(data?.value || "");
+              setOwner(String(data?.value) || "");
             }}
             options={mappedOwners}
           />

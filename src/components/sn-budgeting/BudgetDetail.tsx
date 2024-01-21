@@ -405,7 +405,7 @@ export const BudgetDetail = () => {
         }}
       />
       <ModalExpense
-        expenseData={selectedExpense}
+        expenseData={selectedExpense || undefined}
         open={isOpenModalExpense}
         onClose={() => {
           setSelectedExpense(null);
