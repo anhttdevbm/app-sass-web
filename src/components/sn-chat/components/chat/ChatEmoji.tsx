@@ -49,7 +49,7 @@ const ChatEmoji = ({ onChange }: ChatEmojiProps) => {
         anchorEl={anchorEl}
         placement={"top-end"}
         sx={{
-          zIndex: 1300,
+          zIndex: 9999,
           "& .MuiBox-root": {
             boxShadow: "none",
             paddingBottom: ".8rem",

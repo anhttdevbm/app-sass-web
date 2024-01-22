@@ -202,6 +202,8 @@ const TimeCreate: React.FC<IProps> = ({
         .format("YYYY-MM-DD HH:mm"),
     };
 
+    console.log("Submit", resolveData);
+
     if (selectedEvent?.extendedProps?.id) {
       onUpdateTimeSheet({
         ...resolveData,
