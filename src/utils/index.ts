@@ -520,3 +520,76 @@ export const toHoursAndMinutes = (totalMinutes: number) => {
 
   return { hours, minutes };
 };
+
+export const formatCurrency = (
+  number?: number | null | string,
+  options: OptionFormatNumber = {},
+) => {
+  if (typeof number === "string") return number;
+  const {
+    numberOfFixed = 4,
+    emptyText = "--",
+    suffix,
+    prefix = "",
+    space = true,
+    ...localeOption
+  } = options;
+  const suffixParsed = suffix ? `${space ? " " : ""}${suffix}` : "";
+  if (!number && number !== 0) return emptyText + suffixParsed;
+  const num = Number(number || 0);
+  const maximumFractionDigits = Number.isInteger(num) ? 0 : numberOfFixed;
+  if (num > 10000000000) {
+    let newNum = num / 1000000;
+    while (newNum > 10000000) {
+      newNum /= 10;
+    }
+    return (
+      prefix +
+      Math.round(newNum)
+        .toLocaleString("en-US", {
+          maximumFractionDigits: 0,
+          ...localeOption,
+        })
+        .toString() +
+      "..." +
+      suffixParsed
+    );
+  }
+  return (
+    prefix +
+    num.toLocaleString("en-US", {
+      maximumFractionDigits,
+      ...localeOption,
+    }) +
+    suffixParsed
+  );
+};
+
+export const deepEqual = (foo, bar) => {
+  const has = Object.prototype.hasOwnProperty;
+  let ctor, len;
+  if (foo === bar) return true;
+
+  if (foo && bar && (ctor = foo.constructor) === bar.constructor) {
+    if (ctor === Date) return foo.getTime() === bar.getTime();
+    if (ctor === RegExp) return foo.toString() === bar.toString();
+
+    if (ctor === Array) {
+      if ((len = foo.length) === bar.length) {
+        while (len-- && deepEqual(foo[len], bar[len]));
+      }
+      return len === -1;
+    }
+
+    if (!ctor || typeof foo === "object") {
+      len = 0;
+      for (ctor in foo) {
+        if (has.call(foo, ctor) && ++len && !has.call(bar, ctor)) return false;
+        if (!(ctor in bar) || !deepEqual(foo[ctor], bar[ctor])) return false;
+      }
+      return Object.keys(bar).length === len;
+    }
+  }
+
+  return foo !== foo && bar !== bar;
+};
