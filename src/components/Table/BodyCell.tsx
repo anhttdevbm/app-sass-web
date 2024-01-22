@@ -56,7 +56,7 @@ const BodyCell = (props: BodyCellProps) => {
     <TableCell
       sx={{
         py: 0,
-        height: HEIGHT_ROW,
+        height: "50px",
         borderColor: "grey.100",
         fontSize: 14,
         ...sx,
