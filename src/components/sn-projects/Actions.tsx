@@ -15,6 +15,7 @@ import Form, { ProjectDataForm } from "./Form";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
+import { log } from "console";
 
 const Actions = () => {
   const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();
@@ -51,6 +52,7 @@ const Actions = () => {
   const onSearch = (newQueries: Params) => {
     const path = getPath(pathname, newQueries);
     push(path);
+    console.log(path);
 
     // onGetProjects({ ...newQueries, pageIndex: 1, pageSize });
   };

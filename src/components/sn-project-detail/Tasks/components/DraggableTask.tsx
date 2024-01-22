@@ -131,7 +131,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
               height={40}
               ml={2}
               spacing={{ xs: 0.5, sm: 1 }}
-              gap={2}
+              gap={1}
               sx={{
                 "& >.checkbox": {
                   opacity: isMobile || checked ? 1 : 0,

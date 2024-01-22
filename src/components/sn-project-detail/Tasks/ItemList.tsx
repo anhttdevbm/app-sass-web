@@ -61,6 +61,7 @@ import Content from "./components/Content";
 import Description from "./components/Description";
 import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
 import useWindowSize from "hooks/useWindowSize";
+import MoveTagIcon from "icons/MoveTagIcon";
 
 const ItemList = () => {
   const {
@@ -97,6 +98,7 @@ const ItemList = () => {
   const projectT = useTranslations(NS_PROJECT);
   const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
   const [isDragging, onDraggingTrue, onDraggingFalse] = useToggle();
+  const windowSize = useWindowSize();
 
   const params = useParams();
   const { isDarkMode } = useTheme();
@@ -271,13 +273,11 @@ const ItemList = () => {
     [commonT, projectT],
   );
 
-  const windowSize = useWindowSize();
-
   const headerList = useMemo(() => {
     if (isMdSmaller) return [];
     if (isXlSmaller) return desktopHeaderList;
     if (isXlBigger) return xlHeaderList;
-  }, [windowSize.width]) as CellProps[];
+  }, [windowSize]) as CellProps[];
 
   const onSetTask = (
     taskData?: Task,
@@ -1174,6 +1174,22 @@ const ItemList = () => {
                                         )}
                                         {...provided.dragHandleProps}
                                       >
+                                        {/* <IconButton
+                                          // className="checkbox"
+                                          noPadding
+                                          sx={{
+                                            zIndex: 10,
+                                            marginRight: "16px",
+                                          }}
+                                          // {...provided.dragHandleProps}
+                                        >
+                                          <MoveTagIcon
+                                            fontSize={
+                                              isXlSmaller ? "small" : "medium"
+                                            }
+                                            sx={{ color: "grey.A200" }}
+                                          />
+                                        </IconButton> */}
                                         {task.name}
                                       </Content>
                                     );
@@ -1200,6 +1216,11 @@ const ItemList = () => {
                                     },
                                     "* > div > div > img": {
                                       marginRight: "10px!important",
+                                    },
+                                    "* > div > div > div": {
+                                      paddingLeft: task?.owner
+                                        ? ""
+                                        : "17px!important",
                                     },
                                   }}
                                 >
@@ -1446,14 +1467,12 @@ const ItemList = () => {
                                                       },
                                                     }}
                                                   >
-                                                    <Checkbox
-                                                      className="checkbox0"
-                                                      size="small"
-                                                      style={{
-                                                        opacity: "0",
+                                                    <Box
+                                                      sx={{
+                                                        width: "20px",
+                                                        height: "16px",
                                                       }}
-                                                    />
-
+                                                    ></Box>
                                                     <Stack
                                                       direction={{
                                                         md: "row",
@@ -1522,13 +1541,6 @@ const ItemList = () => {
                                                           }}
                                                         />
 
-                                                        {/* <Draggable
-                                                    draggableId={subTask.id}
-                                                    index={i}
-                                                  >
-                                                    {(provided, snapshot) => {
-                                                      return (
-                                                        <> */}
                                                         <IconButton
                                                           noPadding
                                                           sx={{
@@ -1574,7 +1586,6 @@ const ItemList = () => {
                                                           {subTask.name}
                                                         </Content>
                                                       </Content>
-
                                                       <Content
                                                         sx={{
                                                           display: "flex",
@@ -1599,6 +1610,13 @@ const ItemList = () => {
                                                             {
                                                               marginRight:
                                                                 "10px!important",
+                                                            },
+                                                          "* > div > div > div":
+                                                            {
+                                                              paddingLeft:
+                                                                subTask?.owner
+                                                                  ? ""
+                                                                  : "17px!important",
                                                             },
                                                         }}
                                                       >
@@ -1740,7 +1758,6 @@ const ItemList = () => {
                                                           }
                                                         />
                                                       </Content>
-
                                                       <Content
                                                         sx={{
                                                           display: "flex",

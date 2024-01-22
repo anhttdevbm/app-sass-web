@@ -183,6 +183,7 @@ export const getProjectList = createAsyncThunk(
     ) as GetProjectListQueries;
 
     try {
+      console.log("newQueries khi gui--> ", newQueries);
       const response = await client.get(Endpoint.PROJECTS, newQueries);
 
       if (response?.status === HttpStatusCode.OK) {
@@ -308,6 +309,7 @@ export const getTasksOfProject = createAsyncThunk(
       );
 
       if (response?.status === HttpStatusCode.OK) {
+        console.log(response.data);
         return { ...refactorRawItemListResponse(response.data), prefixKey };
       }
       throw AN_ERROR_TRY_AGAIN;

@@ -55,7 +55,7 @@ import {
   removeMember,
   resetTasks,
   updateTaskDetail,
-  updateTaskParent
+  updateTaskParent,
 } from "./reducer";
 
 export const useProjects = () => {
@@ -150,11 +150,11 @@ export const useProjectAttachment = () => {
     itemError: error,
   } = useAppSelector((state) => state.project, shallowEqual);
   const onGetProjectAttachment = useCallback(
-      async (id: string | string[]) => {
-        await dispatch(getProjectAttachment(id));
-      },
-      [dispatch],
-  )
+    async (id: string | string[]) => {
+      await dispatch(getProjectAttachment(id));
+    },
+    [dispatch],
+  );
 
   return {
     items,
@@ -163,8 +163,6 @@ export const useProjectAttachment = () => {
     onGetProjectAttachment,
   };
 };
-
-
 
 export const useMembersOfProject = () => {
   const dispatch = useAppDispatch();
@@ -231,7 +229,7 @@ export const useMemberOptions = () => {
   const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
   const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
 
-    const onGetOptions = useCallback(
+  const onGetOptions = useCallback(
     async (id: string, queries: BaseQueries) => {
       await dispatch(getMembersOfProject({ ...queries, id, concat: true }));
     },
@@ -275,6 +273,7 @@ export const useTasksOfProject = () => {
 
   const onGetTasksOfProject = useCallback(
     async (id: string, queries: GetTasksOfProjectQueries) => {
+      console.log(id, queries);
       await dispatch(
         getTasksOfProject({ ...queries, project: id, prefixKey: "tasks" }),
       );
