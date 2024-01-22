@@ -4,6 +4,7 @@ import {
   AN_ERROR_TRY_RELOAD_PAGE,
   DARK_THEME_MEDIA_SYSTEM,
   DATE_FORMAT_SLASH,
+  DATE_LOCALE_FORMAT,
 } from "constant/index";
 import { ItemListResponse, OptionFormatNumber } from "constant/types";
 import { useTranslations } from "next-intl";
@@ -205,7 +206,7 @@ export const serverQueries = (
 };
 
 export const formatDate = (
-  date?: number | string,
+  date?: number | string | Date,
   format?: string,
   fallback?: string,
 ) => {
@@ -216,6 +217,15 @@ export const formatDate = (
   const year = dateObj.getFullYear();
 
   if (year === 1 || year === 1970) return fallback ?? "";
+
+  if (format === DATE_LOCALE_FORMAT) {
+    return dateObj.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
   const day = `0${dateObj.getDate()}`.substr(-2);
   const month = `0${dateObj.getMonth() + 1}`.substr(-2);
   const hours = `0${dateObj.getHours()}`.substr(-2);
