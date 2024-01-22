@@ -167,7 +167,7 @@ const BlogDetailSection = () => {
                                             <Stack>
                                                 <Text variant="h4">{detailItem?.title}</Text>
                                                 <Text color="GrayText" fontSize={12}>
-                                                    {formatDate(detailItem?.created_time?.toString(), DATE_TIME_FORMAT_SLASH)}
+                                                    {formatDate(detailItem?.created_time, DATE_TIME_FORMAT_SLASH)}
                                                 </Text>
                                             </Stack>
                                         </Stack>

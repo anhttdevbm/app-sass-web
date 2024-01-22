@@ -37,7 +37,7 @@ const Comment = ({ comment, commentsMap, onReply }: CommentProps) => {
             <Stack>
               <Text variant="h6">{comment.name ?? "--"}</Text>
               <Text variant="caption" color="grey.400">
-                {formatDate(comment.created_time.toString(), "HH:mm - dd/MM/yyyy")}
+                {formatDate(comment.created_time, "HH:mm - dd/MM/yyyy")}
               </Text>
             </Stack>
           </Stack>
