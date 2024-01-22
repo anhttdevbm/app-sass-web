@@ -626,3 +626,10 @@ export const sortedRowInformation = (rows, comparator) => {
   });
   return stabilizedThis.map((el) => el[0]);
 };
+
+export const toHoursAndMinutes = (totalMinutes: number) => {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return { hours, minutes };
+}

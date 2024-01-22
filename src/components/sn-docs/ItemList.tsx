@@ -29,8 +29,13 @@ export declare type TDocumentGroup = {
   documents: Array<{ [key: string]: any }>;
 };
 
-const ItemList = (isGrouped: boolean) => {
+type ItemListProps = {
+  isGrouped: boolean;
+};
+
+const ItemList: React.FC<ItemListProps> = ({ isGrouped }) => {
   const { push } = useRouter();
+
   const { isMdSmaller } = useBreakpoint();
   const pathname = usePathname();
   const { query } = useQueryParams();
@@ -128,7 +133,6 @@ const ItemList = (isGrouped: boolean) => {
             sx: { px: { xs: 0.5, md: 2 } },
           }}
         >
-          {console.log(data)}
           {query?.group_by == DocGroupByEnum.CREATED_BY &&
             Array.isArray(data?.docs) &&
             data?.docs.map((item) => {

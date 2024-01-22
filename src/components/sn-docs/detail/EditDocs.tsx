@@ -12,6 +12,7 @@ import DrawComment, { LayoutSlider } from "./DrawComment";
 import { Text } from "components/shared";
 import CloseIcon from "icons/CloseIcon";
 import DrawSlider from "./DrawSlider";
+import { Editor } from "@tiptap/core";
 
 interface IEditDocs {
   open: boolean;
@@ -19,6 +20,7 @@ interface IEditDocs {
   openSlider: boolean;
   setOpenSlider: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenComment: React.Dispatch<React.SetStateAction<boolean>>;
+  editor: Editor;
 }
 
 const EditDocs = ({
@@ -27,6 +29,7 @@ const EditDocs = ({
   setOpenComment,
   openSlider,
   setOpenSlider,
+  editor,
 }: IEditDocs) => {
   const [title, setTitle] = useState("");
   const [height, setHeight] = useState(0);
@@ -104,7 +107,7 @@ const EditDocs = ({
           heightContent={heightContent}
           height={height}
         >
-          <DrawComment></DrawComment>
+          <DrawComment editor={editor}></DrawComment>
         </LayoutSlider>
       )}
       {openSlider && (

@@ -2,16 +2,15 @@
 import { Endpoint } from "api";
 import { saleClientInstance } from "api/client";
 import { ExpenseStatus, PayStatus } from "constant/enums";
+import _ from "lodash";
 import { useMutation, useQuery } from "react-query";
 import { getPath } from "utils/index";
 
 export const BUDGET_GET_EXPENSE_QK = "budget_get_expense_query_key";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TBudgetExpense = any;
-export type TBudgetExpenses = TBudgetExpense[];
 
-export interface TBudgetExpenseAdd {
+export type TBudgetExpenseAdd = {
   date: string | null;
   owner: string;
   service: string;
@@ -36,6 +35,8 @@ export interface TBudgetExpenseAdd {
   status: ExpenseStatus;
   attachment: any[];
 }
+
+export type TBudgetExpense = Omit<TBudgetExpenseAdd, 'id' & { id: string; }>
 
 const budgetGetExpenseQuery = (budgetId: string) => {
   const url: string = getPath(Endpoint.BUDGET_EXPENSE_LIST, undefined, {
@@ -66,3 +67,30 @@ export const useBudgetExpenseAdd = () => {
   });
 };
 
+export const budgetExpenseUpdate = (data: TBudgetExpense) => {
+  const url: string = getPath(Endpoint.BUDGET_EXPENSE_DETAIL_UPDATE, undefined, {
+    expenseId: _.get(data, 'id', ''),
+  });
+
+  return saleClientInstance.put(url, data);
+};
+
+export const useBudgetExpenseUpdate = () => {
+  return useMutation({
+    mutationFn: budgetExpenseUpdate,
+  });
+};
+
+export const budgetExpenseExport = (data: TBudgetExpense) => {
+  const url: string = getPath(Endpoint.BUDGET_EXPENSE_DETAIL_EXPORT, undefined, {
+    expenseId: _.get(data, 'id', ''),
+  });
+
+  return saleClientInstance.get(url, { data: data, params: { format: 'pdf' } });
+}
+
+export const useBudgetExpenseExport = () => {
+  return useMutation({
+    mutationFn: budgetExpenseExport,
+  });
+};

@@ -11,8 +11,9 @@ import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import { string } from "yup";
 
 export enum BlogStatus {
-  PUBLISHED = "true",
-  DRAFT = "false" // NHA,
+  PUBLISHED = "PUBLISHED",
+  DRAFT = "DRAFT", // NHA,
+  HIDE = "HIDE"
 }
 export type AttachmentsBlogs = {
   object?: string;
@@ -36,7 +37,7 @@ export type BlogData = {
   title?: string;
   content?: string;
   background_down?: AttachmentsBlogs | undefined;
-  published?: boolean;
+  status?: string;
   category?: Category[];
   tag?: string[];
   slug?: string,
@@ -45,6 +46,7 @@ export type BlogData = {
   created_by?: CreateByUser,
   ignoredId?: string,
   categories?: Category[],
+  short_description?: string,
 };
 
 
@@ -52,7 +54,7 @@ export type BlogFormData = {
   id?: string;
   title?: string;
   content?: string;
-  published?: boolean;
+  status?: string;
   category?: string[]; // Use union type with undefined
   tag?: string[] | undefined; // Use union type with undefined
   slug?: string | undefined;
@@ -62,11 +64,12 @@ export type BlogFormData = {
   background?: string;
   attachments?: string[];
   attachmentsUpload?: File[] | [];
+  short_description?: string;
 }
 export type BlogSubmitData = {
   title?: string;
   content?: string;
-  published?: boolean;
+  status?: string;
   category?: string[]; // Use union type with undefined
   tag?: string[] | undefined; // Use union type with undefined
   slug?: string | undefined;
@@ -92,6 +95,10 @@ export type CommentBlogData = {
   replies?: CommentBlogData[];
   avatar: string,
 };
+
+export type TagData = {
+  tag: string;
+}
 
 export const getAllBlogs = createAsyncThunk(
   "blogs/getAllBlogs",
@@ -137,7 +144,7 @@ export const createNewBlogs = createAsyncThunk(
 );
 
 export const updateBlog = createAsyncThunk("blogs/updateBlog",
-  async ({ id, blog,Token }: { id: string, blog: BlogFormData, Token: string | undefined | null}) => {
+  async ({ id, blog, Token }: { id: string, blog: BlogFormData, Token: string | undefined | null }) => {
     try {
       console.log("Request Payload:", JSON.stringify(blog));
       const response = await client.put(Endpoint.BLOGS + "/" + id, blog, {
@@ -258,23 +265,21 @@ export const uploadFile = createAsyncThunk(
 
 export const deleteBlog = createAsyncThunk(
   "blogs/deleteBlog",
-  async ({ ids, Token }: { ids: string[], Token: string | undefined | null }) => {
+  async ({ ids, Token }: { ids: string, Token: string | undefined | null }) => {
     try {
-      ids.forEach(async element => {
-        const response = await client.delete(
-          Endpoint.BLOGS + "/" + element, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          Authorization: `${Token}`,
-          baseURL: BLOG_API_URL,
-        });
-        console.log(JSON.stringify(response));
-        if (response?.status !== HttpStatusCode.OK) {
-          throw AN_ERROR_TRY_AGAIN;
-        }
+      const response = await client.delete(
+        Endpoint.BLOGS + "/" + ids, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        Authorization: `${Token}`,
+        baseURL: BLOG_API_URL,
       });
+      console.log(JSON.stringify(response));
+      if (response?.status !== HttpStatusCode.CREATED) {
+        throw AN_ERROR_TRY_AGAIN;
+      }
       return ids;
     } catch (error) {
       throw error;
@@ -284,40 +289,48 @@ export const deleteBlog = createAsyncThunk(
 // Update published
 export const updatePublished = createAsyncThunk(
   'blogs/updatePublished',
-  async ({ blogList, published, Token }: { blogList: BlogData[]; published: boolean; Token: string | undefined | null }) => {
+  async ({ blogList, status, Token }: { blogList: string[]; status: string; Token: string | undefined | null }) => {
     try {
       const promises = blogList.map(async (element) => {
-        const item = {
-          content: element.content,
-          background: element.background_down?.object,
-          slug: element.slug,
-          published: published,
-          title: element.title,
-          tag: element.tag,
-          attachments: element.attachments_down?.map(att => att.object),
-          category: element.categories?.map(cate => cate.id),
-        } as BlogFormData
-        const response = await client.put(
-          `${Endpoint.BLOGS}/${element.id}`,
-          item,
+        const response = await client.patch(
+          `${Endpoint.BLOGS}/${element}/${status}`,
+          {},
           {
-            method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `${Token}`,
+              Authorization: Token || '',
             },
             baseURL: BLOG_API_URL,
           }
         );
-        if (response?.status !== HttpStatusCode.CREATED) {
-          throw AN_ERROR_TRY_AGAIN;
+        if (response?.status !== HttpStatusCode.OK) {
+          throw new Error(AN_ERROR_TRY_AGAIN);
         }
-        return response.data;
+        return { id: element, status };
       });
-      const results = await Promise.all(promises);
-      return results;
+      const updatedBlogList = await Promise.all(promises);
+      return updatedBlogList;
     } catch (error) {
       throw error;
     }
   }
+);
+
+// get list tag
+export const getListBlogTags = createAsyncThunk(
+  "blogs/getListBlogTags",
+  async () => {
+    try {
+      const response = await client.get(Endpoint.GET_BLOG_TAGS, {}, {
+        baseURL: BLOG_API_URL,
+      });
+      if (response?.status === HttpStatusCode.OK) {
+        const tagList: TagData[] = response.data.data.map(tag => ({ tag }));
+        return tagList;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
 );

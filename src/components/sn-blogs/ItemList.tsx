@@ -34,12 +34,12 @@ import TrashIcon from "icons/TrashIcon";
 import DeleteCofirmDialog from "./components/DeleteCofirmDialog";
 import { AltRoute } from "@mui/icons-material";
 import { DataAction } from "constant/enums";
-import useTheme from "hooks/useTheme";
+import UnEyeIcon from "icons/UnEyeIcon";
 
 const ItemList = () => {
-  
-  const { items,item,onGetBlogs,page,size,totalItems,total_page,error,status,isFetching,isIdle,onUpdatePublished : onApproveOrRejectAction,onDeleteBlog:onDeleteAction} = useBlogs(); 
-totalItems;
+
+  const { items, item, onGetBlogs, page, size, totalItems, total_page, error, status, isFetching, isIdle, onUpdatePublished: onApproveOrRejectAction, onDeleteBlog: onDeleteAction } = useBlogs();
+  totalItems;
   const { initQuery, isReady, query } = useQueryParams();
   const { isMdSmaller } = useBreakpoint();
   const [selectedList, setSelectedList] = useState<BlogData[]>([]);
@@ -48,7 +48,6 @@ totalItems;
   const blogT = useTranslations(NS_BLOG);
   const { push } = useRouter();
   const pathname = usePathname();
-  const { isDarkMode } = useTheme();
   const [published, setPublished] = useState<BlogStatus | undefined>();
 
   const isCheckedAll = useMemo(
@@ -98,11 +97,13 @@ totalItems;
   };
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: blogT("blogList.title"), width: "20%", align: "left" },
-      { value: blogT("blogList.slug"), width: "20%", align: "left" },
-      { value: blogT("blogList.tag"), width: "20%", align: "left" },
-      { value: blogT("blogList.created_time"), width: "20%", align: "left" },
-      { value: blogT("blogList.statusBlog"), width: "10%", align: "left" },
+      { value: blogT("blogList.title"), width: "15%", align: "center" },
+      { value: blogT("blogList.slug"), width: "15%", align: "center" },
+      { value: blogT("blogList.short_description"), width: "25%", align: "center" },
+      { value: blogT("blogList.tag"), width: "15%", align: "center" },
+      { value: blogT("blogList.created_time"), width: "10%", align: "center" },
+      { value: blogT("blogList.statusBlog"), width: "10%", align: "center" },
+      { value: "", width: "5%", align: "center" },
     ],
     [blogT],
   );
@@ -134,69 +135,48 @@ totalItems;
       setId(id);
     };
   };
-
-  const onDeleteBlog = () => {
-    setAction(DataAction.DELETE);
-  };
   const onResetAction = () => {
     setAction(undefined);
     setId(undefined);
     setPublished(undefined);
   };
   const textAction = useMemo(
-    () => (action !== undefined ? blogT(TEXT_ACTION[action]) : ""),
-    [action, blogT],
+    () => (published !== undefined ? blogT(TEXT_ACTION[published]) : ""),
+    [published, blogT],
   );
 
   const onSubmitApproveOrReject = async () => {
     if (action === undefined) return;
-    const ids = id ? [id] : selectedList.map((item) => item.slug);
+    const ids = id ? [id] : selectedList.map((item) => item.id);
     const listItem = selectedList;
     try {
-     const listUpdate =  await onApproveOrRejectAction(listItem as BlogData[],published as unknown as boolean);
-        setAction(undefined);
-        setSelectedList([]);
-        setId(undefined);
-        setPublished(undefined);
-        return listUpdate;
+      console.log(action);
+      const listUpdate = await onApproveOrRejectAction(ids as string[], published as unknown as string);
+      setAction(undefined);
+      setSelectedList([]);
+      setId(undefined);
+      setPublished(undefined);
+      return listUpdate;
     } catch (error) {
       throw error;
     }
   };
-
-  const onSubmitDelete = async () => {
-    if (action === undefined) return;
-    const ids = id ? [id] : selectedList.map((item) => item.slug);
-    try {
-      const idsResponse = await onDeleteAction(ids as string[]);
-      if (idsResponse.length) {
-        setAction(undefined);
-        setSelectedList([]);
-        setId(undefined);
-        setPublished(undefined);
-      }
-      return idsResponse;
-    } catch (error) {
-      throw error;
-    }
-  };
-
   return (
     <>
       <FixedLayout>
         {!!selectedList.length && (
           <Stack
-           direction="row"
-           alignItems="center"
-           spacing={2}
-           pb={0.25}
-           border="1px solid"
-           borderColor="grey.100"
-           borderBottom="none"
-           sx={{ borderTopLeftRadius: 1, borderTopRightRadius: 1 }}
-           px={{ xs: 0.75, md: 1.125 }}
-           py={1.125}
-           mx={{ xs: 0, md: 3 }}
+            direction="row"
+            alignItems="center"
+            spacing={2}
+            pb={0.25}
+            border="1px solid"
+            borderColor="grey.100"
+            borderBottom="none"
+            sx={{ borderTopLeftRadius: 1, borderTopRightRadius: 1 }}
+            px={{ xs: 0.75, md: 1.125 }}
+            py={1.125}
+            mx={{ xs: 0, md: 3 }}
           >
             <Checkbox
               checked={isCheckedAll}
@@ -222,8 +202,8 @@ totalItems;
             </IconButton>
             <IconButton
               size="small"
-              onClick={onApproveOrReject(BlogStatus.DRAFT)}
-              tooltip={blogT("actions.draft")}
+              onClick={onApproveOrReject(BlogStatus.HIDE)}
+              tooltip={blogT("actions.hide")}
               sx={{
                 backgroundColor: "primary.light",
                 color: "text.primary",
@@ -235,24 +215,7 @@ totalItems;
               variant="contained"
               disabled={!selectedList.length}
             >
-              <CloseSquareIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={onDeleteBlog}
-              tooltip={blogT("actions.delete.remove")}
-              sx={{
-                backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-                color: "text.primary",
-                p: { xs: "4px!important", md: 1 },
-                "&:hover svg": {
-                  color: "common.white",
-                },
-              }}
-              variant="contained"
-              disabled={!selectedList.length}
-            >
-              <TrashIcon fontSize="small" />
+              <UnEyeIcon fontSize="small" />
             </IconButton>
           </Stack>
         )}
@@ -284,18 +247,6 @@ totalItems;
                 ) : (
                   <DesktopCells item={item} />
                 )}
-                <ActionsCell
-                  sx={{
-                    pl: { xs: 0.5, md: 2 },
-                    verticalAlign: { xs: "top", md: "middle" },
-                    pt: { xs: 2, md: 0 },
-                  }}
-                  iconProps={{
-                    sx: {
-                      p: { xs: "4px!important", md: 1 },
-                    },
-                  }}
-                />
               </TableRow>
             );
           })}
@@ -315,25 +266,13 @@ totalItems;
         onClose={onResetAction}
         title={blogT("actions.update.title", { label: textAction })}
         content={blogT("actions.update.content", {
-          label: textAction,
-          count: id ? 1 : selectedList.length,
+          label: textAction
         })}
         items={id ? undefined : selectedList}
         onSubmit={onSubmitApproveOrReject}
         action={textAction}
       />
-      <DeleteCofirmDialog
-        open={action === DataAction.DELETE}
-        onClose={onResetAction}
-        title={blogT("actions.delete.title", { label: textAction })}
-        content={blogT("actions.delete.confirm", {
-          label: textAction,
-          count: id ? 1 : selectedList.length,
-        })}
-        items={id ? undefined : selectedList}
-        onSubmit={onSubmitDelete}
-        action={textAction}
-      />
+     
     </>
   );
 };
@@ -342,6 +281,7 @@ export default memo(ItemList);
 const MOBILE_HEADER_LIST = [{ value: "", width: "75%", align: "left" }];
 
 const TEXT_ACTION: { [key in BlogStatus]: string } = {
-  [BlogStatus.PUBLISHED]: "published",
-  [BlogStatus.DRAFT]: "draft",
+  [BlogStatus.PUBLISHED]: "PUBLISHED",
+  [BlogStatus.DRAFT]: "DRAFT",
+  [BlogStatus.HIDE]: "HIDE",
 };

@@ -42,6 +42,7 @@ import useTheme from "hooks/useTheme";
 import _ from "lodash";
 import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
 import { useRouter } from "next-intl/client";
+import { TBudgetExpense } from "queries/budgeting/expense";
 
 enum TABS {
   FEED = "Feed",
@@ -96,6 +97,7 @@ export const BudgetDetail = () => {
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
   const [selectedService, setSelectedService] = useState<TBudgetService | null>();
   const [selectedTime, setSelectedTime] = useState<TTimeRanges | null>();
+  const [selectedExpense, setSelectedExpense] = useState<TBudgetExpense | null>();
 
   const { id } = useParams();
   const { isDarkMode } = useTheme();
@@ -203,6 +205,9 @@ export const BudgetDetail = () => {
     },
     setSelectedTimeData: (time: TTimeRanges | null) => {
       setSelectedTime(time);
+    },
+    setSelectedExpense: (expense: TBudgetExpense | null) => {
+      setSelectedExpense(expense);
     },
     openModalTime: () => {
       openModalTime();
@@ -312,10 +317,6 @@ export const BudgetDetail = () => {
                       color: "primary.main",
                       borderColor: "primary.main",
                     }),
-                    "&:hover": {
-                      color: "primary.main",
-                      borderColor: "primary.main",
-                    },
                   }}
                   onClick={() => changeActiveTab(currentTab)}
                 >
@@ -383,6 +384,7 @@ export const BudgetDetail = () => {
             position: isOpenRightSidebar ? "relative" : "absolute",
             zIndex: isOpenRightSidebar ? 10 : -1,
             right: isOpenRightSidebar ? 0 : "-350px",
+            backgroundColor: isDarkMode ? "#313130" : "white",
           }}
         >
           <BudgetRightSidebar budget={budget} />
@@ -403,8 +405,10 @@ export const BudgetDetail = () => {
         }}
       />
       <ModalExpense
+        expenseData={selectedExpense || undefined}
         open={isOpenModalExpense}
         onClose={() => {
+          setSelectedExpense(null);
           setSelectedService(null);
           hideModalExpense();
         }}

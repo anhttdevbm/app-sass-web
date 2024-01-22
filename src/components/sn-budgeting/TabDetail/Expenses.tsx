@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { budgetDetailRef } from "../BudgetDetail";
 
 export type TExpense = {
   id: string;
@@ -74,6 +75,16 @@ export const Expenses = () => {
   };
 
   const headerList = useMemo((): CellProps[] => {
+    const totalCost = _.reduce(
+      expenses || [],
+      (total, expense) => total + Number(expense.totalCost || 0),
+      0,
+    );
+    const billable = _.reduce(
+      expenses || [],
+      (total, expense) => total + Number(expense.billable || 0),
+      0,
+    );
     return [
       {
         value: (
@@ -83,31 +94,46 @@ export const Expenses = () => {
           />
         ),
         align: "center",
-        width: "3%",
+        width: "5%",
       },
-      { value: budgetT("tabExpenses.service"), align: "center" },
-      { value: budgetT("tabExpenses.description"), align: "center" },
-      { value: budgetT("tabExpenses.date"), align: "center" },
-      { value: budgetT("tabExpenses.att"), align: "center" },
+      { value: budgetT("tabExpenses.service"), align: "center", width: "15%" },
+      {
+        value: budgetT("tabExpenses.description"),
+        align: "center",
+        width: "20%",
+      },
+      { value: budgetT("tabExpenses.date"), align: "center", width: "10%" },
+      { value: budgetT("tabExpenses.att"), align: "center", width: "10%" },
       {
         value: budgetT("tabExpenses.paymentStatus"),
         align: "center",
+        width: "15%",
       },
       {
         value: budgetT("tabExpenses.totalCost"),
-        data: "$56.000.000",
+        data: `$${totalCost}`,
         align: "center",
+        width: "15%",
       },
       {
         value: budgetT("tabExpenses.billable"),
-        data: "$56.000.000",
+        data: `$${billable}`,
         align: "center",
+        width: "10%",
       },
     ];
   }, [expenseSelected, expenses]);
 
   return (
-    <Box px="15px">
+    <Box
+      px="15px"
+      sx={{
+        mb: 2,
+        overflow: {
+          xs: "auto",
+        },
+      }}
+    >
       <Stack direction="row" justifyContent="space-between" py="7px">
         <Button
           sx={{ color: "secondary.main" }}
@@ -135,12 +161,22 @@ export const Expenses = () => {
                 />
               </BodyCell>
               <BodyCell>
-                <b>{_.get(data, 'service.name', '')}</b>
+                <Typography
+                  sx={{ fontWeight: 700, cursor: "pointer" }}
+                  onClick={() => {
+                    budgetDetailRef.current?.setSelectedExpense(data);
+                    budgetDetailRef.current?.openModalExpense();
+                  }}
+                >
+                  {_.get(data, "service.name", "")}
+                </Typography>
               </BodyCell>
               <BodyCell>{data.description}</BodyCell>
-              <BodyCell>{data?.date ? moment(data.date).format('DD/MM/YYYY') : null}</BodyCell>
               <BodyCell>
-                {_.map(_.get(data, 'attachment', []), (att, attIndex) => (
+                {data?.date ? moment(data.date).format("DD/MM/YYYY") : null}
+              </BodyCell>
+              <BodyCell>
+                {_.map(_.get(data, "attachment", []), (att, attIndex) => (
                   <>
                     <Typography key={attIndex}>{att}</Typography>
                   </>

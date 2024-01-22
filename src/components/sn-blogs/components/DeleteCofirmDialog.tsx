@@ -10,48 +10,42 @@ import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { BlogData } from "store/blog/actions";
 
-type DeleteCofirmDialogProps = ConfirmDialogProps & {
-  items?: BlogData[];
+type DeleteConfirmProps = ConfirmDialogProps & {
+  id?: string;
   action: string;
 };
-
-const DeleteCofirmDialog = (props: DeleteCofirmDialogProps) => {
-  const { items = [], onSubmit: onSubmitProps, action, ...rest } = props;
+const DeleteCofirmDialog = (props: DeleteConfirmProps) => {
+  const { id, onSubmit: onSubmitProps, action, ...rest } = props;
   const commonT = useTranslations(NS_COMMON);
 
   const { onAddSnackbar } = useSnackbar();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
- 
-  const onSubmit = async () => {
-    try {
-      if (isSubmitting) return;
-      setIsSubmitting(true);
-      const ids = onSubmitProps && (await onSubmitProps());
 
-      if (ids?.length) {
-        onAddSnackbar(
-          commonT("notification.success", { label: action }),
-          "success",
-        );
-        props?.onClose();
-      } else {
-        throw AN_ERROR_TRY_AGAIN;
+  const onSubmit = async () => {
+      try {
+          if (isSubmitting) return;
+          setIsSubmitting(true);
+          const ids = onSubmitProps && (await onSubmitProps());
+
+          if (ids?.length) {
+              onAddSnackbar(
+                  commonT("notification.success", { label: action }),
+                  "success",
+              );
+              props?.onClose();
+          } else {
+              throw AN_ERROR_TRY_AGAIN;
+          }
+      } catch (error) {
+          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+      } finally {
+          setIsSubmitting(false);
       }
-    } catch (error) {
-      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   return (
-    <ConfirmDialog onSubmit={onSubmit} pending={isSubmitting} {...rest}>
-      <Stack alignItems="center" spacing={2} my={3} flex={1}>
-        {items.map((item) => (
-              <Text variant="body2" textAlign="center">{item.title}</Text>
-        ))}
-      </Stack>
-    </ConfirmDialog>
+      <ConfirmDialog onSubmit={onSubmit} pending={isSubmitting} {...rest}>
+      </ConfirmDialog>
   );
 };
 

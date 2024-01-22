@@ -13,6 +13,8 @@ import useTheme from "hooks/useTheme";
 import { useGetCommentsQuery } from "store/docs/api";
 import { useParams } from "next/navigation";
 import { IComment } from "constant/types";
+import useDocEditor from "../news/hook/useDocEditor";
+import { Editor } from "@tiptap/react";
 export const LayoutSlider = ({
   children,
   heightToolbar,
@@ -50,13 +52,23 @@ export const LayoutSlider = ({
 };
 
 export const CommentItem: React.FC<IComment> = (props) => {
-  const { activeCommentId } = useContext(NewPageContext);
+  const { activeCommentId, setActiveCommentId } = useContext(NewPageContext);
   const { isDarkMode } = useTheme();
   const isActiveComment = activeCommentId === props.position?.position;
   const activeBgColor = isDarkMode ? "grey.50" : "primary.light";
   return (
     <Box
+      onClick={() => {
+        if (activeCommentId === props.position?.position) {
+          props.editor?.commands.setComment(props.position?.position);
+        } else {
+          props.editor?.commands.focus();
+          props.editor?.commands.unsetComment(props.position?.position);
+        }
+        setActiveCommentId(props.position?.position);
+      }}
       sx={{
+        cursor: "pointer",
         display: "flex",
         alignItems: "start",
         gap: "8px",
@@ -115,7 +127,7 @@ export const CommentItem: React.FC<IComment> = (props) => {
   );
 };
 
-const DrawComment = () => {
+const DrawComment = ({ editor }) => {
   const docsT = useTranslations(NS_DOCS);
   const { id } = useParams();
   const { data } = useGetCommentsQuery({ docId: id });
@@ -151,8 +163,11 @@ const DrawComment = () => {
           marginTop: "16px",
         }}
       >
+        {"Comments"}
         {Array.isArray(data) &&
-          data?.map((cmt: IComment) => <CommentItem key={cmt._id} {...cmt} />)}
+          data?.map((cmt: IComment) => (
+            <CommentItem key={cmt._id} {...cmt} editor={editor} />
+          ))}
       </Stack>
     </>
   );

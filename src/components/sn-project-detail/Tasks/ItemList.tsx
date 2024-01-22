@@ -1072,7 +1072,7 @@ const ItemList = () => {
           bgcolor={noData ? "background.paper" : "background.default"}
           sx={{
             "* > th": {
-              padding: "0px",
+              padding: "10px",
               textAlign: "left",
             },
           }}

@@ -38,7 +38,9 @@ export type SelectProps = InputProps & {
   hasAvatar?: boolean;
   hasIcon?: boolean;
   showSubText?: boolean;
+  onClose?: Function;
   onOpen?: Function;
+  isShowSearch?: boolean;
   emitSearchWhenEnter?: boolean;
 };
 
@@ -59,7 +61,9 @@ const Select = (props: SelectProps) => {
     onChange: onChangeProp,
     hasAvatar,
     showSubText = true,
+    isShowSearch = true,
     hasIcon,
+    onClose: handleClose,
     emitSearchWhenEnter,
     ...rest
   } = props;
@@ -72,6 +76,11 @@ const Select = (props: SelectProps) => {
     () => options?.some((option) => option.value === value),
     [options, value],
   );
+
+  const onHandleClose = (e) => {
+    onClose();
+    handleClose && handleClose(e);
+  };
 
   const optionList = useMemo(() => {
     if (hasAll || placeholder) {
@@ -126,7 +135,7 @@ const Select = (props: SelectProps) => {
           ),
           open: isShow,
           onOpen: onOpenSelect,
-          onClose,
+          onClose: onHandleClose,
           MenuProps: {
             PaperProps: {
               onScroll,
@@ -143,7 +152,7 @@ const Select = (props: SelectProps) => {
         onChange={onChange}
         {...rest}
       >
-        {!!onChangeSearch && isShow && (
+        {!!onChangeSearch && isShowSearch && isShow && (
           <Search
             fullWidth
             sx={{

@@ -7,6 +7,7 @@ import {
   createBookingResource,
   deleteBookingResource,
   getBookingAll,
+  getBudgetServices,
   getMyBookingResource,
   updateBookingResource,
 } from "./action";
@@ -23,6 +24,13 @@ import { DataStatus } from "constant/enums";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import { NS_RESOURCE_PLANNING } from "constant/index";
+import {
+  TBudget,
+  TBudgetListQueries,
+  getProjectBudgetList,
+} from "store/project/budget/action";
+import { getServiceBudget } from "store/billing/actions";
+import { id } from "date-fns/locale";
 
 export const useResourceFilter = () => {
   const { end_date, search_key, start_date, position, working_sort } =
@@ -241,5 +249,73 @@ export const useMyBooking = () => {
     isLoading,
     getMyBooking,
     setMyBookingFilter: onSetMyBookingFilter,
+  };
+};
+
+export const useGetServiceBudget = () => {
+  const [projectId, setProjectId] = useState<string>("");
+  const budgets = useAppSelector((state) => state.project.budgets);
+  const serviceBudget = useAppSelector(
+    (state) => state.resourcePlanning.servicesBudget,
+  );
+  const [queries, setQueries] = useState({
+    project_id: projectId,
+    pageSize: 10,
+    pageIndex: 1,
+  } as TBudgetListQueries);
+  const dispatch = useAppDispatch();
+
+  const getBudgets = useCallback(
+    async (queries) => {
+      await dispatch(getProjectBudgetList(queries));
+    },
+    [dispatch, projectId],
+  );
+
+  const serviceBudgetOptions = useMemo(() => {
+    if (!serviceBudget) {
+      return [];
+    }
+    return serviceBudget.map((item) => ({
+      label: item.name,
+      value: item.id,
+    }));
+  }, [serviceBudget]);
+
+  useEffect(() => {
+    if (projectId) {
+      setQueries({
+        project_id: projectId,
+        pageSize: 10,
+        pageIndex: 1,
+      });
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    if (queries) {
+      dispatch(getProjectBudgetList(queries));
+    }
+  }, [JSON.stringify(queries)]);
+
+  useEffect(() => {
+    if (budgets) {
+      dispatch(
+        getBudgetServices({
+          project_id: projectId,
+          budgets: budgets.map((item) => item.id),
+        }),
+      );
+    }
+  }, [budgets]);
+  return {
+    budgets,
+    getBudgets,
+    serviceBudgetOptions,
+    serviceBudget,
+    projectId,
+    setProjectId,
+    queries,
+    setQueries,
   };
 };
