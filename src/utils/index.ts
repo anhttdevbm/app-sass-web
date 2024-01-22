@@ -4,9 +4,9 @@ import {
   AN_ERROR_TRY_RELOAD_PAGE,
   DARK_THEME_MEDIA_SYSTEM,
   DATE_FORMAT_SLASH,
-  DATE_LOCALE_FORMAT,
 } from "constant/index";
 import { ItemListResponse, OptionFormatNumber } from "constant/types";
+import { useTranslations } from "next-intl";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { ReadonlyURLSearchParams } from "next/navigation";
 import StringFormat from "string-format";
@@ -128,22 +128,6 @@ export const getFiltersFromQueries = (
   }, {});
 };
 
-export const formatDocResponseToItemResponse = (data: {
-  totalDocs: number;
-  totalPages: number;
-  page: number;
-  limit: number;
-  docs: any[];
-}) => {
-  return {
-    total: data.totalDocs,
-    total_page: data.totalPages,
-    page: data.page - 1,
-    data: data.docs,
-    pageSize: data.limit,
-  };
-};
-
 export const refactorRawItemListResponse = (rawData: {
   page: number;
   total: number;
@@ -159,7 +143,7 @@ export const refactorRawItemListResponse = (rawData: {
   } as ItemListResponse;
 };
 
-const KEYS = ["page", "size", "sort", "searchType"];
+const KEYS = ["page", "size", "sort"];
 
 export const serverQueries = (
   {
@@ -211,79 +195,17 @@ export const serverQueries = (
 
   const cleanData = cleanObject(data);
 
-  if (cleanData["query"].length && rest.searchType === "or") {
-    cleanData["query"] = `or(${cleanData["query"].join(",")})`;
-  } else if (cleanData["query"].length && rest.searchType === "and") {
-    cleanData["query"] = `and(${cleanData["query"].join(",")})`;
-  } else if (cleanData["query"].length && rest.searchType === "eq") {
-    cleanData["query"] = `eq(${cleanData["query"].join(",")})`;
-  } else {
-    delete cleanData["query"];
-  }
-
-  return cleanData;
-};
-
-export const serverQueriesOr = (
-  {
-    pageIndex,
-    pageSize,
-    ...rest
-  }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-  },
-  likeKeys?: string[],
-  booleanKeys?: string[],
-  numberKeys?: string[],
-  schemaKeys?: {
-    [key: string]: string;
-  },
-  keys?: string[],
-) => {
-  const queries = cleanObject({
-    ...rest,
-    page: pageIndex ? (pageIndex as number) - 1 : undefined,
-    size: isNaN(pageSize) ? pageSize : Number(pageSize),
-  });
-
-  const data = Object.entries(queries).reduce(
-    (out: { [key: string]: string[] }, [key, value]) => {
-      if (KEYS.includes(key) || keys?.includes(key)) {
-        out[key] = value;
-      } else {
-        if (likeKeys?.includes(key)) {
-          out.query.push(`like(${key},"${value}")`);
-        } else if (typeof value === "boolean" || booleanKeys?.includes(key)) {
-          const boolValue =
-            typeof value === "boolean"
-              ? value
-              : value === "true" || Number(value) === 1;
-          out.query.push(`like(${key},${boolValue})`);
-        } else if (typeof value === "number" || numberKeys?.includes(key)) {
-          out.query.push(`like(${key},${value})`);
-        } else {
-          const schema = schemaKeys?.[key] ?? "like";
-          out.query.push(`${schema}(${key},"${value}")`);
-        }
-      }
-      return out;
-    },
-    { query: [] },
-  );
-
-  const cleanData = cleanObject(data);
-
   if (cleanData["query"].length) {
-    cleanData["query"] = `or(${cleanData["query"].join(",")})`;
+    cleanData["query"] = `and(${cleanData["query"].join(",")})`;
   } else {
     delete cleanData["query"];
   }
+
   return cleanData;
 };
 
 export const formatDate = (
-  date?: number | string | Date,
+  date?: number | string,
   format?: string,
   fallback?: string,
 ) => {
@@ -294,15 +216,6 @@ export const formatDate = (
   const year = dateObj.getFullYear();
 
   if (year === 1 || year === 1970) return fallback ?? "";
-
-  if (format === DATE_LOCALE_FORMAT) {
-    return dateObj.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  }
-
   const day = `0${dateObj.getDate()}`.substr(-2);
   const month = `0${dateObj.getMonth() + 1}`.substr(-2);
   const hours = `0${dateObj.getHours()}`.substr(-2);
@@ -337,50 +250,6 @@ export const formatNumber = (
   if (!number && number !== 0) return emptyText + suffixParsed;
   const num = Number(number || 0);
   const maximumFractionDigits = Number.isInteger(num) ? 0 : numberOfFixed;
-  return (
-    prefix +
-    num.toLocaleString("en-US", {
-      maximumFractionDigits,
-      ...localeOption,
-    }) +
-    suffixParsed
-  );
-};
-
-export const formatCurrency = (
-  number?: number | null | string,
-  options: OptionFormatNumber = {},
-) => {
-  if (typeof number === "string") return number;
-  const {
-    numberOfFixed = 4,
-    emptyText = "--",
-    suffix,
-    prefix = "",
-    space = true,
-    ...localeOption
-  } = options;
-  const suffixParsed = suffix ? `${space ? " " : ""}${suffix}` : "";
-  if (!number && number !== 0) return emptyText + suffixParsed;
-  const num = Number(number || 0);
-  const maximumFractionDigits = Number.isInteger(num) ? 0 : numberOfFixed;
-  if (num > 10000000000) {
-    let newNum = num / 1000000;
-    while (newNum > 10000000) {
-      newNum /= 10;
-    }
-    return (
-      prefix +
-      Math.round(newNum)
-        .toLocaleString("en-US", {
-          maximumFractionDigits: 0,
-          ...localeOption,
-        })
-        .toString() +
-      "..." +
-      suffixParsed
-    );
-  }
   return (
     prefix +
     num.toLocaleString("en-US", {
@@ -472,6 +341,80 @@ export const getMonthShortName = (monthNo) => {
   return date.toLocaleString("en-US", { month: "short" });
 };
 
+export const formatDocResponseToItemResponse = (data: {
+  totalDocs: number;
+  totalPages: number;
+  page: number;
+  limit: number;
+  docs: any[];
+}) => {
+  return {
+    total: data.totalDocs,
+    total_page: data.totalPages,
+    page: data.page - 1,
+    data: data.docs,
+    pageSize: data.limit,
+  };
+};
+
+export const serverQueriesOr = (
+  {
+    pageIndex,
+    pageSize,
+    ...rest
+  }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+  },
+  likeKeys?: string[],
+  booleanKeys?: string[],
+  numberKeys?: string[],
+  schemaKeys?: {
+    [key: string]: string;
+  },
+  keys?: string[],
+) => {
+  const queries = cleanObject({
+    ...rest,
+    page: pageIndex ? (pageIndex as number) - 1 : undefined,
+    size: isNaN(pageSize) ? pageSize : Number(pageSize),
+  });
+
+  const data = Object.entries(queries).reduce(
+    (out: { [key: string]: string[] }, [key, value]) => {
+      if (KEYS.includes(key) || keys?.includes(key)) {
+        out[key] = value;
+      } else {
+        if (likeKeys?.includes(key)) {
+          out.query.push(`like(${key},"${value}")`);
+        } else if (typeof value === "boolean" || booleanKeys?.includes(key)) {
+          const boolValue =
+            typeof value === "boolean"
+              ? value
+              : value === "true" || Number(value) === 1;
+          out.query.push(`like(${key},${boolValue})`);
+        } else if (typeof value === "number" || numberKeys?.includes(key)) {
+          out.query.push(`like(${key},${value})`);
+        } else {
+          const schema = schemaKeys?.[key] ?? "like";
+          out.query.push(`${schema}(${key},"${value}")`);
+        }
+      }
+      return out;
+    },
+    { query: [] },
+  );
+
+  const cleanData = cleanObject(data);
+
+  if (cleanData["query"].length) {
+    cleanData["query"] = `or(${cleanData["query"].join(",")})`;
+  } else {
+    delete cleanData["query"];
+  }
+  return cleanData;
+};
+
 export const renderTimeDiff = (ts: string | Date) => {
   if (!ts) return;
   const currentDate = new Date();
@@ -496,60 +439,22 @@ export const renderTimeDiff = (ts: string | Date) => {
   }
 };
 
-export const formatEstimateTime = (time: string | number, isHour?: boolean) => {
-  const totalHours = Math.floor(Number(time) / 60);
-  const remainingMinutes = Math.floor(Number(time)) % 60;
+export const downloadImage = async (url: string, name: string) => {
+  try {
+    const copiedImage = await fetch(url);
+    const blobImage = await copiedImage.blob();
+    const href = URL.createObjectURL(blobImage);
+    const anchorElement = document.createElement("a");
+    anchorElement.href = href;
+    anchorElement.download = name;
+    document.body.appendChild(anchorElement);
+    anchorElement.click();
 
-  const formattedHours = totalHours < 10 ? `0${totalHours}` : totalHours;
-  const formattedMinutes =
-    remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes;
-
-  if (isHour) {
-    return `${formattedHours}h`;
+    document.body.removeChild(anchorElement);
+    window.URL.revokeObjectURL(href);
+  } catch (error) {
+    throw new Error();
   }
-  return `${formattedHours}:${formattedMinutes}`;
-};
-
-export const formatNumberHourToTime = (time: number, isHour?: boolean) => {
-  const Hour = Math.floor(time);
-  const Minute = Math.floor((time - Hour) * 60);
-
-  const formattedHour = Hour < 10 ? `0${Hour}` : Hour;
-  const formattedMinute = Minute < 10 ? `0${Minute}` : Minute;
-
-  if (isHour) {
-    return `${formattedHour}h`;
-  }
-  return `${formattedHour}:${formattedMinute}h`;
-};
-
-export const deepEqual = (foo, bar) => {
-  const has = Object.prototype.hasOwnProperty;
-  let ctor, len;
-  if (foo === bar) return true;
-
-  if (foo && bar && (ctor = foo.constructor) === bar.constructor) {
-    if (ctor === Date) return foo.getTime() === bar.getTime();
-    if (ctor === RegExp) return foo.toString() === bar.toString();
-
-    if (ctor === Array) {
-      if ((len = foo.length) === bar.length) {
-        while (len-- && deepEqual(foo[len], bar[len]));
-      }
-      return len === -1;
-    }
-
-    if (!ctor || typeof foo === "object") {
-      len = 0;
-      for (ctor in foo) {
-        if (has.call(foo, ctor) && ++len && !has.call(bar, ctor)) return false;
-        if (!(ctor in bar) || !deepEqual(foo[ctor], bar[ctor])) return false;
-      }
-      return Object.keys(bar).length === len;
-    }
-  }
-
-  return foo !== foo && bar !== bar;
 };
 
 export const copyImage = (url: string) => {
@@ -584,24 +489,6 @@ export const copyImage = (url: string) => {
   };
 };
 
-export const downloadImage = async (url: string, name: string) => {
-  try {
-    const copiedImage = await fetch(url);
-    const blobImage = await copiedImage.blob();
-    const href = URL.createObjectURL(blobImage);
-    const anchorElement = document.createElement("a");
-    anchorElement.href = href;
-    anchorElement.download = name;
-    document.body.appendChild(anchorElement);
-    anchorElement.click();
-
-    document.body.removeChild(anchorElement);
-    window.URL.revokeObjectURL(href);
-  } catch (error) {
-    throw new Error();
-  }
-};
-
 export const descendingComparator = (a, b, orderBy) => {
   if (typeof get(a, orderBy) === "string") {
     return get(b, orderBy).localeCompare(get(a, orderBy));
@@ -632,4 +519,4 @@ export const toHoursAndMinutes = (totalMinutes: number) => {
   const minutes = totalMinutes % 60;
 
   return { hours, minutes };
-}
+};
