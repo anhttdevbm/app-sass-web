@@ -115,7 +115,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 top: "40px",
                 "border-bottom": "1px solid",
                 borderColor: {
-                  md: "#1BC5BD",
+                  md: "rgba(11, 183, 175, 0.5)",
                   xs: "background.paper",
                 },
                 content: "''",
