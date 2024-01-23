@@ -236,10 +236,10 @@ const ItemList = () => {
       {
         value: commonT("form.title.startDate"),
         width: "100px",
-        align: "left",
+        align: "center",
       },
-      { value: commonT("form.title.endDate"), width: "100px", align: "left" },
-      { value: commonT("status"), width: "100px", align: "left" },
+      { value: commonT("form.title.endDate"), width: "100px", align: "center" },
+      { value: commonT("status"), width: "100px", align: "center" },
       {
         value: commonT("form.title.description"),
         width: "12%",
@@ -261,12 +261,14 @@ const ItemList = () => {
       {
         value: commonT("form.title.startDate"),
         width: "100px",
+        align: "center",
       },
-      { value: commonT("form.title.endDate"), width: "100px" },
-      { value: commonT("status"), width: "100px" },
+      { value: commonT("form.title.endDate"), width: "100px", align: "center" },
+      { value: commonT("status"), width: "100px", align: "center" },
       {
         value: commonT("form.title.description"),
         width: "16%",
+        align: "center",
       },
       { value: "", width: "1%", align: "center" },
     ],
@@ -1071,9 +1073,12 @@ const ItemList = () => {
           height="48px"
           bgcolor={noData ? "background.paper" : "background.default"}
           sx={{
+            ml: "-37px",
             "* > th": {
               padding: "10px",
-              textAlign: "left",
+            },
+            "* > th:first-child": {
+              pl: "37px",
             },
           }}
         >
@@ -1216,11 +1221,6 @@ const ItemList = () => {
                                     },
                                     "* > div > div > img": {
                                       marginRight: "10px!important",
-                                    },
-                                    "* > div > div > div": {
-                                      paddingLeft: task?.owner
-                                        ? ""
-                                        : "17px!important",
                                     },
                                   }}
                                 >
@@ -1610,13 +1610,6 @@ const ItemList = () => {
                                                             {
                                                               marginRight:
                                                                 "10px!important",
-                                                            },
-                                                          "* > div > div > div":
-                                                            {
-                                                              paddingLeft:
-                                                                subTask?.owner
-                                                                  ? ""
-                                                                  : "17px!important",
                                                             },
                                                         }}
                                                       >
