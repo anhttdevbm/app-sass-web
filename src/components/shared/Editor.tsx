@@ -38,6 +38,11 @@ const Editor = (props: EditorProps) => {
       pt={0.75}
       pb={1}
       borderRadius={1}
+      sx={{
+        "& p:last-child": {
+          display: "none",
+        },
+      }}
     >
       <Text variant="caption" color="grey.300">
         {title}
