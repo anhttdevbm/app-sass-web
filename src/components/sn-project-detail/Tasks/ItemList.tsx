@@ -1046,7 +1046,7 @@ const ItemList = () => {
   }, [fixedLayoutRef]);
 
   return (
-    <Stack flex={1} pb={3} order={3}>
+    <Stack flex={1} pb={3} order={3} gap={2} bgcolor={"background.default"}>
       {!!selectedList.length && (
         <ActionsSelected
           selectedList={selectedList}
@@ -1074,6 +1074,7 @@ const ItemList = () => {
           bgcolor={noData ? "background.paper" : "background.default"}
           sx={{
             ml: "-37px",
+            mt: "10px",
             "* > th": {
               padding: "10px",
             },
@@ -1435,7 +1436,7 @@ const ItemList = () => {
                                                         "border-bottom":
                                                           "1px solid",
                                                         borderColor: {
-                                                          md: "#1BC5BD",
+                                                          md: "rgba(27, 197, 189, 0.5)",
                                                           xs: "background.paper",
                                                         },
                                                         content: "''",
@@ -1461,7 +1462,7 @@ const ItemList = () => {
                                                         height: "5px",
                                                         rotate: "45deg",
                                                         borderColor: {
-                                                          md: "#1BC5BD",
+                                                          md: "rgba(27, 197, 189, 0.5)",
                                                           xs: "background.paper",
                                                         },
                                                       },
@@ -1492,7 +1493,7 @@ const ItemList = () => {
                                                           borderBottom:
                                                             "1px solid",
                                                           borderColor: {
-                                                            md: "#1BC5BD",
+                                                            md: "rgba(27, 197, 189, 0.5)",
                                                             xs: "background.paper",
                                                           },
                                                           content: "''",
