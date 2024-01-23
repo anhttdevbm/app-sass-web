@@ -38,14 +38,22 @@ const Actions = () => {
   const onChangeQueries = (name: string, value: any) => {
     const newQueries = {
       ...queries,
+      /**
+       * Updates the value of a specific action based on the provided name and value.
+       * If the name is "sort" and a value is provided, it sets the value to LATEST_VALUE.
+       * If the name is "sort" and no value is provided, it sets the value to undefined.
+       * If the name is "saved" and no value is provided, it sets the value to undefined.
+       * Otherwise, it sets the value to the provided value.
+       **/
       [name]:
         name === "sort" && value
           ? LATEST_VALUE
           : name === "sort"
           ? undefined
+          : name === "saved" && !value
+          ? undefined
           : value,
     };
-
     onSearch(newQueries);
   };
 
