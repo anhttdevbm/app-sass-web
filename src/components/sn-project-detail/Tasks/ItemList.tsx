@@ -62,6 +62,7 @@ import Description from "./components/Description";
 import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
 import useWindowSize from "hooks/useWindowSize";
 import MoveTagIcon from "icons/MoveTagIcon";
+import { red } from "@mui/material/colors";
 
 const ItemList = () => {
   const {
@@ -1059,6 +1060,8 @@ const ItemList = () => {
         // zIndex={12}
         display={{ xs: "none", md: "flex" }}
         bgcolor="background.default"
+        overflow="hidden"
+        mt="12px"
       >
         <TableLayout
           onLayout={onLayout}
@@ -1070,16 +1073,28 @@ const ItemList = () => {
           // maxWidth={1349}
           mx="auto"
           width="100%"
-          height="48px"
+          height="55px"
           bgcolor={noData ? "background.paper" : "background.default"}
+          headerProps={{
+            sx: {
+              backgroundColor: "background.paper",
+            },
+          }}
           sx={{
             ml: "-37px",
-            mt: "10px",
-            "* > th": {
-              padding: "10px",
+            "&::after": {
+              width: "37px",
+              content: "''",
+              height: "100%",
+              position: "absolute",
+              right: "0",
+              backgroundColor: "background.paper",
             },
             "* > th:first-child": {
               pl: "37px",
+            },
+            "* > th": {
+              padding: "10px",
             },
           }}
         >
