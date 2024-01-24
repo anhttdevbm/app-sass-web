@@ -116,7 +116,10 @@ const EditDocs = ({
           heightContent={heightContent}
           height={height}
         >
-          <DrawSlider setOpenSlider={setOpenSlider}></DrawSlider>
+          <DrawSlider
+            setOpenSlider={setOpenSlider}
+            editor={editor}
+          ></DrawSlider>
         </LayoutSlider>
       )}
 

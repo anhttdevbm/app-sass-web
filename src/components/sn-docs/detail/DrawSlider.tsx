@@ -6,7 +6,7 @@ import { client } from "api";
 import { AxiosError, AxiosRequestConfig, HttpStatusCode } from "axios";
 import Avatar from "components/Avatar";
 import { Switch } from "components/Filters";
-import { Text, Tooltip } from "components/shared";
+import { Button, Text, Tooltip } from "components/shared";
 import { DOCS_API_URL, NS_DOCS } from "constant/index";
 import { User } from "constant/types";
 import { format } from "date-fns";
@@ -19,6 +19,8 @@ import { useParams } from "next/navigation";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setContentRow } from "store/docs/reducer";
+import useDocEditor from "../news/hook/useDocEditor";
+import { Editor } from "@tiptap/react";
 
 declare type TDocHistory = {
   _id: string;
@@ -34,14 +36,13 @@ declare type TDocHistory = {
 const HistoryDocItem: React.FC<{ data: TDocHistory }> = ({ data }) => {
   const docsT = useTranslations(NS_DOCS);
   const dispatch = useDispatch();
-console.log(data, 'ff')
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        cursor: 'pointer'
+        cursor: "pointer",
       }}
       onClick={() => dispatch(setContentRow(data?.new))}
     >
@@ -149,11 +150,53 @@ function useGetDocHistory(
 
   return { data: documentUpdateHistory, ...fetchingState };
 }
+const OptionGroup = ({ options, handleChangeOption }) => {
+  const [state, setState] = useState(options[0].value);
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        width: "100%",
+        gap: "1em",
+        padding: "1em",
+      }}
+    >
+      {options.map((item) => (
+        <Box
+          onClick={() => {
+            setState(item.value);
+            handleChangeOption(item.value);
+          }}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+            borderRadius: "4px",
+            cursor: "pointer",
+            border: "1px solid",
+            borderColor: state === item.value ? "primary.main" : "transparent",
+            "&:hover": {
+              borderColor: "primary.main",
+            },
+          }}
+        >
+          {item.label}
+        </Box>
+      ))}
+    </Box>
+  );
+};
 
 const DrawSlider = ({
   setOpenSlider,
+  editor,
 }: {
   setOpenSlider: React.Dispatch<React.SetStateAction<boolean>>;
+  editor: Editor;
 }) => {
   const [state, setState] = useState(2);
   const docsT = useTranslations(NS_DOCS);
@@ -235,6 +278,26 @@ const DrawSlider = ({
             <Box
               sx={{
                 display: "flex",
+                flexDirection: "column",
+                // justifyContent: "space-between",
+                alignItems: "left",
+                bgcolor: "background.paper",
+              }}
+            >
+              <Text fontSize={14} fontWeight={600}>
+                Text Style
+              </Text>
+
+              <OptionGroup
+                options={FontFamilyOptions}
+                handleChangeOption={(value) => {
+                  editor.chain().selectAll().setFontFamily(value).run();
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
                 bgcolor: "background.paper",
@@ -278,5 +341,20 @@ const DrawSlider = ({
     </>
   );
 };
+
+export const FontFamilyOptions = [
+  {
+    label: "Default",
+    value: "",
+  },
+  {
+    label: "Serif",
+    value: "sans-serif",
+  },
+  {
+    label: "Mono",
+    value: "Roboto Mono",
+  },
+];
 
 export default memo(DrawSlider);

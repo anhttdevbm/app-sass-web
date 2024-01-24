@@ -19,6 +19,7 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import { Comment } from "@sereneinserenade/tiptap-comment-extension";
 
+import {FontFamily} from "@tiptap/extension-font-family"
 import { DBlock } from "./d-block";
 import Document from "./doc";
 import Paragraph from "./paragraph";
@@ -61,6 +62,10 @@ export const getExtensions = ({
     GapCursor,
     History,
     HardBreak,
+
+    // Font family
+    FontFamily,
+
 
     // Mark
     Bold,

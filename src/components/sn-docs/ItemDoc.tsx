@@ -50,7 +50,6 @@ export const RowGroup = (props) => {
           <AccordionDetails sx={{ padding: 0, width: "100%" }}>
             {Array.isArray(items) &&
               items.map((doc) => {
-                console.log(doc);
                 return (
                   <TableRow key={doc}>
                     {!isMdSmaller ? (
