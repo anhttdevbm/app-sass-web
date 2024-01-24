@@ -464,6 +464,8 @@ export const useChat = () => {
     async (params: Omit<FetchGroupMemberRequest, "authToken" | "userId">) => {
       const authToken = user?.["authToken"] ?? "";
       const userId = user?.["id_rocket"] ?? "";
+      console.log("params: " + params);
+
       return await dispatch(
         fetchGroupMembers({
           authToken,

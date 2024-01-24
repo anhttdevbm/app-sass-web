@@ -187,10 +187,10 @@ const ChatListTemp = () => {
                 position: "absolute",
                 width: "348px",
                 height: "calc(100% - 8rem)",
-                maxHeight: "500px",
+                maxHeight: "600px",
                 overflow: "hidden",
-                bottom: "7rem",
-                right: "5rem",
+                bottom: "2rem",
+                right: "4rem",
                 borderRadius: "16px",
                 boxShadow: "2px 2px 24px 0px #0000001A",
                 backgroundColor: isDarkMode ? "#303130" : "white",
@@ -218,11 +218,12 @@ const ChatListTemp = () => {
           width: "50px",
           height: "50px",
           borderRadius: "50%",
-          display: "flex",
+          // display: "flex",
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "2px 2px 24px 0px #0000001A",
           cursor: "pointer",
+          display: open ? "none" : "flex",
         }}
         component={"div"}
         onClick={handleTrigger}

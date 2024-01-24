@@ -521,7 +521,7 @@ const ChatDetailGroup = (props) => {
         </Box>
         <Box
           sx={{
-            height: owner ? "16%" : "30%",
+            height: owner ? "30%" : "46%",
             // height: "180px",
             overflow: "auto",
           }}
