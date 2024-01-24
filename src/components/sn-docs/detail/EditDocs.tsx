@@ -110,7 +110,7 @@ const EditDocs = ({
           <DrawComment editor={editor}></DrawComment>
         </LayoutSlider>
       )}
-      {openSlider && (
+      {/* {openSlider && (
         <LayoutSlider
           heightToolbar={heightToolbar}
           heightContent={heightContent}
@@ -121,7 +121,7 @@ const EditDocs = ({
             editor={editor}
           ></DrawSlider>
         </LayoutSlider>
-      )}
+      )} */}
 
       <Box
         sx={{
