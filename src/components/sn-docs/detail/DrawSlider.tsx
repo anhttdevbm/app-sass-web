@@ -150,6 +150,46 @@ function useGetDocHistory(
 
   return { data: documentUpdateHistory, ...fetchingState };
 }
+const OptionGroup = ({ options, handleChangeOption }) => {
+  const [state, setState] = useState(options[0].value);
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        width: "100%",
+        gap: "1em",
+        padding: "1em",
+      }}
+    >
+      {options.map((item) => (
+        <Box
+          onClick={() => {
+            setState(item.value);
+            handleChangeOption(item.value);
+          }}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+            borderRadius: "4px",
+            cursor: "pointer",
+            border: "1px solid",
+            borderColor: state === item.value ? "primary.main" : "transparent",
+            "&:hover": {
+              borderColor: "primary.main",
+            },
+          }}
+        >
+          {item.label}
+        </Box>
+      ))}
+    </Box>
+  );
+};
 
 const DrawSlider = ({
   setOpenSlider,
@@ -248,52 +288,12 @@ const DrawSlider = ({
                 Text Style
               </Text>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  width: "100%",
-                  gap: ".5em",
+              <OptionGroup
+                options={FontFamilyOptions}
+                handleChangeOption={(value) => {
+                  editor.chain().selectAll().setFontFamily(value).run();
                 }}
-              >
-                <Box
-                  onClick={() => {
-                    if (editor) {
-                      editor
-                        .chain()
-                        .selectAll()
-                        .setFontFamily("Courier New, Courier, monospace")
-                        .run();
-                    }
-                  }}
-                  sx={{
-                    cursor: "pointer",
-                    flexGrow: 1,
-                    backgroundColor: "red",
-                  }}
-                >
-                  Default
-                </Box>
-                <Box
-                  onClick={() => editor?.chain().focus().toggleBold().run()}
-                  sx={{
-                    cursor: "pointer",
-                    flexGrow: 1,
-                    backgroundColor: "red",
-                  }}
-                >
-                  Small
-                </Box>
-                <Box
-                  sx={{
-                    cursor: "pointer",
-                    flexGrow: 1,
-                    backgroundColor: "red",
-                  }}
-                >
-                  Large
-                </Box>
-              </Box>
+              />
             </Box>
             <Box
               sx={{
@@ -341,5 +341,20 @@ const DrawSlider = ({
     </>
   );
 };
+
+export const FontFamilyOptions = [
+  {
+    label: "Default",
+    value: "",
+  },
+  {
+    label: "Serif",
+    value: "sans-serif",
+  },
+  {
+    label: "Mono",
+    value: "Roboto Mono",
+  },
+];
 
 export default memo(DrawSlider);

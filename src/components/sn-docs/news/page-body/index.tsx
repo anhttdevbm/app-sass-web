@@ -3,7 +3,9 @@
 import { Box, TextareaAutosize } from "@mui/material";
 import { Editor } from "@tiptap/react";
 import { IDocDetail } from "components/sn-docs/detail/DocDetail";
-import DrawSlider from "components/sn-docs/detail/DrawSlider";
+import DrawSlider, {
+  FontFamilyOptions,
+} from "components/sn-docs/detail/DrawSlider";
 import useTheme from "hooks/useTheme";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -34,7 +36,7 @@ import { TextSelection } from "prosemirror-state";
 import { MenuBarHeaderEdit } from "./components/MenuBarHeader";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-otptional-chain */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
@@ -47,8 +49,6 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     description,
     project_id,
   } = useAppSelector((state) => state.doc);
-
-  alert(name);
 
   const dispatch = useDispatch();
   const { handleGetDocDetail } = useDocs();
@@ -107,6 +107,27 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   }, [content]);
 
   const editor = useDocEditor() as Editor;
+  const [fontFamily, setFontFamily] = useState<any>(FontFamilyOptions[0].value);
+  useEffect(() => {
+    if (editor) {
+      setFontFamily(editor.getAttributes("textStyle").fontFamily);
+      // const htmlContent = editor.getHTML();
+      // const parser = new DOMParser();
+      // const doc_data = parser.parseFromString(htmlContent, "text/html");
+      // console.log(doc_data);
+      // const elements = doc_data.body.getElementsByTagName("*");
+      // for (let i = 0; i < elements.length; i++) {
+      //   console.log(elements[i]);
+      //   const style = elements[i].getAttribute("style");
+      //   if (style) {
+      //     const fontFamily = style.split(":")[1];
+      //     // Check if  FontFamilyOptions containss fontFamily
+      //     if (FontFamilyOptions.find((item) => item.value === fontFamily)) {
+      //     }
+      //   }
+      // }
+    }
+  }, [content]);
 
   useEffect(() => {
     const updateMinHeight = () => {
@@ -200,6 +221,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             <form className={`${styles.form_title}`}>
               {name && (
                 <Textarea
+                  fontFamily={fontFamily}
                   maxRows={3}
                   id="title"
                   disabled={!canEdit}
@@ -234,12 +256,16 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   );
 };
 
-const Textarea = styled(TextareaAutosize)`
+interface TextareaProps {
+  fontFamily: string;
+}
+
+const Textarea = styled(TextareaAutosize)<TextareaProps>`
   border: none;
   outline: none;
   font-size: 48px;
   appearance: none;
-  font-family: inherit;
+  font-family: ${(props) => props.fontFamily};
   font-weight: 800;
   resize: none;
   min-width: 100%;
@@ -253,3 +279,4 @@ const Textarea = styled(TextareaAutosize)`
 `;
 
 export default PageBody;
+  
