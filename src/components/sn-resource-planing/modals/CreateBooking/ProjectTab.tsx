@@ -148,6 +148,11 @@ const ProjectTab = ({
               options={projectOptions}
               label={resourceT("form.project")}
               {...field}
+              MenuProps={{
+                sx: {
+                  maxHeight: "400px",
+                },
+              }}
               sx={{
                 overflow: "hidden",
                 "& .Muibox-root .MuiBox-root": {
@@ -183,6 +188,9 @@ const ProjectTab = ({
               MenuProps={{
                 PaperProps: {
                   onScroll: onScroll,
+                },
+                sx: {
+                  maxHeight: "400px",
                 },
               }}
               helperText={errorsProject.sale_id?.message}

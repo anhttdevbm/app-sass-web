@@ -74,6 +74,7 @@ const Actions = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChangeQueries = (name: string, value: any) => {
+    // console.log("Change queries:---", name, value);
     setQueries((prevQueries) => ({
       ...prevQueries,
       [name]: value,
@@ -193,7 +194,8 @@ const Actions = () => {
           alignItems="center"
           spacing={3}
           justifyContent={{ xs: "flex-start", md: "flex-end" }}
-          overflow="auto"
+          // overflow="auto"
+          overflow="hidden"
           width="100%"
         >
           <Search

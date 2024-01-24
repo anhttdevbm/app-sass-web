@@ -161,7 +161,7 @@ const ChatListTemp = () => {
         top: 0,
         bottom: 0,
         right: 0,
-        zIndex: 9999,
+        zIndex: 1300,
       }}
     >
       {show ? (
@@ -185,9 +185,9 @@ const ChatListTemp = () => {
             <Box
               sx={{
                 position: "absolute",
-                width: "352px",
-                height: "calc(100% - 7rem)",
-                maxHeight: "600px",
+                width: "348px",
+                height: "calc(100% - 8rem)",
+                maxHeight: "500px",
                 overflow: "hidden",
                 bottom: "7rem",
                 right: "5rem",

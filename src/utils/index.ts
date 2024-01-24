@@ -133,7 +133,7 @@ export const formatDocResponseToItemResponse = (data: {
   totalPages: number;
   page: number;
   limit: number;
-  docs: any[];
+  docs: unknown[]; // Fix: Replace 'any[]' with 'unknown[]'
 }) => {
   return {
     total: data.totalDocs,
@@ -159,7 +159,7 @@ export const refactorRawItemListResponse = (rawData: {
   } as ItemListResponse;
 };
 
-const KEYS = ["page", "size", "sort", "searchType"];
+const KEYS = ["page", "size", "sort"];
 
 export const serverQueries = (
   {
@@ -211,18 +211,15 @@ export const serverQueries = (
 
   const cleanData = cleanObject(data);
 
-  if (cleanData["query"].length && rest.searchType === "or") {
-    cleanData["query"] = `or(${cleanData["query"].join(",")})`;
-  } else if (cleanData["query"].length && rest.searchType === "and") {
+  if (cleanData["query"].length) {
     cleanData["query"] = `and(${cleanData["query"].join(",")})`;
-  } else if (cleanData["query"].length && rest.searchType === "eq") {
-    cleanData["query"] = `eq(${cleanData["query"].join(",")})`;
   } else {
     delete cleanData["query"];
   }
 
   return cleanData;
 };
+
 
 export const serverQueriesOr = (
   {

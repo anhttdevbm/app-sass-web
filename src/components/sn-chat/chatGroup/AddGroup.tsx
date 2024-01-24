@@ -241,9 +241,9 @@ const AddGroup: FC<AddGroupProps> = ({
                 return;
               } else {
                 onSetStep(
-                  dataTransfer?.openFrom
-                    ? dataTransfer?.openFrom
-                    : STEP.CHAT_GROUP,
+                  dataTransfer?.openFrom ? STEP.CHAT_GROUP : STEP.CONVENTION,
+                  // ? dataTransfer?.openFrom
+                  // : STEP.CHAT_GROUP,
                 );
               }
             }}
@@ -280,8 +280,8 @@ const AddGroup: FC<AddGroupProps> = ({
       </Box>
       <Box
         overflow="auto"
-        maxHeight="calc(550px - 85px - 15px)"
-        minHeight="calc(550px - 85px - 15px)"
+        maxHeight="calc(450px - 85px - 15px)"
+        minHeight="calc(450px - 85px - 15px)"
         sx={{
           borderRadius: "16px",
           background: "#FFFFFF",
@@ -366,7 +366,7 @@ const AddGroup: FC<AddGroupProps> = ({
               onSetStep(
                 dataTransfer?.openFrom
                   ? dataTransfer?.openFrom
-                  : STEP.CHAT_GROUP,
+                  : STEP.CONVENTION,
               );
             }
           }}

@@ -15,6 +15,7 @@ import Form, { ProjectDataForm } from "./Form";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
+import { log } from "console";
 
 const Actions = () => {
   const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();
@@ -37,20 +38,29 @@ const Actions = () => {
   const onChangeQueries = (name: string, value: any) => {
     const newQueries = {
       ...queries,
+      /**
+       * Updates the value of a specific action based on the provided name and value.
+       * If the name is "sort" and a value is provided, it sets the value to LATEST_VALUE.
+       * If the name is "sort" and no value is provided, it sets the value to undefined.
+       * If the name is "saved" and no value is provided, it sets the value to undefined.
+       * Otherwise, it sets the value to the provided value.
+       **/
       [name]:
         name === "sort" && value
           ? LATEST_VALUE
           : name === "sort"
           ? undefined
+          : name === "saved" && !value
+          ? undefined
           : value,
     };
-
     onSearch(newQueries);
   };
 
   const onSearch = (newQueries: Params) => {
     const path = getPath(pathname, newQueries);
     push(path);
+    console.log(path);
 
     // onGetProjects({ ...newQueries, pageIndex: 1, pageSize });
   };
