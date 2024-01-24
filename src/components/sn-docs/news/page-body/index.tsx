@@ -110,22 +110,22 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const [fontFamily, setFontFamily] = useState<any>(FontFamilyOptions[0].value);
   useEffect(() => {
     if (editor) {
-      setFontFamily(editor.getAttributes("textStyle").fontFamily);
-      // const htmlContent = editor.getHTML();
-      // const parser = new DOMParser();
-      // const doc_data = parser.parseFromString(htmlContent, "text/html");
-      // console.log(doc_data);
-      // const elements = doc_data.body.getElementsByTagName("*");
-      // for (let i = 0; i < elements.length; i++) {
-      //   console.log(elements[i]);
-      //   const style = elements[i].getAttribute("style");
-      //   if (style) {
-      //     const fontFamily = style.split(":")[1];
-      //     // Check if  FontFamilyOptions containss fontFamily
-      //     if (FontFamilyOptions.find((item) => item.value === fontFamily)) {
-      //     }
-      //   }
-      // }
+      console.log(editor.getAttributes("textStyle").fontFamily);
+      const htmlContent = editor.getHTML();
+      const parser = new DOMParser();
+      const doc_data = parser.parseFromString(htmlContent, "text/html");
+      console.log(doc_data);
+      const elements = doc_data.body.getElementsByTagName("*");
+      for (let i = 0; i < elements.length; i++) {
+        console.log(elements[i]);
+        const style = elements[i].getAttribute("style");
+        if (style) {
+          const fontFamily = style.split(":")[1];
+          // Check if  FontFamilyOptions containss fontFamily
+          if (FontFamilyOptions.find((item) => item.value === fontFamily)) {
+          }
+        }
+      }
     }
   }, [content]);
 
@@ -279,4 +279,3 @@ const Textarea = styled(TextareaAutosize)<TextareaProps>`
 `;
 
 export default PageBody;
-  

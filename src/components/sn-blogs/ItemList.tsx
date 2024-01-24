@@ -37,8 +37,21 @@ import { DataAction } from "constant/enums";
 import UnEyeIcon from "icons/UnEyeIcon";
 
 const ItemList = () => {
-
-  const { items, item, onGetBlogs, page, size, totalItems, total_page, error, status, isFetching, isIdle, onUpdatePublished: onApproveOrRejectAction, onDeleteBlog: onDeleteAction } = useBlogs();
+  const {
+    items,
+    item,
+    onGetBlogs,
+    page,
+    size,
+    totalItems,
+    total_page,
+    error,
+    status,
+    isFetching,
+    isIdle,
+    onUpdatePublished: onApproveOrRejectAction,
+    onDeleteBlog: onDeleteAction,
+  } = useBlogs();
   totalItems;
   const { initQuery, isReady, query } = useQueryParams();
   const { isMdSmaller } = useBreakpoint();
@@ -99,7 +112,11 @@ const ItemList = () => {
     () => [
       { value: blogT("blogList.title"), width: "15%", align: "center" },
       { value: blogT("blogList.slug"), width: "15%", align: "center" },
-      { value: blogT("blogList.short_description"), width: "25%", align: "center" },
+      {
+        value: blogT("blogList.short_description"),
+        width: "25%",
+        align: "center",
+      },
       { value: blogT("blogList.tag"), width: "15%", align: "center" },
       { value: blogT("blogList.created_time"), width: "10%", align: "center" },
       { value: blogT("blogList.statusBlog"), width: "10%", align: "center" },
@@ -151,7 +168,10 @@ const ItemList = () => {
     const listItem = selectedList;
     try {
       console.log(action);
-      const listUpdate = await onApproveOrRejectAction(ids as string[], published as unknown as string);
+      const listUpdate = await onApproveOrRejectAction(
+        ids as string[],
+        published as unknown as string,
+      );
       setAction(undefined);
       setSelectedList([]);
       setId(undefined);
@@ -266,13 +286,12 @@ const ItemList = () => {
         onClose={onResetAction}
         title={blogT("actions.update.title", { label: textAction })}
         content={blogT("actions.update.content", {
-          label: textAction
+          label: textAction,
         })}
         items={id ? undefined : selectedList}
         onSubmit={onSubmitApproveOrReject}
         action={textAction}
       />
-     
     </>
   );
 };
