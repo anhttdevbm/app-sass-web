@@ -19,6 +19,8 @@ import { useParams } from "next/navigation";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setContentRow } from "store/docs/reducer";
+import useDocEditor from "../news/hook/useDocEditor";
+import { Editor } from "@tiptap/react";
 
 declare type TDocHistory = {
   _id: string;
@@ -34,7 +36,6 @@ declare type TDocHistory = {
 const HistoryDocItem: React.FC<{ data: TDocHistory }> = ({ data }) => {
   const docsT = useTranslations(NS_DOCS);
   const dispatch = useDispatch();
-  console.log(data, "ff");
   return (
     <Box
       sx={{
@@ -152,8 +153,10 @@ function useGetDocHistory(
 
 const DrawSlider = ({
   setOpenSlider,
+  editor,
 }: {
   setOpenSlider: React.Dispatch<React.SetStateAction<boolean>>;
+  editor: Editor;
 }) => {
   const [state, setState] = useState(2);
   const docsT = useTranslations(NS_DOCS);
@@ -254,6 +257,15 @@ const DrawSlider = ({
                 }}
               >
                 <Box
+                  onClick={() => {
+                    if (editor) {
+                      editor
+                        .chain()
+                        .selectAll()
+                        .setFontFamily("Courier New, Courier, monospace")
+                        .run();
+                    }
+                  }}
                   sx={{
                     cursor: "pointer",
                     flexGrow: 1,
@@ -263,6 +275,7 @@ const DrawSlider = ({
                   Default
                 </Box>
                 <Box
+                  onClick={() => editor?.chain().focus().toggleBold().run()}
                   sx={{
                     cursor: "pointer",
                     flexGrow: 1,

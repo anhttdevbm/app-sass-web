@@ -48,7 +48,6 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   );
 
   const onChangeQueries = (name: string, value: any) => {
-    console.log({ ...queries, [name]: value });
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
   };
   const { id } = useParams();
@@ -59,7 +58,6 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
     }
   };
 
-  // console.log("queries", queries);
   const onSearch = () => {
     let newQueries = {
       ...queries,

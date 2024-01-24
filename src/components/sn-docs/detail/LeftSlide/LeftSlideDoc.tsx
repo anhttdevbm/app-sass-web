@@ -40,7 +40,6 @@ const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
   }, [document]);
 
   const addChildToData = (parent, child) => {
-    console.log("parent", parent);
     const newData = { ...data };
     const addChildToParent = async (parentNode) => {
       const modifiedParentNode = {

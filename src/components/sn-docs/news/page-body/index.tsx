@@ -47,6 +47,9 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     description,
     project_id,
   } = useAppSelector((state) => state.doc);
+
+  alert(name);
+
   const dispatch = useDispatch();
   const { handleGetDocDetail } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
@@ -65,20 +68,20 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   }, 200);
 
   useEffect(() => {
-    cancel();
+    // cancel();
     dispatch(getDocDetails(currentId));
   }, [currentId]);
 
   useEffect(() => {
-    // const data = {
-    //   content: content,
-    //   name: name || undefined,
-    //   description: description,
-    //   project_id: project_id,
-    // };
+    const data = {
+      //   content: content,
+      name: name || undefined,
+      //   description: description,
+      //   project_id: project_id,
+    };
     if (mounted) {
       if (id) {
-        // handleUpdateDoc(data, id);
+        handleUpdateDoc(data, id);
       } else {
       }
     } else {
@@ -188,7 +191,10 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             )}
             {openSlider && (
               <LayoutSlider heightToolbar={minHeight}>
-                <DrawSlider setOpenSlider={setOpenSlider}></DrawSlider>
+                <DrawSlider
+                  setOpenSlider={setOpenSlider}
+                  editor={editor}
+                ></DrawSlider>
               </LayoutSlider>
             )}
             <form className={`${styles.form_title}`}>
