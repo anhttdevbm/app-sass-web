@@ -353,7 +353,7 @@ export const FontFamilyOptions = [
   },
   {
     label: "Mono",
-    value: "Roboto Mono",
+    value: "monospace",
   },
 ];
 
