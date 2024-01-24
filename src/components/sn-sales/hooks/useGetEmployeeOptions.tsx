@@ -18,13 +18,13 @@ const useGetEmployeeOptions = () => {
     onGetOptions({ ...filters, pageSize, pageIndex: pageIndex + 1 });
   };
 
-  const onSearchEmployee = (name: string, value = "") => {
+  const onSearchEmployee = (name: string, value?: string) => {
     onGetOptions({
       pageIndex: 1,
       pageSize: 20,
-      email: (value as string) || "",
-      fullname: (value as string) || "",
-      searchType: "or",
+      email: value as string,
+      fullname: value as string,
+      searchType: value ? "or" : undefined,
     });
   };
 

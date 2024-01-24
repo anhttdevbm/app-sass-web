@@ -18,7 +18,7 @@ export const useGetSchemas = () => {
         .string()
         .trim()
         .required(
-          commonT("form.error.required", { name: resourceT("form.service") }),
+          commonT("form.error.required", { name: resourceT("form.services") }),
         ),
       dateRange: yup
         .object()
