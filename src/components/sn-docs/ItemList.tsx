@@ -110,7 +110,7 @@ const ItemList: React.FC<ItemListProps> = ({ isGrouped }) => {
   );
 
   useEffect(() => {
-    if (!searchParams.get("group_by"))
+    if (!searchParams.get("group_by")) {
       push(
         pathname +
           "?" +
@@ -119,6 +119,7 @@ const ItemList: React.FC<ItemListProps> = ({ isGrouped }) => {
             createQueryString("size", "50"),
           ].join("&"),
       );
+    }
   }, [searchParams.get("group_by")]);
 
   return (

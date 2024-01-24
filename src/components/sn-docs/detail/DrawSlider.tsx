@@ -6,7 +6,7 @@ import { client } from "api";
 import { AxiosError, AxiosRequestConfig, HttpStatusCode } from "axios";
 import Avatar from "components/Avatar";
 import { Switch } from "components/Filters";
-import { Text, Tooltip } from "components/shared";
+import { Button, Text, Tooltip } from "components/shared";
 import { DOCS_API_URL, NS_DOCS } from "constant/index";
 import { User } from "constant/types";
 import { format } from "date-fns";
@@ -34,14 +34,14 @@ declare type TDocHistory = {
 const HistoryDocItem: React.FC<{ data: TDocHistory }> = ({ data }) => {
   const docsT = useTranslations(NS_DOCS);
   const dispatch = useDispatch();
-console.log(data, 'ff')
+  console.log(data, "ff");
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        cursor: 'pointer'
+        cursor: "pointer",
       }}
       onClick={() => dispatch(setContentRow(data?.new))}
     >
@@ -232,6 +232,56 @@ const DrawSlider = ({
       >
         {state === 1 && (
           <>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                // justifyContent: "space-between",
+                alignItems: "left",
+                bgcolor: "background.paper",
+              }}
+            >
+              <Text fontSize={14} fontWeight={600}>
+                Text Style
+              </Text>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                  gap: ".5em",
+                }}
+              >
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                    flexGrow: 1,
+                    backgroundColor: "red",
+                  }}
+                >
+                  Default
+                </Box>
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                    flexGrow: 1,
+                    backgroundColor: "red",
+                  }}
+                >
+                  Small
+                </Box>
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                    flexGrow: 1,
+                    backgroundColor: "red",
+                  }}
+                >
+                  Large
+                </Box>
+              </Box>
+            </Box>
             <Box
               sx={{
                 display: "flex",

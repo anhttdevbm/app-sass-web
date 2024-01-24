@@ -48,7 +48,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   );
 
   const onChangeQueries = (name: string, value: any) => {
-    console.log(name, value);
+    console.log({ ...queries, [name]: value });
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
   };
   const { id } = useParams();
@@ -88,6 +88,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         user_id: convertStringToArray(filters?.user_id),
       };
     }
+
     setQueries(newFilter);
   }, [filters]);
 
