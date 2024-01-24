@@ -8,7 +8,7 @@ import useToggle from "hooks/useToggle";
 import { DataAction } from "constant/enums";
 import { useProjectTypes } from "store/company/selectors";
 import Form from "./Form";
-import { Refresh, Search, Dropdown, Clear } from "components/Filters";
+import { Refresh, Search, Dropdown, Clear, Date } from "components/Filters";
 import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { useTranslations } from "next-intl";
 import useBreakpoint from "hooks/useBreakpoint";
@@ -32,7 +32,7 @@ const Actions = () => {
   const [queries, setQueries] = useState<Params>({});
   const [filterField, setFilterField] = useState("name");
 
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
   };
@@ -64,7 +64,7 @@ const Actions = () => {
 
   return (
     <>
-    <Stack
+      <Stack
         direction={{ xs: "column", md: "row" }}
         alignItems={{ md: "center" }}
         justifyContent="space-between"
@@ -112,8 +112,8 @@ const Actions = () => {
             value={queries["name"]}
             sx={{ width: 300, minWidth: 200 }}
             onKeyDown={(e) => {
-              if(e.key === 'Enter') {
-                onSearch()
+              if (e.key === "Enter") {
+                onSearch();
               }
             }}
           />
@@ -135,14 +135,13 @@ const Actions = () => {
               },
             }}
           />
-          {/* <Date
+          <Date
             label={commonT("form.title.startDate")}
             name="created_time"
             onChange={onChangeQueries}
             value={queries?.["created_time"]}
             format={DATE_FORMAT_HYPHEN}
-        
-          /> */}
+          />
           <Button
             size="extraSmall"
             sx={{
@@ -165,7 +164,7 @@ const Actions = () => {
           initialValues={INITIAL_VALUES}
           onSubmit={onCreateProjectType}
         />
-      )} 
+      )}
     </>
   );
 };

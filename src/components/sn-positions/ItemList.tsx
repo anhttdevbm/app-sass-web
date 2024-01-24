@@ -60,9 +60,9 @@ const ItemList = () => {
         width: "23.5%",
         align: "left",
       },
-      { value: commonT("creationDate"), width: "24.5%"},
-      { value: companyT("positions.numberOfEmployees"), width: "20%"},
-      { value: "", width: "5%" },
+      { value: commonT("creationDate"), width: "24.5%" },
+      { value: companyT("positions.numberOfEmployees"), width: "22%" },
+      { value: "", width: "3%" },
     ],
     [commonT, companyT],
   );
@@ -78,8 +78,8 @@ const ItemList = () => {
         width: "25%",
         align: "left",
       },
-      { value: commonT("creationDate"), width: "20%" },
-      { value: companyT("positions.numberOfEmployees"), width: "20%" },
+      { value: commonT("creationDate"), width: "18%" },
+      { value: companyT("positions.numberOfEmployees"), width: "22%" },
     ],
     [commonT, companyT],
   );
@@ -112,6 +112,7 @@ const ItemList = () => {
     const newQueries = { ...query, ...queries };
     const path = getPath(pathname, newQueries);
     push(path);
+    console.log("newQueries: ", newQueries);
 
     onGetPositions(newQueries);
   };
