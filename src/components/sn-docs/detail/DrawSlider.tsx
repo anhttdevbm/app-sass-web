@@ -20,7 +20,7 @@ import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setContentRow } from "store/docs/reducer";
 import useDocEditor from "../news/hook/useDocEditor";
-import { Editor } from "@tiptap/react";
+import { Editor } from "@tiptap/core";
 
 declare type TDocHistory = {
   _id: string;
