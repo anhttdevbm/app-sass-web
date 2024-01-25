@@ -89,7 +89,7 @@ export const CURRENCY_SYMBOL: Record<CURRENCY_CODE, string> = {
 export const EXPORT_TYPE_OPTIONS = {
   PDF: "pdf",
   CSV: "csv",
-  XLS: "xls",
+  XLS: "xlsx",
 };
 
 export const EXPORT_ORIENTATION_OPTIONS = {
