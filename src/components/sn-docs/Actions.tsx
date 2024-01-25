@@ -27,7 +27,12 @@ function convertStringToArray(inputString) {
 
   return resultArray;
 }
-const Actions = () => {
+
+type ActionProps = {
+  isProjectTabMode: boolean;
+};
+
+const Actions = ({ isProjectTabMode }: ActionProps) => {
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
   const docsT = useTranslations(NS_DOCS);
@@ -36,7 +41,6 @@ const Actions = () => {
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
-  console.log(searchParams.get('search_key'))
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
@@ -46,13 +50,19 @@ const Actions = () => {
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
   };
+  const { id } = useParams();
 
-  // console.log("queries", queries);
+  const handleCreateDoc = () => {
+    if (id && id !== undefined && isProjectTabMode) {
+      onCreateDoc(id);
+    }
+  };
+
   const onSearch = () => {
     let newQueries = {
       ...queries,
       page: 1,
-      group_by: DocGroupByEnum.PROJECT_ID
+      group_by: DocGroupByEnum.PROJECT_ID,
     };
 
     if (queries?.user_id?.length > 0) {
@@ -76,12 +86,13 @@ const Actions = () => {
         user_id: convertStringToArray(filters?.user_id),
       };
     }
+
     setQueries(newFilter);
   }, [filters]);
 
   useEffect(() => {
-    setQueries({search_key: searchParams.get('search_key')})
-  }, [searchParams.get('search_key')]);
+    setQueries({ search_key: searchParams.get("search_key") });
+  }, [searchParams.get("search_key")]);
 
   return (
     <>
@@ -102,7 +113,7 @@ const Actions = () => {
           <Text variant="h4" display={{ md: "none" }}>
             {docsT("title")}
           </Text>
-          <Box onClick={onCreateDoc}>
+          <Box onClick={handleCreateDoc}>
             <Button
               disabled={loading}
               startIcon={<PlusIcon />}

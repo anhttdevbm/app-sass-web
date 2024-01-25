@@ -18,31 +18,40 @@ import styled from "@emotion/styled";
 
 import axios from "axios";
 
+const AccordionSummaryWrapper = styled(AccordionSummary)({
+  height: "50px",
+  "&.Mui-expanded": {
+    minHeight: "50px",
+  },
+});
+
 export const RowGroup = (props) => {
-  const { items, title } = props;
-  
+  const { items, title, isGrouped } = props;
   const { isMdSmaller } = useBreakpoint();
   const { isDarkMode } = useTheme();
- 
 
   return (
     <TableRow>
       <BodyCell align="left" padding="none" colSpan={4}>
         <StyledAccordion defaultExpanded={true}>
-          <AccordionSummary
-            sx={{ bgcolor: isDarkMode ? "grey.50" : "primary.light" }}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Text fontWeight={600} fontSize={14}>
-              {title}
-            </Text>
-          </AccordionSummary>
+          {!isGrouped && (
+            <AccordionSummaryWrapper
+              sx={{
+                bgcolor: isDarkMode ? "grey.50" : "primary.light",
+              }}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Text fontWeight={600} fontSize={14}>
+                {title}
+              </Text>
+            </AccordionSummaryWrapper>
+          )}
           <AccordionDetails sx={{ padding: 0, width: "100%" }}>
             {Array.isArray(items) &&
               items.map((doc) => {
                 return (
-                  <TableRow >
+                  <TableRow key={doc}>
                     {!isMdSmaller ? (
                       <DesktopCells item={doc} />
                     ) : (

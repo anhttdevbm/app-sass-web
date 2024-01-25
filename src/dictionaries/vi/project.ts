@@ -30,6 +30,7 @@ export const ProjectLang: ProjectDictionary = {
     },
   },
   tabList: {
+    documents: "Tài liệu",
     tasks: "Công việc",
     activities: "Hoạt động",
     budget: "Chi phí",
@@ -62,6 +63,11 @@ export const ProjectLang: ProjectDictionary = {
         image: "Ảnh",
       },
       noData: "Không có tệp nào",
+    },
+  },
+  detailDocuments: {
+    head: {
+      title: "Tài liệu trong dự án | Taskcover",
     },
   },
   detailMembers: {

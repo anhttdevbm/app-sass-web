@@ -330,7 +330,7 @@ const TimeSheet: React.FC<IProps> = ({ data, filters, dateRange }) => {
                       fontWeight: 400,
                       lineHeight: "18px",
                       textTransform: "uppercase",
-                      textAlign: "right",
+                      textAlign: "center",
                     }}
                   >
                     {timeT("myTime.timesheet_tab.total")}
@@ -342,7 +342,7 @@ const TimeSheet: React.FC<IProps> = ({ data, filters, dateRange }) => {
                       lineHeight: "20px",
                       textTransform: "uppercase",
                       color: "#1BC5BD",
-                      textAlign: "right",
+                      textAlign: "center",
                     }}
                   >
                     {formatDuration(totalWeek || 0)}

@@ -128,7 +128,7 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
   type MessageHandle = React.ElementRef<typeof Messages>;
   const inputRef = useRef<MessageHandle>(null);
 
-  console.log("Message: --", stateSendMessage);
+  // console.log("Message: --", stateSendMessage);
 
   const handleSendMessage = useCallback(
     async (message: string) => {

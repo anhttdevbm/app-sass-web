@@ -48,7 +48,7 @@ const TabHeader = () => {
     try {
       await onUpdateDeal({
         id: saleDetail?.id,
-        [name]: Number.parseFloat(value),
+        [name]: value,
       }).catch((e) => {
         throw e;
       });
@@ -256,7 +256,7 @@ const TabHeader = () => {
                     }}
                     onKeyDown={async (e) => {
                       if (e.key === "Enter") {
-                        onSelect("probability", value);
+                        onSelect("probability", Number.parseFloat(value));
                         setIsEditProb(false);
                       }
                     }}

@@ -65,6 +65,7 @@ export type EditorProps = {
   files?: File[];
   accepts?: string[];
   noCss?: boolean;
+  dataFile : string[]
 } & Omit<ReactQuillProps, "children">;
 
 const Editor = (props: EditorProps) => {
@@ -73,6 +74,7 @@ const Editor = (props: EditorProps) => {
     onChangeFiles,
     children,
     files = [],
+    dataFile,
     className,
     accepts,
     noCss,
@@ -82,32 +84,40 @@ const Editor = (props: EditorProps) => {
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [loadedFiles, setLoadedFiles] = useState<string[]>([]);
+  const [listDataFile, setListDataFile] = useState<string[]>(dataFile ? dataFile.filter((f) => f) : []);
+
   const urlFiles = useMemo(() => {
-    console.log(files)
     return files.filter(file => file instanceof Blob)
-                .map(file => URL.createObjectURL(file));
+      .map(file => URL.createObjectURL(file));
   }, [files]);
-  
 
   const onChangeFile = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files?.length) return;
-  
+
     let newFiles: File[] = Array.from(event.target.files);
-    newFiles = newFiles.reduce((out: File[], file) => {
-      if (accepts) {
-        if (accepts.includes(file.type)) {
-          out.push(file);
-        }
-      } else if (ACCEPTS.includes(file.type)) {
-        out.push(file);
-      }
-      return out;
-    }, [...files]);
+    console.log(newFiles);
+
+    // Upload new files
+    const newUploadedFiles = await uploadNewFiles(newFiles);
+
+    // Combine the old and new file lists
+    const allFiles = [...files, ...newFiles];
+    console.log(allFiles);
+    setLoadedFiles(newUploadedFiles as string[]);
+
+    // Update listDataFile
+    const newListDataFile = [...listDataFile, ...newUploadedFiles];
+    setListDataFile(newListDataFile);
+
+    // Call the onChangeFiles function to update all files
+    onChangeFiles && onChangeFiles(allFiles, newListDataFile);
+  };
   
+  const uploadNewFiles = async (files: File[]) => {
     const data = [];
-    if (newFiles.length) {
+    if (files.length) {
       setIsLoadingFile(true);
-      const promises = newFiles.map((file) => {
+      const promises = files.map((file) => {
         return client.upload(Endpoint.UPLOAD_LINK, file);
       });
       const results = await Promise.allSettled(promises).finally(() => {
@@ -118,26 +128,40 @@ const Editor = (props: EditorProps) => {
           (data as string[]).push(result.value);
         }
       });
-      console.log(data);
     }
-  console.log(newFiles);
-    setLoadedFiles(data);
-    onChangeFiles && onChangeFiles(newFiles, data);
+    console.log(data);
+    return data;
   };
   
   const onRemove = (index: number) => {
     return () => {
       const newFiles = [...files];
       newFiles.splice(index, 1);
+      console.log(newFiles);
   
       const newData = [...loadedFiles];
-      newData.splice(index, 1);
-  
+      const removedFile = newData.splice(index, 1)[0];
+      console.log(removedFile);
       setLoadedFiles(newData);
-      onChangeFiles && onChangeFiles(newFiles, newData);
+  
+      // Update listDataFile
+      let newListDataFile;
+      if (index === listDataFile.length - 1) {
+        // If removing the last element, simply use slice(0, -1)
+        newListDataFile = listDataFile.slice(0, -1);
+      } else {
+        // If removing any other element, use slice and combine the arrays
+        newListDataFile = [...listDataFile.slice(0, index), ...listDataFile.slice(index + 1)];
+      }
+  
+      setListDataFile(newListDataFile);
+  
+      // Call the onChangeFiles function to update all files
+      onChangeFiles && onChangeFiles(newFiles, newListDataFile);
     };
   };
   
+
 
   const toolbarAttachment = useMemo(
     () => ({
@@ -200,12 +224,12 @@ const Editor = (props: EditorProps) => {
           noCss
             ? {}
             : {
-                border: "1px solid",
-                borderColor: "grey.A200",
-                borderBottomLeftRadius: 4,
-                borderBottomRightRadius: 4,
-                borderTop: "none",
-              }
+              border: "1px solid",
+              borderColor: "grey.A200",
+              borderBottomLeftRadius: 4,
+              borderBottomRightRadius: 4,
+              borderTop: "none",
+            }
         }
       >
         {urlFiles.map((attachment, index) => (

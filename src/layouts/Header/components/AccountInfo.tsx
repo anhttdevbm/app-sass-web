@@ -1,4 +1,4 @@
-import { memo, useState, MouseEvent, useId } from "react";
+import { memo, useState, MouseEvent, useId, useRef, ChangeEvent, useMemo } from "react";
 import {
   ButtonBase,
   Divider,
@@ -10,7 +10,7 @@ import { Button, Text } from "components/shared";
 import ChevronIcon from "icons/ChevronIcon";
 import { useAuth } from "store/app/selectors";
 import Link from "components/Link";
-import { UPGRADE_ACCOUNT_PATH } from "constant/paths";
+import { UPGRADE_ACCOUNT_PATH, ACCOUNT_INFO_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
 import CrownIcon from "icons/CrownIcon";
 import { useAppDispatch } from "store/hooks";
@@ -19,7 +19,7 @@ import { reset as projectReset } from "store/project/reducer";
 import { reset as managerReset } from "store/manager/reducer";
 import { reset as companyReset } from "store/company/reducer";
 import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_LAYOUT } from "constant/index";
+import {  NS_ACCOUNT, NS_COMMON, NS_LAYOUT } from "constant/index";
 import { Permission } from "constant/enums";
 import UserActions from "./UserActions";
 
@@ -28,8 +28,10 @@ const AccountInfo = () => {
   const popoverId = useId();
   const { user, onSignOut: onSignOutAuth } = useAuth();
   const dispatch = useAppDispatch();
+  const accountT = useTranslations(NS_ACCOUNT);
   const commonT = useTranslations(NS_COMMON);
   const t = useTranslations(NS_LAYOUT);
+
 
   const onOpen = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -110,7 +112,14 @@ const AccountInfo = () => {
           }}
         >
           <Stack direction="row" alignItems="center" spacing={1.5} py={2}>
-            <Avatar size={60} alt={user.fullname} src={user?.avatar?.link} />
+          <Link href={ACCOUNT_INFO_PATH} underline="none">
+            <Avatar
+                size={60}
+                alt={user.fullname}
+                src={user?.avatar?.link}
+              />
+          </Link>
+            
             <Stack flex={1} overflow="hidden">
               <Text
                 variant="h6"

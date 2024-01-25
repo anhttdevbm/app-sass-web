@@ -3,7 +3,9 @@
 import { Box, TextareaAutosize } from "@mui/material";
 import { Editor } from "@tiptap/react";
 import { IDocDetail } from "components/sn-docs/detail/DocDetail";
-import DrawSlider from "components/sn-docs/detail/DrawSlider";
+import DrawSlider, {
+  FontFamilyOptions,
+} from "components/sn-docs/detail/DrawSlider";
 import useTheme from "hooks/useTheme";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -22,6 +24,7 @@ import {
   changeContentDoc,
   changeDescription,
   changeTitle,
+  getDocDetails,
   resetDocDetail,
 } from "store/docs/reducer";
 import useDocEditor from "../hook/useDocEditor";
@@ -29,10 +32,11 @@ import { NewPageContext } from "../context/NewPageContext";
 import { DocAccessibility } from "constant/enums";
 import styled from "@emotion/styled";
 import { useUpdateDocMutation } from "store/docs/api";
-import { TextSelection } from 'prosemirror-state';
+import { TextSelection } from "prosemirror-state";
+import { MenuBarHeaderEdit } from "./components/MenuBarHeader";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-otptional-chain */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
@@ -45,6 +49,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     description,
     project_id,
   } = useAppSelector((state) => state.doc);
+
   const dispatch = useDispatch();
   const { handleGetDocDetail } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
@@ -58,41 +63,33 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const { handleUpdateDoc } = useDocs();
 
   const [updateDoc] = useUpdateDocMutation();
-  const [debounceChange] = useDebounce((value: string) => {
-    updateDoc({ id: id as string, payload: { name: value } });
+  const [debounceChange, isDone, cancel] = useDebounce((value: string) => {
+    updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
-  const [handleTitleChange, isTitleChangeDone, cancelTitleChange] = useDebounce(
-    (value: string): void => {
-      // debounceChange(value);
-      dispatch(changeTitle(value));
-      dispatch(changeDescription(value));
-    },
-    200,
-  );
-
   useEffect(() => {
-    cancelTitleChange();
-    console.log({ currentId });
-    // (async () => {
-    //   setMounted(false);
-    //   await handleGetDocDetail(currentId);
-    //   console.log("state", { content, name, description, project_id });
-    //   setMounted(true);
-    // })();
+    // cancel();
+    dispatch(getDocDetails(currentId));
   }, [currentId]);
 
-  const [textDescription, setTextDescription] = useState<string>("");
+  useEffect(() => {
+    const data = {
+      //   content: content,
+      name: name || undefined,
+      //   description: description,
+      //   project_id: project_id,
+    };
+    if (mounted) {
+      if (id) {
+        handleUpdateDoc(data, id);
+      } else {
+      }
+    } else {
+      setMounted(true);
+    }
+  }, [description, name, content, project_id, currentId]);
 
   useEffect(() => {
-    console.log({
-      content,
-      name,
-      description,
-      project_id,
-      currentId,
-    });
-    setTextDescription(description);
     const data = {
       content: content,
       name: name || undefined,
@@ -107,9 +104,30 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     } else {
       setMounted(true);
     }
-  }, [description, name, content, project_id, currentId]);
+  }, [content]);
 
   const editor = useDocEditor() as Editor;
+  const [fontFamily, setFontFamily] = useState<any>(FontFamilyOptions[0].value);
+  useEffect(() => {
+    if (editor) {
+      console.log(editor.getAttributes("textStyle").fontFamily);
+      const htmlContent = editor.getHTML();
+      const parser = new DOMParser();
+      const doc_data = parser.parseFromString(htmlContent, "text/html");
+      console.log(doc_data);
+      const elements = doc_data.body.getElementsByTagName("*");
+      for (let i = 0; i < elements.length; i++) {
+        console.log(elements[i]);
+        const style = elements[i].getAttribute("style");
+        if (style) {
+          const fontFamily = style.split(":")[1];
+          // Check if  FontFamilyOptions containss fontFamily
+          if (FontFamilyOptions.find((item) => item.value === fontFamily)) {
+          }
+        }
+      }
+    }
+  }, [content]);
 
   useEffect(() => {
     const updateMinHeight = () => {
@@ -148,85 +166,106 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   return (
     <Box
       sx={{
-        paddingBottom: {
-          sm: "0",
-          xs: "160px",
-        },
-        width: {
-          sm: "70%",
-          xs: "100%",
-        },
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        width: "100%",
+        height: "100%",
       }}
     >
-      <div className={`${styles.content}} ${styles[theme]}`}>
-        <Box
-          sx={{
-            position: "relative",
-            bgcolor: isDarkMode ? "#191919" : "white",
-            padding: {
-              sm: "32px 40px",
-              xs: "12px",
-            },
-            minHeight: minHeight,
-           
-          }}
-          id="is-edit-text"
-          className={` ${styles.page_content} ${
-            pageInfo?.pageSettings?.fullWidth ? "" : styles.full_width
-          }
+      {editor && <MenuBarHeaderEdit editor={editor} />}
+      <Box
+        sx={{
+          paddingBottom: {
+            sm: "0",
+            xs: "160px",
+          },
+          width: {
+            sm: "100%",
+            xs: "100%",
+          },
+        }}
+      >
+        <div className={`${styles.content}} ${styles[theme]}`}>
+          <Box
+            sx={{
+              position: "relative",
+              bgcolor: isDarkMode ? "#191919" : "white",
+              padding: {
+                sm: "32px 40px",
+                xs: "12px",
+              },
+              minHeight: minHeight,
+            }}
+            id="is-edit-text"
+            className={` ${styles.page_content} ${
+              pageInfo?.pageSettings?.fullWidth ? "" : styles.full_width
+            }
           ${pageInfo?.pageSettings?.smallText ? styles.small_text : ""}
           ${styles[pageInfo?.pageSettings?.font!]}
           `}
-        >
-          {openComment && (
-            <LayoutSlider heightToolbar={minHeight}>
-              <DrawComment />
-            </LayoutSlider>
-          )}
-          {openSlider && (
-            <LayoutSlider heightToolbar={minHeight}>
-              <DrawSlider setOpenSlider={setOpenSlider}></DrawSlider>
-            </LayoutSlider>
-          )}
-          <form className={`${styles.form_title}`}>
-            <Textarea
-              maxRows={3}
-              id="title"
-              value={textDescription}
-              disabled={!canEdit}
-              // defaultValue={description}
-              placeholder="Enter document title..."
-              onChange={(e) => {
-                setTextDescription(e.target.value);
-                handleTitleChange(e.target.value);
-              }}
-              autoComplete="off"
-              spellCheck="false"
-            />
-          </form>
-          {textDescription}
-          <div
-            className={`${styles.editor}`}
-            style={{ pointerEvents: canEdit ? "auto" : "none",  height: '50vh', overflowY: "scroll"}}
           >
-            <Tiptap editor={editor} disabled={!canEdit} />
-          </div>
-        </Box>
-      </div>
-      <ChangeCover
-        open={openChangeCover}
-        onClose={() => setOpenChangeCover(false)}
-      />
+            {openComment && (
+              <LayoutSlider heightToolbar={minHeight}>
+                <DrawComment editor={editor} />
+              </LayoutSlider>
+            )}
+            {openSlider && (
+              <LayoutSlider heightToolbar={minHeight}>
+                <DrawSlider
+                  setOpenSlider={setOpenSlider}
+                  editor={editor}
+                ></DrawSlider>
+              </LayoutSlider>
+            )}
+            <form className={`${styles.form_title}`}>
+              {name && (
+                <Textarea
+                  fontFamily={fontFamily}
+                  maxRows={3}
+                  id="title"
+                  disabled={!canEdit}
+                  defaultValue={name}
+                  placeholder="Enter document title..."
+                  onChange={(e) => {
+                    debounceChange(e.target.value);
+                  }}
+                  autoComplete="off"
+                  spellCheck="false"
+                />
+              )}
+            </form>
+            <div
+              className={`${styles.editor}`}
+              style={{
+                pointerEvents: canEdit ? "auto" : "none",
+                height: "50vh",
+                overflowY: "scroll",
+              }}
+            >
+              <Tiptap editor={editor} disabled={!canEdit} />
+            </div>
+          </Box>
+        </div>
+        <ChangeCover
+          open={openChangeCover}
+          onClose={() => setOpenChangeCover(false)}
+        />
+      </Box>
     </Box>
   );
 };
 
-const Textarea = styled(TextareaAutosize)`
+interface TextareaProps {
+  fontFamily: string;
+}
+
+const Textarea = styled(TextareaAutosize)<TextareaProps>`
   border: none;
   outline: none;
   font-size: 48px;
   appearance: none;
-  font-family: inherit;
+  font-family: ${(props) => props.fontFamily};
   font-weight: 800;
   resize: none;
   min-width: 100%;

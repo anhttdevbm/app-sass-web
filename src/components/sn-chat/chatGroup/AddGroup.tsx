@@ -241,9 +241,9 @@ const AddGroup: FC<AddGroupProps> = ({
                 return;
               } else {
                 onSetStep(
-                  dataTransfer?.openFrom
-                    ? dataTransfer?.openFrom
-                    : STEP.CHAT_GROUP,
+                  dataTransfer?.openFrom ? STEP.CHAT_GROUP : STEP.CONVENTION,
+                  // ? dataTransfer?.openFrom
+                  // : STEP.CHAT_GROUP,
                 );
               }
             }}
@@ -366,7 +366,7 @@ const AddGroup: FC<AddGroupProps> = ({
               onSetStep(
                 dataTransfer?.openFrom
                   ? dataTransfer?.openFrom
-                  : STEP.CHAT_GROUP,
+                  : STEP.CONVENTION,
               );
             }
           }}

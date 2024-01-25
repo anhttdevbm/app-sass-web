@@ -4,6 +4,7 @@ import {
   createBookingResource,
   deleteBookingResource,
   getBookingAll,
+  getBudgetServices,
   getMyBookingResource,
   resourceActionType,
   updateBookingResource,
@@ -14,6 +15,7 @@ import { Project } from "store/project/reducer";
 import { DEFAULT_BOOKING_ALL_FILTER } from "components/sn-resource-planing/helper";
 import { DataStatus } from "constant/enums";
 import { TIME_OFF_TYPE } from "components/sn-sales/helpers";
+import { Service } from "store/sales/reducer";
 
 export interface IDatePicker {
   dateRange: Date[];
@@ -58,6 +60,8 @@ interface ResoucrPlanningState {
   myBookingError: string;
   myBookingFilter: IBookingAllFitler;
   myBookingStatus: DataStatus;
+
+  servicesBudget: Service[];
 }
 
 const initialState: ResoucrPlanningState = {
@@ -76,6 +80,8 @@ const initialState: ResoucrPlanningState = {
   myBookingStatus: DataStatus.IDLE,
   myBookingFilter: DEFAULT_BOOKING_ALL_FILTER,
   myBookingError: "",
+
+  servicesBudget: [],
 };
 
 export const resourcePlanningSlice = createSlice({
@@ -142,6 +148,9 @@ export const resourcePlanningSlice = createSlice({
       })
       .addCase(deleteBookingResource.fulfilled, (state, action) => {
         state.bookingAllStatus = DataStatus.SUCCEEDED;
+      })
+      .addCase(getBudgetServices.fulfilled, (state, action) => {
+        state.servicesBudget = action.payload;
       });
   },
 });

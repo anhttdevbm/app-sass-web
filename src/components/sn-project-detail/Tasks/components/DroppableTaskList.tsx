@@ -261,7 +261,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                       "& >div": {
                         bgcolor: "transparent!important",
                         "&:after": {
-                          borderBottomColor: "#1BC5BD !important",
+                          borderBottomColor: "rgba(11, 183, 175, 0.5) !important",
                         },
                         "&:before": {
                           borderBottom: "unset !important",

@@ -89,7 +89,7 @@ const ResourceLabel = ({
 
   const avatarUrl = useMemo(() => {
     if (eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING) {
-      return projectDetail?.owner?.avatar?.link;
+      return projectDetail?.avatar?.link;
     }
     if (user_id === user?.id || isMybooking) {
       return ownerAvatar;
@@ -162,7 +162,7 @@ const ResourceLabel = ({
         "&:hover": {
           background: "#E1F0FFB2",
         },
-        overflowX: 'auto',
+        overflowX: "auto",
         minWidth: 550,
       }}
     >
@@ -219,6 +219,8 @@ const ResourceLabel = ({
                 color="inherit"
                 fontSize="inherit"
                 sx={{
+                  fontSize: "12px",
+                  mt: "6px",
                   width: "20px",
                   ml: {
                     xs: 1,

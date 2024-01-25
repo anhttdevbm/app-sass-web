@@ -284,7 +284,7 @@ const Information = () => {
           </Text>
         )}
 
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" alignItems="center" spacing={1} minWidth={150}>
           <Text variant="caption" color="grey.400">
             {commonT("status")}
           </Text>
@@ -456,6 +456,9 @@ const Information = () => {
                   },
                   "& p": {
                     marginY: 0,
+                  },
+                  "& p:last-child": {
+                    display: "none",
                   },
                 }}
                 className="html"

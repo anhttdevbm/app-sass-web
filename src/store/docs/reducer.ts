@@ -216,8 +216,7 @@ const docSlice = createSlice({
     getDocDetails: (state, action: PayloadAction<any>) => {
       state.content = action.payload?.content || "";
       state.docInfo = action.payload || {};
-      state.title = action.payload?.name || "";
-      console.log({description:state.description})
+      state.title = action.payload?.name || state.title;
       state.description = action.payload?.description || "";
       state.project_id = action.payload?.project_id || "";
     },
