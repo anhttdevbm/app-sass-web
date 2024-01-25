@@ -17,13 +17,13 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI, uuid } from "utils/index";
-import { TTimeRanges } from "./Time";
+import { TTimeRanges } from "../Time";
 import { useParams } from "next/navigation";
-import { TBudgetService } from "../BudgetDetail";
+import { TBudgetService } from "../../BudgetDetail";
 import { ReactDatePickerProps } from "react-datepicker";
 import { DateTimePicker } from "components/shared/DatePicker";
 import _ from "lodash";
-import InputLabelWrapper from "./InputLabelWrapper";
+import InputLabelWrapper from "../InputLabelWrapper";
 
 type Props = {
   services: any[];

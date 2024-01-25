@@ -85,7 +85,7 @@ export const BudgetingLang: BudgetingDictionary = {
       profit: {
         title: 'PROFIT',
         revenue: "Revenue",
-        cost: "Cost", 
+        cost: "Cost",
         profit: "Profit ",
       },
       budget: {
@@ -182,5 +182,11 @@ export const BudgetingLang: BudgetingDictionary = {
   },
   notifications: {
     updateServiceSuccess: "Update Service Success",
+  },
+  exportFile: {
+    documentFormat: "Document format",
+    orientation: "orientation",
+    pageSize: "Page size",
+    includeAttachments: "include attachments"
   }
 };

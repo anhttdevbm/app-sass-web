@@ -181,4 +181,10 @@ export type BudgetingDictionary = {
   notifications: {
     updateServiceSuccess: string;
   }
+  exportFile: {
+    documentFormat: string;
+    orientation: string;
+    pageSize: string;
+    includeAttachments: string;
+  }
 };

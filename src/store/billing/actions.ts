@@ -28,6 +28,7 @@ export enum DependencyStatus {
 }
 
 export type GetBillingListQueries = BaseQueries_Billing & {
+  budgetId?: string;
   status?: BillingStatus;
 };
 export type GetBudgetListQueries = BaseQueries & {

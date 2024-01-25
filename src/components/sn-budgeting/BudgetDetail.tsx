@@ -10,8 +10,8 @@ import { Button, DatePicker, IconButton, Text } from "components/shared";
 import { Expenses } from "components/sn-budgeting/TabDetail/Expenses";
 import { Feed } from "components/sn-budgeting/TabDetail/Feed";
 import { Invoice } from "components/sn-budgeting/TabDetail/Invoice";
-import { ModalAddTime } from "components/sn-budgeting/TabDetail/ModalAddTime";
-import { ModalExpense } from "components/sn-budgeting/TabDetail/ModalExpense";
+import { ModalAddTime } from "components/sn-budgeting/TabDetail/Modals/ModalAddTime";
+import { ModalExpense } from "components/sn-budgeting/TabDetail/Modals/ModalExpense";
 import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
 import TextStatus from "components/TextStatus";
 import { NS_BUDGETING } from "constant/index";
@@ -42,7 +42,10 @@ import useTheme from "hooks/useTheme";
 import _ from "lodash";
 import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
 import { useRouter } from "next-intl/client";
-import { TBudgetExpense } from "queries/budgeting/expense";
+import {
+  TBudgetExpense,
+  useBudgetGetExpenseQuery,
+} from "queries/budgeting/expense";
 
 enum TABS {
   FEED = "Feed",
@@ -95,9 +98,11 @@ export const BudgetDetail = () => {
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
   const [dateFilter, setDateFilter] = useState<any>("");
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
-  const [selectedService, setSelectedService] = useState<TBudgetService | null>();
+  const [selectedService, setSelectedService] =
+    useState<TBudgetService | null>();
   const [selectedTime, setSelectedTime] = useState<TTimeRanges | null>();
-  const [selectedExpense, setSelectedExpense] = useState<TBudgetExpense | null>();
+  const [selectedExpense, setSelectedExpense] =
+    useState<TBudgetExpense | null>();
 
   const { id } = useParams();
   const { isDarkMode } = useTheme();
@@ -106,6 +111,7 @@ export const BudgetDetail = () => {
   const budgetDetailQuery = useBudgetByIdQuery(String(id));
   const serviceQuery = useBudgetGetServiceQuery(String(id));
   const timeQuery = useBudgetGetTimeRangeQuery(String(id));
+  const budgetGetExpenseQuery = useBudgetGetExpenseQuery(String(id));
 
   const budgetT = useTranslations(NS_BUDGETING);
 
@@ -254,6 +260,9 @@ export const BudgetDetail = () => {
               name="name"
               size="small"
               value={dateFilter}
+              pickerProps={{
+                autoComplete: "off",
+              }}
             />
             <IconButton sx={{ color: "grey.300" }}>
               <EyeIcon sx={{ fontSize: "26px" }} />
@@ -358,7 +367,11 @@ export const BudgetDetail = () => {
                 }}
               />
             )}
-            {activeTab === TABS.EXPENSES && <Expenses />}
+            {activeTab === TABS.EXPENSES && (
+              <Expenses
+                expenseList={_.get(budgetGetExpenseQuery, "data.data.docs", [])}
+              />
+            )}
             {activeTab === TABS.INVOICES && <Invoice />}
             {activeTab === TABS.RECURRING && <Recurring />}
             {activeTab === TABS.SERVICES && (
@@ -414,6 +427,9 @@ export const BudgetDetail = () => {
         }}
         services={servicesList}
         serviceId={_.get(selectedService, "id", "")}
+        refetch={() => {
+          budgetGetExpenseQuery.refetch();
+        }}
       />
     </Box>
   );

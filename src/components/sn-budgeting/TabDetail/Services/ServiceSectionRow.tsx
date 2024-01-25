@@ -230,7 +230,7 @@ export const ServiceSectionRow = ({
 
   return (
     <>
-      <Draggable draggableId={sectionId} index={fieldIndex}>
+      {/* <Draggable draggableId={sectionId} index={fieldIndex}>
         {(provided) => (
           <Stack
             py={2}
@@ -257,12 +257,13 @@ export const ServiceSectionRow = ({
                 const defautlEstimate = getValues(`data.${index}.estimate`);
                 return (
                   <TableRow key={service.id}>
-                    <BodyCell sx={{ p: 1 }}>
+                    <BodyCell sx={{ p: 1, minWidth: 400 }}>
                       <TextField
                         size="small"
                         variant="outlined"
                         fullWidth
                         sx={{
+                          width: "100%",
                           "& .MuiOutlinedInput-notchedOutline": {
                             ...(hasError(errs, index, "name") && {
                               borderColor: "error.main",
@@ -433,7 +434,207 @@ export const ServiceSectionRow = ({
             </Box>
           </Stack>
         )}
-      </Draggable>
+      </Draggable> */}
+
+      <Stack
+        py={2}
+        sx={{
+          boxSizing: "border-box",
+        }}
+        width={"100%"}
+      >
+        <TableLayout
+          headerList={headerList}
+          noData={false}
+          titleColor="grey.300"
+          position="relative"
+          overflow="visible"
+        >
+          {fields.map((service, index) => {
+            const errs = errors[fieldIndex] ?? [];
+            const billStatus =
+              watch(`data.${index}.billingType`) === "billable"
+                ? billingBillable
+                : billingNonBillable;
+            const defautlEstimate = getValues(`data.${index}.estimate`);
+            return (
+              <TableRow key={service.id}>
+                <BodyCell sx={{ p: 1, minWidth: 400 }}>
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      maxWidth: '350px !important',
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        ...(hasError(errs, index, "name") && {
+                          borderColor: "error.main",
+                        }),
+                      },
+                    }}
+                    autoComplete="off"
+                    {...register(`data.${index}.name`)}
+                  />
+                </BodyCell>
+                <BodyCell sx={{ p: 1 }}>
+                  <Select
+                    size="small"
+                    fullWidth
+                    options={positionOptions as Option[]}
+                    onChangeValue={(value) => {
+                      setValue(`data.${index}.type`, String(value));
+                    }}
+                    value={watch(`data.${index}.type`)}
+                    autoComplete="off"
+                    sx={{
+                      minWidth: '160px !important',
+                      [`& .MuiInputBase-root`]: {
+                        px: 1,
+                        backgroundColor: "background.paper",
+                        pl: 0,
+                        gap: 1,
+                      },
+                      "& .MuiFormHelperText-root": {
+                        display: "none",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        ...(hasError(errs, index, "type") && {
+                          borderColor: "error.main",
+                        }),
+                      },
+                    }}
+                  />
+                </BodyCell>
+                <BodyCell sx={{ p: 1 }}>
+                  <Stack alignItems="center">
+                    <Button
+                      size="small"
+                      data-index={index}
+                      onClick={(e) => {
+                        if (Boolean(anchorEl)) {
+                          setAnchorEl(null);
+                        } else {
+                          setAnchorEl(e.currentTarget);
+                        }
+                      }}
+                      sx={{
+                        bgcolor: billStatus.bgcolor,
+                        color: billStatus.color,
+                        "&:hover": { bgcolor: billStatus.bgcolor },
+                      }}
+                    >
+                      {billStatus.label}
+                    </Button>
+                  </Stack>
+                </BodyCell>
+                <BodyCell sx={{ p: 1 }}>
+                  <TextField
+                    size="small"
+                    id="unit"
+                    variant="outlined"
+                    fullWidth
+                    value="hour"
+                    disabled
+                    inputProps={{ sx: { textAlign: "center" } }}
+                    autoComplete="off"
+                  />
+                </BodyCell>
+                <BodyCell sx={{ p: 1 }}>
+                  <Stack gap={1} direction="row" justifyContent="center">
+                    <Box sx={{ cursor: "pointer" }}>
+                      <Tooltip
+                        placement="top"
+                        arrow
+                        title={`Time tracking is ${
+                          !watch(`data.${index}.timeTracking`)
+                            ? "disable"
+                            : "enable"
+                        }`}
+                      >
+                        <IconButton
+                          onClick={() => changeTracking(index, "timeTracking")}
+                        >
+                          <AccessTimeIcon
+                            sx={{
+                              color: !watch(`data.${index}.timeTracking`)
+                                ? "grey.300"
+                                : "secondary.main",
+                            }}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                    <Box sx={{ cursor: "pointer" }}>
+                      <Tooltip
+                        placement="top"
+                        arrow
+                        title={`Booking tracking is ${
+                          !watch(`data.${index}.bookingTracking`)
+                            ? "disable"
+                            : "enable"
+                        }`}
+                      >
+                        <IconButton
+                          onClick={() =>
+                            changeTracking(index, "bookingTracking")
+                          }
+                        >
+                          <CalendarIcon
+                            sx={{
+                              color: !watch(`data.${index}.bookingTracking`)
+                                ? "grey.300"
+                                : "secondary.main",
+                            }}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </Stack>
+                </BodyCell>
+                <BodyCell sx={{ p: 1 }}>
+                  <TimePicker
+                    slotProps={{ textField: { size: "small" } }}
+                    views={["hours", "minutes"]}
+                    format="HH:mm"
+                    defaultValue={
+                      defautlEstimate ? dayjs(defautlEstimate) : null
+                    }
+                    sx={{
+                      width: "160px !important",
+                      minWidth: "160px !important",
+                      maxWidth: "160px !important",
+                      "& .MuiInputBase-input": { textAlign: "center" },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        ...(hasError(errs, index, "estimate") && {
+                          borderColor: "error.main",
+                        }),
+                      },
+                    }}
+                    onChange={(time: Dayjs | null) => changeTime(index, time)}
+                  />
+                </BodyCell>
+                <BodyCell>
+                  <TrashIcon
+                    fontSize="medium"
+                    sx={{ color: "error.main", cursor: "pointer" }}
+                    onClick={() => openConfirmDelete(index)}
+                  />
+                </BodyCell>
+              </TableRow>
+            );
+          })}
+        </TableLayout>
+        <Box pl={3} mt={1}>
+          <Button
+            size="small"
+            startIcon={<PlusIcon />}
+            sx={{ color: "secondary.main" }}
+            onClick={createEmptyRow}
+          >
+            New item
+          </Button>
+        </Box>
+      </Stack>
       <Popper
         ref={refClickOutSide}
         anchorEl={anchorEl}
