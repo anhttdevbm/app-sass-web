@@ -280,8 +280,8 @@ const AddGroup: FC<AddGroupProps> = ({
       </Box>
       <Box
         overflow="auto"
-        maxHeight="calc(450px - 85px - 15px)"
-        minHeight="calc(450px - 85px - 15px)"
+        maxHeight="calc(550px - 85px - 15px)"
+        minHeight="calc(550px - 85px - 15px)"
         sx={{
           borderRadius: "16px",
           background: "#FFFFFF",

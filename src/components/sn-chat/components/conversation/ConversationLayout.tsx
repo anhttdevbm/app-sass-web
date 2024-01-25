@@ -59,7 +59,7 @@ const ConversationLayout = () => {
           display="flex"
           flexDirection="column"
           overflow="hidden"
-          height="calc(500px - 72px)"
+          height="calc(600px - 72px)"
         >
           <Conversation />
         </Box>

@@ -82,14 +82,14 @@ const ChatForward: FC<Props> = (props) => {
           type: "a",
         });
       } else {
-        console.log({ dataTransfer });
+        // console.log({ dataTransfer });
         const targetEmployeeId = Object.keys(employeeIdSelected)
           .filter((item) => employeeIdSelected[item])
           ?.at(-1);
         const target = (isChatDesktop ? props?.conversations : convention)
           ?.filter((i) => i?._id === targetEmployeeId)
           ?.at(-1);
-        console.log({ dataTransfer, targetEmployeeId, target });
+        // console.log({ dataTransfer, targetEmployeeId, target });
         onSetDataTransfer(target);
         onSetConversationInfo(target);
         onSetStep(target.t === "d" ? STEP.CHAT_ONE : STEP.CHAT_GROUP, target);
