@@ -12,7 +12,7 @@ import { ReadonlyURLSearchParams } from "next/navigation";
 import StringFormat from "string-format";
 import { clientStorage } from "./storage";
 import dayjs, { OpUnitType, QUnitType } from "dayjs";
-import { get } from "lodash";
+import _, { get } from "lodash";
 
 export const parseHashURL = (value: string) => `#${value}`;
 
@@ -630,3 +630,11 @@ export const toHoursAndMinutes = (totalMinutes: number) => {
 
   return { hours, minutes };
 }
+
+export const clearNullField = (obj: any) => {
+  return _(obj)
+    .omitBy(_.isUndefined)
+    .omitBy(_.isNull)
+    .omitBy((s) => _.isEqual(s, ''))
+    .value();
+};

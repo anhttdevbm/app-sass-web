@@ -182,5 +182,11 @@ export const BudgetingLang: BudgetingDictionary = {
     },
     notifications: {
         updateServiceSuccess: "Cập nhật dịch vụ thành công.",
+    },
+    exportFile: {
+        documentFormat: "Loại tài liệu",
+        orientation: "Chiều hướng",
+        pageSize: "Kích thước",
+        includeAttachments: "Bao gồm tệp đính kèm"
     }
 }

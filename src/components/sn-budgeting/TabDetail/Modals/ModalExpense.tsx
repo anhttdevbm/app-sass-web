@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Add } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -18,14 +19,19 @@ import { useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import InputLabelWrapper from "./InputLabelWrapper";
-import { TBudgetExpense, useBudgetExpenseAdd, useBudgetExpenseUpdate } from "queries/budgeting/expense";
+import InputLabelWrapper from "../InputLabelWrapper";
+import {
+  TBudgetExpense,
+  useBudgetExpenseAdd,
+  useBudgetExpenseUpdate,
+  useBudgetUploadFile,
+} from "queries/budgeting/expense";
 import moment from "moment";
 import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 import * as yup from "yup";
 import { ExpenseStatus } from "constant/enums";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TBudgetService } from "../BudgetDetail";
+import { TBudgetService } from "../../BudgetDetail";
 import _ from "lodash";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -44,6 +50,7 @@ type Props = {
   expenseData?: TBudgetExpense | null;
   services: any[];
   serviceId: string;
+  refetch?: () => void;
 };
 
 interface TExpenseAddForm {
@@ -54,7 +61,7 @@ interface TExpenseAddForm {
   cost: number | string;
   currency: string;
   totalCost: string | number;
-  markUp: string | number;
+  markup: string | number;
   description?: string;
   reimbursement?: string;
   reimbursementDate?: string;
@@ -73,7 +80,7 @@ const defaultValues: TExpenseAddForm = {
   cost: 0,
   currency: "",
   totalCost: 0,
-  markUp: 0,
+  markup: 0,
   description: "",
   reimbursement: "no",
   status: ExpenseStatus.UNPAID,
@@ -95,6 +102,7 @@ export const ModalExpense = ({
   expenseData,
   services = [],
   serviceId,
+  refetch = () => {},
 }: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
   const commonT = useTranslations(NS_COMMON);
@@ -103,6 +111,8 @@ export const ModalExpense = ({
 
   const budgetExpenseAdd = useBudgetExpenseAdd();
   const budgetExpenseUpdate = useBudgetExpenseUpdate();
+  const budgetUploadFile = useBudgetUploadFile();
+
   const { onAddSnackbar } = useSnackbar();
 
   const inputFileRef = useRef<HTMLInputElement | null>(null);
@@ -160,6 +170,7 @@ export const ModalExpense = ({
         date: _.get(expenseData, "date", null),
         owner: _.get(expenseData, "owner.id", ""),
         service: _.get(expenseData, "serviceId", ""),
+        billable: _.get(expenseData, "billable", 0),
         qty: _.get(expenseData, "qty", 0),
         cost: _.get(expenseData, "cost", 0),
         currency: _.get(expenseData, "currency", "USD"),
@@ -203,7 +214,7 @@ export const ModalExpense = ({
       cost: Number(_.get(formValue, "cost", 0)),
       currency: formValue?.currency || "",
       totalCost: Number(_.get(formValue, "totalCost", 0)),
-      markup: 1,
+      markup: Number(_.get(formValue, "totalCost", 0)),
       billable: Number(_.get(formValue, "billable", 0)),
       description: formValue.description || "",
       company: userInfo.company,
@@ -227,10 +238,11 @@ export const ModalExpense = ({
     };
 
     if (!_.isEmpty(expenseData)) {
-      data['id'] = _.get(expenseData, 'id', '');
+      data["id"] = _.get(expenseData, "id", "");
       budgetExpenseUpdate.mutateAsync(data, {
         onSuccess: () => {
           onAddSnackbar("Update expense successful", "success");
+          refetch();
           onClose();
         },
         onError(error) {
@@ -241,6 +253,7 @@ export const ModalExpense = ({
       budgetExpenseAdd.mutateAsync(data, {
         onSuccess: () => {
           onAddSnackbar("Create expense successful", "success");
+          refetch();
           onClose();
         },
         onError(error) {
@@ -267,17 +280,22 @@ export const ModalExpense = ({
     if (!files) return;
     if (IMAGES_ACCEPT.includes(files[0].type)) {
       const url = URL.createObjectURL(files[0]);
-      setValue(
-        "attachment",
-        _.concat(watch("attachment") || [], [
-          {
-            id: uuid(),
-            link: url,
-            name: files[0].name,
-            size: niceBytes(files[0].size),
-          },
-        ]),
-      );
+      budgetUploadFile.mutateAsync(files[0], {
+        onSuccess: (res: any) => {
+          console.log('res', res);
+          // setValue(
+          //   "attachment",
+          //   _.concat(watch("attachment") || [], [
+          //     {
+          //       id: uuid(),
+          //       link: url,
+          //       name: files[0].name,
+          //       size: niceBytes(files[0].size),
+          //     },
+          //   ]),
+          // );
+        },
+      });
     } else {
       onAddSnackbar(commonT("notification.imageTypeInvalid"), "error");
     }
@@ -631,7 +649,16 @@ export const ModalExpense = ({
                             rootSx={sxInput}
                             fullWidth
                             value={value}
-                            onChange={onChange}
+                            onChange={(e) => {
+                              setValue("markup", e?.target?.value);
+                              onChange(e);
+                              const billable =
+                                (Number(e?.target?.value || 0) *
+                                  Number(watch("totalCost"))) /
+                                  100 +
+                                Number(watch("totalCost"));
+                              setValue("billable", billable);
+                            }}
                             autoComplete="off"
                             InputProps={{
                               endAdornment: "%",
@@ -655,7 +682,7 @@ export const ModalExpense = ({
                     >
                       <Controller
                         control={control}
-                        name="totalBillable"
+                        name="billable"
                         render={({ field: { onChange, value } }) => (
                           <Input
                             rootSx={sxInput}
@@ -741,7 +768,9 @@ export const ModalExpense = ({
                           {_.get(attachmentFile, "size", "")}
                         </Typography>
 
-                        <IconButton onClick={() => handleRemoveFile(attachmentFile)}>
+                        <IconButton
+                          onClick={() => handleRemoveFile(attachmentFile)}
+                        >
                           <ClearIcon />
                         </IconButton>
                       </Stack>

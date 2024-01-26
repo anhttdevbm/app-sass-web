@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Endpoint } from "api";
-import { saleClientInstance } from "api/client";
-import { ExpenseStatus, PayStatus } from "constant/enums";
+import { budgetExpenseUploadClient, client, saleClientInstance } from "api/client";
+import { ExportFormData } from "components/sn-budgeting/TabDetail/Modals/ModalExportExpense";
+import { ExpenseStatus } from "constant/enums";
+import { UPLOAD_API_URL } from "constant/index";
 import _ from "lodash";
 import { useMutation, useQuery } from "react-query";
-import { getPath } from "utils/index";
+import { clearNullField, getPath } from "utils/index";
 
 export const BUDGET_GET_EXPENSE_QK = "budget_get_expense_query_key";
 
@@ -36,7 +38,7 @@ export type TBudgetExpenseAdd = {
   attachment: any[];
 }
 
-export type TBudgetExpense = Omit<TBudgetExpenseAdd, 'id' & { id: string; }>
+export type TBudgetExpense = TBudgetExpenseAdd & { id: string; };
 
 const budgetGetExpenseQuery = (budgetId: string) => {
   const url: string = getPath(Endpoint.BUDGET_EXPENSE_LIST, undefined, {
@@ -81,16 +83,32 @@ export const useBudgetExpenseUpdate = () => {
   });
 };
 
-export const budgetExpenseExport = (data: TBudgetExpense) => {
+export const budgetExpenseExport = (data: { expenseId: string, documentData: ExportFormData }) => {
   const url: string = getPath(Endpoint.BUDGET_EXPENSE_DETAIL_EXPORT, undefined, {
-    expenseId: _.get(data, 'id', ''),
+    expenseId: _.get(data, 'expenseId', ''),
   });
 
-  return saleClientInstance.get(url, { data: data, params: { format: 'pdf' } });
+  return saleClientInstance.get(url, { params: clearNullField(data.documentData)});
 }
 
 export const useBudgetExpenseExport = () => {
   return useMutation({
     mutationFn: budgetExpenseExport,
+  });
+};
+
+export const budgetUploadFile = (file: File) => {
+  return client.get(
+    `${Endpoint.UPLOAD_LINK}/${file.name}`,
+    { type: file.type },
+    {
+      baseURL: UPLOAD_API_URL,
+    },
+  );
+}
+
+export const useBudgetUploadFile = () => {
+  return useMutation({
+    mutationFn: budgetUploadFile,
   });
 };

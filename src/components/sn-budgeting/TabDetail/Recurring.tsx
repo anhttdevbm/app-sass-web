@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { Button } from "components/shared";
 import Image from "next/image";
-import { ModalAddRecurring } from "./ModalAddRecurring";
+import { ModalAddRecurring } from "./Modals/ModalAddRecurring";
 import useToggle from "hooks/useToggle";
 
 export const Recurring = () => {
