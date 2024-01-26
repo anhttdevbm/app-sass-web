@@ -4,13 +4,15 @@ import { IconButton, Text } from "components/shared";
 import { NS_BILLING, NS_COMMON } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import { useTranslations } from "next-intl";
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 import TrashIcon from "icons/TrashIcon";
 import PaymentModal from "../components/PaymentModal";
 import PaymentTableHome from "./PaymentTableHome";
 import PaymentTable from "./PaymentTable";
+import { useBillings } from "store/billing/selectors";
+import { useParams } from "next/navigation";
 
 type TabProps = {
   title: string;
@@ -23,6 +25,19 @@ const ITEM_HEIGHT = 48;
 const TabPayment = (props: TabProps) => {
   const { title } = props;
 
+  const {
+    item,
+    dataPayment,
+    isAddPayment,
+    isUpdatePayment,
+    isDeletedPayment,
+    onGetPayments,
+    onAddPayment,
+    onDeletePayment,
+    onUpdatePayment,
+  } = useBillings();
+
+  const { id } = useParams() as { id: string };
   const { isMdSmaller } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
@@ -35,6 +50,10 @@ const TabPayment = (props: TabProps) => {
   const handleClose = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    onGetPayments(id);
+  }, []);
 
   return (
     <Stack mt={6}>
@@ -77,7 +96,11 @@ const TabPayment = (props: TabProps) => {
       <Stack gap={2} pb={2}>
         <PaymentTable handleOpen={handleOpen} />
       </Stack>
-      <PaymentModal open={isOpen} handleClose={handleClose} />
+      <PaymentModal
+        open={isOpen}
+        handleClose={handleClose}
+        title={billingT("detail.form.payment.title.editPayment")}
+      />
     </Stack>
   );
 };

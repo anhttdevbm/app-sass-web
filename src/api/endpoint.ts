@@ -129,6 +129,12 @@ export const Endpoint = {
   INTERACTION_BILLING: "/bill_interaction",
   INTERACTION_BILLING_BY_BILL: "/bill_interaction/{id}",
   ADD_USER_BILL: "/addUserToBill",
+  CHANGE_BILL: "/bill/{id}",
+  PAYMENT_BILL: "/payment",
+  CUSTOM_PAYMENT: "/payment/{id}",
+  TAG: "/tag",
+  CUSTOM_TAG: "/tag/{id}",
+  UPDATE_BILL_TAG: "/bill/updateTag/{id}",
 
   //Budget
   BUDGET: "/budgets/all",

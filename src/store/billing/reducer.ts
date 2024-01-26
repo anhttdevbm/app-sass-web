@@ -14,9 +14,12 @@ import {
   DependencyStatus,
   // GetActivitiesQueries,
   GetBillingListQueries,
+  addPayment,
   addUserToBilling,
   createBilling,
   createCommentBilling,
+  deleteBilling,
+  deletePayment,
   downloadPdfBilling,
   exportBilling,
   getBillingDetail,
@@ -24,8 +27,12 @@ import {
   getBudgetDetail,
   getBudgetList,
   getCommentBilling,
+  getPaymentByBillId,
   getServiceBudget,
+  markAsSendBilling,
   updateBilling,
+  updatePayment,
+  updateTagBill,
   viewPdfBilling,
 } from "./actions";
 import { cl } from "@fullcalendar/core/internal-common";
@@ -158,6 +165,8 @@ export interface Billing {
   billFrom?: any;
   billTo?: any;
   duplicate?: boolean;
+  tag?: any[];
+  mail_status?: string;
 }
 
 export interface Payment {
@@ -242,6 +251,15 @@ export interface BillingState {
   totalAmount?: number;
   totalAmountUnpaid?: number;
   addUserStatus?: boolean;
+  markAsSend?: boolean;
+  isDeleted?: boolean;
+  isUpdateTagBill?: boolean;
+  isAddPayment?: boolean;
+  isUpdatePayment?: boolean;
+  isDeletedPayment?: boolean;
+  dataPayment?: [];
+  dataTag?: [];
+  isAddTag?: boolean;
 }
 
 export interface BillingDataUpdate {
@@ -385,7 +403,7 @@ const billingSlice = createSlice({
       .addCase(getServiceBudget.fulfilled, (state, { payload }) => {
         // const { items, ...paging } = action.payload;
 
-        state.serviceBudgets = payload;
+        state.serviceBudgets = payload?.sections;
 
         state.status = DataStatus.SUCCEEDED;
         state.error = undefined;
@@ -592,8 +610,87 @@ const billingSlice = createSlice({
       .addCase(addUserToBilling.rejected, (state, action) => {
         state.addUserStatus = false;
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(markAsSendBilling.pending, (state, action) => {
+        state.markAsSend = false;
+      })
+      .addCase(markAsSendBilling.fulfilled, (state, action) => {
+        if (action.payload?.mail_status == "Sent") {
+          state.markAsSend = true;
+        } else {
+          state.markAsSend = false;
+        }
+      })
+      .addCase(markAsSendBilling.rejected, (state, action) => {
+        state.markAsSend = false;
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(deleteBilling.pending, (state, action) => {
+        state.isDeleted = false;
+      })
+      .addCase(deleteBilling.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.isDeleted = true;
+      })
+      .addCase(deleteBilling.rejected, (state, action) => {
+        state.isDeleted = false;
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(updateTagBill.pending, (state, action) => {
+        state.isDeleted = false;
+      })
+      .addCase(updateTagBill.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.isDeleted = true;
+      })
+      .addCase(updateTagBill.rejected, (state, action) => {
+        state.isDeleted = false;
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(getPaymentByBillId.pending, (state, action) => {
+        state.dataPayment = [];
+      })
+      .addCase(getPaymentByBillId.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.dataPayment = action.payload;
+      })
+      .addCase(getPaymentByBillId.rejected, (state, action) => {
+        state.dataPayment = [];
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(addPayment.pending, (state, action) => {
+        state.isAddPayment = false;
+      })
+      .addCase(addPayment.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.isAddPayment = true;
+      })
+      .addCase(addPayment.rejected, (state, action) => {
+        state.isAddPayment = false;
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(updatePayment.pending, (state, action) => {
+        state.isUpdatePayment = false;
+      })
+      .addCase(updatePayment.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.isUpdatePayment = true;
+      })
+      .addCase(updatePayment.rejected, (state, action) => {
+        state.isUpdatePayment = false;
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(deletePayment.pending, (state, action) => {
+        state.isDeletedPayment = false;
+      })
+      .addCase(deletePayment.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.isDeletedPayment = true;
+      })
+      .addCase(deletePayment.rejected, (state, action) => {
+        state.isDeletedPayment = false;
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       }),
-
   // .addCase(
   //   createProject.fulfilled,
   //   (state, action: PayloadAction<Billing>) => {

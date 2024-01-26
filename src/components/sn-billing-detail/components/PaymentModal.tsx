@@ -11,9 +11,10 @@ import { Controller } from "react-hook-form";
 type Iprops = {
   open: boolean;
   handleClose: () => void;
+  title?: string;
 };
 const BillModal = (props: Iprops) => {
-  const { handleClose, open } = props;
+  const { handleClose, open, title } = props;
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
   return (
@@ -24,7 +25,7 @@ const BillModal = (props: Iprops) => {
         minHeight: "auto",
       }}
       open={open}
-      label={billingT("detail.form.payment.title.editPayment")}
+      label={title}
       submitText={billingT("detail.form.payment.button.updatePayment")}
       cancelText={commonT("form.cancel")}
       onClose={handleClose}
