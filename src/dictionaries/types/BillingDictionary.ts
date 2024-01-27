@@ -145,6 +145,7 @@ export type BillingDictionary = {
           amount: string;
           note: string;
           paidOn: string;
+          writeOff: string;
         };
       };
       top: {

@@ -50,6 +50,15 @@ const BillModal = (props: Iprops) => {
 
         onAddPayment(data);
         handleClose();
+      } else if (action == "write") {
+        const data = {
+          ...value,
+          status: "Writeoff",
+          bill_id: item?.id,
+        } as BillPaymentData;
+
+        onAddPayment(data);
+        handleClose();
       } else {
         const data = {
           amount: value?.amount,
@@ -78,7 +87,11 @@ const BillModal = (props: Iprops) => {
       }}
       open={open}
       label={title}
-      submitText={billingT("detail.form.payment.button.updatePayment")}
+      submitText={
+        action == "add" || action == "write"
+          ? commonT("form.save")
+          : billingT("detail.form.payment.button.updatePayment")
+      }
       cancelText={commonT("form.cancel")}
       onClose={handleClose}
       onSubmit={formik.handleSubmit}

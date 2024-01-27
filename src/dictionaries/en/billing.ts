@@ -220,6 +220,7 @@ export const BillingLang: BillingDictionary = {
           amount: "Amount",
           note: "Note",
           paidOn: "Paid on",
+          writeOff: "Writeoff",
         },
       },
       top: {
