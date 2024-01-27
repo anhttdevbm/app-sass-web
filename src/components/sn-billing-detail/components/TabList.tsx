@@ -23,6 +23,8 @@ import { BillingData } from "store/billing/actions";
 import { BILLING_PATH } from "constant/paths";
 import { useRouter } from "next-intl/client";
 import PaymentModal from "./PaymentModal";
+import { Select } from "components/shared";
+import DropdownButton from "./DropdownButton";
 
 type TabItemProps = {
   label: string;
@@ -65,8 +67,10 @@ const TabInfo = (props: TabListProps) => {
     fullNameCompany: user?.company,
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [actionButton, setActionButton] = useState<string>("");
 
-  const handleOpen = () => {
+  const handleOpen = (value) => {
+    setActionButton(value);
     setIsOpen(true);
   };
   const handleClose = () => {
@@ -246,15 +250,16 @@ const TabInfo = (props: TabListProps) => {
             {value === "Payment" && (
               <Stack gap={2} direction={"row"} mb={1}>
                 {item && item?.mail_status == "Sent" && (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      handleOpen();
-                    }}
-                  >
-                    {"Add Payment"}
-                    {/* {billingT("detail.form.top.button.edit")} */}
-                  </Button>
+                  <DropdownButton handleOpen={handleOpen} />
+                  // <Button
+                  //   variant="contained"
+                  //   onClick={() => {
+                  //     handleOpen();
+                  //   }}
+                  // >
+                  //   {"Add Payment"}
+                  //   {/* {billingT("detail.form.top.button.edit")} */}
+                  // </Button>
                 )}
 
                 {/* {editForm && (
@@ -281,7 +286,7 @@ const TabInfo = (props: TabListProps) => {
               open={isOpen}
               handleClose={handleClose}
               title={billingT("detail.form.payment.title.addPayment")}
-              action="add"
+              action={actionButton == "add" ? "add" : "write"}
             />
           </Stack>
           {TABS.map((tab) => (

@@ -28,20 +28,20 @@ const MobileContentCell = (props: MobileContentCellProps) => {
     <>
       <BodyCell align="left">{formatDate(item?.dueDate)}</BodyCell>
 
-      <BodyCell align="left" sx={{ paddingLeft: 0 }}>
+      <BodyCell align="left">
         {formatNumber(item?.amount, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
 
-      <BodyCell align="center">
+      <BodyCell align="left">
         {formatNumber(item?.amount, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
-      <BodyCell align="center">
+      <BodyCell align="left">
         {formatNumber(item?.amount_unpaid, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
