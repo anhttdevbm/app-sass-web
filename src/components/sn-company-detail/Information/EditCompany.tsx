@@ -51,7 +51,7 @@ const EditCompany = () => {
 
     if (typeof data["avatar"] === "object") {
       const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
-      payload.created_by = { avatar: logoUrl };
+      payload.avatar = [logoUrl];
     } else {
       delete dataOnlyUpdated["avatar"];
     }
@@ -71,11 +71,11 @@ const EditCompany = () => {
     "address",
     "phone",
     "tax_code",
-    "created_by"
+    "created_by",
+    "avatar"
   ])
 
-  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).created_by?.avatar?.link } as CompanyData
-
+  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).created_by?.avatar?.link } as CompanyData  
   return (
     <>
       <IconButton
