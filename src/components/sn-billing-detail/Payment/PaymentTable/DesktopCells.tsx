@@ -38,7 +38,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
         ) : (
           <Text
             variant="body2"
-            color="#f9b0ae"
+            color="#f78080"
             fontWeight={600}
             lineHeight={1.28}
             // sx={{ "&:hover": { color: "primary.main" } }}
@@ -56,18 +56,33 @@ const DesktopCells = (props: DesktopCellsProps) => {
         {item?.overdue + " " + billingT("detail.form.payment.table2.date")}
       </BodyCell>
       <BodyCell align="left">
-        <Text
-          variant="body2"
-          color="#1BC5BD"
-          // fontWeight={600}
-          lineHeight={1.28}
-          // sx={{ "&:hover": { color: "primary.main" } }}
-        >
-          {formatNumber(item?.amount, {
-            prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-            numberOfFixed: 2,
-          })}
-        </Text>
+        {item?.status == "Paid" ? (
+          <Text
+            variant="body2"
+            color="#1BC5BD"
+            // fontWeight={600}
+            lineHeight={1.28}
+            // sx={{ "&:hover": { color: "primary.main" } }}
+          >
+            {formatNumber(item?.amount, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
+          </Text>
+        ) : (
+          <Text
+            variant="body2"
+            color="#f78080"
+            // fontWeight={600}
+            lineHeight={1.28}
+            // sx={{ "&:hover": { color: "primary.main" } }}
+          >
+            {formatNumber(item?.amount, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
+          </Text>
+        )}
       </BodyCell>
       <BodyCell align="left">{item?.note}</BodyCell>
     </>
