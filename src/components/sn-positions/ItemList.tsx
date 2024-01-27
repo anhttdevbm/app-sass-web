@@ -54,14 +54,17 @@ const ItemList = () => {
         value: commonT("name"),
         width: "20%",
         align: "left",
+        sort: true
       },
       {
         value: commonT("creator"),
         width: "23.5%",
         align: "left",
+        sort: true
       },
-      { value: commonT("creationDate"), width: "24.5%" },
-      { value: companyT("positions.numberOfEmployees"), width: "22%" },
+        
+      { value: commonT("creationDate"), width: "24.5%",  sort: true  },
+      { value: companyT("positions.numberOfEmployees"), width: "22%", sort: true },
       { value: "", width: "3%" },
     ],
     [commonT, companyT],
