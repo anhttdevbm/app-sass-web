@@ -629,7 +629,6 @@ const billingSlice = createSlice({
         state.isDeleted = false;
       })
       .addCase(deleteBilling.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.isDeleted = true;
       })
       .addCase(deleteBilling.rejected, (state, action) => {
@@ -637,32 +636,35 @@ const billingSlice = createSlice({
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       })
       .addCase(updateTagBill.pending, (state, action) => {
-        state.isDeleted = false;
+        state.isUpdateTagBill = false;
       })
       .addCase(updateTagBill.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.isDeleted = true;
+        state.isUpdateTagBill = true;
       })
       .addCase(updateTagBill.rejected, (state, action) => {
-        state.isDeleted = false;
+        state.isUpdateTagBill = false;
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       })
       .addCase(getPaymentByBillId.pending, (state, action) => {
         state.dataPayment = [];
+        state.isAddPayment = false;
+        state.isUpdatePayment = false;
+        state.isDeletedPayment = false;
       })
       .addCase(getPaymentByBillId.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.dataPayment = action.payload;
       })
       .addCase(getPaymentByBillId.rejected, (state, action) => {
         state.dataPayment = [];
+
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       })
       .addCase(addPayment.pending, (state, action) => {
         state.isAddPayment = false;
+        state.isUpdatePayment = false;
+        state.isDeletedPayment = false;
       })
       .addCase(addPayment.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.isAddPayment = true;
       })
       .addCase(addPayment.rejected, (state, action) => {
@@ -671,6 +673,8 @@ const billingSlice = createSlice({
       })
       .addCase(updatePayment.pending, (state, action) => {
         state.isUpdatePayment = false;
+        state.isAddPayment = false;
+        state.isDeletedPayment = false;
       })
       .addCase(updatePayment.fulfilled, (state, action) => {
         console.log(action.payload);
@@ -682,6 +686,8 @@ const billingSlice = createSlice({
       })
       .addCase(deletePayment.pending, (state, action) => {
         state.isDeletedPayment = false;
+        state.isAddPayment = false;
+        state.isUpdatePayment = false;
       })
       .addCase(deletePayment.fulfilled, (state, action) => {
         console.log(action.payload);

@@ -52,10 +52,22 @@ export type BillPaymentData = {
   amount?: number;
   note?: string;
   id?: string;
+  date?: string;
 };
 
 export type BillTagData = {
   tag?: string;
+};
+
+export type PaymentData = {
+  amount?: number;
+  bill_id?: string;
+  date?: string;
+  id?: string;
+  note?: string;
+  overdue?: string;
+  status?: string;
+  _id?: string;
 };
 
 export const getBillingList = createAsyncThunk(
@@ -501,18 +513,11 @@ export const addPayment = createAsyncThunk(
   "Billing/addPayment",
   async ({ data }: { data: BillPaymentData }) => {
     try {
-      const response = await client.post(
-        Endpoint.PAYMENT_BILL,
-        { data },
-        {
-          baseURL: BILLING_API_URL,
-        },
-      );
+      const response = await client.post(Endpoint.PAYMENT_BILL, data, {
+        baseURL: BILLING_API_URL,
+      });
 
-      if (response?.status === HttpStatusCode.OK) {
-        return response.data;
-      }
-      throw AN_ERROR_TRY_AGAIN;
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -525,16 +530,13 @@ export const updatePayment = createAsyncThunk(
     try {
       const response = await client.put(
         StringFormat(Endpoint.CUSTOM_PAYMENT, { id }),
-        { data },
+        data,
         {
           baseURL: BILLING_API_URL,
         },
       );
 
-      if (response?.status === HttpStatusCode.OK) {
-        return response.data;
-      }
-      throw AN_ERROR_TRY_AGAIN;
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -552,10 +554,7 @@ export const deletePayment = createAsyncThunk(
         },
       );
 
-      if (response?.status === HttpStatusCode.OK) {
-        return response.data;
-      }
-      throw AN_ERROR_TRY_AGAIN;
+      return response.data;
     } catch (error) {
       throw error;
     }

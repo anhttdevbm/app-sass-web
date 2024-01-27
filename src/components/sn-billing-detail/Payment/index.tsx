@@ -13,6 +13,7 @@ import PaymentTableHome from "./PaymentTableHome";
 import PaymentTable from "./PaymentTable";
 import { useBillings } from "store/billing/selectors";
 import { useParams } from "next/navigation";
+import { PaymentData } from "store/billing/actions";
 
 type TabProps = {
   title: string;
@@ -43,8 +44,10 @@ const TabPayment = (props: TabProps) => {
   const billingT = useTranslations(NS_BILLING);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [rowSelected, setRowSelected] = useState<PaymentData>({});
 
-  const handleOpen = () => {
+  const handleOpen = (data: PaymentData) => {
+    setRowSelected(data);
     setIsOpen(true);
   };
   const handleClose = () => {
@@ -55,12 +58,18 @@ const TabPayment = (props: TabProps) => {
     onGetPayments(id);
   }, []);
 
+  useEffect(() => {
+    if (isAddPayment || isUpdatePayment || isDeletedPayment) {
+      onGetPayments(id);
+    }
+  }, [isAddPayment, isUpdatePayment, isDeletedPayment]);
+
   return (
     <Stack mt={6}>
       <Stack gap={2} pb={2} pl={2}>
         <Grid container spacing={2}>
           <Grid md={8} sx={{ borderRadius: "5px 0px 0px 5px" }}>
-            <PaymentTableHome />
+            <PaymentTableHome item={item} />
           </Grid>
           <Grid
             container
@@ -94,12 +103,18 @@ const TabPayment = (props: TabProps) => {
         </Grid>
       </Stack>
       <Stack gap={2} pb={2}>
-        <PaymentTable handleOpen={handleOpen} />
+        <PaymentTable
+          handleOpen={handleOpen}
+          dataPayment={dataPayment}
+          onDeletePayment={onDeletePayment}
+        />
       </Stack>
       <PaymentModal
         open={isOpen}
         handleClose={handleClose}
         title={billingT("detail.form.payment.title.editPayment")}
+        action="update"
+        dataUpdate={rowSelected}
       />
     </Stack>
   );

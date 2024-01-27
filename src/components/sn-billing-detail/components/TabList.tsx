@@ -245,7 +245,7 @@ const TabInfo = (props: TabListProps) => {
             )}
             {value === "Payment" && (
               <Stack gap={2} direction={"row"} mb={1}>
-                {markAsSend && (
+                {item && item?.mail_status == "Sent" && (
                   <Button
                     variant="contained"
                     onClick={() => {
@@ -281,6 +281,7 @@ const TabInfo = (props: TabListProps) => {
               open={isOpen}
               handleClose={handleClose}
               title={billingT("detail.form.payment.title.addPayment")}
+              action="add"
             />
           </Stack>
           {TABS.map((tab) => (
