@@ -54,7 +54,17 @@ type TopContentProps = {
 
 const TopContent = (props: TopContentProps) => {
   const { tagsOptions, item, memberOptions, user } = props;
-  const { onAddUserToBilling, addUserStatus, onGetBilling } = useBillings();
+  const {
+    onAddUserToBilling,
+    addUserStatus,
+    onGetBilling,
+    onMarkAsSentBilling,
+    markAsSend,
+    isUpdateTagBill,
+    onUpdateTagBilling,
+    onDeleteBilling,
+    isDeleted,
+  } = useBillings();
   const { title, prevPath } = useHeaderConfig();
   const { isMdSmaller } = useBreakpoint();
   const billingT = useTranslations(NS_BILLING);
@@ -63,6 +73,8 @@ const TopContent = (props: TopContentProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [listUser, setListUser] = useState<Member[]>([]);
   const [tagSelected, setTagSelected] = useState<string>("");
+  const [markSent, setMarkSent] = useState<string>("");
+
   const open = Boolean(anchorEl);
 
   const options = [
@@ -85,6 +97,18 @@ const TopContent = (props: TopContentProps) => {
     const lastItem = data[data.length - 1];
 
     onAddUserToBilling(id, lastItem?.id);
+  };
+
+  const onChangeTag = (input) => {
+    const data = {
+      tag: input,
+    };
+    onUpdateTagBilling(id, data);
+  };
+
+  const onDelete = () => {
+    onDeleteBilling(id);
+    push(BILLING_PATH);
   };
 
   useEffect(() => {
@@ -124,6 +148,13 @@ const TopContent = (props: TopContentProps) => {
 
       setListUser([...filterMember] as Member[]);
     }
+    if (item?.tag && item?.tag?.length > 0) {
+      setTagSelected(item?.tag[0] ?? "");
+    }
+
+    if (item?.mail_status) {
+      setMarkSent(item?.mail_status ?? "");
+    }
     // if (item?.user && item.user.length > 0 && listUser?.length > 0) {
     //   const filterMember = item.user
     //     ?.map((item) => {
@@ -149,10 +180,21 @@ const TopContent = (props: TopContentProps) => {
   // console.log(listUser);
 
   useEffect(() => {
-    if (addUserStatus) {
+    if (addUserStatus || isUpdateTagBill) {
       onGetBilling(id);
     }
-  }, [addUserStatus]);
+  }, [addUserStatus, isUpdateTagBill]);
+
+  useEffect(() => {
+    onGetBilling(id);
+    setMarkSent("");
+  }, [markAsSend]);
+
+  // useEffect(() => {
+  //   if (isDeleted) {
+  //     push(BILLING_PATH);
+  //   }
+  // }, [isDeleted]);
 
   const onDuplicate = () => {
     localStorage.setItem(
@@ -160,6 +202,13 @@ const TopContent = (props: TopContentProps) => {
       JSON.stringify({ ...item, duplicate: true }),
     );
     push(BILLING_DUPLICATE_PATH);
+  };
+
+  const onMarkAsSend = () => {
+    const data = {
+      mail_status: markSent == "Sent" ? "Unsend" : "Sent",
+    };
+    onMarkAsSentBilling(id, data);
   };
 
   return (
@@ -224,7 +273,7 @@ const TopContent = (props: TopContentProps) => {
         >
           <Button
             // startIcon={<PlusIcon />}
-            // onClick={onAddNew}
+            onClick={onMarkAsSend}
             size="small"
             variant="primary"
           >
@@ -303,7 +352,10 @@ const TopContent = (props: TopContentProps) => {
             placeholder={""}
             options={tagsOptions ?? []}
             name="Tag"
-            onChange={(name, value) => setTagSelected(value)}
+            onChange={(name, value) => {
+              onChangeTag(value);
+              setTagSelected(value);
+            }}
             value={tagSelected}
             rootSx={{
               px: "0px!important",
@@ -380,6 +432,7 @@ const TopContent = (props: TopContentProps) => {
                     direction={"row"}
                     alignItems={"center"}
                     color={"red"}
+                    onClick={() => onDelete()}
                   >
                     <TrashIcon sx={{ fontSize: 25 }} />
                     <Text variant={"body2"} color={"red"}>
