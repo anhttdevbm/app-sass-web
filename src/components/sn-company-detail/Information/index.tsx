@@ -42,9 +42,9 @@ const InformationProjectPage = () => {
   const { prevPath, title } = useHeaderConfig();
 
   const [item, error, isFetching] = useMemo(() => {
-    if (id) {
+    if (id) {      
       return [detailItem, detailItemError, detailItemIsFetching];
-    }
+    }    
     return [myItem, myItemError, myItemIsFetching];
   }, [
     detailItem,
@@ -63,7 +63,7 @@ const InformationProjectPage = () => {
           <Stack direction="row" spacing={2} justifyContent="space-between">
             <Stack direction="row" alignItems="center" spacing={1}>
               <Avatar
-                src={item?.owner?.avatar?.link ?? ProjectPlaceholderImage}
+                src={item?.avatar?.link ?? ProjectPlaceholderImage}
                 size={40}
               />
               <Stack>
