@@ -426,7 +426,7 @@ export const ServiceSection = ({
                   height: "max-content",
                 }}
               >
-                <DragDropContext onDragEnd={onDragEnd}>
+                {/* <DragDropContext onDragEnd={onDragEnd}>
                   <Droppable
                     type="section"
                     direction="vertical"
@@ -445,7 +445,17 @@ export const ServiceSection = ({
                       </Box>
                     )}
                   </Droppable>
-                </DragDropContext>
+                </DragDropContext> */}
+                <Box>
+                  <ServiceSectionRow
+                    fieldIndex={index}
+                    updateValue={handleChangeValue}
+                    errors={errors}
+                    serviceData={section?.data || []}
+                    sectionId={section.id}
+                    deletedServices={deletedServices}
+                  />
+                </Box>
               </Stack>
             </Box>
           ))}

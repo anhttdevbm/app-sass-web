@@ -216,6 +216,7 @@ export const BillingLang: BillingDictionary = {
         title: {
           payments: "Payments",
           editPayment: "Edit Payment",
+          addPayment: "Add Payment",
           amount: "Amount",
           note: "Note",
           paidOn: "Paid on",

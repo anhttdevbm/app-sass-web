@@ -47,7 +47,7 @@ const ExportModal = ({ open, onClose }: IProps) => {
 
   const { handleSubmit, control, reset, getValues, watch } = useForm({
     defaultValues: {
-      type: EXPORT_TYPE_OPTIONS.XLS,
+      type: EXPORT_TYPE_OPTIONS.XLSX,
       orientation: EXPORT_ORIENTATION_OPTIONS.PORTRAIT,
       pageSize: EXPORT_PAGE_SIZE_OPTIONS.A4,
       includeAttachment: "yes",

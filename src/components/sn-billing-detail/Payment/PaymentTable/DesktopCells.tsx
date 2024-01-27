@@ -7,11 +7,12 @@ import { NS_COMMON } from "constant/index";
 import { BILLING_DETAIL_PATH, BILLING_INFO_PATH } from "constant/paths";
 import { useTranslations } from "next-intl";
 import { memo } from "react";
+import { PaymentData } from "store/billing/actions";
 import { Billing, Budgets } from "store/billing/reducer";
 import { formatDate, formatNumber, getPath } from "utils/index";
 
 type DesktopCellsProps = {
-  item?: Budgets;
+  item?: PaymentData;
   order: number;
 };
 
@@ -30,32 +31,22 @@ const DesktopCells = (props: DesktopCellsProps) => {
           lineHeight={1.28}
           // sx={{ "&:hover": { color: "primary.main" } }}
         >
-          {/* {item?.name} */}
+          {item?.status}
         </Text>
       </BodyCell>
 
       <BodyCell align="left" sx={{ paddingLeft: 0 }}>
-        {/* {formatDate(item?.start_date) + " - " + formatDate(item?.end_date)} */}
+        {formatDate(item?.date)}
       </BodyCell>
 
+      <BodyCell align="center">{item?.overdue}</BodyCell>
       <BodyCell align="center">
-        {/* {formatNumber(item?.revenue, {
+        {formatNumber(item?.amount, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
-        })} */}
+        })}
       </BodyCell>
-      <BodyCell align="center">
-        {/* {formatNumber(item?.revenuePJ, {
-          prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-          numberOfFixed: 2,
-        })} */}
-      </BodyCell>
-      <BodyCell align="center">
-        {/* {formatNumber(item?.revenue, {
-          prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-          numberOfFixed: 2,
-        })} */}
-      </BodyCell>
+      <BodyCell align="center">{item?.note}</BodyCell>
     </>
   );
 };

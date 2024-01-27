@@ -10,14 +10,14 @@ import _ from "lodash";
 import moment from "moment";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, Form, useForm } from "react-hook-form";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { usePositions } from "store/company/selectors";
 import { useProjects } from "store/project/selectors";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as yup from "yup";
-import DefaultPopupLayout from "../../../layouts/DefaultPopupLayout";
+import DefaultPopupLayout from "./DefaultPopupLayout";
 import MobileDatePickerComponent from "../Component/MobileDatePicker";
 import NumberInput from "../Component/NumberInput";
 import Textarea from "../Component/Textarea";
@@ -263,7 +263,10 @@ const TimeCreate: React.FC<IProps> = ({
               <TextFieldSelect
                 options={[
                   { label: timeT("header.tab.workTime"), value: "Work time" },
-                  { label: timeT("header.tab.breakTime"), value: "Break time" },
+                  {
+                    label: timeT("header.tab.breakTime"),
+                    value: "Break time",
+                  },
                 ]}
                 label={timeT("modal.Type")}
                 sx={{ flex: 1 }}
@@ -394,6 +397,7 @@ const TimeCreate: React.FC<IProps> = ({
             {timeT("modal.Cancel")}
           </Button>
           <Button
+            // type="submit"
             variant="contained"
             sx={{
               height: "36px",
@@ -408,6 +412,7 @@ const TimeCreate: React.FC<IProps> = ({
             {timeT("modal.Confirm")}
           </Button>
         </Stack>
+
         {isEdit && selectedEvent?.extendedProps?.id && (
           <Stack direction="row" justifyContent="center" sx={{ mt: 1 }}>
             <Button
@@ -442,6 +447,7 @@ const TimeCreate: React.FC<IProps> = ({
       </DialogContent>
     );
   };
+
   return (
     <DefaultPopupLayout
       title={

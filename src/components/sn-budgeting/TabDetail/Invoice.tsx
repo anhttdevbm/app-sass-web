@@ -1,64 +1,249 @@
-import { Box, TableRow } from "@mui/material";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, Stack, TableRow, Typography } from "@mui/material";
+import Pagination from "components/Pagination";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
-import { Checkbox } from "components/shared";
+import { Button, Checkbox, Text } from "components/shared";
+import DesktopCells from "components/sn-billing/DesktopCells";
+import MobileContentCell from "components/sn-billing/MobileContentCell";
+import ExportView from "components/sn-billing/Modals/ExportView";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { CURRENCY_CODE } from "constant/enums";
 import { NS_BUDGETING } from "constant/index";
+import { BILLING_INFO_PATH, BUDGET_EXPENSE_EXPORT_PATH } from "constant/paths";
+import useBreakpoint from "hooks/useBreakpoint";
+import FolderIcon from "icons/FolderIcon";
+import _ from "lodash";
 import { useTranslations } from "next-intl";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-
-type TInvoice = {
-  id: string;
-  subject: string;
-  invoiceNumber: string;
-  date: string;
-  att: string;
-  amountNoTax: string;
-  amountUnpaid: string;
-  dueDate: string;
-};
-
-const TemplateData: TInvoice[] = [
-  {
-    id: "aa11",
-    subject: "Weebsite develop",
-    invoiceNumber: "353467",
-    date: "8/07/2022",
-    att: "",
-    amountNoTax: "$500.00",
-    amountUnpaid: "$500.00",
-    dueDate: "8/07/2022",
-  },
-  {
-    id: "aa22",
-    subject: "Weebsite 222",
-    invoiceNumber: "111111",
-    date: "8/07/2022",
-    att: "",
-    amountNoTax: "$500.00",
-    amountUnpaid: "$500.00",
-    dueDate: "8/07/2022",
-  },
-];
+import { useRouter } from "next-intl/client";
+import { useParams } from "next/navigation";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { BillingDataExport } from "store/billing/actions";
+import { Billing } from "store/billing/reducer";
+import { useBillings } from "store/billing/selectors";
+import { clearNullField, formatDate, formatNumber, getPath } from "utils/index";
 
 export const Invoice = () => {
-  const [invoices, setInvoices] = useState<TInvoice[]>([]);
   const [invoiceSelected, setInvoiceSelected] = useState<string[]>([]);
+  const [exportModel, setExportModel] = useState<boolean>(false);
 
+  const { id } = useParams();
+  const { push } = useRouter();
+  const { isMdSmaller } = useBreakpoint();
+
+  const {
+    items,
+    size,
+    page,
+    total_page,
+    totalItems,
+    isFetching,
+    isIdle,
+    error,
+    totalAmount,
+    totalAmountUnpaid,
+    onGetBillings,
+  } = useBillings();
   const budgetT = useTranslations(NS_BUDGETING);
 
   useEffect(() => {
-    setInvoices(TemplateData);
-  }, []);
-
-  const handleSelecteAllInvoice = (
-    event: ChangeEvent<HTMLInputElement>,
-    isChecked: boolean,
-  ) => {
-    if (!isChecked) {
-      setInvoiceSelected([]);
-      return;
+    if (id) {
+      onGetBillings({ budgetId: id as string });
     }
-    const allInvoiceIds = invoices.map((invoice) => invoice.id);
-    setInvoiceSelected(allInvoiceIds);
+  }, [id]);
+
+  const onChangeAll = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const isChecked = event.target.checked;
+      if (isChecked) {
+        setInvoiceSelected(_.map(items || [], (item: any) => item?.id || ""));
+      } else {
+        setInvoiceSelected([]);
+      }
+    },
+    [items],
+  );
+
+  const isCheckedAll = useMemo(
+    () =>
+      Boolean(
+        invoiceSelected.length && invoiceSelected.length === items?.length,
+      ),
+    [invoiceSelected.length, items?.length],
+  );
+
+  const desktopHeaderList: CellProps[] = useMemo(
+    () => [
+      {
+        value: budgetT("tabInvoice.subject"),
+        align: "center",
+      },
+      {
+        value: budgetT("tabInvoice.invoiceNumber"),
+        align: "center",
+      },
+      {
+        value: budgetT("tabInvoice.date"),
+        align: "center",
+      },
+      { value: budgetT("tabInvoice.att"), align: "center" },
+      {
+        value: (
+          <>
+            <Stack>
+              {budgetT("tabInvoice.amount")}
+              <Text variant={"body2"} align="center" fontWeight={600}>
+                {formatNumber(totalAmount, {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </Text>
+            </Stack>
+          </>
+        ),
+        align: "center",
+      },
+      {
+        value: (
+          <>
+            <Stack>
+              {budgetT("tabInvoice.amountUnpaid")}
+              <Text variant={"body2"} align="center" fontWeight={600}>
+                {formatNumber(totalAmountUnpaid, {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </Text>
+            </Stack>
+          </>
+        ),
+        align: "center",
+      },
+      {
+        value: budgetT("tabInvoice.dueDate"),
+        align: "center",
+      },
+    ],
+    [budgetT, totalAmount, totalAmountUnpaid],
+  );
+  const mobileHeaderList: CellProps[] = useMemo(
+    () => [
+      {
+        value: budgetT("list.table.subject"),
+        align: "center",
+      },
+      {
+        value: budgetT("list.table.invoiceNumber"),
+        align: "center",
+      },
+      {
+        value: budgetT("list.table.date"),
+        align: "center",
+      },
+      { value: budgetT("list.table.budgets"), align: "center" },
+      { value: budgetT("list.table.att"), align: "center" },
+      {
+        value: (
+          <>
+            <Stack>
+              {budgetT("list.table.amount")}
+              <Text variant={"body2"} align="center" fontWeight={600}>
+                {formatNumber(totalAmount, {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </Text>
+            </Stack>
+          </>
+        ),
+        align: "center",
+      },
+      {
+        value: (
+          <>
+            <Stack>
+              {budgetT("list.table.amountUnpaid")}
+              <Text variant={"body2"} align="center" fontWeight={600}>
+                {formatNumber(totalAmountUnpaid, {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </Text>
+            </Stack>
+          </>
+        ),
+        align: "center",
+      },
+      { value: budgetT("list.table.dueDate"), align: "center" },
+    ],
+    [budgetT, totalAmount, totalAmountUnpaid],
+  );
+
+  const headerList = useMemo(() => {
+    const additionalHeaderList = isMdSmaller
+      ? mobileHeaderList
+      : desktopHeaderList;
+    return [
+      {
+        value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} />,
+        width: isMdSmaller ? "10%" : "3%",
+        align: "center",
+      },
+      ...additionalHeaderList,
+      { value: "", width: "10%" },
+    ] as CellProps[];
+  }, [
+    desktopHeaderList,
+    isMdSmaller,
+    mobileHeaderList,
+    isCheckedAll,
+    onChangeAll,
+  ]);
+
+  const selectedBills = useMemo(() => {
+    if (invoiceSelected && invoiceSelected?.length > 0) {
+      return {
+        bill: invoiceSelected?.map((item) => {
+          return { id: item };
+        }),
+      } as BillingDataExport;
+    }
+  }, [invoiceSelected]);
+
+  const onChangeQueries = (queries: { [key: string]: any }) => {
+    const newQueries: any = clearNullField({ budgetId: id, ...queries });
+    onGetBillings(newQueries);
+  };
+
+  // const onChangePage = (newPage: number) => {
+  //   onChangeQueries({ page: newPage, size });
+  // };
+
+  // const onChangeSize = (newPageSize: number) => {
+  //   onChangeQueries({ page: 1, size: newPageSize });
+  // };
+
+  // const onToggleSelect = (item: Billing, indexSelected: number) => {
+  //   return () => {
+  //     if (indexSelected === -1) {
+  //       setInvoiceSelected((prevList) => [...prevList, item]);
+  //     } else {
+  //       setInvoiceSelected((prevList) => {
+  //         const newList = [...prevList];
+  //         newList.splice(indexSelected, 1);
+  //         return newList;
+  //       });
+  //     }
+  //   };
+  // };
+
+  const onOpenModalExport = (value: Billing) => {
+    push(
+      getPath(BUDGET_EXPENSE_EXPORT_PATH, undefined, { id: value?.id ?? "" }),
+    );
+  };
+
+  const onCloseModalExport = () => {
+    setExportModel(false);
   };
 
   const handleSelectInvoice = (
@@ -82,71 +267,49 @@ export const Invoice = () => {
     setInvoiceSelected(invoiceSelected.filter(Boolean));
   };
 
-  const headerList = useMemo(
-    (): CellProps[] => [
-      {
-        value: (
-          <Checkbox
-            checked={invoiceSelected.length === invoices.length}
-            onChange={handleSelecteAllInvoice}
-          />
-        ),
-        align: "center",
-        width: "5%",
-        minWidth: 60,
-      },
-      {
-        value: budgetT("tabInvoice.subject"),
-        align: "center",
-        width: "15%",
-        minWidth: 150,
-      },
-      {
-        value: budgetT("tabInvoice.invoiceNumber"),
-        align: "center",
-        width: "15%",
-        minWidth: 150,
-      },
-      {
-        value: budgetT("tabInvoice.date"),
-        align: "center",
-        width: "10%",
-        minWidth: 120,
-      },
-      {
-        value: budgetT("tabInvoice.att"),
-        align: "center",
-        width: "10%",
-        minWidth: 60,
-      },
-      {
-        value: budgetT("tabInvoice.amountNoTax"),
-        // data: "$56.000.000",
-        align: "center",
-        width: "15%",
-        minWidth: 150,
-      },
-      {
-        value: budgetT("tabInvoice.amountUnpaid"),
-        // data: "$56.000.000",
-        align: "center",
-        width: "15%",
-        minWidth: 150,
-      },
-      {
-        value: budgetT("tabInvoice.dueDate"),
-        align: "center",
-        width: "15%",
-        minWidth: 120,
-      },
-    ],
-    [invoices, invoiceSelected],
-  );
-
   return (
     <Box p="15px">
+      {/* <TableLayout
+        headerList={headerList}
+        pending={isFetching}
+        headerProps={{
+          sx: { px: { xs: 0.5, md: 2 } },
+        }}
+        error={error as string}
+        noData={!isIdle && totalItems === 0}
+        px={{ md: 2 }}
+      >
+        {items?.map((item, index) => {
+          const indexSelected = invoiceSelected.findIndex(
+            (selected) => selected?.id === item.id,
+          );
+          return (
+            <TableRow key={item?.id}>
+              <BodyCell sx={{ pl: { xs: 0.5, md: 2 } }}>
+                <Checkbox
+                  checked={indexSelected !== -1}
+                  onChange={onToggleSelect(item, indexSelected)}
+                />
+              </BodyCell>
+              {isMdSmaller ? (
+                <MobileContentCell
+                  item={item}
+                  onOpenModalExport={onOpenModalExport}
+                />
+              ) : (
+                <DesktopCells
+                  item={item}
+                  order={(page - 1) * size + (index + 1)}
+                  onOpenModalExport={onOpenModalExport}
+                />
+              )}
+            </TableRow>
+          );
+        })}
+      </TableLayout> */}
+
       <TableLayout headerList={headerList} noData={false} titleColor="grey.300">
-        {invoices.map((data, index) => {
+        {_.map(items || [], (data, index) => {
           const indexIdInInvoiceSelected = invoiceSelected.findIndex(
             (inoviceId) => inoviceId === data.id,
           );
@@ -171,19 +334,59 @@ export const Invoice = () => {
                   onChange={handleSelectInvoice}
                 />
               </BodyCell>
-              <BodyCell>{data.subject}</BodyCell>
-              <BodyCell>{data.invoiceNumber}</BodyCell>
-              <BodyCell>{data.date}</BodyCell>
-              <BodyCell>{data.att}</BodyCell>
-              <BodyCell>{data.amountNoTax}</BodyCell>
-              <BodyCell>{data.amountUnpaid}</BodyCell>
               <BodyCell>
-                <span style={{ color: "red" }}>{data.dueDate}</span>
+                <Typography
+                  sx={{ fontWeight: 700, cursor: "pointer" }}
+                  onClick={() => {
+                    push(getPath(BILLING_INFO_PATH, undefined, { id: data?.id || "" }));
+                  }}
+                >
+                  {_.get(data, "subject", "")}
+                </Typography>
+              </BodyCell>
+              <BodyCell>{_.get(data, "invoiceNumber", "")}</BodyCell>
+              <BodyCell>{formatDate(data?.date)}</BodyCell>
+              <BodyCell>
+                <Button onClick={() => onOpenModalExport(data ?? {})}>
+                  <FolderIcon />
+                </Button>
+              </BodyCell>
+              <BodyCell>
+                {formatNumber(_.get(data, "amount", 0), {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </BodyCell>
+              <BodyCell>
+                {formatNumber(_.get(data, "amount_unpaid", 0), {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </BodyCell>
+              <BodyCell>
+                <Typography component="span" style={{ color: "red" }}>
+                  {formatDate(data?.dueDate)}
+                </Typography>{" "}
               </BodyCell>
             </TableRow>
           );
         })}
       </TableLayout>
+
+      {/* <Pagination
+        totalItems={totalItems}
+        totalPages={total_page}
+        page={page}
+        pageSize={size}
+        containerProps={{ px: { md: 3 }, py: 1 }}
+        onChangePage={onChangePage}
+        onChangeSize={onChangeSize}
+      /> */}
+      <ExportView
+        open={exportModel}
+        onClose={() => onCloseModalExport()}
+        item={selectedBills ?? { bill: [] }}
+      />
     </Box>
   );
 };
