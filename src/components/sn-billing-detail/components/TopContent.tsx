@@ -180,14 +180,16 @@ const TopContent = (props: TopContentProps) => {
   // console.log(listUser);
 
   useEffect(() => {
-    if (addUserStatus || isUpdateTagBill) {
+    if ((addUserStatus || isUpdateTagBill) && id) {
       onGetBilling(id);
     }
   }, [addUserStatus, isUpdateTagBill]);
 
   useEffect(() => {
-    onGetBilling(id);
-    setMarkSent("");
+    if (id) {
+      onGetBilling(id);
+      setMarkSent("");
+    }
   }, [markAsSend]);
 
   // useEffect(() => {

@@ -276,10 +276,14 @@ export const createCommentBilling = createAsyncThunk(
 
 export const getCommentBilling = createAsyncThunk(
   "Billing/getCommentBilling",
-  async (id: string) => {
+  async ({ id, param }: { id: string; param: string }) => {
     try {
       const response = await client.get(
-        StringFormat(Endpoint.INTERACTION_BILLING_BY_BILL, { id }),
+        `${
+          StringFormat(Endpoint.INTERACTION_BILLING_BY_BILL, { id }) +
+          "/" +
+          param
+        }`,
         {},
         {
           baseURL: BILLING_API_URL,
