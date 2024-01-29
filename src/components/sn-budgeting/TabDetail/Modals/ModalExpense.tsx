@@ -14,7 +14,10 @@ import {
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
-import { FILE_ACCEPT, IMAGES_ACCEPT, NS_BUDGETING, NS_COMMON } from "constant/index";
+import {
+  FILE_ACCEPT, NS_BUDGETING,
+  NS_COMMON
+} from "constant/index";
 import { useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -37,7 +40,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useCurrencyOptions } from "store/global/selectors";
 import { useParams } from "next/navigation";
 import { User } from "constant/types";
-import { getMessageErrorByAPI, uuid } from "utils/index";
+import { getMessageErrorByAPI } from "utils/index";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -165,7 +168,7 @@ export const ModalExpense = ({
   }, [user]);
 
   const fileIcon = useMemo(() => {
-    const extension = _.last(_.get(watch('uploadFile'), 'name', '').split('.'));
+    const extension = _.last(_.get(watch("uploadFile"), "name", "").split("."));
     switch (extension) {
       case "pdf":
         return <FilePdfIcon sx={{ fontSize: 40 }} />;
@@ -180,7 +183,7 @@ export const ModalExpense = ({
       default:
         return <FileIcon sx={{ fontSize: 40 }} />;
     }
-  }, [watch('uploadFile')]);
+  }, [watch("uploadFile")]);
 
   useEffect(() => {
     onGetCurrencyOptions({ pageIndex: 1, pageSize: 100 });
@@ -306,7 +309,7 @@ export const ModalExpense = ({
           setValue("attachment", _.get(res, "data.object", ""));
           setValue("uploadFile", {
             id: _.get(res, "data.object", ""),
-            link: _.get(res, 'data.download', ''),
+            link: _.get(res, "data.download", ""),
             name: files[0].name,
             size: niceBytes(files[0].size),
           });
@@ -751,7 +754,15 @@ export const ModalExpense = ({
                 />
 
                 <IconButton
-                  sx={{ position: "absolute", right: 20, bottom: 30 }}
+                  sx={{
+                    position: "absolute",
+                    right: 20,
+                    bottom: 30,
+                    borderRadius: "4px !important",
+                    backgroundColor: "#f5f5f5",
+                    p: "4px !important",
+                    border: '1px solid #99999970 !important'
+                  }}
                   onClick={onChooseFile}
                 >
                   <AttachmentIcon />

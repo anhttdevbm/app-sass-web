@@ -271,14 +271,15 @@ export const ModalAddTime = ({
           </Stack>
 
           <InputLabelWrapper
-            label={budgetT("dialog.note")}
-            sx={{ "& label.MuiFormLabel-root": { display: "none" } }}
+            label=""
+            sx={{ "& label.MuiFormLabel-root": { border: 'unset !important', background: '#f7f7fd' } }}
           >
             <Controller
               control={control}
               name="note"
               render={({ field: { onChange, value } }) => (
                 <Textarea
+                  label={budgetT("dialog.note")}
                   fullWidth
                   value={value}
                   minRows={4}

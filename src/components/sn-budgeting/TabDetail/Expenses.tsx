@@ -122,7 +122,10 @@ export const Expenses = ({ expenseList = [] }: Props) => {
       {
         value: (
           <Checkbox
-            checked={expenseSelected.length === expenses.length}
+            checked={
+              expenses.length > 0 &&
+              expenseSelected.length === expenses.length
+            }
             onChange={handleSelectAllExpense}
           />
         ),

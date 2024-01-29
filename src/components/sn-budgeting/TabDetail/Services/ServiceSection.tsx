@@ -33,6 +33,7 @@ import {
   budgetDetailRef,
 } from "components/sn-budgeting/BudgetDetail";
 import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
+import useTheme from "hooks/useTheme";
 
 type Props = {
   sectionsList: TBudgetSection[];
@@ -47,6 +48,7 @@ export const ServiceSection = ({
 }: Props) => {
   const { id: budgetId } = useParams();
   const { onAddSnackbar } = useSnackbar();
+  const { isDarkMode } = useTheme();
 
   const commonT = useTranslations(NS_COMMON);
   const budgetT = useTranslations(NS_BUDGETING);
@@ -389,26 +391,36 @@ export const ServiceSection = ({
   return (
     <>
       <ScrollViewProvider>
-        <Stack direction="row" gap={2} justifyContent="end" p="15px">
-          <Button
-            sx={{ bgcolor: "primary.light", color: "grey.400" }}
-            onClick={() => {
-              resetState();
-              onCloseEdit();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveAllService}
-            sx={{
-              bgcolor: "primary.main",
-              "&:hover": { bgcolor: "primary.light", color: "primary.main" },
-            }}
-          >
-            Save changes
-          </Button>
-        </Stack>
+        <Box
+          sx={{
+            position: "sticky !important",
+            top: "13%",
+            background: isDarkMode ? "#313130" : "white",
+            py: 2,
+            zIndex: 10,
+          }}
+        >
+          <Stack direction="row" gap={2} justifyContent="end" p="15px">
+            <Button
+              sx={{ bgcolor: "primary.light", color: "grey.400" }}
+              onClick={() => {
+                resetState();
+                onCloseEdit();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveAllService}
+              sx={{
+                bgcolor: "primary.main",
+                "&:hover": { bgcolor: "primary.light", color: "primary.main" },
+              }}
+            >
+              Save changes
+            </Button>
+          </Stack>
+        </Box>
 
         <ScrollViewProvider>
           <Stack

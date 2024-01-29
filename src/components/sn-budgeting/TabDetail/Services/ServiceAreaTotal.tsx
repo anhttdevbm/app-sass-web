@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import _ from "lodash";
 import { useMemo } from "react";
 import moment from "moment";
+import useTheme from "hooks/useTheme";
 
 interface Props {
   serviceData: any;
@@ -18,19 +19,36 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
   const { push } = useRouter();
   const { id } = useParams();
+  const { isDarkMode } = useTheme();
 
   const remainingTimeRate = useMemo(() => {
-    return (Number(_.get(serviceData, 'remainingTime', 0)) / Number(_.get(serviceData, 'estimatedTime', 0))) * 100 || 0;
+    return (
+      (Number(_.get(serviceData, "remainingTime", 0)) /
+        Number(_.get(serviceData, "estimatedTime", 0))) *
+        100 || 0
+    );
   }, [serviceData]);
 
   return (
-    <Box p="15px">
+    <Box
+      sx={{
+        position: "sticky !important",
+        top: '13%',
+        background: isDarkMode ? "#313130" : "white",
+        py: 2,
+        zIndex: 10,
+      }}
+    >
       <Stack gap={1} direction="row">
         <Box sx={{ flex: 1, "& .MuiStack-root": { height: "100%" } }}>
-          <ServiceBox remaining={`${_.isEmpty(remainingTimeRate) ? 0 : remainingTimeRate}%`}>
+          <ServiceBox
+            remaining={`${
+              _.isEmpty(remainingTimeRate) ? 0 : remainingTimeRate
+            }%`}
+          >
             <Stack direction="row" justifyContent="space-between">
               <H6>{budgetT("tabService.totalArea.time.title")}</H6>
-              <PTag>{moment().format('D MMM, YYYY')}</PTag>
+              <PTag>{moment().format("D MMM, YYYY")}</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <H6>{budgetT("tabService.totalArea.time.budgetedTime")}</H6>
@@ -42,17 +60,18 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <H6>{budgetT("tabService.totalArea.time.estimatedTime")}</H6>
-              <PTag>{_.get(serviceData, 'allTime', '00:00')}</PTag>
+              <PTag>{_.get(serviceData, "allTime", "00:00")}</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <H6>{budgetT("tabService.totalArea.time.workedTime")}</H6>
-              <PTag>{_.get(serviceData, 'allTimeUsed', '00:00')}</PTag>
+              <PTag>{_.get(serviceData, "allTimeUsed", "00:00")}</PTag>
             </Stack>
             <Stack direction="row" justifyContent="space-between">
               <H6>
-                {budgetT("tabService.totalArea.time.remainingTime")} ({_.isEmpty(remainingTimeRate) ? 0 : remainingTimeRate}%)
+                {budgetT("tabService.totalArea.time.remainingTime")} (
+                {_.isEmpty(remainingTimeRate) ? 0 : remainingTimeRate}%)
               </H6>
-              <PTag>{_.get(serviceData, 'remainingTime', '00:00')}</PTag>
+              <PTag>{_.get(serviceData, "remainingTime", "00:00")}</PTag>
             </Stack>
           </ServiceBox>
         </Box>
@@ -62,7 +81,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
             <ServiceBox remaining="20%">
               <Stack direction="row" justifyContent="space-between">
                 <H6>{budgetT("tabService.totalArea.profit.title")}</H6>
-                <PTag>{moment().format('D MMM, YYYY')}</PTag>
+                <PTag>{moment().format("D MMM, YYYY")}</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <H6>{budgetT("tabService.totalArea.profit.revenue")}</H6>
@@ -84,18 +103,22 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                 width="100%"
               >
                 <H6>{budgetT("tabService.totalArea.budget.title")}</H6>
-                <PTag>{moment().format('D MMM, YYYY')}</PTag>
+                <PTag>{moment().format("D MMM, YYYY")}</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <H6>{budgetT("tabService.totalArea.budget.budgetTotal")}</H6>
-                <PTag>${_.round(_.get(serviceData, 'allBudgetTotal', 0), 2)}</PTag>
+                <PTag>
+                  ${_.round(_.get(serviceData, "allBudgetTotal", 0), 2)}
+                </PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
                 <H6>{budgetT("tabService.totalArea.budget.budgetUsed")}</H6>
-                <PTag>${_.round(_.get(serviceData, 'allBudgetUsed', 0))}</PTag>
+                <PTag>${_.round(_.get(serviceData, "allBudgetUsed", 0))}</PTag>
               </Stack>
               <Stack direction="row" justifyContent="space-between">
-                <H6>{budgetT("tabService.totalArea.budget.budgetRemaining")}</H6>
+                <H6>
+                  {budgetT("tabService.totalArea.budget.budgetRemaining")}
+                </H6>
                 <PTag>$0,00</PTag>
               </Stack>
             </ServiceBox>
