@@ -29,7 +29,7 @@ import { BILLING_INFO_PATH, BUDGET_EXPENSE_EXPORT_PATH } from "constant/paths";
 import { getPath } from "utils/index";
 import { useRouter } from "next-intl/client";
 
-const ViewPdf = () => {
+const ViewPdfInvoice = () => {
   const { push } = useRouter();
   // const { fileExport, dataExport } = useBillings();
 
@@ -303,4 +303,4 @@ const ViewPdf = () => {
   );
 };
 
-export default memo(ViewPdf);
+export default memo(ViewPdfInvoice);

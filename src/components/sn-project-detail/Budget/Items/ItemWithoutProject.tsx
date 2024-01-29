@@ -8,18 +8,19 @@ import { Stack, TableRow, formLabelClasses } from "@mui/material";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
 import Link from "components/Link";
-import { getPath } from "utils/index";
+import { formatNumber, getPath } from "utils/index";
 import { BUDGET_DETAIL_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
 import { BugReport } from "@mui/icons-material";
 import FilterWithIds from "./FilterWithIds";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import _ from "lodash";
 
 type Props = {
   idSelecteds: string[];
   setIdSelected: any;
   budgets: TBudgets;
 };
-
 
 export const ItemWithoutProject = ({
   idSelecteds,
@@ -30,9 +31,9 @@ export const ItemWithoutProject = ({
 
   const getXsCell = (index: number) => {
     return {
-      width: desktopHeaderList[index].width + "!important",
-      minWidth: desktopHeaderList[index].minwidth + "!important",
-      maxWidth: desktopHeaderList[index].width + "!important",
+      width: desktopHeaderList[index]?.width || '0px' + "!important",
+      minWidth: desktopHeaderList[index]?.minwidth || '0px' + "!important",
+      maxWidth: desktopHeaderList[index]?.width || '0px' + "!important",
     };
   };
 
@@ -61,12 +62,6 @@ export const ItemWithoutProject = ({
         align: "left",
         width: "220px",
         minwidth: "220px",
-      },
-      {
-        value: projectT("budget.table.company"),
-        align: "left",
-        width: "150px",
-        minwidth: "150px",
       },
       {
         value: projectT("budget.table.project"),
@@ -128,7 +123,11 @@ export const ItemWithoutProject = ({
       }}
     >
       {!!idSelecteds.length && (
-        <FilterWithIds getXsCell={getXsCell} budgets={budgets} idSelecteds={idSelecteds}/>
+        <FilterWithIds
+          getXsCell={getXsCell}
+          budgets={budgets}
+          idSelecteds={idSelecteds}
+        />
       )}
       {budgets?.map((budget) => {
         return (
@@ -171,32 +170,26 @@ export const ItemWithoutProject = ({
                   <Stack direction="row" alignItems="center">
                     <Avatar src={budget.project.avatar[0].link} size={35} />
                     <Text paddingLeft="10px" align="left">
-                      {budget.company}
-                    </Text>
-                  </Stack>
-                )}
-            </BodyCell>
-            <BodyCell sx={getXsCell(3)}>
-              {budget.project?.avatar &&
-                typeof budget.project.avatar[0] === "object" && (
-                  <Stack direction="row" alignItems="center">
-                    <Avatar src={budget.project.avatar[0].link} size={35} />
-                    <Text paddingLeft="10px" align="left">
                       {budget.project.name}
                     </Text>
                   </Stack>
                 )}
             </BodyCell>
-            <BodyCell sx={getXsCell(4)}>
-              <Text>${budget.revenue}</Text>
+            <BodyCell sx={getXsCell(3)}>
+              <Text>
+                {formatNumber(_.get(budget, 'revenue'), {
+                  prefix: CURRENCY_SYMBOL[_.get(budget, 'currency', 'USD')],
+                  numberOfFixed: 0,
+                })}
+              </Text>
             </BodyCell>
-            <BodyCell sx={getXsCell(5)}>
+            <BodyCell sx={getXsCell(4)}>
               <Text>69.04%</Text>
             </BodyCell>
-            <BodyCell sx={getXsCell(6)}>
+            <BodyCell sx={getXsCell(5)}>
               <Text>350:00h/599:00h</Text>
             </BodyCell>
-            <BodyCell sx={getXsCell(7)}>
+            <BodyCell sx={getXsCell(6)}>
               <Text>47.5%</Text>
             </BodyCell>
           </TableRow>

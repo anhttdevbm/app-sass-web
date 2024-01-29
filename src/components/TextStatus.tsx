@@ -9,6 +9,7 @@ type TextStatusProps = {
   color: AlertColor | "purple" | "positive";
   width?: TextProps["minWidth"];
   namespace?: string;
+  isActive?: boolean;
 } & Omit<TextProps, "color">;
 
 const TextStatus = (props: TextStatusProps) => {
@@ -18,6 +19,7 @@ const TextStatus = (props: TextStatusProps) => {
     width,
     namespace = NS_COMMON,
     children,
+    isActive,
     ...rest
   } = props;
 
@@ -25,10 +27,10 @@ const TextStatus = (props: TextStatusProps) => {
 
   return (
     <Text
-      color={({ palette }) => palette?.[color]?.main}
-      bgcolor={({ palette }) => palette?.[color]?.light}
+      color={({ palette }) => isActive ? 'black' : palette?.[color]?.main}
+      bgcolor={({ palette }) => isActive ? 'transparent' : palette?.[color]?.light}
       variant="caption"
-      fontWeight={500}
+      fontWeight={isActive ? 700 :500}
       py={0.5}
       px={{ xs: 0.5, md: 2 }}
       borderRadius={1.5}

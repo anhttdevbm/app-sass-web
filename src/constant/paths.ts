@@ -61,6 +61,7 @@ export const BILLING_DUPLICATE_PATH = "/billing/duplicate";
 
 //Budget
 export const BUDGET_EXPENSE_EXPORT_PATH = "/budgeting/expense/export/{id}";
+export const BUDGET_INVOICE_EXPORT_PATH = "/budgeting/invoice/export/{id}";
 
 // Landing
 export const LANDING_HOME_PATH = "/landing";

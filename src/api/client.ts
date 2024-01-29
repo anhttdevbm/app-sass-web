@@ -245,6 +245,10 @@ export const saleClient = new RequestClient({
   baseURL: SALE_API_URL,
 });
 
+export const fileClient = new RequestClient({
+  baseURL: UPLOAD_API_URL,
+});
+
 export const budgetExpenseUploadClient = new RequestClient({
   baseURL: BUDGET_UPLOAD_FILE_API_URL,
 });
