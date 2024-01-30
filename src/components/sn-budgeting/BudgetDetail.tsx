@@ -72,11 +72,11 @@ export type TBudgetService = {
   id: string;
   name: string;
   type: string;
-  billingType: string;
+  billType: string;
   unit?: string;
   bookingTracking?: boolean;
   timeTracking?: boolean;
-  estimate?: string;
+  estimate?: string | number;
   isNewService?: boolean;
   desc?: string;
   discount?: number;

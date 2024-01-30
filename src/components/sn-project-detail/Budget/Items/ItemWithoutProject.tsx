@@ -34,7 +34,7 @@ export const ItemWithoutProject = ({
       width: desktopHeaderList[index]?.width || '0px' + "!important",
       minWidth: desktopHeaderList[index]?.minwidth || '0px' + "!important",
       maxWidth: desktopHeaderList[index]?.width || '0px' + "!important",
-    };
+    } as any;
   };
 
   const desktopHeaderList: CellProps[] = useMemo(() => {

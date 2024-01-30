@@ -149,3 +149,8 @@ export enum DocumentFormat {
   CSV = 'csv',
   XLSX = 'xlsx'
 }
+
+export enum BudgetServiceBillable {
+  'BILLABLE' = 'billable',
+  'NON_BILLABLE' = 'non_billable',
+}

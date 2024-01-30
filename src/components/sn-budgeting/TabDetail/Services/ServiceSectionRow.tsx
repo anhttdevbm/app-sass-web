@@ -37,18 +37,33 @@ import _ from "lodash";
 import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
 import { HEADER_HEIGHT } from "layouts/Header";
+import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
 
 type TForm = {
-  data: TBudgetService[];
+  services: TBudgetService[];
+  deletedServices?: TBudgetService[];
 };
 
 type Props = {
   fieldIndex: number;
-  updateValue: (index: number, data: TBudgetService[]) => void;
+  updateValue: (index: number, services: TBudgetService[]) => void;
   errors: TErrors;
-  serviceData: any[];
-  deletedServices: any[];
-  sectionId: string;
+  serviceData: TBudgetService[];
+  deletedServices: string[];
+};
+
+const billingBillable = {
+  label: "Billable",
+  value: BudgetServiceBillable.BILLABLE,
+  color: "success.main",
+  bgcolor: "success.light",
+};
+
+const billingNonBillable = {
+  label: "Non Billable",
+  value: BudgetServiceBillable.NON_BILLABLE,
+  color: "error.main",
+  bgcolor: "error.light",
 };
 
 export const ServiceSectionRow = ({
@@ -56,8 +71,7 @@ export const ServiceSectionRow = ({
   updateValue,
   errors,
   serviceData = [],
-  deletedServices,
-  sectionId = "",
+  deletedServices = [],
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [indexWaitDelete, setIndexWaitDelete] = useState<number | null>(null);
@@ -69,7 +83,7 @@ export const ServiceSectionRow = ({
   const budgetT = useTranslations(NS_BUDGETING);
 
   const { fields, append, remove } = useFieldArray({
-    name: "data",
+    name: "services",
     control,
   });
 
@@ -123,39 +137,25 @@ export const ServiceSectionRow = ({
       width: headerList[index]?.width || "0px" + "!important",
       minWidth: headerList[index]?.minwidth || "0px" + "!important",
       maxWidth: headerList[index]?.width || "0px" + "!important",
-      p: 1
+      p: 1,
     };
-  };
-
-  const billingBillable = {
-    label: "Billable",
-    value: "billable",
-    color: "success.main",
-    bgcolor: "success.light",
-  };
-
-  const billingNonBillable = {
-    label: "Non Billable",
-    value: "non_billable",
-    color: "error.main",
-    bgcolor: "error.light",
   };
 
   useEffect(() => {
     onGetPositions({});
   }, []);
 
-  useEffect(() => {
-    const subscription = watch((value) => {
-      updateValue(fieldIndex, value.data as TBudgetService[]);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
+  // useEffect(() => {
+  //   const subscription = watch((value) => {
+  //     updateValue(fieldIndex, value.services as TBudgetService[]);
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
 
   useEffect(() => {
     if (serviceData.length === 0) return;
     const servicesItems = _.map(serviceData, (service) => {
-      const estimate: number = service.estimate;
+      const estimate: number = Number(service?.estimate) || 0;
       const hour = Math.floor(estimate / 60);
       const minute = estimate - hour * 60;
 
@@ -164,33 +164,31 @@ export const ServiceSectionRow = ({
         id: uuid(),
         serviceId: service.id,
         estimate: dayjs().hour(hour).minute(minute).toString(),
-        billingType: service.billType,
+        billType: service.billType,
         type: service.serviceType,
-      } as any;
+      } as TBudgetService;
     });
 
-    setValue("data", servicesItems);
+    setValue("services", servicesItems);
   }, [serviceData]);
 
   const createEmptyRow = () => {
     append({
       id: uuid(),
       name: "",
-      type: "",
-      billingType: "non_billable",
-      unit: "hour",
-      estimate: "",
-      bookingTracking: false,
-      timeTracking: false,
       desc: "",
+      serviceType: "serviceType",
+      billType: BudgetServiceBillable.BILLABLE,
+      unit: SERVICE_UNIT_OPTIONS.HOUR,
+      estimate: 0,
+      qty: 0,
+      price: 0,
       discount: 0,
       markUp: 0,
-      price: 0,
-      qty: 0,
+      timeTracking: false,
+      bookingTracking: false,
       tolBudget: 0,
-      sectionId: _.get(serviceData, "sectionId", ""),
-      isNewService: true,
-    } as any);
+    } as TBudgetService);
   };
 
   const openConfirmDelete = (index: number) => {
@@ -219,22 +217,22 @@ export const ServiceSectionRow = ({
     index: number,
     type: "bookingTracking" | "timeTracking",
   ) => {
-    setValue(`data.${index}.${type}`, !getValues(`data.${index}.${type}`));
+    setValue(`services.${index}.${type}`, !getValues(`services.${index}.${type}`));
   };
 
   const changeTime = (index: number, time: Dayjs | null) => {
     if (!time) {
-      setValue(`data.${index}.estimate`, "");
+      setValue(`services.${index}.estimate`, "");
       return;
     }
     const hour = time.hour();
     const minute = time.minute();
-    setValue(`data.${index}.estimate`, `${hour}:${minute}`);
+    setValue(`services.${index}.estimate`, `${hour}:${minute}`);
   };
 
   const changeBilling = (billing: string) => {
     const index = anchorEl?.getAttribute("data-index");
-    setValue(`data.${Number(index)}.billingType`, billing);
+    setValue(`services.${Number(index)}.billType`, billing);
     setAnchorEl(null);
   };
 
@@ -268,10 +266,10 @@ export const ServiceSectionRow = ({
           {fields.map((service, index) => {
             const errs = errors[fieldIndex] ?? [];
             const billStatus =
-              watch(`data.${index}.billingType`) === "billable"
+              watch(`services.${index}.billType`) === "billable"
                 ? billingBillable
                 : billingNonBillable;
-            const defautlEstimate = getValues(`data.${index}.estimate`);
+            const defautlEstimate = getValues(`services.${index}.estimate`);
             return (
               <TableRow key={service.id}>
                 <BodyCell sx={getSxCell(0)}>
@@ -280,7 +278,7 @@ export const ServiceSectionRow = ({
                     variant="outlined"
                     fullWidth
                     sx={{
-                      maxWidth: '350px !important',
+                      maxWidth: "350px !important",
                       "& .MuiOutlinedInput-notchedOutline": {
                         ...(hasError(errs, index, "name") && {
                           borderColor: "error.main",
@@ -288,7 +286,7 @@ export const ServiceSectionRow = ({
                       },
                     }}
                     autoComplete="off"
-                    {...register(`data.${index}.name`)}
+                    {...register(`services.${index}.name`)}
                   />
                 </BodyCell>
                 <BodyCell sx={getSxCell(1)}>
@@ -297,17 +295,17 @@ export const ServiceSectionRow = ({
                     fullWidth
                     // options={positionOptions as Option[]}
                     options={[
-                      { label: 'Dev', value: 'dev' },
-                      { label: 'QC', value: 'qc' },
-                      { label: 'BA', value: 'ba' }
+                      { label: "Dev", value: "dev" },
+                      { label: "QC", value: "qc" },
+                      { label: "BA", value: "ba" },
                     ]}
                     onChangeValue={(value) => {
-                      setValue(`data.${index}.type`, String(value));
+                      setValue(`services.${index}.type`, String(value));
                     }}
-                    value={watch(`data.${index}.type`)}
+                    value={watch(`services.${index}.type`)}
                     autoComplete="off"
                     sx={{
-                      minWidth: '160px !important',
+                      minWidth: "160px !important",
                       [`& .MuiInputBase-root`]: {
                         px: 1,
                         backgroundColor: "background.paper",
@@ -366,7 +364,7 @@ export const ServiceSectionRow = ({
                         placement="top"
                         arrow
                         title={`Time tracking is ${
-                          !watch(`data.${index}.timeTracking`)
+                          !watch(`services.${index}.timeTracking`)
                             ? "disable"
                             : "enable"
                         }`}
@@ -376,7 +374,7 @@ export const ServiceSectionRow = ({
                         >
                           <AccessTimeIcon
                             sx={{
-                              color: !watch(`data.${index}.timeTracking`)
+                              color: !watch(`services.${index}.timeTracking`)
                                 ? "grey.300"
                                 : "secondary.main",
                             }}
@@ -389,7 +387,7 @@ export const ServiceSectionRow = ({
                         placement="top"
                         arrow
                         title={`Booking tracking is ${
-                          !watch(`data.${index}.bookingTracking`)
+                          !watch(`services.${index}.bookingTracking`)
                             ? "disable"
                             : "enable"
                         }`}
@@ -401,7 +399,7 @@ export const ServiceSectionRow = ({
                         >
                           <CalendarIcon
                             sx={{
-                              color: !watch(`data.${index}.bookingTracking`)
+                              color: !watch(`services.${index}.bookingTracking`)
                                 ? "grey.300"
                                 : "secondary.main",
                             }}

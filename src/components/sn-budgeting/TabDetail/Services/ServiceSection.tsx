@@ -6,8 +6,14 @@ import PlusIcon from "icons/PlusIcon";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { getMessageErrorByAPI, uuid } from "utils/index";
 import { ServiceSectionRow } from "./ServiceSectionRow";
-import { TErrors, TSectionForm } from "./ServiceUtil";
-import { createRef, useEffect, useImperativeHandle, useState } from "react";
+import { TErrors, TSection } from "./ServiceUtil";
+import {
+  createRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import {
   TBudgetServiceForm,
   useBudgetServiceAdd,
@@ -34,10 +40,21 @@ import {
 } from "components/sn-budgeting/BudgetDetail";
 import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
 import useTheme from "hooks/useTheme";
+import { SERVICE_UNIT_OPTIONS } from "constant/enums";
 
 type Props = {
   sectionsList: TBudgetSection[];
   onCloseEdit?: () => void;
+};
+
+export type TSectionForm = {
+  sections: (TSection & {
+    services: TBudgetService[];
+    sectionId?: string;
+    isNewSection?: boolean;
+    deletedServices?: string[];
+  })[];
+  deletedSections?: string[];
 };
 
 export const serviceSectionRef = createRef<any>();
@@ -59,14 +76,11 @@ export const ServiceSection = ({
 
   const [isOpenConfirm, openConfirm, closeConfirm] = useToggle();
   const [errors, setErrors] = useState<TErrors>({});
-  const [deletedSections, setDeletedSections] = useState<string[]>([]);
   const [indexWaitDelete, setIndexWaitDelete] = useState<number | null>(null);
-  const [deletedServices, setDeletedServices] = useState<any[]>([]);
 
-  const { control, setValue, handleSubmit, getValues } =
-    useForm<TSectionForm>();
+  const { control, setValue, handleSubmit, getValues } = useForm<TSectionForm>();
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: "sections",
     control,
   });
@@ -75,9 +89,9 @@ export const ServiceSection = ({
     const sectionList = _.map(sectionsList, (section) => {
       return {
         id: uuid(),
-        title: section.name,
+        name: section.name,
         sectionId: section.id,
-        data: section.services,
+        services: section.services,
       };
     });
 
@@ -87,12 +101,37 @@ export const ServiceSection = ({
 
   useImperativeHandle(serviceSectionRef, () => ({
     setDeletedServices: (newDeletedServices) => {
-      setDeletedServices(newDeletedServices);
     },
   }));
 
+  const onAddSection = () => {
+    append({
+      id: uuid(),
+      name: "Section " + (fields.length + 1),
+      isNewSection: true,
+      services: [
+        {
+          id: uuid(),
+          name: "",
+          desc: "",
+          serviceType: "serviceType",
+          billType: "billable",
+          unit: SERVICE_UNIT_OPTIONS.HOUR,
+          estimate: 0,
+          qty: 0,
+          price: 0,
+          discount: 0,
+          markUp: 0,
+          timeTracking: false,
+          bookingTracking: false,
+          tolBudget: 0,
+        } as TBudgetService,
+      ],
+    });
+  };
+
   const handleChangeValue = (index: number, data: TBudgetService[]) => {
-    setValue(`sections.${index}.data`, data);
+    setValue(`sections.${index}.services`, data);
     clearTimeout(window["timeoutSubmitService"]);
     window["timeoutSubmitService"] = setTimeout(handleValidateServices, 500);
   };
@@ -112,7 +151,7 @@ export const ServiceSection = ({
         errValidate[sectionIndex] = [];
       }
 
-      section.data.map((item, itemIndex) => {
+      _.map(_.get(section, "services", []), (item, itemIndex) => {
         // validate item name
         const nameTrimed = item.name.trim();
         if (nameTrimed === "") {
@@ -155,62 +194,66 @@ export const ServiceSection = ({
       onAddSnackbar("Please insert required field", "error");
       return;
     }
+    console.log('sections', sections);
 
-    new Promise((resolve) => {
-      const updateSections: any = [];
-      const newSections = _.filter(sections, (section) => {
-        if (!section?.isNewSection) {
-          updateSections.push(section);
-        }
-        return section?.isNewSection;
-      });
+    // new Promise((resolve) => {
+    //   const updateSections: any = [];
+    //   const newSections = _.filter(sections, (section) => {
+    //     if (!section?.isNewSection) {
+    //       updateSections.push(section);
+    //     }
+    //     return section?.isNewSection;
+    //   });
 
-      // add sections
-      if (newSections.length > 0) {
-        new Promise((resolve) => {
-          createSections(newSections);
+    //   console.log("updateSections", updateSections);
+    //   console.log("newSections", newSections);
 
-          return resolve(true);
-        });
-      }
+    //   add sections
+    //   if (newSections.length > 0) {
+    //     new Promise((resolve) => {
+    //       createSections(newSections);
 
-      // update sections
-      new Promise((resolve) => {
-        handleUpdateSections(updateSections);
+    //       return resolve(true);
+    //     });
+    //   }
 
-        return resolve;
-      });
+    //   // update sections
+    //   new Promise((resolve) => {
+    //     handleUpdateSections(updateSections);
 
-      // delete sections
-      if (deletedSections.length > 0) {
-        Promise.all(
-          deletedSections.map((sectionId: string) => {
-            deleteSection(sectionId);
-          }),
-        );
-      }
+    //     return resolve;
+    //   });
 
-      // delete services
-      if (deletedServices.length > 0) {
-        Promise.all(
-          deletedServices.map((serviceId: string) => {
-            deleteService(serviceId);
-          }),
-        );
-      }
+    //   // delete sections
+    //   if (deletedSections.length > 0) {
+    //     Promise.all(
+    //       deletedSections.map((sectionId: string) => {
+    //         deleteSection(sectionId);
+    //       }),
+    //     );
+    //   }
 
-      onAddSnackbar("Update services successful!", "success");
-      onCloseEdit();
+    //   // delete services
+    //   if (deletedServices.length > 0) {
+    //     Promise.all(
+    //       deletedServices.map((serviceId: string) => {
+    //         deleteService(serviceId);
+    //       }),
+    //     );
+    //   }
 
-      return resolve(true);
-    })
-      .then(() => {
-        budgetDetailRef.current?.serviceRefetch();
-        budgetDetailRef.current?.budgetDetailRefetch();
-      })
-      .catch((err) => {
-        onAddSnackbar("Update services failed!", "error");
-      });
+    //   return resolve(true);
+    // })
+    //   .then(() => {
+    //     budgetDetailRef.current?.serviceRefetch();
+    //     budgetDetailRef.current?.budgetDetailRefetch();
+
+    //     onAddSnackbar("Update services successful!", "success");
+    //     onCloseEdit();
+    //   })
+    //   .catch((err) => {
+    //     onAddSnackbar("Update services failed!", "error");
+    //   });
   };
 
   const openConfirmDelete = (index: number) => {
@@ -226,14 +269,15 @@ export const ServiceSection = ({
   const acceptDelete = () => {
     if (indexWaitDelete || indexWaitDelete === 0) {
       const selectedSection = fields[indexWaitDelete];
-      setDeletedSections(
-        _.concat(deletedSections, [selectedSection?.sectionId as string]),
-      );
       const newSections = _.filter(
         fields,
         (section) => section.id !== selectedSection.id,
       );
+      const deletedSections = (getValues("deletedSections") as Array<string>) || [];
+
       setValue("sections", newSections);
+      setValue("deletedSections", _.concat(deletedSections, [sectionsList[indexWaitDelete]?.id]));
+
       setIndexWaitDelete(null);
       cancelConfirmDelete();
     }
@@ -383,11 +427,6 @@ export const ServiceSection = ({
     });
   };
 
-  const resetState = () => {
-    setDeletedSections([]);
-    setDeletedServices([]);
-  };
-
   return (
     <>
       <ScrollViewProvider>
@@ -404,11 +443,10 @@ export const ServiceSection = ({
             <Button
               sx={{ bgcolor: "primary.light", color: "grey.400" }}
               onClick={() => {
-                resetState();
                 onCloseEdit();
               }}
             >
-              Cancel
+              {budgetT('tabService.section.cancelBtnText')}
             </Button>
             <Button
               onClick={handleSaveAllService}
@@ -417,7 +455,7 @@ export const ServiceSection = ({
                 "&:hover": { bgcolor: "primary.light", color: "primary.main" },
               }}
             >
-              Save changes
+              {budgetT('tabService.section.saveBtnText')}
             </Button>
           </Stack>
         </Box>
@@ -450,7 +488,7 @@ export const ServiceSection = ({
                     py={1}
                     sx={{ color: "grey.300" }}
                   >
-                    {section.title}
+                    {section?.name}
                   </Typography>
                   <IconButton onClick={() => openConfirmDelete(index)}>
                     <TrashIcon
@@ -468,9 +506,8 @@ export const ServiceSection = ({
                     fieldIndex={index}
                     updateValue={handleChangeValue}
                     errors={errors}
-                    serviceData={section?.data || []}
-                    sectionId={section.id}
-                    deletedServices={deletedServices}
+                    serviceData={_.get(section, "services", [])}
+                    deletedServices={_.get(section, 'deletedServices', [])}
                   />
                 </Stack>
               </Stack>
@@ -483,14 +520,7 @@ export const ServiceSection = ({
             startIcon={<PlusIcon />}
             size="small"
             sx={{ color: "secondary.main" }}
-            onClick={() =>
-              append({
-                id: uuid(),
-                title: "Section " + (fields.length + 1),
-                isNewSection: true,
-                data: [],
-              } as any)
-            }
+            onClick={onAddSection}
           >
             {budgetT("tabService.section.addSection")}
           </Button>

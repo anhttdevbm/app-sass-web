@@ -123,6 +123,8 @@ export type BudgetingDictionary = {
       description: string;
       addSection: string;
       addItem: string;
+      cancelBtnText: string;
+      saveBtnText: string;
     };
   };
   dialog: {

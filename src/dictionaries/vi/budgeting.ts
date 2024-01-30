@@ -125,6 +125,8 @@ export const BudgetingLang: BudgetingDictionary = {
             estimate: "Ước lượng",
             addSection: 'Thêm dịch vụ',
             addItem: 'Thêm mục',
+            cancelBtnText: "Hủy",
+            saveBtnText: "Lưu thay đổi"
         }
     },
     dialog: {
