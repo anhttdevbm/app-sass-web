@@ -13,7 +13,17 @@ export const getPositions = async (queries: BaseQueries) => {
   ) as BaseQueries;
 
   try {
-    const response = await client.get(Endpoint.POSITIONS_ALL, queries, {
+    let query = queries?.query;
+
+    query = query?.replace("eq(name", "like(name");
+    query = query?.replace("eq(created_time", "gte(created_time");
+    
+    const newqueries = {
+      ...queries,
+      query: query
+    };
+    
+    const response = await client.get(Endpoint.POSITIONS_ALL, newqueries, {
       baseURL: COMPANY_API_URL,
     });
 

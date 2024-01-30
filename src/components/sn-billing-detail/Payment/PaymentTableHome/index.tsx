@@ -55,22 +55,7 @@ const PaymentTableTop = (props: IProps) => {
             {billingT("detail.form.payment.table.leftToPay")}
           </Text>
         ),
-      },
-      {
-        value: (
-          <Text variant={"body2"} sx={{ color: "#fff" }}>
-            {billingT("detail.form.payment.table.paid")}
-          </Text>
-        ),
         align: "left",
-        key: "paid",
-      },
-      {
-        value: (
-          <Text variant={"body2"} sx={{ color: "#fff" }}>
-            {billingT("detail.form.payment.table.leftToPay")}
-          </Text>
-        ),
       },
     ],
     [billingT],
@@ -107,22 +92,7 @@ const PaymentTableTop = (props: IProps) => {
             {billingT("detail.form.payment.table.leftToPay")}
           </Text>
         ),
-      },
-      {
-        value: (
-          <Text variant={"body2"} sx={{ color: "#fff" }}>
-            {billingT("detail.form.payment.table.paid")}
-          </Text>
-        ),
         align: "left",
-        key: "paid",
-      },
-      {
-        value: (
-          <Text variant={"body2"} sx={{ color: "#fff" }}>
-            {billingT("detail.form.payment.table.leftToPay")}
-          </Text>
-        ),
       },
     ],
     [billingT],
@@ -172,12 +142,9 @@ const PaymentTableTop = (props: IProps) => {
             />
           </BodyCell> */}
           {isMdSmaller ? (
-            <MobileContentCell />
+            <MobileContentCell item={item} />
           ) : (
-            <DesktopCells
-              // item={item}
-              order={0}
-            />
+            <DesktopCells item={item} order={0} />
           )}
           {/* <BodyCell align="left" sx={{ px: { xs: 0.5, md: 2 } }}>
             <IconButton

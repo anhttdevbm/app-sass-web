@@ -54,11 +54,7 @@ const Actions = () => {
   };
 
   const onSearch = () => {
-    const q = { ...queries, fullname: queries["email"] };
-    const path = getPath(pathname, q);
-    console.log("path: ", path);
-    console.log("queries: ", queries);
-
+    const path = getPath(pathname, queries);
     push(path);
     onGetPositions(queries);
   };
@@ -101,9 +97,9 @@ const Actions = () => {
             placeholder={commonT("searchBy", {
               name: companyT("position.key"),
             })}
-            name="position.name"
+            name="name"
             onChange={onChangeQueries}
-            value={queries?.["position.name"]}
+            value={queries?.["name"]}
             onEnter={(name, value) => {
               onChangeQueries(name, value);
               onSearch();
@@ -134,9 +130,9 @@ const Actions = () => {
 
           <Date
             label={commonT("form.title.startDate")}
-            name="position.start_date"
+            name="created_time"
             onChange={onChangeQueries}
-            value={queries?.["position.start_date"]}
+            value={queries?.["created_time"]}
             format={DATE_FORMAT_HYPHEN}
             iconProps={{
               sx: { fontSize: 16 },

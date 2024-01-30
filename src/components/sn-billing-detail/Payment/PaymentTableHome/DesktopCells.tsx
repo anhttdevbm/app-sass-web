@@ -11,7 +11,7 @@ import { Billing, Budgets } from "store/billing/reducer";
 import { formatDate, formatNumber, getPath } from "utils/index";
 
 type DesktopCellsProps = {
-  item?: Budgets;
+  item?: Billing;
   order: number;
 };
 
@@ -22,30 +22,23 @@ const DesktopCells = (props: DesktopCellsProps) => {
   return (
     <>
       {/* <BodyCell align="center">{order}</BodyCell> */}
+      <BodyCell align="left">{formatDate(item?.dueDate)}</BodyCell>
+
       <BodyCell align="left">
-        <Text
-          variant="body2"
-          color="#1BC5BD"
-          fontWeight={600}
-          lineHeight={1.28}
-          // sx={{ "&:hover": { color: "primary.main" } }}
-        >
-          {item?.name}
-        </Text>
-      </BodyCell>
-
-      <BodyCell align="left" sx={{ paddingLeft: 0 }}>
-        {formatDate(item?.start_date) + " - " + formatDate(item?.end_date)}
-      </BodyCell>
-
-      <BodyCell align="center">
-        {formatNumber(item?.revenue, {
+        {formatNumber(item?.amount, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
-      <BodyCell align="center">
-        {formatNumber(item?.revenuePJ, {
+
+      <BodyCell align="left">
+        {formatNumber(item?.amount, {
+          prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+          numberOfFixed: 2,
+        })}
+      </BodyCell>
+      <BodyCell align="left">
+        {formatNumber(item?.amount_unpaid, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}

@@ -71,6 +71,10 @@ export interface ProjectType {
   created_by: User;
 }
 
+interface Avatar {
+  link: string;
+}
+
 export interface Company {
   id: string;
   code: string;
@@ -93,7 +97,7 @@ export interface Company {
   tax_code: string;
 
   owner?: User;
-
+  avatar?: Avatar; 
   status: PayStatus;
 
   account_paid?: {

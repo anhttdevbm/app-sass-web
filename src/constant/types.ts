@@ -57,6 +57,7 @@ export type ErrorResponse = {
 export interface BaseQueries {
   pageIndex?: number;
   pageSize?: number;
+  query?: string;
 }
 
 export interface BaseQueries_Feedback {

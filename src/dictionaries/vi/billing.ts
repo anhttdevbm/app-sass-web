@@ -216,9 +216,11 @@ export const BillingLang: BillingDictionary = {
         title: {
           payments: "Thanh toán",
           editPayment: "Chỉnh sửa thông tin thanh toán",
+          addPayment: "Thêm mới",
           amount: "Số tiền",
           note: "Ghi chú",
           paidOn: "Ngày sửa",
+          writeOff: "Ghi nợ",
         },
       },
       top: {

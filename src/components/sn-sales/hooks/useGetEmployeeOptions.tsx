@@ -24,7 +24,7 @@ const useGetEmployeeOptions = () => {
       pageSize: 20,
       email: value as string,
       fullname: value as string,
-      searchType: value ? "or" : undefined,
+      // searchType: value ? "or" : undefined,
     });
   };
 

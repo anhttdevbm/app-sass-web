@@ -43,6 +43,34 @@ export type BillingDataExport = {
   bill?: [];
 };
 
+export type BillingDataMark = {
+  mail_status?: string;
+};
+
+export type BillPaymentData = {
+  bill_id?: string;
+  status?: string;
+  amount?: number;
+  note?: string;
+  id?: string;
+  date?: string;
+};
+
+export type BillTagData = {
+  tag?: string;
+};
+
+export type PaymentData = {
+  amount?: number;
+  bill_id?: string;
+  date?: string;
+  id?: string;
+  note?: string;
+  overdue?: string;
+  status?: string;
+  _id?: string;
+};
+
 export const getBillingList = createAsyncThunk(
   "Billing/getBillingList",
   async (queries: GetBillingListQueries) => {
@@ -370,6 +398,177 @@ export const addUserToBilling = createAsyncThunk(
       const response = await client.put(
         Endpoint.ADD_USER_BILL,
         { id, userId },
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const markAsSendBilling = createAsyncThunk(
+  "Billing/markAsSendBilling",
+  async ({ id, data }: { id: string; data: BillingDataMark }) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.CHANGE_BILL, { id }),
+        data,
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      return response.data;
+
+      // throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+export const deleteBilling = createAsyncThunk(
+  "Billing/deleteBilling",
+  async ({ id }: { id: string }) => {
+    try {
+      const response = await client.delete(
+        StringFormat(Endpoint.CHANGE_BILL, { id }),
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getTags = createAsyncThunk("Billing/getTags", async () => {
+  try {
+    const response = await client.get(Endpoint.TAG, {
+      baseURL: BILLING_API_URL,
+    });
+
+    if (response?.status === HttpStatusCode.OK) {
+      return response.data;
+    }
+    throw AN_ERROR_TRY_AGAIN;
+  } catch (error) {
+    throw error;
+  }
+});
+
+export const saveTag = createAsyncThunk("Billing/saveTag", async () => {
+  try {
+    const response = await client.post(
+      Endpoint.TAG,
+      {},
+      {
+        baseURL: BILLING_API_URL,
+      },
+    );
+
+    if (response?.status === HttpStatusCode.OK) {
+      return response.data;
+    }
+    throw AN_ERROR_TRY_AGAIN;
+  } catch (error) {
+    throw error;
+  }
+});
+
+export const getPaymentByBillId = createAsyncThunk(
+  "Billing/getPaymentByBillId",
+  async ({ id }: { id: string }) => {
+    try {
+      const response = await client.get(
+        StringFormat(Endpoint.CUSTOM_PAYMENT, { id }),
+        {},
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      // if (response?.status === HttpStatusCode.OK) {
+      return response.data;
+      // }
+      // throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const addPayment = createAsyncThunk(
+  "Billing/addPayment",
+  async ({ data }: { data: BillPaymentData }) => {
+    try {
+      const response = await client.post(Endpoint.PAYMENT_BILL, data, {
+        baseURL: BILLING_API_URL,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updatePayment = createAsyncThunk(
+  "Billing/updatePayment",
+  async ({ id, data }: { id: string; data: BillPaymentData }) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.CUSTOM_PAYMENT, { id }),
+        data,
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deletePayment = createAsyncThunk(
+  "Billing/deletePayment",
+  async ({ id }: { id: string }) => {
+    try {
+      const response = await client.delete(
+        StringFormat(Endpoint.CUSTOM_PAYMENT, { id }),
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateTagBill = createAsyncThunk(
+  "Billing/updateTagBill",
+  async ({ id, data }: { id: string; data: BillTagData }) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.UPDATE_BILL_TAG, { id }),
+        data,
         {
           baseURL: BILLING_API_URL,
         },
