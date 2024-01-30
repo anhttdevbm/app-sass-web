@@ -30,14 +30,14 @@ import {
 import {
   TBudgetSection,
   TBudgetService,
+  budgetDetailRef,
 } from "components/sn-budgeting/BudgetDetail";
 import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import useTheme from "hooks/useTheme";
 
 type Props = {
   sectionsList: TBudgetSection[];
   onCloseEdit?: () => void;
-  refetch?: () => void;
 };
 
 export const serviceSectionRef = createRef<any>();
@@ -45,10 +45,10 @@ export const serviceSectionRef = createRef<any>();
 export const ServiceSection = ({
   onCloseEdit = () => {},
   sectionsList = [],
-  refetch = () => {},
 }: Props) => {
   const { id: budgetId } = useParams();
   const { onAddSnackbar } = useSnackbar();
+  const { isDarkMode } = useTheme();
 
   const commonT = useTranslations(NS_COMMON);
   const budgetT = useTranslations(NS_BUDGETING);
@@ -82,8 +82,8 @@ export const ServiceSection = ({
     });
 
     setValue("sections", sectionList);
-    refetch();
-  }, [sectionsList]);
+    budgetDetailRef.current?.serviceRefetch();
+  }, [JSON.stringify(sectionsList)]);
 
   useImperativeHandle(serviceSectionRef, () => ({
     setDeletedServices: (newDeletedServices) => {
@@ -156,7 +156,7 @@ export const ServiceSection = ({
       return;
     }
 
-    try {
+    new Promise((resolve) => {
       const updateSections: any = [];
       const newSections = _.filter(sections, (section) => {
         if (!section?.isNewSection) {
@@ -165,33 +165,52 @@ export const ServiceSection = ({
         return section?.isNewSection;
       });
 
-      // update sections
-      await handleUpdateSections(updateSections);
-
       // add sections
       if (newSections.length > 0) {
-        await createSections(newSections);
+        new Promise((resolve) => {
+          createSections(newSections);
+
+          return resolve(true);
+        });
       }
+
+      // update sections
+      new Promise((resolve) => {
+        handleUpdateSections(updateSections);
+
+        return resolve;
+      });
 
       // delete sections
       if (deletedSections.length > 0) {
-        deletedSections.map(async (sectionId: string) => {
-          await deleteSection(sectionId);
-        });
+        Promise.all(
+          deletedSections.map((sectionId: string) => {
+            deleteSection(sectionId);
+          }),
+        );
       }
 
       // delete services
       if (deletedServices.length > 0) {
-        deletedServices.map(async (serviceId: string) => {
-          await deleteService(serviceId);
-        });
+        Promise.all(
+          deletedServices.map((serviceId: string) => {
+            deleteService(serviceId);
+          }),
+        );
       }
 
       onAddSnackbar("Update services successful!", "success");
       onCloseEdit();
-    } catch (err) {
-      onAddSnackbar("Update services failed!", "error");
-    }
+
+      return resolve(true);
+    })
+      .then(() => {
+        budgetDetailRef.current?.serviceRefetch();
+        budgetDetailRef.current?.budgetDetailRefetch();
+      })
+      .catch((err) => {
+        onAddSnackbar("Update services failed!", "error");
+      });
   };
 
   const openConfirmDelete = (index: number) => {
@@ -220,7 +239,7 @@ export const ServiceSection = ({
     }
   };
 
-  const createSections = async (newSections) => {
+  const createSections = (newSections) => {
     const form: TBudgetServiceForm = {
       budget_id: String(budgetId),
       start_date: dayjs().format("YYYY-MM-DD"),
@@ -340,11 +359,10 @@ export const ServiceSection = ({
         };
       });
 
-      _.forEach(
-        sectionUpdateList,
-        (sectionUpdate: TBudgetServiceUpdateForm) => {
+      await Promise.all(
+        _.map(sectionUpdateList, (sectionUpdate: TBudgetServiceUpdateForm) => {
           budgetServiceUpdate.mutateAsync(sectionUpdate, {});
-        },
+        }),
       );
     } catch (error) {
       onAddSnackbar("Success", "success");
@@ -365,8 +383,6 @@ export const ServiceSection = ({
     });
   };
 
-  const onDragEnd = () => {};
-
   const resetState = () => {
     setDeletedSections([]);
     setDeletedServices([]);
@@ -375,78 +391,79 @@ export const ServiceSection = ({
   return (
     <>
       <ScrollViewProvider>
-        <Stack direction="row" gap={2} justifyContent="end" p="15px">
-          <Button
-            sx={{ bgcolor: "primary.light", color: "grey.400" }}
-            onClick={() => {
-              resetState();
-              onCloseEdit();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveAllService}
-            sx={{
-              bgcolor: "primary.main",
-              "&:hover": { bgcolor: "primary.light", color: "primary.main" },
-            }}
-          >
-            Save changes
-          </Button>
-        </Stack>
+        <Box
+          sx={{
+            position: "sticky !important",
+            top: "13%",
+            background: isDarkMode ? "#313130" : "white",
+            py: 2,
+            zIndex: 10,
+          }}
+        >
+          <Stack direction="row" gap={2} justifyContent="end" p="15px">
+            <Button
+              sx={{ bgcolor: "primary.light", color: "grey.400" }}
+              onClick={() => {
+                resetState();
+                onCloseEdit();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveAllService}
+              sx={{
+                bgcolor: "primary.main",
+                "&:hover": { bgcolor: "primary.light", color: "primary.main" },
+              }}
+            >
+              Save changes
+            </Button>
+          </Stack>
+        </Box>
 
-        <Box>
-          {fields.map((section, index) => (
-            <Box key={section.id}>
+        <ScrollViewProvider>
+          <Stack
+            sx={{
+              height: "max-content",
+            }}
+          >
+            {fields.map((section, index) => (
               <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography
-                  component="h3"
-                  fontSize={24}
-                  fontWeight="bold"
-                  px={2}
-                  py={1}
-                  sx={{ color: "grey.300" }}
-                >
-                  {section.title}
-                </Typography>
-                <IconButton onClick={() => openConfirmDelete(index)}>
-                  <TrashIcon
-                    fontSize="medium"
-                    sx={{ color: "error.main", cursor: "pointer" }}
-                  />
-                </IconButton>
-              </Stack>
-              <Stack
+                key={section.id}
                 sx={{
-                  height: "max-content",
+                  boxSizing: "border-box",
+                  py: 2,
+                  width: "100%",
                 }}
               >
-                {/* <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable
-                    type="section"
-                    direction="vertical"
-                    droppableId={`sectionList`}
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Typography
+                    component="h3"
+                    fontSize={24}
+                    fontWeight="bold"
+                    px={2}
+                    py={1}
+                    sx={{ color: "grey.300" }}
                   >
-                    {(provided) => (
-                      <Box ref={provided.innerRef} {...provided.droppableProps}>
-                        <ServiceSectionRow
-                          fieldIndex={index}
-                          updateValue={handleChangeValue}
-                          errors={errors}
-                          serviceData={section?.data || []}
-                          sectionId={section.id}
-                          deletedServices={deletedServices}
-                        />
-                      </Box>
-                    )}
-                  </Droppable>
-                </DragDropContext> */}
-                <Box>
+                    {section.title}
+                  </Typography>
+                  <IconButton onClick={() => openConfirmDelete(index)}>
+                    <TrashIcon
+                      fontSize="medium"
+                      sx={{ color: "error.main", cursor: "pointer" }}
+                    />
+                  </IconButton>
+                </Stack>
+                <Stack
+                  sx={{
+                    height: "max-content",
+                  }}
+                >
                   <ServiceSectionRow
                     fieldIndex={index}
                     updateValue={handleChangeValue}
@@ -455,11 +472,11 @@ export const ServiceSection = ({
                     sectionId={section.id}
                     deletedServices={deletedServices}
                   />
-                </Box>
+                </Stack>
               </Stack>
-            </Box>
-          ))}
-        </Box>
+            ))}
+          </Stack>
+        </ScrollViewProvider>
 
         <Box>
           <Button

@@ -14,7 +14,7 @@ import {
   popoverClasses,
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
-import { BodyCell, CellProps, TableLayout } from "components/Table";
+import { BodyCell, CellProps } from "components/Table";
 import { Button, Select, Text } from "components/shared";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import CalendarIcon from "icons/CalendarIcon";
@@ -34,9 +34,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { TError, TErrors } from "./ServiceUtil";
 import { serviceSectionRef } from "./ServiceSection";
 import _ from "lodash";
-import { Option } from "constant/types";
 import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
-import { Draggable } from "react-beautiful-dnd";
+import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
+import { HEADER_HEIGHT } from "layouts/Header";
 
 type TForm = {
   data: TBudgetService[];
@@ -77,39 +77,55 @@ export const ServiceSectionRow = ({
     {
       value: budgetT("tabService.section.serviceName"),
       align: "center",
-      width: "25%",
+      minwidth: 250,
+      width: 250,
     },
     {
       value: budgetT("tabService.section.serviceType"),
       align: "center",
-      width: "15%",
+      minwidth: 200,
+      width: 200,
     },
     {
       value: budgetT("tabService.section.billingType"),
       align: "center",
-      width: "15%",
+      minwidth: 200,
+      width: 200,
     },
     {
       value: budgetT("tabService.section.unit"),
       align: "center",
-      width: "15%",
+      minwidth: 200,
+      width: 200,
     },
     {
       value: budgetT("tabService.section.tracking"),
       align: "center",
-      width: "10%",
+      minwidth: 160,
+      width: 160,
     },
     {
       value: budgetT("tabService.section.estimate"),
       align: "center",
-      width: "15%",
+      minwidth: 200,
+      width: 200,
     },
     {
       value: "",
       align: "center",
-      width: "5%",
+      minwidth: 56,
+      width: 56,
     },
   ];
+
+  const getSxCell = (index: number) => {
+    return {
+      width: headerList[index]?.width || "0px" + "!important",
+      minWidth: headerList[index]?.minwidth || "0px" + "!important",
+      maxWidth: headerList[index]?.width || "0px" + "!important",
+      p: 1
+    };
+  };
 
   const billingBillable = {
     label: "Billable",
@@ -230,212 +246,6 @@ export const ServiceSectionRow = ({
 
   return (
     <>
-      {/* <Draggable draggableId={sectionId} index={fieldIndex}>
-        {(provided) => (
-          <Stack
-            py={2}
-            sx={{
-              boxSizing: "border-box",
-            }}
-            width={"100%"}
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-          >
-            <TableLayout
-              headerList={headerList}
-              noData={false}
-              titleColor="grey.300"
-              position="relative"
-              overflow="visible"
-            >
-              {fields.map((service, index) => {
-                const errs = errors[fieldIndex] ?? [];
-                const billStatus =
-                  watch(`data.${index}.billingType`) === "billable"
-                    ? billingBillable
-                    : billingNonBillable;
-                const defautlEstimate = getValues(`data.${index}.estimate`);
-                return (
-                  <TableRow key={service.id}>
-                    <BodyCell sx={{ p: 1, minWidth: 400 }}>
-                      <TextField
-                        size="small"
-                        variant="outlined"
-                        fullWidth
-                        sx={{
-                          width: "100%",
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            ...(hasError(errs, index, "name") && {
-                              borderColor: "error.main",
-                            }),
-                          },
-                        }}
-                        autoComplete="off"
-                        {...register(`data.${index}.name`)}
-                      />
-                    </BodyCell>
-                    <BodyCell sx={{ p: 1 }}>
-                      <Select
-                        size="small"
-                        options={positionOptions as Option[]}
-                        onChangeValue={(value) => {
-                          setValue(`data.${index}.type`, String(value));
-                        }}
-                        value={watch(`data.${index}.type`)}
-                        autoComplete="off"
-                        sx={{
-                          width: "100%",
-                          [`& .MuiInputBase-root`]: {
-                            px: 1,
-                            backgroundColor: "background.paper",
-                            pl: 0,
-                            gap: 1,
-                          },
-                          "& .MuiFormHelperText-root": {
-                            display: "none",
-                          },
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            ...(hasError(errs, index, "type") && {
-                              borderColor: "error.main",
-                            }),
-                          },
-                        }}
-                      />
-                    </BodyCell>
-                    <BodyCell sx={{ p: 1 }}>
-                      <Stack alignItems="center">
-                        <Button
-                          size="small"
-                          data-index={index}
-                          onClick={(e) => {
-                            if (Boolean(anchorEl)) {
-                              setAnchorEl(null);
-                            } else {
-                              setAnchorEl(e.currentTarget);
-                            }
-                          }}
-                          sx={{
-                            bgcolor: billStatus.bgcolor,
-                            color: billStatus.color,
-                            "&:hover": { bgcolor: billStatus.bgcolor },
-                          }}
-                        >
-                          {billStatus.label}
-                        </Button>
-                      </Stack>
-                    </BodyCell>
-                    <BodyCell sx={{ p: 1 }}>
-                      <TextField
-                        size="small"
-                        id="unit"
-                        variant="outlined"
-                        fullWidth
-                        value="hour"
-                        disabled
-                        inputProps={{ sx: { textAlign: "center" } }}
-                        autoComplete="off"
-                      />
-                    </BodyCell>
-                    <BodyCell sx={{ p: 1 }}>
-                      <Stack gap={1} direction="row" justifyContent="center">
-                        <Box sx={{ cursor: "pointer" }}>
-                          <Tooltip
-                            placement="top"
-                            arrow
-                            title={`Time tracking is ${
-                              !watch(`data.${index}.timeTracking`)
-                                ? "disable"
-                                : "enable"
-                            }`}
-                          >
-                            <IconButton
-                              onClick={() =>
-                                changeTracking(index, "timeTracking")
-                              }
-                            >
-                              <AccessTimeIcon
-                                sx={{
-                                  color: !watch(`data.${index}.timeTracking`)
-                                    ? "grey.300"
-                                    : "secondary.main",
-                                }}
-                              />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                        <Box sx={{ cursor: "pointer" }}>
-                          <Tooltip
-                            placement="top"
-                            arrow
-                            title={`Booking tracking is ${
-                              !watch(`data.${index}.bookingTracking`)
-                                ? "disable"
-                                : "enable"
-                            }`}
-                          >
-                            <IconButton
-                              onClick={() =>
-                                changeTracking(index, "bookingTracking")
-                              }
-                            >
-                              <CalendarIcon
-                                sx={{
-                                  color: !watch(`data.${index}.bookingTracking`)
-                                    ? "grey.300"
-                                    : "secondary.main",
-                                }}
-                              />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </Stack>
-                    </BodyCell>
-                    <BodyCell sx={{ p: 1 }}>
-                      <TimePicker
-                        slotProps={{ textField: { size: "small" } }}
-                        views={["hours", "minutes"]}
-                        format="HH:mm"
-                        defaultValue={
-                          defautlEstimate ? dayjs(defautlEstimate) : null
-                        }
-                        sx={{
-                          "& .MuiInputBase-input": { textAlign: "center" },
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            ...(hasError(errs, index, "estimate") && {
-                              borderColor: "error.main",
-                            }),
-                          },
-                        }}
-                        onChange={(time: Dayjs | null) =>
-                          changeTime(index, time)
-                        }
-                      />
-                    </BodyCell>
-                    <BodyCell>
-                      <TrashIcon
-                        fontSize="medium"
-                        sx={{ color: "error.main", cursor: "pointer" }}
-                        onClick={() => openConfirmDelete(index)}
-                      />
-                    </BodyCell>
-                  </TableRow>
-                );
-              })}
-            </TableLayout>
-            <Box pl={3} mt={1}>
-              <Button
-                size="small"
-                startIcon={<PlusIcon />}
-                sx={{ color: "secondary.main" }}
-                onClick={createEmptyRow}
-              >
-                New item
-              </Button>
-            </Box>
-          </Stack>
-        )}
-      </Draggable> */}
-
       <Stack
         py={2}
         sx={{
@@ -443,12 +253,17 @@ export const ServiceSectionRow = ({
         }}
         width={"100%"}
       >
-        <TableLayout
+        <TableLayoutWithScroll
           headerList={headerList}
           noData={false}
           titleColor="grey.300"
           position="relative"
-          overflow="visible"
+          containerHeaderProps={{
+            sx: {
+              maxHeight: { xs: 0, md: undefined },
+              minHeight: { xs: 0, md: HEADER_HEIGHT },
+            },
+          }}
         >
           {fields.map((service, index) => {
             const errs = errors[fieldIndex] ?? [];
@@ -459,7 +274,7 @@ export const ServiceSectionRow = ({
             const defautlEstimate = getValues(`data.${index}.estimate`);
             return (
               <TableRow key={service.id}>
-                <BodyCell sx={{ p: 1, minWidth: 400 }}>
+                <BodyCell sx={getSxCell(0)}>
                   <TextField
                     size="small"
                     variant="outlined"
@@ -476,11 +291,16 @@ export const ServiceSectionRow = ({
                     {...register(`data.${index}.name`)}
                   />
                 </BodyCell>
-                <BodyCell sx={{ p: 1 }}>
+                <BodyCell sx={getSxCell(1)}>
                   <Select
                     size="small"
                     fullWidth
-                    options={positionOptions as Option[]}
+                    // options={positionOptions as Option[]}
+                    options={[
+                      { label: 'Dev', value: 'dev' },
+                      { label: 'QC', value: 'qc' },
+                      { label: 'BA', value: 'ba' }
+                    ]}
                     onChangeValue={(value) => {
                       setValue(`data.${index}.type`, String(value));
                     }}
@@ -505,7 +325,7 @@ export const ServiceSectionRow = ({
                     }}
                   />
                 </BodyCell>
-                <BodyCell sx={{ p: 1 }}>
+                <BodyCell sx={getSxCell(2)}>
                   <Stack alignItems="center">
                     <Button
                       size="small"
@@ -527,7 +347,7 @@ export const ServiceSectionRow = ({
                     </Button>
                   </Stack>
                 </BodyCell>
-                <BodyCell sx={{ p: 1 }}>
+                <BodyCell sx={getSxCell(3)}>
                   <TextField
                     size="small"
                     id="unit"
@@ -539,7 +359,7 @@ export const ServiceSectionRow = ({
                     autoComplete="off"
                   />
                 </BodyCell>
-                <BodyCell sx={{ p: 1 }}>
+                <BodyCell sx={getSxCell(4)}>
                   <Stack gap={1} direction="row" justifyContent="center">
                     <Box sx={{ cursor: "pointer" }}>
                       <Tooltip
@@ -591,7 +411,7 @@ export const ServiceSectionRow = ({
                     </Box>
                   </Stack>
                 </BodyCell>
-                <BodyCell sx={{ p: 1 }}>
+                <BodyCell sx={getSxCell(5)}>
                   <TimePicker
                     slotProps={{ textField: { size: "small" } }}
                     views={["hours", "minutes"]}
@@ -623,7 +443,7 @@ export const ServiceSectionRow = ({
               </TableRow>
             );
           })}
-        </TableLayout>
+        </TableLayoutWithScroll>
         <Box pl={3} mt={1}>
           <Button
             size="small"

@@ -2,19 +2,20 @@
 import { MenuList, Stack } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { Select } from "components/shared";
-import { NS_BUDGETING, NS_COMMON } from "constant/index";
+import { NS_BUDGETING } from "constant/index";
 import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import InputLabelWrapper from "../InputLabelWrapper";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { DocumentFormat } from "constant/enums";
-import { TBudgetExpense, useBudgetExpenseExport } from "queries/budgeting/expense";
 import _ from "lodash";
-import { clearNullField, getMessageErrorByAPI, getPath } from "utils/index";
-import { useSnackbar } from "store/app/selectors";
+import { clearNullField, getPath } from "utils/index";
 import { useRouter } from "next-intl/client";
 import { BUDGET_EXPENSE_EXPORT_PATH } from "constant/paths";
+import { TBudgetExpense } from "store/expense/actions";
+import { useBudgetExpense } from "store/expense/selectors";
+import { useParams } from "next/navigation";
 
 interface Props {
   open: boolean;
@@ -23,16 +24,16 @@ interface Props {
 }
 
 export interface ExportFormData {
-  documentFormat: string;
+  format: string;
   orientation: string;
   pageSize: string;
   includeAttachments: string;
 }
 
 const defaultValues: ExportFormData = {
-  documentFormat: "pdf",
-  orientation: "portrait",
-  pageSize: "A4",
+  format: DocumentFormat.PDF,
+  orientation: "",
+  pageSize: "",
   includeAttachments: "no",
 };
 
@@ -42,11 +43,11 @@ export const ModalExportExpense = ({
   selectedExpenses,
 }: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
-  const commonT = useTranslations(NS_COMMON);
 
-  const budgetExpenseExport = useBudgetExpenseExport();
+  const { id } = useParams();
 
-  const { onAddSnackbar } = useSnackbar();
+  const { onSetSelectedExpenses } = useBudgetExpense();
+
   const { push } = useRouter();
 
   const { control, handleSubmit, watch } = useForm<ExportFormData>({
@@ -57,7 +58,7 @@ export const ModalExportExpense = ({
           .string()
           .nullable()
           .test("invalid orientation", (value, { path, createError }) => {
-            if (!value && watch("documentFormat") === DocumentFormat.PDF) {
+            if (!value && watch("format") === DocumentFormat.PDF) {
               return createError({
                 path,
                 message: "Please select an orientation",
@@ -70,7 +71,7 @@ export const ModalExportExpense = ({
           .string()
           .nullable()
           .test("invalid pageSize", (value, { path, createError }) => {
-            if (!value && watch("documentFormat") === DocumentFormat.PDF) {
+            if (!value && watch("format") === DocumentFormat.PDF) {
               return createError({
                 path,
                 message: "Please select an page size",
@@ -84,22 +85,20 @@ export const ModalExportExpense = ({
   });
 
   const onSubmit = (data: ExportFormData) => {
-    push(getPath(BUDGET_EXPENSE_EXPORT_PATH, clearNullField(data), { id: _.get(_.first(selectedExpenses), 'id') || "" }));
-
-    // budgetExpenseExport.mutateAsync(
-    //   {
-    //     expenseId: _.get(_.first(selectedExpenses), 'id') || "",
-    //     documentData: data,
-    //   },
-    //   {
-    //     onSuccess: (res: any) => {
-    //       console.log('res', res);
-    //     },
-    //     onError: (err: any) => {
-    //       onAddSnackbar(getMessageErrorByAPI(err, commonT), "error");
-    //     }
-    //   },
-    // );
+    onSetSelectedExpenses(selectedExpenses);
+    push(
+      getPath(
+        BUDGET_EXPENSE_EXPORT_PATH,
+        clearNullField({ 
+          format: _.toLower(_.get(data, 'format', '')),
+          orientation: _.toLower(_.get(data, 'orientation', '')),
+          includeAttachments: _.toLower(_.get(data, 'includeAttachments', 'no')),
+          pagesize: _.get(data, 'pageSize', '') }),
+        {
+          id: id?.toString() || "",
+        },
+      ),
+    );
   };
 
   return (
@@ -118,12 +117,12 @@ export const ModalExportExpense = ({
         <Stack overflow="auto">
           <MenuList component={Stack} spacing={2}>
             <InputLabelWrapper
-              label={budgetT(`exportFile.documentFormat`)}
+              label={budgetT(`exportFile.format`)}
               sx={{ width: "100%" }}
             >
               <Controller
                 control={control}
-                name="documentFormat"
+                name="format"
                 render={({ field, fieldState: { error } }) => (
                   <Select
                     autoComplete="off"
