@@ -14,6 +14,9 @@ import PaymentTable from "./PaymentTable";
 import { useBillings } from "store/billing/selectors";
 import { useParams } from "next/navigation";
 import { PaymentData } from "store/billing/actions";
+import ProgressBar from "@ramonak/react-progress-bar";
+import "../Payment/PaymentTableHome/style.css";
+import zIndex from "@mui/material/styles/zIndex";
 
 type TabProps = {
   title: string;
@@ -68,39 +71,82 @@ const TabPayment = (props: TabProps) => {
     <Stack mt={6}>
       <Stack gap={2} pb={2} pl={2}>
         <Grid container spacing={2}>
-          <Grid md={8} sx={{ borderRadius: "5px 0px 0px 5px" }}>
+          <Grid xs={12} md={8} sx={{ borderRadius: "5px 0px 0px 5px" }}>
             <PaymentTableHome item={item} />
           </Grid>
           <Grid
             container
+            xs={12}
             md={4}
             sx={{
-              background: "#1BC5BD",
+              // background: "#1BC5BD",
               textAlign: "center",
               alignItems: "center",
-              borderRadius: "0px 5px 5px 0px",
+              // borderRadius: "0px 5px 5px 0px",
               height: 40,
               zIndex: 2,
               position: "relative",
               right: "2px",
+              width: "100%",
             }}
           >
-            <Grid md={6}>
-              <Text variant={"body2"} color={"#fff"}>
-                {billingT("detail.form.payment.table.paid")}
+            <ProgressBar
+              completed={50}
+              width="100%"
+              height="40px"
+              borderRadius="0px 5px 5px 0px"
+              baseBgColor="#e95d5d"
+              bgColor="#1BC5BD"
+              labelAlignment="left"
+              className="wrapper"
+              customLabel={billingT("detail.form.payment.table.paid")}
+              // barContainerClassName=""
+              // completedClassName=""
+              customLabelStyles={{ fontWeight: 400, fontSize: "16px" }}
+            />
+            <Text
+              sx={{
+                zIndex: 1,
+                position: "absolute",
+                color: "#fff",
+                right: "2px",
+              }}
+            >
+              {billingT("detail.form.payment.table.leftToPay")}
+            </Text>
+            <Stack
+              direction={"row"}
+              justifyContent={"space-between"}
+              p={"2px 5px"}
+              borderBottom={"1px solid #ECECF3"}
+              alignItems={"center"}
+              height={49}
+              width={"100%"}
+              color={"#666666"}
+            >
+              <Text
+                sx={{
+                  fontSize: "14px",
+                  color: "#666",
+                }}
+              >
+                50%
               </Text>
-            </Grid>
-            <Grid md={6}>
-              <Text variant={"body2"} color={"#fff"}>
-                {billingT("detail.form.payment.table.leftToPay")}
+              <Text
+                sx={{
+                  fontSize: "14px",
+                  color: "#666",
+                }}
+              >
+                50%
               </Text>
-            </Grid>
+            </Stack>
           </Grid>
         </Grid>
-        <Grid container spacing={2.1}>
-          <Grid md={8}></Grid>
-          <Grid md={4} borderBottom={"1px solid #ECECF3"}></Grid>
-        </Grid>
+        {/* <Grid container spacing={2.1}>
+          <Grid xs={12} md={8}></Grid>
+          <Grid xs={12} md={4}></Grid>
+        </Grid> */}
       </Stack>
       <Stack gap={2} pb={2}>
         <PaymentTable

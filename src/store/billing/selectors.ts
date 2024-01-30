@@ -100,8 +100,8 @@ export const useBillings = () => {
   );
 
   const onGetCommentBilling = useCallback(
-    async (id: string) => {
-      return await dispatch(getCommentBilling(id));
+    async (id: string, param: string) => {
+      return await dispatch(getCommentBilling({ id, param }));
     },
     [dispatch],
   );

@@ -53,7 +53,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
       </BodyCell>
 
       <BodyCell align="left">
-        {item?.overdue + " " + billingT("detail.form.payment.table2.date")}
+        {item?.overdue + " " + billingT("detail.form.payment.table2.day")}
       </BodyCell>
       <BodyCell align="left">
         {item?.status == "Paid" ? (

@@ -119,7 +119,7 @@ const CommentEditor = forwardRef(
           // newComments.sort((a, b) =>
           //   moment(b.created_time).isAfter(a.created_time) ? 1 : -1,
           // );
-          onGetCommentBilling(billing?.id || "");
+          onGetCommentBilling(billing?.id ?? "", "all");
           // setValue("comments", newComments);
           setContent("");
           setFiles([]);
