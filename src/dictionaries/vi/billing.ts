@@ -204,6 +204,7 @@ export const BillingLang: BillingDictionary = {
           overdue: "Overdue",
           amount: "Số tiền",
           note: "Ghi chú",
+          day: "Ngày",
         },
         button: {
           cancel: "Hủy",

@@ -13,7 +13,7 @@ import { Endpoint, client } from "api";
 
 const EditCompany = () => {
   const { item: detailItem } = useCompany();
-  const { item: myItem, onUpdateMyCompany } = useMyCompany();
+  const { item: myItem, onUpdateMyCompany, onGetCompany } = useMyCompany();
   const { id: paramId } = useParams();
 
   const item = useMemo(() => {
@@ -57,7 +57,7 @@ const EditCompany = () => {
     }
 
     if (paramId) {
-      const data = await onUpdateCompany(id, payload);
+      const data = await onUpdateCompany(id, payload);      
       return data
     }
     const result = await onUpdateMyCompany(payload);
@@ -75,7 +75,7 @@ const EditCompany = () => {
     "avatar"
   ])
 
-  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).created_by?.avatar?.link } as CompanyData  
+  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).avatar?.link } as CompanyData  
   return (
     <>
       <IconButton

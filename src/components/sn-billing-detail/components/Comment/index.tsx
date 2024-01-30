@@ -20,7 +20,7 @@ const CommentSection = (props: IProps) => {
   const { onGetCommentBilling, dataComment } = useBillings();
 
   useEffect(() => {
-    onGetCommentBilling(billing?.id ?? "");
+    onGetCommentBilling(billing?.id ?? "", "all");
   }, [onGetCommentBilling]);
 
   return (
@@ -34,7 +34,7 @@ const CommentSection = (props: IProps) => {
         </Text>
         <CommentEditor billing={billing} user={user} />
       </Stack>
-      <Comments comments={dataComment} />
+      <Comments comments={dataComment} billing={billing} />
     </FixedLayout>
   );
 };

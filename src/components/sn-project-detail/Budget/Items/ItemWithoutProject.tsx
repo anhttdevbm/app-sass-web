@@ -18,7 +18,7 @@ import _ from "lodash";
 
 type Props = {
   idSelecteds: string[];
-  setIdSelected: any;
+  setIdSelected: (ids: string[]) => void;
   budgets: TBudgets;
 };
 
@@ -124,7 +124,11 @@ export const ItemWithoutProject = ({
     >
       {!!idSelecteds.length && (
         <FilterWithIds
-          getXsCell={getXsCell}
+          getXsCell={(index: number) => ({
+            width: "100%",
+            minWidth: "100%",
+            maxWidth: "100%",
+          })}
           budgets={budgets}
           idSelecteds={idSelecteds}
         />
