@@ -18,7 +18,7 @@ import _ from "lodash";
 
 type Props = {
   idSelecteds: string[];
-  setIdSelected: any;
+  setIdSelected: (ids: string[]) => void;
   budgets: TBudgets;
 };
 
