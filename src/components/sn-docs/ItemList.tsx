@@ -29,7 +29,11 @@ export declare type TDocumentGroup = {
   documents: Array<{ [key: string]: any }>;
 };
 
-const ItemList = (isGrouped: boolean) => {
+export declare type TItemListParams = {
+  isGrouped?: boolean;
+};
+
+const ItemList = ({ isGrouped }: TItemListParams) => {
   const { push } = useRouter();
   const { isMdSmaller } = useBreakpoint();
   const pathname = usePathname();
