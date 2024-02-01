@@ -82,12 +82,11 @@ const TabPayment = (props: TabProps) => {
         }
       }
       if (dataPayment?.length > 1) {
-        paidNew =
-          dataPayment?.reduce(
-            (sum, e: PaymentData) =>
-              e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
-            0,
-          ) - paidFirst;
+        paidNew = dataPayment?.reduce(
+          (sum, e: PaymentData) =>
+            e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+          0,
+        );
         leftToPayNew = item.amount ?? 0 - paidNew;
       }
 
