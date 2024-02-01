@@ -11,8 +11,14 @@ import { memo } from "react";
 import { Billing, Budgets } from "store/billing/reducer";
 import { formatDate, formatNumber, getPath } from "utils/index";
 
+type dataPaid = {
+  paid?: number;
+  leftToPay?: number;
+};
 type MobileContentCellProps = {
   item?: Billing;
+  dataPaid?: dataPaid;
+  dataWriteOff?: number;
 };
 
 type InformationItemProps = {
@@ -22,7 +28,7 @@ type InformationItemProps = {
 };
 
 const MobileContentCell = (props: MobileContentCellProps) => {
-  const { item } = props;
+  const { item, dataPaid, dataWriteOff } = props;
   const t = useTranslations(NS_COMMON);
   return (
     <>
@@ -36,16 +42,21 @@ const MobileContentCell = (props: MobileContentCellProps) => {
       </BodyCell>
 
       <BodyCell align="left">
-        {formatNumber(item?.amount, {
+        {formatNumber(dataPaid?.paid, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
       <BodyCell align="left">
-        {formatNumber(item?.amount_unpaid, {
-          prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-          numberOfFixed: 2,
-        })}
+        {formatNumber(
+          dataWriteOff && dataPaid
+            ? dataPaid?.leftToPay ?? 0 + dataWriteOff
+            : 0,
+          {
+            prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+            numberOfFixed: 2,
+          },
+        )}
       </BodyCell>
     </>
   );

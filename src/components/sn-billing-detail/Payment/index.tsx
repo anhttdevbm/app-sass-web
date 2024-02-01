@@ -67,12 +67,96 @@ const TabPayment = (props: TabProps) => {
     }
   }, [isAddPayment, isUpdatePayment, isDeletedPayment]);
 
+  const dataPaid = useMemo(() => {
+    let paidFirst = 0 as number;
+    let leftToPayFirst = 0 as number;
+    let leftToPayNew = 0 as number;
+    let paidNew = 0 as number;
+
+    if (dataPayment && dataPayment.length > 0 && item) {
+      if (dataPayment?.length == 1) {
+        if (dataPayment[0].status == "Paid") {
+          paidFirst = dataPayment[0]?.amount ?? 0;
+          leftToPayFirst =
+            item.amount ?? 0 - paidFirst - (dataPayment[0]?.amount ?? 0);
+        }
+      }
+      if (dataPayment?.length > 1) {
+        paidNew =
+          dataPayment?.reduce(
+            (sum, e: PaymentData) =>
+              e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+            0,
+          ) - paidFirst;
+        leftToPayNew = item.amount ?? 0 - paidNew;
+      }
+
+      const sumDataPaid = paidFirst + paidNew;
+      const sumLeftToPay = leftToPayFirst + leftToPayNew;
+
+      return { paid: sumDataPaid, leftToPay: sumLeftToPay };
+    } else {
+      return 0;
+    }
+  }, [dataPayment, item]);
+
+  const dataWriteOff = useMemo(() => {
+    if (dataPayment && dataPayment?.length > 0 && item && dataPaid) {
+      let leftToPay = 0 as number;
+      const sumDataAmountWriteOff = dataPayment?.reduce(
+        (sum, e: PaymentData) =>
+          e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+        0,
+      );
+
+      if (sumDataAmountWriteOff == item?.amount ?? 0) {
+        leftToPay = 0;
+      }
+
+      if (sumDataAmountWriteOff > (item?.amount ?? 0) && dataPaid) {
+        leftToPay = item?.amount ?? 0 - dataPaid.paid - sumDataAmountWriteOff;
+      }
+
+      return leftToPay;
+    }
+  }, [item, dataPaid, dataPayment]);
+
+  const percentPaid = useMemo(() => {
+    const sumAmountPaid = dataPayment?.reduce(
+      (sum, e: PaymentData) =>
+        e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+      0,
+    );
+    const data =
+      item?.amount && sumAmountPaid
+        ? Math.round((sumAmountPaid / item?.amount) * 100)
+        : 0;
+    return data;
+  }, [dataPayment, item]);
+
+  const percentLeftToPay = useMemo(() => {
+    const sumAmountWriteOff = dataPayment?.reduce(
+      (sum, e: PaymentData) =>
+        e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+      0,
+    );
+    const data =
+      item?.amount && sumAmountWriteOff
+        ? Math.round((sumAmountWriteOff / item?.amount) * 100)
+        : 0;
+    return data;
+  }, [item, dataPayment]);
+
   return (
     <Stack mt={6}>
       <Stack gap={2} pb={2} pl={2}>
         <Grid container spacing={2}>
           <Grid xs={12} md={8} sx={{ borderRadius: "5px 0px 0px 5px" }}>
-            <PaymentTableHome item={item} />
+            <PaymentTableHome
+              item={item}
+              dataPaid={dataPaid ?? {}}
+              dataWriteOff={dataWriteOff}
+            />
           </Grid>
           <Grid
             container
@@ -91,7 +175,7 @@ const TabPayment = (props: TabProps) => {
             }}
           >
             <ProgressBar
-              completed={50}
+              completed={percentPaid}
               width="100%"
               height="40px"
               borderRadius="0px 5px 5px 0px"
@@ -102,7 +186,12 @@ const TabPayment = (props: TabProps) => {
               customLabel={billingT("detail.form.payment.table.paid")}
               // barContainerClassName=""
               // completedClassName=""
-              customLabelStyles={{ fontWeight: 400, fontSize: "16px" }}
+              customLabelStyles={{
+                fontWeight: 400,
+                fontSize: "16px",
+                zIndex: 1,
+                position: "absolute",
+              }}
             />
             <Text
               sx={{
@@ -130,7 +219,7 @@ const TabPayment = (props: TabProps) => {
                   color: "#666",
                 }}
               >
-                50%
+                {percentPaid}%
               </Text>
               <Text
                 sx={{
@@ -138,7 +227,7 @@ const TabPayment = (props: TabProps) => {
                   color: "#666",
                 }}
               >
-                50%
+                {percentLeftToPay}%
               </Text>
             </Stack>
           </Grid>
