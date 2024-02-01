@@ -87,7 +87,7 @@ const TabPayment = (props: TabProps) => {
             e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
           0,
         );
-        leftToPayNew = item.amount ?? 0 - paidNew;
+        leftToPayNew = (item.amount ?? 0) - paidNew;
       }
 
       const sumDataPaid = paidNew;
@@ -113,7 +113,7 @@ const TabPayment = (props: TabProps) => {
       }
 
       if (sumDataAmountWriteOff > (item?.amount ?? 0) && dataPaid) {
-        leftToPay = item?.amount ?? 0 - dataPaid.paid - sumDataAmountWriteOff;
+        leftToPay = (item?.amount ?? 0) - dataPaid.paid - sumDataAmountWriteOff;
       }
 
       return leftToPay;

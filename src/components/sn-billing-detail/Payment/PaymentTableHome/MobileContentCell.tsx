@@ -50,7 +50,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
       <BodyCell align="left">
         {formatNumber(
           dataWriteOff && dataPaid
-            ? dataPaid?.leftToPay ?? 0 + dataWriteOff
+            ? (dataPaid?.leftToPay ?? 0) + dataWriteOff
             : 0,
           {
             prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],

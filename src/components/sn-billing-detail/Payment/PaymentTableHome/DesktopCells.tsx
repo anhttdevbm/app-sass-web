@@ -24,7 +24,7 @@ type DesktopCellsProps = {
 const DesktopCells = (props: DesktopCellsProps) => {
   const { item, order, dataPaid, dataWriteOff } = props;
   const commonT = useTranslations(NS_COMMON);
-
+  console.log(dataWriteOff);
   return (
     <>
       {/* <BodyCell align="center">{order}</BodyCell> */}
@@ -46,7 +46,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
       <BodyCell align="left">
         {formatNumber(
           dataWriteOff && dataPaid
-            ? dataPaid?.leftToPay ?? 0 + dataWriteOff
+            ? (dataPaid?.leftToPay ?? 0) + dataWriteOff
             : 0,
           {
             prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
