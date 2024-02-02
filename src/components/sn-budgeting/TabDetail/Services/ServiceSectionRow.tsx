@@ -38,18 +38,20 @@ import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
+import { Option } from "constant/types";
 
 type TForm = {
-  services: TBudgetService[];
-  deletedServices?: TBudgetService[];
+  services: (TBudgetService & {
+    estimateTime?: string;
+  })[];
 };
 
 type Props = {
   fieldIndex: number;
   updateValue: (index: number, services: TBudgetService[]) => void;
   errors: TErrors;
-  serviceData: TBudgetService[];
-  deletedServices: string[];
+  serviceData: (TBudgetService & { estimateTime?: string })[];
+  sectionId: string;
 };
 
 const billingBillable = {
@@ -71,18 +73,22 @@ export const ServiceSectionRow = ({
   updateValue,
   errors,
   serviceData = [],
-  deletedServices = [],
+  sectionId
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [indexWaitDelete, setIndexWaitDelete] = useState<number | null>(null);
   const [isOpenConfirm, openConfirm, closeConfirm] = useToggle();
   const refClickOutSide = useOnClickOutside(() => setAnchorEl(null));
-  const { register, control, setValue, watch, getValues } = useForm<TForm>();
+  const { register, control, setValue, watch, getValues } = useForm<TForm>({
+    defaultValues: {
+      services: []
+    }
+  });
   const { onGetPositions } = usePositions();
   const { positionOptions } = useGetOptions();
   const budgetT = useTranslations(NS_BUDGETING);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     name: "services",
     control,
   });
@@ -145,39 +151,18 @@ export const ServiceSectionRow = ({
     onGetPositions({});
   }, []);
 
-  // useEffect(() => {
-  //   const subscription = watch((value) => {
-  //     updateValue(fieldIndex, value.services as TBudgetService[]);
-  //   });
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
-
   useEffect(() => {
     if (serviceData.length === 0) return;
-    const servicesItems = _.map(serviceData, (service) => {
-      const estimate: number = Number(service?.estimate) || 0;
-      const hour = Math.floor(estimate / 60);
-      const minute = estimate - hour * 60;
 
-      return {
-        ...service,
-        id: uuid(),
-        serviceId: service.id,
-        estimate: dayjs().hour(hour).minute(minute).toString(),
-        billType: service.billType,
-        type: service.serviceType,
-      } as TBudgetService;
-    });
-
-    setValue("services", servicesItems);
-  }, [serviceData]);
+    setValue("services", serviceData);
+  }, [JSON.stringify(serviceData)]);
 
   const createEmptyRow = () => {
-    append({
+    const emptyService = {
       id: uuid(),
       name: "",
       desc: "",
-      serviceType: "serviceType",
+      serviceType: null,
       billType: BudgetServiceBillable.BILLABLE,
       unit: SERVICE_UNIT_OPTIONS.HOUR,
       estimate: 0,
@@ -188,7 +173,15 @@ export const ServiceSectionRow = ({
       timeTracking: false,
       bookingTracking: false,
       tolBudget: 0,
-    } as TBudgetService);
+      isNewService: true,
+      sectionId: sectionId
+    };
+    append(emptyService);
+
+    updateValue(
+      fieldIndex,
+      _.concat(watch("services"), [emptyService]) as TBudgetService[],
+    );
   };
 
   const openConfirmDelete = (index: number) => {
@@ -204,11 +197,20 @@ export const ServiceSectionRow = ({
   const acceptDelete = () => {
     if (indexWaitDelete || indexWaitDelete === 0) {
       const selectedService = fields[indexWaitDelete];
-      serviceSectionRef.current?.setDeletedServices(
-        _.concat(deletedServices, [_.get(selectedService, "serviceId", "")]),
+      const newServices = _.filter(
+        fields,
+        (service) => service.id !== selectedService.id,
       );
-      setIndexWaitDelete(indexWaitDelete);
-      remove(Number(indexWaitDelete));
+
+      if (!selectedService?.isNewService) {
+        serviceSectionRef.current?.setDeletedServices(
+          _.get(selectedService, "serviceId", ""),
+          fieldIndex,
+        );
+      }
+
+      setValue("services", newServices);
+      setIndexWaitDelete(null);
     }
     cancelConfirmDelete();
   };
@@ -217,23 +219,32 @@ export const ServiceSectionRow = ({
     index: number,
     type: "bookingTracking" | "timeTracking",
   ) => {
-    setValue(`services.${index}.${type}`, !getValues(`services.${index}.${type}`));
+    setValue(
+      `services.${index}.${type}`,
+      !getValues(`services.${index}.${type}`),
+    );
+    updateValue(fieldIndex, watch("services") as TBudgetService[]);
   };
 
   const changeTime = (index: number, time: Dayjs | null) => {
     if (!time) {
-      setValue(`services.${index}.estimate`, "");
+      setValue(`services.${index}.estimate`, 0);
+      setValue(`services.${index}.estimateTime`, "");
       return;
     }
     const hour = time.hour();
     const minute = time.minute();
-    setValue(`services.${index}.estimate`, `${hour}:${minute}`);
+    setValue(`services.${index}.estimate`, hour * 60 + minute);
+    setValue(`services.${index}.estimateTime`, `${hour}:${minute}`);
+
+    updateValue(fieldIndex, watch("services") as TBudgetService[]);
   };
 
   const changeBilling = (billing: string) => {
     const index = anchorEl?.getAttribute("data-index");
     setValue(`services.${Number(index)}.billType`, billing);
     setAnchorEl(null);
+    updateValue(fieldIndex, watch("services") as TBudgetService[]);
   };
 
   const hasError = (errList: TError[], index: number, name: string) => {
@@ -266,14 +277,15 @@ export const ServiceSectionRow = ({
           {fields.map((service, index) => {
             const errs = errors[fieldIndex] ?? [];
             const billStatus =
-              watch(`services.${index}.billType`) === "billable"
+              watch(`services.${index}.billType`) === BudgetServiceBillable.BILLABLE
                 ? billingBillable
                 : billingNonBillable;
-            const defautlEstimate = getValues(`services.${index}.estimate`);
+            const defautlEstimate = getValues(`services.${index}.estimateTime`);
             return (
               <TableRow key={service.id}>
                 <BodyCell sx={getSxCell(0)}>
                   <TextField
+                    {...register(`services.${index}.name`)}
                     size="small"
                     variant="outlined"
                     fullWidth
@@ -286,23 +298,36 @@ export const ServiceSectionRow = ({
                       },
                     }}
                     autoComplete="off"
-                    {...register(`services.${index}.name`)}
+                    onChange={(e) => {
+                      setValue(
+                        `services.${index}.name`,
+                        e?.target?.value || "",
+                      );
+                      updateValue(
+                        fieldIndex,
+                        watch("services") as TBudgetService[],
+                      );
+                    }}
                   />
                 </BodyCell>
                 <BodyCell sx={getSxCell(1)}>
                   <Select
                     size="small"
                     fullWidth
-                    // options={positionOptions as Option[]}
-                    options={[
-                      { label: "Dev", value: "dev" },
-                      { label: "QC", value: "qc" },
-                      { label: "BA", value: "ba" },
-                    ]}
+                    options={positionOptions as Option[]}
+                    // options={[
+                    //   { label: "Dev", value: "dev" },
+                    //   { label: "QC", value: "qc" },
+                    //   { label: "BA", value: "ba" },
+                    // ]}
                     onChangeValue={(value) => {
-                      setValue(`services.${index}.type`, String(value));
+                      setValue(`services.${index}.serviceType`, String(value));
+                      updateValue(
+                        fieldIndex,
+                        watch("services") as TBudgetService[],
+                      );
                     }}
-                    value={watch(`services.${index}.type`)}
+                    value={watch(`services.${index}.serviceType`)}
                     autoComplete="off"
                     sx={{
                       minWidth: "160px !important",
@@ -351,7 +376,7 @@ export const ServiceSectionRow = ({
                     id="unit"
                     variant="outlined"
                     fullWidth
-                    value="hour"
+                    value={SERVICE_UNIT_OPTIONS.HOUR}
                     disabled
                     inputProps={{ sx: { textAlign: "center" } }}
                     autoComplete="off"
