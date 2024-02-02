@@ -64,9 +64,9 @@ export type ProjectDictionary = {
   };
   detailDocuments: {
     head: {
-      title: string,
-    },
-  },
+      title: string;
+    };
+  };
   detailMembers: {
     head: {
       title: string;

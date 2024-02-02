@@ -29,11 +29,11 @@ export declare type TDocumentGroup = {
   documents: Array<{ [key: string]: any }>;
 };
 
-type ItemListProps = {
-  isGrouped: boolean;
+export declare type TItemListParams = {
+  isGrouped?: boolean;
 };
 
-const ItemList: React.FC<ItemListProps> = ({ isGrouped }) => {
+const ItemList = ({ isGrouped }: TItemListParams) => {
   const { push } = useRouter();
 
   const { isMdSmaller } = useBreakpoint();
