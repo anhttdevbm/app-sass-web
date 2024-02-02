@@ -37,6 +37,7 @@ const EditCompany = () => {
 
     let dataOnlyUpdated = { ...data };
 
+
     dataOnlyUpdated = Object.entries(dataOnlyUpdated).reduce(
       (out, [key, value]) => {
         if (item[key] !== value) {
@@ -47,13 +48,13 @@ const EditCompany = () => {
       {},
     ) as any;
 
-    const payload = { ...dataOnlyUpdated } as any
+    let payload = { ...dataOnlyUpdated } as any
 
     if (typeof data["avatar"] === "object") {
       const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
       payload.created_by = { avatar: logoUrl };
     } else {
-      delete dataOnlyUpdated["avatar"];
+      delete payload["avatar"];
     }
 
     if (paramId) {
