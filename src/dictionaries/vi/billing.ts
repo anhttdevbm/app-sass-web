@@ -201,7 +201,7 @@ export const BillingLang: BillingDictionary = {
         table2: {
           status: "Trạng thái",
           date: "Ngày",
-          overdue: "Overdue",
+          overdue: "Quá hạn",
           amount: "Số tiền",
           note: "Ghi chú",
           day: "Ngày",

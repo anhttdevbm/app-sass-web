@@ -14,6 +14,7 @@ import {
   DependencyStatus,
   // GetActivitiesQueries,
   GetBillingListQueries,
+  PaymentData,
   addPayment,
   addUserToBilling,
   createBilling,
@@ -257,7 +258,7 @@ export interface BillingState {
   isAddPayment?: boolean;
   isUpdatePayment?: boolean;
   isDeletedPayment?: boolean;
-  dataPayment?: [];
+  dataPayment?: PaymentData[];
   dataTag?: [];
   isAddTag?: boolean;
 }
