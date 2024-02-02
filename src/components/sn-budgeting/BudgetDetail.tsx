@@ -71,12 +71,12 @@ export type TBudgetSection = {
 export type TBudgetService = {
   id: string;
   name: string;
-  type: string;
-  billingType: string;
+  serviceType?: string | null;
+  billType: string;
   unit?: string;
   bookingTracking?: boolean;
   timeTracking?: boolean;
-  estimate?: string;
+  estimate?: number;
   isNewService?: boolean;
   desc?: string;
   discount?: number;
@@ -84,7 +84,7 @@ export type TBudgetService = {
   price?: number;
   qty?: number;
   sectionId?: string;
-  serviceType?: string;
+  serviceId?: string;
   tolBudget?: number;
 };
 
@@ -438,8 +438,14 @@ export const BudgetDetail = () => {
               <Service
                 sections={_.get(serviceQuery, "data.data.sections", [])}
                 isEdit={isEditService}
-                onCloseEdit={offEditService}
+                onCloseEdit={() => {
+                  serviceQuery.refetch();
+                  offEditService();
+                }}
                 serviceData={_.get(serviceQuery, "data.data")}
+                refetch={() => {
+                  serviceQuery.refetch();
+                }}
               />
             )}
           </Box>

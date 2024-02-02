@@ -47,7 +47,7 @@ export const ServiceBox = ({
 
 export type TSection = {
   id: string;
-  title: string;
+  name: string;
 };
 
 export type TSectionData = {
@@ -59,10 +59,6 @@ export type TSectionData = {
   tracking: { time: number; booking: number };
   estimate: string;
   isNewService?: boolean;
-};
-
-export type TSectionForm = {
-  sections: (TSection & { data: TBudgetService[] } & { sectionId?: string, isNewSection?: boolean })[];
 };
 
 export type TError = { itemIndex: number; fieldName: string; errorMgs: string };
