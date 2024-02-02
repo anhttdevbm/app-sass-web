@@ -1,5 +1,5 @@
 import { Wrapper } from "components/sn-billing";
-import ViewPdf from "components/sn-budgeting/TabDetail/Services/ViewPdf";
+import ViewPdfExpense from "components/sn-budgeting/TabDetail/Expenses/ViewPdfExpense";
 import { NS_BUDGETING } from "constant/index";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Page() {
   return (
     <Wrapper>
-      <ViewPdf />
+      <ViewPdfExpense />
     </Wrapper>
   );
 }

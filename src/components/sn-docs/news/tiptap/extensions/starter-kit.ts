@@ -19,7 +19,8 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import { Comment } from "@sereneinserenade/tiptap-comment-extension";
 
-import {FontFamily} from "@tiptap/extension-font-family"
+import FontSize from "./font-size";
+import { FontFamily } from "@tiptap/extension-font-family";
 import { DBlock } from "./d-block";
 import Document from "./doc";
 import Paragraph from "./paragraph";
@@ -65,8 +66,7 @@ export const getExtensions = ({
 
     // Font family
     FontFamily,
-
-
+    FontSize,
     // Mark
     Bold,
     Italic,

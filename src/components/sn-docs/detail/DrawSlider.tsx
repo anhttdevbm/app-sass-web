@@ -298,20 +298,21 @@ const DrawSlider = ({
             <Box
               sx={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "space-between",
-                alignItems: "center",
+                // alignItems: "center",
                 bgcolor: "background.paper",
               }}
             >
               <Text fontSize={14} fontWeight={600}>
                 {docsT("createDoc.Ltext")}
               </Text>
-              <Switch
-                name="text"
-                onChange={onChangeText}
-                size="small"
-                reverse
-                value={isLargeText}
+              <OptionGroup
+                options={TextSizeOptions}
+                handleChangeOption={(value) => {
+                  editor.chain().selectAll().setFontSize(value).run();
+                  alert(value);
+                }}
               />
             </Box>
             <Box
@@ -354,6 +355,21 @@ export const FontFamilyOptions = [
   {
     label: "Mono",
     value: "monospace",
+  },
+];
+
+export const TextSizeOptions = [
+  {
+    label: "Small",
+    value: "12px",
+  },
+  {
+    label: "Medium",
+    value: "16px",
+  },
+  {
+    label: "Large",
+    value: "64px",
   },
 ];
 

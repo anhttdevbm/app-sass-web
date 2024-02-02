@@ -29,6 +29,7 @@ import useGetOptions from "store/billing/selectors";
 import { useSaleDetail, useSalesService } from "store/sales/selectors";
 import { formatNumber } from "utils/index";
 import LinkPopup from "../LinkPopup";
+import useQueryParams from "hooks/useQueryParams";
 
 interface IProps {
   index: number;

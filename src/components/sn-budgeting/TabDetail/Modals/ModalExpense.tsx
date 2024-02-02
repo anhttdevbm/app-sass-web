@@ -14,14 +14,16 @@ import {
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
-import { IMAGES_ACCEPT, NS_BUDGETING, NS_COMMON } from "constant/index";
+import {
+  FILE_ACCEPT, NS_BUDGETING,
+  NS_COMMON
+} from "constant/index";
 import { useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import InputLabelWrapper from "../InputLabelWrapper";
 import {
-  TBudgetExpense,
   useBudgetExpenseAdd,
   useBudgetExpenseUpdate,
   useBudgetUploadFile,
@@ -31,18 +33,24 @@ import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptio
 import * as yup from "yup";
 import { ExpenseStatus } from "constant/enums";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TBudgetService } from "../../BudgetDetail";
+import { TBudgetService, budgetDetailRef } from "../../BudgetDetail";
 import _ from "lodash";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useCurrencyOptions } from "store/global/selectors";
 import { useParams } from "next/navigation";
 import { User } from "constant/types";
-import { getMessageErrorByAPI, uuid } from "utils/index";
+import { getMessageErrorByAPI } from "utils/index";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import ClearIcon from "@mui/icons-material/Clear";
 import { niceBytes } from "utils/extension";
+import { TBudgetExpense } from "store/expense/actions";
+import FilePdfIcon from "icons/FilePdfIcon";
+import FileDocIcon from "icons/FileDocIcon";
+import FileExcelIcon from "icons/FileExcelIcon";
+import FileCsvIcon from "icons/FileCsvIcon";
+import FileIcon from "icons/FileIcon";
 
 type Props = {
   open: boolean;
@@ -50,7 +58,6 @@ type Props = {
   expenseData?: TBudgetExpense | null;
   services: any[];
   serviceId: string;
-  refetch?: () => void;
 };
 
 interface TExpenseAddForm {
@@ -69,7 +76,8 @@ interface TExpenseAddForm {
   paymentDate?: string;
   vendor?: string;
   status: ExpenseStatus;
-  attachment: any[];
+  attachment: string;
+  uploadFile?: any;
 }
 
 const defaultValues: TExpenseAddForm = {
@@ -84,7 +92,7 @@ const defaultValues: TExpenseAddForm = {
   description: "",
   reimbursement: "no",
   status: ExpenseStatus.UNPAID,
-  attachment: [],
+  attachment: "",
 };
 
 const sxInput = {
@@ -102,7 +110,6 @@ export const ModalExpense = ({
   expenseData,
   services = [],
   serviceId,
-  refetch = () => {},
 }: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
   const commonT = useTranslations(NS_COMMON);
@@ -160,6 +167,24 @@ export const ModalExpense = ({
     return dataUser;
   }, [user]);
 
+  const fileIcon = useMemo(() => {
+    const extension = _.last(_.get(watch("uploadFile"), "name", "").split("."));
+    switch (extension) {
+      case "pdf":
+        return <FilePdfIcon sx={{ fontSize: 40 }} />;
+      case "doc":
+      case "docx":
+        return <FileDocIcon sx={{ fontSize: 40 }} />;
+      case "xls":
+      case "xlsx":
+        return <FileExcelIcon sx={{ fontSize: 40 }} />;
+      case "csv":
+        return <FileCsvIcon sx={{ fontSize: 40 }} />;
+      default:
+        return <FileIcon sx={{ fontSize: 40 }} />;
+    }
+  }, [watch("uploadFile")]);
+
   useEffect(() => {
     onGetCurrencyOptions({ pageIndex: 1, pageSize: 100 });
   }, []);
@@ -187,7 +212,7 @@ export const ModalExpense = ({
         paymentDate: _.get(expenseData, "payment.paymentDate", null),
         vendor: _.get(expenseData, "payment.vendor", "USD"),
         status: _.get(expenseData, "status", ExpenseStatus.UNPAID),
-        attachment: _.get(expenseData, "attachment", []),
+        attachment: _.get(expenseData, "attachment", ""),
       });
     }
   }, [expenseData]);
@@ -234,7 +259,7 @@ export const ModalExpense = ({
         vendor: formValue.vendor || "",
       },
       status: ExpenseStatus.PAID,
-      attachment: "",
+      attachment: formValue.attachment,
     };
 
     if (!_.isEmpty(expenseData)) {
@@ -242,7 +267,7 @@ export const ModalExpense = ({
       budgetExpenseUpdate.mutateAsync(data, {
         onSuccess: () => {
           onAddSnackbar("Update expense successful", "success");
-          refetch();
+          budgetDetailRef.current?.budgetGetExpenseRefetch();
           onClose();
         },
         onError(error) {
@@ -253,7 +278,7 @@ export const ModalExpense = ({
       budgetExpenseAdd.mutateAsync(data, {
         onSuccess: () => {
           onAddSnackbar("Create expense successful", "success");
-          refetch();
+          budgetDetailRef.current?.budgetGetExpenseRefetch();
           onClose();
         },
         onError(error) {
@@ -278,22 +303,16 @@ export const ModalExpense = ({
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
     const files: FileList | null = event?.target?.files;
     if (!files) return;
-    if (IMAGES_ACCEPT.includes(files[0].type)) {
-      const url = URL.createObjectURL(files[0]);
+    if (FILE_ACCEPT.includes(files[0].type)) {
       budgetUploadFile.mutateAsync(files[0], {
         onSuccess: (res: any) => {
-          console.log('res', res);
-          // setValue(
-          //   "attachment",
-          //   _.concat(watch("attachment") || [], [
-          //     {
-          //       id: uuid(),
-          //       link: url,
-          //       name: files[0].name,
-          //       size: niceBytes(files[0].size),
-          //     },
-          //   ]),
-          // );
+          setValue("attachment", _.get(res, "data.object", ""));
+          setValue("uploadFile", {
+            id: _.get(res, "data.object", ""),
+            link: _.get(res, "data.download", ""),
+            name: files[0].name,
+            size: niceBytes(files[0].size),
+          });
         },
       });
     } else {
@@ -302,13 +321,8 @@ export const ModalExpense = ({
   };
 
   const handleRemoveFile = (file) => {
-    setValue(
-      "attachment",
-      _.filter(
-        watch("attachment"),
-        (attachmentFile) => attachmentFile?.id !== file?.id,
-      ),
-    );
+    setValue("attachment", "");
+    setValue("uploadFile", null);
   };
 
   return (
@@ -740,7 +754,15 @@ export const ModalExpense = ({
                 />
 
                 <IconButton
-                  sx={{ position: "absolute", right: 20, bottom: 30 }}
+                  sx={{
+                    position: "absolute",
+                    right: 20,
+                    bottom: 30,
+                    borderRadius: "4px !important",
+                    backgroundColor: "#f5f5f5",
+                    p: "4px !important",
+                    border: '1px solid #99999970 !important'
+                  }}
                   onClick={onChooseFile}
                 >
                   <AttachmentIcon />
@@ -749,39 +771,39 @@ export const ModalExpense = ({
             </Grid>
 
             <Grid item xs={12}>
-              {!_.isEmpty(watch("attachment")) && (
+              {!_.isEmpty(watch("uploadFile")) && (
                 <Box width="100%">
-                  {_.map(watch("attachment") || [], (attachmentFile, index) => (
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      key={index}
-                      sx={{ border: "1px solid #99999970", px: 2, py: 1 }}
-                    >
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ border: "1px solid #99999970", px: 2, py: 1 }}
+                  >
+                    <Stack direction="row" alignItems="center" gap={1}>
+                      {fileIcon}
                       <Typography>
-                        {_.get(attachmentFile, "name", "")}
+                        {_.get(watch("uploadFile"), "name", "")}
+                      </Typography>
+                    </Stack>
+
+                    <Stack direction="row" alignItems="center">
+                      <Typography sx={{ mr: 1 }}>
+                        {_.get(watch("uploadFile"), "size", "")}
                       </Typography>
 
-                      <Stack direction="row" alignItems="center">
-                        <Typography sx={{ mr: 1 }}>
-                          {_.get(attachmentFile, "size", "")}
-                        </Typography>
-
-                        <IconButton
-                          onClick={() => handleRemoveFile(attachmentFile)}
-                        >
-                          <ClearIcon />
-                        </IconButton>
-                      </Stack>
+                      <IconButton
+                        onClick={() => handleRemoveFile(watch("uploadFile"))}
+                      >
+                        <ClearIcon />
+                      </IconButton>
                     </Stack>
-                  ))}
+                  </Stack>
                 </Box>
               )}
 
               <Box
                 type="file"
-                accept={IMAGES_ACCEPT.join(", ")}
+                accept={FILE_ACCEPT.join(", ")}
                 component="input"
                 display="none"
                 onChange={onChangeFile}

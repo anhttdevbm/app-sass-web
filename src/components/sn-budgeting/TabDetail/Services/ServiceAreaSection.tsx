@@ -87,11 +87,6 @@ export const ServiceAreaSection = ({
               }}
               sx={{
                 minHeight: 100,
-                // minWidth: {
-                //   md: 1320,
-                //   xs: 1320,
-                //   overflow: "visible",
-                // },
                 width: "100%",
                 [`&.MuiTableCell-root :first-child`]: {
                   pl: 4,

@@ -95,7 +95,7 @@ const ItemList = () => {
       {
         value: (
           <>
-            <Stack>
+            <Stack sx={{ padding: "12px 0px" }}>
               {billingT("list.table.amount")}
               <Text variant={"body2"} align="center" fontWeight={600}>
                 {formatNumber(totalAmount, {
@@ -111,7 +111,7 @@ const ItemList = () => {
       {
         value: (
           <>
-            <Stack>
+            <Stack sx={{ padding: "12px 0px" }}>
               {billingT("list.table.amountUnpaid")}
               <Text variant={"body2"} align="center" fontWeight={600}>
                 {formatNumber(totalAmountUnpaid, {
@@ -150,7 +150,7 @@ const ItemList = () => {
       {
         value: (
           <>
-            <Stack>
+            <Stack sx={{ padding: "12px 0px" }}>
               {billingT("list.table.amount")}
               <Text variant={"body2"} align="center" fontWeight={600}>
                 {formatNumber(totalAmount, {
@@ -166,7 +166,7 @@ const ItemList = () => {
       {
         value: (
           <>
-            <Stack>
+            <Stack sx={{ padding: "12px 0px" }}>
               {billingT("list.table.amountUnpaid")}
               <Text variant={"body2"} align="center" fontWeight={600}>
                 {formatNumber(totalAmountUnpaid, {

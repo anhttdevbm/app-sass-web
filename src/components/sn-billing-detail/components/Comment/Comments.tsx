@@ -16,21 +16,27 @@ import Loading from "components/Loading";
 import { Dropdown } from "components/Filters";
 import AttachmentPreview from "./AttachmentPreview";
 import { useBillings } from "store/billing/selectors";
-import { BillingComment, BillingCommentData } from "store/billing/reducer";
+import {
+  Billing,
+  BillingComment,
+  BillingCommentData,
+} from "store/billing/reducer";
 
 type CommentsProps = {
   comments?: BillingCommentData[];
+  billing?: Billing;
 };
 
 type CommentItemProps = { type: string } & BillingCommentData;
 
 const Comments = (props: CommentsProps) => {
-  const { comments } = props;
+  const { comments, billing } = props;
   const billingT = useTranslations(NS_BILLING);
   const commonT = useTranslations(NS_COMMON);
   const { isFetching } = useBillings();
-  const [comentType, setCommentType] = useState("");
+  const [comentType, setCommentType] = useState("all");
   // const { control, getValues } = useFormContext();
+  const { onGetCommentBilling } = useBillings();
   const [listAttachmentsDown, setListAttachmentsDown] = useState<string[]>([
     "",
   ]);
@@ -47,6 +53,10 @@ const Comments = (props: CommentsProps) => {
       (comment) => comment?.file && comment?.file?.length > 0,
     );
   }, [comments, comentType]);
+
+  useEffect(() => {
+    onGetCommentBilling(billing?.id ?? "", comentType);
+  }, [billing?.id, comentType, onGetCommentBilling]);
 
   return isFetching ? (
     <Loading open={false} />
@@ -74,15 +84,15 @@ const Comments = (props: CommentsProps) => {
               label: billingT("detail.form.feed.button.option.attachments"),
               value: "attachments",
             },
-            {
-              label: billingT("detail.form.feed.button.option.changes"),
-              value: "changes",
-            },
+            // {
+            //   label: billingT("detail.form.feed.button.option.changes"),
+            //   value: "changes",
+            // },
           ]}
           name="type"
         />
       </Stack>
-      {filteredComments?.map((comment: BillingCommentData) => (
+      {comments?.map((comment: BillingCommentData) => (
         <CommentItem
           key={comment.bill_id}
           type={comentType || "comments"}

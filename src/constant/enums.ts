@@ -145,7 +145,12 @@ export enum ExpenseStatus {
 }
 
 export enum DocumentFormat {
-  PDF = 'PDF',
-  CSV = 'CSV',
-  XLSX = 'XLSX'
+  PDF = 'pdf',
+  CSV = 'csv',
+  XLSX = 'xlsx'
+}
+
+export enum BudgetServiceBillable {
+  'BILLABLE' = 'billable',
+  'NON_BILLABLE' = 'non_billable',
 }

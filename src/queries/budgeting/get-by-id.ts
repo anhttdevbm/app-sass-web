@@ -11,11 +11,11 @@ export const budgetByIdQuery = (id: string): Promise<any> => {
 };
 
 export const useBudgetByIdQuery = (id: string): any | undefined => {
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: [BUDGET_GET_BY_ID_QK, id],
     queryFn: () => budgetByIdQuery(id),
     retry: 0,
     staleTime: Infinity,
   });
-  return data;
+  return { data, refetch };
 };

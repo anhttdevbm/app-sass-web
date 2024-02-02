@@ -62,6 +62,8 @@ export const BudgetingLang: BudgetingDictionary = {
             status: 'Trạng thái',
             attachment: 'Đính kèm',
         },
+        deleteBtnText: "Xóa",
+        selected: "được chọn"
     },
     tabInvoice: {
         subject: 'Subject',
@@ -123,6 +125,8 @@ export const BudgetingLang: BudgetingDictionary = {
             estimate: "Ước lượng",
             addSection: 'Thêm dịch vụ',
             addItem: 'Thêm mục',
+            cancelBtnText: "Hủy",
+            saveBtnText: "Lưu thay đổi"
         }
     },
     dialog: {
@@ -188,5 +192,21 @@ export const BudgetingLang: BudgetingDictionary = {
         orientation: "Chiều hướng",
         pageSize: "Kích thước",
         includeAttachments: "Bao gồm tệp đính kèm"
+    },
+    expenseExport: {
+        title: 'Chi phí',
+        totalCost: 'Tổng chi phí',
+        totalBillable: 'Tổng số phải thanh toán',
+        generatedAt: 'Ngày tạo',
+        generatedBy: 'Tạo bởi',
+        service: 'Dịch vụ',
+        description: 'Mô tả',
+        date: 'Ngày',
+        paymentStatus: 'Tình trạng thanh toán',
+        att: 'Đính kèm',
+        cost: 'Chi phí',
+        billable: 'Thanh toán',
+        openNewTab: "Mở trang mới",
+        download: "Tải xuống"
     }
 }

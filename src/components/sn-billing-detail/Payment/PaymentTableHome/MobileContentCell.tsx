@@ -11,8 +11,14 @@ import { memo } from "react";
 import { Billing, Budgets } from "store/billing/reducer";
 import { formatDate, formatNumber, getPath } from "utils/index";
 
+type dataPaid = {
+  paid?: number;
+  leftToPay?: number;
+};
 type MobileContentCellProps = {
   item?: Billing;
+  dataPaid?: dataPaid;
+  dataWriteOff?: number;
 };
 
 type InformationItemProps = {
@@ -22,30 +28,35 @@ type InformationItemProps = {
 };
 
 const MobileContentCell = (props: MobileContentCellProps) => {
-  const { item } = props;
+  const { item, dataPaid, dataWriteOff } = props;
   const t = useTranslations(NS_COMMON);
   return (
     <>
       <BodyCell align="left">{formatDate(item?.dueDate)}</BodyCell>
 
-      <BodyCell align="left" sx={{ paddingLeft: 0 }}>
+      <BodyCell align="left">
         {formatNumber(item?.amount, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
 
-      <BodyCell align="center">
-        {formatNumber(item?.amount, {
+      <BodyCell align="left">
+        {formatNumber(dataPaid?.paid, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
-      <BodyCell align="center">
-        {formatNumber(item?.amount_unpaid, {
-          prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-          numberOfFixed: 2,
-        })}
+      <BodyCell align="left">
+        {formatNumber(
+          dataWriteOff && dataPaid
+            ? (dataPaid?.leftToPay ?? 0) + dataWriteOff
+            : 0,
+          {
+            prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+            numberOfFixed: 2,
+          },
+        )}
       </BodyCell>
     </>
   );

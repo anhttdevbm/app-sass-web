@@ -14,7 +14,7 @@ import { ModalAddTime } from "components/sn-budgeting/TabDetail/Modals/ModalAddT
 import { ModalExpense } from "components/sn-budgeting/TabDetail/Modals/ModalExpense";
 import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
 import TextStatus from "components/TextStatus";
-import { NS_BUDGETING } from "constant/index";
+import { NS_BUDGETING, NS_COMMON, NS_PROJECT } from "constant/index";
 import { BILLING_CREATE_PATH, BUDGETING_PATH } from "constant/paths";
 import dayjs from "dayjs";
 import useToggle from "hooks/useToggle";
@@ -28,6 +28,7 @@ import {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { TBudget } from "store/project/budget/action";
@@ -42,10 +43,12 @@ import useTheme from "hooks/useTheme";
 import _ from "lodash";
 import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
 import { useRouter } from "next-intl/client";
-import {
-  TBudgetExpense,
-  useBudgetGetExpenseQuery,
-} from "queries/budgeting/expense";
+import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
+import { ProjectStatus } from "store/project/actions";
+import { useProjects } from "store/project/selectors";
+import { useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+import { TBudgetExpense } from "store/expense/actions";
 
 enum TABS {
   FEED = "Feed",
@@ -68,12 +71,12 @@ export type TBudgetSection = {
 export type TBudgetService = {
   id: string;
   name: string;
-  type: string;
-  billingType: string;
+  serviceType?: string | null;
+  billType: string;
   unit?: string;
   bookingTracking?: boolean;
   timeTracking?: boolean;
-  estimate?: string;
+  estimate?: number;
   isNewService?: boolean;
   desc?: string;
   discount?: number;
@@ -81,18 +84,24 @@ export type TBudgetService = {
   price?: number;
   qty?: number;
   sectionId?: string;
-  serviceType?: string;
+  serviceId?: string;
   tolBudget?: number;
 };
 
 export const budgetDetailRef = createRef<any>();
 
 export const BudgetDetail = () => {
+  const { id } = useParams();
+  const { isDarkMode } = useTheme();
+  const { push } = useRouter();
+  const { onUpdateProject } = useProjects();
+
   const [isOpenModalTime, openModalTime, hideModalTime] = useToggle();
   const [isOpenModalExpense, openModalExpense, hideModalExpense] = useToggle();
   const [isShowLoadingTab, openLoadingTab, hideLoadingTab] = useToggle();
   const [isEditService, onEditService, offEditService] = useToggle();
   const [isOpenRightSidebar, showRightSidebar, hideRightSidebar] = useToggle();
+  const { onAddSnackbar } = useSnackbar();
 
   const [budget, setBudget] = useState<TBudget | null>(null);
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
@@ -104,19 +113,19 @@ export const BudgetDetail = () => {
   const [selectedExpense, setSelectedExpense] =
     useState<TBudgetExpense | null>();
 
-  const { id } = useParams();
-  const { isDarkMode } = useTheme();
-  const { push } = useRouter();
-
   const budgetDetailQuery = useBudgetByIdQuery(String(id));
   const serviceQuery = useBudgetGetServiceQuery(String(id));
   const timeQuery = useBudgetGetTimeRangeQuery(String(id));
   const budgetGetExpenseQuery = useBudgetGetExpenseQuery(String(id));
 
   const budgetT = useTranslations(NS_BUDGETING);
+  const projectT = useTranslations(NS_PROJECT);
+  const commonT = useTranslations(NS_COMMON);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (serviceQuery) {
+    if (!_.isEmpty(serviceQuery)) {
       const services: any[] = _.map(
         _.get(serviceQuery, "data.data.sections", []),
         (section) => {
@@ -128,12 +137,20 @@ export const BudgetDetail = () => {
   }, [JSON.stringify(serviceQuery)]);
 
   useEffect(() => {
-    if (budgetDetailQuery) {
-      setBudget(budgetDetailQuery.data);
+    if (!_.isEmpty(budgetDetailQuery)) {
+      setBudget(_.get(budgetDetailQuery, "data.data"));
     }
-  }, [budgetDetailQuery]);
+  }, [JSON.stringify(budgetDetailQuery)]);
+
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }
 
   const changeActiveTab = (newTab: string) => {
+    scrollToTop();
+
     if (window["timeoutHideLoadingTab"]) {
       clearTimeout(window["timeoutHideLoadingTab"]);
     }
@@ -221,12 +238,43 @@ export const BudgetDetail = () => {
     openModalExpense: () => {
       openModalExpense();
     },
+    budgetDetailRefetch: () => {
+      budgetDetailQuery.refetch();
+    },
+    serviceRefetch: () => {
+      serviceQuery.refetch();
+    },
+    timeRefetch: () => {
+      timeQuery.refetch();
+    },
+    budgetGetExpenseRefetch: () => {
+      budgetGetExpenseQuery.refetch();
+    },
   }));
+
+  const handleChangeProjectStatus = async (status: ProjectStatus) => {
+    try {
+      const newData = await onUpdateProject(_.get(budget, "project.id", ""), {
+        status: status,
+      });
+      if (newData) {
+        onAddSnackbar(
+          projectT("detail.notification.changeStatusSuccess"),
+          "success",
+        );
+        budgetDetailQuery.refetch();
+      }
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
 
   if (!budget) return <></>;
 
   return (
     <Box ref={budgetDetailRef}>
+      <Stack>
+      </Stack>
       <Box
         sx={{
           position: "sticky !important",
@@ -294,6 +342,12 @@ export const BudgetDetail = () => {
               color="success"
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
+              isActive={
+                _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
+              }
+              onClick={async () => {
+                await handleChangeProjectStatus(ProjectStatus.ACTIVE);
+              }}
             />
             <Box
               sx={{
@@ -308,6 +362,12 @@ export const BudgetDetail = () => {
               color="error"
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
+              isActive={
+                _.get(budget, "project.status", "") === ProjectStatus.CLOSE
+              }
+              onClick={async () => {
+                await handleChangeProjectStatus(ProjectStatus.CLOSE);
+              }}
             />
           </Stack>
           <Stack direction="row" alignItems="center">
@@ -356,7 +416,7 @@ export const BudgetDetail = () => {
           >
             <CircularProgress />
           </Stack>
-          <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
+          <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }} ref={scrollRef}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
             {activeTab === TABS.TIME && (
               <Time
@@ -378,7 +438,10 @@ export const BudgetDetail = () => {
               <Service
                 sections={_.get(serviceQuery, "data.data.sections", [])}
                 isEdit={isEditService}
-                onCloseEdit={offEditService}
+                onCloseEdit={() => {
+                  serviceQuery.refetch();
+                  offEditService();
+                }}
                 serviceData={_.get(serviceQuery, "data.data")}
                 refetch={() => {
                   serviceQuery.refetch();
@@ -427,9 +490,6 @@ export const BudgetDetail = () => {
         }}
         services={servicesList}
         serviceId={_.get(selectedService, "id", "")}
-        refetch={() => {
-          budgetGetExpenseQuery.refetch();
-        }}
       />
     </Box>
   );

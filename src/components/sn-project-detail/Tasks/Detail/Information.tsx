@@ -259,6 +259,14 @@ const Information = () => {
             variant="filled"
             size="small"
             onChange={changeNameTask}
+            onClick={(e) => {
+              setTimeout(() => {
+                const target = e.target as HTMLInputElement;
+                const length = target.value.length;
+                target.focus(); 
+                target.setSelectionRange(length, length);
+              }, 0);
+            }}
             sx={{
               "& >div": {
                 bgcolor: "transparent!important",

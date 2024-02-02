@@ -14,10 +14,12 @@ type IProps = {
   arrBudgets?: Budgets[];
   isEdit?: boolean;
   item?: Billing;
+  dataPaid?: {};
+  dataWriteOff?: number;
 };
 
 const PaymentTableTop = (props: IProps) => {
-  const { arrBudgets, isEdit, item } = props;
+  const { arrBudgets, isEdit, item, dataPaid, dataWriteOff } = props;
 
   const { isMdSmaller } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
@@ -142,9 +144,18 @@ const PaymentTableTop = (props: IProps) => {
             />
           </BodyCell> */}
           {isMdSmaller ? (
-            <MobileContentCell item={item} />
+            <MobileContentCell
+              item={item}
+              dataPaid={dataPaid ?? {}}
+              dataWriteOff={dataWriteOff}
+            />
           ) : (
-            <DesktopCells item={item} order={0} />
+            <DesktopCells
+              item={item}
+              dataPaid={dataPaid ?? {}}
+              dataWriteOff={dataWriteOff}
+              order={0}
+            />
           )}
           {/* <BodyCell align="left" sx={{ px: { xs: 0.5, md: 2 } }}>
             <IconButton

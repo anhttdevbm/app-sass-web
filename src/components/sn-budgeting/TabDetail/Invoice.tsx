@@ -1,15 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, TableRow, Typography } from "@mui/material";
-import Pagination from "components/Pagination";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
 import { Button, Checkbox, Text } from "components/shared";
-import DesktopCells from "components/sn-billing/DesktopCells";
-import MobileContentCell from "components/sn-billing/MobileContentCell";
-import ExportView from "components/sn-billing/Modals/ExportView";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { CURRENCY_CODE } from "constant/enums";
 import { NS_BUDGETING } from "constant/index";
-import { BILLING_INFO_PATH, BUDGET_EXPENSE_EXPORT_PATH } from "constant/paths";
+import { BILLING_INFO_PATH, BUDGET_INVOICE_EXPORT_PATH } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import FolderIcon from "icons/FolderIcon";
 import _ from "lodash";
@@ -17,14 +13,12 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { useParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { BillingDataExport } from "store/billing/actions";
 import { Billing } from "store/billing/reducer";
 import { useBillings } from "store/billing/selectors";
-import { clearNullField, formatDate, formatNumber, getPath } from "utils/index";
+import { formatDate, formatNumber, getPath } from "utils/index";
 
 export const Invoice = () => {
   const [invoiceSelected, setInvoiceSelected] = useState<string[]>([]);
-  const [exportModel, setExportModel] = useState<boolean>(false);
 
   const { id } = useParams();
   const { push } = useRouter();
@@ -32,13 +26,6 @@ export const Invoice = () => {
 
   const {
     items,
-    size,
-    page,
-    total_page,
-    totalItems,
-    isFetching,
-    isIdle,
-    error,
     totalAmount,
     totalAmountUnpaid,
     onGetBillings,
@@ -199,20 +186,10 @@ export const Invoice = () => {
     onChangeAll,
   ]);
 
-  const selectedBills = useMemo(() => {
-    if (invoiceSelected && invoiceSelected?.length > 0) {
-      return {
-        bill: invoiceSelected?.map((item) => {
-          return { id: item };
-        }),
-      } as BillingDataExport;
-    }
-  }, [invoiceSelected]);
-
-  const onChangeQueries = (queries: { [key: string]: any }) => {
-    const newQueries: any = clearNullField({ budgetId: id, ...queries });
-    onGetBillings(newQueries);
-  };
+  // const onChangeQueries = (queries: { [key: string]: any }) => {
+  //   const newQueries: any = clearNullField({ budgetId: id, ...queries });
+  //   onGetBillings(newQueries);
+  // };
 
   // const onChangePage = (newPage: number) => {
   //   onChangeQueries({ page: newPage, size });
@@ -238,12 +215,8 @@ export const Invoice = () => {
 
   const onOpenModalExport = (value: Billing) => {
     push(
-      getPath(BUDGET_EXPENSE_EXPORT_PATH, undefined, { id: value?.id ?? "" }),
+      getPath(BUDGET_INVOICE_EXPORT_PATH, undefined, { id: value?.id ?? "" }),
     );
-  };
-
-  const onCloseModalExport = () => {
-    setExportModel(false);
   };
 
   const handleSelectInvoice = (
@@ -269,45 +242,6 @@ export const Invoice = () => {
 
   return (
     <Box p="15px">
-      {/* <TableLayout
-        headerList={headerList}
-        pending={isFetching}
-        headerProps={{
-          sx: { px: { xs: 0.5, md: 2 } },
-        }}
-        error={error as string}
-        noData={!isIdle && totalItems === 0}
-        px={{ md: 2 }}
-      >
-        {items?.map((item, index) => {
-          const indexSelected = invoiceSelected.findIndex(
-            (selected) => selected?.id === item.id,
-          );
-          return (
-            <TableRow key={item?.id}>
-              <BodyCell sx={{ pl: { xs: 0.5, md: 2 } }}>
-                <Checkbox
-                  checked={indexSelected !== -1}
-                  onChange={onToggleSelect(item, indexSelected)}
-                />
-              </BodyCell>
-              {isMdSmaller ? (
-                <MobileContentCell
-                  item={item}
-                  onOpenModalExport={onOpenModalExport}
-                />
-              ) : (
-                <DesktopCells
-                  item={item}
-                  order={(page - 1) * size + (index + 1)}
-                  onOpenModalExport={onOpenModalExport}
-                />
-              )}
-            </TableRow>
-          );
-        })}
-      </TableLayout> */}
-
       <TableLayout headerList={headerList} noData={false} titleColor="grey.300">
         {_.map(items || [], (data, index) => {
           const indexIdInInvoiceSelected = invoiceSelected.findIndex(
@@ -382,11 +316,6 @@ export const Invoice = () => {
         onChangePage={onChangePage}
         onChangeSize={onChangeSize}
       /> */}
-      <ExportView
-        open={exportModel}
-        onClose={() => onCloseModalExport()}
-        item={selectedBills ?? { bill: [] }}
-      />
     </Box>
   );
 };

@@ -2,9 +2,9 @@ import { DialogLayoutProps } from "components/DialogLayout";
 import { useSnackbar } from "store/app/selectors";
 import { useTranslations } from "next-intl";
 import { DATE_FORMAT_FORM, NS_COMMON, NS_PROJECT } from "constant/index";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import FormLayout from "components/FormLayout";
-import { MenuList, Popper, Stack } from "@mui/material";
+import { MenuList, Stack } from "@mui/material";
 import { Input, Select } from "components/shared";
 import { FormikErrors, useFormik } from "formik";
 import { TBudgetCreateParam } from "store/project/budget/action";
@@ -15,6 +15,7 @@ import { useBudgets } from "store/project/budget/selector";
 import { DateTimePicker } from "components/shared/DatePicker";
 import { useProjects } from "store/project/selectors";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import moment from "moment";
 
 type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
   projectId?: string;
@@ -71,6 +72,11 @@ const ModalAddBudget = (props: Props) => {
     }
     if (param.end_date) {
       param.end_date = formatDate(param.end_date, DATE_FORMAT_FORM);
+    }
+
+    if (moment(param.start_date).isAfter(param.end_date)) {
+      formik.setFieldError('start_date', 'The start date must be after the end date');
+      return;
     }
 
     try {
