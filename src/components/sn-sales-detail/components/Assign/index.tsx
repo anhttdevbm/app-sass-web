@@ -71,12 +71,15 @@ const DisplayItem = ({
 
   const salesT = useTranslations(NS_SALES);
 
-  const avatars: AvatarProps[] = users?.map((option) => {
+  const avatars: AvatarProps[] = users?.reduce((acc, option) => {
     const user = employeeOptions.find((item) => item.value === option.id);
-    return {
-      src: user?.avatar ?? UserPlaceholderImage.src,
-    };
-  });
+    if (user) {
+      acc.push({
+        src: user.avatar || UserPlaceholderImage.src,
+      });
+    }
+    return acc;
+  }, [] as AvatarProps[]);
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
       {avatars?.length === 0 ? (

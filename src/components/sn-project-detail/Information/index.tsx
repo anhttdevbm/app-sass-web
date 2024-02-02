@@ -168,7 +168,6 @@ const DesktopInformation = (props) => {
 
   const handleChangeSlide = (url) => {
     const info = filtered_images.find((item) => item.url === url);
-    console.log("info", info);
     setMediaPreview((state) => ({ ...info, isPreview: true }));
   };
 

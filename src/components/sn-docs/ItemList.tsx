@@ -35,6 +35,7 @@ export declare type TItemListParams = {
 
 const ItemList = ({ isGrouped }: TItemListParams) => {
   const { push } = useRouter();
+
   const { isMdSmaller } = useBreakpoint();
   const pathname = usePathname();
   const { query } = useQueryParams();
@@ -109,7 +110,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
   );
 
   useEffect(() => {
-    if (!searchParams.get("group_by"))
+    if (!searchParams.get("group_by")) {
       push(
         pathname +
           "?" +
@@ -118,6 +119,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
             createQueryString("size", "50"),
           ].join("&"),
       );
+    }
   }, [searchParams.get("group_by")]);
 
   return (
@@ -132,7 +134,6 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
             sx: { px: { xs: 0.5, md: 2 } },
           }}
         >
-          {console.log(data)}
           {query?.group_by == DocGroupByEnum.CREATED_BY &&
             Array.isArray(data?.docs) &&
             data?.docs.map((item) => {

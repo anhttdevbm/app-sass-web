@@ -36,6 +36,8 @@ export type BudgetingDictionary = {
     paymentStatus: string;
     totalCost: string;
     billable: string;
+    deleteBtnText: string;
+    selected: string;
     newExpenseForm: {
       date: string;
       owner: string;
@@ -119,6 +121,10 @@ export type BudgetingDictionary = {
       discount: string;
       totalBudget: string;
       description: string;
+      addSection: string;
+      addItem: string;
+      cancelBtnText: string;
+      saveBtnText: string;
     };
   };
   dialog: {
@@ -178,5 +184,27 @@ export type BudgetingDictionary = {
   };
   notifications: {
     updateServiceSuccess: string;
-  }
+  };
+  exportFile: {
+    documentFormat: string;
+    orientation: string;
+    pageSize: string;
+    includeAttachments: string;
+  };
+  expenseExport: {
+    openNewTab: string;
+    download: string;
+    title: string;
+    totalCost: string;
+    totalBillable: string;
+    generatedAt: string;
+    generatedBy: string;
+    service: string;
+    description: string;
+    date: string;
+    paymentStatus: string;
+    att: string;
+    cost: string;
+    billable: string;
+  };
 };

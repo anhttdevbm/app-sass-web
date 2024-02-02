@@ -8,23 +8,18 @@ import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { BlogData, BlogFormData } from "store/blog/actions";
+import { BlogData, BlogFormData, TagData } from "store/blog/actions";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
 import { UnprivilegedEditor } from "react-quill";
 import UploadFile from "components/shared/UploadFile";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useTagOptions, useTags } from "store/tags/selector";
 import { useCategoryBlog } from "store/blog-category/selectors";
-import { clientStorage } from "utils/storage";
-import { useDispatch } from "react-redux";
-import { ContactlessOutlined, Label } from "@mui/icons-material";
-import CustomAutocomplete from "./SelectCategories";
-import SelectCategories from "./SelectCategories";
-import { Category } from "store/blog-category/reducer";
 import SelectMultiple from "./SelectMultiple";
 import EditorView from "./EditorView";
-import { Endpoint, client } from "api";
+import { useBlogs } from "store/blog/selectors";
+import SelectCategoriescomplete from "./SelectCategories";
+import slugify from 'slugify';
+import SelectTagMultiple from "./SelectMultiple";
 
 type FormProps = {
   initialValues: BlogFormData;
@@ -35,46 +30,24 @@ type FormProps = {
 const Form = (props: FormProps) => {
   const { initialValues, type, onSubmit: onSubmitProps, ...rest } = props;
   const { onAddSnackbar } = useSnackbar();
-  const { user, onGetProfile } = useAuth();
   const blogT = useTranslations(NS_BLOG);
   const commonT = useTranslations(NS_COMMON);
   const editorRef = useRef<UnprivilegedEditor | undefined>();
-  const { tagsOptions, onSearchTags } = useTagOptions();
-  const { onCreateTags } = useTags();
   const [content, setContent] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const [data, setData] = useState<any | undefined>(undefined);
   const blogFormTranslatePrefix = "blogForm";
+  const [backgroundChanged, setBackgroundChanged] = useState(false);
+  const { listBlogTag, onGetListTag } = useBlogs();
+  const [tags, setTags] = useState<TagData[]>([]);
   const {
     items,
     onGetOptions: onGetCategoryOptions,
   } = useCategoryBlog();
   useEffect(() => {
+    onGetListTag();
     onGetCategoryOptions({ pageIndex: 1, pageSize: 50 });
-  }, [onGetCategoryOptions]);
-
-
-  const onSubmit = async (values: BlogFormData) => {
-    try {
-        const newItem = await onSubmitProps(values);
-        if (newItem) {
-            onAddSnackbar(
-                blogT("blogCategory.notification.success", { label }),
-                "success",
-            );
-            props.onClose();
-        } else {
-            throw AN_ERROR_TRY_AGAIN;
-        }
-    } catch (error) {
-        onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-    }
-};
-  const formik = useFormik({
-    initialValues,
-    enableReinitialize: true,
-    onSubmit,
-});
+  }, [onGetCategoryOptions, onGetListTag]);
 
   // set value
   const label = useMemo(() => {
@@ -90,49 +63,56 @@ const Form = (props: FormProps) => {
 
   const handleChangeName = (event) => {
     const nameValue = event.target.value;
-    const slugValue = nameValue
-      .toLowerCase()
-      .replace(/ /g, "-")
-      .replace(/[^\w-]+/g, "");
+    const slugValue = slugify(nameValue, {
+      lower: true,
+      remove: /[*+~.()'"!:@]/g, // Loại bỏ các ký tự đặc biệt không mong muốn
+    });
+
     formik.setFieldValue("title", nameValue);
     formik.setFieldValue("slug", slugValue);
   };
 
   const onSelect = (data) => {
-    const mappingData = data.map((item) => item.label);
-    console.log(mappingData);
-    console.log("data : "+data)
-    formik.setFieldValue("tag", mappingData);
+    const uniqueData = Array.from(new Set(data.map(item => item.tag))).map(tag => ({ tag }));
+    formik.setFieldValue("tag", uniqueData.map((item) => item.tag));
   };
-  const onEnter = (value: string | undefined) => {
+
+  const onEnter = (value) => {
+    console.log(value);
     if (!value) return;
-    const tags = formik.values?.tag ?? [];
-    const isExisted = tagsOptions.find((item) => item.label === value);
-    const convertedTags = tags.map((item) => ({
-      label: item,
-      value: item,
-    }));
+    if ((tags == null || tags.length == 0)) {
+      setTags(listBlogTag);
+    }
+    const itemValues = formik.values?.tag ?? [];
+    const isExisted = itemValues.find((item) => item == value);
 
     if (isExisted) {
-      onSelect([
-        ...convertedTags,
-        {
-          label: value,
-          value: isExisted.value,
-        },
-      ]);
-      return;
+      const updatedTags = itemValues.map(tag => ({ tag }));
+      onSelect([...updatedTags, { tag: value }]);
+    } else {
+      const newTagOption = {
+        tag: value,
+      };
+      setTags((prevListBlogTag) => [...prevListBlogTag, newTagOption]);
+      const updatedTags = itemValues.map(tag => ({ tag }));
+      onSelect([...updatedTags, { tag: value }]);
     }
-
-    onCreateTags({
-      name: value,
-    });
   };
+
+
 
   const onChangeField = (name: string, newValue?: any) => {
     formik.setFieldValue(name, newValue);
+    console.log(name);
+    if (name === "backgroundUpload") {
+      console.log("vào đây nhé");
+      setBackgroundChanged(true);
+    }
   };
-
+  const onSelectCategory = (data) => {
+    const mappingData = data.map((item) => item.id);
+    formik.setFieldValue("category", mappingData);
+  };
   const onChangeContent = (value: string, delta, _, editor: UnprivilegedEditor) => {
     const isEmpty = value === "<p><br></p>";
     setContent(isEmpty ? "" : value);
@@ -140,10 +120,46 @@ const Form = (props: FormProps) => {
     formik.setFieldValue("content", isEmpty ? "" : value);
   };
 
-  const onChangeAttactment = (files: File[]) => {
+  const onChangeAttactment = (files: File[], data: string[]) => {
     setFiles(files);
+    // Update listDataFile
+
+    // Update the value of attachments in formik
+    formik.setFieldValue("attachments", data);
     formik.setFieldValue("attachmentsUpload", files);
   };
+
+
+  const onSubmit = async (values: BlogFormData) => {
+    try {
+
+      if (backgroundChanged) {
+        console.log(values.background);
+      } else {
+        values.backgroundUpload = undefined;
+      }
+      const newItem = await onSubmitProps(values);
+      if (newItem) {
+        onAddSnackbar(
+          blogT("blogForm.notification.success", { label }),
+          "success",
+        );
+        props.onClose();
+      } else {
+        throw AN_ERROR_TRY_AGAIN;
+      }
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
+  const formik = useFormik({
+    initialValues,
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit,
+  });
+
+
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
       (out: FormikErrors<BlogFormData>, [key, error]) => {
@@ -160,7 +176,8 @@ const Form = (props: FormProps) => {
     () => !!Object.values(touchedErrors)?.length || formik.isSubmitting,
     [touchedErrors, formik.isSubmitting],
   );
- 
+
+
   return (
     <FormLayout
       sx={{
@@ -175,72 +192,93 @@ const Form = (props: FormProps) => {
       {...rest}
     >
       <Grid container spacing={2}>
-        <Grid item xs={5}>
+        <Grid item xs={5} marginTop={1}>
           <Stack>
-            <Input
-              fullWidth
-              name="title"
-              required
-              onChange={(e) => {
-                handleChangeName(e);
-                formik.handleChange(e);
-              }}
-              onBlur={formik.handleBlur}
-              value={formik.values?.title}
-              rootSx={sxConfig.input}
-              error={commonT(touchedErrors?.title, {
-                name: blogT("blogForm.title"),
-              }) ? 'error' : undefined}
-              helperText={commonT(touchedErrors?.title, {
-                name: blogT("blogForm.title"),
-              })}
-              title={blogT(`${blogFormTranslatePrefix}.title`)}
-            />
-
-            <Input
-              fullWidth
-              name="slug"
-              required
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.slug}
-              rootSx={sxConfig.input}
-              title={blogT(`${blogFormTranslatePrefix}.slug`)}
-              error={commonT(touchedErrors?.slug, {
-                name: blogT("blogForm.slug"),
-              }) ? 'error' : undefined}
-              helperText={commonT(touchedErrors?.slug, {
-                name: blogT("blogForm.slug"),
-              })}
-            />
-            <Stack>
-               <SelectCategories
-                name="category"
-                value={formik.values?.category}
-                onChange={onChangeField}
+            <Stack style={{ marginBottom: 5 }}>
+              <Input
+                fullWidth
+                name="title"
+                required
+                onChange={(e) => {
+                  handleChangeName(e);
+                  formik.handleChange(e);
+                }}
+                onBlur={formik.handleBlur}
+                value={formik.values?.title}
+                rootSx={sxConfig.input}
+                error={commonT(touchedErrors?.title, {
+                  name: blogT("blogForm.title"),
+                }) ? 'error' : undefined}
+                helperText={commonT(touchedErrors?.title, {
+                  name: blogT("blogForm.title"),
+                })}
+                title={blogT(`${blogFormTranslatePrefix}.title`)}
               />
             </Stack>
-
-            <SelectMultiple
-                limitTags={3}
-                options={tagsOptions}
-                onSelect={(e, data) => onSelect(data)}
-                onInputChange={(value) => onSearchTags(value)}
-                onEnter={onEnter}
-                label={blogT("blogForm.tag")}
+            <Stack style={{ marginBottom: 4 }}>
+              <Input
+                fullWidth
+                name="slug"
+                required
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values?.slug}
+                rootSx={sxConfig.input}
+                title={blogT(`${blogFormTranslatePrefix}.slug`)}
+                error={commonT(touchedErrors?.slug, {
+                  name: blogT("blogForm.slug"),
+                }) ? 'error' : undefined}
+                helperText={commonT(touchedErrors?.slug, {
+                  name: blogT("blogForm.slug"),
+                })}
+              />
+            </Stack>
+            <Stack>
+              <SelectCategoriescomplete items={items} label={blogT("blogForm.category")}
                 sx={sxConfig}
-                value={formik.values.tag?.map((tag) => ({ label: tag, value: tag }))}
-            />
-
+                onSelect={(e, data) => onSelectCategory(data)}
+                value={formik.values.category?.map((tag) => ({
+                  id: tag
+                }))}
+              />
+            </Stack>
+            <Stack style={{ marginBottom: 4, marginTop: 2 }}>
+              <SelectTagMultiple items={tags.length > 0 && tags !== undefined ? tags : listBlogTag} label={blogT("blogForm.tag")}
+                sx={sxConfig}
+                onSelect={(e, data) => onSelect(data)}
+                onEnter={onEnter}
+                value={formik.values.tag?.map((tag) => ({ tag }))}
+              />
+            </Stack>
             <UploadFile
               title={blogT("blogForm.background")}
               name="backgroundUpload"
               value={formik.values?.backgroundUpload}
-              onChange={onChangeField} 
+              onChange={onChangeField}
             />
           </Stack>
         </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={7} marginTop={1}>
+          <Stack style={{ marginBottom: 4 }}>
+            <Input
+              fullWidth
+              name="short_description"
+              required
+              onChange={(e) => {
+                formik.handleChange(e);
+              }}
+              onBlur={formik.handleBlur}
+              value={formik.values?.short_description}
+              rootSx={sxConfig.input}
+              error={commonT(touchedErrors?.short_description, {
+                name: blogT("blogForm.short_description"),
+              }) ? 'error' : undefined}
+              helperText={commonT(touchedErrors?.short_description, {
+                name: blogT("blogForm.short_description"),
+              })}
+              title={blogT(`${blogFormTranslatePrefix}.short_description`)}
+            />
+          </Stack>
           <Stack height={300}>
             <EditorView
               hasAttachment
@@ -249,6 +287,7 @@ const Form = (props: FormProps) => {
               onChangeFiles={onChangeAttactment}
               value={formik.values.content}
               files={formik.values.attachmentsUpload}
+              dataFile={formik.values.attachments as string[]}
             >
               <Stack
                 direction="row"
@@ -269,20 +308,29 @@ export default memo(Form);
 const sxConfig = {
   input: {
     height: 56,
+    maxWidth: '100%',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 };
 export const validationSchema = Yup.object().shape({
   title: Yup.string().required('form.error.required'),
   slug: Yup.string().required('form.error.required'),
   content: Yup.string().required('form.error.required'),
-  background: Yup.object().required('form.error.required'),
+  backgroundUpload: Yup.object().required('form.error.required'),
   attachments: Yup.array()
     .of(Yup.object({
       name: Yup.string().required('form.error.required'),
     }))
     .min(1, 'form.error.required'),
-    category: Yup.array()
+  category: Yup.array()
     .of(Yup.string())
     .min(1, 'form.error.required'),
-  tag: Yup.array().of(Yup.string()),
+  tag: Yup.array()
+    .of(Yup.object({
+      name: Yup.string().required('form.error.required'),
+    }))
+    .min(1, 'form.error.required'),
+  short_description: Yup.string().required("form.error.required"),
 });

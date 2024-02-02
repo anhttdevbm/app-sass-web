@@ -7,6 +7,7 @@ import { HomeTab } from "./RightSidebar/HomeTab";
 import { ClientTab } from "./RightSidebar/ClientTab";
 import { SettingTab } from "./RightSidebar/SettingTab";
 import { TBudget } from "store/project/budget/action";
+import useTheme from "hooks/useTheme";
 
 enum Tabs {
   Home,
@@ -14,15 +15,24 @@ enum Tabs {
   Setting,
 }
 
-interface BudgetRightSidebarProps{
+interface BudgetRightSidebarProps {
   budget: TBudget;
 }
 
-export const BudgetRightSidebar = ({budget}:BudgetRightSidebarProps) => {
+export const BudgetRightSidebar = ({ budget }: BudgetRightSidebarProps) => {
   const [tabActive, setTabActive] = useState<Tabs>(Tabs.Home);
+  const { isDarkMode } = useTheme();
 
   return (
-    <Box>
+    <Box
+      sx={{
+        position: "sticky !important",
+        top: 0,
+        background: isDarkMode ? "#313130" : "white",
+        py: 2,
+        zIndex: 10,
+      }}
+    >
       <Stack direction="row" gap={2}>
         <ButtonHeader
           isActive={tabActive === Tabs.Home}
@@ -45,7 +55,7 @@ export const BudgetRightSidebar = ({budget}:BudgetRightSidebarProps) => {
       </Stack>
       <Box>
         {tabActive === Tabs.Home && <HomeTab budget={budget} />}
-        {tabActive === Tabs.Client && <ClientTab budget={budget}/>}
+        {tabActive === Tabs.Client && <ClientTab budget={budget} />}
         {tabActive === Tabs.Setting && <SettingTab budget={budget} />}
       </Box>
     </Box>

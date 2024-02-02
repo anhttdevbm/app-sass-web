@@ -2,9 +2,9 @@ import { DialogLayoutProps } from "components/DialogLayout";
 import { useSnackbar } from "store/app/selectors";
 import { useTranslations } from "next-intl";
 import { DATE_FORMAT_FORM, NS_COMMON, NS_PROJECT } from "constant/index";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import FormLayout from "components/FormLayout";
-import { MenuList, Popper, Stack } from "@mui/material";
+import { MenuList, Stack } from "@mui/material";
 import { Input, Select } from "components/shared";
 import { FormikErrors, useFormik } from "formik";
 import { TBudgetCreateParam } from "store/project/budget/action";
@@ -15,6 +15,7 @@ import { useBudgets } from "store/project/budget/selector";
 import { DateTimePicker } from "components/shared/DatePicker";
 import { useProjects } from "store/project/selectors";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import moment from "moment";
 
 type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
   projectId?: string;
@@ -48,7 +49,10 @@ const ModalAddBudget = (props: Props) => {
   const { projectOptions } = useGetOptions();
 
   useEffect(() => {
-    if (!rest.open) return;
+    if (!rest.open) {
+      formik.resetForm();
+      return;
+    }
     if (!projects || projects.length === 0) {
       onGetProjects({});
     }
@@ -68,6 +72,11 @@ const ModalAddBudget = (props: Props) => {
     }
     if (param.end_date) {
       param.end_date = formatDate(param.end_date, DATE_FORMAT_FORM);
+    }
+
+    if (moment(param.start_date).isAfter(param.end_date)) {
+      formik.setFieldError('start_date', 'The start date must be after the end date');
+      return;
     }
 
     try {
@@ -199,6 +208,7 @@ const ModalAddBudget = (props: Props) => {
               })}
               rootSx={sxInput}
               fullWidth
+              autoComplete="off"
             />
           )}
           <Input
@@ -213,6 +223,7 @@ const ModalAddBudget = (props: Props) => {
             error={commonT(touchedErrors?.name, {
               name: projectT("budget.form.name"),
             })}
+            autoComplete="off"
           />
           <Stack direction={{ sm: "row" }} spacing={2}>
             <DateTimePicker
@@ -237,6 +248,7 @@ const ModalAddBudget = (props: Props) => {
                 onClickOutside() {
                   toggleFocusInputDate(false);
                 },
+                autoComplete: "off",
               }}
             />
             <DateTimePicker
@@ -265,6 +277,7 @@ const ModalAddBudget = (props: Props) => {
                 onClickOutside() {
                   toggleFocusInputDate(false);
                 },
+                autoComplete: "off",
               }}
             />
           </Stack>
@@ -294,6 +307,7 @@ const ModalAddBudget = (props: Props) => {
               placeholder: commonT("searchBy", { name: "email" }),
             }}
             onOpen={() => onGetEmployeeOptions({ pageIndex: 1, pageSize: 20 })}
+            autoComplete="off"
           />
         </MenuList>
       </Stack>

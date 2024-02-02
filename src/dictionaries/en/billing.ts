@@ -177,7 +177,7 @@ export const BillingLang: BillingDictionary = {
       feed: {
         table: {},
         button: {
-          sendComment: "Sent Comment",
+          sendComment: "Send Comment",
           option: {
             comments: "Comments",
             attachments: "Attachments",
@@ -204,6 +204,7 @@ export const BillingLang: BillingDictionary = {
           overdue: "Overdue",
           amount: "Amount",
           note: "Note",
+          day: "days",
         },
         button: {
           cancel: "Cancel",
@@ -216,9 +217,11 @@ export const BillingLang: BillingDictionary = {
         title: {
           payments: "Payments",
           editPayment: "Edit Payment",
+          addPayment: "Add Payment",
           amount: "Amount",
           note: "Note",
           paidOn: "Paid on",
+          writeOff: "Writeoff",
         },
       },
       top: {

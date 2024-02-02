@@ -8,6 +8,7 @@ import timeTrackingReducer, {
 } from "store/timeTracking/reducer";
 import managerReducer, { ManagerState } from "store/manager/reducer";
 import chatReducer from "store/chat/reducer";
+import budgetExpenseReducer from "store/expense/reducer";
 import { SaleState, salesReducer } from "./sales/reducer";
 import { resourcePlanningReducer } from "./resourcePlanning/reducer";
 import { TagState, tagsReducer } from "./tags/reducer";
@@ -54,6 +55,7 @@ export const store = configureStore({
     career: CareerReducer,
     [documentApi.reducerPath]: documentApi.reducer,
     billing: billingReducer,
+    budgetExpense: budgetExpenseReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -13,7 +13,7 @@ import { Endpoint, client } from "api";
 
 const EditCompany = () => {
   const { item: detailItem } = useCompany();
-  const { item: myItem, onUpdateMyCompany } = useMyCompany();
+  const { item: myItem, onUpdateMyCompany, onGetCompany } = useMyCompany();
   const { id: paramId } = useParams();
 
   const item = useMemo(() => {
@@ -51,13 +51,13 @@ const EditCompany = () => {
 
     if (typeof data["avatar"] === "object") {
       const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
-      payload.created_by = { avatar: logoUrl };
+      payload.avatar = [logoUrl];
     } else {
       delete dataOnlyUpdated["avatar"];
     }
 
     if (paramId) {
-      const data = await onUpdateCompany(id, payload);
+      const data = await onUpdateCompany(id, payload);      
       return data
     }
     const result = await onUpdateMyCompany(payload);
@@ -71,11 +71,11 @@ const EditCompany = () => {
     "address",
     "phone",
     "tax_code",
-    "created_by"
+    "created_by",
+    "avatar"
   ])
 
-  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).created_by?.avatar?.link } as CompanyData
-
+  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).avatar?.link } as CompanyData  
   return (
     <>
       <IconButton

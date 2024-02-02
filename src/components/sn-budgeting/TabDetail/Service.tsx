@@ -9,7 +9,7 @@ import { TBudgetSection } from "../BudgetDetail";
 type Props = {
   isEdit?: boolean;
   onCloseEdit?: () => void;
-  refetch?: () => void;
+  refetch: () => void;
   sections: TBudgetSection[];
   serviceData: any;
 };

@@ -99,6 +99,7 @@ export const Endpoint = {
   UPLOAD: "/files/upload-avatar",
   SIGNUP_UPLOAD: "/avatar/upload",
   UPLOAD_LINK: "/files/upload-link",
+  DOWNLOAD_LINK: '/in/files/download-links',
 
   RESOURCE_PLANNING: "/resources",
   RESOURCE_PLANNING_LIST: "/resources/all",
@@ -130,6 +131,8 @@ export const Endpoint = {
   BLOGS: "/post",
   DETAIL_BLOG: "/post/{id}",
   GET_BLOG_COMMENT: "/post/{id}/comment",
+  GET_BLOG_TAGS : "/post/tags",
+
   //carrer
   CAREER: "/job-post",
   UPADATECAREER: "/job-post/{id}",
@@ -142,6 +145,12 @@ export const Endpoint = {
   INTERACTION_BILLING: "/bill_interaction",
   INTERACTION_BILLING_BY_BILL: "/bill_interaction/{id}",
   ADD_USER_BILL: "/addUserToBill",
+  CHANGE_BILL: "/bill/{id}",
+  PAYMENT_BILL: "/payment",
+  CUSTOM_PAYMENT: "/payment/{id}",
+  TAG: "/tag",
+  CUSTOM_TAG: "/tag/{id}",
+  UPDATE_BILL_TAG: "/bill/updateTag/{id}",
 
   //Budget
   BUDGET: "/budgets/all",

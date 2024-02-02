@@ -22,6 +22,9 @@ import { Padding } from "@mui/icons-material";
 import { BillingData } from "store/billing/actions";
 import { BILLING_PATH } from "constant/paths";
 import { useRouter } from "next-intl/client";
+import PaymentModal from "./PaymentModal";
+import { Select } from "components/shared";
+import DropdownButton from "./DropdownButton";
 
 type TabItemProps = {
   label: string;
@@ -48,8 +51,14 @@ const TabInfo = (props: TabListProps) => {
   // const { id } = useParams() as { id: string };
   // const pathname = usePathname();
   const billingT = useTranslations(NS_BILLING);
-  const { onUpdateBilling, updateStatus, onCreateBilling, createStatus } =
-    useBillings();
+  const {
+    onUpdateBilling,
+    updateStatus,
+    onCreateBilling,
+    createStatus,
+    markAsSend,
+  } = useBillings();
+  const { push } = useRouter();
   const [value, setValue] = useState("Invoice");
   const [editForm, setEditForm] = useState<boolean>(false);
   const [billToInfo, setBillToInfo] = useState<Bill>({});
@@ -57,7 +66,16 @@ const TabInfo = (props: TabListProps) => {
   const [billFromInfo, setBillFromInfo] = useState<Bill>({
     fullNameCompany: user?.company,
   });
-  const { push } = useRouter();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [actionButton, setActionButton] = useState<string>("");
+
+  const handleOpen = (value) => {
+    setActionButton(value);
+    setIsOpen(true);
+  };
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   const TABS = [
     {
@@ -229,6 +247,47 @@ const TabInfo = (props: TabListProps) => {
                 )}
               </Stack>
             )}
+            {value === "Payment" && (
+              <Stack gap={2} direction={"row"} mb={1}>
+                {item && item?.mail_status == "Sent" && (
+                  <DropdownButton handleOpen={handleOpen} />
+                  // <Button
+                  //   variant="contained"
+                  //   onClick={() => {
+                  //     handleOpen();
+                  //   }}
+                  // >
+                  //   {"Add Payment"}
+                  //   {/* {billingT("detail.form.top.button.edit")} */}
+                  // </Button>
+                )}
+
+                {/* {editForm && (
+                  <>
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        setEditForm(false);
+                      }}
+                    >
+                      {billingT("detail.form.top.button.cancel")}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={() => formik.handleSubmit()}
+                    >
+                      {billingT("detail.form.top.button.saveChange")}
+                    </Button>
+                  </>
+                )} */}
+              </Stack>
+            )}
+            <PaymentModal
+              open={isOpen}
+              handleClose={handleClose}
+              title={billingT("detail.form.payment.title.addPayment")}
+              action={actionButton == "add" ? "add" : "write"}
+            />
           </Stack>
           {TABS.map((tab) => (
             <TabItem

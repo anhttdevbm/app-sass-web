@@ -3,13 +3,19 @@ import { useCallback, useEffect, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  BillPaymentData,
+  BillTagData,
   BillingData,
   BillingDataExport,
+  BillingDataMark,
   GetBillingListQueries,
   GetBudgetListQueries,
+  addPayment,
   addUserToBilling,
   createBilling,
   createCommentBilling,
+  deleteBilling,
+  deletePayment,
   downloadPdfBilling,
   exportBilling,
   exportBillingQueries,
@@ -18,8 +24,12 @@ import {
   getBudgetDetail,
   getBudgetList,
   getCommentBilling,
+  getPaymentByBillId,
   getServiceBudget,
+  markAsSendBilling,
   updateBilling,
+  updatePayment,
+  updateTagBill,
   viewPdfBilling,
 } from "./actions";
 import { BillingCommentData, BillingDataUpdate, Service } from "./reducer";
@@ -46,6 +56,13 @@ export const useBillings = () => {
     totalAmount,
     totalAmountUnpaid,
     addUserStatus,
+    markAsSend,
+    isDeleted,
+    isUpdateTagBill,
+    dataPayment,
+    isAddPayment,
+    isUpdatePayment,
+    isDeletedPayment,
   } = useAppSelector((state) => state.billing, shallowEqual);
   const { page, size, totalItems, total_page } = useAppSelector(
     (state) => state.billing.paging,
@@ -83,8 +100,8 @@ export const useBillings = () => {
   );
 
   const onGetCommentBilling = useCallback(
-    async (id: string) => {
-      return await dispatch(getCommentBilling(id));
+    async (id: string, param: string) => {
+      return await dispatch(getCommentBilling({ id, param }));
     },
     [dispatch],
   );
@@ -120,6 +137,51 @@ export const useBillings = () => {
     },
     [dispatch],
   );
+
+  const onMarkAsSentBilling = useCallback(
+    async (id: string, data: BillingDataMark) => {
+      return await dispatch(markAsSendBilling({ id, data }));
+    },
+    [dispatch],
+  );
+
+  const onDeleteBilling = useCallback(
+    async (id: string) => {
+      return await dispatch(deleteBilling({ id }));
+    },
+    [dispatch],
+  );
+
+  const onUpdateTagBilling = useCallback(
+    async (id: string, data: BillTagData) => {
+      return await dispatch(updateTagBill({ id, data }));
+    },
+    [dispatch],
+  );
+  const onGetPayments = useCallback(
+    async (id: string) => {
+      return await dispatch(getPaymentByBillId({ id }));
+    },
+    [dispatch],
+  );
+  const onUpdatePayment = useCallback(
+    async (id: string, data: BillPaymentData) => {
+      return await dispatch(updatePayment({ id, data }));
+    },
+    [dispatch],
+  );
+  const onAddPayment = useCallback(
+    async (data: BillPaymentData) => {
+      return await dispatch(addPayment({ data }));
+    },
+    [dispatch],
+  );
+  const onDeletePayment = useCallback(
+    async (id: string) => {
+      return await dispatch(deletePayment({ id }));
+    },
+    [dispatch],
+  );
   //   const onUpdateProject = useCallback(
   //     async (id: string, data: Partial<ProjectData>) => {
   //       try {
@@ -151,6 +213,13 @@ export const useBillings = () => {
     totalAmount,
     totalAmountUnpaid,
     addUserStatus,
+    markAsSend,
+    isDeleted,
+    isUpdateTagBill,
+    dataPayment,
+    isAddPayment,
+    isUpdatePayment,
+    isDeletedPayment,
     onGetBillings,
     onCreateBilling,
     onUpdateBilling,
@@ -161,6 +230,13 @@ export const useBillings = () => {
     onDownloadFileBilling,
     onViewFileBilling,
     onAddUserToBilling,
+    onMarkAsSentBilling,
+    onDeleteBilling,
+    onUpdateTagBilling,
+    onGetPayments,
+    onAddPayment,
+    onUpdatePayment,
+    onDeletePayment,
   };
 };
 
@@ -333,30 +409,30 @@ const useGetOptions = () => {
 };
 export default useGetOptions;
 
-// export const useProject = () => {
-//   const dispatch = useAppDispatch();
-//   const {
-//     item,
-//     itemStatus: status,
-//     itemError: error,
-//   } = useAppSelector((state) => state.project, shallowEqual);
+export const usePayment = () => {
+  const dispatch = useAppDispatch();
+  const {
+    item,
+    itemStatus: status,
+    itemError: error,
+  } = useAppSelector((state) => state.billing, shallowEqual);
 
-//   const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
-//   const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+  const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
+  const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
 
-//   const onGetProject = useCallback(
-//     async (id: string) => {
-//       await dispatch(getProject(id));
-//     },
-//     [dispatch],
-//   );
+  const onGetPayment = useCallback(
+    async (id: string) => {
+      await dispatch(getPaymentByBillId({ id }));
+    },
+    [dispatch],
+  );
 
-//   return {
-//     item,
-//     status,
-//     error,
-//     isIdle,
-//     isFetching,
-//     onGetProject,
-//   };
-// };
+  return {
+    item,
+    status,
+    error,
+    isIdle,
+    isFetching,
+    onGetPayment,
+  };
+};

@@ -146,7 +146,7 @@ const FormStepOne = (props: IProps) => {
   );
 
   useEffect(() => {
-    const budgetData = _.get(budgetDetailQuery, 'data');
+    const budgetData = _.get(budgetDetailQuery, 'data.data');
     if (!!budgetData && !_.has(budgetData, 'errors')) {
       handleNext([budgetData]);
     }

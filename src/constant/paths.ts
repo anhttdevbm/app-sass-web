@@ -26,7 +26,7 @@ export const PROJECT_ACTIVITIES_PATH = "/projects/{id}/activities";
 export const PROJECT_BUDGET_PATH = "/projects/{id}/budget";
 export const PROJECT_MEMBERS_PATH = "/projects/{id}/members";
 export const PROJECT_INFORMATION_PATH = "/projects/{id}";
-export const PROJECT_DOCUMENT_PATH = "/projects/{id}/docs?project={id}&page=1&group_by=project_id";
+export const PROJECT_DOCUMENT_PATH = "/projects/{id}/docs?project={id}&page=1&group_by=project_id&size={10}";
 
 export const TIME_TRACKING_PATH = "/time-tracking";
 export const RESOURCE_PLANING_PATH = "/resource-planing";
@@ -58,6 +58,10 @@ export const BILLING_INFO_PATH = "/billing/{id}";
 export const BILLING_DETAIL_PATH = "/billing/detail";
 export const BILLING_EXPORT_PATH = "/billing/export/{id}";
 export const BILLING_DUPLICATE_PATH = "/billing/duplicate";
+
+//Budget
+export const BUDGET_EXPENSE_EXPORT_PATH = "/budgeting/expense/export/{id}";
+export const BUDGET_INVOICE_EXPORT_PATH = "/budgeting/invoice/export/{id}";
 
 // Landing
 export const LANDING_HOME_PATH = "/landing";
@@ -109,6 +113,7 @@ export const AUTHORIZED_PATHS = {
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
+    BUDGET_EXPENSE_EXPORT_PATH
   ],
   [Permission.SA]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -128,6 +133,7 @@ export const AUTHORIZED_PATHS = {
     CAREER_PATH,
     CAREER_DETAIL_PATH,
     BLOGS_RELATED_PATH,
+    BUDGET_EXPENSE_EXPORT_PATH
   ],
   [Permission.ST]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -160,6 +166,7 @@ export const AUTHORIZED_PATHS = {
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
+    BUDGET_EXPENSE_EXPORT_PATH
   ],
   [Permission.EU]: [...AUTHORIZED_LOGGED_IN_PATHS, UPGRADE_ACCOUNT_PATH],
 };

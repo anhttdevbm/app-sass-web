@@ -61,6 +61,8 @@ import Content from "./components/Content";
 import Description from "./components/Description";
 import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
 import useWindowSize from "hooks/useWindowSize";
+import MoveTagIcon from "icons/MoveTagIcon";
+import { red } from "@mui/material/colors";
 
 const ItemList = () => {
   const {
@@ -97,6 +99,7 @@ const ItemList = () => {
   const projectT = useTranslations(NS_PROJECT);
   const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
   const [isDragging, onDraggingTrue, onDraggingFalse] = useToggle();
+  const windowSize = useWindowSize();
 
   const params = useParams();
   const { isDarkMode } = useTheme();
@@ -234,10 +237,10 @@ const ItemList = () => {
       {
         value: commonT("form.title.startDate"),
         width: "100px",
-        align: "left",
+        align: "center",
       },
-      { value: commonT("form.title.endDate"), width: "100px", align: "left" },
-      { value: commonT("status"), width: "100px", align: "left" },
+      { value: commonT("form.title.endDate"), width: "100px", align: "center" },
+      { value: commonT("status"), width: "100px", align: "center" },
       {
         value: commonT("form.title.description"),
         width: "12%",
@@ -259,25 +262,25 @@ const ItemList = () => {
       {
         value: commonT("form.title.startDate"),
         width: "100px",
+        align: "center",
       },
-      { value: commonT("form.title.endDate"), width: "100px" },
-      { value: commonT("status"), width: "100px" },
+      { value: commonT("form.title.endDate"), width: "100px", align: "center" },
+      { value: commonT("status"), width: "100px", align: "center" },
       {
         value: commonT("form.title.description"),
         width: "16%",
+        align: "center",
       },
       { value: "", width: "1%", align: "center" },
     ],
     [commonT, projectT],
   );
 
-  const windowSize = useWindowSize();
-
   const headerList = useMemo(() => {
     if (isMdSmaller) return [];
     if (isXlSmaller) return desktopHeaderList;
     if (isXlBigger) return xlHeaderList;
-  }, [windowSize.width]) as CellProps[];
+  }, [windowSize]) as CellProps[];
 
   const onSetTask = (
     taskData?: Task,
@@ -1044,7 +1047,7 @@ const ItemList = () => {
   }, [fixedLayoutRef]);
 
   return (
-    <Stack flex={1} pb={3} order={3}>
+    <Stack flex={1} pb={3} order={3} gap={2} bgcolor={"background.default"}>
       {!!selectedList.length && (
         <ActionsSelected
           selectedList={selectedList}
@@ -1057,6 +1060,8 @@ const ItemList = () => {
         // zIndex={12}
         display={{ xs: "none", md: "flex" }}
         bgcolor="background.default"
+        overflow="hidden"
+        mt="12px"
       >
         <TableLayout
           onLayout={onLayout}
@@ -1068,12 +1073,28 @@ const ItemList = () => {
           // maxWidth={1349}
           mx="auto"
           width="100%"
-          height="48px"
+          height="55px"
           bgcolor={noData ? "background.paper" : "background.default"}
+          headerProps={{
+            sx: {
+              backgroundColor: "background.paper",
+            },
+          }}
           sx={{
+            ml: "-37px",
+            "&::after": {
+              width: "37px",
+              content: "''",
+              height: "100%",
+              position: "absolute",
+              right: "0",
+              backgroundColor: "background.paper",
+            },
+            "* > th:first-child": {
+              pl: "37px",
+            },
             "* > th": {
-              padding: "0px",
-              textAlign: "left",
+              padding: "10px",
             },
           }}
         >
@@ -1174,6 +1195,22 @@ const ItemList = () => {
                                         )}
                                         {...provided.dragHandleProps}
                                       >
+                                        {/* <IconButton
+                                          // className="checkbox"
+                                          noPadding
+                                          sx={{
+                                            zIndex: 10,
+                                            marginRight: "16px",
+                                          }}
+                                          // {...provided.dragHandleProps}
+                                        >
+                                          <MoveTagIcon
+                                            fontSize={
+                                              isXlSmaller ? "small" : "medium"
+                                            }
+                                            sx={{ color: "grey.A200" }}
+                                          />
+                                        </IconButton> */}
                                         {task.name}
                                       </Content>
                                     );
@@ -1414,7 +1451,7 @@ const ItemList = () => {
                                                         "border-bottom":
                                                           "1px solid",
                                                         borderColor: {
-                                                          md: "#1BC5BD",
+                                                          md: "rgba(27, 197, 189, 0.5)",
                                                           xs: "background.paper",
                                                         },
                                                         content: "''",
@@ -1440,20 +1477,18 @@ const ItemList = () => {
                                                         height: "5px",
                                                         rotate: "45deg",
                                                         borderColor: {
-                                                          md: "#1BC5BD",
+                                                          md: "rgba(27, 197, 189, 0.5)",
                                                           xs: "background.paper",
                                                         },
                                                       },
                                                     }}
                                                   >
-                                                    <Checkbox
-                                                      className="checkbox0"
-                                                      size="small"
-                                                      style={{
-                                                        opacity: "0",
+                                                    <Box
+                                                      sx={{
+                                                        width: "20px",
+                                                        height: "16px",
                                                       }}
-                                                    />
-
+                                                    ></Box>
                                                     <Stack
                                                       direction={{
                                                         md: "row",
@@ -1473,7 +1508,7 @@ const ItemList = () => {
                                                           borderBottom:
                                                             "1px solid",
                                                           borderColor: {
-                                                            md: "#1BC5BD",
+                                                            md: "rgba(27, 197, 189, 0.5)",
                                                             xs: "background.paper",
                                                           },
                                                           content: "''",
@@ -1522,13 +1557,6 @@ const ItemList = () => {
                                                           }}
                                                         />
 
-                                                        {/* <Draggable
-                                                    draggableId={subTask.id}
-                                                    index={i}
-                                                  >
-                                                    {(provided, snapshot) => {
-                                                      return (
-                                                        <> */}
                                                         <IconButton
                                                           noPadding
                                                           sx={{
@@ -1574,7 +1602,6 @@ const ItemList = () => {
                                                           {subTask.name}
                                                         </Content>
                                                       </Content>
-
                                                       <Content
                                                         sx={{
                                                           display: "flex",
@@ -1740,7 +1767,6 @@ const ItemList = () => {
                                                           }
                                                         />
                                                       </Content>
-
                                                       <Content
                                                         sx={{
                                                           display: "flex",

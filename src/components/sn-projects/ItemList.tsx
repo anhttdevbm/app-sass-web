@@ -66,12 +66,12 @@ const ItemList = () => {
       {
         value: commonT("form.title.startDate"),
         width: "12.5%",
-        align: "left",
+        align: "center",
       },
       {
         value: commonT("form.title.endDate"),
         width: "12.5%",
-        align: "left",
+        align: "center",
       },
       { value: commonT("status"), width: "12.5%" },
       { value: "", width: "5%" },

@@ -186,6 +186,9 @@ const ItemMemberDetail = ({
                   vertical: "top",
                   horizontal: "left",
                 }}
+                sx={{
+                  zIndex: "1301",
+                }}
               >
                 <MenuItem
                   onClick={() => {

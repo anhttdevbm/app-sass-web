@@ -135,6 +135,18 @@ const chatSlice = createSlice({
     setRoomId: (state, action) => {
       state.roomId = action.payload;
     },
+
+    //---Handle in groups ---//
+    setGroupMembers: (state, action: PayloadAction<[]>) => {
+      state.groupMembers = action.payload;
+    },
+    removeGroupMember: (state, action) => {
+      state.groupMembers = state.groupMembers.filter(
+        (groupMember) => groupMember.id !== action.payload,
+      );
+    },
+    //------------------------//
+
     setTypeList: (state, action) => {
       state.typeList = action.payload;
     },

@@ -13,6 +13,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useHeaderConfig } from "store/app/selectors";
 import { useProject, useProjects } from "store/project/selectors";
 import { getPath } from "utils/index";
+import useBreakpoint from "../hooks/useBreakpoint";
 
 type ProjectDetailLayoutProps = {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
   const { isDarkMode } = useTheme();
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
+  const { isLgBigger } = useBreakpoint();
 
   const pathname = usePathname();
 
@@ -78,6 +80,8 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
     <Wrapper
       sx={{
         overflow: "hidden",
+        padding: `${isLgBigger ? "24" : "16"}px!important`,
+        paddingTop: "0px!important",
       }}
       id={SCROLL_ID}
       overflow="auto"

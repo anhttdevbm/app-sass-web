@@ -15,8 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Page() {
   return (
     <Wrapper overflow="auto" inFrame>
-      <Actions />
-      <ItemList />
+      <Actions isProjectTabMode={false} />
+      <ItemList isGrouped={false} />
     </Wrapper>
   );
 }

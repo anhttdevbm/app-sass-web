@@ -138,7 +138,15 @@ export type BillingDictionary = {
         table: {};
         table2: {};
         button: {};
-        title: {};
+        title: {
+          payments: string;
+          editPayment: string;
+          addPayment: string;
+          amount: string;
+          note: string;
+          paidOn: string;
+          writeOff: string;
+        };
       };
       top: {
         button: {};

@@ -144,7 +144,7 @@ const SalesPage = () => {
             </Text>
             <Text
               variant="h6"
-              color={totalRevenue > 0 ? "primary.main" : "error.main"}
+              color={totalRevenue > 0 ? "success.main" : "error.main"}
             >
               {formatCurrency(totalRevenue, {
                 prefix: "$",
@@ -185,7 +185,7 @@ const SalesPage = () => {
               </Text>
               <Text
                 variant="h6"
-                color={totalRevenuePJ > 0 ? "primary.main" : "error.main"}
+                color={totalRevenuePJ > 0 ? "success.main" : "error.main"}
               >
                 {formatCurrency(totalRevenuePJ, {
                   prefix: "$",

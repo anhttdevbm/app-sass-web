@@ -1,4 +1,4 @@
-import { useFormContext } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import { get } from "lodash";
 import React, { useState } from "react";
 import { bool } from "yup";
@@ -16,7 +16,7 @@ export const ScrollViewProvider = ({ children }) => {
   const [isScrollView, setScrollView] = useState(false);
   const {
     formState: { errors },
-  } = useFormContext();
+  } = useForm();
 
   const scrollErrorField = (name) => {
     if (errors && get(errors, `${name}`)) {

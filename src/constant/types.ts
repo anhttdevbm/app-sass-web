@@ -1,6 +1,7 @@
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { DocAccessibility, Permission, ThemeMode } from "./enums";
 import { i18n } from ".";
+import { Editor } from "@tiptap/core";
 
 export interface Option {
   label: string;
@@ -56,6 +57,7 @@ export type ErrorResponse = {
 export interface BaseQueries {
   pageIndex?: number;
   pageSize?: number;
+  query?: string;
 }
 
 export interface BaseQueries_Feedback {
@@ -174,6 +176,7 @@ export declare interface IComment {
     position: string;
   };
   doc: string;
+  editor: Editor;
   createdAt: Date;
 }
 

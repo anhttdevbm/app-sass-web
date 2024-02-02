@@ -143,3 +143,14 @@ export enum ExpenseStatus {
   UNPAID = 'UNPAID',
   PAID = 'PAID'
 }
+
+export enum DocumentFormat {
+  PDF = 'pdf',
+  CSV = 'csv',
+  XLSX = 'xlsx'
+}
+
+export enum BudgetServiceBillable {
+  'BILLABLE' = 'billable',
+  'NON_BILLABLE' = 'non_billable',
+}

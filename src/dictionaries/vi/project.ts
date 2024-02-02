@@ -67,7 +67,7 @@ export const ProjectLang: ProjectDictionary = {
   },
   detailDocuments: {
     head: {
-      title: "Documents of Project | Taskcover",
+      title: "Tài liệu trong dự án | Taskcover",
     },
   },
   detailMembers: {

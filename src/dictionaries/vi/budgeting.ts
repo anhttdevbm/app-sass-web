@@ -62,6 +62,8 @@ export const BudgetingLang: BudgetingDictionary = {
             status: 'Trạng thái',
             attachment: 'Đính kèm',
         },
+        deleteBtnText: "Xóa",
+        selected: "được chọn"
     },
     tabInvoice: {
         subject: 'Subject',
@@ -81,31 +83,31 @@ export const BudgetingLang: BudgetingDictionary = {
         },
         totalArea: {
             time: {
-                title: 'TIME',
-                estimatedTime: 'Estimated time',
-                billableTime: 'Billable time',
-                workedTime: 'Worked time',
-                budgetedTime: 'Budgeted time',
-                remainingTime: 'Remaining time',
+                title: 'THỜI GIAN',
+                estimatedTime: 'Thời gian ước tính',
+                billableTime: 'Thời gian tính phí',
+                workedTime: 'Thời gian làm việc',
+                budgetedTime: 'Thời gian dự kiến',
+                remainingTime: 'Thời gian còn lại',
             },
             profit: {
-                title: 'PROFIT',
-                revenue: "Revenue",
-                cost: "Cost",
-                profit: "Profit ",
+                title: 'LỢI NHUẬN',
+                revenue: "Doanh thu",
+                cost: "Chi phí",
+                profit: "Lợi nhuận ",
             },
             budget: {
-                title: 'BUDGET',
-                budgetTotal: "Budget Total",
-                budgetUsed: "Budget Used",
-                budgetRemaining: "Budget Remaining",
+                title: 'NGÂN SÁCH',
+                budgetTotal: "Tổng ngân sách",
+                budgetUsed: "Ngân sách đã sử dụng",
+                budgetRemaining: "Ngân sách còn lại",
             },
             invoicing: {
-                title: 'INVOICING',
-                newInvoice: 'New invoice',
-                total: 'Total',
-                invoiced: 'Invoiced',
-                forInvoicing: 'For invoicing'
+                title: 'HÓA ĐƠN',
+                newInvoice: 'Hóa đơn mới',
+                total: 'Tổng',
+                invoiced: 'Đã lập hóa đơn',
+                forInvoicing: 'Để lập hóa đơn'
             }
         },
         section: {
@@ -121,6 +123,10 @@ export const BudgetingLang: BudgetingDictionary = {
             totalBudget: "Tổng chi phí",
             description: "Mô tả",
             estimate: "Ước lượng",
+            addSection: 'Thêm dịch vụ',
+            addItem: 'Thêm mục',
+            cancelBtnText: "Hủy",
+            saveBtnText: "Lưu thay đổi"
         }
     },
     dialog: {
@@ -180,5 +186,27 @@ export const BudgetingLang: BudgetingDictionary = {
     },
     notifications: {
         updateServiceSuccess: "Cập nhật dịch vụ thành công.",
+    },
+    exportFile: {
+        documentFormat: "Loại tài liệu",
+        orientation: "Chiều hướng",
+        pageSize: "Kích thước",
+        includeAttachments: "Bao gồm tệp đính kèm"
+    },
+    expenseExport: {
+        title: 'Chi phí',
+        totalCost: 'Tổng chi phí',
+        totalBillable: 'Tổng số phải thanh toán',
+        generatedAt: 'Ngày tạo',
+        generatedBy: 'Tạo bởi',
+        service: 'Dịch vụ',
+        description: 'Mô tả',
+        date: 'Ngày',
+        paymentStatus: 'Tình trạng thanh toán',
+        att: 'Đính kèm',
+        cost: 'Chi phí',
+        billable: 'Thanh toán',
+        openNewTab: "Mở trang mới",
+        download: "Tải xuống"
     }
 }

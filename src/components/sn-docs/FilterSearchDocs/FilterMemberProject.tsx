@@ -29,6 +29,9 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const [currentProjectLabel, setCurrentProjectLabel] = useState<any>(null);
+
   const commonT = useTranslations(NS_COMMON);
   const { items: projects, onGetProjects } = useProjects();
 
@@ -50,7 +53,7 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
       setProjectOptions([
         {
           label: "None",
-          value: ''
+          value: "",
         },
         ...resolveProjects,
       ]);
@@ -65,7 +68,9 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
         sx={sxConfig.item}
       >
         <Text variant="body2" color="grey.400">
-          {docsT("filter.filter.project")}
+          {currentProjectLabel
+            ? currentProjectLabel
+            : docsT("filter.filter.project")}
         </Text>
         <ChevronIcon fontSize="small"></ChevronIcon>
       </MenuItem>
@@ -106,16 +111,22 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
             borderRadius: 1,
           }}
         >
-           {projectOptions.map((item) => { 
+          {projectOptions.map((item) => {
             return (
-              <MenuItem key={item.value} onClick={() => {
+              <MenuItem
+                key={item.value}
+                onClick={() => {
+                  setCurrentProjectLabel(item.label);
                   onChange("project", item.value);
                   handleClose();
-                  setSelectedItem(item.value)
-              }}
-              sx={{backgroundColor: item?.value === selectedItem ? '#dddddd' : ''}}
+                  setSelectedItem(item.value);
+                }}
+                sx={{
+                  backgroundColor:
+                    item?.value === selectedItem ? "#dddddd" : "",
+                }}
               >
-               {item?.label}
+                {item?.label}
               </MenuItem>
             );
           })}
