@@ -31,17 +31,17 @@ const SwitchLanguage = (props: StackProps) => {
 
   const langData = [
     {
-      img: "/images/img-vn-flag.png",
-      alt: "Vietnamese Flag",
-      content: commonT("i18n.vn"),
-      value: "vi",
-    },
-    {
       img: "/images/img-usa-flag.png",
       alt: "USA Flag",
       content: commonT("i18n.en"),
       value: "en",
     },
+    {
+      img: "/images/img-vn-flag.png",
+      alt: "Vietnamese Flag",
+      content: commonT("i18n.vn"),
+      value: "vi",
+    }
   ];
 
   return (
