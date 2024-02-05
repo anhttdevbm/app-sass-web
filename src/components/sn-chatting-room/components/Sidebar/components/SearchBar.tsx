@@ -82,11 +82,15 @@ const SearchBar = ({ onFilterConversation }) => {
             }}
           />
         </Paper>
+
         <IconButton
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            backgroundColor: isDarkMode ? "#3a3b3c" : "white",
+            marginLeft: "10px",
+            borderRadius: 2, 
           }}
           onClick={() => onSetDrawerType("group-modal")}
         >
