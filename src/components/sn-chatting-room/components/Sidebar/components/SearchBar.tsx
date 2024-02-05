@@ -90,7 +90,7 @@ const SearchBar = ({ onFilterConversation }) => {
           }}
           onClick={() => onSetDrawerType("group-modal")}
         >
-          <NewGroupIcon fill="#999999" />
+          <NewGroupIcon />
         </IconButton>
       </Box>
     </>

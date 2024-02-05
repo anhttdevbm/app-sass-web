@@ -176,6 +176,8 @@ const ChatList = () => {
           sx={{
             overflowX: "scroll",
             bgcolor: isDarkMode ? "var(--mui-palette-grey-50)" : "white",
+            paddingLeft: '10px',
+            paddingRight: '10px',
           }}
           ref={chatListRef}
         >
