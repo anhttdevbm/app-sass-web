@@ -25,6 +25,7 @@ import { useRouter } from "next-intl/client";
 import PaymentModal from "./PaymentModal";
 import { Select } from "components/shared";
 import DropdownButton from "./DropdownButton";
+import { useSnackbar } from "store/app/selectors";
 
 type TabItemProps = {
   label: string;
@@ -59,6 +60,7 @@ const TabInfo = (props: TabListProps) => {
     markAsSend,
   } = useBillings();
   const { push } = useRouter();
+  const { onAddSnackbar } = useSnackbar();
   const [value, setValue] = useState("Invoice");
   const [editForm, setEditForm] = useState<boolean>(false);
   const [billToInfo, setBillToInfo] = useState<Bill>({});
@@ -144,10 +146,12 @@ const TabInfo = (props: TabListProps) => {
 
   const handleSaveValue = (data: BillingDataUpdate) => {
     onUpdateBilling(data);
+    onAddSnackbar("Cập nhật thành công!", "success");
   };
 
   const handleCreateData = (data: BillingData) => {
     onCreateBilling(data);
+    onAddSnackbar("Thành công!", "success");
   };
 
   useEffect(() => {
@@ -167,6 +171,8 @@ const TabInfo = (props: TabListProps) => {
       push(BILLING_PATH);
     }
   }, [createStatus, isSubmit]);
+
+  console.log(arrBudgets);
 
   return (
     <>
@@ -201,6 +207,7 @@ const TabInfo = (props: TabListProps) => {
                   key={tab.label}
                   {...tab}
                   label={tab.label}
+                  disabled={tab.value != "Invoice" && editForm}
                   sx={{
                     color: value === tab.value ? "#212121" : "grey.300",
                     textTransform: "none",
@@ -285,7 +292,11 @@ const TabInfo = (props: TabListProps) => {
             <PaymentModal
               open={isOpen}
               handleClose={handleClose}
-              title={billingT("detail.form.payment.title.addPayment")}
+              title={
+                actionButton == "add"
+                  ? billingT("detail.form.payment.title.addPayment")
+                  : billingT("detail.form.payment.title.addWriteOff")
+              }
               action={actionButton == "add" ? "add" : "write"}
             />
           </Stack>
@@ -345,6 +356,7 @@ const TabItem = (props: TabItemProps) => {
     <TabPanel
       value={value}
       sx={{ padding: 0 }}
+
       // color={value ? "#212121" : "grey.300"}
       // sx={{ overflow: "scroll" }}
       // sx={{ overflow: "scroll", padding: "0px 12px" }}

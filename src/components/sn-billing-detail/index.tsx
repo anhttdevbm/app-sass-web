@@ -63,7 +63,13 @@ const InformationBillingPage = () => {
 
   useEffect(() => {
     onGetOptions({ pageIndex: 1, pageSize: 20 });
+    // onGetServiceBudgets();
   }, []);
+
+  useEffect(() => {
+    if (!isReady) return;
+    onGetBudgets({ ...initQuery });
+  }, [initQuery, isReady, onGetBudgets]);
 
   return (
     // <FixedLayout

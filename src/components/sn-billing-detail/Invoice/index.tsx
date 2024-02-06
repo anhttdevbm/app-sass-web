@@ -205,6 +205,8 @@ const TabInvoice = (props: TabProps) => {
   //   }
   // }, [fileExport, viewFileStatus]);
 
+  console.log(item);
+
   return (
     <FixedLayout px={2}>
       <Stack
