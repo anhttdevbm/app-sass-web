@@ -3,6 +3,7 @@ import { AlertColor } from "@mui/material";
 import { Text, TextProps } from "components/shared";
 import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
+import useTheme from "hooks/useTheme";
 
 type TextStatusProps = {
   text: string;
@@ -13,6 +14,8 @@ type TextStatusProps = {
 } & Omit<TextProps, "color">;
 
 const TextStatus = (props: TextStatusProps) => {
+  const { isDarkMode } = useTheme();
+
   const {
     text,
     color,
@@ -27,7 +30,7 @@ const TextStatus = (props: TextStatusProps) => {
 
   return (
     <Text
-      color={({ palette }) => isActive ? 'black' : palette?.[color]?.main}
+      color={({ palette }) => isActive ? isDarkMode ? 'white' : 'black' : palette?.[color]?.main}
       bgcolor={({ palette }) => isActive ? 'transparent' : palette?.[color]?.light}
       variant="caption"
       fontWeight={isActive ? 700 :500}
