@@ -75,7 +75,10 @@ const ModalAddBudget = (props: Props) => {
     }
 
     if (moment(param.start_date).isAfter(param.end_date)) {
-      formik.setFieldError('start_date', 'The start date must be after the end date');
+      formik.setFieldError(
+        "start_date",
+        "The start date must be after the end date",
+      );
       return;
     }
 
@@ -191,10 +194,18 @@ const ModalAddBudget = (props: Props) => {
       pending={false}
       submitWhenEnter={false}
       bodyFlex={0}
+      sx={{
+        overflow: 'visible !important',
+        '& .MuiDialogContent-root': {
+          overflow: 'visible !important',
+          maxHeight: '300px',
+          '& .MuiStack-root': { overflow: 'visible !important' }
+        }
+      }}
       {...rest}
     >
-      <Stack overflow="auto" ref={bodyModalRef}>
-        <MenuList component={Stack} spacing={2}>
+      <Stack ref={bodyModalRef} sx={{ overflow: 'visible !important' }}>
+        <MenuList component={Stack} spacing={2} sx={{ overflow: 'visible' }}>
           {!props.projectId && (
             <Select
               options={projectOptions}
@@ -225,7 +236,7 @@ const ModalAddBudget = (props: Props) => {
             })}
             autoComplete="off"
           />
-          <Stack direction={{ sm: "row" }} spacing={2}>
+          <Stack direction={{ sm: "row" }} spacing={2} sx={{ '& .react-datepicker-popper': { zIndex: 999 }}}>
             <DateTimePicker
               title={projectT("budget.form.start_date")}
               name="start_date"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { NS_PROJECT } from "constant/index";

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
+import "@sweetalert2/theme-material-ui/material-ui.css";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import Avatar from "components/Avatar";
 import Link from "components/Link";
@@ -19,7 +18,6 @@ import { BILLING_CREATE_PATH, BUDGETING_PATH } from "constant/paths";
 import dayjs from "dayjs";
 import useToggle from "hooks/useToggle";
 import EditIcon from "icons/EditIcon";
-import EyeIcon from "icons/EyeIcon";
 import OpenSidebarIcon from "icons/OpenSidebarIcon";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
@@ -49,6 +47,7 @@ import { useProjects } from "store/project/selectors";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import { TBudgetExpense } from "store/expense/actions";
+import Swal from "sweetalert2";
 
 enum TABS {
   FEED = "Feed",
@@ -146,10 +145,20 @@ export const BudgetDetail = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = 0;
     }
-  }
+  };
 
   const changeActiveTab = (newTab: string) => {
     scrollToTop();
+
+    if (isEditService) {
+      Swal.fire({
+        title: 'You need to save your changes before go to another tab',
+        text: '',
+        icon: 'info'
+      });
+
+      return;
+    }
 
     if (window["timeoutHideLoadingTab"]) {
       clearTimeout(window["timeoutHideLoadingTab"]);
@@ -273,9 +282,7 @@ export const BudgetDetail = () => {
 
   return (
     <Box ref={budgetDetailRef}>
-      <Stack>
-      </Stack>
-      <Box
+      <Stack
         sx={{
           position: "sticky !important",
           top: 0,
@@ -312,12 +319,6 @@ export const BudgetDetail = () => {
                 autoComplete: "off",
               }}
             />
-            <IconButton sx={{ color: "grey.300" }}>
-              <EyeIcon sx={{ fontSize: "26px" }} />
-            </IconButton>
-            <IconButton sx={{ color: "grey.300" }}>
-              <ShareOutlinedIcon />
-            </IconButton>
             <IconButton
               sx={{ color: "grey.300" }}
               onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}
@@ -376,7 +377,7 @@ export const BudgetDetail = () => {
               return (
                 <Box
                   key={`budget-detail-tab-${index}`}
-                  p="15px"
+                  p={1}
                   mx="2px"
                   borderBottom="2px solid transparent"
                   sx={{
@@ -396,8 +397,9 @@ export const BudgetDetail = () => {
             {ButtonAction}
           </Stack>
         </Stack>
-      </Box>
-      <Stack direction="row">
+      </Stack>
+
+      <Stack direction="row" mt={2}>
         <Box
           position="relative"
           sx={{
@@ -460,12 +462,14 @@ export const BudgetDetail = () => {
             position: isOpenRightSidebar ? "relative" : "absolute",
             zIndex: isOpenRightSidebar ? 10 : -1,
             right: isOpenRightSidebar ? 0 : "-350px",
+            top: 0,
             backgroundColor: isDarkMode ? "#313130" : "white",
           }}
         >
           <BudgetRightSidebar budget={budget} />
         </Box>
       </Stack>
+
       <ModalAddTime
         serviceId={_.get(selectedService, "id", "")}
         services={servicesList}

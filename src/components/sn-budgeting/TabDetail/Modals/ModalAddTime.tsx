@@ -167,6 +167,14 @@ export const ModalAddTime = ({
           : budgetT("dialog.addBtnText")
       }
       onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        overflow: 'visible !important',
+        '& .MuiDialogContent-root': {
+          overflow: 'visible !important',
+          maxHeight: '510px',
+          '& .MuiStack-root': { overflow: 'visible !important' }
+        }
+      }}
     >
       <Stack overflow="auto">
         <MenuList component={Stack} spacing={2}>
@@ -219,7 +227,7 @@ export const ModalAddTime = ({
               />
             )}
           />
-          <Stack gap={2} direction="row">
+          <Stack gap={2} direction="row" sx={{ '& .react-datepicker-popper': { zIndex: 999 }}}>
             <Controller
               control={control}
               name="startTime"
@@ -235,10 +243,7 @@ export const ModalAddTime = ({
                   pickerProps={
                     {
                       autoComplete: "off",
-                      dateFormat: "h:mm aa",
-                      timeIntervals: 1,
                       showTimeSelect: true,
-                      showTimeSelectOnly: true,
                     } as ReactDatePickerProps
                   }
                 />
@@ -259,10 +264,7 @@ export const ModalAddTime = ({
                   pickerProps={
                     {
                       autoComplete: "off",
-                      dateFormat: "h:mm aa",
-                      timeIntervals: 1,
                       showTimeSelect: true,
-                      showTimeSelectOnly: true,
                     } as ReactDatePickerProps
                   }
                 />

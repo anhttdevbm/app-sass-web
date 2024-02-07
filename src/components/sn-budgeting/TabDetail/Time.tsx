@@ -24,7 +24,7 @@ import { useBudgetTimeRemove } from "queries/budgeting/time-range";
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI, toHoursAndMinutes } from "utils/index";
+import { formatNumber, getMessageErrorByAPI, toHoursAndMinutes } from "utils/index";
 import MoreDotIcon from "../../../icons/MoreDotIcon";
 import TrashIcon from "../../../icons/TrashIcon";
 import { budgetDetailRef } from "../BudgetDetail";
@@ -188,10 +188,10 @@ export const Time = ({
                 {_.get(data, "note", "")}
               </BodyCell>
               <BodyCell sx={{ textAlign: "center" }}>
-                {_.get(data, "timeRanges", "")}
+                {formatNumber(_.get(data, "timeRanges", ""), { numberOfFixed: 2 })}
               </BodyCell>
               <BodyCell sx={{ textAlign: "center" }}>
-                {_.get(data, "billableTime", "")}
+                {formatNumber(_.get(data, "billableTime", ""), { numberOfFixed: 2 })}
               </BodyCell>
               <BodyCell sx={{ p: 0 }}>
                 <IconButton
