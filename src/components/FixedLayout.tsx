@@ -54,7 +54,7 @@ const FixedLayout = (props: StackProps) => {
         sx={{
           height: `${height}px`,
           minHeight: 0,
-          overflowY: "auto",
+          overflowY: "hidden",
           overflowX: "hidden",
           paddingBottom: "16px",
         }}

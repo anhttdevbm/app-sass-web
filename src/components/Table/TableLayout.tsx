@@ -145,6 +145,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
     <Stack
       // flex={1}
       // maxHeight={HEIGHT_ROW * (numberOfRows + 1) + HEIGHT_HEADER + 10}
+      maxHeight={HEIGHT_ROW * (numberOfRows + 1)}
       overflow="hidden"
       {...rest}
     >
