@@ -66,7 +66,8 @@ function getShortMonthName(month) {
 
 const DesktopCells = (props: DesktopCellsProps) => {
   const { item } = props;
-  const { push } = useRouter();
+  const { push } =
+   useRouter();
   const dispatch = useDispatch();
   const api = axiosBaseQuery({ baseUrl: DOCS_API_URL });
   return (

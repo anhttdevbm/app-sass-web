@@ -19,7 +19,7 @@ import TextFieldSelect, {
   IOptionStructure,
 } from "components/shared/TextFieldSelect";
 import _ from "lodash";
-import { useProjects } from "store/project/selectors";
+import { useProject, useProjects } from "store/project/selectors";
 import ChevronIcon from "icons/ChevronIcon";
 
 const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
@@ -29,8 +29,10 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const [currentProjectLabel, setCurrentProjectLabel] = useState<any>(null);
+  const { item } = useProject();
+  const [currentProjectLabel, setCurrentProjectLabel] = useState<any>(
+    item?.name || null,
+  );
 
   const commonT = useTranslations(NS_COMMON);
   const { items: projects, onGetProjects } = useProjects();
