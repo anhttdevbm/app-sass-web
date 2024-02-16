@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations(NS_BILLING);
 
   return {
-    title: t("list.head.title"),
+    title: t("list.head"),
   };
 }
 export default function Page() {

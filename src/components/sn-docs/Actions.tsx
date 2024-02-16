@@ -157,13 +157,19 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           />
 
           <Dropdown
-            placeholder={docsT("filter.group.none")}
+            placeholder={
+              isProjectTabMode
+                ? docsT("filter.all")
+                : docsT("filter.group.none")
+            }
             options={grOptions}
             name="group_by"
             hasAll={false}
             onChange={onChangeQueries}
-            defaultValue={queries?.group_by}
-            value={queries?.group_by}
+            defaultValue={
+              isProjectTabMode ? docsT("filter.all") : queries?.group_by
+            }
+            value={isProjectTabMode ? docsT("filter.all") : queries?.group_by}
           />
           <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
           <Button

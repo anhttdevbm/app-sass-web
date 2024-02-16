@@ -19,6 +19,7 @@ import React, { useContext, useMemo, useRef, useState } from "react";
 import {
   Box,
   ButtonBase,
+  Divider,
   MenuItem,
   MenuList,
   Popover,
@@ -32,6 +33,19 @@ import BgIcon from "icons/BgIcon";
 import DeleteUserIcon from "icons/DeleteUserIcon";
 import DeleteDocs from "icons/DeleteDocs";
 import { ColorTypeDropDown } from "../../menu/bubble-menu/ColorTypeDropDown";
+import CommentIcon from "icons/CommentIcon";
+import ChangeIcon from "icons/ChangeIcon";
+import { ChevronRight } from "@mui/icons-material";
+import TextIcon from "icons/TextIcon";
+import Hg1Icon from "../../menu/slash-menu/asset/icons/Hg1Icon";
+import H2Icon from "../../menu/slash-menu/asset/icons/H2Icon";
+import H3Icon from "../../menu/slash-menu/asset/icons/H3Icon";
+import BulletList from "@tiptap/extension-bullet-list";
+import BulletListIcon from "../../menu/slash-menu/asset/icons/BulletListIcon";
+import NumberListIcon from "../../menu/slash-menu/asset/icons/NumberListIcon";
+import TodoListIcon from "../../menu/slash-menu/asset/icons/TodoListIcon";
+import QuoteIcon from "../../menu/slash-menu/asset/icons/QuoteIcon";
+import CodeBlockIcon from "../../menu/slash-menu/asset/icons/CodeBlockIcon";
 
 export const DBlockNodeView: React.FC<NodeViewProps> = ({
   node,
@@ -46,7 +60,8 @@ export const DBlockNodeView: React.FC<NodeViewProps> = ({
   );
   const [anchorElColor, setAnchorElColor] =
     React.useState<HTMLButtonElement | null>(null);
-
+  const [anchorElTurnInto, setAnchorElTurnInto] =
+    React.useState<HTMLButtonElement | null>(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -72,9 +87,113 @@ export const DBlockNodeView: React.FC<NodeViewProps> = ({
     });
   };
 
-  const onDuplicate = () => {
-    // editor.commands.insertContent();
-  };
+  const onDuplicate = () => {};
+
+  const TurnIntoOptions = [
+    {
+      icon: <TextIcon active={false} />,
+      title: "Text",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor.chain().setTextSelection({ from, to }).toggleBold().run();
+      },
+    },
+    {
+      icon: <Hg1Icon></Hg1Icon>,
+      title: "Heading 1",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor
+          .chain()
+          .setTextSelection({ from, to })
+          .setHeading({ level: 1 })
+          .run();
+      },
+    },
+    {
+      icon: <H2Icon />,
+      title: "Heading 2",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor
+          .chain()
+          .setTextSelection({ from, to })
+          .setHeading({ level: 2 })
+          .run();
+      },
+    },
+    {
+      icon: <H3Icon />,
+      title: "Heading 3",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor
+          .chain()
+          .setTextSelection({ from, to })
+          .setHeading({ level: 3 })
+          .run();
+      },
+    },
+    {
+      isBreakLine: true,
+    },
+    {
+      icon: <BulletListIcon />,
+      title: "Bullet list",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor.chain().setTextSelection({ from, to }).toggleBulletList().run();
+      },
+    },
+    {
+      icon: <NumberListIcon />,
+      title: "Numbered list",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor.chain().setTextSelection({ from, to }).toggleOrderedList().run();
+      },
+    },
+    {
+      icon: <TodoListIcon />,
+      title: "Todo list",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor.chain().setTextSelection({ from, to }).toggleTaskList().run();
+      },
+    },
+    {
+      icon: <QuoteIcon />,
+      title: "Quote",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor.chain().setTextSelection({ from, to }).toggleBlockquote().run();
+      },
+    },
+    {
+      icon: <CodeBlockIcon />,
+      title: "Code block",
+      onClick: () => {
+        const from = getPos();
+        const to = getPos() + node.nodeSize;
+        editor.chain().setTextSelection({ from, to }).toggleCode().run();
+      },
+    },
+    // {
+    // icon: <BulletList />,
+    // title: "Bullet list",
+    // onClick: () => {
+    //   editor.chain().selectAll().setNodeType("bulletList").run();
+    // },
+    // },
+  ];
 
   const fullWidth = pageInfo?.pageSettings?.fullWidth!;
 
@@ -162,6 +281,40 @@ export const DBlockNodeView: React.FC<NodeViewProps> = ({
                     Background color
                   </Text>
                 </MenuItem>
+                <Divider />
+                <MenuItem
+                  // onClick={(e) => setAnchorElColor(e.currentTarget)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <CommentIcon></CommentIcon>
+                  <Text variant="body2" color="grey.400">
+                    Comment
+                  </Text>
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                  onClick={(e) => setAnchorElTurnInto(e.currentTarget)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <ChangeIcon></ChangeIcon>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      flexDirection: "row",
+                      width: "100%",
+                    }}
+                  >
+                    <Text variant="body2" color="grey.400">
+                      Turn into
+                    </Text>
+
+                    <ChevronRight></ChevronRight>
+                  </div>
+                </MenuItem>
                 <MenuItem
                   onClick={() => {
                     deleteNode();
@@ -241,6 +394,62 @@ export const DBlockNodeView: React.FC<NodeViewProps> = ({
               borderRadius: 1,
             }}
           ></Stack>
+        </Popover>
+        <Popover
+          anchorEl={anchorElTurnInto}
+          open={Boolean(anchorElTurnInto)}
+          onClose={() => setAnchorElTurnInto(null)}
+          anchorOrigin={{
+            vertical: "center",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "center",
+            horizontal: "left",
+          }}
+          sx={{
+            [`& .${popoverClasses.paper}`]: {
+              backgroundImage: "none",
+              minWidth: 190,
+              maxWidth: 190,
+            },
+          }}
+          slotProps={{
+            paper: {
+              sx: {
+                borderRadius: 1,
+              },
+            },
+          }}
+        >
+          <Stack
+            py={2}
+            sx={{
+              boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.1)",
+              border: "1px solid",
+              borderTopWidth: 0,
+              borderColor: "grey.100",
+              borderRadius: 1,
+            }}
+          >
+            {TurnIntoOptions.map((item, index) => {
+              return item.isBreakLine ? (
+                <Divider />
+              ) : (
+                <MenuItem
+                  key={index}
+                  onClick={item.onClick}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  {item.icon}
+                  <Text variant="body2" color="grey.400">
+                    {item.title}
+                  </Text>
+                </MenuItem>
+              );
+            })}
+          </Stack>
         </Popover>
       </NodeViewWrapper>
     </>
