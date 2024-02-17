@@ -412,7 +412,6 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
     code,
   ]);
 
-  const text = "TEST";
   const setLink = () => {
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("URL", previousUrl);
