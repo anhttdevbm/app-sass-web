@@ -41,6 +41,8 @@ import Hg1Icon from "../../tiptap/menu/slash-menu/asset/icons/Hg1Icon";
 import H2Icon from "../../tiptap/menu/slash-menu/asset/icons/H2Icon";
 import H3Icon from "../../tiptap/menu/slash-menu/asset/icons/H3Icon";
 import { TextColorDropdown } from "../../tiptap/menu/bubble-menu/TextColorDropdown";
+import { TextAlignDropDown } from "../../tiptap/menu/bubble-menu/TextAlignDropdown";
+import { BackgroundColorDropDown } from "../../tiptap/menu/bubble-menu/BackgroundColorDropDown";
 
 type TTextStyleOptions = {
   [key: string]: {
@@ -562,7 +564,7 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
       >
         <IconLineTextCenter />
       </button>
-      {/* TEXT ALIGN */}
+      <TextAlignDropDown editor={editor} />
       <button
         disabled={!canEdit}
         value="link"
@@ -592,7 +594,7 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
       </button>
 
       <TextColorDropdown editor={editor} />
-
+      <BackgroundColorDropDown editor={editor} />
       <button
         disabled={!canComment}
         onClick={() => {
