@@ -34,6 +34,9 @@ import styled from "@emotion/styled";
 import { useUpdateDocMutation } from "store/docs/api";
 import { TextSelection } from "prosemirror-state";
 import { MenuBarHeaderEdit } from "./components/MenuBarHeader";
+import { Button } from "components/shared";
+import { EmojiEmotions } from "@mui/icons-material";
+import EmojiSelector from "./components/EmojiSelector";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-otptional-chain */
@@ -55,6 +58,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const currentId = useAppSelector((state) => state.doc.id);
 
   const [openChangeCover, setOpenChangeCover] = useState<boolean>(false);
+  const [openEmojiSelector, setOpenEmojiSelector] = useState<boolean>(false);
   const { theme } = useContext(ThemeContext);
   const { openComment } = useContext(NewPageContext);
   const [minHeight, setMinHeight] = useState("100vh");
@@ -218,6 +222,52 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
                 ></DrawSlider>
               </LayoutSlider>
             )}
+
+            <Box
+              sx={{
+                display: "flex",
+                position: "relative",
+                fontWeight: "light!important",
+              }}
+            >
+              <Button
+                sx={{
+                  color: "gray",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  paddingLeft: "0.25em! important",
+                  paddingRight: "0.25em! important",
+                  fontWeight: "light!important",
+                  borderRadius: "1em",
+                }}
+                variant="text"
+                color="primary"
+                onClick={() => setOpenEmojiSelector(true)}
+              >
+                <EmojiEmotions />
+                <span>Emoji</span>
+              </Button>
+
+              <Button
+                sx={{
+                  color: "gray",
+                  fontWeight: "light!important",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  paddingLeft: "0.25em! important",
+                  paddingRight: "0.25em! important",
+                  borderRadius: "1em",
+                }}
+                variant="text"
+                color="primary"
+                onClick={() => setOpenChangeCover(true)}
+              >
+                Change cover
+              </Button>
+            </Box>
+
             <form className={`${styles.form_title}`}>
               {name && (
                 <Textarea
@@ -247,6 +297,23 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             </div>
           </Box>
         </div>
+        <EmojiSelector
+          openPicker={openEmojiSelector}
+          closePicker={() => {
+            setOpenEmojiSelector(false);
+          }}
+          setEmoji={() => {}}
+          setEmojiCode={() => {}}
+          leftOpen={true}
+          fullWidth={false}
+          cover={true}
+
+          // setEmoji: (emojiImage: string) => void;
+          // setEmojiCode: (unified: string) => void;
+          // leftOpen: boolean;
+          // fullWidth: boolean;
+          // cover: boolean;
+        />
         <ChangeCover
           open={openChangeCover}
           onClose={() => setOpenChangeCover(false)}

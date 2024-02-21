@@ -17,6 +17,7 @@ import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
+import TextAlign from "@tiptap/extension-text-align";
 import { Comment } from "@sereneinserenade/tiptap-comment-extension";
 
 import FontSize from "./font-size";
@@ -113,6 +114,9 @@ export const getExtensions = ({
     // Color
     Highlight.configure({
       multicolor: true,
+    }),
+    TextAlign.configure({
+      types: ["heading", "paragraph"],
     }),
     TextStyle,
     Color.configure({
