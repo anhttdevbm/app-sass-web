@@ -322,7 +322,6 @@ export const updateMyCompany = createAsyncThunk(
 
       const myCompany = (state as any).company.myItem;
 
-
       const response = await client.put(Endpoint.COMPANIES, data, {
         baseURL: COMPANY_API_URL,
         params: {
@@ -334,7 +333,6 @@ export const updateMyCompany = createAsyncThunk(
         const result = {
           ...myCompany,
           ...response.data,
-          avatar: myCompany.avatar,
           owner: { ...myCompany.owner },
           created_by: { ...myCompany.created_by },
         };
