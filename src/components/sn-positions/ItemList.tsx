@@ -63,8 +63,8 @@ const ItemList = () => {
         sort: true
       },
         
-      { value: commonT("creationDate"), width: "20%", align: "right",  sort: true  },
-      { value: companyT("positions.numberOfEmployees"), align: "right", width: "20%", sort: true },
+      { value: commonT("creationDate"), width: "20%", align: "center",  sort: true  },
+      { value: companyT("positions.numberOfEmployees"), align: "center", width: "20%", sort: true },
       { value: "", width: "5%" },
     ],
     [commonT, companyT],
@@ -94,7 +94,7 @@ const ItemList = () => {
 
     return [
       ...additionalHeaderList,
-      { value: "", width: isMdSmaller ? "15%" : "10%" },
+      // { value: "", width: isMdSmaller ? "15%" : "10%" },
     ] as CellProps[];
   }, [desktopHeaderList, isMdSmaller, mobileHeaderList]);
 
