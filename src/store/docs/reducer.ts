@@ -74,7 +74,7 @@ export interface IDocs {
   docsPaging: Paging;
   docsError?: string;
   docsFilters: any;
-  title: string;
+  title: string | undefined;
   docOptions: any[];
   docOptionsStatus: DataStatus;
   docOptionsPaging: Paging;
@@ -151,7 +151,7 @@ const initialState: IDocs = {
   },
   id: "",
   project_id: "all",
-  title: "No Name",
+  title: undefined,
   content: "",
   description: "",
   pageInfo: storedPageInfo ? JSON.parse(storedPageInfo) : null,

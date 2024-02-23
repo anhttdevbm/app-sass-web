@@ -68,7 +68,6 @@ const useDocs = () => {
   };
 
   const handleUpdateDoc = async (data, id) => {
-    console.log("UPDATE!", data);
     await client.put(Endpoint.DOCS + `/${id}`, data, {
       baseURL: "http://113.192.9.79:6813/api/v1",
     });
@@ -91,7 +90,7 @@ const useDocs = () => {
       return;
     }
 
-    console.log({id});
+    console.log({ id });
 
     const res = await client.get(
       Endpoint.DETAIL_DOCS + id,
@@ -102,7 +101,7 @@ const useDocs = () => {
     );
 
     if (res.status === HttpStatusCode.OK) {
-      console.log({data:res.data})
+      console.log({ data: res.data });
       dispatch(getDocDetails(res.data));
     }
   };
