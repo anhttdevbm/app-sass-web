@@ -66,22 +66,24 @@ function getShortMonthName(month) {
 
 const DesktopCells = (props: DesktopCellsProps) => {
   const { item } = props;
-  const { push } =
-   useRouter();
+  const { push } = useRouter();
   const dispatch = useDispatch();
   const api = axiosBaseQuery({ baseUrl: DOCS_API_URL });
   return (
     <>
       <BodyCell align="left">
         <div
-        style={{cursor: 'pointer'}}
+          style={{ cursor: "pointer" }}
           onClick={async () => {
             const result: any = await api(
               {
                 url: `/docs/detail/${item.id}`,
                 method: "GET",
                 //@ts-ignore
-              }, {}, {});
+              },
+              {},
+              {},
+            );
             if (result.error) {
               console.error("Error:", result.error);
             } else {

@@ -71,6 +71,8 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
+  // We should cancel debounce when we change the doucment ítelf
+
   useEffect(() => {
     // cancel();
     dispatch(getDocDetails(currentId));

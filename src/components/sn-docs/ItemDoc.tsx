@@ -49,17 +49,19 @@ export const RowGroup = (props) => {
           )}
           <AccordionDetails sx={{ padding: 0, width: "100%" }}>
             {Array.isArray(items) &&
-              items.map((doc) => {
-                return (
-                  <TableRow key={doc}>
-                    {!isMdSmaller ? (
-                      <DesktopCells item={doc} />
-                    ) : (
-                      <MobileContentCell item={doc} />
-                    )}
-                  </TableRow>
-                );
-              })}
+              items
+                .filter((doc) => !doc.root_directory)
+                .map((doc) => {
+                  return (
+                    <TableRow key={doc}>
+                      {!isMdSmaller ? (
+                        <DesktopCells item={doc} />
+                      ) : (
+                        <MobileContentCell item={doc} />
+                      )}
+                    </TableRow>
+                  );
+                })}
           </AccordionDetails>
         </StyledAccordion>
       </BodyCell>

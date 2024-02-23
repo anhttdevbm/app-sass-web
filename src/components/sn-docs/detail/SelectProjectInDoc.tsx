@@ -17,6 +17,8 @@ import {
 } from "@mui/material";
 import { Project } from "store/project/reducer";
 import { changeProjectId } from "store/docs/reducer";
+import Avatar from "components/Avatar";
+import { Search } from "components/Filters";
 
 const SelectProjectInDoc = () => {
   const { project_id } = useAppSelector((state) => state.doc);
@@ -41,6 +43,8 @@ const SelectProjectInDoc = () => {
     setProjectActive(e);
     handleClose();
   }, []);
+
+  const [searchKey, setSearchKey] = useState("");
 
   return (
     <>
@@ -79,8 +83,9 @@ const SelectProjectInDoc = () => {
         }}
       >
         <Stack
-          py={2}
+          pb={2}
           sx={{
+            width: 250,
             boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.1)",
             border: "1px solid",
             borderTopWidth: 0,
@@ -88,19 +93,32 @@ const SelectProjectInDoc = () => {
             borderRadius: 1,
           }}
         >
+          <Search
+            name="project-search"
+            onChange={(name: any, searchValue: string | undefined) => {
+              setSearchKey(searchValue || "");
+            }}
+            value={searchKey}
+          />
           <MenuList component={Box} sx={{ py: 0 }}>
-            {projects.map((e) => (
-              <MenuItem
-                onClick={() => handleSelect(e)}
-                key={e.id}
-                component={ButtonBase}
-                sx={sxConfig.item}
-              >
-                <Text ml={2} variant="body2" color="grey.400">
-                  {e.name}
-                </Text>
-              </MenuItem>
-            ))}
+            {projects
+              .filter((e) =>
+                e.name.toLowerCase().includes(searchKey.toLowerCase()),
+              )
+              .map((e) => (
+                <MenuItem
+                  onClick={() => handleSelect(e)}
+                  key={e.id}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <Avatar size={32} src={e.avatar?.link} />
+
+                  <Text ml={2} variant="body2" color="grey.400">
+                    {e.name}
+                  </Text>
+                </MenuItem>
+              ))}
           </MenuList>
         </Stack>
       </Popover>

@@ -521,9 +521,17 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
         >
           {currentTextStyle && (
             <div className={`${styles.bubble_dropdown_button}`}>
-              <div className={`${styles.info}`}>
-                {currentTextStyle.icon}
-                <span className={`${styles.bubble_dropdown_button_label}`}>
+              <div
+                className={`${styles.info}`}
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <div className={`${toggleButtonStyles.icon}`}>
+                  {currentTextStyle.icon}
+                </div>
+                <span
+                  className={`${styles.bubble_dropdown_button_label}`}
+                  style={{ whiteSpace: "nowrap" }}
+                >
                   {currentTextStyle.label}
                 </span>
               </div>

@@ -38,6 +38,7 @@ export type CellProps = TableCellProps & {
   width?: string | number;
   minWidth?: number;
   minwidth?: number | string;
+  handler?: any;
 };
 
 type TableLayoutProps = {
@@ -207,6 +208,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                   </HeaderSortCell>
                 ) : (
                   <CellHeader
+                    onClick={item.handler}
                     key={uuid()}
                     {...item}
                     width={item.width ?? `${100 / nOfColumnsNotWidthFixed}%`}
