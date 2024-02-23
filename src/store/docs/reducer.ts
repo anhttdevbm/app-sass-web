@@ -97,7 +97,7 @@ export interface IDocs {
 
 const initialState: IDocs = {
   docs: [],
-  contentRow: '',
+  contentRow: "",
   docsStatus: DataStatus.IDLE,
   docsPaging: DEFAULT_PAGING,
   docsFilters: {},
@@ -214,6 +214,7 @@ const docSlice = createSlice({
       state.contentRow = action.payload;
     },
     getDocDetails: (state, action: PayloadAction<any>) => {
+      console.log("action.payload", action.payload);
       state.content = action.payload?.content || "";
       state.docInfo = action.payload || {};
       state.title = action.payload?.name || state.title;
@@ -291,7 +292,7 @@ export const {
   changeProjectId,
   changeDescription,
   changePermDoc,
-  setContentRow
+  setContentRow,
 } = docSlice.actions;
 
 export default docSlice.reducer;

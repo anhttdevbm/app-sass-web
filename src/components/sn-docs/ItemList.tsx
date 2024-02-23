@@ -22,6 +22,7 @@ import { RowGroup } from "./ItemDoc";
 import MobileContentCell from "./MobileContentCell";
 import { useGetDocsQuery } from "store/docs/api";
 import Avatar from "components/Avatar";
+import { MenuButton } from "@mui/base";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -55,7 +56,10 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
         value: "Created at",
         width: "23.333%",
       },
-      { value: "Last edited", width: "23.333%" },
+      {
+        value: "Last edited",
+        width: "23.333%",
+      },
       { value: "Creator", width: "23.333%" },
     ],
     [],
@@ -98,6 +102,10 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     onChangeQueries({ page: 1, size: newPageSize });
   };
 
+  const onChangeSort = (sort: any) => {
+    onChangeQueries(sort);
+  };
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(
@@ -109,15 +117,28 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     [searchParams],
   );
 
+  const createParamString = useCallback(
+    (obj: Record<string, string>) => {
+      const params = new URLSearchParams(
+        searchParams as unknown as typeof URLSearchParams.prototype,
+      );
+      Object.entries(obj).forEach(([key, value]) => {
+        params.set(key, value);
+      });
+      return params.toString();
+    },
+    [searchParams],
+  );
+
   useEffect(() => {
     if (!searchParams.get("group_by")) {
       push(
         pathname +
           "?" +
-          [
-            createQueryString("group_by", DocGroupByEnum.PROJECT_ID),
-            createQueryString("size", "50"),
-          ].join("&"),
+          createParamString({
+            group_by: DocGroupByEnum.PROJECT_ID,
+            size: "50",
+          }),
       );
     }
   }, [searchParams.get("group_by")]);
