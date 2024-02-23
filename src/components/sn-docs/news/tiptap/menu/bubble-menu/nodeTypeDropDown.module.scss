@@ -17,12 +17,13 @@
 
     .bubble_dropdown_button {
       display: flex;
+      flex-wrap: nowrap;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
 
       .info {
-        display: flex;
+        display: flex !important;
         align-items: center;
         font-size: 13px;
         color: $dark-background-hover;
@@ -33,6 +34,7 @@
         }
 
         .bubble_dropdown_button_label {
+          white-space: nowrap;
           padding-left: 8px;
         }
       }
