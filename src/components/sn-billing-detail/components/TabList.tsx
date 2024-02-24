@@ -172,8 +172,6 @@ const TabInfo = (props: TabListProps) => {
     }
   }, [createStatus, isSubmit]);
 
-  console.log(arrBudgets);
-
   return (
     <>
       <Stack

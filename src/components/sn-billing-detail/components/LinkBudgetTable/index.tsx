@@ -15,10 +15,11 @@ type IProps = {
   arrBudgets?: Budgets[];
   isEdit?: boolean;
   item?: Billing;
+  setListBudgets?: (data: Budgets[]) => void;
 };
 
 const LinkBudgetTable = (props: IProps) => {
-  const { arrBudgets, isEdit, item } = props;
+  const { arrBudgets, isEdit, item, setListBudgets } = props;
 
   const { isMdSmaller } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
@@ -83,9 +84,19 @@ const LinkBudgetTable = (props: IProps) => {
     ] as CellProps[];
   }, [desktopHeaderList, isMdSmaller, mobileHeaderList]);
 
-  const findBudget = arrBudgets?.filter((budget) =>
-    item?.budget?.find((budget2) => budget2.id === budget.id),
-  );
+  // const findBudget = useMemo(() => {
+  //   const findData = arrBudgets?.filter((budget) =>
+  //     l?.find((budget2) => budget2?.id === budget?.id),
+  //   );
+  //   return findData;
+  // }, [arrBudgets]);
+
+  const OptionBudget = useMemo(() => {
+    const options = arrBudgets?.map((item) => {
+      return { label: item?.name, value: item?.id };
+    });
+    return options;
+  }, [arrBudgets]);
   return (
     <>
       <TableLayout
@@ -100,7 +111,7 @@ const LinkBudgetTable = (props: IProps) => {
         // noData={!isIdle && totalItems === 0}
         // px={{ md: 3 }}
       >
-        {findBudget?.map((item, index) => {
+        {arrBudgets?.map((item, index) => {
           //   const indexSelected = selectedList.findIndex(
           //     (selected) => selected?.id === item.id,
           //   );
@@ -141,7 +152,10 @@ const LinkBudgetTable = (props: IProps) => {
 
         {isEdit && (
           <Stack direction={"row"} gap={2} alignItems={"center"}>
-            <LinkBudgetPopup />
+            <LinkBudgetPopup
+              setListBudgets={setListBudgets}
+              arrBudgets={arrBudgets}
+            />
           </Stack>
         )}
       </TableLayout>
