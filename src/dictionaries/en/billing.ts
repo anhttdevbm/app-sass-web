@@ -218,6 +218,7 @@ export const BillingLang: BillingDictionary = {
           payments: "Payments",
           editPayment: "Edit Payment",
           addPayment: "Add Payment",
+          addWriteOff: "Add WriteOff",
           amount: "Amount",
           note: "Note",
           paidOn: "Paid on",
@@ -227,9 +228,12 @@ export const BillingLang: BillingDictionary = {
       top: {
         button: {
           markAsSent: "Mark as sent",
+          unSent: "UnSent",
           cancel: "Cancel",
           saveChange: "Save change",
           edit: "Edit",
+          addPayment: "Payment",
+          addWriteOff: "WriteOff",
           option: {
             duplicateInvoice: "Duplicate invoice",
             createCreditNote: "Create credit note",

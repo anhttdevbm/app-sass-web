@@ -90,7 +90,7 @@ const TabPayment = (props: TabProps) => {
         leftToPayNew = (item.amount ?? 0) - paidNew;
       }
 
-      const sumDataPaid = paidNew;
+      const sumDataPaid = dataPayment?.length == 1 ? paidFirst : paidNew;
       const sumLeftToPay = leftToPayFirst + leftToPayNew;
 
       return { paid: sumDataPaid, leftToPay: sumLeftToPay };

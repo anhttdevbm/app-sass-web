@@ -12,9 +12,10 @@ import { useSalesService } from "store/sales/selectors";
 import { uuid } from "utils/index";
 import ServiceTableItem from "./ServiceTableItemDesktop";
 import ServiceTableItemMobile from "./ServiceTableItemMobile";
-import { Service } from "store/billing/reducer";
+import { Budgets, Service } from "store/billing/reducer";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { Option } from "constant/types";
+import { useServiceBudgets } from "store/billing/selectors";
 
 interface IProps {
   // section: ServiceSection;
@@ -22,18 +23,26 @@ interface IProps {
   // provided: DroppableProvided;
   isEdit?: boolean;
   listService: Service[];
-  OptionBudget?: Option[];
+  arrBudgets?: Budgets[];
   setListService: (value: Service[]) => void;
 }
 const billingFormTranslatePrefix = "list.form";
 
 const ServiceTable = (props: IProps) => {
-  const { isEdit, listService, setListService, OptionBudget } = props;
+  const { isEdit, listService, setListService, arrBudgets } = props;
   const salesT = useTranslations(NS_SALES);
   const { isMdSmaller } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
   const { positionOptions } = useGetOptions();
+
+  const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
+
+  useEffect(() => {
+    if (arrBudgets && arrBudgets?.length > 0) {
+      arrBudgets?.forEach((item) => onGetServiceBudgets(item?.id?.toString()));
+    }
+  }, [onGetServiceBudgets, arrBudgets]);
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
@@ -143,9 +152,9 @@ const ServiceTable = (props: IProps) => {
       setListService([
         {
           id: uuid(),
-          name: "2132",
+          name: arrService[0]?.id,
           desc: "345446",
-          serviceType: positionOptions[0]?.value,
+          serviceType: "Service Type",
           price: 0,
           billType: SALE_BILL_TYPE.FIX,
           qty: 0,
@@ -160,9 +169,9 @@ const ServiceTable = (props: IProps) => {
         ...listService,
         {
           id: uuid(),
-          name: "2132",
+          name: arrService[0]?.id,
           desc: "345446",
-          serviceType: positionOptions[0]?.value,
+          serviceType: "Service Type",
           price: 0,
           billType: SALE_BILL_TYPE.FIX,
           qty: 0,
@@ -191,7 +200,7 @@ const ServiceTable = (props: IProps) => {
   const handleChangeValue = (
     id: string,
     keyObj: string,
-    value: string | number,
+    value: string | number | null,
   ) => {
     if (listService && listService.length > 0) {
       if (id) {
@@ -257,7 +266,8 @@ const ServiceTable = (props: IProps) => {
                         key={item.id}
                         onRemoveRow={removeRow}
                         handleChangeValue={handleChangeValue}
-                        OptionBudget={OptionBudget}
+                        arrBudgets={arrBudgets}
+                        arrServices={arrService}
                       />
                     ))}
                     {provided.placeholder}
@@ -298,7 +308,8 @@ const ServiceTable = (props: IProps) => {
                         key={item.id}
                         onRemoveRow={removeRow}
                         handleChangeValue={handleChangeValue}
-                        OptionBudget={OptionBudget}
+                        arrBudgets={arrBudgets}
+                        arrServices={arrService}
                       />
                     ))}
                   </div>

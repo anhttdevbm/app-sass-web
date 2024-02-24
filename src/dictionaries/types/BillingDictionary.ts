@@ -142,6 +142,7 @@ export type BillingDictionary = {
           payments: string;
           editPayment: string;
           addPayment: string;
+          addWriteOff: string;
           amount: string;
           note: string;
           paidOn: string;

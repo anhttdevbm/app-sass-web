@@ -26,6 +26,7 @@ import {
   getBillingDetail,
   getBillingList,
   getBudgetDetail,
+  getBudgetFilterList,
   getBudgetList,
   getCommentBilling,
   getPaymentByBillId,
@@ -204,6 +205,8 @@ export interface Service {
   createdAt: string;
   updateAt: string;
   creator: string;
+  budget: string;
+  budgetId: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -261,6 +264,7 @@ export interface BillingState {
   dataPayment?: PaymentData[];
   dataTag?: [];
   isAddTag?: boolean;
+  budgetFilter?: Budgets[];
 }
 
 export interface BillingDataUpdate {
@@ -391,6 +395,30 @@ const billingSlice = createSlice({
         state.status = DataStatus.FAILED;
         state.error = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       })
+      .addCase(getBudgetFilterList.pending, (state, action) => {
+        // state.status = DataStatus.LOADING;
+        // state.filters = getFiltersFromQueries(action.meta.arg);
+        // state.paging.pageIndex = Number(
+        //   action.meta.arg.pageIndex ?? DEFAULT_PAGING.pageIndex,
+        // );
+        // state.paging.pageSize = Number(
+        //   action.meta.arg.pageSize ?? DEFAULT_PAGING.pageSize,
+        // );
+      })
+      .addCase(getBudgetFilterList.fulfilled, (state, { payload }) => {
+        // const { items, ...paging } = action.payload;
+        const data = payload?.docs;
+
+        state.budgetFilter = data as Budgets[];
+        state.status = DataStatus.SUCCEEDED;
+        state.error = undefined;
+        // state.paging = Object.assign(state.paging, paging);
+      })
+      .addCase(getBudgetFilterList.rejected, (state, action) => {
+        state.status = DataStatus.FAILED;
+        state.error = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+
       .addCase(getServiceBudget.pending, (state, action) => {
         // state.status = DataStatus.LOADING;
         // state.filters = getFiltersFromQueries(action.meta.arg);

@@ -279,7 +279,11 @@ const TopContent = (props: TopContentProps) => {
             size="small"
             variant="primary"
           >
-            {billingT("detail.form.top.button.markAsSent")}
+            {item?.mail_status == "Unsend"
+              ? billingT("detail.form.top.button.markAsSent")
+              : item?.mail_status == "Sent"
+              ? billingT("detail.form.top.button.unSent")
+              : ""}
           </Button>
         </Stack>
         <Stack

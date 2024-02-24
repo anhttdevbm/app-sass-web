@@ -59,6 +59,7 @@ const TabInvoice = (props: TabProps) => {
   const [isBillTo, setIsBillTo] = useState<boolean>(false);
 
   const [listService, setListService] = useState<Service[]>([]);
+  const [listBudgets, setListBudgets] = useState<Budgets[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [exportModel, setExportModel] = useState(false);
   const [viewFileStatus, setViewFileStatus] = useState<boolean>(false);
@@ -126,7 +127,14 @@ const TabInvoice = (props: TabProps) => {
     if (item?.budgetService && item?.budgetService?.length > 0) {
       setListService([...item?.budgetService]);
     }
-  }, [item]);
+
+    if (item?.budget && item?.budget?.length > 0) {
+      const findBudget = arrBudgets?.filter((find) =>
+        item?.budget?.find((el) => el.id === find.id),
+      ) as Budgets[];
+      setListBudgets(findBudget ?? []);
+    }
+  }, [item, arrBudgets]);
 
   const handleClose = () => {
     setOpenModal(false);
@@ -457,7 +465,7 @@ const TabInvoice = (props: TabProps) => {
           isEdit={editForm}
           listService={listService}
           setListService={setListService}
-          OptionBudget={OptionBudget}
+          arrBudgets={arrBudgets}
         />
       </Stack>
       <Stack alignItems="start" gap={2} pb={2}>
@@ -517,9 +525,10 @@ const TabInvoice = (props: TabProps) => {
       </Stack>
       <Stack gap={2} pb={2}>
         <LinkBudgetTable
-          arrBudgets={arrBudgets ?? []}
+          arrBudgets={listBudgets ?? []}
           isEdit={editForm}
           item={item}
+          setListBudgets={setListBudgets}
         />
       </Stack>
       <Stack gap={2} pb={2}>

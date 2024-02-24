@@ -22,6 +22,7 @@ import {
   getBillingDetail,
   getBillingList,
   getBudgetDetail,
+  getBudgetFilterList,
   getBudgetList,
   getCommentBilling,
   getPaymentByBillId,
@@ -242,10 +243,8 @@ export const useBillings = () => {
 
 export const useBudgets = () => {
   const dispatch = useAppDispatch();
-  const { budgets, status, error, filters, budgetDetail } = useAppSelector(
-    (state) => state.billing,
-    shallowEqual,
-  );
+  const { budgets, status, error, filters, budgetDetail, budgetFilter } =
+    useAppSelector((state) => state.billing, shallowEqual);
   const { page, size, totalItems, total_page } = useAppSelector(
     (state) => state.billing.paging,
     shallowEqual,
@@ -257,6 +256,13 @@ export const useBudgets = () => {
   const onGetBudgets = useCallback(
     async (queries: GetBudgetListQueries) => {
       await dispatch(getBudgetList(queries));
+    },
+    [dispatch],
+  );
+
+  const onGetBudgetFilters = useCallback(
+    async (queries: GetBudgetListQueries) => {
+      await dispatch(getBudgetFilterList(queries));
     },
     [dispatch],
   );
@@ -298,8 +304,10 @@ export const useBudgets = () => {
     totalItems,
     total_page,
     budgetDetail,
+    budgetFilter,
     onGetBudgets,
     onGetBudgetDetail,
+    onGetBudgetFilters,
   };
 };
 
