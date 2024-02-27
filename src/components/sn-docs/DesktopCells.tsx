@@ -80,9 +80,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
                 url: `/docs/detail/${item.id}`,
                 method: "GET",
                 //@ts-ignore
-              },
-              {},
-              {},
+              }, {}, {},
             );
             if (result.error) {
               console.error("Error:", result.error);
