@@ -313,7 +313,6 @@ const DrawSlider = ({
                 options={TextSizeOptions}
                 handleChangeOption={(value) => {
                   editor.chain().selectAll().setFontSize(value).run();
-                  alert(value);
                 }}
               />
             </Box>

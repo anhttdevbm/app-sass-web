@@ -446,6 +446,13 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
         .includes(perm),
     [perm],
   );
+  const [tippyInstance, setTippyInstance] = useState<any>(null);
+
+  const handleClick = () => {
+    if (tippyInstance) {
+      tippyInstance.hide();
+    }
+  };
 
   return (
     <Box
@@ -487,9 +494,11 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
         disabled={!canEdit}
         appendTo={document.body}
         trigger="click"
-        interactive
         animation="shift-toward-subtle"
         placement="bottom-start"
+        interactive={true}
+        hideOnClick={true}
+        onCreate={(instance) => setTippyInstance(instance)}
         content={
           <div className={`${styles.bubble_menu}  ${styles[theme]}`}>
             {Object.entries(TextStyleOptions).map(([key, value]) => (
@@ -497,7 +506,10 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
                 <div
                   key={key}
                   className={`${styles.bubble_dropdown_item}`}
-                  onClick={value.onClick}
+                  onClick={() => {
+                    value.onClick();
+                    handleClick();
+                  }}
                 >
                   <div className={`${styles.bubble_dropdown_button}`}>
                     <div className={`${styles.info}`}>
