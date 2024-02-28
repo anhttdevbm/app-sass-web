@@ -155,7 +155,7 @@ const Information = () => {
   };
 
   const onKeyDownTaskName = async (
-    event: React.KeyboardEvent<HTMLInputElement>,
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
   ) => {
     if (event.key !== "Enter") return;
     const nameTrimmed = taskName?.trim();
@@ -231,10 +231,10 @@ const Information = () => {
     setTaskName(task?.name);
   }, [task?.name]);
 
-  const inputNameRef = useRef();
+  const inputNameRef = useRef(null);
 
-  const handleFocus = () => {
-    inputNameRef?.current?.focus();
+  const handleFocus = (inputNameRef) => {
+    if (inputNameRef) inputNameRef.current?.focus();
   };
 
   if (!task) return null;
@@ -275,12 +275,9 @@ const Information = () => {
             onMouseLeave={removeEditable}
             value={taskName}
             onKeyDown={onKeyDownTaskName}
-            inputRef={inputNameRef}
-            fullWidth={true}
-            variant="filled"
-            size="small"
+            ref={inputNameRef}
             onChange={changeNameTask}
-            onClick={handleFocus}
+            onClick={() => handleFocus(inputNameRef)}
             contentEditable={true}
             style={{
               width: "100%",
