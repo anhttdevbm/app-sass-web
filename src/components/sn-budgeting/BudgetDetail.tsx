@@ -123,8 +123,6 @@ export const BudgetDetail = () => {
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!_.isEmpty(serviceQuery)) {
       const services: any[] = _.map(
@@ -144,8 +142,9 @@ export const BudgetDetail = () => {
   }, [JSON.stringify(budgetDetailQuery)]);
 
   const scrollToTop = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
+    const wrapper = document.querySelector('#budget-detail-container')
+    if (wrapper) {
+      wrapper.scrollTop = 0
     }
   };
 
@@ -417,7 +416,7 @@ export const BudgetDetail = () => {
           >
             <CircularProgress />
           </Stack>
-          <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }} ref={scrollRef}>
+          <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
             {activeTab === TABS.TIME && (
               <Time
