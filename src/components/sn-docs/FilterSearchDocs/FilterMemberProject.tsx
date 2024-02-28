@@ -21,6 +21,8 @@ import TextFieldSelect, {
 import _ from "lodash";
 import { useProject, useProjects } from "store/project/selectors";
 import ChevronIcon from "icons/ChevronIcon";
+import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 
 const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
@@ -61,6 +63,22 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
       ]);
     }
   }, [projects]);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("project")) {
+      setSelectedItem(searchParams.get("project"));
+
+      // get project name by id
+      alert(JSON.stringify(projectOptions));
+      projectOptions.forEach((item) => {
+        if (item.value === searchParams.get("project")) {
+          setCurrentProjectLabel(item.label);
+        }
+      });
+    }
+  }, [projects, searchParams.get("project")]);
 
   return (
     <>
