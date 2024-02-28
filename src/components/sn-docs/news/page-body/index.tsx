@@ -135,16 +135,34 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     }
   }, [content]);
 
+  const [editorHeight, setEditorHeight] = useState("100vh");
+
   useEffect(() => {
     const updateMinHeight = () => {
       const windowHeight: number = window.innerHeight;
       const elementPosition: DOMRect | undefined = document
         .getElementById("is-edit-text")
         ?.getBoundingClientRect();
+      const elementPositionTitle: DOMRect | undefined = document
+        .getElementById("document_title")
+        ?.getBoundingClientRect();
+
+      const elementPositionEmoji: DOMRect | undefined = document
+        .getElementById("document_emoji")
+        ?.getBoundingClientRect();
+
       if (elementPosition) {
+        const newEditorHeight: string =
+          windowHeight -
+          elementPosition.top -
+          (elementPositionEmoji?.height || 0) -
+          (elementPositionTitle?.height || 0) +
+          -150 +
+          "px";
         const newMinHeight: string =
           windowHeight - (elementPosition.top + 50) + "px"; //
         setMinHeight(newMinHeight);
+        setEditorHeight(newEditorHeight);
       }
     };
 
@@ -226,6 +244,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             )}
 
             <Box
+              id="document_emoji"
               sx={{
                 display: "flex",
                 position: "relative",
@@ -270,7 +289,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
               </Button>
             </Box>
 
-            <form className={`${styles.form_title}`}>
+            <form id="document_title" className={`${styles.form_title}`}>
               {name && (
                 <Textarea
                   fontFamily={fontFamily}
@@ -291,7 +310,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
               className={`${styles.editor}`}
               style={{
                 pointerEvents: canEdit ? "auto" : "none",
-                height: "50vh",
+                height: editorHeight,
                 overflowY: "scroll",
               }}
             >
