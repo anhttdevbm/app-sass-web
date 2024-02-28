@@ -1,7 +1,6 @@
 import { Box, Stack } from "@mui/material";
 import { IconButton } from "components/shared";
 import useBreakpoint from "hooks/useBreakpoint";
-// import MoveDotIcon from "icons/MoveDotIcon";
 import CheckBoxCustom from "components/shared/CheckBoxCustom";
 import MoveTagIcon from "icons/MoveTagIcon";
 import {
@@ -121,6 +120,9 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 content: "''",
                 width: "100%",
                 height: "1px",
+              },
+              "&:hover": {
+                backgroundColor: "rgba(236, 236, 243, 0.5)",
               },
             }}
             {...rest}
