@@ -1,5 +1,18 @@
-import React, { ReactNode, memo, useEffect, useMemo, useState } from "react";
-import { Box, Stack, StackProps, TextField } from "@mui/material";
+import React, {
+  ReactNode,
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Box,
+  Stack,
+  StackProps,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import { IconButton, Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import {
@@ -35,6 +48,7 @@ import { TASK_TEXT_STATUS } from "../components";
 import { useSnackbar } from "store/app/selectors";
 import PencilUnderlineIcon from "../../../../icons/PencilUnderlineIcon";
 import useTheme from "hooks/useTheme";
+import { inherits } from "util";
 
 type InformationItemProps = StackProps & {
   label: string;
@@ -217,6 +231,12 @@ const Information = () => {
     setTaskName(task?.name);
   }, [task?.name]);
 
+  const inputNameRef = useRef();
+
+  const handleFocus = () => {
+    inputNameRef?.current?.focus();
+  };
+
   if (!task) return null;
 
   return (
@@ -250,41 +270,37 @@ const Information = () => {
         spacing={2}
       >
         {editName ? (
-          <TextField
+          <TextareaAutosize
             onBlur={removeEditable}
             onMouseLeave={removeEditable}
             value={taskName}
             onKeyDown={onKeyDownTaskName}
-            fullWidth
+            inputRef={inputNameRef}
+            fullWidth={true}
             variant="filled"
             size="small"
             onChange={changeNameTask}
-            onClick={(e) => {
-              setTimeout(() => {
-                const target = e.target as HTMLInputElement;
-                const length = target.value.length;
-                target.focus(); 
-                target.setSelectionRange(length, length);
-              }, 0);
-            }}
-            sx={{
-              "& >div": {
-                bgcolor: "transparent!important",
-              },
-              "& input": {
-                fontSize: 15,
-                paddingTop: "0px !important",
-              },
-              width: "60% !important",
-              // wordBreak: "break-word",
+            onClick={handleFocus}
+            contentEditable={true}
+            style={{
+              width: "100%",
+              fontSize: 16,
+              fontFamily: "initial",
+              textAlign: "justify",
+              outlineStyle: "unset",
+              border: "none",
+              resize: "none",
             }}
           />
         ) : (
           <Text
             variant={"h5"}
             color="text.primary"
-            sx={{ wordBreak: "break-word" }}
-            onMouseEnter={() => {
+            sx={{
+              wordBreak: "break-word",
+              display: editName ? "none" : "block",
+            }}
+            onClick={() => {
               setEditName(true);
             }}
           >
