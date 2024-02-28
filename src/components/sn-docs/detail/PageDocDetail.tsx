@@ -6,6 +6,7 @@ import HeaderDocDetail from "./HeaderDocDetail";
 import DocDetail from "./DocDetail";
 import { NewPageContextProvider } from "../news/context/NewPageContext";
 import { ThemeProvider } from "../news/context/ThemeContext";
+import FixedLayout from "components/FixedLayout";
 
 const PageDocDetail = () => {
   const [openComment, setOpenComment] = useState(false);

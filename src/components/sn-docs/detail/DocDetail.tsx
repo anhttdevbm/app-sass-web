@@ -6,6 +6,7 @@ import { Box } from "@mui/material";
 import EditDocs from "./EditDocs";
 import PageBody from "../news/page-body";
 import CommentDialog from "../news/page-body/components/CommentDialog";
+import FixedLayout from "components/FixedLayout";
 
 export interface IDocDetail {
   openComment: boolean;
@@ -26,6 +27,8 @@ const DocDetail = ({
     <Box
       position={"relative"}
       sx={{
+        overflow: "auto",
+        height: "100%",
         display: "flex",
         gap: { xs: open ? 3 : 0, md: 3 },
       }}
