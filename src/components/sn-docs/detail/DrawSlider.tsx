@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, Divider, IconButton, Stack } from "@mui/material";
 import { client } from "api";
 import { AxiosError, AxiosRequestConfig, HttpStatusCode } from "axios";
 import Avatar from "components/Avatar";
@@ -275,6 +275,7 @@ const DrawSlider = ({
       >
         {state === 1 && (
           <>
+            <Divider />
             <Box
               sx={{
                 display: "flex",
@@ -295,6 +296,7 @@ const DrawSlider = ({
                 }}
               />
             </Box>
+            <Divider />
             <Box
               sx={{
                 display: "flex",
@@ -311,10 +313,10 @@ const DrawSlider = ({
                 options={TextSizeOptions}
                 handleChangeOption={(value) => {
                   editor.chain().selectAll().setFontSize(value).run();
-                  alert(value);
                 }}
               />
             </Box>
+            <Divider />
             <Box
               sx={{
                 display: "flex",

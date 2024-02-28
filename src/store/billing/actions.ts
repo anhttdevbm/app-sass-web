@@ -9,7 +9,11 @@ import {
   SALE_API_URL,
 } from "constant/index";
 import { BaseQueries, BaseQueries_Billing } from "constant/types";
-import { refactorRawItemListResponse, serverQueries } from "utils/index";
+import {
+  cleanObject,
+  refactorRawItemListResponse,
+  serverQueries,
+} from "utils/index";
 import StringFormat from "string-format";
 
 import { Option } from "constant/types";
@@ -33,6 +37,7 @@ export type GetBillingListQueries = BaseQueries_Billing & {
 };
 export type GetBudgetListQueries = BaseQueries & {
   // status?: BillingStatus;
+  search_key?: string;
 };
 export type exportBillingQueries = BaseQueries_Billing & {
   fileType?: string;
@@ -133,14 +138,55 @@ export const getBillingDetail = createAsyncThunk(
 export const getBudgetList = createAsyncThunk(
   "Billing/getBudgetList",
   async (queries: GetBudgetListQueries) => {
+    const newQueries = { ...queries };
+
+    // if (newQueries?.sort !== "updated_time=-1") {
+    //   newQueries.sort = "created_time=-1";
+    // }
+
+    // newQueries = cleanObject({
+    //   search_key: queries.search_key || undefined,
+    //   // sort_by: queries.sort || "DESC",
+    //   // company: queries.company || undefined,
+    //   // page: queries.pageIndex ? (queries.pageIndex as number) : undefined,
+    //   // size: isNaN(queries.pageSize as number)
+    //   //   ? queries.pageSize
+    //   //   : Number(queries.pageSize),
+    // }) as GetBudgetListQueries;
+    // console.log(newQueries);
+    try {
+      const response = await client.get(Endpoint.BUDGET, newQueries, {
+        baseURL: SALE_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getBudgetFilterList = createAsyncThunk(
+  "Billing/getBudgetFilterList",
+  async (queries: GetBudgetListQueries) => {
     let newQueries = { ...queries };
 
     // if (newQueries?.sort !== "updated_time=-1") {
     //   newQueries.sort = "created_time=-1";
     // }
 
-    newQueries = serverQueries(newQueries, ["name"]) as GetBudgetListQueries;
-
+    newQueries = cleanObject({
+      search_key: queries.search_key || undefined,
+      // sort_by: queries.sort || "DESC",
+      // company: queries.company || undefined,
+      // page: queries.pageIndex ? (queries.pageIndex as number) : undefined,
+      // size: isNaN(queries.pageSize as number)
+      //   ? queries.pageSize
+      //   : Number(queries.pageSize),
+    }) as GetBudgetListQueries;
     try {
       const response = await client.get(Endpoint.BUDGET, newQueries, {
         baseURL: SALE_API_URL,

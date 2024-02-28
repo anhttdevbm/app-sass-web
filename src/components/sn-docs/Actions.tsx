@@ -74,6 +74,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
       };
     }
     const path = getPath(pathname, newQueries);
+    console.log("New path", { path });
     push(path);
   };
 
@@ -132,7 +133,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         <Stack
           direction="row"
           alignItems="center"
-          spacing={3}
+          spacing={3} 
           py={{ xs: 1.25, md: 0.5, lg: 1.25 }}
           px={{ md: 1, lg: 2 }}
           borderRadius={1}

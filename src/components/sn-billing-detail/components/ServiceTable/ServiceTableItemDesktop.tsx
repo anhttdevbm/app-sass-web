@@ -24,7 +24,7 @@ import { useTranslations } from "next-intl";
 import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { useFormContext } from "react-hook-form";
-import { Service } from "store/billing/reducer";
+import { Budgets, Service } from "store/billing/reducer";
 import useGetOptions from "store/billing/selectors";
 import { useSaleDetail, useSalesService } from "store/sales/selectors";
 import { formatNumber } from "utils/index";
@@ -35,12 +35,13 @@ interface IProps {
   index: number;
   service: Service;
   isEdit?: boolean;
-  OptionBudget?: Option[];
+  arrBudgets?: Budgets[];
+  arrServices?: Service[];
   onRemoveRow: (value: Service) => void;
   handleChangeValue: (
     id: string,
     keyObj: string,
-    value: string | number,
+    value: string | number | null,
   ) => void;
 }
 
@@ -48,7 +49,8 @@ const ServiceTableItem = ({
   index,
   service,
   isEdit,
-  OptionBudget,
+  arrBudgets,
+  arrServices,
   onRemoveRow,
   handleChangeValue,
 }: IProps) => {
@@ -61,6 +63,7 @@ const ServiceTableItem = ({
   const currency = saleDetail?.currency;
 
   const { serviceUnitOptions } = useGetServiceUnitOptions();
+  const [isChangeService, setIsChangeService] = React.useState<boolean>(false);
 
   const position = useMemo(() => {
     if (!service.serviceType) return "";
@@ -80,6 +83,24 @@ const ServiceTableItem = ({
 
     return service.billType;
   }, [service.billType]);
+
+  const optionService = useMemo(() => {
+    const options = arrServices?.map((item) => {
+      return { label: item.name, value: item?.id };
+    });
+    return options;
+  }, [arrServices]);
+
+  useEffect(() => {
+    if (!isEdit) {
+      setIsChangeService(false);
+    }
+    // else {
+    //   if (isEdit && isChangeService) {
+    //     setIsChangeService(false);
+    //   }
+    // }
+  }, [isEdit, isChangeService]);
 
   return (
     <Draggable
@@ -115,7 +136,16 @@ const ServiceTableItem = ({
             )}
             <TableRow sx={{ height: 46, alignItems: "center" }}>
               <BodyCell align="left" size="small">
-                <LinkPopup OptionBudget={OptionBudget} service={service} />
+                {isEdit ? (
+                  <LinkPopup
+                    arrBudgets={arrBudgets}
+                    service={service}
+                    arrServices={arrServices}
+                    handleChangeValue={handleChangeValue}
+                  />
+                ) : (
+                  ""
+                )}
               </BodyCell>
               <BodyCell
                 align="left"
@@ -131,16 +161,15 @@ const ServiceTableItem = ({
                     defaultValue={currency}
                     disabled={isLocked}
                     showSubText
-                    value={service.serviceType}
-                    options={positionOptions as Option[]}
+                    value={
+                      isEdit && !isChangeService ? service.id : service.name
+                    }
+                    options={optionService as Option[]}
                     key={service?.id}
                     id={service.id}
                     onChange={(e) => {
-                      handleChangeValue(
-                        service?.id,
-                        "serviceType",
-                        e.target.value,
-                      );
+                      handleChangeValue(service?.id, "name", e.target.value);
+                      setIsChangeService(true);
                     }}
                     sx={{
                       width: "100%",
@@ -157,10 +186,9 @@ const ServiceTableItem = ({
                   />
                 ) : (
                   <Text variant="body2">
-                    {positionOptions?.find(
-                      (item) => item.value === service?.serviceType,
-                    )?.label ??
-                      service?.serviceType ??
+                    {optionService?.find((item) => item.value === service?.name)
+                      ?.label ??
+                      service?.name ??
                       ""}
                   </Text>
                 )}

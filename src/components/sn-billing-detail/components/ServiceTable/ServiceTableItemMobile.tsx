@@ -12,7 +12,7 @@ import { useSaleDetail, useSalesService } from "store/sales/selectors";
 import { BodyCell } from "components/Table";
 import { IconButton, Select, Text } from "components/shared";
 import TrashIcon from "icons/TrashIcon";
-import { Service } from "store/billing/reducer";
+import { Budgets, Service } from "store/billing/reducer";
 import { Draggable } from "react-beautiful-dnd";
 import LinkPopup from "../LinkPopup";
 import { Option } from "constant/types";
@@ -24,12 +24,13 @@ interface IProps {
   index: number;
   service: Service;
   isEdit?: boolean;
-  OptionBudget?: Option[];
+  arrBudgets?: Budgets[];
+  arrServices?: Service[];
   onRemoveRow: (value: Service) => void;
   handleChangeValue: (
     id: string,
     keyObj: string,
-    value: string | number,
+    value: string | number | null,
   ) => void;
 }
 
@@ -40,7 +41,8 @@ const ServiceTableItemMobile = ({
   service,
   onRemoveRow,
   isEdit,
-  OptionBudget,
+  arrBudgets,
+  arrServices,
   handleChangeValue,
 }: IProps) => {
   const commonT = useTranslations(NS_COMMON);
@@ -52,6 +54,13 @@ const ServiceTableItemMobile = ({
   const { serviceUnitOptions } = useGetServiceUnitOptions();
   const { billTypeOptions } = useGetBillTypeOptions();
   const { positionOptions } = useGetOptions();
+
+  const optionService = useMemo(() => {
+    const options = arrServices?.map((item) => {
+      return { label: item.name, value: item?.id };
+    });
+    return options;
+  }, [arrServices]);
 
   return (
     <Draggable
@@ -83,7 +92,16 @@ const ServiceTableItemMobile = ({
                 spacing={2}
               >
                 <BodyCell align="left" size="small">
-                  <LinkPopup OptionBudget={OptionBudget} service={service} />
+                  {isEdit ? (
+                    <LinkPopup
+                      arrBudgets={arrBudgets}
+                      service={service}
+                      arrServices={arrServices}
+                      handleChangeValue={handleChangeValue}
+                    />
+                  ) : (
+                    ""
+                  )}
                 </BodyCell>
                 <BodyCell
                   align="left"
@@ -99,16 +117,12 @@ const ServiceTableItemMobile = ({
                       defaultValue={currency}
                       disabled={isLocked}
                       showSubText
-                      value={service.serviceType}
-                      options={positionOptions as Option[]}
+                      value={service.name}
+                      options={optionService as Option[]}
                       key={service?.id}
                       id={service.id}
                       onChange={(e) => {
-                        handleChangeValue(
-                          service?.id,
-                          "serviceType",
-                          e.target.value,
-                        );
+                        handleChangeValue(service?.id, "name", e.target.value);
                       }}
                       sx={{
                         width: "100%",
@@ -122,7 +136,7 @@ const ServiceTableItemMobile = ({
                       }}
                     />
                   ) : (
-                    <Text variant="body2">{service?.serviceType}</Text>
+                    <Text variant="body2">{service?.name}</Text>
                   )}
                 </BodyCell>
 

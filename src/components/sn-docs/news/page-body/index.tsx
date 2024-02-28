@@ -34,6 +34,9 @@ import styled from "@emotion/styled";
 import { useUpdateDocMutation } from "store/docs/api";
 import { TextSelection } from "prosemirror-state";
 import { MenuBarHeaderEdit } from "./components/MenuBarHeader";
+import { Button } from "components/shared";
+import { EmojiEmotions } from "@mui/icons-material";
+import EmojiSelector from "./components/EmojiSelector";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-otptional-chain */
@@ -55,6 +58,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const currentId = useAppSelector((state) => state.doc.id);
 
   const [openChangeCover, setOpenChangeCover] = useState<boolean>(false);
+  const [openEmojiSelector, setOpenEmojiSelector] = useState<boolean>(false);
   const { theme } = useContext(ThemeContext);
   const { openComment } = useContext(NewPageContext);
   const [minHeight, setMinHeight] = useState("100vh");
@@ -66,6 +70,8 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const [debounceChange, isDone, cancel] = useDebounce((value: string) => {
     updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
+
+  // We should cancel debounce when we change the doucment ítelf
 
   useEffect(() => {
     // cancel();
@@ -170,87 +176,160 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
         flexDirection: "column",
         gap: "20px",
         width: "100%",
-        height: "100%",
+        overflow: "hidden",
       }}
     >
-      {editor && <MenuBarHeaderEdit editor={editor} />}
       <Box
         sx={{
-          paddingBottom: {
-            sm: "0",
-            xs: "160px",
-          },
-          width: {
-            sm: "100%",
-            xs: "100%",
-          },
+          background: "red",
+          overflow: "hidden",
+          height: "100%",
         }}
       >
-        <div className={`${styles.content}} ${styles[theme]}`}>
-          <Box
-            sx={{
-              position: "relative",
-              bgcolor: isDarkMode ? "#191919" : "white",
-              padding: {
-                sm: "32px 40px",
-                xs: "12px",
-              },
-              minHeight: minHeight,
-            }}
-            id="is-edit-text"
-            className={` ${styles.page_content} ${
-              pageInfo?.pageSettings?.fullWidth ? "" : styles.full_width
-            }
+        {/* {editor && <MenuBarHeaderEdit editor={editor} />}
+        <Box
+          sx={{
+            dispaly: "flex",
+            paddingBottom: {
+              sm: "0",
+              xs: "160px",
+            },
+            height: "468px",
+            width: {
+              sm: "100%",
+              xs: "100%",
+            },
+          }}
+        >
+          <div className={`${styles.content}} ${styles[theme]}`}>
+            <Box
+              sx={{
+                position: "relative",
+                bgcolor: isDarkMode ? "#191919" : "white",
+                padding: {
+                  sm: "32px 40px",
+                  xs: "12px",
+                },
+                minHeight: minHeight,
+              }}
+              id="is-edit-text"
+              className={` ${styles.page_content} ${
+                pageInfo?.pageSettings?.fullWidth ? "" : styles.full_width
+              }
           ${pageInfo?.pageSettings?.smallText ? styles.small_text : ""}
           ${styles[pageInfo?.pageSettings?.font!]}
           `}
-          >
-            {openComment && (
-              <LayoutSlider heightToolbar={minHeight}>
-                <DrawComment editor={editor} />
-              </LayoutSlider>
-            )}
-            {openSlider && (
-              <LayoutSlider heightToolbar={minHeight}>
-                <DrawSlider
-                  setOpenSlider={setOpenSlider}
-                  editor={editor}
-                ></DrawSlider>
-              </LayoutSlider>
-            )}
-            <form className={`${styles.form_title}`}>
-              {name && (
-                <Textarea
-                  fontFamily={fontFamily}
-                  maxRows={3}
-                  id="title"
-                  disabled={!canEdit}
-                  defaultValue={name}
-                  placeholder="Enter document title..."
-                  onChange={(e) => {
-                    debounceChange(e.target.value);
-                  }}
-                  autoComplete="off"
-                  spellCheck="false"
-                />
-              )}
-            </form>
-            <div
-              className={`${styles.editor}`}
-              style={{
-                pointerEvents: canEdit ? "auto" : "none",
-                height: "50vh",
-                overflowY: "scroll",
-              }}
             >
-              <Tiptap editor={editor} disabled={!canEdit} />
-            </div>
-          </Box>
-        </div>
-        <ChangeCover
-          open={openChangeCover}
-          onClose={() => setOpenChangeCover(false)}
-        />
+              {openComment && (
+                <LayoutSlider heightToolbar={minHeight}>
+                  <DrawComment editor={editor} />
+                </LayoutSlider>
+              )}
+              {openSlider && (
+                <LayoutSlider heightToolbar={minHeight}>
+                  <DrawSlider
+                    setOpenSlider={setOpenSlider}
+                    editor={editor}
+                  ></DrawSlider>
+                </LayoutSlider>
+              )}
+
+              <Box
+                sx={{
+                  display: "flex",
+                  position: "relative",
+                  fontWeight: "light!important",
+                }}
+              >
+                <Button
+                  sx={{
+                    color: "gray",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    paddingLeft: "0.25em! important",
+                    paddingRight: "0.25em! important",
+                    fontWeight: "light!important",
+                    borderRadius: "1em",
+                  }}
+                  variant="text"
+                  color="primary"
+                  onClick={() => setOpenEmojiSelector(true)}
+                >
+                  <EmojiEmotions />
+                  <span>Emoji</span>
+                </Button>
+
+                <Button
+                  sx={{
+                    color: "gray",
+                    fontWeight: "light!important",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    paddingLeft: "0.25em! important",
+                    paddingRight: "0.25em! important",
+                    borderRadius: "1em",
+                  }}
+                  variant="text"
+                  color="primary"
+                  onClick={() => setOpenChangeCover(true)}
+                >
+                  Change cover
+                </Button>
+              </Box>
+
+              <form className={`${styles.form_title}`}>
+                {name && (
+                  <Textarea
+                    fontFamily={fontFamily}
+                    maxRows={3}
+                    id="title"
+                    disabled={!canEdit}
+                    defaultValue={name}
+                    placeholder="Enter document title..."
+                    onChange={(e) => {
+                      debounceChange(e.target.value);
+                    }}
+                    autoComplete="off"
+                    spellCheck="false"
+                  />
+                )}
+              </form>
+              <div
+                className={`${styles.editor}`}
+                style={{
+                  pointerEvents: canEdit ? "auto" : "none",
+                  height: "400px",
+                  overflowY: "scroll",
+                }}
+              >
+                <Tiptap editor={editor} disabled={!canEdit} />
+              </div>
+            </Box>
+          </div>
+          <EmojiSelector
+            openPicker={openEmojiSelector}
+            closePicker={() => {
+              setOpenEmojiSelector(false);
+            }}
+            setEmoji={() => {}}
+            setEmojiCode={() => {}}
+            leftOpen={true}
+            fullWidth={false}
+            cover={true}
+
+            // setEmoji: (emojiImage: string) => void;
+            // setEmojiCode: (unified: string) => void;
+            // leftOpen: boolean;
+            // fullWidth: boolean;
+            // cover: boolean;
+          />
+          <ChangeCover
+            open={openChangeCover}
+            onClose={() => setOpenChangeCover(false)}
+          />
+        </Box> */}
       </Box>
     </Box>
   );

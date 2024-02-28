@@ -23,8 +23,8 @@ export const DropdownButton = (props: Props) => {
   const billingT = useTranslations(NS_BILLING);
 
   const options = [
-    billingT("detail.form.payment.title.addPayment"),
-    billingT("detail.form.payment.title.writeOff"),
+    billingT("detail.form.top.button.addPayment"),
+    billingT("detail.form.top.button.addWriteOff"),
   ];
 
   const handleClick = () => {
@@ -63,7 +63,10 @@ export const DropdownButton = (props: Props) => {
       >
         <Button
           onClick={() => {
-            if (options[selectedIndex] == "Writeoff") {
+            if (
+              options[selectedIndex] ==
+              billingT("detail.form.top.button.addWriteOff")
+            ) {
               handleOpen("write");
             } else {
               handleOpen("add");

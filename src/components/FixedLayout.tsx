@@ -64,6 +64,7 @@ const FixedLayout = (props: StackProps) => {
           // maxWidth={1349}
           mx="auto"
           width="100%"
+          height="100%"
           flex={is1440Larger ? undefined : 1}
           bgcolor={{ md: "background.paper" }}
           {...rest}

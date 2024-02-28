@@ -217,7 +217,8 @@ export const BillingLang: BillingDictionary = {
         title: {
           payments: "Thanh toán",
           editPayment: "Chỉnh sửa thông tin thanh toán",
-          addPayment: "Thêm mới",
+          addPayment: "Tạo khoản thanh toán",
+          addWriteOff: "Tạo khoản Ghi nợ",
           amount: "Số tiền",
           note: "Ghi chú",
           paidOn: "Ngày sửa",
@@ -227,9 +228,12 @@ export const BillingLang: BillingDictionary = {
       top: {
         button: {
           markAsSent: "Đánh dấu là đã gửi",
+          unSent: "Chưa gửi",
           cancel: "Hủy",
           saveChange: "Lưu thay đổi",
           edit: "Chỉnh sửa",
+          addPayment: "Thanh toán",
+          addWriteOff: "Ghi nợ",
           option: {
             duplicateInvoice: "Nhân bản invoice",
             createCreditNote: "Tạo ghi chú tín dụng",

@@ -38,6 +38,7 @@ export type CellProps = TableCellProps & {
   width?: string | number;
   minWidth?: number;
   minwidth?: number | string;
+  handler?: any;
 };
 
 type TableLayoutProps = {
@@ -145,7 +146,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
     <Stack
       // flex={1}
       // maxHeight={HEIGHT_ROW * (numberOfRows + 1) + HEIGHT_HEADER + 10}
-      maxHeight={HEIGHT_ROW * (numberOfRows + 1)}
+      // maxHeight={HEIGHT_ROW * (numberOfRows + 1)}
       overflow="hidden"
       {...rest}
     >
@@ -207,6 +208,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                   </HeaderSortCell>
                 ) : (
                   <CellHeader
+                    onClick={item.handler}
                     key={uuid()}
                     {...item}
                     width={item.width ?? `${100 / nOfColumnsNotWidthFixed}%`}

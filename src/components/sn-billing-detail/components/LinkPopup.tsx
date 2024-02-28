@@ -1,23 +1,71 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import PopoverLayout from "./PopoverLayout";
 import { Button, IconButton, Input, Select, Text } from "components/shared";
-import { Stack } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Stack,
+} from "@mui/material";
 import { FormikProps } from "formik";
-import { Billing, Service } from "store/billing/reducer";
+import { Billing, Budgets, Service } from "store/billing/reducer";
 import { formatNumber } from "utils/index";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { CURRENCY_CODE } from "constant/enums";
 import LinkBudgetIcon from "icons/LinkBudgetIcon";
 import { Option } from "constant/types";
+import { Search } from "components/Filters";
+import Avatar from "components/Avatar";
+import FolderIcon from "icons/FolderIcon";
+import LinkBudgetIconMap from "icons/LinkBudgetIconMap";
 
-type IProps = { OptionBudget?: Option[]; service: Service };
+type IProps = {
+  arrBudgets?: Budgets[];
+  service: Service;
+  arrServices?: Service[];
+  handleChangeValue: (
+    id: string,
+    keyObj: string,
+    value: string | number | null,
+  ) => void;
+};
 const LinkPopup = (props: IProps) => {
-  const { OptionBudget, service } = props;
+  const { arrBudgets, service, arrServices, handleChangeValue } = props;
 
   const [selectedBudget, setSelectedBudget] = useState<string>("");
+  const [dense, setDense] = useState(false);
 
   const onChangeValue = (e) => {
     setSelectedBudget(e.target.value);
+  };
+
+  const findBudget = useMemo(() => {
+    const dataBudget = arrBudgets?.find(
+      (item) => item?.id === service.budgetId,
+    );
+    return dataBudget;
+  }, [arrBudgets]);
+
+  const findServiceInBudget = useMemo(() => {
+    const data = arrServices?.filter(
+      (item) => item?.budgetId === findBudget?.id,
+    );
+    return data;
+  }, [arrServices, findBudget]);
+
+  useEffect(() => {
+    setSelectedBudget(service?.budgetId);
+  }, [service]);
+
+  const onSearch = (value) => {
+    console.log(value);
+  };
+
+  const onLinkBudget = (data: Service) => {
+    if (data && data.budgetId && data.budgetId !== "") {
+      handleChangeValue(data?.id, "budgetId", null);
+    }
   };
 
   return (
@@ -27,7 +75,18 @@ const LinkPopup = (props: IProps) => {
         children={
           <>
             <Stack gap={2} p={2}>
-              <Select
+              <Search
+                placeholder="Tìm kiếm"
+                name="search_key"
+                onEnter={(name, value) => {
+                  onSearch(value);
+                }}
+                // onChange={(name, value) => {
+
+                // }}
+              />
+              <hr style={{ width: "100%", border: "1px solid #ECECF3" }} />
+              {/* <Select
                 options={OptionBudget ?? []}
                 searchProps={{
                   placeholder: "Select service or expense",
@@ -39,22 +98,63 @@ const LinkPopup = (props: IProps) => {
                 // disabled
                 rootSx={sxConfig.input}
                 fullWidth
-              />
-
-              <Button variant="text" sx={{ textDecoration: "none" }}>
-                <Text variant={"body1"} color={"#1BC5BD"}>
-                  Unlink
-                </Text>
-              </Button>
+                showSubText
+              /> */}
+              {service.budgetId && (
+                <>
+                  <Stack direction={"row"} gap={1} alignItems={"center"}>
+                    <Avatar size={30} src={""} />
+                    <Text variant={"body1"}>{findBudget?.name}</Text>
+                  </Stack>
+                  <List dense={dense}>
+                    {findServiceInBudget &&
+                      findServiceInBudget?.map((item) => {
+                        return (
+                          <ListItem key={item?.id} sx={{ padding: "2px 0px" }}>
+                            <ListItemText
+                              primary={
+                                item?.name +
+                                " : " +
+                                formatNumber(item?.price, {
+                                  // suffix: CURRENCY_CODE.USD,
+                                  numberOfFixed: 2,
+                                  prefix: CURRENCY_SYMBOL.USD,
+                                })
+                              }
+                              // secondary={secondary ? 'Secondary text' : null}
+                            />
+                          </ListItem>
+                        );
+                      })}
+                  </List>{" "}
+                  <Text
+                    variant={"body1"}
+                    color={"#1BC5BD"}
+                    onClick={() => {
+                      onLinkBudget(service);
+                    }}
+                  >
+                    Unlink
+                  </Text>
+                </>
+              )}
             </Stack>
           </>
         }
         label={
-          <Text variant={"body1"} color={"#1BC5BD"}>
-            <IconButton>
-              <LinkBudgetIcon width={20} />
-            </IconButton>
-          </Text>
+          service?.budgetId && service?.budgetId !== "" ? (
+            <Text variant={"body1"}>
+              <IconButton>
+                <LinkBudgetIconMap width={20} />
+              </IconButton>
+            </Text>
+          ) : (
+            <Text variant={"body1"}>
+              <IconButton sx={{ color: "red" }}>
+                <LinkBudgetIcon width={20} htmlColor="red" />
+              </IconButton>
+            </Text>
+          )
         }
       />
     </>
