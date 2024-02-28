@@ -71,7 +71,6 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
       setSelectedItem(searchParams.get("project"));
 
       // get project name by id
-      alert(JSON.stringify(projectOptions));
       projectOptions.forEach((item) => {
         if (item.value === searchParams.get("project")) {
           setCurrentProjectLabel(item.label);
