@@ -338,12 +338,9 @@ export const BudgetDetail = () => {
           <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
             <TextStatus
               text="status.open"
-              color="success"
+              color={_.get(budget, "project.status", "") === ProjectStatus.ACTIVE ? "success": 'common'}
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
-              isActive={
-                _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
-              }
               onClick={async () => {
                 await handleChangeProjectStatus(ProjectStatus.ACTIVE);
               }}
@@ -358,12 +355,9 @@ export const BudgetDetail = () => {
             />
             <TextStatus
               text="status.close"
-              color="error"
+              color={_.get(budget, "project.status", "") === ProjectStatus.CLOSE ? "error": 'common'}
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
-              isActive={
-                _.get(budget, "project.status", "") === ProjectStatus.CLOSE
-              }
               onClick={async () => {
                 await handleChangeProjectStatus(ProjectStatus.CLOSE);
               }}
