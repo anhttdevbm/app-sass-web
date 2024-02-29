@@ -13,7 +13,7 @@ import _ from "lodash";
 import { DateRangePicker, DateRange } from "mui-daterange-picker";
 import CalendarIcon from "icons/CalendarIcon";
 import useTheme from "hooks/useTheme";
-
+import ChevronIcon from "icons/ChevronIcon";
 interface ISectionProps {
   value?: DateRange | null;
   label?: string;
@@ -22,6 +22,8 @@ interface ISectionProps {
   required?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  showIndicator?: boolean;
+  iconPosition?: 'left' | 'right'
 }
 
 type TextFieldInputProps = ISectionProps & TextFieldProps;
@@ -36,6 +38,8 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
   errorMessage,
   helperText,
   sx,
+  showIndicator,
+  iconPosition = 'right'
 }) => {
   const randomId = (Math.random() + 1).toString(36).substring(7);
   const [isFocus] = React.useState<boolean>(false);
@@ -69,6 +73,7 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
           sx={{
             display: "flex",
             flexDirection: "row",
+            gap: "4px",
             color: !!isDarkMode ? "common.white" : "common.black",
             backgroundColor: !!isDarkMode ? "#393939" : "grey.50",
             borderRadius: "4px",
@@ -83,60 +88,63 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
             borderColor: errorMessage
               ? "rgba(246, 78, 96, 1)"
               : isFocus
-              ? "rgba(54, 153, 255, 0.5)"
-              : "transparent",
+                ? "rgba(54, 153, 255, 0.5)"
+                : "transparent",
             alignItems: "center",
             width: "100%",
           }}
         >
-          <Stack direction="column" flex={1}>
-            <InputLabel
-              sx={{
-                fontSize: "12px",
-                fontWeight: 400,
-                lineHeight: "18px",
-                userSelect: "none",
-                mb: 1,
-                color: palette.grey[300],
-              }}
-              htmlFor={`input-field-${randomId}`}
-            >
-              {label}{" "}
-              {required && (
-                <Typography
-                  component="span"
-                  sx={{
-                    color: "rgba(246, 78, 96, 1)",
-                    fontSize: "inherit",
-                    lineHeight: "16px",
-                  }}
-                >
-                  (*)
-                </Typography>
-              )}
-            </InputLabel>
-            <Typography
-              sx={{
-                fontSize: 14,
-                lineHeight: "22px",
-                fontWeight: 400,
-                opacity:
-                  _.isEmpty(dateRange.startDate) ||
-                  _.isEmpty(dateRange.startDate)
+          <Stack direction={iconPosition === 'left' ? 'row-reverse' : 'row'} gap={1} alignItems='center'>
+            <Stack direction="column" flex={1}>
+              <InputLabel
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 400,
+                  lineHeight: "18px",
+                  userSelect: "none",
+                  mb: label ? 1 : 0,
+                  color: palette.grey[300],
+                }}
+                htmlFor={`input-field-${randomId}`}
+              >
+                {label}{" "}
+                {required && (
+                  <Typography
+                    component="span"
+                    sx={{
+                      color: "rgba(246, 78, 96, 1)",
+                      fontSize: "inherit",
+                      lineHeight: "16px",
+                    }}
+                  >
+                    (*)
+                  </Typography>
+                )}
+              </InputLabel>
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  lineHeight: "22px",
+                  fontWeight: 400,
+                  opacity: !dateRange.startDate
                     ? 0.5
                     : 1,
-              }}
-            >
-              {dateRange.startDate
-                ? dayjs(dateRange.startDate || "").format("DD/MM/YYYY")
-                : "DD/MM/YYYY"}{" "}
-              -{" "}
-              {dateRange.endDate
-                ? dayjs(dateRange.endDate).format("DD/MM/YYYY")
-                : "DD-MM-YYYY"}
-            </Typography>
+                }}
+              >
+                {dateRange.startDate
+                  ? dayjs(dateRange.startDate || "").format("DD/MM/YYYY")
+                  : "DD/MM/YYYY"}{" "}
+                -{" "}
+                {dateRange.endDate
+                  ? dayjs(dateRange.endDate).format("DD/MM/YYYY")
+                  : "DD-MM-YYYY"}
+              </Typography>
+            </Stack>
+            <CalendarIcon width={20} height={20} />
           </Stack>
-          <CalendarIcon width={20} height={20} />
+          {showIndicator && <ChevronIcon width={10} height={10} sx={{
+            transform: isOpenCalendar ? "rotate(180deg)" : "rotate(0deg)",
+          }} />}
         </Box>
         {helperText ? (
           <FormHelperText

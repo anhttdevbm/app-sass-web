@@ -48,6 +48,8 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import { TBudgetExpense } from "store/expense/actions";
 import Swal from "sweetalert2";
+import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
+import { DateRange } from "mui-daterange-picker";
 
 enum TABS {
   FEED = "Feed",
@@ -104,7 +106,7 @@ export const BudgetDetail = () => {
 
   const [budget, setBudget] = useState<TBudget | null>(null);
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
-  const [dateFilter, setDateFilter] = useState<any>("");
+  const [dateFilter, setDateFilter] = useState<DateRange>({});
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
   const [selectedService, setSelectedService] =
     useState<TBudgetService | null>();
@@ -120,8 +122,6 @@ export const BudgetDetail = () => {
   const budgetT = useTranslations(NS_BUDGETING);
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
-
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!_.isEmpty(serviceQuery)) {
@@ -142,8 +142,9 @@ export const BudgetDetail = () => {
   }, [JSON.stringify(budgetDetailQuery)]);
 
   const scrollToTop = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
+    const wrapper = document.querySelector('#budget-detail-container')
+    if (wrapper) {
+      wrapper.scrollTop = 0
     }
   };
 
@@ -307,17 +308,14 @@ export const BudgetDetail = () => {
             </Stack>
           </Stack>
           <Stack direction="row" alignItems="center">
-            <DatePicker
-              onChange={(name, date) => {
-                if (!date) return;
-                setDateFilter(dayjs(date.toString()).format("YYYY-MM-DD"));
-              }}
-              name="name"
-              size="small"
+            <CustomDateRangePicker
               value={dateFilter}
-              pickerProps={{
-                autoComplete: "off",
+              onChange={(value) => {
+                setDateFilter(value)
               }}
+              iconPosition="left"
+              showIndicator
+              errorMessage=''
             />
             <IconButton
               sx={{ color: "grey.300" }}
@@ -418,7 +416,7 @@ export const BudgetDetail = () => {
           >
             <CircularProgress />
           </Stack>
-          <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }} ref={scrollRef}>
+          <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
             {activeTab === TABS.TIME && (
               <Time
