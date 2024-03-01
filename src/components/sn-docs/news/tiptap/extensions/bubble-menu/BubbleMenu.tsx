@@ -22,7 +22,6 @@ export const BubbleMenu: React.FC<BubbleMenuProps> = ({
   children,
 }) => {
   const [element, setElement] = useState<HTMLDivElement | null>(null);
-
   useEffect(() => {
     if (!element) {
       return;

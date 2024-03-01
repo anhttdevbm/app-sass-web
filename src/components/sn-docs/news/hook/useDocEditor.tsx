@@ -41,12 +41,19 @@ export default function useDocEditor() {
     onUpdate: async ({ editor, transaction }) => {
       setContent(editor.getJSON());
       anchorRef.current = transaction.selection.anchor;
+      // await handleContentUpdate(editor.getHTML());
+    },
+    onBlur: async ({ editor, transaction }) => {
       await handleContentUpdate(editor.getHTML());
     },
   });
 
   useEffect(() => {
+    let from = editor?.view.state.selection.from;
+    let to = editor?.view.state.selection.to;
     editor?.commands?.setContent(content);
+    // Set selection editor
+    // alert(from + " -> " + to);
   }, [content]);
 
   return editor;
