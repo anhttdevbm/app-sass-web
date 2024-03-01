@@ -115,24 +115,23 @@ export const Invoice = () => {
   const mobileHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: budgetT("list.table.subject"),
+        value: budgetT("tabInvoice.subject"),
         align: "center",
       },
       {
-        value: budgetT("list.table.invoiceNumber"),
+        value: budgetT("tabInvoice.invoiceNumber"),
         align: "center",
       },
       {
-        value: budgetT("list.table.date"),
+        value: budgetT("tabInvoice.date"),
         align: "center",
       },
-      { value: budgetT("list.table.budgets"), align: "center" },
-      { value: budgetT("list.table.att"), align: "center" },
+      { value: budgetT("tabInvoice.att"), align: "center" },
       {
         value: (
           <>
             <Stack>
-              {budgetT("list.table.amount")}
+              {budgetT("tabInvoice.amount")}
               <Text variant={"body2"} align="center" fontWeight={600}>
                 {formatNumber(totalAmount, {
                   prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
@@ -148,9 +147,9 @@ export const Invoice = () => {
         value: (
           <>
             <Stack>
-              {budgetT("list.table.amountUnpaid")}
+            {budgetT("tabInvoice.amountUnpaid")}
               <Text variant={"body2"} align="center" fontWeight={600}>
-                {formatNumber(totalAmountUnpaid, {
+                {formatNumber(totalAmount, {
                   prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
                   numberOfFixed: 2,
                 })}
@@ -160,7 +159,10 @@ export const Invoice = () => {
         ),
         align: "center",
       },
-      { value: budgetT("list.table.dueDate"), align: "center" },
+      {
+        value: budgetT("tabInvoice.dueDate"),
+        align: "center",
+      },
     ],
     [budgetT, totalAmount, totalAmountUnpaid],
   );

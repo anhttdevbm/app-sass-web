@@ -302,7 +302,7 @@ export const BudgetDetail = () => {
             <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
             <Stack pl="7px">
               <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
-                {budget.project.name}
+                {budget.project?.name}
               </Text>
               <Text lineHeight={1.2}>{budget.name}</Text>
             </Stack>
