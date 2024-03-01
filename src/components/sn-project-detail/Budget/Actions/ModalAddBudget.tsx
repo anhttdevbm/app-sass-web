@@ -198,7 +198,6 @@ const ModalAddBudget = (props: Props) => {
         overflow: 'visible !important',
         '& .MuiDialogContent-root': {
           overflow: 'visible !important',
-          maxHeight: '300px',
           '& .MuiStack-root': { overflow: 'visible !important' }
         }
       }}
@@ -214,7 +213,7 @@ const ModalAddBudget = (props: Props) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.project_id}
-              error={commonT(touchedErrors?.owner, {
+              error={commonT(touchedErrors?.project_id, {
                 name: projectT("budget.form.project_id"),
               })}
               rootSx={sxInput}
