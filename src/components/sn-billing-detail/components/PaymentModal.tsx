@@ -1,16 +1,17 @@
 import { CheckBox } from "@mui/icons-material";
 import { Grid, Stack, TextField } from "@mui/material";
 import FormLayout from "components/FormLayout";
-import { Input, Select } from "components/shared";
+import { DatePicker, Input, Select } from "components/shared";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
 import { NS_BILLING, NS_COMMON } from "constant/index";
 import dayjs from "dayjs";
-import { useFormik } from "formik";
+import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { BillPaymentData, PaymentData } from "store/billing/actions";
 import { useBillings } from "store/billing/selectors";
+import * as Yup from "yup";
 
 type Iprops = {
   open: boolean;
@@ -40,7 +41,10 @@ const BillModal = (props: Iprops) => {
     initialValues: {
       status: "Paid",
     },
-    // validationSchema: {},
+    validationSchema: Yup.object().shape({
+      amount: Yup.string().trim().required("form.error.required"),
+      date: Yup.string().required("form.error.required"),
+    }),
     onSubmit: (value) => {
       if (action == "add") {
         const data = {
@@ -72,11 +76,41 @@ const BillModal = (props: Iprops) => {
     },
   });
 
+  const touchedErrors = useMemo(() => {
+    return Object.entries(formik.errors).reduce(
+      (out: FormikErrors<BillPaymentData>, [key, error]) => {
+        // if (formik.touched[key]) {
+        out[key] = error;
+        // }
+        return out;
+      },
+      {},
+    );
+  }, [formik.touched, formik.errors]);
+
   useEffect(() => {
     if (dataUpdate && Object.keys(dataUpdate).length > 0) {
       formik.setValues(dataUpdate);
     }
   }, [dataUpdate]);
+
+  useEffect(() => {
+    if (!open) {
+      formik.resetForm();
+    }
+  }, [open]);
+
+  const onChangeDate = (name: string, newDate?: Date) => {
+    formik.setFieldValue(name, newDate ? newDate : null);
+    formik.setFieldTouched(name, true);
+
+    // Fix validate failed when change network
+    // let timeout: NodeJS.Timeout | null = null;
+    // if (timeout) clearTimeout(timeout);
+    // timeout = setTimeout(() => {
+    //   formik.validateForm();
+    // }, 50);
+  };
 
   return (
     <FormLayout
@@ -95,6 +129,7 @@ const BillModal = (props: Iprops) => {
       cancelText={commonT("form.cancel")}
       onClose={handleClose}
       onSubmit={formik.handleSubmit}
+
       //   submitting={isFetching}
     >
       <Grid container spacing={2}>
@@ -106,6 +141,9 @@ const BillModal = (props: Iprops) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.amount}
+              error={commonT(touchedErrors?.amount, {
+                name: "amount",
+              })}
               // error={commonT(touchedErrors?.amount, {
               //   name: commonT("form.title.amount"),
               // })}
@@ -113,19 +151,22 @@ const BillModal = (props: Iprops) => {
               rootSx={sxConfig.input}
               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
             />
-            <Input
+
+            <DatePicker
               title={billingT("detail.form.payment.title.paidOn")}
-              // name="status"
-              // onChange={formik.handleChange}
-              // onBlur={formik.handleBlur}
-              value={currentDate}
-              disabled
-              // error={commonT(touchedErrors?.description, {
-              //   name: commonT("form.title.description"),
-              // })}
-              fullWidth
+              name="date"
+              onChange={onChangeDate}
+              onBlur={formik.handleBlur}
+              value={formik.values?.date}
+              error={commonT(touchedErrors?.date, {
+                name: "date",
+                // name2: commonT("form.title.startDate"),
+              })}
               rootSx={sxConfig.input}
-              sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
+              fullWidth
+              sx={{
+                mt: { xs: 2, sm: 0 },
+              }}
             />
           </Stack>
         </Grid>

@@ -1,5 +1,5 @@
 import { DataStatus } from "constant/enums";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
@@ -27,19 +27,21 @@ import {
   getCommentBilling,
   getPaymentByBillId,
   getServiceBudget,
+  getTags,
   markAsSendBilling,
   updateBilling,
   updatePayment,
   updateTagBill,
   viewPdfBilling,
 } from "./actions";
-import { BillingCommentData, BillingDataUpdate, Service } from "./reducer";
+import { BillingCommentData, BillingDataUpdate, Service, Tag } from "./reducer";
 import { IOptionStructure } from "components/shared/TextFieldSelect";
 import { usePositions } from "store/company/selectors";
 import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
 import _ from "lodash";
 import { da } from "date-fns/locale";
+import { Option } from "constant/types";
 
 export const useBillings = () => {
   const dispatch = useAppDispatch();
@@ -377,45 +379,45 @@ export const useFetchOptions = () => {
   }, []);
 };
 
-const useGetOptions = () => {
-  // const [projectOptions, setProjectOptions] = useState<IOptionStructure[]>([]);
-  // const [positionOptions, setPositionOptions] = useState<IOptionStructure[]>(
-  //   [],
-  useFetchOptions();
-  const { items: positions, onGetPositions } = usePositions();
-  const commonT = useTranslations(NS_COMMON);
-  // const projectOptions: IOptionStructure[] = useMemo(() => {
-  //   if (!_.isEmpty(projects)) {
-  //     const resolveProjects = _.map(projects, (project) => {
-  //       return {
-  //         label: project?.name,
-  //         value: project?.id,
-  //       };
-  //     });
-  //     return resolveProjects;
-  //   }
-  //   return [];
-  // }, [JSON.stringify(projects)]);
+// const useGetOptions = () => {
+//   // const [projectOptions, setProjectOptions] = useState<IOptionStructure[]>([]);
+//   // const [positionOptions, setPositionOptions] = useState<IOptionStructure[]>(
+//   //   [],
+//   useFetchOptions();
+//   const { items: positions, onGetTags } = useStags();
+//   const commonT = useTranslations(NS_COMMON);
+//   // const projectOptions: IOptionStructure[] = useMemo(() => {
+//   //   if (!_.isEmpty(projects)) {
+//   //     const resolveProjects = _.map(projects, (project) => {
+//   //       return {
+//   //         label: project?.name,
+//   //         value: project?.id,
+//   //       };
+//   //     });
+//   //     return resolveProjects;
+//   //   }
+//   //   return [];
+//   // }, [JSON.stringify(projects)]);
 
-  const positionOptions: IOptionStructure[] = useMemo(() => {
-    if (!_.isEmpty(positions)) {
-      const resolvePositions = _.map(positions, (position) => {
-        return {
-          label: position?.name,
-          value: position?.id,
-        };
-      });
-      return resolvePositions;
-    }
-    return [];
-  }, [JSON.stringify(positions)]);
+//   const positionOptions: IOptionStructure[] = useMemo(() => {
+//     if (!_.isEmpty(positions)) {
+//       const resolvePositions = _.map(positions, (position) => {
+//         return {
+//           label: position?.name,
+//           value: position?.id,
+//         };
+//       });
+//       return resolvePositions;
+//     }
+//     return [];
+//   }, [JSON.stringify(positions)]);
 
-  return {
-    positionOptions,
-    onGetPositions,
-  };
-};
-export default useGetOptions;
+//   return {
+//     positionOptions,
+//     onGetTags,
+//   };
+// };
+// export default useGetOptions;
 
 export const usePayment = () => {
   const dispatch = useAppDispatch();
@@ -442,5 +444,41 @@ export const usePayment = () => {
     isIdle,
     isFetching,
     onGetPayment,
+  };
+};
+
+export const useTags = () => {
+  const dispatch = useAppDispatch();
+  const {
+    dataTag,
+    itemStatus: status,
+    itemError: error,
+  } = useAppSelector((state) => state.billing, shallowEqual);
+  const [tagsOptions, setTagsOptions] = useState<Option[]>([]);
+
+  const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
+  const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+
+  const onGetTags = useCallback(async () => {
+    await dispatch(getTags());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (dataTag && dataTag?.length > 0) {
+      const options = dataTag?.map((tag: Tag) => ({
+        label: tag?.name ?? "",
+        value: tag?.id ?? "",
+      }));
+      setTagsOptions(options);
+    }
+  }, [dataTag]);
+
+  return {
+    tagsOptions,
+    status,
+    error,
+    isIdle,
+    isFetching,
+    onGetTags,
   };
 };

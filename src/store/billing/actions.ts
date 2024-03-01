@@ -41,6 +41,7 @@ export type GetBudgetListQueries = BaseQueries & {
 export type exportBillingQueries = BaseQueries_Billing & {
   fileType?: string;
   pageType?: string;
+  fileName?: string;
 };
 export type BillingData = {};
 export type BillingDataExport = {
@@ -400,6 +401,7 @@ export const downloadPdfBilling = createAsyncThunk(
         return {
           response: response.data,
           fileType: queries.fileType,
+          fileName: queries.fileName,
           dataBill: data?.bill,
         };
       }
@@ -505,9 +507,13 @@ export const deleteBilling = createAsyncThunk(
 
 export const getTags = createAsyncThunk("Billing/getTags", async () => {
   try {
-    const response = await client.get(Endpoint.TAG, {
-      baseURL: BILLING_API_URL,
-    });
+    const response = await client.get(
+      Endpoint.TAG,
+      {},
+      {
+        baseURL: BILLING_API_URL,
+      },
+    );
 
     if (response?.status === HttpStatusCode.OK) {
       return response.data;

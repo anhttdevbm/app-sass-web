@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Grid,
   InputAdornment,
   InputLabel,
   NativeSelect,
@@ -313,7 +314,7 @@ const FormStepTwo = (props: IProps) => {
                   options={options}
                   name="itemByTime"
                   onChange={(e, value) => {
-                    setFilterTable({ itemTime: value });
+                    setFilterTable({ ...filterTable, itemTime: value });
                   }}
                   defaultValue={"SERVICE"}
                   hasAll={false}
@@ -349,7 +350,7 @@ const FormStepTwo = (props: IProps) => {
                   options={options}
                   name="itemByAmount"
                   onChange={(e, value) => {
-                    setFilterTable({ itemAmount: value });
+                    setFilterTable({ ...filterTable, itemAmount: value });
                   }}
                   defaultValue={"SERVICE"}
                   hasAll={false}
@@ -379,7 +380,7 @@ const FormStepTwo = (props: IProps) => {
                   options={optionsPercent}
                   name="itemBy"
                   onChange={(e, value) => {
-                    setFilterTable({ itemPercent: value });
+                    setFilterTable({ ...filterTable, itemPercent: value });
                   }}
                   hasAll={false}
                   defaultValue={50}
@@ -411,7 +412,7 @@ const FormStepTwo = (props: IProps) => {
                   options={options}
                   name="itemBy"
                   onChange={(e, value) => {
-                    setFilterTable({ revenueBy: value });
+                    setFilterTable({ ...filterTable, revenueBy: value });
                   }}
                   defaultValue={"SERVICE"}
                   value={filterTable.revenueBy}
@@ -482,7 +483,7 @@ const FormStepTwo = (props: IProps) => {
             options={optionsExpresses}
             name="express"
             onChange={(e, value) => {
-              setFilterTable({ express: value });
+              setFilterTable({ ...filterTable, express: value });
             }}
             defaultValue={"INVOICE"}
             hasAll={false}
@@ -504,31 +505,39 @@ const FormStepTwo = (props: IProps) => {
             }}
           />
         </Stack>
-        <Stack alignItems="start" gap={1}>
-          <Stack direction="row" mt={2} gap={2}>
-            <Text variant={"body1"}>
-              {billingT(`${billingFormTranslatePrefix}.title.subTotal`)}
-            </Text>
-            <Text variant={"body1"} ml={2}>
-              {"$" + sumAmount}
-            </Text>
-          </Stack>
-          <Stack direction="row" gap={2}>
-            <Text variant={"body1"}>
-              {billingT(`${billingFormTranslatePrefix}.title.vat`) + " 0%"}
-            </Text>
-            <Text variant={"body1"} ml={4}>
-              {"$" + 0}
-            </Text>
-          </Stack>
-          <Stack direction="row" gap={2}>
-            <Text variant={"body1"}>
-              {billingT(`${billingFormTranslatePrefix}.title.total`)}
-            </Text>
-            <Text variant={"body1"} ml={1.5} fontWeight={600}>
-              {"$" + sumAmount}
-            </Text>
-          </Stack>
+        <Stack alignItems="row" gap={2}>
+          <Grid container spacing={2}>
+            <Grid item xs={1}>
+              <Text variant={"body1"}>
+                {billingT(`${billingFormTranslatePrefix}.title.subTotal`)}
+              </Text>
+            </Grid>
+            <Grid item>
+              <Text variant={"body1"}>{"$" + sumAmount}</Text>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={1}>
+              <Text variant={"body1"}>
+                {billingT(`${billingFormTranslatePrefix}.title.vat`) + " 0%"}
+              </Text>
+            </Grid>
+            <Grid item>
+              <Text variant={"body1"}>{"$" + 0}</Text>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={1}>
+              <Text variant={"body1"}>
+                {billingT(`${billingFormTranslatePrefix}.title.total`)}
+              </Text>
+            </Grid>
+            <Grid item>
+              <Text variant={"body1"} textAlign={"center"} fontWeight={600}>
+                {"$" + sumAmount}
+              </Text>
+            </Grid>
+          </Grid>
         </Stack>
         <Stack direction="row" alignItems="center" mt={3} gap={2}>
           <Text variant={"h4"}>

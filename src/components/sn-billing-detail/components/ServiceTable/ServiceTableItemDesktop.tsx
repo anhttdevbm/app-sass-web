@@ -25,7 +25,7 @@ import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { useFormContext } from "react-hook-form";
 import { Budgets, Service } from "store/billing/reducer";
-import useGetOptions from "store/billing/selectors";
+
 import { useSaleDetail, useSalesService } from "store/sales/selectors";
 import { formatNumber } from "utils/index";
 import LinkPopup from "../LinkPopup";
@@ -59,19 +59,10 @@ const ServiceTableItem = ({
   const commonT = useTranslations(NS_COMMON);
   const { billTypeOptions } = useGetBillTypeOptions();
   const { saleDetail } = useSaleDetail();
-  const { positionOptions, onGetPositions } = useGetOptions();
   const currency = saleDetail?.currency;
 
   const { serviceUnitOptions } = useGetServiceUnitOptions();
   const [isChangeService, setIsChangeService] = React.useState<boolean>(false);
-
-  const position = useMemo(() => {
-    if (!service.serviceType) return "";
-    const result = positionOptions.find(
-      (item) => item.value === service.serviceType,
-    );
-    return result?.label || "";
-  }, [positionOptions]);
 
   const isShowCols = useCallback((cols: ServiceColumn) => {
     // if (!sectionColumns[sectionIndex]) return true;
@@ -86,7 +77,7 @@ const ServiceTableItem = ({
 
   const optionService = useMemo(() => {
     const options = arrServices?.map((item) => {
-      return { label: item.name, value: item?.id };
+      return { label: item.name, value: item?.name, id: item.id };
     });
     return options;
   }, [arrServices]);
@@ -121,7 +112,7 @@ const ServiceTableItem = ({
               sm: "row",
             }}
             alignItems="center"
-            py={1}
+            // py={2}
           >
             {isEdit && (
               <IconButton
@@ -134,8 +125,8 @@ const ServiceTableItem = ({
                 <MoveDotIcon />
               </IconButton>
             )}
-            <TableRow sx={{ height: 46, alignItems: "center" }}>
-              <BodyCell align="left" size="small">
+            <TableRow sx={{ alignItems: "center" }}>
+              <BodyCell align="left" size="small" sx={{ paddingTop: "20px" }}>
                 {isEdit ? (
                   <LinkPopup
                     arrBudgets={arrBudgets}
@@ -161,9 +152,7 @@ const ServiceTableItem = ({
                     defaultValue={currency}
                     disabled={isLocked}
                     showSubText
-                    value={
-                      isEdit && !isChangeService ? service.id : service.name
-                    }
+                    value={service?.name}
                     options={optionService as Option[]}
                     key={service?.id}
                     id={service.id}
@@ -179,18 +168,13 @@ const ServiceTableItem = ({
                         [`& .MuiTypography-root:nth-child(2)`]: {
                           display: "none",
                         },
-                        height: 52,
-                        mt: 1,
+                        height: 55,
+                        mt: "13px",
                       },
                     }}
                   />
                 ) : (
-                  <Text variant="body2">
-                    {optionService?.find((item) => item.value === service?.name)
-                      ?.label ??
-                      service?.name ??
-                      ""}
-                  </Text>
+                  <Text variant="body2">{service?.name}</Text>
                 )}
               </BodyCell>
 
@@ -245,8 +229,8 @@ const ServiceTableItem = ({
                         [`& .MuiTypography-root:nth-child(2)`]: {
                           display: "none",
                         },
-                        height: 52,
-                        mt: 1,
+                        height: 55,
+                        mt: "13px",
                       },
                     }}
                   />

@@ -12,6 +12,7 @@ import {
   useBillings,
   useBudgets,
   useServiceBudgets,
+  useTags,
 } from "store/billing/selectors";
 import { useEmployeeOptions, useEmployees } from "store/company/selectors";
 import { useTagOptions } from "store/tags/selector";
@@ -19,7 +20,7 @@ import { User } from "constant/types";
 
 const InformationBillingPage = () => {
   const { item, onGetBilling, updateStatus } = useBillings();
-  const { tagsOptions } = useTagOptions();
+  const { tagsOptions, onGetTags } = useTags();
   const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
   const { budgets, onGetBudgets } = useBudgets();
   const { initQuery, isReady, query } = useQueryParams();
@@ -64,6 +65,7 @@ const InformationBillingPage = () => {
   useEffect(() => {
     onGetOptions({ pageIndex: 1, pageSize: 20 });
     // onGetServiceBudgets();
+    onGetTags();
   }, []);
 
   useEffect(() => {

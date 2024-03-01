@@ -22,6 +22,7 @@ import BillModal from "../components/BillModal";
 import LinkBudgetTable from "../components/LinkBudgetTable";
 import ServiceTable from "../components/ServiceTable";
 import VatPopup from "../components/VatPopup";
+import ReplacePopup from "../components/ReplacePopup";
 
 type TabProps = {
   title: string;
@@ -61,8 +62,11 @@ const TabInvoice = (props: TabProps) => {
   const [listService, setListService] = useState<Service[]>([]);
   const [listBudgets, setListBudgets] = useState<Budgets[]>([]);
   const [selected, setSelected] = useState<string>("");
+  const [selectedDateSent, setSelectedDateSent] = useState<string>("");
   const [exportModel, setExportModel] = useState(false);
   const [viewFileStatus, setViewFileStatus] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>("");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const formik = useFormik<Billing>({
     enableReinitialize: true,
@@ -196,9 +200,17 @@ const TabInvoice = (props: TabProps) => {
     }
 
     if (value === "DOWNLOAD") {
-      onDownloadFileBilling({ fileType: "pdf_landscape", pageType: "Letter" }, {
-        bill: arrBill ?? [],
-      } as BillingDataExport);
+      onDownloadFileBilling(
+        { fileType: "pdf_landscape", pageType: "Letter", fileName: fileName },
+        {
+          bill: arrBill ?? [],
+        } as BillingDataExport,
+      );
+    }
+
+    if (value === "REPLACE") {
+      setAnchorEl(value);
+      setFileName("");
     }
   };
 
@@ -214,7 +226,7 @@ const TabInvoice = (props: TabProps) => {
   // }, [fileExport, viewFileStatus]);
 
   return (
-    <FixedLayout px={2}>
+    <FixedLayout px={2} height={"85vh"}>
       <Stack
         direction={"row"}
         gap={2}
@@ -251,15 +263,27 @@ const TabInvoice = (props: TabProps) => {
               },
             }}
           />
+          {selected === "REPLACE" && (
+            <ReplacePopup
+              fileName={fileName}
+              selected={selected}
+              anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
+              setFileName={setFileName}
+            />
+          )}
+
           <Date
             label={billingT("detail.form.invoice.title.dateSent")}
             onChange={function (
               name: string,
               newDate?: string | undefined,
             ): void {
-              throw new Error("Function not implemented.");
+              setSelectedDateSent(newDate ?? "");
+              // throw new Error("Function not implemented.");
             }}
-            name={""}
+            name={"dateSent"}
+            value={selectedDateSent}
           />
         </Stack>
       </Stack>
@@ -330,7 +354,7 @@ const TabInvoice = (props: TabProps) => {
                   }}
                   onBlur={form.handleBlur}
                   value={form.values?.dueDate}
-                  disabled={!editForm}
+                  disabled={!editForm || !form.values?.date}
                   // error={commonT(touchedErrors?.end_date, {
                   //   name: commonT("form.title.endDate"),
                   //   name2: commonT("form.title.startDate"),

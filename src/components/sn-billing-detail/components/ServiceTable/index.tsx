@@ -152,8 +152,8 @@ const ServiceTable = (props: IProps) => {
       setListService([
         {
           id: uuid(),
-          name: arrService[0]?.id,
-          desc: "345446",
+          name: "",
+          desc: "",
           serviceType: "Service Type",
           price: 0,
           billType: SALE_BILL_TYPE.FIX,
@@ -169,8 +169,8 @@ const ServiceTable = (props: IProps) => {
         ...listService,
         {
           id: uuid(),
-          name: arrService[0]?.id,
-          desc: "345446",
+          name: "",
+          desc: "",
           serviceType: "Service Type",
           price: 0,
           billType: SALE_BILL_TYPE.FIX,
@@ -202,7 +202,7 @@ const ServiceTable = (props: IProps) => {
     keyObj: string,
     value: string | number | null,
   ) => {
-    if (listService && listService.length > 0) {
+    if (listService && listService.length > 0 && arrService) {
       if (id) {
         setListService(
           listService?.map((sev) =>
