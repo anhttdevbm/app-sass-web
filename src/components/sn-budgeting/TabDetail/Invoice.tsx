@@ -176,7 +176,7 @@ export const Invoice = () => {
       //   align: "center",
       // },
       ...additionalHeaderList,
-      { value: "", width: "10%" },
+      // { value: "", width: "10%" },
     ] as CellProps[];
   }, [
     desktopHeaderList,
