@@ -37,7 +37,7 @@ import { FeedbackLang } from "./feedback";
 import { BlogLang } from "./blog";
 import { CareerLang } from "./career";
 import { ApplicantsLang } from "./applicants";
-import { BudgetingLang } from "../en/budgeting";
+import { BudgetingLang } from "./budgeting";
 import { BillingLang } from "./billing";
 
 export default {

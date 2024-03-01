@@ -223,7 +223,7 @@ export const ProjectLang: ProjectDictionary = {
       workTime: "Work Time",
       estimateTime: "Estimate Time",
       revenue: "Revenue",
-      margin: "Marin",
+      margin: "Margin",
       budgetUsed: "Budget Used",
       budgetTotal: "Budget Total",
       workedTime: "Worked Time",

@@ -221,7 +221,7 @@ export const TableLayoutWithScroll = (props: TableLayoutProps) => {
                       <Text variant="h6" color={titleColor}>
                         {item.value}
                       </Text>
-                      <Text variant="h5" color="grey.400">
+                      <Text variant="h5" color={item?.color ?? "grey.400"}>
                         {item.data}
                       </Text>
                     </>
