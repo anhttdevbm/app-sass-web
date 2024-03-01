@@ -218,7 +218,7 @@ export const ProjectLang: ProjectDictionary = {
       workTime: "Work Time",
       estimateTime: "Thời gian ước tính",
       revenue: "Doanh thu",
-      margin: "Marin",
+      margin: "Lãi suất",
       budgetUsed: "Ngân sách đã được sử dụng",
       budgetTotal: "Tổng ngân sách",
       workedTime: "Thời gian làm việc",

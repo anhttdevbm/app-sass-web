@@ -175,7 +175,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                 height="100%"
                 direction="row"
               >
-                <H6>INVOICING</H6>
+                <H6>{budgetT("tabService.totalArea.invoicing.title")}</H6>
                 <Typography
                   variant="h6"
                   sx={{
