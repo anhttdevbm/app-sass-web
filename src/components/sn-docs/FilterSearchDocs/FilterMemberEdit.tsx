@@ -11,7 +11,7 @@ import {
   Typography,
   popoverClasses,
 } from "@mui/material";
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { FilterSearchDocsProps } from "./FilterSearchDocs";
 import { Select, Text } from "components/shared";
 import { useTranslations } from "next-intl";
@@ -21,7 +21,8 @@ import { useEmployeeOptions } from "store/company/selectors";
 import ChevronIcon from "icons/ChevronIcon";
 import CalendarIcon from "icons/CalendarIcon";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
 const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
