@@ -97,46 +97,48 @@ const TabInvoice = (props: TabProps) => {
   ];
 
   useEffect(() => {
-    formik.setValues(
-      {
-        ...item,
-        vat: item?.vat ? Number(item?.vat) : 0,
-      } ?? {},
-    );
-    if (item?.billFrom && item?.billFrom?.length > 0) {
-      setBillFromInfo({
-        city: item?.billFrom[0]?.city,
-        country: item?.billFrom[0]?.country,
-        fullNameCompany: item?.billFrom[0]?.company,
-        save: item?.billFrom[0]?.save,
-        state: item?.billFrom[0]?.state,
-        street: item?.billFrom[0]?.street,
-        tax_id: item?.billFrom[0]?.tax_id,
-        zipCode: item?.billFrom[0]?.zip ?? 0,
-      });
-    }
-    if (item?.billTo && item?.billTo?.length > 0) {
-      setBillToInfo({
-        city: item?.billTo[0]?.city,
-        country: item?.billTo[0]?.country,
-        fullNameCompany: item?.billTo[0]?.company,
-        save: item?.billTo[0]?.save,
-        state: item?.billTo[0]?.state,
-        street: item?.billTo[0]?.street,
-        tax_id: item?.billTo[0]?.tax_id,
-        zipCode: item?.billTo[0]?.zip ?? 0,
-      });
-    }
+    if (item && arrBudgets) {
+      formik.setValues(
+        {
+          ...item,
+          vat: item?.vat ? Number(item?.vat) : 0,
+        } ?? {},
+      );
+      if (item?.billFrom && item?.billFrom?.length > 0) {
+        setBillFromInfo({
+          city: item?.billFrom[0]?.city,
+          country: item?.billFrom[0]?.country,
+          fullNameCompany: item?.billFrom[0]?.company,
+          save: item?.billFrom[0]?.save,
+          state: item?.billFrom[0]?.state,
+          street: item?.billFrom[0]?.street,
+          tax_id: item?.billFrom[0]?.tax_id,
+          zipCode: item?.billFrom[0]?.zip ?? 0,
+        });
+      }
+      if (item?.billTo && item?.billTo?.length > 0) {
+        setBillToInfo({
+          city: item?.billTo[0]?.city,
+          country: item?.billTo[0]?.country,
+          fullNameCompany: item?.billTo[0]?.company,
+          save: item?.billTo[0]?.save,
+          state: item?.billTo[0]?.state,
+          street: item?.billTo[0]?.street,
+          tax_id: item?.billTo[0]?.tax_id,
+          zipCode: item?.billTo[0]?.zip ?? 0,
+        });
+      }
 
-    if (item?.budgetService && item?.budgetService?.length > 0) {
-      setListService([...item?.budgetService]);
-    }
+      if (item?.budgetService && item?.budgetService?.length > 0) {
+        setListService([...item?.budgetService]);
+      }
 
-    if (item?.budget && item?.budget?.length > 0) {
-      const findBudget = arrBudgets?.filter((find) =>
-        item?.budget?.find((el) => el.id === find.id),
-      ) as Budgets[];
-      setListBudgets(findBudget ?? []);
+      if (item?.budget && item?.budget?.length > 0) {
+        const findBudget = arrBudgets?.filter((find) =>
+          item?.budget?.find((el) => el.id === find.id),
+        ) as Budgets[];
+        setListBudgets(findBudget ?? []);
+      }
     }
   }, [item, arrBudgets]);
 

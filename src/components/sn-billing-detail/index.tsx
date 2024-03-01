@@ -63,6 +63,12 @@ const InformationBillingPage = () => {
   }, [onGetBilling, updateStatus, dataDuplicate]);
 
   useEffect(() => {
+    if (id && updateStatus) {
+      onGetBilling(id.toString() ?? "");
+    }
+  }, [onGetBilling, updateStatus, dataDuplicate]);
+
+  useEffect(() => {
     onGetOptions({ pageIndex: 1, pageSize: 20 });
     // onGetServiceBudgets();
     onGetTags();
