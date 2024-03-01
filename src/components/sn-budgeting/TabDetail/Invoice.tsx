@@ -170,11 +170,11 @@ export const Invoice = () => {
       ? mobileHeaderList
       : desktopHeaderList;
     return [
-      {
-        value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} />,
-        width: isMdSmaller ? "10%" : "3%",
-        align: "center",
-      },
+      // {
+      //   value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} />,
+      //   width: isMdSmaller ? "10%" : "3%",
+      //   align: "center",
+      // },
       ...additionalHeaderList,
       { value: "", width: "10%" },
     ] as CellProps[];
@@ -261,13 +261,13 @@ export const Invoice = () => {
                 width: "100%",
               }}
             >
-              <BodyCell sx={{ minWidth: 60 }}>
+              {/* <BodyCell sx={{ minWidth: 60 }}>
                 <Checkbox
                   checked={indexIdInInvoiceSelected !== -1}
                   value={data.id}
                   onChange={handleSelectInvoice}
                 />
-              </BodyCell>
+              </BodyCell> */}
               <BodyCell>
                 <Typography
                   sx={{ fontWeight: 700, cursor: "pointer" }}
@@ -298,7 +298,7 @@ export const Invoice = () => {
                 })}
               </BodyCell>
               <BodyCell>
-                <Typography component="span" style={{ color: "red" }}>
+                <Typography component="span">
                   {formatDate(data?.dueDate)}
                 </Typography>{" "}
               </BodyCell>
