@@ -31,6 +31,7 @@ import {
   getCommentBilling,
   getPaymentByBillId,
   getServiceBudget,
+  getTags,
   markAsSendBilling,
   updateBilling,
   updatePayment,
@@ -180,6 +181,11 @@ export interface Payment {
   info: PaymentDetail[];
 }
 
+export interface Tag {
+  id?: string;
+  name: string;
+}
+
 export interface PaymentDetail {
   id?: string;
   status: number;
@@ -262,7 +268,7 @@ export interface BillingState {
   isUpdatePayment?: boolean;
   isDeletedPayment?: boolean;
   dataPayment?: PaymentData[];
-  dataTag?: [];
+  dataTag?: Tag[];
   isAddTag?: boolean;
   budgetFilter?: Budgets[];
 }
@@ -589,7 +595,12 @@ const billingSlice = createSlice({
           );
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", `${Date.now()}.pdf`);
+          link.setAttribute(
+            "download",
+            data?.fileName && data?.fileName !== ""
+              ? `${data?.fileName}.pdf`
+              : `${Date.now()}.pdf`,
+          );
           document.body.appendChild(link);
           link.click();
         }
@@ -706,7 +717,6 @@ const billingSlice = createSlice({
         state.isDeletedPayment = false;
       })
       .addCase(updatePayment.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.isUpdatePayment = true;
       })
       .addCase(updatePayment.rejected, (state, action) => {
@@ -719,11 +729,21 @@ const billingSlice = createSlice({
         state.isUpdatePayment = false;
       })
       .addCase(deletePayment.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.isDeletedPayment = true;
       })
       .addCase(deletePayment.rejected, (state, action) => {
         state.isDeletedPayment = false;
+        // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(getTags.pending, (state, action) => {
+        state.dataTag = [];
+      })
+      .addCase(getTags.fulfilled, (state, action) => {
+        state.dataTag = action.payload;
+      })
+      .addCase(getTags.rejected, (state, action) => {
+        state.dataTag = [];
+
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       }),
   // .addCase(

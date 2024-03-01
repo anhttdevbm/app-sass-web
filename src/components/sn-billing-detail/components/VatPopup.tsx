@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import PopoverLayout from "./PopoverLayout";
 import { Input, Text } from "components/shared";
 import { Stack } from "@mui/material";
@@ -16,6 +16,11 @@ type IProps = {
 const VatPopup = (props: IProps) => {
   const { form } = props;
   const billingT = useTranslations(NS_BILLING);
+
+  const handleChangeVat = (data) => {
+    form.setFieldValue("vat", data?.target?.value);
+  };
+
   return (
     <>
       <PopoverLayout
@@ -35,11 +40,12 @@ const VatPopup = (props: IProps) => {
                 rootSx={sxConfig.input}
                 fullWidth
                 name="vat"
+                type="number"
                 value={formatNumber(form.values.vat, {
                   prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
                   numberOfFixed: 2,
                 })}
-                onChange={form.handleChange}
+                onChange={handleChangeVat}
                 onBlur={form.handleBlur}
               />
             </Stack>

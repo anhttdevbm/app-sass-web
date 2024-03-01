@@ -22,6 +22,7 @@ import BillModal from "../components/BillModal";
 import LinkBudgetTable from "../components/LinkBudgetTable";
 import ServiceTable from "../components/ServiceTable";
 import VatPopup from "../components/VatPopup";
+import ReplacePopup from "../components/ReplacePopup";
 
 type TabProps = {
   title: string;
@@ -61,8 +62,11 @@ const TabInvoice = (props: TabProps) => {
   const [listService, setListService] = useState<Service[]>([]);
   const [listBudgets, setListBudgets] = useState<Budgets[]>([]);
   const [selected, setSelected] = useState<string>("");
+  const [selectedDateSent, setSelectedDateSent] = useState<string>("");
   const [exportModel, setExportModel] = useState(false);
   const [viewFileStatus, setViewFileStatus] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>("");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const formik = useFormik<Billing>({
     enableReinitialize: true,
@@ -93,46 +97,48 @@ const TabInvoice = (props: TabProps) => {
   ];
 
   useEffect(() => {
-    formik.setValues(
-      {
-        ...item,
-        vat: item?.vat ? Number(item?.vat) : 0,
-      } ?? {},
-    );
-    if (item?.billFrom && item?.billFrom?.length > 0) {
-      setBillFromInfo({
-        city: item?.billFrom[0]?.city,
-        country: item?.billFrom[0]?.country,
-        fullNameCompany: item?.billFrom[0]?.company,
-        save: item?.billFrom[0]?.save,
-        state: item?.billFrom[0]?.state,
-        street: item?.billFrom[0]?.street,
-        tax_id: item?.billFrom[0]?.tax_id,
-        zipCode: item?.billFrom[0]?.zip ?? 0,
-      });
-    }
-    if (item?.billTo && item?.billTo?.length > 0) {
-      setBillToInfo({
-        city: item?.billTo[0]?.city,
-        country: item?.billTo[0]?.country,
-        fullNameCompany: item?.billTo[0]?.company,
-        save: item?.billTo[0]?.save,
-        state: item?.billTo[0]?.state,
-        street: item?.billTo[0]?.street,
-        tax_id: item?.billTo[0]?.tax_id,
-        zipCode: item?.billTo[0]?.zip ?? 0,
-      });
-    }
+    if (item && arrBudgets) {
+      formik.setValues(
+        {
+          ...item,
+          vat: item?.vat ? Number(item?.vat) : 0,
+        } ?? {},
+      );
+      if (item?.billFrom && item?.billFrom?.length > 0) {
+        setBillFromInfo({
+          city: item?.billFrom[0]?.city,
+          country: item?.billFrom[0]?.country,
+          fullNameCompany: item?.billFrom[0]?.company,
+          save: item?.billFrom[0]?.save,
+          state: item?.billFrom[0]?.state,
+          street: item?.billFrom[0]?.street,
+          tax_id: item?.billFrom[0]?.tax_id,
+          zipCode: item?.billFrom[0]?.zip ?? 0,
+        });
+      }
+      if (item?.billTo && item?.billTo?.length > 0) {
+        setBillToInfo({
+          city: item?.billTo[0]?.city,
+          country: item?.billTo[0]?.country,
+          fullNameCompany: item?.billTo[0]?.company,
+          save: item?.billTo[0]?.save,
+          state: item?.billTo[0]?.state,
+          street: item?.billTo[0]?.street,
+          tax_id: item?.billTo[0]?.tax_id,
+          zipCode: item?.billTo[0]?.zip ?? 0,
+        });
+      }
 
-    if (item?.budgetService && item?.budgetService?.length > 0) {
-      setListService([...item?.budgetService]);
-    }
+      if (item?.budgetService && item?.budgetService?.length > 0) {
+        setListService([...item?.budgetService]);
+      }
 
-    if (item?.budget && item?.budget?.length > 0) {
-      const findBudget = arrBudgets?.filter((find) =>
-        item?.budget?.find((el) => el.id === find.id),
-      ) as Budgets[];
-      setListBudgets(findBudget ?? []);
+      if (item?.budget && item?.budget?.length > 0) {
+        const findBudget = arrBudgets?.filter((find) =>
+          item?.budget?.find((el) => el.id === find.id),
+        ) as Budgets[];
+        setListBudgets(findBudget ?? []);
+      }
     }
   }, [item, arrBudgets]);
 
@@ -196,9 +202,17 @@ const TabInvoice = (props: TabProps) => {
     }
 
     if (value === "DOWNLOAD") {
-      onDownloadFileBilling({ fileType: "pdf_landscape", pageType: "Letter" }, {
-        bill: arrBill ?? [],
-      } as BillingDataExport);
+      onDownloadFileBilling(
+        { fileType: "pdf_landscape", pageType: "Letter", fileName: fileName },
+        {
+          bill: arrBill ?? [],
+        } as BillingDataExport,
+      );
+    }
+
+    if (value === "REPLACE") {
+      setAnchorEl(value);
+      setFileName("");
     }
   };
 
@@ -214,7 +228,7 @@ const TabInvoice = (props: TabProps) => {
   // }, [fileExport, viewFileStatus]);
 
   return (
-    <FixedLayout px={2}>
+    <FixedLayout px={2} height={"85vh"}>
       <Stack
         direction={"row"}
         gap={2}
@@ -251,15 +265,27 @@ const TabInvoice = (props: TabProps) => {
               },
             }}
           />
+          {selected === "REPLACE" && (
+            <ReplacePopup
+              fileName={fileName}
+              selected={selected}
+              anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
+              setFileName={setFileName}
+            />
+          )}
+
           <Date
             label={billingT("detail.form.invoice.title.dateSent")}
             onChange={function (
               name: string,
               newDate?: string | undefined,
             ): void {
-              throw new Error("Function not implemented.");
+              setSelectedDateSent(newDate ?? "");
+              // throw new Error("Function not implemented.");
             }}
-            name={""}
+            name={"dateSent"}
+            value={selectedDateSent}
           />
         </Stack>
       </Stack>
@@ -330,7 +356,7 @@ const TabInvoice = (props: TabProps) => {
                   }}
                   onBlur={form.handleBlur}
                   value={form.values?.dueDate}
-                  disabled={!editForm}
+                  disabled={!editForm || !form.values?.date}
                   // error={commonT(touchedErrors?.end_date, {
                   //   name: commonT("form.title.endDate"),
                   //   name2: commonT("form.title.startDate"),
