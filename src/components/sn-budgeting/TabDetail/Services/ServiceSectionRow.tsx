@@ -54,7 +54,7 @@ type Props = {
   sectionId: string;
 };
 
-export const ServiceSectionRow = ({
+const ServiceSectionRow = ({
   fieldIndex,
   updateValue,
   errors,
@@ -553,3 +553,5 @@ export const ServiceSectionRow = ({
     </>
   );
 };
+
+export default ServiceSectionRow

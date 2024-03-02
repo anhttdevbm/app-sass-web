@@ -104,11 +104,11 @@ export const TableLayoutWithScroll = (props: TableLayoutProps) => {
   );
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
+    // let timeout: NodeJS.Timeout | null = null;
 
-    if (timeout) clearTimeout(timeout);
+    // if (timeout) clearTimeout(timeout);
 
-    timeout = setTimeout(() => {
+    // timeout = setTimeout(() => {
       const newBodySx = refs?.reduce((out, item, index) => {
         out[`& td:nth-of-type(${index + 1}), & th:nth-of-type(${index + 1})`] =
           {
@@ -120,7 +120,7 @@ export const TableLayoutWithScroll = (props: TableLayoutProps) => {
         return out;
       }, {});
       setBodySx(newBodySx);
-    }, 250);
+    // }, 250);
   }, [headerList, refs, children, size, isExpandedSidebar]);
 
   useEffect(() => {
