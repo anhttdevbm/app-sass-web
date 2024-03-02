@@ -78,20 +78,33 @@ const ItemList = () => {
       {
         value: billingT("list.table.subject"),
         align: "center",
+        width: "220px",
+        minwidth: "220px",
       },
       {
         value: billingT("list.table.invoiceNumber"),
         align: "center",
+        width: "220px",
+        minwidth: "220px",
       },
       {
         value: billingT("list.table.date"),
         align: "center",
+        width: "220px",
+        minwidth: "220px",
       },
       {
         value: billingT("list.table.budgets"),
         align: "center",
+        width: "220px",
+        minwidth: "220px",
       },
-      { value: billingT("list.table.att"), align: "center" },
+      {
+        value: billingT("list.table.att"),
+        align: "center",
+        width: "120px",
+        minwidth: "120px",
+      },
       {
         value: (
           <>
@@ -107,6 +120,8 @@ const ItemList = () => {
           </>
         ),
         align: "center",
+        width: "150px",
+        minwidth: "150px",
       },
       {
         value: (
@@ -123,10 +138,14 @@ const ItemList = () => {
           </>
         ),
         align: "center",
+        width: "160px",
+        minwidth: "160px",
       },
       {
         value: billingT("list.table.dueDate"),
         align: "center",
+        width: "160px",
+        minwidth: "160px",
       },
     ],
     [billingT, totalAmount, totalAmountUnpaid],
@@ -211,7 +230,7 @@ const ItemList = () => {
         align: "center",
       },
       ...additionalHeaderList,
-      { value: "", width: "10%" },
+      // { value: "", width: "10%" },
     ] as CellProps[];
   }, [
     desktopHeaderList,

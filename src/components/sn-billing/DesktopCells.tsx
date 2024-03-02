@@ -47,12 +47,8 @@ const DesktopCells = (props: DesktopCellsProps) => {
         </Text>
       </BodyCell>
 
-      <BodyCell align="center" sx={{ paddingRight: 4 }}>
-        {item?.invoiceNumber}
-      </BodyCell>
-      <BodyCell align="center" sx={{ paddingRight: 3 }}>
-        {formatDate(item?.date)}
-      </BodyCell>
+      <BodyCell align="center">{item?.invoiceNumber}</BodyCell>
+      <BodyCell align="center">{formatDate(item?.date)}</BodyCell>
 
       <BodyCell
         // href={getPath(PROJECT_TASKS_PATH, undefined, { id: item?.id })}
@@ -61,26 +57,24 @@ const DesktopCells = (props: DesktopCellsProps) => {
       >
         {item?.budget ? item?.budget[0]?.name : ""}
       </BodyCell>
-      <BodyCell align="center" sx={{ paddingRight: 4 }}>
+      <BodyCell align="center">
         <Button onClick={() => onOpenModalExport(item ?? {})}>
           <FolderIcon />
         </Button>
       </BodyCell>
-      <BodyCell align="center" sx={{ paddingRight: 5 }}>
+      <BodyCell align="center">
         {formatNumber(item?.amount, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
-      <BodyCell align="center" sx={{ paddingRight: 5 }}>
+      <BodyCell align="center">
         {formatNumber(item?.amount_unpaid, {
           prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
           numberOfFixed: 2,
         })}
       </BodyCell>
-      <BodyCell align="center" sx={{ paddingRight: 16.5 }}>
-        {formatDate(item?.dueDate)}
-      </BodyCell>
+      <BodyCell align="center">{formatDate(item?.dueDate)}</BodyCell>
     </>
   );
 };
