@@ -33,7 +33,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
     <Box
       sx={{
         position: "sticky !important",
-        top: '14%',
+        top: '13.5%',
         background: isDarkMode ? "#313130" : "white",
         zIndex: 10,
       }}
