@@ -17,6 +17,9 @@ export const BudgetingLang: BudgetingDictionary = {
         open: 'Đang mở',
         close: 'Đã giao hàng',
     },
+    notification: {
+        date: 'Cập nhật ngày thành công!'
+    },
     actionStatus: {
         create: 'Đã tạo ngân sách',
         create_service: "Đã tạo dịch vụ của ngân sách"

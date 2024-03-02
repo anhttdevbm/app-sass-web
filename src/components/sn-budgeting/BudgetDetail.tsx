@@ -50,6 +50,7 @@ import { TBudgetExpense } from "store/expense/actions";
 import Swal from "sweetalert2";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { DateRange } from "mui-daterange-picker";
+import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 
 enum TABS {
   FEED = "Feed",
@@ -106,7 +107,6 @@ export const BudgetDetail = () => {
 
   const [budget, setBudget] = useState<TBudget | null>(null);
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
-  const [dateFilter, setDateFilter] = useState<DateRange>({});
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
   const [selectedService, setSelectedService] =
     useState<TBudgetService | null>();
@@ -118,6 +118,7 @@ export const BudgetDetail = () => {
   const serviceQuery = useBudgetGetServiceQuery(String(id));
   const timeQuery = useBudgetGetTimeRangeQuery(String(id));
   const budgetGetExpenseQuery = useBudgetGetExpenseQuery(String(id));
+  const budgetUpdate = useBudgetUpdate();
 
   const budgetT = useTranslations(NS_BUDGETING);
   const projectT = useTranslations(NS_PROJECT);
@@ -288,6 +289,28 @@ export const BudgetDetail = () => {
     }
   };
 
+  const handleUpdateDate = async (date: DateRange) => {
+    try {
+      console.log(budget.id);
+      
+      budgetUpdate.mutateAsync(
+        {
+          id: budget.id,
+          start_date: date.startDate,
+          end_date: date.endDate,
+        },
+        {
+          onSuccess: () => {
+            onAddSnackbar(budgetT('notification.date'), "success");
+            budgetDetailQuery.refetch();
+          },
+        },
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
+
   if (!budget) return <></>;
 
   return (
@@ -318,12 +341,13 @@ export const BudgetDetail = () => {
           </Stack>
           <Stack direction="row" alignItems="center">
             <CustomDateRangePicker
-              value={dateFilter}
-              onChange={(value) => {
-                setDateFilter(value)
+              value={{
+                startDate: budget.start_date ? dayjs(budget.start_date).toDate() : undefined,
+                endDate: budget.end_date ? dayjs(budget.end_date).toDate() : undefined,
               }}
+              onChange={handleUpdateDate}
               iconPosition="left"
-              showIndicator
+              isDropdown
               errorMessage=''
             />
             <IconButton

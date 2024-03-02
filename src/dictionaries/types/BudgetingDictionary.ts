@@ -15,6 +15,9 @@ export type BudgetingDictionary = {
     open: string;
     close: string;
   };
+  notification: {
+    date: string;
+  }
   actionStatus: {
     create: string;
     create_service: string;

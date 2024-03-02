@@ -17,6 +17,9 @@ export const BudgetingLang: BudgetingDictionary = {
     open: "Open",
     close: "Delivered",
   },
+  notification: {
+    date: 'Update date successfully!'
+  },
   actionStatus: {
     create: "Budget was created",
     create_service: "Budget service was created",
