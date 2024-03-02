@@ -5,7 +5,6 @@ import { Button, IconButton } from "components/shared";
 import PlusIcon from "icons/PlusIcon";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { getMessageErrorByAPI, uuid } from "utils/index";
-import { ServiceSectionRow } from "./ServiceSectionRow";
 import { TErrors, TSection } from "./ServiceUtil";
 import {
   createRef,
@@ -36,6 +35,11 @@ import {
 import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
 import useTheme from "hooks/useTheme";
 import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
+import dynamic from "next/dynamic";
+
+const ServiceSectionRow = dynamic(() => import('./ServiceSectionRow'), {
+  ssr: false
+})
 
 type Props = {
   sectionsList: TBudgetSection[];

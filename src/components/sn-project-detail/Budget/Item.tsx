@@ -92,33 +92,29 @@ const Item = ({ projectId }: { projectId?: string }) => {
               <Text>Subsidiary</Text>
               <KeyboardArrowDownIcon />
             </Stack>
-            {projectId && (
-              <>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  sx={{ cursor: "pointer", color: "grey.400" }}
-                  onClick={(e) =>
-                    setStatusEl(statusEl ? null : e.currentTarget)
-                  }
-                >
-                  <Text>Status</Text>
-                  <KeyboardArrowDownIcon />
-                </Stack>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  sx={{ cursor: "pointer", color: "grey.400" }}
-                  onClick={(e) => setTagEl(tagEl ? null : e.currentTarget)}
-                >
-                  <SellOutlinedIcon
-                    sx={{ transform: "rotate(75deg)", fontSize: "20px", mr: 1 }}
-                  />
-                  <Text>Tags</Text>
-                  <KeyboardArrowDownIcon />
-                </Stack>
-              </>
-            )}
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{ cursor: "pointer", color: "grey.400" }}
+              onClick={(e) =>
+                setStatusEl(statusEl ? null : e.currentTarget)
+              }
+            >
+              <Text>Status</Text>
+              <KeyboardArrowDownIcon />
+            </Stack>
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{ cursor: "pointer", color: "grey.400" }}
+              onClick={(e) => setTagEl(tagEl ? null : e.currentTarget)}
+            >
+              <SellOutlinedIcon
+                sx={{ transform: "rotate(75deg)", fontSize: "20px", mr: 1 }}
+              />
+              <Text>Tags</Text>
+              <KeyboardArrowDownIcon />
+            </Stack>
             <Stack
               direction="row"
               alignItems="center"
