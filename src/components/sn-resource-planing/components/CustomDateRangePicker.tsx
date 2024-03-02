@@ -22,7 +22,7 @@ interface ISectionProps {
   required?: boolean;
   disabled?: boolean;
   placeholder?: string;
-  showIndicator?: boolean;
+  isDropdown?: boolean;
   iconPosition?: 'left' | 'right'
 }
 
@@ -38,7 +38,7 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
   errorMessage,
   helperText,
   sx,
-  showIndicator,
+  isDropdown,
   iconPosition = 'right'
 }) => {
   const randomId = (Math.random() + 1).toString(36).substring(7);
@@ -61,10 +61,12 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
           width: fullWidth ? "100%" : "auto",
           cursor: "pointer",
           zIndex: 0,
+          position: 'relative',
           ...sx,
         }}
         onClick={() => {
-          setIsOpenCalendar(true);
+          if (!isDropdown)
+            setIsOpenCalendar(true);
         }}
       >
         <Box
@@ -92,6 +94,10 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
                 : "transparent",
             alignItems: "center",
             width: "100%",
+          }}
+          onClick={() => {
+            if (isDropdown)
+              setIsOpenCalendar(true);
           }}
         >
           <Stack direction={iconPosition === 'left' ? 'row-reverse' : 'row'} gap={1} alignItems='center'>
@@ -142,7 +148,7 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
             </Stack>
             <CalendarIcon width={20} height={20} />
           </Stack>
-          {showIndicator && <ChevronIcon width={10} height={10} sx={{
+          {isDropdown && <ChevronIcon width={10} height={10} sx={{
             transform: isOpenCalendar ? "rotate(180deg)" : "rotate(0deg)",
           }} />}
         </Box>
@@ -162,8 +168,34 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
             {errorMessage}
           </Typography>
         ) : null}
+        {isOpenCalendar && isDropdown && <Box sx={{
+          position: 'absolute',
+          top: 60,
+          right: 0,
+          "& .MuiGrid-root > ul:nth-child(1)": {
+            display: "none",
+          },
+          "& .MuiPaper-root .MuiGrid-root > .MuiGrid-root:nth-of-type(2)": {
+            flex: "1 0 auto",
+          },
+        }
+        }>
+          <DateRangePicker
+            open={isOpenCalendar}
+            toggle={() => toggle()}
+            closeOnClickOutside
+            minDate={dayjs().toDate()}
+            onChange={(range) => {
+              setDateRange(range);
+              toggle();
+              onChange && onChange(range);
+            }}
+            initialDateRange={dateRange}
+          />
+        </Box>}
       </Box>
-      <Dialog
+
+      {!isDropdown && <Dialog
         open={isOpenCalendar}
         PaperProps={{
           sx: {
@@ -198,7 +230,7 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
           }}
           initialDateRange={dateRange}
         />
-      </Dialog>
+      </Dialog>}
     </>
   );
 };
