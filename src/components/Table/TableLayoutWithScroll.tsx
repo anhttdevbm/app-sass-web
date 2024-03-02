@@ -112,7 +112,7 @@ export const TableLayoutWithScroll = (props: TableLayoutProps) => {
       const newBodySx = refs?.reduce((out, item, index) => {
         out[`& td:nth-of-type(${index + 1}), & th:nth-of-type(${index + 1})`] =
           {
-            minwidth: item?.current?.offsetWidth,
+            minWidth: item?.current?.offsetWidth,
             width: item?.current?.offsetWidth,
             maxWidth: item?.current?.offsetWidth,
             overflowX: "hidden",
