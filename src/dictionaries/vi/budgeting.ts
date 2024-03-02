@@ -15,7 +15,11 @@ export const BudgetingLang: BudgetingDictionary = {
     },
     status: {
         open: 'Đang mở',
-        close: 'Đã giao hàng',
+        close: 'Hoàn Thành',
+    },
+    confirmChangeStatus: {
+        title: "Xác nhận chuyển trạng thái dự án",
+        content: "Bạn chắc chắn muốn chuyển trạng thái dự án thành {status}?",
     },
     notification: {
         date: 'Cập nhật ngày thành công!'

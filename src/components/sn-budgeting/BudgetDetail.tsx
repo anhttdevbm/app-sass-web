@@ -51,6 +51,7 @@ import Swal from "sweetalert2";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { DateRange } from "mui-daterange-picker";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
+import ConfirmDialog from "components/ConfirmDialog";
 
 enum TABS {
   FEED = "Feed",
@@ -97,12 +98,14 @@ export const BudgetDetail = () => {
   const { isDarkMode } = useTheme();
   const { push } = useRouter();
   const { onUpdateProject } = useProjects();
+  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE)
 
   const [isOpenModalTime, openModalTime, hideModalTime] = useToggle();
   const [isOpenModalExpense, openModalExpense, hideModalExpense] = useToggle();
   const [isShowLoadingTab, openLoadingTab, hideLoadingTab] = useToggle();
   const [isEditService, onEditService, offEditService] = useToggle();
   const [isOpenRightSidebar, showRightSidebar, hideRightSidebar] = useToggle();
+  const [isOpenModalStatus, showModalStatus, hideModalStatus] = useToggle();
   const { onAddSnackbar } = useSnackbar();
 
   const [budget, setBudget] = useState<TBudget | null>(null);
@@ -286,6 +289,8 @@ export const BudgetDetail = () => {
       }
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    } finally {
+      hideModalStatus();
     }
   };
 
@@ -311,6 +316,11 @@ export const BudgetDetail = () => {
     }
   };
 
+  const handleOpenChangeStatusDialog = (status: ProjectStatus) => {
+    tempStatus.current = status;
+    showModalStatus();
+  }
+
   if (!budget) return <></>;
 
   return (
@@ -321,7 +331,7 @@ export const BudgetDetail = () => {
           top: 0,
           background: isDarkMode ? "#313130" : "white",
           py: 2,
-          zIndex: 10,
+          zIndex: 11,
         }}
       >
         <Stack
@@ -371,11 +381,15 @@ export const BudgetDetail = () => {
           <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
             <TextStatus
               text="status.open"
-              color={_.get(budget, "project.status", "") === ProjectStatus.ACTIVE ? "success": 'common'}
+              color={
+                _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
+                  ? "success"
+                  : "common"
+              }
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
-              onClick={async () => {
-                await handleChangeProjectStatus(ProjectStatus.ACTIVE);
+              onClick={() => {
+                handleOpenChangeStatusDialog(ProjectStatus.ACTIVE);
               }}
             />
             <Box
@@ -388,11 +402,15 @@ export const BudgetDetail = () => {
             />
             <TextStatus
               text="status.close"
-              color={_.get(budget, "project.status", "") === ProjectStatus.CLOSE ? "error": 'common'}
+              color={
+                _.get(budget, "project.status", "") === ProjectStatus.CLOSE
+                  ? "error"
+                  : "common"
+              }
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
-              onClick={async () => {
-                await handleChangeProjectStatus(ProjectStatus.CLOSE);
+              onClick={() => {
+                handleOpenChangeStatusDialog(ProjectStatus.CLOSE);
               }}
             />
           </Stack>
@@ -519,6 +537,20 @@ export const BudgetDetail = () => {
         }}
         services={servicesList}
         serviceId={_.get(selectedService, "id", "")}
+      />
+      <ConfirmDialog
+        onSubmit={() => {
+          handleChangeProjectStatus(tempStatus.current);
+        }}
+        open={isOpenModalStatus}
+        onClose={hideModalStatus}
+        title={budgetT("confirmChangeStatus.title")}
+        content={budgetT("confirmChangeStatus.content", {
+          status:
+            tempStatus.current === ProjectStatus.CLOSE
+              ? budgetT("status.close")
+              : budgetT("status.open"),
+        })}
       />
     </Box>
   );
