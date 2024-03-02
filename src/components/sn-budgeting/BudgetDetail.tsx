@@ -123,6 +123,15 @@ export const BudgetDetail = () => {
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
 
+  const TAB_NAME = {
+    [TABS.FEED]: budgetT('tab.feed'),
+    [TABS.TIME]: budgetT('tab.time'),
+    [TABS.EXPENSES]: budgetT('tab.expenses'),
+    [TABS.INVOICES]: budgetT('tab.invoices'),
+    [TABS.SERVICES]: budgetT('tab.services'),
+    [TABS.RECURRING]: budgetT('tab.recurring'),
+  }
+
   useEffect(() => {
     if (!_.isEmpty(serviceQuery)) {
       const services: any[] = _.map(
@@ -153,7 +162,7 @@ export const BudgetDetail = () => {
 
     if (isEditService) {
       Swal.fire({
-        title: 'You need to save your changes before go to another tab',
+        title: budgetT('tabService.alert'),
         text: '',
         icon: 'info'
       });
@@ -302,7 +311,7 @@ export const BudgetDetail = () => {
             <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
             <Stack pl="7px">
               <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
-                {budget.project.name}
+                {budget.project?.name}
               </Text>
               <Text lineHeight={1.2}>{budget.name}</Text>
             </Stack>
@@ -382,7 +391,7 @@ export const BudgetDetail = () => {
                   }}
                   onClick={() => changeActiveTab(currentTab)}
                 >
-                  {currentTab}
+                  {TAB_NAME[currentTab]}
                 </Box>
               );
             })}

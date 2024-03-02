@@ -148,7 +148,7 @@ export const ServiceAreaSection = ({
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >
                   <Text ml={2} variant="body2" color="grey.400">
-                    Add time entry
+                    {budgetT("tabService.action.addTime")}
                   </Text>
                 </MenuItem>
                 <MenuItem
@@ -159,25 +159,25 @@ export const ServiceAreaSection = ({
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >
                   <Text ml={2} variant="body2" color="grey.400">
-                    Add expense
+                    {budgetT("tabService.action.addExpense")}
                   </Text>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => {}}
+                  onClick={() => { }}
                   component={ButtonBase}
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >
                   <Text ml={2} variant="body2" color="grey.400">
-                    View time entries
+                    {budgetT("tabService.action.viewTime")}
                   </Text>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => {}}
+                  onClick={() => { }}
                   component={ButtonBase}
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >
                   <Text ml={2} variant="body2" color="grey.400">
-                    View expenses
+                    {budgetT("tabService.action.viewExpense")}
                   </Text>
                 </MenuItem>
               </MenuList>

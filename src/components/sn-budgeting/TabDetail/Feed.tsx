@@ -65,35 +65,35 @@ export const Feed = ({ budget }: { budget: TBudget }) => {
                   {budgetT(`actionStatus.${FeedAction[feed.action]}`)}
                 </Text>
                 <Stack direction="row" gap={1} alignItems="center" mb="5px">
-                  <Text>Created</Text>
+                  <Text>{budgetT("tabFeed.created")}</Text>
                   <BadgeCustom text={feed.budget_id.created_by.fullname} />
                 </Stack>
                 <Stack direction="row" gap={1} alignItems="center" mb="5px">
-                  <Text>Responsible set to</Text>
+                  <Text>{budgetT("tabFeed.responsible")}</Text>
                   <BadgeCustom text={feed.budget_id.owner.fullname} />
                 </Stack>
                 <Stack direction="row" gap={1} alignItems="center" mb="5px">
-                  <Text>Currency set to</Text>
+                  <Text>{budgetT("tabFeed.currency")}</Text>
                   <BadgeCustom
                     text={feed.data.currency ?? feed.budget_id.currency}
                   />
                 </Stack>
                 <Stack direction="row" gap={1} alignItems="center" mb="5px">
-                  <Text>Company set to</Text>
+                  <Text>{budgetT("tabFeed.company")}</Text>
                   <BadgeCustom text={feed.budget_id.company} />
                 </Stack>
                 <Stack direction="row" gap={1} alignItems="center" mb="5px">
-                  <Text>Deal type set to</Text>
+                  <Text>{budgetT("tabFeed.dealType")}</Text>
                   <BadgeCustom text={"Client"} />
                 </Stack>
                 <Stack direction="row" gap={1} alignItems="center" mb="5px">
-                  <Text>Start date set to</Text>
+                  <Text>{budgetT("tabFeed.startDate")}</Text>
                   <BadgeCustom
                     text={formatDate(feed.data.start_date, DATE_LOCALE_FORMAT)}
                   />
                 </Stack>
                 <Stack direction="row" gap={1} alignItems="center" mb="5px">
-                  <Text>End date set to</Text>
+                  <Text>{budgetT("tabFeed.endDate")}</Text>
                   <BadgeCustom
                     text={formatDate(
                       feed.data.end_date ?? feed.budget_id.end_date,

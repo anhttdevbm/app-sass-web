@@ -77,7 +77,7 @@ export const ModalAddRecurring = ({ open, onClose }: Props) => {
                 ml={1}
                 sx={{ cursor: "pointer" }}
               >
-                Copy PO number on each occurence
+                {budgetT("dialogRecurring.copy")}
               </Typography>
             </Stack>
           </MenuList>

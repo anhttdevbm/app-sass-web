@@ -54,20 +54,6 @@ type Props = {
   sectionId: string;
 };
 
-const billingBillable = {
-  label: "Billable",
-  value: BudgetServiceBillable.BILLABLE,
-  color: "success.main",
-  bgcolor: "success.light",
-};
-
-const billingNonBillable = {
-  label: "Non Billable",
-  value: BudgetServiceBillable.NON_BILLABLE,
-  color: "error.main",
-  bgcolor: "error.light",
-};
-
 export const ServiceSectionRow = ({
   fieldIndex,
   updateValue,
@@ -87,6 +73,20 @@ export const ServiceSectionRow = ({
   const { onGetPositions } = usePositions();
   const { positionOptions } = useGetOptions();
   const budgetT = useTranslations(NS_BUDGETING);
+
+  const billingBillable = {
+    label: budgetT('dialogExpense.billable'),
+    value: BudgetServiceBillable.BILLABLE,
+    color: "success.main",
+    bgcolor: "success.light",
+  };
+  
+  const billingNonBillable = {
+    label: budgetT('dialogExpense.nonBillable'),
+    value: BudgetServiceBillable.NON_BILLABLE,
+    color: "error.main",
+    bgcolor: "error.light",
+  };
 
   const { fields, append } = useFieldArray({
     name: "services",
@@ -474,7 +474,7 @@ export const ServiceSectionRow = ({
             sx={{ color: "secondary.main" }}
             onClick={createEmptyRow}
           >
-            New item
+            {budgetT("tabService.section.addItem")}
           </Button>
         </Box>
       </Stack>

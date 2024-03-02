@@ -21,6 +21,23 @@ export const BudgetingLang: BudgetingDictionary = {
     create: "Budget was created",
     create_service: "Budget service was created",
   },
+  tab: {
+    feed: 'Feed',
+    time: 'Time',
+    expenses: 'Expenses',
+    invoices: 'Invoices',
+    recurring: 'Recurring',
+    services: 'Services',
+  },
+  tabFeed: {
+    created: 'Created',
+    responsible: 'Responsible set to',
+    company: 'Company set to',
+    currency: 'Currency set to',
+    dealType: "Deal type set to",
+    startDate: 'Start date set to',
+    endDate: 'End date set to',
+  },
   tabTime: {
     service: "Service",
     person: "Person",
@@ -75,6 +92,13 @@ export const BudgetingLang: BudgetingDictionary = {
     dueDate: "Due Date",
   },
   tabService: {
+    alert: 'You need to save your changes before go to another tab',
+    action: {
+      addTime: 'Add time entry',
+      addExpense: 'Add expense',
+      viewTime: 'View time entries',
+      viewExpense: 'View expenses'
+    },
     totalArea: {
       time: {
         title: 'TIME',
@@ -166,6 +190,7 @@ export const BudgetingLang: BudgetingDictionary = {
     createBtnText: "Create Expense",
     updateBtnText: "Update Expense",
     billable: "Billable",
+    nonBillable: "Non Billable",
     reimbursementDate: "Reimbursement Date",
     dueDate: "Due date",
     paymentDate: "Payment date",
@@ -179,6 +204,7 @@ export const BudgetingLang: BudgetingDictionary = {
     recurringInterval: "Recurring Interval",
     nextOccurrence: "Next Occurrence",
     stopRecurring: "Stop Recurring",
+    copy: 'Copy PO number on each occurence',
   },
   delete: {
     titleConfirmDelete: "Confirm delete",
