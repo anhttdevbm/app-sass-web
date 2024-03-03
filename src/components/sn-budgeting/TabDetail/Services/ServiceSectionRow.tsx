@@ -18,7 +18,7 @@ import { BodyCell, CellProps } from "components/Table";
 import { Button, Select, Text } from "components/shared";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import CalendarIcon from "icons/CalendarIcon";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { usePositions } from "store/company/selectors";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -54,21 +54,7 @@ type Props = {
   sectionId: string;
 };
 
-const billingBillable = {
-  label: "Billable",
-  value: BudgetServiceBillable.BILLABLE,
-  color: "success.main",
-  bgcolor: "success.light",
-};
-
-const billingNonBillable = {
-  label: "Non Billable",
-  value: BudgetServiceBillable.NON_BILLABLE,
-  color: "error.main",
-  bgcolor: "error.light",
-};
-
-export const ServiceSectionRow = ({
+const ServiceSectionRow = ({
   fieldIndex,
   updateValue,
   errors,
@@ -88,12 +74,26 @@ export const ServiceSectionRow = ({
   const { positionOptions } = useGetOptions();
   const budgetT = useTranslations(NS_BUDGETING);
 
+  const billingBillable = {
+    label: budgetT('dialogExpense.billable'),
+    value: BudgetServiceBillable.BILLABLE,
+    color: "success.main",
+    bgcolor: "success.light",
+  };
+  
+  const billingNonBillable = {
+    label: budgetT('dialogExpense.nonBillable'),
+    value: BudgetServiceBillable.NON_BILLABLE,
+    color: "error.main",
+    bgcolor: "error.light",
+  };
+
   const { fields, append } = useFieldArray({
     name: "services",
     control,
   });
 
-  const headerList: CellProps[] = [
+  const headerList: CellProps[] = useMemo(() => [
     {
       value: budgetT("tabService.section.serviceName"),
       align: "center",
@@ -136,7 +136,7 @@ export const ServiceSectionRow = ({
       minwidth: 56,
       width: 56,
     },
-  ];
+  ],[]);
 
   const getSxCell = (index: number) => {
     return {
@@ -474,7 +474,7 @@ export const ServiceSectionRow = ({
             sx={{ color: "secondary.main" }}
             onClick={createEmptyRow}
           >
-            New item
+            {budgetT("tabService.section.addItem")}
           </Button>
         </Box>
       </Stack>
@@ -553,3 +553,5 @@ export const ServiceSectionRow = ({
     </>
   );
 };
+
+export default ServiceSectionRow

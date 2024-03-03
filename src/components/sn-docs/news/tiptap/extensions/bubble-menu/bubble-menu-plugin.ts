@@ -125,7 +125,6 @@ export class BubbleMenuView {
   updateHandler = (view: EditorView, oldState?: EditorState) => {
     const { state, composing } = view;
     const { selection } = state;
-
     if (composing) return;
 
     this.createTooltip();

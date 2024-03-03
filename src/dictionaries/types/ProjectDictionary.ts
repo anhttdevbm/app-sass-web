@@ -205,6 +205,8 @@ export type ProjectDictionary = {
       project_id: string;
     };
     createBudgetSuccess: string;
+    duplicateBudgetSuccess: string;
+    deleteBudgetSuccess: string;
     table: {
       budget: string;
       owner: string;

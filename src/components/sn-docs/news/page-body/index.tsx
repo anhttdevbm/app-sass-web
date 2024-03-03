@@ -309,6 +309,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             <div
               className={`${styles.editor}`}
               style={{
+                width: "100%",
                 pointerEvents: canEdit ? "auto" : "none",
                 height: editorHeight,
                 overflowY: "scroll",

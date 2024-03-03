@@ -459,6 +459,7 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
       sx={{
         display: "flex",
         alignItems: "center",
+        height: "50px",
         cursor: "pointer",
         backgroundColor: "background.default",
         zIndex: "10",
@@ -557,7 +558,19 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
       </Tippy>
       <button
         disabled={!canEdit}
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onClick={() => {
+          //  From to
+          const { view, state } = editor;
+          const { from, to } = view.state.selection;
+
+          // Get current mark range
+          editor.chain().focus().toggleBold().run();
+
+          // set the selection to the previous mark range
+          setTimeout(() => {
+            editor.chain().setTextSelection({ from, to }).run();
+          }, 3000);
+        }}
         className={editor.isActive("bold") ? "active" : ""}
       >
         <IconBold />

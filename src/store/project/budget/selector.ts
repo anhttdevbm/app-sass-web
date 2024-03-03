@@ -5,6 +5,7 @@ import { DataStatus } from "constant/enums";
 import { ProjectData, updateProject } from "store/project/actions";
 import {
   createProjectBudget,
+  deleteProjectBudget,
   getProjectBudgetList,
   TBudgetCreateParam,
   TBudgetListQueries,
@@ -45,6 +46,12 @@ export const useBudgets = () => {
     [dispatch],
   );
 
+  const triggerDeleteProjectBudget = useCallback(
+    async (id:string) =>
+      await dispatch(deleteProjectBudget(id)).unwrap(),
+    [dispatch],
+  );
+
   const triggerUpdateProjectBudget = useCallback(
     async (id: string, data: Partial<ProjectData>) =>
       await dispatch(updateProject({ id, ...data })).unwrap(),
@@ -59,6 +66,7 @@ export const useBudgets = () => {
     get: triggerGetProjectBudget,
     create: triggerCreateProjectBudget,
     update: triggerUpdateProjectBudget,
+    delete: triggerDeleteProjectBudget,
     isIdle,
     isFetching,
     pageIndex,

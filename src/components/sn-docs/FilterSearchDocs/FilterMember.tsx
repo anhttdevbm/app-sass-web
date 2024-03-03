@@ -21,6 +21,7 @@ import { Search } from "components/Filters";
 import MemberItem from "components/sn-projects/components/MemberItem";
 import { useEmployeeOptions } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
+import { useSearchParams } from "next/navigation";
 
 const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
@@ -50,11 +51,29 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
       newData.splice(indexSelected, 1);
     }
     setMembers(newData);
-    onChange("user_id", newData)
+    onChange("user_id", newData);
   };
   const onChangeSearch = (name: string, newValue?: string | number) => {
     onGetEmployeeOptions({ pageIndex: 1, pageSize: 10, [name]: newValue });
   };
+
+  const [selectedOptions, setSelectedOptions] = useState<any>(null);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    let selectedMemberIds =
+      searchParams
+        .get("user_id")
+        ?.split(",")
+        .map((item) => {
+          return {
+            id: item,
+            name: undefined,
+          };
+        }) || [];
+    setMembers(selectedMemberIds);
+  }, [ignoreItems, searchParams.get("user_id")]);
 
   const fetchUser = () => {
     const params = {

@@ -789,7 +789,10 @@ export const ModalExpense = ({
                     borderRadius: "4px !important",
                     backgroundColor: "#f5f5f5",
                     p: "4px !important",
-                    border: '1px solid #99999970 !important'
+                    border: '1px solid #99999970 !important',
+                    "&:hover": {
+                      backgroundColor: "#f4f4f4",
+                    },
                   }}
                   onClick={onChooseFile}
                 >

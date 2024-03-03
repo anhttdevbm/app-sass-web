@@ -7,7 +7,7 @@ import useTheme from "hooks/useTheme";
 
 type TextStatusProps = {
   text: string;
-  color: AlertColor | "purple" | "positive";
+  color: AlertColor | "purple" | "positive" | "common";
   width?: TextProps["minWidth"];
   namespace?: string;
   isActive?: boolean;

@@ -50,6 +50,8 @@ import { TBudgetExpense } from "store/expense/actions";
 import Swal from "sweetalert2";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { DateRange } from "mui-daterange-picker";
+import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
+import ConfirmDialog from "components/ConfirmDialog";
 
 enum TABS {
   FEED = "Feed",
@@ -96,17 +98,18 @@ export const BudgetDetail = () => {
   const { isDarkMode } = useTheme();
   const { push } = useRouter();
   const { onUpdateProject } = useProjects();
+  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE)
 
   const [isOpenModalTime, openModalTime, hideModalTime] = useToggle();
   const [isOpenModalExpense, openModalExpense, hideModalExpense] = useToggle();
   const [isShowLoadingTab, openLoadingTab, hideLoadingTab] = useToggle();
   const [isEditService, onEditService, offEditService] = useToggle();
   const [isOpenRightSidebar, showRightSidebar, hideRightSidebar] = useToggle();
+  const [isOpenModalStatus, showModalStatus, hideModalStatus] = useToggle();
   const { onAddSnackbar } = useSnackbar();
 
   const [budget, setBudget] = useState<TBudget | null>(null);
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
-  const [dateFilter, setDateFilter] = useState<DateRange>({});
   const [servicesList, setServiceList] = useState<TBudgetService[]>([]);
   const [selectedService, setSelectedService] =
     useState<TBudgetService | null>();
@@ -118,10 +121,20 @@ export const BudgetDetail = () => {
   const serviceQuery = useBudgetGetServiceQuery(String(id));
   const timeQuery = useBudgetGetTimeRangeQuery(String(id));
   const budgetGetExpenseQuery = useBudgetGetExpenseQuery(String(id));
+  const budgetUpdate = useBudgetUpdate();
 
   const budgetT = useTranslations(NS_BUDGETING);
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
+
+  const TAB_NAME = {
+    [TABS.FEED]: budgetT('tab.feed'),
+    [TABS.TIME]: budgetT('tab.time'),
+    [TABS.EXPENSES]: budgetT('tab.expenses'),
+    [TABS.INVOICES]: budgetT('tab.invoices'),
+    [TABS.SERVICES]: budgetT('tab.services'),
+    [TABS.RECURRING]: budgetT('tab.recurring'),
+  }
 
   useEffect(() => {
     if (!_.isEmpty(serviceQuery)) {
@@ -153,7 +166,7 @@ export const BudgetDetail = () => {
 
     if (isEditService) {
       Swal.fire({
-        title: 'You need to save your changes before go to another tab',
+        title: budgetT('tabService.alert'),
         text: '',
         icon: 'info'
       });
@@ -276,8 +289,37 @@ export const BudgetDetail = () => {
       }
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    } finally {
+      hideModalStatus();
     }
   };
+
+  const handleUpdateDate = async (date: DateRange) => {
+    try {
+      console.log(budget.id);
+      
+      budgetUpdate.mutateAsync(
+        {
+          id: budget.id,
+          start_date: date.startDate,
+          end_date: date.endDate,
+        },
+        {
+          onSuccess: () => {
+            onAddSnackbar(budgetT('notification.date'), "success");
+            budgetDetailQuery.refetch();
+          },
+        },
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
+
+  const handleOpenChangeStatusDialog = (status: ProjectStatus) => {
+    tempStatus.current = status;
+    showModalStatus();
+  }
 
   if (!budget) return <></>;
 
@@ -289,7 +331,7 @@ export const BudgetDetail = () => {
           top: 0,
           background: isDarkMode ? "#313130" : "white",
           py: 2,
-          zIndex: 10,
+          zIndex: 11,
         }}
       >
         <Stack
@@ -302,19 +344,20 @@ export const BudgetDetail = () => {
             <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
             <Stack pl="7px">
               <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
-                {budget.project.name}
+                {budget.project?.name}
               </Text>
               <Text lineHeight={1.2}>{budget.name}</Text>
             </Stack>
           </Stack>
           <Stack direction="row" alignItems="center">
             <CustomDateRangePicker
-              value={dateFilter}
-              onChange={(value) => {
-                setDateFilter(value)
+              value={{
+                startDate: budget.start_date ? dayjs(budget.start_date).toDate() : undefined,
+                endDate: budget.end_date ? dayjs(budget.end_date).toDate() : undefined,
               }}
+              onChange={handleUpdateDate}
               iconPosition="left"
-              showIndicator
+              isDropdown
               errorMessage=''
             />
             <IconButton
@@ -338,14 +381,15 @@ export const BudgetDetail = () => {
           <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
             <TextStatus
               text="status.open"
-              color="success"
+              color={
+                _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
+                  ? "success"
+                  : "common"
+              }
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
-              isActive={
-                _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
-              }
-              onClick={async () => {
-                await handleChangeProjectStatus(ProjectStatus.ACTIVE);
+              onClick={() => {
+                handleOpenChangeStatusDialog(ProjectStatus.ACTIVE);
               }}
             />
             <Box
@@ -358,14 +402,15 @@ export const BudgetDetail = () => {
             />
             <TextStatus
               text="status.close"
-              color="error"
+              color={
+                _.get(budget, "project.status", "") === ProjectStatus.CLOSE
+                  ? "error"
+                  : "common"
+              }
               namespace={NS_BUDGETING}
               sx={{ cursor: "pointer" }}
-              isActive={
-                _.get(budget, "project.status", "") === ProjectStatus.CLOSE
-              }
-              onClick={async () => {
-                await handleChangeProjectStatus(ProjectStatus.CLOSE);
+              onClick={() => {
+                handleOpenChangeStatusDialog(ProjectStatus.CLOSE);
               }}
             />
           </Stack>
@@ -388,7 +433,7 @@ export const BudgetDetail = () => {
                   }}
                   onClick={() => changeActiveTab(currentTab)}
                 >
-                  {currentTab}
+                  {TAB_NAME[currentTab]}
                 </Box>
               );
             })}
@@ -492,6 +537,20 @@ export const BudgetDetail = () => {
         }}
         services={servicesList}
         serviceId={_.get(selectedService, "id", "")}
+      />
+      <ConfirmDialog
+        onSubmit={() => {
+          handleChangeProjectStatus(tempStatus.current);
+        }}
+        open={isOpenModalStatus}
+        onClose={hideModalStatus}
+        title={budgetT("confirmChangeStatus.title")}
+        content={budgetT("confirmChangeStatus.content", {
+          status:
+            tempStatus.current === ProjectStatus.CLOSE
+              ? budgetT("status.close")
+              : budgetT("status.open"),
+        })}
       />
     </Box>
   );

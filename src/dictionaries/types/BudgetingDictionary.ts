@@ -15,9 +15,33 @@ export type BudgetingDictionary = {
     open: string;
     close: string;
   };
+  notification: {
+    date: string;
+  },
+  confirmChangeStatus: {
+    title: string;
+    content: string;
+  };
   actionStatus: {
     create: string;
     create_service: string;
+  };
+  tab: {
+    feed: string;
+    services: string;
+    time: string;
+    expenses: string;
+    invoices: string;
+    recurring: string;
+  };
+  tabFeed: {
+    created: string;
+    responsible: string;
+    currency: string;
+    company: string;
+    dealType: string;
+    startDate: string;
+    endDate: string;
   };
   tabTime: {
     service: string;
@@ -73,6 +97,12 @@ export type BudgetingDictionary = {
     dueDate: string;
   };
   tabService: {
+    action: {
+      addTime: string;
+      addExpense: string;
+      viewTime: string;
+      viewExpense: string;
+    }
     index: {
       name: string;
       workedTime: string;
@@ -126,6 +156,7 @@ export type BudgetingDictionary = {
       cancelBtnText: string;
       saveBtnText: string;
     };
+    alert: string;
   };
   dialog: {
     titleModalAdd: string;
@@ -168,6 +199,7 @@ export type BudgetingDictionary = {
     dueDate: string;
     paymentDate: string;
     vendor: string;
+    nonBillable: string;
   };
   dialogRecurring: {
     titleModalAdd: string;
@@ -177,6 +209,7 @@ export type BudgetingDictionary = {
     recurringInterval: string;
     nextOccurrence: string;
     stopRecurring: string;
+    copy: string;
   };
   delete: {
     titleConfirmDelete: string;

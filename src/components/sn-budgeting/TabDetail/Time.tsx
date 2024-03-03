@@ -188,10 +188,10 @@ export const Time = ({
                 {_.get(data, "note", "")}
               </BodyCell>
               <BodyCell sx={{ textAlign: "center" }}>
-                {formatNumber(_.get(data, "timeRanges", ""), { numberOfFixed: 2 })}
+                {formatNumber(_.get(data, "timeRanges", ""), { numberOfFixed: 0 })}
               </BodyCell>
               <BodyCell sx={{ textAlign: "center" }}>
-                {formatNumber(_.get(data, "billableTime", ""), { numberOfFixed: 2 })}
+                {formatNumber(_.get(data, "billableTime", ""), { numberOfFixed: 0 })}
               </BodyCell>
               <BodyCell sx={{ p: 0 }}>
                 <IconButton

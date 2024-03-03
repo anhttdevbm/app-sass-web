@@ -10,6 +10,7 @@ import { HttpStatusCode } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN } from "constant/index";
 import { BaseQueries } from "constant/types";
 import { saleClient } from "../../../api/client";
+import StringFormat from "string-format";
 
 export type TBudget = any;
 export type TBudgets = TBudget[];
@@ -96,6 +97,20 @@ export const createProjectBudget = createAsyncThunk(
     const response = await saleClient.post(url, param);
 
     if (response?.status !== HttpStatusCode.CREATED) {
+      throw AN_ERROR_TRY_AGAIN;
+    }
+
+    return response.data;
+  },
+);
+
+export const deleteProjectBudget = createAsyncThunk(
+  "project/deleteProjectBudget",
+  async (budgetId:string) => {
+    const url = StringFormat(Endpoint.BUDGET_DELETE_BY_ID, { budgetId });
+    const response = await saleClient.delete(url);
+
+    if (response?.status !== HttpStatusCode.OK) {
       throw AN_ERROR_TRY_AGAIN;
     }
 

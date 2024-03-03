@@ -212,6 +212,8 @@ export const ProjectLang: ProjectDictionary = {
       project_id: "Project",
     },
     createBudgetSuccess: "Create new budget success!",
+    duplicateBudgetSuccess: "Duplicate budget success!",
+    deleteBudgetSuccess: "Delete budget success!",
     table: {
       budget: "Status / Budget",
       owner: "Owner",
@@ -221,7 +223,7 @@ export const ProjectLang: ProjectDictionary = {
       workTime: "Work Time",
       estimateTime: "Estimate Time",
       revenue: "Revenue",
-      margin: "Marin",
+      margin: "Margin",
       budgetUsed: "Budget Used",
       budgetTotal: "Budget Total",
       workedTime: "Worked Time",

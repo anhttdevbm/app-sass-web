@@ -33,7 +33,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
     <Box
       sx={{
         position: "sticky !important",
-        top: '14%',
+        top: '170px', // header height
         background: isDarkMode ? "#313130" : "white",
         zIndex: 10,
       }}
@@ -175,7 +175,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                 height="100%"
                 direction="row"
               >
-                <H6>INVOICING</H6>
+                <H6>{budgetT("tabService.totalArea.invoicing.title")}</H6>
                 <Typography
                   variant="h6"
                   sx={{

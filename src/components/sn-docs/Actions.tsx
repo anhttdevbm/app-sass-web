@@ -53,9 +53,9 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const { id } = useParams();
 
   const handleCreateDoc = () => {
-    if (id && id !== undefined && isProjectTabMode) {
-      onCreateDoc(id);
-    }
+    onCreateDoc(id);
+    // if (id && id !== undefined && isProjectTabMode) {
+    // }
   };
 
   const onSearch = () => {

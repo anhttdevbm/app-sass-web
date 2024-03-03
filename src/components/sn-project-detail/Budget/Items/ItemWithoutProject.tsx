@@ -76,6 +76,7 @@ export const ItemWithoutProject = ({
         width: "160px",
         minwidth: "160px",
         data: "$109,000,567",
+        color: 'green',
       },
       {
         value: projectT("budget.table.margin"),

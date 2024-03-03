@@ -77,7 +77,7 @@ export const Invoice = () => {
         value: (
           <>
             <Stack>
-              {budgetT("tabInvoice.amount")}
+              {budgetT("tabInvoice.amountNoTax")}
               <Text variant={"body2"} align="center" fontWeight={600}>
                 {formatNumber(totalAmount, {
                   prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
@@ -115,24 +115,23 @@ export const Invoice = () => {
   const mobileHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: budgetT("list.table.subject"),
+        value: budgetT("tabInvoice.subject"),
         align: "center",
       },
       {
-        value: budgetT("list.table.invoiceNumber"),
+        value: budgetT("tabInvoice.invoiceNumber"),
         align: "center",
       },
       {
-        value: budgetT("list.table.date"),
+        value: budgetT("tabInvoice.date"),
         align: "center",
       },
-      { value: budgetT("list.table.budgets"), align: "center" },
-      { value: budgetT("list.table.att"), align: "center" },
+      { value: budgetT("tabInvoice.att"), align: "center" },
       {
         value: (
           <>
             <Stack>
-              {budgetT("list.table.amount")}
+              {budgetT("tabInvoice.amountNoTax")}
               <Text variant={"body2"} align="center" fontWeight={600}>
                 {formatNumber(totalAmount, {
                   prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
@@ -148,9 +147,9 @@ export const Invoice = () => {
         value: (
           <>
             <Stack>
-              {budgetT("list.table.amountUnpaid")}
+            {budgetT("tabInvoice.amountUnpaid")}
               <Text variant={"body2"} align="center" fontWeight={600}>
-                {formatNumber(totalAmountUnpaid, {
+                {formatNumber(totalAmount, {
                   prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
                   numberOfFixed: 2,
                 })}
@@ -160,7 +159,10 @@ export const Invoice = () => {
         ),
         align: "center",
       },
-      { value: budgetT("list.table.dueDate"), align: "center" },
+      {
+        value: budgetT("tabInvoice.dueDate"),
+        align: "center",
+      },
     ],
     [budgetT, totalAmount, totalAmountUnpaid],
   );
@@ -170,13 +172,13 @@ export const Invoice = () => {
       ? mobileHeaderList
       : desktopHeaderList;
     return [
-      {
-        value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} />,
-        width: isMdSmaller ? "10%" : "3%",
-        align: "center",
-      },
+      // {
+      //   value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} />,
+      //   width: isMdSmaller ? "10%" : "3%",
+      //   align: "center",
+      // },
       ...additionalHeaderList,
-      { value: "", width: "10%" },
+      // { value: "", width: "10%" },
     ] as CellProps[];
   }, [
     desktopHeaderList,
@@ -261,13 +263,13 @@ export const Invoice = () => {
                 width: "100%",
               }}
             >
-              <BodyCell sx={{ minWidth: 60 }}>
+              {/* <BodyCell sx={{ minWidth: 60 }}>
                 <Checkbox
                   checked={indexIdInInvoiceSelected !== -1}
                   value={data.id}
                   onChange={handleSelectInvoice}
                 />
-              </BodyCell>
+              </BodyCell> */}
               <BodyCell>
                 <Typography
                   sx={{ fontWeight: 700, cursor: "pointer" }}
@@ -298,7 +300,7 @@ export const Invoice = () => {
                 })}
               </BodyCell>
               <BodyCell>
-                <Typography component="span" style={{ color: "red" }}>
+                <Typography component="span">
                   {formatDate(data?.dueDate)}
                 </Typography>{" "}
               </BodyCell>
