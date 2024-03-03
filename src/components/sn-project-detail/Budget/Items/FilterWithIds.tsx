@@ -19,12 +19,16 @@ interface FilterWithIdsProps {
   idSelecteds: string[];
 }
 
+const filterButtonVariant = {
+  [STATUS.OPEN]: 'success',
+  [STATUS.CLOSE]: 'danger'
+}
+
 function FilterWithIds({
   getXsCell,
   budgets,
   idSelecteds,
 }: FilterWithIdsProps) {
-  console.log("budgets", budgets);
   const [status, setStatus] = useState(STATUS.ALL);
   const { totalRevenue } = useMemo(() => {
     let totalRevenue = 0;
@@ -73,7 +77,7 @@ function FilterWithIds({
     <TableRow>
       <BodyCell sx={{ pl: { xs: 0.5, md: 2 }, ...getXsCell(0) }}></BodyCell>
       <BodyCell sx={getXsCell(1)}>
-        <Button variant="contained" onClick={handleChangeStatus}>
+        <Button variant={filterButtonVariant[status] || "secondary"} size="extraSmall" onClick={handleChangeStatus}>
           {status}
         </Button>
       </BodyCell>
