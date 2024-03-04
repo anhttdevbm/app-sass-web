@@ -39,6 +39,7 @@ import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
 import { Option } from "constant/types";
+import { Droppable } from "react-beautiful-dnd";
 
 type TForm = {
   services: (TBudgetService & {

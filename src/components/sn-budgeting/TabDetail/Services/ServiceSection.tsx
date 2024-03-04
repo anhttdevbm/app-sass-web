@@ -30,16 +30,17 @@ import _ from "lodash";
 import { useBudgetServiceUpdate } from "queries/budgeting/service-update";
 import {
   TBudgetSection,
-  TBudgetService
+  TBudgetService,
 } from "components/sn-budgeting/BudgetDetail";
 import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
 import useTheme from "hooks/useTheme";
 import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
 import dynamic from "next/dynamic";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-const ServiceSectionRow = dynamic(() => import('./ServiceSectionRow'), {
-  ssr: false
-})
+const ServiceSectionRow = dynamic(() => import("./ServiceSectionRow"), {
+  ssr: false,
+});
 
 type Props = {
   sectionsList: TBudgetSection[];
@@ -198,7 +199,7 @@ export const ServiceSection = ({
           bookingTracking: false,
           tolBudget: 0,
           sectionId: "",
-          isNewService: true
+          isNewService: true,
         } as TBudgetService,
       ],
     });
@@ -413,7 +414,7 @@ export const ServiceSection = ({
             serviceParams = {
               ...service,
               id: service?.serviceId,
-              sectionId: section?.sectionId
+              sectionId: section?.sectionId,
             };
           }
 
@@ -428,10 +429,10 @@ export const ServiceSection = ({
       });
 
       budgetServiceUpdate.mutateAsync(
-      {
-        services: serviceUpdateList,
-        sections: sectionUpdateList,
-      },
+        {
+          services: serviceUpdateList,
+          sections: sectionUpdateList,
+        },
         {
           onSuccess: () => {
             onAddSnackbar("Update services successful!", "success");
@@ -497,54 +498,90 @@ export const ServiceSection = ({
               height: "max-content",
             }}
           >
-            {fields.map((section, index) => {
-              return (
-                <Stack
-                  key={section.id}
-                  sx={{
-                    boxSizing: "border-box",
-                    py: 2,
-                    width: "100%",
-                  }}
-                >
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Typography
-                      component="h3"
-                      fontSize={24}
-                      fontWeight="bold"
-                      px={2}
-                      py={1}
-                      sx={{ color: "grey.300" }}
-                    >
-                      {section?.name}
-                    </Typography>
-                    <IconButton onClick={() => openConfirmDelete(index)}>
-                      <TrashIcon
-                        fontSize="medium"
-                        sx={{ color: "error.main", cursor: "pointer" }}
-                      />
-                    </IconButton>
-                  </Stack>
-                  <Stack
-                    sx={{
-                      height: "max-content",
-                    }}
-                  >
-                    <ServiceSectionRow
-                      fieldIndex={index}
-                      updateValue={handleChangeValue}
-                      errors={errors}
-                      serviceData={_.get(section, "services", [])}
-                      sectionId={section?.sectionId || ""}
-                    />
-                  </Stack>
-                </Stack>
-              );
-            })}
+            <DragDropContext onDragEnd={(e) => console.log(501, e)}>
+              <Droppable
+                type="section"
+                direction="vertical"
+                droppableId={`sectionList`}
+              >
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {fields.map((section, index) => {
+                      return (
+                        <Draggable
+                          draggableId={section.id}
+                          key={section.id}
+                          index={index}
+                          isDragDisabled={false}
+                        >
+                          {(providedInner) => (
+                            <Stack
+                              // key={section.id}
+                              sx={{
+                                boxSizing: "border-box",
+                                py: 2,
+                                width: "100%",
+                                backgroundColor: "common.white",
+                              }}
+                              ref={providedInner.innerRef}
+                              {...providedInner.draggableProps}
+                            >
+                              <Stack
+                                direction="column"
+                                spacing={2}
+                                {...providedInner.dragHandleProps}
+                              >
+                                <Stack
+                                  direction="row"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                >
+                                  <Typography
+                                    component="h3"
+                                    fontSize={24}
+                                    fontWeight="bold"
+                                    px={2}
+                                    py={1}
+                                    sx={{ color: "grey.300" }}
+                                  >
+                                    {section?.name}
+                                  </Typography>
+                                  <IconButton
+                                    onClick={() => openConfirmDelete(index)}
+                                  >
+                                    <TrashIcon
+                                      fontSize="medium"
+                                      sx={{
+                                        color: "error.main",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </IconButton>
+                                </Stack>
+                                <Stack
+                                  sx={{
+                                    height: "max-content",
+                                  }}
+                                >
+                                  <ServiceSectionRow
+                                    fieldIndex={index}
+                                    updateValue={handleChangeValue}
+                                    errors={errors}
+                                    serviceData={_.get(section, "services", [])}
+                                    sectionId={section?.sectionId || ""}
+                                  />
+                                </Stack>
+                              </Stack>
+                            </Stack>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </Stack>
         </ScrollViewProvider>
 

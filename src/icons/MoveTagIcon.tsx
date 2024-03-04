@@ -47,15 +47,15 @@ const MoveTagIcon = (props: SvgIconProps) => {
           d="M15.539 1.15572H9.21361L1.53571 8.83345C1.02793 9.3414 1.02793 10.1725 1.53571 10.6803L7.32034 16.4648C7.82822 16.9727 8.65918 16.9727 9.16712 16.4648L16.8448 8.78693L16.845 2.46155C16.845 1.74332 16.2573 1.15572 15.539 1.15572Z"
           stroke="#1BC5BD"
           stroke-miterlimit="10"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M13.7689 5.71121C13.3604 6.1197 12.6981 6.1197 12.2896 5.71121C11.8811 5.30271 11.8811 4.6404 12.2896 4.232C12.6981 3.82344 13.3604 3.82337 13.7689 4.232C14.1774 4.6404 14.1774 5.30271 13.7689 5.71121Z"
           stroke="#1BC5BD"
           stroke-miterlimit="10"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </g>
     </svg>
