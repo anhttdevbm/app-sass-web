@@ -36,21 +36,26 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
 
+  const [selectedMember, setSelectedMember] = useState<any>({ id: null });
+
   const [members, setMembers] = useState<any>([]);
   //const [name, setName] = useState<any>([]);
   const ignoreItems = useMemo(() => {
     return items;
   }, [items]);
   const onChangeMembers = (id: string, fullname: string) => {
-    const indexSelected = members.findIndex((item) => item.id === id);
+    // const indexSelected = members.findIndex((item) => item.id === id);
 
-    const newData = [...members];
-    if (indexSelected === -1) {
-      newData.push({ id, fullname });
-    } else {
-      newData.splice(indexSelected, 1);
-    }
-    setMembers(newData);
+    const newData = [{ id, fullname }];
+
+    setSelectedMember({ id, fullname });
+
+    // if (indexSelected === -1) {
+    //   newData.push({ id, fullname });
+    // } else {
+    //   newData.splice(indexSelected, 1);
+    // }
+    // setMembers(newData);
     onChange("user_id", newData);
   };
   const onChangeSearch = (name: string, newValue?: string | number) => {
@@ -148,7 +153,8 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
             emitWhenEnter
           />
           {ignoreItems.map((item) => {
-            const isChecked = members.some((member) => item.id === member.id);
+            const isChecked = selectedMember.id === item.id;
+            // const isChecked = members.some((member) => item.id === member.id);
             return (
               <MenuItem key={item.id}>
                 <MemberItem
