@@ -446,9 +446,12 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
         .includes(perm),
     [perm],
   );
-  const [tippyInstance, setTippyInstance] = useState<any>(null);
+  const [textStyleInstance, setTextStyleInstance] = useState<any>(null);
+  const [textColorInstance, setTextColorInstance] = useState<any>(null);
+  const [backgroundColorInstance, setBackgroundColorInstance] =
+    useState<any>(null);
 
-  const handleClick = () => {
+  const handleClick = (tippyInstance) => {
     if (tippyInstance) {
       tippyInstance.hide();
     }
@@ -499,7 +502,7 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
         placement="bottom-start"
         interactive={true}
         hideOnClick={true}
-        onCreate={(instance) => setTippyInstance(instance)}
+        onCreate={(instance) => setTextStyleInstance(instance)}
         content={
           <div className={`${styles.bubble_menu}  ${styles[theme]}`}>
             {Object.entries(TextStyleOptions).map(([key, value]) => (
@@ -509,7 +512,7 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
                   className={`${styles.bubble_dropdown_item}`}
                   onClick={() => {
                     value.onClick();
-                    handleClick();
+                    handleClick(textStyleInstance);
                   }}
                 >
                   <div className={`${styles.bubble_dropdown_button}`}>
@@ -625,8 +628,103 @@ export const MenuBarHeaderEdit = ({ editor }: { editor: Editor }) => {
         <IconLi2 />
       </button>
 
-      <TextColorDropdown editor={editor} />
-      <BackgroundColorDropDown editor={editor} />
+      <button
+        onClick={() => {
+          editor.chain().focus().setColor("red").run();
+        }}
+      >
+        Color Red
+      </button>
+      {/* <Tippy
+        disabled={!canEdit}
+        appendTo={document.body}
+        trigger="click"
+        animation="shift-toward-subtle"
+        placement="bottom-start"
+        interactive={true}
+        hideOnClick={true}
+        onCreate={(instance) => setTippyInstance(instance)}
+        content={
+          <div className={`${styles.bubble_menu}  ${styles[theme]}`}>
+            {Object.entries({
+              red: {
+                icon: <TextIcon active={true} />,
+                label: "Red",
+                onClick: () => {
+                  editor.chain().focus().setColor("red").run();
+                },
+              },
+              green: {
+                icon: <TextIcon active={true} />,
+                label: "Green",
+                onClick: () => {
+                  editor.chain().focus().setColor("green").run();
+                },
+              },
+            }).map(([key, value]) => (
+              <>
+                <div
+                  key={key}
+                  className={`${styles.bubble_dropdown_item}`}
+                  onClick={() => {
+                    value.onClick();
+                    handleClick();
+                  }}
+                >
+                  <div className={`${styles.bubble_dropdown_button}`}>
+                    <div className={`${styles.info}`}>
+                      {value.icon}
+                      <span
+                        className={`${styles.bubble_dropdown_button_label}`}
+                      >
+                        {value.label}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {value.isBreakBelow && <Divider />}
+              </>
+            ))}
+          </div>
+        }
+      >
+        <div
+          className={`${toggleButtonStyles.bubble_toggle_dropdown} ${toggleButtonStyles[theme]}`}
+        >
+          {currentTextStyle && (
+            <div className={`${styles.bubble_dropdown_button}`}>
+              <div
+                className={`${styles.info}`}
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <div className={`${toggleButtonStyles.icon}`}>
+                  {currentTextStyle.icon}
+                </div>
+                <span
+                  className={`${styles.bubble_dropdown_button_label}`}
+                  style={{ whiteSpace: "nowrap" }}
+                >
+                  {currentTextStyle.label}
+                </span>
+              </div>
+            </div>
+          )}
+
+          <div className={`${toggleButtonStyles.icon}`}>
+            <DownIcon />
+          </div>
+        </div>
+      </Tippy> */}
+      <TextColorDropdown
+        handleClick={() => handleClick(textColorInstance)}
+        onCreate={(instance) => setTextColorInstance(instance)}
+        editor={editor}
+      />
+      <BackgroundColorDropDown
+        editor={editor}
+        handleClick={() => handleClick(backgroundColorInstance)}
+        onCreate={(instance) => setBackgroundColorInstance(instance)}
+      />
       <button
         disabled={!canComment}
         onClick={() => {
