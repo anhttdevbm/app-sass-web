@@ -42,8 +42,10 @@ export default function useDocEditor() {
       setContent(editor.getJSON());
       anchorRef.current = transaction.selection.anchor;
       // await handleContentUpdate(editor.getHTML());
+      console.log("onUpdate");
     },
-    onBlur: async ({ editor, transaction }) => {
+    onBlur: async ({ editor }) => {
+      console.log("onBlur");
       await handleContentUpdate(editor.getHTML());
     },
   });
