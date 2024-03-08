@@ -36,11 +36,15 @@ import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollEr
 import useTheme from "hooks/useTheme";
 import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
 import dynamic from "next/dynamic";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
-const ServiceSectionRow = dynamic(() => import("./ServiceSectionRow"), {
-  ssr: false,
-});
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  ResponderProvided,
+  DropResult,
+} from "react-beautiful-dnd";
+import ServiceSectionRow from "./ServiceSectionRow";
+import MoveDotIcon from "icons/MoveDotIcon";
 
 type Props = {
   sectionsList: TBudgetSection[];
@@ -91,7 +95,7 @@ export const ServiceSection = ({
       defaultValues,
     });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, swap } = useFieldArray({
     name: "sections",
     control,
   });
@@ -460,13 +464,57 @@ export const ServiceSection = ({
     });
   };
 
+  const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    const { destination, source, draggableId } = result;
+
+    const sectionList = [...getValues("sections")];
+
+    if (!destination) return;
+
+    // Swap section
+    if (destination.droppableId === "sectionList") {
+      swap(source.index, destination.index);
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    const desSectionIndex = destination.droppableId.split(".")[2];
+    const sourceSectionIndex = source.droppableId.split(".")[2];
+    const desSectionId = destination.droppableId.split(".")[1];
+    const sourceSectionId = source.droppableId.split(".")[1];
+
+    // Swap items in section
+    if (desSectionId === sourceSectionId) {
+      const section = sectionList[desSectionIndex];
+      const tmp = section.services[source.index];
+      section.services[source.index] = section.services[destination.index];
+      section.services[destination.index] = tmp;
+      setValue("sections", sectionList, { shouldDirty: true });
+      return;
+    }
+
+    // Swap items to another section
+    const desSection = sectionList[desSectionIndex];
+    const sourceSection = sectionList[sourceSectionIndex];
+    const draggable = sourceSection.services[source.index];
+    sourceSection.services.splice(source.index, 1);
+    desSection.services.splice(destination.index, 0, draggable);
+    setValue("sections", sectionList, { shouldDirty: true });
+  };
+
   return (
     <>
       <ScrollViewProvider>
+        {/* Edit top actions: Cancel - Save */}
         <Box
           sx={{
             position: "sticky !important",
-            top: "14%",
+            top: "21%",
             background: isDarkMode ? "#313130" : "white",
             zIndex: 10,
           }}
@@ -492,13 +540,16 @@ export const ServiceSection = ({
           </Stack>
         </Box>
 
+        {/* List editable section */}
         <ScrollViewProvider>
           <Stack
             sx={{
               height: "max-content",
+              px: 2,
+              backgroundColor: "common.white",
             }}
           >
-            <DragDropContext onDragEnd={(e) => console.log(501, e)}>
+            <DragDropContext onDragEnd={onDragEnd}>
               <Droppable
                 type="section"
                 direction="vertical"
@@ -516,12 +567,11 @@ export const ServiceSection = ({
                         >
                           {(providedInner) => (
                             <Stack
-                              // key={section.id}
                               sx={{
                                 boxSizing: "border-box",
-                                py: 2,
                                 width: "100%",
                                 backgroundColor: "common.white",
+                                mt: 2,
                               }}
                               ref={providedInner.innerRef}
                               {...providedInner.draggableProps}
@@ -536,16 +586,27 @@ export const ServiceSection = ({
                                   justifyContent="space-between"
                                   alignItems="center"
                                 >
-                                  <Typography
-                                    component="h3"
-                                    fontSize={24}
-                                    fontWeight="bold"
-                                    px={2}
+                                  <Stack
+                                    direction={{
+                                      xs: "column",
+                                      sm: "row",
+                                    }}
+                                    alignItems="center"
                                     py={1}
-                                    sx={{ color: "grey.300" }}
                                   >
-                                    {section?.name}
-                                  </Typography>
+                                    <IconButton noPadding>
+                                      <MoveDotIcon />
+                                    </IconButton>
+                                    <Typography
+                                      component="h3"
+                                      fontSize={20}
+                                      fontWeight="bold"
+                                      px={2}
+                                      sx={{ color: "grey.300" }}
+                                    >
+                                      {section?.name}
+                                    </Typography>
+                                  </Stack>
                                   <IconButton
                                     onClick={() => openConfirmDelete(index)}
                                   >

@@ -14,7 +14,7 @@ const SplitIcon = (props: SvgIconProps) => {
         d="M3.98749 14.529L1.45832 11.9999L3.98749 9.4707"
         stroke="currentColor"
         strokeWidth="1.5"
-        stroke-miterlimit="10"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -22,7 +22,7 @@ const SplitIcon = (props: SvgIconProps) => {
         d="M8.54169 12L1.52919 12"
         stroke="currentColor"
         strokeWidth="1.5"
-        stroke-miterlimit="10"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -38,7 +38,7 @@ const SplitIcon = (props: SvgIconProps) => {
         d="M19.5125 9.47096L22.0417 12.0001L19.5125 14.5293"
         stroke="currentColor"
         strokeWidth="1.5"
-        stroke-miterlimit="10"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -46,7 +46,7 @@ const SplitIcon = (props: SvgIconProps) => {
         d="M14.9583 12L21.9708 12"
         stroke="currentColor"
         strokeWidth="1.5"
-        stroke-miterlimit="10"
+        strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
