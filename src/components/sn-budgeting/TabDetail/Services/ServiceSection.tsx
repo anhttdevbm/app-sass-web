@@ -30,16 +30,21 @@ import _ from "lodash";
 import { useBudgetServiceUpdate } from "queries/budgeting/service-update";
 import {
   TBudgetSection,
-  TBudgetService
+  TBudgetService,
 } from "components/sn-budgeting/BudgetDetail";
 import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
 import useTheme from "hooks/useTheme";
 import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
 import dynamic from "next/dynamic";
-
-const ServiceSectionRow = dynamic(() => import('./ServiceSectionRow'), {
-  ssr: false
-})
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  ResponderProvided,
+  DropResult,
+} from "react-beautiful-dnd";
+import ServiceSectionRow from "./ServiceSectionRow";
+import MoveDotIcon from "icons/MoveDotIcon";
 
 type Props = {
   sectionsList: TBudgetSection[];
@@ -90,7 +95,7 @@ export const ServiceSection = ({
       defaultValues,
     });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, swap } = useFieldArray({
     name: "sections",
     control,
   });
@@ -198,7 +203,7 @@ export const ServiceSection = ({
           bookingTracking: false,
           tolBudget: 0,
           sectionId: "",
-          isNewService: true
+          isNewService: true,
         } as TBudgetService,
       ],
     });
@@ -413,7 +418,7 @@ export const ServiceSection = ({
             serviceParams = {
               ...service,
               id: service?.serviceId,
-              sectionId: section?.sectionId
+              sectionId: section?.sectionId,
             };
           }
 
@@ -428,10 +433,10 @@ export const ServiceSection = ({
       });
 
       budgetServiceUpdate.mutateAsync(
-      {
-        services: serviceUpdateList,
-        sections: sectionUpdateList,
-      },
+        {
+          services: serviceUpdateList,
+          sections: sectionUpdateList,
+        },
         {
           onSuccess: () => {
             onAddSnackbar("Update services successful!", "success");
@@ -459,13 +464,57 @@ export const ServiceSection = ({
     });
   };
 
+  const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    const { destination, source, draggableId } = result;
+
+    const sectionList = [...getValues("sections")];
+
+    if (!destination) return;
+
+    // Swap section
+    if (destination.droppableId === "sectionList") {
+      swap(source.index, destination.index);
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    const desSectionIndex = destination.droppableId.split(".")[2];
+    const sourceSectionIndex = source.droppableId.split(".")[2];
+    const desSectionId = destination.droppableId.split(".")[1];
+    const sourceSectionId = source.droppableId.split(".")[1];
+
+    // Swap items in section
+    if (desSectionId === sourceSectionId) {
+      const section = sectionList[desSectionIndex];
+      const tmp = section.services[source.index];
+      section.services[source.index] = section.services[destination.index];
+      section.services[destination.index] = tmp;
+      setValue("sections", sectionList, { shouldDirty: true });
+      return;
+    }
+
+    // Swap items to another section
+    const desSection = sectionList[desSectionIndex];
+    const sourceSection = sectionList[sourceSectionIndex];
+    const draggable = sourceSection.services[source.index];
+    sourceSection.services.splice(source.index, 1);
+    desSection.services.splice(destination.index, 0, draggable);
+    setValue("sections", sectionList, { shouldDirty: true });
+  };
+
   return (
     <>
       <ScrollViewProvider>
+        {/* Edit top actions: Cancel - Save */}
         <Box
           sx={{
             position: "sticky !important",
-            top: "14%",
+            top: "21%",
             background: isDarkMode ? "#313130" : "white",
             zIndex: 10,
           }}
@@ -491,60 +540,109 @@ export const ServiceSection = ({
           </Stack>
         </Box>
 
+        {/* List editable section */}
         <ScrollViewProvider>
           <Stack
             sx={{
               height: "max-content",
+              px: 2,
+              backgroundColor: "common.white",
             }}
           >
-            {fields.map((section, index) => {
-              return (
-                <Stack
-                  key={section.id}
-                  sx={{
-                    boxSizing: "border-box",
-                    py: 2,
-                    width: "100%",
-                  }}
-                >
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Typography
-                      component="h3"
-                      fontSize={24}
-                      fontWeight="bold"
-                      px={2}
-                      py={1}
-                      sx={{ color: "grey.300" }}
-                    >
-                      {section?.name}
-                    </Typography>
-                    <IconButton onClick={() => openConfirmDelete(index)}>
-                      <TrashIcon
-                        fontSize="medium"
-                        sx={{ color: "error.main", cursor: "pointer" }}
-                      />
-                    </IconButton>
-                  </Stack>
-                  <Stack
-                    sx={{
-                      height: "max-content",
-                    }}
-                  >
-                    <ServiceSectionRow
-                      fieldIndex={index}
-                      updateValue={handleChangeValue}
-                      errors={errors}
-                      serviceData={_.get(section, "services", [])}
-                      sectionId={section?.sectionId || ""}
-                    />
-                  </Stack>
-                </Stack>
-              );
-            })}
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable
+                type="section"
+                direction="vertical"
+                droppableId={`sectionList`}
+              >
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {fields.map((section, index) => {
+                      return (
+                        <Draggable
+                          draggableId={section.id}
+                          key={section.id}
+                          index={index}
+                          isDragDisabled={false}
+                        >
+                          {(providedInner) => (
+                            <Stack
+                              sx={{
+                                boxSizing: "border-box",
+                                width: "100%",
+                                backgroundColor: "common.white",
+                                mt: 2,
+                              }}
+                              ref={providedInner.innerRef}
+                              {...providedInner.draggableProps}
+                            >
+                              <Stack
+                                direction="column"
+                                spacing={2}
+                                {...providedInner.dragHandleProps}
+                              >
+                                <Stack
+                                  direction="row"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                >
+                                  <Stack
+                                    direction={{
+                                      xs: "column",
+                                      sm: "row",
+                                    }}
+                                    alignItems="center"
+                                    py={1}
+                                  >
+                                    <IconButton noPadding>
+                                      <MoveDotIcon />
+                                    </IconButton>
+                                    <Typography
+                                      component="h3"
+                                      fontSize={20}
+                                      fontWeight="bold"
+                                      px={2}
+                                      sx={{ color: "grey.300" }}
+                                    >
+                                      {section?.name}
+                                    </Typography>
+                                  </Stack>
+                                  <IconButton
+                                    onClick={() => openConfirmDelete(index)}
+                                  >
+                                    <TrashIcon
+                                      fontSize="medium"
+                                      sx={{
+                                        color: "error.main",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                  </IconButton>
+                                </Stack>
+                                <Stack
+                                  sx={{
+                                    height: "max-content",
+                                  }}
+                                >
+                                  <ServiceSectionRow
+                                    fieldIndex={index}
+                                    updateValue={handleChangeValue}
+                                    errors={errors}
+                                    serviceData={_.get(section, "services", [])}
+                                    sectionId={section?.sectionId || ""}
+                                  />
+                                </Stack>
+                              </Stack>
+                            </Stack>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </Stack>
         </ScrollViewProvider>
 

@@ -19,12 +19,16 @@ interface FilterWithIdsProps {
   idSelecteds: string[];
 }
 
+const filterButtonVariant = {
+  [STATUS.OPEN]: 'success',
+  [STATUS.CLOSE]: 'danger'
+}
+
 function FilterWithIds({
   getXsCell,
   budgets,
   idSelecteds,
 }: FilterWithIdsProps) {
-  console.log("budgets", budgets);
   const [status, setStatus] = useState(STATUS.ALL);
   const { totalRevenue } = useMemo(() => {
     let totalRevenue = 0;
@@ -71,18 +75,18 @@ function FilterWithIds({
 
   return (
     <TableRow>
-      <BodyCell sx={{ pl: { xs: 0.5, md: 2 }, ...getXsCell(0) }}></BodyCell>
-      <BodyCell sx={getXsCell(1)}>
-        <Button variant="contained" onClick={handleChangeStatus}>
+      <BodyCell sx={{ pl: { xs: 0.5, md: 2 }, ...getXsCell(0) }} fallback=""></BodyCell>
+      <BodyCell sx={{...getXsCell(1), textAlign: 'left'}} fallback="">
+        <Button variant={filterButtonVariant[status] || "secondary"} size="extraSmall" onClick={handleChangeStatus}>
           {status}
         </Button>
       </BodyCell>
-      <BodyCell sx={getXsCell(2)}></BodyCell>
-      <BodyCell sx={getXsCell(3)}></BodyCell>
-      <BodyCell sx={getXsCell(4)}>${totalRevenue}</BodyCell>
-      <BodyCell sx={getXsCell(5)}></BodyCell>
-      <BodyCell sx={getXsCell(6)}></BodyCell>
-      <BodyCell sx={getXsCell(7)}></BodyCell>
+      <BodyCell sx={getXsCell(2)} fallback=""></BodyCell>
+      <BodyCell sx={getXsCell(3)} fallback=""></BodyCell>
+      <BodyCell sx={getXsCell(4)} fallback="">${totalRevenue}</BodyCell>
+      <BodyCell sx={getXsCell(5)} fallback=""></BodyCell>
+      <BodyCell sx={getXsCell(6)} fallback=""></BodyCell>
+      <BodyCell sx={getXsCell(7)} fallback=""></BodyCell>
     </TableRow>
   );
 }

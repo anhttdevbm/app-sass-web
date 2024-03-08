@@ -39,6 +39,8 @@ export const ItemWithoutProject = ({
   };
 
   const desktopHeaderList: CellProps[] = useMemo(() => {
+    const _totalRevenue = budgets.reduce((prev, curr) => prev + curr.revenue,0)
+
     return [
       {
         value: (
@@ -65,6 +67,12 @@ export const ItemWithoutProject = ({
         minwidth: "220px",
       },
       {
+        value: projectT("budget.table.company"),
+        align: "left",
+        width: "220px",
+        minwidth: "220px",
+      },
+      {
         value: projectT("budget.table.project"),
         align: "left",
         width: "220px",
@@ -75,27 +83,30 @@ export const ItemWithoutProject = ({
         align: "center",
         width: "160px",
         minwidth: "160px",
-        data: "$109,000,567",
+        data: formatNumber(_totalRevenue, {
+          prefix: CURRENCY_SYMBOL['USD'],
+          numberOfFixed: 0,
+        }),
         color: 'green',
       },
       {
         value: projectT("budget.table.margin"),
         align: "center",
-        data: "69.04%",
+        data: "",
         width: "100px",
         minwidth: "100px",
       },
       {
         value: projectT("budget.table.budgetedTimeUse"),
         align: "center",
-        data: "350:00h/599:00h ",
+        data: "",
         width: "200px",
         minwidth: "200px",
       },
       {
-        value: projectT("budget.table.invoiced"),
+        value: projectT("budget.table.invoiced") + " %",
         align: "center",
-        data: "47.5%",
+        data: "",
         width: "140px",
         minwidth: "140px",
       },
@@ -171,6 +182,11 @@ export const ItemWithoutProject = ({
               )}
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
+                    <Text paddingLeft="10px" align="left">
+                      {budget.company}
+                    </Text>
+            </BodyCell>
+            <BodyCell sx={getXsCell(2)}>
               {budget.project?.avatar &&
                 typeof budget.project.avatar[0] === "object" && (
                   <Stack direction="row" alignItems="center">
@@ -190,13 +206,13 @@ export const ItemWithoutProject = ({
               </Text>
             </BodyCell>
             <BodyCell sx={getXsCell(4)}>
-              <Text>69.04%</Text>
+              <Text></Text>
             </BodyCell>
             <BodyCell sx={getXsCell(5)}>
-              <Text>350:00h/599:00h</Text>
+              <Text></Text>
             </BodyCell>
             <BodyCell sx={getXsCell(6)}>
-              <Text>47.5%</Text>
+              <Text></Text>
             </BodyCell>
           </TableRow>
         );

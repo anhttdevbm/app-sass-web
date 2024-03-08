@@ -14,12 +14,16 @@ const PRIMARY_OUTLINED = "primaryOutlined";
 const SECONDARY = "secondary";
 const EXTRA_SMALL = "extraSmall";
 const NORMAL = "normal";
+const DANGER = "danger";
+const SUCCESS = 'success'
 
 declare module "@mui/material/Button/Button" {
   interface ButtonPropsVariantOverrides {
     [PRIMARY]: true;
     [SECONDARY]: true;
     [PRIMARY_OUTLINED]: true;
+    [DANGER]: true,
+    [SUCCESS]: true
   }
   interface ButtonPropsSizeOverrides {
     [EXTRA_SMALL]: true;
@@ -172,6 +176,26 @@ const getDefaultSx = (isDarkMode: boolean, sx) => {
       },
       [`&.${buttonClasses.disabled}`]: {
         opacity: 0.6,
+      },
+    },
+    [`&.${matchClass(PREFIX_BUTTON_CLASS, DANGER)}`]: {
+      backgroundColor: "error.light",
+      color: "error.main",
+      "&:hover": {
+        opacity: 0.8
+      },
+      [`&.${buttonClasses.disabled}`]: {
+        opacity: 0.6
+      },
+    },
+    [`&.${matchClass(PREFIX_BUTTON_CLASS, SUCCESS)}`]: {
+      backgroundColor: "success.light",
+      color: "success.main",
+      "&:hover": {
+        opacity: 0.8
+      },
+      [`&.${buttonClasses.disabled}`]: {
+        opacity: 0.6
       },
     },
 
