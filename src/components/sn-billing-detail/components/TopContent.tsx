@@ -111,22 +111,22 @@ const TopContent = (props: TopContentProps) => {
     push(BILLING_PATH);
   };
 
-  useEffect(() => {
-    if (user && listUser.length === 0 && item?.user && item.user.length === 0) {
-      if (!setMember.has(user.id)) {
-        setMember.add(user.id);
-        const member = {
-          id: user.id,
-          fullname: user.fullname,
-          avatar: {
-            link: user?.avatar?.link,
-          },
-        } as Member;
+  // useEffect(() => {
+  //   if (user && listUser.length === 0 && item?.user && item.user.length === 0) {
+  //     if (!setMember.has(user.id)) {
+  //       setMember.add(user.id);
+  //       const member = {
+  //         id: user.id,
+  //         fullname: user.fullname,
+  //         avatar: {
+  //           link: user?.avatar?.link,
+  //         },
+  //       } as Member;
 
-        setListUser([member]);
-      }
-    }
-  }, [user, item]);
+  //       setListUser([member]);
+  //     }
+  //   }
+  // }, [user, item]);
 
   useEffect(() => {
     if (item?.user && item.user.length > 0 && listUser?.length === 0) {

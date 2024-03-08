@@ -21,6 +21,7 @@ import { Search } from "components/Filters";
 import MemberItem from "components/sn-projects/components/MemberItem";
 import { useEmployeeOptions } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
+import { useSearchParams } from "next/navigation";
 
 const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
@@ -35,26 +36,49 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
 
+  const [selectedMember, setSelectedMember] = useState<any>({ id: null });
+
   const [members, setMembers] = useState<any>([]);
   //const [name, setName] = useState<any>([]);
   const ignoreItems = useMemo(() => {
     return items;
   }, [items]);
   const onChangeMembers = (id: string, fullname: string) => {
-    const indexSelected = members.findIndex((item) => item.id === id);
+    // const indexSelected = members.findIndex((item) => item.id === id);
 
-    const newData = [...members];
-    if (indexSelected === -1) {
-      newData.push({ id, fullname });
-    } else {
-      newData.splice(indexSelected, 1);
-    }
-    setMembers(newData);
-    onChange("user_id", newData)
+    const newData = [{ id, fullname }];
+
+    setSelectedMember({ id, fullname });
+
+    // if (indexSelected === -1) {
+    //   newData.push({ id, fullname });
+    // } else {
+    //   newData.splice(indexSelected, 1);
+    // }
+    // setMembers(newData);
+    onChange("user_id", newData);
   };
   const onChangeSearch = (name: string, newValue?: string | number) => {
     onGetEmployeeOptions({ pageIndex: 1, pageSize: 10, [name]: newValue });
   };
+
+  const [selectedOptions, setSelectedOptions] = useState<any>(null);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    let selectedMemberIds =
+      searchParams
+        .get("user_id")
+        ?.split(",")
+        .map((item) => {
+          return {
+            id: item,
+            name: undefined,
+          };
+        }) || [];
+    setMembers(selectedMemberIds);
+  }, [ignoreItems, searchParams.get("user_id")]);
 
   const fetchUser = () => {
     const params = {
@@ -129,7 +153,8 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
             emitWhenEnter
           />
           {ignoreItems.map((item) => {
-            const isChecked = members.some((member) => item.id === member.id);
+            const isChecked = selectedMember.id === item.id;
+            // const isChecked = members.some((member) => item.id === member.id);
             return (
               <MenuItem key={item.id}>
                 <MemberItem

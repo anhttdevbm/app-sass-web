@@ -17,64 +17,72 @@ type TBackgroundColorOptions = {
   };
 };
 
-export const BackgroundColorDropDown = ({ editor }: { editor: Editor }) => {
+export const backgroundColorOptions: TBackgroundColorOptions = {
+  white: {
+    icon: <div className={`${styles.default}`}>A</div>,
+    color: "white",
+    label: "White",
+    textColor: "black",
+  },
+
+  gray: {
+    icon: <div className={`${styles.background_gray}`}>A</div>,
+    color: "#898989",
+    label: "Gray",
+  },
+  brown: {
+    icon: <div className={`${styles.background_brown}`}>A</div>,
+    color: "#976f5e",
+    label: "Brown",
+  },
+  orange: {
+    icon: <div className={`${styles.background_orange}`}>A</div>,
+    color: "#ff8c00",
+    label: "Orange",
+  },
+  yellow: {
+    icon: <div className={`${styles.background_yellow}`}>A</div>,
+    color: "#ffd700",
+    label: "Yellow",
+  },
+  green: {
+    icon: <div className={`${styles.background_green}`}>A</div>,
+    color: "#4b8c67",
+    label: "Green",
+  },
+  blue: {
+    icon: <div className={`${styles.background_blue}`}>A</div>,
+    color: "#0000ff",
+    label: "Blue",
+  },
+  purple: {
+    icon: <div className={`${styles.background_purple}`}>A</div>,
+    color: "#800080",
+    label: "Purple",
+  },
+  pink: {
+    icon: <div className={`${styles.background_pink}`}>A</div>,
+    color: "#ffc0cb",
+    label: "Pink",
+  },
+  red: {
+    icon: <div className={`${styles.background_red}`}>A</div>,
+    color: "#ff0000",
+    label: "Red",
+  },
+};
+
+export const BackgroundColorDropDown = ({
+  editor,
+  handleClick,
+  onCreate,
+}: {
+  editor: Editor;
+  handleClick: any;
+  onCreate: any;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme } = useContext(ThemeContext);
-
-  const backgroundColorOptions: TBackgroundColorOptions = {
-    white: {
-      icon: <div className={`${styles.default}`}>A</div>,
-      color: "white",
-      label: "White",
-      textColor: "black",
-    },
-
-    gray: {
-      icon: <div className={`${styles.background_gray}`}>A</div>,
-      color: "#898989",
-      label: "Gray",
-    },
-    brown: {
-      icon: <div className={`${styles.background_brown}`}>A</div>,
-      color: "#976f5e",
-      label: "Brown",
-    },
-    orange: {
-      icon: <div className={`${styles.background_orange}`}>A</div>,
-      color: "#ff8c00",
-      label: "Orange",
-    },
-    yellow: {
-      icon: <div className={`${styles.background_yellow}`}>A</div>,
-      color: "#ffd700",
-      label: "Yellow",
-    },
-    green: {
-      icon: <div className={`${styles.background_green}`}>A</div>,
-      color: "#4b8c67",
-      label: "Green",
-    },
-    blue: {
-      icon: <div className={`${styles.background_blue}`}>A</div>,
-      color: "#0000ff",
-      label: "Blue",
-    },
-    purple: {
-      icon: <div className={`${styles.background_purple}`}>A</div>,
-      color: "#800080",
-      label: "Purple",
-    },
-    pink: {
-      icon: <div className={`${styles.background_pink}`}>A</div>,
-      color: "#ffc0cb",
-      label: "Pink",
-    },
-    red: {
-      icon: <div className={`${styles.background_red}`}>A</div>,
-      color: "#ff0000",
-      label: "Red",
-    },
-  };
 
   const isWhiteHighlighted = editor.isActive("highlight", {
     color: backgroundColorOptions.white.color,
@@ -134,6 +142,7 @@ export const BackgroundColorDropDown = ({ editor }: { editor: Editor }) => {
 
   return (
     <Tippy
+      onCreate={onCreate}
       appendTo={document.body}
       trigger="click"
       interactive
@@ -158,6 +167,7 @@ export const BackgroundColorDropDown = ({ editor }: { editor: Editor }) => {
                     .setColor(value.textColor || "white")
                     .toggleHighlight({ color: value.color })
                     .run();
+                  handleClick();
                 }}
               >
                 <div className={`${styles.info}`}>

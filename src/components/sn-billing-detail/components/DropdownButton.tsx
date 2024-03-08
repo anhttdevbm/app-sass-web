@@ -10,14 +10,18 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import { NS_BILLING } from "constant/index";
 import { useTranslations } from "next-intl";
+import { ButtonBase, Menu, Stack } from "@mui/material";
+import { Text } from "components/shared";
+import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 
 type Props = {
   handleOpen: (value) => void;
 };
+const ITEM_HEIGHT = 48;
 
 export const DropdownButton = (props: Props) => {
   const { handleOpen } = props;
-  const [open, setOpen] = React.useState(false);
+  // const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const billingT = useTranslations(NS_BILLING);
@@ -27,36 +31,102 @@ export const DropdownButton = (props: Props) => {
     billingT("detail.form.top.button.addWriteOff"),
   ];
 
-  const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]}`);
-  };
+  // const handleClick = () => {
+  //   console.info(`You clicked ${options[selectedIndex]}`);
+  // };
 
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
     index: number,
   ) => {
     setSelectedIndex(index);
-    setOpen(false);
+    // setOpen(false);
   };
 
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+  // const handleToggle = () => {
+  //   setOpen((prevOpen) => !prevOpen);
+  // };
+
+  // const handleClose = (event: Event) => {
+  //   if (
+  //     anchorRef.current &&
+  //     anchorRef.current.contains(event.target as HTMLElement)
+  //   ) {
+  //     return;
+  //   }
+
+  //   setOpen(false);
+  // };
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
-
-  const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
-      return;
-    }
-
-    setOpen(false);
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
     <React.Fragment>
-      <ButtonGroup
+      {/* <IconButton
+        aria-label="more"
+        id="long-button"
+        aria-controls={open ? "long-menu" : undefined}
+        aria-expanded={open ? "true" : undefined}
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        <MoreHoriz />
+      </IconButton> */}
+      <Button
+        onClick={handleClick}
+        aria-label="more"
+        id="long-button"
+        aria-controls={open ? "long-menu" : undefined}
+        aria-expanded={open ? "true" : undefined}
+        aria-haspopup="true"
+        variant="contained"
+        size="medium"
+      >
+        {options[selectedIndex]}
+      </Button>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5,
+            width: "12ch",
+          },
+        }}
+      >
+        {options.map((option, index) => (
+          <MenuItem
+            key={option}
+            disabled={index === 2}
+            selected={index === selectedIndex}
+            onClick={(event) => {
+              handleMenuItemClick(event, index);
+              if (
+                options[index] == billingT("detail.form.top.button.addWriteOff")
+              ) {
+                handleOpen("write");
+              } else {
+                handleOpen("add");
+              }
+            }}
+          >
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
+      {/* <ButtonGroup
         variant="contained"
         ref={anchorRef}
         aria-label="split button"
@@ -122,7 +192,7 @@ export const DropdownButton = (props: Props) => {
             </Paper>
           </Grow>
         )}
-      </Popper>
+      </Popper> */}
     </React.Fragment>
   );
 };

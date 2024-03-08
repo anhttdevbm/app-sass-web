@@ -8,12 +8,21 @@ import dropButtonTogglestyles from "./colorTypeToggle.module.scss";
 import { ThemeContext } from "components/sn-docs/news/context/ThemeContext";
 import DownIcon from "components/sn-docs/news/asset/icons/DownIcon";
 
-export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
+export const TextColorDropdown = ({
+  editor,
+  handleClick,
+  onCreate,
+}: {
+  editor: Editor;
+  handleClick: any;
+  onCreate: any;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme } = useContext(ThemeContext);
 
   return (
     <Tippy
+      onCreate={onCreate}
       appendTo={document.body}
       trigger="click"
       interactive
@@ -26,7 +35,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
           <div className={`${styles.color_menu_dropdown}`}>COLOR</div>
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("black").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("black").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.default}`}>A</div>
@@ -35,7 +47,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
           </div>
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("white").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("white").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.white}`}>A</div>
@@ -45,7 +60,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#898989").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#898989").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.gray}`}>A</div>
@@ -55,7 +73,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#976f5e").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#976f5e").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.brown}`}>A</div>
@@ -65,7 +86,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#c27a47").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#c27a47").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.orange}`}>A</div>
@@ -75,7 +99,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#ca9849").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#ca9849").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.yellow}`}>A</div>
@@ -85,7 +112,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#4b8c67").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#4b8c67").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.green}`}>A</div>
@@ -95,7 +125,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#5c83c2").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#5c83c2").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.blue}`}>A</div>
@@ -105,7 +138,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#835bac").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#835bac").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.purple}`}>A</div>
@@ -115,7 +151,10 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
 
           <div
             className={`${styles.color_dropdown_button}`}
-            onClick={() => editor.chain().focus().setColor("#d15796").run()}
+            onClick={() => {
+              editor.chain().focus().setColor("#d15796").run();
+              handleClick();
+            }}
           >
             <div className={`${styles.info}`}>
               <div className={`${styles.pink}`}>A</div>
@@ -127,6 +166,7 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
             className={`${styles.color_dropdown_button}`}
             onClick={() => {
               editor.chain().focus().setColor("#df5452").run();
+              handleClick();
             }}
           >
             <div className={`${styles.info}`}>
@@ -139,7 +179,9 @@ export const TextColorDropdown = ({ editor }: { editor: Editor }) => {
     >
       <div
         className={`${dropButtonTogglestyles.color_toggle_dropdown}`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+        }}
       >
         <div
           style={{
