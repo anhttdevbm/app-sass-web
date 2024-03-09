@@ -46,6 +46,7 @@ import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
 import { Option } from "constant/types";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import MoveDotIcon from "icons/MoveDotIcon";
+import ServiceItemAction, { Action } from "./ServiceItemAction";
 
 type TForm = {
   services: (TBudgetService & {
@@ -102,46 +103,47 @@ const ServiceSectionRow = ({
 
   const headerList: CellProps[] = useMemo(
     () => [
+      { value: "", width: 20 },
       {
         value: budgetT("tabService.section.serviceName"),
         align: "center",
-        minwidth: 250,
+        minWidth: 250,
         width: 250,
       },
       {
         value: budgetT("tabService.section.serviceType"),
         align: "center",
-        minwidth: 200,
+        minWidth: 200,
         width: 200,
       },
       {
         value: budgetT("tabService.section.billingType"),
         align: "center",
-        minwidth: 200,
+        minWidth: 200,
         width: 200,
       },
       {
         value: budgetT("tabService.section.unit"),
         align: "center",
-        minwidth: 200,
+        minWidth: 200,
         width: 200,
       },
       {
         value: budgetT("tabService.section.tracking"),
         align: "center",
-        minwidth: 160,
+        minWidth: 160,
         width: 160,
       },
       {
         value: budgetT("tabService.section.estimate"),
         align: "center",
-        minwidth: 200,
+        minWidth: 200,
         width: 200,
       },
       {
         value: "",
         align: "center",
-        minwidth: 56,
+        minWidth: 56,
         width: 56,
       },
     ],
@@ -263,6 +265,33 @@ const ServiceSectionRow = ({
     );
   };
 
+  const handleExecActions = (
+    action: Action,
+    data: { index: number; serviceId: string },
+  ) => {
+    switch (action) {
+      case Action.DELETE:
+        openConfirmDelete(data.index);
+        break;
+      case Action.DUPLICATE:
+        const selectedService = _.find(
+          fields,
+          (service) => service.id === fields[data.index].id,
+        );
+
+        if (selectedService) {
+          selectedService.id = uuid();
+          append(selectedService);
+
+          updateValue(
+            fieldIndex,
+            _.concat(watch("services"), [selectedService]) as TBudgetService[],
+          );
+        }
+        break;
+    }
+  };
+
   return (
     <>
       <Stack
@@ -326,13 +355,15 @@ const ServiceSectionRow = ({
                             alignItems="center"
                             py={1}
                           >
-                            <IconButton2
-                              noPadding
-                              {...provided.dragHandleProps}
-                            >
-                              <MoveDotIcon />
-                            </IconButton2>
                             <TableRow key={service.id}>
+                              <BodyCell sx={{ px: 0 }}>
+                                <IconButton2
+                                  noPadding
+                                  {...provided.dragHandleProps}
+                                >
+                                  <MoveDotIcon />
+                                </IconButton2>
+                              </BodyCell>
                               <BodyCell sx={getSxCell(0)}>
                                 <TextField
                                   {...register(`services.${index}.name`)}
@@ -532,15 +563,30 @@ const ServiceSectionRow = ({
                                   }
                                 />
                               </BodyCell>
+
                               <BodyCell>
-                                <TrashIcon
+                                <Stack
+                                  direction={"row"}
+                                  spacing={0}
+                                  sx={{
+                                    position: "relative",
+                                    zIndex: 99,
+                                  }}
+                                >
+                                  <ServiceItemAction
+                                    onChangeAction={handleExecActions}
+                                    serviceId={service.id}
+                                    index={index}
+                                  />
+                                </Stack>
+                                {/* <TrashIcon
                                   fontSize="medium"
                                   sx={{
                                     color: "error.main",
                                     cursor: "pointer",
                                   }}
                                   onClick={() => openConfirmDelete(index)}
-                                />
+                                /> */}
                               </BodyCell>
                             </TableRow>
                           </Stack>
