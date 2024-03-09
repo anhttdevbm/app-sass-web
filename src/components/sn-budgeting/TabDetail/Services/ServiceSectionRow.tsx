@@ -30,7 +30,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
 import { useTranslations } from "next-intl";
 import { NS_BUDGETING } from "constant/index";
-import { uuid } from "utils/index";
+import { formatNumber, uuid } from "utils/index";
 import PlusIcon from "icons/PlusIcon";
 import TrashIcon from "icons/TrashIcon";
 import ConfirmDialog from "components/ConfirmDialog";
@@ -47,6 +47,7 @@ import { Option } from "constant/types";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import MoveDotIcon from "icons/MoveDotIcon";
 import ServiceItemAction, { Action } from "./ServiceItemAction";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 
 type TForm = {
   services: (TBudgetService & {
@@ -82,9 +83,24 @@ const ServiceSectionRow = ({
   const { positionOptions } = useGetOptions();
   const budgetT = useTranslations(NS_BUDGETING);
 
+  const billTypeOptions = [
+    {
+      label: "Fixed",
+      value: BudgetServiceBillable.FIXED,
+    },
+    {
+      label: "Actuals",
+      value: BudgetServiceBillable.ACTUALS,
+    },
+    {
+      label: "Non-Billable",
+      value: BudgetServiceBillable.NON_BILLABLE,
+    },
+  ];
+
   const billingBillable = {
     label: budgetT("dialogExpense.billable"),
-    value: BudgetServiceBillable.BILLABLE,
+    value: BudgetServiceBillable.NON_BILLABLE,
     color: "success.main",
     bgcolor: "success.light",
   };
@@ -141,6 +157,24 @@ const ServiceSectionRow = ({
         width: 200,
       },
       {
+        value: budgetT("tabService.section.quantity"),
+        align: "center",
+        minWidth: 200,
+        width: 200,
+      },
+      {
+        value: budgetT("tabService.section.price"),
+        align: "center",
+        minWidth: 200,
+        width: 200,
+      },
+      {
+        value: budgetT("tabService.section.totalBudget"),
+        align: "center",
+        minWidth: 200,
+        width: 200,
+      },
+      {
         value: "",
         align: "center",
         minWidth: 56,
@@ -153,7 +187,7 @@ const ServiceSectionRow = ({
   const getSxCell = (index: number) => {
     return {
       width: headerList[index]?.width || "0px" + "!important",
-      minWidth: headerList[index]?.minwidth || "0px" + "!important",
+      minWidth: headerList[index]?.minWidth || "0px" + "!important",
       maxWidth: headerList[index]?.width || "0px" + "!important",
       p: 1,
     };
@@ -175,7 +209,7 @@ const ServiceSectionRow = ({
       name: "",
       desc: "",
       serviceType: null,
-      billType: BudgetServiceBillable.BILLABLE,
+      billType: BudgetServiceBillable.NON_BILLABLE,
       unit: SERVICE_UNIT_OPTIONS.HOUR,
       estimate: 0,
       qty: 0,
@@ -326,11 +360,6 @@ const ServiceSectionRow = ({
               >
                 {fields.map((service, index) => {
                   const errs = errors[fieldIndex] ?? [];
-                  const billStatus =
-                    watch(`services.${index}.billType`) ===
-                    BudgetServiceBillable.BILLABLE
-                      ? billingBillable
-                      : billingNonBillable;
                   const defautlEstimate = getValues(
                     `services.${index}.estimateTime`,
                   );
@@ -356,7 +385,7 @@ const ServiceSectionRow = ({
                             py={1}
                           >
                             <TableRow key={service.id}>
-                              <BodyCell sx={{ px: 0 }}>
+                              <BodyCell sx={{ px: 0, ...getSxCell(0) }}>
                                 <IconButton2
                                   noPadding
                                   {...provided.dragHandleProps}
@@ -364,7 +393,7 @@ const ServiceSectionRow = ({
                                   <MoveDotIcon />
                                 </IconButton2>
                               </BodyCell>
-                              <BodyCell sx={getSxCell(0)}>
+                              <BodyCell sx={getSxCell(1)}>
                                 <TextField
                                   {...register(`services.${index}.name`)}
                                   size="small"
@@ -391,16 +420,11 @@ const ServiceSectionRow = ({
                                   }}
                                 />
                               </BodyCell>
-                              <BodyCell sx={getSxCell(1)}>
+                              <BodyCell sx={getSxCell(2)}>
                                 <Select
                                   size="small"
                                   fullWidth
                                   options={positionOptions as Option[]}
-                                  // options={[
-                                  //   { label: "Dev", value: "dev" },
-                                  //   { label: "QC", value: "qc" },
-                                  //   { label: "BA", value: "ba" },
-                                  // ]}
                                   onChangeValue={(value) => {
                                     setValue(
                                       `services.${index}.serviceType`,
@@ -432,43 +456,89 @@ const ServiceSectionRow = ({
                                   }}
                                 />
                               </BodyCell>
-                              <BodyCell sx={getSxCell(2)}>
-                                <Stack alignItems="center">
-                                  <Button
-                                    size="small"
-                                    data-index={index}
-                                    onClick={(e) => {
-                                      if (Boolean(anchorEl)) {
-                                        setAnchorEl(null);
-                                      } else {
-                                        setAnchorEl(e.currentTarget);
-                                      }
-                                    }}
-                                    sx={{
-                                      bgcolor: billStatus.bgcolor,
-                                      color: billStatus.color,
-                                      "&:hover": {
-                                        bgcolor: billStatus.bgcolor,
-                                      },
-                                    }}
-                                  >
-                                    {billStatus.label}
-                                  </Button>
-                                </Stack>
-                              </BodyCell>
                               <BodyCell sx={getSxCell(3)}>
-                                <TextField
+                                <Select
                                   size="small"
-                                  id="unit"
-                                  variant="outlined"
                                   fullWidth
-                                  value={SERVICE_UNIT_OPTIONS.HOUR}
-                                  disabled
-                                  inputProps={{ sx: { textAlign: "center" } }}
+                                  options={billTypeOptions as Option[]}
+                                  onChangeValue={(value) => {
+                                    setValue(
+                                      `services.${index}.billType`,
+                                      String(value),
+                                    );
+                                    updateValue(
+                                      fieldIndex,
+                                      watch("services") as TBudgetService[],
+                                    );
+                                  }}
+                                  value={watch(`services.${index}.billType`)}
                                   autoComplete="off"
+                                  sx={{
+                                    minWidth: "160px !important",
+                                    [`& .MuiInputBase-root`]: {
+                                      px: 1,
+                                      backgroundColor: "background.paper",
+                                      pl: 0,
+                                      gap: 1,
+                                    },
+                                    "& .MuiFormHelperText-root": {
+                                      display: "none",
+                                    },
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                      ...(hasError(errs, index, "type") && {
+                                        borderColor: "error.main",
+                                      }),
+                                    },
+                                  }}
                                 />
+
                               </BodyCell>
                               <BodyCell sx={getSxCell(4)}>
+                                <Select
+                                  size="small"
+                                  fullWidth
+                                  options={[
+                                    {
+                                      label: SERVICE_UNIT_OPTIONS.DAY,
+                                      value: SERVICE_UNIT_OPTIONS.DAY,
+                                    },
+                                    {
+                                      label: SERVICE_UNIT_OPTIONS.HOUR,
+                                      value: SERVICE_UNIT_OPTIONS.HOUR,
+                                    },
+                                  ]}
+                                  onChangeValue={(value) => {
+                                    setValue(
+                                      `services.${index}.unit`,
+                                      String(value),
+                                    );
+                                    updateValue(
+                                      fieldIndex,
+                                      watch("services") as TBudgetService[],
+                                    );
+                                  }}
+                                  value={watch(`services.${index}.unit`)}
+                                  autoComplete="off"
+                                  sx={{
+                                    minWidth: "160px !important",
+                                    [`& .MuiInputBase-root`]: {
+                                      px: 1,
+                                      backgroundColor: "background.paper",
+                                      pl: 0,
+                                      gap: 1,
+                                    },
+                                    "& .MuiFormHelperText-root": {
+                                      display: "none",
+                                    },
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                      ...(hasError(errs, index, "type") && {
+                                        borderColor: "error.main",
+                                      }),
+                                    },
+                                  }}
+                                />
+                              </BodyCell>
+                              <BodyCell sx={getSxCell(5)}>
                                 <Stack
                                   gap={1}
                                   direction="row"
@@ -535,8 +605,14 @@ const ServiceSectionRow = ({
                                   </Box>
                                 </Stack>
                               </BodyCell>
-                              <BodyCell sx={getSxCell(5)}>
+                              <BodyCell sx={getSxCell(6)}>
                                 <TimePicker
+                                  disabled={
+                                    watch(`services.${index}.billType`) !==
+                                      BudgetServiceBillable.FIXED &&
+                                    watch(`services.${index}.billType`) !==
+                                      BudgetServiceBillable.NON_BILLABLE
+                                  }
                                   slotProps={{ textField: { size: "small" } }}
                                   views={["hours", "minutes"]}
                                   format="HH:mm"
@@ -564,7 +640,100 @@ const ServiceSectionRow = ({
                                 />
                               </BodyCell>
 
-                              <BodyCell>
+                              <BodyCell sx={getSxCell(7)}>
+                                <TextField
+                                  {...register(`services.${index}.qty`)}
+                                  disabled={
+                                    watch(`services.${index}.billType`) !==
+                                      BudgetServiceBillable.FIXED &&
+                                    watch(`services.${index}.billType`) !==
+                                      BudgetServiceBillable.ACTUALS
+                                  }
+                                  size="small"
+                                  variant="outlined"
+                                  fullWidth
+                                  type="number"
+                                  sx={{
+                                    maxWidth: "350px !important",
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                      ...(hasError(errs, index, "qty") && {
+                                        borderColor: "error.main",
+                                      }),
+                                    },
+                                  }}
+                                  autoComplete="off"
+                                  onChange={(e) => {
+                                    setValue(
+                                      `services.${index}.qty`,
+                                      Number(e?.target?.value) || 0,
+                                    );
+                                    updateValue(
+                                      fieldIndex,
+                                      watch("services") as TBudgetService[],
+                                    );
+                                  }}
+                                />
+                              </BodyCell>
+
+                              <BodyCell sx={getSxCell(8)}>
+                                <Stack
+                                  direction="row"
+                                  alignItems={"center"}
+                                  gap={1}
+                                >
+                                  <TextField
+                                    {...register(`services.${index}.price`)}
+                                    disabled={
+                                      watch(`services.${index}.billType`) !==
+                                        BudgetServiceBillable.FIXED &&
+                                      watch(`services.${index}.billType`) !==
+                                        BudgetServiceBillable.ACTUALS
+                                    }
+                                    size="small"
+                                    variant="outlined"
+                                    fullWidth
+                                    type="number"
+                                    sx={{
+                                      width: "59%",
+                                      maxWidth: "350px !important",
+                                      "& .MuiOutlinedInput-notchedOutline": {
+                                        ...(hasError(errs, index, "price") && {
+                                          borderColor: "error.main",
+                                        }),
+                                      },
+                                    }}
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                      setValue(
+                                        `services.${index}.price`,
+                                        Number(e?.target?.value) || 0,
+                                      );
+                                      updateValue(
+                                        fieldIndex,
+                                        watch("services") as TBudgetService[],
+                                      );
+                                    }}
+                                  />
+                                  {"USD/" +
+                                    (watch(`services.${index}.unit`) === "hour"
+                                      ? "hr"
+                                      : "day")}
+                                </Stack>
+                              </BodyCell>
+
+                              <BodyCell sx={getSxCell(9)}>
+                                {formatNumber(
+                                  (watch(`services.${index}.qty`) || 0) *
+                                    (watch(`services.${index}.price`) || 0),
+                                  {
+                                    prefix: CURRENCY_SYMBOL["USD"],
+                                    numberOfFixed: 0,
+                                  },
+                                )}
+                                {}
+                              </BodyCell>
+
+                              <BodyCell sx={getSxCell(10)}>
                                 <Stack
                                   direction={"row"}
                                   spacing={0}
@@ -579,14 +748,6 @@ const ServiceSectionRow = ({
                                     index={index}
                                   />
                                 </Stack>
-                                {/* <TrashIcon
-                                  fontSize="medium"
-                                  sx={{
-                                    color: "error.main",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => openConfirmDelete(index)}
-                                /> */}
                               </BodyCell>
                             </TableRow>
                           </Stack>

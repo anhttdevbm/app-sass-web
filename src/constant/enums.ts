@@ -140,17 +140,19 @@ export const DocAccessibility = {
 } as const;
 
 export enum ExpenseStatus {
-  UNPAID = 'UNPAID',
-  PAID = 'PAID'
+  UNPAID = "UNPAID",
+  PAID = "PAID",
 }
 
 export enum DocumentFormat {
-  PDF = 'pdf',
-  CSV = 'csv',
-  XLSX = 'xlsx'
+  PDF = "pdf",
+  CSV = "csv",
+  XLSX = "xlsx",
 }
 
 export enum BudgetServiceBillable {
-  'BILLABLE' = 'billable',
-  'NON_BILLABLE' = 'non_billable',
+  "BILLABLE" = "billable",
+  "NON_BILLABLE" = "non_billable",
+  FIXED = "fixed",
+  ACTUALS = "actuals",
 }
