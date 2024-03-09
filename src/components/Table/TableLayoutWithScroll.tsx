@@ -30,6 +30,7 @@ export type CellProps = TableCellProps & {
   data?: string;
   width?: string | number;
   minwidth?: string | number;
+  minWidth?: string | number;
 };
 
 type TableLayoutProps = {
@@ -109,17 +110,16 @@ export const TableLayoutWithScroll = (props: TableLayoutProps) => {
     // if (timeout) clearTimeout(timeout);
 
     // timeout = setTimeout(() => {
-      const newBodySx = refs?.reduce((out, item, index) => {
-        out[`& td:nth-of-type(${index + 1}), & th:nth-of-type(${index + 1})`] =
-          {
-            minWidth: item?.current?.offsetWidth,
-            width: item?.current?.offsetWidth,
-            maxWidth: item?.current?.offsetWidth,
-            overflowX: "hidden",
-          };
-        return out;
-      }, {});
-      setBodySx(newBodySx);
+    const newBodySx = refs?.reduce((out, item, index) => {
+      out[`& td:nth-of-type(${index + 1}), & th:nth-of-type(${index + 1})`] = {
+        minWidth: item?.current?.offsetWidth,
+        width: item?.current?.offsetWidth,
+        maxWidth: item?.current?.offsetWidth,
+        overflowX: "hidden",
+      };
+      return out;
+    }, {});
+    setBodySx(newBodySx);
     // }, 250);
   }, [headerList, refs, children, size, isExpandedSidebar]);
 
@@ -155,7 +155,7 @@ export const TableLayoutWithScroll = (props: TableLayoutProps) => {
                     {
                       maxWidth:
                         item.width ?? `${100 / nOfColumnsNotWidthFixed}%`,
-                      minWidth: item?.minwidth,
+                      minWidth: item?.minwidth || item?.minWidth,
                       ...sxItem,
                       ...sxHeaderProps,
                     } as CellProps["sx"]
@@ -192,7 +192,7 @@ export const TableLayoutWithScroll = (props: TableLayoutProps) => {
                     {
                       maxWidth:
                         item.width ?? `${100 / nOfColumnsNotWidthFixed}%`,
-                      minWidth: item?.minwidth,
+                      minWidth: item?.minWidth || item?.minwidth,
                       ...sxItem,
                       ...sxHeaderProps,
                     } as CellProps["sx"]
