@@ -13,9 +13,11 @@ export enum FeedbackStatus {
 
 export type FeedbackData = {
   id?: string;
+  topic?: string;
   name?: string;
   phone?: string;
   email?: string;
+  type?: string;
   title?: string;
   content?: string;
   status?: string;
@@ -23,16 +25,23 @@ export type FeedbackData = {
   responsed_by?: string;
   responsed_content?: string;
   responsed_time?: Date;
+  forward_email?: string[]
 };
 
 export type Responsed_Feedback = {
   content?: string;
+  type?: string;
+  forwardEmail: string[]
 }
 
 export type GetFeedbackDataListQueries = BaseQueries_Feedback & {
   searchKey?: string;
   status?: string;
 };
+
+export type MailData = {
+  mail: string;
+}
 
 //Get list Feedback
 export const getFeedbacks = createAsyncThunk(
@@ -61,7 +70,9 @@ export const respondToFeedback = createAsyncThunk(
     try {
       const respondToFeedback = {
         content: data.responsed_content,
-        title : data.title
+        title : data.title,
+        type: 'BCC',
+        forwardEmail: data.forward_email
       } as Responsed_Feedback
       const response = await client.post(StringFormat(Endpoint.RESPONDFEEDBACK, { id }),
         respondToFeedback,
