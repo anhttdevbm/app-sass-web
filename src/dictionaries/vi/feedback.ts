@@ -13,9 +13,11 @@ export const FeedbackLang: FeedbackDictionary = {
 
     feedbackTable: {
         id: "Mã",
+        topic: 'Topic',
         name: "Người gửi",
         phone: "Di động",
         email: "Email",
+        mailBcc: "Mail BCC",
         subject: "Tiêu đề",
         content: "Nội dung",
         status: "Trạng thái",

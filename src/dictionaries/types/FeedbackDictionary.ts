@@ -13,9 +13,11 @@ export type FeedbackDictionary={
     
     feedbackTable: {
         id: string,
+        topic: string,
         name: string,
         phone: string,
         email: string,
+        mailBcc: string,
         subject: string,
         content: string,
         status:string,

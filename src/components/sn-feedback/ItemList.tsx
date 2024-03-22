@@ -32,7 +32,7 @@ const ItemList = () => {
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: feedbackT("feedbackTable.name"), width: "15%", align: "left" },
+      { value: feedbackT("feedbackTable.topic"), width: "15%", align: "left" },
       { value: feedbackT("feedbackTable.phone"), width: "10%", align: "left" },
       { value: feedbackT("feedbackTable.email"), width: "20%", align: "left" },
       { value: feedbackT("feedbackTable.subject"), width: "15%", align: "left" },

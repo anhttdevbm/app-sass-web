@@ -49,7 +49,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
 
   return (
     <>
-      <BodyCell align="left">{props.item.name}</BodyCell>
+      <BodyCell align="left">{props.item.topic}</BodyCell>
       <BodyCell align="left">{props.item.phone}</BodyCell>
       <BodyCell align="left">{props.item.email}</BodyCell>
       <BodyCell align="left">{props.item.title}</BodyCell>
@@ -105,6 +105,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
               responsed_by: props.item?.responsed_by,
               responsed_content: props.item?.responsed_content,
               responsed_time: props.item?.responsed_time,
+              forward_email: props.item?.forward_email ?? [],
             } as FeedbackData
           }
           onSubmit={onResponsedContent}

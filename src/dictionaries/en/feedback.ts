@@ -13,9 +13,11 @@ export const FeedbackLang : FeedbackDictionary={
 
     feedbackTable: {
         id: "ID",
+        topic: 'Topic',
         name: "Name",
         phone: "Phone",
         email: "Email",
+        mailBcc: "Mail BCC",
         subject: "Subject",
         content: "Content",
         status: "Status",

@@ -10,13 +10,15 @@ import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_FEEDBACK } from "constant/index";
 import { FormikErrors, useFormik } from "formik";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import * as Yup from "yup";
 import { getMessageErrorByAPI } from "utils/index";
 import { DataAction } from "constant/enums";
 import { useTranslations } from "next-intl";
-import { FeedbackData } from "store/feedback/actions";
+import { FeedbackData, MailData } from "store/feedback/actions";
+import SelectMailMultiple from "./SelectMailMultiple";
+
 type FormProps = {
   initialValues: FeedbackData;
   type: DataAction;
@@ -29,6 +31,7 @@ const Form = (props: FormProps) => {
   const { onAddSnackbar } = useSnackbar();
   const feedbackT = useTranslations(NS_FEEDBACK);
   const commonT = useTranslations(NS_COMMON);
+  const [mails, setMails] = useState<MailData[]>([]);
 
   const label = useMemo(() => {
     switch (type) {
@@ -65,8 +68,31 @@ const Form = (props: FormProps) => {
     initialValues,
     validationSchema,
     enableReinitialize: true,
-    onSubmit,
+    onSubmit
   });
+
+  const onSelect = (data) => {
+    const uniqueData = Array.from(new Set(data.map(item => item.mail))).map(mail => ({ mail }));
+    formik.setFieldValue("forward_email", uniqueData.map((item) => item.mail));
+  };
+
+  const onEnter = (value) => {
+    if (!value) return;
+    const itemValues = formik.values?.forward_email ?? [];
+    const isExisted = itemValues.find((item) => item == value);
+
+    if (isExisted) {
+      const updatedTags = itemValues.map(mail => ({ mail }));
+      onSelect([...updatedTags, { mail: value }]);
+    } else {
+      const newMailOption = {
+        mail: value,
+      };
+      setMails((prevListMail) => [...prevListMail, newMailOption]);
+      const updatedMails = itemValues.map(mail => ({ mail }));
+      onSelect([...updatedMails, { mail: value }]);
+    }
+  };
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
@@ -112,6 +138,16 @@ const Form = (props: FormProps) => {
             </Typography>
             <hr />
             <Stack>
+              <Typography sx={{ mb: 1 }} color="#424242">
+                {feedbackT("feedbackTable.mailBcc")}
+              </Typography>
+              <SelectMailMultiple
+                items={mails}
+                sx={sxConfig}
+                onSelect={(e, data) => onSelect(data)}
+                onEnter={onEnter}
+                value={formik.values.forward_email?.map((mail) => ({ mail }))}
+              />
               <Typography sx={{ mb: 1 }} color="#424242" variant="h5">
                 {feedbackT("feedbackTable.subject")}:
               </Typography>
@@ -170,3 +206,14 @@ export default memo(Form);
 export const validationSchema = Yup.object().shape({
   responsed_content: Yup.string().trim().required("form.error.required"),
 });
+
+const sxConfig = {
+  padding: '10px',
+  input: {
+    height: 56,
+    maxWidth: '100%',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+};

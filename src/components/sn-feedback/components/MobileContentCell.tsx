@@ -53,8 +53,8 @@ const MobileContentCell = (props: MobileContentCellProps) => {
   return (
     <BodyCell align="left">
       <Stack spacing={2} py={1.5}>
-        <InformationItem label={feedbackT("feedbackTable.name")}>
-          <Text>{props.item.name}</Text>
+        <InformationItem label={feedbackT("feedbackTable.topic")}>
+          <Text>{props.item.topic}</Text>
         </InformationItem>
         <InformationItem label={feedbackT("feedbackTable.phone")}>
           {props.item.phone}
@@ -111,6 +111,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
                   responsed_by: props.item?.responsed_by,
                   responsed_content: props.item?.responsed_content,
                   responsed_time: props.item?.responsed_time,
+                  forward_email: props.item?.forward_email ?? [],
                 } as FeedbackData
               }
               onSubmit={onResponsedContent}
