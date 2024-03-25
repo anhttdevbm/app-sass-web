@@ -66,12 +66,6 @@ const Actions = () => {
 
   useEffect(() => {
     setQueries(filters);
-    console.log(options);
-    
-    // const newValue = options.find(
-    //   (item) => item && value && item?.value === value,
-    // );
-    // setOptionSelected(newValue);
   }, [filters]);
 
   return (
