@@ -21,6 +21,7 @@ export const LayoutLang: LayoutDictionary = {
     costHistory: "Lịch sử chi phí",
     listOfPositions: "Danh sách chức vụ",
     projectTypeList: "Danh sách loại dự án",
+    clientCompanies: "Công ty khách hàng",
     companyInformation: "Thông tin công ty",
     manager: "Quản lý",
     companyList: "Danh sách công ty",

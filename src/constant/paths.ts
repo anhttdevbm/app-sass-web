@@ -14,6 +14,7 @@ export const EMPLOYEES_PATH = "/employees";
 export const COST_HISTORY_PATH = "/cost-history";
 export const POSITIONS_PATH = "/positions";
 export const PROJECT_TYPES_PATH = "/project-types";
+export const CLIENT_COMPANIES_PATH = "/client-companies";
 export const MY_COMPANY_PATH = "/my-company";
 export const COMPANIES_PATH = "/companies";
 export const COMPANY_DETAIL_PATH = "/companies/{id}";

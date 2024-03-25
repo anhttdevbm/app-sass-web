@@ -21,6 +21,7 @@ export const LayoutLang: LayoutDictionary = {
     costHistory: "Cost History",
     listOfPositions: "List Of Positions",
     projectTypeList: "Project Type List",
+    clientCompanies: "Client Company",
     companyInformation: "Company Information",
     manager: "Manager",
     companyList: "Company List",

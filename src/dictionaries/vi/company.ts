@@ -72,6 +72,21 @@ export const CompanyLang: CompanyDictionary = {
       success: "{label} loại dự án thành công!",
     },
   },
+  clientCompany: {
+    head: {
+      title: "Công ty khách hàng | Taskcover",
+    },
+    title: "Công ty khách hàng",
+    create: "Thêm",
+    createBy: "Người tạo",
+    createDate: "Ngày tạo",
+    duplicate: "Nhân bản",
+    form: {
+      title: {
+        name: "Tạo một công ty khách hàng mới",
+      }
+    }
+  },
   information: {
     head: {
       title: "Thông tin công ty | Taskcover",
