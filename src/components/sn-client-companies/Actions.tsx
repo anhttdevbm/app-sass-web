@@ -18,6 +18,8 @@ import AssignerFilter from "./components/AssignerFilter";
 import { Option } from "constant/types";
 import Image from "next/image";
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { ClientCompanyData } from "store/company/actions";
+import { Endpoint, client } from "api";
 
 const Actions = () => {
   const {
@@ -56,6 +58,17 @@ const Actions = () => {
     const q = { ...queries };
     const path = getPath(pathname, q);
     push(path);
+  };
+
+  const onUpdate = async (data: ClientCompanyData) => {
+    const payload = { ...data };       
+    if (typeof data["avatar"] === "object") {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
+      payload.avatar = logoUrl;
+    } else {
+      delete payload["avatar"];
+    }
+    return await onCreateClientCompany(payload);
   };
 
   const onDoubleClick = () => setOptionSelected(undefined);
@@ -178,15 +191,15 @@ const Actions = () => {
           {commonT("search")}
         </Button>
       </Stack>
-      {/* {isShow && (
+      {isShow && (
         <Form
           open={isShow}
           onClose={onHide}
           type={DataAction.CREATE}
           initialValues={INITIAL_VALUES}
-          onSubmit={onCreateClientCompany}
+          onSubmit={onUpdate}
         />
-      )} */}
+      )}
     </>
   );
 };
@@ -194,6 +207,7 @@ const Actions = () => {
 export default memo(Actions);
 
 const INITIAL_VALUES = {
+  code: "COM1z",
   name: "",
   tax_code: "",
   zip_code: "",
@@ -202,13 +216,15 @@ const INITIAL_VALUES = {
   email: "",
   avatar: "",
   website: "",
+  status: false,
+  created_time: "",
   contact: {
     name: "",
     position: "",
     address: "",
     phone: "",
     email: "",
-    avatar: "",
+    avatar: [],
     website: "",
   },
 };

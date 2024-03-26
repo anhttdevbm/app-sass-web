@@ -24,6 +24,7 @@ type FormProps = {
 } & Omit<DialogLayoutProps, "children" | "onSubmit">;
 
 const INITIAL_VALUES = {
+  code: "",
   name: "",
   tax_code: "",
   zip_code: "",
@@ -32,13 +33,15 @@ const INITIAL_VALUES = {
   email: "",
   avatar: "",
   website: "",
+  status: false,
+  created_time: "",
   contact: {
     name: "",
     position: "",
     address: "",
     phone: "",
     email: "",
-    avatar: "",
+    avatar: [],
     website: "",
   },
 };
@@ -48,28 +51,28 @@ type FormTypes = typeof INITIAL_VALUES//  & { avatar?: File };
 const Form = (props: FormProps) => {
   const { initialValues, type, onSubmit: onSubmitProps, ...rest } = props;
   const { onAddSnackbar } = useSnackbar();
-  const { user, onGetProfile } = useAuth();
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
   const [isShowContact, setShowContact] = useState<boolean>(false);
 
-  const { options, onGetOptions, isFetching, totalPages, pageIndex, pageSize } =
+  const { onGetOptions, isFetching, totalPages, pageIndex, pageSize } =
     usePositionOptions();
 
   const onSubmit = async (values: FormTypes) => {
     try {
-      // const newItem = await onSubmitProps(values);
+      const newItem = await onSubmitProps(values);
+      if (newItem) {
+      onAddSnackbar(
+        companyT("clientCompany.notification.success"),
+        "success",
+      );
       props.onClose();
-      // if (newItem) {
-      // onAddSnackbar(
-      //   companyT("employees.notification.success"),
-      //   "success",
-      // );
-      // props.onClose();
-      // } else {
-      // throw AN_ERROR_TRY_AGAIN;
-      // }
+      } else {
+      throw AN_ERROR_TRY_AGAIN;
+      }
+          
     } catch (error) {
+        
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
@@ -103,8 +106,9 @@ const Form = (props: FormProps) => {
     onGetOptions({ pageSize, pageIndex: pageIndex + 1 });
   };
 
-  const onChangeAvatar = (newFile?: File) => {
-    formik.setFieldValue("avatar", newFile);
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const onChangeField = (name: string, newValue?: any) => {
+    formik.setFieldValue(name, newValue);
   };
 
   const onShowContact = () => setShowContact(true);
@@ -121,19 +125,20 @@ const Form = (props: FormProps) => {
       submitting={formik.isSubmitting}
       disabled={disabled}
       onSubmit={formik.handleSubmit}
-      submitText={"Create"}
+      submitText={companyT("clientCompany.create")}
       {...rest}
     >
       <Stack direction="row" gap={3}>
         <Stack>
-          {/*<AvatarUpload*/}
-          {/*  value={formik.values?.avatar}*/}
-          {/*  onChange={onChangeAvatar}*/}
-          {/*/>*/}
+          <AvatarUpload
+            name="avatar"
+            value={formik.values?.avatar}
+            onChange={onChangeField}
+          />
         </Stack>
         <Stack width="100%" display="flex" flexDirection="column" gap={2.5}>
           <Input
-            title="Company name"
+            title={companyT("clientCompany.companyName")}
             name="name"
             required
             onChange={formik.handleChange}
@@ -148,7 +153,7 @@ const Form = (props: FormProps) => {
 
           <Stack display="flex" flexDirection="row" gap={2}>
             <Input
-              title="Tax code"
+              title={companyT("clientCompany.taxCode")}
               name="tax_code"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -158,7 +163,7 @@ const Form = (props: FormProps) => {
               sx={{ width: "100%" }}
             />
             <Input
-              title="Address"
+              title={companyT("clientCompany.address")}
               name="address"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -170,7 +175,7 @@ const Form = (props: FormProps) => {
           </Stack>
           <Stack display="flex" flexDirection="row" gap={2}>
             <Input
-              title="Zipcode"
+              title={companyT("clientCompany.zipCode")}
               name="zip_code"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -234,21 +239,21 @@ const Form = (props: FormProps) => {
             >
               <Stack display="flex" flexDirection="row" gap={2}>
                 <Input
-                  title="Full name"
+                  title={commonT("fullName")}
                   name="contact.name"
                   required
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.name}
                   disabled={type === DataAction.UPDATE}
-                  error={commonT(touchedErrors?.name, {
+                  error={commonT(touchedErrors?.contact?.name, {
                     name: "Full name",
                   })}
                   rootSx={sxConfig.input}
                   sx={{ width: "100%" }}
                 />
                 <Input
-                  title="Position"
+                  title={commonT("position")}
                   name="contact.position"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -260,7 +265,7 @@ const Form = (props: FormProps) => {
               </Stack>
               <Stack display="flex" flexDirection="row" gap={2}>
                 <Input
-                  title="Phone number"
+                  title={commonT("phone")}
                   name="contact.phone"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -285,7 +290,7 @@ const Form = (props: FormProps) => {
               </Stack>
               <Stack display="flex" flexDirection="row" gap={2}>
                 <Input
-                  title="Address"
+                  title={companyT("clientCompany.address")}
                   name="contact.address"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -295,7 +300,7 @@ const Form = (props: FormProps) => {
                   sx={{ width: "100%" }}
                 />
                 <Input
-                  title="Position"
+                  title="Website"
                   name="contact.website"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -322,7 +327,6 @@ export const validationSchema = Yup.object().shape({
     name: Yup.string().required("form.error.required"),
     email: Yup.string().trim().matches(EMAIL_REGEX, "form.error.invalid"),
   })
-  // position: Yup.string().required("form.error.required"),
 });
 
 const sxConfig = {

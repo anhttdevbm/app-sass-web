@@ -81,7 +81,11 @@ export type CompanyDictionary = {
       title: {
         name: string;
       }
-    }
+    },
+    companyName: string;
+    taxCode: string;
+    address: string;
+    zipCode: string;
   };
   information: {
     head: {

@@ -85,7 +85,11 @@ export const CompanyLang: CompanyDictionary = {
       title: {
         name: "Tạo một công ty khách hàng mới",
       }
-    }
+    },
+    companyName: "Tên công ty",
+    taxCode: "Mã số thuế",
+    address: "Địa chỉ",
+    zipCode: "Mã bưu chính",
   },
   information: {
     head: {

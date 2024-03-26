@@ -62,18 +62,21 @@ export type ClientCompanyData = {
   name: string;
   tax_code: string;
   address: string;
+  zip_code?: string;
   phone: string;
   email: string;
   created_time: string;
   status: boolean;
   avatar?: string;
+  website?: string;
   contact?: {
     name?: string;
     position?: string;
     address?: string;
     phone?: string;
     email?: string;
-    avatar?: [];
+    website?: string;
+    avatar?: string[];
   };
 };
 
@@ -484,7 +487,7 @@ export const createClientCompany = createAsyncThunk(
         baseURL: COMPANY_API_URL,
       });
 
-      if (response?.status === HttpStatusCode.OK) {
+      if (response?.status === HttpStatusCode.CREATED) {
         return response.data?.id ? response.data : response.data?.body;
       }
       throw AN_ERROR_TRY_AGAIN;

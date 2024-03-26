@@ -85,7 +85,11 @@ export const CompanyLang: CompanyDictionary = {
       title: {
         name: "Create a new client company",
       }
-    }
+    },
+    companyName: "Company Name",
+    taxCode: "Tax code",
+    address: "Address",
+    zipCode: "Zipcode",
   },
   information: {
     head: {

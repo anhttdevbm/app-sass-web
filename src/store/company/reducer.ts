@@ -572,14 +572,17 @@ const companySlice = createSlice({
       .addCase(
         getClientCompanies.fulfilled,
         (state, action: PayloadAction<ItemListResponse>) => {
-          const { items, ...paging } = action.payload;
+          const { items, concat, ...paging } = action.payload;
 
-          state.clientCompanies = removeDuplicateItem(
-            state.clientCompanies.concat(items as ClientCompany[]),
-          );
+          if (concat) {
+            state.clientCompanies = removeDuplicateItem(
+              state.clientCompanies.concat(items as ClientCompany[]),
+            );
+          } else {
+            state.clientCompanies = items as ClientCompany[];
+          }
 
           state.clientCompaniesStatus = DataStatus.SUCCEEDED;
-          // state.employeeOptionsError = undefined;
           state.clientCompaniesPaging = Object.assign(
             state.clientCompaniesPaging,
             paging,
