@@ -20,6 +20,8 @@ import {
   getClientCompanies,
   GetClientConpanyListQueries,
   getClientCompaniesMemberOptions,
+  createClientCompany,
+  deleteClientCompany,
 } from "./actions";
 import { ItemListResponse, Paging, User, Option } from "constant/types";
 import { DataStatus, PayStatus } from "constant/enums";
@@ -120,6 +122,7 @@ export interface ClientCompany {
   email: string;
   created_time: string;
   status: boolean;
+  zip_code?: string;
   contact?: {
     _id: string;
     id?: string;
@@ -130,6 +133,7 @@ export interface ClientCompany {
     email?: string;
     created_time?: string;
     avatar?: [];
+    website?: string;
   };
 }
 
@@ -608,7 +612,7 @@ const companySlice = createSlice({
         getClientCompaniesMemberOptions.fulfilled,
         (state, action: PayloadAction<ItemListResponse>) => {
           const { items, ...paging } = action.payload;
-          state.clientCompaniesMemberOptions = []; 
+          state.clientCompaniesMemberOptions = [];
           const newOptions: Option[] = (items as Employee[]).map((item) => ({
             label: item.fullname,
             value: item.id,
@@ -626,6 +630,35 @@ const companySlice = createSlice({
             state[`${prefixKey}Paging`],
             paging,
           );
+        },
+      )
+      .addCase(
+        createClientCompany.fulfilled,
+        (state, action: PayloadAction<ClientCompany>) => {
+          console.log(action.payload);
+          state.clientCompanies.unshift(action.payload);
+
+          if (state.clientCompanies.length > state.clientCompaniesPaging.pageSize) {
+            state.clientCompanies.pop();
+            if (state.clientCompaniesPaging.totalPages !== undefined) {
+              state.clientCompaniesPaging.totalPages += 1;
+            }
+          }
+
+          if (state.clientCompaniesPaging.totalItems !== undefined) {
+            state.clientCompaniesPaging.totalItems += 1;
+          }
+        },
+      )
+      .addCase(
+        deleteClientCompany.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.clientCompanies = state.clientCompanies.filter(
+            (item) => !action.payload.includes(item.id),
+          );         
+          if (state.clientCompaniesPaging.totalItems !== undefined) {
+            state.clientCompaniesPaging.totalItems -= 1;
+          }
         },
       ),
 });

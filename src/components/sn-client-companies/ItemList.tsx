@@ -1,40 +1,25 @@
 "use client";
 
-import { Stack, TableRow } from "@mui/material";
-import ConfirmDialog from "components/ConfirmDialog";
+import { TableRow } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import Pagination from "components/Pagination";
 import { ActionsCell, CellProps, TableLayout } from "components/Table";
-import { Checkbox, IconButton } from "components/shared";
-import { DataAction, PayStatus } from "constant/enums";
+import { DataAction } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useQueryParams from "hooks/useQueryParams";
-import useTheme from "hooks/useTheme";
-import EditIcon from "icons/EditIcon";
 import DuplicateIcon from "icons/DuplicateIcon";
-import DeleteDocs from "icons/DeleteDocs";
-
-import TrashIcon from "icons/TrashIcon";
-import { HEADER_HEIGHT } from "layouts/Header";
+import EditIcon from "icons/EditIcon";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
-import {
-  ChangeEvent,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { EmployeeData, ClientCompanyData } from "store/company/actions";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { ClientCompanyData } from "store/company/actions";
 import { ClientCompany } from "store/company/reducer";
 import { useClientCompanies } from "store/company/selectors";
 import { getPath } from "utils/index";
-import CreateForm from "./components/CreateForm";
-import DuplicateForm from "./components/DuplicateForm";
 import { DesktopCells, MobileContentCell } from "./components";
 import DeleteConfirm from "./components/DeleteConfirm";
+import DuplicateForm from "./components/DuplicateForm";
 
 const ItemList = () => {
   const {
@@ -46,7 +31,9 @@ const ItemList = () => {
     pageSize,
     pageIndex,
     totalPages,
-    onGetClientCompanies
+    onGetClientCompanies,
+    onDeleteClientCompany,
+    onCreateClientCompany,
   } = useClientCompanies();
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
@@ -55,27 +42,13 @@ const ItemList = () => {
   const pathname = usePathname();
   const { push } = useRouter();
   const { isMdSmaller } = useBreakpoint();
-  const { isDarkMode } = useTheme();
+  const actionCellRef = useRef<HTMLDivElement>(null);
 
   const [item, setItem] = useState<ClientCompany | undefined>();
-  const [selectedList, setSelectedList] = useState<ClientCompany[]>([]);
+  const [selected, setSelected] = useState<ClientCompany | undefined>(
+    undefined,
+  );
   const [action, setAction] = useState<DataAction | undefined>();
-
-  const isCheckedAll = useMemo(
-    () => Boolean(selectedList.length && selectedList.length === items.length),
-    [selectedList.length, items.length],
-  );
-  const onChangeAll = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const isChecked = event.target.checked;
-      if (isChecked) {
-        setSelectedList(items);
-      } else {
-        setSelectedList([]);
-      }
-    },
-    [items],
-  );
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
@@ -133,7 +106,7 @@ const ItemList = () => {
   const onActionToItem = (action: DataAction, item?: ClientCompany) => {
     return () => {
       if (action === DataAction.DELETE) {
-        item && setSelectedList([item]);
+        item && setSelected(item);
       } else {
         item && setItem(item);
       }
@@ -161,33 +134,17 @@ const ItemList = () => {
     onChangeQueries({ pageIndex: 1, pageSize: newPageSize });
   };
 
-  const onUpdateEmployee = async (data: EmployeeData) => {
-    // if (!item) return;
-    // return await onUpdateEmployeeAction(item.id, data.position);
-  };
-
   const onDuplicateClientCompany = async (data: ClientCompanyData) => {
-    // if (!item) return;
-    // return await onUpdateEmployeeAction(item.id, data.position);
-  };
-
-  const onPay = () => {
-    setAction(DataAction.OTHER);
-  };
-  const onDelete = () => {
-    setAction(DataAction.DELETE);
+    if (!item) return;
+    return await onCreateClientCompany(data);
   };
 
   const onSubmitDelete = async () => {
-    const ids = selectedList.map((item) => item.id);
     try {
-      // const idsResponse = await onDeleteEmployees(ids);
-      // if (idsResponse.length) {
-      //   setAction(undefined);
-      //   setSelectedList([]);
-      //   // setId(undefined);
-      // }
-      // return idsResponse;
+      if (selected?.id) {
+        return await onDeleteClientCompany(selected?.id);
+      }
+      return undefined;
     } catch (error) {
       throw error;
     }
@@ -197,10 +154,6 @@ const ItemList = () => {
     if (!isReady) return;
     onGetClientCompanies({ ...DEFAULT_PAGING, ...initQuery });
   }, [initQuery, isReady, onGetClientCompanies]);
-
-  useEffect(() => {
-    setSelectedList([]);
-  }, [pageIndex]);
 
   return (
     <>
@@ -238,6 +191,7 @@ const ItemList = () => {
                       p: { xs: "4px!important", lg: 1 },
                     },
                   }}
+                  ref={actionCellRef}
                   options={[
                     {
                       content: commonT("edit"),
@@ -279,16 +233,12 @@ const ItemList = () => {
         />
       </FixedLayout>
 
-      {action === DataAction.OTHER && (
+      {action === DataAction.OTHER && item && (
         <DuplicateForm
           open
           onClose={onResetAction}
           type={DataAction.UPDATE}
-          initialValues={
-            {
-             address: item?.address
-            } as ClientCompanyData
-          }
+          initialValues={item}
           onSubmit={onDuplicateClientCompany}
         />
       )}
@@ -308,16 +258,14 @@ const ItemList = () => {
         />
       )} */}
 
-      {/*<DeleteConfirm*/}
-      {/*  open={action === DataAction.DELETE}*/}
-      {/*  onClose={onResetAction}*/}
-      {/*  title={companyT("employees.confirmRemove.title")}*/}
-      {/*  content={companyT("employees.confirmRemove.content", {*/}
-      {/*    count: selectedList.length,*/}
-      {/*  })}*/}
-      {/*  items={selectedList}*/}
-      {/*  onSubmit={onSubmitDelete}*/}
-      {/*/>*/}
+      <DeleteConfirm
+        open={action === DataAction.DELETE}
+        onClose={onResetAction}
+        title={companyT("clientCompany.confirmRemove.title")}
+        content={companyT("clientCompany.confirmRemove.content")}
+        item={selected}
+        onSubmit={onSubmitDelete}
+      />
     </>
   );
 };

@@ -58,7 +58,6 @@ export type GetClientConpanyListQueries = BaseQueries & {
 };
 
 export type ClientCompanyData = {
-  position: string | number | null | undefined;
   code: string;
   name: string;
   tax_code: string;
@@ -423,34 +422,6 @@ export const getClientCompanies = createAsyncThunk(
   },
 );
 
-// export const getClientCompaniesMemberOptions = createAsyncThunk(
-//   "company/getClientCompaniesMemberOptions",
-//   async ({
-//     concat,
-//     ...queries
-//   }: GetEmployeeListQueries & { concat?: boolean }) => {
-//     queries = serverQueries(
-//       { ...queries, sort: "created_time=-1" },
-//       ["email", "fullname"],
-//       undefined,
-//       ["status"],
-//     ) as GetEmployeeListQueries;
-//     console.log(queries);
-//     try {
-//       const response = await client.get(Endpoint.USERS, queries, {
-//         baseURL: AUTH_API_URL,
-//       });
-
-//       if (response?.status === HttpStatusCode.OK) {
-//         return { ...refactorRawItemListResponse(response.data), concat };
-//       }
-//       throw AN_ERROR_TRY_AGAIN;
-//     } catch (error) {
-//       throw error;
-//     }
-//   },
-// );
-
 export const getClientCompaniesMemberOptions = createAsyncThunk(
   "company/getClientCompaniesMemberOptions",
   async ({
@@ -479,7 +450,6 @@ export const getClientCompaniesMemberOptions = createAsyncThunk(
   },
 );
 
-
 export const createClientCompany = createAsyncThunk(
   "company/createClientCompany",
   async (data: ClientCompanyData) => {
@@ -489,7 +459,30 @@ export const createClientCompany = createAsyncThunk(
       });
 
       if (response?.status === HttpStatusCode.CREATED) {
-        return response.data?.id ? response.data : response.data?.body;
+        return response.data?.id
+          ? { ...response.data, contact: data?.contact }
+          : response.data?.body;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteClientCompany = createAsyncThunk(
+  "company/deleteClientCompany",
+  async (id: string) => {
+    try {
+      const response = await client.delete(
+        `${Endpoint.CLIENT_COMPANIES}/${id}`,
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return id;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {

@@ -84,12 +84,23 @@ export const CompanyLang: CompanyDictionary = {
     form: {
       title: {
         name: "Create a new client company",
-      }
+      },
     },
     companyName: "Company Name",
     taxCode: "Tax code",
     address: "Address",
     zipCode: "Zipcode",
+    duplicateForm: {
+      title: "Duplicate",
+      newName: "New name",
+    },
+    confirmRemove: {
+      title: "Confirm to Delete",
+      content: "Are you sure to delete this client company?",
+    },
+    notification: {
+      success: "{label} client company successfully!",
+    },
   },
   information: {
     head: {
