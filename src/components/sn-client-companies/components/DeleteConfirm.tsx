@@ -1,20 +1,17 @@
-import { memo, useState } from "react";
-import { Stack } from "@mui/material";
 import ConfirmDialog, { ConfirmDialogProps } from "components/ConfirmDialog";
-import { Company, Employee } from "store/company/reducer";
-import Avatar from "components/Avatar";
-import { Text } from "components/shared";
-import { useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI } from "utils/index";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { useTranslations } from "next-intl";
+import { memo, useState } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { ClientCompanyData } from "store/company/actions";
+import { getMessageErrorByAPI } from "utils/index";
 
 type DeleteConfirmProps = ConfirmDialogProps & {
-  items?: Employee[];
+  item?: ClientCompanyData;
 };
 
 const DeleteConfirm = (props: DeleteConfirmProps) => {
-  const { items = [], onSubmit: onSubmitProps, ...rest } = props;
+  const { item, onSubmit: onSubmitProps, ...rest } = props;
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
 
@@ -45,21 +42,7 @@ const DeleteConfirm = (props: DeleteConfirmProps) => {
     }
   };
 
-  return (
-    <ConfirmDialog onSubmit={onSubmit} pending={isSubmitting} {...rest}>
-      <Stack alignItems="center" spacing={2} my={3} flex={1}>
-        {items.map((item) => (
-          <Stack direction="row" width={275} key={item.id} spacing={1.5}>
-            <Avatar size={40} src={item.avatar?.link} />
-            <Stack>
-              <Text variant="h6">{item.fullname}</Text>
-              <Text variant="body2">{item.email}</Text>
-            </Stack>
-          </Stack>
-        ))}
-      </Stack>
-    </ConfirmDialog>
-  );
+  return <ConfirmDialog onSubmit={onSubmit} pending={isSubmitting} {...rest} />;
 };
 
 export default memo(DeleteConfirm);

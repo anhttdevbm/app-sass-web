@@ -1,20 +1,18 @@
-import { Stack, Card } from "@mui/material";
+import { Card, Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
-import { FormikErrors, useFormik, useField } from "formik";
-import { memo, useEffect, useMemo, useState } from "react";
-import { useAuth, useSnackbar } from "store/app/selectors";
-import * as Yup from "yup";
-import { getMessageErrorByAPI } from "utils/index";
-import { DataAction } from "constant/enums";
 import { Button, Input, Text } from "components/shared";
-import { ClientCompanyData } from "store/company/actions";
+import { DataAction } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { EMAIL_REGEX } from "constant/regex";
-import { usePositionOptions } from "store/global/selectors";
-import { useTranslations } from "next-intl";
-import AvatarUpload from "./AvatarUpload";
+import { FormikErrors, useFormik } from "formik";
 import PlusIcon from "icons/PlusIcon";
+import { useTranslations } from "next-intl";
+import { memo, useMemo, useState } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+import * as Yup from "yup";
+import AvatarUpload from "./AvatarUpload";
 
 type FormProps = {
   initialValues: FormTypes;
@@ -46,7 +44,7 @@ const INITIAL_VALUES = {
   },
 };
 
-type FormTypes = typeof INITIAL_VALUES//  & { avatar?: File };
+type FormTypes = typeof INITIAL_VALUES; //  & { avatar?: File };
 
 const Form = (props: FormProps) => {
   const { initialValues, type, onSubmit: onSubmitProps, ...rest } = props;
@@ -55,24 +53,21 @@ const Form = (props: FormProps) => {
   const commonT = useTranslations(NS_COMMON);
   const [isShowContact, setShowContact] = useState<boolean>(false);
 
-  const { onGetOptions, isFetching, totalPages, pageIndex, pageSize } =
-    usePositionOptions();
-
   const onSubmit = async (values: FormTypes) => {
     try {
       const newItem = await onSubmitProps(values);
       if (newItem) {
-      onAddSnackbar(
-        companyT("clientCompany.notification.success"),
-        "success",
-      );
-      props.onClose();
+        onAddSnackbar(
+          companyT("clientCompany.notification.success", {
+            label: commonT("createNew"),
+          }),
+          "success",
+        );
+        props.onClose();
       } else {
-      throw AN_ERROR_TRY_AGAIN;
+        throw AN_ERROR_TRY_AGAIN;
       }
-          
     } catch (error) {
-        
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
@@ -101,17 +96,15 @@ const Form = (props: FormProps) => {
     [touchedErrors, formik.isSubmitting],
   );
 
-  const onEndReached = () => {
-    if (isFetching || (totalPages && pageIndex >= totalPages)) return;
-    onGetOptions({ pageSize, pageIndex: pageIndex + 1 });
-  };
-
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const onChangeField = (name: string, newValue?: any) => {
     formik.setFieldValue(name, newValue);
   };
 
-  const onShowContact = () => setShowContact(true);
+  const onShowContact = () => {
+    setShowContact(true);
+    formik?.setFieldValue("isShowContact", true);
+  };
 
   return (
     <FormLayout
@@ -323,10 +316,24 @@ export default memo(Form);
 export const validationSchema = Yup.object().shape({
   name: Yup.string().required("form.error.required"),
   email: Yup.string().trim().matches(EMAIL_REGEX, "form.error.invalid"),
-  contact: Yup.object().shape({
-    name: Yup.string().required("form.error.required"),
-    email: Yup.string().trim().matches(EMAIL_REGEX, "form.error.invalid"),
-  })
+  contact: Yup.object()
+    .shape({
+      name: Yup.string().test(
+        "required",
+        "form.error.required",
+        (value, context) => {
+          if (
+            !!context?.from?.length &&
+            context?.from[1]?.value["isShowContact"]
+          ) {
+            return !!value?.length;
+          }
+          return true;
+        },
+      ),
+      email: Yup.string().trim().matches(EMAIL_REGEX, "form.error.invalid"),
+    })
+    .nullable(),
 });
 
 const sxConfig = {

@@ -71,7 +71,7 @@ export type CompanyDictionary = {
   clientCompany: {
     head: {
       title: string;
-    },
+    };
     title: string;
     create: string;
     createBy: string;
@@ -80,12 +80,23 @@ export type CompanyDictionary = {
     form: {
       title: {
         name: string;
-      }
-    },
+      };
+    };
     companyName: string;
     taxCode: string;
     address: string;
     zipCode: string;
+    duplicateForm: {
+      title: string;
+      newName: string;
+    },
+    confirmRemove: {
+      title: string;
+      content: string;
+    };
+    notification: {
+      success: string;
+    };
   };
   information: {
     head: {

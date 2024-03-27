@@ -1,25 +1,25 @@
 "use client";
 
-import { Stack, selectClasses, Theme } from "@mui/material";
+import { Stack, Theme, selectClasses } from "@mui/material";
+import { Endpoint, client } from "api";
 import { Date, Search } from "components/Filters";
 import { Button, Text } from "components/shared";
-import { DataAction, PayStatus } from "constant/enums";
-import { NS_COMMON, NS_COMPANY, DATE_FORMAT_HYPHEN } from "constant/index";
+import { DataAction } from "constant/enums";
+import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_COMPANY } from "constant/index";
+import { Option } from "constant/types";
 import useToggle from "hooks/useToggle";
 import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { memo, useEffect, useState } from "react";
-import { useClientCompanies } from "store/company/selectors";
-import { getPath } from "utils/index";
-import Form from "./components/CreateForm";
-import AssignerFilter from "./components/AssignerFilter";
-import { Option } from "constant/types";
 import Image from "next/image";
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useEffect, useState } from "react";
 import { ClientCompanyData } from "store/company/actions";
-import { Endpoint, client } from "api";
+import { useClientCompanies } from "store/company/selectors";
+import { getPath } from "utils/index";
+import AssignerFilter from "./components/AssignerFilter";
+import Form from "./components/CreateForm";
 
 const Actions = () => {
   const {
@@ -191,8 +191,7 @@ const Actions = () => {
           {commonT("search")}
         </Button>
       </Stack>
-      // TODO: Fix now show form
-      {/* {isShow && (
+      {isShow && (
         <Form
           open={isShow}
           onClose={onHide}
@@ -200,7 +199,7 @@ const Actions = () => {
           initialValues={INITIAL_VALUES}
           onSubmit={onUpdate}
         />
-      )}  */}
+      )} 
     </>
   );
 };

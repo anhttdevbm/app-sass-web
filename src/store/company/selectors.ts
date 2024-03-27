@@ -24,6 +24,7 @@ import {
   ClientCompanyData,
   createClientCompany,
   getClientCompaniesMemberOptions,
+  deleteClientCompany,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
@@ -402,6 +403,17 @@ export const useClientCompanies = () => {
     [dispatch],
   );
 
+  const onDeleteClientCompany = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(deleteClientCompany(id)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
   return {
     items,
     status,
@@ -417,5 +429,6 @@ export const useClientCompanies = () => {
     onGetClientCompanies,
     onGetMemberOptions,
     onCreateClientCompany,
+    onDeleteClientCompany,
   };
 };

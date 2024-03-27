@@ -84,12 +84,23 @@ export const CompanyLang: CompanyDictionary = {
     form: {
       title: {
         name: "Tạo một công ty khách hàng mới",
-      }
+      },
     },
     companyName: "Tên công ty",
     taxCode: "Mã số thuế",
     address: "Địa chỉ",
     zipCode: "Mã bưu chính",
+    duplicateForm: {
+      title: "Nhân bản",
+      newName: "Tên mới",
+    },
+    confirmRemove: {
+      title: "Xác nhận xóa",
+      content: "Bạn có chắc chắn xóa công ty khách hàng này không?",
+    },
+    notification: {
+      success: "{label} công ty khách hàng thành công!",
+    },
   },
   information: {
     head: {
