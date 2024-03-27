@@ -58,6 +58,7 @@ export type GetClientConpanyListQueries = BaseQueries & {
 };
 
 export type ClientCompanyData = {
+  position: string | number | null | undefined;
   code: string;
   name: string;
   tax_code: string;
