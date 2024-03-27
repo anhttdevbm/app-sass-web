@@ -8,7 +8,16 @@ export type DropdownProps = Omit<SelectProps, "name" | "onChange"> & {
 };
 
 const Dropdown = (props: DropdownProps) => {
-  const { rootSx, name, onChange, value, sx, options, ...rest } = props;
+  const {
+    rootSx,
+    name,
+    onChange,
+    value,
+    sx,
+    options,
+    hasAll = true,
+    ...rest
+  } = props;
 
   const hasValue = useMemo(
     () => options.some((option) => option.value === value),
@@ -19,26 +28,25 @@ const Dropdown = (props: DropdownProps) => {
     const { name, value } = event.target;
     onChange(name, value);
   };
-
   return (
     <Select
       size="small"
-      hasAll
+      hasAll={hasAll}
       onlyContent
       rootSx={{
         color: hasValue ? "primary.main" : "grey.400",
         fontWeight: 600,
         height: 32,
         "&": {
-          position: 'relative',
-          width: '100%',
+          position: "relative",
+          width: "100%",
         },
         "& .text-option": {
           fontWeight: 600,
           color: "grey.400",
           whiteSpace: "wrap",
-          textAlign: 'left',
-          width: '100% important'
+          textAlign: "left",
+          width: "100% important",
         },
         "& >svg": {
           fontSize: 20,

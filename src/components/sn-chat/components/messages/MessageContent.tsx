@@ -1,11 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography, { TypographyProps } from "@mui/material/Typography";
-import {
-  MediaPreviewItem,
-  MessageInfo,
-  UnReadMessageInfo,
-  UnreadUserInfo,
-} from "store/chat/type";
+import { MediaPreviewItem, MessageInfo, UnreadUserInfo } from "store/chat/type";
 import { formatDate } from "utils/index";
 import Linkify from "linkify-react";
 import linkifyHtml from "linkify-html";
@@ -13,6 +8,8 @@ import AttachmentContent from "../conversation/AttachmentContent";
 import { useEffect, useMemo, useRef } from "react";
 import ReadedIcon from "icons/ReadedIcon";
 import UnReadIcon from "icons/UnReadIcon";
+import useTheme from "hooks/useTheme";
+import { useChat } from "store/chat/selectors";
 
 export const TimeMessage = ({
   time,
@@ -20,7 +17,7 @@ export const TimeMessage = ({
   isCurrentUser,
   timeMessageProps,
 }: {
-  time: string;
+  time: string | Date;
   isRead: boolean;
   isCurrentUser: boolean;
   timeMessageProps?: TypographyProps;
@@ -30,18 +27,17 @@ export const TimeMessage = ({
   const getTimeStamp = useMemo(() => {
     const date = new Date(time);
     const lastHours = date.getHours();
-    let half = "AM";
+    let half = " AM";
     if (lastHours === undefined) {
       return "";
     }
     if (lastHours > 12) {
       date.setHours(lastHours - 12);
-      half = "PM";
+      half = " PM";
     }
     if (lastHours === 0) date.setHours(12);
-    if (lastHours === 12) half = "PM";
-
-    return `${formatDate(date.toLocaleString(), "HH:mm")}${half}`;
+    if (lastHours === 12) half = " PM";
+    return `${formatDate(date, "HH:mm")}${half}`;
   }, [time]);
   return (
     <Typography
@@ -78,8 +74,10 @@ const MessageContent = ({
   unReadMessage,
 }: MessageContentProps) => {
   const textRef = useRef<HTMLDivElement>(null);
+  const { listSearchMessage, selectSearchIndex } = useChat();
 
   const isUnReadCheck = unReadMessage.some((item) => item.unreadCount === 0);
+  const { isDarkMode } = useTheme();
   const isReadMessage = useMemo(() => {
     const timeMessage = new Date(message.ts);
     if (isGroup) {
@@ -100,6 +98,25 @@ const MessageContent = ({
     }
   }, [message]);
 
+  const renderBackgroundColor = useMemo(() => {
+    if (listSearchMessage.map((item) => item.messageId).includes(message._id)) {
+      return isDarkMode ? "#333333" : "#EBF5FF";
+    }
+    if (isCurrentUser) {
+      if (isDarkMode) return "#333333";
+      return "#EBF5FF";
+    }
+    return isDarkMode ? "#3a3b3c" : "#F7F7FD";
+  }, [isCurrentUser, isDarkMode, listSearchMessage, message._id]);
+
+  const renderBorderColor = useMemo(() => {
+    const findMessage = listSearchMessage[selectSearchIndex];
+    if (!findMessage) return "#F7F7FD";
+    if (findMessage?.messageId.includes(message._id)) {
+      return isDarkMode ? "#F7F7FD" : "#3699FF";
+    }
+  }, [isDarkMode, listSearchMessage, message._id, selectSearchIndex]);
+
   if (message.msg) {
     return (
       <Box
@@ -110,7 +127,8 @@ const MessageContent = ({
           alignItems: "flex-end",
           padding: "0.5rem 1rem",
           borderRadius: "20px",
-          backgroundColor: isCurrentUser ? "#EBF5FF" : "#F7F7FD",
+          backgroundColor: renderBackgroundColor,
+          border: `2px solid ${renderBorderColor}`,
           maxWidth: "270px",
         }}
         order={2}
@@ -118,6 +136,7 @@ const MessageContent = ({
         <Typography
           component="div"
           sx={{
+            maxWidth: "calc(270px - 32px)",
             overflowWrap: "anywhere",
             marginRight: isCurrentUser ? "unset" : "auto",
             color: isCurrentUser ? "#3699FF" : "inherit",
@@ -136,7 +155,8 @@ const MessageContent = ({
               ref={textRef}
               sx={{
                 "& pre": {
-                  whiteSpace: "pre-wrap",
+                  // whiteSpace: "pre-wrap",
+                  overflow: "auto",
                 },
                 "& *": {
                   margin: "0",

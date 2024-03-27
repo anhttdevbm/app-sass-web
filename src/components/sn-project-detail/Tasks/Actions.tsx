@@ -10,14 +10,7 @@ import {
 } from "@mui/material";
 import { Button, Text } from "components/shared";
 import PlusIcon from "icons/PlusIcon";
-import {
-  Clear,
-  Date,
-  Dropdown,
-  Refresh,
-  Search,
-  Switch,
-} from "components/Filters";
+import { Date, Dropdown, Search } from "components/Filters";
 import {
   useMemberOptions,
   useProjects,
@@ -81,6 +74,7 @@ const Actions = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChangeQueries = (name: string, value: any) => {
+    // console.log("Change queries:---", name, value);
     setQueries((prevQueries) => ({
       ...prevQueries,
       [name]: value,
@@ -134,8 +128,8 @@ const Actions = () => {
         spacing={{ xs: 1, md: 3 }}
         py={{ xs: 0.75 }}
         mt={{ sm: 1.25, md: 0 }}
-        position="sticky"
-        top={{ xs: 108, md: 36 }}
+        position="relative"
+        // top={{ xs: 108, md: 36 }}
         zIndex={12}
         bgcolor="background.paper"
       >
@@ -200,7 +194,8 @@ const Actions = () => {
           alignItems="center"
           spacing={3}
           justifyContent={{ xs: "flex-start", md: "flex-end" }}
-          overflow="auto"
+          // overflow="auto"
+          overflow="hidden"
           width="100%"
         >
           <Search
@@ -210,6 +205,10 @@ const Actions = () => {
             name="tasks.name"
             onChange={onChangeQueries}
             value={queries?.["tasks.name"]}
+            onEnter={(name, value) => {
+              onChangeQueries(name, value);
+              onSearch();
+            }}
             sx={{
               width: { xs: is1440Larger ? 220 : 160 },
               minWidth: { xs: is1440Larger ? 220 : 160 },

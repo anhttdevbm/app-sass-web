@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import Link from "components/Link";
 import { DataStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import useTheme from "hooks/useTheme";
 import FileBasicIcon from "icons/FileBasicIcon";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo } from "react";
@@ -12,7 +13,8 @@ import { useChat } from "store/chat/selectors";
 const FileContent = () => {
   const { mediaList, mediaListStatus, onGetChatAttachments } = useChat();
   const { onAddSnackbar } = useSnackbar();
-  const t = useTranslations(NS_COMMON);
+  const commonT = useTranslations(NS_COMMON);
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     const handleGetAttachment = async () => {
@@ -20,14 +22,14 @@ const FileContent = () => {
         await onGetChatAttachments({ fileType: "file" });
       } catch (error) {
         onAddSnackbar(
-          typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),
+          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
           "error",
         );
       }
     };
 
     handleGetAttachment();
-  }, [onAddSnackbar, onGetChatAttachments, t]);
+  }, [onAddSnackbar, onGetChatAttachments, commonT]);
 
   const fileClone = useMemo(() => {
     return mediaList?.filter((file) => file.name && file.path);
@@ -71,7 +73,7 @@ const FileContent = () => {
                 href={item.path}
                 target="_blank"
                 sx={{
-                  color: "#212121",
+                  color: isDarkMode ? "white" : "#212121",
                   overflowWrap: "anywhere",
                   fontWeight: 600,
                   textDecoration: "auto",
@@ -83,7 +85,7 @@ const FileContent = () => {
           );
         })
       ) : (
-        <Typography textAlign="center">No Data...</Typography>
+        <Typography textAlign="center">{commonT("noData")}</Typography>
       )}
     </Box>
   );

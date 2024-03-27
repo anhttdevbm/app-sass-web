@@ -9,11 +9,11 @@ body {
   bottom: 0;
   width: 100vw;
   height: calc(var(--vh, 1vh) * 100);
-  background-color: transparent!important;
+  background-color: transparent !important;
 }
 
 body.not-auth {
-  background-color: var(--mui-palette-background-default)!important;
+  background-color: var(--mui-palette-background-default) !important;
 }
 
 input:-webkit-autofill,
@@ -65,21 +65,20 @@ a {
   .only-mobile {
     display: initial !important;
   }
-
 }
-
 
 @supports (font: -apple-system-body) and (-webkit-appearance: none) {
   img[loading="lazy"] {
-    clipPath: inset(0.6px);
+    clippath: inset(0.6px);
   }
 }
 
 @media screen and (min-width: 768px) {
+
   /* width */
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 7px;
   }
 
   /* Track */
@@ -117,12 +116,12 @@ a {
 }
 
 .attachment-filter button.active {
-  border: 1px solid #3699FF !important;
-  background: #E1F0FF !important;
-  color: #3699FF !important;
+  border: 1px solid #3699ff !important;
+  background: #e1f0ff !important;
+  color: #3699ff !important;
 }
 
-.slider-comment-attachment .react-slideshow-wrapper .images-wrap > div {
+.slider-comment-attachment .react-slideshow-wrapper .images-wrap>div {
   display: flex !important;
   align-items: center;
   justify-content: center;

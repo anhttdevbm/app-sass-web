@@ -31,9 +31,10 @@ export const ProjectLang: ProjectDictionary = {
     },
   },
   tabList: {
+    documents: "Documents",
     tasks: "Tasks",
     activities: "Activities",
-    costHistory: "Cost History",
+    budget: "Budget",
     members: "Members",
     information: "Information",
   },
@@ -60,10 +61,15 @@ export const ProjectLang: ProjectDictionary = {
       filter: {
         all: "All",
         file: "File",
-        image: "Image"
+        image: "Image",
       },
       noData: "No data",
-    }
+    },
+  },
+  detailDocuments: {
+    head: {
+      title: "Documents of Project | Taskcover",
+    },
   },
   detailMembers: {
     head: {
@@ -98,6 +104,8 @@ export const ProjectLang: ProjectDictionary = {
         newTaskPlace: "New move place",
       },
     },
+    unsaveMessage:
+      "Task description has not been saved, do you want to save it?",
     addNewTask: "Add new task",
     addNewSubTask: "New subtask",
     addNewSubTaskPlaceholder: "Add New Subtask",
@@ -136,6 +144,7 @@ export const ProjectLang: ProjectDictionary = {
       deleteTaskListSuccess: "Delete task list successfully!",
       deleteTasksSuccess: "Delete tasks successfully!",
       actionTaskSuccess: "Update {label} task successfully!",
+      taskNameIsRequired: "Task name is required",
     },
   },
   taskDetail: {
@@ -171,6 +180,7 @@ export const ProjectLang: ProjectDictionary = {
     commentList: "Comments",
     showMore: "Show more",
     showLess: "Show less",
+
     form: {
       title: {
         newTask: "Move to task",
@@ -178,11 +188,70 @@ export const ProjectLang: ProjectDictionary = {
     },
     notification: {
       assignSuccess: "Assign task successfully!",
+      dateSuccess: "Change time successfully",
     },
   },
   detailActivities: {
     head: {
       title: "Activities of Project",
+    },
+  },
+  budget: {
+    head: {
+      title: "Cost of Project | Taskcover",
+    },
+    action: {
+      addBudget: "Add budget",
+      addBudgetTitleModal: "New budget",
+    },
+    form: {
+      name: "Name",
+      start_date: "Budget start date",
+      end_date: "Budget end date",
+      owner: "Owner",
+      project_id: "Project",
+    },
+    createBudgetSuccess: "Create new budget success!",
+    duplicateBudgetSuccess: "Duplicate budget success!",
+    deleteBudgetSuccess: "Delete budget success!",
+    table: {
+      budget: "Status / Budget",
+      owner: "Owner",
+      cost: "Cost",
+      budgetTimeUsed: "Budget Time Used",
+      budgetedTimeUse: "Budgeted Time Usage",
+      workTime: "Work Time",
+      estimateTime: "Estimate Time",
+      revenue: "Revenue",
+      margin: "Margin",
+      budgetUsed: "Budget Used",
+      budgetTotal: "Budget Total",
+      workedTime: "Worked Time",
+      billableTime: "Billabel Time",
+      invoiced: "Invoiced",
+      company: "Company",
+      project: "Project",
+    },
+    groupBy: {
+      dateCreated: "Date Created",
+      dateUpdated: "Date Updated",
+      startDate: "Start Date",
+      endDate: "End Date",
+      owner: "Owner",
+      status: "Status",
+    },
+    filter: {
+      owner: "Owner",
+      time: "Time",
+    },
+    titleGroupBy: "Group By",
+    titleFilter: "Filter",
+  },
+  errors: {
+    form: {
+      add_sub_task: {
+        required: "Task name is required",
+      },
     },
   },
 };

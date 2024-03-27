@@ -1,23 +1,24 @@
-import { ChangeEvent, ForwardedRef, forwardRef, memo, useMemo } from "react";
 import {
-  InputLabelProps,
-  SxProps,
-  TextField,
-  TextFieldProps,
   formHelperTextClasses,
   inputBaseClasses,
   inputLabelClasses,
   selectClasses,
+  Stack,
+  SxProps,
+  TextField,
+  TextFieldProps,
+  Typography,
 } from "@mui/material";
-import { matchClass } from "./helpers";
-import Tooltip from "./Tooltip";
-import WarningIcon from "icons/WarningIcon";
-import ErrorIcon from "icons/ErrorIcon";
-import useToggle from "hooks/useToggle";
-import IconButton from "./IconButton";
-import UnEyeIcon from "icons/UnEyeIcon";
-import EyeIcon from "icons/EyeIcon";
 import useTheme from "hooks/useTheme";
+import useToggle from "hooks/useToggle";
+import ErrorIcon from "icons/ErrorIcon";
+import EyeIcon from "icons/EyeIcon";
+import UnEyeIcon from "icons/UnEyeIcon";
+import WarningIcon from "icons/WarningIcon";
+import { ChangeEvent, ForwardedRef, forwardRef, memo, useMemo } from "react";
+import { matchClass } from "./helpers";
+import IconButton from "./IconButton";
+import Tooltip from "./Tooltip";
 
 type CoreInputProps = Omit<TextFieldProps, "error" | "title"> & {
   label?: string;
@@ -33,6 +34,7 @@ type CoreInputProps = Omit<TextFieldProps, "error" | "title"> & {
 export type InputProps = Omit<CoreInputProps, "label"> & {
   tooltip?: string;
   title?: string;
+  onClickEndNode?: () => void;
 };
 
 const Input = forwardRef((props: InputProps, ref) => {

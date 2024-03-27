@@ -7,7 +7,7 @@ import "highlight.js/styles/atom-one-dark.css";
 import AppProvider from "contexts/AppProvider";
 import { openSans } from "public/material/typography";
 import { notFound } from "next/navigation";
-import { NextIntlClientProvider, useLocale } from "next-intl";
+import { useLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { Locale } from "constant/types";
@@ -40,6 +40,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       <body suppressHydrationWarning={true} className={openSans.className}>
         <AppProvider locale={locale} messages={messages}>
           {children}

@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 import Avatar from "components/Avatar";
-import { Box, Button, Fab, InputAdornment, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Fab,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ItemMemberDetail from "./ItemMemberDetail";
 import GroupNameIcon from "icons/GroupNameIcon";
-import DefaultPopupLayout from "components/sn-time-tracking/TimeTrackingModal/DefaultPopupLayout";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { useEffect, useState, ChangeEvent } from "react";
 import { useTranslations } from "next-intl";
-import { NS_COMMON } from "constant/index";
+import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import FileGroupIcon from "icons/FileGroupIcon";
 import ArrowRightIcon from "icons/ArrowRightIcon";
 import EditGroupNameIcon from "icons/EditGroupNameIcon";
@@ -20,8 +27,26 @@ import { useAuth, useSnackbar } from "store/app/selectors";
 import ItemDetail from "../components/ItemDetail";
 import MediaFileIconGroup from "icons/MediaFileIconGroup";
 import LinkIconGroup from "icons/LinkIconGroup";
+import { uploadFile } from "store/chat/media/actionMedia";
+import { useAppDispatch } from "store/hooks";
+import useTheme from "hooks/useTheme";
+import { UploadAvatarGroup } from "./UploadAvatarGroup";
+import ForwardLayout from "components/sn-chatting-room/components/RoomDetails/components/Drawer/ChatForward/ForwardLayout";
+
+export const TYPE_POPUP = {
+  DELETE: "DELETE",
+  LEAVE_AND_NEW_ADD: "LEAVE_AND_NEW_ADD",
+  LEAVE_OWNER: "LEAVE_OWNER",
+  LEAVE_MEMBER: "LEAVE_MEMBER",
+  NEW_ADMIN: "NEW_ADMIN",
+  RENAME_GROUP: "RENAME_GROUP",
+  FORWARD_MESSAGE: "FORWARD_MESSAGE",
+};
 
 const ChatDetailGroup = (props) => {
+  const dispatch = useAppDispatch();
+  const { isDarkMode } = useTheme();
+
   const {
     typeList,
     dataTransfer,
@@ -34,9 +59,8 @@ const ChatDetailGroup = (props) => {
     onFetchGroupMembersMember,
     onChangeGroupRole,
     onRemoveGroupMember,
-    onSetConversationInfo,
     onDeleteConversationGroup,
-    onGetAllConvention
+    onGetAllConvention,
   } = useChat();
   const { user } = useAuth();
   //check owner
@@ -46,14 +70,8 @@ const ChatDetailGroup = (props) => {
   const owner = owners.some((obj) => obj._id === user?.id_rocket);
 
   const commonT = useTranslations(NS_COMMON);
-  const TYPE_POPUP = {
-    DELETE: "DELETE",
-    LEAVE_AND_NEW_ADD: "LEAVE_AND_NEW_ADD",
-    LEAVE_OWNER: "LEAVE_OWNER",
-    LEAVE_MEMBER: "LEAVE_MEMBER",
-    NEW_ADMIN: "NEW_ADMIN",
-    RENAME_GROUP: "RENAME_GROUP",
-  };
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
+
   const init = {
     type: "",
     statusPopup: false,
@@ -68,12 +86,12 @@ const ChatDetailGroup = (props) => {
   const [userId, setUserId] = useState("");
   const { onAddSnackbar } = useSnackbar();
   const handleClosePopup = () => {
-    setRenameGroup(dataTransfer?.name)
+    setRenameGroup(dataTransfer?.name?.replaceAll("_", " "));
     setShowPopup(init);
   };
 
   useEffect(() => {
-    setRenameGroup(dataTransfer?.name)
+    setRenameGroup(dataTransfer?.name?.replaceAll("_", " "));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataTransfer]);
 
@@ -94,11 +112,12 @@ const ChatDetailGroup = (props) => {
       if (result?.error) {
         return onAddSnackbar(result?.error?.message, "error");
       }
-      (await onChangeGroupRole({
-        groupId: dataTransfer?._id,
-        userIdToChange: user?.id_rocket ?? "",
-        newRole: "removeOwner",
-      })) as any;
+      // (await onChangeGroupRole({
+      //   groupId: dataTransfer?._id,
+      //   userIdToChange: user?.id_rocket ?? "",
+      //   newRole: "removeOwner",
+      // })) as any;
+      onAddSnackbar(commonChatBox("chatBox.group.adminChange"), "success");
     } else {
       const result = (await onRemoveGroupMember({
         groupId: dataTransfer?._id,
@@ -107,17 +126,12 @@ const ChatDetailGroup = (props) => {
       if (result?.error) {
         return onAddSnackbar(result?.error?.message, "error");
       }
+      onAddSnackbar(commonChatBox("chatBox.group.removeMember"), "success");
     }
-    onAddSnackbar("Successfully!", "success");
     onFetchGroupMembersMember({
       roomId: dataTransfer?._id,
     });
   };
-
-  const handleClickMember = (member) => {
-    onSetConversationInfo(member)
-    onSetStep(STEP.VIEW_DETAIL_USER);
-  }
 
   const _renderNewAdmin = () => {
     return (
@@ -125,75 +139,75 @@ const ChatDetailGroup = (props) => {
         <Box sx={{ width: "100%", margin: "0 50px" }}>
           {groupMembers?.length > 0
             ? groupMembers
-              .filter((m) => m._id !== user?.id_rocket)
-              .map((item, index) => {
-                return (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      marginBottom: 1,
-                      // cursor: "pointer",
-                      ":hover": {
-                        backgroundColor: "#F7F7FD",
-                      },
-                    }}
-                    p={1}
-                    onClick={() => {
-                      setUserId(item?._id);
-                      setShowPopup((pre) => ({
-                        ...pre,
-                        type: TYPE_POPUP.LEAVE_AND_NEW_ADD,
-                        statusPopup: true,
-                        title: "Leave Group",
-                        content: (
-                          <Box
-                            sx={{
-                              textAlign: "center",
-                            }}
-                          >
-                            <Typography>
-                              Leave group and select{" "}
-                              <span
-                                style={{
-                                  color: "var(--brand-primary, #3699FF)",
-                                }}
-                              >
-                                {item?.fullname}
-                              </span>{" "}
-                              as new admin?
-                            </Typography>
-                          </Box>
-                        ),
-                      }));
-                    }}
-                    key={index}
-                  >
-                    <Avatar
-                      src={item?.avatar}
-                      alt="Avatar"
-                      size={42}
-                      style={{
-                        borderRadius: "50%",
-                      }}
-                    />
+                .filter((m) => m._id !== user?.id_rocket)
+                .map((item, index) => {
+                  return (
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        marginBottom: 1,
+                        // cursor: "pointer",
+                        ":hover": {
+                          backgroundColor: isDarkMode ? "#3a3b3c" : "#F7F7FD",
+                        },
                       }}
+                      p={1}
+                      onClick={() => {
+                        setUserId(item?._id);
+                        setShowPopup((pre) => ({
+                          ...pre,
+                          type: TYPE_POPUP.LEAVE_AND_NEW_ADD,
+                          statusPopup: true,
+                          title: commonChatBox("chatBox.leaveGroup"),
+                          content: (
+                            <Box
+                              sx={{
+                                textAlign: "center",
+                              }}
+                            >
+                              <Typography>
+                                {commonChatBox("chatBox.leaveGroupMsg.text_1")}{" "}
+                                <span
+                                  style={{
+                                    color: "var(--brand-primary, #3699FF)",
+                                  }}
+                                >
+                                  {item?.fullname}
+                                </span>{" "}
+                                {commonChatBox("chatBox.leaveGroupMsg.text_2")}
+                              </Typography>
+                            </Box>
+                          ),
+                        }));
+                      }}
+                      key={index}
                     >
-                      <Typography variant="inherit" fontWeight="bold">
-                        {item?.fullname}
-                      </Typography>
-                      <Typography variant="caption" color="#999999">
-                        {item?.email}
-                      </Typography>
+                      <Avatar
+                        src={item?.avatar}
+                        alt="Avatar"
+                        size={80}
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <Typography variant="inherit" fontWeight="bold">
+                          {item?.fullname}
+                        </Typography>
+                        <Typography variant="caption" color="#999999">
+                          {item?.email}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                );
-              })
+                  );
+                })
             : null}
         </Box>
       </>
@@ -214,7 +228,7 @@ const ChatDetailGroup = (props) => {
             justifyContent: "center",
           }}
         >
-          {showPopup?.type === TYPE_POPUP.RENAME_GROUP ?
+          {showPopup?.type === TYPE_POPUP.RENAME_GROUP ? (
             <TextField
               size="small"
               sx={{
@@ -225,16 +239,21 @@ const ChatDetailGroup = (props) => {
                   borderRadius: "10px",
                   border: "1px solid transparent",
                 },
-                margin: "0 50px"
+                margin: "0 50px",
               }}
               placeholder="Enter name"
               fullWidth
               value={renameGroup}
               onChange={handleChangeName}
             />
-            : showPopup?.content}
+          ) : (
+            showPopup?.content
+          )}
         </Box>
-        {showPopup?.type !== TYPE_POPUP.NEW_ADMIN && (
+        {[TYPE_POPUP.FORWARD_MESSAGE].includes(showPopup?.type) && (
+          <ForwardLayout />
+        )}
+        {![TYPE_POPUP.NEW_ADMIN].includes(showPopup?.type) && (
           <Box
             sx={{
               display: "flex",
@@ -272,32 +291,40 @@ const ChatDetailGroup = (props) => {
       onAddSnackbar(result?.error?.message, "error");
       return;
     }
-    onAddSnackbar("Successfully!", "success");
+    onAddSnackbar(commonT("success"), "success");
     onGetAllConvention({
       type: "a",
       text: "",
       offset: 0,
-      count: 1000,
+      count: 10,
     });
     onSetStep(STEP.CONVENTION);
   };
 
   const handlePopup = async () => {
+    if (!renameGroup.trim()) {
+      return onAddSnackbar("Invalid group name!", "error");
+    }
     const renameGroupApi = async () => {
       const dataTransferNew = {
         ...dataTransfer,
-        name: renameGroup,
-        fname: renameGroup,
+        name: renameGroup.replace("_", " "),
+        fname: renameGroup.replace("_", " "),
       };
+
       const renameResult = (await onRenameGroup({
         roomId: dataTransfer?._id,
-        name: renameGroup,
+        name: renameGroup.replace(" ", "_"),
       })) as any;
-      
+
       if (renameResult?.error) {
-        return onAddSnackbar(commonT("form.error.renameGroup", { name: renameResult?.meta?.arg?.name }), "error");
+        return onAddSnackbar(
+          commonT("form.error.renameGroup", {
+            name: renameResult?.meta?.arg?.name,
+          }),
+          "error",
+        );
       } else {
-        
         onGetAllConvention({
           type: "a",
           text: "",
@@ -305,7 +332,7 @@ const ChatDetailGroup = (props) => {
           count: 10,
         });
         onSetDataTransfer(dataTransferNew);
-        onAddSnackbar("Successfully!", "success");
+        onAddSnackbar(commonChatBox("chatBox.group.rename_alert"), "success");
       }
     };
     const left = async () => {
@@ -315,7 +342,7 @@ const ChatDetailGroup = (props) => {
       if (leftResult?.error) {
         return onAddSnackbar(leftResult?.error?.message, "error");
       } else {
-        handleSuccess(leftResult)
+        handleSuccess(leftResult);
       }
     };
     const addAndRemove = async (add: string, remove: string) => {
@@ -340,11 +367,11 @@ const ChatDetailGroup = (props) => {
       case TYPE_POPUP.DELETE:
         //CALL API DELETE
         const result = onDeleteConversationGroup({
-          type: 'p',
+          type: "p",
           roomId: dataTransfer?._id,
-        })
+        });
         onSetStep(STEP.CONVENTION);
-        handleSuccess(result)
+        handleSuccess(result);
         break;
       case TYPE_POPUP.LEAVE_MEMBER:
         await left();
@@ -376,7 +403,7 @@ const ChatDetailGroup = (props) => {
       ...pre,
       type: TYPE_POPUP.NEW_ADMIN,
       statusPopup: true,
-      title: "select a new admin",
+      title: commonChatBox("chatBox.selectAdminNew"),
       content: <>{_renderNewAdmin()}</>,
     }));
   };
@@ -389,7 +416,7 @@ const ChatDetailGroup = (props) => {
     <>
       <Box
         sx={{
-          margin: "10px",
+          margin: "16px",
         }}
       >
         <Box
@@ -405,46 +432,14 @@ const ChatDetailGroup = (props) => {
           >
             <Avatar
               alt="Avatar"
+              src={dataTransfer?.avatar}
               size={80}
               style={{
-                borderRadius: "10px",
+                borderRadius: "50%",
                 margin: "auto",
               }}
             />
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                right: "-22px",
-                boxShadow: "2px 2px 24px 0px rgba(0, 0, 0, 0.10)",
-                cursor: "pointer",
-                borderRadius: "50%",
-              }}
-            >
-              <label htmlFor="upload-photo">
-                <input
-                  style={{ display: "none" }}
-                  id="upload-photo"
-                  name="upload-photo"
-                  type="file"
-                />
-                <Fab
-                  color="primary"
-                  size="small"
-                  component="span"
-                  aria-label="add"
-                  sx={{
-                    background: "#fff",
-                    padding: "10px",
-                    "&:hover": {
-                      background: "#fff",
-                    },
-                  }}
-                >
-                  <UploadImageIcon />
-                </Fab>
-              </label>
-            </Box>
+            <UploadAvatarGroup />
           </Box>
         </Box>
         <Box
@@ -454,7 +449,9 @@ const ChatDetailGroup = (props) => {
           }}
         >
           <ItemDetail
-            text={`Group name: ${dataTransfer?.name}`}
+            text={`${commonChatBox(
+              "chatBox.groupName",
+            )} ${dataTransfer?.name?.replaceAll("_", " ")}`}
             icon={<GroupNameIcon />}
             iconClick={<EditGroupNameIcon />}
             onClick={() => {
@@ -462,14 +459,14 @@ const ChatDetailGroup = (props) => {
                 ...pre,
                 type: TYPE_POPUP.RENAME_GROUP,
                 statusPopup: true,
-                title: "Change name",
+                title: commonChatBox("chatBox.changeName"),
                 content: <></>,
                 actionType: 0,
               }));
             }}
           />
           <ItemDetail
-            text={"Media"}
+            text={commonChatBox("chatBox.media")}
             icon={<MediaFileIconGroup />}
             iconClick={<ArrowRightIcon />}
             onClick={() => {
@@ -478,7 +475,7 @@ const ChatDetailGroup = (props) => {
             }}
           />
           <ItemDetail
-            text={"Link"}
+            text={commonChatBox("chatBox.link")}
             icon={<LinkIconGroup />}
             iconClick={<ArrowRightIcon />}
             onClick={() => {
@@ -488,7 +485,7 @@ const ChatDetailGroup = (props) => {
           />
 
           <ItemDetail
-            text={"File"}
+            text={commonChatBox("chatBox.file")}
             icon={<FileGroupIcon />}
             iconClick={<ArrowRightIcon />}
             onClick={() => {
@@ -507,11 +504,13 @@ const ChatDetailGroup = (props) => {
           <Box>
             <Typography
               variant="caption"
-              color="#212121"
+              color={isDarkMode ? "white" : "#212121"}
               fontSize={16}
               fontWeight={600}
             >
-              {`Member (${dataTransfer?.usersCount})`}
+              {`${commonChatBox("chatBox.members")} (${
+                dataTransfer?.usersCount
+              })`}
             </Typography>
           </Box>
           <Box>
@@ -522,7 +521,8 @@ const ChatDetailGroup = (props) => {
         </Box>
         <Box
           sx={{
-            height: "180px",
+            height: owner ? "30%" : "46%",
+            // height: "180px",
             overflow: "auto",
           }}
         >
@@ -536,10 +536,7 @@ const ChatDetailGroup = (props) => {
               callbackRemove={() => {
                 handleManageMember("remove", member);
               }}
-              onClick={() => {
-                handleClickMember(member)
-              }}
-              admin = {owner}
+              admin={owner}
             />
           ))}
         </Box>
@@ -563,84 +560,91 @@ const ChatDetailGroup = (props) => {
                       ...pre,
                       type: TYPE_POPUP.DELETE,
                       statusPopup: true,
-                      title: "Delete Group",
-                      content: <>Are you sure to delete group?</>,
+                      title: commonChatBox("chatBox.deleteGroup"),
+                      content: <>{commonChatBox("chatBox.sureRemoveGroup")}</>,
                       actionType: 0,
                     }));
                   }}
                 >
-                  {"Delete group"}
+                  {commonChatBox("chatBox.deleteGroup")}
                 </Typography>
               </Box>
             )}
-            {groupMembers.length > 1 &&
-            <Box sx={{ textAlign: "center" }}>
-              <Typography
-                variant="caption"
-                color="#F64E60"
-                fontSize={14}
-                fontWeight={600}
-                sx={{ cursor: "pointer" }}
-                onClick={() => {
-                  if (owner) {
-                    setShowPopup((pre) => ({
-                      ...pre,
-                      type: TYPE_POPUP.LEAVE_OWNER,
-                      statusPopup: true,
-                      title: "Leave Group",
-                      content: (
-                        <Box
-                          sx={{
-                            textAlign: "center",
-                          }}
-                        >
-                          <Typography>
-                            You won&apos;t be able to see the messages in this
-                            conversation
-                          </Typography>
-                          <Typography>
-                            again after you leave the group. Please{" "}
-                            <span
-                              style={{
-                                color: "var(--brand-primary, #3699FF)",
-                                cursor: "pointer",
-                              }}
-                              onClick={handleNewAdd}
-                            >
-                              select a new admin
-                            </span>
-                          </Typography>
-                          <Typography>
-                            or the system will choose automatically
-                          </Typography>
-                        </Box>
-                      ),
-                    }));
-                  } else {
-                    setShowPopup((pre) => ({
-                      ...pre,
-                      type: TYPE_POPUP.LEAVE_MEMBER,
-                      statusPopup: true,
-                      title: "Leave Group",
-                      content: <>Are you sure to leave group?</>,
-                    }));
-                  }
-                }}
-              >
-                {"Leave group"}
-              </Typography>
-            </Box>
-            }
+            {groupMembers.length > 1 && (
+              <Box sx={{ textAlign: "center" }}>
+                <Typography
+                  variant="caption"
+                  color="#F64E60"
+                  fontSize={14}
+                  fontWeight={600}
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => {
+                    if (owner) {
+                      setShowPopup((pre) => ({
+                        ...pre,
+                        type: TYPE_POPUP.LEAVE_OWNER,
+                        statusPopup: true,
+                        title: commonChatBox("chatBox.leaveGroup"),
+                        content: (
+                          <Box
+                            sx={{
+                              textAlign: "center",
+                            }}
+                          >
+                            <Typography>
+                              {commonChatBox(
+                                "chatBox.leaveGroupConfirm.text_1",
+                              )}
+                            </Typography>
+                            <Typography>
+                              {commonChatBox(
+                                "chatBox.leaveGroupConfirm.text_2",
+                              )}{" "}
+                              <span
+                                style={{
+                                  color: "var(--brand-primary, #3699FF)",
+                                  cursor: "pointer",
+                                }}
+                                onClick={handleNewAdd}
+                              >
+                                {commonChatBox("chatBox.selectAdminNew")}
+                              </span>
+                            </Typography>
+                            <Typography>
+                              {commonChatBox(
+                                "chatBox.leaveGroupConfirm.text_3",
+                              )}
+                            </Typography>
+                          </Box>
+                        ),
+                      }));
+                    } else {
+                      setShowPopup((pre) => ({
+                        ...pre,
+                        type: TYPE_POPUP.LEAVE_MEMBER,
+                        statusPopup: true,
+                        title: commonChatBox("chatBox.leaveGroup"),
+                        content: <>{commonChatBox("chatBox.sureLeaveGroup")}</>,
+                      }));
+                    }
+                  }}
+                >
+                  {commonChatBox("chatBox.leaveGroup")}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>
-      <DefaultPopupLayout
-        title={showPopup?.title}
-        content={_renderContentPopup()}
-        open={showPopup?.statusPopup}
-        onClose={handleClosePopup}
-        sx={{ width: showPopup?.widthPopup }}
-      />
+      {showPopup?.statusPopup && (
+        <DefaultPopupLayout
+          title={showPopup?.title}
+          content={_renderContentPopup()}
+          open={showPopup?.statusPopup}
+          onClose={handleClosePopup}
+          sx={{ width: showPopup?.widthPopup }}
+        />
+      )}
     </>
   );
 };

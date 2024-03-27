@@ -52,8 +52,44 @@ export const Endpoint = {
   PROJECT_TYPES: "type-project",
   PROJECT_TYPE_ITEM: "type-project/{id}",
   PROJECT_TYPES_INACTIVE: "type-project/inactive",
+  SALES_LIST: "/sales/all",
+  CREATE_DEAL: "/sales",
+  SALES_DEAL_EXPORT: "/sales/export/deal",
+  SALES_DEAL_DETAIL: "/sales/{id}",
+  SALES_TODO: "/sales/todo",
+  SALES_TODO_DETAIL: "/sales/todo/{id}",
+  SALES_SERVICE: "/sales/service/",
+  SALES_SERVICE_DETAIL: "/sales/service/{id}",
+  SALES_SECTION_DETAIL: "/sales/section/{id}",
+  SALES_COMMENT: "/sales/comment",
+  TAGS: "/tags",
+  TAGS_ALL: "/tags/all",
+  TAGS_DETAIL: "/tags/{id}",
 
   COST_HISTORY: "/cost-history",
+
+  BUDGET_ALL: "/budgets/all",
+  BUDGET_CREATE: "/budgets",
+  BUDGET_UPDATE: '/budgets/{budgetId}',
+  BUDGET_DELETE_BY_ID: '/budgets/{budgetId}',
+  BUDGET_GET_BY_ID: "/budgets/budget-by-id/{id}",
+  BUDGET_GET_FEED: "/budgets/feed/{id}",
+  BUDGET_GET_TIME_RANGES: "/budgets/times/{id}",
+  BUDGET_TIME_RANGES: "/budgets/times",
+  BUDGET_DELETE_TIME_RANGES: "/budgets/times/{id}",
+  BUDGET_SERVICE_LIST: "/budgets/service/{id}",
+  BUDGET_SERVICE_ADD: "/budgets/service",
+  BUDGET_SERVICE_UPDATE: "/budgets/service/{id}",
+  BUDGET_SECTION_DELETE: "/budgets/section/{id}",
+  BUDGET_TIME_RANGES_BY_ID: "/budgets/time/{timeId}",
+  BUDGET_TIME_RANGES_UPDATE: "/budgets/time/{id}",
+  BUDGET_TIME_RANGES_DELETE: "/budgets/time/{id}",
+  BUDGET_EXPENSE_CREATE: "/budgets/expense/create-expense",
+  BUDGET_EXPENSE_LIST: "/budgets/expense/get-all-expense/{budgetId}",
+  BUDGET_EXPENSE_DETAIL: "/budgets/expense/get-detail-expense/{expenseId}",
+  BUDGET_EXPENSE_DETAIL_EXPORT: "/budgets/expense/export-all-expense/{expenseId}",
+  BUDGET_EXPENSE_DETAIL_UPDATE: "/budgets/expense/update-expense/{expenseId}",
+  BUDGET_EXPENSE_DETAIL_DELETE: "/budgets/expense/delete-expense/{expenseId}",
 
   POSITIONS_ALL: "/positions/all",
   POSITIONS: "/positions",
@@ -63,6 +99,12 @@ export const Endpoint = {
   UPLOAD: "/files/upload-avatar",
   SIGNUP_UPLOAD: "/avatar/upload",
   UPLOAD_LINK: "/files/upload-link",
+  DOWNLOAD_LINK: '/in/files/download-links',
+
+  RESOURCE_PLANNING: "/resources",
+  RESOURCE_PLANNING_LIST: "/resources/all",
+  RESOURCE_PLANNING_DETAIL: "/resources/{id}",
+  MY_RESOURCE_PLANNING: "/resources/me",
 
   MY_TIME_SHEET: "/timesheets/me",
   WORK_LOG: "/timesheets/log",
@@ -70,4 +112,49 @@ export const Endpoint = {
   TIME_SHEET: "/timesheets",
   PIN: "/timesheets/pin",
   SAME_WORKER: "timesheets/same-worker",
+
+  // Docs
+  DOCS: "/docs",
+  CREATE_DOCS: "/docs",
+  UPDATE_DOCS: "/docs/{id}",
+  DETAIL_DOCS: "/docs/detail/",
+  HISTORY_DOCS: "/docs/history/{id}",
+  ADD_PERM_DOCS: "/docs/add-perm/",
+  PERM_DOCS: "/docs/perm/",
+
+  //feedback
+  FEEDBACK: "/feedback",
+  RESPONDFEEDBACK: "/feedback/{id}/response",
+
+  // blog
+  CATEGORY_BLOG: "/category",
+  BLOGS: "/post",
+  DETAIL_BLOG: "/post/{id}",
+  GET_BLOG_COMMENT: "/post/{id}/comment",
+  GET_BLOG_TAGS : "/post/tags",
+
+  //carrer
+  CAREER: "/job-post",
+  UPADATECAREER: "/job-post/{id}",
+  DETAIL_CAREER: "/post/{id}",
+
+  //Billing
+  BILLING: "/bill",
+  DETAIL_BILLING: "/bill/export/{id}",
+  EXPORT_BILLING: "/billToExport",
+  INTERACTION_BILLING: "/bill_interaction",
+  INTERACTION_BILLING_BY_BILL: "/bill_interaction/{id}",
+  ADD_USER_BILL: "/addUserToBill",
+  CHANGE_BILL: "/bill/{id}",
+  PAYMENT_BILL: "/payment",
+  CUSTOM_PAYMENT: "/payment/{id}",
+  TAG: "/tag",
+  CUSTOM_TAG: "/tag/{id}",
+  UPDATE_BILL_TAG: "/bill/updateTag/{id}",
+
+  //Budget
+  BUDGET: "/budgets/all",
+  DETAIL_BUDGET: "/budgets/budget-by-id/{id}",
+  CREATE_SERVICE_BUDGET: "/budgets/service",
+  SERVICE_BY_BUDGET: "/budgets/service/{id}",
 };

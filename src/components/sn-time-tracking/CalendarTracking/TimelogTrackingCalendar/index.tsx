@@ -16,7 +16,7 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import Filter from "../../Component/Filter";
+import Filter from "../../../shared/Filter";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { MobileDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -33,12 +33,10 @@ import { NS_TIME_TRACKING } from "constant/index";
 
 const { TASK_ACTION } = ENUMS;
 
-
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
 }
-
 
 interface ITimeLogStructure {
   id: string;
@@ -92,11 +90,10 @@ const TimelogTrackingCalendar: React.FC<IProps> = ({}) => {
 
   useEffect(() => {
     if (workLog?.data?.length) {
-      setTimeLogs(workLog.data) 
+      setTimeLogs(workLog.data);
     } else {
-      setTimeLogs([])
+      setTimeLogs([]);
     }
-      ;
   }, [workLog]);
 
   const getTaskActionString = (action: string) => {
@@ -210,57 +207,56 @@ const TimelogTrackingCalendar: React.FC<IProps> = ({}) => {
         justifyContent="space-between"
         sx={{ my: "16px" }}
       >
-        
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileDatePicker
-              open={ isOpen }
-              disableFuture
-              onOpen={() => setIsOpen(true)}
-              onClose={() => setIsOpen(false)}
-              onChange={(date: any) => {
-                const newDate = dayjs(date).format("YYYY-MM-DD");
-                const newFilters = { ...filters, date: newDate };
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MobileDatePicker
+            open={isOpen}
+            disableFuture
+            onOpen={() => setIsOpen(true)}
+            onClose={() => setIsOpen(false)}
+            onChange={(date: any) => {
+              const newDate = dayjs(date).format("YYYY-MM-DD");
+              const newFilters = { ...filters, date: newDate };
 
-                setFilters(newFilters);
-                onGetWorkLog(newFilters).then(() => {
-                  scrollToTop();
-                });
-              }}
-              sx={{ display: "none" }}
-              closeOnSelect
-              slotProps={{
-                actionBar: {
-                  actions: [],
-                },
-                toolbar: {
-                  hidden: true,
-                },
-                day: {
-                  sx: {
-                    transition: "all ease 0.25s",
-                    borderRadius: "4px",
-                    fontWeight: 600,
-                    "&.Mui-selected": {
-                      color: "#ffffff",
-                      backgroundColor: `rgba(54, 153, 255, 1) !important`,
-                      "&.MuiPickersDay-today": {
-                        color: "#ffffff",
-                        borderColor: "rgba(54, 153, 255, 1)",
-                      },
-                    },
+              setFilters(newFilters);
+              onGetWorkLog(newFilters).then(() => {
+                scrollToTop();
+              });
+            }}
+            sx={{ display: "none" }}
+            closeOnSelect
+            slotProps={{
+              actionBar: {
+                actions: [],
+              },
+              toolbar: {
+                hidden: true,
+              },
+              day: {
+                sx: {
+                  transition: "all ease 0.25s",
+                  borderRadius: "4px",
+                  fontWeight: 600,
+                  "&.Mui-selected": {
+                    color: "#ffffff",
+                    backgroundColor: `rgba(54, 153, 255, 1) !important`,
                     "&.MuiPickersDay-today": {
-                      color: "rgba(54, 153, 255, 1)",
+                      color: "#ffffff",
                       borderColor: "rgba(54, 153, 255, 1)",
                     },
-                    ":hover": {
-                      background: "rgba(54, 153, 255, 1)",
-                    },
+                  },
+                  "&.MuiPickersDay-today": {
+                    color: "rgba(54, 153, 255, 1)",
+                    borderColor: "rgba(54, 153, 255, 1)",
+                  },
+                  ":hover": {
+                    background: "rgba(54, 153, 255, 1)",
                   },
                 },
-              }}
-            />
-          </LocalizationProvider>
-          <Stack
+              },
+            }}
+          />
+        </LocalizationProvider>
+        <Stack
           direction="row"
           alignItems="center"
           sx={{
@@ -333,4 +329,3 @@ const TimelogTrackingCalendar: React.FC<IProps> = ({}) => {
 };
 
 export default TimelogTrackingCalendar;
-

@@ -3,10 +3,10 @@ import { client } from "api/client";
 import { Endpoint } from "api/endpoint";
 import { HttpStatusCode, Status } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, AN_ERROR_TRY_RELOAD_PAGE } from "constant/index";
-import { BaseQueries } from "constant/types";
+import { BaseQueries, Option } from "constant/types";
 import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import StringFormat from "string-format";
-import { Task, TaskList } from "./reducer";
+import { Task } from "./reducer";
 
 export enum ProjectStatus {
   ACTIVE = "ACTIVE",
@@ -21,9 +21,7 @@ export enum DependencyStatus {
 }
 
 export type GetProjectListQueries = BaseQueries & {
-  saved?: boolean;
   sort?: string;
-  status?: ProjectStatus;
 };
 
 export type GetMembersOfProjectQueries = BaseQueries & {
@@ -50,7 +48,7 @@ export type ProjectData = {
   members?: {
     id: string;
   }[];
-  type_project: string;
+  type_project: Option;
   status?: ProjectStatus;
   saved?: boolean;
   avatar?: string[];
@@ -185,6 +183,7 @@ export const getProjectList = createAsyncThunk(
     ) as GetProjectListQueries;
 
     try {
+      console.log("newQueries khi gui--> ", newQueries);
       const response = await client.get(Endpoint.PROJECTS, newQueries);
 
       if (response?.status === HttpStatusCode.OK) {
@@ -310,6 +309,7 @@ export const getTasksOfProject = createAsyncThunk(
       );
 
       if (response?.status === HttpStatusCode.OK) {
+        console.log(response.data);
         return { ...refactorRawItemListResponse(response.data), prefixKey };
       }
       throw AN_ERROR_TRY_AGAIN;

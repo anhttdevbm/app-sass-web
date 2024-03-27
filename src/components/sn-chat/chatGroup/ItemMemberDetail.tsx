@@ -2,10 +2,11 @@ import Avatar from "components/Avatar";
 import { Box, Button, Menu, MenuItem, Typography } from "@mui/material";
 import MoreSquareIcon from "icons/MoreSquareIcon";
 import { useTranslations } from "next-intl";
-import { NS_COMMON } from "constant/index";
+import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { IconButton } from "components/shared";
 import { useState } from "react";
-import DefaultPopupLayout from "components/sn-time-tracking/TimeTrackingModal/DefaultPopupLayout";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
+import useTheme from "hooks/useTheme";
 
 interface ItemMemberDetailProp {
   admin?: boolean;
@@ -13,7 +14,6 @@ interface ItemMemberDetailProp {
   data?: any;
   callbackAddAdmin?: () => void;
   callbackRemove?: () => void;
-  onClick?: () => void;
 }
 
 const ItemMemberDetail = ({
@@ -21,11 +21,11 @@ const ItemMemberDetail = ({
   data,
   callbackAddAdmin,
   callbackRemove,
-  onClick,
 }: ItemMemberDetailProp) => {
   const TYPE_POPUP = {
     ADD_ADMIN: "ADD_ADMIN",
   };
+  const { isDarkMode } = useTheme();
 
   const init = {
     type: "",
@@ -38,6 +38,7 @@ const ItemMemberDetail = ({
 
   const [showPopup, setShowPopup] = useState(init);
   const commonT = useTranslations(NS_COMMON);
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -82,8 +83,8 @@ const ItemMemberDetail = ({
           }}
         >
           <Button
+            variant="primary"
             type="button"
-            variant="primaryOutlined"
             size="small"
             sx={defaultSx.buttonCancel}
             onClick={handleClosePopup}
@@ -91,7 +92,7 @@ const ItemMemberDetail = ({
             {commonT("form.cancel")}
           </Button>
           <Button
-            variant="primary"
+            variant="primaryOutlined"
             sx={defaultSx.buttonConfirm}
             type="button"
             size="small"
@@ -117,7 +118,6 @@ const ItemMemberDetail = ({
           display: "flex",
           alignItems: "center",
         }}
-        onClick={onClick}
       >
         <Avatar
           alt="Avatar"
@@ -136,7 +136,7 @@ const ItemMemberDetail = ({
         >
           <Typography
             variant="inherit"
-            color="#212121"
+            color={isDarkMode ? "white" : "#212121"}
             fontWeight={600}
             fontSize={14}
           >
@@ -148,7 +148,7 @@ const ItemMemberDetail = ({
             fontWeight={400}
             fontSize={12}
           >
-            {`${data?.username}@`}
+            {data?.email}
           </Typography>
         </Box>
       </Box>
@@ -157,7 +157,7 @@ const ItemMemberDetail = ({
           <Button
             variant="primary"
             sx={{
-              background: "#ECECF3",
+              background: isDarkMode ? "#6c727a" : "#ECECF3",
               fontSize: "0.75rem",
               fontWeight: 400,
             }}
@@ -167,63 +167,65 @@ const ItemMemberDetail = ({
             {commonT("form.admin")}
           </Button>
         ) : (
-          admin &&
-          <>
-            <IconButton noPadding size="normal">
-              <MoreSquareIcon onClick={handleClick} />
-            </IconButton>
-            <Menu
-              id="demo-positioned-menu"
-              aria-labelledby="demo-positioned-button"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={() => setAnchorEl(null)}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-            >
-              {true ? (
-                <>
-                  <MenuItem onClick={() => {
+          admin && (
+            <>
+              <IconButton noPadding size="normal">
+                <MoreSquareIcon onClick={handleClick} />
+              </IconButton>
+              <Menu
+                id="demo-positioned-menu"
+                aria-labelledby="demo-positioned-button"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                sx={{
+                  zIndex: "1301",
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
                     setShowPopup((pre) => ({
                       ...pre,
                       type: TYPE_POPUP.ADD_ADMIN,
                       statusPopup: true,
-                      title: "Add as admin",
-                      content: <>Are you sure add as admin?</>,
+                      title: commonChatBox("chatBox.addAsAdmin"),
+                      content: <>{commonChatBox("chatBox.sureAddAsAdmin")}</>,
                     }));
-                  }}>
-                    Add as admin
-                  </MenuItem>
-                  <MenuItem onClick={() => handleClickMenu("remove")}>
-                    Remove from chat{" "}
-                  </MenuItem>
-                </>
-              ) : (
-                <></>
-              )}
-            </Menu>
-          </>
+                  }}
+                >
+                  {commonChatBox("chatBox.addAsAdmin")}
+                </MenuItem>
+                <MenuItem onClick={() => handleClickMenu("remove")}>
+                  {commonChatBox("chatBox.removeFromChat")}
+                </MenuItem>
+              </Menu>
+            </>
+          )
         )}
       </Box>
-      <DefaultPopupLayout
-        title={showPopup?.title}
-        content={_renderContentPopup()}
-        open={showPopup?.statusPopup}
-        onClose={handleClosePopup}
-        sx={{ width: showPopup?.widthPopup }}
-      />
+      {showPopup?.statusPopup && (
+        <DefaultPopupLayout
+          title={showPopup?.title}
+          content={_renderContentPopup()}
+          open={showPopup?.statusPopup}
+          onClose={handleClosePopup}
+          sx={{ width: showPopup?.widthPopup }}
+        />
+      )}
     </Box>
   );
 };
 
 const defaultSx = {
-  buttonCancel: {
+  buttonConfirm: {
     minWidth: 120,
     mx: 1.5,
     borderRadius: "0.25rem",
@@ -234,7 +236,7 @@ const defaultSx = {
       background: "var(--brand-primary, #3699FF)",
     },
   },
-  buttonConfirm: {
+  buttonCancel: {
     minWidth: 120,
     mx: 1.5,
     borderRadius: "0.25rem",

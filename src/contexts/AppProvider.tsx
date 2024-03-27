@@ -12,8 +12,8 @@ import {
   SIGNUP_PATH,
   FORGOT_PASSWORD_PATH,
   RESET_PASSWORD_PATH,
+  LANDING_HOME_PATH,
 } from "constant/paths";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { updateAuth, toggleAppReady, UserInfo } from "store/app/reducer";
 import Snackbar from "components/Snackbar";
 import AppLoading from "components/AppLoading";
@@ -22,8 +22,14 @@ import { Locale } from "constant/types";
 import { AbstractIntlMessages } from "next-intl";
 import NextIntlProvider from "./NextIntlProvider";
 import { getProfile } from "store/app/actions";
+// import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, RESET_PASSWORD_PATH];
+const LANDING_PATHS = [LANDING_HOME_PATH];
 
 const AppProvider = ({
   children,
@@ -53,6 +59,7 @@ const AppProvider = ({
       !accessToken &&
       replaceRef.current &&
       !AUTH_PATHS.includes(pathname) &&
+      !LANDING_PATHS.includes(pathname) &&
       !isResetPath
     ) {
       replaceRef.current(SIGNIN_PATH);
@@ -81,12 +88,18 @@ const AppProvider = ({
     });
   }, [onSetViewHeight]);
 
+  const queryClient: QueryClient = new QueryClient();
+
   return (
     <NextIntlProvider locale={locale} messages={messages}>
       <ThemeProvider>
-        <Provider store={store}>
-          <AuthWrapper>{children}</AuthWrapper>
-        </Provider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <QueryClientProvider client={queryClient}>
+            <Provider store={store}>
+              <AuthWrapper>{children}</AuthWrapper>
+            </Provider>
+          </QueryClientProvider>
+        </LocalizationProvider>
       </ThemeProvider>
     </NextIntlProvider>
   );

@@ -47,8 +47,8 @@ export const genName = (
 
 export const TASK_TEXT_STATUS: { [key in Status]: string } = {
   [Status.ACTIVE]: "statusEnum.inprogress",
-  [Status.CLOSE]: "statusEnum.close",
   [Status.PAUSE]: "statusEnum.pause",
+  [Status.CLOSE]: "statusEnum.close",
 };
 
 export const TASK_STATUS_OPTIONS = [

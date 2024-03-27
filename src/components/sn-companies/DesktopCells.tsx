@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Company } from "store/company/reducer";
 import { BodyCell, StatusCell } from "components/Table";
-import { DATE_TIME_FORMAT_SLASH, NS_COMMON, NS_MANAGER } from "constant/index";
+import { DATE_TIME_FORMAT_SLASH, DATE_LOCALE_FORMAT, NS_COMMON, NS_MANAGER } from "constant/index";
 import { formatDate, getPath } from "utils/index";
 import {
   TEXT_STATUS,
@@ -14,6 +14,7 @@ import Avatar from "components/Avatar";
 import { Stack } from "@mui/material";
 import { COMPANY_DETAIL_PATH } from "constant/paths";
 import { useTranslations } from "next-intl";
+import dayjs from "dayjs";
 
 type DesktopCellsProps = {
   item: Company;
@@ -53,8 +54,9 @@ const DesktopCells = (props: DesktopCellsProps) => {
         {item.email}
       </BodyCell>
 
-      <BodyCell tooltip={formatDate(item.created_time, DATE_TIME_FORMAT_SLASH)}>
-        {formatDate(item.created_time)}
+      <BodyCell tooltip={dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}>
+        {/* {formatDate(item.created_time)} */}
+        {dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}
       </BodyCell>
       <StatusCell
         text={

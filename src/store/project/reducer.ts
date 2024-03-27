@@ -1,18 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import {
   changeParentTask,
   commentTask,
+  convertSubTaskToTask,
+  convertToSubTask,
+  convertToTask,
   createProject,
   createTask,
   createTaskList,
+  deleteDependency,
   deleteSubTasks,
   deleteTaskLists,
   deleteTasks,
+  deleteTodo,
+  DependencyStatus,
   getActivitiesOfProject,
   GetActivitiesQueries,
   getMembersOfProject,
   GetMembersOfProjectQueries,
   getProject,
+  getProjectAttachment,
   getProjectList,
   GetProjectListQueries,
   getTaskList,
@@ -20,22 +28,13 @@ import {
   GetTasksOfProjectQueries,
   moveTask,
   ProjectStatus,
-  TaskData,
   updateProject,
   updateTask,
   updateTaskList,
-  convertToTask,
   updateTodoStatus,
-  convertToSubTask,
-  deleteTodo,
-  convertSubTaskToTask,
-  DependencyStatus,
-  deleteDependency,
-  getProjectAttachment
 } from "./actions";
 import {
   Attachment,
-  BaseQueries,
   ItemListResponse,
   Option,
   Paging,
@@ -50,6 +49,8 @@ import {
 } from "utils/index";
 import { Position } from "store/company/reducer";
 import { subDays } from "date-fns";
+import { BudgetReducer } from "store/project/budget/reducer";
+import { TBudgetListFilter, TBudgets } from "store/project/budget/action";
 
 export interface Member {
   id: string;
@@ -96,6 +97,7 @@ export interface Project {
   description: string;
   expected_cost: number;
   working_hours: number;
+  currency: string;
   start_date: string;
   end_date: string;
   number?: string;
@@ -169,6 +171,7 @@ export interface ActivityTask {
   action: string;
   task: Task;
   project: Project;
+  new?: string;
 }
 
 export type TaskDetail = Omit<Task, "task_list" | "task" | "sub_task"> & {
@@ -236,6 +239,12 @@ export interface ProjectState {
   activitiesError?: string;
   activitiesFilters: GetActivitiesQueries;
   attachments?: AttachmentOfProject[];
+
+  budgets?: TBudgets;
+  budgetStatus: DataStatus;
+  budgetPaging: Paging;
+  budgetError?: string;
+  budgetFilters: TBudgetListFilter;
 }
 
 export const DEFAULT_RANGE_ACTIVITIES: GetActivitiesQueries = {
@@ -276,6 +285,12 @@ const initialState: ProjectState = {
   activitiesFilters: DEFAULT_RANGE_ACTIVITIES,
 
   attachments: [],
+
+  budgets: [],
+  budgetStatus: DataStatus.IDLE,
+  budgetPaging: DEFAULT_PAGING,
+  budgetError: undefined,
+  budgetFilters: {},
 };
 
 const projectSlice = createSlice({
@@ -314,7 +329,7 @@ const projectSlice = createSlice({
     },
     reset: () => initialState,
   },
-  extraReducers: (builder) =>
+  extraReducers: (builder) => {
     builder
       .addCase(getProjectList.pending, (state, action) => {
         state.status = DataStatus.LOADING;
@@ -393,12 +408,12 @@ const projectSlice = createSlice({
         state.itemStatus = DataStatus.LOADING;
       })
       .addCase(
-          getProjectAttachment.fulfilled,
-          (state, action: PayloadAction<any>) => {
-            state.attachments = action.payload;
-            state.itemStatus = DataStatus.SUCCEEDED;
-            state.itemError = undefined;
-          },
+        getProjectAttachment.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          state.attachments = action.payload;
+          state.itemStatus = DataStatus.SUCCEEDED;
+          state.itemError = undefined;
+        },
       )
       .addCase(getProjectAttachment.rejected, (state, action) => {
         state.attachments = undefined;
@@ -858,10 +873,17 @@ const projectSlice = createSlice({
         state.activities = [];
         state.activitiesStatus = DataStatus.FAILED;
         state.activitiesError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
-      }),
+      });
+    BudgetReducer(builder);
+  },
 });
 
-export const { removeMember, updateTaskDetail, updateTaskParent, resetTasks, reset } =
-  projectSlice.actions;
+export const {
+  removeMember,
+  updateTaskDetail,
+  updateTaskParent,
+  resetTasks,
+  reset,
+} = projectSlice.actions;
 
 export default projectSlice.reducer;

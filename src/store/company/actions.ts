@@ -19,12 +19,14 @@ export enum CompanyStatus {
 }
 
 export type GetEmployeeListQueries = BaseQueries & {
+  fullname?: string;
   email?: string;
   position?: string;
   is_pay_user?: boolean;
   status?: boolean;
   company?: string;
   date?: string;
+  searchType?: "and" | "or" | "eq";
 };
 
 export type EmployeeData = {
@@ -45,6 +47,7 @@ export type CompanyData = {
   address?: string;
   phone?: string;
   tax_code?: string;
+  avatar?: string | File;
 };
 
 export const getEmployees = createAsyncThunk(
@@ -55,7 +58,7 @@ export const getEmployees = createAsyncThunk(
   }: GetEmployeeListQueries & { concat?: boolean }) => {
     queries = serverQueries(
       { ...queries, sort: "created_time=-1" },
-      ["email"],
+      ["email", "fullname"],
       undefined,
       ["status"],
     ) as GetEmployeeListQueries;
@@ -77,11 +80,11 @@ export const getEmployees = createAsyncThunk(
 
 export const getEmployeeOptions = createAsyncThunk(
   "company/getEmployeeOptions",
-  async (queries: BaseQueries & { email?: string }) => {
+  async (queries: BaseQueries & { email?: string; fullname?: string }) => {
     queries = serverQueries({ ...queries, sort: "created_time=-1" }, [
       "email",
+      "fullname",
     ]) as GetEmployeeListQueries;
-
     try {
       const response = await client.get(Endpoint.COMPANY_MEMBERS, queries, {
         baseURL: AUTH_API_URL,
@@ -313,8 +316,12 @@ export const getMyCompany = createAsyncThunk(
 
 export const updateMyCompany = createAsyncThunk(
   "company/updateMyCompany",
-  async (data: CompanyData) => {
+  async (data: CompanyData, { getState }) => {
     try {
+      const state = getState();
+
+      const myCompany = (state as any).company.myItem;
+
       const response = await client.put(Endpoint.COMPANIES, data, {
         baseURL: COMPANY_API_URL,
         params: {
@@ -323,7 +330,14 @@ export const updateMyCompany = createAsyncThunk(
       });
 
       if (response?.status === HttpStatusCode.OK) {
-        return response.data;
+        const result = {
+          ...myCompany,
+          ...response.data,
+          owner: { ...myCompany.owner },
+          created_by: { ...myCompany.created_by },
+        };
+
+        return result;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {

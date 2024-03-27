@@ -52,17 +52,20 @@ const ItemList = () => {
       { value: "#", width: "5%", align: "center" },
       {
         value: commonT("name"),
-        width: "25%",
+        width: "20%",
         align: "left",
+        sort: true
       },
       {
         value: commonT("creator"),
-        width: "20%",
+        width: "25%",
         align: "left",
+        sort: true
       },
-      { value: commonT("creationDate"), width: "20%" },
-      { value: companyT("positions.numberOfEmployees"), width: "20%" },
-      { value: "", width: "10%" },
+        
+      { value: commonT("creationDate"), width: "20%", align: "center",  sort: true  },
+      { value: companyT("positions.numberOfEmployees"), align: "center", width: "20%", sort: true },
+      { value: "", width: "5%" },
     ],
     [commonT, companyT],
   );
@@ -78,8 +81,8 @@ const ItemList = () => {
         width: "25%",
         align: "left",
       },
-      { value: commonT("creationDate"), width: "20%" },
-      { value: companyT("positions.numberOfEmployees"), width: "20%" },
+      { value: commonT("creationDate"), width: "18%" },
+      { value: companyT("positions.numberOfEmployees"), width: "22%" },
     ],
     [commonT, companyT],
   );
@@ -91,7 +94,7 @@ const ItemList = () => {
 
     return [
       ...additionalHeaderList,
-      { value: "", width: isMdSmaller ? "15%" : "10%" },
+      // { value: "", width: isMdSmaller ? "15%" : "10%" },
     ] as CellProps[];
   }, [desktopHeaderList, isMdSmaller, mobileHeaderList]);
 
@@ -112,7 +115,6 @@ const ItemList = () => {
     const newQueries = { ...query, ...queries };
     const path = getPath(pathname, newQueries);
     push(path);
-
     onGetPositions(newQueries);
   };
 

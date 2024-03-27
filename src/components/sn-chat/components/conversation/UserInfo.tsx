@@ -86,7 +86,8 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
               src={avatar || undefined}
               size={120}
               style={{
-                borderRadius: "10px",
+                borderRadius: "50%",
+                // borderRadius: "10px",
                 objectFit: "cover",
               }}
             />

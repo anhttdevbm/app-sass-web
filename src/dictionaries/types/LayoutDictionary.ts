@@ -24,6 +24,21 @@ export type LayoutDictionary = {
     companyList: string;
     statementHistory: string;
     timeTracking: string;
+    budgeting: string;
     resourcePlaning: string;
+    sales: string;
+    docs: string;
+    chat: string;
+    //feedback
+    feedback: string;
+    feedbackList: string;
+    //blog
+    blog :string;
+    blogList:string;
+    blogCategoryList:string;
+    //carrer
+    career:string;
+    careerList:string;
+    billing:string;
   };
 };

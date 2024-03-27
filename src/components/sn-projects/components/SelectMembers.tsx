@@ -105,7 +105,7 @@ const SelectMembers = (props: SelectMembersProps) => {
             flex={1}
             flexWrap="wrap"
           >
-            {ignoreMembers.map((member) => (
+            {ignoreMembers?.map((member) => (
               <DisplayItem
                 key={member.id}
                 {...member}

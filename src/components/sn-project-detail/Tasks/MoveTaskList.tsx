@@ -1,13 +1,16 @@
-import { Dispatch, SetStateAction, memo, useEffect, useMemo } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  memo,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Stack } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DialogLayoutProps } from "components/DialogLayout";
 import { Select } from "components/shared";
-import {
-  useTaskDetail,
-  useTaskOptions,
-  useTasksOfProject,
-} from "store/project/selectors";
+import { useTaskDetail, useTasksOfProject } from "store/project/selectors";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
 import { useFormik, FormikErrors } from "formik";
 import { useTranslations } from "next-intl";
@@ -15,6 +18,9 @@ import { getMessageErrorByAPI } from "utils/index";
 import { useSnackbar } from "store/app/selectors";
 import * as Yup from "yup";
 import { useParams } from "next/navigation";
+import { Option } from "constant/types";
+import SelectMoveTask from "components/shared/SelectMoveTask";
+import { overflow } from "html2canvas/dist/types/css/property-descriptors/overflow";
 
 type MoveTaskListProps = {
   oldTaskListIds: string[];
@@ -29,22 +35,13 @@ const MoveTaskList = (props: MoveTaskListProps) => {
 
   const { onAddSnackbar } = useSnackbar();
   const { onMoveTask } = useTasksOfProject();
-  const {
-    options,
-    onGetOptions,
-    isFetching,
-    filters,
-    pageSize,
-    pageIndex,
-    totalPages,
-  } = useTaskOptions();
+  const { items } = useTasksOfProject();
   const { onGetTaskList } = useTaskDetail();
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
 
-  const params = useParams();
-
-  const projectId = useMemo(() => params.id, [params.id]) as string;
+  const [options, setOptions] = useState<Option[]>([]);
+  const [searchOptions, setSearchOptions] = useState<Option[]>([]);
 
   const onSubmit = async (values: typeof INITIAL_VALUES) => {
     try {
@@ -100,15 +97,36 @@ const MoveTaskList = (props: MoveTaskListProps) => {
     [touchedErrors, formik.isSubmitting],
   );
 
-  const onEndReached = () => {
-    if (isFetching || (totalPages && pageIndex >= totalPages)) return;
-    onGetOptions({ ...filters, pageSize, pageIndex: pageIndex + 1 });
-  };
-
   useEffect(() => {
-    if (!projectId) return;
-    onGetOptions({ project: projectId, pageIndex: 1, pageSize: 20 });
-  }, [onGetOptions, projectId]);
+    if (items && items.length > 0) {
+      const newItems = items.filter((item) => item.id !== oldTaskListIds[0]);
+      const itemOptions = newItems.map((item) => {
+        const option: Option = {
+          label: item.name,
+          value: item.id,
+        };
+        return option;
+      });
+
+      setOptions([...itemOptions]);
+      setSearchOptions([...itemOptions]);
+    }
+  }, [items]);
+
+  const onChangeSearch = (name: string, value?: string | number) => {
+    if (value) {
+      const v = value.toString().trim();
+
+      if (v.length === 0) {
+        setSearchOptions([...options]);
+      }
+
+      const sOptions = options.filter((option) => option.label.includes(v));
+      setSearchOptions([...sOptions]);
+    } else {
+      setSearchOptions([...options]);
+    }
+  };
 
   return (
     <FormLayout
@@ -124,8 +142,8 @@ const MoveTaskList = (props: MoveTaskListProps) => {
       {...rest}
     >
       <Stack spacing={2} py={3}>
-        <Select
-          options={options}
+        <SelectMoveTask
+          options={searchOptions}
           title={projectT("detailTasks.form.title.newTaskPlace")}
           name="task_move"
           required
@@ -137,9 +155,15 @@ const MoveTaskList = (props: MoveTaskListProps) => {
           })}
           rootSx={sxConfig.input}
           fullWidth
-          onEndReached={onEndReached}
           showSubText={false}
           hasIcon
+          searchProps={{
+            value: "",
+            placeholder: commonT("searchBy", { name: "list" }),
+            name: "task_move",
+          }}
+          onChangeSearch={onChangeSearch}
+          emitSearchWhenEnter={false}
         />
       </Stack>
     </FormLayout>
@@ -158,5 +182,6 @@ const validationSchema = Yup.object().shape({
 const sxConfig = {
   input: {
     height: 56,
+    with: "100% !important",
   },
 };

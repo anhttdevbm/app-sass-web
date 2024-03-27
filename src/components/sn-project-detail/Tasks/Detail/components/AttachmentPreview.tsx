@@ -1,5 +1,5 @@
 import { Box, Stack, StackProps } from "@mui/material";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
 import { IMAGES_ACCEPT, NS_COMMON } from "constant/index";
 import { IconButton, Text, Tooltip } from "components/shared";
 import CircleCloseIcon from "icons/CircleCloseIcon";
@@ -75,100 +75,113 @@ const AttachmentPreview = (props: AttachmentPreviewProps) => {
 
   return (
     // <Tooltip title={type && !isPreview ? commonT("clickToViewLarge") : ""}>
-    <Stack
-      direction="row"
-      alignItems="center"
-      borderRadius={1}
-      position="relative"
-      spacing={1}
-      {...containerProps}
-    >
-      {VIDEOS_EXTENSION.includes(extension) && (
-        <Box
-          bgcolor="rgba(0, 0, 0, .2)"
+    <Fragment>
+      <Stack
+        direction="row"
+        alignItems="center"
+        borderRadius={1}
+        position="relative"
+        spacing={1}
+        width={190}
+        mx={0.75}
+        sx={{ cursor: "pointer" }}
+        onClick={() => {
+          if (
+            IMAGES_EXTENSION.includes(extension) ||
+            VIDEOS_EXTENSION.includes(extension)
+          ) {
+            onPreviewTrue();
+          }
+        }}
+        {...containerProps}
+      >
+        {VIDEOS_EXTENSION.includes(extension) && (
+          <Box
+            bgcolor="rgba(0, 0, 0, .2)"
+            width={size}
+            height={size}
+            position="absolute"
+            top={onRemove ? 10 : 0}
+            left={onRemove ? 18 : 8}
+            borderRadius={1}
+            zIndex={1}
+          />
+        )}
+        <Stack
+          alignItems="center"
+          justifyContent="center"
           width={size}
           height={size}
-          position="absolute"
-          top={onRemove ? 10 : 0}
-          left={onRemove ? 18 : 8}
           borderRadius={1}
-          zIndex={1}
-        />
-      )}
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        width={size}
-        height={size}
-        borderRadius={1}
-        overflow="hidden"
-        p={onRemove ? 1.25 : 0}
-        sx={{
-          cursor: "pointer",
-        }}
-      >
-        {IMAGES_EXTENSION.includes(extension) ? (
-          <Box
-            component="img"
-            {...previewProps}
-            alt={name ?? "Image"}
-            ref={ref}
-            onClick={onPreviewTrue}
-            {...rest}
-          />
-        ) : VIDEOS_EXTENSION.includes(extension) ? (
-          <>
-            <PlayIcon
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: 28,
-                transform: "translateY(-50%)",
-                color: "common.white",
-                fontSize: 24,
-                zIndex: 1,
-              }}
-              onClick={onPreviewTrue}
-            />
-            <Box component="video" ref={ref} {...previewProps}>
-              <source {...rest} type={type} />
-            </Box>
-          </>
-        ) : (
-          <Link
-            href={props.src}
-            download
-            target="_blank"
-            underline="none"
-            color="inherit"
-          >
-            {fileIcon}
-          </Link>
-        )}
-      </Stack>
-      {!!showName && (
-        <Text variant="caption" maxWidth={100}>
-          {shortName(name)}
-        </Text>
-      )}
-      {!!onRemove && (
-        <IconButton
-          noPadding
-          onClick={onRemove}
+          overflow="hidden"
+          p={onRemove ? 1.25 : 0}
           sx={{
-            position: "absolute",
-            top: -10,
-            right: -10,
-            bgcolor: "background.paper",
-            "&:hover": {
-              bgcolor: "background.paper",
-            },
-            zIndex: 20,
+            cursor: "pointer",
           }}
         >
-          <CircleCloseIcon sx={{ color: "grey.400", fontSize: 20 }} />
-        </IconButton>
-      )}
+          {IMAGES_EXTENSION.includes(extension) ? (
+            <Box
+              component="img"
+              {...previewProps}
+              alt={name ?? "Image"}
+              ref={ref}
+              onClick={onPreviewTrue}
+              {...rest}
+            />
+          ) : VIDEOS_EXTENSION.includes(extension) ? (
+            <>
+              <PlayIcon
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: 28,
+                  transform: "translateY(-50%)",
+                  color: "common.white",
+                  fontSize: 24,
+                  zIndex: 1,
+                }}
+                onClick={onPreviewTrue}
+              />
+              <Box component="video" ref={ref} {...previewProps}>
+                <source {...rest} type={type} />
+              </Box>
+            </>
+          ) : (
+            <Link
+              href={props.src}
+              download
+              target="_blank"
+              underline="none"
+              color="inherit"
+            >
+              {fileIcon}
+            </Link>
+          )}
+        </Stack>
+        {!!showName && (
+          <Text variant="caption" maxWidth={100}>
+            {shortName(name)}
+          </Text>
+        )}
+        {!!onRemove && (
+          <IconButton
+            noPadding
+            onClick={onRemove}
+            sx={{
+              position: "absolute",
+              top: -10,
+              right: -10,
+              bgcolor: "background.paper",
+              "&:hover": {
+                bgcolor: "background.paper",
+              },
+              zIndex: 20,
+            }}
+          >
+            <CircleCloseIcon sx={{ color: "grey.400", fontSize: 20 }} />
+          </IconButton>
+        )}
+      </Stack>
       {Boolean(isPreview && props?.src && type) && (
         <Preview
           open={isPreview}
@@ -177,7 +190,7 @@ const AttachmentPreview = (props: AttachmentPreviewProps) => {
           src={props.src as string}
         />
       )}
-    </Stack>
+    </Fragment>
     // </Tooltip>
   );
 };

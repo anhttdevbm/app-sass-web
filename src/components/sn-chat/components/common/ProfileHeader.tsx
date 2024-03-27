@@ -12,6 +12,13 @@ import SearchRoundIcon from "icons/SearchRoundIcon";
 import VideoCallIcon from "icons/VideoCallIcon";
 import { useCallback, useEffect, useState } from "react";
 
+import { useChat } from "store/chat/selectors";
+import { useTranslations } from "next-intl";
+import { NS_COMMON } from "constant/index";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { STEP } from "store/chat/type";
+import InfoUserIcon from "icons/InfoUserIcon";
+import { CenterFocusStrong } from "@mui/icons-material";
 interface ProfileHeaderProps {
   textSearch?: string;
   isSearch?: boolean;
@@ -45,6 +52,46 @@ const ProfileHeader = ({
   const { sx: containerSx, ...containerProp } = containerProps || {};
   const { sx: nameSx, ...nameProp } = nameProps || {};
 
+  const {
+    prevStep,
+    dataTransfer,
+    groupMembers,
+    onSetRoomId,
+    onSetStep,
+    onCreateDirectMessageGroup,
+    onAddMembers2Group,
+    currStep,
+    onFetchGroupMembersMember,
+    onSetDataTransfer,
+    onChangeListConversations,
+    convention,
+    isChatDesktop,
+    onCloseDrawer,
+    onSetConversationInfo,
+    onGetChatAttachments,
+  } = useChat();
+  const commonT = useTranslations(NS_COMMON);
+
+  const { user } = useAuth();
+  const { onAddSnackbar } = useSnackbar();
+
+  const handleCreateGroup = async () => {
+    const result = await onCreateDirectMessageGroup({
+      groupName: (() => {
+        return `${dataTransfer?.username?.slice(0, 8)}...-and-me...${Math.floor(
+          Math.random() * (9999 - 1 + 1) + 1,
+        )}`;
+      })(),
+      members: [dataTransfer?.username],
+      type: "d",
+    });
+    onSetRoomId(result.payload.group._id);
+    onSetDataTransfer(result.payload.group);
+    onSetConversationInfo(result.payload.group);
+    onAddSnackbar(commonT("success"), "success");
+    onSetStep(STEP.CHAT_GROUP, result?.payload?.group);
+  };
+
   useEffect(() => {
     setOpenSearch(isSearch || false);
     return () => {
@@ -73,7 +120,7 @@ const ProfileHeader = ({
   const groupButton = useCallback(() => {
     return (
       <>
-        {onSearch && (
+        {/* {onSearch && (
           <IconButton onClick={() => setOpenSearch(true)}>
             <SearchIcon
               sx={{
@@ -81,22 +128,59 @@ const ProfileHeader = ({
               }}
             />
           </IconButton>
-        )}
+        )} */}
 
-        <IconButton
-          sx={{
-            color: "white",
-          }}
-        >
-          <ProfileAdd />
-        </IconButton>
-        {/* <IconButton
-          sx={{
-            color: "white",
-          }}
-        >
-          <VideoCallIcon />
-        </IconButton> */}
+        <Box display="flex" width="100px" justifyContent="space-around">
+          {onSearch && (
+            <IconButton onClick={() => setOpenSearch(true)}>
+              <SearchIcon
+                sx={{
+                  color: "#FFFFFF",
+                }}
+              />
+            </IconButton>
+          )}
+          <IconButton
+            onClick={() => {
+              onSetStep(STEP.ADD_GROUP, {
+                isNew: true,
+                currentSelects: dataTransfer,
+              });
+            }}
+            sx={{
+              color: "white",
+              padding: "6px",
+            }}
+          >
+            <ProfileAdd />
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              onSetStep(STEP.CONVENTION, {
+                isNew: true,
+                currentSelects: dataTransfer,
+              });
+            }}
+            sx={{
+              color: "white",
+              padding: "6px",
+            }}
+          >
+            <VideoCallIcon />
+          </IconButton>
+
+          {onShowProfile && (
+            <IconButton
+              onClick={onShowProfile}
+              sx={{
+                color: "white",
+                padding: "6px",
+              }}
+            >
+              <InfoUserIcon />
+            </IconButton>
+          )}
+        </Box>
       </>
     );
   }, [onSearch]);
@@ -113,8 +197,8 @@ const ProfileHeader = ({
                 "&::before": {
                   content: `''`,
                   position: "absolute",
-                  right: "-5px",
-                  top: "-4px",
+                  right: "-2px",
+                  bottom: "-2px",
                   width: "14px",
                   height: "14px",
                   border: "2px solid #ffffff",
@@ -128,19 +212,20 @@ const ProfileHeader = ({
                 alt="Avatar"
                 src={avatarClone}
                 size={40}
-                style={{
-                  borderRadius: "10px",
-                }}
                 onError={() => setAvatarClone(undefined)}
               />
             </Box>
           )}
+
           <Box
+            width="180px"
+            height="40px"
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              marginLeft: "11px",
+              marginLeft: "4px",
+              maxHeight: "40px",
             }}
           >
             {onShowProfile ? (
@@ -160,7 +245,13 @@ const ProfileHeader = ({
               <Typography
                 variant="inherit"
                 fontWeight="bold"
-                sx={nameSx}
+                sx={{
+                  ...nameSx,
+                  left: 0,
+                  transform: "none",
+                  WebkitLineClamp: 1,
+                  position: "unset",
+                }}
                 {...nameProp}
               >
                 {name}
@@ -169,7 +260,7 @@ const ProfileHeader = ({
             {statusOnline && (
               <Typography
                 variant="caption"
-                color="#999999"
+                color="#FFFFFF"
                 fontSize="14px"
                 lineHeight="22px"
               >
@@ -177,6 +268,7 @@ const ProfileHeader = ({
               </Typography>
             )}
           </Box>
+
           <Box ml="auto">{groupButton()}</Box>
         </>
       );
@@ -191,6 +283,7 @@ const ProfileHeader = ({
               "& .MuiInputBase-root": {
                 pl: "10px",
                 borderRadius: "8px",
+                fontSize: "14px",
                 backgroundColor: "#F7F7FD",
                 "& fieldset": {
                   border: "unset",
@@ -208,8 +301,8 @@ const ProfileHeader = ({
                   sx={{
                     fill: "none",
                     filter: "opacity(0.8)",
-                    height: "20px",
-                    width: "20px",
+                    height: "24px",
+                    width: "24px",
                   }}
                 />
               ),
@@ -225,16 +318,18 @@ const ProfileHeader = ({
               onSearch?.("", false);
             }}
             sx={{
-              color: "#1BC5BD",
+              marginLeft: "0.3rem",
+              color: "white",
             }}
           >
-            Hủy
+            Cancel
           </Button>
         </>
       );
     }
   }, [
     avatar,
+    avatarClone,
     groupButton,
     handleKeyDown,
     name,
@@ -254,8 +349,10 @@ const ProfileHeader = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          padding: "11.5px",
+          padding: "16px 16px 16px 4px",
           borderBottom: "1px solid #ECECF3",
+          backgroundColor: "#3699FF",
+          color: "#FFFFFF",
           ...containerSx,
         }}
         {...containerProp}
@@ -268,7 +365,8 @@ const ProfileHeader = ({
         >
           <ArrowDownIcon
             sx={{
-              fontSize: "32px",
+              fontSize: "24px",
+              color: "#FFFFFF",
             }}
           />
         </IconButton>

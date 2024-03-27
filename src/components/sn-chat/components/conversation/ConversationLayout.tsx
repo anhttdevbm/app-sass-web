@@ -12,6 +12,7 @@ const ConversationLayout = () => {
     convention,
     prevStep,
     conversationInfo,
+    dataTransfer,
     onSetStep,
     onSetRoomId,
     onSetConversationInfo,
@@ -19,6 +20,7 @@ const ConversationLayout = () => {
     onSetStateSearchMessage,
   } = useChat();
   const [displayUserInfo, setDisplayUserInfo] = useState(false);
+
   const accountInfo = useMemo(() => {
     const account = convention?.find(
       (item) => item._id === roomId,
@@ -31,7 +33,7 @@ const ConversationLayout = () => {
       <Box height="inherit" display="flex" flexDirection="column">
         <ProfileHeader
           avatar={{ url: accountInfo?.avatar, isShow: true }}
-          name={accountInfo?.name || "123"}
+          name={accountInfo?.name || dataTransfer?.name}
           statusOnline={conversationInfo?.status || ""}
           onPrevious={() => {
             onSetStep(prevStep);

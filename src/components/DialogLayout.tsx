@@ -49,7 +49,7 @@ const DialogLayout = forwardRef(
       hasCloseButton = true,
       hasDialogClose = true,
       onSubmit,
-      zIndex = 15,
+      zIndex = 50,
       submitWhenEnter,
       ...rest
     } = props;

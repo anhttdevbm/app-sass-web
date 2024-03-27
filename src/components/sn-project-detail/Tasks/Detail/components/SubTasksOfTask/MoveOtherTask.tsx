@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DialogLayoutProps } from "components/DialogLayout";
@@ -15,19 +15,43 @@ import { Option } from "constant/types";
 
 type MoveOtherTaskProps = {
   subId: string;
+  onAfterSubmit?: () => void;
+  taskListIdProps?: string;
+  taskIdProps?: string;
 } & Omit<DialogLayoutProps, "children" | "onSubmit">;
 
 const MoveOtherTask = (props: MoveOtherTaskProps) => {
-  const { subId, ...rest } = props;
+  const { subId, taskIdProps, taskListIdProps, ...rest } = props;
 
   const { onAddSnackbar } = useSnackbar();
   const { items } = useTasksOfProject();
-  const { task, taskListId, taskId, onChangeParentTask, onGetTaskList } =
-    useTaskDetail();
+  const {
+    task,
+    taskListId: taskListIdHook,
+    taskId: taskIdHook,
+    onChangeParentTask,
+    onGetTaskList,
+  } = useTaskDetail();
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
 
+  const [taskListId, setTaskListId] = useState<string | undefined>(undefined);
+  const [taskId, setTaskId] = useState<string | undefined>(undefined);
+
   const params = useParams();
+
+  useEffect(() => {
+    if (taskIdHook) {
+      setTaskId(taskIdHook);
+    } else {
+      setTaskId(taskIdProps);
+    }
+    if (taskListIdHook) {
+      setTaskListId(taskListIdHook);
+    } else {
+      setTaskListId(taskListIdProps);
+    }
+  }, [taskListIdProps, taskIdProps, taskIdHook, taskListIdHook]);
 
   const options = useMemo(() => {
     if (!taskListId || !taskId) return [];
@@ -67,7 +91,8 @@ const MoveOtherTask = (props: MoveOtherTaskProps) => {
         "success",
       );
       props.onClose();
-      onGetTaskList(newTaskListId);
+      await onGetTaskList(newTaskListId);
+      props.onAfterSubmit && props.onAfterSubmit();
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }

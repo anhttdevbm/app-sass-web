@@ -7,6 +7,7 @@ export const AccountLang: AccountDictionary = {
     },
     title: "Thông tin tài khoản",
     updateAccount: "Cập nhật tài khoản",
+    changeInformation: "Cập nhật tài khoản",
     notAllowUpdate: "{name} không được phép cập nhật.",
     notification: {
       updateSuccess: "Thông tin tài khoản được cập nhật thành công!",

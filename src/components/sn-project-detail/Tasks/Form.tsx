@@ -277,7 +277,7 @@ const Form = (props: FormProps) => {
         <Editor
           value={formik.values?.description}
           onChange={onChangeField}
-          title={commonT("form.title.note")}
+          title={commonT("form.title.description")}
           name="description"
           editorKey={TASK_EDITOR}
         />

@@ -124,6 +124,10 @@ const Actions = () => {
           name="email"
           onChange={onChangeQueries}
           value={queries?.email}
+          onEnter={(name, value) => {
+            onChangeQueries(name, value);
+            onSearch();
+          }}
           sx={{ minWidth: "fit-content", height: { xs: 46, md: 32 } }}
           rootSx={{ height: { xs: 46, md: 32 } }}
         />

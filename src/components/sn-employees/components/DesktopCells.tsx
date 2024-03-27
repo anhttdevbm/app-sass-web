@@ -1,9 +1,14 @@
 import { memo } from "react";
 import { Employee } from "store/company/reducer";
 import { BodyCell, StatusCell } from "components/Table";
-import { DATE_TIME_FORMAT_SLASH, NS_COMPANY } from "constant/index";
+import { DATE_TIME_FORMAT_SLASH, NS_COMPANY, DATE_LOCALE_FORMAT } from "constant/index";
 import { formatDate } from "utils/index";
 import { TEXT_STATUS, COLOR_STATUS } from "../helpers";
+import dayjs from "dayjs";
+import { Text } from "components/shared";
+import { Stack } from "@mui/material";
+import Avatar from "components/Avatar";
+
 
 type DesktopCellsProps = {
   item: Employee;
@@ -13,18 +18,25 @@ const DesktopCells = (props: DesktopCellsProps) => {
   const { item } = props;
   return (
     <>
-      <BodyCell align="left">{item.fullname}</BodyCell>
+      <BodyCell align="left">
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Avatar size={32} src={item?.avatar?.link} />
+          <Text variant="h6">{item.fullname}</Text>
+        </Stack>
+      </BodyCell>
       <BodyCell align="left" noWrap>
         {item.email}
       </BodyCell>
       <BodyCell>{item.position?.name}</BodyCell>
-      <BodyCell tooltip={formatDate(item.created_time, DATE_TIME_FORMAT_SLASH)}>
-        {formatDate(item.created_time)}
+      <BodyCell tooltip={dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}>
+        {/* {formatDate(item.created_time)} */}
+        {dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}
       </BodyCell>
       <BodyCell
-        tooltip={formatDate(item.date_end_using, DATE_TIME_FORMAT_SLASH)}
+        tooltip={dayjs(item.date_end_using).format(DATE_LOCALE_FORMAT)}
       >
-        {formatDate(item.date_end_using)}
+        {/* {formatDate(item.date_end_using)} */}
+        {dayjs(item.date_end_using).format(DATE_LOCALE_FORMAT)}
       </BodyCell>
       <StatusCell
         namespace={NS_COMPANY}

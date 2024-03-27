@@ -25,10 +25,12 @@ import {
   TYPE_LIST,
   UserInfo,
   MediaPreviewItem,
+  IChatInfo,
+  SetParamConversationProps,
 } from "./type";
 import { getChatRoomFile, getChatUrls } from "./media/actionMedia";
 import { ChatLinkType, MediaResponse, MediaType } from "./media/typeMedia";
-
+import dayjs from "dayjs";
 const initalPage = {
   pageIndex: 0,
   pageSize: 10,
@@ -78,6 +80,15 @@ const initialState: ChatState = {
   chatAttachments: [],
   deleteConversationStatus: DataStatus.IDLE,
   dataTransfer: {},
+  // param allChat,
+  paramsConversation: {},
+  paramsLastMessage: {},
+  paramsUnreadMessage: {},
+  typeDrawerChat: "info",
+  isOpenInfoChat: false,
+  isChatDesktop: false,
+  detailConversationStatus: DataStatus.IDLE,
+  selectSearchIndex: 0,
 };
 
 const isConversation = (type: string) => {
@@ -89,32 +100,77 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     reset: () => initialState,
+    setChatDesktop: (state, action) => {
+      state.isChatDesktop = action.payload;
+    },
+    setSelectSearchIndex: (state, action) => {
+      state.selectSearchIndex = action.payload;
+    },
+    resetConversationInfo: (state) => {
+      state.conversationInfo = null;
+    },
+    setTypeDrawerChatDesktop: (state, action) => {
+      state.typeDrawerChat = action.payload;
+      state.isOpenInfoChat = true;
+    },
+    setCloseDrawerChatDesktop: (state, action) => {
+      state.typeDrawerChat = action.payload;
+      state.isOpenInfoChat = false;
+    },
     setStep: (state, action) => {
       const prevStep = Number(action.payload.step) - 1;
       state.prevStep = prevStep === STEP.IDLE ? STEP.CONVENTION : prevStep;
       state.currStep = action.payload.step;
+      if (!action?.payload?.dataTransfer?.isDesktop) {
+        state.messageInfo = [];
+      }
 
-      if (action.payload.dataTransfer !== undefined) {
+      if (
+        action.payload.dataTransfer !== undefined &&
+        Object.keys(action.payload.dataTransfer).length > 0
+      ) {
         state.dataTransfer = action.payload.dataTransfer;
       }
     },
     setRoomId: (state, action) => {
       state.roomId = action.payload;
     },
+
+    //---Handle in groups ---//
+    setGroupMembers: (state, action: PayloadAction<[]>) => {
+      state.groupMembers = action.payload;
+    },
+    removeGroupMember: (state, action) => {
+      state.groupMembers = state.groupMembers.filter(
+        (groupMember) => groupMember.id !== action.payload,
+      );
+    },
+    //------------------------//
+
     setTypeList: (state, action) => {
       state.typeList = action.payload;
     },
     setDataTransfer: (state, action) => {
-      console.log("action.payload", action.payload);
-
-      state.dataTransfer = action.payload;
+      if (action?.payload && Object.keys(action.payload).length > 0) {
+        state.dataTransfer = action.payload;
+      }
+    },
+    resetDataTransfer: (state) => {
+      state.dataTransfer = {};
     },
     setConversationInfo: (state, action) => {
       state.conversationInfo = action.payload;
     },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
-        state.messageInfo.push(action.payload);
+        if (
+          state.messageInfo.findIndex(
+            (message) => message._id === action.payload?._id,
+          ) === -1
+        ) {
+          state.messageInfo.push(action.payload);
+        }
+
         if (action.payload.attachments?.length > 0) {
           const mediaMessages: MediaPreviewItem[] = action.payload.attachments
             .filter(
@@ -127,6 +183,8 @@ const chatSlice = createSlice({
                 link: item.image_url ?? item.video_url ?? "",
                 name: item.name || "",
                 object: "",
+                ts: item.ts || "",
+                type: item.image_url ? "image_url" : "video_url",
               };
             });
 
@@ -149,14 +207,53 @@ const chatSlice = createSlice({
         status: action.payload.status,
       };
     },
-    setLastMessage: (state, action) => {
-      const newConversation = state.convention.map((item) => {
-        if (item._id === action.payload.roomId) {
-          return { ...item, lastMessage: action.payload.lastMessage };
-        }
-        return item;
-      });
-      state.convention = newConversation;
+    setListNewConversation: (state, action) => {
+      state.convention = action.payload;
+    },
+
+    setLastMessage: (
+      state,
+      action: PayloadAction<{
+        roomId: string;
+        lastMessage: MessageInfo;
+        unreadCount: number;
+        unreadsFrom: string;
+      }>,
+    ) => {
+      const newConversation = state.convention
+        .map((item) => {
+          if (item._id === action.payload.roomId) {
+            return {
+              ...item,
+              lastMessage: action.payload.lastMessage,
+              unreadCount: action.payload.unreadCount,
+              unreadsFrom: action.payload.unreadsFrom,
+            };
+          }
+          return item;
+        })
+        .sort((a, b) => {
+          if (a.lastMessage && b.lastMessage) {
+            const aDate = new Date(a.lastMessage.ts);
+            const bDate = new Date(b.lastMessage.ts);
+            const compareTime = dayjs(aDate).isBefore(dayjs(bDate));
+            return compareTime ? 1 : -1;
+          } else {
+            return 1;
+          }
+        });
+      state.convention = [...newConversation];
+    },
+    updateUnSeenMessage: (state, action) => {
+      const index = state.convention.findIndex((i) => i._id === action.payload);
+      if (index > -1) {
+        const updateConversation = {
+          ...state.convention[index],
+          unreadCount: 0,
+          unreadsFrom: "",
+        };
+        state.convention.splice(index, 1, updateConversation);
+      }
     },
     setStateSearchMessage: (
       state,
@@ -167,6 +264,9 @@ const chatSlice = createSlice({
       state.stateSearchMessage = action.payload;
       state.messageInfo = [];
     },
+    //     getUpdateConversation: (state, action) => {
+    // log
+    //     },
     clearConversation: (state) => {
       state.convention = [];
       state.conversationPaging = { ...initalPage, textSearch: "" };
@@ -174,6 +274,15 @@ const chatSlice = createSlice({
     clearMessageList: (state) => {
       state.messageInfo = [];
       state.messagePaging = initalPage;
+    },
+    setParamsState: (
+      state,
+      action: PayloadAction<SetParamConversationProps>,
+    ) => {
+      state[action.payload.type] = action.payload.value;
+    },
+    resetSearchChatText: (state) => {
+      state.listSearchMessage = [];
     },
   },
   extraReducers: (builder) =>
@@ -237,7 +346,7 @@ const chatSlice = createSlice({
         getLatestMessages.fulfilled,
         (state, action: PayloadAction<MessageInfo[]>) => {
           // state.messageInfo = []
-          if (action.payload?.length > 0) {
+          if (action.payload) {
             const messageNew = action.payload?.reverse() || [];
 
             //Save media message
@@ -253,9 +362,11 @@ const chatSlice = createSlice({
               )
               .map((item) => {
                 return {
-                  link: item.downloadlink || "",
-                  name: item.name || "",
+                  link: item.downloadlink as string,
+                  name: item.name as string,
                   object: "",
+                  ts: item.ts as string,
+                  type: item.image_url ? "image_url" : "video_url",
                 };
               });
 
@@ -313,17 +424,20 @@ const chatSlice = createSlice({
       })
       // getPartnerInfoById
       .addCase(getUserInfoById.pending, (state, action) => {
+        state.detailConversationStatus = DataStatus.LOADING;
         state.partnerInfoStatus = DataStatus.LOADING;
       })
       .addCase(
         getUserInfoById.fulfilled,
         (state, action: PayloadAction<UserInfo>) => {
           state.partnerInfo = action.payload || null;
+          state.detailConversationStatus = DataStatus.SUCCEEDED;
           state.partnerInfoStatus = DataStatus.SUCCEEDED;
         },
       )
       .addCase(getUserInfoById.rejected, (state, action) => {
         state.partnerInfo = null;
+        state.detailConversationStatus = DataStatus.FAILED;
         state.partnerInfoStatus = DataStatus.FAILED;
       })
       // getChatUrls
@@ -385,7 +499,7 @@ const chatSlice = createSlice({
       })
       // addMembersToDirectMessageGroup
       .addCase(addMembersToDirectMessageGroup.pending, (state, action) => {
-        state.messageInfo = []
+        state.messageInfo = [];
         state.addMembers2GroupStatus = DataStatus.LOADING;
       })
       .addCase(
@@ -426,6 +540,7 @@ const chatSlice = createSlice({
         (state, action: PayloadAction<MediaResponse<MediaType>>) => {
           state.leftGroupStatus = DataStatus.SUCCEEDED;
           state.mediaList = action.payload.files;
+          state.chatAttachments = action.payload.files;
           state.mediaListStatus = DataStatus.SUCCEEDED;
         },
       )
@@ -457,6 +572,15 @@ export const {
   clearConversation,
   clearMessageList,
   setStateSearchMessage,
+  updateUnSeenMessage,
+  setTypeDrawerChatDesktop,
+  setCloseDrawerChatDesktop,
+  resetConversationInfo,
+  setChatDesktop,
+  setListNewConversation,
+  resetSearchChatText,
+  setSelectSearchIndex,
+  resetDataTransfer,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

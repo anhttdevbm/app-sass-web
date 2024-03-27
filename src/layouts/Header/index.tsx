@@ -90,7 +90,7 @@ const Header = () => {
       </Stack>
       {/* {breakpoint}-{width} */}
       <Stack direction="row" alignItems="center" spacing={3}>
-        {Boolean(searchPlaceholder && key) && (
+        {/* {Boolean(searchPlaceholder && key) && (
           <Search
             sx={{ display: { xs: "none", sm: "initial" } }}
             placeholder={searchPlaceholder}
@@ -104,7 +104,7 @@ const Header = () => {
             emitWhenEnter={isFocused}
             value={filters?.[key as string]}
           />
-        )}
+        )} */}
         <Stack direction="row" alignItems="center" spacing={2}>
           <SwitchLanguage />
           <SwitchTheme />

@@ -1,4 +1,4 @@
 import { Endpoint } from "./endpoint";
-import { client } from "./client";
+import { client, axios } from "./client";
 
-export { client, Endpoint };
+export { client, axios, Endpoint };

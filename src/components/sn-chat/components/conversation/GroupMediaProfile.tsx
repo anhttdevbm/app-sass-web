@@ -8,6 +8,8 @@ import { SxProps } from "@mui/material";
 import LinkContent from "../common/LinkContent";
 import MediaContent from "../common/MediaContent";
 import FileContent from "../common/FileContent";
+import { useTranslations } from "next-intl";
+import { NS_CHAT_BOX } from "constant/index";
 
 interface GroupMediaProfileProps {
   type?: STEP_INFO;
@@ -20,6 +22,7 @@ const GroupMediaProfile = ({
   const [tab, setTab] = useState<STEP_INFO>(type);
   const { conversationInfo } = useChat();
   const { name } = conversationInfo || {};
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   const renderContent = useMemo(() => {
     switch (tab) {
@@ -37,7 +40,7 @@ const GroupMediaProfile = ({
   }, [type]);
 
   const styleButtonTab: SxProps = {
-    width: "100px",
+    width: "121px",
     border: "1px solid #999999",
     borderRadius: "20px",
     color: "#999999",
@@ -78,7 +81,7 @@ const GroupMediaProfile = ({
           display="flex"
           alignItems="center"
           justifyContent="center"
-          gap={2}
+          gap={1}
           mt={2}
           mb={2}
           sx={{
@@ -94,7 +97,7 @@ const GroupMediaProfile = ({
             sx={styleButtonTab}
             className={tab === STEP_INFO.MEDIA ? "active" : ""}
           >
-            Media file
+            {commonChatBox("chatBox.media")}
           </Button>
           <Button
             variant="outlined"
@@ -102,7 +105,7 @@ const GroupMediaProfile = ({
             sx={styleButtonTab}
             className={tab === STEP_INFO.LINK ? "active" : ""}
           >
-            Link
+            {commonChatBox("chatBox.link")}
           </Button>
           <Button
             variant="outlined"
@@ -110,7 +113,7 @@ const GroupMediaProfile = ({
             sx={styleButtonTab}
             className={tab === STEP_INFO.FILE ? "active" : ""}
           >
-            File
+            {commonChatBox("chatBox.file")}
           </Button>
         </Box>
         {renderContent}

@@ -8,9 +8,7 @@ import { formatDate } from "utils/index";
 import AttachmentPreview from "components/AttachmentPreview";
 import { useTranslations } from "next-intl";
 import { NS_PROJECT } from "constant/index";
-import {
-  Attachment,
-} from "constant/types";
+import { Attachment } from "constant/types";
 
 type CommentsProps = {
   comments?: Comment[];
@@ -21,15 +19,17 @@ type CommentItemProps = {} & Comment;
 const Comments = (props: CommentsProps) => {
   const { comments = [] } = props;
   const projectT = useTranslations(NS_PROJECT);
-  const [listAttachmentsDown, setListAttachmentsDown] = useState<Attachment[]>([])
+  const [listAttachmentsDown, setListAttachmentsDown] = useState<Attachment[]>(
+    [],
+  );
   useEffect(() => {
     comments.map((comment) => {
       if (comment.attachments_down) {
         comment.attachments_down.map((item) => {
-          setListAttachmentsDown(current => [...current, item]);
-        })
+          setListAttachmentsDown((current) => [...current, item]);
+        });
       }
-    })
+    });
   }, [comments]);
 
   return (
@@ -38,7 +38,11 @@ const Comments = (props: CommentsProps) => {
         {projectT("taskDetail.commentList")}
       </Text>
       {comments.map((comment) => (
-        <CommentItem key={comment.id} {...comment} listAttachmentsDown={listAttachmentsDown}/>
+        <CommentItem
+          key={comment.id}
+          {...comment}
+          listAttachmentsDown={listAttachmentsDown}
+        />
       ))}
     </Stack>
   );
@@ -47,7 +51,13 @@ const Comments = (props: CommentsProps) => {
 export default memo(Comments);
 
 const CommentItem = (props: CommentItemProps) => {
-  const { creator, content, attachments_down = [], created_time, listAttachmentsDown } = props;
+  const {
+    creator,
+    content,
+    attachments_down = [],
+    created_time,
+    listAttachmentsDown,
+  } = props;
 
   return (
     <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>

@@ -1,30 +1,30 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Fade from "@mui/material/Fade";
-import Paper from "@mui/material/Paper";
-import Popper from "@mui/material/Popper";
 import SwitchChat from "components/sn-chat/SwitchChat";
 import ChatMessageIcon from "icons/ChatMessageIcon";
 import CloseIcon from "icons/CloseIcon";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "store/chat/selectors";
-import DefaultPopupLayout from "components/sn-time-tracking/TimeTrackingModal/DefaultPopupLayout";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { Grow, Typography } from "@mui/material";
 import { Button } from "components/shared";
 import { useTranslations } from "next-intl";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { Permission } from "constant/enums";
+import useTheme from "hooks/useTheme";
 
 const ChatListTemp = () => {
   const { user } = useAuth();
-  const { onGetAllConvention, onClearConversation, onReset } = useChat();
+  const { onGetAllConvention, onClearConversation, onReset, onSetChatDesktop } =
+    useChat();
   const popperRef = useRef(false);
   const [open, setOpen] = useState(false);
   const [show, setShow] = useState(false);
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar } = useSnackbar();
+  const { isDarkMode } = useTheme();
 
   const init = {
     type: "",
@@ -101,6 +101,11 @@ const ChatListTemp = () => {
     }));
   };
 
+  const handleCloseChatBox = () => {
+    setShowPopup(init);
+    setOpen(false);
+  };
+
   window.addEventListener("resize", () => {
     browserWidth = window.innerWidth;
     if (browserWidth < 768) {
@@ -129,6 +134,7 @@ const ChatListTemp = () => {
 
   const handleTrigger = (e: React.MouseEvent<HTMLDivElement>) => {
     popperRef.current = !popperRef.current;
+    onSetChatDesktop(false);
     if (browserWidth < 768) {
       setOpen(false);
       setShow(true);
@@ -145,7 +151,6 @@ const ChatListTemp = () => {
       onReset();
     }
   };
-
   if (!roleChatAccept) {
     return null;
   }
@@ -156,7 +161,7 @@ const ChatListTemp = () => {
         top: 0,
         bottom: 0,
         right: 0,
-        zIndex: 200,
+        zIndex: 1300,
       }}
     >
       {show ? (
@@ -171,50 +176,54 @@ const ChatListTemp = () => {
           sx={{ width: showPopup?.widthPopup }}
         />
       ) : (
-        <Grow
-          in={open}
-          style={{ transformOrigin: "bottom right" }}
-          {...(open ? { timeout: 500 } : {})}
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              width: "400px",
-              height: "calc(100% - 7rem)",
-              maxHeight: "600px",
-              overflow: "hidden",
-              bottom: "7rem",
-              right: "5rem",
-              borderRadius: "16px",
-              boxShadow: "2px 2px 24px 0px #0000001A",
-            }}
+        <>
+          <Grow
+            in={open}
+            style={{ transformOrigin: "bottom right" }}
+            {...(open ? { timeout: 500 } : {})}
           >
             <Box
               sx={{
-                height: "100%",
+                position: "absolute",
+                width: "348px",
+                height: "calc(100% - 8rem)",
+                maxHeight: "600px",
                 overflow: "hidden",
-                backgroundColor: "white",
+                bottom: "2rem",
+                right: "4rem",
+                borderRadius: "16px",
+                boxShadow: "2px 2px 24px 0px #0000001A",
+                backgroundColor: isDarkMode ? "#303130" : "white",
               }}
             >
-              <SwitchChat />
+              <Box
+                sx={{
+                  height: "100%",
+                  overflow: "hidden",
+                  backgroundColor: isDarkMode ? "#303130" : "white",
+                }}
+              >
+                {open && <SwitchChat onCloseChatBox={handleCloseChatBox} />}
+              </Box>
             </Box>
-          </Box>
-        </Grow>
+          </Grow>
+        </>
       )}
       <Box
         position="fixed"
-        bottom="3rem"
-        right="5rem"
+        bottom="2rem"
+        right="4rem"
         sx={{
           backgroundColor: "#3699FF",
           width: "50px",
           height: "50px",
           borderRadius: "50%",
-          display: "flex",
+          // display: "flex",
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "2px 2px 24px 0px #0000001A",
           cursor: "pointer",
+          display: open ? "none" : "flex",
         }}
         component={"div"}
         onClick={handleTrigger}

@@ -7,7 +7,7 @@ import { memo, useMemo } from "react";
 import { useSnackbar } from "store/app/selectors";
 import * as Yup from "yup";
 import { getMessageErrorByAPI } from "utils/index";
-import { Input } from "components/shared";
+import { Input, Upload } from "components/shared";
 import { VN_PHONE_REGEX } from "constant/regex";
 import { CompanyData } from "store/company/actions";
 import { useTranslations } from "next-intl";
@@ -46,6 +46,10 @@ const Form = (props: FormProps) => {
     onSubmit,
   });
 
+  const onChangeField = (name: string, newValue?: any) => {
+    formik.setFieldValue(name, newValue);
+  };
+
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
       (out: FormikErrors<CompanyData>, [key, error]) => {
@@ -62,6 +66,7 @@ const Form = (props: FormProps) => {
     () => !!Object.values(touchedErrors)?.length || formik.isSubmitting,
     [touchedErrors, formik.isSubmitting],
   );
+
 
   return (
     <FormLayout
@@ -120,6 +125,12 @@ const Form = (props: FormProps) => {
           error={touchedErrors?.tax_code}
           rootSx={sxConfig.input}
         />
+         <Upload
+            title="Logo"
+            name="avatar"
+            value={formik.values?.avatar}
+            onChange={onChangeField}
+          />
       </Stack>
     </FormLayout>
   );

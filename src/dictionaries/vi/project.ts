@@ -29,11 +29,11 @@ export const ProjectLang: ProjectDictionary = {
       choosePositionFirst: "Bạn cần chọn chức vụ cho thành viên này trước!",
     },
   },
-
   tabList: {
+    documents: "Tài liệu",
     tasks: "Công việc",
     activities: "Hoạt động",
-    costHistory: "Lịch sử chi phí",
+    budget: "Chi phí",
     members: "Thành viên",
     information: "Thông tin",
   },
@@ -60,10 +60,15 @@ export const ProjectLang: ProjectDictionary = {
       filter: {
         all: "Tất cả",
         file: "Tệp",
-        image: "Ảnh"
+        image: "Ảnh",
       },
       noData: "Không có tệp nào",
-    }
+    },
+  },
+  detailDocuments: {
+    head: {
+      title: "Tài liệu trong dự án | Taskcover",
+    },
   },
   detailMembers: {
     head: {
@@ -110,6 +115,7 @@ export const ProjectLang: ProjectDictionary = {
     selectedCount: "{value} đã chọn",
     assignee: "Người được giao",
     processingDuplicate: "Hệ thống đang xử lý sao chép...",
+    unsaveMessage: "Mô tả nhiệm vụ chưa được lưu, bạn có muốn lưu nó không?",
     nameWillBeExisted:
       "Tên công việc con bị trùng nhau, vui lòng đổi tên nó trước khi di chuyển.",
     keys: {
@@ -136,6 +142,7 @@ export const ProjectLang: ProjectDictionary = {
       deleteTaskListSuccess: "Xóa danh mục công việc thành công!",
       deleteTasksSuccess: "Xóa công việc thành công!",
       actionTaskSuccess: "Cập nhật {label} công việc thành công!",
+      taskNameIsRequired: "Tên công việc không được bỏ trống",
     },
   },
   taskDetail: {
@@ -178,11 +185,70 @@ export const ProjectLang: ProjectDictionary = {
     },
     notification: {
       assignSuccess: "Giao công việc cho thành viên thành công!",
+      dateSuccess: "Thay đổi thời gian thành công",
     },
   },
   detailActivities: {
     head: {
       title: "Hoạt động dự án | Taskcover",
+    },
+  },
+  budget: {
+    head: {
+      title: "Chi phí của dự án | Taskcover",
+    },
+    action: {
+      addBudget: "Thêm ngân sách",
+      addBudgetTitleModal: "Thêm ngân sách mới",
+    },
+    form: {
+      name: "Tên",
+      start_date: "Ngày bắt đầu",
+      end_date: "Ngày kết thúc",
+      owner: "Người tạo",
+      project_id: "Dự án",
+    },
+    createBudgetSuccess: "Thêm ngân sách mới thành công",
+    duplicateBudgetSuccess: "Nhân bản ngân sách thành công",
+    deleteBudgetSuccess: "Xóa ngân sách thành công",
+    table: {
+      budget: "Trạng thái/Ngân sách",
+      owner: "Người tạo",
+      cost: "Chi phí",
+      budgetTimeUsed: "Thời gian đã dùng",
+      budgetedTimeUse: "Thời gian ngân sách sử dụng",
+      workTime: "Work Time",
+      estimateTime: "Thời gian ước tính",
+      revenue: "Doanh thu",
+      margin: "Lãi suất",
+      budgetUsed: "Ngân sách đã được sử dụng",
+      budgetTotal: "Tổng ngân sách",
+      workedTime: "Thời gian làm việc",
+      billableTime: "Thời gian tính phí",
+      invoiced: "Đã lập hóa đơn",
+      company: "Công ty",
+      project: "Dự án",
+    },
+    groupBy: {
+      dateCreated: "Ngày tạo",
+      dateUpdated: "Ngày cập nhật",
+      startDate: "Ngày bắt đầu",
+      endDate: "Ngày kết thúc",
+      owner: "Người tạo",
+      status: "Trạng thái",
+    },
+    filter: {
+      owner: "Người tạo",
+      time: "Thời gian",
+    },
+    titleGroupBy: "Group By",
+    titleFilter: "Lọc",
+  },
+  errors: {
+    form: {
+      add_sub_task: {
+        required: "Tên công việc không được trống",
+      },
     },
   },
 };

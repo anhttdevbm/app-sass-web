@@ -7,6 +7,7 @@ export const AccountLang: AccountDictionary = {
     },
     title: "Account Information",
     updateAccount: "Update account",
+    changeInformation: "Change information",
     notAllowUpdate: "{name} is not allowed to be updated.",
     notification: {
       updateSuccess: "Account information updated successfully!",

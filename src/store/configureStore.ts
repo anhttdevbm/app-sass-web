@@ -8,6 +8,17 @@ import timeTrackingReducer, {
 } from "store/timeTracking/reducer";
 import managerReducer, { ManagerState } from "store/manager/reducer";
 import chatReducer from "store/chat/reducer";
+import budgetExpenseReducer from "store/expense/reducer";
+import { SaleState, salesReducer } from "./sales/reducer";
+import { resourcePlanningReducer } from "./resourcePlanning/reducer";
+import { TagState, tagsReducer } from "./tags/reducer";
+import docReducer, { IDocs } from "./docs/reducer";
+import { feedbackReducer } from "./feedback/reducer";
+import { BlogState, blogReducer } from "./blog/reducer";
+import { categoryBlogReducer } from "./blog-category/reducer";
+import { CareerReducer } from "./career/reducer";
+import documentApi from "./docs/api";
+import { BillingState, billingReducer } from "./billing/reducer";
 
 export interface State {
   app: AppState;
@@ -16,6 +27,11 @@ export interface State {
   company: CompanyState;
   manager: ManagerState;
   timeTracking: TimeTrackingState;
+  tags: TagState;
+  sales: SaleState;
+  docs: IDocs;
+  blogs: BlogState;
+  billing: BillingState;
 }
 
 export const store = configureStore({
@@ -26,12 +42,25 @@ export const store = configureStore({
     company: companyReducer,
     timeTracking: timeTrackingReducer,
     manager: managerReducer,
-    chat: chatReducer
+    chat: chatReducer,
+    tags: tagsReducer,
+    sales: salesReducer,
+    doc: docReducer,
+    resourcePlanning: resourcePlanningReducer,
+    //feedback
+    feedback: feedbackReducer,
+    blogs: blogReducer,
+    categoryBlogs: categoryBlogReducer,
+    //career
+    career: CareerReducer,
+    [documentApi.reducerPath]: documentApi.reducer,
+    billing: billingReducer,
+    budgetExpense: budgetExpenseReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }),
+    }).concat([documentApi.middleware]),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

@@ -2,9 +2,8 @@ import { useChat } from "store/chat/selectors";
 import ProfileHeader from "../common/ProfileHeader";
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
-import { SxProps, Typography } from "@mui/material";
+import { SxProps } from "@mui/material";
 import ProfileCircleIcon from "icons/ProfileCircleIcon";
-import ArrowDownIcon from "icons/ArrowDownIcon";
 import MediaFileIcon from "icons/MediaFileIcon";
 import LinkIcon from "icons/LinkIcon";
 import FileBasicIcon from "icons/FileBasicIcon";
@@ -12,51 +11,12 @@ import { MessageSearchInfo, STEP_INFO } from "store/chat/type";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MessageListSearch from "../messages/MessageListSearch";
 import { useSnackbar } from "store/app/selectors";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { AN_ERROR_TRY_AGAIN, NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import UserInfo from "./UserInfo";
 import GroupMediaProfile from "./GroupMediaProfile";
-
-const ItemProfile = ({
-  Icon,
-  title,
-  onClick,
-}: {
-  Icon: React.ElementType;
-  title: string;
-  onClick: () => void;
-}) => {
-  return (
-    <Box
-      display="flex"
-      gap="1rem"
-      ml="1rem"
-      mr="1.5rem"
-      alignItems="center"
-      sx={{
-        cursor: "pointer",
-      }}
-      onClick={onClick}
-    >
-      <Icon
-        sx={{
-          fill: "none",
-          color: "#666666",
-          filter: "opacity(0.8)",
-        }}
-      />
-      <Typography>{title}</Typography>
-      <ArrowDownIcon
-        sx={{
-          ml: "auto",
-          transform: "rotate(180deg)",
-          filter: "opacity(0.5)",
-          cursor: "pointer",
-        }}
-      />
-    </Box>
-  );
-};
+import ItemProfile from "../common/ItemProfile";
+import useTheme from "hooks/useTheme";
 
 interface UserLandingProps {
   displayUserInfo: boolean;
@@ -65,6 +25,8 @@ interface UserLandingProps {
 const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   const { conversationInfo, onSetStateSearchMessage, onSearchChatText } =
     useChat();
+  const { isDarkMode } = useTheme();
+
   const { onAddSnackbar } = useSnackbar();
   const t = useTranslations(NS_COMMON);
   const { avatar, name } = conversationInfo || {};
@@ -79,6 +41,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   const text = stateSearch.text;
   const isToggle = stateSearch.isToggle;
   const isSearch = stateSearch.isSearch;
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   const handleSearchChatText = useCallback(async () => {
     try {
@@ -107,6 +70,11 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
     [onPrevious, onSetStateSearchMessage],
   );
 
+  const handleSetStep = (step: STEP_INFO) => {
+    setStepMedia(step);
+    setShowMedia(true);
+  };
+
   const resetForm = (step: STEP_INFO) => {
     setShowMedia(false);
     setTimeout(() => {
@@ -131,50 +99,44 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
           <Avatar
             alt="Avatar"
             src={avatar || undefined}
-            size={80}
+            size={120}
             style={{
-              borderRadius: "10px",
+              borderRadius: "50%",
               objectFit: "cover",
             }}
           />
           <Box display="flex" flexDirection="column" gap={2} mt={5}>
             <ItemProfile
               Icon={ProfileCircleIcon}
-              title="Account infomation"
-              onClick={() => {
-                setStepMedia(STEP_INFO.USER);
-                setShowMedia(true);
-              }}
+              title={commonChatBox("chatBox.accountInformation")}
+              onClick={() => handleSetStep(STEP_INFO.USER)}
             />
             <ItemProfile
               Icon={MediaFileIcon}
-              title="Media file"
-              onClick={() => {
-                setStepMedia(STEP_INFO.MEDIA);
-                setShowMedia(true);
-              }}
+              title={commonChatBox("chatBox.media")}
+              onClick={() => handleSetStep(STEP_INFO.MEDIA)}
             />
             <ItemProfile
               Icon={LinkIcon}
-              title="Link"
-              onClick={() => {
-                setStepMedia(STEP_INFO.LINK);
-                setShowMedia(true);
-              }}
+              title={commonChatBox("chatBox.link")}
+              onClick={() => handleSetStep(STEP_INFO.LINK)}
             />
             <ItemProfile
               Icon={FileBasicIcon}
-              title="File"
-              onClick={() => {
-                setStepMedia(STEP_INFO.FILE);
-                setShowMedia(true);
-              }}
+              title={commonChatBox("chatBox.file")}
+              onClick={() => handleSetStep(STEP_INFO.FILE)}
             />
           </Box>
         </Box>
       );
     }
-  }, [avatar, handleSelectMessage, stateSearch.isSearch, stateSearch.text]);
+  }, [
+    avatar,
+    handleSelectMessage,
+    stateSearch.isSearch,
+    stateSearch.text,
+    commonChatBox,
+  ]);
 
   const renderMediaContent = useMemo(() => {
     switch (stepMedia) {
@@ -193,7 +155,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
     width: "100%",
     height: "inherit",
     overflow: "hidden",
-    backgroundColor: "white",
+    backgroundColor: isDarkMode ? "#303031" : "white",
     display: "flex",
     flexDirection: "column",
   };

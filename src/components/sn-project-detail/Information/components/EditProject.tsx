@@ -33,6 +33,7 @@ const EditProject = () => {
               : undefined,
             expected_cost: item?.expected_cost,
             working_hours: item?.working_hours,
+            currency: item?.currency,
             members: item?.members.map(({ id, fullname, ...rest }) => ({
               id,
               fullname,

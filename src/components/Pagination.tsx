@@ -48,11 +48,32 @@ const Pagination = (props: PaginationProps) => {
     <Stack
       direction={{ xs: "column-reverse", sm: "row" }}
       alignItems="center"
-      justifyContent={{ xs: "center", md: "space-between" }}
+      justifyContent={{ xs: "center", md: "flex-start" }}
       width="100%"
+      padding={2}
       spacing={{ md: 2 }}
       {...containerProps}
     >
+      <MuiPagination
+        count={totalPages}
+        variant="outlined"
+        shape="rounded"
+        onChange={onChange}
+        sx={{
+          [`& .${paginationItemClasses.root}`]: {
+            fontWeight: 600,
+          },
+          [`& .${paginationItemClasses.selected}`]: {
+            backgroundColor: ({ palette }) =>
+              `${palette.primary.main}!important`,
+            borderColor: "primary.main",
+            color: "common.white",
+          },
+          ...sx,
+        }}
+        {...rest}
+      />
+
       <Stack
         direction="row"
         alignItems="center"
@@ -73,26 +94,6 @@ const Pagination = (props: PaginationProps) => {
           {t("paging.outOf", { count: formatNumber(totalItems) })}
         </Text>
       </Stack>
-
-      <MuiPagination
-        count={totalPages}
-        variant="outlined"
-        shape="rounded"
-        onChange={onChange}
-        sx={{
-          [`& .${paginationItemClasses.root}`]: {
-            fontWeight: 600,
-          },
-          [`& .${paginationItemClasses.selected}`]: {
-            backgroundColor: ({ palette }) =>
-              `${palette.primary.main}!important`,
-            borderColor: "primary.main",
-            color: "common.white",
-          },
-          ...sx,
-        }}
-        {...rest}
-      />
     </Stack>
   );
 };
@@ -100,6 +101,7 @@ const Pagination = (props: PaginationProps) => {
 export default memo(Pagination);
 
 export const OPTIONS = [
+  { label: "5", value: 5 },
   { label: "10", value: 10 },
   { label: "25", value: 25 },
   { label: "50", value: 50 },

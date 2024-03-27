@@ -3,14 +3,17 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Avatar from "components/Avatar";
+import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import ArrowRightIcon from "icons/ArrowRightIcon";
 import CloseIcon from "icons/CloseIcon";
+import InfoUserIcon from "icons/InfoUserIcon";
 import PointOnline from "icons/pointOnline";
 import ProfileAdd from "icons/ProfileAdd";
 import SearchIcon from "icons/SearchIcon";
 import VideoCallIcon from "icons/VideoCallIcon";
-import { useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useChat } from "store/chat/selectors";
 import { IChatItemInfo, STEP } from "store/chat/type";
@@ -25,11 +28,31 @@ const AccountInfoHeader = ({
   onPrevious,
   viewStep,
 }: AccountInfoHeaderProp) => {
-  const { dataTransfer, onSetStep, prevStep } = useChat();
+  const { dataTransfer, onSetStep, prevStep, currStep, onGetAllConvention } =
+    useChat();
   const { usersCount, t, name } = accountInfo;
   const isGroup = useMemo(() => t !== "d", [t]);
 
   const [textSearch, setTextSearch] = useState("");
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
+  const [avatar, setAvatar] = useState<string | undefined>(
+    dataTransfer?.avatar,
+  );
+
+  useEffect(() => {
+    setAvatar(dataTransfer?.avatar);
+  }, [dataTransfer?.avatar]);
+
+  useEffect(() => {
+    (async () => {
+      await onGetAllConvention({
+        type: "a",
+        text: textSearch ?? "",
+        offset: 0,
+        count: 30,
+      });
+    })();
+  }, [currStep, textSearch]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -41,90 +64,131 @@ const AccountInfoHeader = ({
     if (isGroup) {
       return (
         <>
-          <div style={{ position: "relative" }}>
-            <ImageList
-              sx={{ width: 56, height: 56, margin: 0 }}
-              cols={2}
-              rowHeight={164}
-            >
-              <Avatar
-                alt="Avatar"
-                size={25}
-                style={{
-                  borderRadius: "5px",
-                }}
-              />
-              <Avatar
-                alt="Avatar"
-                size={25}
-                style={{
-                  borderRadius: "5px",
-                }}
-              />
-              <Avatar
-                alt="Avatar"
-                size={25}
-                style={{
-                  borderRadius: "5px",
-                }}
-              />
-              {usersCount - 3 > 0 ? (
-                <Box
-                  sx={{
-                    textAlign: "center",
-                    borderRadius: "5px",
-                    backgroundColor: "#3078F1",
-                    color: "white",
-                  }}
-                >
-                  <Typography variant="caption">+ {usersCount - 3}</Typography>
-                </Box>
-              ) : null}
-            </ImageList>
-            <IconButton
-              style={{
-                width: 5,
-                height: 5,
-                position: "absolute",
-                right: -2,
-                top: -2,
-                cursor: "unset",
-              }}
-            >
-              <PointOnline />
-            </IconButton>
-          </div>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography variant="inherit" fontWeight="bold" style={{ cursor: "pointer" }}
-              onClick={() => {
-                onSetStep(STEP.CHAT_DETAIL_GROUP);
-              }}
-            >
-              {name ? name : dataTransfer?.fname}
-            </Typography>
-            <Typography variant="caption" color="#999999">
-              Active
-            </Typography>
-          </Box>
-          {/* <IconButton
-            sx={{
-              cursor: "pointer",
-            }}
+          <div
             onClick={() => {
               onSetStep(STEP.CHAT_DETAIL_GROUP);
             }}
+            style={{ position: "relative", cursor: "pointer" }}
           >
-            <ArrowRightIcon />
-          </IconButton> */}
+            {avatar ? (
+              <>
+                <Avatar
+                  alt="Avatar"
+                  size={40}
+                  src={avatar || undefined}
+                  onError={() => setAvatar(undefined)}
+                />
+                <IconButton
+                  style={{
+                    width: 5,
+                    height: 5,
+                    position: "absolute",
+                    right: 2,
+                    bottom: 0,
+                    cursor: "unset",
+                  }}
+                >
+                  <PointOnline />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                <ImageList
+                  sx={{
+                    width: 50,
+                    height: 50,
+                    margin: 0,
+                    position: "relative",
+                  }}
+                >
+                  <Avatar
+                    alt="Avatar"
+                    size={36}
+                    style={{
+                      border: "4px solid ",
+                      borderColor: "background.default",
+                      borderRadius: "50%",
+                      position: "absolute",
+                      bottom: "10px",
+                      left: "10px",
+                    }}
+                  />
+                  <Avatar
+                    alt="Avatar"
+                    size={36}
+                    style={{
+                      border: "3px solid ",
+                      borderColor: "background.default",
+                      borderRadius: "50%",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                    }}
+                  />
+
+                  {/* Show how many members in group
+                
+                  {usersCount - 3 > 0 ? (
+                  <Box
+                    sx={{
+                      textAlign: "center",
+                      borderRadius: "5px",
+                      backgroundColor: "#3078F1",
+                      color: "white",
+                    }}
+                  >
+                    <Typography variant="caption">
+                      + {usersCount - 3}
+                    </Typography>
+                  </Box>
+                ) : null} */}
+                </ImageList>
+                <IconButton
+                  style={{
+                    width: 5,
+                    height: 5,
+                    position: "absolute",
+                    right: 12,
+                    bottom: -6,
+                    cursor: "unset",
+                  }}
+                >
+                  <PointOnline />
+                </IconButton>
+              </>
+            )}
+          </div>
+          <Box
+            onClick={() => {
+              onSetStep(STEP.CHAT_DETAIL_GROUP);
+            }}
+            sx={{
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              color: "white",
+            }}
+          >
+            <Typography
+              variant="inherit"
+              fontWeight="bold"
+              style={{ cursor: "pointer", WebkitLineClamp: 1 }}
+            >
+              {dataTransfer?.fname
+                ? dataTransfer?.fname?.replaceAll("_", " ")
+                : dataTransfer?.name
+                ? dataTransfer?.name?.replaceAll("_", " ")
+                : name}
+            </Typography>
+            <Typography variant="caption">
+              {commonChatBox("chatBox.active")}
+            </Typography>
+          </Box>
         </>
       );
     }
   };
+
   const _renderItemHeader = (viewStep) => {
     switch (viewStep) {
       case STEP.CHAT_GROUP:
@@ -134,11 +198,15 @@ const AccountInfoHeader = ({
           <>
             <Box
               sx={{
+                maxWidth: "180px",
                 fontSize: "16px",
                 fontWeight: 600,
+                color: "white",
+                textAlign: "left",
+                flex: 1,
               }}
             >
-              {dataTransfer?.name}
+              {dataTransfer?.name?.replaceAll("_", " ")}
             </Box>
           </>
         );
@@ -149,6 +217,9 @@ const AccountInfoHeader = ({
               sx={{
                 fontSize: "16px",
                 fontWeight: 600,
+                color: "white",
+                textAlign: "center",
+                flex: 1,
               }}
             >
               {dataTransfer?.name}
@@ -182,7 +253,7 @@ const AccountInfoHeader = ({
             </Typography>
             <IconButton
               onClick={() => {
-                onSetStep(STEP.ADD_GROUP, { ...dataTransfer, isNew: !isGroup });
+                onSetStep(STEP.CHAT_GROUP, dataTransfer);
               }}
               sx={{
                 width: "26px",
@@ -200,18 +271,20 @@ const AccountInfoHeader = ({
               "& .MuiInputBase-root": {
                 color: "black",
                 borderRadius: "10px",
-                border: "1px solid transparent",
               },
+              "& fieldset": { border: "none" },
             }}
             placeholder="Search"
             fullWidth
             onKeyDown={handleKeyDown}
             InputProps={{
+              disableUnderline: true, // <== added this
               startAdornment: (
                 <InputAdornment position="start">
                   <SearchIcon
                     sx={{
                       color: "#999999",
+                      fontSize: "24px",
                     }}
                   />
                 </InputAdornment>
@@ -233,14 +306,18 @@ const AccountInfoHeader = ({
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              padding: 1.5,
+              gap: "3px",
+              padding: 1,
               borderBottom: "1px solid #ECECF3",
+              backgroundColor: "#3699FF",
+              height: "72px",
             }}
           >
             <IconButton
               sx={{
                 cursor: "pointer",
+                color: "#FFFFFF",
+                padding: "0px!important",
               }}
               onClick={onPrevious}
             >
@@ -248,12 +325,15 @@ const AccountInfoHeader = ({
             </IconButton>
             {_renderItemHeader(viewStep)}
 
-            <Box ml="auto">
-              {viewStep != STEP.CHAT_ONE && (
+            <Box ml="auto" display="flex">
+              {viewStep == STEP.CHAT_DETAIL_GROUP && (
                 <IconButton>
                   <SearchIcon
                     sx={{
-                      color: "#1BC5BD",
+                      color: "#FFFFFF",
+                    }}
+                    onClick={() => {
+                      onSetStep(STEP.SEARCH_CHAT_TEXT);
                     }}
                   />
                 </IconButton>
@@ -261,20 +341,39 @@ const AccountInfoHeader = ({
               <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
                 onClick={() => {
-                  onSetStep(STEP.ADD_GROUP);
+                  onSetStep(STEP.ADD_MEMBER, {
+                    ...dataTransfer,
+                    openFrom: currStep,
+                  });
                 }}
               >
                 <ProfileAdd />
               </IconButton>
-              {/* <IconButton
+              <IconButton
                 sx={{
                   color: "white",
+                  padding: "6px",
                 }}
               >
                 <VideoCallIcon />
-              </IconButton> */}
+              </IconButton>
+
+              {viewStep != STEP.CHAT_DETAIL_GROUP && viewStep != STEP.LIST && (
+                <IconButton
+                  onClick={() => {
+                    onSetStep(STEP.CHAT_DETAIL_GROUP);
+                  }}
+                  sx={{
+                    color: "white",
+                    padding: "6px",
+                  }}
+                >
+                  <InfoUserIcon />
+                </IconButton>
+              )}
             </Box>
           </Box>
         );

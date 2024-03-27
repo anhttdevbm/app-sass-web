@@ -22,6 +22,7 @@ const Avatar = (props: AvatarProps) => {
         minWidth: size,
         maxWidth: size,
         objectFit: "cover",
+        // borderRadius: "50%",
       }}
       {...rest}
     />

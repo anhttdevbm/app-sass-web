@@ -70,6 +70,9 @@ const InputNumber = (props: InputNumberProps) => {
 
   const onAdd = (num: number) => {
     return () => {
+      // handle negative
+      if(!negative && num < 0 && !value) return
+
       const newValue =
         (!value && value != 0) ||
         isNaN(typeof value === "string" ? Number(value) : value)

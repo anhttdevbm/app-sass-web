@@ -82,3 +82,19 @@
   background-color: var(--mui-palette-grey-100);
   color: var(--mui-palette-text-primary);
 }
+
+.forward-icon {
+  display: none !important;
+}
+
+.message-layout:hover .forward-icon {
+  display: flex !important;
+}
+
+.mouse-pointer {
+  cursor: pointer;
+}
+
+.MuiAutocomplete-noOptions {
+  color: var(--mui-palette-grey-400) !important;
+}

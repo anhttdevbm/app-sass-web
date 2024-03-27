@@ -1,15 +1,25 @@
 import Wrapper from "components/Wrapper";
- import { TabList, Timeline } from "components/sn-resource-planing";
+import ResourcePlanning from "components/sn-resource-planing";
 
- export const metadata = {
-   title: "Time tracking | Taskcover",
- };
+export const metadata = {
+  title: "Resource Planning | Taskcover",
+};
 
- export default function Page() {
-   return (
-     <Wrapper overflow="auto">
-       <TabList />
-       <Timeline />
-     </Wrapper>
-   );
- }
+export default function ResourcePlanningPage() {
+  return (
+    <Wrapper
+      sx={{
+        overflow: {
+          sx: "scroll",
+          md: "hidden",
+        },
+      }}
+      px={{
+        sx: 0,
+        md: 3,
+      }}
+    >
+      <ResourcePlanning />
+    </Wrapper>
+  );
+}

@@ -26,6 +26,21 @@ export const LayoutLang: LayoutDictionary = {
     companyList: "Company List",
     statementHistory: "Statement History",
     timeTracking: "Time Tracking",
+    budgeting: "Budgeting",
     resourcePlaning: "Resource Planing",
+    sales: "Sales",
+    docs: "Documents",
+    chat: "Chat",
+    //feedback
+    feedback: "Feedback",
+    feedbackList: "Feedback List",
+    //blog,category
+    blog:"Blogs",
+    blogList:"Blog List",
+    blogCategoryList :"Category List",
+    //carrer
+    career:"Career",
+    careerList: "Career List",
+    billing: "Billing"
   },
 };

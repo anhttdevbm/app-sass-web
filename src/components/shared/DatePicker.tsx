@@ -30,6 +30,8 @@ const DatePicker = (props: DatePickerProps) => {
     ...rest
   } = props;
 
+
+
   const locale = useLocale();
 
   const onChangeDate = (date: Date | null) => {
@@ -53,14 +55,57 @@ const DatePicker = (props: DatePickerProps) => {
   );
 };
 
+export const DateTimePicker = (props: DatePickerProps) => {
+  const {
+    title,
+    placeholder,
+    required,
+    disabled,
+    pickerProps,
+    onChange,
+    value,
+    name,
+    ...rest
+  } = props;
+
+  const locale = useLocale();
+
+  const onChangeDate = (date: Date | null) => {
+    onChange(name, date || undefined);
+  };
+
+  return (
+    <LibDatePicker
+      selected={value ? new Date(value) : null}
+      placeholderText={placeholder}
+      title={title}
+      onChange={onChangeDate}
+      required={required}
+      disabled={disabled}
+      name={name}
+      locale={locale}
+      dateFormat="dd/MM/yyyy HH:mm"
+      showTimeSelect={true}
+      {...pickerProps}
+      customInput={<DatePickerInput {...rest} />}
+    />
+  );
+};
+
 export default memo(DatePicker);
 
 const DatePickerInput = forwardRef((props: InputProps, ref) => {
+  const { onClickEndNode, ...rest } = props;
   return (
     <Input
       ref={ref}
-      {...props}
-      endNode={<CalendarIcon sx={{ color: "grey.400", fontSize: 24 }} />}
+      {...rest}
+      endNode={
+        <CalendarIcon
+          onClick={onClickEndNode}
+          sx={{ color: "grey.400", fontSize: 24 }}
+        />
+      }
     />
   );
 });

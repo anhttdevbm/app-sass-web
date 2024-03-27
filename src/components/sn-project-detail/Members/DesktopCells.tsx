@@ -5,8 +5,9 @@ import { Stack } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import { formatDate } from "utils/index";
-import { DATE_TIME_FORMAT_SLASH } from "constant/index";
+import { DATE_TIME_FORMAT_SLASH, DATE_LOCALE_FORMAT } from "constant/index";
 import { DeleteUser } from "./components";
+import dayjs from "dayjs";
 
 type DesktopCellsProps = {
   item: Member;
@@ -27,10 +28,11 @@ const DesktopCells = (props: DesktopCellsProps) => {
       <BodyCell align="left" textProps={{ noWrap: true }} tooltip={item.email}>
         {item.email}
       </BodyCell>
-      <BodyCell>{item?.position_project?.name}</BodyCell>
+      <BodyCell>{item?.position?.name}</BodyCell>
       <BodyCell></BodyCell>
-      <BodyCell tooltip={formatDate(item.date_in, DATE_TIME_FORMAT_SLASH)}>
-        {formatDate(item.date_in)}
+      <BodyCell tooltip={dayjs(item.date_in).format(DATE_LOCALE_FORMAT)}>
+        {/* {formatDate(item?.date_in)} */}
+        {dayjs(item.date_in).format(DATE_LOCALE_FORMAT)}
       </BodyCell>
       <BodyCell align="left">
         <DeleteUser id={item.id} />

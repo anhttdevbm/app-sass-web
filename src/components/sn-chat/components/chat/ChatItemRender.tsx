@@ -3,6 +3,9 @@ import Avatar from "components/Avatar";
 import { ImageList, Typography } from "@mui/material";
 import { IChatItemInfo } from "store/chat/type";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { NS_CHAT_BOX } from "constant/index";
+import useTheme from "hooks/useTheme";
 
 interface ChatItemRenderProps {
   sessionId: string;
@@ -18,6 +21,9 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
     unreadCount,
     status: statusPartner,
   } = chatInfo || {};
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
+  const { isDarkMode } = useTheme();
+
   const [avatarClone, setAvatarClone] = useState<string | undefined>(avatar);
   const isUnReadMessage = useMemo(() => unreadCount > 0, [unreadCount]);
   const isDirectMessage = useMemo(() => t === "d", [t]);
@@ -33,13 +39,16 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
       return isCurrentAccByLastMessage ? "You sent a file." : "Sent a file.";
     } else {
       return isCurrentAccByLastMessage
-        ? `<p>You: ${lastMessage?.msg}</p>`
+        ? `<p>${commonChatBox("chatBox.you")} ${lastMessage?.msg}</p>`
         : lastMessage?.msg;
     }
   }, [isCurrentAccByLastMessage, lastMessage]);
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setAvatarClone(avatar);
+  }, [avatar]);
   useEffect(() => {
     if (lastMessageContent && lastMessageRef.current) {
       lastMessageRef.current.innerHTML = !isMessageNotConnect
@@ -49,7 +58,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   }, [isMessageNotConnect, lastMessageContent]);
 
   const groupAvatar = useMemo(() => {
-    if (isGroup && usersCount > 3) {
+    if (!avatarClone && isGroup && usersCount > 3) {
       return (
         <ImageList
           sx={{ width: 56, height: 56, margin: 0 }}
@@ -98,7 +107,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           size={56}
           src={avatarClone || undefined}
           style={{
-            borderRadius: "10px",
+            borderRadius: "50%",
           }}
           onError={() => setAvatarClone(undefined)}
         />
@@ -114,9 +123,9 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           fontWeight={isUnReadMessage ? 700 : 600}
           fontSize="14px"
           lineHeight="18px"
-          color="black"
+          color={isDarkMode ? "white" : "black"}
         >
-          {name}
+          {isGroup ? name?.replaceAll("_", " ") : name}
         </Typography>
         <Typography
           ref={lastMessageRef}
@@ -124,6 +133,10 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           color="#999999"
           sx={{
             display: "flex",
+            ...(isUnReadMessage && {
+              fontWeight: 700,
+              color: "black",
+            }),
             "& *": {
               margin: 0,
               padding: 0,
@@ -151,10 +164,10 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
             "& a": {
               color: "#999999",
             },
-            "& ol": {
+            "& ol, & ul": {
               marginLeft: "1rem",
               display: "flex",
-              gap: "1rem",
+              gap: "2rem",
             },
             "& pre": {
               display: "-webkit-box",
@@ -163,11 +176,10 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
               overflow: "hidden",
             },
           }}
-          fontWeight={isUnReadMessage ? "900" : "normal"}
         />
       </>
     );
-  }, [isCurrentAccByLastMessage, isUnReadMessage, name]);
+  }, [isCurrentAccByLastMessage, isUnReadMessage, name, isDarkMode]);
 
   return (
     <>
@@ -190,17 +202,14 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           "&::before": {
             content: `''`,
             position: "absolute",
-            right: "-5px",
-            top: "-2px",
-            width: "17px",
-            height: "17px",
+            right: "-1px",
+            bottom: "-1px",
+            width: "16px",
+            height: "16px",
             border: "2px solid #ffffff",
             backgroundColor: "#55C000",
             borderRadius: "50%",
-            visibility:
-              isDirectMessage && statusPartner === "online"
-                ? "visible"
-                : "hidden",
+            visibility: statusPartner === "online" ? "visible" : "hidden",
           },
         }}
       >

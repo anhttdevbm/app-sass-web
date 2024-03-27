@@ -18,14 +18,14 @@ import {
 
 type PopoverLayoutProps = {
   children: ReactNode;
-
+  onClose?: () => void;
   label: ReactNode;
   containerProps?: BoxProps;
 };
 
 const PopoverLayout = forwardRef(
   (props: PopoverLayoutProps, ref: ForwardedRef<HTMLButtonElement | null>) => {
-    const { children, label, containerProps } = props;
+    const { children, label, containerProps, onClose: onPopperClose } = props;
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const popoverId = useId();
@@ -35,6 +35,7 @@ const PopoverLayout = forwardRef(
 
     const onClose = () => {
       setAnchorEl(null);
+      onPopperClose && onPopperClose();
     };
 
     return (

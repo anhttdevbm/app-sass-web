@@ -11,6 +11,7 @@ interface ChatInputProps {
   onEnterMessage: (message: string) => void;
   onChangeFiles?: (file: File[]) => void;
   onResize?: (num?: number) => void;
+  wrapperInputSx?: any;
 }
 const ChatInput = ({
   isLoading,
@@ -19,6 +20,7 @@ const ChatInput = ({
   onEnterMessage,
   onChangeFiles,
   onResize,
+  wrapperInputSx,
 }: ChatInputProps) => {
   const [bodyElement, setBodyElement] = useState(null);
   const resizeObserver = useRef(
@@ -44,6 +46,7 @@ const ChatInput = ({
       sx={{
         width: "100%",
         bottom: "1rem",
+        ...(wrapperInputSx ? { ...wrapperInputSx } : {}),
       }}
     >
       <Box

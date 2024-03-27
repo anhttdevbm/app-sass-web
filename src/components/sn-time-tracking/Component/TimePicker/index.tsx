@@ -8,9 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { MobileTimePicker } from "@mui/x-date-pickers";
+import { MobileTimePicker, TimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import dayjs, { Dayjs } from "dayjs";
 import useTheme from "hooks/useTheme";
 import OutLineExpandIcon from "icons/OutLineExpandIcon";
@@ -110,7 +111,7 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                 </Typography>
               )}
             </InputLabel>
-            <MobileTimePicker
+            {/* <MobileTimePicker
               sx={{
                 input: {
                   fontSize: "14px",
@@ -151,9 +152,61 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                   display: "none",
                 },
               }}
+            /> */}
+            <TimePicker
+              // label="With Time Clock"
+              sx={{
+                input: {
+                  fontSize: "14px",
+                  lineHeight: "22px",
+                  fontWeight: 400,
+                  color: isDarkMode ? "#fff" : "common.black",
+                  padding: 0,
+                  backgroundColor: isDarkMode ? "#393939" : "grey.50",
+                },
+                fieldset: {
+                  border: "none",
+                },
+                "> :before, :after": {
+                  display: "none",
+                },
+                "& button": {
+                  position: 'absolute',
+                  right: '2px',
+                  bottom: '-1px',
+                }
+              }}
+              value={selectedDate}
+              onChange={(value: any) => {
+                // onChange && onChange(dayjs(value).format('YYYY/MM/DD'));
+                onChange && onChange(dayjs(value));
+              }}
+              onOpen={() => setIsFocus(true)}
+              onClose={() => setIsFocus(false)}
+              closeOnSelect
+              ref={datePickerRef}
+              slotProps={{
+                textField: {
+                  required: true,
+                  id: `input-field-${randomId}`,
+                },
+                actionBar: {
+                  actions: [],
+                },
+                // toolbar: {
+                //   hidden: true,
+                // },
+                rightArrowIcon: {
+                  display: "none",
+                },
+              }}
+              viewRenderers={{
+                hours: renderTimeViewClock,
+                minutes: renderTimeViewClock,
+              }}
             />
           </Stack>
-          <OutLineExpandIcon
+          {/* <OutLineExpandIcon
             sx={{
               width: "20px",
               height: "20px",
@@ -161,7 +214,7 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                 cursor: "pointer",
               },
             }}
-          />
+          /> */}
         </Box>
         {helperText ? (
           <FormHelperText

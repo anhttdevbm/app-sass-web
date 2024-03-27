@@ -8,7 +8,7 @@ import {
   COMPANY_API_URL,
 } from "constant/index";
 import { BaseQueries } from "constant/types";
-import { refactorRawItemListResponse, serverQueries } from "utils/index";
+import { refactorRawItemListResponse, serverQueries, serverQueriesOr } from "utils/index";
 import StringFormat from "string-format";
 
 export enum CompanyStatus {
@@ -28,6 +28,8 @@ export type GetEmployeeListQueries = BaseQueries & {
   is_pay_user?: boolean;
   company?: string;
   date?: string;
+  name?: string;
+  fullname?: string;
 };
 
 export type GetCompanyListQueries = BaseQueries & {
@@ -44,9 +46,9 @@ export type GetStatementHistoryQueries = BaseQueries & {
 export const getEmployeesOfCompany = createAsyncThunk(
   "manager/getEmployeesOfCompany",
   async ({ ...queries }: GetEmployeeListQueries) => {
-    queries = serverQueries(
+    queries = serverQueriesOr(
       { ...queries, sort: "created_time=-1" },
-      ["email"],
+      ["email", "fullname"],
       ["approve"],
       ["status"],
       {
@@ -126,6 +128,7 @@ export const getCompany = createAsyncThunk(
 export const updateCompany = createAsyncThunk(
   "manager/updateCompany",
   async ({ id, ...data }: CompanyData & { id: string }) => {
+    console.log('update')
     try {
       const response = await client.put(
         StringFormat(Endpoint.COMPANY_ITEM, { id }),
@@ -133,8 +136,8 @@ export const updateCompany = createAsyncThunk(
         {
           baseURL: COMPANY_API_URL,
         },
-      );
-
+        );
+        
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
       }

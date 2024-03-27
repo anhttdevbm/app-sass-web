@@ -2,44 +2,52 @@ import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import Media from "components/Media";
-import Preview from "components/Preview";
+import Preview, { TitlePreview } from "components/Preview";
 import { DataStatus } from "constant/enums";
 import { ACCEPT_MEDIA, AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import PlayIcon from "icons/PlayIcon";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { MediaType, TypeMedia } from "store/chat/media/typeMedia";
 import { useChat } from "store/chat/selectors";
-export interface MediaPreview extends Partial<MediaType> {
-  link: string;
-  object: string;
-}
+import { copyImage, downloadImage, formatDate } from "utils/index";
+export type MediaInfo = MediaType & {
+  type: TypeMedia;
+};
+export type MediaPreview = Partial<MediaInfo> & {
+  isPreview: boolean;
+};
 export const MediaClone = ({
-  src,
-  type,
+  media,
   listMedia,
 }: {
-  src: string;
-  type: TypeMedia;
-  listMedia: MediaPreview[];
+  media: MediaInfo;
+  listMedia: MediaInfo[];
 }) => {
+  const commonT = useTranslations(NS_COMMON);
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
   const [isError, setError] = useState<boolean>(false);
-  const [mediaPreview, setMediaPreview] = useState<{
-    isPreview;
-    src: string;
-    type: TypeMedia;
-  }>({ isPreview: false, src: "", type: "image_url" });
+  const [mediaPreview, setMediaPreview] = useState<MediaPreview>({
+    isPreview: false,
+    url: "",
+    type: "image_url",
+  });
+  const { url, type } = media;
   const listMediaClone = useMemo(() => {
     return listMedia.map((item) => {
       return {
         link: item.url || "",
         name: item.name || "",
-        object: item.object,
+        object: item.path,
       } as { link: string; name: string; object: string };
     });
   }, [listMedia]);
+
+  const handleChangeSlide = (url) => {
+    const info = listMedia.find((item) => item.url === url);
+    setMediaPreview((state) => ({ ...info, isPreview: true }));
+  };
 
   const switchMedia = useMemo(() => {
     switch (type) {
@@ -47,7 +55,7 @@ export const MediaClone = ({
         return !isError ? (
           <Media
             size={92}
-            src={src}
+            src={url}
             loading="lazy"
             style={{
               display: isError ? "none" : "block",
@@ -60,9 +68,8 @@ export const MediaClone = ({
             onClick={() =>
               setMediaPreview((state) => ({
                 ...state,
+                ...media,
                 isPreview: true,
-                src: src,
-                type: type,
               }))
             }
           />
@@ -95,7 +102,6 @@ export const MediaClone = ({
                 color: "common.white",
                 fontSize: 24,
                 zIndex: 1,
-
                 backgroundColor: "#FFFFFF4D",
                 borderRadius: "50px",
                 width: "30px",
@@ -104,9 +110,8 @@ export const MediaClone = ({
               onClick={() =>
                 setMediaPreview((state) => ({
                   ...state,
+                  ...media,
                   isPreview: true,
-                  src: src,
-                  type: "video_url",
                 }))
               }
             />
@@ -120,7 +125,7 @@ export const MediaClone = ({
                   objectFit: "cover",
                 }}
               >
-                <source src={src} onError={() => setError(true)} />
+                <source src={url} onError={() => setError(true)} />
               </Box>
             ) : (
               <Skeleton
@@ -145,24 +150,43 @@ export const MediaClone = ({
           />
         );
     }
-  }, [isError, src, type]);
+  }, [type, isError, url, media]);
+
+  const time = useMemo(() => {
+    const date = new Date(mediaPreview.uploadedAt as string);
+    return formatDate(date, "HH:mm dd/MM/yyyy");
+  }, [mediaPreview.uploadedAt]);
 
   return (
     <>
       {switchMedia}
-      {Boolean(
-        mediaPreview?.isPreview && mediaPreview?.src && mediaPreview?.type,
-      ) && (
+      {!!(
+        mediaPreview?.isPreview &&
+        mediaPreview?.url &&
+        mediaPreview?.type
+      ) ? (
         <Preview
           open={true}
           type={mediaPreview.type || ""}
           listAttachmentsDown={listMediaClone}
-          onClose={() =>
-            setMediaPreview((state) => ({ ...state, isPreview: false }))
-          }
-          src={mediaPreview.src as string}
+          src={mediaPreview.url as string}
+          titleProps={{
+            children: (
+              <TitlePreview
+                time={time}
+                onClose={() =>
+                  setMediaPreview((state) => ({ ...state, isPreview: false }))
+                }
+                onCopy={() => copyImage(mediaPreview.url || "")}
+                onDownloadFile={() =>
+                  downloadImage(mediaPreview.url || "", mediaPreview.name || "")
+                }
+              />
+            ),
+          }}
+          onStartChangeSlide={handleChangeSlide}
         />
-      )}
+      ) : null}
     </>
   );
 };
@@ -170,7 +194,7 @@ export const MediaClone = ({
 const MediaContent = () => {
   const { mediaList, mediaListStatus, onGetChatAttachments } = useChat();
   const { onAddSnackbar } = useSnackbar();
-  const t = useTranslations(NS_COMMON);
+  const commonT = useTranslations(NS_COMMON);
 
   useEffect(() => {
     const handleGetAttachment = async () => {
@@ -178,15 +202,15 @@ const MediaContent = () => {
         await onGetChatAttachments({ fileType: "media" });
       } catch (error) {
         onAddSnackbar(
-          typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),
+          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
           "error",
         );
       }
     };
     handleGetAttachment();
-  }, [onAddSnackbar, onGetChatAttachments, t]);
+  }, [onAddSnackbar, onGetChatAttachments, commonT]);
 
-  const mediaClone = useMemo(() => {
+  const mediaClone = useMemo<MediaInfo[]>(() => {
     const acceptType = ACCEPT_MEDIA.map((item) => item.split("/")?.[1]);
     return mediaList
       ?.filter((file) => {
@@ -215,7 +239,7 @@ const MediaContent = () => {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 
-  return (
+  return mediaClone?.length > 0 ? (
     <Box
       sx={{
         display: "grid",
@@ -228,19 +252,16 @@ const MediaContent = () => {
         maxHeight: "100%",
       }}
     >
-      {mediaClone?.length > 0 ? (
-        mediaClone?.map((item, index) => (
-          <MediaClone
-            key={index}
-            src={item.url}
-            type={item.type}
-            listMedia={mediaClone as unknown as MediaPreview[]}
-          />
-        ))
-      ) : (
-        <Typography textAlign="center">No Data...</Typography>
-      )}
+      {mediaClone?.map((item, index) => (
+        <MediaClone
+          key={index}
+          media={item}
+          listMedia={mediaClone}
+        />
+      ))}
     </Box>
+  ) : (
+    <Typography textAlign="center">{commonT("noData")}</Typography>
   );
 };
 

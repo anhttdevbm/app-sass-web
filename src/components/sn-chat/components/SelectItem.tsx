@@ -7,14 +7,17 @@ import CircleUnchecked from "icons/CircleUnchecked";
 import CircleCheckedFilled from "icons/CircleCheckedFilled";
 import { Button } from "components/shared";
 import { Employee } from "store/company/reducer";
+import useTheme from "hooks/useTheme";
 
 interface SelectItemProp {
   employee: Employee;
   onClick?: (event: ChangeEvent<HTMLInputElement>) => void;
   checkbox?: boolean;
   onClickItem?: () => void;
+  checked?: boolean;
 }
 const SelectItem = ({
+  checked,
   employee,
   onClick,
   checkbox,
@@ -22,6 +25,7 @@ const SelectItem = ({
 }: SelectItemProp) => {
   const { fullname, email, avatar } = employee;
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
+  const { isDarkMode } = useTheme();
 
   return (
     <Box
@@ -29,10 +33,11 @@ const SelectItem = ({
         display: "flex",
         alignItems: "center",
         gap: "0.5rem",
+        paddingLeft: '0px',
         marginBottom: 1,
         // cursor: "pointer",
         ":hover": {
-          backgroundColor: "#F7F7FD",
+          backgroundColor: isDarkMode ? "#3a3b3c" : "#F7F7FD",
         },
       }}
       p={1}
@@ -40,6 +45,10 @@ const SelectItem = ({
     >
       {checkbox && (
         <Checkbox
+          sx={{
+            paddingLeft: '0px',
+          }}
+          checked={checked}
           onChange={onClick}
           {...label}
           icon={<CircleUnchecked />}

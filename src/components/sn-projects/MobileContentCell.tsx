@@ -1,18 +1,18 @@
 import { memo } from "react";
 import { Stack } from "@mui/material";
 import { Text } from "components/shared";
-import TextStatus from "components/TextStatus";
-import { COLOR_STATUS, TEXT_STATUS } from "./components/helpers";
-import { BodyCell, StatusCell } from "components/Table";
+import { formatDate } from "utils/index";
+import { BodyCell } from "components/Table";
 import { Project } from "store/project/reducer";
 import { PROJECT_TASKS_PATH } from "constant/paths";
 import { getPath } from "utils/index";
 import Link from "components/Link";
 import Avatar from "components/Avatar";
 import { useTranslations } from "next-intl";
-import { NS_COMMON } from "constant/index";
+import { NS_COMMON, DATE_LOCALE_FORMAT } from "constant/index";
 import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
 import { Saved, SelectStatus } from "./components";
+import dayjs from "dayjs";
 
 type MobileContentCellProps = {
   item: Project;
@@ -52,6 +52,13 @@ const MobileContentCell = (props: MobileContentCellProps) => {
       </BodyCell>
       <BodyCell align="left" sx={{ px: 0.5 }}>
         {item?.owner?.fullname}
+      </BodyCell>
+      <BodyCell align="left">
+        {/* {formatDate(item.start_date)} */}
+        {item.start_date ? dayjs(item.start_date).format(DATE_LOCALE_FORMAT) : ""}
+      </BodyCell>
+      <BodyCell align="left">
+        {item.end_date ? dayjs(item.end_date).format(DATE_LOCALE_FORMAT) : ""}
       </BodyCell>
       {item.status ? (
         <BodyCell sx={{ display: 'flex', justifyContent: 'center', width: '100%', alignItems: 'center' }}>

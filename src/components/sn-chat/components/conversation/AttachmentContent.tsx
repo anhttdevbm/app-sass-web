@@ -1,9 +1,8 @@
 import Box, { BoxProps } from "@mui/material/Box";
 import SvgIcon from "@mui/material/SvgIcon";
-import Typography from "@mui/material/Typography";
 import Avatar from "components/Avatar";
 import Link from "components/Link";
-import Preview from "components/Preview";
+import Preview, { TitlePreview } from "components/Preview";
 import { FILE_MAP } from "constant/enums";
 import { mapType } from "constant/index";
 import FileCsvIcon from "icons/FileCsvIcon";
@@ -12,10 +11,19 @@ import FileExcelIcon from "icons/FileExcelIcon";
 import FilePdfIcon from "icons/FilePdfIcon";
 import PlayIcon from "icons/PlayIcon";
 import { useMemo, useRef, useState } from "react";
-import { Attachment } from "store/chat/media/typeMedia";
+import { Attachment, TypeMedia } from "store/chat/media/typeMedia";
 import { MediaPreviewItem, MessageInfo } from "store/chat/type";
 import { TimeMessage } from "../messages/MessageContent";
+import useTheme from "hooks/useTheme";
+import { copyImage, downloadImage, formatDate } from "utils/index";
 
+interface MediaPreview {
+  isPreview;
+  src: string;
+  type: TypeMedia;
+  ts: string;
+  name: string;
+}
 const IconFile = {
   [FILE_MAP.DOC]: FileDocIcon,
   [FILE_MAP.EXCEL]: FileExcelIcon,
@@ -29,12 +37,14 @@ const AttachmentContent = ({
   isCurrentUser,
   isRead,
   attachmentProps,
+  showOnlyContent,
 }: {
   message: MessageInfo;
   mediaListPreview: MediaPreviewItem[];
   isCurrentUser: boolean;
   isRead: boolean;
   attachmentProps?: BoxProps;
+  showOnlyContent?: boolean;
 }) => {
   const { sx, ...props } = attachmentProps || {};
 
@@ -54,24 +64,21 @@ const AttachmentContent = ({
           (result[keys] = result[keys] || []).push(current[keys]);
       } else {
         for (const key of keys) {
-          current[key] && (result[key] = result[key] || []).push(current[key]);
+          current[key] && (result[key] = result[key] || []).push(current);
         }
       }
       return result;
     }, {});
   };
-
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
-  const [mediaPreview, setMediaPreview] = useState<{
-    isPreview;
-    src: string;
-    type: "image_url" | "video_url";
-  }>({ isPreview: false, src: "", type: "image_url" });
+  const [mediaPreview, setMediaPreview] = useState<Partial<MediaPreview>>({
+    isPreview: false,
+  });
 
   const media = groupAttachment(message?.attachments, [
     "image_url",
     "video_url",
-  ]) as unknown as { image_url: string[]; video_url: string[] };
+  ]) as unknown as { image_url: Attachment[]; video_url: Attachment[] };
 
   const files = useMemo(() => {
     return message?.attachments
@@ -86,11 +93,46 @@ const AttachmentContent = ({
         }
       });
   }, [message]);
+
+  const { isDarkMode } = useTheme();
+
+  const renderBackgroundColor = useMemo(() => {
+    if (isCurrentUser) {
+      if (isDarkMode) return "#333333";
+      return "#EBF5FF";
+    }
+    return isDarkMode ? "#3a3b3c" : "#F7F7FD";
+  }, [isCurrentUser, isDarkMode]);
+
+  const forceUpdatePreview = (data: {
+    isPreview: boolean;
+    src: string;
+    type: TypeMedia;
+    ts: string;
+    name: string;
+  }) => {
+    const date = new Date(data.ts as string);
+    const time = formatDate(date, "HH:mm dd/MM/yyyy");
+    setMediaPreview({ ...data, ts: time });
+  };
+
+  const handleChangeSlide = (url) => {
+    const info = mediaListPreview.find((item) => item.link === url);
+    forceUpdatePreview({
+      src: info?.link as string,
+      type: info?.type as TypeMedia,
+      ts: info?.ts as string,
+      name: info?.name as string,
+      isPreview: true,
+    });
+  };
+
   return (
     <>
       {
         <Box
           sx={{
+            marginTop: '17px',
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
@@ -107,42 +149,47 @@ const AttachmentContent = ({
                 <Box position="relative" key={index} height={112}>
                   <Avatar
                     size={112}
-                    src={image || undefined}
+                    src={image.image_url}
                     style={{
                       borderRadius: "8px",
                       border: "1px solid #efefef",
                       objectFit: "cover",
                     }}
                     onClick={() =>
-                      setMediaPreview((state) => ({
-                        ...state,
+                      forceUpdatePreview({
+                        ts: image.ts as string,
                         isPreview: true,
-                        src: image,
+                        src: image.image_url || "",
                         type: "image_url",
-                      }))
+                        name: image.name as string,
+                      })
                     }
                   />
-                  <TimeMessage
-                    time={message.ts}
-                    isRead={isRead}
-                    isCurrentUser={isCurrentUser}
-                    timeMessageProps={{
-                      sx: {
-                        position: "absolute",
-                        bottom: ".4rem",
-                        right: ".3rem",
-                        gap: "0.2rem",
-                        padding: "0 6px",
-                        borderRadius: "15px",
-                        backgroundColor: "#00000080",
-                      },
-                    }}
-                  />
+                  {showOnlyContent ? (
+                    ""
+                  ) : (
+                    <TimeMessage
+                      time={message.ts}
+                      isRead={isRead}
+                      isCurrentUser={isCurrentUser}
+                      timeMessageProps={{
+                        sx: {
+                          position: "absolute",
+                          bottom: ".4rem",
+                          right: ".3rem",
+                          gap: "0.2rem",
+                          padding: "0 6px",
+                          borderRadius: "15px",
+                          backgroundColor: "#00000080",
+                        },
+                      }}
+                    />
+                  )}
                 </Box>
               );
             })}
           {media &&
-            media?.video_url?.map((url, index) => {
+            media?.video_url?.map((video, index) => {
               return (
                 <Box position="relative" key={index} height={112}>
                   <>
@@ -156,19 +203,19 @@ const AttachmentContent = ({
                         color: "common.white",
                         fontSize: 24,
                         zIndex: 1,
-
                         backgroundColor: "#FFFFFF4D",
                         borderRadius: "50px",
                         width: "30px",
                         height: "30px",
                       }}
                       onClick={() =>
-                        setMediaPreview((state) => ({
-                          ...state,
+                        forceUpdatePreview({
+                          ts: video.ts as string,
                           isPreview: true,
-                          src: url,
+                          src: video.video_url || "",
                           type: "video_url",
-                        }))
+                          name: video.name as string,
+                        })
                       }
                     />
                     <Box
@@ -178,25 +225,29 @@ const AttachmentContent = ({
                       height={112}
                       sx={{ objectFit: "cover", borderRadius: "8px" }}
                     >
-                      <source src={url} />
+                      <source src={video.video_url} />
                     </Box>
                   </>
-                  <TimeMessage
-                    time={message.ts}
-                    isRead={isRead}
-                    isCurrentUser={isCurrentUser}
-                    timeMessageProps={{
-                      sx: {
-                        position: "absolute",
-                        bottom: ".4rem",
-                        right: ".3rem",
-                        gap: "0.2rem",
-                        padding: "0 6px",
-                        borderRadius: "15px",
-                        backgroundColor: "#00000080",
-                      },
-                    }}
-                  />
+                  {showOnlyContent ? (
+                    ""
+                  ) : (
+                    <TimeMessage
+                      time={message.ts}
+                      isRead={isRead}
+                      isCurrentUser={isCurrentUser}
+                      timeMessageProps={{
+                        sx: {
+                          position: "absolute",
+                          bottom: ".4rem",
+                          right: ".3rem",
+                          gap: "0.2rem",
+                          padding: "0 6px",
+                          borderRadius: "15px",
+                          backgroundColor: "#00000080",
+                        },
+                      }}
+                    />
+                  )}
                 </Box>
               );
             })}
@@ -217,7 +268,7 @@ const AttachmentContent = ({
                     alignItems="flex-end"
                     key={index}
                     sx={{
-                      backgroundColor: isCurrentUser ? "#EBF5FF" : "#F7F7FD",
+                      backgroundColor: renderBackgroundColor,
                       padding: "0.5rem 1rem",
                       borderRadius: "20px",
                     }}
@@ -242,11 +293,15 @@ const AttachmentContent = ({
                         {file?.title}
                       </Link>
                     </Box>
-                    <TimeMessage
-                      time={message.ts}
-                      isRead={isRead}
-                      isCurrentUser={isCurrentUser}
-                    />
+                    {showOnlyContent ? (
+                      ""
+                    ) : (
+                      <TimeMessage
+                        time={message.ts}
+                        isRead={isRead}
+                        isCurrentUser={isCurrentUser}
+                      />
+                    )}
                   </Box>
                 );
               })}
@@ -255,19 +310,36 @@ const AttachmentContent = ({
         </Box>
       }
 
-      {Boolean(
-        mediaPreview?.isPreview && mediaPreview?.src && mediaPreview?.type,
-      ) && (
+      {!!(
+        mediaPreview?.isPreview &&
+        mediaPreview?.src &&
+        mediaPreview?.type
+      ) ? (
         <Preview
           open={true}
-          type={mediaPreview.type || ""}
+          type={mediaPreview.type as string}
+          src={mediaPreview.src as string}
           listAttachmentsDown={mediaListPreview}
           onClose={() =>
             setMediaPreview((state) => ({ ...state, isPreview: false }))
           }
-          src={mediaPreview.src as string}
+          onStartChangeSlide={handleChangeSlide}
+          titleProps={{
+            children: (
+              <TitlePreview
+                time={mediaPreview.ts as string}
+                onClose={() =>
+                  setMediaPreview((state) => ({ ...state, isPreview: false }))
+                }
+                onCopy={() => copyImage(mediaPreview.src || "")}
+                onDownloadFile={() =>
+                  downloadImage(mediaPreview.src || "", mediaPreview.name || "")
+                }
+              />
+            ),
+          }}
         />
-      )}
+      ) : null}
     </>
   );
 };

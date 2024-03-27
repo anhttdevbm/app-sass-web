@@ -17,6 +17,7 @@ import { IMAGES_ACCEPT } from "constant/index";
 import AttachmentPreview from "components/AttachmentPreview";
 import dynamic from "next/dynamic";
 import hljs from "highlight.js";
+import { replaceDescriptionBr } from "components/sn-project-detail/Tasks/helpers";
 
 const ReactQuill = dynamic(
   () => {
@@ -86,7 +87,6 @@ const Editor = (props: EditorProps) => {
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files?.length) return;
     let newFiles = Array.from(event.target.files);
-
     newFiles = newFiles.reduce(
       (out: File[], file) => {
         if (ACCEPTS.includes(file.type)) {
@@ -135,7 +135,6 @@ const Editor = (props: EditorProps) => {
 
   const onInit = useCallback(async () => {
     const RQuill = (await import("react-quill")).default;
-    console.log(RQuill);
 
     const icons = RQuill.Quill.import("ui/icons");
     icons["attachment"] =
@@ -145,6 +144,12 @@ const Editor = (props: EditorProps) => {
   useEffect(() => {
     onInit();
   }, [onInit]);
+
+  useEffect(() => {
+    if (props.value && value.length === 0) {
+      setValue(replaceDescriptionBr(props.value as string, ""));
+    }
+  }, [props.value]);
 
   return (
     <Stack className="editor">
@@ -156,8 +161,8 @@ const Editor = (props: EditorProps) => {
           syntax: true,
         }}
         className={noCss ? "nocss" : ""}
-        value={value}
         onChange={setValue}
+        value={value}
         {...rest}
       />
       <Stack
@@ -204,7 +209,7 @@ export default memo(Editor);
 
 const ACCEPTS = [...IMAGES_ACCEPT, "video/mp4"];
 
-const COLORS = [
+export const COLORS = [
   "#000000",
   "#e60000",
   "#ff9900",

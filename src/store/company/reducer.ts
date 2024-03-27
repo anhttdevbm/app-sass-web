@@ -24,6 +24,7 @@ import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
 
 export interface Employee extends User {
+  _id: string;
   created_time: string;
   department: string;
   is_active: boolean;
@@ -34,6 +35,17 @@ export interface Employee extends User {
   approve?: boolean;
   username?: string;
   id_rocket?: string;
+}
+
+export interface SearchChatText {
+  avatar: string;
+  fullname: string;
+  matchedText: string;
+  messageId: string;
+  offset: number;
+  roomId: string;
+  ts: string;
+  userId: string;
 }
 
 export interface Position {
@@ -59,6 +71,10 @@ export interface ProjectType {
   created_by: User;
 }
 
+interface Avatar {
+  link: string;
+}
+
 export interface Company {
   id: string;
   code: string;
@@ -81,7 +97,7 @@ export interface Company {
   tax_code: string;
 
   owner?: User;
-
+  avatar?: Avatar; 
   status: PayStatus;
 
   account_paid?: {

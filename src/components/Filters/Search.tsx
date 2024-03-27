@@ -12,6 +12,7 @@ export type SearchProps = Omit<InputProps, "name" | "onChange"> & {
   emitWhenEnter?: boolean;
   search?: string | number;
   hasClear?: boolean;
+  onEnter?: (name, value?: string) => void;
 };
 
 const Search = (props: SearchProps) => {
@@ -22,6 +23,7 @@ const Search = (props: SearchProps) => {
     value = "",
     emitWhenEnter,
     search,
+    onEnter,
     hasClear = true,
     ...rest
   } = props;
@@ -93,6 +95,12 @@ const Search = (props: SearchProps) => {
           </IconButton>
         )
       }
+      onKeyDown={(e) => {
+        e.stopPropagation();
+        if (e.key === "Enter") {
+          onEnter && onEnter(name, text as string);
+        }
+      }}
       placeholder={commonT("search")}
       onChangeValue={onChangeValue}
       value={text}

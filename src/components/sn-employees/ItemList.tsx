@@ -82,12 +82,12 @@ const ItemList = () => {
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: commonT("fullName"), width: "15%", align: "left" },
-      { value: "Email", width: "15%", align: "left" },
-      { value: commonT("position"), width: "15%" },
-      { value: commonT("creationDate"), width: "13.5%" },
+      { value: commonT("fullName"), width: "25%", align: "left" },
+      { value: "Email", width: "15.5%", align: "left" },
+      { value: commonT("position"), width: "12.5%" },
+      { value: commonT("creationDate"), width: "12.5%" },
       { value: companyT("employees.expirationDate"), width: "13.5%" },
-      { value: commonT("status"), width: "17%" },
+      { value: commonT("status"), width: "12.5%" },
     ],
     [commonT, companyT],
   );
@@ -143,7 +143,7 @@ const ItemList = () => {
     const path = getPath(pathname, newQueries);
     push(path);
 
-    onGetEmployees(newQueries);
+    onGetEmployees({ ...newQueries });
   };
 
   const onChangePage = (newPage: number) => {

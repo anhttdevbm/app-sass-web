@@ -33,6 +33,8 @@ export const AuthLang: AuthDictionary = {
         fullName: "Full name",
         phone: "Phone number",
         avatar: "Avatar",
+        position: "Position",
+        email: 'Email'
       },
     },
     title: "Sign up",

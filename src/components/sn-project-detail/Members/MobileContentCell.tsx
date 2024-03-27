@@ -28,7 +28,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
       <Collapse label={<Label item={item} />}>
         <Stack px={2}>
           <InformationItem label={commonT("position")}>
-            {item?.position_project?.name}
+            {item?.position?.name}
           </InformationItem>
           <InformationItem
             label={projectT("detailMembers.hoursWorked")}

@@ -1,41 +1,45 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  IconButton,
-  InputAdornment,
-  Skeleton,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { IconButton, InputAdornment, Skeleton, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, ElementType, FC, useEffect, useState } from "react";
 import { useChat } from "store/chat/selectors";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import SearchIcon from "icons/SearchIcon";
 import { Button } from "components/shared";
 import { useTranslations } from "next-intl";
-import { NS_COMMON } from "constant/index";
+import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { Employee } from "store/company/reducer";
 import SelectItem from "../components/SelectItem";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { STEP } from "store/chat/type";
-import { DataStatus } from "constant/enums";
+import useGetScreenMode from "hooks/useGetScreenMode";
 
-const AddGroup = () => {
+interface AddGroupProps {
+  callbackBackIcon?: any;
+  CustomCallBackIcon?: any;
+  onSelectNewGroup?: any;
+  isNew?: boolean;
+  type?: any;
+}
+
+const AddGroup: FC<AddGroupProps> = ({
+  callbackBackIcon,
+  onSelectNewGroup,
+  CustomCallBackIcon,
+  isNew,
+  type = null,
+}) => {
   const [textSearch, setTextSearch] = useState("");
   const [employeeSelected, setEmployeeSelected] = useState<any>({});
   const [employeeNameSelected, setEmployeeNameSelected] = useState<any>({});
   const [employeeIdSelected, setEmployeeIdSelected] = useState<any>({});
+  const { mobileMode } = useGetScreenMode();
 
   const {
     items,
     isFetching,
-    isIdle,
     error,
-    totalItems,
-    pageSize,
-    pageIndex,
-    totalPages,
     onGetEmployees,
     onApproveOrReject: onApproveOrRejectAction,
   } = useEmployeesOfCompany();
@@ -43,50 +47,94 @@ const AddGroup = () => {
   const { user } = useAuth();
 
   const {
-    prevStep,
-    createGroupStatus,
-    newGroupData,
-    convention,
     dataTransfer,
     groupMembers,
     onSetRoomId,
-    onGetAllConvention,
     onSetStep,
     onCreateDirectMessageGroup,
     onAddMembers2Group,
     onFetchGroupMembersMember,
+    onSetDataTransfer,
+    onChangeListConversations,
+    convention,
+    isChatDesktop,
+    onCloseDrawer,
+    onSetConversationInfo,
+    onGetLastMessages,
   } = useChat();
 
   const commonT = useTranslations(NS_COMMON);
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { onAddSnackbar } = useSnackbar();
 
   useEffect(() => {
-    onGetEmployees(user?.company ?? "", { pageIndex: 0, pageSize: 30 });
-    onGetAllConvention({
-      type: "a",
-      text: "",
-      offset: 0,
-      count: 1000,
+    onGetEmployees(user?.company ?? "", {
+      email: textSearch,
+      fullname: textSearch,
+      pageIndex: 0,
+      pageSize: 30,
     });
+  }, [onGetEmployees, textSearch, user?.company]);
+
+  useEffect(() => {
+    if (isChatDesktop) return;
+    if (dataTransfer?.currentSelects?.uids?.length) {
+      setEmployeeSelected({
+        ...employeeSelected,
+        [dataTransfer?.currentSelects?.username ?? ""]: true,
+      });
+      setEmployeeNameSelected({
+        ...employeeNameSelected,
+        [dataTransfer?.currentSelects?.name ?? ""]: true,
+      });
+      setEmployeeIdSelected({
+        ...employeeIdSelected,
+        [dataTransfer?.currentSelects?.uids?.at(0) ?? ""]: true,
+      });
+    }
+  }, [dataTransfer?.currentSelects]);
+
+  useEffect(() => {
+    if (dataTransfer.isNew || isNew || type === "modal") return;
     onFetchGroupMembersMember({
       roomId: dataTransfer?._id,
     });
-  }, [onGetAllConvention, onGetEmployees, textSearch, user?.company]);
+  }, [dataTransfer, onFetchGroupMembersMember, isNew, type]);
 
   const handleSuccess = (result) => {
     if (result?.error) {
       onAddSnackbar(result?.error?.message, "error");
       return;
     }
-    onAddSnackbar("Successfully!", "success");
-    onGetAllConvention({
-      type: "a",
-      text: "",
-      offset: 0,
-      count: 1000,
-    });
-    onSetStep(STEP.CHAT_GROUP, !dataTransfer?.isNew ? dataTransfer : result?.payload?.group);
-    onSetRoomId(dataTransfer?.isNew ? result?.payload?.group?._id : dataTransfer?._id)
+    onAddSnackbar(commonT("success"), "success");
+    onSetRoomId(
+      dataTransfer?.isNew ? result?.payload?.group?._id : dataTransfer?._id,
+    );
+    const dataItem = !dataTransfer?.isNew
+      ? dataTransfer
+      : result?.payload?.group;
+
+    if (isChatDesktop) {
+      onSelectNewGroup(result?.payload?.group);
+      onSetDataTransfer(dataItem);
+      if (isNew) {
+        if (type === "modal") {
+          onChangeListConversations(
+            [result?.payload?.group].concat(convention),
+          );
+        } else {
+          onChangeListConversations([dataItem].concat(convention));
+        }
+      } else {
+        onGetLastMessages({
+          roomId: dataTransfer?._id,
+          type: dataTransfer?.t,
+        });
+      }
+      onCloseDrawer("account");
+      return;
+    }
+    onSetStep(STEP.CHAT_GROUP, dataItem);
   };
 
   const handleKeyDown = (event) => {
@@ -114,23 +162,38 @@ const AddGroup = () => {
   };
 
   const handleCreateGroup = async () => {
-    if (dataTransfer?.isNew) {
-      const result = await onCreateDirectMessageGroup({
-        groupName: (() => {
-          return (
-            Object.keys(employeeSelected)
-              .filter((item) => employeeSelected[item] === true)
-              ?.join("-")
-              .slice(0, 10) +
-            `...${Math.floor(Math.random() * (9999 - 1 + 1) + 1)}`
-          );
-        })(),
-        members: Object.keys(employeeSelected).filter(
-          (item) => employeeSelected[item] === true,
-        ),
-        type: "d",
-      });      
-      handleSuccess(result);
+    const memberAddGroup = Object.keys(employeeSelected).filter(
+      (item) => employeeSelected[item] === true,
+    );
+    if (!Object.values(employeeIdSelected)?.filter((item) => item).length) {
+      onAddSnackbar("Please select at least one member!", "error");
+      return;
+    }
+    if (dataTransfer?.isNew || isNew) {
+      if (memberAddGroup.length > 0) {
+        const result = await onCreateDirectMessageGroup({
+          groupName: (() => {
+            return (
+              Object.keys(employeeSelected)
+                .filter((item) => employeeSelected[item] === true)
+                ?.join("-")
+                .slice(0, 10) +
+              `...${Math.floor(Math.random() * (9999 - 1 + 1) + 1)}`
+            );
+          })(),
+          members: [
+            ...Object.keys(employeeSelected).filter(
+              (item) => employeeSelected[item] === true,
+            ),
+            ...(dataTransfer.username ? [dataTransfer?.username] : []),
+          ],
+          type: "d",
+        });
+        onSetRoomId(result.payload.group._id);
+        onSetDataTransfer(result.payload.group);
+        onSetConversationInfo(result.payload.group);
+        handleSuccess(result);
+      }
     } else {
       const users = Object.keys(employeeIdSelected).filter(
         (item) => employeeIdSelected[item] === true,
@@ -152,6 +215,7 @@ const AddGroup = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
+        ...(mobileMode ? {} : { width: "100%" }),
       }}
     >
       <Box
@@ -159,31 +223,46 @@ const AddGroup = () => {
           display: "flex",
           alignItems: "center",
           gap: 1,
-          padding: 2,
+          padding: "16px 21px 16px 4px",
+          // paddingLeft: "10px",
+          backgroundColor: "#3699FF",
+          color: "white",
         }}
       >
-        <IconButton
-          sx={{
-            cursor: "pointer",
-          }}
-          onClick={() => {
-            onSetStep(prevStep);
-          }}
-        >
-          <ArrowDownIcon />
-        </IconButton>
+        {type !== "modal" && (
+          <IconButton
+            sx={{
+              cursor: "pointer",
+              color: "white",
+            }}
+            onClick={() => {
+              if (callbackBackIcon) {
+                callbackBackIcon();
+                return;
+              } else {
+                onSetStep(
+                  dataTransfer?.openFrom ? STEP.CHAT_GROUP : STEP.CONVENTION,
+                  // ? dataTransfer?.openFrom
+                  // : STEP.CHAT_GROUP,
+                );
+              }
+            }}
+          >
+            {CustomCallBackIcon ? CustomCallBackIcon : <ArrowDownIcon />}
+          </IconButton>
+        )}
         <TextField
           size="small"
           sx={{
             backgroundColor: "white",
-            borderRadius: "10px",
+            borderRadius: "8px",
             "& .MuiInputBase-root": {
               color: "black",
-              borderRadius: "10px",
+              borderRadius: "8px",
               border: "1px solid transparent",
             },
           }}
-          placeholder="Search name"
+          placeholder={commonChatBox("chatBox.searchName")}
           fullWidth
           onKeyDown={handleKeyDown}
           InputProps={{
@@ -203,6 +282,12 @@ const AddGroup = () => {
         overflow="auto"
         maxHeight="calc(550px - 85px - 15px)"
         minHeight="calc(550px - 85px - 15px)"
+        sx={{
+          borderRadius: "16px",
+          background: "#FFFFFF",
+          boxShadow: "2px 2px 24px 0px rgba(0, 0, 0, 0.10)",
+          padding: "16px",
+        }}
       >
         {isFetching || error ? (
           Array.from({ length: 5 }, (_, i) => (
@@ -232,12 +317,21 @@ const AddGroup = () => {
               ? items
                   ?.filter(
                     (item) =>
-                      dataTransfer?.isNew || !dataTransfer?.isNew && !groupMembers?.map((m) => m._id)?.includes(item.id_rocket),
+                      dataTransfer?.isNew ||
+                      type === "modal" ||
+                      (!dataTransfer?.isNew &&
+                        !groupMembers
+                          ?.map((m) => m._id)
+                          ?.includes(item.id_rocket)),
                   )
                   ?.filter((m) => m.id_rocket !== user?.id_rocket)
                   .map((item, index) => {
                     return (
                       <SelectItem
+                        checked={
+                          employeeIdSelected?.hasOwnProperty(item.id_rocket) ||
+                          employeeIdSelected[item.id_rocket as any] === true
+                        }
                         checkbox
                         employee={item}
                         key={index}
@@ -256,7 +350,7 @@ const AddGroup = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 1,
+          gap: mobileMode ? 1 : "0px",
           padding: 2,
         }}
       >
@@ -266,7 +360,15 @@ const AddGroup = () => {
           size="small"
           sx={defaultSx.button}
           onClick={() => {
-            onSetStep(prevStep);
+            if (isChatDesktop) {
+              onCloseDrawer("account");
+            } else {
+              onSetStep(
+                dataTransfer?.openFrom
+                  ? dataTransfer?.openFrom
+                  : STEP.CONVENTION,
+              );
+            }
           }}
         >
           {commonT("form.cancel")}

@@ -1,9 +1,12 @@
 import {
   Box,
   ButtonBase,
+  Fade,
+  Grow,
   MenuItem,
   MenuList,
   Popover,
+  Popper,
   Stack,
   popoverClasses,
 } from "@mui/material";
@@ -19,8 +22,16 @@ import MoreDotIcon from "icons/MoreDotIcon";
 import MoveArrowIcon from "icons/MoveArrowIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useTranslations } from "next-intl";
-import { memo, MouseEvent, useId, useMemo, useState } from "react";
-import { useTasksOfProject } from "store/project/selectors";
+import {
+  memo,
+  MouseEvent,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useTaskDetail, useTasksOfProject } from "store/project/selectors";
 import { Selected, genName } from "./helpers";
 import { Task, TaskList } from "store/project/reducer";
 import { useParams } from "next/navigation";
@@ -36,10 +47,17 @@ import Loading from "components/Loading";
 import MoveTaskList from "../MoveTaskList";
 import { string } from "yup";
 import ConfirmDialog from "components/ConfirmDialog";
+import HierarchyIcon from "icons/HierarchyIcon";
+import AddSubTask from "../AddSubTask";
+import ConvertIcon from "icons/ConvertIcon";
+import ChangeIcon from "icons/ChangeIcon";
+import MoveOtherTask from "../Detail/components/SubTasksOfTask/MoveOtherTask";
+import { useOnClickOutside } from "hooks/useOnClickOutside";
 
 type MoreListProps = {
   selectedList: Selected[];
   onReset: () => void;
+  isClosed?: boolean;
 } & IconButtonProps;
 
 enum Action {
@@ -47,10 +65,13 @@ enum Action {
   DUPLICATE = 1,
   MOVE,
   DELETE,
+  ADD_SUB_TASK,
+  CONVERT_SUB_TASK_TO_TASK,
+  CHANGE_PARENT_TASK,
 }
 
 const MoreList = (props: MoreListProps) => {
-  const { selectedList, onReset, ...rest } = props;
+  const { selectedList, onReset, isClosed, ...rest } = props;
 
   const {
     items,
@@ -60,6 +81,15 @@ const MoreList = (props: MoreListProps) => {
     onDeleteTasks,
     onDeleteSubTasks,
   } = useTasksOfProject();
+
+  const { onConvertSubTaskToTask, onGetTaskList } = useTaskDetail();
+
+  const handleClickOutside = () => {
+    onClose();
+  };
+
+  const ref = useOnClickOutside(handleClickOutside);
+
   const projectT = useTranslations(NS_PROJECT);
   const { onAddSnackbar } = useSnackbar();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -467,99 +497,162 @@ const MoreList = (props: MoreListProps) => {
     }
   };
 
+  const onConvertToTask = async () => {
+    const taskListId = props?.selectedList[0]?.taskListId;
+    const taskId = props?.selectedList[0]?.taskId;
+    const subTaskId = props?.selectedList[0]?.subTaskId;
+    if (!taskListId || !taskId || !subTaskId) return;
+    setIsSubmitting(true);
+    try {
+      await onConvertSubTaskToTask({
+        task_list: taskListId,
+        task: taskId,
+        sub_task: subTaskId,
+      });
+      await onGetTaskList(taskListId);
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <IconButton
         disabled={!selectedList.length}
         noPadding
-        onClick={onOpen}
+        onClick={(e) => {
+          if (Boolean(anchorEl)) {
+            onClose();
+          } else {
+            onOpen(e);
+          }
+        }}
         {...rest}
       >
         <MoreDotIcon fontSize="medium" sx={{ color: "grey.300" }} />
       </IconButton>
-      <Popover
-        id={popoverId}
+      <Popper
+        ref={ref}
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={onClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
         sx={{
           [`& .${popoverClasses.paper}`]: {
-            backgroundImage: "none",
+            backgroundImage: "white",
             minWidth: 150,
-            maxWidth: 150,
+            maxWidth: 250,
           },
+          zIndex: 0,
         }}
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: 1,
-              mt: 0.5,
-            },
-          },
-        }}
+        transition
+        placement={"bottom-start"}
       >
-        <Stack
-          py={2}
-          sx={{
-            boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.1)",
-            border: "1px solid",
-            borderTopWidth: 0,
-            borderColor: "grey.100",
-            borderRadius: 1,
-          }}
-        >
-          <MenuList component={Box} sx={{ py: 0 }}>
-            <MenuItem
-              onClick={onDuplicate}
-              component={ButtonBase}
-              sx={sxConfig.item}
+        {({ TransitionProps }) => (
+          <Grow {...TransitionProps} timeout={350}>
+            <Stack
+              py={2}
+              sx={{
+                boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.2)",
+                border: "1px solid",
+                borderTopWidth: 0,
+                borderColor: "grey.100",
+                borderRadius: 1,
+                bgcolor: "background.paper",
+              }}
             >
-              <DuplicateIcon sx={{ color: "grey.400" }} fontSize="medium" />
-              <Text ml={2} variant="body2" color="grey.400">
-                {commonT("duplicate")}
-              </Text>
-            </MenuItem>
-            <Tooltip
-              title={
-                taskListIds.length ? "" : projectT("detailTasks.noTasksToMove")
-              }
-            >
-              <Stack direction="row" alignItems="center">
+              <MenuList component={Box} sx={{ py: 0 }}>
+                {taskListIds.length > 0 && (
+                  <MenuItem
+                    onClick={onSetTType(Action.ADD_SUB_TASK)}
+                    component={ButtonBase}
+                    sx={sxConfig.item}
+                  >
+                    <HierarchyIcon
+                      sx={{ color: "grey.400" }}
+                      fontSize="medium"
+                    />
+                    <Text ml={2} variant="body2" color="grey.400">
+                      {projectT("taskDetail.addSubTasks")}
+                    </Text>
+                  </MenuItem>
+                )}
                 <MenuItem
-                  onClick={onSetTType(Action.MOVE)}
+                  onClick={onDuplicate}
                   component={ButtonBase}
                   sx={sxConfig.item}
-                  disabled={!taskListIds.length}
                 >
-                  <MoveArrowIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                  <DuplicateIcon sx={{ color: "grey.400" }} fontSize="medium" />
                   <Text ml={2} variant="body2" color="grey.400">
-                    {commonT("move")}
+                    {commonT("duplicate")}
                   </Text>
                 </MenuItem>
-              </Stack>
-            </Tooltip>
+                {taskListIds.length === 0 && (
+                  <MenuItem
+                    onClick={onConvertToTask}
+                    component={ButtonBase}
+                    sx={sxConfig.item}
+                  >
+                    <ConvertIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                    <Text ml={2} variant="body2" color="grey.400">
+                      {projectT("taskDetail.convertToTask")}
+                    </Text>
+                  </MenuItem>
+                )}
+                {taskListIds.length === 0 && (
+                  <MenuItem
+                    onClick={onSetTType(Action.CHANGE_PARENT_TASK)}
+                    component={ButtonBase}
+                    sx={sxConfig.item}
+                  >
+                    <ChangeIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                    <Text ml={2} variant="body2" color="grey.400">
+                      {projectT("taskDetail.changeParentTask")}
+                    </Text>
+                  </MenuItem>
+                )}
+                {taskListIds.length > 0 && (
+                  <Tooltip
+                    title={
+                      taskListIds.length
+                        ? ""
+                        : projectT("detailTasks.noTasksToMove")
+                    }
+                  >
+                    <Stack direction="row" alignItems="center">
+                      <MenuItem
+                        onClick={onSetTType(Action.MOVE)}
+                        component={ButtonBase}
+                        sx={sxConfig.item}
+                        disabled={!taskListIds.length}
+                      >
+                        <MoveArrowIcon
+                          sx={{ color: "grey.400" }}
+                          fontSize="medium"
+                        />
+                        <Text ml={2} variant="body2" color="grey.400">
+                          {commonT("move")}
+                        </Text>
+                      </MenuItem>
+                    </Stack>
+                  </Tooltip>
+                )}
 
-            <MenuItem
-              onClick={onSetTType(Action.DELETE)}
-              component={ButtonBase}
-              sx={sxConfig.item}
-            >
-              <TrashIcon color="error" fontSize="medium" />
-              <Text ml={2} variant="body2" color="error.main">
-                {commonT("delete")}
-              </Text>
-            </MenuItem>
-          </MenuList>
-        </Stack>
-      </Popover>
+                <MenuItem
+                  onClick={onSetTType(Action.DELETE)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <TrashIcon color="error" fontSize="medium" />
+                  <Text ml={2} variant="body2" color="error.main">
+                    {commonT("delete")}
+                  </Text>
+                </MenuItem>
+              </MenuList>
+            </Stack>
+          </Grow>
+        )}
+      </Popper>
       <Loading open={isSubmitting} message={msg} />
       {type === Action.MOVE && (
         <MoveTaskList
@@ -568,6 +661,9 @@ const MoreList = (props: MoreListProps) => {
           taskIds={taskIds}
           oldTaskListIds={taskListIds}
           setIsSubmitting={setIsSubmitting}
+          sx={{
+            overflow: "hidden",
+          }}
         />
       )}
       {type === Action.DELETE && (
@@ -579,6 +675,27 @@ const MoreList = (props: MoreListProps) => {
           onSubmit={onDelete}
         />
       )}
+      {type === Action.ADD_SUB_TASK && (
+        <AddSubTask
+          open
+          taskListId={props?.selectedList[0]?.taskListId}
+          taskId={props?.selectedList[0]?.taskId}
+          onClose={onSetTType()}
+          title={projectT("taskDetail.addSubTasks")}
+          content={projectT("taskDetail.addSubTasks")}
+          setIsSubmitting={setIsSubmitting}
+        />
+      )}
+      {type === Action.CHANGE_PARENT_TASK &&
+        props?.selectedList[0]?.subTaskId != null && (
+          <MoveOtherTask
+            subId={props?.selectedList[0]?.subTaskId as string}
+            taskListIdProps={props?.selectedList[0]?.taskListId}
+            taskIdProps={props?.selectedList[0]?.taskId}
+            open
+            onClose={onSetTType()}
+          />
+        )}
     </>
   );
 };

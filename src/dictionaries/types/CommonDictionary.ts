@@ -34,11 +34,13 @@ export type CommonDictionary = {
       description: string;
       note: string;
       title: string;
+      selectTime: string;
     };
     confirm: string;
     save: string;
     cancel: string;
     add: string;
+    forward: string;
     admin: string;
   };
   notification: {
@@ -50,6 +52,7 @@ export type CommonDictionary = {
     anErrorTryReload: string;
   };
   position: string;
+  company: string;
   fullName: string;
   phone: string;
   status: string;
@@ -80,13 +83,18 @@ export type CommonDictionary = {
     close: string;
     pause: string;
   };
+  show: string;
+  hide: string;
   searchBy: string;
+  searchByLabel: string;
   creationDate: string;
   creator: string;
   confirmDelete: {
     title: string;
     content: string;
   };
+  yes: string;
+  no: string;
   upgradeAccount: string;
   clickGoDetail: string;
   waiting: string;
@@ -104,4 +112,9 @@ export type CommonDictionary = {
   processing: string;
   aFewFilesInvalid: string;
   processingUpload: string;
+  day: string;
+  hour: string;
+  cancel: string;
+  success: string;
+  crop: string;
 };

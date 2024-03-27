@@ -5,8 +5,9 @@ import { Text } from "components/shared";
 import { formatDate, formatNumber } from "utils/index";
 import { BodyCell } from "components/Table";
 import { Position } from "store/company/reducer";
-import { DATE_TIME_FORMAT_SLASH, NS_COMMON, NS_COMPANY } from "constant/index";
+import { DATE_LOCALE_FORMAT, DATE_TIME_FORMAT_SLASH, NS_COMMON, NS_COMPANY } from "constant/index";
 import { useTranslations } from "next-intl";
+import dayjs from "dayjs";
 
 type MobileContentCellProps = {
   item: Position;
@@ -30,7 +31,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
         {item.created_by?.fullname}
       </BodyCell>
       <BodyCell
-        tooltip={formatDate(item.created_time, DATE_TIME_FORMAT_SLASH)}
+        tooltip={dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}
         sx={{ px: 0.5 }}
         textProps={{
           sx: {
@@ -38,7 +39,8 @@ const MobileContentCell = (props: MobileContentCellProps) => {
           },
         }}
       >
-        {formatDate(item.created_time)}
+        {/* {formatDate(item.created_time)} */}
+        {dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}
       </BodyCell>
     </>
   );

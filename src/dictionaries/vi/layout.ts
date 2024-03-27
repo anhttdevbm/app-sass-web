@@ -26,6 +26,19 @@ export const LayoutLang: LayoutDictionary = {
     companyList: "Danh sách công ty",
     statementHistory: "Lịch sử báo cáo",
     timeTracking: "Theo dõi thời gian",
+    budgeting: "Ngân sách",
     resourcePlaning: "Kế hoạch tài nguyên",
+    sales: "Giao dịch",
+    docs: 'Tài Liệu',
+    chat: "Tin nhắn",
+    //feedback
+    feedback: "Đánh giá",
+    feedbackList: "Danh sách đánh giá",
+    blog:"Bài viết",
+    blogList:"Danh sách bài viết",
+    blogCategoryList:"Danh sách danh mục",
+    career:"Nghề nghiệp",
+    careerList: "Danh sách nghề nghiệp",
+    billing:"Hóa đơn"
   },
 };

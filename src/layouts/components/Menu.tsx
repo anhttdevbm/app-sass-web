@@ -5,7 +5,6 @@ import { Text } from "components/shared";
 import { usePathname } from "next-intl/client";
 import MenuDashboardIcon from "icons/MenuDashboardIcon";
 import {
-  AUTHORIZED_PATHS,
   COMPANIES_PATH,
   COST_HISTORY_PATH,
   EMPLOYEES_PATH,
@@ -16,10 +15,18 @@ import {
   PROJECT_TYPES_PATH,
   STATEMENT_HISTORY_PATH,
   TIME_TRACKING_PATH,
-  RESOURCE_PLANING_PATH
+  RESOURCE_PLANING_PATH,
+  CHATTING_ROOM_PATH,
+  SALES_LIST_PATH,
+  DOCS_PATH,
+  FEEDBACK_PATH,
+  BLOG_CATEGORY_PATH,
+  BLOGS_PATH,
+  CAREER_PATH,
+  BUDGETING_PATH,
+  BILLING_PATH,
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
-import MenuTaskIcon from "icons/MenuTaskIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
 import Collapse from "./Collapse";
 import { useAuth, useSidebar } from "store/app/selectors";
@@ -32,6 +39,16 @@ import { Permission } from "constant/enums";
 import useTheme from "hooks/useTheme";
 import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
 import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
+import MenuChatIcon from "icons/MenuChatIcon";
+import CardReceive from "icons/CardReceive";
+import MenuDocsIcon from "icons/MenuDocsIcon";
+import FeedbackIcon from "icons/FeedbackIcon";
+import MenuBlogIcon from "icons/MenuBlogIcon";
+import CareerIcon from "icons/CareerIcon";
+import DocsItem from "icons/DocsItem";
+import BillingIcon from "icons/BillingIcon";
+import WalletMoneyIcon from "icons/WalletMoneyIcon";
+import BudgetIcon from "icons/BudgetIcon";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -185,6 +202,7 @@ const DATA: MenuItemProps[] = [
     icon: <MenuDashboardIcon />,
     roles: [Permission.AM, Permission.ST],
   },
+
   {
     label: "menu.project",
     icon: <MenuProjectIcon />,
@@ -252,6 +270,69 @@ const DATA: MenuItemProps[] = [
     href: RESOURCE_PLANING_PATH,
     icon: <MenuResourcePlaningIcon />,
     roles: [Permission.AM, Permission.ST],
+  },
+  {
+    label: "menu.budgeting",
+    // icon: <WalletMoneyIcon style={{ color: '#3699FF' }} />,
+    icon: <BudgetIcon />,
+    href: BUDGETING_PATH,
+    roles: [Permission.AM, Permission.ST],
+  },
+  //Billing
+  {
+    label: "menu.billing",
+    icon: <BillingIcon />,
+    href: BILLING_PATH,
+    roles: [Permission.AM, Permission.ST],
+  },
+  {
+    label: "menu.chat",
+    href: CHATTING_ROOM_PATH,
+    icon: <MenuChatIcon />,
+    roles: [Permission.AM, Permission.ST],
+  },
+  {
+    label: "menu.sales",
+    href: SALES_LIST_PATH,
+    icon: <CardReceive />,
+    roles: [Permission.AM],
+  },
+  {
+    label: "menu.docs",
+    href: DOCS_PATH,
+    icon: <MenuDocsIcon />,
+    roles: [Permission.AM, Permission.ST],
+  },
+  // Feedback
+  {
+    label: "menu.feedback",
+    icon: <FeedbackIcon />,
+    href: FEEDBACK_PATH,
+    roles: [Permission.SA],
+  },
+  {
+    label: "menu.blog",
+    icon: <MenuBlogIcon />,
+    subs: [
+      {
+        label: "menu.blogCategoryList",
+        roles: [Permission.SA],
+        href: BLOG_CATEGORY_PATH,
+      },
+      {
+        label: "menu.blogList",
+        href: BLOGS_PATH,
+        roles: [Permission.SA],
+      },
+    ],
+    roles: [Permission.SA],
+  },
+  //Carrer
+  {
+    label: "menu.career",
+    icon: <CareerIcon />,
+    href: CAREER_PATH,
+    roles: [Permission.SA],
   },
 ];
 

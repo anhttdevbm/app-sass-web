@@ -3,12 +3,22 @@ import {
   ButtonBase,
   MenuItem,
   MenuList,
-  Popover,
+  Popper,
+  Grow,
+  useTheme,
   Stack,
+  TextField,
   popoverClasses,
 } from "@mui/material";
-import { Button, Checkbox, IconButton, Text } from "components/shared";
+import ConfirmDialog from "components/ConfirmDialog";
+import DialogLayout from "components/DialogLayout";
+import Loading from "components/Loading";
+import { IconButton, Text } from "components/shared";
+import CheckBoxCustom from "components/shared/CheckBoxCustom";
+import { DataAction } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_PROJECT } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import { useOnClickOutside } from "hooks/useOnClickOutside";
 import useToggle from "hooks/useToggle";
 import CaretIcon from "icons/CaretIcon";
 import DuplicateIcon from "icons/DuplicateIcon";
@@ -18,32 +28,27 @@ import PencilIcon from "icons/PencilIcon";
 import PlusIcon from "icons/PlusIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import {
   Dispatch,
   HTMLAttributes,
-  memo,
   MouseEvent,
   SetStateAction,
+  memo,
   useId,
   useMemo,
   useState,
 } from "react";
 import { Droppable } from "react-beautiful-dnd";
-import Form from "../Form";
-import { DataAction } from "constant/enums";
-import { TaskListData } from "store/project/actions";
-import { useTasksOfProject } from "store/project/selectors";
-import TaskListForm from "../TaskListForm";
-import MoveTaskList from "../MoveTaskList";
-import { Selected, TaskFormData, genName } from "./helpers";
-import { useParams } from "next/navigation";
-import { Task } from "store/project/reducer";
 import { useSnackbar } from "store/app/selectors";
+import { TaskListData } from "store/project/actions";
+import { Task } from "store/project/reducer";
+import { useTasksOfProject } from "store/project/selectors";
 import { checkIsMobile, getMessageErrorByAPI } from "utils/index";
-import ConfirmDialog from "components/ConfirmDialog";
-import DialogLayout from "components/DialogLayout";
-import Loading from "components/Loading";
-import useBreakpoint from "hooks/useBreakpoint";
+import Form from "../Form";
+import MoveTaskList from "../MoveTaskList";
+import TaskListForm from "../TaskListForm";
+import { Selected, TaskFormData, genName } from "./helpers";
 
 type DroppableTaskListProps = {
   id: string;
@@ -54,6 +59,7 @@ type DroppableTaskListProps = {
   onChange: () => void;
   setSelectedList: Dispatch<SetStateAction<Selected[]>>;
   index: number;
+  showPopup?: boolean | true;
 } & HTMLAttributes<HTMLDivElement>;
 
 type MoreListProps = {
@@ -77,6 +83,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
   const { isXlSmaller } = useBreakpoint();
 
   const projectT = useTranslations(NS_PROJECT);
+  const commonT = useTranslations(NS_COMMON);
   const { onCreateTask: onCreateTaskAction } = useTasksOfProject();
 
   const isMobile = useMemo(() => checkIsMobile(), []);
@@ -88,30 +95,79 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
   const onCreateTask = async (data: TaskFormData) => {
     return await onCreateTaskAction(data, id);
   };
+  const { onAddSnackbar } = useSnackbar();
+
+  const [taskName, setTaskName] = useState<string>("");
+
+  const changeNameTask = (event) => {
+    setTaskName(event.target.value);
+  };
+
+  const theme = useTheme();
+
+  const onKeyDownTaskName = async (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    taskListId: string,
+  ) => {
+    if (event.key !== "Enter") return;
+    const nameTrimmed = taskName?.trim();
+
+    if (!nameTrimmed) {
+      onAddSnackbar(
+        projectT("detailTasks.notification.taskNameIsRequired", {
+          label: commonT("createNew"),
+        }),
+        "error",
+      );
+      return;
+    }
+
+    const newItem = await onCreateTask({
+      task_list: taskListId,
+      name: nameTrimmed,
+      description: "",
+      end_date: "",
+      start_date: "",
+    });
+    if (newItem) {
+      setTaskName("");
+      onAddSnackbar(
+        projectT("detailTasks.notification.taskSuccess", {
+          label: commonT("createNew"),
+        }),
+        "success",
+      );
+    }
+  };
 
   return (
     <>
-      <Droppable droppableId={id}>
+      <Droppable droppableId={id} type="TASK_LIST">
         {(provided, taskListDropSnapshot) => {
           return (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
               style={{
-                border: isDragging ? "1px dashed #EBEBEB" : undefined,
+                border: isDragging ? "1px dashed" : undefined,
+                backgroundColor: theme.palette.background.paper,
               }}
             >
               <Stack
                 direction="row"
                 alignItems="center"
-                height={38}
+                height={48}
                 pl={{ xs: 0, md: 2 }}
                 width="100%"
-                // justifyContent="space-between"
                 spacing={3}
                 borderTop={index !== 0 ? { md: "1px solid" } : undefined}
                 borderBottom={{ md: "1px solid" }}
                 borderColor={{ md: "grey.100" }}
+                style={{
+                  backgroundColor: checked
+                    ? "rgba(236, 236, 243, 1)"
+                    : "rgba(236, 236, 243, 0.6)",
+                }}
               >
                 <Stack
                   direction="row"
@@ -127,7 +183,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   alignItems="center"
                   overflow="hidden"
                 >
-                  <Checkbox
+                  <CheckBoxCustom
                     size="small"
                     className="checkbox"
                     checked={checked}
@@ -145,7 +201,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   </IconButton>
                   <Text
                     variant={isXlSmaller ? "h6" : "h5"}
-                    color="grey.300"
+                    color="#666666"
                     onClick={onShowPreviewName}
                     noWrap
                     sx={{ cursor: "pointer" }}
@@ -157,7 +213,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     ml={0.5}
                     variant="h5"
                     fontWeight={400}
-                    color="grey.300"
+                    color="#666666"
                   >
                     {`(${count})`}
                   </Text>
@@ -167,7 +223,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     setSelectedList={setSelectedList}
                   />
                 </Stack>
-                <Button
+                {/* <Button
                   onClick={onShowCreate}
                   startIcon={<PlusIcon />}
                   variant="text"
@@ -178,15 +234,66 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   }}
                 >
                   {projectT("detailTasks.addNewTask")}
-                </Button>
+                </Button> */}
               </Stack>
-
               {isShow && props.children}
               {provided.placeholder}
+              {/* Show form add new task */}
+              {isShow && (
+                <Stack
+                  width="100%"
+                  direction="row"
+                  spacing={0}
+                  alignItems="center"
+                  sx={{ ml: { xs: 2, md: 7 } }}
+                >
+                  <PlusIcon sx={{ color: "#999999", mt: 0.5 }} />
+                  <TextField
+                    label={projectT("detailTasks.addNewTask")}
+                    value={taskName}
+                    onKeyDown={(e) => onKeyDownTaskName(e, id)}
+                    fullWidth
+                    variant="filled"
+                    size="small"
+                    onChange={changeNameTask}
+                    required
+                    sx={{
+                      "& >div": {
+                        bgcolor: "transparent!important",
+                        "&:after": {
+                          borderBottomColor: "rgba(11, 183, 175, 0.5) !important",
+                        },
+                        "&:before": {
+                          borderBottom: "unset !important",
+                        },
+                      },
+                      pb: "8px",
+
+                      "& input": {
+                        fontSize: 14,
+                        paddingTop: "17px !important",
+                      },
+                      width: "35% !important",
+                      "& label.Mui-focused": {
+                        color: "green",
+                      },
+                      "& >label": {
+                        fontWeight: "600 !important",
+                        fontSize: "14px",
+                        color: "#999999 !important",
+                      },
+                      "& >label >span": {
+                        display: "none",
+                      },
+                    }}
+                  />
+                </Stack>
+              )}
             </div>
           );
         }}
       </Droppable>
+
       {isShowCreate && (
         <Form
           open={isShowCreate}
@@ -211,6 +318,7 @@ enum Action {
   DUPLICATE,
   MOVE,
   DELETE,
+  ADD_NEW_TASK,
 }
 
 export const MoreList = (props: MoreListProps) => {
@@ -246,6 +354,12 @@ export const MoreList = (props: MoreListProps) => {
   const [type, setType] = useState<Action | undefined>();
   const [msg, setMsg] = useState<string | undefined>();
 
+  const handleClickOutside = () => {
+    onClose();
+  };
+
+  const ref = useOnClickOutside(handleClickOutside);
+
   const onOpen = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -259,6 +373,10 @@ export const MoreList = (props: MoreListProps) => {
       onClose();
       setType(action);
     };
+  };
+
+  const onCreateTaskHandle = async (data: TaskFormData) => {
+    return await onCreateTask(data, id);
   };
 
   const onUpdateTaskList = async (values: Omit<TaskListData, "project">) => {
@@ -359,95 +477,117 @@ export const MoreList = (props: MoreListProps) => {
 
   return (
     <>
-      <IconButton noPadding onClick={onOpen}>
-        <MoreDotIcon fontSize="small" sx={{ color: "grey.300" }} />
-      </IconButton>
-      <Popover
-        id={popoverId}
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={onClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        sx={{
-          [`& .${popoverClasses.paper}`]: {
-            backgroundImage: "none",
-            minWidth: 150,
-            maxWidth: 150,
-          },
-        }}
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: 1,
-              mt: 0.5,
-            },
-          },
+      <IconButton
+        noPadding
+        onClick={(e) => {
+          if (Boolean(anchorEl)) {
+            onClose();
+          } else {
+            onOpen(e);
+          }
         }}
       >
-        <Stack
-          py={2}
-          sx={{
-            boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.1)",
-            border: "1px solid",
-            borderTopWidth: 0,
-            borderColor: "grey.100",
-            borderRadius: 1,
-          }}
-        >
-          <MenuList component={Box} sx={{ py: 0 }}>
-            <MenuItem
-              onClick={onSetTType(Action.RENAME)}
-              component={ButtonBase}
-              sx={sxConfig.item}
+        <MoreDotIcon fontSize="small" sx={{ color: "grey.300" }} />
+      </IconButton>
+
+      <Popper
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        sx={{
+          [`& .${popoverClasses.paper}`]: {
+            backgroundImage: "white",
+            minWidth: 200,
+            maxWidth: 250,
+          },
+          zIndex: 1,
+        }}
+        transition
+        placement={"bottom-start"}
+        ref={ref}
+      >
+        {({ TransitionProps }) => (
+          <Grow {...TransitionProps} timeout={350}>
+            <Stack
+              py={2}
+              sx={{
+                boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.5)",
+                border: "1px solid",
+                borderTopWidth: 0,
+                borderColor: "grey.100",
+                borderRadius: 1,
+                bgcolor: "background.paper",
+              }}
             >
-              <PencilIcon sx={{ color: "grey.400" }} fontSize="medium" />
-              <Text ml={2} variant="body2" color="grey.400">
-                {commonT("rename")}
-              </Text>
-            </MenuItem>
-            <MenuItem
-              onClick={onDuplicateTaskList}
-              component={ButtonBase}
-              sx={sxConfig.item}
-            >
-              <DuplicateIcon sx={{ color: "grey.400" }} fontSize="medium" />
-              <Text ml={2} variant="body2" color="grey.400">
-                {commonT("duplicate")}
-              </Text>
-            </MenuItem>
-            {!!taskIds.length && (
-              <MenuItem
-                onClick={onSetTType(Action.MOVE)}
-                component={ButtonBase}
-                sx={sxConfig.item}
-              >
-                <MoveArrowIcon sx={{ color: "grey.400" }} fontSize="medium" />
-                <Text ml={2} variant="body2" color="grey.400">
-                  {commonT("move")}
-                </Text>
-              </MenuItem>
-            )}
-            <MenuItem
-              onClick={onSetTType(Action.DELETE)}
-              component={ButtonBase}
-              sx={sxConfig.item}
-            >
-              <TrashIcon color="error" fontSize="medium" />
-              <Text ml={2} variant="body2" color="error.main">
-                {commonT("delete")}
-              </Text>
-            </MenuItem>
-          </MenuList>
-        </Stack>
-      </Popover>
+              <MenuList component={Box} sx={{ py: 0 }}>
+                <MenuItem
+                  onClick={onSetTType(Action.ADD_NEW_TASK)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <PlusIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                  <Text ml={2} variant="body2" color="grey.400">
+                    {projectT("detailTasks.addNewTask")}
+                  </Text>
+                </MenuItem>
+                <MenuItem
+                  onClick={onSetTType(Action.RENAME)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <PencilIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                  <Text ml={2} variant="body2" color="grey.400">
+                    {commonT("rename")}
+                  </Text>
+                </MenuItem>
+                <MenuItem
+                  onClick={onDuplicateTaskList}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <DuplicateIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                  <Text ml={2} variant="body2" color="grey.400">
+                    {commonT("duplicate")}
+                  </Text>
+                </MenuItem>
+                {!!taskIds.length && (
+                  <MenuItem
+                    onClick={onSetTType(Action.MOVE)}
+                    component={ButtonBase}
+                    sx={sxConfig.item}
+                  >
+                    <MoveArrowIcon
+                      sx={{ color: "grey.400" }}
+                      // sx={{ color: "red" }}
+                      fontSize="medium"
+                    />
+                    <Text ml={2} variant="body2" color="grey.400">
+                      {commonT("move")}
+                    </Text>
+                  </MenuItem>
+                )}
+                <MenuItem
+                  onClick={onSetTType(Action.DELETE)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <TrashIcon color="error" fontSize="medium" />
+                  <Text ml={2} variant="body2" color="error.main">
+                    {commonT("delete")}
+                  </Text>
+                </MenuItem>
+              </MenuList>
+            </Stack>
+          </Grow>
+        )}
+      </Popper>
       <Loading open={!!msg} message={msg} />
+
+      <Form
+        open={type === Action.ADD_NEW_TASK}
+        onClose={onSetTType()}
+        type={DataAction.CREATE}
+        onSubmit={onCreateTaskHandle}
+      />
 
       {type === Action.RENAME && (
         <TaskListForm

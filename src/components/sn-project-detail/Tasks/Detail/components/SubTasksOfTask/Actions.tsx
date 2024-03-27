@@ -11,6 +11,7 @@ import PopoverLayout from "./PopoverLayout";
 type ActionsProps = {
   subId: string;
   onChangeAction: (action: Action) => void;
+  options?: { label: string; value: Action }[]
 };
 
 export enum Action {
@@ -22,7 +23,7 @@ export enum Action {
 }
 
 const Actions = (props: ActionsProps) => {
-  const { subId, onChangeAction } = props;
+  const { subId, onChangeAction, options: optionProp } = props;
   const { taskListId, taskId, onUpdateTask } = useTaskDetail();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const { onAddSnackbar } = useSnackbar();
@@ -31,7 +32,7 @@ const Actions = (props: ActionsProps) => {
   const projectT = useTranslations(NS_PROJECT);
 
   const options = useMemo(
-    () => [
+    () => optionProp ? optionProp : [
       { label: commonT("rename"), value: Action.RENAME },
       {
         label: projectT("taskDetail.convertToTask"),
@@ -47,7 +48,7 @@ const Actions = (props: ActionsProps) => {
       },
       { label: commonT("delete"), value: Action.DELETE },
     ],
-    [projectT, commonT],
+    [projectT, commonT, optionProp],
   );
 
   const onAction = (action: Action) => {
@@ -66,7 +67,7 @@ const Actions = (props: ActionsProps) => {
         </IconButton>
       }
     >
-      <MenuList component={Box} sx={{ pb: 0 }}>
+      <MenuList component={Box}>
         {options.map((option) => (
           <MenuItem
             component={ButtonBase}

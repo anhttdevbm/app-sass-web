@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Stack } from "@mui/material";
+import { Box, InputBase, Stack } from "@mui/material";
 import {
   ChangeEvent,
   useCallback,
@@ -10,14 +10,37 @@ import {
   useState,
 } from "react";
 import "react-quill/dist/quill.snow.css";
-import { ACCEPT_MEDIA, FILE_ACCEPT } from "constant/index";
+import {
+  ACCEPT_MEDIA,
+  FILE_ACCEPT,
+  NS_CHAT_BOX,
+  NS_COMMON,
+} from "constant/index";
 import AttachmentPreview from "components/AttachmentPreview";
-import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import ImageImportIcon from "icons/ImageImportIcon";
 import UploadFileIcon from "icons/UploadFileIcon";
 import ChatEmoji, { Emoji } from "./ChatEmoji";
 import hljs from "highlight.js";
+import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
+import type ReactQuill from "react-quill";
+import { useChat } from "store/chat/selectors";
+import { useTranslations } from "next-intl";
+import useTheme from "hooks/useTheme";
+import SendMesIcon from "icons/SendMesIcon";
+import { Input } from "components/shared";
+
+const QuillNoSSRWrapper = dynamic(
+  async () => {
+    const { default: RQ } = await import("react-quill");
+    // eslint-disable-next-line react/display-name, @typescript-eslint/no-explicit-any
+    return ({ forwardedRef, ...props }: any) => (
+      <RQ ref={forwardedRef} {...props} />
+    );
+  },
+  { ssr: false },
+);
 
 hljs.configure({
   // optionally configure hljs
@@ -49,6 +72,18 @@ hljs.configure({
   ],
 });
 
+const ACCEPT_ALL = [...FILE_ACCEPT, ...ACCEPT_MEDIA];
+const TOOLBAR = [
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "link",
+  { list: "bullet" },
+  { list: "ordered" },
+  "clean",
+];
+
 export type EditorProps = {
   hasAttachment?: boolean;
   children?: React.ReactNode;
@@ -59,13 +94,6 @@ export type EditorProps = {
   onChangeFiles?: (files: File[]) => void;
   onEnterText?: (text: string) => void;
 };
-
-const ACCEPT_ALL = [...FILE_ACCEPT, ...ACCEPT_MEDIA];
-const TOOLBAR = [
-  ["bold", "italic", "underline", "strike"],
-  ["link", "code-block"],
-  [{ list: "ordered" }, { list: "bullet" }],
-];
 
 const ChatEditor = (props: EditorProps) => {
   const {
@@ -78,55 +106,30 @@ const ChatEditor = (props: EditorProps) => {
     initalValue,
     isLoading,
   } = props;
+  const { onGetUnReadMessages, dataTransfer } = useChat();
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
 
-  const [value, setValue] = useState(initalValue);
+  const { isDarkMode } = useTheme();
+
+  const quillRef = useRef<ReactQuill>(null);
   const inputMediaRef = useRef<HTMLInputElement | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
+  const [value, setValue] = useState("");
   const urlFiles = useMemo(
     () => files.map((file) => URL.createObjectURL(file)),
     [files],
   );
-
-  const onChangeFile = (
-    event: ChangeEvent<HTMLInputElement>,
-    type: string[],
-  ) => {
-    if (!event.target.files?.length) return;
-    let newFiles = Array.from(event.target.files);
-
-    newFiles = newFiles.reduce(
-      (out: File[], file) => {
-        if (type?.includes(file.type)) {
-          out.push(file);
-        }
-        return out;
-      },
-      [...files],
-    );
-    onChangeFiles && onChangeFiles(newFiles);
-    if (inputMediaRef.current) {
-      inputMediaRef.current.value = "";
-    }
-  };
-
-  const onRemove = (index: number) => {
-    return () => {
-      const newFiles = [...files];
-      newFiles.splice(index, 1);
-      onChangeFiles && onChangeFiles(newFiles);
-    };
-  };
-
   const toolbarAttachment = useMemo(
     () => ({
       container: [
         ["bold", "italic", "underline", "strike"], // toggled buttons
-        ["blockquote", "code-block"],
-        [{ list: "ordered" }, { list: "bullet" }],
+        ["link"],
+        [{ list: "bullet" }, { list: "ordered" }],
         [{ script: "sub" }, { script: "super" }], // superscript/subscript
         [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
         [{ color: [] }, { background: [] }], // dropdown with defaults from theme
         ["attachment"],
+        ["link", "image", "video"],
       ],
       handlers: {
         attachment: () => {
@@ -136,106 +139,191 @@ const ChatEditor = (props: EditorProps) => {
     }),
     [],
   );
-
   const toolbar = useMemo(
     () => (hasAttachment ? toolbarAttachment : TOOLBAR),
     [hasAttachment, toolbarAttachment],
   );
 
-  const { quill, quillRef, editor } = useQuill({
-    strict: true,
-    modules: {
-      syntax: {
-        highlight: (text) => hljs.highlightAuto(text).value,
-      },
+  const quillEditor = quillRef.current?.getEditor();
+
+  const onChangeFile = useCallback(
+    (event: ChangeEvent<HTMLInputElement>, type: string[]) => {
+      if (!event.target.files?.length) return;
+      let newFiles = Array.from(event.target.files);
+
+      newFiles = newFiles.reduce(
+        (out: File[], file) => {
+          if (type?.includes(file.type)) {
+            out.push(file);
+          }
+          return out;
+        },
+        [...files],
+      );
+      onChangeFiles && onChangeFiles(newFiles);
+      if (inputMediaRef.current) {
+        inputMediaRef.current.value = "";
+      }
+      quillEditor?.focus();
+    },
+    [files, onChangeFiles, quillEditor],
+  );
+
+  const onRemove = useCallback(
+    (index: number) => {
+      return () => {
+        const newFiles = [...files];
+        newFiles.splice(index, 1);
+        onChangeFiles && onChangeFiles(newFiles);
+      };
+    },
+    [files, onChangeFiles],
+  );
+
+  const handleMessage = useCallback(() => {
+    const parser = new DOMParser();
+    const html = parser.parseFromString(
+      quillEditor?.root.innerHTML || "",
+      "text/html",
+    );
+    const body = html.body;
+    const arrIndexRemove: number[] = [];
+    for (let i = body.children.length - 1; i > -1; i--) {
+      const element = body.children[i] as HTMLElement;
+      if (element.tagName === "P" && element.innerText.trim() === "") {
+        arrIndexRemove.push(i);
+      } else {
+        break;
+      }
+    }
+
+    for (const i of arrIndexRemove) {
+      body.children[i]?.remove();
+    }
+
+    onEnterText?.(body.innerHTML);
+    quillEditor?.deleteText(0, quillEditor?.getLength());
+    setValue("");
+  }, [onEnterText, quillEditor]);
+
+  const getUnReadMessage = useCallback(async () => {
+    await onGetUnReadMessages({
+      type: dataTransfer?.t ?? "d",
+    });
+  }, [dataTransfer?.t, onGetUnReadMessages]);
+
+  const handleKeyDown = useCallback(
+    (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        getUnReadMessage();
+        handleMessage();
+      }
+    },
+    [handleMessage],
+  );
+
+  const handleChaneEmoji = useCallback(
+    (emoji: Emoji) => {
+      quillEditor?.focus();
+      const selection = quillEditor?.getSelection();
+      const newText = `${emoji.native}`;
+      let i = 1;
+      if (selection?.index === undefined || selection?.index === 0) {
+        i = 0;
+      } else {
+        i = selection?.index;
+      }
+      quillEditor?.insertText(i, newText);
+    },
+    [quillEditor],
+  );
+
+  useEffect(() => {
+    quillEditor?.focus();
+    if (initalValue) {
+      setValue(initalValue);
+    }
+  }, [initalValue, quillEditor]);
+
+  const modules = useMemo(() => {
+    return {
       toolbar,
+      syntax: {
+        highlight: (text) => {
+          return hljs.highlightAuto(text).value;
+        },
+      },
       keyboard: {
         bindings: {
+          enter: {
+            key: 13,
+            handler: function (range, context) {
+              return false;
+            },
+          },
           shift_enter: {
             key: 13,
             shiftKey: true,
             handler: function (range, context) {
-              // quill?.insertText(range.index - 1, "\n");
               return true;
             },
           },
         },
       },
-    },
-    placeholder: "Type Message...",
-    formats: [
-      "bold",
-      "italic",
-      "underline",
-      "strike",
-      "link",
-      "code-block",
-      "list",
-      "ordered",
-      "bullet",
-    ],
-  });
-
-  const quillRefCurr = quillRef.current;
-
-  const handleKeyDown = useCallback(
-    (event) => {
-      const listText = quill?.getContents().ops || [];
-      const lastText = listText[listText.length - 1];
-      const lastUpdate = {
-        ...lastText,
-        insert: lastText.insert.trim() + "\n",
-      };
-      if (event.key === "Enter" && !event.shiftKey) {
-        listText.splice(listText.length - 1, 1, lastUpdate);
-        quill?.setContents({ ...quill?.getContents(), ops: listText });
-        const text = quill?.getText().trim() ? quill.root.innerHTML : "";
-        onEnterText?.(text);
-        quill?.setText("");
-        setValue("");
-      }
-    },
-    [onEnterText, quill],
-  );
-
-  const handleChaneEmoji = (emoji: Emoji) => {
-    const newText = `${emoji.native}`;
-    quill?.insertText(quill?.getLength() - 1, newText);
-    quill?.root.focus();
-  };
-
-  useEffect(() => {
-    quill?.focus();
-    quillRefCurr?.addEventListener("keydown", handleKeyDown);
-    return () => {
-      quillRefCurr?.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleKeyDown, quill, quillRefCurr]);
+  }, [toolbar]);
 
   useEffect(() => {
-    if (initalValue) {
-      quill?.setText(initalValue);
-    }
-  }, [initalValue, quill]);
+    setValue("");
+  }, [dataTransfer]);
 
   return (
     <Stack
       className="editor"
       sx={{
+        "& .quill": {
+          flexDirection: "column",
+          padding: "16px",
+          "& .ql-container": {
+            boxSizing: "border-box",
+            position: "unset!important",
+            display: "block",
+            marginRight: "60px",
+            backgroundColor: "#E1F0FF",
+            borderRadius: "20px!important",
+            width: "260px!important",
+          },
+        },
+
         "& .ql-snow": {
           border: "unset !important",
           borderTop: "1px solid #ECECF3!important",
           borderRadius: "unset !important",
+          padding: "8px 0",
         },
+
         "& .ql-container": {
-          position: "unset!important",
-          maxHeight: "150px",
-          display: "block",
           "& .ql-editor": {
-            paddingRight: "7rem",
-          },
-          "& .ql-blank::before": {
-            color: "#BABCC6",
+            boxSizing: "border-box",
+            cursor: "text",
+            lineHeight: 1.4,
+            textAlign: "left",
+            whiteSpace: "pre-wrap",
+            wordWrap: "break-word",
+            outline: "none",
+            maxHeight: "80px",
+            padding: "4px 32px 0px 20px",
+            overflow: "scroll",
+            height: "100%",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+
+            "&.ql-blank::before": {
+              paddingLeft: "16px",
+              fontSize: "14px",
+              color: "#999999",
+            },
           },
           "& .ql-tooltip": {
             right: "0",
@@ -244,26 +332,50 @@ const ChatEditor = (props: EditorProps) => {
             width: "fit-content",
           },
         },
+        "& .ql-formats": {
+          marginRight: "16px",
+          display: "flex",
+          gap: "8px",
+          justifyContent: "center",
+        },
       }}
     >
       {isLoading ? "loading..." : null}
       <Box position="relative">
-        <Box
-          component={"div"}
-          ref={quillRef}
-          sx={{
-            color: "black !important",
-            flexDirection: "column",
-          }}
-        />
+        <Box className="text-editor">
+          <QuillNoSSRWrapper
+            forwardedRef={quillRef}
+            theme="snow"
+            modules={modules}
+            placeholder={commonChatBox("chatBox.typeMessage")}
+            formats={[
+              "bold",
+              "italic",
+              "underline",
+              "strike",
+              "link",
+              "bullet",
+              "ordered",
+              "list",
+              "link",
+              "image",
+              "video",
+            ]}
+            value={value}
+            onChange={(value) => {
+              setValue(value);
+            }}
+            onKeyDown={handleKeyDown}
+          />
+        </Box>
         <Box
           sx={{
             position: "absolute",
             right: "1rem",
-            bottom: "0.7rem",
+            bottom: "32px",
             display: "flex",
             flexDirection: "row",
-            gap: "0.5rem",
+            gap: "8px",
           }}
         >
           <ChatEmoji onChange={handleChaneEmoji} />
@@ -285,6 +397,13 @@ const ChatEditor = (props: EditorProps) => {
               inputFileRef?.current?.click();
             }}
           />
+          {/* <SendMesIcon
+            sx={{
+              fill: "transparent",
+              cursor: "pointer",
+            }}
+            onClick={handleMessage}
+          /> */}
         </Box>
       </Box>
       <Stack
@@ -292,8 +411,8 @@ const ChatEditor = (props: EditorProps) => {
         flex={1}
         flexWrap="nowrap"
         overflow="auto"
-        display={urlFiles?.length > 0 ? "flex" : "none"}
         p={noCss ? 0 : 1}
+        display={urlFiles?.length > 0 ? "flex" : "none"}
         sx={
           noCss
             ? {}

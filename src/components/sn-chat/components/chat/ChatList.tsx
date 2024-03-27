@@ -4,27 +4,39 @@ import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
 import { DirectionChat, IChatItemInfo, STEP } from "store/chat/type";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
 import SearchRoundIcon from "icons/SearchRoundIcon";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import {
+  AN_ERROR_TRY_AGAIN,
+  NS_CHAT_BOX,
+  NS_COMMON,
+  NS_PROJECT,
+} from "constant/index";
 import { useTranslations } from "next-intl";
+import { useWSChat } from "store/chat/helpers";
+import useTheme from "hooks/useTheme";
 
-const ChatList = () => {
+const ChatList = ({ onCloseChatBox }) => {
   const { user } = useAuth();
   const {
     isError,
     convention,
     conversationPaging: { pageIndex, pageSize, textSearch: initText },
     isFetching,
+    currStep,
     onSetRoomId,
     onSetConversationInfo,
     onGetAllConvention,
     onSetStep,
   } = useChat();
 
+  useWSChat();
   const { onAddSnackbar } = useSnackbar();
-  const t = useTranslations(NS_COMMON);
+  const commonT = useTranslations(NS_COMMON);
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
+  const { isDarkMode } = useTheme();
+
   const [textSearch, setTextSearch] = useState(initText);
   const [lastElement, setLastElement] = useState(null);
   const pageRef = useRef(pageIndex);
@@ -40,12 +52,14 @@ const ChatList = () => {
         const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
 
         if (scrollHeightRef.current > clientHeight) {
-          handleGetConversation(textSearch, "a", pageRef.current, pageSize);
+          console.log(initText);
+
+          handleGetConversation(initText, "a", pageRef.current, pageSize);
         }
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize, textSearch]);
+  }, [pageSize, initText]);
 
   const conversationList = useMemo(() => {
     return convention
@@ -75,26 +89,29 @@ const ChatList = () => {
       });
   }, [convention, user]);
 
-  const handleGetConversation = async (
-    text: string,
-    type: DirectionChat,
-    offset?: number,
-    count?: number,
-  ) => {
-    try {
-      await onGetAllConvention({
-        type,
-        text,
-        offset: offset || 0,
-        count: count || 10,
-      });
-    } catch (error) {
-      onAddSnackbar(
-        typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),
-        "error",
-      );
-    }
-  };
+  const handleGetConversation = useCallback(
+    async (
+      text: string,
+      type: DirectionChat,
+      offset?: number,
+      count?: number,
+    ) => {
+      try {
+        await onGetAllConvention({
+          type,
+          text,
+          offset: offset || 0,
+          count: count || 10,
+        });
+      } catch (error) {
+        onAddSnackbar(
+          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
+          "error",
+        );
+      }
+    },
+    [onAddSnackbar, onGetAllConvention, commonT],
+  );
 
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
     onSetRoomId(chatInfo._id);
@@ -110,9 +127,13 @@ const ChatList = () => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      handleGetConversation(event.target.value, "a");
+      handleGetConversation(event.target.value.toLowerCase(), "a");
     }
   };
+
+  useEffect(() => {
+    handleGetConversation("", "a");
+  }, [currStep]);
 
   useEffect(() => {
     pageRef.current = pageIndex;
@@ -133,6 +154,10 @@ const ChatList = () => {
     };
   }, [lastElement, observer]);
 
+  const handleCloseChatBox = () => {
+    onCloseChatBox();
+  };
+
   return (
     <Box
       height="inherit"
@@ -145,14 +170,15 @@ const ChatList = () => {
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 3,
+          gap: 2,
           padding: 2,
           backgroundColor: "#3699FF",
         }}
       >
-        <Typography color="white" variant="h4">
-          Chat
+        <Typography color="white" variant="h4" onClick={handleCloseChatBox}>
+          {commonChatBox("chatBox.chat")}
         </Typography>
+
         <TextField
           size="small"
           sx={{
@@ -165,11 +191,13 @@ const ChatList = () => {
             "& fieldset": {
               border: "unset",
             },
+
+            flex: 1,
           }}
           inputProps={{
             sx: {
               paddingLeft: "5px",
-              fontSize: "14px",
+              fontSize: "14px!important",
               fontWeight: 400,
               lineHeight: "22px",
               "&::-webkit-input-placeholder": {
@@ -184,21 +212,33 @@ const ChatList = () => {
                 sx={{
                   fill: "none",
                   filter: "opacity(0.8)",
-                  height: "20px",
-                  width: "20px",
+                  height: "24px",
+                  width: "24px",
                 }}
               />
             ),
           }}
-          placeholder="Search name"
+          placeholder={commonChatBox("chatBox.searchName")}
           fullWidth
           value={textSearch}
           onChange={(e) => setTextSearch(e.target.value)}
           onKeyDown={handleKeyDown}
         />
+
         <Box
           onClick={() => {
             onSetStep(STEP.ADD_GROUP, { isNew: true });
+          }}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#FFFFFF",
+            cursor: "pointer",
+            fontSize: "24rem!important",
+            width: "38px",
+            height: "100%",
+            borderRadius: "8px",
           }}
         >
           <NewGroupIcon />
@@ -208,6 +248,10 @@ const ChatList = () => {
         ref={chatListRef}
         overflow="auto"
         maxHeight="calc(600px - 74px - 15px)"
+        bgcolor={isDarkMode ? "#303031" : "white"}
+        sx={{
+          padding: "0px 24px 24px 24px",
+        }}
       >
         {(isFetching || isError) && pageIndex === 0 ? (
           Array.from({ length: 5 }, (_, i) => (
@@ -233,23 +277,27 @@ const ChatList = () => {
           ))
         ) : (
           <>
-            {conversationList?.length > 0
-              ? conversationList.map((item, index) => {
-                  return (
-                    <ChatItemLayout
-                      chatInfo={item}
-                      sessionId={user?.["username"]}
-                      key={index}
-                      onClickConvention={handleClickConversation}
-                      chatItemProps={{
-                        ...(index === conversationList?.length - 1 && {
-                          ref: setLastElement,
-                        }),
-                      }}
-                    />
-                  );
-                })
-              : null}
+            {conversationList?.length > 0 ? (
+              conversationList.map((item, index) => {
+                return (
+                  <ChatItemLayout
+                    chatInfo={item}
+                    sessionId={user?.["username"]}
+                    key={index}
+                    onClickConvention={handleClickConversation}
+                    chatItemProps={{
+                      ...(index === conversationList?.length - 1 && {
+                        ref: setLastElement,
+                      }),
+                    }}
+                  />
+                );
+              })
+            ) : (
+              <Typography textAlign="center" marginTop={2}>
+                {commonT("noData")}
+              </Typography>
+            )}
           </>
         )}
       </Box>

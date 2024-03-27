@@ -1,6 +1,19 @@
-import React, {ReactNode, memo, useEffect, useMemo, useState} from "react";
-import {Box, Stack, StackProps, TextField} from "@mui/material";
-import {IconButton, Text} from "components/shared";
+import React, {
+  ReactNode,
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Box,
+  Stack,
+  StackProps,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
+import { IconButton, Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import {
   AN_ERROR_TRY_AGAIN,
@@ -12,7 +25,7 @@ import {
 import TextStatus from "components/TextStatus";
 import Avatar from "components/Avatar";
 import { formatDate, formatNumber } from "utils/index";
-import {useTaskDetail} from "store/project/selectors";
+import { useTaskDetail } from "store/project/selectors";
 import ArrowTriangleIcon from "icons/ArrowTriangleIcon";
 import AlignLeftIcon from "icons/AlignLeftIcon";
 import LinkSquareIcon from "icons/LinkSquareIcon";
@@ -32,9 +45,10 @@ import { TODO_LIST_ID } from "./components/TodoList";
 import { DEPENDENCIES_ID } from "./components/Dependencies";
 import hljs from "highlight.js";
 import { TASK_TEXT_STATUS } from "../components";
-import {useSnackbar} from "store/app/selectors";
+import { useSnackbar } from "store/app/selectors";
 import PencilUnderlineIcon from "../../../../icons/PencilUnderlineIcon";
 import useTheme from "hooks/useTheme";
+import { inherits } from "util";
 
 type InformationItemProps = StackProps & {
   label: string;
@@ -54,8 +68,12 @@ const Information = () => {
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
 
-  const [isAddDescription, onShowAddDescription, onHideAddDescription] =
-    useToggle(false);
+  const [
+    isAddDescription,
+    onShowAddDescription,
+    onHideAddDescription,
+    onToggleShowDescription,
+  ] = useToggle(false);
   const [isAddSubTask, onShowAddSubTask, , , setShowAddSubTask] = useToggle(
     !!task?.sub_tasks?.length,
   );
@@ -132,24 +150,26 @@ const Information = () => {
   };
 
   const changeNameTask = (event) => {
-    setTaskName(event.target.value)
-    setError("")
-  }
+    setTaskName(event.target.value);
+    setError("");
+  };
 
-  const onKeyDownTaskName = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDownTaskName = async (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
     if (event.key !== "Enter") return;
     const nameTrimmed = taskName?.trim();
     if (nameTrimmed) {
-      setEditName(false)
+      setEditName(false);
       await submitNameTask(task?.id, {
-        name : nameTrimmed
+        name: nameTrimmed,
       });
     } else {
-      setEditName(true)
+      setEditName(true);
       setError(
-          commonT("form.error.required", {
-            name: projectT("detailTasks.form.title.name"),
-          }),
+        commonT("form.error.required", {
+          name: projectT("detailTasks.form.title.name"),
+        }),
       );
     }
   };
@@ -157,16 +177,16 @@ const Information = () => {
   const removeEditable = async () => {
     const nameTrimmed = taskName?.trim();
     if (nameTrimmed) {
-      setEditName(false)
+      setEditName(false);
     } else {
-      setEditName(true)
+      setEditName(true);
       setError(
-          commonT("form.error.required", {
-            name: projectT("detailTasks.form.title.name"),
-          }),
+        commonT("form.error.required", {
+          name: projectT("detailTasks.form.title.name"),
+        }),
       );
     }
-  }
+  };
   const label = useMemo(() => {
     return commonT("update");
   }, [commonT]);
@@ -176,11 +196,16 @@ const Information = () => {
       if (!taskListId || !taskId) {
         throw AN_ERROR_TRY_AGAIN;
       }
-      const updateTask = await onUpdateTaskAction(data, taskListId, taskId, subTaskId);
+      const updateTask = await onUpdateTaskAction(
+        data,
+        taskListId,
+        taskId,
+        subTaskId,
+      );
       if (updateTask) {
         onAddSnackbar(
-            projectT("detailTasks.notification.taskSuccess", { label }),
-            "success",
+          projectT("detailTasks.notification.taskSuccess", { label }),
+          "success",
         );
       } else {
         throw AN_ERROR_TRY_AGAIN;
@@ -188,7 +213,7 @@ const Information = () => {
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   useEffect(() => {
     setShowAddSubTask(!!task?.sub_tasks?.length);
@@ -205,6 +230,12 @@ const Information = () => {
   useEffect(() => {
     setTaskName(task?.name);
   }, [task?.name]);
+
+  const inputNameRef = useRef(null);
+
+  const handleFocus = (inputNameRef) => {
+    if (inputNameRef) inputNameRef.current?.focus();
+  };
 
   if (!task) return null;
 
@@ -238,43 +269,43 @@ const Information = () => {
         justifyContent="space-between"
         spacing={2}
       >
-        {
-          editName ? (
-              <TextField
-                  onBlur={removeEditable}
-                  onMouseLeave={removeEditable}
-                  value={taskName}
-                  onKeyDown={onKeyDownTaskName}
-                  fullWidth
-                  variant="filled"
-                  size="small"
-                  onChange={changeNameTask}
-                  sx={{
-                    "& >div": {
-                      bgcolor: "transparent!important",
-                    },
-                    "& input": {
-                      fontSize: 15,
-                      paddingTop: '0px !important',
-                    },
-                    width: '60% !important'
-                  }}
-              />
-          ) : (
-              <Text
-                  variant="h5"
-                  color="text.primary"
-                  sx={{ wordBreak: "break-word" }}
-                  onMouseEnter={() => {
-                    setEditName(true)
-                  }}
-              >
-                {taskName}
-              </Text>
-          )
-        }
+        {editName ? (
+          <TextareaAutosize
+            onBlur={removeEditable}
+            onMouseLeave={removeEditable}
+            value={taskName}
+            onKeyDown={onKeyDownTaskName}
+            ref={inputNameRef}
+            onChange={changeNameTask}
+            onClick={() => handleFocus(inputNameRef)}
+            contentEditable={true}
+            style={{
+              width: "100%",
+              fontSize: 16,
+              fontFamily: "initial",
+              textAlign: "justify",
+              outlineStyle: "unset",
+              border: "none",
+              resize: "none",
+            }}
+          />
+        ) : (
+          <Text
+            variant={"h5"}
+            color="text.primary"
+            sx={{
+              wordBreak: "break-word",
+              display: editName ? "none" : "block",
+            }}
+            onClick={() => {
+              setEditName(true);
+            }}
+          >
+            {taskName}
+          </Text>
+        )}
 
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" alignItems="center" spacing={1} minWidth={150}>
           <Text variant="caption" color="grey.400">
             {commonT("status")}
           </Text>
@@ -286,9 +317,9 @@ const Information = () => {
       </Stack>
 
       {!!error && (
-          <Text variant="caption" color="error">
-            {error}
-          </Text>
+        <Text variant="caption" color="error">
+          {error}
+        </Text>
       )}
 
       {!isHideActions && (
@@ -398,71 +429,94 @@ const Information = () => {
         </InformationItem>
       </Stack>
 
-      {
-        !isAddDescription && (
-              <InformationItem
-                  label={`${commonT("form.title.description")}:`}
-                  minHeight={!isAddDescription ? 150 : ''}
-                  bgcolor="grey.50"
-                  p={2}
-                  borderRadius={1}
-                  marginTop="8px !important"
-                  position="relative"
+      {task?.description && !isAddDescription && (
+        <InformationItem
+          label={`${commonT("form.title.description")}:`}
+          minHeight={!isAddDescription ? 150 : ""}
+          bgcolor="grey.50"
+          p={2}
+          borderRadius={1}
+          marginTop="8px !important"
+          position="relative"
+        >
+          {!!task?.description && !isAddDescription && (
+            <Stack
+              direction="row"
+              justifyContent="end"
+              sx={{ position: "absolute", top: "2px", right: "14px" }}
+            >
+              <IconButton
+                onClick={() => {
+                  onShowAddDescription();
+                  setDescription(task?.description);
+                }}
+                variant="contained"
+                size="small"
+                sx={{
+                  backgroundColor: isDarkMode ? "grey.50" : "primary.light",
+                  color: "text.primary",
+                  p: 1,
+                  "&:hover svg": {
+                    color: "common.white",
+                  },
+                  justifyContent: "end",
+                  maxWidth: "50px",
+                }}
               >
-                {
-                    (!!task?.description && !isAddDescription) && (
-                        <Stack direction="row" justifyContent="end" sx={{ position: 'absolute', top: '2px', right: '14px' }}>
-                          <IconButton
-                              onClick={() => {
-                                onShowAddDescription();
-                                setDescription(task?.description)
-                              }}
-                              variant="contained"
-                              size="small"
-                              sx={{
-                                backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-                                color: "text.primary",
-                                p: 1,
-                                "&:hover svg": {
-                                  color: "common.white",
-                                },
-                                justifyContent: "end",
-                                maxWidth: "50px"
-                              }}
-                          >
-                            <PencilUnderlineIcon sx={{ fontSize: 16 }} />
-                          </IconButton>
-                        </Stack>
-                    )
-                }
-                {(!!task?.description && !isAddDescription) && (
-                    <>
-                      <Box
-                          sx={{
-                            fontSize: 14,
-                            "& *": {
-                              wordBreak: "break-all",
-                            },
-                          }}
-                          className="html"
-                          dangerouslySetInnerHTML={{
-                            __html: readMore || task.description.length < 400 ? task.description : `${task.description.substring(0, 400)}...`,
-                          }}
-                      />
-                      {
-                          task.description.length > 400 && (
-                              <p className="btn" onClick={() => setReadMore(!readMore)} style={{ cursor: "pointer", color: "#1BC5BD", fontSize: "14px", fontWeight: "600"}}>
-                                {readMore ? projectT("taskDetail.showLess") : projectT("taskDetail.showMore")}
-                              </p>
-                          )
-                      }
-                    </>
-                )}
-              </InformationItem>
-          )
-      }
+                <PencilUnderlineIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Stack>
+          )}
+          {!!task?.description && !isAddDescription && (
+            <>
+              <Box
+                sx={{
+                  fontSize: 14,
+                  "& *": {
+                    wordBreak: "break-all",
+                  },
+                  "& p": {
+                    marginY: 0,
+                  },
+                  "& p:last-child": {
+                    display: "none",
+                  },
+                }}
+                className="html"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    readMore || task.description.length < 400
+                      ? task.description
+                      : `${task.description.substring(0, 400)}...`,
+                }}
+              />
+              {task.description.length > 400 && (
+                <p
+                  className="btn"
+                  onClick={() => setReadMore(!readMore)}
+                  style={{
+                    cursor: "pointer",
+                    color: "#1BC5BD",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {readMore
+                    ? projectT("taskDetail.showLess")
+                    : projectT("taskDetail.showMore")}
+                </p>
+              )}
+            </>
+          )}
+        </InformationItem>
+      )}
 
-      <DescriptionTask open={isAddDescription} onClose={onHideAddDescription} textEdit={description} title={commonT("form.title.description")}/>
+      <DescriptionTask
+        open={isAddDescription}
+        onClose={onHideAddDescription}
+        textEdit={description}
+        title={commonT("form.title.description")}
+      />
       <AttachmentsTask id={ATTACHMENT_ID} files={files} setFiles={setFiles} />
       {!subTaskId && <SubTasksOfTask open={isAddSubTask} />}
       <TodoList open={isAddTodo} />

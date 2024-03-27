@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo, useMemo } from "react";
 import PencilIcon from "icons/PencilIcon";
 import { IconButton } from "components/shared";
@@ -8,10 +9,11 @@ import Form from "./Form";
 import { useMyCompany } from "store/company/selectors";
 import { useParams } from "next/navigation";
 import { useCompany } from "store/manager/selectors";
+import { Endpoint, client } from "api";
 
 const EditCompany = () => {
   const { item: detailItem } = useCompany();
-  const { item: myItem, onUpdateMyCompany } = useMyCompany();
+  const { item: myItem, onUpdateMyCompany, onGetCompany } = useMyCompany();
   const { id: paramId } = useParams();
 
   const item = useMemo(() => {
@@ -35,6 +37,7 @@ const EditCompany = () => {
 
     let dataOnlyUpdated = { ...data };
 
+
     dataOnlyUpdated = Object.entries(dataOnlyUpdated).reduce(
       (out, [key, value]) => {
         if (item[key] !== value) {
@@ -43,15 +46,37 @@ const EditCompany = () => {
         return out;
       },
       {},
-    ) as CompanyData;
+    ) as any;
+
+    let payload = { ...dataOnlyUpdated } as any
+
+    if (typeof data["avatar"] === "object") {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
+      payload.avatar = [logoUrl];
+    } else {
+      delete payload["avatar"];
+    }
 
     if (paramId) {
-      return await onUpdateCompany(id, dataOnlyUpdated);
+      const data = await onUpdateCompany(id, payload);      
+      return data
     }
-    return await onUpdateMyCompany(dataOnlyUpdated);
+    const result = await onUpdateMyCompany(payload);
+    return result
   };
 
   if (!item || paramId) return null;
+
+  const dataFromKeys = getDataFromKeys(item, [
+    "name",
+    "address",
+    "phone",
+    "tax_code",
+    "created_by",
+    "avatar"
+  ])
+
+  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).avatar?.link } as CompanyData  
   return (
     <>
       <IconButton
@@ -66,12 +91,7 @@ const EditCompany = () => {
           open
           onClose={onHide}
           initialValues={
-            getDataFromKeys(item, [
-              "name",
-              "address",
-              "phone",
-              "tax_code",
-            ]) as CompanyData
+            initialValues
           }
           onSubmit={onUpdate}
         />

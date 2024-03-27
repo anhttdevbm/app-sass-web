@@ -33,6 +33,8 @@ export const AuthLang: AuthDictionary = {
         fullName: "Họ tên",
         phone: "Số điện thoại",
         avatar: "Ảnh đại diện",
+        position: "Chức vụ",
+        email: 'Email'
       },
     },
     title: "Đăng ký",

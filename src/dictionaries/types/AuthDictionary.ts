@@ -31,6 +31,8 @@ export type AuthDictionary = {
         fullName: string;
         phone: string;
         avatar: string;
+        position: string;
+        email: string;
       };
     };
     title: string;

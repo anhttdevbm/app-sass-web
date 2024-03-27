@@ -1,5 +1,6 @@
 const ClientStorage = class {
   set(key: string, value) {
+    if (typeof localStorage === "undefined") return;
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
@@ -8,6 +9,7 @@ const ClientStorage = class {
   }
 
   get(key: string) {
+    if (typeof localStorage === "undefined") return "";
     try {
       let dataValue = localStorage?.getItem(key);
       dataValue = dataValue ? JSON.parse(dataValue) : "";
@@ -18,10 +20,12 @@ const ClientStorage = class {
   }
 
   remove(key: string) {
+    if (typeof localStorage === "undefined") return;
     localStorage.removeItem(key);
   }
 
   clear() {
+    if (typeof localStorage === "undefined") return;
     localStorage.clear();
   }
 };

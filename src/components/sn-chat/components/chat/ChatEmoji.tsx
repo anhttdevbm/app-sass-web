@@ -1,10 +1,10 @@
-import Popover from "@mui/material/Popover";
 import { useState } from "react";
 import data from "@emoji-mart/data";
-// import Picker from "@emoji-mart/react";
 import Box from "@mui/material/Box";
 import ImojiImportIcon from "icons/ImojiImportIcon";
 import dynamic from "next/dynamic";
+import Popper from "@mui/material/Popper";
+import { useOnClickOutside } from "hooks/useOnClickOutside";
 
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
 
@@ -21,38 +21,38 @@ interface ChatEmojiProps {
 }
 const ChatEmoji = ({ onChange }: ChatEmojiProps) => {
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
+  const [open, setOpen] = useState(false);
   const handleOpen = (event: React.MouseEvent<SVGSVGElement>) => {
+    setOpen(true);
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
+    setOpen(false);
     setAnchorEl(null);
   };
 
+  const ref = useOnClickOutside(handleClose);
+
   return (
-    <Box position="relative">
+    <Box position="relative" display="flex">
       <ImojiImportIcon
         sx={{
           fill: "transparent",
           cursor: "pointer",
         }}
-        onClick={handleOpen}
+        onMouseDown={handleOpen}
       />
-      <Popover
-        open={!!anchorEl}
+      <Popper
+        ref={ref}
+        open={open}
         anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
+        placement={"top-end"}
         sx={{
-          "& .MuiPaper-root": {
+          zIndex: 9999,
+          "& .MuiBox-root": {
             boxShadow: "none",
-            paddingBottom: ".5rem",
+            paddingBottom: ".8rem",
             backgroundColor: "transparent",
           },
         }}
@@ -61,14 +61,13 @@ const ChatEmoji = ({ onChange }: ChatEmojiProps) => {
           sx={{
             width: "352px",
             height: "435px",
-            border: "1px solid #e7e7e738",
             borderRadius: "10px",
             display: "table",
           }}
         >
           <Picker data={data} onEmojiSelect={onChange} theme="light" />
         </Box>
-      </Popover>
+      </Popper>
     </Box>
   );
 };

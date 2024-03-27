@@ -1,6 +1,8 @@
 "use client";
-
-import { Box, Stack } from "@mui/material";
+import { Box, DialogContent, Slider, Stack } from "@mui/material";
+import { Endpoint, client } from "api";
+import Avatar from "components/Avatar";
+import FixedLayout from "components/FixedLayout";
 import { Button, IconButton, Input, Text } from "components/shared";
 import {
   AN_ERROR_TRY_RELOAD_PAGE,
@@ -8,27 +10,28 @@ import {
   NS_ACCOUNT,
   NS_COMMON,
 } from "constant/index";
-import { ChangeEvent, memo, useMemo, useRef } from "react";
-import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
-import Avatar from "components/Avatar";
-import BagIcon from "icons/BagIcon";
-import useToggle from "hooks/useToggle";
-import PencilIcon from "icons/PencilIcon";
-import * as Yup from "yup";
-import { VN_PHONE_REGEX } from "constant/regex";
-import { useFormik, FormikErrors } from "formik";
-import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
-import { UpdateUserInfoData } from "store/app/actions";
-import { client, Endpoint } from "api";
-import { useTranslations } from "next-intl";
+import { FormikErrors, useFormik } from "formik";
 import useBreakpoint from "hooks/useBreakpoint";
-import FixedLayout from "components/FixedLayout";
+import useToggle from "hooks/useToggle";
+import BagIcon from "icons/BagIcon";
+import PencilIcon from "icons/PencilIcon";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
+import { useTranslations } from "next-intl";
+import { ChangeEvent, memo, useMemo, useRef, useState } from "react";
+import AvatarEditor from "react-avatar-editor";
+import { UpdateUserInfoData } from "store/app/actions";
+import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
+import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
+import * as Yup from "yup";
 
 const UserInformation = () => {
   const { user } = useAuth();
   const { onUpdateUserInfo } = useUserInfo();
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
+  const imageEdittorRef = useRef<AvatarEditor>(null);
+  const [imageScale, setImageScale] = useState(1.2);
+  const [openImageEditor, setOpenImageEditor] = useState<string | null>(null);
 
   const { isSmSmaller } = useBreakpoint();
 
@@ -41,6 +44,11 @@ const UserInformation = () => {
   const onSubmit = async (values: UpdateUserInfoData) => {
     try {
       const newData = { ...values };
+      console.log("newData", newData);
+      console.log("type newData", typeof formik.values);
+      console.log("type avatar", typeof values["avatar"]);
+      console.log("value avatar", values["avatar"]);
+      
       if (typeof values["avatar"] === "object") {
         const avatarUrl: string = await client.upload(
           Endpoint.UPLOAD,
@@ -75,7 +83,8 @@ const UserInformation = () => {
     const files = event.target.files;
     if (!files) return;
     if (IMAGES_ACCEPT.includes(files[0].type)) {
-      formik.setFieldValue("avatar", files[0]);
+      setOpenImageEditor(URL.createObjectURL(files[0]));
+      // formik.setFieldValue("avatar", files[0]);
     } else {
       onAddSnackbar(commonT("form.notification.imageTypeInvalid"), "error");
     }
@@ -95,6 +104,21 @@ const UserInformation = () => {
     enableReinitialize: true,
     onSubmit,
   });
+
+  const handleCropAvatar = () => {
+    const dataUrl = imageEdittorRef.current
+      ?.getImageScaledToCanvas()
+      .toDataURL();
+    fetch(dataUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const file = new File([blob], "avatar.png", { type: blob.type });
+        formik.setFieldValue("avatar", file);
+      })
+      .finally(() => {
+        setOpenImageEditor(null);
+      });
+  };
 
   const previewImage = useMemo(() => {
     if (typeof formik.values?.avatar === "object") {
@@ -132,145 +156,199 @@ const UserInformation = () => {
   }
 
   return (
-    <FixedLayout flex={1}>
-      <Stack
-        flex={1}
-        justifyContent="center"
-        alignItems="center"
-        spacing={3}
-        maxWidth={({ spacing }) => ({
-          xs: `calc(100vw - ${spacing(3 * 2)})`,
-          sm: 700,
-        })}
-        alignSelf="center"
-        width="100%"
-        py={3}
-        component="form"
-        noValidate
-        onSubmit={formik.handleSubmit}
-      >
-        <Text variant="subtitle1" fontWeight={700}>
-          {accountT("accountInformation.title")}
-        </Text>
-        <Stack width={90} height={90} borderRadius="50%" position="relative">
-          <Avatar size={90} src={previewImage} alt={user.fullname} />
-          {isEdit && (
-            <>
-              <IconButton
-                onClick={onChooseFile}
-                noPadding
-                sx={{
-                  width: 24,
-                  height: 24,
-                  backgroundColor: "grey.50",
-                  "&:hover": {
+    <>
+      <FixedLayout flex={1}>
+        <Stack
+          flex={1}
+          justifyContent="center"
+          alignItems="center"
+          spacing={3}
+          maxWidth={({ spacing }) => ({
+            xs: `calc(100vw - ${spacing(3 * 2)})`,
+            sm: 700,
+          })}
+          alignSelf="center"
+          width="100%"
+          py={3}
+          component="form"
+          noValidate
+          onSubmit={formik.handleSubmit}
+        >
+          <Text variant="subtitle1" fontWeight={700}>
+            {accountT("accountInformation.title")}
+          </Text>
+          <Stack width={90} height={90} borderRadius="50%" position="relative">
+            <Avatar
+              size={90}
+              src={previewImage}
+              alt={user.fullname}
+              onClick={isEdit ? onChooseFile : onEditTrue}
+              style={{ cursor: "pointer" }}
+            />
+            {isEdit && (
+              <>
+                <IconButton
+                  onClick={onChooseFile}
+                  noPadding
+                  sx={{
+                    width: 24,
+                    height: 24,
                     backgroundColor: "grey.50",
-                  },
-                  borderRadius: "50%",
-                  position: "absolute",
-                  bottom: 0,
-                  right: 0,
-                }}
+                    "&:hover": {
+                      backgroundColor: "grey.50",
+                    },
+                    borderRadius: "50%",
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                  }}
+                >
+                  <PencilIcon sx={{ color: "grey.400", fontSize: 24 }} />
+                </IconButton>
+                <Box
+                  component="input"
+                  type="file"
+                  accept={IMAGES_ACCEPT.join(", ")}
+                  display="none"
+                  ref={inputFileRef}
+                  onChange={onChangeFile}
+                />
+              </>
+            )}
+          </Stack>
+
+          <Stack direction="row" alignItems="center" spacing={0.5}>
+            <BagIcon sx={{ color: "grey.400" }} fontSize="medium" />
+            <Text color="grey.400">{`${commonT("position")}: ${
+              user?.position?.name ?? "--"
+            }`}</Text>
+          </Stack>
+          {!isEdit && (
+            <Button onClick={onEditTrue} variant="secondary" size="small">
+              {accountT("accountInformation.changeInformation")}
+            </Button>
+          )}
+
+          <Input
+            rootSx={sxConfig.input}
+            title={commonT("fullName")}
+            fullWidth
+            name="fullname"
+            disabled={!isEdit}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values?.fullname}
+            error={commonT(touchedErrors?.fullname, {
+              name: commonT("fullName"),
+              min: 6,
+            })}
+            required={isEdit}
+          />
+          <Input
+            rootSx={sxConfig.input}
+            title={commonT("phone")}
+            fullWidth
+            name="phone"
+            disabled={!isEdit}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values?.phone}
+            error={commonT(touchedErrors?.phone, {
+              name: commonT("phone"),
+            })}
+          />
+          <Input
+            rootSx={sxConfig.input}
+            title="Email"
+            fullWidth
+            name="email"
+            disabled
+            value={user.email}
+            tooltip={
+              isEdit
+                ? accountT("accountInformation.notAllowUpdate", {
+                    name: "Email",
+                  })
+                : undefined
+            }
+          />
+          {isEdit && (
+            <Stack
+              direction={{ xs: "column-reverse", sm: "row" }}
+              alignItems="center"
+              spacing={{ xs: 2, sm: 3 }}
+              width="100%"
+            >
+              <Button
+                type="button"
+                onClick={onCancel}
+                sx={sxConfig.button}
+                variant="primaryOutlined"
+                size={isSmSmaller ? "medium" : "small"}
+                fullWidth
               >
-                <PencilIcon sx={{ color: "grey.400", fontSize: 24 }} />
-              </IconButton>
-              <Box
-                component="input"
-                type="file"
-                accept={IMAGES_ACCEPT.join(", ")}
-                display="none"
-                ref={inputFileRef}
-                onChange={onChangeFile}
-              />
-            </>
+                {commonT("form.cancel")}
+              </Button>
+              <Button
+                disabled={disabled}
+                pending={formik.isSubmitting}
+                sx={{ ...sxConfig.button }}
+                variant="primary"
+                size={isSmSmaller ? "medium" : "small"}
+                type="submit"
+                fullWidth
+              >
+                {commonT("form.confirm")}
+              </Button>
+            </Stack>
           )}
         </Stack>
+      </FixedLayout>
 
-        <Stack direction="row" alignItems="center" spacing={0.5}>
-          <BagIcon sx={{ color: "grey.400" }} fontSize="medium" />
-          <Text color="grey.400">{`${commonT("position")}: ${
-            user?.position?.name ?? "--"
-          }`}</Text>
-        </Stack>
-        {!isEdit && (
-          <Button onClick={onEditTrue} variant="secondary" size="small">
-            {accountT("accountInformation.updateAccount")}
-          </Button>
-        )}
+      <DefaultPopupLayout
+        open={!!openImageEditor}
+        title="Image editor"
+        onClose={() => setOpenImageEditor(null)}
+      >
+        <DialogContent>
+          <Stack alignItems="center" gap={2}>
+            <AvatarEditor
+              ref={imageEdittorRef}
+              image={openImageEditor}
+              width={300}
+              height={300}
+              border={50}
+              color={[255, 255, 255, 0.6]} // RGBA
+              borderRadius={300}
+              scale={imageScale}
+              rotate={0}
+            />
 
-        <Input
-          rootSx={sxConfig.input}
-          title={commonT("fullName")}
-          fullWidth
-          name="fullname"
-          disabled={!isEdit}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values?.fullname}
-          error={commonT(touchedErrors?.fullname, {
-            name: commonT("fullName"),
-            min: 6,
-          })}
-          required={isEdit}
-        />
-        <Input
-          rootSx={sxConfig.input}
-          title={commonT("phone")}
-          fullWidth
-          name="phone"
-          disabled={!isEdit}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values?.phone}
-          error={commonT(touchedErrors?.phone, {
-            name: commonT("phone"),
-          })}
-        />
-        <Input
-          rootSx={sxConfig.input}
-          title="Email"
-          fullWidth
-          name="email"
-          disabled
-          value={user.email}
-          tooltip={
-            isEdit
-              ? accountT("accountInformation.notAllowUpdate", { name: "Email" })
-              : undefined
-          }
-        />
-        {isEdit && (
-          <Stack
-            direction={{ xs: "column-reverse", sm: "row" }}
-            alignItems="center"
-            spacing={{ xs: 2, sm: 3 }}
-            width="100%"
-          >
+            <Slider
+              onChange={(event: Event, newValue: number | number[]) => {
+                setImageScale(parseFloat(newValue.toString()));
+              }}
+              min={1}
+              max={2}
+              step={0.1}
+              defaultValue={imageScale}
+            />
+          </Stack>
+
+          <Stack direction="row" justifyContent="center" spacing={2}>
             <Button
-              type="button"
-              onClick={onCancel}
-              sx={sxConfig.button}
-              variant="primaryOutlined"
-              size={isSmSmaller ? "medium" : "small"}
-              fullWidth
+              variant="secondary"
+              onClick={() => setOpenImageEditor(null)}
             >
-              {commonT("form.cancel")}
+              {commonT("cancel")}
             </Button>
-            <Button
-              disabled={disabled}
-              pending={formik.isSubmitting}
-              sx={{ ...sxConfig.button }}
-              variant="primary"
-              size={isSmSmaller ? "medium" : "small"}
-              type="submit"
-              fullWidth
-            >
-              {commonT("form.confirm")}
+            <Button variant="primary" onClick={handleCropAvatar}>
+              {commonT("crop")}
             </Button>
           </Stack>
-        )}
-      </Stack>
-    </FixedLayout>
+        </DialogContent>
+      </DefaultPopupLayout>
+    </>
   );
 };
 

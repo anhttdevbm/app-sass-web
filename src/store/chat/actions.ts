@@ -18,7 +18,9 @@ import {
   RenameGroupRequest,
   MessageSearchInfoRequest,
   UnReadMessageRequest,
-  MessageInfo,
+  ReadMessageRequest,
+  ForwardMessageGroup,
+  ChangeGroupAvatar,
 } from "./type";
 import { AxiosError } from "axios";
 
@@ -31,6 +33,28 @@ export const getAllConvention = createAsyncThunk(
       });
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const message = error.response?.data["error"];
+        return rejectWithValue(message);
+      } else {
+        throw error;
+      }
+    }
+  },
+);
+
+export const getConventionById = createAsyncThunk(
+  "chat/getConventionById",
+  async (paramReq: ChatConventionItemRequest, { rejectWithValue }) => {
+    try {
+      const response = await client.post("getAllConversations", paramReq, {
+        baseURL: CHAT_API_URL,
+      });
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.length > 0 ? response.data[0] : null;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {
@@ -97,8 +121,37 @@ export const getUserInfoById = createAsyncThunk(
 export const sendMessages = createAsyncThunk(
   "chat/sendMessages",
   async (paramReq: MessageBodyRequest) => {
+    const { t, ...param } = paramReq;
+    const objUrl = {
+      d: "sendDirectMessage",
+      p: "sendMessageToGroup",
+      c: "sendMessageToChannel",
+    };
+    // p for group sendMessageToGroup
+    // c for channel sendMessageToChannel
+    const paramsByType = {
+      d: {
+        sender_authToken: param.sender_authToken,
+        sender_userId: param.sender_userId,
+        receiverUsername: param.receiverUsername,
+        attachments: param.attachments,
+      },
+      p: {
+        authToken: param.authToken,
+        userId: param.userId,
+        roomId: param.roomId,
+        attachments: param.attachments,
+      },
+      c: {
+        authToken: param.authToken,
+        userId: param.userId,
+        channel: param.channel,
+        attachments: param.attachments,
+      },
+    };
+    if (!t) return;
     try {
-      const response = await client.post("sendDirectMessage", paramReq, {
+      const response = await client.post(objUrl[t], paramsByType[t], {
         baseURL: CHAT_API_URL,
       });
 
@@ -152,6 +205,22 @@ export const getUnreadMessages = createAsyncThunk(
     }
   },
 );
+
+export const readMessages = async (paramReq: ReadMessageRequest) => {
+  try {
+    const response = await client.post("readMessages", paramReq, {
+      baseURL: CHAT_API_URL,
+    });
+
+    if (response?.status === HttpStatusCode.OK) {
+      return response.data;
+    }
+    throw AN_ERROR_TRY_AGAIN;
+  } catch (error) {
+    console.log(error);
+    // throw error;
+  }
+};
 
 export const createDirectMessageGroup = createAsyncThunk(
   "chat/createDirectMessageGroup",
@@ -307,6 +376,42 @@ export const deleteConversation = createAsyncThunk(
   async (paramReq: DeleteConversationGroup) => {
     try {
       const response = await client.post("deleteConversation", paramReq, {
+        baseURL: CHAT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const forwardMessage = createAsyncThunk(
+  "chat/forwardMessage",
+  async (paramReq: ForwardMessageGroup) => {
+    try {
+      const response = await client.post("forwardMessage", paramReq, {
+        baseURL: CHAT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const changeGroupAvatar = createAsyncThunk(
+  "chat/changeRoomAvatar",
+  async (paramReq: ChangeGroupAvatar) => {
+    try {
+      const response = await client.post("changeRoomAvatar", paramReq, {
         baseURL: CHAT_API_URL,
       });
 

@@ -6,7 +6,7 @@ import { TextProps } from "components/shared";
 
 type StatusCellProps = {
   text: string;
-  color: AlertColor;
+  color: AlertColor | "purple" | "positive";
   width?: TextProps["minWidth"];
   namespace?: string;
   textProps?: Omit<TextProps, "color" | "width">;

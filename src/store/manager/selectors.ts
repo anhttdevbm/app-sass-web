@@ -92,6 +92,7 @@ export const useCompany = () => {
 
   const onUpdateCompany = useCallback(
     async (id: string, data: CompanyData) => {
+      console.log('Update∆')
       try {
         return await dispatch(updateCompany({ id, ...data })).unwrap();
       } catch (error) {

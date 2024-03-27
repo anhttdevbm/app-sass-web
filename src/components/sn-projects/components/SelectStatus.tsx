@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { useProjects } from "store/project/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import { useSnackbar } from "store/app/selectors";
@@ -10,10 +10,8 @@ import MenuItem from "@mui/material/MenuItem";
 import TextStatus from "components/TextStatus";
 import Popover from "@mui/material/Popover";
 import useQueryParams from "hooks/useQueryParams";
-import { DEFAULT_PAGING } from "constant/index";
 
 import { ProjectStatus } from "store/project/actions";
-import { Button, Typography, Select } from "@mui/material";
 
 type SelectStatusProps = {
   value?: ProjectStatus;
@@ -27,7 +25,6 @@ const SelectStatus = (props: SelectStatusProps) => {
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
   const [status, setStatus] = useState(value || ProjectStatus.ACTIVE);
-  const { initQuery, isReady, query } = useQueryParams();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const onToggleStatus = async (newStatus) => {

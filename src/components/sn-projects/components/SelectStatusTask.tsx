@@ -1,3 +1,4 @@
+import { Grow, popoverClasses, Popper, Stack } from "@mui/material";
 import { memo, useState } from "react";
 import { StatusCell } from "components/Table";
 import { COLOR_STATUS } from "./helpers";
@@ -7,6 +8,7 @@ import Popover from "@mui/material/Popover";
 import { Status } from "constant/enums";
 import TextStatus from "components/TextStatus";
 import { TASK_TEXT_STATUS } from "components/sn-project-detail/Tasks/components";
+import { useOnClickOutside } from "hooks/useOnClickOutside";
 
 type SelectStatusTaskProps = {
   value: Status;
@@ -17,6 +19,16 @@ const SelectStatusTask = (props: SelectStatusTaskProps) => {
   const { value, onHandler } = props;
   const [status, setStatus] = useState(value || Status.ACTIVE);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const onClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClickOutside = () => {
+    onClose();
+  };
+
+  const ref = useOnClickOutside(handleClickOutside);
 
   const handleChange = async (newStatus: Status) => {
     onHandler(newStatus);
@@ -34,13 +46,14 @@ const SelectStatusTask = (props: SelectStatusTaskProps) => {
   const open = Boolean(anchorEl);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <>
       <div
         onClick={handleStatusCellClick}
         style={{
           display: "flex",
           alignItems: "center",
           cursor: "pointer",
+          zIndex: 0,
         }}
       >
         <TextStatus
@@ -50,47 +63,66 @@ const SelectStatusTask = (props: SelectStatusTaskProps) => {
         />
       </div>
 
-      <Popover
-        open={open}
+      <Popper
+        ref={ref}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
+        sx={{
+          [`& .${popoverClasses.paper}`]: {
+            backgroundImage: "white",
+            minWidth: 130,
+            maxWidth: 180,
+          },
+          zIndex: 0,
+          backgroundColor: "white",
         }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
+        transition
+        placement={"bottom-start"}
       >
-        {Object.keys(Status).map((statusKey) => {
-          const statusValue = Status[statusKey] as Status;
-          return (
-            <MenuItem
-              key={statusValue}
-              value={statusValue}
-              onClick={() => {
-                handleChange(statusValue);
-                handleClose();
-              }}
+        {({ TransitionProps }) => (
+          <Grow {...TransitionProps} timeout={350}>
+            <Stack
+              py={2}
               sx={{
-                "& td": {
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
+                boxShadow: "2px 2px 24px rgba(0, 0, 0, 0.2)",
+                border: "1px solid",
+                borderTopWidth: 0,
+                borderColor: "grey.100",
+                borderRadius: 1,
+                bgcolor: "background.paper",
               }}
             >
-              <StatusCell
-                text={TASK_TEXT_STATUS[statusValue]}
-                color={COLOR_STATUS[statusValue]}
-                width={120}
-              />
-            </MenuItem>
-          );
-        })}
-      </Popover>
-    </div>
+              {Object.keys(Status).map((statusKey) => {
+                const statusValue = Status[statusKey] as Status;
+                return (
+                  <MenuItem
+                    key={statusValue}
+                    value={statusValue}
+                    onClick={() => {
+                      handleChange(statusValue);
+                      handleClose();
+                    }}
+                    sx={{
+                      "& td": {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      },
+                    }}
+                  >
+                    <StatusCell
+                      text={TASK_TEXT_STATUS[statusValue]}
+                      color={COLOR_STATUS[statusValue]}
+                      width={120}
+                    />
+                  </MenuItem>
+                );
+              })}
+            </Stack>
+          </Grow>
+        )}
+      </Popper>
+    </>
   );
 };
 

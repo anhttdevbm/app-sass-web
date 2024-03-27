@@ -1,0 +1,17 @@
+.ProseMirror p.is-empty::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  .comment {
+    border-bottom: 1px solid yellow;
+  }
+}
+.ProseMirror .comment {
+  border-bottom: 4px solid #2196f3;
+}
+
+* {
+  outline: none;
+}

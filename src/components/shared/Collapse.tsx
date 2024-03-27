@@ -1,5 +1,10 @@
 import { memo } from "react";
-import { Accordion, AccordionSummary, accordionClasses } from "@mui/material";
+import {
+  Accordion,
+  AccordionSummary,
+  SxProps,
+  accordionClasses,
+} from "@mui/material";
 import ChevronIcon from "icons/ChevronIcon";
 import useTheme from "hooks/useTheme";
 
@@ -7,10 +12,11 @@ type CollapseProps = {
   label: React.ReactNode;
   children: React.ReactNode;
   initCollapse?: boolean;
+  sx?: SxProps;
 };
 
 const Collapse = (props: CollapseProps) => {
-  const { label, children, initCollapse = false } = props;
+  const { label, children, initCollapse = false, sx } = props;
 
   const { isDarkMode } = useTheme();
 
@@ -36,6 +42,7 @@ const Collapse = (props: CollapseProps) => {
         [`& .${accordionClasses.region}`]: {
           width: "100%",
         },
+        ...sx,
       }}
     >
       <AccordionSummary

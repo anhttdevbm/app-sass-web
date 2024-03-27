@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo, useEffect, useRef, useState } from "react";
-import { Stack } from "@mui/material";
+import { FormControl, InputLabel, Select, Stack } from "@mui/material";
 import { Button, Text } from "components/shared";
 import PlusIcon from "icons/PlusIcon";
 import { Clear, Dropdown, Refresh, Search } from "components/Filters";
@@ -30,8 +30,12 @@ const Actions = () => {
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
 
-  const { filters, onGetEmployees, pageSize, onCreateEmployee } =
-    useEmployees();
+  const {
+    filters,
+    onGetEmployees,
+    pageSize,
+    onCreateEmployee,
+  } = useEmployees();
 
   const [isShow, onShow, onHide] = useToggle();
 
@@ -39,6 +43,7 @@ const Actions = () => {
   const { push } = useRouter();
 
   const [queries, setQueries] = useState<Params>({});
+  const [filterField, setFilterField] = useState("email");
 
   const paymentOptions = useMemo(
     () =>
@@ -52,7 +57,8 @@ const Actions = () => {
   };
 
   const onSearch = () => {
-    const path = getPath(pathname, queries);
+    const q = { ...queries, fullname: queries["email"] };
+    const path = getPath(pathname, q);
     push(path);
 
     // onGetEmployees({ ...queries, pageIndex: 1, pageSize });
@@ -62,7 +68,7 @@ const Actions = () => {
     const newQueries = { pageIndex: 1, pageSize };
     const path = getPath(pathname, newQueries);
     push(path);
-    onGetEmployees(newQueries);
+    onGetEmployees({ ...newQueries });
   };
 
   const onRefresh = () => {
@@ -134,11 +140,16 @@ const Actions = () => {
           minWidth={{ md: "fit-content" }}
         >
           <Search
-            placeholder={commonT("searchBy", { name: "email" })}
-            name="email"
+            placeholder={commonT("searchBy", { name: "email or name" })}
+            name={"email"}
             onChange={onChangeQueries}
-            value={queries?.email}
-            sx={{ width: 200, minWidth: 200 }}
+            value={queries["email"]}
+            sx={{ width: 300, minWidth: 200 }}
+            onKeyDown={(e) => {
+              if(e.key === 'Enter') {
+                onSearch()
+              }
+            }}
           />
           <Dropdown
             placeholder={commonT("position")}
@@ -160,7 +171,8 @@ const Actions = () => {
             size="extraSmall"
             sx={{
               display: { xs: "none", md: "flex" },
-              height: 32, px: ({ spacing }) => `${spacing(2)}!important`
+              height: 32,
+              px: ({ spacing }) => `${spacing(2)}!important`,
             }}
             onClick={onSearch}
             variant="secondary"

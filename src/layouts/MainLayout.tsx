@@ -2,7 +2,7 @@
 
 import { Snackbar, Stack } from "@mui/material";
 import AppLoading from "components/AppLoading";
-import Header, { HEADER_HEIGHT } from "./Header";
+import Header from "./Header";
 import { memo, useEffect, useMemo } from "react";
 import { Sidebar } from "./components";
 import { useAppSelector } from "store/hooks";
@@ -10,6 +10,7 @@ import { shallowEqual } from "react-redux";
 import { usePathname, useRouter } from "next-intl/client";
 import {
   AUTHORIZED_PATHS,
+  CHATTING_ROOM_PATH,
   FORGOT_PASSWORD_PATH,
   HOME_PATH,
   JOIN_WORKSPACE_PATH,
@@ -30,6 +31,8 @@ type MainLayoutProps = {
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH];
 
+const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH];
+
 const MainLayout = (props: MainLayoutProps) => {
   const { children } = props;
 
@@ -37,6 +40,8 @@ const MainLayout = (props: MainLayoutProps) => {
   const pathname = usePathname();
   const { id } = useParams() as { id: string };
   const commonT = useTranslations(NS_COMMON);
+
+  const pathNameWithoutId = id ? pathname.replace(`/${id}`, "") : pathname;
 
   const { appReady, token, user } = useAppSelector(
     (state) => state.app,
@@ -46,14 +51,18 @@ const MainLayout = (props: MainLayoutProps) => {
   const { onGetProfile } = useAuth();
 
   const isLoggedIn = useMemo(() => !!token, [token]);
+  const isChatting = useMemo(
+    () => !!IS_CHATTING_ROOM.includes(pathNameWithoutId),
+    [pathNameWithoutId],
+  );
 
-  const isAuthorized = useMemo(() => {
-    if (!user?.roles?.length) return false;
-    return user?.roles?.some((role) => {
-      const basePath = id ? pathname.replace(id, "{id}") : pathname;
-      return AUTHORIZED_PATHS[role].includes(basePath);
-    });
-  }, [user?.roles, pathname, id]);
+  // const isAuthorized = useMemo(() => {
+  //   if (!user?.roles?.length) return false;
+  //   return user?.roles?.some((role) => {
+  //     const basePath = id ? pathname.replace(id, "{id}") : pathname;
+  //     return AUTHORIZED_PATHS[role].includes(basePath);
+  //   });
+  // }, [user?.roles, pathname, id]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -83,24 +92,27 @@ const MainLayout = (props: MainLayoutProps) => {
           <Header />
           <Stack
             flex={1}
-            height="fit-content"
+            // height="fit-content"
             spacing={{ xs: 1.5, sm: 3 }}
-            justifyContent={isAuthorized ? undefined : "center"}
-            alignItems={isAuthorized ? undefined : "center"}
-            overflow="hidden"
+            sx={{ overflow: 'auto' }}
+            // justifyContent={isAuthorized ? undefined : "center"}
+            // alignItems={isAuthorized ? undefined : "center"}
+            // overflow="hidden"
           >
-            {isAuthorized ? (
+            {
+              // isAuthorized ? (
               children
-            ) : (
-              <Text variant="body2" fontWeight={600}>
-                {commonT("unauthorized")}
-              </Text>
-            )}
+              // ) : (
+              //   <Text variant="body2" fontWeight={600}>
+              //     {commonT("unauthorized")}
+              //   </Text>
+              // )
+            }
           </Stack>
         </Stack>
       </Stack>
       <Snackbar />
-      <ChatListTemp />
+      {!isChatting ? <ChatListTemp /> : null}
     </>
   );
 };

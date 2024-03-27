@@ -24,6 +24,7 @@ import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 import FixedLayout from "components/FixedLayout";
+import { Option } from "constant/types";
 
 const ItemList = () => {
   const {
@@ -54,15 +55,25 @@ const ItemList = () => {
       { value: "#", width: "5%", align: "center" },
       {
         value: commonT("name"),
-        width: "30%",
+        width: "23%",
         align: "left",
       },
       {
         value: commonT("assigner"),
-        width: "25%",
+        width: "22.5%",
         align: "left",
       },
-      { value: commonT("status"), width: "25%" },
+      {
+        value: commonT("form.title.startDate"),
+        width: "12.5%",
+        align: "center",
+      },
+      {
+        value: commonT("form.title.endDate"),
+        width: "12.5%",
+        align: "center",
+      },
+      { value: commonT("status"), width: "12.5%" },
       { value: "", width: "5%" },
     ],
     [commonT],
@@ -71,7 +82,7 @@ const ItemList = () => {
     () => [
       {
         value: commonT("name"),
-        width: "25%",
+        width: "20%",
         align: "left",
       },
       {
@@ -79,7 +90,12 @@ const ItemList = () => {
         width: "25%",
         align: "left",
       },
-      { value: commonT("status"), width: "30%" },
+      {
+        value: commonT("creationDate"),
+        width: "15%",
+        align: "left",
+      },
+      { value: commonT("status"), width: "25%" },
       { value: "", width: "10%" },
     ],
     [commonT],
@@ -103,7 +119,10 @@ const ItemList = () => {
             name: item.name,
             description: item.description,
             owner: item?.owner?.id,
-            type_project: item?.type_project?.id,
+            type_project: {
+              value: item?.type_project?.id,
+              label: item?.type_project?.name,
+            } as Option,
             start_date: item?.start_date
               ? new Date(item.start_date).getTime()
               : undefined,
@@ -111,6 +130,7 @@ const ItemList = () => {
               ? new Date(item.end_date).getTime()
               : undefined,
             expected_cost: item?.expected_cost,
+            currency: item?.currency,
             working_hours: item?.working_hours,
             members: item?.members.map(({ id, fullname, ...rest }) => ({
               id,

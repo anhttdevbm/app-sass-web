@@ -1,59 +1,97 @@
-import * as React from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Link from "components/Link";
+import { DataStatus } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import FileBasicIcon from "icons/FileBasicIcon";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo } from "react";
+import { useSnackbar } from "store/app/selectors";
 import { useChat } from "store/chat/selectors";
-import FileGroupIcon from "icons/FileGroupIcon";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
 
 const FileList = () => {
-  const { onSetTypeList, typeList } = useChat();
+  const { mediaList, mediaListStatus, onGetChatAttachments, dataTransfer } = useChat();
+  const { onAddSnackbar } = useSnackbar();
+  const commonT = useTranslations(NS_COMMON);
 
-  const { chatAttachments, dataTransfer, onGetChatAttachments } = useChat();
+  useEffect(() => {
+    const handleGetAttachment = async () => {
+      try {
+        await onGetChatAttachments({
+          fileType: "file",
+          roomId: dataTransfer?._id,
+          roomType: "p",
+        });
+      } catch (error) {
+        onAddSnackbar(
+          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
+          "error",
+        );
+      }
+    };
 
-  React.useEffect(() => {
-    onGetChatAttachments({
-      roomId: dataTransfer?._id,
-      fileType: "file",
-      roomType: "p",
-    });
-  }, []);
+    handleGetAttachment();
+  }, [onAddSnackbar, onGetChatAttachments, commonT]);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    onSetTypeList(newValue);
-  };
+  const fileClone = useMemo(() => {
+    return mediaList?.filter((file) => file.name && file.path);
+  }, [mediaList]);
+
+  if (
+    mediaListStatus === DataStatus.LOADING ||
+    mediaListStatus === DataStatus.FAILED
+  ) {
+    return <Typography textAlign="center">Loading...</Typography>;
+  }
 
   return (
-    <>
-      {chatAttachments?.files?.map((file, index) => (
-        <Box
-          key={index}
-          sx={{
-            display: "flex",
-            justifyItems: "center",
-          }}
-        >
-          <FileGroupIcon />
-          <Typography
-            sx={{
-              marginLeft: "1rem",
-              color: "var(--black, #212121)",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-            }}
-          >
-            Chat Mobile App.docx
-          </Typography>
-        </Box>
-      ))}
-    </>
+    <Box
+      sx={{
+        overflow: "auto",
+        maxHeight: "calc(600px - 77px - 59px - 16px)",
+        height: "100%",
+        paddingLeft: "1rem",
+        paddingRight: "0.3rem",
+      }}
+    >
+      {fileClone.length > 0 ? (
+        fileClone?.map((item, index) => {
+          return (
+            <Box
+              key={index}
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              py=".5rem"
+              gap="1rem"
+            >
+              <FileBasicIcon
+                sx={{
+                  fill: "transparent",
+                  color: "#666666",
+                }}
+              />
+              <Link
+                href={item.path}
+                target="_blank"
+                sx={{
+                  color: "#212121",
+                  overflowWrap: "anywhere",
+                  fontWeight: 600,
+                  textDecoration: "auto",
+                }}
+              >
+                {item.name}
+              </Link>
+            </Box>
+          );
+        })
+      ) : (
+        <Typography textAlign="center">{commonT("noData")}</Typography>
+      )}
+    </Box>
   );
 };
 
 export default FileList;
+

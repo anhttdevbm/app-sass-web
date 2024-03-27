@@ -21,6 +21,7 @@ const ItemDetail = ({ text, icon, iconClick, onClick }: SelectItemProp) => {
 
   return (
     <Box
+      onClick={onClick}
       sx={{
         display: "flex",
         flexDirection: "row",
@@ -51,7 +52,6 @@ const ItemDetail = ({ text, icon, iconClick, onClick }: SelectItemProp) => {
             cursor: "pointer",
             padding: 0.5,
           }}
-          onClick={onClick}
         >
           {iconClick}
         </IconButton>

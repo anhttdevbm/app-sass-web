@@ -5,9 +5,10 @@ import { Text } from "components/shared";
 import {
   PROJECT_TASKS_PATH,
   PROJECT_ACTIVITIES_PATH,
-  PROJECT_COST_HISTORY_PATH,
+  PROJECT_BUDGET_PATH,
   PROJECT_MEMBERS_PATH,
   PROJECT_INFORMATION_PATH,
+  PROJECT_DOCUMENT_PATH,
 } from "constant/paths";
 import { usePathname } from "next-intl/client";
 import {
@@ -132,9 +133,10 @@ const TabActions = (props: StackProps) => {
 const TABS = [
   { label: "tabList.tasks", href: PROJECT_TASKS_PATH },
   { label: "tabList.activities", href: PROJECT_ACTIVITIES_PATH },
-  { label: "tabList.costHistory", href: PROJECT_COST_HISTORY_PATH },
+  { label: "tabList.budget", href: PROJECT_BUDGET_PATH },
   { label: "tabList.members", href: PROJECT_MEMBERS_PATH },
   { label: "tabList.information", href: PROJECT_INFORMATION_PATH },
+  { label: "tabList.documents", href: PROJECT_DOCUMENT_PATH },
 ];
 
 const getSuffixPath = (path: string) => {

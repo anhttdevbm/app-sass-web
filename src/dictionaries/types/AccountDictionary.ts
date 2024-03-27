@@ -5,6 +5,7 @@ export type AccountDictionary = {
     };
     title: string;
     updateAccount: string;
+    changeInformation: string;
     notAllowUpdate: string;
     notification: {
       updateSuccess: string;

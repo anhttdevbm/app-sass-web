@@ -43,6 +43,7 @@ const TopContent = () => {
       spacing={3}
       pb={2}
       display={{ md: "none" }}
+      zIndex={1}
     >
       <Stack
         direction="row"

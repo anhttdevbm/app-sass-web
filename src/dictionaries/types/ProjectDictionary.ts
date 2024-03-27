@@ -27,9 +27,10 @@ export type ProjectDictionary = {
     };
   };
   tabList: {
+    documents: string;
     tasks: string;
     activities: string;
-    costHistory: string;
+    budget: string;
     members: string;
     information: string;
   };
@@ -57,9 +58,14 @@ export type ProjectDictionary = {
         all: string;
         file: string;
         image: string;
-      },
+      };
       noData: string;
-    }
+    };
+  };
+  detailDocuments: {
+    head: {
+      title: string;
+    };
   };
   detailMembers: {
     head: {
@@ -107,6 +113,7 @@ export type ProjectDictionary = {
     assignee: string;
     processingDuplicate: string;
     nameWillBeExisted: string;
+    unsaveMessage: string;
     keys: {
       owner: string;
       start_date: string;
@@ -131,6 +138,7 @@ export type ProjectDictionary = {
       deleteTaskListSuccess: string;
       deleteTasksSuccess: string;
       actionTaskSuccess: string;
+      taskNameIsRequired: string;
     };
   };
   taskDetail: {
@@ -173,11 +181,70 @@ export type ProjectDictionary = {
     };
     notification: {
       assignSuccess: string;
+      dateSuccess: string;
     };
   };
   detailActivities: {
     head: {
       title: string;
+    };
+  };
+  budget: {
+    head: {
+      title: string;
+    };
+    action: {
+      addBudget: string;
+      addBudgetTitleModal: string;
+    };
+    form: {
+      name: string;
+      start_date: string;
+      end_date: string;
+      owner: string;
+      project_id: string;
+    };
+    createBudgetSuccess: string;
+    duplicateBudgetSuccess: string;
+    deleteBudgetSuccess: string;
+    table: {
+      budget: string;
+      owner: string;
+      cost: string;
+      budgetTimeUsed: string;
+      budgetedTimeUse: string;
+      workTime: string;
+      estimateTime: string;
+      revenue: string;
+      margin: string;
+      budgetUsed: string;
+      budgetTotal: string;
+      workedTime: string;
+      billableTime: string;
+      invoiced: string;
+      company: string;
+      project: string;
+    };
+    groupBy: {
+      dateCreated: string;
+      dateUpdated: string;
+      startDate: string;
+      endDate: string;
+      owner: string;
+      status: string;
+    };
+    filter: {
+      owner: string;
+      time: string;
+    };
+    titleGroupBy: string;
+    titleFilter: string;
+  };
+  errors: {
+    form: {
+      add_sub_task: {
+        required: string;
+      };
     };
   };
 };

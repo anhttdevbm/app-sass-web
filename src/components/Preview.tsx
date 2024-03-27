@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogProps,
   DialogTitle,
+  DialogTitleProps,
   backdropClasses,
   dialogClasses,
 } from "@mui/material";
@@ -13,6 +14,9 @@ import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
+import CopyWhiteIcon from "icons/CopyWhiteIcon";
+import RedoIcon from "icons/RedoIcon";
+import DownloadIcon from "icons/DownloadIcon";
 
 const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];
 const VIDEOS_EXTENSION = ["mp4", "mov", "wmv", "flv", "avi", "webm", "mkv"];
@@ -27,11 +31,92 @@ type PreviewProps = {
   src: string;
   listData?: Attachment[];
   listAttachmentsDown?: Attachment[];
+  titleProps?: DialogTitleProps;
+  onStartChangeSlide?: (id: string | undefined) => void;
 } & Omit<DialogProps, "children">;
 
+export const TitlePreview = ({
+  time,
+  onClose,
+  onCopy,
+  onDownloadFile,
+}: {
+  time: string;
+  onCopy: () => void;
+  onDownloadFile: () => void;
+  onClose: () => void;
+}) => {
+  const commonT = useTranslations(NS_COMMON);
+  return (
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="space-between"
+      width="100%"
+      sx={{
+        "& .MuiTypography-root": {
+          color: "white",
+        },
+      }}
+    >
+      <Text variant="caption" fontSize="14px" lineHeight="22px">
+        {time}
+      </Text>
+      <Box display="flex" gap="3rem">
+        <Text
+          display="inline-flex"
+          gap="0.3rem"
+          sx={{
+            cursor: "pointer",
+          }}
+          onClick={onCopy}
+        >
+          <CopyWhiteIcon color="inherit" />
+          Copy
+        </Text>
+        {/* <Text
+          display="inline-flex"
+          gap="0.3rem"
+          sx={{
+            cursor: "pointer",
+          }}
+        >
+          <RedoIcon color="inherit" />
+          Forward
+        </Text> */}
+        <Text
+          display="inline-flex"
+          gap="0.3rem"
+          sx={{
+            cursor: "pointer",
+          }}
+          onClick={onDownloadFile}
+        >
+          <DownloadIcon color="inherit" />
+          Download
+        </Text>
+      </Box>
+      <Text variant="h6" onClick={onClose} sx={{ cursor: "pointer" }}>
+        {commonT("close")}
+      </Text>
+    </Box>
+  );
+};
 const Preview = (props: PreviewProps) => {
-  const { type, src, listData, listAttachmentsDown, ...rest } = props;
-  const indexSlide = listAttachmentsDown?.findIndex((el) => el.link == src);
+  const {
+    type,
+    src,
+    listData,
+    listAttachmentsDown,
+    titleProps,
+    onStartChangeSlide,
+    ...rest
+  } = props;
+  const {
+    sx: titleSx,
+    children: titleChildren,
+    ...titleProp
+  } = titleProps || {};
   const commonT = useTranslations(NS_COMMON);
 
   const onClose = () => {
@@ -44,6 +129,23 @@ const Preview = (props: PreviewProps) => {
     const extension = arr[arr.length - 1];
     if (IMAGES_EXTENSION.includes(extension)) return `image/${extension}`;
     if (VIDEOS_EXTENSION.includes(extension)) return `video/${extension}`;
+  };
+
+  const filterAttachment = (listData?: Attachment[]) => {
+    if (!listData) return [];
+    return listData.filter((data) => {
+      const extension = getExtension(data?.name);
+      return extension?.startsWith("image") || extension?.startsWith("video");
+    });
+  };
+
+  const indexSlide = filterAttachment(listAttachmentsDown)?.findIndex(
+    (el) => el.link == src,
+  );
+
+  const handleChangeSlide = (_, to) => {
+    const idAsUrl = listAttachmentsDown?.[to].link;
+    onStartChangeSlide?.(idAsUrl);
   };
 
   return (
@@ -71,16 +173,20 @@ const Preview = (props: PreviewProps) => {
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
+          ...titleSx,
         }}
+        {...titleProp}
       >
-        <Text
-          variant="h6"
-          onClick={onClose}
-          color="common.white"
-          sx={{ cursor: "pointer" }}
-        >
-          {commonT("close")}
-        </Text>
+        {titleChildren ?? (
+          <Text
+            variant="h6"
+            onClick={onClose}
+            color="common.white"
+            sx={{ cursor: "pointer" }}
+          >
+            {commonT("close")}
+          </Text>
+        )}
       </DialogTitle>
       {listAttachmentsDown && listAttachmentsDown?.length > 0 ? (
         <Box
@@ -96,13 +202,14 @@ const Preview = (props: PreviewProps) => {
         >
           <Slide
             defaultIndex={indexSlide}
+            onStartChange={handleChangeSlide}
             infinite={false}
             autoplay={false}
             duration={5000}
             transitionDuration={500}
             easing="ease"
           >
-            {listAttachmentsDown?.map((data, index) => (
+            {filterAttachment(listAttachmentsDown)?.map((data, index) => (
               <div
                 key={index}
                 style={{
@@ -123,7 +230,8 @@ const Preview = (props: PreviewProps) => {
                     width="auto"
                     alt="Image"
                     sx={{
-                      maxWidth: "600px",
+                      maxWidth: "100%",
+                      maxHeight: "100%",
                     }}
                   />
                 )}

@@ -8,6 +8,7 @@ const ChevronIcon = (props: SvgIconProps) => {
       fill="none"
       fontSize="inherit"
       xmlns="http://www.w3.org/2000/svg"
+      style={{ cursor: 'pointer' }}
       {...props}
     >
       <path

@@ -115,9 +115,13 @@ const ActionsCell = (props: ActionsCellProps) => {
         size="small"
         onClick={onOpen}
         sx={{
-          backgroundColor: isDarkMode ? "grey.50" : "primary.light",
+          backgroundColor: isDarkMode ? "grey.150" : "white",
           color: "grey.400",
           p: 1,
+          '&:hover': {
+            backgroundColor: 'unset',
+            color: isDarkMode ? "black" : "grey.600",
+          },
           ...sxIconProps,
         }}
         variant="contained"
