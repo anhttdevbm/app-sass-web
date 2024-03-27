@@ -13,6 +13,7 @@ import {
   POSITIONS_PATH,
   PROJECTS_PATH,
   PROJECT_TYPES_PATH,
+  CLIENT_COMPANIES_PATH,
   STATEMENT_HISTORY_PATH,
   TIME_TRACKING_PATH,
   RESOURCE_PLANING_PATH,
@@ -232,6 +233,11 @@ const DATA: MenuItemProps[] = [
       {
         label: "menu.projectTypeList",
         href: PROJECT_TYPES_PATH,
+        roles: [Permission.AM],
+      },
+      {
+        label: "menu.clientCompanies",
+        href: CLIENT_COMPANIES_PATH,
         roles: [Permission.AM],
       },
       {

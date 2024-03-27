@@ -16,10 +16,14 @@ import {
   getMyCompany,
   getPositionList,
   getProjectTypeList,
+  getClientCompanies,
   updateEmployee,
   updateMyCompany,
   updatePosition,
   updateProjectType,
+  ClientCompanyData,
+  createClientCompany,
+  getClientCompaniesMemberOptions,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
@@ -357,5 +361,61 @@ export const useCostHistory = () => {
     totalItems,
     totalPages,
     onGetCostHistory,
+  };
+};
+
+export const useClientCompanies = () => {
+  const dispatch = useAppDispatch();
+  const {
+    clientCompanies: items,
+    clientCompaniesMemberOptions: options,
+    clientCompaniesStatus: status,
+    clientCompaniesError: error,
+    clientCompaniesFilters: filters,
+  } = useAppSelector((state) => state.company, shallowEqual);
+  const { pageIndex, pageSize, totalItems, totalPages } = useAppSelector(
+    (state) => state.company.clientCompaniesPaging,
+    shallowEqual,
+  );
+
+  const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
+  const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+
+  const onGetClientCompanies = useCallback(
+    async (queries: BaseQueries) => {
+      await dispatch(getClientCompanies(queries));
+    },
+    [dispatch],
+  );
+
+  const onGetMemberOptions = useCallback(
+    async (queries: BaseQueries) => {       
+      await dispatch(getClientCompaniesMemberOptions(queries));
+    },
+    [dispatch],
+  );
+
+  const onCreateClientCompany = useCallback(
+    async (data: ClientCompanyData) => {
+      return await dispatch(createClientCompany(data)).unwrap();
+    },
+    [dispatch],
+  );
+
+  return {
+    items,
+    status,
+    error,
+    filters,
+    isIdle,
+    isFetching,
+    pageIndex,
+    pageSize,
+    totalItems,
+    totalPages,
+    options,
+    onGetClientCompanies,
+    onGetMemberOptions,
+    onCreateClientCompany,
   };
 };

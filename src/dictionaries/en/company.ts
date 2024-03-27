@@ -72,6 +72,25 @@ export const CompanyLang: CompanyDictionary = {
       success: "{label} project type successfully!",
     },
   },
+  clientCompany: {
+    head: {
+      title: "Client Company | Taskcover",
+    },
+    title: "Client Company",
+    create: "Create",
+    createBy: "Create by",
+    createDate: "Create date",
+    duplicate: "Duplicate",
+    form: {
+      title: {
+        name: "Create a new client company",
+      }
+    },
+    companyName: "Company Name",
+    taxCode: "Tax code",
+    address: "Address",
+    zipCode: "Zipcode",
+  },
   information: {
     head: {
       title: "Company Information | Taskcover",
