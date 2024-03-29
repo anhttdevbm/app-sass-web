@@ -8,7 +8,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from "@mui/material";
 import { Button, Text } from "components/shared";
 import ArrowExport from "icons/ArrowExport";
@@ -42,7 +42,7 @@ const ViewPdfInvoice = () => {
   const [isDownload, setIsDownload] = useState<boolean>(false);
   const printRef = React.useRef(null);
   const param = useParams();
-  console.log('param', param);
+  // console.log('param', param);
 
   const id = param?.id.toString();
 
@@ -171,7 +171,7 @@ const ViewPdfInvoice = () => {
 
         <Stack gap={2} p={2} padding={8} alignItems={"center"}>
           <div
-           //TODO: Comment this code to deploy, waiting for QUANGNV to fix the bug 
+            //TODO: Comment this code to deploy, waiting for QUANGNV to fix the bug
             // ref={printRef}
             style={{
               fontSize: 20,

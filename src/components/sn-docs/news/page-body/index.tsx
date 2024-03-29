@@ -44,14 +44,9 @@ import EmojiSelector from "./components/EmojiSelector";
 
 const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const pageInfo = useAppSelector((state) => state.doc.pageInfo);
-  let {
-    perm,
-    content,
-    id,
-    title: name,
-    description,
-    project_id,
-  } = useAppSelector((state) => state.doc);
+  const page = useAppSelector((state) => state.doc);
+  const { perm, content, id, title: name, description, project_id } = page;
+  console.log(name, id);
 
   const dispatch = useDispatch();
   const { handleGetDocDetail } = useDocs();
@@ -64,6 +59,8 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const [minHeight, setMinHeight] = useState("100vh");
   const { isDarkMode } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [textAreaValue, setTextAreaValue] = useState(name);
+
   const { handleUpdateDoc } = useDocs();
 
   const [updateDoc] = useUpdateDocMutation();
@@ -72,6 +69,9 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   }, 200);
 
   // We should cancel debounce when we change the doucment ítelf
+  useEffect(() => {
+    setTextAreaValue(name);
+  }, [name]);
 
   useEffect(() => {
     // cancel();
@@ -88,6 +88,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     if (mounted) {
       if (id) {
         handleUpdateDoc(data, id);
+        // setTextAreaValue(name);
       } else {
       }
     } else {
@@ -95,35 +96,35 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     }
   }, [description, name, content, project_id, currentId]);
 
-  useEffect(() => {
-    const data = {
-      content: content,
-      name: name || undefined,
-      description: description,
-      project_id: project_id,
-    };
-    if (mounted) {
-      if (id) {
-        handleUpdateDoc(data, id);
-      } else {
-      }
-    } else {
-      setMounted(true);
-    }
-  }, [content]);
+  // useEffect(() => {
+  //   const data = {
+  //     content: content,
+  //     name: name || undefined,
+  //     description: description,
+  //     project_id: project_id,
+  //   };
+  //   if (mounted) {
+  //     if (id) {
+  //       handleUpdateDoc(data, id);
+  //     } else {
+  //     }
+  //   } else {
+  //     setMounted(true);
+  //   }
+  // }, [content]);
 
   const editor = useDocEditor() as Editor;
   const [fontFamily, setFontFamily] = useState<any>(FontFamilyOptions[0].value);
   useEffect(() => {
     if (editor) {
-      console.log(editor.getAttributes("textStyle").fontFamily);
+      // console.log(editor.getAttributes("textStyle").fontFamily);
       const htmlContent = editor.getHTML();
       const parser = new DOMParser();
       const doc_data = parser.parseFromString(htmlContent, "text/html");
-      console.log(doc_data);
+      // console.log(doc_data);
       const elements = doc_data.body.getElementsByTagName("*");
       for (let i = 0; i < elements.length; i++) {
-        console.log(elements[i]);
+        // console.log(elements[i]);
         const style = elements[i].getAttribute("style");
         if (style) {
           const fontFamily = style.split(":")[1];
@@ -290,15 +291,17 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
             </Box>
 
             <form id="document_title" className={`${styles.form_title}`}>
-              {name && (
+              {textAreaValue && (
                 <Textarea
                   fontFamily={fontFamily}
                   maxRows={3}
                   id="title"
                   disabled={!canEdit}
-                  defaultValue={name}
+                  value={textAreaValue}
+                  // defaultValue={name}
                   placeholder="Enter document title..."
                   onChange={(e) => {
+                    setTextAreaValue(e.target.value);
                     debounceChange(e.target.value);
                   }}
                   autoComplete="off"
