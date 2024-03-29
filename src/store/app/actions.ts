@@ -31,6 +31,7 @@ export type ResetPasswordData = {
 
 export type UpdateUserInfoData = {
   phone?: string;
+  address?: string;
   fullname?: string;
   avatar?: string | string[];
 };
