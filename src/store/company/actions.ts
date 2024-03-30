@@ -11,6 +11,8 @@ import { BaseQueries } from "constant/types";
 import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import StringFormat from "string-format";
 import { getPositions, getProjectTypes } from "store/global/actions";
+import data from "@emoji-mart/data";
+import { ClientCompany } from "components/sn-client-companies/type";
 
 export enum CompanyStatus {
   REJECT,
@@ -57,35 +59,12 @@ export type GetClientConpanyListQueries = BaseQueries & {
   searchType?: "and" | "or" | "eq";
 };
 
-export type ClientCompanyData = {
-  code: string;
-  name: string;
-  tax_code: string;
-  address: string;
-  zip_code?: string;
-  phone: string;
-  email: string;
-  created_time: string;
-  status: boolean;
-  avatar?: string;
-  website?: string;
-  contact?: {
-    name?: string;
-    position?: string;
-    address?: string;
-    phone?: string;
-    email?: string;
-    website?: string;
-    avatar?: string[];
-  };
-};
-
 export const getEmployees = createAsyncThunk(
   "company/getEmployees",
   async ({
-    concat,
-    ...queries
-  }: GetEmployeeListQueries & { concat?: boolean }) => {
+           concat,
+           ...queries
+         }: GetEmployeeListQueries & { concat?: boolean }) => {
     queries = serverQueries(
       { ...queries, sort: "created_time=-1" },
       ["email", "fullname"],
@@ -425,9 +404,9 @@ export const getClientCompanies = createAsyncThunk(
 export const getClientCompaniesMemberOptions = createAsyncThunk(
   "company/getClientCompaniesMemberOptions",
   async ({
-    concat,
-    ...queries
-  }: GetEmployeeListQueries & { concat?: boolean }) => {
+           concat,
+           ...queries
+         }: GetEmployeeListQueries & { concat?: boolean }) => {
     queries = serverQueries(
       { ...queries, sort: "created_time=-1" },
       ["email", "fullname"],
@@ -452,7 +431,7 @@ export const getClientCompaniesMemberOptions = createAsyncThunk(
 
 export const createClientCompany = createAsyncThunk(
   "company/createClientCompany",
-  async (data: ClientCompanyData) => {
+  async (data: ClientCompany) => {
     try {
       const response = await client.post(Endpoint.CLIENT_COMPANIES, data, {
         baseURL: COMPANY_API_URL,
@@ -483,6 +462,58 @@ export const deleteClientCompany = createAsyncThunk(
 
       if (response?.status === HttpStatusCode.OK) {
         return id;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getClientCompanyDetails = createAsyncThunk(
+  "company/getClientCompany",
+  async (id: string) => {
+    try {
+      const response = await client.get(
+        `${Endpoint.CLIENT_COMPANIES}/${id}`,
+        {},
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+      if (response?.status === HttpStatusCode.OK) {
+        const { data } = response;
+        return data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateClientCompany = createAsyncThunk(
+  "company/updateClientCompany",
+  async (data: ClientCompany) => {
+    const contact = data.contact;
+    const body: ClientCompany = {...data, contact: {
+      name: contact?.name,
+        avatar: contact?.avatar,
+        address: contact?.address,
+        email: contact?.email,
+        phone: contact?.phone,
+        position: contact?.position,
+        website: contact?.website,
+      }}
+    try {
+      const response = await client.put(`${Endpoint.CLIENT_COMPANIES}/${data?.id}`, body, {
+        baseURL: COMPANY_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data?.id
+          ? { ...response.data, contact: data?.contact }
+          : response.data?.body;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {

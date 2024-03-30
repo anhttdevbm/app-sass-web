@@ -1,9 +1,7 @@
 import { Dropdown, DropdownProps } from "components/Filters";
 import { NS_COMMON, NS_COMPANY } from "constant/index";
-import { Option } from "constant/types";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
-import { ChangeEvent, memo, MouseEventHandler, useEffect, useState } from "react";
+import { memo } from "react";
 import { useClientCompanies } from "store/company/selectors";
 
 const AssignerFilter = (

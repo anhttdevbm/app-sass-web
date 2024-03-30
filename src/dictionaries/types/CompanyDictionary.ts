@@ -97,6 +97,12 @@ export type CompanyDictionary = {
     notification: {
       success: string;
     };
+    generalInformation: string;
+    contact: string;
+    formUpdate: {
+      title: string;
+      submit: string;
+    }
   };
   information: {
     head: {
