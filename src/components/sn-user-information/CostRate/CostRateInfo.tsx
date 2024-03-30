@@ -3,6 +3,8 @@ import { Box } from "@mui/material";
 import { Text } from "components/shared";
 import { useCostRate } from "store/costRate/selectors";
 
+import ProcessRing from "../components/ProcessRing";
+
 const CostRateInfo = () => {
   const { currentRate } = useCostRate();
 
@@ -25,6 +27,9 @@ const CostRateInfo = () => {
       <Text><strong>total_hours:</strong> {currentRate?.total_hours}</Text>
       <Text><strong>created_by:</strong> {currentRate?.created_by}</Text>
       <Text><strong>created_time:</strong> {currentRate?.created_time}</Text>
+      <ProcessRing size={256} percentage={75}>
+        <Text fontSize={33}>22</Text>
+      </ProcessRing>
     </Box>
   )
 }
