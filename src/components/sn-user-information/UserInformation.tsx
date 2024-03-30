@@ -15,7 +15,7 @@ import {
 } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
-import CopyIcon from "icons/CopyIcon";
+import NewCopyIcon from "icons/NewCopyIcon";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
@@ -139,7 +139,7 @@ const UserInformation = () => {
                   aria-label="copy"
                   onClick={() => { navigator.clipboard.writeText(user?.["username"]) }}
                 >
-                  <CopyIcon />
+                  <NewCopyIcon />
                 </IconButton>
               }
               tooltip={

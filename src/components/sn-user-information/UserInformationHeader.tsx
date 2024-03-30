@@ -12,7 +12,7 @@ import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
 import { Button, IconButton, Text } from "components/shared";
 import Avatar from "components/Avatar";
-import PencilIcon from "icons/PencilIcon";
+import PencilIcon from "icons/FocusedCameraIcon";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
@@ -105,8 +105,8 @@ const UserInformationHeader = ({ isEdit }) => {
                 onClick={onChooseFile}
                 noPadding
                 sx={{
-                  width: 24,
-                  height: 24,
+                  width: 37,
+                  height: 37,
                   backgroundColor: "grey.50",
                   "&:hover": {
                     backgroundColor: "grey.50",
@@ -117,7 +117,7 @@ const UserInformationHeader = ({ isEdit }) => {
                   right: 0,
                 }}
               >
-                <PencilIcon sx={{ color: "grey.400", fontSize: 24 }} />
+                <PencilIcon sx={{ color: "grey.400", fontSize: 18 }} />
               </IconButton>
               <Box
                 component="input"
