@@ -1,5 +1,5 @@
 import { Box, DialogContent, Slider, Stack } from "@mui/material";
-import { Button, Text } from "components/shared";
+import { Button } from "components/shared";
 import { IMAGES_ACCEPT, NS_COMMON } from "constant/index";
 import UploadIcon from "icons/UploadIcon";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
@@ -37,7 +37,6 @@ const Upload = (props: UploadProps) => {
     if (typeof value === "object") {
       return URL.createObjectURL(value);
     }
-    console.log((value as string | undefined) ?? placeholder ?? LogoPlaceholderImage);
     return (value as string | undefined) || placeholder;
   }, [placeholder, value]);
 
