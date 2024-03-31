@@ -1,15 +1,23 @@
 import { ReactElement } from "react";
-import { Box, Grid, Stack } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableBody from "@mui/material/TableBody";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import { styled } from "@mui/material/styles";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Filler, Title } from 'chart.js';
+import dayjs from "dayjs";
 
 import { Text } from "components/shared";
 import CalendarIcon from "icons/CalendarIcon";
 import { useCostRate } from "store/costRate/selectors";
-
 import ProcessRing from "../components/ProcessRing";
 
-const InfoBlock = ({title, content, icon}: {
+const CurrentRateBlock = ({title, content, icon}: {
   title: string;
   content: string;
   icon: ReactElement;
@@ -27,15 +35,20 @@ const InfoBlock = ({title, content, icon}: {
     >
       {icon}
       <Stack direction="column" spacing={1}>
-        <Text color="grey.800" fontSize={20} fontWeight={600}>{title}</Text>
+        <Text color="grey.800" fontSize={20} fontWeight={600} whiteSpace="nowrap" textOverflow="ellipsis">{title}</Text>
         <Text color="grey.800">{content}</Text>
       </Stack>
     </Stack>
   )
 }
 
+const StyledBodyCell = styled(TableCell)({
+  border: 0,
+  padding: 20,
+})
+
 const CostRateInfo = () => {
-  const { currentRate } = useCostRate();
+  const { currentRate, remainingRates } = useCostRate();
 
   const labels = [
     "Mar 18",
@@ -97,7 +110,7 @@ const CostRateInfo = () => {
 
       <Grid
         container
-        mt={4}
+        mt={5}
         spacing={3}
       >
         <Grid item container xs={8}>
@@ -120,61 +133,110 @@ const CostRateInfo = () => {
 
       <Grid
         container
-        mt={4}
-        spacing={4}
+        mt={6}
+        spacing={6}
       >
         <Grid item xs={4}>
-          <InfoBlock
+          <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Type"
-            content="Monthly"
+            content={currentRate?.type ?? 'N/A'}
           />
         </Grid>
         <Grid item xs={4}>
-          <InfoBlock
+          <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Per Month"
-            content="1000.$"
+            content={currentRate?.cost_per_month ? `${currentRate.cost_per_month}.$` : 'N/A'}
           />
         </Grid>
         <Grid item xs={4}>
-          <InfoBlock
+          <CurrentRateBlock
             icon={<CalendarIcon />}
             title="At current cost rate"
-            content="22 days"
+            content="N/A"
           />
         </Grid>
         <Grid item xs={4}>
-          <InfoBlock
+          <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Capacity"
-            content="244h"
+            content={currentRate?.total_hours ? `${currentRate.total_hours}h` : 'N/A'}
           />
         </Grid>
         <Grid item xs={4}>
-          <InfoBlock
+          <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Current Hourly Cost"
-            content="Monthly"
+            content="N/A"
           />
         </Grid>
         <Grid item xs={4}>
-          <InfoBlock
+          <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Overhead"
-            content="Turned off"
+            content="N/A"
           />
         </Grid>
         <Grid item xs={12}>
-          <Stack border={1} borderColor="#14B9E5" borderRadius={3} padding={3}>
+          <Stack border={1} borderColor="#14B9E5" borderRadius={3} padding={4}>
             <Text color="grey.800" fontSize={20} fontWeight={600}>Note</Text>
             <Text color="grey.700" mt={1}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos modi ex autem ut reprehenderit veritatis commodi? Beatae aut tenetur quam cum ut eius, voluptates velit repellendus iure sint modi ratione.</Text>
           </Stack>
         </Grid>
       </Grid>
 
-      <Text fontSize={25} fontWeight={600} variant="h3" color="grey.800">Cost Rate</Text>
+      <Text fontSize={25} fontWeight={600} variant="h3" color="grey.800" mt={6} mb={2}>Cost Rate</Text>
 
+      <Table>
+        <TableHead>
+          <TableRow
+            sx={{
+              height: 70,
+              "& th": {
+                border: 0,
+                paddingTop: 2,
+                paddingBottom: 2,
+                paddingLeft: 2.5,
+                paddingRight: 2.5,
+                backgroundColor: "#D9F0FD",
+              },
+              "& th:first-child": {
+                borderTopLeftRadius: 12,
+                borderBottomLeftRadius: 12,
+              },
+              "& th:last-child": {
+                borderTopRightRadius: 12,
+                borderBottomRightRadius: 12,
+              },
+              "& th:nth-child(7)": {
+                width: "20%",
+              },
+            }}
+          >
+            <TableCell>Start Date</TableCell>
+            <TableCell>End Date</TableCell>
+            <TableCell>Cost Type</TableCell>
+            <TableCell>Cost</TableCell>
+            <TableCell>Hourly</TableCell>
+            <TableCell>Capacity</TableCell>
+            <TableCell>Note</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {remainingRates.map((item) =>
+            <TableRow key={item.id}>
+              <StyledBodyCell>{dayjs(item.start_date).format('DD MMM, YYYY')}</StyledBodyCell>
+              <StyledBodyCell>{dayjs(item.end_date).format('DD MMM, YYYY')}</StyledBodyCell>
+              <StyledBodyCell>{item.type}</StyledBodyCell>
+              <StyledBodyCell>--</StyledBodyCell>
+              <StyledBodyCell>--</StyledBodyCell>
+              <StyledBodyCell>--</StyledBodyCell>
+              <StyledBodyCell>--</StyledBodyCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </Box>
   )
 }
