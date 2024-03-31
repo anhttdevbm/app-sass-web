@@ -2,6 +2,7 @@ import { Card, Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import { Button, Input, Text } from "components/shared";
+import { ClientCompany, Contact } from "components/sn-client-companies/type";
 import { DataAction } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { EMAIL_REGEX } from "constant/regex";
@@ -15,14 +16,14 @@ import * as Yup from "yup";
 import AvatarUpload from "./AvatarUpload";
 
 type FormProps = {
-  initialValues: FormTypes;
+  initialValues?: ClientCompany;
   type: DataAction;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (values: FormTypes) => Promise<any>;
+  onSubmit: (values: ClientCompany) => Promise<any>;
 } & Omit<DialogLayoutProps, "children" | "onSubmit">;
 
-const INITIAL_VALUES = {
-  code: "",
+export const INITIAL_VALUES: ClientCompany = {
+  code: "COM1z",
   name: "",
   tax_code: "",
   zip_code: "",
@@ -39,12 +40,10 @@ const INITIAL_VALUES = {
     address: "",
     phone: "",
     email: "",
-    avatar: [],
+    avatar: undefined,
     website: "",
   },
 };
-
-type FormTypes = typeof INITIAL_VALUES; //  & { avatar?: File };
 
 const Form = (props: FormProps) => {
   const { initialValues, type, onSubmit: onSubmitProps, ...rest } = props;
@@ -53,13 +52,16 @@ const Form = (props: FormProps) => {
   const commonT = useTranslations(NS_COMMON);
   const [isShowContact, setShowContact] = useState<boolean>(false);
 
-  const onSubmit = async (values: FormTypes) => {
+  const onSubmit = async (values: ClientCompany) => {
     try {
       const newItem = await onSubmitProps(values);
       if (newItem) {
         onAddSnackbar(
           companyT("clientCompany.notification.success", {
-            label: commonT("createNew"),
+            label:
+              type === DataAction.CREATE
+                ? commonT("createNew")
+                : commonT("update"),
           }),
           "success",
         );
@@ -73,7 +75,7 @@ const Form = (props: FormProps) => {
   };
 
   const formik = useFormik({
-    initialValues,
+    initialValues: initialValues || INITIAL_VALUES,
     validationSchema,
     enableReinitialize: true,
     onSubmit,
@@ -81,7 +83,7 @@ const Form = (props: FormProps) => {
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
-      (out: FormikErrors<FormTypes>, [key, error]) => {
+      (out: FormikErrors<ClientCompany>, [key, error]) => {
         if (formik.touched[key]) {
           out[key] = error;
         }
@@ -114,18 +116,30 @@ const Form = (props: FormProps) => {
         minHeight: "auto",
         gap: "24px",
       }}
-      label={`${companyT("clientCompany.form.title.name")}`}
+      label={
+        type === DataAction.CREATE
+          ? companyT("clientCompany.form.title.name")
+          : companyT("clientCompany.formUpdate.title")
+      }
       submitting={formik.isSubmitting}
       disabled={disabled}
       onSubmit={formik.handleSubmit}
-      submitText={companyT("clientCompany.create")}
+      submitText={
+        type === DataAction.CREATE
+          ? companyT("clientCompany.create")
+          : companyT("clientCompany.formUpdate.submit")
+      }
       {...rest}
     >
       <Stack direction="row" gap={3}>
         <Stack>
           <AvatarUpload
             name="avatar"
-            value={formik.values?.avatar}
+            value={
+              typeof formik.values?.avatar === "string"
+                ? formik.values?.avatar
+                : ""
+            }
             onChange={onChangeField}
           />
         </Stack>
@@ -138,9 +152,8 @@ const Form = (props: FormProps) => {
             onBlur={formik.handleBlur}
             value={formik.values?.name}
             error={commonT(touchedErrors?.name, {
-              name: "Company name",
+              name: companyT("clientCompany.companyName"),
             })}
-            disabled={type === DataAction.UPDATE}
             rootSx={sxConfig.input}
           />
 
@@ -151,7 +164,6 @@ const Form = (props: FormProps) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.tax_code}
-              disabled={type === DataAction.UPDATE}
               rootSx={sxConfig.input}
               sx={{ width: "100%" }}
             />
@@ -161,7 +173,6 @@ const Form = (props: FormProps) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.address}
-              disabled={type === DataAction.UPDATE}
               rootSx={sxConfig.input}
               sx={{ width: "100%" }}
             />
@@ -173,7 +184,6 @@ const Form = (props: FormProps) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.zip_code}
-              disabled={type === DataAction.UPDATE}
               rootSx={sxConfig.input}
               sx={{ width: "100%" }}
             />
@@ -183,7 +193,6 @@ const Form = (props: FormProps) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.email}
-              disabled={type === DataAction.UPDATE}
               rootSx={sxConfig.input}
               error={commonT(touchedErrors?.email, {
                 name: "Email",
@@ -198,7 +207,6 @@ const Form = (props: FormProps) => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values?.website}
-            disabled={type === DataAction.UPDATE}
             rootSx={sxConfig.input}
           />
 
@@ -238,8 +246,7 @@ const Form = (props: FormProps) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.name}
-                  disabled={type === DataAction.UPDATE}
-                  error={commonT(touchedErrors?.contact?.name, {
+                  error={commonT(touchedErrors?.contact, {
                     name: "Full name",
                   })}
                   rootSx={sxConfig.input}
@@ -251,7 +258,6 @@ const Form = (props: FormProps) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.position}
-                  disabled={type === DataAction.UPDATE}
                   rootSx={sxConfig.input}
                   sx={{ width: "100%" }}
                 />
@@ -263,7 +269,6 @@ const Form = (props: FormProps) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.phone}
-                  disabled={type === DataAction.UPDATE}
                   rootSx={sxConfig.input}
                   sx={{ width: "100%" }}
                 />
@@ -273,9 +278,8 @@ const Form = (props: FormProps) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.email}
-                  disabled={type === DataAction.UPDATE}
                   rootSx={sxConfig.input}
-                  error={commonT(touchedErrors?.contact?.email, {
+                  error={commonT((touchedErrors?.contact as Contact)?.email, {
                     name: "Email",
                   })}
                   sx={{ width: "100%" }}
@@ -288,7 +292,6 @@ const Form = (props: FormProps) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.address}
-                  disabled={type === DataAction.UPDATE}
                   rootSx={sxConfig.input}
                   sx={{ width: "100%" }}
                 />
@@ -298,7 +301,6 @@ const Form = (props: FormProps) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.website}
-                  disabled={type === DataAction.UPDATE}
                   rootSx={sxConfig.input}
                   sx={{ width: "100%" }}
                 />

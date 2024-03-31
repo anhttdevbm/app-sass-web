@@ -101,6 +101,12 @@ export const CompanyLang: CompanyDictionary = {
     notification: {
       success: "{label} client company successfully!",
     },
+    generalInformation: "General Information",
+    contact: "Contact",
+    formUpdate: {
+      title: "General information",
+      submit: "Save change"
+    }
   },
   information: {
     head: {

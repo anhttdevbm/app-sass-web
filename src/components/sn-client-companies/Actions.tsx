@@ -15,11 +15,12 @@ import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import Image from "next/image";
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
 import { memo, useEffect, useState } from "react";
-import { ClientCompanyData } from "store/company/actions";
 import { useClientCompanies } from "store/company/selectors";
 import { getPath } from "utils/index";
 import AssignerFilter from "./components/AssignerFilter";
-import Form from "./components/CreateForm";
+import Form from "./components/Form";
+import { useHeaderConfig } from "store/app/selectors";
+import { ClientCompany } from "./type";
 
 const Actions = () => {
   const {
@@ -45,6 +46,7 @@ const Actions = () => {
   const [optionSelected, setOptionSelected] = useState<Option | undefined>(
     undefined,
   );
+  const { onUpdateHeaderConfig } = useHeaderConfig();
 
   const onChangeQueries = (name: string, value?: string) => {
     const newValue = options.find(
@@ -60,8 +62,8 @@ const Actions = () => {
     push(path);
   };
 
-  const onUpdate = async (data: ClientCompanyData) => {
-    const payload = { ...data };       
+  const onUpdate = async (data: ClientCompany) => {
+    const payload = { ...data };
     if (typeof data["avatar"] === "object") {
       const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
       payload.avatar = logoUrl;
@@ -80,6 +82,10 @@ const Actions = () => {
   useEffect(() => {
     setQueries(filters);
   }, [filters]);
+
+  useEffect(() => {
+    onUpdateHeaderConfig({ title: companyT("clientCompany.title"), imageUrl: undefined, prevPath: undefined });
+  }, [onUpdateHeaderConfig, companyT, pathname]);
 
   return (
     <>
@@ -137,7 +143,7 @@ const Actions = () => {
             }}
           />
           {optionSelected && (
-            <Button size="extraSmall" sx={{padding: 0, display: "flex", gap: 1}} onDoubleClick={onDoubleClick}>
+            <Button size="extraSmall" sx={{ padding: 0, display: "flex", gap: 1 }} onDoubleClick={onDoubleClick}>
               <Image
                 className="rounded"
                 style={{ margin: "auto" }}
@@ -196,35 +202,11 @@ const Actions = () => {
           open={isShow}
           onClose={onHide}
           type={DataAction.CREATE}
-          initialValues={INITIAL_VALUES}
           onSubmit={onUpdate}
         />
-      )} 
+      )}
     </>
   );
 };
 
 export default memo(Actions);
-
-const INITIAL_VALUES = {
-  code: "COM1z",
-  name: "",
-  tax_code: "",
-  zip_code: "",
-  address: "",
-  phone: "",
-  email: "",
-  avatar: "",
-  website: "",
-  status: false,
-  created_time: "",
-  contact: {
-    name: "",
-    position: "",
-    address: "",
-    phone: "",
-    email: "",
-    avatar: [],
-    website: "",
-  },
-};

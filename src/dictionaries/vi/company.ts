@@ -101,6 +101,12 @@ export const CompanyLang: CompanyDictionary = {
     notification: {
       success: "{label} công ty khách hàng thành công!",
     },
+    generalInformation: "Thông tin chung",
+    contact: "Liên hệ",
+    formUpdate: {
+      title: "Thông tin chung",
+      submit: "Lưu thay đổi"
+    }
   },
   information: {
     head: {

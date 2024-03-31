@@ -21,16 +21,16 @@ import {
   updateMyCompany,
   updatePosition,
   updateProjectType,
-  ClientCompanyData,
   createClientCompany,
   getClientCompaniesMemberOptions,
   deleteClientCompany,
+  getClientCompanyDetails, updateClientCompany,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
 import { shallowEqual } from "react-redux";
 import { BaseQueries, Option } from "constant/types";
-import Avatar from "components/Avatar";
+import { ClientCompany } from "components/sn-client-companies/type";
 
 export const useEmployees = () => {
   const dispatch = useAppDispatch();
@@ -373,6 +373,7 @@ export const useClientCompanies = () => {
     clientCompaniesStatus: status,
     clientCompaniesError: error,
     clientCompaniesFilters: filters,
+    clientCompanyDetail: detailItem,
   } = useAppSelector((state) => state.company, shallowEqual);
   const { pageIndex, pageSize, totalItems, totalPages } = useAppSelector(
     (state) => state.company.clientCompaniesPaging,
@@ -397,7 +398,7 @@ export const useClientCompanies = () => {
   );
 
   const onCreateClientCompany = useCallback(
-    async (data: ClientCompanyData) => {
+    async (data: ClientCompany) => {
       return await dispatch(createClientCompany(data)).unwrap();
     },
     [dispatch],
@@ -414,6 +415,21 @@ export const useClientCompanies = () => {
     [dispatch],
   );
 
+  const onGetClientCompanyDetails = useCallback(
+    async (id: string) => {
+      await dispatch(getClientCompanyDetails(id));
+    },
+    [dispatch],
+  );
+
+  const onUpdateClientCompany = useCallback(
+    async (data: ClientCompany) => {
+      return await dispatch(updateClientCompany(data)).unwrap();
+    },
+    [dispatch],
+  );
+
+
   return {
     items,
     status,
@@ -426,9 +442,12 @@ export const useClientCompanies = () => {
     totalItems,
     totalPages,
     options,
+    detailItem,
     onGetClientCompanies,
     onGetMemberOptions,
     onCreateClientCompany,
     onDeleteClientCompany,
+    onGetClientCompanyDetails,
+    onUpdateClientCompany
   };
 };

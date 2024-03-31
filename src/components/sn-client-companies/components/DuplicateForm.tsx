@@ -8,16 +8,15 @@ import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { ClientCompanyData } from "store/company/actions";
-import { ClientCompany } from "store/company/reducer";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
+import { ClientCompany } from "components/sn-client-companies/type";
 
 type FormProps = {
   initialValues: ClientCompany;
   type: DataAction;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (values: ClientCompanyData) => Promise<any>;
+  onSubmit: (values: ClientCompany) => Promise<any>;
 } & Omit<DialogLayoutProps, "children" | "onSubmit">;
 
 const Form = (props: FormProps) => {
@@ -31,7 +30,7 @@ const Form = (props: FormProps) => {
 
   const onSubmit = async (values: ClientCompany) => {
     try {
-      const body: ClientCompanyData = {
+      const body: ClientCompany = {
         address: values.address,
         code: values.code,
         created_time: values.created_time,
@@ -80,7 +79,7 @@ const Form = (props: FormProps) => {
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
-      (out: FormikErrors<ClientCompanyData>, [key, error]) => {
+      (out: FormikErrors<ClientCompany>, [key, error]) => {
         if (formik.touched[key]) {
           out[key] = error;
         }
@@ -125,8 +124,8 @@ const Form = (props: FormProps) => {
           onBlur={formik.handleBlur}
           value={formik.values?.name}
           ref={inputRef}
-          error={commonT(touchedErrors?.email, {
-            name: "Email",
+          error={commonT(touchedErrors?.name, {
+            name: companyT("clientCompany.companyName"),
           })}
           rootSx={sxConfig.input}
         />

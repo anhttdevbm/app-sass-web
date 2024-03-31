@@ -3,11 +3,11 @@ import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { useTranslations } from "next-intl";
 import { memo, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
-import { ClientCompanyData } from "store/company/actions";
 import { getMessageErrorByAPI } from "utils/index";
+import { ClientCompany } from "../type";
 
 type DeleteConfirmProps = ConfirmDialogProps & {
-  item?: ClientCompanyData;
+  item?: ClientCompany;
 };
 
 const DeleteConfirm = (props: DeleteConfirmProps) => {

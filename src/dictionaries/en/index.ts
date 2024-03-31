@@ -17,6 +17,7 @@ import {
   NS_CAREER,
   NS_BUDGETING,
   NS_BILLING,
+  NS_COST_RATE,
 } from "constant/index";
 import { AccountLang } from "./account";
 import { AuthLang } from "./auth";
@@ -36,6 +37,7 @@ import { BlogLang } from "./blog";
 import { CareerLang } from "./career";
 import { BudgetingLang } from "./budgeting";
 import { BillingLang } from "./billing";
+import { CostRateLang } from "./costRate";
 
 export default {
   [NS_COMMON]: CommonLang,
@@ -56,4 +58,5 @@ export default {
   [NS_BUDGETING]:BudgetingLang,
   [NS_CAREER]: CareerLang,
   [NS_BILLING]: BillingLang,
+  [NS_COST_RATE]: CostRateLang,
 };

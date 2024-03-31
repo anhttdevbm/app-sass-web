@@ -13,13 +13,13 @@ import EditIcon from "icons/EditIcon";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { ClientCompanyData } from "store/company/actions";
-import { ClientCompany } from "store/company/reducer";
 import { useClientCompanies } from "store/company/selectors";
 import { getPath } from "utils/index";
 import { DesktopCells, MobileContentCell } from "./components";
 import DeleteConfirm from "./components/DeleteConfirm";
 import DuplicateForm from "./components/DuplicateForm";
+import Form from "./components/Form";
+import { ClientCompany } from "./type";
 
 const ItemList = () => {
   const {
@@ -34,6 +34,7 @@ const ItemList = () => {
     onGetClientCompanies,
     onDeleteClientCompany,
     onCreateClientCompany,
+    onUpdateClientCompany,
   } = useClientCompanies();
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
@@ -105,7 +106,7 @@ const ItemList = () => {
 
   const onActionToItem = (action: DataAction, item?: ClientCompany) => {
     return () => {
-      if (action === DataAction.DELETE) {
+      if (action === DataAction.DELETE || action === DataAction.UPDATE) {
         item && setSelected(item);
       } else {
         item && setItem(item);
@@ -134,7 +135,7 @@ const ItemList = () => {
     onChangeQueries({ pageIndex: 1, pageSize: newPageSize });
   };
 
-  const onDuplicateClientCompany = async (data: ClientCompanyData) => {
+  const onDuplicateClientCompany = async (data: ClientCompany) => {
     if (!item) return;
     return await onCreateClientCompany(data);
   };
@@ -148,6 +149,10 @@ const ItemList = () => {
     } catch (error) {
       throw error;
     }
+  };
+
+  const onUpdate = async (data: ClientCompany) => {
+    return await onUpdateClientCompany(data);
   };
 
   useEffect(() => {
@@ -243,20 +248,15 @@ const ItemList = () => {
         />
       )}
 
-      {/* {action === DataAction.UPDATE && (
-        <CreateForm
-          open
+      {action === DataAction.UPDATE && (
+        <Form
+          open={action === DataAction.UPDATE}
           onClose={onResetAction}
           type={DataAction.UPDATE}
-          initialValues={
-            {
-              email: item?.email,
-              position: item?.position?.id,
-            } as EmployeeData
-          }
-          onSubmit={onUpdateEmployee}
+          initialValues={selected}
+          onSubmit={onUpdate}
         />
-      )} */}
+      )}
 
       <DeleteConfirm
         open={action === DataAction.DELETE}
@@ -271,3 +271,24 @@ const ItemList = () => {
 };
 
 export default memo(ItemList);
+
+const INITIAL_VALUES = {
+  code: "COM1z",
+  name: "",
+  tax_code: "",
+  zip_code: "",
+  address: "",
+  phone: "",
+  email: "",
+  website: "",
+  status: false,
+  created_time: "",
+  contact: {
+    name: "",
+    position: "",
+    address: "",
+    phone: "",
+    email: "",
+    website: "",
+  },
+};
