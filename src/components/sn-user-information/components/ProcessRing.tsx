@@ -1,5 +1,6 @@
 import { memo } from "react";
-import { Box, SvgIcon } from "@mui/material";
+import Box from "@mui/material/Box";
+import SvgIcon from "@mui/material/SvgIcon";
 
 const SvgProcessRing = memo(function SvgProcessRing({ size }: {
   size: number

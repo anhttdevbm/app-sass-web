@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { useAuth } from "store/app/selectors";
 import { useCostRate } from "store/costRate/selectors";
-
 import CostRateEmpty from "./CostRateEmpty";
 import CostRateInfo from "./CostRateInfo";
 
