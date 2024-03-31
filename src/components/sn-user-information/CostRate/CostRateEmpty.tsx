@@ -10,7 +10,7 @@ const CostRateEmpty = ({ fullname }) => {
   const costRateT = useTranslations(NS_COST_RATE);
 
   return (
-    <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+    <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1}>
       <Box display="flex" justifyContent="center" alignItems="center">
         <Image src={CostRateEmptyImage} alt="Cost Rate Empty Illustration" width={320} />
       </Box>

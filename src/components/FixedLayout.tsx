@@ -57,6 +57,7 @@ const FixedLayout = (props: StackProps) => {
           overflowY: "hidden",
           overflowX: "hidden",
           paddingBottom: "16px",
+          borderRadius: "12px",
         }}
       >
         <Stack

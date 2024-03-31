@@ -101,10 +101,16 @@ const CostRateInfo = () => {
 
   return (
     <Box
-      border={1}
-      borderColor="divider"
-      borderRadius={6}
-      padding={4.5}
+      sx={{
+        border: 1,
+        borderColor: "divider",
+        borderRadius: "18px",
+        padding: "36px",
+        flex: 1,
+        marginTop: "64px",
+        marginLeft: "48px",
+        marginRight: "36px",
+      }}
     >
       <Text fontSize={25} fontWeight={600} variant="h3" color="grey.800">Current Cost Rate</Text>
 
