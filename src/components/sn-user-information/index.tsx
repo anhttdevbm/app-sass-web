@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Grid, Tab } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Tab from "@mui/material/Tab";
 import { useTranslations } from "next-intl";
 
 import { NS_COST_RATE } from "constant/index";
@@ -39,7 +41,7 @@ const UserInformationPage = () => {
 
   return (
     <>
-      <FixedLayout flex={1}>
+      <Box>
         <TabContext value={tab}>
           <Grid container alignItems="end">
             <Grid item xs={12} md={6}>
@@ -84,7 +86,7 @@ const UserInformationPage = () => {
             <CostRate />
           </TabPanel>
         </TabContext>
-      </FixedLayout>
+      </Box>
     </>
   );
 }

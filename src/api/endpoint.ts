@@ -67,6 +67,7 @@ export const Endpoint = {
   TAGS_DETAIL: "/tags/{id}",
   CLIENT_COMPANIES: "/clients",
 
+  COST_RATE: "/cost-rate",
   COST_HISTORY: "/cost-history",
 
   BUDGET_ALL: "/budgets/all",

@@ -1,6 +1,9 @@
 "use client";
 import { ChangeEvent, useMemo, useRef, useState } from "react";
-import { Box, DialogContent, Slider, Stack } from "@mui/material";
+import Box from "@mui/material/Box";
+import DialogContent from "@mui/material/DialogContent";
+import Slider from "@mui/material/Slider";
+import Stack from "@mui/material/Stack";
 import AvatarEditor from "react-avatar-editor";
 import { useTranslations } from "next-intl";
 

@@ -1,21 +1,24 @@
 "use client";
-import { Box, Grid, Stack } from "@mui/material";
+import { memo, useMemo } from "react";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import { FormikErrors, useFormik } from "formik";
+import { useTranslations } from "next-intl";
+import * as Yup from "yup";
+
 import { Button, IconButton, Input, Text } from "components/shared";
 import {
   AN_ERROR_TRY_RELOAD_PAGE,
   NS_ACCOUNT,
   NS_COMMON,
 } from "constant/index";
-import { FormikErrors, useFormik } from "formik";
 import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
 import CopyIcon from "icons/CopyIcon";
-import { useTranslations } from "next-intl";
-import { memo, useMemo } from "react";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
-import * as Yup from "yup";
 
 const UserInformation = () => {
   const { user } = useAuth();
