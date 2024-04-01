@@ -65,6 +65,7 @@ export type EditorProps = {
   files?: File[];
   accepts?: string[];
   noCss?: boolean;
+  dataFile?: string[];
 } & Omit<ReactQuillProps, "children">;
 
 const Editor = (props: EditorProps) => {
@@ -96,7 +97,7 @@ const Editor = (props: EditorProps) => {
   const onChangeFile = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files?.length) return;
 
-    let newFiles: File[] = Array.from(event.target.files);
+    const newFiles: File[] = Array.from(event.target.files);
     // console.log(newFiles);
 
     // Upload new files
