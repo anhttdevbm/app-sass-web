@@ -138,7 +138,10 @@ export const Endpoint = {
   //carrer
   CAREER: "/job-post",
   UPADATECAREER: "/job-post/{id}",
-  DETAIL_CAREER: "/post/{id}",
+  DETAIL_CAREER: "/job-post/{slug}",
+  UPDATE_STATUS_CAREER: "/job-post/{id}/status/{status}",
+  GET_APPLICANTS_CAREER: "/job-post/{slug}/applicants",
+  RESPONDAPPLICANT: "/job-post/response-applicant",
 
   //Billing
   BILLING: "/bill",

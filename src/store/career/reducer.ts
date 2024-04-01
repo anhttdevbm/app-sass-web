@@ -1,25 +1,27 @@
 import { DataStatus } from "constant/enums";
-import { CareerData, GetCareerListQueries, getAllCareer, getCareerBySlug, postCareer, upadteCareer, updateStatusCareer } from "./action";
+import { CareerData, GetCareerListQueries, getAllCareer, getCareerBySlug, postCareer, upadteCareer, updateStatusCareer,　getApplicantsByCareer } from "./action";
 import { Paging_Career } from "constant/types";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING_CAREER } from "constant/index";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
+import { IApplicant } from "constant/types";
 
 export interface FeedbackState {
     careers: CareerData[];
-    careersError: string | undefined | null;
+    careersError: string | undefined;
     careersStatus: DataStatus;
     careersPaging: Paging_Career;
     career?: CareerData;
     careersFilters: Omit<GetCareerListQueries, "page" | "size">;
+    careerApplicants: IApplicant[]
 }
 
 const initialState: FeedbackState = {
     careers: [],
-    careersError: null,
+    careersError: "",
     careersStatus: DataStatus.IDLE,
     careersPaging: DEFAULT_PAGING_CAREER,
     careersFilters: {},
+    careerApplicants: []
 };
 
 const careerSlice = createSlice({
@@ -80,9 +82,9 @@ const careerSlice = createSlice({
                     state.career = action.payload;
                 }
             }).addCase(getCareerBySlug.fulfilled, (state, action: PayloadAction<CareerData>) => {
-                if (state?.career?.id === action.payload.id) {
+                // if (state?.career?.id === action.payload.id) {
                     state.career = action.payload;
-                }
+                // }
             }).addCase(updateStatusCareer.rejected, (state, action) => {
                 state.careersStatus = DataStatus.FAILED;
               }).addCase(updateStatusCareer.fulfilled, (state, action) => {
@@ -99,6 +101,9 @@ const careerSlice = createSlice({
                   return career;
                 });
               })
+            .addCase(getApplicantsByCareer.fulfilled, (state, action: PayloadAction<IApplicant[]>) => {
+                state.careerApplicants = action.payload;
+            })
               
     },
 });
