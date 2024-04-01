@@ -164,6 +164,7 @@ const CoreInput = forwardRef(
         {...rest}
         variant="outlined"
         label={title}
+        re
       />
     );
   },
@@ -192,6 +193,14 @@ const getDefaultSx = (
       left: smallSize ? 2 : 7,
       [`&.${inputBaseClasses.focused}`]: {
         color: "grey.300",
+      },
+      "& .MuiFormLabel-asterisk.MuiInputLabel-asterisk": {
+        color: "transparent",
+        marginLeft: "-6px",
+        "&::after": {
+          content: '"(*)"',
+          color: "#F64E60",
+        }
       },
       ...titleSx,
     },

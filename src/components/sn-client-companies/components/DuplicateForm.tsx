@@ -19,7 +19,7 @@ type FormProps = {
   onSubmit: (values: ClientCompany) => Promise<any>;
 } & Omit<DialogLayoutProps, "children" | "onSubmit">;
 
-const Form = (props: FormProps) => {
+const DuplicateForm = (props: FormProps) => {
   const { initialValues, type, onSubmit: onSubmitProps, ...rest } = props;
   const { onAddSnackbar } = useSnackbar();
   const { user, onGetProfile } = useAuth();
@@ -134,7 +134,7 @@ const Form = (props: FormProps) => {
   );
 };
 
-export default memo(Form);
+export default memo(DuplicateForm);
 
 export const validationSchema = Yup.object().shape({
   name: Yup.string().required("form.error.required"),

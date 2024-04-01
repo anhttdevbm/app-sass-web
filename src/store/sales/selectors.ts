@@ -126,6 +126,7 @@ export const useSales = () => {
         company_id: data.company,
         tags: data.tags,
         start_date,
+        client: data?.client,
       };
       await dispatch(updateDeal({ id: data.id, data: convertedBody }))
         .unwrap()

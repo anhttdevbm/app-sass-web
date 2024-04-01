@@ -74,7 +74,7 @@ const Upload = (props: UploadProps) => {
   return (
     <>
       <Stack spacing={1} flex={1}>
-        <Stack direction="column" alignItems="center" spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={2}>
           <Stack
             width={64}
             height={64}

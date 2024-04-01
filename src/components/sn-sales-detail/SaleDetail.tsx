@@ -21,9 +21,10 @@ import {
   EditContext,
   EditProvider,
 } from "./components/sn-service/context/EditContext";
+import SaleClient from "./components/Client/index";
 
 const SalesDetail = () => {
-  const [tab, setTab] = useState<SALES_DETAIL_TAB>(SALES_DETAIL_TAB.FEED);
+  const [tab, setTab] = useState<SALES_DETAIL_TAB>(SALES_DETAIL_TAB.CLIENT);
   const { getValues, resetField, reset } = useFormContext();
   const onChangeTab = (e: React.SyntheticEvent, newTab: SALES_DETAIL_TAB) => {
     setTab(newTab);
@@ -111,6 +112,14 @@ const SalesDetail = () => {
           value={SALES_DETAIL_TAB.SERVICE}
         >
           <SaleService />
+        </TabPanel>
+        <TabPanel
+          sx={{
+            height: "100%",
+          }}
+          value={SALES_DETAIL_TAB.CLIENT}
+        >
+          <SaleClient />
         </TabPanel>
       </TabContext>
     </FixedLayout>

@@ -61,6 +61,7 @@ export const SalesLang: SalesDictionary = {
       feed: "Feed",
       assign: "Assign",
       service: "Service",
+      client: "Client",
     },
     todoList: {
       assign: "Assign",

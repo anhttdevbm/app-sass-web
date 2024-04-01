@@ -25,7 +25,7 @@ type InformationItemProps = StackProps & {
   children?: string | number | React.ReactNode;
 };
 
-const InformationProjectPage = () => {
+const InformationCompany = () => {
   const { detailItem: item, isFetching, error, onUpdateClientCompany } = useClientCompanies();
   const { id } = useParams();
   const commonT = useTranslations(NS_COMMON);
@@ -246,7 +246,7 @@ const InformationProjectPage = () => {
   );
 };
 
-export default memo(InformationProjectPage);
+export default memo(InformationCompany);
 const InformationItem = (props: InformationItemProps) => {
   const { label, children = "--", ...rest } = props;
   return (

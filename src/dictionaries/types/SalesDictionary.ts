@@ -60,6 +60,7 @@ export type SalesDictionary = {
 
       feed: string;
       service: string;
+      client: string;
     };
     todoList: {
       title: string;

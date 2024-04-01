@@ -61,6 +61,7 @@ export const salesLang: SalesDictionary = {
       assign: "Thành Viên",
       feed: "Tin mới",
       service: "Dịch vụ",
+      client: "Khách hàng",
     },
     todoList: {
       assign: "Phân công",
