@@ -4,9 +4,15 @@ import Image from "next/image";
 
 import CostRateEmptyImage from "public/images/img-cost-rate-empty.png";
 import { NS_COST_RATE } from "constant/index";
-import { Text } from "components/shared";
+import { NewButton, Text } from "components/shared";
+import AddCircleIcon from "icons/AddCircleIcon";
 
-const CostRateEmpty = ({ fullname }) => {
+type CostRateEmpty = {
+  fullname?: string;
+  isEditable?: boolean;
+}
+
+const CostRateEmpty = ({ fullname, isEditable = false }: CostRateEmpty) => {
   const costRateT = useTranslations(NS_COST_RATE);
 
   return (
@@ -16,6 +22,18 @@ const CostRateEmpty = ({ fullname }) => {
       </Box>
       <Text variant="h3" textAlign="center" fontSize="25px" fontWeight={600} pt={4}><span style={{ color: "#045EB8" }}>{fullname}</span> {costRateT("empty.title")}</Text>
       <Text variant="h5" textAlign="center" fontSize="16px" fontWeight={400} pt={3} color="grey.700">{costRateT("empty.subtitle")}</Text>
+
+      {
+        isEditable
+          ? <NewButton
+            variant="primary"
+            sx={{marginTop: "20px", marginBottom: "64px"}}
+            startIcon={<AddCircleIcon />}
+          >
+            Add cost rate
+          </NewButton>
+          : <></>
+      }
     </Box>
   )
 };
