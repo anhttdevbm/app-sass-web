@@ -6,13 +6,17 @@ import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 
-import { NewButton as Button, Input, Text } from "components/shared";
+import {
+  NewButton as Button,
+  NewInput as Input,
+  Text
+} from "components/shared";
 import {
   AN_ERROR_TRY_RELOAD_PAGE,
   NS_ACCOUNT,
   NS_COMMON,
 } from "constant/index";
-import useBreakpoint from "hooks/useBreakpoint";
+// import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
 import NewCopyIcon from "icons/NewCopyIcon";
 import OutlineEditIcon from "icons/OutlineEditIcon";
@@ -26,7 +30,7 @@ const UserInformation = () => {
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
 
-  const { isSmSmaller } = useBreakpoint();
+  // const { isSmSmaller } = useBreakpoint();
 
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
 
@@ -45,10 +49,10 @@ const UserInformation = () => {
     }
   };
 
-  const onCancel = () => {
-    formik.resetForm();
-    onEditFalse();
-  };
+  // const onCancel = () => {
+  //   formik.resetForm();
+  //   onEditFalse();
+  // };
 
   const initialValues = useMemo(
     () => ({
@@ -138,7 +142,7 @@ const UserInformation = () => {
               value={user?.["username"]}
               endNode={
                 <Button
-                  sx={{color: 'blue.500', bgcolor: 'grey.50'}}
+                  sx={{color: '#0575E6'}}
                   aria-label="copy"
                   onClick={() => { navigator.clipboard.writeText(user?.["username"]) }}
                   startIcon={<NewCopyIcon />}

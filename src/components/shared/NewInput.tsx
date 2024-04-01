@@ -185,13 +185,14 @@ const getDefaultSx = (
 ) => {
   return {
     [`& .${inputLabelClasses.root}`]: {
-      fontSize: 12,
-      lineHeight: "16px",
-      color: "grey.300",
+      fontSize: 13,
+      fontWeight: 500,
+      lineHeight: "20px",
+      color: "#4D4D4D",
       top: smallSize ? -4 : -10,
       left: smallSize ? 2 : 7,
       [`&.${inputBaseClasses.focused}`]: {
-        color: "grey.300",
+        color: "#4D4D4D",
       },
       ...titleSx,
     },
@@ -200,13 +201,14 @@ const getDefaultSx = (
       border: onlyContent ? "none" : "1px solid",
       borderColor: "grey.50",
       boxSizing: "border-box",
-      borderRadius: 1,
+      borderRadius: 999,
       color: "text.primary",
+      mt: "38px",
 
-      pt: hasTitle ? 2.5 : 1.875,
-      pb: hasTitle ? 1 : 1.875,
-      px: 2.5,
-      fontSize: 14,
+      pt: "12px",
+      pb: "12px",
+      pl: "24px",
+      fontSize: 16,
       lineHeight: "22px",
 
       "&:hover": {
