@@ -23,8 +23,25 @@ const UserInformationPage = () => {
   const costRateT = useTranslations(NS_COST_RATE);
   const tabStyles = {
     width: 'auto',
-    px: "25px",
-    borderRadius: "9999px",
+    px: "36px",
+    border: "1px solid",
+    borderStyle: "solid",
+    borderColor: "transparent",
+    borderTopColor: "#EFEFEF",
+    borderBottomColor: "#EFEFEF",
+    "& .MuiTouchRipple-root": {
+      borderRadius: "9999px",
+    },
+    "&:first-child": {
+      borderTopLeftRadius: "9999px",
+      borderBottomLeftRadius: "9999px",
+      borderLeftColor: "#EFEFEF",
+    },
+    "&:last-child": {
+      borderTopRightRadius: "9999px",
+      borderBottomRightRadius: "9999px",
+      borderRightColor: "#EFEFEF",
+    },
   };
 
   const tabs: ITab[] = [
@@ -44,18 +61,39 @@ const UserInformationPage = () => {
         <Box
           sx={{
             height: "100%",
+            marginBottom: {
+              xs: "48px",
+              sm: "initial",
+            },
             display: "flex",
             flexDirection: "column",
           }}
         >
           <TabContext value={tab}>
-            <Grid container alignItems="end" pl="48px" pr="32px" mt="32px" mb="48px">
+            <Grid
+              container
+              alignItems="end"
+              pl={{
+                xs: "24px",
+                sm: "48px",
+              }}
+              pr={{
+                xs: "24px",
+                sm: "32px",
+              }}
+              mt="32px"
+              mb="48px"
+            >
               <Grid item xs={12} md={6}>
                 <UserInformationHeader isEdit={tab == 'userInfo'} />
               </Grid>
               <Grid item xs={12} md={6}>
                 <TabList
                 sx={{
+                  mt: {
+                    xs: "24px",
+                    sm: "initial",
+                  },
                   "& .MuiTab-root": {
                     textTransform: "unset",
                     fontSize: "16px",
@@ -69,7 +107,10 @@ const UserInformationPage = () => {
                   "& .MuiTabs-flexContainer": {
                     position: "relative",
                     zIndex: 10,
-                    justifyContent: "end",
+                    justifyContent: {
+                      xs: "center",
+                      sm: "end",
+                    }
                   },
                   "& .MuiTabs-indicator": {
                     height: "100%",

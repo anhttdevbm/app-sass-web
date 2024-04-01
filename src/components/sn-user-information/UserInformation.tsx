@@ -99,8 +99,14 @@ const UserInformation = () => {
   return (
     <>
       <Box
-        ml="48px"
-        mr="32px"
+        ml={{
+          xs: "16px",
+          sm: "48px",
+        }}
+        mr={{
+          xs: "16px",
+          sm: "32px",
+        }}
         flexGrow={1}
       >
         <Grid
@@ -211,7 +217,7 @@ const UserInformation = () => {
             />
           </Grid>
 
-          <Grid container item xs={12} justifyContent="center" mt={6}>
+          <Grid container item xs={12} justifyContent="center" mt={{xs: 5, sm: 6}}>
             { !isEdit
               ?
                 <Button
