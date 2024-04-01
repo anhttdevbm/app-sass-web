@@ -16,7 +16,7 @@ import * as Yup from "yup";
 import { getMessageErrorByAPI } from "utils/index";
 import { DataAction } from "constant/enums";
 import { useTranslations } from "next-intl";
-import { ApplicantData, MailData } from "store/career/actions";
+import { ApplicantData, MailData } from "store/career/action";
 import SelectMailMultiple from "./SelectMailMultiple";
 
 type FormProps = {

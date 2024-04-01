@@ -53,7 +53,13 @@ export type ApplicantData = {
   type?: string,
   forward_email: string[],
   title?: string
+  phone?: string
+  name?: string
 };
+
+export type MailData = {
+  mail: string;
+}
 
 //Get list Feedback
 export const getAllCareer = createAsyncThunk(
