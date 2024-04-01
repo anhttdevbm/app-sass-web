@@ -23,9 +23,8 @@ const UserInformationPage = () => {
   const costRateT = useTranslations(NS_COST_RATE);
   const tabStyles = {
     width: 'auto',
-    fontSize: "16px",
-    lineHeight: "20px",
-    fontWeight: 600,
+    px: "25px",
+    borderRadius: "9999px",
   };
 
   const tabs: ITab[] = [
@@ -59,18 +58,26 @@ const UserInformationPage = () => {
               <Grid item xs={12} md={6}>
                 <TabList
                 sx={{
-                  "& .MuiTabs-flexContainer": {
-                    justifyContent: 'end'
-                  },
                   "& .MuiTab-root": {
                     textTransform: "unset",
                     fontSize: "16px",
-                    lineHeight: "20px",
-                    fontWeight: 600,
+                    lineHeight: "25px",
+                    fontWeight: 400,
                     color: "#333333",
-                    "&.active": {
+                    "&.Mui-selected": {
                       color: "#045EB8",
                     },
+                  },
+                  "& .MuiTabs-flexContainer": {
+                    position: "relative",
+                    zIndex: 10,
+                    justifyContent: "end",
+                  },
+                  "& .MuiTabs-indicator": {
+                    height: "100%",
+                    borderRadius: "9999px",
+                    backgroundColor: "#D9F0FD",
+                    zIndex: 1,
                   },
                 }}
                   onChange={(_event: React.SyntheticEvent, newValue: string) =>
