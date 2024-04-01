@@ -134,6 +134,9 @@ export type BillingDictionary = {
         button: {};
         title: {};
       };
+      client: {
+        title: {}
+      }
       payment: {
         table: {};
         table2: {};

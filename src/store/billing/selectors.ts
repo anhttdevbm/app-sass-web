@@ -33,6 +33,7 @@ import {
   updatePayment,
   updateTagBill,
   viewPdfBilling,
+  updateClientBill,
 } from "./actions";
 import { BillingCommentData, BillingDataUpdate, Service, Tag } from "./reducer";
 import { IOptionStructure } from "components/shared/TextFieldSelect";
@@ -480,5 +481,20 @@ export const useTags = () => {
     isIdle,
     isFetching,
     onGetTags,
+  };
+};
+
+export const useClientBill = () => {
+  const dispatch = useAppDispatch();
+
+  const onUpdateClientId = useCallback(
+    async (id?: string, clientId?: string) => {
+      await dispatch(updateClientBill({ id, clientId }));
+    },
+    [dispatch],
+  );
+
+  return {
+    onUpdateClientId,
   };
 };
