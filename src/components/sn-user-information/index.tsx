@@ -44,14 +44,12 @@ const UserInformationPage = () => {
         <Box
           sx={{
             height: "100%",
-            paddingTop: "32px",
-            paddingBottom: "48px",
             display: "flex",
             flexDirection: "column",
           }}
         >
           <TabContext value={tab}>
-            <Grid container alignItems="end" pl="48px" pr="32px">
+            <Grid container alignItems="end" pl="48px" pr="32px" mt="32px" mb="48px">
               <Grid item xs={12} md={6}>
                 <UserInformationHeader isEdit={tab == 'userInfo'} />
               </Grid>

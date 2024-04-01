@@ -99,16 +99,20 @@ const UserInformation = () => {
   return (
     <>
       <Box
-        pl="48px"
-        pr="18px"
-        py={{
-          xs: 6,
-          sm: 8,
-        }}
+        ml="48px"
+        mr="32px"
+        flexGrow={1}
       >
         <Grid
           container
-          spacing={3}
+          columnSpacing={{
+            xs: 0,
+            sm: 11,
+          }}
+          rowSpacing={{
+            xs: 2,
+            sm: 3,
+          }}
           width="100%"
           component="form"
           noValidate
