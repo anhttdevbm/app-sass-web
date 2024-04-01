@@ -2,20 +2,24 @@
 import { memo, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 
-import { Button, IconButton, Input, Text } from "components/shared";
+import {
+  NewButton as Button,
+  NewInput as Input,
+  Text
+} from "components/shared";
 import {
   AN_ERROR_TRY_RELOAD_PAGE,
   NS_ACCOUNT,
   NS_COMMON,
 } from "constant/index";
-import useBreakpoint from "hooks/useBreakpoint";
+// import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
-import CopyIcon from "icons/CopyIcon";
+import NewCopyIcon from "icons/NewCopyIcon";
+import OutlineEditIcon from "icons/OutlineEditIcon";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
@@ -26,7 +30,7 @@ const UserInformation = () => {
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
 
-  const { isSmSmaller } = useBreakpoint();
+  // const { isSmSmaller } = useBreakpoint();
 
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
 
@@ -45,10 +49,10 @@ const UserInformation = () => {
     }
   };
 
-  const onCancel = () => {
-    formik.resetForm();
-    onEditFalse();
-  };
+  // const onCancel = () => {
+  //   formik.resetForm();
+  //   onEditFalse();
+  // };
 
   const initialValues = useMemo(
     () => ({
@@ -94,15 +98,28 @@ const UserInformation = () => {
 
   return (
     <>
-      <Box margin={4}>
+      <Box
+        ml={{
+          xs: "16px",
+          sm: "48px",
+        }}
+        mr={{
+          xs: "16px",
+          sm: "32px",
+        }}
+        flexGrow={1}
+      >
         <Grid
           container
-          spacing={3}
-          width="100%"
-          py={{
-            xs: 3,
-            sm: 4,
+          columnSpacing={{
+            xs: 0,
+            sm: 11,
           }}
+          rowSpacing={{
+            xs: 2,
+            sm: 3,
+          }}
+          width="100%"
           component="form"
           noValidate
           onSubmit={formik.handleSubmit}
@@ -134,13 +151,14 @@ const UserInformation = () => {
               disabled
               value={user?.["username"]}
               endNode={
-                <IconButton
-                  sx={{color: 'blue.500', bgcolor: 'grey.50'}}
+                <Button
+                  sx={{color: '#0575E6'}}
                   aria-label="copy"
                   onClick={() => { navigator.clipboard.writeText(user?.["username"]) }}
+                  startIcon={<NewCopyIcon />}
                 >
-                  <CopyIcon />
-                </IconButton>
+                  Copy
+                </Button>
               }
               tooltip={
                 isEdit
@@ -199,43 +217,46 @@ const UserInformation = () => {
             />
           </Grid>
 
-          <Grid container item xs={12} justifyContent="center" >
-            {!isEdit && (
-              <Button onClick={onEditTrue} variant="secondary" size="small">
-                {accountT("accountInformation.changeInformation")}
-              </Button>
-            )}
-
-            {isEdit && (
-              <Stack
-                direction={{ xs: "column-reverse", sm: "row" }}
-                alignItems="center"
-                spacing={{ xs: 2, sm: 3 }}
-                width="100%"
-              >
+          <Grid container item xs={12} justifyContent="center" mt={{xs: 5, sm: 6}}>
+            { !isEdit
+              ?
                 <Button
-                  type="button"
-                  onClick={onCancel}
-                  sx={sxConfig.button}
-                  variant="primaryOutlined"
-                  size={isSmSmaller ? "medium" : "small"}
-                  fullWidth
+                  onClick={onEditTrue}
+                  variant="secondaryOutlined"
+                  startIcon={<OutlineEditIcon />}
+                  sx={{
+                    ...sxConfig.button,
+                    "&.MuiButton-sizeMedium" :{
+                      px: "86px",
+                      py: "12px",
+                    },
+                  }}
                 >
-                  {commonT("form.cancel")}
+                  {accountT("accountInformation.changeInformation")}
                 </Button>
-                <Button
-                  disabled={disabled}
-                  pending={formik.isSubmitting}
-                  sx={{ ...sxConfig.button }}
-                  variant="primary"
-                  size={isSmSmaller ? "medium" : "small"}
-                  type="submit"
-                  fullWidth
-                >
-                  {commonT("form.confirm")}
-                </Button>
-              </Stack>
-            )}
+              : <></>
+            }
+            { isEdit
+              ?
+                <>
+                  <Button
+                    disabled={disabled}
+                    pending={formik.isSubmitting}
+                    sx={{
+                      ...sxConfig.button,
+                      "&.MuiButton-sizeMedium" :{
+                        px: "86px",
+                        py: "12px",
+                      },
+                    }}
+                    variant="primary"
+                    type="submit"
+                  >
+                    {commonT("form.save")}
+                  </Button>
+                </>
+              : <></>
+            }
           </Grid>
         </Grid>
       </Box>

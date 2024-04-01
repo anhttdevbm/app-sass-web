@@ -20,7 +20,7 @@ const CostRate = () => {
     {
       currentRate?.id
         ? <CostRateInfo />
-        : <CostRateEmpty fullname={user?.fullname} />
+        : <CostRateEmpty fullname={user?.fullname} isEditable />
     }
     </>
   )

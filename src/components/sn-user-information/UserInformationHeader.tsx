@@ -12,7 +12,7 @@ import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
 import { Button, IconButton, Text } from "components/shared";
 import Avatar from "components/Avatar";
-import PencilIcon from "icons/PencilIcon";
+import PencilIcon from "icons/FocusedCameraIcon";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
@@ -90,10 +90,10 @@ const UserInformationHeader = ({ isEdit }) => {
 
   return (
     <>
-      <Stack direction="row" alignItems="center" pl={4} pt={4}>
-        <Stack width={90} height={90} borderRadius="50%" position="relative">
+      <Stack direction="row" alignItems="center" >
+        <Stack width={100} height={100} borderRadius="50%" position="relative">
           <Avatar
-            size={90}
+            size={100}
             src={previewImage}
             alt={user?.fullname}
             onClick={isEdit ? onChooseFile : undefined}
@@ -105,19 +105,19 @@ const UserInformationHeader = ({ isEdit }) => {
                 onClick={onChooseFile}
                 noPadding
                 sx={{
-                  width: 24,
-                  height: 24,
-                  backgroundColor: "grey.50",
+                  width: 37,
+                  height: 37,
+                  backgroundColor: "#D9F0FD",
                   "&:hover": {
-                    backgroundColor: "grey.50",
+                    backgroundColor: "#D9F0FD",
                   },
                   borderRadius: "50%",
                   position: "absolute",
-                  bottom: 0,
-                  right: 0,
+                  bottom: -17,
+                  right: -3,
                 }}
               >
-                <PencilIcon sx={{ color: "grey.400", fontSize: 24 }} />
+                <PencilIcon sx={{ color: "#0575E6", fontSize: 18 }} />
               </IconButton>
               <Box
                 component="input"
@@ -130,16 +130,16 @@ const UserInformationHeader = ({ isEdit }) => {
             </>
           )}
         </Stack>
-        <Stack marginLeft={2} alignItems="start">
-          <Text variant="subtitle1" fontWeight={700}>{user?.fullname}</Text>
+        <Stack marginLeft={2} spacing="8px" alignItems="start">
+          <Text variant="subtitle1" fontWeight={600} color="#404040" fontSize={20}>{user?.fullname}</Text>
           <Text
-            py={1}
-            px={3}
-            bgcolor="primary.main"
+            py="6px"
+            px="18px"
+            bgcolor="#14B9E5"
             color="common.white"
             borderRadius={9999}
             textAlign="center"
-            fontSize={12}
+            fontSize={13}
             fontWeight={500}
           >{ user?.position?.name ?? "--" }</Text>
         </Stack>

@@ -1,9 +1,22 @@
-import { Autocomplete, Button, Checkbox, FormControlLabel, Grid, Stack, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import { Input, Upload } from "components/shared";
 import { DataAction } from "constant/enums";
-import { ACCESS_TOKEN_STORAGE_KEY, AN_ERROR_TRY_AGAIN, NS_BLOG, NS_COMMON } from "constant/index";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AN_ERROR_TRY_AGAIN,
+  NS_BLOG,
+  NS_COMMON,
+} from "constant/index";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -18,7 +31,7 @@ import SelectMultiple from "./SelectMultiple";
 import EditorView from "./EditorView";
 import { useBlogs } from "store/blog/selectors";
 import SelectCategoriescomplete from "./SelectCategories";
-import slugify from 'slugify';
+import slugify from "slugify";
 import SelectTagMultiple from "./SelectMultiple";
 
 type FormProps = {
@@ -40,10 +53,7 @@ const Form = (props: FormProps) => {
   const [backgroundChanged, setBackgroundChanged] = useState(false);
   const { listBlogTag, onGetListTag } = useBlogs();
   const [tags, setTags] = useState<TagData[]>([]);
-  const {
-    items,
-    onGetOptions: onGetCategoryOptions,
-  } = useCategoryBlog();
+  const { items, onGetOptions: onGetCategoryOptions } = useCategoryBlog();
   useEffect(() => {
     onGetListTag();
     onGetCategoryOptions({ pageIndex: 1, pageSize: 50 });
@@ -73,39 +83,42 @@ const Form = (props: FormProps) => {
   };
 
   const onSelect = (data) => {
-    const uniqueData = Array.from(new Set(data.map(item => item.tag))).map(tag => ({ tag }));
-    formik.setFieldValue("tag", uniqueData.map((item) => item.tag));
+    const uniqueData = Array.from(new Set(data.map((item) => item.tag))).map(
+      (tag) => ({ tag }),
+    );
+    formik.setFieldValue(
+      "tag",
+      uniqueData.map((item) => item.tag),
+    );
   };
 
   const onEnter = (value) => {
-    console.log(value);
+    // console.log(value);
     if (!value) return;
-    if ((tags == null || tags.length == 0)) {
+    if (tags == null || tags.length == 0) {
       setTags(listBlogTag);
     }
     const itemValues = formik.values?.tag ?? [];
     const isExisted = itemValues.find((item) => item == value);
 
     if (isExisted) {
-      const updatedTags = itemValues.map(tag => ({ tag }));
+      const updatedTags = itemValues.map((tag) => ({ tag }));
       onSelect([...updatedTags, { tag: value }]);
     } else {
       const newTagOption = {
         tag: value,
       };
       setTags((prevListBlogTag) => [...prevListBlogTag, newTagOption]);
-      const updatedTags = itemValues.map(tag => ({ tag }));
+      const updatedTags = itemValues.map((tag) => ({ tag }));
       onSelect([...updatedTags, { tag: value }]);
     }
   };
 
-
-
   const onChangeField = (name: string, newValue?: any) => {
     formik.setFieldValue(name, newValue);
-    console.log(name);
+    // console.log(name);
     if (name === "backgroundUpload") {
-      console.log("vào đây nhé");
+      // console.log("vào đây nhé");
       setBackgroundChanged(true);
     }
   };
@@ -113,7 +126,12 @@ const Form = (props: FormProps) => {
     const mappingData = data.map((item) => item.id);
     formik.setFieldValue("category", mappingData);
   };
-  const onChangeContent = (value: string, delta, _, editor: UnprivilegedEditor) => {
+  const onChangeContent = (
+    value: string,
+    delta,
+    _,
+    editor: UnprivilegedEditor,
+  ) => {
     const isEmpty = value === "<p><br></p>";
     setContent(isEmpty ? "" : value);
     editorRef.current = editor;
@@ -129,12 +147,10 @@ const Form = (props: FormProps) => {
     formik.setFieldValue("attachmentsUpload", files);
   };
 
-
   const onSubmit = async (values: BlogFormData) => {
     try {
-
       if (backgroundChanged) {
-        console.log(values.background);
+        // console.log(values.background);
       } else {
         values.backgroundUpload = undefined;
       }
@@ -159,7 +175,6 @@ const Form = (props: FormProps) => {
     onSubmit,
   });
 
-
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
       (out: FormikErrors<BlogFormData>, [key, error]) => {
@@ -176,7 +191,6 @@ const Form = (props: FormProps) => {
     () => !!Object.values(touchedErrors)?.length || formik.isSubmitting,
     [touchedErrors, formik.isSubmitting],
   );
-
 
   return (
     <FormLayout
@@ -206,9 +220,13 @@ const Form = (props: FormProps) => {
                 onBlur={formik.handleBlur}
                 value={formik.values?.title}
                 rootSx={sxConfig.input}
-                error={commonT(touchedErrors?.title, {
-                  name: blogT("blogForm.title"),
-                }) ? 'error' : undefined}
+                error={
+                  commonT(touchedErrors?.title, {
+                    name: blogT("blogForm.title"),
+                  })
+                    ? "error"
+                    : undefined
+                }
                 helperText={commonT(touchedErrors?.title, {
                   name: blogT("blogForm.title"),
                 })}
@@ -225,25 +243,35 @@ const Form = (props: FormProps) => {
                 value={formik.values?.slug}
                 rootSx={sxConfig.input}
                 title={blogT(`${blogFormTranslatePrefix}.slug`)}
-                error={commonT(touchedErrors?.slug, {
-                  name: blogT("blogForm.slug"),
-                }) ? 'error' : undefined}
+                error={
+                  commonT(touchedErrors?.slug, {
+                    name: blogT("blogForm.slug"),
+                  })
+                    ? "error"
+                    : undefined
+                }
                 helperText={commonT(touchedErrors?.slug, {
                   name: blogT("blogForm.slug"),
                 })}
               />
             </Stack>
             <Stack>
-              <SelectCategoriescomplete items={items} label={blogT("blogForm.category")}
+              <SelectCategoriescomplete
+                items={items}
+                label={blogT("blogForm.category")}
                 sx={sxConfig}
                 onSelect={(e, data) => onSelectCategory(data)}
                 value={formik.values.category?.map((tag) => ({
-                  id: tag
+                  id: tag,
                 }))}
               />
             </Stack>
             <Stack style={{ marginBottom: 4, marginTop: 2 }}>
-              <SelectTagMultiple items={tags.length > 0 && tags !== undefined ? tags : listBlogTag} label={blogT("blogForm.tag")}
+              <SelectTagMultiple
+                items={
+                  tags.length > 0 && tags !== undefined ? tags : listBlogTag
+                }
+                label={blogT("blogForm.tag")}
                 sx={sxConfig}
                 onSelect={(e, data) => onSelect(data)}
                 onEnter={onEnter}
@@ -270,9 +298,13 @@ const Form = (props: FormProps) => {
               onBlur={formik.handleBlur}
               value={formik.values?.short_description}
               rootSx={sxConfig.input}
-              error={commonT(touchedErrors?.short_description, {
-                name: blogT("blogForm.short_description"),
-              }) ? 'error' : undefined}
+              error={
+                commonT(touchedErrors?.short_description, {
+                  name: blogT("blogForm.short_description"),
+                })
+                  ? "error"
+                  : undefined
+              }
               helperText={commonT(touchedErrors?.short_description, {
                 name: blogT("blogForm.short_description"),
               })}
@@ -308,29 +340,31 @@ export default memo(Form);
 const sxConfig = {
   input: {
     height: 56,
-    maxWidth: '100%',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
+    maxWidth: "100%",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
 };
 export const validationSchema = Yup.object().shape({
-  title: Yup.string().required('form.error.required'),
-  slug: Yup.string().required('form.error.required'),
-  content: Yup.string().required('form.error.required'),
-  backgroundUpload: Yup.object().required('form.error.required'),
+  title: Yup.string().required("form.error.required"),
+  slug: Yup.string().required("form.error.required"),
+  content: Yup.string().required("form.error.required"),
+  backgroundUpload: Yup.object().required("form.error.required"),
   attachments: Yup.array()
-    .of(Yup.object({
-      name: Yup.string().required('form.error.required'),
-    }))
-    .min(1, 'form.error.required'),
-  category: Yup.array()
-    .of(Yup.string())
-    .min(1, 'form.error.required'),
+    .of(
+      Yup.object({
+        name: Yup.string().required("form.error.required"),
+      }),
+    )
+    .min(1, "form.error.required"),
+  category: Yup.array().of(Yup.string()).min(1, "form.error.required"),
   tag: Yup.array()
-    .of(Yup.object({
-      name: Yup.string().required('form.error.required'),
-    }))
-    .min(1, 'form.error.required'),
+    .of(
+      Yup.object({
+        name: Yup.string().required("form.error.required"),
+      }),
+    )
+    .min(1, "form.error.required"),
   short_description: Yup.string().required("form.error.required"),
 });

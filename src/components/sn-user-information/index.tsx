@@ -23,9 +23,25 @@ const UserInformationPage = () => {
   const costRateT = useTranslations(NS_COST_RATE);
   const tabStyles = {
     width: 'auto',
-    fontSize: "16px",
-    lineHeight: "20px",
-    fontWeight: 600,
+    px: "36px",
+    border: "1px solid",
+    borderStyle: "solid",
+    borderColor: "transparent",
+    borderTopColor: "#EFEFEF",
+    borderBottomColor: "#EFEFEF",
+    "& .MuiTouchRipple-root": {
+      borderRadius: "9999px",
+    },
+    "&:first-child": {
+      borderTopLeftRadius: "9999px",
+      borderBottomLeftRadius: "9999px",
+      borderLeftColor: "#EFEFEF",
+    },
+    "&:last-child": {
+      borderTopRightRadius: "9999px",
+      borderBottomRightRadius: "9999px",
+      borderRightColor: "#EFEFEF",
+    },
   };
 
   const tabs: ITab[] = [
@@ -41,52 +57,116 @@ const UserInformationPage = () => {
 
   return (
     <>
-      <Box>
-        <TabContext value={tab}>
-          <Grid container alignItems="end">
-            <Grid item xs={12} md={6}>
-              <UserInformationHeader isEdit={tab == 'userInfo'} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TabList
-              sx={{
-                "& .MuiTabs-flexContainer": {
-                  justifyContent: 'end'
-                },
-                "& .MuiTab-root": {
-                  textTransform: "unset",
-                  fontSize: "16px",
-                  lineHeight: "20px",
-                  fontWeight: 600,
-                  color: "rgba(153, 153, 153, 1)",
-                  "&.active": {
-                    color: "#3699FF",
+      <FixedLayout flex={1}>
+        <Box
+          sx={{
+            height: "100%",
+            marginBottom: {
+              xs: "48px",
+              sm: "initial",
+            },
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <TabContext value={tab}>
+            <Grid
+              container
+              alignItems="end"
+              pl={{
+                xs: "24px",
+                sm: "48px",
+              }}
+              pr={{
+                xs: "24px",
+                sm: "32px",
+              }}
+              mt="32px"
+              mb="48px"
+            >
+              <Grid item xs={12} md={6}>
+                <UserInformationHeader isEdit={tab == 'userInfo'} />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TabList
+                sx={{
+                  mt: {
+                    xs: "24px",
+                    sm: "initial",
                   },
+                  "& .MuiTab-root": {
+                    textTransform: "unset",
+                    fontSize: "16px",
+                    lineHeight: "25px",
+                    fontWeight: 400,
+                    color: "#333333",
+                    "&.Mui-selected": {
+                      color: "#045EB8",
+                    },
+                  },
+                  "& .MuiTabs-flexContainer": {
+                    position: "relative",
+                    zIndex: 10,
+                    justifyContent: {
+                      xs: "center",
+                      sm: "end",
+                    }
+                  },
+                  "& .MuiTabs-indicator": {
+                    height: "100%",
+                    borderRadius: "9999px",
+                    backgroundColor: "#D9F0FD",
+                    zIndex: 1,
+                  },
+                }}
+                  onChange={(_event: React.SyntheticEvent, newValue: string) =>
+                    setTab(newValue)
+                  }
+                >
+                  {tabs.map((tab: ITab) => (
+                    <Tab
+                      key={`tab-${tab.value}`}
+                      label={tab.label}
+                      value={tab.value}
+                      sx={tabStyles}
+                    />
+                  ))}
+                </TabList>
+              </Grid>
+            </Grid>
+            <TabPanel
+              value="userInfo"
+              sx={{
+                padding: 0,
+                flexGrow: 1,
+                "&:not([hidden])": {
+                  display: "flex",
+                  flexDirection: "column",
+                  overflowX: "hidden",
+                  overflowY: "scroll",
                 },
               }}
-                onChange={(_event: React.SyntheticEvent, newValue: string) =>
-                  setTab(newValue)
-                }
-              >
-                {tabs.map((tab: ITab) => (
-                  <Tab
-                    key={`tab-${tab.value}`}
-                    label={tab.label}
-                    value={tab.value}
-                    sx={tabStyles}
-                  />
-                ))}
-              </TabList>
-            </Grid>
-          </Grid>
-          <TabPanel value="userInfo" >
-            <UserInformation />
-          </TabPanel>
-          <TabPanel value="costRate" >
-            <CostRate />
-          </TabPanel>
-        </TabContext>
-      </Box>
+            >
+              <UserInformation />
+            </TabPanel>
+            <TabPanel
+              value="costRate"
+              sx={{
+                padding: 0,
+                flexGrow: 1,
+                "&:not([hidden])": {
+                  display: "flex",
+                  flexDirection: "column",
+                  overflowX: "hidden",
+                  overflowY: "scroll",
+                },
+              }}
+            >
+              <CostRate />
+            </TabPanel>
+          </TabContext>
+        </Box>
+      </FixedLayout>
     </>
   );
 }

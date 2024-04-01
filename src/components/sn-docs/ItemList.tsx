@@ -197,16 +197,6 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
               );
             })}
         </TableLayout>
-
-        <Pagination
-          totalItems={data?.totalDocs}
-          totalPages={data?.totalPages}
-          page={data?.page}
-          pageSize={+query.size}
-          containerProps={{ px: { md: 3 }, py: 1 }}
-          onChangePage={onChangePage}
-          onChangeSize={onChangeSize}
-        />
       </FixedLayout>
     </>
   );

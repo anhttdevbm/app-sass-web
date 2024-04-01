@@ -98,7 +98,7 @@ export const BudgetDetail = () => {
   const { isDarkMode } = useTheme();
   const { push } = useRouter();
   const { onUpdateProject } = useProjects();
-  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE)
+  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE);
 
   const [isOpenModalTime, openModalTime, hideModalTime] = useToggle();
   const [isOpenModalExpense, openModalExpense, hideModalExpense] = useToggle();
@@ -128,13 +128,13 @@ export const BudgetDetail = () => {
   const commonT = useTranslations(NS_COMMON);
 
   const TAB_NAME = {
-    [TABS.FEED]: budgetT('tab.feed'),
-    [TABS.TIME]: budgetT('tab.time'),
-    [TABS.EXPENSES]: budgetT('tab.expenses'),
-    [TABS.INVOICES]: budgetT('tab.invoices'),
-    [TABS.SERVICES]: budgetT('tab.services'),
-    [TABS.RECURRING]: budgetT('tab.recurring'),
-  }
+    [TABS.FEED]: budgetT("tab.feed"),
+    [TABS.TIME]: budgetT("tab.time"),
+    [TABS.EXPENSES]: budgetT("tab.expenses"),
+    [TABS.INVOICES]: budgetT("tab.invoices"),
+    [TABS.SERVICES]: budgetT("tab.services"),
+    [TABS.RECURRING]: budgetT("tab.recurring"),
+  };
 
   useEffect(() => {
     if (!_.isEmpty(serviceQuery)) {
@@ -155,9 +155,9 @@ export const BudgetDetail = () => {
   }, [JSON.stringify(budgetDetailQuery)]);
 
   const scrollToTop = () => {
-    const wrapper = document.querySelector('#budget-detail-container')
+    const wrapper = document.querySelector("#budget-detail-container");
     if (wrapper) {
-      wrapper.scrollTop = 0
+      wrapper.scrollTop = 0;
     }
   };
 
@@ -166,9 +166,9 @@ export const BudgetDetail = () => {
 
     if (isEditService) {
       Swal.fire({
-        title: budgetT('tabService.alert'),
-        text: '',
-        icon: 'info'
+        title: budgetT("tabService.alert"),
+        text: "",
+        icon: "info",
       });
 
       return;
@@ -296,8 +296,8 @@ export const BudgetDetail = () => {
 
   const handleUpdateDate = async (date: DateRange) => {
     try {
-      console.log(budget.id);
-      
+      // console.log(budget.id);
+
       budgetUpdate.mutateAsync(
         {
           id: budget.id,
@@ -306,7 +306,7 @@ export const BudgetDetail = () => {
         },
         {
           onSuccess: () => {
-            onAddSnackbar(budgetT('notification.date'), "success");
+            onAddSnackbar(budgetT("notification.date"), "success");
             budgetDetailQuery.refetch();
           },
         },
@@ -319,7 +319,7 @@ export const BudgetDetail = () => {
   const handleOpenChangeStatusDialog = (status: ProjectStatus) => {
     tempStatus.current = status;
     showModalStatus();
-  }
+  };
 
   if (!budget) return <></>;
 
@@ -352,13 +352,17 @@ export const BudgetDetail = () => {
           <Stack direction="row" alignItems="center">
             <CustomDateRangePicker
               value={{
-                startDate: budget.start_date ? dayjs(budget.start_date).toDate() : undefined,
-                endDate: budget.end_date ? dayjs(budget.end_date).toDate() : undefined,
+                startDate: budget.start_date
+                  ? dayjs(budget.start_date).toDate()
+                  : undefined,
+                endDate: budget.end_date
+                  ? dayjs(budget.end_date).toDate()
+                  : undefined,
               }}
               onChange={handleUpdateDate}
               iconPosition="left"
               isDropdown
-              errorMessage=''
+              errorMessage=""
             />
             <IconButton
               sx={{ color: "grey.300" }}

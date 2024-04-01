@@ -1,9 +1,22 @@
-import { Autocomplete, Button, Checkbox, FormControlLabel, Grid, Stack, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import { Input, Upload } from "components/shared";
 import { DataAction } from "constant/enums";
-import { ACCESS_TOKEN_STORAGE_KEY, AN_ERROR_TRY_AGAIN, NS_BLOG, NS_COMMON } from "constant/index";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AN_ERROR_TRY_AGAIN,
+  NS_BLOG,
+  NS_COMMON,
+} from "constant/index";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -18,7 +31,7 @@ import { useCategoryBlog } from "store/blog-category/selectors";
 import CustomAutocomplete from "./SelectCategories";
 import Editor from "./Editor";
 import { useBlogs } from "store/blog/selectors";
-import slugify from 'slugify';
+import slugify from "slugify";
 import SelectTagMultiple from "./SelectMultiple";
 
 type FormProps = {
@@ -33,21 +46,18 @@ const Form = (props: FormProps) => {
   const blogT = useTranslations(NS_BLOG);
   const commonT = useTranslations(NS_COMMON);
   const editorRef = useRef<UnprivilegedEditor | undefined>();
-  const { listBlogTag,onGetListTag } = useBlogs();
+  const { listBlogTag, onGetListTag } = useBlogs();
   const [content, setContent] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const [data, setData] = useState<any | undefined>(undefined);
   const [tags, setTags] = useState<TagData[]>([]);
   const blogFormTranslatePrefix = "blogForm";
-  const {
-    items,
-    onGetOptions: onGetCategoryOptions,
-  } = useCategoryBlog();
+  const { items, onGetOptions: onGetCategoryOptions } = useCategoryBlog();
 
   useEffect(() => {
     onGetListTag();
     onGetCategoryOptions({ pageIndex: 1, pageSize: 50 });
-  }, [onGetCategoryOptions,onGetListTag]);
+  }, [onGetCategoryOptions, onGetListTag]);
 
   const onSubmit = async (values: BlogFormData) => {
     try {
@@ -55,21 +65,21 @@ const Form = (props: FormProps) => {
       if (newItem) {
         onAddSnackbar(
           blogT("blogForm.notification.success", { label }),
-          "success"
+          "success",
         );
         props.onClose();
       } else {
-        onAddSnackbar(blogT(AN_ERROR_TRY_AGAIN), "error")
+        onAddSnackbar(blogT(AN_ERROR_TRY_AGAIN), "error");
       }
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-      console.log(error)
+      // console.log(error)
     }
   };
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit
+    onSubmit,
   });
 
   // set value
@@ -81,9 +91,11 @@ const Form = (props: FormProps) => {
     const selectedFile = event.target.files[0];
     // Your custom logic with the file
     if (selectedFile) {
-      alert(`Selected File: ${selectedFile.name}, Size: ${selectedFile.size} bytes`);
+      alert(
+        `Selected File: ${selectedFile.name}, Size: ${selectedFile.size} bytes`,
+      );
     } else {
-      alert('No file selected');
+      alert("No file selected");
     }
 
     // If you want to update formik values
@@ -110,14 +122,19 @@ const Form = (props: FormProps) => {
       lower: true,
       remove: /[*+~.()'"!:@]/g, // Loại bỏ các ký tự đặc biệt không mong muốn
     });
-  
+
     formik.setFieldValue("title", nameValue);
     formik.setFieldValue("slug", slugValue);
   };
 
   const onSelect = (data) => {
-    const uniqueData = Array.from(new Set(data.map(item => item.tag))).map(tag => ({ tag }));
-    formik.setFieldValue("tag", uniqueData.map((item) => item.tag));
+    const uniqueData = Array.from(new Set(data.map((item) => item.tag))).map(
+      (tag) => ({ tag }),
+    );
+    formik.setFieldValue(
+      "tag",
+      uniqueData.map((item) => item.tag),
+    );
   };
   const onSelectCategory = (data) => {
     const mappingData = data.map((item) => item.id);
@@ -126,32 +143,36 @@ const Form = (props: FormProps) => {
 
   const onEnter = (value) => {
     if (!value) return;
-    if  ((tags==null || tags.length==0)){
+    if (tags == null || tags.length == 0) {
       setTags(listBlogTag);
     }
     const itemValues = formik.values?.tag ?? [];
     const isExisted = itemValues.find((item) => item == value);
-  
+
     if (isExisted) {
-      const updatedTags = itemValues.map(tag => ({ tag }));
+      const updatedTags = itemValues.map((tag) => ({ tag }));
       onSelect([...updatedTags, { tag: value }]);
     } else {
       const newTagOption = {
         tag: value,
       };
       setTags((prevListBlogTag) => [...prevListBlogTag, newTagOption]);
-      const updatedTags = itemValues.map(tag => ({ tag }));
+      const updatedTags = itemValues.map((tag) => ({ tag }));
       onSelect([...updatedTags, { tag: value }]);
     }
   };
-
 
   const onChangeField = (name: string, newValue?: any) => {
     formik.setFieldValue(name, newValue);
     setData(newValue);
   };
 
-  const onChangeContent = (value: string, delta, _, editor: UnprivilegedEditor) => {
+  const onChangeContent = (
+    value: string,
+    delta,
+    _,
+    editor: UnprivilegedEditor,
+  ) => {
     const isEmpty = value === "<p><br></p>";
     setContent(isEmpty ? "" : value);
     editorRef.current = editor;
@@ -159,7 +180,7 @@ const Form = (props: FormProps) => {
   };
 
   const onChangeAttactment = (files: File[], data: string[]) => {
-    console.log(data);
+    // console.log(data);
     setFiles(files);
     // formik.setFieldValue("attachmentsUpload", fileLoaded);
     formik.setFieldValue("attachments", data);
@@ -209,9 +230,13 @@ const Form = (props: FormProps) => {
                 onBlur={formik.handleBlur}
                 value={formik.values?.title}
                 rootSx={sxConfig.input}
-                error={commonT(touchedErrors?.title, {
-                  name: blogT("blogForm.title"),
-                }) ? 'error' : undefined}
+                error={
+                  commonT(touchedErrors?.title, {
+                    name: blogT("blogForm.title"),
+                  })
+                    ? "error"
+                    : undefined
+                }
                 helperText={commonT(touchedErrors?.title, {
                   name: blogT("blogForm.title"),
                 })}
@@ -229,22 +254,32 @@ const Form = (props: FormProps) => {
                 value={formik.values?.slug}
                 rootSx={sxConfig.input}
                 title={blogT(`${blogFormTranslatePrefix}.slug`)}
-                error={commonT(touchedErrors?.slug, {
-                  name: blogT("blogForm.slug"),
-                }) ? 'error' : undefined}
+                error={
+                  commonT(touchedErrors?.slug, {
+                    name: blogT("blogForm.slug"),
+                  })
+                    ? "error"
+                    : undefined
+                }
                 helperText={commonT(touchedErrors?.slug, {
                   name: blogT("blogForm.slug"),
                 })}
               />
             </Stack>
             <Stack>
-              <CustomAutocomplete items={items} label={blogT("blogForm.category")}
+              <CustomAutocomplete
+                items={items}
+                label={blogT("blogForm.category")}
                 sx={sxConfig}
                 onSelect={(e, data) => onSelectCategory(data)}
               />
             </Stack>
-            <Stack style={{ marginBottom: 4,marginTop:2 }}>
-            <SelectTagMultiple items={tags.length>0 && tags !== undefined ? tags: listBlogTag} label={blogT("blogForm.tag")}
+            <Stack style={{ marginBottom: 4, marginTop: 2 }}>
+              <SelectTagMultiple
+                items={
+                  tags.length > 0 && tags !== undefined ? tags : listBlogTag
+                }
+                label={blogT("blogForm.tag")}
                 sx={sxConfig}
                 onSelect={(e, data) => onSelect(data)}
                 onEnter={onEnter}
@@ -257,7 +292,6 @@ const Form = (props: FormProps) => {
               onChange={onChangeField}
               required={true}
             />
-
           </Stack>
         </Grid>
         <Grid item xs={7} marginTop={1}>
@@ -272,9 +306,13 @@ const Form = (props: FormProps) => {
               onBlur={formik.handleBlur}
               value={formik.values?.short_description}
               rootSx={sxConfig.input}
-              error={commonT(touchedErrors?.short_description, {
-                name: blogT("blogForm.short_description"),
-              }) ? 'error' : undefined}
+              error={
+                commonT(touchedErrors?.short_description, {
+                  name: blogT("blogForm.short_description"),
+                })
+                  ? "error"
+                  : undefined
+              }
               helperText={commonT(touchedErrors?.short_description, {
                 name: blogT("blogForm.short_description"),
               })}
@@ -313,18 +351,18 @@ const sxConfig = {
 };
 
 export const validationSchema = Yup.object().shape({
-  title: Yup.string().required('form.error.required'),
-  slug: Yup.string().required('form.error.required'),
-  content: Yup.string().required('form.error.required'),
-  backgroundUpload: Yup.mixed().required('form.error.required'),
+  title: Yup.string().required("form.error.required"),
+  slug: Yup.string().required("form.error.required"),
+  content: Yup.string().required("form.error.required"),
+  backgroundUpload: Yup.mixed().required("form.error.required"),
   attachments: Yup.array()
-    .of(Yup.object({
-      name: Yup.string().required('form.error.required'),
-    }))
-    .min(1, 'form.error.required'),
-  category: Yup.array()
-    .of(Yup.string())
-    .min(1, 'form.error.required'),
+    .of(
+      Yup.object({
+        name: Yup.string().required("form.error.required"),
+      }),
+    )
+    .min(1, "form.error.required"),
+  category: Yup.array().of(Yup.string()).min(1, "form.error.required"),
   tag: Yup.array().of(Yup.string()),
   short_description: Yup.string().required("form.error.required"),
 });

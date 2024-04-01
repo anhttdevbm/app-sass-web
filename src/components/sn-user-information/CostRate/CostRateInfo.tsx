@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
+import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
@@ -34,7 +35,7 @@ const CurrentRateBlock = ({title, content, icon}: {
       maxWidth={266}
     >
       {icon}
-      <Stack direction="column" spacing={1}>
+      <Stack direction="column" spacing={{ xs: 0, sm: 1 }}>
         <Text color="grey.800" fontSize={20} fontWeight={600} whiteSpace="nowrap" textOverflow="ellipsis">{title}</Text>
         <Text color="grey.800">{content}</Text>
       </Stack>
@@ -101,10 +102,23 @@ const CostRateInfo = () => {
 
   return (
     <Box
-      border={1}
-      borderColor="divider"
-      borderRadius={6}
-      padding={4.5}
+      sx={{
+        border: 1,
+        borderColor: "divider",
+        borderRadius: "18px",
+        padding: "36px",
+        flexGrow: 1,
+        marginTop: "16px",
+        marginBottom: "36px",
+        marginLeft: {
+          xs: "24px",
+          sm: "48px",
+        },
+        marginRight: {
+          xs: "24px",
+          sm: "36px",
+        },
+      }}
     >
       <Text fontSize={25} fontWeight={600} variant="h3" color="grey.800">Current Cost Rate</Text>
 
@@ -113,7 +127,7 @@ const CostRateInfo = () => {
         mt={5}
         spacing={3}
       >
-        <Grid item container xs={8}>
+        <Grid item container xs={12} sm={8}>
           <Box position="relative" width="100%">
             <Line
               data={chartData}
@@ -121,7 +135,7 @@ const CostRateInfo = () => {
             />
           </Box>
         </Grid>
-        <Grid item container xs={4} justifyContent="end">
+        <Grid item container xs={12} sm={4} justifyContent="end">
           <Stack direction="column" alignItems="center">
             <ProcessRing size={256} percentage={75}>
               <Text fontSize={33}>22</Text>
@@ -136,49 +150,49 @@ const CostRateInfo = () => {
         mt={6}
         spacing={6}
       >
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Type"
             content={currentRate?.type ?? 'N/A'}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Per Month"
             content={currentRate?.cost_per_month ? `${currentRate.cost_per_month}.$` : 'N/A'}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="At current cost rate"
             content="N/A"
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Capacity"
             content={currentRate?.total_hours ? `${currentRate.total_hours}h` : 'N/A'}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Current Hourly Cost"
             content="N/A"
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Overhead"
             content="N/A"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12}>
           <Stack border={1} borderColor="#14B9E5" borderRadius={3} padding={4}>
             <Text color="grey.800" fontSize={20} fontWeight={600}>Note</Text>
             <Text color="grey.700" mt={1}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos modi ex autem ut reprehenderit veritatis commodi? Beatae aut tenetur quam cum ut eius, voluptates velit repellendus iure sint modi ratione.</Text>
@@ -188,55 +202,78 @@ const CostRateInfo = () => {
 
       <Text fontSize={25} fontWeight={600} variant="h3" color="grey.800" mt={6} mb={2}>Cost Rate</Text>
 
-      <Table>
-        <TableHead>
-          <TableRow
-            sx={{
-              height: 70,
-              "& th": {
-                border: 0,
-                paddingTop: 2,
-                paddingBottom: 2,
-                paddingLeft: 2.5,
-                paddingRight: 2.5,
-                backgroundColor: "#D9F0FD",
-              },
-              "& th:first-child": {
-                borderTopLeftRadius: 12,
-                borderBottomLeftRadius: 12,
-              },
-              "& th:last-child": {
-                borderTopRightRadius: 12,
-                borderBottomRightRadius: 12,
-              },
-              "& th:nth-child(7)": {
-                width: "20%",
-              },
-            }}
-          >
-            <TableCell>Start Date</TableCell>
-            <TableCell>End Date</TableCell>
-            <TableCell>Cost Type</TableCell>
-            <TableCell>Cost</TableCell>
-            <TableCell>Hourly</TableCell>
-            <TableCell>Capacity</TableCell>
-            <TableCell>Note</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {remainingRates.map((item) =>
-            <TableRow key={item.id}>
-              <StyledBodyCell>{dayjs(item.start_date).format('DD MMM, YYYY')}</StyledBodyCell>
-              <StyledBodyCell>{dayjs(item.end_date).format('DD MMM, YYYY')}</StyledBodyCell>
-              <StyledBodyCell>{item.type}</StyledBodyCell>
-              <StyledBodyCell>--</StyledBodyCell>
-              <StyledBodyCell>--</StyledBodyCell>
-              <StyledBodyCell>--</StyledBodyCell>
-              <StyledBodyCell>--</StyledBodyCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <Box width="100%" overflow="hidden">
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow
+                sx={{
+                  height: 70,
+                  "& th": {
+                    border: 0,
+                    paddingTop: 2,
+                    paddingBottom: 2,
+                    paddingLeft: 2.5,
+                    paddingRight: 2.5,
+                    backgroundColor: "#D9F0FD",
+                  },
+                  "& th:first-child": {
+                    borderTopLeftRadius: 12,
+                    borderBottomLeftRadius: 12,
+                  },
+                  "& th:last-child": {
+                    borderTopRightRadius: 12,
+                    borderBottomRightRadius: 12,
+                  },
+                  "& th:nth-child(1)": {
+                    minWidth: "100px",
+                  },
+                  "& th:nth-child(2)": {
+                    minWidth: "100px",
+                  },
+                  "& th:nth-child(3)": {
+                    minWidth: "100px",
+                  },
+                  "& th:nth-child(4)": {
+                    minWidth: "100px",
+                  },
+                  "& th:nth-child(5)": {
+                    minWidth: "100px",
+                  },
+                  "& th:nth-child(6)": {
+                    minWidth: "100px",
+                  },
+                  "& th:nth-child(7)": {
+                    width: "20%",
+                    minWidth: "100px",
+                  },
+                }}
+              >
+                <TableCell>Start Date</TableCell>
+                <TableCell>End Date</TableCell>
+                <TableCell>Cost Type</TableCell>
+                <TableCell>Cost</TableCell>
+                <TableCell>Hourly</TableCell>
+                <TableCell>Capacity</TableCell>
+                <TableCell>Note</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {remainingRates.map((item) =>
+                <TableRow key={item.id}>
+                  <StyledBodyCell>{dayjs(item.start_date).format('DD MMM, YYYY')}</StyledBodyCell>
+                  <StyledBodyCell>{dayjs(item.end_date).format('DD MMM, YYYY')}</StyledBodyCell>
+                  <StyledBodyCell>{item.type}</StyledBodyCell>
+                  <StyledBodyCell>--</StyledBodyCell>
+                  <StyledBodyCell>--</StyledBodyCell>
+                  <StyledBodyCell>--</StyledBodyCell>
+                  <StyledBodyCell>--</StyledBodyCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
     </Box>
   )
 }
