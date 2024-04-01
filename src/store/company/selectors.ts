@@ -16,16 +16,21 @@ import {
   getMyCompany,
   getPositionList,
   getProjectTypeList,
+  getClientCompanies,
   updateEmployee,
   updateMyCompany,
   updatePosition,
   updateProjectType,
+  createClientCompany,
+  getClientCompaniesMemberOptions,
+  deleteClientCompany,
+  getClientCompanyDetails, updateClientCompany,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
 import { shallowEqual } from "react-redux";
 import { BaseQueries, Option } from "constant/types";
-import Avatar from "components/Avatar";
+import { ClientCompany } from "components/sn-client-companies/type";
 
 export const useEmployees = () => {
   const dispatch = useAppDispatch();
@@ -357,5 +362,92 @@ export const useCostHistory = () => {
     totalItems,
     totalPages,
     onGetCostHistory,
+  };
+};
+
+export const useClientCompanies = () => {
+  const dispatch = useAppDispatch();
+  const {
+    clientCompanies: items,
+    clientCompaniesMemberOptions: options,
+    clientCompaniesStatus: status,
+    clientCompaniesError: error,
+    clientCompaniesFilters: filters,
+    clientCompanyDetail: detailItem,
+  } = useAppSelector((state) => state.company, shallowEqual);
+  const { pageIndex, pageSize, totalItems, totalPages } = useAppSelector(
+    (state) => state.company.clientCompaniesPaging,
+    shallowEqual,
+  );
+
+  const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
+  const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+
+  const onGetClientCompanies = useCallback(
+    async (queries: BaseQueries) => {
+      await dispatch(getClientCompanies(queries));
+    },
+    [dispatch],
+  );
+
+  const onGetMemberOptions = useCallback(
+    async (queries: BaseQueries) => {       
+      await dispatch(getClientCompaniesMemberOptions(queries));
+    },
+    [dispatch],
+  );
+
+  const onCreateClientCompany = useCallback(
+    async (data: ClientCompany) => {
+      return await dispatch(createClientCompany(data)).unwrap();
+    },
+    [dispatch],
+  );
+
+  const onDeleteClientCompany = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(deleteClientCompany(id)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const onGetClientCompanyDetails = useCallback(
+    async (id: string) => {
+      await dispatch(getClientCompanyDetails(id));
+    },
+    [dispatch],
+  );
+
+  const onUpdateClientCompany = useCallback(
+    async (data: ClientCompany) => {
+      return await dispatch(updateClientCompany(data)).unwrap();
+    },
+    [dispatch],
+  );
+
+
+  return {
+    items,
+    status,
+    error,
+    filters,
+    isIdle,
+    isFetching,
+    pageIndex,
+    pageSize,
+    totalItems,
+    totalPages,
+    options,
+    detailItem,
+    onGetClientCompanies,
+    onGetMemberOptions,
+    onCreateClientCompany,
+    onDeleteClientCompany,
+    onGetClientCompanyDetails,
+    onUpdateClientCompany
   };
 };

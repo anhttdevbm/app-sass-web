@@ -72,6 +72,42 @@ export const CompanyLang: CompanyDictionary = {
       success: "{label} project type successfully!",
     },
   },
+  clientCompany: {
+    head: {
+      title: "Client Company | Taskcover",
+    },
+    title: "Client Company",
+    create: "Create",
+    createBy: "Create by",
+    createDate: "Create date",
+    duplicate: "Duplicate",
+    form: {
+      title: {
+        name: "Create a new client company",
+      },
+    },
+    companyName: "Company Name",
+    taxCode: "Tax code",
+    address: "Address",
+    zipCode: "Zipcode",
+    duplicateForm: {
+      title: "Duplicate",
+      newName: "New name",
+    },
+    confirmRemove: {
+      title: "Confirm to Delete",
+      content: "Are you sure to delete this client company?",
+    },
+    notification: {
+      success: "{label} client company successfully!",
+    },
+    generalInformation: "General Information",
+    contact: "Contact",
+    formUpdate: {
+      title: "General information",
+      submit: "Save change"
+    }
+  },
   information: {
     head: {
       title: "Company Information | Taskcover",

@@ -58,6 +58,7 @@ export const CommonLang: CommonDictionary = {
   company: "Công ty",
   fullName: "Họ tên",
   phone: "Số điện thoại",
+  address: "Địa chỉ",
   status: "Trạng thái",
   filter: {
     refresh: "Làm mới dữ liệu",

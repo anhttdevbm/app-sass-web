@@ -72,6 +72,42 @@ export const CompanyLang: CompanyDictionary = {
       success: "{label} loại dự án thành công!",
     },
   },
+  clientCompany: {
+    head: {
+      title: "Công ty khách hàng | Taskcover",
+    },
+    title: "Công ty khách hàng",
+    create: "Thêm",
+    createBy: "Người tạo",
+    createDate: "Ngày tạo",
+    duplicate: "Nhân bản",
+    form: {
+      title: {
+        name: "Tạo một công ty khách hàng mới",
+      },
+    },
+    companyName: "Tên công ty",
+    taxCode: "Mã số thuế",
+    address: "Địa chỉ",
+    zipCode: "Mã bưu chính",
+    duplicateForm: {
+      title: "Nhân bản",
+      newName: "Tên mới",
+    },
+    confirmRemove: {
+      title: "Xác nhận xóa",
+      content: "Bạn có chắc chắn xóa công ty khách hàng này không?",
+    },
+    notification: {
+      success: "{label} công ty khách hàng thành công!",
+    },
+    generalInformation: "Thông tin chung",
+    contact: "Liên hệ",
+    formUpdate: {
+      title: "Thông tin chung",
+      submit: "Lưu thay đổi"
+    }
+  },
   information: {
     head: {
       title: "Thông tin công ty | Taskcover",

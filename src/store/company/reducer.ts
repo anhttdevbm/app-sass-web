@@ -17,11 +17,19 @@ import {
   getMyCompany,
   deleteEmployees,
   getEmployeeOptions,
+  getClientCompanies,
+  GetClientConpanyListQueries,
+  getClientCompaniesMemberOptions,
+  createClientCompany,
+  deleteClientCompany,
+  getClientCompanyDetails,
+  updateClientCompany,
 } from "./actions";
-import { ItemListResponse, Paging, User } from "constant/types";
+import { ItemListResponse, Paging, User, Option } from "constant/types";
 import { DataStatus, PayStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
+import { ClientCompany } from "components/sn-client-companies/type";
 
 export interface Employee extends User {
   _id: string;
@@ -97,7 +105,7 @@ export interface Company {
   tax_code: string;
 
   owner?: User;
-  avatar?: Avatar; 
+  avatar?: Avatar;
   status: PayStatus;
 
   account_paid?: {
@@ -141,6 +149,28 @@ export interface CompanyState {
   costHistoriesStatus: DataStatus;
   costHistoriesPaging: Paging;
   costHistoriesError?: string;
+
+  clientCompanies: ClientCompany[];
+  clientCompaniesStatus: DataStatus;
+  clientCompaniesPaging: Paging;
+  clientCompaniesError?: string;
+  clientCompaniesFilters: Omit<
+    GetClientConpanyListQueries,
+    "pageIndex" | "pageSize"
+  >;
+
+  clientCompaniesMemberOptions: Option[];
+  clientCompaniesMemberOptionsStatus: DataStatus;
+  clientCompaniesMemberOptionsPaging: Paging;
+  clientCompaniesMemberOptionsError?: string;
+  clientCompaniesMemberOptionsFilters: Omit<
+    GetEmployeeListQueries,
+    "pageIndex" | "pageSize"
+  >;
+
+  clientCompanyDetail?: ClientCompany;
+  clientCompanyDetailStatus: DataStatus;
+  clientCompanyDetailError?: string;
 }
 
 const initialState: CompanyState = {
@@ -167,6 +197,18 @@ const initialState: CompanyState = {
   costHistories: [],
   costHistoriesStatus: DataStatus.IDLE,
   costHistoriesPaging: DEFAULT_PAGING,
+
+  clientCompanies: [],
+  clientCompaniesStatus: DataStatus.IDLE,
+  clientCompaniesPaging: DEFAULT_PAGING,
+  clientCompaniesFilters: {},
+
+  clientCompaniesMemberOptions: [],
+  clientCompaniesMemberOptionsStatus: DataStatus.IDLE,
+  clientCompaniesMemberOptionsPaging: DEFAULT_PAGING,
+  clientCompaniesMemberOptionsFilters: {},
+
+  clientCompanyDetailStatus: DataStatus.IDLE,
 };
 
 const companySlice = createSlice({
@@ -500,7 +542,139 @@ const companySlice = createSlice({
         state.costHistories = [];
         state.costHistoriesStatus = DataStatus.FAILED;
         state.costHistoriesError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
-      }),
+      })
+      .addCase(getClientCompanies.pending, (state, action) => {
+        state.clientCompaniesStatus = DataStatus.LOADING;
+        state.clientCompaniesFilters = getFiltersFromQueries(action.meta.arg);
+
+        if (action.meta.arg.pageIndex === 1) {
+          state.clientCompanies = [];
+        }
+        state.clientCompaniesPaging.pageIndex = Number(
+          action.meta.arg.pageIndex ?? DEFAULT_PAGING.pageIndex,
+        );
+        state.clientCompaniesPaging.pageSize = Number(
+          action.meta.arg.pageSize ?? DEFAULT_PAGING.pageSize,
+        );
+      })
+      .addCase(
+        getClientCompanies.fulfilled,
+        (state, action: PayloadAction<ItemListResponse>) => {
+          const { items, concat, ...paging } = action.payload;
+
+          if (concat) {
+            state.clientCompanies = removeDuplicateItem(
+              state.clientCompanies.concat(items as ClientCompany[]),
+            );
+          } else {
+            state.clientCompanies = items as ClientCompany[];
+          }
+
+          state.clientCompaniesStatus = DataStatus.SUCCEEDED;
+          state.clientCompaniesPaging = Object.assign(
+            state.clientCompaniesPaging,
+            paging,
+          );
+        },
+      )
+      .addCase(getClientCompaniesMemberOptions.pending, (state, action) => {
+        const prefixKey = "clientCompaniesMemberOptions";
+        state[`${prefixKey}Status`] = DataStatus.LOADING;
+        state[`${prefixKey}Filters`] = getFiltersFromQueries(action.meta.arg);
+
+        if (action.meta.arg?.concat && action.meta.arg.pageIndex === 1) {
+          state.clientCompaniesMemberOptions = [];
+        }
+        state[`${prefixKey}Paging`].pageIndex = Number(
+          action.meta.arg.pageIndex ?? DEFAULT_PAGING.pageIndex,
+        );
+        state[`${prefixKey}Paging`].pageSize = Number(
+          action.meta.arg.pageSize ?? DEFAULT_PAGING.pageSize,
+        );
+      })
+      .addCase(
+        getClientCompaniesMemberOptions.fulfilled,
+        (state, action: PayloadAction<ItemListResponse>) => {
+          const { items, ...paging } = action.payload;
+          state.clientCompaniesMemberOptions = [];
+          const newOptions: Option[] = (items as Employee[]).map((item) => ({
+            label: item.fullname,
+            value: item.id,
+            avatar: item?.avatar?.link,
+            subText: item.email,
+          }));
+          state.clientCompaniesMemberOptions = removeDuplicateItem(
+            state.clientCompaniesMemberOptions.concat(newOptions),
+            "value",
+          );
+          const prefixKey = "clientCompaniesMemberOptions";
+          state[`${prefixKey}Status`] = DataStatus.SUCCEEDED;
+          state[`${prefixKey}Error`] = undefined;
+          state[`${prefixKey}Paging`] = Object.assign(
+            state[`${prefixKey}Paging`],
+            paging,
+          );
+        },
+      )
+      .addCase(
+        createClientCompany.fulfilled,
+        (state, action: PayloadAction<ClientCompany>) => {
+          state.clientCompanies.unshift(action.payload);
+
+          if (
+            state.clientCompanies.length > state.clientCompaniesPaging.pageSize
+          ) {
+            state.clientCompanies.pop();
+            if (state.clientCompaniesPaging.totalPages !== undefined) {
+              state.clientCompaniesPaging.totalPages += 1;
+            }
+          }
+
+          if (state.clientCompaniesPaging.totalItems !== undefined) {
+            state.clientCompaniesPaging.totalItems += 1;
+          }
+        },
+      )
+      .addCase(
+        deleteClientCompany.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.clientCompanies = state.clientCompanies.filter(
+            (item) => item?.id && !action.payload.includes(item?.id),
+          );
+          if (state.clientCompaniesPaging.totalItems !== undefined) {
+            state.clientCompaniesPaging.totalItems -= 1;
+          }
+        },
+      )
+      .addCase(
+        getClientCompanyDetails.fulfilled,
+        (state, action: PayloadAction<ClientCompany>) => {
+          state.clientCompanyDetail = action.payload;
+          state.clientCompanyDetailStatus = DataStatus.SUCCEEDED;
+        },
+      )
+      .addCase(getClientCompanyDetails.rejected, (state, action) => {
+        state.clientCompanyDetail = undefined;
+        state.clientCompanyDetailStatus = DataStatus.FAILED;
+        state.clientCompanyDetailError =
+          action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(
+        updateClientCompany.fulfilled,
+        (state, action: PayloadAction<ClientCompany>) => {
+          state.clientCompanyDetail = action.payload;
+
+          const indexUpdated = state.clientCompanies.findIndex(
+            (item) => item.id === action.payload.id,
+          );
+          if (indexUpdated !== -1) {
+            state.clientCompanies[indexUpdated] = Object.assign(
+              state.clientCompanies[indexUpdated],
+              action.payload,
+            );
+          }
+        },
+      ),
 });
 
 export const { reset } = companySlice.actions;

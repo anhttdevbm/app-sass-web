@@ -68,6 +68,42 @@ export type CompanyDictionary = {
       success: string;
     };
   };
+  clientCompany: {
+    head: {
+      title: string;
+    };
+    title: string;
+    create: string;
+    createBy: string;
+    createDate: string;
+    duplicate: string;
+    form: {
+      title: {
+        name: string;
+      };
+    };
+    companyName: string;
+    taxCode: string;
+    address: string;
+    zipCode: string;
+    duplicateForm: {
+      title: string;
+      newName: string;
+    },
+    confirmRemove: {
+      title: string;
+      content: string;
+    };
+    notification: {
+      success: string;
+    };
+    generalInformation: string;
+    contact: string;
+    formUpdate: {
+      title: string;
+      submit: string;
+    }
+  };
   information: {
     head: {
       title: string;

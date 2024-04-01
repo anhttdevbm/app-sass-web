@@ -19,6 +19,7 @@ export type LayoutDictionary = {
     costHistory: string;
     listOfPositions: string;
     projectTypeList: string;
+    clientCompanies: string;
     companyInformation: string;
     manager: string;
     companyList: string;
