@@ -164,7 +164,6 @@ const CoreInput = forwardRef(
         {...rest}
         variant="outlined"
         label={title}
-        re
       />
     );
   },
