@@ -30,6 +30,7 @@ export const BudgetingLang: BudgetingDictionary = {
   },
   tab: {
     feed: 'Feed',
+    client: 'Client',
     time: 'Time',
     expenses: 'Expenses',
     invoices: 'Invoices',

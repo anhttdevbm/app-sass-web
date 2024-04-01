@@ -52,9 +52,11 @@ import CustomDateRangePicker from "components/sn-resource-planing/components/Cus
 import { DateRange } from "mui-daterange-picker";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 import ConfirmDialog from "components/ConfirmDialog";
+import { Client } from "components/sn-budgeting/TabDetail/Client";
 
 enum TABS {
   FEED = "Feed",
+  CLIENT = "Client",
   SERVICES = "Services",
   TIME = "Time",
   EXPENSES = "Expenses",
@@ -129,6 +131,7 @@ export const BudgetDetail = () => {
 
   const TAB_NAME = {
     [TABS.FEED]: budgetT("tab.feed"),
+    [TABS.CLIENT]: budgetT("tab.client"),
     [TABS.TIME]: budgetT("tab.time"),
     [TABS.EXPENSES]: budgetT("tab.expenses"),
     [TABS.INVOICES]: budgetT("tab.invoices"),
@@ -467,6 +470,7 @@ export const BudgetDetail = () => {
           </Stack>
           <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
+            {activeTab === TABS.CLIENT && <Client bugetId={budget.id} />}
             {activeTab === TABS.TIME && (
               <Time
                 timeList={_.get(timeQuery, "data.data.docs", [])}

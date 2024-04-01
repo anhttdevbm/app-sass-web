@@ -1,25 +1,24 @@
 "use client";
 
 import { Button, Divider, Stack } from "@mui/material";
+import { Endpoint, client } from "api";
 import FixedLayout from "components/FixedLayout";
 import { Text } from "components/shared";
 import { ClientCompany } from "components/sn-client-companies/type";
+import EditForm from "components/sn-sales-detail/components/Client/EditForm";
 import SelectClient from "components/sn-sales-detail/components/Client/SelectClient";
+import ViewDetail from "components/sn-sales-detail/components/Client/ViewDetail";
 import { DEFAULT_PAGING, NS_COMPANY } from "constant/index";
 import { Option } from "constant/types";
 import EditIcon from "icons/EditIcon";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
 import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
-import { memo, useEffect, useState } from "react";
+import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
+import { useEffect, useState } from "react";
 import { useClientCompanies } from "store/company/selectors";
-import { useSales } from "store/sales/selectors";
-import { Endpoint, client } from "../../../../api";
-import EditForm from "./EditForm";
-import ViewDetail from "./ViewDetail";
 
-const SalesClient = () => {
-  const { id } = useParams();
+export const Client = (props: { bugetId: string }) => {
+  const { bugetId } = props;
   const {
     onGetClientCompanyDetails,
     detailItem,
@@ -28,7 +27,6 @@ const SalesClient = () => {
     onUpdateClientCompany,
   } = useClientCompanies();
 
-  const { onUpdateDeal } = useSales();
   const [isEditMode, setEditMode] = useState<boolean>(false);
   const [options, setOptions] = useState<Option[]>([]);
   const [optionSelected, setOptionSelected] = useState<
@@ -36,6 +34,7 @@ const SalesClient = () => {
   >();
   const [clientSelected, setClientSelected] = useState<ClientCompany>();
   const companyT = useTranslations(NS_COMPANY);
+  const budgetUpdate = useBudgetUpdate();
 
   useEffect(() => {
     onGetClientCompanies({ ...DEFAULT_PAGING });
@@ -77,12 +76,15 @@ const SalesClient = () => {
       delete payload["avatar"];
     }
     setEditMode(false);
-    await onUpdateDeal({ id, client: data?.id });
-    return await onUpdateClientCompany(payload);
+    await onUpdateClientCompany(payload);
+    return await budgetUpdate.mutateAsync({
+      id: bugetId,
+      client: data?.id,
+    });
   };
 
   return (
-    <FixedLayout flex={1}>
+    <FixedLayout flex={1} p="30px">
       <Stack sx={{ height: 58 }}>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center">
@@ -141,5 +143,3 @@ const SalesClient = () => {
     </FixedLayout>
   );
 };
-
-export default memo(SalesClient);

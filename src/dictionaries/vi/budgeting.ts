@@ -30,6 +30,7 @@ export const BudgetingLang: BudgetingDictionary = {
     },
     tab: {
         feed: 'Phản hồi',
+        client: 'Khách hàng',
         time: 'Thời gian',
         expenses: 'Chi phí',
         invoices: 'Hóa đơn',
