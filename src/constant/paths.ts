@@ -50,8 +50,8 @@ export const BLOGS_DETAIL_PATH = "/blogs/{id}";
 export const BLOGS_RELATED_PATH = "/blogs/{id}/related";
 //Carrer
 export const CAREER_PATH = "/careers";
-export const CAREER_DETAIL_PATH = "/careers/{id}";
-export const APPLICANTS_DETAIL_PATH = "/careers/{id}/applicants";
+export const CAREER_DETAIL_PATH = "/careers/{slug}";
+export const APPLICANTS_DETAIL_PATH = "/careers/{slug}/applicants";
 //Billing
 export const BILLING_PATH = "/billing";
 export const BILLING_CREATE_PATH = "/billing/create";

@@ -180,6 +180,22 @@ export declare interface IComment {
   createdAt: Date;
 }
 
+export interface IApplicant {
+  _id: string,
+  id: string,
+  first_name: string,
+  last_name: string,
+  birth: string,
+  email: string,
+  gender: string,
+  phone: string,
+  resume: string,
+  socialLink: string,
+  created_time: string,
+  attachments_down: Attachment[],
+  resume_down: Attachment
+}
+
 //  _id: '657215173bd3d5a7f5cbe7f8',
 //       created_time: '2023-12-07T18:55:19.160Z',
 //       updated_time: '2023-12-07T18:55:19.160Z',

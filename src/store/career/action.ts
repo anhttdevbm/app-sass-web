@@ -6,10 +6,17 @@ import { BaseQueries_Feedback } from "constant/types";
 import StringFormat from "string-format";
 import { serverQueries } from "utils/index";
 import { CareergDataForm } from "./type";
+import { IApplicant } from "constant/types";
 
 export enum CareerStatus {
   PUBLISHED,
-  DRAFT // NHA
+  DRAFT, // NHA
+  
+}
+
+export enum UpdateStatusCareer {
+  CLOSED = 'CLOSED',
+  REOPEN = 'REOPEN'
 }
 
 export enum SearchStatus {
@@ -18,6 +25,7 @@ export enum SearchStatus {
 }
 
 export type CareerData = {
+  status: UpdateStatusCareer;
   id?: string
   title?: string;
   description?: string;
@@ -33,6 +41,18 @@ export type CareerData = {
 export type GetCareerListQueries = BaseQueries_Feedback & {
   searchKey?: string;
   isOpening?: string;
+};
+
+export type ApplicantData = {
+  jobpostId: string,
+  applicantId: string,
+  email?: string,
+  subject?: string,
+  content?: string,
+  responsed_content?: string,
+  type?: string,
+  forward_email: string[],
+  title?: string
 };
 
 //Get list Feedback
@@ -108,9 +128,13 @@ export const upadteCareer = createAsyncThunk(
 );
 
 export const getCareerBySlug = createAsyncThunk(
-  "getCareerBySlug", async (id: string) => {
+  "getCareerBySlug", async (slug: string) => {      
       try {
-          const response = await client.get(Endpoint.DETAIL_CAREER, id, {
+          console.log(slug);
+          
+          const response = await client.get(StringFormat(Endpoint.DETAIL_CAREER, {slug}), 
+            undefined,
+            {
               baseURL: CAREER_API_URL,
           });
           if (response?.status === HttpStatusCode.OK) {
@@ -157,6 +181,100 @@ export const updateStatusCareer = createAsyncThunk(
       return results;
     } catch (error) {
       throw error;
+    }
+  }
+);
+
+export const updateStatusCareerNew = createAsyncThunk(
+  'updateStatusCareerNew',
+  async ({ careerList, opened, Token }: { careerList: CareerData[]; opened: string; Token: string | undefined | null }) => {
+    console.log(opened);
+    try {
+      const promises = careerList.map(async (element) => {
+        const item = {
+          ...element,
+          is_opening: opened, 
+          start_time : element.start_time ? new Date(element.start_time).toISOString().split('T')[0] : null,
+          end_time : element.end_time ? new Date(element.end_time).toISOString().split('T')[0] : null,
+        };
+        const status = opened === SearchStatus.IS_OPENING ? UpdateStatusCareer.REOPEN : UpdateStatusCareer.CLOSED
+        const id = element.id
+        const response = await client.patch(
+          StringFormat(Endpoint.UPDATE_STATUS_CAREER, {id, status}),
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `${Token}`,
+            },
+            baseURL: CAREER_API_URL,
+          }
+        );
+        
+        if (response?.status !== HttpStatusCode.OK) {
+          throw AN_ERROR_TRY_AGAIN;
+        }
+        return response.data;
+      });
+      const results = await Promise.all(promises);
+      return results;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const getApplicantsByCareer = createAsyncThunk(
+  'getApplicantsByCareer',
+  async(slug: string) => {
+    try {
+      console.log(slug);
+      
+      const response = await client.get(StringFormat(Endpoint.GET_APPLICANTS_CAREER, {slug}), 
+        undefined,
+        {
+          baseURL: CAREER_API_URL,
+      });
+      if (response?.status === HttpStatusCode.OK) {
+          return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+  } catch (error) {
+      throw error;
+  }
+  }
+)
+
+export const respondToApplicant = createAsyncThunk(
+  "career/respondToApplicant",
+  async ({ data, Token }: { data: ApplicantData, Token: string | undefined | null }) => {
+    try {
+      const respondToFeedback = {
+        jobpostId: data.jobpostId,
+        applicantId: data.applicantId,
+        content: data.responsed_content,
+        subject : data.title,
+        type: 'BCC',
+        forward_email: data.forward_email
+      } as ApplicantData
+      const response = await client.post(StringFormat(Endpoint.RESPONDAPPLICANT),
+        respondToFeedback,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          Authorization: `${Token}`,
+          baseURL: CAREER_API_URL,
+        },
+      );
+      console.log(response?.status);
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw AN_ERROR_TRY_AGAIN;
     }
   }
 );

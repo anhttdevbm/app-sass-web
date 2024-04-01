@@ -415,7 +415,7 @@ const Form = (props: FormProps) => {
           />
         </Grid>
         <Grid item xs={12} md={12}>
-          <RadioGroup
+          {/* <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="is_opening"
@@ -434,7 +434,7 @@ const Form = (props: FormProps) => {
               control={<Radio />}
               label={careerT("form_career.closed")}
             />
-          </RadioGroup>
+          </RadioGroup> */}
         </Grid>
         <Grid item xs={12} md={12}></Grid>
       </Grid>

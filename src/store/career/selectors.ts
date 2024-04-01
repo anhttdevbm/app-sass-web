@@ -2,10 +2,11 @@ import { DataStatus } from "constant/enums";
 import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { CareerData, GetCareerListQueries, getAllCareer, getCareerBySlug, postCareer, upadteCareer, updateStatusCareer } from "./action";
+import { CareerData, GetCareerListQueries, getAllCareer, getCareerBySlug, postCareer, upadteCareer, updateStatusCareer, updateStatusCareerNew, getApplicantsByCareer, respondToApplicant } from "./action";
 import { CareergDataForm } from "./type";
 import { clientStorage } from "utils/storage";
 import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
+import { ApplicantData } from "./action";
 
 export const useCareer = () => {
   const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ export const useCareer = () => {
     careersError: error,
     careersFilters: filters,
     career: item,
+    careerApplicants: applicants
   } = useAppSelector((state) => state.career, shallowEqual);
 
   const { page, size, totalItems, total_page } = useAppSelector(
@@ -53,9 +55,11 @@ export const useCareer = () => {
     }, [dispatch]
   )
 
-  const onGetCareerBySlug = async (slug: string) => {
-    return await dispatch(getCareerBySlug(slug)).unwrap();
-  };
+  const onGetCareerBySlug = useCallback(
+    async (slug: string) => {
+      return await dispatch(getCareerBySlug(slug)).unwrap();
+    },　[dispatch]
+  )
 
   const onUpdateCareerStatus =  useCallback(
     async(careerList: CareerData[],opened:boolean)=>{
@@ -67,6 +71,34 @@ export const useCareer = () => {
         }
     },[dispatch]
   )
+
+  const onUpdateCareerStatusNew =  useCallback(
+    async(careerList: CareerData[],opened:string)=>{
+        try {
+            const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
+            return await dispatch(updateStatusCareerNew({ careerList: careerList,opened:opened, Token: Token })).unwrap();
+        } catch (error) {
+           throw error; 
+        }
+    },[dispatch]
+  )
+
+  const onGetCareerApplicants = useCallback(
+    async (slug: string) => {
+      return await dispatch(getApplicantsByCareer(slug)).unwrap();
+    },　[dispatch]
+  )
+
+  const onRespondToApplicant = useCallback(
+    async (data: ApplicantData, Token: string | undefined |null) => {
+      try {
+        return await dispatch(respondToApplicant({ data, Token })).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    }, [dispatch]
+  )
+
   return {
     onGetCareer,
     onCreateNewCareer,
@@ -83,6 +115,10 @@ export const useCareer = () => {
     isIdle,
     isFetching,
     filters,
-    onUpdateCareerStatus
+    applicants,
+    onUpdateCareerStatus,
+    onUpdateCareerStatusNew,
+    onGetCareerApplicants,
+    onRespondToApplicant
   };
 };
