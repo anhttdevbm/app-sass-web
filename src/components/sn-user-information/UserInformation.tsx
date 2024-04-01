@@ -2,12 +2,11 @@
 import { memo, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 
-import { Button, IconButton, Input, Text } from "components/shared";
+import { NewButton as Button, Input, Text } from "components/shared";
 import {
   AN_ERROR_TRY_RELOAD_PAGE,
   NS_ACCOUNT,
@@ -16,6 +15,7 @@ import {
 import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
 import NewCopyIcon from "icons/NewCopyIcon";
+import OutlineEditIcon from "icons/OutlineEditIcon";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
@@ -137,13 +137,14 @@ const UserInformation = () => {
               disabled
               value={user?.["username"]}
               endNode={
-                <IconButton
+                <Button
                   sx={{color: 'blue.500', bgcolor: 'grey.50'}}
                   aria-label="copy"
                   onClick={() => { navigator.clipboard.writeText(user?.["username"]) }}
+                  startIcon={<NewCopyIcon />}
                 >
-                  <NewCopyIcon />
-                </IconButton>
+                  Copy
+                </Button>
               }
               tooltip={
                 isEdit
@@ -202,43 +203,46 @@ const UserInformation = () => {
             />
           </Grid>
 
-          <Grid container item xs={12} justifyContent="center" >
-            {!isEdit && (
-              <Button onClick={onEditTrue} variant="secondary" size="small">
-                {accountT("accountInformation.changeInformation")}
-              </Button>
-            )}
-
-            {isEdit && (
-              <Stack
-                direction={{ xs: "column-reverse", sm: "row" }}
-                alignItems="center"
-                spacing={{ xs: 2, sm: 3 }}
-                width="100%"
-              >
+          <Grid container item xs={12} justifyContent="center" mt={6}>
+            { !isEdit
+              ?
                 <Button
-                  type="button"
-                  onClick={onCancel}
-                  sx={sxConfig.button}
-                  variant="primaryOutlined"
-                  size={isSmSmaller ? "medium" : "small"}
-                  fullWidth
+                  onClick={onEditTrue}
+                  variant="secondaryOutlined"
+                  startIcon={<OutlineEditIcon />}
+                  sx={{
+                    ...sxConfig.button,
+                    "&.MuiButton-sizeMedium" :{
+                      px: "86px",
+                      py: "12px",
+                    },
+                  }}
                 >
-                  {commonT("form.cancel")}
+                  {accountT("accountInformation.changeInformation")}
                 </Button>
-                <Button
-                  disabled={disabled}
-                  pending={formik.isSubmitting}
-                  sx={{ ...sxConfig.button }}
-                  variant="primary"
-                  size={isSmSmaller ? "medium" : "small"}
-                  type="submit"
-                  fullWidth
-                >
-                  {commonT("form.confirm")}
-                </Button>
-              </Stack>
-            )}
+              : <></>
+            }
+            { isEdit
+              ?
+                <>
+                  <Button
+                    disabled={disabled}
+                    pending={formik.isSubmitting}
+                    sx={{
+                      ...sxConfig.button,
+                      "&.MuiButton-sizeMedium" :{
+                        px: "86px",
+                        py: "12px",
+                      },
+                    }}
+                    variant="primary"
+                    type="submit"
+                  >
+                    {commonT("form.save")}
+                  </Button>
+                </>
+              : <></>
+            }
           </Grid>
         </Grid>
       </Box>
