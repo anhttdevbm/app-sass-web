@@ -28,6 +28,7 @@ export type BudgetingDictionary = {
   };
   tab: {
     feed: string;
+    client: string;
     services: string;
     time: string;
     expenses: string;

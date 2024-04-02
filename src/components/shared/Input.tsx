@@ -193,6 +193,14 @@ const getDefaultSx = (
       [`&.${inputBaseClasses.focused}`]: {
         color: "grey.300",
       },
+      "& .MuiFormLabel-asterisk.MuiInputLabel-asterisk": {
+        color: "transparent",
+        marginLeft: "-6px",
+        "&::after": {
+          content: '"(*)"',
+          color: "#F64E60",
+        }
+      },
       ...titleSx,
     },
     [`& .${inputBaseClasses.root}`]: {

@@ -8,6 +8,7 @@ import { TabContext, TabPanel, TabList } from "@mui/lab";
 import TabInvoice from "../Invoice";
 import TabFeed from "../Feed";
 import TabPayment from "../Payment";
+import TabClient from "../Client";
 import {
   Bill,
   Billing,
@@ -87,6 +88,10 @@ const TabInfo = (props: TabListProps) => {
     {
       label: billingT("detail.form.feed.title.Feed"),
       value: "Feed",
+    },
+    {
+      label: billingT("detail.form.client.title.Client"),
+      value: "Client",
     },
     {
       label: billingT("detail.form.payment.title.payments"),
@@ -377,6 +382,7 @@ const TabItem = (props: TabItemProps) => {
         <TabFeed title={label} bill={item ?? {}} user={user} />
       )}
       {value === "Payment" && <TabPayment title={label} />}
+      {value === "Client" && <TabClient />}
     </TabPanel>
   );
 };

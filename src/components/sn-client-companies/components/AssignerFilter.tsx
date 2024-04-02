@@ -47,6 +47,6 @@ const AssignerFilter = (
       {...props}
     />
   );
-};
+``};
 
 export default memo(AssignerFilter);

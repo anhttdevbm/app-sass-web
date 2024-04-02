@@ -22,6 +22,7 @@ import useToggle from "hooks/useToggle";
 import Text from "./Text";
 import { SearchProps } from "components/Filters/Search";
 import Image from "next/image";
+import * as React from "react";
 
 export type SelectProps = InputProps & {
   options: Option[];
@@ -42,6 +43,8 @@ export type SelectProps = InputProps & {
   onOpen?: Function;
   isShowSearch?: boolean;
   emitSearchWhenEnter?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  renderValue?: (value: any) => React.ReactNode;
 };
 
 const ID_PLACEHOLDER = uuid();
@@ -65,6 +68,7 @@ const Select = (props: SelectProps) => {
     hasIcon,
     onClose: handleClose,
     emitSearchWhenEnter,
+    renderValue,
     ...rest
   } = props;
 
@@ -133,6 +137,7 @@ const Select = (props: SelectProps) => {
           IconComponent: () => (
             <ChevronIcon onClick={!props.disabled ? onOpen : undefined} />
           ),
+          renderValue,
           open: isShow,
           onOpen: onOpenSelect,
           onClose: onHandleClose,

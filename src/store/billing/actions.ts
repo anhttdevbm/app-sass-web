@@ -639,3 +639,24 @@ export const updateTagBill = createAsyncThunk(
     }
   },
 );
+
+export const updateClientBill = createAsyncThunk(
+  "Billing/updateClientBill",
+  async ({ id, clientId }: { id?: string; clientId?: string }) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.CHANGE_BILL, { id }),
+        { client: clientId },
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      return response.data;
+
+      // throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);

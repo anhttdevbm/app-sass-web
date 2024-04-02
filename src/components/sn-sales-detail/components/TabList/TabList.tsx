@@ -20,6 +20,7 @@ import { Controller, useFormContext, useWatch } from "react-hook-form";
 export enum SALES_DETAIL_TAB {
   FEED = "feed",
   SERVICE = "service",
+  CLIENT = "client",
 }
 const TABS = [
   {
@@ -29,6 +30,10 @@ const TABS = [
   {
     label: "detail.tab.service",
     value: SALES_DETAIL_TAB.SERVICE,
+  },
+  {
+    label: "detail.tab.client",
+    value: SALES_DETAIL_TAB.CLIENT,
   },
 ];
 
