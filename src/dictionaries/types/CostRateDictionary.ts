@@ -19,6 +19,13 @@ export type CostRateDictionary = {
       endDate: string;
       holidayCalendar: string;
       note: string;
+      mon: string;
+      tue: string;
+      wed: string;
+      thu: string;
+      fri: string;
+      sat: string;
+      sun: string;
     };
     notification: {
       addSuccess: string;

@@ -1,5 +1,8 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
+import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
+import MuiInput, { InputProps as MuiInputProps } from "@mui/material/Input";
+import MuiInputLabel from "@mui/material/InputLabel";
 import Stack from "@mui/material/Stack";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
@@ -13,21 +16,114 @@ import {
   NewInput as Input,
   NewSelect as Select,
   NewDatePicker as DatePicker,
+  Text,
   } from "components/shared";
 import { useSnackbar } from "store/app/selectors";
 import { NewCostRate } from "store/costRate/actions";
 import { useCostRate } from "store/costRate/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 
+const WorkingHoursBlock = memo(function WorkingHoursBlock({
+  title,
+  fullWidth,
+  name,
+  onChange,
+  onBlur,
+  value,
+  error,
+}: MuiInputProps) {
+  return (
+    <FormControl
+      sx={{
+        display: "flex",
+        py: "7px",
+        flexDirection: "column",
+        flex: "0 0 129px",
+        width: "129px",
+        height: "146px",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderRadius: "12px",
+        background: value === 0 ? "linear-gradient(45deg, hsla(0, 0%, 91%, 0.41), hsla(180, 19%, 87%, 1))" : "#D9F0FD",
+        "&:not(:first-child)": {
+          ml: "14px",
+        },
+      }}
+    >
+      <MuiInputLabel sx={{display: "none"}}>{title}</MuiInputLabel>
+      <Text
+        sx={{
+          fontSize: "20px",
+          fontWeight: 600,
+          color: "#4D4D4D",
+          textAlign: "center",
+        }}
+      >
+        {title}
+      </Text>
+      <MuiInput
+        fullWidth={fullWidth}
+        name={name}
+        onChange={onChange}
+        onBlur={onBlur}
+        value={value}
+        error={error}
+        sx={{
+          backgroundColor: "transparent",
+          fontSize: "39px",
+          fontWeight: 600,
+          color: "#0575E6",
+          width: "1ch",
+          textAlign: "center",
+          border: "none",
+          "&::before, &::after": {
+            display: "none",
+          },
+        }}
+      />
+      <Text
+        sx={{
+          fontSize: "20px",
+          fontWeight: 600,
+          color: "#4D4D4D",
+          textAlign: "center",
+        }}
+      >
+        Hour (s)
+      </Text>
+    </FormControl>
+  );
+});
+
 const INITIAL_VALUES = {
   type: "",
   cost_per_month: 0,
   currency: "",
-  working_hours: [0, 0, 0, 0, 0, 0, 0],
   total_hours: 0,
   holiday_calendar: "",
   note: "",
+  working_hours: {
+    mon: 8,
+    tue: 8,
+    wed: 8,
+    thu: 8,
+    fri: 8,
+    sat: 0,
+    sun: 0,
+  },
 }
+
+type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
+  working_hours: {
+    mon: number;
+    tue: number;
+    wed: number;
+    thu: number;
+    fri: number;
+    sat: number;
+    sun: number;
+  };
+};
 
 const CostRateForm = ({ onCancel, onConfirm }) => {
   const commonT = useTranslations(NS_COMMON);
@@ -35,9 +131,21 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
   const { onAddSnackbar } = useSnackbar();
   const { handleAddNewCostRate } = useCostRate();
 
-  const onSubmit = async (values: NewCostRate) => {
+  const onSubmit = async (values: NewCostRateForm) => {
     try {
-      await handleAddNewCostRate(values);
+      const data = {
+        ...values,
+        working_hours: [
+          values.working_hours.mon,
+          values.working_hours.tue,
+          values.working_hours.wed,
+          values.working_hours.thu,
+          values.working_hours.fri,
+          values.working_hours.sat,
+          values.working_hours.sun,
+        ],
+      } as NewCostRate;
+      await handleAddNewCostRate(data);
       onAddSnackbar(
         costRateT("empty.notification.addSuccess"),
         "success",
@@ -52,7 +160,7 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
       ...INITIAL_VALUES
     }),
     [],
-  ) as NewCostRate;
+  ) as NewCostRateForm;
 
   const formik = useFormik({
     initialValues,
@@ -63,7 +171,7 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
       (
-        out: FormikErrors<NewCostRate>,
+        out: FormikErrors<NewCostRateForm>,
         [key, error],
       ) => {
         if (formik.touched[key]) {
@@ -149,6 +257,71 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
         </Grid>
 
         <Grid item xs={12}>
+          <Stack direction="row" sx={{overflowX: "scroll", overflowY: "visible"}}>
+            <WorkingHoursBlock
+              title={costRateT("empty.form.mon")}
+              fullWidth
+              name="working_hours.mon"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.working_hours?.mon}
+              error={!!(touchedErrors?.working_hours?.mon)}
+            />
+            <WorkingHoursBlock
+              title={costRateT("empty.form.tue")}
+              fullWidth
+              name="working_hours.tue"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.working_hours?.tue}
+              error={!!(touchedErrors?.working_hours?.tue)}
+            />
+            <WorkingHoursBlock
+              title={costRateT("empty.form.wed")}
+              fullWidth
+              name="working_hours.wed"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.working_hours?.wed}
+              error={!!(touchedErrors?.working_hours?.wed)}
+            />
+            <WorkingHoursBlock
+              title={costRateT("empty.form.thu")}
+              fullWidth
+              name="working_hours.thu"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.working_hours?.thu}
+              error={!!(touchedErrors?.working_hours?.thu)}
+            />
+            <WorkingHoursBlock
+              title={costRateT("empty.form.fri")}
+              fullWidth
+              name="working_hours.fri"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.working_hours?.fri}
+              error={!!(touchedErrors?.working_hours?.fri)}
+            />
+            <WorkingHoursBlock
+              title={costRateT("empty.form.sat")}
+              fullWidth
+              name="working_hours.sat"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.working_hours?.sat}
+              error={!!(touchedErrors?.working_hours?.sat)}
+            />
+            <WorkingHoursBlock
+              title={costRateT("empty.form.sun")}
+              fullWidth
+              name="working_hours.sun"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.working_hours?.sun}
+              error={!!(touchedErrors?.working_hours?.sun)}
+            />
+          </Stack>
         </Grid>
 
         <Grid item xs={12} sm={4}>

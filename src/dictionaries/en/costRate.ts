@@ -21,6 +21,13 @@ export const CostRateLang: CostRateDictionary = {
       endDate: "End Date",
       holidayCalendar: "Holiday Calendar",
       note: "Note",
+      mon: "Mon",
+      tue: "Tue",
+      wed: "Wed",
+      thu: "Thu",
+      fri: "Fri",
+      sat: "Sat",
+      sun: "Sun",
     },
     notification: {
       addSuccess: "Add Cost Rate successfully.",

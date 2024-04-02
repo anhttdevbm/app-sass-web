@@ -134,7 +134,14 @@ const CoreInput = forwardRef(
 
     return (
       <TextField
-        sx={{ ...defaultSx, ...sx }}
+        sx={{
+          ...defaultSx,
+          [`& .${inputBaseClasses.root}`]: {
+            ...defaultSx[`& .${inputBaseClasses.root}`],
+            mt: title ? "38px" : undefined,
+          },
+          ...sx,
+          }}
         error={hasError}
         color={color}
         ref={ref}
@@ -201,7 +208,6 @@ const getDefaultSx = (
       boxSizing: "border-box",
       borderRadius: 999,
       color: "text.primary",
-      mt: "38px",
 
       pt: "12px",
       pb: "12px",
