@@ -68,6 +68,7 @@ export const Endpoint = {
   CLIENT_COMPANIES: "/clients",
 
   COST_RATE: "/cost-rate",
+  COST_RATE_NEW: "/cost-rate/new",
   COST_HISTORY: "/cost-history",
 
   BUDGET_ALL: "/budgets/all",

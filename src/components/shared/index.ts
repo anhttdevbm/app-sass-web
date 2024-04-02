@@ -6,8 +6,10 @@ import Text, { TextProps } from "./Text";
 import Input, { InputProps } from "./Input";
 import NewInput, { InputProps as NewInputProps } from "./NewInput";
 import Select, { SelectProps } from "./Select";
+import NewSelect, { SelectProps as NewSelectProps } from "./NewSelect";
 import InputNumber from "./InputNumber";
 import DatePicker, { DatePickerProps } from "./DatePicker";
+import NewDatePicker, { DatePickerProps as NewDatePickerProps } from "./NewDatePicker";
 import Switch, { SwitchProps } from "./Switch";
 import Checkbox from "./Checkbox";
 import Upload from "./Upload";
@@ -24,8 +26,10 @@ export {
   Input,
   NewInput,
   Select,
+  NewSelect,
   InputNumber,
   DatePicker,
+  NewDatePicker,
   Switch,
   Checkbox,
   Upload,
@@ -39,7 +43,9 @@ export type {
   InputProps,
   NewInputProps,
   SelectProps,
+  NewSelectProps,
   SwitchProps,
   DatePickerProps,
+  NewDatePickerProps,
   IconButtonProps,
 };
