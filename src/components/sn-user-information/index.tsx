@@ -61,10 +61,6 @@ const UserInformationPage = () => {
         <Box
           sx={{
             height: "100%",
-            marginBottom: {
-              xs: "48px",
-              sm: "initial",
-            },
             display: "flex",
             flexDirection: "column",
           }}
