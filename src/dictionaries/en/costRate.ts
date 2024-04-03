@@ -11,5 +11,27 @@ export const CostRateLang: CostRateDictionary = {
   empty: {
     title: "doesn't have any defined cost rate",
     subtitle: "Add cost rate to track employee salaries",
+    addCostRate: "Add Cost Rate",
+    form: {
+      type: "Cost Rate Type",
+      costPerMonth: "Cost Per Month",
+      currency: "Currency",
+      workingHours: "Working Hours",
+      startDate: "Start Date",
+      endDate: "End Date",
+      holidayCalendar: "Holiday Calendar",
+      note: "Note",
+      mon: "Mon",
+      tue: "Tue",
+      wed: "Wed",
+      thu: "Thu",
+      fri: "Fri",
+      sat: "Sat",
+      sun: "Sun",
+      overhead: "Over Head",
+    },
+    notification: {
+      addSuccess: "Add Cost Rate successfully.",
+    },
   },
 };

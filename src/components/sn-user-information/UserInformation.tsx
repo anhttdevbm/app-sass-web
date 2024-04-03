@@ -217,7 +217,7 @@ const UserInformation = () => {
             />
           </Grid>
 
-          <Grid container item xs={12} justifyContent="center" mt={{xs: 5, sm: 6}}>
+          <Grid container item xs={12} justifyContent="center" my={{xs: 5, sm: 6}}>
             { !isEdit
               ?
                 <Button

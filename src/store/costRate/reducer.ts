@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { getAllCostRate } from "./actions";
+import {
+  getAllCostRate,
+  addNewCostRate,
+} from "./actions";
 
 export type CostRate = {
   id: string;
@@ -38,6 +41,13 @@ const costRateSlice = createSlice({
         (state, action: PayloadAction<CostRate[]>) => {
           state.currentRate = action.payload[0];
           state.remainingRates = action.payload;
+        }
+      )
+      .addCase(
+        addNewCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          state.currentRate = action.payload;
+          state.remainingRates.unshift(action.payload);
         }
       )
 })
