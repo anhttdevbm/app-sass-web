@@ -6,7 +6,7 @@ import MuiInput, { InputProps as MuiInputProps } from "@mui/material/Input";
 import MuiInputLabel from "@mui/material/InputLabel";
 import Stack from "@mui/material/Stack";
 import Switch from "@mui/material/Switch";
-import { FormikErrors, useFormik } from "formik";
+import { FormikProps, FormikErrors } from "formik";
 import { useTranslations } from "next-intl";
 
 import {
@@ -20,10 +20,7 @@ import {
   NewDatePicker as DatePicker,
   Text,
   } from "components/shared";
-import { useSnackbar } from "store/app/selectors";
 import { NewCostRate } from "store/costRate/actions";
-import { useCostRate } from "store/costRate/selectors";
-import { getMessageErrorByAPI } from "utils/index";
 
 const WorkingHoursBlock = memo(function WorkingHoursBlock({
   title,
@@ -97,26 +94,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
   );
 });
 
-const INITIAL_VALUES = {
-  type: "",
-  cost_per_month: 0,
-  currency: "",
-  total_hours: 0,
-  holiday_calendar: "",
-  note: "",
-  working_hours: {
-    mon: 8,
-    tue: 8,
-    wed: 8,
-    thu: 8,
-    fri: 8,
-    sat: 0,
-    sun: 0,
-  },
-  overhead: true,
-}
-
-type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
+export type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
   working_hours: {
     mon: number;
     tue: number;
@@ -129,48 +107,14 @@ type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
   overhead: boolean;
 };
 
-const CostRateForm = ({ onCancel, onConfirm }) => {
+type CostRateFormType = {
+  formik: FormikProps<NewCostRateForm>;
+  onCancel: () => void;
+}
+
+const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
-  const { onAddSnackbar } = useSnackbar();
-  const { handleAddNewCostRate } = useCostRate();
-
-  const onSubmit = async (values: NewCostRateForm) => {
-    try {
-      const data = {
-        ...values,
-        working_hours: [
-          values.working_hours.mon,
-          values.working_hours.tue,
-          values.working_hours.wed,
-          values.working_hours.thu,
-          values.working_hours.fri,
-          values.working_hours.sat,
-          values.working_hours.sun,
-        ],
-      } as NewCostRate;
-      await handleAddNewCostRate(data);
-      onAddSnackbar(
-        costRateT("empty.notification.addSuccess"),
-        "success",
-      );
-    } catch (error) {
-      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-    }
-  };
-
-  const initialValues = useMemo(
-    () => ({
-      ...INITIAL_VALUES
-    }),
-    [],
-  ) as NewCostRateForm;
-
-  const formik = useFormik({
-    initialValues,
-    enableReinitialize: true,
-    onSubmit,
-  });
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
@@ -191,6 +135,7 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
     () => !!Object.values(touchedErrors)?.length || formik.isSubmitting,
     [touchedErrors, formik.isSubmitting],
   );
+
   const handleChangeDate = (name: string, newDate?: Date) => {
     formik.setFieldValue(name, newDate ? newDate : null);
     formik.setFieldTouched(name, true);

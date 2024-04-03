@@ -1,25 +1,79 @@
 "use client";
-import { useState } from "react";
+import { useMemo } from "react";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { Formik } from "formik";
 
 import CostRateEmptyImage from "public/images/img-cost-rate-empty.png";
-import { NS_COST_RATE } from "constant/index";
+import { NS_COMMON, NS_COST_RATE } from "constant/index";
 import { NewButton as Button, Text } from "components/shared";
-import CostRateForm from "./CostRateForm";
+import CostRateForm, { NewCostRateForm } from "./CostRateForm";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import AddCircleIcon from "icons/AddCircleIcon";
 import useBreakpoint from "hooks/useBreakpoint";
-import { useAuth } from "store/app/selectors";
+import useToggle from "hooks/useToggle";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { NewCostRate } from "store/costRate/actions";
+import { useCostRate } from "store/costRate/selectors";
 import { Permission } from "constant/enums";
+import { getMessageErrorByAPI } from "utils/index";
 
 const CostRateEmpty = () => {
   const { user } = useAuth();
+  const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
-  const [ isModalOpen, setModalOpen ] = useState(false);
+  const { onAddSnackbar } = useSnackbar();
+  const [ isModalOpen, openModal, closeModal ] = useToggle(false);
   const { isSmSmaller } = useBreakpoint();
+  const { handleAddNewCostRate } = useCostRate();
+
+  const onSubmit = async (values: NewCostRateForm) => {
+    try {
+      const data = {
+        ...values,
+        working_hours: [
+          values.working_hours.mon,
+          values.working_hours.tue,
+          values.working_hours.wed,
+          values.working_hours.thu,
+          values.working_hours.fri,
+          values.working_hours.sat,
+          values.working_hours.sun,
+        ],
+      } as NewCostRate;
+      await handleAddNewCostRate(data);
+      onAddSnackbar(
+        costRateT("empty.notification.addSuccess"),
+        "success",
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
+
+  const initialValues = useMemo(
+    () => ({
+      type: "",
+      cost_per_month: 0,
+      currency: "",
+      total_hours: 0,
+      holiday_calendar: "",
+      note: "",
+      working_hours: {
+        mon: 8,
+        tue: 8,
+        wed: 8,
+        thu: 8,
+        fri: 8,
+        sat: 0,
+        sun: 0,
+      },
+      overhead: true,
+    }),
+    [],
+  ) as NewCostRateForm;
 
   return (
     <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1}>
@@ -60,7 +114,7 @@ const CostRateEmpty = () => {
                 },
               }}
               startIcon={<AddCircleIcon />}
-              onClick={() => { setModalOpen(true) }}
+              onClick={() => { openModal() }}
             >
               {costRateT("empty.addCostRate")}
             </Button>
@@ -68,13 +122,21 @@ const CostRateEmpty = () => {
             <DefaultPopupLayout
               open={isModalOpen}
               title="Add New Cost Rate"
-              onClose={() => { setModalOpen(false) }}
+              onClose={() => { closeModal() }}
             >
               <DialogContent>
-                <CostRateForm
-                  onConfirm={() => undefined}
-                  onCancel={() => { setModalOpen(false) }}
-                />
+                <Formik
+                  initialValues={initialValues}
+                  onSubmit={onSubmit}
+                >
+                  {
+                    (props) =>
+                      <CostRateForm
+                        formik={props}
+                        onCancel={() => { closeModal() }}
+                      />
+                  }
+                </Formik>
               </DialogContent>
             </DefaultPopupLayout>
           </>
