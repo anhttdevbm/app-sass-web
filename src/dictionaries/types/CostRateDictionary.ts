@@ -26,6 +26,7 @@ export type CostRateDictionary = {
       fri: string;
       sat: string;
       sun: string;
+      overhead: string;
     };
     notification: {
       addSuccess: string;

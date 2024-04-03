@@ -1,9 +1,11 @@
 import { memo, useMemo } from "react";
 import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import MuiInput, { InputProps as MuiInputProps } from "@mui/material/Input";
 import MuiInputLabel from "@mui/material/InputLabel";
 import Stack from "@mui/material/Stack";
+import Switch from "@mui/material/Switch";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 
@@ -111,6 +113,7 @@ const INITIAL_VALUES = {
     sat: 0,
     sun: 0,
   },
+  overhead: true,
 }
 
 type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
@@ -123,6 +126,7 @@ type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
     sat: number;
     sun: number;
   };
+  overhead: boolean;
 };
 
 const CostRateForm = ({ onCancel, onConfirm }) => {
@@ -382,12 +386,76 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
             error={commonT(touchedErrors?.note, {
               name: costRateT("empty.form.note"),
             })}
+            sx={{mb: 6}}
           />
         </Grid>
 
-        <Grid item xs={12} sm={2}>
+        <Grid item xs={12} sm={4}>
+          <FormControlLabel
+            label={costRateT("empty.form.overhead")}
+            labelPlacement="start"
+            sx={{
+              "& .MuiFormControlLabel-label": {
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "#4D4D4D",
+              },
+            }}
+            control={
+              <Switch
+                size="small"
+                name="overhead"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                checked={formik.values?.overhead}
+                value={formik.values?.overhead}
+                sx={(theme) => ({
+                  ml: "16px",
+                  width: "37px",
+                  height: "20px",
+                  padding: 0,
+                  '& .MuiSwitch-thumb': {
+                    boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "999px",
+                    transition: theme.transitions.create(['width'], {
+                      duration: 150,
+                    }),
+                  },
+                  "& .MuiSwitch-switchBase": {
+                    "&.Mui-checked": {
+                      transform: "translateX(16px)",
+                      color: '#fff',
+                      "& + .MuiSwitch-track": {
+                        opacity: 1,
+                        backgroundColor: "#0575E6",
+                      },
+                    },
+                  },
+                  "& .MuiSwitch-track": {
+                    borderRadius: "999px",
+                    opacity: 1,
+                    backgroundColor: "grey.300",
+                  },
+                  "& .MuiTouchRipple-root": {
+                    display: "none",
+                  },
+                  "&:active": {
+                    "& .MuiSwitch-thumb": {
+                      width: "15px",
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      transform: 'translateX(13px)',
+                    },
+                  },
+                })}
+              />
+            }
+          />
         </Grid>
-        <Grid item xs={12} sm={10}>
+
+        <Grid item xs={12} sm={8}>
           <Stack
             direction={{
               xs: "column",

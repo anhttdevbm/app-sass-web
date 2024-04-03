@@ -28,6 +28,7 @@ export const CostRateLang: CostRateDictionary = {
       fri: "Fri",
       sat: "Sat",
       sun: "Sun",
+      overhead: "Over Head",
     },
     notification: {
       addSuccess: "Add Cost Rate successfully.",
