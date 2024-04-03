@@ -94,7 +94,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
   );
 });
 
-export type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
+export type NewCostRateForm = Omit<NewCostRate, "total_hours" | "working_hours"> & {
   working_hours: {
     mon: number;
     tue: number;

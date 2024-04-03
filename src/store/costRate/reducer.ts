@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   getAllCostRate,
   addNewCostRate,
+  updateCostRate,
 } from "./actions";
 
 export type CostRate = {
@@ -22,12 +23,11 @@ export type CostRate = {
 }
 
 export type CostRateState = {
-  currentRate?: CostRate;
-  remainingRates: CostRate[];
+  rates: CostRate[];
 }
 
 const initialState: CostRateState = {
-  remainingRates: [],
+  rates: [],
 }
 
 const costRateSlice = createSlice({
@@ -39,15 +39,19 @@ const costRateSlice = createSlice({
       .addCase(
         getAllCostRate.fulfilled,
         (state, action: PayloadAction<CostRate[]>) => {
-          state.currentRate = action.payload[0];
-          state.remainingRates = action.payload;
+          state.rates = action.payload;
         }
       )
       .addCase(
         addNewCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          state.currentRate = action.payload;
-          state.remainingRates.unshift(action.payload);
+          state.rates.unshift(action.payload);
+        }
+      )
+      .addCase(
+        updateCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          state.rates[state.rates.findIndex(rate => rate.id === action.payload.id)] = { ...action.payload }
         }
       )
 })

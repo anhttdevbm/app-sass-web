@@ -30,6 +30,7 @@ export type CostRateDictionary = {
     };
     notification: {
       addSuccess: string;
+      updateSuccess: string;
     };
   }
 };

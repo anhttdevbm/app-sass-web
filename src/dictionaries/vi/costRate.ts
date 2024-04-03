@@ -32,6 +32,7 @@ export const CostRateLang: CostRateDictionary = {
     },
     notification: {
       addSuccess: "Add Cost Rate successfully.",
+      updateSuccess: "Update Cost Rate successfully.",
     },
   },
 };

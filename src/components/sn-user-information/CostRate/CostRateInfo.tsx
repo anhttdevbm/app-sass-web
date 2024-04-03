@@ -1,5 +1,6 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
+import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
@@ -12,11 +13,21 @@ import { styled } from "@mui/material/styles";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Filler, Title } from 'chart.js';
 import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { Formik } from "formik";
 
+import { Permission } from "constant/enums";
+import { NS_COMMON, NS_COST_RATE } from "constant/index";
 import { Text } from "components/shared";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import CalendarIcon from "icons/CalendarIcon";
-import { useCostRate } from "store/costRate/selectors";
 import ProcessRing from "../components/ProcessRing";
+import useToggle from "hooks/useToggle";
+import { UpdateCostRate } from "store/costRate/actions";
+import { useCostRate } from "store/costRate/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import CostRateForm, { NewCostRateForm } from "./CostRateForm";
+import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
 
 const CurrentRateBlock = ({title, content, icon}: {
   title: string;
@@ -49,7 +60,65 @@ const StyledBodyCell = styled(TableCell)({
 })
 
 const CostRateInfo = () => {
-  const { currentRate, remainingRates } = useCostRate();
+  const { user } = useAuth();
+  const commonT = useTranslations(NS_COMMON);
+  const costRateT = useTranslations(NS_COST_RATE);
+  const { onAddSnackbar } = useSnackbar();
+  const [ isModalOpen, openModal, closeModal ] = useToggle(false);
+  const { currentRate, remainingRates, handleUpdateCostRate } = useCostRate();
+  // const [ editCostRateId, setEditCostRateId ] = useState("");
+
+  const onSubmit = async (values: NewCostRateForm) => {
+    try {
+      const data = {
+        ...values,
+        id: currentRate.id,
+        working_hours: [
+          values.working_hours.mon,
+          values.working_hours.tue,
+          values.working_hours.wed,
+          values.working_hours.thu,
+          values.working_hours.fri,
+          values.working_hours.sat,
+          values.working_hours.sun,
+        ],
+      } as UpdateCostRate;
+      await handleUpdateCostRate(data);
+      onAddSnackbar(
+        costRateT("empty.notification.updateSuccess"),
+        "success",
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
+
+  const initialValues = useMemo(
+    () => ({
+      ...getDataFromKeys(currentRate, [
+        "id",
+        "type",
+        "cost_per_month",
+        "currency",
+        "total_hours",
+        "start_date",
+        "end_date",
+        "holiday_calendar",
+        "note",
+      ]),
+      working_hours: {
+        mon: currentRate.working_hours[0],
+        tue: currentRate.working_hours[1],
+        wed: currentRate.working_hours[2],
+        thu: currentRate.working_hours[3],
+        fri: currentRate.working_hours[4],
+        sat: currentRate.working_hours[5],
+        sun: currentRate.working_hours[6],
+      },
+      overhead: true,
+    }),
+    [currentRate],
+  ) as NewCostRateForm;
 
   const labels = [
     "Mar 18",
@@ -138,7 +207,7 @@ const CostRateInfo = () => {
         <Grid item container xs={12} sm={4} justifyContent="end">
           <Stack direction="column" alignItems="center">
             <ProcessRing size={256} percentage={75}>
-              <Text fontSize={33}>22</Text>
+              <Text fontSize={33} onClick={() => { openModal() }}>22</Text>
             </ProcessRing>
             <Text fontSize={20} fontWeight={600} mt={3}>Working Days</Text>
           </Stack>
@@ -274,6 +343,33 @@ const CostRateInfo = () => {
           </Table>
         </TableContainer>
       </Box>
+
+      {
+        user?.roles.includes(Permission.AM)
+          ? <>
+            <DefaultPopupLayout
+              open={isModalOpen}
+              title="Edit Cost Rate"
+              onClose={() => { closeModal() }}
+            >
+              <DialogContent>
+                <Formik
+                  initialValues={initialValues}
+                  onSubmit={onSubmit}
+                >
+                  {
+                    (props) =>
+                      <CostRateForm
+                        formik={props}
+                        onCancel={() => { closeModal() }}
+                      />
+                  }
+                </Formik>
+              </DialogContent>
+            </DefaultPopupLayout>
+          </>
+          : <></>
+      }
     </Box>
   )
 }
