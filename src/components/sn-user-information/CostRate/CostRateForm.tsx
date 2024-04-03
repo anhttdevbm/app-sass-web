@@ -239,6 +239,7 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
             error={commonT(touchedErrors?.cost_per_month, {
               name: costRateT("empty.form.costPerMonth"),
             })}
+            endNode={<Text sx={{mr: 1}}>$</Text>}
           />
         </Grid>
 
@@ -467,7 +468,7 @@ const CostRateForm = ({ onCancel, onConfirm }) => {
             spacing={3}
           >
             <Button variant="primaryOutlined" onClick={() => onCancel()}>Cancel</Button>
-            <Button variant="primary" type="submit">Confirm</Button>
+            <Button variant="primary" type="submit" disabled={isSubmitDisabled}>Confirm</Button>
           </Stack>
         </Grid>
       </Grid>

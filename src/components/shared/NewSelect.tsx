@@ -7,7 +7,7 @@ import {
   inputBaseClasses,
 } from "@mui/material";
 import { Option } from "constant/types";
-import ChevronIcon from "icons/ChevronIcon";
+import CircleChevronDownIcon from "icons/CircleChevronDownIcon";
 import { Search } from "components/Filters";
 import { debounce, uuid } from "utils/index";
 import Avatar from "components/Avatar";
@@ -131,7 +131,7 @@ const NewSelect = (props: SelectProps) => {
         select
         SelectProps={{
           IconComponent: () => (
-            <ChevronIcon onClick={!props.disabled ? onOpen : undefined} />
+            <CircleChevronDownIcon onClick={!props.disabled ? onOpen : undefined} sx={{mr: 2}}/>
           ),
           renderValue,
           open: isShow,

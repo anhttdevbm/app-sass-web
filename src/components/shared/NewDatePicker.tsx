@@ -4,7 +4,7 @@ import LibDatePicker, {
   registerLocale,
 } from "react-datepicker";
 import Input, { InputProps } from "./NewInput";
-import CalendarIcon from "icons/CalendarIcon";
+import CalendarIcon from "icons/NewCalendarIcon";
 import { vi, enUS } from "date-fns/locale";
 import { useLocale } from "next-intl";
 
@@ -103,7 +103,14 @@ const DatePickerInput = forwardRef((props: InputProps, ref) => {
       endNode={
         <CalendarIcon
           onClick={onClickEndNode}
-          sx={{ color: "grey.400", fontSize: 24 }}
+          sx={{
+            mr: 1,
+            color: "#4D4D4D",
+            fontSize: 24,
+            "&:hover": {
+              cursor: "pointer",
+            },
+          }}
         />
       }
     />
