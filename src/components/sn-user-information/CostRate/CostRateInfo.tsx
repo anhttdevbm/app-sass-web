@@ -1,5 +1,5 @@
 "use client";
-import { ReactElement, useMemo, useState } from "react";
+import { ReactElement, useCallback, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
@@ -17,10 +17,11 @@ import CalendarIcon from "icons/CalendarIcon";
 import ProcessRing from "../components/ProcessRing";
 import useToggle from "hooks/useToggle";
 import { UpdateCostRate } from "store/costRate/actions";
+import { CostRate } from "store/costRate/reducer";
 import { useCostRate } from "store/costRate/selectors";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
-import CostRateForm, { NewCostRateForm } from "./CostRateForm";
+import CostRateForm, { EditCostRateForm } from "./CostRateForm";
 import CostRateTable from "../components/CostRateTable";
 
 const CurrentRateBlock = ({title, content, icon}: {
@@ -54,16 +55,41 @@ const CostRateInfo = () => {
   const costRateT = useTranslations(NS_COST_RATE);
   const { onAddSnackbar } = useSnackbar();
   const [ isModalOpen, openModal, closeModal ] = useToggle(false);
-  const { currentRate, remainingRates, handleUpdateCostRate } = useCostRate();
-  // const [ editCostRateId, setEditCostRateId ] = useState("");
+  const { currentRate, remainingRates, handleUpdateCostRate, handleDeleteCostRate } = useCostRate();
 
+  const [ costRateToEdit, setCostRateToEdit ] = useState<CostRate | undefined>(undefined);
   const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles]);
 
-  const onSubmit = async (values: NewCostRateForm) => {
+  const handleItemEdit = useCallback((id: string) => {
+    const rate = [ currentRate, ...remainingRates ].find(r => r?.id === id)
+    if (rate) {
+      setCostRateToEdit(rate);
+      openModal();
+    }
+  }, [ currentRate, remainingRates, openModal ])
+
+  const handleItemDelete = useCallback(async (id: string) => {
+    try {
+      await handleDeleteCostRate(id);
+      onAddSnackbar(
+        costRateT("empty.notification.updateSuccess"),
+        "success",
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  }, [ commonT, costRateT, handleDeleteCostRate, onAddSnackbar])
+
+  const handleCloseForm = () => {
+    setCostRateToEdit(undefined);
+    closeModal();
+  }
+
+  const onSubmit = async (values: EditCostRateForm) => {
     try {
       const data = {
         ...values,
-        id: currentRate?.id ?? "",
+        id: costRateToEdit?.id ?? "",
         working_hours: [
           values.working_hours.mon,
           values.working_hours.tue,
@@ -85,31 +111,33 @@ const CostRateInfo = () => {
   };
 
   const initialValues = useMemo(
-    () => ({
-      ...getDataFromKeys(currentRate, [
-        "id",
-        "type",
-        "cost_per_month",
-        "currency",
-        "total_hours",
-        "start_date",
-        "end_date",
-        "holiday_calendar",
-        "note",
-      ]),
-      working_hours: {
-        mon: currentRate?.working_hours[0] ?? 8,
-        tue: currentRate?.working_hours[1] ?? 8,
-        wed: currentRate?.working_hours[2] ?? 8,
-        thu: currentRate?.working_hours[3] ?? 8,
-        fri: currentRate?.working_hours[4] ?? 8,
-        sat: currentRate?.working_hours[5] ?? 0,
-        sun: currentRate?.working_hours[6] ?? 0,
-      },
-      overhead: true,
-    }),
-    [currentRate],
-  ) as NewCostRateForm;
+    () => costRateToEdit
+      ? ({
+          ...getDataFromKeys(costRateToEdit, [
+            "id",
+            "type",
+            "cost_per_month",
+            "currency",
+            "total_hours",
+            "start_date",
+            "end_date",
+            "holiday_calendar",
+            "note",
+          ]),
+          working_hours: {
+            mon: costRateToEdit?.working_hours[0] ?? 8,
+            tue: costRateToEdit?.working_hours[1] ?? 8,
+            wed: costRateToEdit?.working_hours[2] ?? 8,
+            thu: costRateToEdit?.working_hours[3] ?? 8,
+            fri: costRateToEdit?.working_hours[4] ?? 8,
+            sat: costRateToEdit?.working_hours[5] ?? 0,
+            sun: costRateToEdit?.working_hours[6] ?? 0,
+          },
+          overhead: true,
+        })
+    : undefined,
+    [costRateToEdit],
+  ) as EditCostRateForm;
 
   const labels = [
     "Mar 18",
@@ -198,7 +226,7 @@ const CostRateInfo = () => {
         <Grid item container xs={12} sm={4} justifyContent="end">
           <Stack direction="column" alignItems="center">
             <ProcessRing size={256} percentage={75}>
-              <Text fontSize={33} onClick={() => { openModal() }}>22</Text>
+              <Text fontSize={33}>22</Text>
             </ProcessRing>
             <Text fontSize={20} fontWeight={600} mt={3}>Working Days</Text>
           </Stack>
@@ -266,6 +294,8 @@ const CostRateInfo = () => {
         <CostRateTable
           items={remainingRates}
           isEditable={isAdmin}
+          handleItemEdit={handleItemEdit}
+          handleItemDelete={handleItemDelete}
         />
       </Box>
 
@@ -275,7 +305,7 @@ const CostRateInfo = () => {
             <DefaultPopupLayout
               open={isModalOpen}
               title="Edit Cost Rate"
-              onClose={() => { closeModal() }}
+              onClose={handleCloseForm}
             >
               <DialogContent>
                 <Formik
@@ -286,7 +316,7 @@ const CostRateInfo = () => {
                     (props) =>
                       <CostRateForm
                         formik={props}
-                        onCancel={() => { closeModal() }}
+                        onCancel={handleCloseForm}
                       />
                   }
                 </Formik>

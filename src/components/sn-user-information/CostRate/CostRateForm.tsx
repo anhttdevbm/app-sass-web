@@ -107,8 +107,10 @@ export type NewCostRateForm = Omit<NewCostRate, "total_hours" | "working_hours">
   overhead: boolean;
 };
 
+export type EditCostRateForm = NewCostRateForm & { id: string; }
+
 type CostRateFormType = {
-  formik: FormikProps<NewCostRateForm>;
+  formik: FormikProps<NewCostRateForm> | FormikProps<EditCostRateForm>;
   onCancel: () => void;
 }
 
