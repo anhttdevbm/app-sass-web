@@ -3,6 +3,8 @@ import { useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   getAllCostRate,
+  getCostRate,
+  deleteCostRate,
   addNewCostRate,
   updateCostRate,
   NewCostRate,
@@ -14,13 +16,35 @@ export const useCostRate = () => {
 
   const rates = useAppSelector((state) => state.costRate.rates);
 
-  const currentRate = useMemo(() => rates[0], [rates]);
-  const remainingRates = useMemo(() => rates.slice(1), [rates]);
+  const currentRate = useMemo(() => rates?.length > 0 ? rates[0] : undefined, [rates]);
+  const remainingRates = useMemo(() => rates?.length > 0 ? rates.slice(1) : [], [rates]);
 
   const handleGetAllCostRate = useCallback(
     async () => {
       try {
         return await dispatch(getAllCostRate()).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const handleGetCostRate = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(getCostRate(id)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const handleDeleteCostRate = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(deleteCostRate(id)).unwrap();
       } catch (error) {
         throw error;
       }
@@ -54,6 +78,8 @@ export const useCostRate = () => {
     currentRate,
     remainingRates,
     handleGetAllCostRate,
+    handleGetCostRate,
+    handleDeleteCostRate,
     handleAddNewCostRate,
     handleUpdateCostRate,
   };

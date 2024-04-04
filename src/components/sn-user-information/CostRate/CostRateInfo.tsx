@@ -1,18 +1,11 @@
+"use client";
 import { ReactElement, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import Table from "@mui/material/Table";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import { styled } from "@mui/material/styles";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Filler, Title } from 'chart.js';
-import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import { Formik } from "formik";
 
@@ -26,8 +19,9 @@ import useToggle from "hooks/useToggle";
 import { UpdateCostRate } from "store/costRate/actions";
 import { useCostRate } from "store/costRate/selectors";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import CostRateForm, { NewCostRateForm } from "./CostRateForm";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
+import CostRateForm, { NewCostRateForm } from "./CostRateForm";
+import CostRateTable from "../components/CostRateTable";
 
 const CurrentRateBlock = ({title, content, icon}: {
   title: string;
@@ -54,11 +48,6 @@ const CurrentRateBlock = ({title, content, icon}: {
   )
 }
 
-const StyledBodyCell = styled(TableCell)({
-  border: 0,
-  padding: 20,
-})
-
 const CostRateInfo = () => {
   const { user } = useAuth();
   const commonT = useTranslations(NS_COMMON);
@@ -68,11 +57,13 @@ const CostRateInfo = () => {
   const { currentRate, remainingRates, handleUpdateCostRate } = useCostRate();
   // const [ editCostRateId, setEditCostRateId ] = useState("");
 
+  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles]);
+
   const onSubmit = async (values: NewCostRateForm) => {
     try {
       const data = {
         ...values,
-        id: currentRate.id,
+        id: currentRate?.id ?? "",
         working_hours: [
           values.working_hours.mon,
           values.working_hours.tue,
@@ -107,13 +98,13 @@ const CostRateInfo = () => {
         "note",
       ]),
       working_hours: {
-        mon: currentRate.working_hours[0],
-        tue: currentRate.working_hours[1],
-        wed: currentRate.working_hours[2],
-        thu: currentRate.working_hours[3],
-        fri: currentRate.working_hours[4],
-        sat: currentRate.working_hours[5],
-        sun: currentRate.working_hours[6],
+        mon: currentRate?.working_hours[0] ?? 8,
+        tue: currentRate?.working_hours[1] ?? 8,
+        wed: currentRate?.working_hours[2] ?? 8,
+        thu: currentRate?.working_hours[3] ?? 8,
+        fri: currentRate?.working_hours[4] ?? 8,
+        sat: currentRate?.working_hours[5] ?? 0,
+        sun: currentRate?.working_hours[6] ?? 0,
       },
       overhead: true,
     }),
@@ -272,80 +263,14 @@ const CostRateInfo = () => {
       <Text fontSize={25} fontWeight={600} variant="h3" color="grey.800" mt={6} mb={2}>Cost Rate</Text>
 
       <Box width="100%" overflow="hidden">
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={{
-                  height: 70,
-                  "& th": {
-                    border: 0,
-                    paddingTop: 2,
-                    paddingBottom: 2,
-                    paddingLeft: 2.5,
-                    paddingRight: 2.5,
-                    backgroundColor: "#D9F0FD",
-                  },
-                  "& th:first-child": {
-                    borderTopLeftRadius: 12,
-                    borderBottomLeftRadius: 12,
-                  },
-                  "& th:last-child": {
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 12,
-                  },
-                  "& th:nth-child(1)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(2)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(3)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(4)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(5)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(6)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(7)": {
-                    width: "20%",
-                    minWidth: "100px",
-                  },
-                }}
-              >
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
-                <TableCell>Cost Type</TableCell>
-                <TableCell>Cost</TableCell>
-                <TableCell>Hourly</TableCell>
-                <TableCell>Capacity</TableCell>
-                <TableCell>Note</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {remainingRates.map((item) =>
-                <TableRow key={item.id}>
-                  <StyledBodyCell>{dayjs(item.start_date).format('DD MMM, YYYY')}</StyledBodyCell>
-                  <StyledBodyCell>{dayjs(item.end_date).format('DD MMM, YYYY')}</StyledBodyCell>
-                  <StyledBodyCell>{item.type}</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <CostRateTable
+          items={remainingRates}
+          isEditable={isAdmin}
+        />
       </Box>
 
       {
-        user?.roles.includes(Permission.AM)
+        isAdmin
           ? <>
             <DefaultPopupLayout
               open={isModalOpen}

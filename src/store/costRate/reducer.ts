@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import {
   getAllCostRate,
+  getCostRate,
+  deleteCostRate,
   addNewCostRate,
   updateCostRate,
 } from "./actions";
@@ -39,13 +41,33 @@ const costRateSlice = createSlice({
       .addCase(
         getAllCostRate.fulfilled,
         (state, action: PayloadAction<CostRate[]>) => {
-          state.rates = action.payload;
+          state.rates = [ ...action.payload ];
+        }
+      )
+      .addCase(
+        getCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          const index = state.rates.findIndex(rate => rate.id === action.payload.id);
+          if (index > -1) {
+            state.rates[index] = { ...action.payload }
+          } else {
+            state.rates.unshift({ ...action.payload });
+          }
+        }
+      )
+      .addCase(
+        deleteCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          const index = state.rates.findIndex(rate => rate.id === action.payload.id);
+          if (index > -1) {
+            state.rates.splice(index, 1);
+          }
         }
       )
       .addCase(
         addNewCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          state.rates.unshift(action.payload);
+          state.rates.unshift({ ...action.payload });
         }
       )
       .addCase(

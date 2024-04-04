@@ -36,6 +36,52 @@ export const getAllCostRate = createAsyncThunk(
   },
 );
 
+export const getCostRate = createAsyncThunk(
+  "costRate/getCostRate",
+  async (id: string) => {
+    try {
+      const response = await client.get(
+        StringFormat(Endpoint.COST_RATE_DETAIL, { id }),
+        undefined,
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteCostRate = createAsyncThunk(
+  "costRate/deleteCostRate",
+  async (id: string) => {
+    try {
+      const response = await client.delete(
+        StringFormat(Endpoint.COST_RATE_DETAIL, { id }),
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        if (!response.data.id) {
+          response.data.id = id
+        }
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const addNewCostRate = createAsyncThunk(
   "costRate/addNewCostRate",
   async (data: NewCostRate) => {
