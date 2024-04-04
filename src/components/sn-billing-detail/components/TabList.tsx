@@ -17,7 +17,7 @@ import {
   Service,
 } from "store/billing/reducer";
 import { User } from "constant/types";
-import { useBillings } from "store/billing/selectors";
+import { useBillings, useClientBill } from "store/billing/selectors";
 import { FormikProps, useFormik } from "formik";
 import { Padding } from "@mui/icons-material";
 import { BillingData } from "store/billing/actions";
@@ -71,6 +71,11 @@ const TabInfo = (props: TabListProps) => {
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [actionButton, setActionButton] = useState<string>("");
+  const { isShowEditClient } = useClientBill();
+
+  useEffect(() => {
+    console.log(isShowEditClient);
+  }, [isShowEditClient]);
 
   const handleOpen = (value) => {
     setActionButton(value);
@@ -191,39 +196,41 @@ const TabInfo = (props: TabListProps) => {
             direction={"row"}
             justifyContent={"space-between"}
             gap={1}
-            borderBottom={"1px solid #ECECF3"}
+            borderBottom={isShowEditClient ? "" : "1px solid #ECECF3"}
             height={40}
           >
-            <TabList
-              key={value}
-              onChange={handleChange}
-              sx={{
-                height: 40,
-                minHeight: "40px !important",
-                ["& span"]: {
-                  display: "none !important",
-                },
-              }}
-            >
-              {TABS.map((tab) => (
-                <Tab
-                  key={tab.label}
-                  {...tab}
-                  label={tab.label}
-                  disabled={tab.value != "Invoice" && editForm}
-                  sx={{
-                    color: value === tab.value ? "#212121" : "grey.300",
-                    textTransform: "none",
-                    background: value === tab.value ? "#E1F0FF" : "none",
-                    paddingTop: "3px",
-                    width: 150,
-                    ["&.MuiTab-root.Mui-selected"]: {
-                      color: "#212121",
-                    },
-                  }}
-                />
-              ))}
-            </TabList>
+            {!isShowEditClient && (
+              <TabList
+                key={value}
+                onChange={handleChange}
+                sx={{
+                  height: 40,
+                  minHeight: "40px !important",
+                  ["& span"]: {
+                    display: "none !important",
+                  },
+                }}
+              >
+                {TABS.map((tab) => (
+                  <Tab
+                    key={tab.label}
+                    {...tab}
+                    label={tab.label}
+                    disabled={tab.value != "Invoice" && editForm}
+                    sx={{
+                      color: value === tab.value ? "#212121" : "grey.300",
+                      textTransform: "none",
+                      background: value === tab.value ? "#E1F0FF" : "none",
+                      paddingTop: "3px",
+                      width: 150,
+                      ["&.MuiTab-root.Mui-selected"]: {
+                        color: "#212121",
+                      },
+                    }}
+                  />
+                ))}
+              </TabList>
+            )}
             {value === "Invoice" && (
               <Stack gap={2} direction={"row"} mb={1}>
                 {!editForm && (

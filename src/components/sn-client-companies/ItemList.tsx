@@ -1,8 +1,8 @@
 "use client";
 
-import { TableRow } from "@mui/material";
+import { Stack, TableRow } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
-import Pagination from "components/Pagination";
+import Pagination from "./components/Pagination";
 import { ActionsCell, CellProps, TableLayout } from "components/Table";
 import { DataAction } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
@@ -20,6 +20,7 @@ import DeleteConfirm from "./components/DeleteConfirm";
 import DuplicateForm from "./components/DuplicateForm";
 import Form from "./components/Form";
 import { ClientCompany } from "./type";
+import { client, Endpoint } from "../../api";
 
 const ItemList = () => {
   const {
@@ -152,7 +153,14 @@ const ItemList = () => {
   };
 
   const onUpdate = async (data: ClientCompany) => {
-    return await onUpdateClientCompany(data);
+    const payload = { ...data };
+    if (data.files) {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
+      payload.avatar = [logoUrl];
+    } else {
+      delete payload["files"];
+    }
+    return await onUpdateClientCompany(payload);
   };
 
   useEffect(() => {
@@ -162,12 +170,13 @@ const ItemList = () => {
 
   return (
     <>
-      <FixedLayout>
+      <FixedLayout rounded="unset">
         <TableLayout
           headerList={headerList}
           pending={isFetching}
           error={error as string}
           noData={!isIdle && items.length === 0}
+          mt={3}
           px={{ xs: 0, md: 3 }}
           headerProps={{
             sx: { px: { xs: 0.5, md: 2 }, wordBreak: "break-all" },
@@ -237,7 +246,6 @@ const ItemList = () => {
           onChangeSize={onChangeSize}
         />
       </FixedLayout>
-
       {action === DataAction.OTHER && item && (
         <DuplicateForm
           open

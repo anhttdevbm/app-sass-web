@@ -7,7 +7,8 @@ import { CLIENT_COMPANIES_PATH } from "constant/paths";
 import { DATE_LOCALE_FORMAT } from "constant/index";
 import dayjs from "dayjs";
 import { memo } from "react";
-import { ClientCompany } from "components/sn-client-companies/type";
+import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
+import LogoPlaceholderImage from "public/images/img-user-placeholder.webp";
 
 type DesktopCellsProps = {
   item: ClientCompany;
@@ -21,7 +22,14 @@ const DesktopCells = (props: DesktopCellsProps) => {
       <BodyCell>{order}</BodyCell>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} />
+          <Avatar
+            size={32}
+            src={
+              Array.isArray(item?.avatar) && !!item?.avatar?.length
+                ? (item?.avatar[0] as IAvatar)?.link
+                : LogoPlaceholderImage
+            }
+          />
           <Link href={`${CLIENT_COMPANIES_PATH}/${item?.id}`} underline="none">
             <Text
               variant="h6"

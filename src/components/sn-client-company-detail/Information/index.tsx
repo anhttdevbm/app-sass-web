@@ -1,24 +1,28 @@
 "use client";
 
-import { memo, useEffect, useMemo } from "react";
 import { Divider, Stack, StackProps } from "@mui/material";
+import FixedLayout from "components/FixedLayout";
+import Link from "components/Link";
 import { Button, Text } from "components/shared";
-import { useParams } from "next/navigation";
+import Form from "components/sn-client-companies/components/Form";
+import { ClientCompany } from "components/sn-client-companies/type";
+import { DataAction } from "constant/enums";
+import { DATE_LOCALE_FORMAT, NS_COMMON, NS_COMPANY } from "constant/index";
+import {
+  CLIENT_COMPANIES_PATH,
+  EMPLOYEES_PATH,
+  POSITIONS_PATH,
+  PROJECTS_PATH,
+} from "constant/paths";
+import dayjs from "dayjs";
+import useToggle from "hooks/useToggle";
+import EditUnderlineIcon from "icons/EditUnderlineIcon";
+import { useTranslations } from "next-intl";
+import CompanyPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useEffect } from "react";
 import { useHeaderConfig } from "store/app/selectors";
 import { useClientCompanies } from "store/company/selectors";
-import { NS_COMMON, NS_COMPANY, DATE_LOCALE_FORMAT } from "constant/index";
-import { useTranslations } from "next-intl";
-import Link from "components/Link";
-import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
-import { EMPLOYEES_PATH, POSITIONS_PATH, PROJECTS_PATH, CLIENT_COMPANIES_PATH } from "constant/paths";
-import FixedLayout from "components/FixedLayout";
-import dayjs from "dayjs";
-import EditIcon from "icons/EditIcon";
-import Form from "components/sn-client-companies/components/Form";
-import { DataAction } from "constant/enums";
-import useToggle from "hooks/useToggle";
-import { usePathname } from "next-intl/client";
-import { ClientCompany } from "components/sn-client-companies/type";
+import { client, Endpoint } from "api";
 
 type InformationItemProps = StackProps & {
   label: string;
@@ -26,26 +30,34 @@ type InformationItemProps = StackProps & {
 };
 
 const InformationCompany = () => {
-  const { detailItem: item, isFetching, error, onUpdateClientCompany } = useClientCompanies();
-  const { id } = useParams();
+  const { detailItem: item, onUpdateClientCompany } = useClientCompanies();
   const commonT = useTranslations(NS_COMMON);
   const companyT = useTranslations(NS_COMPANY);
   const [isShow, onShow, onHide] = useToggle();
-  const pathname = usePathname();
 
-  const { prevPath, title, onUpdateHeaderConfig } = useHeaderConfig();
+  const { onUpdateHeaderConfig } = useHeaderConfig();
 
   const onUpdate = async (data: ClientCompany) => {
-    return await onUpdateClientCompany(data);
+    const payload = { ...data };
+    if (data.files) {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
+      payload.avatar = [logoUrl];
+    } else {
+      delete payload["files"];
+    }
+    return await onUpdateClientCompany(payload);
   };
 
   useEffect(() => {
     onUpdateHeaderConfig({
       title: item?.name ?? "",
       prevPath: CLIENT_COMPANIES_PATH,
-      imageUrl: ProjectPlaceholderImage,
+      imageUrl:
+        Array.isArray(item?.avatar) && !!item?.avatar?.length
+          ? (item?.avatar[0]?.link as string)
+          : "" || CompanyPlaceholderImage,
     });
-  }, [onUpdateHeaderConfig, item?.name]);
+  }, [onUpdateHeaderConfig, item]);
 
   return (
     <>
@@ -67,7 +79,7 @@ const InformationCompany = () => {
                 style={{ width: 32, maxWidth: 32, padding: 0 }}
                 onClick={onShow}
               >
-                <EditIcon
+                <EditUnderlineIcon
                   sx={{
                     width: 16,
                     height: 16,
@@ -237,7 +249,7 @@ const InformationCompany = () => {
         <Form
           open={isShow}
           onClose={onHide}
-          type={DataAction.CREATE}
+          type={DataAction.UPDATE}
           initialValues={item}
           onSubmit={onUpdate}
         />

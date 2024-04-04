@@ -660,3 +660,29 @@ export const updateClientBill = createAsyncThunk(
     }
   },
 );
+
+export const setShowEditClient = createAsyncThunk(
+  "Billing/setShowEditClient",
+  async (value: boolean) => {
+    return value;
+  },
+);
+
+export const getBillingClientDetail = createAsyncThunk(
+  "Billing/getBillingClientDetail",
+  async ({ id }: { id: string }) => {
+    try {
+      const response = await client.get(
+        StringFormat(Endpoint.CHANGE_BILL, { id }),
+        {},
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);

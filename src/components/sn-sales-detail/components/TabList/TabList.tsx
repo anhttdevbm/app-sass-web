@@ -68,6 +68,7 @@ const TabItem = (props: TabItemProps) => {
       label={salesT(label)}
       {...rest}
       sx={{
+        textTransform: "capitalize",
         minWidth: 120,
         height: 40,
         bgcolor: isActive

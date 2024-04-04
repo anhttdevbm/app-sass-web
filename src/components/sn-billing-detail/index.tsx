@@ -19,7 +19,8 @@ import { useTagOptions } from "store/tags/selector";
 import { User } from "constant/types";
 
 const InformationBillingPage = () => {
-  const { item, onGetBilling, updateStatus } = useBillings();
+  const { item, onGetBilling, updateStatus, onGetBillingDetail } =
+    useBillings();
   const { tagsOptions, onGetTags } = useTags();
   const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
   const { budgets, onGetBudgets } = useBudgets();
@@ -78,6 +79,12 @@ const InformationBillingPage = () => {
     if (!isReady) return;
     onGetBudgets({ ...initQuery });
   }, [isReady, onGetBudgets]);
+
+  useEffect(() => {
+    if (typeof id === "string" && id) {
+      onGetBillingDetail(id);
+    }
+  }, [id]);
 
   return (
     // <FixedLayout

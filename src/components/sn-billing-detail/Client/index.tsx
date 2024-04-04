@@ -4,7 +4,7 @@ import { Button, Divider, Stack } from "@mui/material";
 import { Endpoint, client } from "api";
 import FixedLayout from "components/FixedLayout";
 import { Text } from "components/shared";
-import { ClientCompany } from "components/sn-client-companies/type";
+import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 import EditForm from "components/sn-sales-detail/components/Client/EditForm";
 import SelectClient from "components/sn-sales-detail/components/Client/SelectClient";
 import ViewDetail from "components/sn-sales-detail/components/Client/ViewDetail";
@@ -16,7 +16,7 @@ import { useParams } from "next/navigation";
 import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
 import { useEffect, useState } from "react";
 import { updateClientBill } from "store/billing/actions";
-import { useClientBill } from "store/billing/selectors";
+import { useBillings, useClientBill } from "store/billing/selectors";
 import { useClientCompanies } from "store/company/selectors";
 
 const TabClient = () => {
@@ -29,14 +29,16 @@ const TabClient = () => {
     onUpdateClientCompany,
   } = useClientCompanies();
 
-  const { onUpdateClientId } = useClientBill();
+  const { billingClientDetail } = useBillings();
+  const { isShowEditClient, onUpdateClientId, onSetShowEditClient } =
+    useClientBill();
 
-  const [isEditMode, setEditMode] = useState<boolean>(false);
   const [options, setOptions] = useState<Option[]>([]);
   const [optionSelected, setOptionSelected] = useState<
     string | number | undefined
   >();
   const [clientSelected, setClientSelected] = useState<ClientCompany>();
+  const [isUpdated, setUpdated] = useState<boolean>(false);
   const companyT = useTranslations(NS_COMPANY);
 
   useEffect(() => {
@@ -47,14 +49,20 @@ const TabClient = () => {
     const opts = (items as ClientCompany[]).map((item) => ({
       label: item.name,
       value: item.id || 0,
-      avatar: (item?.avatar || LogoPlaceholderImage) as string,
+      avatar:
+        Array.isArray(item?.avatar) && !!item?.avatar?.length
+          ? (item?.avatar[0] as IAvatar)?.link
+          : "",
       subText: `${companyT("clientCompany.taxCode")}: ${item.tax_code}`,
     }));
     setOptions(opts);
   }, [items, companyT]);
 
   useEffect(() => {
-    if (!!options.length) {
+    if (isUpdated) return;
+    if (billingClientDetail?.client) {
+      setOptionSelected(billingClientDetail?.client);
+    } else if (!!options.length) {
       setOptionSelected(options[0]?.value);
     }
   }, [options, setOptionSelected]);
@@ -72,14 +80,14 @@ const TabClient = () => {
 
   const onUpdate = async (data: ClientCompany) => {
     const payload = { ...data };
-    if (!Array.isArray(data?.avatar) && typeof data["avatar"] === "object") {
-      const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
-      payload.avatar = logoUrl;
+    if (data.files) {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
+      payload.avatar = [logoUrl];
     } else {
-      delete payload["avatar"];
+      delete payload["files"];
     }
-    setEditMode(false);
-
+    onSetShowEditClient(false);
+    setUpdated(true);
     await onUpdateClientId(id.toString(), data?.id ?? "");
     return await onUpdateClientCompany(payload);
   };
@@ -89,7 +97,7 @@ const TabClient = () => {
       <Stack sx={{ height: 58 }}>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center">
-            {isEditMode ? (
+            {isShowEditClient ? (
               <Stack sx={{ height: "100%" }}>
                 <Text variant="h4">{detailItem?.name}</Text>
                 <Text variant="h6" color="grey.400">
@@ -107,7 +115,7 @@ const TabClient = () => {
               />
             )}
           </Stack>
-          {!isEditMode && (
+          {!isShowEditClient && (
             <Stack>
               <Button
                 variant="text"
@@ -119,7 +127,7 @@ const TabClient = () => {
                   paddingX: 0,
                   paddingY: 1,
                 }}
-                onClick={() => setEditMode(!isEditMode)}
+                onClick={() => onSetShowEditClient(true)}
               >
                 <EditIcon
                   sx={{
@@ -136,7 +144,7 @@ const TabClient = () => {
         </Stack>
       </Stack>
       <Divider sx={{ borderColor: "grey.100", marginY: 3 }} />
-      {isEditMode ? (
+      {isShowEditClient ? (
         <EditForm initialValues={detailItem} onSubmit={onUpdate} />
       ) : (
         <ViewDetail item={clientSelected || detailItem} />

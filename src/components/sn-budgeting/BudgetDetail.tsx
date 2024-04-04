@@ -470,7 +470,9 @@ export const BudgetDetail = () => {
           </Stack>
           <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
-            {activeTab === TABS.CLIENT && <Client bugetId={budget.id} />}
+            {activeTab === TABS.CLIENT && (
+              <Client bugetId={budget.id} clientId={budget?.client} />
+            )}
             {activeTab === TABS.TIME && (
               <Time
                 timeList={_.get(timeQuery, "data.data.docs", [])}

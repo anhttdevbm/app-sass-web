@@ -3,8 +3,8 @@ import { Dropdown, DropdownProps } from "components/Filters";
 import { Text } from "components/shared";
 import { Option } from "constant/types";
 import Image from "next/image";
-import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
-import { ChangeEvent, memo, useEffect, useMemo, useState } from "react";
+import LogoPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useEffect, useState } from "react";
 
 type SelectValueProps = StackProps & {
   value: string | number;
@@ -28,12 +28,15 @@ const SelectClient = (
       name="clientId"
       rootSx={{
         height: 58,
+        minWidth: 320,
         backgroundColor: "grey.50",
+        py: "8px!important",
+        px: "12px!important",
         "& >svg": {
           fontSize: 20,
           position: "absolute",
           top: "50%",
-          right: 0,
+          right: 12,
           zIndex: 0,
           transform: "translateY(-50%)",
           px: "0px!important",
@@ -72,15 +75,29 @@ const SelectValue = (props: SelectValueProps) => {
     <Stack direction="row" gap={1}>
       <Stack sx={{ marginBottom: "auto", marginTop: "auto" }}>
         {!!item?.avatar?.length && (
-          <Image src={item?.avatar} alt={item?.label}></Image>
+          <img
+            src={item?.avatar}
+            style={{ width: 42, height: 42 }}
+            alt={item?.label ?? item?.subText ?? ""}
+            className="rounded"
+          />
         )}
         {!item?.avatar?.length && (
-          <Image src={LogoPlaceholderImage} alt={item?.label ?? ""}></Image>
+          <Image
+            src={LogoPlaceholderImage}
+            alt={item?.label ?? ""}
+            style={{ width: 32, height: 32 }}
+            className="rounded"
+          ></Image>
         )}
       </Stack>
       <Stack>
-        <Text>{item?.label}</Text>
-        <Text sx={{ fontSize: 14 }}>{item?.subText}</Text>
+        <Text sx={{ fontSize: 20, lineHeight: "24px", fontWeight: 600 }}>
+          {item?.label}
+        </Text>
+        <Text sx={{ fontSize: 14, color: "#666666", lineHeight: "18px" }}>
+          {item?.subText}
+        </Text>
       </Stack>
     </Stack>
   );
