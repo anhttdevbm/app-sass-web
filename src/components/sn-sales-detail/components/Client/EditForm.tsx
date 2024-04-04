@@ -1,15 +1,15 @@
-import { Card, Divider, Stack } from "@mui/material";
-import { DialogLayoutProps } from "components/DialogLayout";
-import FormLayout from "components/FormLayout";
+import { Divider, Stack } from "@mui/material";
 import { Button, Input, Text } from "components/shared";
-import { ClientCompany, Contact } from "components/sn-client-companies/type";
-import { DataAction } from "constant/enums";
+import {
+  ClientCompany,
+  Contact,
+  IAvatar,
+} from "components/sn-client-companies/type";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { EMAIL_REGEX } from "constant/regex";
 import { FormikErrors, useFormik } from "formik";
-import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
@@ -29,7 +29,7 @@ export const INITIAL_VALUES: ClientCompany = {
   address: "",
   phone: "",
   email: "",
-  avatar: "",
+  avatar: [],
   website: "",
   status: false,
   created_time: "",
@@ -101,7 +101,11 @@ const EditForm = (props: FormProps) => {
 
   return (
     <Stack sx={{ overflowY: "auto" }}>
-      <Stack direction="column" gap={3} sx={{ overflowY: "auto" }}>
+      <Stack
+        direction="column"
+        gap={3}
+        sx={{ overflowY: "auto", paddingRight: 2 }}
+      >
         <Text variant="h5">{companyT("clientCompany.generalInformation")}</Text>
         <Stack direction="column">
           <Stack
@@ -109,11 +113,13 @@ const EditForm = (props: FormProps) => {
             sx={{ alignItems: "flex-start", width: "fit-content" }}
           >
             <AvatarUpload
-              name="avatar"
+              name="files"
               value={
-                typeof formik.values?.avatar === "string"
-                  ? formik.values?.avatar
-                  : ""
+                formik.values?.files ||
+                (Array.isArray(formik.values?.avatar) &&
+                !!formik.values?.avatar?.length
+                  ? (formik.values?.avatar[0] as IAvatar)?.link
+                  : "")
               }
               onChange={onChangeField}
             />
@@ -253,7 +259,14 @@ const EditForm = (props: FormProps) => {
         type="submit"
         variant="primary"
         size="extraSmall"
-        sx={{ marginY: 4 }}
+        sx={{
+          marginY: 4,
+          width: "fit-content",
+          mx: "auto",
+          height: 40,
+          px: ({ spacing }) => `${spacing(3)}!important`,
+          py: ({ spacing }) => `${spacing(1.5)}!important`,
+        }}
         onClick={onSubmitForm}
       >
         {companyT("clientCompany.formUpdate.submit")}

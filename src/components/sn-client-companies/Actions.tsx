@@ -49,6 +49,10 @@ const Actions = () => {
   const { onUpdateHeaderConfig } = useHeaderConfig();
 
   const onChangeQueries = (name: string, value?: string) => {
+    setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+  };
+
+  const onChangeCreateBy = (name: string, value?: string) => {
     const newValue = options.find(
       (item) => item && value && item?.value === value,
     );
@@ -64,11 +68,11 @@ const Actions = () => {
 
   const onUpdate = async (data: ClientCompany) => {
     const payload = { ...data };
-    if (typeof data["avatar"] === "object") {
-      const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
-      payload.avatar = logoUrl;
+    if (data.files) {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
+      payload.avatar = [logoUrl];
     } else {
-      delete payload["avatar"];
+      delete payload["files"];
     }
     return await onCreateClientCompany(payload);
   };
@@ -84,7 +88,11 @@ const Actions = () => {
   }, [filters]);
 
   useEffect(() => {
-    onUpdateHeaderConfig({ title: companyT("clientCompany.title"), imageUrl: undefined, prevPath: undefined });
+    onUpdateHeaderConfig({
+      title: companyT("clientCompany.title"),
+      imageUrl: undefined,
+      prevPath: undefined,
+    });
   }, [onUpdateHeaderConfig, companyT, pathname]);
 
   return (
@@ -95,6 +103,9 @@ const Actions = () => {
         justifyContent="space-between"
         spacing={{ xs: 1, md: 3 }}
         px={{ xs: 0, md: 3 }}
+        py={{ xs: 0, md: 1.5 }}
+        borderBottom={1}
+        borderColor="grey.100"
       >
         <Stack
           direction="row"
@@ -111,7 +122,11 @@ const Actions = () => {
             startIcon={<PlusIcon />}
             size="extraSmall"
             variant="primary"
-            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
+            sx={{
+              height: 40,
+              px: ({ spacing }) => `${spacing(3)}!important`,
+              py: ({ spacing }) => `${spacing(1.5)}!important`,
+            }}
           >
             {companyT("clientCompany.create")}
           </Button>
@@ -121,62 +136,48 @@ const Actions = () => {
           direction="row"
           alignItems="center"
           spacing={3}
-          py={{ xs: 1.25, md: 0.5, lg: 1.25 }}
-          px={{ md: 1, lg: 2 }}
+          py={{ xs: 1.25, md: 0.5, lg: 1.5 }}
+          px={{ md: 1, lg: 1.5 }}
           borderRadius={1}
           width={{ xs: "100%", md: undefined }}
           justifyContent={{ xs: "flex-start", md: "flex-end" }}
           maxWidth={{ xs: "100%", md: "fit-content" }}
           overflow="auto"
           minWidth={{ md: "fit-content" }}
+          border={1}
+          borderColor="grey.100"
         >
           <Search
             placeholder={commonT("search")}
             name={"name"}
             onChange={onChangeQueries}
             value={queries["name"]}
-            sx={{ width: 300, minWidth: 200 }}
+            sx={{ width: 210, minWidth: 210 }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 onSearch();
               }
             }}
           />
-          {optionSelected && (
-            <Button size="extraSmall" sx={{ padding: 0, display: "flex", gap: 1 }} onDoubleClick={onDoubleClick}>
-              <Image
-                className="rounded"
-                style={{ margin: "auto" }}
-                src={optionSelected?.avatar || UserPlaceholderImage}
-                alt={optionSelected?.label}
-                width={22}
-                height={22}
-              ></Image>
-              <Text>{optionSelected?.label}</Text>
-            </Button>
-          )}
-          {!optionSelected && (
-            <AssignerFilter
-              onChange={onChangeQueries}
-              value={queries?.["position.owner"]}
-              hasAvatar
-              name="fullname"
-              sx={{ display: { xs: "none", md: "initial" } }}
-              rootSx={{
-                "& >svg": { fontSize: 16 },
-                px: "0px!important",
-                [`& .${selectClasses.outlined}`]: {
-                  pr: "0!important",
-                  mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                    `${spacing(4)}!important`,
-                  "& .sub": {
-                    display: "none",
-                  },
+          <AssignerFilter
+            onChange={onChangeCreateBy}
+            value={optionSelected?.value}
+            hasAvatar
+            name="fullname"
+            sx={{ display: { xs: "none", md: "initial" } }}
+            rootSx={{
+              "& >svg": { fontSize: 16 },
+              px: "0px!important",
+              [`& .${selectClasses.outlined}`]: {
+                pr: "0!important",
+                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
+                  `${spacing(0.5)}!important`,
+                "& .sub": {
+                  display: "none",
                 },
-              }}
-            />
-          )}
-
+              },
+            }}
+          />
           <Date
             label={companyT("clientCompany.createDate")}
             name="created_time"
@@ -188,14 +189,6 @@ const Actions = () => {
             }}
           />
         </Stack>
-        <Button
-          size="extraSmall"
-          sx={{ height: 32, display: { xs: "none", md: "flex" } }}
-          onClick={onSearch}
-          variant="secondary"
-        >
-          {commonT("search")}
-        </Button>
       </Stack>
       {isShow && (
         <Form

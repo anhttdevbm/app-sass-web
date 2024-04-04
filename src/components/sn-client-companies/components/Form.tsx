@@ -2,7 +2,11 @@ import { Card, Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import { Button, Input, Text } from "components/shared";
-import { ClientCompany, Contact } from "components/sn-client-companies/type";
+import {
+  ClientCompany,
+  Contact,
+  IAvatar,
+} from "components/sn-client-companies/type";
 import { DataAction } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { EMAIL_REGEX } from "constant/regex";
@@ -30,7 +34,7 @@ export const INITIAL_VALUES: ClientCompany = {
   address: "",
   phone: "",
   email: "",
-  avatar: "",
+  avatar: [],
   website: "",
   status: false,
   created_time: "",
@@ -134,11 +138,13 @@ const Form = (props: FormProps) => {
       <Stack direction="row" gap={3}>
         <Stack>
           <AvatarUpload
-            name="avatar"
+            name="files"
             value={
-              typeof formik.values?.avatar === "string"
-                ? formik.values?.avatar
-                : ""
+              formik.values?.files ||
+              (Array.isArray(formik.values?.avatar) &&
+              !!formik.values?.avatar?.length
+                ? (formik.values?.avatar[0] as IAvatar)?.link
+                : "")
             }
             onChange={onChangeField}
           />

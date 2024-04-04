@@ -19,7 +19,6 @@ const AssignerFilter = (
   const commonT = useTranslations(NS_COMMON);
   const companyT = useTranslations(NS_COMPANY);
 
-
   const onEndReached = () => {
     if (isFetching || (totalPages && pageIndex >= totalPages)) return;
     onGetMemberOptions({ ...filters, pageSize, pageIndex: pageIndex + 1 });
@@ -47,6 +46,6 @@ const AssignerFilter = (
       {...props}
     />
   );
-``};
+};
 
 export default memo(AssignerFilter);

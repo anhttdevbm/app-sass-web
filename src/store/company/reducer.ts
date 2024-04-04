@@ -29,7 +29,7 @@ import { ItemListResponse, Paging, User, Option } from "constant/types";
 import { DataStatus, PayStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
-import { ClientCompany } from "components/sn-client-companies/type";
+import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 
 export interface Employee extends User {
   _id: string;
@@ -619,8 +619,15 @@ const companySlice = createSlice({
       .addCase(
         createClientCompany.fulfilled,
         (state, action: PayloadAction<ClientCompany>) => {
-          state.clientCompanies.unshift(action.payload);
-
+          const avatar = action?.payload?.avatar;
+          const newAvatar: IAvatar[] = [];
+          if (!Array.isArray(avatar)) {
+            newAvatar.push(avatar as IAvatar);
+          }
+          state.clientCompanies.unshift({
+            ...action.payload,
+            avatar: newAvatar || avatar,
+          });
           if (
             state.clientCompanies.length > state.clientCompaniesPaging.pageSize
           ) {

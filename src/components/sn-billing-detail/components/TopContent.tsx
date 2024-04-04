@@ -276,7 +276,7 @@ const TopContent = (props: TopContentProps) => {
           <Button
             // startIcon={<PlusIcon />}
             onClick={onMarkAsSend}
-            size="small"
+            size="extraSmall"
             variant="primary"
           >
             {item?.mail_status == "Unsend"

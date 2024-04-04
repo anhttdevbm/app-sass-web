@@ -37,6 +37,8 @@ import {
   updatePayment,
   updateTagBill,
   viewPdfBilling,
+  setShowEditClient,
+  getBillingClientDetail,
 } from "./actions";
 import { cl } from "@fullcalendar/core/internal-common";
 
@@ -116,6 +118,7 @@ export interface Budgets {
   revenue: number;
   revenuePJ: number;
 }
+
 export interface Invoice {
   id?: string;
   serviceType: string;
@@ -194,6 +197,7 @@ export interface PaymentDetail {
   amount: number;
   note: string;
 }
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Service {
   id: string;
@@ -271,6 +275,8 @@ export interface BillingState {
   dataTag?: Tag[];
   isAddTag?: boolean;
   budgetFilter?: Budgets[];
+  isShowEditClient?: boolean;
+  billingClientDetail?: BillingClientDetail;
 }
 
 export interface BillingDataUpdate {
@@ -308,6 +314,72 @@ export interface BillingCommentData {
 
 export interface BillingComment extends Omit<Comment, "creator"> {
   body: BillingCommentData;
+}
+
+export interface BillingClientDetail {
+  _id?: string;
+  id?: string;
+  billTo?: {
+    city: string;
+    country: string;
+    street: string;
+    tax_id: string;
+    zipCode: number;
+  }[];
+  billFrom?: {
+    city: string;
+    country: string;
+    street: string;
+    zipCode: number;
+  }[];
+  invoiceNumber: string;
+  budget: {
+    id: string;
+    name: string;
+  }[];
+  tag: Tag[];
+  budgetService: {
+    _id: string;
+    id: string;
+    createdAt: string;
+    updateAt: string;
+    budget: string;
+    budgetId: string;
+    name: string;
+    desc: string;
+    serviceType: string;
+    billType: string;
+    unit: string;
+    estimate: number;
+    qty: number;
+    price: number;
+    discount: number;
+    markUp: number;
+    tolBudget: number;
+    timeTracking: boolean;
+    bookingTracking: boolean;
+    creator: string;
+    __v: number;
+    section: string;
+    sectionId: string;
+    timeUsed: number;
+  }[];
+  user: {
+    id: string;
+    name: string;
+  }[];
+  subject: string;
+  message: any;
+  mail_status: string;
+  amount: number;
+  poNumber: any;
+  amount_unpaid: number;
+  vat: string;
+  invoiceMethod: string;
+  status: string;
+  date: string;
+  dueDate: string;
+  client: string;
 }
 
 // export const DEFAULT_RANGE_ACTIVITIES: GetActivitiesQueries = {
@@ -745,6 +817,12 @@ const billingSlice = createSlice({
         state.dataTag = [];
 
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(setShowEditClient.fulfilled, (state, action) => {
+        state.isShowEditClient = action.payload;
+      })
+      .addCase(getBillingClientDetail.fulfilled, (state, action) => {
+        state.billingClientDetail = action.payload;
       }),
   // .addCase(
   //   createProject.fulfilled,

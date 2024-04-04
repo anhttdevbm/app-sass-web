@@ -11,6 +11,12 @@ export interface Contact {
   website?: string;
 }
 
+export interface IAvatar {
+  object: string;
+  name: string;
+  link: string;
+}
+
 export interface ClientCompany {
   id?: string;
   code: string;
@@ -22,9 +28,10 @@ export interface ClientCompany {
   created_time: string;
   status: boolean;
   zip_code?: string;
-  avatar?: string;
+  avatar?: string[] | IAvatar[] | IAvatar;
   website?: string;
   contact?: Contact;
+  files?: File;
 }
 
 const INITIAL_VALUES: ClientCompany = {
@@ -35,7 +42,7 @@ const INITIAL_VALUES: ClientCompany = {
   address: "",
   phone: "",
   email: "",
-  avatar: "",
+  avatar: [],
   website: "",
   status: false,
   created_time: "",

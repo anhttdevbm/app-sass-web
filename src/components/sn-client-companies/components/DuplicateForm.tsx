@@ -10,7 +10,7 @@ import { memo, useEffect, useMemo, useRef } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
-import { ClientCompany } from "components/sn-client-companies/type";
+import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 
 type FormProps = {
   initialValues: ClientCompany;
@@ -48,7 +48,11 @@ const DuplicateForm = (props: FormProps) => {
           phone: values?.contact?.phone,
           position: values?.contact?.position,
           website: values?.contact?.website,
-        }
+        },
+        avatar:
+          Array.isArray(values?.avatar) && !!values?.avatar?.length
+            ? [(values?.avatar[0] as IAvatar)?.object]
+            : undefined,
       };
       const newItem = await onSubmitProps(body);
       if (newItem) {

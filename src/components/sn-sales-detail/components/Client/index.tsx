@@ -3,17 +3,16 @@
 import { Button, Divider, Stack } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import { Text } from "components/shared";
-import { ClientCompany } from "components/sn-client-companies/type";
+import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 import SelectClient from "components/sn-sales-detail/components/Client/SelectClient";
 import { DEFAULT_PAGING, NS_COMPANY } from "constant/index";
 import { Option } from "constant/types";
-import EditIcon from "icons/EditIcon";
+import EditIcon from "icons/EditUnderlineIcon";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
 import { memo, useEffect, useState } from "react";
 import { useClientCompanies } from "store/company/selectors";
-import { useSales } from "store/sales/selectors";
+import { useSaleDetail, useSales } from "store/sales/selectors";
 import { Endpoint, client } from "../../../../api";
 import EditForm from "./EditForm";
 import ViewDetail from "./ViewDetail";
@@ -28,6 +27,8 @@ const SalesClient = () => {
     onUpdateClientCompany,
   } = useClientCompanies();
 
+  const { saleDetail } = useSaleDetail();
+
   const { onUpdateDeal } = useSales();
   const [isEditMode, setEditMode] = useState<boolean>(false);
   const [options, setOptions] = useState<Option[]>([]);
@@ -35,6 +36,7 @@ const SalesClient = () => {
     string | number | undefined
   >();
   const [clientSelected, setClientSelected] = useState<ClientCompany>();
+  const [isUpdated, setUpdated] = useState<boolean>(false);
   const companyT = useTranslations(NS_COMPANY);
 
   useEffect(() => {
@@ -45,17 +47,23 @@ const SalesClient = () => {
     const opts = (items as ClientCompany[]).map((item) => ({
       label: item.name,
       value: item.id || 0,
-      avatar: (item?.avatar || LogoPlaceholderImage) as string,
+      avatar:
+        Array.isArray(item?.avatar) && !!item?.avatar?.length
+          ? (item?.avatar[0] as IAvatar)?.link
+          : "",
       subText: `${companyT("clientCompany.taxCode")}: ${item.tax_code}`,
     }));
     setOptions(opts);
   }, [items, companyT]);
 
   useEffect(() => {
-    if (!!options.length) {
+    if (isUpdated) return;
+    if (saleDetail?.client) {
+      setOptionSelected(saleDetail?.client);
+    } else if (!!options.length) {
       setOptionSelected(options[0]?.value);
     }
-  }, [options, setOptionSelected]);
+  }, [options, setOptionSelected, saleDetail]);
 
   useEffect(() => {
     if (optionSelected) {
@@ -70,13 +78,14 @@ const SalesClient = () => {
 
   const onUpdate = async (data: ClientCompany) => {
     const payload = { ...data };
-    if (!Array.isArray(data?.avatar) && typeof data["avatar"] === "object") {
-      const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
-      payload.avatar = logoUrl;
+    if (data.files) {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
+      payload.avatar = [logoUrl];
     } else {
-      delete payload["avatar"];
+      delete payload["files"];
     }
     setEditMode(false);
+    setUpdated(true);
     await onUpdateDeal({ id, client: data?.id });
     return await onUpdateClientCompany(payload);
   };

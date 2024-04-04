@@ -53,7 +53,6 @@ const Upload = (props: UploadProps) => {
       .then((blob) => {
         const file = new File([blob], "avatar.png", { type: blob.type });
         onChange(name, file);
-        // formik.setFieldValue("avatar", file);
       })
       .finally(() => {
         setOpenImageEditor(null);
