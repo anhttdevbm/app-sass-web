@@ -49,9 +49,10 @@ const HeaderSortCell = forwardRef(
           backgroundColor: "grey.50",
           borderBottom: "none",
           py: 0,
-          borderTopLeftRadius: isStart ? 4 : undefined,
-          borderBottomLeftRadius: isStart ? 4 : undefined,
-          borderTopRightRadius: isEnd ? 4 : undefined,
+          borderTopLeftRadius: isStart ? 12 : undefined,
+          borderBottomLeftRadius: isStart ? 12 : undefined,
+          borderTopRightRadius: isEnd ? 12 : undefined,
+          borderBottomRightRadius: isEnd ? 12 : undefined,
           transitionDuration: "0.2s",
           ...sx,
         }}

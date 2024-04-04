@@ -1,18 +1,3 @@
-import {
-  Box,
-  BoxProps,
-  CircularProgress,
-  Stack,
-  StackProps,
-  SxProps,
-  Table,
-  TableBody,
-  Grid,
-  TableCellProps,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import { AN_ERROR_TRY_RELOAD_PAGE, NS_COMMON } from "constant";
 import React, {
   MouseEventHandler,
   createRef,
@@ -22,7 +7,33 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import CellBody, { HEIGHT_ROW } from "./BodyCell";
+// import {
+//   Box,
+//   BoxProps,
+//   CircularProgress,
+//   Stack,
+//   StackProps,
+//   SxProps,
+//   Table,
+//   TableBody,
+//   Grid,
+//   TableCellProps,
+//   TableHead,
+//   TableRow,
+// } from "@mui/material";
+import Box, { BoxProps } from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import Stack, { StackProps } from "@mui/material/Stack";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import Grid from "@mui/material/Grid";
+import { TableCellProps } from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { SxProps } from "@mui/material/styles";
+
+import { AN_ERROR_TRY_RELOAD_PAGE, NS_COMMON } from "constant";
+import CellBody from "./BodyCell";
 import CellHeader, { HEIGHT_HEADER } from "./HeaderCell";
 import useWindowSize from "hooks/useWindowSize";
 import { useSidebar } from "store/app/selectors";
@@ -153,8 +164,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
     >
       <Box
         sx={{
-          overflowX: "auto",
-          overflowY: "hidden",
+          overflow: "visible",
           minHeight: HEIGHT_HEADER,
           display: "flex",
           alignItem: "center",

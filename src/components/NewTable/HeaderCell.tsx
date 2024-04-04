@@ -16,13 +16,14 @@ const HeaderCell = forwardRef(
     return (
       <TableCell
         sx={{
-          backgroundColor: "grey.50",
-          borderBottom: "none",
-          py: 0,
-          borderTopLeftRadius: isStart ? 4 : undefined,
-          borderBottomLeftRadius: isStart ? 4 : undefined,
-          borderTopRightRadius: isEnd ? 4 : undefined,
-          borderBottomRightRadius: isEnd ? 4 : undefined,
+          backgroundColor: "#D9F0FD",
+          border: 0,
+          px: 2.5,
+          py: 2,
+          borderTopLeftRadius: isStart ? 12 : undefined,
+          borderBottomLeftRadius: isStart ? 12 : undefined,
+          borderTopRightRadius: isEnd ? 12 : undefined,
+          borderBottomRightRadius: isEnd ? 12 : undefined,
           ...sx,
         }}
         height={HEIGHT_HEADER}
@@ -31,7 +32,15 @@ const HeaderCell = forwardRef(
         {...rest}
       >
         {typeof children === "string" ? (
-          <Text variant="h6" color="grey.400" {...textProps}>
+          <Text
+            variant="h6"
+            {...textProps}
+            sx={{
+              fontSize: "16px",
+              fontWeight: 400,
+              color: "#4D4D4D",
+            }}
+          >
             {children}
           </Text>
         ) : (

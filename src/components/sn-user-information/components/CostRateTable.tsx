@@ -1,16 +1,8 @@
 "use client";
-import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
-import Table from "@mui/material/Table";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import { SxProps, styled } from "@mui/material/styles";
-import { useTranslations } from "next-intl";
 import dayjs from "dayjs";
 
-import { NS_COST_RATE } from "constant/index";
 import { Checkbox } from "components/shared";
 import {
   TableLayout,
@@ -26,16 +18,6 @@ type CostRateTableProps = {
   handleItemEdit: (id: string) => void;
   handleItemDelete: (id: string) => void;
 }
-
-const StyledHeadCell = styled(TableCell)({
-  border: 0,
-  padding: 20,
-})
-
-const StyledBodyCell = styled(TableCell)({
-  border: 0,
-  padding: 20,
-})
 
 const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDelete }: CostRateTableProps) => {
   const [selectedList, setSelectedList] = useState<string[]>([]);
@@ -82,30 +64,6 @@ const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDe
     return cols;
   }, [ isEditable, isCheckedAll, onChangeAll ])
 
-  const headerRowSx: SxProps = useMemo(() => {
-    const sx: SxProps = {
-      height: 70,
-      "& > th": {
-        border: 0,
-        paddingTop: 2,
-        paddingBottom: 2,
-        paddingLeft: 2.5,
-        paddingRight: 2.5,
-        backgroundColor: "#D9F0FD",
-      },
-      "& > th:first-of-type": {
-        borderTopLeftRadius: 12,
-        borderBottomLeftRadius: 12,
-      },
-      "& > th:last-of-type": {
-        borderTopRightRadius: 12,
-        borderBottomRightRadius: 12,
-      },
-    };
-
-    return sx;
-  }, []);
-
   return (
     <>
       <TableLayout
@@ -149,52 +107,6 @@ const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDe
           );
         })}
       </TableLayout>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow sx={headerRowSx}>
-              { isEditable
-                ? <StyledHeadCell sx={{ width: "30px" }}>
-                    <Checkbox checked={isCheckedAll} onChange={onChangeAll} checkedColor="#0575E6"/>
-                  </StyledHeadCell>
-                : <></>
-              }
-              { columns.map((h, idx) =>
-                <StyledHeadCell
-                  key={`th-${idx}`}
-                  sx={{ width: h.width }}
-                >
-                  { h.value }
-                </StyledHeadCell>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {items.map((item) => {
-              const indexSelected = selectedList.findIndex(
-                (selected) => selected === item.id,
-              );
-              return (
-                <TableRow key={item.id}>
-                  { isEditable
-                    ? <StyledBodyCell>
-                        <Checkbox checked={indexSelected !== -1} onChange={onToggleSelect(item.id, indexSelected)} checkedColor="#0575E6"/>
-                      </StyledBodyCell>
-                    : <></>
-                  }
-                  <StyledBodyCell>{dayjs(item.start_date).format('DD MMM, YYYY')}</StyledBodyCell>
-                  <StyledBodyCell>{dayjs(item.end_date).format('DD MMM, YYYY')}</StyledBodyCell>
-                  <StyledBodyCell>{item.type}</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
     </>
   )
 }

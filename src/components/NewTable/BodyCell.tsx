@@ -57,7 +57,7 @@ const BodyCell = (props: BodyCellProps) => {
       sx={{
         py: 0,
         height: HEIGHT_ROW,
-        borderColor: "grey.100",
+        border: 0,
         fontSize: 14,
         ...sx,
       }}

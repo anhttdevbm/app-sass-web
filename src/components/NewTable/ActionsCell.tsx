@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { BodyCell } from "components/Table";
 import { IconButton, IconButtonProps, Text } from "components/shared";
-import MoreSquareIcon from "icons/MoreSquareIcon";
+import ThreeDotsIcon from "icons/ThreeDotsIcon";
 import PencilIcon from "icons/PencilIcon";
 import TrashIcon from "icons/TrashIcon";
 import ConfirmDialog, { ConfirmDialogProps } from "components/ConfirmDialog";
@@ -132,7 +132,7 @@ const ActionsCell = (props: ActionsCellProps) => {
         variant="contained"
         {...restIconProps}
       >
-        <MoreSquareIcon sx={{ fontSize: 24 }} />
+        <ThreeDotsIcon sx={{ fontSize: 12, color: "#4D4D4D" }} />
       </IconButton>
       <Popover
         id={popoverId}
