@@ -1,22 +1,28 @@
-import { ReactElement } from "react";
+"use client";
+import { ReactElement, useCallback, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
+import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import Table from "@mui/material/Table";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import { styled } from "@mui/material/styles";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Filler, Title } from 'chart.js';
-import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { Formik } from "formik";
 
+import { Permission } from "constant/enums";
+import { NS_COMMON, NS_COST_RATE } from "constant/index";
 import { Text } from "components/shared";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import CalendarIcon from "icons/CalendarIcon";
-import { useCostRate } from "store/costRate/selectors";
 import ProcessRing from "../components/ProcessRing";
+import useToggle from "hooks/useToggle";
+import { UpdateCostRate } from "store/costRate/actions";
+import { CostRate } from "store/costRate/reducer";
+import { useCostRate } from "store/costRate/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
+import CostRateForm, { EditCostRateForm } from "./CostRateForm";
+import CostRateTable from "../components/CostRateTable";
 
 const CurrentRateBlock = ({title, content, icon}: {
   title: string;
@@ -43,13 +49,95 @@ const CurrentRateBlock = ({title, content, icon}: {
   )
 }
 
-const StyledBodyCell = styled(TableCell)({
-  border: 0,
-  padding: 20,
-})
-
 const CostRateInfo = () => {
-  const { currentRate, remainingRates } = useCostRate();
+  const { user } = useAuth();
+  const commonT = useTranslations(NS_COMMON);
+  const costRateT = useTranslations(NS_COST_RATE);
+  const { onAddSnackbar } = useSnackbar();
+  const [ isModalOpen, openModal, closeModal ] = useToggle(false);
+  const { currentRate, remainingRates, handleUpdateCostRate, handleDeleteCostRate } = useCostRate();
+
+  const [ costRateToEdit, setCostRateToEdit ] = useState<CostRate | undefined>(undefined);
+  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles]);
+
+  const handleItemEdit = useCallback((id: string) => {
+    const rate = [ currentRate, ...remainingRates ].find(r => r?.id === id)
+    if (rate) {
+      setCostRateToEdit(rate);
+      openModal();
+    }
+  }, [ currentRate, remainingRates, openModal ])
+
+  const handleItemDelete = useCallback(async (id: string) => {
+    try {
+      await handleDeleteCostRate(id);
+      onAddSnackbar(
+        costRateT("empty.notification.updateSuccess"),
+        "success",
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  }, [ commonT, costRateT, handleDeleteCostRate, onAddSnackbar])
+
+  const handleCloseForm = () => {
+    setCostRateToEdit(undefined);
+    closeModal();
+  }
+
+  const onSubmit = async (values: EditCostRateForm) => {
+    try {
+      const data = {
+        ...values,
+        id: costRateToEdit?.id ?? "",
+        working_hours: [
+          values.working_hours.mon,
+          values.working_hours.tue,
+          values.working_hours.wed,
+          values.working_hours.thu,
+          values.working_hours.fri,
+          values.working_hours.sat,
+          values.working_hours.sun,
+        ],
+      } as UpdateCostRate;
+      await handleUpdateCostRate(data);
+      onAddSnackbar(
+        costRateT("empty.notification.updateSuccess"),
+        "success",
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
+
+  const initialValues = useMemo(
+    () => costRateToEdit
+      ? ({
+          ...getDataFromKeys(costRateToEdit, [
+            "id",
+            "type",
+            "cost_per_month",
+            "currency",
+            "total_hours",
+            "start_date",
+            "end_date",
+            "holiday_calendar",
+            "note",
+          ]),
+          working_hours: {
+            mon: costRateToEdit?.working_hours[0] ?? 8,
+            tue: costRateToEdit?.working_hours[1] ?? 8,
+            wed: costRateToEdit?.working_hours[2] ?? 8,
+            thu: costRateToEdit?.working_hours[3] ?? 8,
+            fri: costRateToEdit?.working_hours[4] ?? 8,
+            sat: costRateToEdit?.working_hours[5] ?? 0,
+            sun: costRateToEdit?.working_hours[6] ?? 0,
+          },
+          overhead: true,
+        })
+    : undefined,
+    [costRateToEdit],
+  ) as EditCostRateForm;
 
   const labels = [
     "Mar 18",
@@ -203,77 +291,40 @@ const CostRateInfo = () => {
       <Text fontSize={25} fontWeight={600} variant="h3" color="grey.800" mt={6} mb={2}>Cost Rate</Text>
 
       <Box width="100%" overflow="hidden">
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={{
-                  height: 70,
-                  "& th": {
-                    border: 0,
-                    paddingTop: 2,
-                    paddingBottom: 2,
-                    paddingLeft: 2.5,
-                    paddingRight: 2.5,
-                    backgroundColor: "#D9F0FD",
-                  },
-                  "& th:first-child": {
-                    borderTopLeftRadius: 12,
-                    borderBottomLeftRadius: 12,
-                  },
-                  "& th:last-child": {
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 12,
-                  },
-                  "& th:nth-child(1)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(2)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(3)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(4)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(5)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(6)": {
-                    minWidth: "100px",
-                  },
-                  "& th:nth-child(7)": {
-                    width: "20%",
-                    minWidth: "100px",
-                  },
-                }}
-              >
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
-                <TableCell>Cost Type</TableCell>
-                <TableCell>Cost</TableCell>
-                <TableCell>Hourly</TableCell>
-                <TableCell>Capacity</TableCell>
-                <TableCell>Note</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {remainingRates.map((item) =>
-                <TableRow key={item.id}>
-                  <StyledBodyCell>{dayjs(item.start_date).format('DD MMM, YYYY')}</StyledBodyCell>
-                  <StyledBodyCell>{dayjs(item.end_date).format('DD MMM, YYYY')}</StyledBodyCell>
-                  <StyledBodyCell>{item.type}</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                  <StyledBodyCell>--</StyledBodyCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <CostRateTable
+          items={remainingRates}
+          isEditable={isAdmin}
+          handleItemEdit={handleItemEdit}
+          handleItemDelete={handleItemDelete}
+        />
       </Box>
+
+      {
+        isAdmin
+          ? <>
+            <DefaultPopupLayout
+              open={isModalOpen}
+              title="Edit Cost Rate"
+              onClose={handleCloseForm}
+            >
+              <DialogContent>
+                <Formik
+                  initialValues={initialValues}
+                  onSubmit={onSubmit}
+                >
+                  {
+                    (props) =>
+                      <CostRateForm
+                        formik={props}
+                        onCancel={handleCloseForm}
+                      />
+                  }
+                </Formik>
+              </DialogContent>
+            </DefaultPopupLayout>
+          </>
+          : <></>
+      }
     </Box>
   )
 }

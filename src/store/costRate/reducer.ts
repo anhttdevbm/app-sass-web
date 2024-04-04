@@ -2,7 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import {
   getAllCostRate,
+  getCostRate,
+  deleteCostRate,
   addNewCostRate,
+  updateCostRate,
 } from "./actions";
 
 export type CostRate = {
@@ -22,12 +25,11 @@ export type CostRate = {
 }
 
 export type CostRateState = {
-  currentRate?: CostRate;
-  remainingRates: CostRate[];
+  rates: CostRate[];
 }
 
 const initialState: CostRateState = {
-  remainingRates: [],
+  rates: [],
 }
 
 const costRateSlice = createSlice({
@@ -39,15 +41,39 @@ const costRateSlice = createSlice({
       .addCase(
         getAllCostRate.fulfilled,
         (state, action: PayloadAction<CostRate[]>) => {
-          state.currentRate = action.payload[0];
-          state.remainingRates = action.payload;
+          state.rates = [ ...action.payload ];
+        }
+      )
+      .addCase(
+        getCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          const index = state.rates.findIndex(rate => rate.id === action.payload.id);
+          if (index > -1) {
+            state.rates[index] = { ...action.payload }
+          } else {
+            state.rates.unshift({ ...action.payload });
+          }
+        }
+      )
+      .addCase(
+        deleteCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          const index = state.rates.findIndex(rate => rate.id === action.payload.id);
+          if (index > -1) {
+            state.rates.splice(index, 1);
+          }
         }
       )
       .addCase(
         addNewCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          state.currentRate = action.payload;
-          state.remainingRates.unshift(action.payload);
+          state.rates.unshift({ ...action.payload });
+        }
+      )
+      .addCase(
+        updateCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          state.rates[state.rates.findIndex(rate => rate.id === action.payload.id)] = { ...action.payload }
         }
       )
 })

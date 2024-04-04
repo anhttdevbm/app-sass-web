@@ -8,10 +8,10 @@ import CostRateInfo from "./CostRateInfo";
 const CostRate = () => {
   const { currentRate, handleGetAllCostRate } = useCostRate();
 
-  // useEffect(() => {
-  //   handleGetAllCostRate()
-  //     .then((data) => { return undefined; })
-  // }, [handleGetAllCostRate])
+  useEffect(() => {
+    handleGetAllCostRate()
+      .then((data) => { return undefined; })
+  }, [handleGetAllCostRate])
 
   return (
     <>

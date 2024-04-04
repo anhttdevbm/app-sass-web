@@ -154,16 +154,18 @@ const getDefaultSx = (isDarkMode: boolean, sx) => {
       },
     },
     [`&.${matchClass(PREFIX_BUTTON_CLASS, PRIMARY_OUTLINED)}`]: {
-      border: "1px solid",
-      backgroundColor: "transparent",
-      borderColor: "primary.main",
+      border: "1px solid transparent",
+      background:
+        `linear-gradient(#fff, #fff) padding-box,
+         linear-gradient(90deg, #2AF598 0%, #009EFD 100%)`,
       color: "primary.main",
       "&:hover": {
-        borderColor: "primary.dark",
         color: "primary.dark",
       },
       [`&.${buttonClasses.disabled}`]: {
-        borderColor: isDarkMode ? "grey.50" : "primary.light",
+        background:
+          `linear-gradient(#fff, #fff) padding-box,
+           linear-gradient(90deg, #2AF598 0%, #009EFD 100%)`,
         color: isDarkMode ? "grey.50" : "primary.light",
       },
     },
