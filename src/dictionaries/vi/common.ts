@@ -122,4 +122,9 @@ export const CommonLang: CommonDictionary = {
   cancel: "Huỷ",
   success: "Thành công!",
   crop: "Xén",
+  landingPage: {
+    homePage: "Trang chủ",
+    aboutUs: "Về chúng tôi",
+    helpCenter: "Trung tâm trợ giúp",
+  }
 };

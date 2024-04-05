@@ -19,6 +19,7 @@ import {
   NS_BILLING,
   NS_APPLICANTS,
   NS_COST_RATE,
+  NS_CONTENTS,
 } from "constant/index";
 import { AccountLang } from "./account";
 import { AuthLang } from "./auth";
@@ -40,6 +41,7 @@ import { BudgetingLang } from "./budgeting";
 import { BillingLang } from "./billing";
 import { ApplicantsLang } from "./applicants";
 import { CostRateLang } from "./costRate";
+import { ContentsLang } from "./contents"
 
 export default {
   [NS_COMMON]: CommonLang,
@@ -62,4 +64,5 @@ export default {
   [NS_BILLING]: BillingLang,
   [NS_APPLICANTS]: ApplicantsLang,
   [NS_COST_RATE]: CostRateLang,
+  [NS_CONTENTS]: ContentsLang
 };

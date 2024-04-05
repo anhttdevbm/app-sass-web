@@ -41,5 +41,10 @@ export type LayoutDictionary = {
     career:string;
     careerList:string;
     billing:string;
+    //content
+    contents: string;
+    landingHome: string;
+    landingAboutUs: string;
+    landingHelpCenter: string;
   };
 };

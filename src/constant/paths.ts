@@ -67,6 +67,8 @@ export const BUDGET_INVOICE_EXPORT_PATH = "/budgeting/invoice/export/{id}";
 
 // Landing
 export const LANDING_HOME_PATH = "/landing";
+export const LANDING_ABOUT_US_PATH = "/landing/about-us";
+export const LANDING_HELP_CENTER_PATH = "/landing/help-center";
 
 const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,

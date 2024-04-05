@@ -118,4 +118,9 @@ export type CommonDictionary = {
   cancel: string;
   success: string;
   crop: string;
+  landingPage: {
+    homePage: string,
+    aboutUs: string,
+    helpCenter: string,
+  }
 };
