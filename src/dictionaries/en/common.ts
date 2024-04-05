@@ -123,4 +123,9 @@ export const CommonLang: CommonDictionary = {
   cancel: "Cancel",
   success: "Successfully!",
   crop: "Crop",
+  landingPage: {
+    homePage: "Home Page",
+    aboutUs: "About us",
+    helpCenter: "Help Center",
+  }
 };

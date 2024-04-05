@@ -20,6 +20,7 @@ import { CareerReducer } from "./career/reducer";
 import documentApi from "./docs/api";
 import { BillingState, billingReducer } from "./billing/reducer";
 import costRateReducer, { CostRateState } from "./costRate/reducer";
+import ContentReducer, { ContentState } from "./content/reducer";
 
 export interface State {
   app: AppState;
@@ -34,6 +35,7 @@ export interface State {
   blogs: BlogState;
   billing: BillingState;
   costRate: CostRateState;
+  content: ContentState
 }
 
 export const store = configureStore({
@@ -59,6 +61,7 @@ export const store = configureStore({
     billing: billingReducer,
     budgetExpense: budgetExpenseReducer,
     costRate: costRateReducer,
+    content: ContentReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

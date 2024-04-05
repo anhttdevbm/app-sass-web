@@ -26,6 +26,9 @@ import {
   CAREER_PATH,
   BUDGETING_PATH,
   BILLING_PATH,
+  LANDING_HOME_PATH,
+  LANDING_ABOUT_US_PATH,
+  LANDING_HELP_CENTER_PATH
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
@@ -45,6 +48,7 @@ import CardReceive from "icons/CardReceive";
 import MenuDocsIcon from "icons/MenuDocsIcon";
 import FeedbackIcon from "icons/FeedbackIcon";
 import MenuBlogIcon from "icons/MenuBlogIcon";
+import HomeOutlinedIcon from "icons/HomeOutlinedIcon";
 import CareerIcon from "icons/CareerIcon";
 import DocsItem from "icons/DocsItem";
 import BillingIcon from "icons/BillingIcon";
@@ -338,6 +342,29 @@ const DATA: MenuItemProps[] = [
     label: "menu.career",
     icon: <CareerIcon />,
     href: CAREER_PATH,
+    roles: [Permission.SA],
+  },
+  // Contents
+  {
+    label: "menu.contents",
+    icon: <HomeOutlinedIcon />,
+    subs: [
+      {
+        label: "menu.landingHome",
+        roles: [Permission.SA],
+        href: LANDING_HOME_PATH,
+      },
+      {
+        label: "menu.landingAboutUs",
+        roles: [Permission.SA],
+        href: LANDING_ABOUT_US_PATH,
+      },
+      {
+        label: "menu.landingHelpCenter",
+        roles: [Permission.SA],
+        href: LANDING_HELP_CENTER_PATH,
+      },
+    ],
     roles: [Permission.SA],
   },
 ];

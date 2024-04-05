@@ -12,7 +12,8 @@ export type UploadProps = {
     title: string;
     name: string;
     required?: boolean;
-    onChange: (name: string, file?: File) => void;
+    index?: number | undefined;
+    onChange: (name: string, file?: File, index?: number) => void;
     value?: File | string;
     placeholder?: StaticImageData;
 };
@@ -22,6 +23,7 @@ const Upload = (props: UploadProps) => {
         title,
         name,
         required,
+        index,
         onChange,
         value,
         placeholder = LogoPlaceholderImage,
@@ -30,7 +32,7 @@ const Upload = (props: UploadProps) => {
     const { onAddSnackbar } = useSnackbar();
     const t = useTranslations(NS_COMMON);
 
-    const previewImage = useMemo(() => {
+    const previewImage = useMemo(() => {        
         if (typeof value === "object") {
             return URL.createObjectURL(value);
         }
@@ -45,7 +47,7 @@ const Upload = (props: UploadProps) => {
         const files = event.target.files;
         if (!files) return;
         if (IMAGES_ACCEPT.includes(files[0].type)) {
-            onChange(name, files[0]);
+            onChange(name, files[0], index);
         } else {
             onAddSnackbar(t("notification.imageTypeInvalid"), "error");
         }
@@ -66,7 +68,7 @@ const Upload = (props: UploadProps) => {
                     border="1px solid"
                     borderColor="grey.50"
                 >
-                    <Image   onClick={onChooseFile}
+                    <Image onClick={onChooseFile}
                         src={previewImage}
                         width={value ? 200 : 100}
                         height={value ? 200 : 100}

@@ -40,6 +40,10 @@ export const LayoutLang: LayoutDictionary = {
     blogCategoryList:"Danh sách danh mục",
     career:"Nghề nghiệp",
     careerList: "Danh sách nghề nghiệp",
-    billing:"Hóa đơn"
+    billing:"Hóa đơn",
+    contents: "Nội Dung",
+    landingHome: "Trang Chủ",
+    landingAboutUs: "Giới Thiệu",
+    landingHelpCenter: "Trung Tâm Trợ Giúp",
   },
 };

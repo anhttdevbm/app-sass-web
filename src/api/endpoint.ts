@@ -162,4 +162,9 @@ export const Endpoint = {
   DETAIL_BUDGET: "/budgets/budget-by-id/{id}",
   CREATE_SERVICE_BUDGET: "/budgets/service",
   SERVICE_BY_BUDGET: "/budgets/service/{id}",
+
+  //Content
+  CONTENT_HOME_BANNER: "/content/home/banner",
+  CONTENT_HOME_EXPLORE: "/content/home/explore-how-we",
+  CONTENT_HOME_POWER: "/content/home/powerful-agent",
 };

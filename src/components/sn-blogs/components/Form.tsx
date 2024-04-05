@@ -162,7 +162,7 @@ const Form = (props: FormProps) => {
     }
   };
 
-  const onChangeField = (name: string, newValue?: any) => {
+  const onChangeField = (name: string, newValue?: any) => {    
     formik.setFieldValue(name, newValue);
     setData(newValue);
   };
