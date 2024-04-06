@@ -6,11 +6,8 @@ import Grid from "@mui/material/Grid";
 import Tab from "@mui/material/Tab";
 import { useTranslations } from "next-intl";
 
-import { Text } from "components/shared";
-import { AN_ERROR_TRY_RELOAD_PAGE, NS_COMMON, NS_COST_RATE } from "constant/index";
+import { NS_COST_RATE } from "constant/index";
 import FixedLayout from "components/FixedLayout";
-import { useContext } from "hooks/useNonOptionalContext";
-import { EmployeeDetailContext } from "./EmployeeDetailContext";
 import EmployeeDetailHeader from "./EmployeeDetailHeader";
 import EmployeeDetailForm from "./EmployeeDetailForm";
 import CostRate from "./CostRate/CostRate";
@@ -21,9 +18,7 @@ interface ITab {
 }
 
 const EmployeeDetailMain = () => {
-  const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
-  const { employee, onGetProfile, onUpdateUserInfo } = useContext(EmployeeDetailContext);
 
   const [tab, setTab] = useState<string>("userInfo");
   const tabs: ITab[] = [
@@ -36,14 +31,6 @@ const EmployeeDetailMain = () => {
       value: "costRate",
     },
   ];
-
-  if (!employee) {
-    return (
-      <Text variant="body2" textAlign="center" fontWeight={600}>
-        {commonT(AN_ERROR_TRY_RELOAD_PAGE)}
-      </Text>
-    );
-  }
 
   return (
     <FixedLayout flex={1}>
@@ -70,12 +57,7 @@ const EmployeeDetailMain = () => {
             mb="48px"
           >
             <Grid item xs={12} md={6}>
-              <EmployeeDetailHeader
-                employee={employee}
-                onGetProfile={onGetProfile}
-                onUpdateUserInfo={onUpdateUserInfo}
-                isEdit={tab == 'userInfo'}
-              />
+              <EmployeeDetailHeader isEdit={tab == 'userInfo'} />
             </Grid>
             <Grid item xs={12} md={6}>
               <TabList
@@ -137,7 +119,7 @@ const EmployeeDetailMain = () => {
               },
             }}
           >
-            <EmployeeDetailForm employee={employee} onUpdateUserInfo={onUpdateUserInfo} />
+            <EmployeeDetailForm />
           </TabPanel>
           <TabPanel
             value="costRate"
@@ -173,12 +155,12 @@ const tabStyles = {
   "& .MuiTouchRipple-root": {
     borderRadius: "9999px",
   },
-  "&:first-child": {
+  "&:first-of-type": {
     borderTopLeftRadius: "9999px",
     borderBottomLeftRadius: "9999px",
     borderLeftColor: "#EFEFEF",
   },
-  "&:last-child": {
+  "&:last-of-type": {
     borderTopRightRadius: "9999px",
     borderBottomRightRadius: "9999px",
     borderRightColor: "#EFEFEF",

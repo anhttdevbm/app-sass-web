@@ -13,26 +13,17 @@ import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
 import { Button, IconButton, Text } from "components/shared";
 import Avatar from "components/Avatar";
 import PencilIcon from "icons/FocusedCameraIcon";
+import { useContext } from "hooks/useNonOptionalContext";
 import { UpdateUserInfoData } from "store/app/actions";
-import { UserInfo } from "store/app/reducer";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
+import { EmployeeDetailContext } from "./EmployeeDetailContext";
 
-const EmployeeDetailHeader = ({
-  employee,
-  onGetProfile,
-  onUpdateUserInfo,
-  isEdit,
-}: {
-  employee: UserInfo;
-  onGetProfile: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdateUserInfo: (data: UpdateUserInfoData) => Promise<any>;
-  isEdit: boolean;
-}) => {
+const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
 
+  const { employee, onGetProfile, onUpdateUserInfo } = useContext(EmployeeDetailContext);
   const { onAddSnackbar } = useSnackbar();
   const [avatar, setAvatar] = useState<string | File>(employee.avatar?.link ?? "");
   const imageEdittorRef = useRef<AvatarEditor>(null);

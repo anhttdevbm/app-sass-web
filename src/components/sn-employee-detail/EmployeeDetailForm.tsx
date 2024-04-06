@@ -16,27 +16,21 @@ import {
 } from "constant/index";
 // import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
+import { useContext } from "hooks/useNonOptionalContext";
 import CopyIcon from "icons/NewCopyIcon";
 import OutlineEditIcon from "icons/OutlineEditIcon";
 import { UpdateUserInfoData } from "store/app/actions";
-import { UserInfo } from "store/app/reducer";
 import { useSnackbar } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
+import { EmployeeDetailContext } from "./EmployeeDetailContext";
 
-const EmployeeDetailForm = ({
-  employee,
-  onUpdateUserInfo,
-}: {
-  employee: UserInfo;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdateUserInfo: (data: UpdateUserInfoData) => Promise<any>;
-} ) => {
+const EmployeeDetailForm = () => {
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
   // const { isSmSmaller } = useBreakpoint();
 
+  const { employee, onUpdateUserInfo } = useContext(EmployeeDetailContext);
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
-
   const { onAddSnackbar } = useSnackbar();
 
   const onSubmit = async (values: UpdateUserInfoData) => {

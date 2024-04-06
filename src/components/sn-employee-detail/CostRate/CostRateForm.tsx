@@ -44,7 +44,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
         justifyContent: "space-between",
         borderRadius: "12px",
         background: value === 0 ? "linear-gradient(45deg, hsla(0, 0%, 91%, 0.41), hsla(180, 19%, 87%, 1))" : "#D9F0FD",
-        "&:not(:first-child)": {
+        "&:not(:first-of-type)": {
           ml: "14px",
         },
       }}
