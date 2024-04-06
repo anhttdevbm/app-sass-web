@@ -1,15 +1,14 @@
-import { memo } from "react";
 import { Stack } from "@mui/material";
 import Avatar from "components/Avatar";
-import { Text } from "components/shared";
-import { BodyCell } from "components/Table";
 import Link from "components/Link";
-import { CLIENT_COMPANIES_PATH } from "constant/paths";
-import { NS_COMPANY, NS_COMMON, DATE_LOCALE_FORMAT } from "constant/index";
-import { useTranslations } from "next-intl";
-import dayjs from "dayjs";
+import { BodyCell } from "components/Table";
+import { Text } from "components/shared";
 import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
+import { DATE_LOCALE_FORMAT } from "constant/index";
+import { CLIENT_COMPANIES_PATH } from "constant/paths";
+import dayjs from "dayjs";
 import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
+import { memo } from "react";
 
 type MobileContentCellProps = {
   item: ClientCompany;
@@ -22,8 +21,6 @@ type InformationItemProps = {
 
 const MobileContentCell = (props: MobileContentCellProps) => {
   const { item } = props;
-  const companyT = useTranslations(NS_COMPANY);
-  const commonT = useTranslations(NS_COMMON);
 
   return (
     <>
@@ -57,8 +54,8 @@ const MobileContentCell = (props: MobileContentCellProps) => {
       </BodyCell>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} />
-          <Text variant="h6">{item?.contact?.name}</Text>
+          <Avatar size={32} src={item?.created_by?.avatar?.link} />
+          <Text variant="h6">{item?.created_by?.fullname}</Text>
         </Stack>
       </BodyCell>
       <BodyCell tooltip={dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}>

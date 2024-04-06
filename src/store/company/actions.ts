@@ -56,8 +56,16 @@ export type GetClientConpanyListQueries = BaseQueries & {
   name?: string;
   email?: string;
   position?: string;
+  created_by?: string;
   searchType?: "and" | "or" | "eq";
 };
+
+export type GetClientConpanyOptionListQueries = BaseQueries & {
+  name?: string;
+  email?: string;
+  searchType?: "and" | "or" | "eq";
+};
+
 
 export const getEmployees = createAsyncThunk(
   "company/getEmployees",

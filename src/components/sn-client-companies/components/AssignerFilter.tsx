@@ -14,19 +14,23 @@ const AssignerFilter = (
     totalPages,
     pageIndex,
     pageSize,
-    filters,
+    optionsFilters,
   } = useClientCompanies();
   const commonT = useTranslations(NS_COMMON);
   const companyT = useTranslations(NS_COMPANY);
 
   const onEndReached = () => {
     if (isFetching || (totalPages && pageIndex >= totalPages)) return;
-    onGetMemberOptions({ ...filters, pageSize, pageIndex: pageIndex + 1 });
+    onGetMemberOptions({
+      ...optionsFilters,
+      pageSize,
+      pageIndex: pageIndex + 1,
+    });
   };
 
   const onChangeSearch = (name: string, newValue?: string | number) => {
     onGetMemberOptions({
-      ...filters,
+      ...optionsFilters,
       pageIndex: 1,
       pageSize,
       [name]: newValue,
@@ -38,7 +42,6 @@ const AssignerFilter = (
       placeholder={companyT("clientCompany.createBy")}
       options={options}
       name="fullname"
-      onEndReached={onEndReached}
       onChangeSearch={onChangeSearch}
       searchProps={{
         name: "fullname",
