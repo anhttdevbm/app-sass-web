@@ -20,7 +20,7 @@ import {
   NewDatePicker as DatePicker,
   Text,
   } from "components/shared";
-import { NewCostRate } from "store/costRate/actions";
+import { NewCostRate } from "store/employeeDetail/actions";
 
 const WorkingHoursBlock = memo(function WorkingHoursBlock({
   title,

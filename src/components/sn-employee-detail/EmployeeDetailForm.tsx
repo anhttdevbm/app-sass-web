@@ -20,11 +20,17 @@ import CopyIcon from "icons/NewCopyIcon";
 import OutlineEditIcon from "icons/OutlineEditIcon";
 import { UpdateUserInfoData } from "store/app/actions";
 import { UserInfo } from "store/app/reducer";
-import { useSnackbar, useUserInfo } from "store/app/selectors";
+import { useSnackbar } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
 
-const EmployeeDetail = ({ employee }: { employee: UserInfo} ) => {
-  const { onUpdateUserInfo } = useUserInfo();
+const EmployeeDetailForm = ({
+  employee,
+  onUpdateUserInfo,
+}: {
+  employee: UserInfo;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onUpdateUserInfo: (data: UpdateUserInfoData) => Promise<any>;
+} ) => {
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
   // const { isSmSmaller } = useBreakpoint();
@@ -253,7 +259,7 @@ const EmployeeDetail = ({ employee }: { employee: UserInfo} ) => {
   );
 };
 
-export default memo(EmployeeDetail);
+export default memo(EmployeeDetailForm);
 
 const INITIAL_VALUES = {
   fullname: "",

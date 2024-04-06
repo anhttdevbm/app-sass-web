@@ -2,22 +2,61 @@ import { useCallback, useMemo } from "react";
 
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  getEmployeeDetail,
+  updateEmployee,
   getAllCostRate,
   getCostRate,
   deleteCostRate,
   addNewCostRate,
   updateCostRate,
+  UpdateEmployee,
   NewCostRate,
   UpdateCostRate,
 } from "./actions";
 
+export const useEmployeeDetail = () => {
+  const dispatch = useAppDispatch();
+
+  const employee = useAppSelector((state) => state.employeeDetail.employee.detail);
+  const status = useAppSelector((state) => state.employeeDetail.employee.status);
+
+  const handleGetEmployeeDetail = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(getEmployeeDetail(id)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const handleUpdateEmployee = useCallback(
+    async (data: UpdateEmployee) => {
+      try {
+        return await dispatch(updateEmployee(data)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  return {
+    employee,
+    status,
+    handleGetEmployeeDetail,
+    handleUpdateEmployee,
+  };
+}
+
 export const useCostRate = () => {
   const dispatch = useAppDispatch();
 
-  const rates = useAppSelector((state) => state.costRate.rates);
+  const costRates = useAppSelector((state) => state.employeeDetail.costRates.items);
 
-  const currentRate = useMemo(() => rates?.length > 0 ? rates[0] : undefined, [rates]);
-  const remainingRates = useMemo(() => rates?.length > 0 ? rates.slice(1) : [], [rates]);
+  const currentRate = useMemo(() => costRates?.length > 0 ? costRates[0] : undefined, [costRates]);
+  const remainingRates = useMemo(() => costRates?.length > 0 ? costRates.slice(1) : [], [costRates]);
 
   const handleGetAllCostRate = useCallback(
     async () => {

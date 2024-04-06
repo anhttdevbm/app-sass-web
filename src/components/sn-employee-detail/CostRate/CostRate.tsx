@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 
-import { useCostRate } from "store/costRate/selectors";
+import { useCostRate } from "store/employeeDetail/selectors";
 import CostRateEmpty from "./CostRateEmpty";
 import CostRateInfo from "./CostRateInfo";
 

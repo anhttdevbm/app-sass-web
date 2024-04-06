@@ -15,8 +15,8 @@ import AddCircleIcon from "icons/AddCircleIcon";
 import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { NewCostRate } from "store/costRate/actions";
-import { useCostRate } from "store/costRate/selectors";
+import { NewCostRate } from "store/employeeDetail/actions";
+import { useCostRate } from "store/employeeDetail/selectors";
 import { Permission } from "constant/enums";
 import { getMessageErrorByAPI } from "utils/index";
 

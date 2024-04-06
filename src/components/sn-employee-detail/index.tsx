@@ -1,200 +1,98 @@
 "use client";
-import { useState } from "react";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Tab from "@mui/material/Tab";
-import { useTranslations } from "next-intl";
+import { ReactNode, useCallback, useEffect } from "react";
+import { useParams } from "next/navigation";
 
-import { Text } from "components/shared";
-import { AN_ERROR_TRY_RELOAD_PAGE, NS_COMMON, NS_COST_RATE } from "constant/index";
-import FixedLayout from "components/FixedLayout";
+import { DataStatus } from "constant/enums";
 import { useAuth, useUserInfo } from "store/app/selectors";
-import Header from "./Header";
-import EmployeeDetail from "./EmployeeDetail";
-import CostRate from "./CostRate/CostRate";
+import { UpdateUserInfoData } from "store/app/actions";
+import { UpdateEmployee } from "store/employeeDetail/actions";
+import { reset } from "store/employeeDetail/reducer";
+import { useEmployeeDetail } from "store/employeeDetail/selectors";
+import { EmployeeDetailContext } from "./EmployeeDetailContext";
+import EmployeeDetailMain from "./EmployeeDetailMain";
 
-interface ITab {
-  label: string;
-  value: string;
+// // TypeScript discriminated union
+// type UserInformationProps = {
+//   type: "SELF";
+// }
+
+// type EmployeeDetailProps = {
+//   type: "EMPLOYEE_DETAIL";
+//   employeeId: string;
+// }
+
+// export type EmployeeDetailPageProps = UserInformationProps | EmployeeDetailProps;
+
+export type EmployeeDetailPageProps = {
+  type: "SELF" | "EMPLOYEE_DETAIL";
 }
 
-// TypeScript discriminated union
-type UserInformationProps = {
-  type: "self";
-}
-
-type EmployeeDetailProps = {
-  type: "employeeDetail";
-  employeeId: string;
-}
-
-export type EmployeeDetailPageProps = UserInformationProps | EmployeeDetailProps;
-
-const EmployeeDetailPage = ( props: EmployeeDetailPageProps ) => {
-  const commonT = useTranslations(NS_COMMON);
-  const costRateT = useTranslations(NS_COST_RATE);
-  const { user, onGetProfile } = useAuth();
+const UserInformationProvider = ({children}: { children: ReactNode }) => {
+  const { user: employee, onGetProfile } = useAuth();
   const { onUpdateUserInfo } = useUserInfo();
 
-  const employee = user;
+  return (
+    <EmployeeDetailContext.Provider value={{
+      employee,
+      onGetProfile,
+      onUpdateUserInfo
+    }}>
+      {children}
+    </EmployeeDetailContext.Provider>
+  );
+}
 
-  const [tab, setTab] = useState<string>("userInfo");
-  const tabStyles = {
-    width: 'auto',
-    px: "36px",
-    border: "1px solid",
-    borderStyle: "solid",
-    borderColor: "transparent",
-    borderTopColor: "#EFEFEF",
-    borderBottomColor: "#EFEFEF",
-    "& .MuiTouchRipple-root": {
-      borderRadius: "9999px",
-    },
-    "&:first-child": {
-      borderTopLeftRadius: "9999px",
-      borderBottomLeftRadius: "9999px",
-      borderLeftColor: "#EFEFEF",
-    },
-    "&:last-child": {
-      borderTopRightRadius: "9999px",
-      borderBottomRightRadius: "9999px",
-      borderRightColor: "#EFEFEF",
-    },
-  };
+const EmployeeDetailProvider = ({children}: { children: ReactNode }) => {
+  const {
+    employee,
+    status,
+    handleGetEmployeeDetail,
+    handleUpdateEmployee,
+  } = useEmployeeDetail();
+  const params = useParams() as { id: string };
 
-  const tabs: ITab[] = [
-    {
-      label: costRateT("head.tab.userInfo"),
-      value: "userInfo",
-    },
-    {
-      label: costRateT("head.tab.costRate"),
-      value: "costRate",
-    },
-  ];
+  const onGetProfile = useCallback(() => {
+    handleGetEmployeeDetail(params.id);
+  }, [handleGetEmployeeDetail, params.id])
 
-  if (!employee) {
-    return (
-      <Text variant="body2" textAlign="center" fontWeight={600}>
-        {commonT(AN_ERROR_TRY_RELOAD_PAGE)}
-      </Text>
-    );
-  }
+  const onUpdateUserInfo = useCallback(async (data: UpdateUserInfoData) => {
+    const payload = { ...data, id: params.id } as UpdateEmployee;
+    await handleUpdateEmployee(payload);
+  }, [handleUpdateEmployee, params.id]);
+
+  useEffect(() => {
+    if (status === DataStatus.IDLE) {
+      onGetProfile()
+    }
+    return () => { reset() };
+  }, [status, onGetProfile]);
 
   return (
-    <FixedLayout flex={1}>
-      <Box
-        sx={{
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <TabContext value={tab}>
-          <Grid
-            container
-            alignItems="end"
-            pl={{
-              xs: "24px",
-              sm: "48px",
-            }}
-            pr={{
-              xs: "24px",
-              sm: "32px",
-            }}
-            mt="32px"
-            mb="48px"
-          >
-            <Grid item xs={12} md={6}>
-              <Header
-                employee={employee}
-                onGetProfile={onGetProfile}
-                onUpdateUserInfo={onUpdateUserInfo}
-                isEdit={tab == 'userInfo'}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TabList
-              sx={{
-                mt: {
-                  xs: "24px",
-                  sm: "initial",
-                },
-                "& .MuiTab-root": {
-                  textTransform: "unset",
-                  fontSize: "16px",
-                  lineHeight: "25px",
-                  fontWeight: 400,
-                  color: "#333333",
-                  "&.Mui-selected": {
-                    color: "#045EB8",
-                  },
-                },
-                "& .MuiTabs-flexContainer": {
-                  position: "relative",
-                  zIndex: 10,
-                  justifyContent: {
-                    xs: "center",
-                    sm: "end",
-                  }
-                },
-                "& .MuiTabs-indicator": {
-                  height: "100%",
-                  borderRadius: "9999px",
-                  backgroundColor: "#D9F0FD",
-                  zIndex: 1,
-                },
-              }}
-                onChange={(_event: React.SyntheticEvent, newValue: string) =>
-                  setTab(newValue)
-                }
-              >
-                {tabs.map((tab: ITab) => (
-                  <Tab
-                    key={`tab-${tab.value}`}
-                    label={tab.label}
-                    value={tab.value}
-                    sx={tabStyles}
-                  />
-                ))}
-              </TabList>
-            </Grid>
-          </Grid>
-          <TabPanel
-            value="userInfo"
-            sx={{
-              padding: 0,
-              flexGrow: 1,
-              "&:not([hidden])": {
-                display: "flex",
-                flexDirection: "column",
-                overflowX: "hidden",
-                overflowY: "scroll",
-              },
-            }}
-          >
-            <EmployeeDetail employee={employee} />
-          </TabPanel>
-          <TabPanel
-            value="costRate"
-            sx={{
-              padding: 0,
-              flexGrow: 1,
-              "&:not([hidden])": {
-                display: "flex",
-                flexDirection: "column",
-                overflowX: "hidden",
-                overflowY: "scroll",
-              },
-            }}
-          >
-            <CostRate />
-          </TabPanel>
-        </TabContext>
-      </Box>
-    </FixedLayout>
+    <EmployeeDetailContext.Provider value={{
+      employee,
+      onGetProfile,
+      onUpdateUserInfo
+    }}>
+      {children}
+    </EmployeeDetailContext.Provider>
   );
+}
+
+const EmployeeDetailPage = (props: EmployeeDetailPageProps) => {
+  switch (props.type) {
+    case "SELF":
+      return (
+        <UserInformationProvider>
+          <EmployeeDetailMain />
+        </UserInformationProvider>
+      );
+    case "EMPLOYEE_DETAIL":
+      return (
+        <EmployeeDetailProvider>
+          <EmployeeDetailMain />
+        </EmployeeDetailProvider>
+      );
+  }
 }
 
 export default EmployeeDetailPage;
