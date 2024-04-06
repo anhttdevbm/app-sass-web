@@ -24,6 +24,7 @@ import {
   deleteClientCompany,
   getClientCompanyDetails,
   updateClientCompany,
+  GetClientConpanyOptionListQueries,
 } from "./actions";
 import { ItemListResponse, Paging, User, Option } from "constant/types";
 import { DataStatus, PayStatus } from "constant/enums";
@@ -158,6 +159,10 @@ export interface CompanyState {
     GetClientConpanyListQueries,
     "pageIndex" | "pageSize"
   >;
+  clientCompaniesOptionsFilters: Omit<
+    GetClientConpanyOptionListQueries,
+    "pageIndex" | "pageSize"
+  >;
 
   clientCompaniesMemberOptions: Option[];
   clientCompaniesMemberOptionsStatus: DataStatus;
@@ -202,6 +207,7 @@ const initialState: CompanyState = {
   clientCompaniesStatus: DataStatus.IDLE,
   clientCompaniesPaging: DEFAULT_PAGING,
   clientCompaniesFilters: {},
+  clientCompaniesOptionsFilters: {},
 
   clientCompaniesMemberOptions: [],
   clientCompaniesMemberOptionsStatus: DataStatus.IDLE,

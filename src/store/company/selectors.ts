@@ -373,6 +373,7 @@ export const useClientCompanies = () => {
     clientCompaniesStatus: status,
     clientCompaniesError: error,
     clientCompaniesFilters: filters,
+    clientCompaniesOptionsFilters: optionsFilters,
     clientCompanyDetail: detailItem,
   } = useAppSelector((state) => state.company, shallowEqual);
   const { pageIndex, pageSize, totalItems, totalPages } = useAppSelector(
@@ -435,6 +436,7 @@ export const useClientCompanies = () => {
     status,
     error,
     filters,
+    optionsFilters,
     isIdle,
     isFetching,
     pageIndex,

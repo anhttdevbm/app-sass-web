@@ -5,7 +5,12 @@ import { Endpoint, client } from "api";
 import { Date, Search } from "components/Filters";
 import { Button, Text } from "components/shared";
 import { DataAction } from "constant/enums";
-import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_COMPANY } from "constant/index";
+import {
+  AUTH_API_URL,
+  DATE_FORMAT_HYPHEN,
+  NS_COMMON,
+  NS_COMPANY,
+} from "constant/index";
 import { Option } from "constant/types";
 import useToggle from "hooks/useToggle";
 import PlusIcon from "icons/PlusIcon";
@@ -14,24 +19,22 @@ import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import Image from "next/image";
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useClientCompanies } from "store/company/selectors";
 import { getPath } from "utils/index";
 import AssignerFilter from "./components/AssignerFilter";
 import Form from "./components/Form";
 import { useHeaderConfig } from "store/app/selectors";
 import { ClientCompany } from "./type";
+import StringFormat from "string-format";
+import { debounce } from "lodash";
 
 const Actions = () => {
   const {
     filters,
-    isFetching,
-    totalPages,
-    pageIndex,
+    optionsFilters,
     options,
-    onGetClientCompanies,
     onGetMemberOptions,
-    pageSize,
     onCreateClientCompany,
   } = useClientCompanies();
   const companyT = useTranslations(NS_COMPANY);
@@ -48,16 +51,26 @@ const Actions = () => {
   );
   const { onUpdateHeaderConfig } = useHeaderConfig();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onDebounceSearch = useCallback(
+    debounce((name, nextValue) => {
+      const q = { ...queries, [name]: nextValue };
+      const path = getPath(pathname, q);
+      push(path);
+    }, 500),
+    [],
+  );
+
   const onChangeQueries = (name: string, value?: string) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+    onDebounceSearch(name, value);
   };
 
   const onChangeCreateBy = (name: string, value?: string) => {
-    const newValue = options.find(
-      (item) => item && value && item?.value === value,
-    );
-    setOptionSelected(newValue);
-    setQueries((prevQueries) => ({ ...prevQueries, [name]: newValue?.label }));
+    setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+    const q = { ...queries, created_by: value };
+    const path = getPath(pathname, q);
+    push(path);
   };
 
   const onSearch = () => {
@@ -77,7 +90,12 @@ const Actions = () => {
     return await onCreateClientCompany(payload);
   };
 
-  const onDoubleClick = () => setOptionSelected(undefined);
+  const onDoubleClick = () => {
+    const value = { ...queries };
+    delete value["created_by"];
+    setQueries(value);
+    onDebounceSearch("created_by", "");
+  };
 
   useEffect(() => {
     onGetMemberOptions({ pageIndex: 1, pageSize: 20 });
@@ -85,7 +103,38 @@ const Actions = () => {
 
   useEffect(() => {
     setQueries(filters);
-  }, [filters]);
+    const newValue = options.find(
+      (item) =>
+        item && filters?.created_by && item?.value === filters?.created_by,
+    );
+    setOptionSelected(newValue);
+  }, [filters, options]);
+
+  const onGetMemberDetail = async (id: string) => {
+    const response = await client.get(
+      StringFormat(Endpoint.USER_ITEM, { id }),
+      queries,
+      {
+        baseURL: AUTH_API_URL,
+      },
+    );
+    const opt = {
+      label: response.data?.fullname ?? "",
+      value: response.data?.id ?? "",
+      avatar: response.data?.avatar?.link ?? "",
+    };
+    setOptionSelected(opt);
+  };
+
+  useEffect(() => {
+    if (
+      optionsFilters &&
+      typeof filters?.created_by !== "undefined" &&
+      filters?.created_by === optionSelected?.value
+    ) {
+      onGetMemberDetail(filters?.created_by);
+    }
+  }, [filters, optionSelected]);
 
   useEffect(() => {
     onUpdateHeaderConfig({
@@ -159,25 +208,44 @@ const Actions = () => {
               }
             }}
           />
-          <AssignerFilter
-            onChange={onChangeCreateBy}
-            value={optionSelected?.value}
-            hasAvatar
-            name="fullname"
-            sx={{ display: { xs: "none", md: "initial" } }}
-            rootSx={{
-              "& >svg": { fontSize: 16 },
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(0.5)}!important`,
-                "& .sub": {
-                  display: "none",
+          {optionSelected && (
+            <Button
+              size="extraSmall"
+              sx={{ padding: 0, display: "flex", gap: 1 }}
+              onDoubleClick={onDoubleClick}
+            >
+              <Image
+                className="rounded"
+                style={{ margin: "auto" }}
+                src={optionSelected?.avatar || UserPlaceholderImage}
+                alt={optionSelected?.label}
+                width={22}
+                height={22}
+              ></Image>
+              <Text>{optionSelected?.label}</Text>
+            </Button>
+          )}
+          {!optionSelected && (
+            <AssignerFilter
+              onChange={onChangeCreateBy}
+              value={optionSelected}
+              hasAvatar
+              name="created_by"
+              sx={{ display: { xs: "none", md: "initial" } }}
+              rootSx={{
+                "& >svg": { fontSize: 16 },
+                px: "0px!important",
+                [`& .${selectClasses.outlined}`]: {
+                  pr: "0!important",
+                  mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
+                    `${spacing(0.5)}!important`,
+                  "& .sub": {
+                    display: "none",
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          )}
           <Date
             label={companyT("clientCompany.createDate")}
             name="created_time"

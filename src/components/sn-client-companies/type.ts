@@ -17,6 +17,21 @@ export interface IAvatar {
   link: string;
 }
 
+export interface Position {
+  id: string
+  name: string
+}
+
+export interface CreatedBy {
+  id: string
+  email: string
+  roles: string[]
+  company: string
+  fullname: string
+  position: Position
+  avatar: IAvatar
+}
+
 export interface ClientCompany {
   id?: string;
   code: string;
@@ -32,6 +47,7 @@ export interface ClientCompany {
   website?: string;
   contact?: Contact;
   files?: File;
+  created_by?: CreatedBy
 }
 
 const INITIAL_VALUES: ClientCompany = {
