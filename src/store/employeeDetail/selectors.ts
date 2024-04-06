@@ -2,6 +2,10 @@ import { useCallback, useMemo } from "react";
 
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  resetEmployee,
+  resetCostRates,
+} from "./reducer";
+import {
   getEmployeeDetail,
   updateEmployee,
   getAllCostRate,
@@ -42,11 +46,23 @@ export const useEmployeeDetail = () => {
     [dispatch],
   );
 
+  const handleResetEmployee = useCallback(
+    async () => {
+      try {
+        return dispatch(resetEmployee());
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
   return {
     employee,
     status,
     handleGetEmployeeDetail,
     handleUpdateEmployee,
+    handleResetEmployee,
   };
 }
 
@@ -113,6 +129,17 @@ export const useCostRate = () => {
     [dispatch],
   );
 
+  const handleResetCostRates = useCallback(
+    async () => {
+      try {
+        return dispatch(resetCostRates());
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
   return {
     currentRate,
     remainingRates,
@@ -121,5 +148,6 @@ export const useCostRate = () => {
     handleDeleteCostRate,
     handleAddNewCostRate,
     handleUpdateCostRate,
+    handleResetCostRates,
   };
 };

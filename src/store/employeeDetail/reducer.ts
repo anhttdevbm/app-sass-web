@@ -66,6 +66,7 @@ const employeeDetailSlice = createSlice({
   initialState,
   reducers: {
     resetEmployee: (state) => ({ ...state, employee: { ...initialState.employee } }),
+    resetCostRates: (state) => ({ ...state, costRates: { ...initialState.costRates } }),
     reset: () => ({ ...initialState }),
   },
   extraReducers: (builder) =>
@@ -174,6 +175,7 @@ const employeeDetailSlice = createSlice({
 export const {
   reset,
   resetEmployee,
+  resetCostRates,
 } = employeeDetailSlice.actions;
 
 export default employeeDetailSlice.reducer;

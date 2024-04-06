@@ -11,6 +11,7 @@ export const PROJECTS_PATH = "/projects";
 export const BUDGETING_PATH = "/budgeting";
 export const BUDGET_DETAIL_PATH = "/budgeting/{id}";
 export const EMPLOYEES_PATH = "/employees";
+export const EMPLOYEES_DETAIL_PATH = "/employee-detail/{id}";
 export const COST_HISTORY_PATH = "/cost-history";
 export const POSITIONS_PATH = "/positions";
 export const PROJECT_TYPES_PATH = "/project-types";

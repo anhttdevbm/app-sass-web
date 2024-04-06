@@ -1,5 +1,4 @@
 "use client";
-
 import {
   memo,
   useEffect,
@@ -9,6 +8,9 @@ import {
   ChangeEvent,
 } from "react";
 import { Stack, TableRow } from "@mui/material";
+import { usePathname, useRouter } from "next-intl/client";
+import { useTranslations } from "next-intl";
+
 import {
   TableLayout,
   BodyCell,
@@ -18,8 +20,7 @@ import {
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useQueryParams from "hooks/useQueryParams";
 import Pagination from "components/Pagination";
-import { usePathname, useRouter } from "next-intl/client";
-import { getDataFromKeys, getPath } from "utils/index";
+import { getPath } from "utils/index";
 import { IconButton, Checkbox } from "components/shared";
 import { useEmployees } from "store/company/selectors";
 import CardSendIcon from "icons/CardSendIcon";
@@ -32,7 +33,6 @@ import TrashIcon from "icons/TrashIcon";
 import { MobileContentCell, DesktopCells } from "./components";
 import useBreakpoint from "hooks/useBreakpoint";
 import DeleteConfirm from "./components/DeleteConfirm";
-import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import FixedLayout from "components/FixedLayout";
 import { HEADER_HEIGHT } from "layouts/Header";

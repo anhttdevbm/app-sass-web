@@ -6,7 +6,6 @@ import { DataStatus } from "constant/enums";
 import { useAuth, useUserInfo } from "store/app/selectors";
 import { UpdateUserInfoData } from "store/app/actions";
 import { UpdateEmployee } from "store/employeeDetail/actions";
-import { reset } from "store/employeeDetail/reducer";
 import { useEmployeeDetail } from "store/employeeDetail/selectors";
 import { EmployeeDetailContext } from "./EmployeeDetailContext";
 import EmployeeDetailMain from "./EmployeeDetailMain";
@@ -48,6 +47,7 @@ const EmployeeDetailProvider = ({children}: { children: ReactNode }) => {
     status,
     handleGetEmployeeDetail,
     handleUpdateEmployee,
+    handleResetEmployee,
   } = useEmployeeDetail();
   const params = useParams() as { id: string };
 
@@ -64,8 +64,11 @@ const EmployeeDetailProvider = ({children}: { children: ReactNode }) => {
     if (status === DataStatus.IDLE) {
       onGetProfile()
     }
-    return () => { reset() };
   }, [status, onGetProfile]);
+
+  useEffect(() => {
+    return () => { handleResetEmployee() };
+  }, [handleResetEmployee]);
 
   return (
     <EmployeeDetailContext.Provider value={{
