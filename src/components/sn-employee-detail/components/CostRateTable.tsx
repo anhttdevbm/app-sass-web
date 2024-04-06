@@ -10,7 +10,7 @@ import {
   CellProps,
   ActionsCell,
 } from "components/NewTable";
-import { CostRate } from "store/costRate/reducer";
+import { CostRate } from "store/employeeDetail/reducer";
 
 type CostRateTableProps = {
   items: CostRate[];

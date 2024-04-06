@@ -3,8 +3,10 @@ import StringFormat from "string-format";
 
 import { Endpoint, client } from "api";
 import { HttpStatusCode } from "constant/enums";
-import { CostRate } from "./reducer";
-import { AN_ERROR_TRY_AGAIN, COMPANY_API_URL } from "constant/index";
+import { Employee, CostRate } from "./reducer";
+import { AN_ERROR_TRY_AGAIN, AUTH_API_URL, COMPANY_API_URL } from "constant/index";
+
+export type UpdateEmployee = Partial<Employee>;
 
 export type NewCostRate = Partial<
   Omit<CostRate, "id" | "created_by" | "created_time" | "company">
@@ -17,6 +19,50 @@ export type UpdateCostRate = Partial<
 > & {
   note?: string;
 }
+
+export const getEmployeeDetail = createAsyncThunk(
+  "costRate/getEmployeeDetail",
+  async (id: string) => {
+    try {
+      const response = await client.get(
+        StringFormat(Endpoint.USER_ITEM, { id }),
+        undefined,
+        {
+          baseURL: AUTH_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateEmployee = createAsyncThunk(
+  "costRate/updateEmployee",
+  async (data: UpdateEmployee) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.USER_ITEM, { id: data.id }),
+        data,
+        {
+          baseURL: AUTH_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
 
 export const getAllCostRate = createAsyncThunk(
   "costRate/getAllCostRate",

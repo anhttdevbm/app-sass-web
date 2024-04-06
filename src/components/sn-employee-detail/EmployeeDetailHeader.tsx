@@ -13,18 +13,19 @@ import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
 import { Button, IconButton, Text } from "components/shared";
 import Avatar from "components/Avatar";
 import PencilIcon from "icons/FocusedCameraIcon";
+import { useContext } from "hooks/useNonOptionalContext";
 import { UpdateUserInfoData } from "store/app/actions";
-import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
+import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
+import { EmployeeDetailContext } from "./EmployeeDetailContext";
 
-const UserInformationHeader = ({ isEdit }) => {
-  const { user, onGetProfile } = useAuth();
-  const { onUpdateUserInfo } = useUserInfo();
+const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
-  const { onAddSnackbar } = useSnackbar();
 
-  const [avatar, setAvatar] = useState<string | File>(user?.avatar?.link ?? "");
+  const { employee, onGetProfile, onUpdateUserInfo } = useContext(EmployeeDetailContext);
+  const { onAddSnackbar } = useSnackbar();
+  const [avatar, setAvatar] = useState<string | File>(employee.avatar?.link ?? "");
   const imageEdittorRef = useRef<AvatarEditor>(null);
   const [imageScale, setImageScale] = useState(1.2);
   const [openImageEditor, setOpenImageEditor] = useState<string | null>(null);
@@ -95,7 +96,7 @@ const UserInformationHeader = ({ isEdit }) => {
           <Avatar
             size={100}
             src={previewImage}
-            alt={user?.fullname}
+            alt={employee.fullname}
             onClick={isEdit ? onChooseFile : undefined}
             style={{ cursor: "pointer" }}
           />
@@ -131,7 +132,7 @@ const UserInformationHeader = ({ isEdit }) => {
           )}
         </Stack>
         <Stack marginLeft={2} spacing="8px" alignItems="start">
-          <Text variant="subtitle1" fontWeight={600} color="#404040" fontSize={20}>{user?.fullname}</Text>
+          <Text variant="subtitle1" fontWeight={600} color="#404040" fontSize={20}>{employee.fullname}</Text>
           <Text
             py="6px"
             px="18px"
@@ -141,7 +142,7 @@ const UserInformationHeader = ({ isEdit }) => {
             textAlign="center"
             fontSize={13}
             fontWeight={500}
-          >{ user?.position?.name ?? "--" }</Text>
+          >{ `${employee.position?.name ?? "--"} at ${employee.company ?? "--"}` }</Text>
         </Stack>
       </Stack>
 
@@ -192,4 +193,4 @@ const UserInformationHeader = ({ isEdit }) => {
   )
 };
 
-export default UserInformationHeader;
+export default EmployeeDetailHeader;

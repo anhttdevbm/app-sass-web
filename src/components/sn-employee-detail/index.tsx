@@ -1,0 +1,122 @@
+"use client";
+import { ReactNode, useCallback, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+
+import { DataStatus } from "constant/enums";
+import { AN_ERROR_TRY_RELOAD_PAGE, NS_COMMON } from "constant/index";
+import { Text } from "components/shared";
+import { useAuth, useUserInfo } from "store/app/selectors";
+import { UpdateUserInfoData } from "store/app/actions";
+import { UpdateEmployee } from "store/employeeDetail/actions";
+import { useEmployeeDetail } from "store/employeeDetail/selectors";
+import { EmployeeDetailContext } from "./EmployeeDetailContext";
+import EmployeeDetailMain from "./EmployeeDetailMain";
+
+// // TypeScript discriminated union
+// type UserInformationProps = {
+//   type: "SELF";
+// }
+
+// type EmployeeDetailProps = {
+//   type: "EMPLOYEE_DETAIL";
+//   employeeId: string;
+// }
+
+// export type EmployeeDetailPageProps = UserInformationProps | EmployeeDetailProps;
+
+export type EmployeeDetailPageProps = {
+  type: "SELF" | "EMPLOYEE_DETAIL";
+}
+
+const ErrorPage = () => {
+  const commonT = useTranslations(NS_COMMON);
+
+  return (
+    <Text variant="body2" textAlign="center" fontWeight={600}>
+      {commonT(AN_ERROR_TRY_RELOAD_PAGE)}
+    </Text>
+  );
+}
+
+const UserInformationProvider = ({children}: { children: ReactNode }) => {
+  const { user: employee, onGetProfile } = useAuth();
+  const { onUpdateUserInfo } = useUserInfo();
+
+  if (!employee) {
+    return <ErrorPage />
+  }
+
+  return (
+    <EmployeeDetailContext.Provider value={{
+      employee,
+      onGetProfile,
+      onUpdateUserInfo
+    }}>
+      {children}
+    </EmployeeDetailContext.Provider>
+  );
+}
+
+const EmployeeDetailProvider = ({children}: { children: ReactNode }) => {
+  const {
+    employee,
+    status,
+    handleGetEmployeeDetail,
+    handleUpdateEmployee,
+    handleResetEmployee,
+  } = useEmployeeDetail();
+  const params = useParams() as { id: string };
+
+  const onGetProfile = useCallback(() => {
+    handleGetEmployeeDetail(params.id);
+  }, [handleGetEmployeeDetail, params.id])
+
+  const onUpdateUserInfo = useCallback(async (data: UpdateUserInfoData) => {
+    const payload = { ...data, id: params.id } as UpdateEmployee;
+    await handleUpdateEmployee(payload);
+  }, [handleUpdateEmployee, params.id]);
+
+  useEffect(() => {
+    if (status === DataStatus.IDLE) {
+      onGetProfile()
+    }
+  }, [status, onGetProfile]);
+
+  useEffect(() => {
+    return () => { handleResetEmployee() };
+  }, [handleResetEmployee]);
+
+  if (!employee) {
+    return <ErrorPage />
+  }
+
+  return (
+    <EmployeeDetailContext.Provider value={{
+      employee,
+      onGetProfile,
+      onUpdateUserInfo
+    }}>
+      {children}
+    </EmployeeDetailContext.Provider>
+  );
+}
+
+const EmployeeDetailPage = (props: EmployeeDetailPageProps) => {
+  switch (props.type) {
+    case "SELF":
+      return (
+        <UserInformationProvider>
+          <EmployeeDetailMain />
+        </UserInformationProvider>
+      );
+    case "EMPLOYEE_DETAIL":
+      return (
+        <EmployeeDetailProvider>
+          <EmployeeDetailMain />
+        </EmployeeDetailProvider>
+      );
+  }
+}
+
+export default EmployeeDetailPage;
