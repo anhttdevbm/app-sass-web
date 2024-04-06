@@ -17,7 +17,7 @@ import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 
-const UserInformationHeader = ({ isEdit }) => {
+const EmployeeDetailHeader = ({ isEdit }) => {
   const { user, onGetProfile } = useAuth();
   const { onUpdateUserInfo } = useUserInfo();
   const commonT = useTranslations(NS_COMMON);
@@ -192,4 +192,4 @@ const UserInformationHeader = ({ isEdit }) => {
   )
 };
 
-export default UserInformationHeader;
+export default EmployeeDetailHeader;

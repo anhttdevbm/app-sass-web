@@ -8,8 +8,8 @@ import { useTranslations } from "next-intl";
 
 import { NS_COST_RATE } from "constant/index";
 import FixedLayout from "components/FixedLayout";
-import UserInformationHeader from "./UserInformationHeader";
-import UserInformation from "./UserInformation";
+import EmployeeDetailHeader from "./EmployeeDetailHeader";
+import EmployeeDetail from "./EmployeeDetail";
 import CostRate from "./CostRate/CostRate";
 
 
@@ -18,7 +18,7 @@ interface ITab {
   value: string;
 }
 
-const UserInformationPage = () => {
+const EmployeeDetailPage = () => {
   const [tab, setTab] = useState<string>("userInfo");
   const costRateT = useTranslations(NS_COST_RATE);
   const tabStyles = {
@@ -81,7 +81,7 @@ const UserInformationPage = () => {
               mb="48px"
             >
               <Grid item xs={12} md={6}>
-                <UserInformationHeader isEdit={tab == 'userInfo'} />
+                <EmployeeDetailHeader isEdit={tab == 'userInfo'} />
               </Grid>
               <Grid item xs={12} md={6}>
                 <TabList
@@ -143,7 +143,7 @@ const UserInformationPage = () => {
                 },
               }}
             >
-              <UserInformation />
+              <EmployeeDetail />
             </TabPanel>
             <TabPanel
               value="costRate"
@@ -167,4 +167,4 @@ const UserInformationPage = () => {
   );
 }
 
-export default UserInformationPage;
+export default EmployeeDetailPage;

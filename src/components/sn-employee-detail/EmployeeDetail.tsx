@@ -24,7 +24,7 @@ import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
 
-const UserInformation = () => {
+const EmployeeDetail = () => {
   const { user } = useAuth();
   const { onUpdateUserInfo } = useUserInfo();
   const commonT = useTranslations(NS_COMMON);
@@ -264,7 +264,7 @@ const UserInformation = () => {
   );
 };
 
-export default memo(UserInformation);
+export default memo(EmployeeDetail);
 
 const INITIAL_VALUES = {
   fullname: "",
