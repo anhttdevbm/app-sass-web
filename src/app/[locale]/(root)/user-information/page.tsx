@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Page() {
   return (
     <Wrapper overflow="auto">
-      <EmployeeDetailPage />
+      <EmployeeDetailPage type="self" />
     </Wrapper>
   );
 }

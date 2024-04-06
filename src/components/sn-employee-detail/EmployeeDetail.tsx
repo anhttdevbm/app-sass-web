@@ -9,27 +9,24 @@ import * as Yup from "yup";
 import {
   NewButton as Button,
   NewInput as Input,
-  Text
 } from "components/shared";
 import {
-  AN_ERROR_TRY_RELOAD_PAGE,
   NS_ACCOUNT,
   NS_COMMON,
 } from "constant/index";
 // import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
-import NewCopyIcon from "icons/NewCopyIcon";
+import CopyIcon from "icons/NewCopyIcon";
 import OutlineEditIcon from "icons/OutlineEditIcon";
 import { UpdateUserInfoData } from "store/app/actions";
-import { useAuth, useSnackbar, useUserInfo } from "store/app/selectors";
+import { UserInfo } from "store/app/reducer";
+import { useSnackbar, useUserInfo } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
 
-const EmployeeDetail = () => {
-  const { user } = useAuth();
+const EmployeeDetail = ({ employee }: { employee: UserInfo} ) => {
   const { onUpdateUserInfo } = useUserInfo();
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
-
   // const { isSmSmaller } = useBreakpoint();
 
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
@@ -56,9 +53,9 @@ const EmployeeDetail = () => {
 
   const initialValues = useMemo(
     () => ({
-      ...getDataFromKeys(user, Object.keys(INITIAL_VALUES)),
+      ...getDataFromKeys(employee, Object.keys(INITIAL_VALUES)),
     }),
-    [user],
+    [employee],
   ) as UpdateUserInfoData;
 
   const formik = useFormik({
@@ -87,14 +84,6 @@ const EmployeeDetail = () => {
     () => !!Object.values(touchedErrors)?.length || formik.isSubmitting,
     [touchedErrors, formik.isSubmitting],
   );
-
-  if (!user) {
-    return (
-      <Text variant="body2" textAlign="center" fontWeight={600}>
-        {commonT(AN_ERROR_TRY_RELOAD_PAGE)}
-      </Text>
-    );
-  }
 
   return (
     <>
@@ -149,13 +138,13 @@ const EmployeeDetail = () => {
               fullWidth
               name="username"
               disabled
-              value={user?.["username"]}
+              value={employee["username"]}
               endNode={
                 <Button
                   sx={{color: '#0575E6'}}
                   aria-label="copy"
-                  onClick={() => { navigator.clipboard.writeText(user?.["username"]) }}
-                  startIcon={<NewCopyIcon />}
+                  onClick={() => { navigator.clipboard.writeText(employee["username"]) }}
+                  startIcon={<CopyIcon />}
                 >
                   Copy
                 </Button>
@@ -206,7 +195,7 @@ const EmployeeDetail = () => {
               fullWidth
               name="email"
               disabled
-              value={user.email}
+              value={employee.email}
               tooltip={
                 isEdit
                   ? accountT("accountInformation.notAllowUpdate", {
@@ -272,7 +261,7 @@ const INITIAL_VALUES = {
   address: "",
 };
 
-export const validationSchema = Yup.object().shape({
+const validationSchema = Yup.object().shape({
   fullname: Yup.string()
     .trim()
     .required("form.error.required")
