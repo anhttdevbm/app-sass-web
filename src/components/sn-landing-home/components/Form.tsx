@@ -38,13 +38,14 @@ type FormProps = {
 const Form = (props: FormProps) => {
   const contentT = useTranslations(NS_CONTENTS);
   const commonT = useTranslations(NS_COMMON);
-  const { initialValues, type, onSubmit: onSubmitProps, ...rest } = props;
+  const { initialValues, type, titleForm, onSubmit: onSubmitProps, ...rest } = props;
   const { onAddSnackbar } = useSnackbar();
   const [tab, setTab] = useState('1');
 
   const onSubmit = async (values: ExploreData[]) => {
     try {
       const items = await onSubmitProps(values);
+      
       if (items) {
         onAddSnackbar(
           contentT("home.notification.updateSuccess"),
@@ -134,7 +135,7 @@ const Form = (props: FormProps) => {
                   <Grid item xs={12} md={6}>
                     <TextField
                       id="title-"
-                      label={contentT("home.exploreTable.title")}
+                      label={contentT("tableList.title")}
                       fullWidth
                       size="small"
                       focused
@@ -151,7 +152,7 @@ const Form = (props: FormProps) => {
                   <Grid item xs={12} md={6}>
                     <TextField
                       id="outlined-required"
-                      label={contentT("home.exploreTable.tab_name")}
+                      label={contentT("tableList.tab_name")}
                       fullWidth
                       size="small"
                       focused
@@ -168,7 +169,7 @@ const Form = (props: FormProps) => {
                   <Grid item xs={12} md={6}>
                     <TextField
                       id="title-"
-                      label={contentT("home.exploreTable.link")}
+                      label={contentT("tableList.link")}
                       fullWidth
                       size="small"
                       focused
@@ -184,7 +185,7 @@ const Form = (props: FormProps) => {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <UploadFile
-                      title={contentT("home.exploreTable.image")}
+                      title={contentT("tableList.image")}
                       name="imageUpload"
                       value={formik.values[index]?.imageUpload ? formik.values[index]?.imageUpload : formik.values[index]?.image?.link}
                       index={index}
@@ -194,7 +195,7 @@ const Form = (props: FormProps) => {
                   <Grid item xs={12} md={12}>
                     <TextField
                       id="outlined-multiline-static"
-                      label={contentT("home.exploreTable.description")}
+                      label={contentT("tableList.description")}
                       fullWidth
                       multiline
                       size="small"

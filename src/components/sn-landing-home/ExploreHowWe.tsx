@@ -1,7 +1,7 @@
 import { Stack, TableRow } from "@mui/material";
 import { ChangeEvent, useMemo, useRef, useState, useEffect } from "react";
 import StatusServer from "components/StatusServer";
-import { useContent } from "store/content/selectors"
+import { useContentHome } from "store/content/selectors"
 import {NS_CONTENTS } from "constant/index";
 import { Button, IconButton, Text } from "components/shared";
 import { useTranslations } from "next-intl";
@@ -19,17 +19,17 @@ import { ExploreData } from "store/content/reducer";
 import React, { memo } from "react";
 
 const ExploreHowWe = () => {
-    const { isFetching, error, explores, onGetHomeExplore, onUpdateHomeExplore } = useContent()
+    const { isFetching, error, explores, onGetHomeExplore, onUpdateHomeExplore } = useContentHome()
     const contentT = useTranslations(NS_CONTENTS);
     const [action, setAction] = useState<DataAction | undefined>();
     const [isEdit, setIsEdit] = useState<undefined>();
 
     const desktopHeaderList: CellProps[] = useMemo(
         () => [
-          { value: contentT("home.exploreTable.title"), width: "30%", align: "left" },
-          { value: contentT("home.exploreTable.tab_name"), width: "20%", align: "left" },
-          { value: contentT("home.exploreTable.description"), width: "35%", align: "left" },
-          { value: contentT("home.exploreTable.image"), width: "15%", align: "left" },
+          { value: contentT("tableList.title"), width: "30%", align: "left" },
+          { value: contentT("tableList.tab_name"), width: "20%", align: "left" },
+          { value: contentT("tableList.description"), width: "35%", align: "left" },
+          { value: contentT("tableList.image"), width: "15%", align: "left" },
         ],
         [contentT],
     );
@@ -62,6 +62,13 @@ const ExploreHowWe = () => {
 
     const onResetAction = () => {
         setAction(undefined);
+    }
+
+    const handleUpdateHomeExplore = async(values: ExploreData[]) => {
+        const response = await onUpdateHomeExplore(values)
+        if (!response) return
+        await onGetHomeExplore()
+        return response
     }
 
     useEffect(() => {
@@ -129,7 +136,7 @@ const ExploreHowWe = () => {
                     onClose={onResetAction}
                     type={DataAction.UPDATE}
                     initialValues={exploreForm}
-                    onSubmit={(values) => onUpdateHomeExplore(values)}
+                    onSubmit={handleUpdateHomeExplore}
                     titleForm={contentT("home.update_explore_how_we")}
                 />
             )}

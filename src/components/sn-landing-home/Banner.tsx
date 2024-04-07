@@ -6,7 +6,7 @@ import { IMAGES_ACCEPT, NS_COMMON, NS_CONTENTS } from "constant/index";
 import { useSnackbar } from "store/app/selectors";
 import { useTranslations } from "next-intl";
 import Box from "@mui/material/Box";
-import { useContent } from "store/content/selectors"
+import { useContentHome } from "store/content/selectors"
 import AvatarEditor from "react-avatar-editor";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import DialogContent from "@mui/material/DialogContent";
@@ -23,7 +23,7 @@ const BannerHomePage = () => {
   const { onAddSnackbar } = useSnackbar();
   const commonT = useTranslations(NS_COMMON);
   const contentT = useTranslations(NS_CONTENTS);
-  const { item, isFetching, error, onGetHomeBanner, onUpdateHomeBanner } = useContent()
+  const { item, isFetching, error, onGetHomeBanner, onUpdateHomeBanner } = useContentHome()
   const [banner, setBanner] = useState<string | File>(item?.link ?? "");
   const imageEdittorRef = useRef<AvatarEditor>(null);
   const [imageScale, setImageScale] = useState(1.2);
