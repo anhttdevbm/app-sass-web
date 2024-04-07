@@ -306,6 +306,7 @@ const CostRateInfo = () => {
               open={isModalOpen}
               title="Edit Cost Rate"
               onClose={handleCloseForm}
+              sx={{borderRadius: "24px"}}
             >
               <DialogContent>
                 <Formik

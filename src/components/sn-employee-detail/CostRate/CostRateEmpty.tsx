@@ -123,6 +123,7 @@ const CostRateEmpty = () => {
               open={isModalOpen}
               title="Add New Cost Rate"
               onClose={() => { closeModal() }}
+              sx={{borderRadius: "24px"}}
             >
               <DialogContent>
                 <Formik
