@@ -47,5 +47,6 @@ export const LayoutLang: LayoutDictionary = {
     landingHome: "Home Page",
     landingAboutUs: "About Us",
     landingHelpCenter: "Help Center",
+    landingTrustCenter: "Trust Center"
   },
 };

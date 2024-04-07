@@ -18,9 +18,9 @@ const DesktopCells = (props: DesktopCellsProps) => {
 
   return (
     <>
-      <BodyCell align="left">{props.item.title}</BodyCell>
+      <BodyCell align="left" noWrap>{props.item.title}</BodyCell>
       <BodyCell align="left">{props.item.tab_name}</BodyCell>
-      <BodyCell align="left">{props.item.description}</BodyCell>
+      <BodyCell align="left" noWrap>{props.item.description}</BodyCell>
       <BodyCell align="left">
         <Stack
           justifyContent="center"

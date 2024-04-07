@@ -169,4 +169,17 @@ export const Endpoint = {
   CONTENT_HOME_BANNER: "/content/home/banner",
   CONTENT_HOME_EXPLORE: "/content/home/explore-how-we",
   CONTENT_HOME_POWER: "/content/home/powerful-agent",
+
+  CONTENT_ABOUT_US_BANNER: "/content/about-us/banners",
+  CONTENT_ABOUT_US_QUESTIONS: "/content/about-us/questions",
+  CONTENT_ABOUT_US_MISSIONS: "/content/about-us/missions",
+  CONTENT_ABOUT_US_MOST_VIEW_ARTICLES: "/content/about-us/most-viewed-articles",
+  CONTENT_ABOUT_US_ALL_START_TEAM: "/content/about-us/all-star-team",
+  CONTENT_ABOUT_US_ONE_START_TEAM: "/content/about-us/all-star-team/{id}",
+
+  CONTENT_HELP_CENTER_BANNER: "/content/help-center/banner",
+  CONTENT_HELP_CENTER_USAGE_TIPS: "/content/help-center/usage-tips",
+
+  CONTENT_TRUST_CENTER_BANNER: "/content/trust-center/banner",
+  CONTENT_TRUST_CENTER_BUILDING_TRUST: "/content/trust-center/building-trust",
 };

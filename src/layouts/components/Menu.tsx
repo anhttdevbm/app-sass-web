@@ -28,7 +28,8 @@ import {
   BILLING_PATH,
   LANDING_HOME_PATH,
   LANDING_ABOUT_US_PATH,
-  LANDING_HELP_CENTER_PATH
+  LANDING_HELP_CENTER_PATH,
+  LANDING_TRUST_CENTER_PATH
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
@@ -363,6 +364,11 @@ const DATA: MenuItemProps[] = [
         label: "menu.landingHelpCenter",
         roles: [Permission.SA],
         href: LANDING_HELP_CENTER_PATH,
+      },
+      {
+        label: "menu.landingTrustCenter",
+        roles: [Permission.SA],
+        href: LANDING_TRUST_CENTER_PATH,
       },
     ],
     roles: [Permission.SA],
