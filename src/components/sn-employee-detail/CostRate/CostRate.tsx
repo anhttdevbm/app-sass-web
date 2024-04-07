@@ -10,7 +10,6 @@ const CostRate = () => {
 
   useEffect(() => {
     handleGetAllCostRate()
-      .then((data) => { return undefined; })
   }, [handleGetAllCostRate])
 
   return (
