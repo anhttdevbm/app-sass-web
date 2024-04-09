@@ -73,7 +73,14 @@ const Upload = (props: UploadProps) => {
   return (
     <>
       <Stack spacing={1} flex={1}>
-        <Stack direction="column" alignItems="center" spacing={2}>
+        <Stack
+          sx={{
+            flexDirection: { xs: "row", sm: "column", md: "column" },
+            gap: 2,
+          }}
+          alignItems="center"
+          spacing={2}
+        >
           <Stack
             width={64}
             height={64}
@@ -92,7 +99,7 @@ const Upload = (props: UploadProps) => {
               className="rounded"
             />
           </Stack>
-          <Stack>
+          <Stack sx={{ marginTop: "0px!important" }}>
             <Button
               variant="secondary"
               sx={{

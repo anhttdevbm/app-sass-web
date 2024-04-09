@@ -10,7 +10,7 @@ import SelectClient from "components/sn-sales-detail/components/Client/SelectCli
 import ViewDetail from "components/sn-sales-detail/components/Client/ViewDetail";
 import { DEFAULT_PAGING, NS_COMPANY } from "constant/index";
 import { Option } from "constant/types";
-import EditIcon from "icons/EditIcon";
+import EditUnderlineIcon from "icons/EditUnderlineIcon";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
@@ -93,7 +93,7 @@ const TabClient = () => {
   };
 
   return (
-    <FixedLayout flex={1} p="30px">
+    <FixedLayout flex={1} py="30px" px={0}>
       <Stack sx={{ height: 58 }}>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center">
@@ -124,15 +124,16 @@ const TabClient = () => {
                   width: 32,
                   minWidth: 32,
                   maxWidth: 32,
+                  maxHeight: 32,
                   paddingX: 0,
                   paddingY: 1,
                 }}
                 onClick={() => onSetShowEditClient(true)}
               >
-                <EditIcon
+                <EditUnderlineIcon
                   sx={{
-                    width: 16,
-                    height: 16,
+                    width: 24,
+                    height: 24,
                     padding: 0,
                     margin: "auto",
                     color: "#666666",

@@ -22,6 +22,7 @@ import {
   getClientCompaniesMemberOptions,
   createClientCompany,
   deleteClientCompany,
+  multipleDeleteClientCompany,
   getClientCompanyDetails,
   updateClientCompany,
   GetClientConpanyOptionListQueries,
@@ -651,6 +652,17 @@ const companySlice = createSlice({
       .addCase(
         deleteClientCompany.fulfilled,
         (state, action: PayloadAction<string>) => {
+          state.clientCompanies = state.clientCompanies.filter(
+            (item) => item?.id && !action.payload.includes(item?.id),
+          );
+          if (state.clientCompaniesPaging.totalItems !== undefined) {
+            state.clientCompaniesPaging.totalItems -= 1;
+          }
+        },
+      )
+      .addCase(
+        multipleDeleteClientCompany.fulfilled,
+        (state, action: PayloadAction<string[]>) => {
           state.clientCompanies = state.clientCompanies.filter(
             (item) => item?.id && !action.payload.includes(item?.id),
           );

@@ -384,6 +384,7 @@ export const BudgetDetail = () => {
           direction="row"
           justifyContent="space-between"
           borderBottom="1px solid #ECECF3"
+          sx={{ overflowX: "auto" }}
         >
           <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
             <TextStatus
@@ -449,7 +450,7 @@ export const BudgetDetail = () => {
         </Stack>
       </Stack>
 
-      <Stack direction="row" mt={2}>
+      <Stack direction="row" mt={1}>
         <Box
           position="relative"
           sx={{

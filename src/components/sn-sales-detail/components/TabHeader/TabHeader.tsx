@@ -97,7 +97,7 @@ const TabHeader = () => {
         sm: "0.5rem 1rem",
       }}
       minHeight={{
-        xs: "128px",
+        xs: "140px",
         md: "64px",
       }}
       justifyContent="space-between"

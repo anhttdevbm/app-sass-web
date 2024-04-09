@@ -25,139 +25,123 @@ const InformationProjectPage = (props: { item?: ClientCompany }) => {
     <Stack sx={{ overflowY: "auto", width: "100%", marginBottom: 3 }}>
       <Stack spacing={3} width={{ xs: "fit-content", md: 600 }}>
         <Text variant="h5">{companyT("clientCompany.generalInformation")}</Text>
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 2, sm: 5, lg: 10 }}
-        >
-          <InformationItem flex={1} label={companyT("clientCompany.createBy")}>
-            {item?.contact?.name}
-          </InformationItem>
-
-          <InformationItem
-            flex={1}
-            label={companyT("clientCompany.createDate")}
-          >
-            {dayjs(item?.created_time).format(DATE_LOCALE_FORMAT)}
-          </InformationItem>
-        </Stack>
 
         <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 2, sm: 5, lg: 10 }}
+          direction={{ xs: "column", sm: "row", md: "row" }}
+          columnGap="56px"
+          rowGap={2}
         >
-          <InformationItem flex={1} label={companyT("clientCompany.address")}>
-            {item?.address}
-          </InformationItem>
+          <Stack direction="column" gap={2} width="100%">
+            <InformationItem
+              flex={1}
+              label={companyT("clientCompany.createBy")}
+            >
+              {item?.contact?.name}
+            </InformationItem>
 
-          <InformationItem flex={1} label={companyT("clientCompany.zipCode")}>
-            {item?.zip_code}
-          </InformationItem>
-        </Stack>
+            <InformationItem flex={1} label={companyT("clientCompany.address")}>
+              {item?.address}
+            </InformationItem>
 
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 2, sm: 5, lg: 10 }}
-        >
-          <InformationItem flex={1} label={"Email"}>
-            {item?.email}
-          </InformationItem>
+            <InformationItem flex={1} label={"Email"}>
+              {item?.email}
+            </InformationItem>
 
-          <InformationItem flex={1} label={commonT("phone")}>
-            {item?.phone ? item?.phone : undefined}
-          </InformationItem>
-        </Stack>
+            <InformationItem flex={1} label={"Website"}>
+              {item?.website}
+            </InformationItem>
+          </Stack>
 
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 2, sm: 5, lg: 10 }}
-        >
-          <InformationItem flex={1} label={"Website"}>
-            {item?.website}
-          </InformationItem>
+          <Stack direction="column" gap={2} width="100%">
+            <InformationItem
+              flex={1}
+              label={companyT("clientCompany.createDate")}
+            >
+              {dayjs(item?.created_time).format(DATE_LOCALE_FORMAT)}
+            </InformationItem>
+
+            <InformationItem flex={1} label={companyT("clientCompany.zipCode")}>
+              {item?.zip_code}
+            </InformationItem>
+
+            <InformationItem flex={1} label={commonT("phone")}>
+              {item?.phone ? item?.phone : undefined}
+            </InformationItem>
+          </Stack>
         </Stack>
 
         <Divider sx={{ borderColor: "grey.100" }} />
 
         <Text variant="h5">{companyT("clientCompany.contact")}</Text>
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 2, sm: 5, lg: 10 }}
-        >
-          <InformationItem flex={1} label={commonT("fullName")}>
-            <Link
-              href={EMPLOYEES_PATH}
-              underline="none"
-              sx={{
-                color: "inherit",
-                "&:hover": {
-                  color: "primary.main",
-                },
-                fontSize: 14,
-              }}
-            >
-              {item?.contact?.name}
-            </Link>
-          </InformationItem>
-
-          <InformationItem flex={1} label={commonT("position")}>
-            <Link
-              href={POSITIONS_PATH}
-              underline="none"
-              sx={{
-                color: "inherit",
-                "&:hover": {
-                  color: "primary.main",
-                },
-                fontSize: 14,
-              }}
-            >
-              {item?.contact?.position}
-            </Link>
-          </InformationItem>
-        </Stack>
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 2, sm: 5, lg: 10 }}
-        >
-          <InformationItem flex={1} label={"Email"}>
-            <Link
-              href={PROJECTS_PATH}
-              underline="none"
-              sx={{
-                color: "inherit",
-                "&:hover": {
-                  color: "primary.main",
-                },
-                fontSize: 14,
-              }}
-            >
-              {item?.contact?.email}
-            </Link>
-          </InformationItem>
-
-          <InformationItem flex={1} label={commonT("phone")}>
-            {item?.contact?.phone}
-          </InformationItem>
-        </Stack>
 
         <Stack
-          direction="row"
-          alignItems="center"
-          spacing={{ xs: 2, sm: 5, lg: 10 }}
+          direction={{ xs: "column", sm: "row", md: "row" }}
+          columnGap="56px"
+          rowGap={2}
         >
-          <InformationItem flex={1} label={companyT("clientCompany.address")}>
-            {item?.contact?.address}
-          </InformationItem>
+          <Stack direction="column" gap={2} width="100%">
+            <InformationItem flex={1} label={commonT("fullName")}>
+              <Link
+                href={EMPLOYEES_PATH}
+                underline="none"
+                sx={{
+                  color: "inherit",
+                  "&:hover": {
+                    color: "primary.main",
+                  },
+                  fontSize: 14,
+                }}
+              >
+                {item?.contact?.name ?? "--"}
+              </Link>
+            </InformationItem>
 
-          <InformationItem flex={1} label={"Website"}>
-            {item?.contact?.website}
-          </InformationItem>
+            <InformationItem flex={1} label={"Email"}>
+              <Link
+                href={PROJECTS_PATH}
+                underline="none"
+                sx={{
+                  color: "inherit",
+                  "&:hover": {
+                    color: "primary.main",
+                  },
+                  fontSize: 14,
+                }}
+              >
+                {item?.contact?.email ?? "--"}
+              </Link>
+            </InformationItem>
+
+            <InformationItem flex={1} label={companyT("clientCompany.address")}>
+              {item?.contact?.address}
+            </InformationItem>
+          </Stack>
+
+          <Stack direction="column" gap={2} width="100%">
+            <InformationItem flex={1} label={commonT("position")}>
+              <Link
+                href={POSITIONS_PATH}
+                underline="none"
+                sx={{
+                  color: "inherit",
+                  "&:hover": {
+                    color: "primary.main",
+                  },
+                  fontSize: 14,
+                }}
+              >
+                {item?.contact?.position ?? "--"}
+              </Link>
+            </InformationItem>
+
+            <InformationItem flex={1} label={commonT("phone")}>
+              {item?.contact?.phone}
+            </InformationItem>
+
+            <InformationItem flex={1} label={"Website"}>
+              {item?.contact?.website}
+            </InformationItem>
+          </Stack>
         </Stack>
       </Stack>
     </Stack>

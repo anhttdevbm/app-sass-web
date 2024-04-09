@@ -85,6 +85,8 @@ export const CompanyLang: CompanyDictionary = {
       title: {
         name: "Create a new client company",
       },
+      addContact: "Add contact",
+      closedContact: "Closed contact",
     },
     companyName: "Company Name",
     taxCode: "Tax code",
@@ -105,8 +107,8 @@ export const CompanyLang: CompanyDictionary = {
     contact: "Contact",
     formUpdate: {
       title: "General information",
-      submit: "Save change"
-    }
+      submit: "Save change",
+    },
   },
   information: {
     head: {
