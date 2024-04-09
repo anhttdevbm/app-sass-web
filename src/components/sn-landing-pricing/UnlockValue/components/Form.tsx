@@ -118,9 +118,9 @@ const Form = (props: FormProps) => {
     if (features == null || features.length == 0) {
       setFeatures(listFeatures as UnlockValueFormData[]);
     }
-    const itemValues = formik.values[index]?.features ?? [];
+    const itemValues = formik.values[index].features ?? [];
     
-    const isExisted = itemValues.find((item) => item === value);
+    const isExisted = itemValues.find((item) => item == value);
 
     if (isExisted) {
       const updatedTags = itemValues.map((tag) => ({ tag }));

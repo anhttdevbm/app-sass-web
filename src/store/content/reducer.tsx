@@ -107,7 +107,7 @@ export interface UnlockValueData {
     description: string,
     monthly: string | number,
     yearly: string | number,
-    features: string[] | TagData[],
+    features: string[],
 }
 export interface ContentState {
     banner?: Attachment | null,
