@@ -27,13 +27,30 @@ import {
     getTrustCenterBanner,
     updateTrustCenterBanner,
     getTrustCenterBuildingTrust,
-    updateTrustCenterBuildingTrust, } from "./actions";
+    updateTrustCenterBuildingTrust,
+    getAIBanner,
+    updateAIBanner,
+    getAIBrands,
+    updateAIBrands,
+    getAIProductivity,
+    updateAIProductivity,
+    getAIPromote,
+    updateAIPromote,
+    getPricingBanner,
+    updatePricingBanner,
+    getPricingBannerTwo,
+    updatePricingBannerTwo,
+    getPricingPartners,
+    updatePricingPartners,
+    getPricingUnlockValues,
+    updatePricingUnlockValues 
+} from "./actions";
 import { DataStatus } from "constant/enums";
 import { ExploreData, ContentData, StartMemberData, StartMemberFormData } from "./reducer";
 import { uploadFile } from "store/blog/actions";
 import { ArticleData } from "./reducer";
 import { Attachment } from "constant/types";
-import { BannerCenterData } from "./reducer";
+import { BannerCenterData, PromoteData, UnlockValueData } from "./reducer";
 
 export type BannerData = {
     data: string;
@@ -44,7 +61,7 @@ export type ExploreFormData = {
     tab_name: string;
     description: string;
     image: string;
-    linkCTA: string;
+    linkCTA?: string;
 };
 
 export type ContentCommonFormData = {
@@ -120,8 +137,6 @@ export const useContentHome = () => {
             }
         },
         [dispatch],
-
-        
     );
 
     const onGetHomePower = useCallback(
@@ -334,10 +349,14 @@ export const useContentAboutUs = () => {
     );
 
     const onDeleteAboutUsMember = useCallback(
-        async () => {
-            await dispatch(deleteAboutUsMember());
+        async (memberId: number) => {
+            try {
+                return await dispatch(deleteAboutUsMember({ id: memberId })).unwrap();
+            } catch (error) {
+                throw error;
+            }
         },
-        [dispatch],
+        [dispatch]
     );
 
     const onGetAboutUsBanners = useCallback(
@@ -556,5 +575,357 @@ export const useContentCenter = () => {
         onUpdateTrustCenterBanner,
         onGetTrustCenterBuildingTrust,
         onUpdateTrustCenterBuildingTrust
+    }
+}
+
+export const useContentAI = () => {
+    const dispatch = useAppDispatch();
+    const {
+        contentStatus: status,
+        contentError: error,
+        aiBanner,
+        brands,
+        productivities,
+        promote
+    } = useAppSelector((state) => state.content, shallowEqual);
+
+    const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
+    const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+
+    const onGetAIBanner = useCallback(
+        async () => {
+            await dispatch(getAIBanner());
+        },
+        [dispatch],
+    );
+
+    const onUpdateAIBanner = useCallback(
+        async (item: ContentData) => {
+            let imageUpload: string = ""
+            let imageUpload2: string = ""
+            if (item?.imageUpload) {
+                const imageUploadResponse = await dispatch(
+                    uploadFile({
+                        file: item.imageUpload,
+                    }),
+                );
+                imageUpload = imageUploadResponse.payload.object
+            } else {
+                imageUpload = item.image.object;
+            }
+
+            if (item?.imageUpload2) {
+                const imageUploadResponse2 = await dispatch(
+                    uploadFile({
+                        file: item.imageUpload2,
+                    }),
+                );
+                imageUpload2 = imageUploadResponse2.payload.object
+            } else {
+                imageUpload2 = item.image2.object;
+            }
+
+            const params = {
+                title: item.title,
+                description: item.description,
+                image: imageUpload,
+                image2: imageUpload2,
+                linkCTA: item.linkCTA
+            } as ContentData
+            return await dispatch(updateAIBanner(params)).unwrap();
+        },
+        [dispatch],
+    );
+
+    const onGetAIBrands = useCallback(
+        async () => {
+            await dispatch(getAIBrands());
+        },
+        [dispatch],
+    );
+
+    const onUpdateAIBrands = useCallback(
+        async (articles: ArticleData[]) => {
+            try {
+                const promises = articles.map(async(item, index) => {
+                    if (item.logoUpload) {
+                        const logoUploadResponse = await dispatch(
+                            uploadFile({
+                                file: item.logoUpload,
+                            }),
+                        );
+                        item.logo = logoUploadResponse.payload.object;
+                    }
+                    return {
+                        name: item.name,
+                        logo: item.logoUpload ? item.logo : item.logo?.object,
+                    }
+                })
+
+                const params = await Promise.all(promises);                
+
+                return await dispatch(updateAIBrands(params as ArticleData[])).unwrap();
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        },
+        [dispatch],
+    )
+
+    const onGetAIProductivity = useCallback(
+        async () => {
+            await dispatch(getAIProductivity());
+        },
+        [dispatch],
+    );
+
+    const onUpdateAIProductivity = useCallback(
+        async (data: ExploreData[]) => {
+            try {
+                const promises = data.map(async(item, index) => {
+                    if (item.imageUpload) {
+                        const imageUploadResponse = await dispatch(
+                            uploadFile({
+                                file: item.imageUpload,
+                            }),
+                        );
+                        item.image = imageUploadResponse.payload.object;
+                    }
+                    return {
+                        title: item.title,
+                        tab_name: item.tab_name,
+                        description: item.description,
+                        image: item.imageUpload ? item.image : item.image?.object,
+                    }
+                })
+
+                const params = await Promise.all(promises);                
+
+                return await dispatch(updateAIProductivity(params as ExploreFormData[])).unwrap();
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        },
+        [dispatch],
+    );
+
+    const onGetAIPromote = useCallback(
+        async () => {
+            await dispatch(getAIPromote());
+        },
+        [dispatch],
+    );
+
+    const onUpdateAIPromote = useCallback(
+        async (data: PromoteData) => {
+            try {
+                let imageUpload: string = ""
+                if (data?.imageUpload) {
+                    const imageUploadResponse = await dispatch(
+                        uploadFile({
+                            file: data.imageUpload,
+                        }),
+                    );
+                    imageUpload = imageUploadResponse.payload.object
+                } else {
+                    imageUpload = data.image.object;
+                }
+
+                const promises = data.items.map(async(item, index) => {
+                    if (item.imageUpload) {
+                        const imageUploadResponse = await dispatch(
+                            uploadFile({
+                                file: item.imageUpload,
+                            }),
+                        );
+                        item.image = imageUploadResponse.payload.object;
+                    }
+                    return {
+                        title: item.title,
+                        description: item.description,
+                        image: item.imageUpload ? item.image : item.image?.object,
+                        linkCTA: item.linkCTA,
+                        linkCTA2: item.linkCTA2
+                    }
+                })
+
+                const items = await Promise.all(promises);
+                const params = {
+                    image: imageUpload,
+                    items: items
+                }     
+
+                return await dispatch(updateAIPromote(params as PromoteData)).unwrap();
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        },
+        [dispatch],
+    );
+
+    return {
+        aiBanner,
+        brands,
+        productivities,
+        promote,
+        error,
+        isIdle,
+        isFetching,
+        onGetAIBanner,
+        onUpdateAIBanner,
+        onGetAIBrands,
+        onUpdateAIBrands,
+        onGetAIProductivity,
+        onUpdateAIProductivity,
+        onGetAIPromote,
+        onUpdateAIPromote
+    }
+}
+
+export const useContentPricing = () => {
+    const dispatch = useAppDispatch();
+    const {
+        contentStatus: status,
+        contentError: error,
+        pricingBanner,
+        pricingBanner2,
+        partners,
+        unlockValues
+    } = useAppSelector((state) => state.content, shallowEqual);
+
+    const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
+    const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+
+    const onGetPricingBanner = useCallback(
+        async () => {
+            await dispatch(getPricingBanner());
+        },
+        [dispatch],
+    );
+
+    const onUpdatePricingBanner = useCallback(
+        async (item: ContentData) => {
+            let imageUpload: string = ""
+            let imageUpload2: string = ""
+            if (item?.imageUpload) {
+                const imageUploadResponse = await dispatch(
+                    uploadFile({
+                        file: item.imageUpload,
+                    }),
+                );
+                imageUpload = imageUploadResponse.payload.object
+            } else {
+                imageUpload = item.image.object;
+            }
+
+            const params = {
+                title: item.title,
+                description: item.description,
+                image: imageUpload,
+                linkCTA: item.linkCTA
+            } as ContentData
+            return await dispatch(updatePricingBanner(params)).unwrap();
+        },
+        [dispatch],
+    );
+
+    const onGetPricingBannerTwo = useCallback(
+        async () => {
+            await dispatch(getPricingBannerTwo());
+        },
+        [dispatch],
+    );
+
+    const onUpdatePricingBannerTwo = useCallback(
+        async (item: ContentData) => {
+            let imageUpload: string = ""
+            let imageUpload2: string = ""
+            if (item?.imageUpload) {
+                const imageUploadResponse = await dispatch(
+                    uploadFile({
+                        file: item.imageUpload,
+                    }),
+                );
+                imageUpload = imageUploadResponse.payload.object
+            } else {
+                imageUpload = item.image.object;
+            }
+
+            const params = {
+                title: item.title,
+                description: item.description,
+                image: imageUpload,
+                linkCTA: item.linkCTA
+            } as ContentData
+            return await dispatch(updatePricingBannerTwo(params)).unwrap();
+        },
+        [dispatch],
+    );
+
+    const onGetPricingPartners = useCallback(
+        async () => {
+            await dispatch(getPricingPartners());
+        },
+        [dispatch],
+    );
+
+    const onUpdatePricingPartners = useCallback(
+        async (articles: ArticleData[]) => {
+            try {
+                const promises = articles.map(async(item, index) => {
+                    if (item.logoUpload) {
+                        const logoUploadResponse = await dispatch(
+                            uploadFile({
+                                file: item.logoUpload,
+                            }),
+                        );
+                        item.logo = logoUploadResponse.payload.object;
+                    }
+                    return {
+                        name: item.name,
+                        logo: item.logoUpload ? item.logo : item.logo?.object,
+                    }
+                })
+
+                const params = await Promise.all(promises);                
+
+                return await dispatch(updatePricingPartners(params as ArticleData[])).unwrap();
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        },
+        [dispatch],
+    )
+
+    const onGetPricingUnlockValues = useCallback(
+        async () => {
+            await dispatch(getPricingUnlockValues());
+        },
+        [dispatch],
+    );
+
+    const onUpdatePricingUnlockValues = useCallback(
+        async (values: UnlockValueData[]) => {
+            return await dispatch(updatePricingUnlockValues(values));
+        },
+        [dispatch],
+    );
+
+    return {
+        error,
+        isIdle,
+        isFetching,
+        pricingBanner,
+        pricingBanner2,
+        partners,
+        unlockValues,
+        onGetPricingBanner,
+        onUpdatePricingBanner,
+        onGetPricingBannerTwo,
+        onUpdatePricingBannerTwo,
+        onGetPricingPartners,
+        onUpdatePricingPartners,
+        onGetPricingUnlockValues,
+        onUpdatePricingUnlockValues
     }
 }

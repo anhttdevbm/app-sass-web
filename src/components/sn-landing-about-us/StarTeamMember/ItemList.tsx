@@ -6,6 +6,7 @@ import { NS_CONTENTS, NS_COMMON } from "constant/index";
 import { Button, IconButton, Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import PencilIcon from "icons/PencilIcon";
+import TrashIcon from "icons/TrashIcon";
 import {
     ActionsCell,
     BodyCell,
@@ -17,6 +18,10 @@ import { DataAction } from "constant/enums";
 import Form from "./components/Form";
 import React, { memo } from "react";
 import { StartMemberData } from "store/content/reducer";
+import DeleteCofirmDialog from "./components/DeleteCofirmDialog";
+import { getMessageErrorByAPI } from "utils/index";
+import MobileContentCell from　"./components/MobileContentCell";
+import useBreakpoint from "hooks/useBreakpoint";
 
 const ItemList = () => {
     const { 
@@ -24,7 +29,6 @@ const ItemList = () => {
         error, 
         members, 
         onGetAboutUsMembers,
-        onCreateAboutUsMember,
         onUpdateAboutUsMember,
         onDeleteAboutUsMember
     } = useContentAboutUs()
@@ -33,14 +37,16 @@ const ItemList = () => {
     const [action, setAction] = useState<DataAction | undefined>();
     const [item, setItem] = useState<StartMemberData>();
     const [memberId, setMemberId] = useState<string | undefined>();
+    const { isMdSmaller } = useBreakpoint();
 
     const desktopHeaderList: CellProps[] = useMemo(
         () => [
           { value: contentT("aboutUs.startTeamMemberTable.name"), width: "25%", align: "left" },
           { value: contentT("aboutUs.startTeamMemberTable.work_experience"), width: "25%", align: "center" },
           { value: contentT("aboutUs.startTeamMemberTable.college"), width: "20%", align: "center" },
-          { value: contentT("aboutUs.startTeamMemberTable.email"), width: "25%", align: "center" },
-          { value: "", width: "5%", align: "left" },
+          { value: contentT("aboutUs.startTeamMemberTable.email"), width: "24%", align: "center" },
+          { value: "", width: "3%", align: "center" },
+          { value: "", width: "3%", align: "center" },
         ],
         [contentT],
     );
@@ -56,29 +62,23 @@ const ItemList = () => {
     }, [members])
 
     const headerList = useMemo(() => {
-        const additionalHeaderList = desktopHeaderList;
+        const additionalHeaderList = isMdSmaller
+            ? MOBILE_HEADER_LIST
+            : desktopHeaderList;
     
         return [
           ...additionalHeaderList,
         ] as CellProps[];
       }, [desktopHeaderList]);
 
-    const onAction = (action: DataAction) => {
-        return () => {
-            if (action === DataAction.UPDATE) {
-                setAction(action);
-            }
-        };
-    }
-
     const onActionToItem = (action: DataAction, item?: StartMemberData) => {
         return () => {
-          if (action === DataAction.DELETE) {
-            // setMemberId(item?.slug);
-          } else {
-            item && setItem(item);
-          }
-          setAction(action);
+            if (action === DataAction.DELETE) {
+                item && setItem(item)
+            } else {
+                item && setItem(item);
+            }
+            setAction(action);
         };
       };
 
@@ -87,11 +87,24 @@ const ItemList = () => {
     }
 
     const handleUpdateAboutUsMember = async(values: StartMemberData) => {
+        console.log(values);
+        
         const response = await onUpdateAboutUsMember(values.id, values)
         if (!response) return;
         await onGetAboutUsMembers()
         return response
     }
+
+    const onSubmitDelete = async () => {        
+        try {
+            if (typeof item?.id === 'undefined' ) return;        
+            const response = await onDeleteAboutUsMember(item?.id as number);
+            console.log(response);
+            return response
+        } catch (error) {
+            onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+        }
+    };
 
     useEffect(() => {
         onGetAboutUsMembers()
@@ -118,24 +131,86 @@ const ItemList = () => {
                         { memberLists.map((item, index) => {
                             return (
                                 <TableRow key={index}>
-                                    <DesktopCells item={item} />
-                                    <IconButton 
-                                        size="small"
-                                        onClick={onActionToItem(DataAction.UPDATE, item)}
-                                        tooltip={commonT("update")}
-                                        sx={{
-                                        backgroundColor: "primary.light",
-                                        color: "text.primary",
-                                        p: { xs: "4px!important", md: 1 },
-                                        marginTop:1,
-                                        "&:hover svg": {
-                                            color: "common.white",
-                                        },
-                                        }}
-                                        variant="contained"
-                                    >
-                                        <PencilIcon sx={{ color: "grey.400" }} fontSize="medium" />
-                                    </IconButton>
+                                    {isMdSmaller ? (
+                                        <>
+                                            <MobileContentCell item={item} />
+                                            <Stack spacing={4} py={1.5} direction="row" alignItems="center">
+                                                <IconButton 
+                                                    size="small"
+                                                    onClick={onActionToItem(DataAction.UPDATE, item)}
+                                                    tooltip={commonT("update")}
+                                                    sx={{
+                                                    backgroundColor: "primary.light",
+                                                    color: "text.primary",
+                                                    p: { xs: "4px!important", md: 1 },
+                                                    "&:hover svg": {
+                                                        color: "common.white",
+                                                    },
+                                                    }}
+                                                    variant="contained"
+                                                >
+                                                    <PencilIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                                                </IconButton>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={onActionToItem(DataAction.DELETE, item)}
+                                                    tooltip={commonT("delete")}
+                                                    sx={{
+                                                        backgroundColor: "primary.light",
+                                                        color: "text.primary",
+                                                        p: { xs: "4px!important", md: 1 },
+                                                        "&:hover svg": {
+                                                        color: "common.white",
+                                                        },
+                                                    }}
+                                                    variant="contained"
+                                                    >
+                                                    <TrashIcon fontSize="small" />
+                                                </IconButton>
+                                            </Stack>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <DesktopCells item={item} />
+                                            <BodyCell>
+                                                <IconButton 
+                                                    size="small"
+                                                    onClick={onActionToItem(DataAction.UPDATE, item)}
+                                                    tooltip={commonT("update")}
+                                                    sx={{
+                                                    backgroundColor: "primary.light",
+                                                    color: "text.primary",
+                                                    p: { xs: "4px!important", md: 1 },
+                                                    "&:hover svg": {
+                                                        color: "common.white",
+                                                    },
+                                                    }}
+                                                    variant="contained"
+                                                >
+                                                    <PencilIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                                                </IconButton>
+                                            </BodyCell>
+                                            <BodyCell>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={onActionToItem(DataAction.DELETE, item)}
+                                                    tooltip={commonT("delete")}
+                                                    sx={{
+                                                        backgroundColor: "primary.light",
+                                                        color: "text.primary",
+                                                        p: { xs: "4px!important", md: 1 },
+                                                        "&:hover svg": {
+                                                        color: "common.white",
+                                                        },
+                                                    }}
+                                                    variant="contained"
+                                                    >
+                                                    <TrashIcon fontSize="small" />
+                                                </IconButton>
+                                            </BodyCell>
+                                        </>
+                                    )}
+                                    
                                 </TableRow>
                             )
                         })}
@@ -160,13 +235,26 @@ const ItemList = () => {
                             social_link: item?.social_link,
                             detail: item?.detail,
                         } as StartMemberData
-                    } 
-                    //onSubmit={(values) => onUpdateCareer_submit(String(item?.id), values)}       
+                    }       
                     onSubmit={handleUpdateAboutUsMember}            
                 />
             )}
+            <DeleteCofirmDialog
+                open={action === DataAction.DELETE}
+                onClose={onResetAction}
+                title={contentT("action.delete.title")}
+                content={contentT("action.delete.confirm")}
+                onSubmit={onSubmitDelete}
+                action={commonT("delete")}
+            />
         </>
     )
 }
 
 export default memo(ItemList)
+
+function onAddSnackbar(arg0: any, arg1: string) {
+    throw new Error("Function not implemented.");
+}
+
+const MOBILE_HEADER_LIST = [{ value: "", width: "75%", align: "left" }];

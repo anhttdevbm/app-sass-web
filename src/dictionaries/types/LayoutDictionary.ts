@@ -47,5 +47,7 @@ export type LayoutDictionary = {
     landingAboutUs: string;
     landingHelpCenter: string;
     landingTrustCenter: string;
+    landingAI: string;
+    landingPricing: string;
   };
 };

@@ -71,6 +71,8 @@ export const LANDING_HOME_PATH = "/landing/home";
 export const LANDING_ABOUT_US_PATH = "/landing/about-us";
 export const LANDING_HELP_CENTER_PATH = "/landing/help-center";
 export const LANDING_TRUST_CENTER_PATH = "/landing/trust-center";
+export const LANDING_AI_PATH = "/landing/ai";
+export const LANDING_PRICING_PATH = "/landing/pricing";
 
 const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,

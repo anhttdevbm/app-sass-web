@@ -29,7 +29,9 @@ import {
   LANDING_HOME_PATH,
   LANDING_ABOUT_US_PATH,
   LANDING_HELP_CENTER_PATH,
-  LANDING_TRUST_CENTER_PATH
+  LANDING_TRUST_CENTER_PATH,
+  LANDING_AI_PATH,
+  LANDING_PRICING_PATH
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
@@ -369,6 +371,16 @@ const DATA: MenuItemProps[] = [
         label: "menu.landingTrustCenter",
         roles: [Permission.SA],
         href: LANDING_TRUST_CENTER_PATH,
+      },
+      {
+        label: "menu.landingAI",
+        roles: [Permission.SA],
+        href: LANDING_AI_PATH,
+      },
+      {
+        label: "menu.landingPricing",
+        roles: [Permission.SA],
+        href: LANDING_PRICING_PATH,
       },
     ],
     roles: [Permission.SA],

@@ -22,6 +22,15 @@ import {
     getTrustCenterBanner,
     updateTrustCenterBanner,
     getTrustCenterBuildingTrust,
+    getAIBanner,
+    getAIBrands,
+    getAIProductivity,
+    getAIPromote,
+    getPricingBanner,
+    getPricingBannerTwo,
+    getPricingPartners,
+    getPricingUnlockValues,
+    updatePricingUnlockValues
  } from "./actions";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 
@@ -43,9 +52,12 @@ export type ArticleData = {
 export interface ContentData {
     title?: string | undefined,
     description?: string | undefined,
-    image?: Attachment | undefined,
-    linkCTA?: string
+    image?: Attachment | undefined | any,
+    image2?: Attachment | undefined | any,
+    linkCTA?: string,
+    linkCTA2?: string
     imageUpload?: File | undefined
+    imageUpload2?: File | undefined
 }
 export interface StartMemberData {
     id?: number | undefined,
@@ -60,7 +72,6 @@ export interface StartMemberData {
     social_link: string,
     detail: string,
 }
-
 export interface StartMemberFormData {
     name: string,
     work_experience: string,
@@ -72,13 +83,31 @@ export interface StartMemberFormData {
     social_link: string,
     detail: string,
 }
-
 export interface BannerCenterData {
     banner_title?: string,
     banner_description?: string,
     description: string,
     banner_image: any | Attachment | string,
     bannerUpload?: File | undefined,
+}
+
+export interface PromoteData {
+    image: Attachment | string | any,
+    imageUpload?: File | undefined,
+    items: ContentData[]
+}
+
+export interface TagData {
+    tag: string;
+}
+
+export interface UnlockValueData {
+    name: string,
+    tag: string,
+    description: string,
+    monthly: string | number,
+    yearly: string | number,
+    features: string[],
 }
 export interface ContentState {
     banner?: Attachment | null,
@@ -93,7 +122,15 @@ export interface ContentState {
     aboutBanners: Attachment[],
     centerBanner: BannerCenterData | null,
     usageTips: ContentData[],
-    buildingTrust: ContentData[]
+    buildingTrust: ContentData[],
+    aiBanner: ContentData | null,
+    brands: ArticleData[],
+    productivities: ExploreData[],
+    promote: PromoteData | null,
+    pricingBanner: ContentData | null,
+    pricingBanner2: ContentData | null,
+    partners: ArticleData[],
+    unlockValues: UnlockValueData[]
 }
 
 const initialState: ContentState = {
@@ -109,7 +146,15 @@ const initialState: ContentState = {
     aboutBanners: [],
     centerBanner: null ,
     usageTips: [],
-    buildingTrust: []
+    buildingTrust: [],
+    aiBanner: null,
+    brands: [],
+    productivities: [],
+    promote: null,
+    pricingBanner: null,
+    pricingBanner2: null,
+    partners: [],
+    unlockValues: []
 }
 
 const contentSlice = createSlice({
@@ -308,7 +353,124 @@ const contentSlice = createSlice({
                 state.contentStatus = DataStatus.FAILED
                 state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
             })
+            // AI
+            .addCase(getAIBanner.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getAIBanner.fulfilled, (state, action: PayloadAction<ContentData>) => {
+                const banner = action.payload;
+        
+                state.aiBanner = banner
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getAIBanner.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
 
+            .addCase(getAIBrands.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getAIBrands.fulfilled, (state, action: PayloadAction<ArticleData[]>) => {
+                const brands = action.payload;
+        
+                state.brands = brands
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getAIBrands.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
+
+            .addCase(getAIProductivity.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getAIProductivity.fulfilled, (state, action: PayloadAction<ExploreData[]>) => {
+                const productivities = action.payload;
+        
+                state.productivities = productivities
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getAIProductivity.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
+
+            .addCase(getAIPromote.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getAIPromote.fulfilled, (state, action: PayloadAction<PromoteData>) => {
+                const promote = action.payload;
+        
+                state.promote = promote
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getAIPromote.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
+            // Pricing
+            .addCase(getPricingBanner.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getPricingBanner.fulfilled, (state, action: PayloadAction<PromoteData>) => {
+                const banner = action.payload;
+        
+                state.pricingBanner = banner
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getPricingBanner.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
+
+            .addCase(getPricingBannerTwo.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getPricingBannerTwo.fulfilled, (state, action: PayloadAction<PromoteData>) => {
+                const banner = action.payload;
+        
+                state.pricingBanner2 = banner
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getPricingBannerTwo.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
+
+            .addCase(getPricingPartners.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getPricingPartners.fulfilled, (state, action: PayloadAction<ArticleData[]>) => {
+                const partners = action.payload;
+        
+                state.partners = partners
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getPricingPartners.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
+
+            .addCase(getPricingUnlockValues.pending, (state, action) => {
+                state.contentStatus = DataStatus.LOADING;
+            })
+            .addCase(getPricingUnlockValues.fulfilled, (state, action: PayloadAction<UnlockValueData[]>) => {
+                const unlockValues = action.payload;
+        
+                state.unlockValues = unlockValues
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
+            .addCase(getPricingUnlockValues.rejected, (state, action) => {
+                state.contentStatus = DataStatus.FAILED
+                state.contentError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+            })
+            .addCase(updatePricingUnlockValues.fulfilled, (state, action) => {                
+                const unlockValues = action.meta.arg;
+        
+                state.unlockValues = unlockValues
+                state.contentStatus = DataStatus.SUCCEEDED;
+            })
 })
 
 export const { reset } = contentSlice.actions;

@@ -45,7 +45,7 @@ const Form = (props: FormProps) => {
     }
   }, [commonT, type]);
 
-  const onSubmit = async (values: StartMemberData) => {
+  const onSubmit = async (values: StartMemberData) => {    
     try {
       const newItem = await onSubmitProps(values);
       if (newItem) {
@@ -296,7 +296,6 @@ const Form = (props: FormProps) => {
                 : formik.values?.avatarUpload
             }
             onChange={onChangeField}
-            required={true}
           />
           
         </Grid>
@@ -329,5 +328,5 @@ export default memo(Form);
 export const validationSchema = Yup.object().shape({
   name: Yup.string().trim().required("form.error.required"),
   email: Yup.string().trim().required("form.error.required"),
-  avatarUpload: Yup.mixed().required("form.error.required"),
+  // avatarUpload?: Yup.mixed().required("form.error.required"),
 });
