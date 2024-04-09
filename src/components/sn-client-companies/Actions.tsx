@@ -145,6 +145,15 @@ const Actions = () => {
       imageUrl: undefined,
       prevPath: undefined,
     });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        endpoint: undefined,
+        key: undefined,
+      });
+    };
   }, [onUpdateHeaderConfig, companyT, pathname]);
 
   return (
