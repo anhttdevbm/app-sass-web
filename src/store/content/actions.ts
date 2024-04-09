@@ -14,7 +14,9 @@ import {
   ArticleData, 
   StartMemberData, 
   StartMemberFormData, 
-  BannerCenterData 
+  BannerCenterData ,
+  PromoteData,
+  UnlockValueData
 } from "./reducer";
 
 // Home
@@ -317,9 +319,9 @@ export const updateAboutUsMember = createAsyncThunk(
 
 export const deleteAboutUsMember = createAsyncThunk(
   "content/deleteAboutUsMember",
-  async () => {    
+  async ({id} : {id: number | undefined}) => {    
     try {
-      const response = await client.delete(Endpoint.CONTENT_ABOUT_US_ONE_START_TEAM,
+      const response = await client.delete(StringFormat(Endpoint.CONTENT_ABOUT_US_ONE_START_TEAM, { id }),
       {
         baseURL: CONTENT_API_URL,
       });
@@ -532,3 +534,318 @@ export const updateTrustCenterBuildingTrust = createAsyncThunk(
     }
   },
 );
+
+// AI
+export const getAIBanner = createAsyncThunk(
+  "content/getAIBanner",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_AI_BANNER, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateAIBanner = createAsyncThunk(
+  "content/updateAIBanner",
+  async (banners: ContentData) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_AI_BANNER, {
+        data: banners
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getAIBrands = createAsyncThunk(
+  "content/getAIBrands",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_AI_BRANDS, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateAIBrands = createAsyncThunk(
+  "content/updateAIBrands",
+  async (brands: ArticleData[]) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_AI_BRANDS, {
+        data: brands
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getAIProductivity = createAsyncThunk(
+  "content/getAIProductivity",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_AI_PRODUCTIVITY, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateAIProductivity = createAsyncThunk(
+  "content/updateAIProductivity",
+  async (explores: ExploreFormData[]) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_AI_PRODUCTIVITY, {
+        data: explores
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getAIPromote = createAsyncThunk(
+  "content/getAIPromote",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_AI_PROMOTE, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateAIPromote = createAsyncThunk(
+  "content/updateAIPromote",
+  async (promote: PromoteData) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_AI_PROMOTE, {
+        data: promote
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+// Pricing
+export const getPricingBanner = createAsyncThunk(
+  "content/getPricingBanner",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_PRICING_BANNER, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updatePricingBanner = createAsyncThunk(
+  "content/updatePricingBanner",
+  async (banners: ContentData) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_PRICING_BANNER, {
+        data: banners
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getPricingBannerTwo = createAsyncThunk(
+  "content/getPricingBannerTwo",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_PRICING_BANNER2, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updatePricingBannerTwo = createAsyncThunk(
+  "content/updatePricingBannerTwo",
+  async (banners: ContentData) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_PRICING_BANNER2, {
+        data: banners
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getPricingPartners = createAsyncThunk(
+  "content/getPricingPartners",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_PRICING_PARTNERS, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updatePricingPartners = createAsyncThunk(
+  "content/updatePricingPartners",
+  async (partners: ArticleData[]) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_PRICING_PARTNERS, {
+        data: partners
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getPricingUnlockValues = createAsyncThunk(
+  "content/getPricingUnlockValues",
+  async () => {    
+    try {
+      const response = await client.get(Endpoint.CONTENT_PRICING_UNLOCK, undefined,
+      {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updatePricingUnlockValues = createAsyncThunk(
+  "content/updatePricingUnlockValues",
+  async (items: UnlockValueData[]) => {    
+    try {
+      const response = await client.put(Endpoint.CONTENT_PRICING_UNLOCK, {
+        data: items
+      }, {
+        baseURL: CONTENT_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+    

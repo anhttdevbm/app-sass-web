@@ -52,8 +52,33 @@ export type ContentsDictionary = {
         building_trust: string,
         update_building_trust: string
     },
+    ai: {
+        head: {
+            title: string
+        },
+        brands: string,
+        update_brands: string,
+        productivity: string,
+        update_productivity: string,
+        promote_your_operation: string,
+        update_promote_your_operation: string,
+    },
+    pricing: {
+        head: {
+            title: string
+        }
+        unlock_unbeatable_value: string,
+        update_unlock_unbeatable_value: string,
+        partners: string,
+        update_partners: string,
+    },
     action: {
-        edit: string
+        edit: string,
+        delete: {
+            title:string,
+            confirm:string,
+            remove:string,
+        },
     },
     tableList: {
         name?: string,
@@ -64,10 +89,15 @@ export type ContentsDictionary = {
         link?: string,
         logo?: string,
         banner?: string,
+        monthly?: string | number,
+        yearly?: string | number,
+        features?: string
+        tag?: string
     },
     content_success: {
         notification: {
             success_responsed: string,
         },
     },
+    update_banner: string
 }

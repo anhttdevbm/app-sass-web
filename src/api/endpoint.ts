@@ -182,4 +182,14 @@ export const Endpoint = {
 
   CONTENT_TRUST_CENTER_BANNER: "/content/trust-center/banner",
   CONTENT_TRUST_CENTER_BUILDING_TRUST: "/content/trust-center/building-trust",
+
+  CONTENT_AI_BANNER: "content/AI/banner",
+  CONTENT_AI_BRANDS: "content/AI/brands",
+  CONTENT_AI_PRODUCTIVITY: "content/AI/productivity",
+  CONTENT_AI_PROMOTE: "content/AI/promote-your-operation",
+
+  CONTENT_PRICING_BANNER: "content/pricing/banner",
+  CONTENT_PRICING_BANNER2: "content/pricing/banner2",
+  CONTENT_PRICING_UNLOCK: "content/pricing/unlock-unbeatable-value",
+  CONTENT_PRICING_PARTNERS: "content/pricing/partners",
 };

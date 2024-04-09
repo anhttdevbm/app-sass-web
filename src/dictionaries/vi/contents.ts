@@ -54,8 +54,33 @@ export const ContentsLang: ContentsDictionary = {
         building_trust: "Xây dựng niềm tin",
         update_building_trust: "Cập nhật Xây dựng niềm tin"
     },
+    ai: {
+        head: {
+            title: "AI"
+        },
+        brands: "Thương Hiệu",
+        update_brands: "Cập nhật Thương Hiệu",
+        productivity: "Năng Suất",
+        update_productivity: "Cập nhật Năng Suất",
+        promote_your_operation: "Thúc đẩy hoạt động của bạn",
+        update_promote_your_operation: "Cập nhật Thúc đẩy hoạt động của bạn",
+    },
+    pricing: {
+        head: {
+            title: "Giá Cả"
+        },
+        unlock_unbeatable_value: "Mở Khóa Giá Trị Vô Địch",
+        update_unlock_unbeatable_value: "Cập nhật mở khóa giá trị vô địch",
+        partners: "Đối tác",
+        update_partners: "Cập nhật Đối tác",
+    },
     action: {
-        edit: "Chĩnh sữa"
+        edit: "Chĩnh sữa",
+        delete:{
+            title:"Xác nhận xóa thành viên",
+            confirm:"Bạn muốn xóa thành viên ?",
+            remove:"Xóa",
+        },
     },
     tableList: {
         name: "Tên",
@@ -66,10 +91,15 @@ export const ContentsLang: ContentsDictionary = {
         link: "Liên kết",
         logo: "Logo",
         banner: "Biễu ngữ",
+        monthly: "Hàng Tháng",
+        yearly: "Hàng Năm",
+        features: "Tính Năng",
+        tag: "Thẻ"
     },
     content_success: {
         notification: {
             success_responsed: "{label} Thành Công",
         },
     },
+    update_banner: "Cập Nhật Banner",
 }

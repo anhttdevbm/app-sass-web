@@ -128,6 +128,8 @@ const Form = (props: FormProps) => {
   };
 
   const onSelect = (data) => {
+    console.log(data);
+    
     const uniqueData = Array.from(new Set(data.map((item) => item.tag))).map(
       (tag) => ({ tag }),
     );
@@ -147,7 +149,10 @@ const Form = (props: FormProps) => {
       setTags(listBlogTag);
     }
     const itemValues = formik.values?.tag ?? [];
+    console.log(itemValues);
+    
     const isExisted = itemValues.find((item) => item == value);
+    
 
     if (isExisted) {
       const updatedTags = itemValues.map((tag) => ({ tag }));

@@ -54,8 +54,33 @@ export const ContentsLang: ContentsDictionary = {
         building_trust: "Building Trust",
         update_building_trust: "Update Building Trust"
     },
+    ai: {
+        head: {
+            title: "AI"
+        },
+        brands: "Brands",
+        update_brands: "Update Brands",
+        productivity: "Productivity",
+        update_productivity: "Update Productivity",
+        promote_your_operation: "Promote Your Operation",
+        update_promote_your_operation: "Update Promote Your Operation",
+    },
+    pricing: {
+        head: {
+            title: "Pricing"
+        },
+        unlock_unbeatable_value: "Unlock Unbeatable Value",
+        update_unlock_unbeatable_value: "Update Unlock Unbeatable Value",
+        partners: "Partners",
+        update_partners: "Update Partners",
+    },
     action: {
-        edit: "Edit"
+        edit: "Edit",
+        delete:{
+            title : "Confirm delete member ",
+            confirm : "Are you sure to remove member ?",
+            remove : "Remove",
+        },
     },
     tableList: {
         name:  "Name",
@@ -66,10 +91,15 @@ export const ContentsLang: ContentsDictionary = {
         link: "Link",
         logo: "Logo",
         banner: "Banner",
+        monthly: "Monthly",
+        yearly: "Yearly",
+        features: "Features",
+        tag: "Tag"
     },
     content_success: {
         notification: {
             success_responsed: "{label} Successful",
         },
     },
+    update_banner: "Update Banner",
 }

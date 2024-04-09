@@ -45,6 +45,8 @@ export const LayoutLang: LayoutDictionary = {
     landingHome: "Trang Chủ",
     landingAboutUs: "Giới Thiệu",
     landingHelpCenter: "Trung Tâm Trợ Giúp",
-    landingTrustCenter: "Trung tâm Tin tưởng"
+    landingTrustCenter: "Trung tâm Tin tưởng",
+    landingAI: "AI",
+    landingPricing: "Định giá",
   },
 };
