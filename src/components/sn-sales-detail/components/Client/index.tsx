@@ -7,7 +7,7 @@ import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 import SelectClient from "components/sn-sales-detail/components/Client/SelectClient";
 import { DEFAULT_PAGING, NS_COMPANY } from "constant/index";
 import { Option } from "constant/types";
-import EditIcon from "icons/EditUnderlineIcon";
+import EditUnderlineIcon from "icons/EditUnderlineIcon";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { memo, useEffect, useState } from "react";
@@ -122,15 +122,16 @@ const SalesClient = () => {
                   width: 32,
                   minWidth: 32,
                   maxWidth: 32,
+                  maxHeight: 32,
                   paddingX: 0,
                   paddingY: 1,
                 }}
                 onClick={() => setEditMode(!isEditMode)}
               >
-                <EditIcon
+                <EditUnderlineIcon
                   sx={{
-                    width: 16,
-                    height: 16,
+                    width: 24,
+                    height: 24,
                     padding: 0,
                     margin: "auto",
                     color: "#666666",

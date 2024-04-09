@@ -1,6 +1,6 @@
 import { Card, Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
-import FormLayout from "components/FormLayout";
+import FormLayout from "./FormLayout";
 import { Button, Input, Text } from "components/shared";
 import {
   ClientCompany,
@@ -108,8 +108,8 @@ const Form = (props: FormProps) => {
   };
 
   const onShowContact = () => {
-    setShowContact(true);
-    formik?.setFieldValue("isShowContact", true);
+    setShowContact(!isShowContact);
+    formik?.setFieldValue("isShowContact", !isShowContact);
   };
 
   return (
@@ -135,7 +135,10 @@ const Form = (props: FormProps) => {
       }
       {...rest}
     >
-      <Stack direction="row" gap={3}>
+      <Stack
+        sx={{ flexDirection: { xs: "column", sm: "row", md: "row" } }}
+        gap={3}
+      >
         <Stack>
           <AvatarUpload
             name="files"
@@ -163,7 +166,11 @@ const Form = (props: FormProps) => {
             rootSx={sxConfig.input}
           />
 
-          <Stack display="flex" flexDirection="row" gap={2}>
+          <Stack
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
+            gap={2}
+          >
             <Input
               title={companyT("clientCompany.taxCode")}
               name="tax_code"
@@ -183,7 +190,11 @@ const Form = (props: FormProps) => {
               sx={{ width: "100%" }}
             />
           </Stack>
-          <Stack display="flex" flexDirection="row" gap={2}>
+          <Stack
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
+            gap={2}
+          >
             <Input
               title={companyT("clientCompany.zipCode")}
               name="zip_code"
@@ -244,7 +255,11 @@ const Form = (props: FormProps) => {
                 gap: 2.5,
               }}
             >
-              <Stack display="flex" flexDirection="row" gap={2}>
+              <Stack
+                display="flex"
+                flexDirection={{ xs: "column", sm: "row" }}
+                gap={2}
+              >
                 <Input
                   title={commonT("fullName")}
                   name="contact.name"
@@ -252,7 +267,7 @@ const Form = (props: FormProps) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values?.contact?.name}
-                  error={commonT(touchedErrors?.contact, {
+                  error={commonT((touchedErrors?.contact as any)?.name, {
                     name: "Full name",
                   })}
                   rootSx={sxConfig.input}
@@ -268,7 +283,11 @@ const Form = (props: FormProps) => {
                   sx={{ width: "100%" }}
                 />
               </Stack>
-              <Stack display="flex" flexDirection="row" gap={2}>
+              <Stack
+                display="flex"
+                flexDirection={{ xs: "column", sm: "row" }}
+                gap={2}
+              >
                 <Input
                   title={commonT("phone")}
                   name="contact.phone"
@@ -291,7 +310,11 @@ const Form = (props: FormProps) => {
                   sx={{ width: "100%" }}
                 />
               </Stack>
-              <Stack display="flex" flexDirection="row" gap={2}>
+              <Stack
+                display="flex"
+                flexDirection={{ xs: "column", sm: "row" }}
+                gap={2}
+              >
                 <Input
                   title={companyT("clientCompany.address")}
                   name="contact.address"

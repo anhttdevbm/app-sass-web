@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Theme, selectClasses } from "@mui/material";
+import { Stack, Theme, selectClasses, IconButton } from "@mui/material";
 import { Endpoint, client } from "api";
 import { Date, Search } from "components/Filters";
 import { Button, Text } from "components/shared";
@@ -28,6 +28,9 @@ import { useHeaderConfig } from "store/app/selectors";
 import { ClientCompany } from "./type";
 import StringFormat from "string-format";
 import { debounce } from "lodash";
+import ArrowRightIcon from "icons/ArrowRightIcon";
+import ChevronIcon from "../../icons/ChevronIcon";
+import SearchIcon from "../../icons/SearchIcon";
 
 const Actions = () => {
   const {
@@ -163,15 +166,62 @@ const Actions = () => {
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Text variant="h4" display={{ md: "none" }}>
-            {companyT("clientCompany.title")}
-          </Text>
+          <IconButton
+            size="medium"
+            sx={{ display: { md: "none" }, pl: { xs: 0, sm: 0 } }}
+          >
+            <ChevronIcon
+              sx={{ color: "text.primary", transform: "rotate(90deg)" }}
+              fontSize="medium"
+            />
+            <Text variant="h4" display={{ md: "none" }}>
+              {companyT("clientCompany.title")}
+            </Text>
+          </IconButton>
           <Button
             onClick={onShow}
             startIcon={<PlusIcon />}
             size="extraSmall"
             variant="primary"
             sx={{
+              display: { xs: "none", sm: "none", md: "block" },
+              height: 40,
+              px: ({ spacing }) => `${spacing(3)}!important`,
+              py: ({ spacing }) => `${spacing(1.5)}!important`,
+            }}
+          >
+            {companyT("clientCompany.create")}
+          </Button>
+        </Stack>
+
+        <Stack direction="row" width="100%" justifyContent="space-between">
+          <Search
+            placeholder={commonT("search")}
+            name={"name"}
+            onChange={onChangeQueries}
+            value={queries["name"]}
+            sx={{
+              width: 210,
+              minWidth: 210,
+              display: { xs: "block", sm: "block", md: "none" },
+            }}
+            rootSx={{ bgcolor: "#F7F7FD", paddingLeft: "4px!important" }}
+            startNode={
+              <SearchIcon sx={{ width: 24, height: 24 }} color="info" />
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onSearch();
+              }
+            }}
+          />
+          <Button
+            onClick={onShow}
+            startIcon={<PlusIcon />}
+            size="extraSmall"
+            variant="primary"
+            sx={{
+              display: { xs: "block", sm: "block", md: "none" },
               height: 40,
               px: ({ spacing }) => `${spacing(3)}!important`,
               py: ({ spacing }) => `${spacing(1.5)}!important`,
@@ -186,10 +236,10 @@ const Actions = () => {
           alignItems="center"
           spacing={3}
           py={{ xs: 1.25, md: 0.5, lg: 1.5 }}
-          px={{ md: 1, lg: 1.5 }}
+          px={{ xs: 1.25, md: 1, lg: 1.5 }}
           borderRadius={1}
           width={{ xs: "100%", md: undefined }}
-          justifyContent={{ xs: "flex-start", md: "flex-end" }}
+          justifyContent={{ xs: "space-between", md: "flex-end" }}
           maxWidth={{ xs: "100%", md: "fit-content" }}
           overflow="auto"
           minWidth={{ md: "fit-content" }}
@@ -201,7 +251,11 @@ const Actions = () => {
             name={"name"}
             onChange={onChangeQueries}
             value={queries["name"]}
-            sx={{ width: 210, minWidth: 210 }}
+            sx={{
+              width: 210,
+              minWidth: 210,
+              display: { xs: "none", sm: "none", md: "block" },
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 onSearch();
@@ -211,7 +265,13 @@ const Actions = () => {
           {optionSelected && (
             <Button
               size="extraSmall"
-              sx={{ padding: 0, display: "flex", gap: 1 }}
+              sx={{
+                padding: 0,
+                display: "flex",
+                gap: 1,
+                mx: { xs: "0px!important", sm: "0px!important" },
+                px: { xs: "0px!important", sm: "0px!important" },
+              }}
               onDoubleClick={onDoubleClick}
             >
               <Image
@@ -231,7 +291,7 @@ const Actions = () => {
               value={optionSelected}
               hasAvatar
               name="created_by"
-              sx={{ display: { xs: "none", md: "initial" } }}
+              sx={{ ml: { xs: "0px!important", sm: "0px!important" } }}
               rootSx={{
                 "& >svg": { fontSize: 16 },
                 px: "0px!important",

@@ -24,7 +24,9 @@ import {
   createClientCompany,
   getClientCompaniesMemberOptions,
   deleteClientCompany,
-  getClientCompanyDetails, updateClientCompany,
+  getClientCompanyDetails,
+  updateClientCompany,
+  multipleDeleteClientCompany,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
@@ -392,7 +394,7 @@ export const useClientCompanies = () => {
   );
 
   const onGetMemberOptions = useCallback(
-    async (queries: BaseQueries) => {       
+    async (queries: BaseQueries) => {
       await dispatch(getClientCompaniesMemberOptions(queries));
     },
     [dispatch],
@@ -416,6 +418,17 @@ export const useClientCompanies = () => {
     [dispatch],
   );
 
+  const onMultipleDeleteClientCompany = useCallback(
+    async (ids: string[]) => {
+      try {
+        return await dispatch(multipleDeleteClientCompany(ids)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
   const onGetClientCompanyDetails = useCallback(
     async (id: string) => {
       await dispatch(getClientCompanyDetails(id));
@@ -429,7 +442,6 @@ export const useClientCompanies = () => {
     },
     [dispatch],
   );
-
 
   return {
     items,
@@ -449,7 +461,8 @@ export const useClientCompanies = () => {
     onGetMemberOptions,
     onCreateClientCompany,
     onDeleteClientCompany,
+    onMultipleDeleteClientCompany,
     onGetClientCompanyDetails,
-    onUpdateClientCompany
+    onUpdateClientCompany,
   };
 };

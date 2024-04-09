@@ -27,8 +27,10 @@ const SelectClient = (
       onlyContent
       name="clientId"
       rootSx={{
-        height: 58,
+        height: "auto",
+        minHeight: 58,
         minWidth: 320,
+        maxWidth: 400,
         backgroundColor: "grey.50",
         py: "8px!important",
         px: "12px!important",
@@ -92,10 +94,28 @@ const SelectValue = (props: SelectValueProps) => {
         )}
       </Stack>
       <Stack>
-        <Text sx={{ fontSize: 20, lineHeight: "24px", fontWeight: 600 }}>
+        <Text
+          sx={{
+            fontSize: 20,
+            lineHeight: "24px",
+            fontWeight: 600,
+            width: "auto",
+            maxWidth: { xs: "240px", sm: "unset" },
+            whiteSpace: "normal",
+          }}
+        >
           {item?.label}
         </Text>
-        <Text sx={{ fontSize: 14, color: "#666666", lineHeight: "18px" }}>
+        <Text
+          sx={{
+            fontSize: 14,
+            color: "#666666",
+            lineHeight: "18px",
+            width: "auto",
+            maxWidth: "240px",
+            whiteSpace: "normal",
+          }}
+        >
           {item?.subText}
         </Text>
       </Stack>

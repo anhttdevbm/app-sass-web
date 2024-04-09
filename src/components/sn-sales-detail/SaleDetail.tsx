@@ -6,8 +6,8 @@ import TabHeader from "./components/TabHeader/TabHeader";
 import { useFetchDealDetail } from "./hooks/useGetDealDetail";
 import { TabContext, TabPanel } from "@mui/lab";
 import SaleFeed from "./sn-feed";
-import { useForm, useFormContext } from "react-hook-form";
-import { Sales, Todo } from "store/sales/reducer";
+import { useFormContext } from "react-hook-form";
+import { Todo } from "store/sales/reducer";
 import { useSaleDetail, useSalesService } from "store/sales/selectors";
 import Loading from "components/Loading";
 import { useFetchEmployeeOptions } from "components/sn-sales/hooks/useGetEmployeeOptions";
@@ -16,15 +16,11 @@ import { DATE_FORMAT_HYPHEN } from "constant/index";
 import { formatDate } from "utils/index";
 import SaleService from "./components/sn-service";
 import useFetchServiceSection from "./hooks/useGetServiceSection";
-import useServiceHeader from "./hooks/useServiceHeader";
-import {
-  EditContext,
-  EditProvider,
-} from "./components/sn-service/context/EditContext";
+import { EditContext } from "./components/sn-service/context/EditContext";
 import SaleClient from "./components/Client/index";
 
 const SalesDetail = () => {
-  const [tab, setTab] = useState<SALES_DETAIL_TAB>(SALES_DETAIL_TAB.CLIENT);
+  const [tab, setTab] = useState<SALES_DETAIL_TAB>(SALES_DETAIL_TAB.FEED);
   const { getValues, resetField, reset } = useFormContext();
   const onChangeTab = (e: React.SyntheticEvent, newTab: SALES_DETAIL_TAB) => {
     setTab(newTab);
@@ -116,6 +112,7 @@ const SalesDetail = () => {
         <TabPanel
           sx={{
             height: "100%",
+            paddingX: "0px",
           }}
           value={SALES_DETAIL_TAB.CLIENT}
         >

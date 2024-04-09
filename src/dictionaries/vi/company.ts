@@ -85,6 +85,8 @@ export const CompanyLang: CompanyDictionary = {
       title: {
         name: "Tạo một công ty khách hàng mới",
       },
+      addContact: "Thêm thông tin liên hệ",
+      closedContact: "Đóng thông tin liên hệ",
     },
     companyName: "Tên công ty",
     taxCode: "Mã số thuế",
@@ -105,8 +107,8 @@ export const CompanyLang: CompanyDictionary = {
     contact: "Liên hệ",
     formUpdate: {
       title: "Thông tin chung",
-      submit: "Lưu thay đổi"
-    }
+      submit: "Lưu thay đổi",
+    },
   },
   information: {
     head: {

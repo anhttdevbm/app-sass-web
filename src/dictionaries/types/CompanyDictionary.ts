@@ -81,6 +81,8 @@ export type CompanyDictionary = {
       title: {
         name: string;
       };
+      addContact: string;
+      closedContact: string;
     };
     companyName: string;
     taxCode: string;
@@ -89,7 +91,7 @@ export type CompanyDictionary = {
     duplicateForm: {
       title: string;
       newName: string;
-    },
+    };
     confirmRemove: {
       title: string;
       content: string;
@@ -102,7 +104,7 @@ export type CompanyDictionary = {
     formUpdate: {
       title: string;
       submit: string;
-    }
+    };
   };
   information: {
     head: {

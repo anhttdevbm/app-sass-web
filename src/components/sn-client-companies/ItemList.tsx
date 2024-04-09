@@ -1,9 +1,14 @@
 "use client";
 
-import { Stack, TableRow } from "@mui/material";
+import { IconButton, Stack, TableRow } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import Pagination from "./components/Pagination";
-import { ActionsCell, CellProps, TableLayout } from "components/Table";
+import {
+  ActionsCell,
+  BodyCell,
+  CellProps,
+  TableLayout,
+} from "components/Table";
 import { DataAction } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
@@ -12,7 +17,15 @@ import DuplicateIcon from "icons/DuplicateIcon";
 import EditIcon from "icons/EditIcon";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useClientCompanies } from "store/company/selectors";
 import { getPath } from "utils/index";
 import { DesktopCells, MobileContentCell } from "./components";
@@ -21,6 +34,8 @@ import DuplicateForm from "./components/DuplicateForm";
 import Form from "./components/Form";
 import { ClientCompany } from "./type";
 import { client, Endpoint } from "../../api";
+import { Checkbox } from "components/shared";
+import TrashIcon from "../../icons/TrashIcon";
 
 const ItemList = () => {
   const {
@@ -34,6 +49,7 @@ const ItemList = () => {
     totalPages,
     onGetClientCompanies,
     onDeleteClientCompany,
+    onMultipleDeleteClientCompany,
     onCreateClientCompany,
     onUpdateClientCompany,
   } = useClientCompanies();
@@ -51,6 +67,36 @@ const ItemList = () => {
     undefined,
   );
   const [action, setAction] = useState<DataAction | undefined>();
+  const [selectedList, setSelectedList] = useState<ClientCompany[]>([]);
+  const [deleteType, setDeleteType] = useState<"single" | "multiple">("single");
+  const isCheckedAll = useMemo(
+    () => Boolean(selectedList.length && selectedList.length === items.length),
+    [selectedList.length, items.length],
+  );
+
+  const onChangeAll = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const isChecked = event.target.checked;
+      if (isChecked) {
+        setSelectedList(items);
+      } else {
+        setSelectedList([]);
+      }
+    },
+    [items],
+  );
+
+  const onToggleSelect = (item: ClientCompany, indexSelected: number) => {
+    if (indexSelected === -1) {
+      setSelectedList((prevList) => [...prevList, item]);
+    } else {
+      setSelectedList((prevList) => {
+        const newList = [...prevList];
+        newList.splice(indexSelected, 1);
+        return newList;
+      });
+    }
+  };
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
@@ -77,33 +123,71 @@ const ItemList = () => {
     [commonT, companyT],
   );
 
-  const mobileHeaderList: CellProps[] = useMemo(
-    () => [
-      {
-        value: commonT("name"),
-        width: "25%",
-        align: "left",
-      },
-      {
-        value: commonT("creator"),
-        width: "35%",
-        align: "left",
-      },
-      { value: commonT("creationDate"), width: "25%" },
-    ],
-    [commonT],
-  );
+  const MobileHeader = (props: {
+    checked: boolean;
+    disable: boolean;
+    setAction: (value: DataAction) => void;
+    setDeleteType: (value: "single" | "multiple") => void;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  }) => {
+    const { checked, disable, onChange, setAction, setDeleteType } = props;
+    return (
+      <Stack direction="row" justifyContent="space-between">
+        <Checkbox sx={{ pl: 1 }} checked={checked} onChange={onChange} />
+        <IconButton
+          size="medium"
+          disabled={disable}
+          onClick={() => {
+            setDeleteType("multiple");
+            setAction(DataAction.DELETE);
+          }}
+        >
+          <TrashIcon color="error" />
+        </IconButton>
+      </Stack>
+    );
+  };
 
   const headerList = useMemo(() => {
-    const additionalHeaderList = isMdSmaller
-      ? mobileHeaderList
-      : desktopHeaderList;
-
-    return [
+    const additionalHeaderList = isMdSmaller ? [] : desktopHeaderList;
+    const list = [
+      ...(isMdSmaller
+        ? [
+            {
+              value: (
+                <MobileHeader
+                  checked={isCheckedAll}
+                  onChange={onChangeAll}
+                  setAction={setAction}
+                  setDeleteType={setDeleteType}
+                  disable={selectedList?.length === 0}
+                />
+              ),
+              width: "100%",
+              align: "left",
+            },
+          ]
+        : []),
       ...additionalHeaderList,
-      { value: "", width: isMdSmaller ? "20%" : "8%" },
-    ] as CellProps[];
-  }, [isMdSmaller, mobileHeaderList, desktopHeaderList]);
+      ...(isMdSmaller
+        ? []
+        : [
+            {
+              value: "",
+              width: "10%",
+            },
+          ]),
+    ];
+    return list as CellProps[];
+  }, [
+    isMdSmaller,
+    desktopHeaderList,
+    isCheckedAll,
+    onChangeAll,
+    selectedList,
+    setAction,
+    setDeleteType,
+  ]);
 
   const onActionToItem = (action: DataAction, item?: ClientCompany) => {
     return () => {
@@ -120,20 +204,19 @@ const ItemList = () => {
     setItem(undefined);
     setAction(undefined);
   };
-  const onChangeQueries = (queries: { [key: string]: number }) => {
+  const onChangeQueries = async (queries: { [key: string]: number }) => {
     const newQueries = { ...query, ...queries };
     const path = getPath(pathname, newQueries);
     push(path);
-
-    onGetClientCompanies({ ...newQueries });
+    await onGetClientCompanies({ ...newQueries });
   };
 
-  const onChangePage = (newPage: number) => {
-    onChangeQueries({ pageIndex: newPage, pageSize });
+  const onChangePage = async (newPage: number) => {
+    await onChangeQueries({ pageIndex: newPage, pageSize });
   };
 
-  const onChangeSize = (newPageSize: number) => {
-    onChangeQueries({ pageIndex: 1, pageSize: newPageSize });
+  const onChangeSize = async (newPageSize: number) => {
+    await onChangeQueries({ pageIndex: 1, pageSize: newPageSize });
   };
 
   const onDuplicateClientCompany = async (data: ClientCompany) => {
@@ -141,10 +224,15 @@ const ItemList = () => {
     return await onCreateClientCompany(data);
   };
 
-  const onSubmitDelete = async () => {
+  const onSubmitDelete = async (type: "single" | "multiple" = "single") => {
     try {
-      if (selected?.id) {
+      if (type === "single" && selected?.id) {
         return await onDeleteClientCompany(selected?.id);
+      } else if (type === "multiple" && !!selectedList?.length) {
+        const ids = (selectedList?.map((item) => item?.id) || []) as string[];
+        const result = await onMultipleDeleteClientCompany(ids);
+        setSelectedList([]);
+        return result;
       }
       return undefined;
     } catch (error) {
@@ -183,10 +271,22 @@ const ItemList = () => {
           }}
         >
           {items.map((item, index) => {
+            const indexSelected = selectedList.findIndex(
+              (selected) => selected.id === item.id,
+            );
             return (
               <TableRow key={item.id}>
                 {isMdSmaller ? (
-                  <MobileContentCell item={item} />
+                  <MobileContentCell
+                    item={item}
+                    indexSelected={indexSelected}
+                    checked={indexSelected !== -1}
+                    actionCellRef={actionCellRef}
+                    onUpdate={onActionToItem(DataAction.UPDATE, item)}
+                    onDuplicate={onActionToItem(DataAction.OTHER, item)}
+                    onDelete={onActionToItem(DataAction.DELETE, item)}
+                    onToggleSelect={onToggleSelect}
+                  />
                 ) : (
                   <DesktopCells
                     item={item}
@@ -194,43 +294,42 @@ const ItemList = () => {
                   />
                 )}
 
-                <ActionsCell
-                  sx={{
-                    pl: { xs: 0.5, md: 0 },
-                    verticalAlign: { xs: "top", md: "middle" },
-                    pt: { xs: 2, md: 0 },
-                  }}
-                  iconProps={{
-                    sx: {
-                      p: { xs: "4px!important", lg: 1 },
-                    },
-                  }}
-                  ref={actionCellRef}
-                  options={[
-                    {
-                      content: commonT("edit"),
-                      onClick: onActionToItem(DataAction.UPDATE, item),
-                      icon: (
-                        <EditIcon
-                          sx={{ color: "grey.400" }}
-                          fontSize="medium"
-                        />
-                      ),
-                    },
-                    {
-                      content: companyT("clientCompany.duplicate"),
-                      onClick: onActionToItem(DataAction.OTHER, item),
-                      icon: (
-                        <DuplicateIcon
-                          sx={{ color: "grey.400" }}
-                          fontSize="medium"
-                        />
-                      ),
-                    },
-                  ]}
-                  onDelete={onActionToItem(DataAction.DELETE, item)}
-                  hasPopup={false}
-                />
+                {!isMdSmaller && (
+                  <ActionsCell
+                    sx={{
+                      verticalAlign: "middle",
+                      textAlign: "right",
+                    }}
+                    ref={actionCellRef}
+                    options={[
+                      {
+                        content: commonT("edit"),
+                        onClick: onActionToItem(DataAction.UPDATE, item),
+                        icon: (
+                          <EditIcon
+                            sx={{ color: "grey.400" }}
+                            fontSize="medium"
+                          />
+                        ),
+                      },
+                      {
+                        content: companyT("clientCompany.duplicate"),
+                        onClick: onActionToItem(DataAction.OTHER, item),
+                        icon: (
+                          <DuplicateIcon
+                            sx={{ color: "grey.400" }}
+                            fontSize="medium"
+                          />
+                        ),
+                      },
+                    ]}
+                    onDelete={() => {
+                      setDeleteType("single");
+                      onActionToItem(DataAction.DELETE, item);
+                    }}
+                    hasPopup={false}
+                  />
+                )}
               </TableRow>
             );
           })}
@@ -272,31 +371,10 @@ const ItemList = () => {
         title={companyT("clientCompany.confirmRemove.title")}
         content={companyT("clientCompany.confirmRemove.content")}
         item={selected}
-        onSubmit={onSubmitDelete}
+        onSubmit={() => onSubmitDelete(deleteType)}
       />
     </>
   );
 };
 
 export default memo(ItemList);
-
-const INITIAL_VALUES = {
-  code: "COM1z",
-  name: "",
-  tax_code: "",
-  zip_code: "",
-  address: "",
-  phone: "",
-  email: "",
-  website: "",
-  status: false,
-  created_time: "",
-  contact: {
-    name: "",
-    position: "",
-    address: "",
-    phone: "",
-    email: "",
-    website: "",
-  },
-};

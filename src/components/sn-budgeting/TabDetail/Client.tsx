@@ -15,13 +15,12 @@ import {
   NS_SALES,
 } from "constant/index";
 import { Option } from "constant/types";
-import EditIcon from "icons/EditIcon";
 import { useTranslations } from "next-intl";
-import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 import { useEffect, useState } from "react";
 import { useClientCompanies } from "store/company/selectors";
 import { useSnackbar } from "store/app/selectors";
+import EditUnderlineIcon from "icons/EditUnderlineIcon";
 
 export const Client = (props: { bugetId: string; clientId?: string }) => {
   const { bugetId, clientId } = props;
@@ -58,7 +57,7 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
         Array.isArray(item?.avatar) && !!item?.avatar?.length
           ? (item?.avatar[0] as IAvatar)?.link
           : "",
-      subText: `${companyT("clientCompany.taxCode")}: ${item.tax_code}`,
+      subText: `${companyT("clientCompany.taxCode")}: ${item.tax_code ?? "--"}`,
     }));
     setOptions(opts);
   }, [items, companyT]);
@@ -107,7 +106,7 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
   };
 
   return (
-    <FixedLayout flex={1} p="30px">
+    <FixedLayout flex={1} px="8px" pb="24px" rounded="none">
       <Stack sx={{ height: 58 }}>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center">
@@ -133,20 +132,22 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
             <Stack>
               <Button
                 variant="text"
-                size="extraSmall"
+                size="medium"
                 sx={{
                   width: 32,
                   minWidth: 32,
                   maxWidth: 32,
+                  maxHeight: 32,
+                  minHeight: 32,
                   paddingX: 0,
                   paddingY: 1,
                 }}
                 onClick={() => setEditMode(!isEditMode)}
               >
-                <EditIcon
+                <EditUnderlineIcon
                   sx={{
-                    width: 16,
-                    height: 16,
+                    width: 24,
+                    height: 24,
                     padding: 0,
                     margin: "auto",
                     color: "#666666",

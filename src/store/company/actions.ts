@@ -66,13 +66,12 @@ export type GetClientConpanyOptionListQueries = BaseQueries & {
   searchType?: "and" | "or" | "eq";
 };
 
-
 export const getEmployees = createAsyncThunk(
   "company/getEmployees",
   async ({
-           concat,
-           ...queries
-         }: GetEmployeeListQueries & { concat?: boolean }) => {
+    concat,
+    ...queries
+  }: GetEmployeeListQueries & { concat?: boolean }) => {
     queries = serverQueries(
       { ...queries, sort: "created_time=-1" },
       ["email", "fullname"],
@@ -412,9 +411,9 @@ export const getClientCompanies = createAsyncThunk(
 export const getClientCompaniesMemberOptions = createAsyncThunk(
   "company/getClientCompaniesMemberOptions",
   async ({
-           concat,
-           ...queries
-         }: GetEmployeeListQueries & { concat?: boolean }) => {
+    concat,
+    ...queries
+  }: GetEmployeeListQueries & { concat?: boolean }) => {
     queries = serverQueries(
       { ...queries, sort: "created_time=-1" },
       ["email", "fullname"],
@@ -478,6 +477,28 @@ export const deleteClientCompany = createAsyncThunk(
   },
 );
 
+export const multipleDeleteClientCompany = createAsyncThunk(
+  "company/multipleDeleteClientCompany",
+  async (ids: string[]) => {
+    try {
+      const response = await client.post(
+        `${Endpoint.CLIENT_COMPANIES_MULTI}`,
+        { ids },
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return ids;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const getClientCompanyDetails = createAsyncThunk(
   "company/getClientCompany",
   async (id: string) => {
@@ -504,19 +525,26 @@ export const updateClientCompany = createAsyncThunk(
   "company/updateClientCompany",
   async (data: ClientCompany) => {
     const contact = data.contact;
-    const body: ClientCompany = {...data, contact: {
-      name: contact?.name,
+    const body: ClientCompany = {
+      ...data,
+      contact: {
+        name: contact?.name,
         avatar: contact?.avatar,
         address: contact?.address,
         email: contact?.email,
         phone: contact?.phone,
         position: contact?.position,
         website: contact?.website,
-      }}
+      },
+    };
     try {
-      const response = await client.put(`${Endpoint.CLIENT_COMPANIES}/${data?.id}`, body, {
-        baseURL: COMPANY_API_URL,
-      });
+      const response = await client.put(
+        `${Endpoint.CLIENT_COMPANIES}/${data?.id}`,
+        body,
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data?.id
