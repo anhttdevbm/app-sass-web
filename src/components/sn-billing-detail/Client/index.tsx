@@ -42,7 +42,7 @@ const TabClient = () => {
   const companyT = useTranslations(NS_COMPANY);
 
   useEffect(() => {
-    onGetClientCompanies({ ...DEFAULT_PAGING });
+    onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
   }, [onGetClientCompanies]);
 
   useEffect(() => {
@@ -73,9 +73,10 @@ const TabClient = () => {
     }
   }, [optionSelected, onGetClientCompanyDetails]);
 
-  const onChangeClientCompany = (name, value) => {
+  const onChangeClientCompany = async (name, value) => {
     setClientSelected(items?.find((item) => item?.id === value));
     setOptionSelected(value);
+    await onUpdateClientId(id.toString(), value ?? "");
   };
 
   const onUpdate = async (data: ClientCompany) => {
@@ -88,12 +89,16 @@ const TabClient = () => {
     }
     onSetShowEditClient(false);
     setUpdated(true);
-    await onUpdateClientId(id.toString(), data?.id ?? "");
     return await onUpdateClientCompany(payload);
   };
 
   return (
-    <FixedLayout flex={1} py="30px" px={0}>
+    <FixedLayout
+      flex={1}
+      pb="24px"
+      pt={{ xs: "12px", sm: "12px", md: "24px" }}
+      px={0}
+    >
       <Stack sx={{ height: 58 }}>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center">
@@ -144,7 +149,12 @@ const TabClient = () => {
           )}
         </Stack>
       </Stack>
-      <Divider sx={{ borderColor: "grey.100", marginY: 3 }} />
+      <Divider
+        sx={{
+          borderColor: "grey.100",
+          marginY: { xs: 1.5, sm: 1.5, md: 1.5, lg: 3 },
+        }}
+      />
       {isShowEditClient ? (
         <EditForm initialValues={detailItem} onSubmit={onUpdate} />
       ) : (

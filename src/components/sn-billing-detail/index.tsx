@@ -95,7 +95,11 @@ const InformationBillingPage = () => {
     // }}
     // overflow={"auto"}
     // >
-    <Stack>
+    <Stack
+      padding={{ sm: 3 }}
+      sx={{ overflowY: "auto" }}
+      bgcolor={{ md: "background.default" }}
+    >
       <TopContent
         tagsOptions={tagsOptions}
         item={id ? item : duplicateBill}

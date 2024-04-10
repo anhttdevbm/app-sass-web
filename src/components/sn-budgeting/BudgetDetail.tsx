@@ -335,6 +335,7 @@ export const BudgetDetail = () => {
           background: isDarkMode ? "#313130" : "white",
           py: 2,
           zIndex: 11,
+          borderRadius: 1,
         }}
       >
         <Stack
