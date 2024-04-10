@@ -124,7 +124,7 @@ const Partners = () => {
                     type={DataAction.UPDATE}
                     initialValues={partners}
                     onSubmit={handleUpdatePricingPartners}
-                    titleForm={contentT("aboutUs.updateMostViewedArticles")}
+                    titleForm={contentT("pricing.update_partners")}
                 />
             )}
         </>

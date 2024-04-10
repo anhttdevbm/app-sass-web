@@ -126,7 +126,7 @@ const Banners = () => {
                     type={DataAction.UPDATE}
                     initialValues={banners}
                     onSubmit={onHandleUpdateBanners}
-                    titleForm={contentT("aboutUs.updateMostViewedArticles")}
+                    titleForm={contentT("update_banner")}
                 />
             )}
         </>
