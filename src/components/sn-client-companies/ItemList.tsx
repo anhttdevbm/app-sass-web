@@ -100,22 +100,22 @@ const ItemList = () => {
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: "No", width: "5%", align: "center" },
+      { value: "No", width: "8%", align: "center" },
       {
         value: commonT("name"),
-        width: "25%",
+        width: "45%",
         align: "left",
         sort: true,
       },
       {
         value: companyT("clientCompany.createBy"),
-        width: "25%",
+        width: "20%",
         align: "left",
         sort: true,
       },
       {
         value: companyT("clientCompany.createDate"),
-        width: "25%",
+        width: "15%",
         align: "center",
         sort: true,
       },
@@ -174,7 +174,7 @@ const ItemList = () => {
         : [
             {
               value: "",
-              width: "10%",
+              width: "6%",
             },
           ]),
     ];
@@ -192,6 +192,7 @@ const ItemList = () => {
   const onActionToItem = (action: DataAction, item?: ClientCompany) => {
     return () => {
       if (action === DataAction.DELETE || action === DataAction.UPDATE) {
+        setDeleteType("single");
         item && setSelected(item);
       } else {
         item && setItem(item);
@@ -323,10 +324,7 @@ const ItemList = () => {
                         ),
                       },
                     ]}
-                    onDelete={() => {
-                      setDeleteType("single");
-                      onActionToItem(DataAction.DELETE, item);
-                    }}
+                    onDelete={onActionToItem(DataAction.DELETE, item)}
                     hasPopup={false}
                   />
                 )}

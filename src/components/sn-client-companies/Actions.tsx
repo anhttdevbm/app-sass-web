@@ -155,9 +155,10 @@ const Actions = () => {
         justifyContent="space-between"
         spacing={{ xs: 1, md: 3 }}
         px={{ xs: 0, md: 3 }}
-        py={{ xs: 0, md: 1.5 }}
+        py={{ xs: 0, md: 1, lg: 1.5 }}
         borderBottom={1}
         borderColor="grey.100"
+        rowGap={1}
       >
         <Stack
           direction="row"
@@ -185,9 +186,9 @@ const Actions = () => {
             variant="primary"
             sx={{
               display: { xs: "none", sm: "none", md: "block" },
-              height: 40,
+              height: { xs: 32, sm: 32, md: 32, lg: 40 },
               px: ({ spacing }) => `${spacing(3)}!important`,
-              py: ({ spacing }) => `${spacing(1.5)}!important`,
+              lineHeight: "20px"
             }}
           >
             {companyT("clientCompany.create")}
@@ -204,8 +205,9 @@ const Actions = () => {
               width: 210,
               minWidth: 210,
               display: { xs: "block", sm: "block", md: "none" },
+              my: "auto"
             }}
-            rootSx={{ bgcolor: "#F7F7FD", paddingLeft: "4px!important" }}
+            rootSx={{ bgcolor: "#F7F7FD", paddingLeft: "4px!important", height: 32 }}
             startNode={
               <SearchIcon sx={{ width: 24, height: 24 }} color="info" />
             }
@@ -255,6 +257,7 @@ const Actions = () => {
               width: 210,
               minWidth: 210,
               display: { xs: "none", sm: "none", md: "block" },
+              marginRight: { md: "24px!important" },
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
