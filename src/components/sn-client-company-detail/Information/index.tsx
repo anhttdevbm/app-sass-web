@@ -71,6 +71,8 @@ const InformationCompany = () => {
         style={{ overflowY: "auto", overflowX: "hidden" }}
         px={{ xs: 1, sm: 3 }}
         py={{ md: 3 }}
+        rounded="4px"
+        borderRadius={1}
       >
         <Stack spacing={3}>
           <Stack
