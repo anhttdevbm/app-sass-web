@@ -23,7 +23,10 @@ export type CostRate = {
   is_active: boolean;
   holiday_calendar: string;
   working_hours: number[];
-  total_hours?: number;
+  total_hours: number;
+  total_days: number;
+  over_head: boolean;
+  note?: string;
   created_by: string;
   created_time: string;
 }

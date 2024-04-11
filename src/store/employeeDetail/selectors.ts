@@ -72,7 +72,6 @@ export const useCostRate = () => {
   const costRates = useAppSelector((state) => state.employeeDetail.costRates.items);
 
   const currentRate = useMemo(() => costRates?.length > 0 ? costRates[0] : undefined, [costRates]);
-  const remainingRates = useMemo(() => costRates?.length > 0 ? costRates.slice(1) : [], [costRates]);
 
   const handleGetAllCostRate = useCallback(
     async () => {
@@ -142,7 +141,7 @@ export const useCostRate = () => {
 
   return {
     currentRate,
-    remainingRates,
+    costRates,
     handleGetAllCostRate,
     handleGetCostRate,
     handleDeleteCostRate,

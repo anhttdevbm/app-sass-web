@@ -94,7 +94,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
   );
 });
 
-export type NewCostRateForm = Omit<NewCostRate, "total_hours" | "working_hours"> & {
+export type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
   working_hours: {
     mon: number;
     tue: number;
@@ -104,7 +104,6 @@ export type NewCostRateForm = Omit<NewCostRate, "total_hours" | "working_hours">
     sat: number;
     sun: number;
   };
-  overhead: boolean;
 };
 
 export type EditCostRateForm = NewCostRateForm & { id: string; }
@@ -355,8 +354,8 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
                 name="overhead"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                checked={formik.values?.overhead}
-                value={formik.values?.overhead}
+                checked={formik.values?.over_head}
+                value={formik.values?.over_head}
                 sx={(theme) => ({
                   ml: "16px",
                   width: "37px",
