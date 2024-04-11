@@ -84,9 +84,11 @@ const SalesDetail = () => {
       //   xl: 1450,
       // }}
       sx={{
-        width: "100%",
+        width: "auto",
         minWidth: "95%",
         overflowY: "hidden",
+        marginLeft: { lg: "8px", xl: "24px" },
+        marginRight: { lg: "8px", xl: "24px" },
       }}
       rounded="4px"
     >

@@ -220,7 +220,7 @@ const TopContent = (props: TopContentProps) => {
       gap={1}
       pt={2}
       px={2}
-      bgcolor={isDarkMode ? "#313130" : "#ffffff"}
+      bgcolor={isDarkMode ? "#313130" : "white"}
       borderRadius={1}
     >
       <Stack

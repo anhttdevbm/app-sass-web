@@ -27,7 +27,7 @@ const SalesClient = () => {
     onUpdateClientCompany,
   } = useClientCompanies();
 
-  const { saleDetail } = useSaleDetail();
+  const { saleDetail, onGetSaleDetail } = useSaleDetail();
 
   const { onUpdateDeal } = useSales();
   const [isEditMode, setEditMode] = useState<boolean>(false);
@@ -75,6 +75,7 @@ const SalesClient = () => {
     setClientSelected(items?.find((item) => item?.id === value));
     setOptionSelected(value);
     await onUpdateDeal({ id, client: value });
+    await onGetSaleDetail(id as string);
   };
 
   const onUpdate = async (data: ClientCompany) => {

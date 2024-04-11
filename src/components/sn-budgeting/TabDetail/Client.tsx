@@ -21,9 +21,14 @@ import { useEffect, useState } from "react";
 import { useClientCompanies } from "store/company/selectors";
 import { useSnackbar } from "store/app/selectors";
 import EditUnderlineIcon from "icons/EditUnderlineIcon";
+import { TBudget } from "store/project/budget/action";
 
-export const Client = (props: { bugetId: string; clientId?: string }) => {
-  const { bugetId, clientId } = props;
+export const Client = (props: {
+  bugetId: string;
+  clientId?: string;
+  update: (TBudget) => void;
+}) => {
+  const { bugetId, clientId, update } = props;
   const {
     onGetClientCompanyDetails,
     detailItem,
@@ -80,10 +85,11 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
   const onChangeClientCompany = async (name, value) => {
     setClientSelected(items?.find((item) => item?.id === value));
     setOptionSelected(value);
-    await budgetUpdate.mutateAsync({
+    const { data } = await budgetUpdate.mutateAsync({
       id: bugetId,
       client: value,
     });
+    update(data);
     onAddSnackbar(
       commonT("notification.success", {
         label: saleT("list.newDealForm.update"),
