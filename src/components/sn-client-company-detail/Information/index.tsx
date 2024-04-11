@@ -73,6 +73,9 @@ const InformationCompany = () => {
         py={{ md: 3 }}
         rounded="4px"
         borderRadius={1}
+        marginLeft={{ lg: 1, xl: 3 }}
+        marginRight={{ lg: 1, xl: 3 }}
+        width="auto"
       >
         <Stack spacing={3}>
           <Stack

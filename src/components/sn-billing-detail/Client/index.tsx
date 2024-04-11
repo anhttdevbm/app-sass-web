@@ -8,7 +8,7 @@ import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 import EditForm from "components/sn-sales-detail/components/Client/EditForm";
 import SelectClient from "components/sn-sales-detail/components/Client/SelectClient";
 import ViewDetail from "components/sn-sales-detail/components/Client/ViewDetail";
-import { DEFAULT_PAGING, NS_COMPANY } from "constant/index";
+import { DEFAULT_PAGING, NS_COMPANY, NS_COMMON } from "constant/index";
 import { Option } from "constant/types";
 import EditUnderlineIcon from "icons/EditUnderlineIcon";
 import { useTranslations } from "next-intl";
@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { updateClientBill } from "store/billing/actions";
 import { useBillings, useClientBill } from "store/billing/selectors";
 import { useClientCompanies } from "store/company/selectors";
+import { useSnackbar } from "store/app/selectors";
 
 const TabClient = () => {
   const { id } = useParams();
@@ -29,7 +30,7 @@ const TabClient = () => {
     onUpdateClientCompany,
   } = useClientCompanies();
 
-  const { billingClientDetail } = useBillings();
+  const { billingClientDetail, onGetBillingDetail } = useBillings();
   const { isShowEditClient, onUpdateClientId, onSetShowEditClient } =
     useClientBill();
 
@@ -40,6 +41,8 @@ const TabClient = () => {
   const [clientSelected, setClientSelected] = useState<ClientCompany>();
   const [isUpdated, setUpdated] = useState<boolean>(false);
   const companyT = useTranslations(NS_COMPANY);
+  const commonT = useTranslations(NS_COMMON);
+  const { onAddSnackbar } = useSnackbar();
 
   useEffect(() => {
     onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
@@ -77,6 +80,13 @@ const TabClient = () => {
     setClientSelected(items?.find((item) => item?.id === value));
     setOptionSelected(value);
     await onUpdateClientId(id.toString(), value ?? "");
+    await onGetBillingDetail(id as string);
+    onAddSnackbar(
+      commonT("notification.success", {
+        label: commonT("update"),
+      }),
+      "success",
+    );
   };
 
   const onUpdate = async (data: ClientCompany) => {

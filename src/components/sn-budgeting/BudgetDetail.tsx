@@ -324,6 +324,10 @@ export const BudgetDetail = () => {
     showModalStatus();
   };
 
+  const updateBuggeting = (data: TBudget) => {
+    setBudget(data);
+  };
+
   if (!budget) return <></>;
 
   return (
@@ -473,7 +477,11 @@ export const BudgetDetail = () => {
           <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
             {activeTab === TABS.CLIENT && (
-              <Client bugetId={budget.id} clientId={budget?.client} />
+              <Client
+                bugetId={budget.id}
+                clientId={budget?.client}
+                update={updateBuggeting}
+              />
             )}
             {activeTab === TABS.TIME && (
               <Time

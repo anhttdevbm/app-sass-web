@@ -1,5 +1,5 @@
 import Wrapper from "components/Wrapper";
-import { Actions, ItemList} from "components/sn-client-companies";
+import { Actions, ItemList } from "components/sn-client-companies";
 import { NS_COMPANY } from "constant/index";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
