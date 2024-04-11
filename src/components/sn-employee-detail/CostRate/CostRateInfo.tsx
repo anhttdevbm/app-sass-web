@@ -55,18 +55,18 @@ const CostRateInfo = () => {
   const costRateT = useTranslations(NS_COST_RATE);
   const { onAddSnackbar } = useSnackbar();
   const [ isModalOpen, openModal, closeModal ] = useToggle(false);
-  const { currentRate, remainingRates, handleUpdateCostRate, handleDeleteCostRate } = useCostRate();
+  const { currentRate, costRates, handleUpdateCostRate, handleDeleteCostRate } = useCostRate();
 
   const [ costRateToEdit, setCostRateToEdit ] = useState<CostRate | undefined>(undefined);
   const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles]);
 
   const handleItemEdit = useCallback((id: string) => {
-    const rate = [ currentRate, ...remainingRates ].find(r => r?.id === id)
+    const rate = costRates.find(r => r?.id === id)
     if (rate) {
       setCostRateToEdit(rate);
       openModal();
     }
-  }, [ currentRate, remainingRates, openModal ])
+  }, [ costRates, openModal ])
 
   const handleItemDelete = useCallback(async (id: string) => {
     try {
@@ -118,7 +118,6 @@ const CostRateInfo = () => {
             "type",
             "cost_per_month",
             "currency",
-            "total_hours",
             "start_date",
             "end_date",
             "holiday_calendar",
@@ -133,7 +132,7 @@ const CostRateInfo = () => {
             sat: costRateToEdit?.working_hours[5] ?? 0,
             sun: costRateToEdit?.working_hours[6] ?? 0,
           },
-          overhead: true,
+          over_head: true,
         })
     : undefined,
     [costRateToEdit],
@@ -277,13 +276,13 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Overhead"
-            content="N/A"
+            content={currentRate?.over_head ? 'Yes' : 'No'}
           />
         </Grid>
         <Grid item xs={12} sm={12}>
           <Stack border={1} borderColor="#14B9E5" borderRadius={3} padding={4}>
             <Text color="grey.800" fontSize={20} fontWeight={600}>Note</Text>
-            <Text color="grey.700" mt={1}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos modi ex autem ut reprehenderit veritatis commodi? Beatae aut tenetur quam cum ut eius, voluptates velit repellendus iure sint modi ratione.</Text>
+            <Text color="grey.700" mt={1}>{currentRate?.note}</Text>
           </Stack>
         </Grid>
       </Grid>
@@ -292,7 +291,7 @@ const CostRateInfo = () => {
 
       <Box width="100%" overflow="hidden">
         <CostRateTable
-          items={remainingRates}
+          items={costRates}
           isEditable={isAdmin}
           handleItemEdit={handleItemEdit}
           handleItemDelete={handleItemDelete}

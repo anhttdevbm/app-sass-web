@@ -8,17 +8,9 @@ import { AN_ERROR_TRY_AGAIN, AUTH_API_URL, COMPANY_API_URL } from "constant/inde
 
 export type UpdateEmployee = Partial<Employee>;
 
-export type NewCostRate = Partial<
-  Omit<CostRate, "id" | "created_by" | "created_time" | "company">
-> & {
-  note?: string;
-}
+export type UpdateCostRate = Partial<Omit<CostRate, "created_by" | "created_time" | "company">>
 
-export type UpdateCostRate = Partial<
-  Omit<CostRate, "created_by" | "created_time" | "company">
-> & {
-  note?: string;
-}
+export type NewCostRate = Omit<UpdateCostRate, "id" | "start_date" | "end_date"> & Pick<CostRate, "start_date" | "end_date">
 
 export const getEmployeeDetail = createAsyncThunk(
   "costRate/getEmployeeDetail",
