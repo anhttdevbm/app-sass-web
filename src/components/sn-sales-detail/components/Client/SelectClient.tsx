@@ -29,8 +29,8 @@ const SelectClient = (
       rootSx={{
         height: "auto",
         minHeight: 58,
-        minWidth: 320,
-        maxWidth: 400,
+        minWidth: 200,
+        maxWidth: "unset",
         backgroundColor: "grey.50",
         py: "8px!important",
         px: "12px!important",
@@ -74,7 +74,7 @@ const SelectValue = (props: SelectValueProps) => {
   }, [value, setItem, options]);
 
   return (
-    <Stack direction="row" gap={1}>
+    <Stack direction="row" gap={1} minHeight={42}>
       <Stack sx={{ marginBottom: "auto", marginTop: "auto" }}>
         {!!item?.avatar?.length && (
           <img
@@ -100,7 +100,7 @@ const SelectValue = (props: SelectValueProps) => {
             lineHeight: "24px",
             fontWeight: 600,
             width: "auto",
-            maxWidth: { xs: "240px", sm: "unset" },
+            maxWidth: { xs: "unset", sm: "unset" },
             whiteSpace: "normal",
           }}
         >
@@ -112,7 +112,7 @@ const SelectValue = (props: SelectValueProps) => {
             color: "#666666",
             lineHeight: "18px",
             width: "auto",
-            maxWidth: "240px",
+            maxWidth: "unset",
             whiteSpace: "normal",
           }}
         >

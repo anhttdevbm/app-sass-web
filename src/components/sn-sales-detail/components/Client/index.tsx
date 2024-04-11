@@ -40,7 +40,7 @@ const SalesClient = () => {
   const companyT = useTranslations(NS_COMPANY);
 
   useEffect(() => {
-    onGetClientCompanies({ ...DEFAULT_PAGING });
+    onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
   }, [onGetClientCompanies]);
 
   useEffect(() => {
@@ -71,9 +71,10 @@ const SalesClient = () => {
     }
   }, [optionSelected, onGetClientCompanyDetails]);
 
-  const onChangeClientCompany = (name, value) => {
+  const onChangeClientCompany = async (name, value) => {
     setClientSelected(items?.find((item) => item?.id === value));
     setOptionSelected(value);
+    await onUpdateDeal({ id, client: value });
   };
 
   const onUpdate = async (data: ClientCompany) => {
@@ -86,14 +87,18 @@ const SalesClient = () => {
     }
     setEditMode(false);
     setUpdated(true);
-    await onUpdateDeal({ id, client: data?.id });
     return await onUpdateClientCompany(payload);
   };
 
   return (
     <FixedLayout flex={1}>
-      <Stack sx={{ height: 58 }}>
-        <Stack direction="row" spacing={2} justifyContent="space-between">
+      <Stack sx={{ height: "auto" }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          columnGap={{ xs: 2, sm: 4 }}
+          justifyContent="space-between"
+        >
           <Stack direction="row" alignItems="center">
             {isEditMode ? (
               <Stack sx={{ height: "100%" }}>
@@ -142,7 +147,12 @@ const SalesClient = () => {
           )}
         </Stack>
       </Stack>
-      <Divider sx={{ borderColor: "grey.100", marginY: 3 }} />
+      <Divider
+        sx={{
+          borderColor: "grey.100",
+          marginY: { xs: 1.5, sm: 1.5, md: 1.5, lg: 3 },
+        }}
+      />
       {isEditMode ? (
         <EditForm initialValues={detailItem} onSubmit={onUpdate} />
       ) : (

@@ -46,7 +46,7 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
   const budgetUpdate = useBudgetUpdate();
 
   useEffect(() => {
-    onGetClientCompanies({ ...DEFAULT_PAGING });
+    onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
   }, [onGetClientCompanies]);
 
   useEffect(() => {
@@ -77,9 +77,19 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
     }
   }, [optionSelected, onGetClientCompanyDetails]);
 
-  const onChangeClientCompany = (name, value) => {
+  const onChangeClientCompany = async (name, value) => {
     setClientSelected(items?.find((item) => item?.id === value));
     setOptionSelected(value);
+    await budgetUpdate.mutateAsync({
+      id: bugetId,
+      client: value,
+    });
+    onAddSnackbar(
+      commonT("notification.success", {
+        label: saleT("list.newDealForm.update"),
+      }),
+      "success",
+    );
   };
 
   const onUpdate = async (data: ClientCompany) => {
@@ -92,21 +102,17 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
     }
     setEditMode(false);
     setUpdated(true);
-    await budgetUpdate.mutateAsync({
-      id: bugetId,
-      client: data?.id,
-    });
-    onAddSnackbar(
-      commonT("notification.success", {
-        label: saleT("list.newDealForm.update"),
-      }),
-      "success",
-    );
     return await onUpdateClientCompany(payload);
   };
 
   return (
-    <FixedLayout flex={1} px="8px" pb="24px" rounded="none">
+    <FixedLayout
+      flex={1}
+      px={{ xs: "8px", sm: "24px", md: "24px" }}
+      pb="24px"
+      rounded="4px"
+      borderRadius={1}
+    >
       <Stack sx={{ height: 58 }}>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center">
@@ -158,7 +164,12 @@ export const Client = (props: { bugetId: string; clientId?: string }) => {
           )}
         </Stack>
       </Stack>
-      <Divider sx={{ borderColor: "grey.100", marginY: 3 }} />
+      <Divider
+        sx={{
+          borderColor: "grey.100",
+          marginY: { xs: 1.5, sm: 1.5, md: 1.5, lg: 3 },
+        }}
+      />
       {isEditMode ? (
         <EditForm initialValues={detailItem} onSubmit={onUpdate} />
       ) : (

@@ -97,7 +97,8 @@ const TabHeader = () => {
         sm: "0.5rem 1rem",
       }}
       minHeight={{
-        xs: "140px",
+        xs: "64px",
+        sm: "140px",
         md: "64px",
       }}
       justifyContent="space-between"
@@ -281,6 +282,8 @@ const TabHeader = () => {
           spacing={1}
           sx={{
             maxWidth: "200px",
+            height: "fit-content",
+            py: "6px",
           }}
         >
           {/* Add coin icon here */}
@@ -317,6 +320,7 @@ const TabHeader = () => {
               sx={{
                 width: "100px",
                 maxWidth: "100px",
+                height: "66px",
               }}
             >
               <LabelStatusCell

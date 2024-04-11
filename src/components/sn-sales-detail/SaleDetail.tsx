@@ -88,6 +88,7 @@ const SalesDetail = () => {
         minWidth: "95%",
         overflowY: "hidden",
       }}
+      rounded="4px"
     >
       <TabHeader />
       <TabList value={tab} onChange={onChangeTab} />
@@ -111,8 +112,8 @@ const SalesDetail = () => {
         </TabPanel>
         <TabPanel
           sx={{
-            height: "100%",
-            paddingX: "0px",
+            paddingX: { xs: "8px", sm: "8px", md: "24px" },
+            paddingTop: { xs: 1.5, sm: 1.5, md: 1.5, lg: 3 },
           }}
           value={SALES_DETAIL_TAB.CLIENT}
         >
