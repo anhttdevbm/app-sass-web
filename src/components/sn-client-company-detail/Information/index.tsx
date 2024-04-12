@@ -60,6 +60,15 @@ const InformationCompany = () => {
           ? (item?.avatar[0]?.link as string)
           : "" || CompanyPlaceholderImage,
     });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        endpoint: undefined,
+        key: undefined,
+      });
+    };
   }, [onUpdateHeaderConfig, item]);
 
   const onBackRouter = () => back();
