@@ -13,7 +13,7 @@ import { EMAIL_REGEX } from "constant/regex";
 import { FormikErrors, useFormik } from "formik";
 import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
@@ -77,6 +77,27 @@ const Form = (props: FormProps) => {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
+
+  useEffect(() => {
+    const fieldsToExtract = [
+      "name",
+      "phone",
+      "email",
+      "address",
+      "website",
+      "position",
+    ];
+    if (initialValues && initialValues?.contact) {
+      const newObj = Object.fromEntries(
+        Object.entries(initialValues?.contact).filter(([key, _]) =>
+          fieldsToExtract.includes(key),
+        ),
+      );
+      if (Object.values(newObj).some((item) => item)) {
+        setShowContact(true);
+      }
+    }
+  }, [initialValues]);
 
   const formik = useFormik({
     initialValues: initialValues || INITIAL_VALUES,
