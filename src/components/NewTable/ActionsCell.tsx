@@ -1,29 +1,28 @@
 import { memo, useId, MouseEvent, useState } from "react";
 import {
-  AlertColor,
   Box,
   ButtonBase,
   ButtonBaseProps,
   MenuItem,
-  MenuItemProps,
   MenuList,
   Popover,
   Stack,
   TableCellProps,
   popoverClasses,
 } from "@mui/material";
-import { BodyCell } from "components/Table";
+import { useTranslations } from "next-intl";
+
+import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { IconButton, IconButtonProps, Text } from "components/shared";
-import ThreeDotsIcon from "icons/ThreeDotsIcon";
-import PencilIcon from "icons/PencilIcon";
-import TrashIcon from "icons/TrashIcon";
 import ConfirmDialog, { ConfirmDialogProps } from "components/ConfirmDialog";
+import ThreeDotsIcon from "icons/ThreeDotsIcon";
+import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
+import TrashIcon from "icons/TrashAltIcon";
 import useToggle from "hooks/useToggle";
+import useTheme from "hooks/useTheme";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
-import { useTranslations } from "next-intl";
-import useTheme from "hooks/useTheme";
+import BodyCell from "./BodyCell";
 
 type ActionOption = {
   icon: React.ReactNode;
@@ -199,7 +198,7 @@ const ActionsCell = (props: ActionsCellProps) => {
                 onClick={onEditClicked}
                 sx={sxConfig.item}
               >
-                <PencilIcon sx={{ color: "grey.400" }} fontSize="medium" />
+                <EditUnderlineIcon sx={{ color: "grey.400" }} fontSize="medium" />
                 <Text ml={2} variant="body2" color="grey.400">
                   {t("edit")}
                 </Text>

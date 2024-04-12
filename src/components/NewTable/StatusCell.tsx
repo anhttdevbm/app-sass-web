@@ -1,8 +1,9 @@
 import { memo } from "react";
 import { AlertColor, TableCellProps } from "@mui/material";
-import { BodyCell } from "components/Table";
+
 import TextStatus from "components/TextStatus";
 import { TextProps } from "components/shared";
+import BodyCell from "./BodyCell";
 
 type StatusCellProps = {
   text: string;
@@ -22,6 +23,7 @@ const StatusCell = (props: StatusCellProps) => {
         color={color}
         width={width}
         namespace={namespace}
+        sx={{borderRadius: 999}}
         {...textProps}
       />
     </BodyCell>

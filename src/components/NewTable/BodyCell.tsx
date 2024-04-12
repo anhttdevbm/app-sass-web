@@ -89,4 +89,4 @@ const BodyCell = (props: BodyCellProps) => {
 
 export default memo(BodyCell);
 
-export const HEIGHT_ROW = 48;
+export const HEIGHT_ROW = 64;

@@ -55,4 +55,4 @@ export default memo(HeaderCell);
 
 HeaderCell.displayName = "HeaderCell";
 
-export const HEIGHT_HEADER = 40;
+export const HEIGHT_HEADER = 70;
