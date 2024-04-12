@@ -116,7 +116,7 @@ const Mission = () => {
                     type={DataAction.UPDATE}
                     initialValues={missions}
                     onSubmit={(values) => onUpdateAboutUsMission(values)}
-                    titleForm={contentT("aboutUs.updateMission")}
+                    titleForm={contentT("aboutUs.updatemission")}
                     name={contentT("aboutUs.mission")}
                 />
             )}

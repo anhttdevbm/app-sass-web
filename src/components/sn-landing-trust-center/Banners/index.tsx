@@ -126,7 +126,7 @@ const Banners = () => {
                     type={DataAction.UPDATE}
                     initialValues={banner}
                     onSubmit={handleUpdateTrustCenterBanner}
-                    titleForm={contentT("home.banner")}
+                    titleForm={contentT("update_banner")}
                 />
             )}
         </>

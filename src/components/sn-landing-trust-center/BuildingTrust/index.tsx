@@ -125,7 +125,7 @@ const BuildingTrust = () => {
                     type={DataAction.UPDATE}
                     initialValues={buildingTrust}
                     onSubmit={handleUpdateTrustCenterBuildingTrust}
-                    titleForm={contentT("trustCenter.building_trust")}
+                    titleForm={contentT("trustCenter.update_building_trust")}
                 />
             )}
         </>
