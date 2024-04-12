@@ -29,6 +29,8 @@ const CostRateEmpty = () => {
   const { isSmSmaller } = useBreakpoint();
   const { handleAddNewCostRate } = useCostRate();
 
+  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles])
+
   const onSubmit = async (values: NewCostRateForm) => {
     try {
       const working_hours = [
@@ -105,10 +107,11 @@ const CostRateEmpty = () => {
       <Text variant="h5" textAlign="center" fontSize="16px" fontWeight={400} pt={3} color="grey.700">{costRateT("empty.subtitle")}</Text>
 
       {
-        user?.roles.includes(Permission.AM)
+        isAdmin
           ? <>
             <Button
               variant="primary"
+              disabled
               sx={{
                 marginTop: {
                   xs: "36px",

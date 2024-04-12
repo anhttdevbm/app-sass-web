@@ -2,15 +2,19 @@
 import { useEffect } from "react";
 
 import { useCostRate } from "store/employeeDetail/selectors";
+import { useEmployeeDetailContext } from "../EmployeeDetailContext";
 import CostRateEmpty from "./CostRateEmpty";
 import CostRateInfo from "./CostRateInfo";
 
 const CostRate = () => {
   const { currentRate, handleGetAllCostRate } = useCostRate();
+  const { type } = useEmployeeDetailContext();
 
   useEffect(() => {
-    handleGetAllCostRate()
-  }, [handleGetAllCostRate])
+    if (type === 'SELF') {
+      handleGetAllCostRate()
+    }
+  }, [type, handleGetAllCostRate])
 
   return (
     <>

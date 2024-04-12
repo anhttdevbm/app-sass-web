@@ -14,24 +14,27 @@ import {
   NS_ACCOUNT,
   NS_COMMON,
 } from "constant/index";
+import { Permission } from "constant/enums";
 // import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
-import { useContext } from "hooks/useNonOptionalContext";
 import CopyIcon from "icons/NewCopyIcon";
 import OutlineEditIcon from "icons/OutlineEditIcon";
 import { UpdateUserInfoData } from "store/app/actions";
-import { useSnackbar } from "store/app/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
-import { EmployeeDetailContext } from "./EmployeeDetailContext";
+import { useEmployeeDetailContext } from "./EmployeeDetailContext";
 
 const EmployeeDetailForm = () => {
+  const { user } = useAuth();
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
   // const { isSmSmaller } = useBreakpoint();
 
-  const { employee, onUpdateUserInfo } = useContext(EmployeeDetailContext);
+  const { type, employee, onUpdateUserInfo } = useEmployeeDetailContext();
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
   const { onAddSnackbar } = useSnackbar();
+
+  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles])
 
   const onSubmit = async (values: UpdateUserInfoData) => {
     try {
@@ -207,7 +210,7 @@ const EmployeeDetailForm = () => {
           </Grid>
 
           <Grid container item xs={12} justifyContent="center" my={{xs: 5, sm: 6}}>
-            { !isEdit
+            { ( ( type === 'SELF' || isAdmin ) && !isEdit )
               ?
                 <Button
                   onClick={onEditTrue}

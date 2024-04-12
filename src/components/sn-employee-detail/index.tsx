@@ -10,7 +10,7 @@ import { useAuth, useUserInfo } from "store/app/selectors";
 import { UpdateUserInfoData } from "store/app/actions";
 import { UpdateEmployee } from "store/employeeDetail/actions";
 import { useEmployeeDetail } from "store/employeeDetail/selectors";
-import { EmployeeDetailContext } from "./EmployeeDetailContext";
+import { EmployeeDetailContextProvider } from "./EmployeeDetailContext";
 import EmployeeDetailMain from "./EmployeeDetailMain";
 
 // // TypeScript discriminated union
@@ -39,7 +39,7 @@ const ErrorPage = () => {
   );
 }
 
-const UserInformationProvider = ({children}: { children: ReactNode }) => {
+const UserInformationProvider = ({ type, children }: EmployeeDetailPageProps & { children: ReactNode }) => {
   const { user: employee, onGetProfile } = useAuth();
   const { onUpdateUserInfo } = useUserInfo();
 
@@ -48,17 +48,18 @@ const UserInformationProvider = ({children}: { children: ReactNode }) => {
   }
 
   return (
-    <EmployeeDetailContext.Provider value={{
+    <EmployeeDetailContextProvider value={{
+      type,
       employee,
       onGetProfile,
       onUpdateUserInfo
     }}>
       {children}
-    </EmployeeDetailContext.Provider>
+    </EmployeeDetailContextProvider>
   );
 }
 
-const EmployeeDetailProvider = ({children}: { children: ReactNode }) => {
+const EmployeeDetailProvider = ({ type, children }: EmployeeDetailPageProps & { children: ReactNode }) => {
   const {
     employee,
     status,
@@ -92,13 +93,14 @@ const EmployeeDetailProvider = ({children}: { children: ReactNode }) => {
   }
 
   return (
-    <EmployeeDetailContext.Provider value={{
+    <EmployeeDetailContextProvider value={{
+      type,
       employee,
       onGetProfile,
       onUpdateUserInfo
     }}>
       {children}
-    </EmployeeDetailContext.Provider>
+    </EmployeeDetailContextProvider>
   );
 }
 
@@ -106,13 +108,13 @@ const EmployeeDetailPage = (props: EmployeeDetailPageProps) => {
   switch (props.type) {
     case "SELF":
       return (
-        <UserInformationProvider>
+        <UserInformationProvider type={props.type}>
           <EmployeeDetailMain />
         </UserInformationProvider>
       );
     case "EMPLOYEE_DETAIL":
       return (
-        <EmployeeDetailProvider>
+        <EmployeeDetailProvider type={props.type}>
           <EmployeeDetailMain />
         </EmployeeDetailProvider>
       );
