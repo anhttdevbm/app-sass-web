@@ -10,26 +10,31 @@ import { useTranslations } from "next-intl";
 import { Endpoint, client } from "api";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
+import { Permission } from "constant/enums";
 import { Button, IconButton, Text } from "components/shared";
 import Avatar from "components/Avatar";
 import PencilIcon from "icons/FocusedCameraIcon";
-import { useContext } from "hooks/useNonOptionalContext";
 import { UpdateUserInfoData } from "store/app/actions";
-import { useSnackbar } from "store/app/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
-import { EmployeeDetailContext } from "./EmployeeDetailContext";
+import { useEmployeeDetailContext } from "./EmployeeDetailContext";
 
 const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
+  const { user } = useAuth();
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
 
-  const { employee, onGetProfile, onUpdateUserInfo } = useContext(EmployeeDetailContext);
+  const { type, employee, onGetProfile, onUpdateUserInfo } = useEmployeeDetailContext();
   const { onAddSnackbar } = useSnackbar();
   const [avatar, setAvatar] = useState<string | File>(employee.avatar?.link ?? "");
   const imageEdittorRef = useRef<AvatarEditor>(null);
   const [imageScale, setImageScale] = useState(1.2);
   const [openImageEditor, setOpenImageEditor] = useState<string | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
+
+  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles])
+
+  const hasPermissionToEdit = useMemo(() => type === 'SELF' || isAdmin, [type, isAdmin])
 
   const onChooseFile = () => {
     inputFileRef?.current?.click();
@@ -97,10 +102,10 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
             size={100}
             src={previewImage}
             alt={employee.fullname}
-            onClick={isEdit ? onChooseFile : undefined}
+            onClick={(isEdit && hasPermissionToEdit) ? onChooseFile : undefined}
             style={{ cursor: "pointer" }}
           />
-          {isEdit && (
+          {(isEdit && hasPermissionToEdit) && (
             <>
               <IconButton
                 onClick={onChooseFile}
