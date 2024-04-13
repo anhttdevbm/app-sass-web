@@ -31,7 +31,8 @@ import {
   LANDING_HELP_CENTER_PATH,
   LANDING_TRUST_CENTER_PATH,
   LANDING_AI_PATH,
-  LANDING_PRICING_PATH
+  LANDING_PRICING_PATH,
+  HOLIDAY_CALENDAR_PATH
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
@@ -250,6 +251,11 @@ const DATA: MenuItemProps[] = [
       {
         label: "menu.companyInformation",
         href: MY_COMPANY_PATH,
+        roles: [Permission.AM],
+      },
+      {
+        label: "menu.holidayCalendar",
+        href: HOLIDAY_CALENDAR_PATH,
         roles: [Permission.AM],
       },
     ],
