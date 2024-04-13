@@ -18,6 +18,7 @@ export const LayoutLang: LayoutDictionary = {
     task: "Tasks",
     company: "Company",
     employees: "Employees",
+    holidayCalendar: "Holiday Calendar",
     costHistory: "Cost History",
     listOfPositions: "List Of Positions",
     projectTypeList: "Project Type List",

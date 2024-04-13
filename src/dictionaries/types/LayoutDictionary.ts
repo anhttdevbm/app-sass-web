@@ -16,6 +16,7 @@ export type LayoutDictionary = {
     task: string;
     company: string;
     employees: string;
+    holidayCalendar: string;
     costHistory: string;
     listOfPositions: string;
     projectTypeList: string;
