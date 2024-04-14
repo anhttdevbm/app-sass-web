@@ -6,18 +6,17 @@ import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
 
 import { NS_COMPANY, NS_COMMON } from "constant/index";
-import { DataAction, PayStatus } from "constant/enums";
+import { DataAction, EmployeeType, PayStatus } from "constant/enums";
 import { NewButton as Button, Text } from "components/shared";
 import { Dropdown, Search } from "components/NewFilters";
 import { TEXT_STATUS } from "./helpers";
 import useToggle from "hooks/useToggle";
 import { getPath } from "utils/index";
 import { useEmployees } from "store/company/selectors";
-import { GetEmployeeListQueries } from "store/company/actions";
 import { usePositionOptions } from "store/global/selectors";
 import AddCircleIcon from "icons/AddCircleIcon";
-import PlusIcon from "icons/PlusIcon";
-import Form from "./Form";
+import EmployeeCompanyForm from "./EmployeeCompanyForm";
+import EmployeeTypeForm from "./EmployeeTypeForm";
 
 const Actions = () => {
   const {
@@ -39,6 +38,8 @@ const Actions = () => {
   } = useEmployees();
 
   const [isShow, onShow, onHide] = useToggle();
+  const [formStage, setFormStage] = useState<1 | 2>(1);
+  const [employeeTypeToAdd, setEmployeeTypeToAdd] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
 
   const pathname = usePathname();
   const { push } = useRouter();
@@ -114,9 +115,7 @@ const Actions = () => {
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Text variant="h4">
-            {companyT("employees.title")}
-          </Text>
+          <Text variant="h4">{companyT("employees.title")}</Text>
           <Button
             onClick={onShow}
             startIcon={<AddCircleIcon />}
@@ -147,11 +146,11 @@ const Actions = () => {
             value={queries["email"]}
             sx={{
               width: 300,
-              minWidth: 200
+              minWidth: 200,
             }}
             onKeyDown={(e) => {
-              if(e.key === 'Enter') {
-                onSearch()
+              if (e.key === "Enter") {
+                onSearch();
               }
             }}
           />
@@ -171,11 +170,7 @@ const Actions = () => {
             onChange={onChangeQueries}
             value={Number(queries?.status)}
           />
-          <Button
-            size="small"
-            onClick={onSearch}
-            variant="secondaryOutlined"
-          >
+          <Button size="small" onClick={onSearch} variant="secondaryOutlined">
             {commonT("search")}
           </Button>
           {/* <Stack direction="row" alignItems="center" spacing={3}>
@@ -195,15 +190,76 @@ const Actions = () => {
           {commonT("search")}
         </Button>
       </Stack>
-      {isShow && (
-        <Form
-          open={isShow}
-          onClose={onHide}
-          type={DataAction.CREATE}
-          initialValues={INITIAL_VALUES}
-          onSubmit={onCreateEmployee}
-        />
-      )}
+
+      {
+        // 3 level nested condition, so if-else statements in IFFE instead of chained ternary operator
+        (() => {
+          if (isShow) {
+            if (formStage === 2) {
+              switch (employeeTypeToAdd) {
+                case EmployeeType.EMPLOYEE:
+                  return (
+                    <EmployeeCompanyForm
+                      open={isShow}
+                      onClose={() => {
+                        onHide();
+                        setFormStage(1);
+                      }}
+                      type={DataAction.CREATE}
+                      initialValues={INITIAL_VALUES}
+                      onSubmit={onCreateEmployee}
+                    />
+                  );
+                case EmployeeType.CLIENT:
+                  return (
+                    <EmployeeCompanyForm
+                      open={isShow}
+                      onClose={() => {
+                        onHide();
+                        setFormStage(1);
+                      }}
+                      type={DataAction.CREATE}
+                      initialValues={INITIAL_VALUES}
+                      onSubmit={onCreateEmployee}
+                    />
+                  );
+                case EmployeeType.CONTRACTOR:
+                  return (
+                    <EmployeeCompanyForm
+                      open={isShow}
+                      onClose={() => {
+                        onHide();
+                        setFormStage(1);
+                      }}
+                      type={DataAction.CREATE}
+                      initialValues={INITIAL_VALUES}
+                      onSubmit={onCreateEmployee}
+                    />
+                  );
+              }
+            } else {
+              return (
+                <EmployeeTypeForm
+                  open={isShow && formStage === 1}
+                  onClose={() => {
+                    onHide();
+                    setFormStage(1);
+                  }}
+                  onSubmit={(type: EmployeeType) => {
+                    setEmployeeTypeToAdd(type);
+                    setFormStage(2);
+                  }}
+                  options={[
+                    { label: "Employee", value: EmployeeType.EMPLOYEE },
+                    { label: "Client", value: EmployeeType.CLIENT },
+                    { label: "Contractor", value: EmployeeType.CONTRACTOR },
+                  ]}
+                />
+              );
+            }
+          }
+        })()
+      }
     </>
   );
 };
