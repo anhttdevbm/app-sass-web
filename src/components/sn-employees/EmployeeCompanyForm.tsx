@@ -1,28 +1,34 @@
-import { Stack } from "@mui/material";
-import { DialogLayoutProps } from "components/DialogLayout";
-import FormLayout from "components/FormLayout";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
-import { FormikErrors, useFormik } from "formik";
 import { memo, useMemo } from "react";
-import { useAuth, useSnackbar } from "store/app/selectors";
-import * as Yup from "yup";
-import { getMessageErrorByAPI } from "utils/index";
-import { DataAction } from "constant/enums";
-import { Input, Select } from "components/shared";
-import { EmployeeData } from "store/company/actions";
-import { EMAIL_REGEX } from "constant/regex";
-import { usePositionOptions } from "store/global/selectors";
+import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
+import { FormikErrors, useFormik } from "formik";
+import * as Yup from "yup";
 
-type FormProps = {
+import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
+import { DataAction, Permission } from "constant/enums";
+import { EMAIL_REGEX } from "constant/regex";
+import { DialogLayoutProps } from "components/DialogLayout";
+import FormLayout from "components/NewFormLayout";
+import { NewInput as Input, NewSelect as Select } from "components/shared";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { EmployeeData } from "store/company/actions";
+import { usePositionOptions } from "store/global/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+
+type EmployeeCompanyFormProps = {
   initialValues: EmployeeData;
   type: DataAction;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmit: (values: EmployeeData) => Promise<any>;
 } & Omit<DialogLayoutProps, "children" | "onSubmit">;
 
-const Form = (props: FormProps) => {
-  const { initialValues, type, onSubmit: onSubmitProps, ...rest } = props;
+const EmployeeCompanyForm = ({
+  initialValues,
+  type,
+  onSubmit: onSubmitProps,
+  onClose,
+  ...rest
+}: EmployeeCompanyFormProps) => {
   const { onAddSnackbar } = useSnackbar();
   const { user, onGetProfile } = useAuth();
   const companyT = useTranslations(NS_COMPANY);
@@ -54,7 +60,7 @@ const Form = (props: FormProps) => {
         if (values?.email === user?.email) {
           onGetProfile();
         }
-        props.onClose();
+        onClose();
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
@@ -103,6 +109,7 @@ const Form = (props: FormProps) => {
       submitting={formik.isSubmitting}
       disabled={disabled}
       onSubmit={formik.handleSubmit}
+      onClose={onClose}
       {...rest}
     >
       <Stack spacing={2} py={3}>
@@ -119,27 +126,41 @@ const Form = (props: FormProps) => {
           disabled={type === DataAction.UPDATE}
           rootSx={sxConfig.input}
         />
-        <Select
-          options={options}
-          title={commonT("position")}
-          name="position"
-          required
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values?.position}
-          error={commonT(touchedErrors?.position, {
-            name: commonT("position"),
-          })}
-          rootSx={sxConfig.input}
-          fullWidth
-          onEndReached={onEndReached}
-        />
+        <Stack direction="row" spacing={2}>
+          <Select
+            title="Permission"
+            name="permission"
+            options={[
+              { label: "AM", value: Permission.AM, },
+              { label: "SA", value: Permission.SA, },
+              { label: "ST", value: Permission.ST, },
+              { label: "EU", value: Permission.EU, },
+            ]}
+            fullWidth
+            rootSx={sxConfig.input}
+          />
+          <Select
+            options={options}
+            title={commonT("position")}
+            name="position"
+            required
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values?.position}
+            error={commonT(touchedErrors?.position, {
+              name: commonT("position"),
+            })}
+            fullWidth
+            rootSx={sxConfig.input}
+            onEndReached={onEndReached}
+          />
+        </Stack>
       </Stack>
     </FormLayout>
   );
 };
 
-export default memo(Form);
+export default memo(EmployeeCompanyForm);
 
 export const validationSchema = Yup.object().shape({
   email: Yup.string()

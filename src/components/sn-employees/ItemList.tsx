@@ -33,7 +33,7 @@ import { Employee } from "store/company/reducer";
 import { EmployeeData } from "store/company/actions";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import TrashIcon from "icons/TrashAltIcon";
-import Form from "./Form";
+import EmployeeCompanyForm from "./EmployeeCompanyForm";
 import { MobileContentCell, DesktopCells } from "./components";
 import DeleteConfirm from "./components/DeleteConfirm";
 
@@ -348,7 +348,7 @@ const ItemList = () => {
         />
       )}
       {action === DataAction.UPDATE && (
-        <Form
+        <EmployeeCompanyForm
           open
           onClose={onResetAction}
           type={DataAction.UPDATE}

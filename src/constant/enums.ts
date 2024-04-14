@@ -42,6 +42,12 @@ export enum Status {
   CLOSE = "CLOSE",
 }
 
+export enum EmployeeType {
+  EMPLOYEE = "EMPLOYEE",
+  CLIENT = "CLIENT",
+  CONTRACTOR = "CONTRACTOR",
+}
+
 export enum PayStatus {
   // ALL,
   PAID = 1,
