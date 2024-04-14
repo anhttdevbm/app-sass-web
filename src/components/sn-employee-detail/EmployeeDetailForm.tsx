@@ -6,14 +6,8 @@ import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 
-import {
-  NewButton as Button,
-  NewInput as Input,
-} from "components/shared";
-import {
-  NS_ACCOUNT,
-  NS_COMMON,
-} from "constant/index";
+import { NewButton as Button, NewInput as Input } from "components/shared";
+import { NS_ACCOUNT, NS_COMMON } from "constant/index";
 import { Permission } from "constant/enums";
 // import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
@@ -34,7 +28,10 @@ const EmployeeDetailForm = () => {
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
   const { onAddSnackbar } = useSnackbar();
 
-  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles])
+  const isAdmin = useMemo(
+    () => user?.roles.includes(Permission.AM),
+    [user?.roles],
+  );
 
   const onSubmit = async (values: UpdateUserInfoData) => {
     try {
@@ -107,16 +104,12 @@ const EmployeeDetailForm = () => {
             xs: 0,
             sm: 11,
           }}
-          rowSpacing={{
-            xs: 2,
-            sm: 3,
-          }}
+          rowSpacing={2}
           width="100%"
           component="form"
           noValidate
           onSubmit={formik.handleSubmit}
         >
-
           <Grid item xs={12} sm={6}>
             <Input
               rootSx={sxConfig.input}
@@ -144,9 +137,12 @@ const EmployeeDetailForm = () => {
               value={employee["username"]}
               endNode={
                 <Button
-                  sx={{color: '#0575E6'}}
+                  sx={{ color: "#0575E6" }}
+                  size="small"
                   aria-label="copy"
-                  onClick={() => { navigator.clipboard.writeText(employee["username"]) }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(employee["username"]);
+                  }}
                   startIcon={<CopyIcon />}
                 >
                   Copy
@@ -209,46 +205,52 @@ const EmployeeDetailForm = () => {
             />
           </Grid>
 
-          <Grid container item xs={12} justifyContent="center" my={{xs: 5, sm: 6}}>
-            { ( ( type === 'SELF' || isAdmin ) && !isEdit )
-              ?
+          <Grid
+            container
+            item
+            xs={12}
+            justifyContent="center"
+            my={{ xs: 5, sm: 6 }}
+          >
+            {(type === "SELF" || isAdmin) && !isEdit ? (
+              <Button
+                onClick={onEditTrue}
+                variant="secondaryOutlined"
+                startIcon={<OutlineEditIcon />}
+                sx={{
+                  ...sxConfig.button,
+                  "&.MuiButton-sizeMedium": {
+                    px: 10,
+                    py: 1,
+                  },
+                }}
+              >
+                {accountT("accountInformation.changeInformation")}
+              </Button>
+            ) : (
+              <></>
+            )}
+            {isEdit ? (
+              <>
                 <Button
-                  onClick={onEditTrue}
-                  variant="secondaryOutlined"
-                  startIcon={<OutlineEditIcon />}
+                  disabled={disabled}
+                  pending={formik.isSubmitting}
                   sx={{
                     ...sxConfig.button,
-                    "&.MuiButton-sizeMedium" :{
-                      px: "86px",
-                      py: "12px",
+                    "&.MuiButton-sizeMedium": {
+                      px: 10,
+                      py: 1,
                     },
                   }}
+                  variant="primary"
+                  type="submit"
                 >
-                  {accountT("accountInformation.changeInformation")}
+                  {commonT("form.save")}
                 </Button>
-              : <></>
-            }
-            { isEdit
-              ?
-                <>
-                  <Button
-                    disabled={disabled}
-                    pending={formik.isSubmitting}
-                    sx={{
-                      ...sxConfig.button,
-                      "&.MuiButton-sizeMedium" :{
-                        px: "86px",
-                        py: "12px",
-                      },
-                    }}
-                    variant="primary"
-                    type="submit"
-                  >
-                    {commonT("form.save")}
-                  </Button>
-                </>
-              : <></>
-            }
+              </>
+            ) : (
+              <></>
+            )}
           </Grid>
         </Grid>
       </Box>
@@ -274,7 +276,7 @@ const validationSchema = Yup.object().shape({
 
 const sxConfig = {
   input: {
-    height: 58,
+    height: 52,
     "& input": {
       color: ({ palette }) => `${palette.grey[900]}!important`,
     },

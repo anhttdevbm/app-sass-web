@@ -18,15 +18,15 @@ const HeaderCell = forwardRef(
         sx={{
           backgroundColor: "#D9F0FD",
           border: 0,
-          px: 2.5,
+          px: 2,
           py: 2,
+          height: { HEIGHT_HEADER },
           borderTopLeftRadius: isStart ? 12 : undefined,
           borderBottomLeftRadius: isStart ? 12 : undefined,
           borderTopRightRadius: isEnd ? 12 : undefined,
           borderBottomRightRadius: isEnd ? 12 : undefined,
           ...sx,
         }}
-        height={HEIGHT_HEADER}
         ref={ref}
         align="center"
         {...rest}
@@ -55,4 +55,4 @@ export default memo(HeaderCell);
 
 HeaderCell.displayName = "HeaderCell";
 
-export const HEIGHT_HEADER = 70;
+export const HEIGHT_HEADER = 65;
