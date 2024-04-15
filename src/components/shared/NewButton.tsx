@@ -16,7 +16,7 @@ const SECONDARY_OUTLINED = "secondaryOutlined";
 const EXTRA_SMALL = "extraSmall";
 const NORMAL = "normal";
 const DANGER = "danger";
-const SUCCESS = 'success'
+const SUCCESS = "success";
 
 declare module "@mui/material/Button/Button" {
   interface ButtonPropsVariantOverrides {
@@ -24,8 +24,8 @@ declare module "@mui/material/Button/Button" {
     [SECONDARY]: true;
     [PRIMARY_OUTLINED]: true;
     [SECONDARY_OUTLINED]: true;
-    [DANGER]: true,
-    [SUCCESS]: true
+    [DANGER]: true;
+    [SUCCESS]: true;
   }
   interface ButtonPropsSizeOverrides {
     [EXTRA_SMALL]: true;
@@ -84,10 +84,12 @@ const CoreButton = forwardRef(
         ref={ref}
         startIcon={startIcon}
         variant={variant}
-        sx={{
-          ...defaultSx,
-          ...sx,
-        } as CoreButtonProps["sx"]}
+        sx={
+          {
+            ...defaultSx,
+            ...sx,
+          } as CoreButtonProps["sx"]
+        }
         {...rest}
       />
     );
@@ -155,16 +157,14 @@ const getDefaultSx = (isDarkMode: boolean, sx) => {
     },
     [`&.${matchClass(PREFIX_BUTTON_CLASS, PRIMARY_OUTLINED)}`]: {
       border: "1px solid transparent",
-      background:
-        `linear-gradient(#fff, #fff) padding-box,
+      background: `linear-gradient(#fff, #fff) padding-box,
          linear-gradient(90deg, #2AF598 0%, #009EFD 100%)`,
       color: "primary.main",
       "&:hover": {
         color: "primary.dark",
       },
       [`&.${buttonClasses.disabled}`]: {
-        background:
-          `linear-gradient(#fff, #fff) padding-box,
+        background: `linear-gradient(#fff, #fff) padding-box,
            linear-gradient(90deg, #2AF598 0%, #009EFD 100%)`,
         color: isDarkMode ? "grey.50" : "primary.light",
       },
@@ -202,20 +202,20 @@ const getDefaultSx = (isDarkMode: boolean, sx) => {
       backgroundColor: "error.light",
       color: "error.main",
       "&:hover": {
-        opacity: 0.8
+        opacity: 0.8,
       },
       [`&.${buttonClasses.disabled}`]: {
-        opacity: 0.6
+        opacity: 0.6,
       },
     },
     [`&.${matchClass(PREFIX_BUTTON_CLASS, SUCCESS)}`]: {
       backgroundColor: "success.light",
       color: "success.main",
       "&:hover": {
-        opacity: 0.8
+        opacity: 0.8,
       },
       [`&.${buttonClasses.disabled}`]: {
-        opacity: 0.6
+        opacity: 0.6,
       },
     },
 
@@ -238,8 +238,8 @@ const getDefaultSx = (isDarkMode: boolean, sx) => {
       // py: 1.75,
       px: 4,
       fontSize: 16,
-      lineHeight: 1.25,
-      minHeight: 48,
+      lineHeight: 1.2,
+      minHeight: 44,
     },
     [`&.${buttonClasses.sizeSmall}`]: {
       // py: 1.5,

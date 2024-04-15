@@ -17,9 +17,14 @@ type CostRateTableProps = {
   isEditable?: boolean;
   handleItemEdit: (id: string) => void;
   handleItemDelete: (id: string) => void;
-}
+};
 
-const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDelete }: CostRateTableProps) => {
+const CostRateTable = ({
+  items,
+  isEditable = false,
+  handleItemEdit,
+  handleItemDelete,
+}: CostRateTableProps) => {
   const [selectedList, setSelectedList] = useState<string[]>([]);
 
   const onToggleSelect = (item: string, indexSelected: number) => {
@@ -27,7 +32,9 @@ const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDe
       if (indexSelected === -1) {
         setSelectedList((prevList) => [...prevList, item]);
       } else {
-        setSelectedList((prevList) => prevList.filter((_, idx) => idx !== indexSelected));
+        setSelectedList((prevList) =>
+          prevList.filter((_, idx) => idx !== indexSelected),
+        );
       }
     };
   };
@@ -39,7 +46,7 @@ const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDe
     (event: ChangeEvent<HTMLInputElement>) => {
       const isChecked = event.target.checked;
       if (isChecked) {
-        setSelectedList(items.map(i => i.id));
+        setSelectedList(items.map((i) => i.id));
       } else {
         setSelectedList([]);
       }
@@ -48,41 +55,55 @@ const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDe
   );
 
   const columns = useMemo<CellProps[]>(() => {
-    const cols: CellProps[] = ([
-      { value: "Start Date", width: "100px" },
-      { value: "End Date", width: "100px" },
-      { value: "Cost Type", width: "100px" },
-      { value: "Cost", width: "100px" },
-      { value: "Hourly", width: "100px" },
-      { value: "Capacity", width: "100px" },
-      { value: "Note", width: "100px" },
-    ]);
+    const cols: CellProps[] = [
+      { value: "Start Date", sx: { width: "12ch" } },
+      { value: "End Date", sx: { width: "12ch" } },
+      { value: "Cost Type", sx: { width: "11ch" } },
+      { value: "Cost", sx: { width: "6ch" } },
+      { value: "Hourly", sx: { width: "8ch" } },
+      { value: "Capacity", sx: { width: "12ch" } },
+      { value: "Note" },
+    ];
     if (isEditable) {
-      cols.unshift({ value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} checkedColor="#0575E6"/>, width: "3%" });
-      cols.push({ value: "", width: "8%" });
+      cols.unshift({
+        value: (
+          <Checkbox
+            checked={isCheckedAll}
+            onChange={onChangeAll}
+            checkedColor="#0575E6"
+          />
+        ),
+        sx: { width: "2ch" },
+      });
+      cols.push({ value: "", sx: { width: "2ch" } });
     }
     return cols;
-  }, [ isEditable, isCheckedAll, onChangeAll ])
+  }, [isEditable, isCheckedAll, onChangeAll]);
 
   return (
     <>
-      <TableLayout
-        headerList={columns}
-      >
+      <TableLayout headerList={columns}>
         {items.map((item) => {
           const indexSelected = selectedList.findIndex(
             (selected) => selected === item.id,
           );
           return (
             <TableRow key={item.id}>
-              { isEditable
-                ? <BodyCell>
-                    <Checkbox checked={indexSelected !== -1} onChange={onToggleSelect(item.id, indexSelected)} checkedColor="#0575E6"/>
-                  </BodyCell>
-                : <></>
-              }
-              <BodyCell>{dayjs(item.start_date).format('DD MMM, YYYY')}</BodyCell>
-              <BodyCell>{dayjs(item.end_date).format('DD MMM, YYYY')}</BodyCell>
+              {isEditable ? (
+                <BodyCell>
+                  <Checkbox
+                    checked={indexSelected !== -1}
+                    onChange={onToggleSelect(item.id, indexSelected)}
+                    checkedColor="#0575E6"
+                  />
+                </BodyCell>
+              ) : (
+                <></>
+              )}
+              <BodyCell>
+                {dayjs(item.start_date).format("DD MMM, YYYY")}
+              </BodyCell>
+              <BodyCell>{dayjs(item.end_date).format("DD MMM, YYYY")}</BodyCell>
               <BodyCell>{item.type}</BodyCell>
               <BodyCell>--</BodyCell>
               <BodyCell>--</BodyCell>
@@ -99,8 +120,12 @@ const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDe
                     p: { xs: "4px!important", lg: 1 },
                   },
                 }}
-                onEdit={() => { handleItemEdit(item.id) } }
-                onDelete={() => { handleItemDelete(item.id) } }
+                onEdit={() => {
+                  handleItemEdit(item.id);
+                }}
+                onDelete={() => {
+                  handleItemDelete(item.id);
+                }}
                 hasPopup={false}
               />
             </TableRow>
@@ -108,7 +133,7 @@ const CostRateTable = ( {items, isEditable = false, handleItemEdit, handleItemDe
         })}
       </TableLayout>
     </>
-  )
-}
+  );
+};
 
 export default CostRateTable;

@@ -9,17 +9,14 @@ import Switch from "@mui/material/Switch";
 import { FormikProps, FormikErrors } from "formik";
 import { useTranslations } from "next-intl";
 
-import {
-  NS_COST_RATE,
-  NS_COMMON,
-} from "constant/index";
+import { NS_COST_RATE, NS_COMMON } from "constant/index";
 import {
   NewButton as Button,
   NewInput as Input,
   NewSelect as Select,
   NewDatePicker as DatePicker,
   Text,
-  } from "components/shared";
+} from "components/shared";
 import { NewCostRate } from "store/employeeDetail/actions";
 
 const WorkingHoursBlock = memo(function WorkingHoursBlock({
@@ -43,18 +40,22 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
         alignItems: "center",
         justifyContent: "space-between",
         borderRadius: "12px",
-        background: value === 0 ? "linear-gradient(45deg, hsla(0, 0%, 91%, 0.41), hsla(180, 19%, 87%, 1))" : "#D9F0FD",
+        background:
+          value === 0
+            ? "linear-gradient(45deg, hsla(0, 0%, 91%, 0.41), hsla(180, 19%, 87%, 1))"
+            : "#D9F0FD",
         "&:not(:first-of-type)": {
           ml: "14px",
         },
       }}
     >
-      <MuiInputLabel sx={{display: "none"}}>{title}</MuiInputLabel>
+      <MuiInputLabel sx={{ display: "none" }}>{title}</MuiInputLabel>
       <Text
         sx={{
           fontSize: "20px",
           fontWeight: 600,
           color: "#4D4D4D",
+          textTransform: "uppercase",
           textAlign: "center",
         }}
       >
@@ -71,7 +72,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
           backgroundColor: "transparent",
           fontSize: "39px",
           fontWeight: 600,
-          color: "#0575E6",
+          color: value === 0 ? "#4D4D4D" : "#0575E6",
           width: "1ch",
           textAlign: "center",
           border: "none",
@@ -106,23 +107,20 @@ export type NewCostRateForm = Omit<NewCostRate, "working_hours"> & {
   };
 };
 
-export type EditCostRateForm = NewCostRateForm & { id: string; }
+export type EditCostRateForm = NewCostRateForm & { id: string };
 
 type CostRateFormType = {
   formik: FormikProps<NewCostRateForm> | FormikProps<EditCostRateForm>;
   onCancel: () => void;
-}
+};
 
-const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
+const CostRateForm = ({ formik, onCancel }: CostRateFormType) => {
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
-      (
-        out: FormikErrors<NewCostRateForm>,
-        [key, error],
-      ) => {
+      (out: FormikErrors<NewCostRateForm>, [key, error]) => {
         if (formik.touched[key]) {
           out[key] = error;
         }
@@ -140,7 +138,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
   const handleChangeDate = (name: string, newDate?: Date) => {
     formik.setFieldValue(name, newDate ? newDate : null);
     formik.setFieldTouched(name, true);
-  }
+  };
 
   return (
     <>
@@ -151,11 +149,11 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
           xs: 2,
           sm: 3,
         }}
+        pb={3}
         component="form"
         noValidate
         onSubmit={formik.handleSubmit}
       >
-
         <Grid item xs={12} sm={4}>
           <Select
             options={[
@@ -185,7 +183,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
             error={commonT(touchedErrors?.cost_per_month, {
               name: costRateT("empty.form.costPerMonth"),
             })}
-            endNode={<Text sx={{mr: 1}}>$</Text>}
+            endNode={<Text sx={{ mr: 1 }}>$</Text>}
           />
         </Grid>
 
@@ -208,7 +206,16 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
         </Grid>
 
         <Grid item xs={12}>
-          <Stack direction="row" sx={{overflowX: "scroll", overflowY: "visible"}}>
+          <Stack
+            direction="row"
+            sx={{
+              pb: 2,
+              overflowX: "scroll",
+              overflowY: "visible",
+              "&::scrollbar": { height: 4 },
+              "&::-webkit-scrollbar": { height: 4 },
+            }}
+          >
             <WorkingHoursBlock
               title={costRateT("empty.form.mon")}
               fullWidth
@@ -216,7 +223,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.working_hours?.mon}
-              error={!!(touchedErrors?.working_hours?.mon)}
+              error={!!touchedErrors?.working_hours?.mon}
             />
             <WorkingHoursBlock
               title={costRateT("empty.form.tue")}
@@ -225,7 +232,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.working_hours?.tue}
-              error={!!(touchedErrors?.working_hours?.tue)}
+              error={!!touchedErrors?.working_hours?.tue}
             />
             <WorkingHoursBlock
               title={costRateT("empty.form.wed")}
@@ -234,7 +241,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.working_hours?.wed}
-              error={!!(touchedErrors?.working_hours?.wed)}
+              error={!!touchedErrors?.working_hours?.wed}
             />
             <WorkingHoursBlock
               title={costRateT("empty.form.thu")}
@@ -243,7 +250,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.working_hours?.thu}
-              error={!!(touchedErrors?.working_hours?.thu)}
+              error={!!touchedErrors?.working_hours?.thu}
             />
             <WorkingHoursBlock
               title={costRateT("empty.form.fri")}
@@ -252,7 +259,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.working_hours?.fri}
-              error={!!(touchedErrors?.working_hours?.fri)}
+              error={!!touchedErrors?.working_hours?.fri}
             />
             <WorkingHoursBlock
               title={costRateT("empty.form.sat")}
@@ -261,7 +268,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.working_hours?.sat}
-              error={!!(touchedErrors?.working_hours?.sat)}
+              error={!!touchedErrors?.working_hours?.sat}
             />
             <WorkingHoursBlock
               title={costRateT("empty.form.sun")}
@@ -270,7 +277,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values?.working_hours?.sun}
-              error={!!(touchedErrors?.working_hours?.sun)}
+              error={!!touchedErrors?.working_hours?.sun}
             />
           </Stack>
         </Grid>
@@ -333,7 +340,7 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
             error={commonT(touchedErrors?.note, {
               name: costRateT("empty.form.note"),
             })}
-            sx={{mb: 6}}
+            sx={{ mb: 6 }}
           />
         </Grid>
 
@@ -361,19 +368,19 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
                   width: "37px",
                   height: "20px",
                   padding: 0,
-                  '& .MuiSwitch-thumb': {
-                    boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+                  "& .MuiSwitch-thumb": {
+                    boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
                     width: "12px",
                     height: "12px",
                     borderRadius: "999px",
-                    transition: theme.transitions.create(['width'], {
+                    transition: theme.transitions.create(["width"], {
                       duration: 150,
                     }),
                   },
                   "& .MuiSwitch-switchBase": {
                     "&.Mui-checked": {
                       transform: "translateX(16px)",
-                      color: '#fff',
+                      color: "#fff",
                       "& + .MuiSwitch-track": {
                         opacity: 1,
                         backgroundColor: "#0575E6",
@@ -392,8 +399,8 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
                     "& .MuiSwitch-thumb": {
                       width: "15px",
                     },
-                    '& .MuiSwitch-switchBase.Mui-checked': {
-                      transform: 'translateX(13px)',
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      transform: "translateX(13px)",
                     },
                   },
                 })}
@@ -413,13 +420,17 @@ const CostRateForm = ( { formik, onCancel }: CostRateFormType) => {
             }}
             spacing={3}
           >
-            <Button variant="primaryOutlined" onClick={() => onCancel()}>Cancel</Button>
-            <Button variant="primary" type="submit" disabled={isSubmitDisabled}>Confirm</Button>
+            <Button variant="primaryOutlined" onClick={() => onCancel()}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" disabled={isSubmitDisabled}>
+              Confirm
+            </Button>
           </Stack>
         </Grid>
       </Grid>
     </>
-  )
-}
+  );
+};
 
 export default CostRateForm;

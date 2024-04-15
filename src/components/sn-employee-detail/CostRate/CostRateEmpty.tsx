@@ -25,11 +25,14 @@ const CostRateEmpty = () => {
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
   const { onAddSnackbar } = useSnackbar();
-  const [ isModalOpen, openModal, closeModal ] = useToggle(false);
-  const { isSmSmaller } = useBreakpoint();
+  const [isModalOpen, openModal, closeModal] = useToggle(false);
+  const { isMdSmaller } = useBreakpoint();
   const { handleAddNewCostRate } = useCostRate();
 
-  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles])
+  const isAdmin = useMemo(
+    () => user?.roles.includes(Permission.AM),
+    [user?.roles],
+  );
 
   const onSubmit = async (values: NewCostRateForm) => {
     try {
@@ -43,7 +46,14 @@ const CostRateEmpty = () => {
         values.working_hours.sun,
       ];
       const total_hours = working_hours.reduce((sum, val) => sum + val, 0);
-      const total_days = Math.round((new Date(values.end_date).getTime() - new Date(values.start_date).getTime()) / 1000 / 60 / 60 / 24);
+      const total_days = Math.round(
+        (new Date(values.end_date).getTime() -
+          new Date(values.start_date).getTime()) /
+          1000 /
+          60 /
+          60 /
+          24,
+      );
 
       const data = {
         ...values,
@@ -52,10 +62,7 @@ const CostRateEmpty = () => {
         total_days,
       } as NewCostRate;
       await handleAddNewCostRate(data);
-      onAddSnackbar(
-        costRateT("empty.notification.addSuccess"),
-        "success",
-      );
+      onAddSnackbar(costRateT("empty.notification.addSuccess"), "success");
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
@@ -84,77 +91,94 @@ const CostRateEmpty = () => {
   ) as NewCostRateForm;
 
   return (
-    <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      flexGrow={1}
+    >
       <Box display="flex" justifyContent="center" alignItems="center">
         <Image
           src={CostRateEmptyImage}
           alt="Cost Rate Empty Illustration"
-          width={ isSmSmaller ? 200 : 320 }
+          width={isMdSmaller ? 180 : 250}
         />
       </Box>
       <Text
         variant="h3"
         textAlign="center"
         fontSize={{
-          xs: "20px",
-          sm: "25px",
+          xs: 20,
+          sm: 24,
         }}
         fontWeight={600}
         pt={4}
       >
-        <span style={{ color: "#045EB8" }}>{user?.fullname}</span> {costRateT("empty.title")}
+        <span style={{ color: "#045EB8" }}>{user?.fullname}</span>{" "}
+        {costRateT("empty.title")}
       </Text>
-      <Text variant="h5" textAlign="center" fontSize="16px" fontWeight={400} pt={3} color="grey.700">{costRateT("empty.subtitle")}</Text>
+      <Text
+        variant="h5"
+        textAlign="center"
+        fontSize="16px"
+        fontWeight={400}
+        pt={3}
+        color="grey.700"
+      >
+        {costRateT("empty.subtitle")}
+      </Text>
 
-      {
-        isAdmin
-          ? <>
-            <Button
-              variant="primary"
-              disabled
-              sx={{
-                marginTop: {
-                  xs: "36px",
-                  sm: "20px",
-                },
-                marginBottom: {
-                  xs: "36px",
-                  sm: "64px",
-                },
-              }}
-              startIcon={<AddCircleIcon />}
-              onClick={() => { openModal() }}
-            >
-              {costRateT("empty.addCostRate")}
-            </Button>
+      {isAdmin ? (
+        <>
+          <Button
+            variant="primary"
+            size="medium"
+            sx={{
+              mt: {
+                xs: 4,
+                sm: 2,
+              },
+              mb: {
+                xs: 4,
+                sm: 7,
+              },
+            }}
+            startIcon={<AddCircleIcon />}
+            onClick={() => {
+              openModal();
+            }}
+          >
+            {costRateT("empty.addCostRate")}
+          </Button>
 
-            <DefaultPopupLayout
-              open={isModalOpen}
-              title="Add New Cost Rate"
-              onClose={() => { closeModal() }}
-              sx={{borderRadius: "24px"}}
-            >
-              <DialogContent>
-                <Formik
-                  initialValues={initialValues}
-                  onSubmit={onSubmit}
-                >
-                  {
-                    (props) =>
-                      <CostRateForm
-                        formik={props}
-                        onCancel={() => { closeModal() }}
-                      />
-                  }
-                </Formik>
-              </DialogContent>
-            </DefaultPopupLayout>
-          </>
-          : <></>
-      }
-
+          <DefaultPopupLayout
+            open={isModalOpen}
+            title="Add New Cost Rate"
+            onClose={() => {
+              closeModal();
+            }}
+            sx={{ borderRadius: "24px" }}
+          >
+            <DialogContent>
+              <Formik initialValues={initialValues} onSubmit={onSubmit}>
+                {(props) => (
+                  <CostRateForm
+                    formik={props}
+                    onCancel={() => {
+                      closeModal();
+                    }}
+                  />
+                )}
+              </Formik>
+            </DialogContent>
+          </DefaultPopupLayout>
+        </>
+      ) : (
+        <></>
+      )}
     </Box>
-  )
+  );
 };
 
 export default CostRateEmpty;

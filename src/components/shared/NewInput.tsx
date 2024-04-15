@@ -141,7 +141,7 @@ const CoreInput = forwardRef(
             mt: title ? "38px" : undefined,
           },
           ...sx,
-          }}
+        }}
         error={hasError}
         color={color}
         ref={ref}
@@ -209,9 +209,8 @@ const getDefaultSx = (
       borderRadius: 999,
       color: "text.primary",
 
-      pt: "12px",
-      pb: "12px",
-      pl: "24px",
+      py: 1.25,
+      pl: 3,
       fontSize: 16,
       lineHeight: "22px",
 
