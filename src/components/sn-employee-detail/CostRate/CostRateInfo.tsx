@@ -80,7 +80,7 @@ const CostRateInfo = () => {
   const costRateT = useTranslations(NS_COST_RATE);
   const { onAddSnackbar } = useSnackbar();
   const [isModalOpen, openModal, closeModal] = useToggle(false);
-  const { currentRate, costRates, handleUpdateCostRate, handleDeleteCostRate } =
+  const { selectCurrentCostRate, selectAllCostRate, handleUpdateCostRate, handleDeleteCostRate } =
     useCostRate();
 
   const [costRateToEdit, setCostRateToEdit] = useState<CostRate | undefined>(
@@ -93,13 +93,13 @@ const CostRateInfo = () => {
 
   const handleItemEdit = useCallback(
     (id: string) => {
-      const rate = costRates.find((r) => r?.id === id);
+      const rate = selectAllCostRate.find((r) => r?.id === id);
       if (rate) {
         setCostRateToEdit(rate);
         openModal();
       }
     },
-    [costRates, openModal],
+    [selectAllCostRate, openModal],
   );
 
   const handleItemDelete = useCallback(
@@ -292,7 +292,7 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Type"
-            content={currentRate?.type ?? "N/A"}
+            content={selectCurrentCostRate?.type ?? "N/A"}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
@@ -300,8 +300,8 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title="Cost Per Month"
             content={
-              currentRate?.cost_per_month
-                ? `${currentRate.cost_per_month}.$`
+              selectCurrentCostRate?.cost_per_month
+                ? `${selectCurrentCostRate.cost_per_month}.$`
                 : "N/A"
             }
           />
@@ -318,7 +318,7 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title="Capacity"
             content={
-              currentRate?.total_hours ? `${currentRate.total_hours}h` : "N/A"
+              selectCurrentCostRate?.total_hours ? `${selectCurrentCostRate.total_hours}h` : "N/A"
             }
           />
         </Grid>
@@ -333,7 +333,7 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Overhead"
-            content={currentRate?.over_head ? "Yes" : "No"}
+            content={selectCurrentCostRate?.over_head ? "Yes" : "No"}
           />
         </Grid>
       </Grid>
@@ -352,7 +352,7 @@ const CostRateInfo = () => {
           Note
         </Text>
         <Text color="grey.700" mt={0.5}>
-          {currentRate?.note}
+          {selectCurrentCostRate?.note}
         </Text>
       </Stack>
 
@@ -375,7 +375,7 @@ const CostRateInfo = () => {
 
       <Box width="100%" overflow="hidden">
         <CostRateTable
-          items={costRates}
+          items={selectAllCostRate}
           isEditable={isAdmin}
           handleItemEdit={handleItemEdit}
           handleItemDelete={handleItemDelete}

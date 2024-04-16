@@ -7,24 +7,18 @@ import CostRateEmpty from "./CostRateEmpty";
 import CostRateInfo from "./CostRateInfo";
 
 const CostRate = () => {
-  const { currentRate, handleGetAllCostRate } = useCostRate();
+  const { selectAllCostRate, handleGetAllCostRate } = useCostRate();
   const { type } = useEmployeeDetailContext();
 
   useEffect(() => {
-    if (type === 'SELF') {
-      handleGetAllCostRate()
+    if (type === "SELF") {
+      handleGetAllCostRate();
     }
-  }, [type, handleGetAllCostRate])
+  }, [type, handleGetAllCostRate]);
 
   return (
-    <>
-    {
-      currentRate?.id
-        ? <CostRateInfo />
-        : <CostRateEmpty />
-    }
-    </>
-  )
-}
+    <>{selectAllCostRate.length > 0 ? <CostRateInfo /> : <CostRateEmpty />}</>
+  );
+};
 
 export default CostRate;

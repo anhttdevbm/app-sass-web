@@ -216,69 +216,18 @@ const CostRateForm = ({ formik, onCancel }: CostRateFormType) => {
               "&::-webkit-scrollbar": { height: 4 },
             }}
           >
-            <WorkingHoursBlock
-              title={costRateT("empty.form.mon")}
-              fullWidth
-              name="working_hours.mon"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.working_hours?.mon}
-              error={!!touchedErrors?.working_hours?.mon}
-            />
-            <WorkingHoursBlock
-              title={costRateT("empty.form.tue")}
-              fullWidth
-              name="working_hours.tue"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.working_hours?.tue}
-              error={!!touchedErrors?.working_hours?.tue}
-            />
-            <WorkingHoursBlock
-              title={costRateT("empty.form.wed")}
-              fullWidth
-              name="working_hours.wed"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.working_hours?.wed}
-              error={!!touchedErrors?.working_hours?.wed}
-            />
-            <WorkingHoursBlock
-              title={costRateT("empty.form.thu")}
-              fullWidth
-              name="working_hours.thu"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.working_hours?.thu}
-              error={!!touchedErrors?.working_hours?.thu}
-            />
-            <WorkingHoursBlock
-              title={costRateT("empty.form.fri")}
-              fullWidth
-              name="working_hours.fri"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.working_hours?.fri}
-              error={!!touchedErrors?.working_hours?.fri}
-            />
-            <WorkingHoursBlock
-              title={costRateT("empty.form.sat")}
-              fullWidth
-              name="working_hours.sat"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.working_hours?.sat}
-              error={!!touchedErrors?.working_hours?.sat}
-            />
-            <WorkingHoursBlock
-              title={costRateT("empty.form.sun")}
-              fullWidth
-              name="working_hours.sun"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.working_hours?.sun}
-              error={!!touchedErrors?.working_hours?.sun}
-            />
+            {daysOfWeekKeys.map((day) => (
+              <WorkingHoursBlock
+                key={day}
+                title={costRateT(`empty.form.${day}`)}
+                fullWidth
+                name={`working_hours.${day}`}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.working_hours[day]}
+                error={!!touchedErrors?.working_hours?.[day]}
+              />
+            ))}
           </Stack>
         </Grid>
 
@@ -434,3 +383,5 @@ const CostRateForm = ({ formik, onCancel }: CostRateFormType) => {
 };
 
 export default CostRateForm;
+
+const daysOfWeekKeys = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
