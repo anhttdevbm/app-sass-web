@@ -98,6 +98,7 @@ const SalesClient = () => {
           direction="row"
           spacing={2}
           columnGap={{ xs: 2, sm: 4 }}
+          flexWrap="wrap"
           justifyContent="space-between"
         >
           <Stack direction="row" alignItems="center">
