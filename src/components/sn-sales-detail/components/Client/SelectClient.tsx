@@ -29,7 +29,7 @@ const SelectClient = (
       rootSx={{
         height: "auto",
         minHeight: 58,
-        minWidth: 200,
+        minWidth: "320",
         maxWidth: "unset",
         backgroundColor: "grey.50",
         py: "8px!important",
@@ -77,6 +77,7 @@ const SelectValue = (props: SelectValueProps) => {
     <Stack direction="row" gap={1} minHeight={42}>
       <Stack sx={{ marginBottom: "auto", marginTop: "auto" }}>
         {!!item?.avatar?.length && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item?.avatar}
             style={{ width: 42, height: 42 }}
@@ -100,8 +101,10 @@ const SelectValue = (props: SelectValueProps) => {
             lineHeight: "24px",
             fontWeight: 600,
             width: "auto",
-            maxWidth: { xs: "unset", sm: "unset" },
-            whiteSpace: "normal",
+            maxWidth: { xs: "60vw", sm: "unset" },
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
           {item?.label}

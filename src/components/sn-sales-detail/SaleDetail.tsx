@@ -116,6 +116,7 @@ const SalesDetail = () => {
           sx={{
             paddingX: { xs: "8px", sm: "8px", md: "24px" },
             paddingTop: { xs: 1.5, sm: 1.5, md: 1.5, lg: 3 },
+            overflowY: "hidden",
           }}
           value={SALES_DETAIL_TAB.CLIENT}
         >
