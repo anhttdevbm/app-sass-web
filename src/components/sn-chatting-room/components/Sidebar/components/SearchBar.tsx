@@ -7,14 +7,21 @@ import SearchIcon from "icons/SearchIcon";
 import { debounce } from "utils/index";
 import { useChat } from "store/chat/selectors";
 import { useRef } from "react";
+import { useWSChat } from "store/chat/helpers";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
 
 const SearchBar = ({ onFilterConversation }) => {
   const { mobileMode } = useGetScreenMode();
 
   const { onSetDrawerType } = useChat();
+  const { sendMessage } = useWSChat();
   const { isDarkMode } = useTheme();
   const debounceSearchText = debounce((text: string) => {
-    onFilterConversation("text", text);
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_SEARCH,
+      roomName: text,
+      page: 1,
+    });
   }, 1000);
 
   const inputRef = useRef<any>(null);
@@ -90,7 +97,7 @@ const SearchBar = ({ onFilterConversation }) => {
             justifyContent: "center",
             backgroundColor: isDarkMode ? "#3a3b3c" : "white",
             marginLeft: "10px",
-            borderRadius: 2, 
+            borderRadius: 2,
           }}
           onClick={() => onSetDrawerType("group-modal")}
         >

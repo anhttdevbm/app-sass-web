@@ -161,6 +161,9 @@ const chatSlice = createSlice({
     setConversationInfo: (state, action) => {
       state.conversationInfo = action.payload;
     },
+    setConversation: (state, action) => {
+      state.convention = action.payload;
+    },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
         if (
@@ -565,6 +568,7 @@ export const {
   setRoomId,
   setMessage,
   setConversationInfo,
+  setConversation,
   setTypeList,
   setDataTransfer,
   setStateSendMessage,

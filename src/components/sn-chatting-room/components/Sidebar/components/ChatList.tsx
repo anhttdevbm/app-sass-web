@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import ChatItemLayout from "components/sn-chat/components/chat/ChatItemLayout";
-import { DirectionChat, IChatItemInfo, STEP } from "store/chat/type";
+import { CHAT_ROOM_TYPE, DirectionChat, IChatItemInfo, STEP } from "store/chat/type";
 import { useDeepCompareMemo } from "hooks/useDeepCompare";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
@@ -101,41 +101,18 @@ const ChatList = () => {
   }, [lastElement, observer]);
 
   const _conversations = useDeepCompareMemo(() => {
-    return conversations
-      .filter((item) => item.username !== user?.["username"])
-      .map((item) => {
-        if (item.t !== "d") return item;
-        return {
-          ...item,
-          ...(item?.statuses?.length > 0
-            ? {
-                status:
-                  item.statuses?.[0].username === user?.["username"]
-                    ? item.statuses?.[1]?.status
-                    : item.statuses?.[0]?.status,
-              }
-            : {}),
-          ...(item?.usernames?.length > 0
-            ? {
-                username:
-                  item.usernames?.[0] === user?.["username"]
-                    ? item.usernames?.[1]
-                    : item.usernames?.[0],
-              }
-            : {}),
-        };
-      });
+    return conversations;
   }, [conversations, user]);
 
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
     try {
-      onSetRoomId(chatInfo._id);
+      onSetRoomId(chatInfo.id);
       onSetDataTransfer(chatInfo);
       onSetConversationInfo(chatInfo);
       onSetStateSearchMessage(null);
       onResetSearchChatText();
-      if (chatInfo?.t)
-        if (chatInfo?.t !== "d") {
+      if (chatInfo?.type)
+        if (chatInfo?.type === CHAT_ROOM_TYPE.GROUP) {
           onSetStep(STEP.CHAT_GROUP, chatInfo);
         } else {
           onSetStep(STEP.CHAT_ONE, chatInfo);
@@ -148,9 +125,9 @@ const ChatList = () => {
       <ChatItemLayout
         chatInfo={conversation}
         sessionId={user?.["username"]}
-        key={conversation._id}
+        key={conversation.id}
         onClickConvention={handleClickConversation}
-        isActive={idActive === conversation._id || false}
+        isActive={idActive === conversation.id || false}
         chatItemProps={{
           ...(index === _conversations?.length - 1 && {
             ref: setLastElement,
@@ -176,8 +153,8 @@ const ChatList = () => {
           sx={{
             overflowX: "scroll",
             bgcolor: isDarkMode ? "var(--mui-palette-grey-50)" : "white",
-            paddingLeft: '10px',
-            paddingRight: '10px',
+            paddingLeft: "10px",
+            paddingRight: "10px",
           }}
           ref={chatListRef}
         >
@@ -187,7 +164,7 @@ const ChatList = () => {
     );
   };
 
-  return <>{renderConversations(currentConversation?._id as string)}</>;
+  return <>{renderConversations(currentConversation?.id as string)}</>;
 };
 
 export default ChatList;
