@@ -108,6 +108,7 @@ const TabList = ({ value, onChange }: TabListProps) => {
 
   return (
     <Stack
+      display="flex"
       direction={{
         xs: "column",
         sm: "row",
@@ -127,10 +128,14 @@ const TabList = ({ value, onChange }: TabListProps) => {
       <Tabs
         value={value}
         onChange={onChange}
+        variant="scrollable"
         TabIndicatorProps={{
           sx: {
             bgcolor: "transparent",
           },
+        }}
+        sx={{
+          maxWidth: "calc(100vw - 64px)",
         }}
       >
         {TABS.map((tab) => (

@@ -29,7 +29,7 @@ const SelectClient = (
       rootSx={{
         height: "auto",
         minHeight: 58,
-        minWidth: "320",
+        minWidth: "300",
         maxWidth: "unset",
         backgroundColor: "grey.50",
         py: "8px!important",
@@ -101,7 +101,7 @@ const SelectValue = (props: SelectValueProps) => {
             lineHeight: "24px",
             fontWeight: 600,
             width: "auto",
-            maxWidth: { xs: "60vw", sm: "unset" },
+            maxWidth: { xs: "calc(100vw - 140px)", sm: "unset" },
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
