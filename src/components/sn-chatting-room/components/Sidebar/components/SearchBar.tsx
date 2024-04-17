@@ -4,24 +4,44 @@ import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
 import NewGroupIcon from "icons/NewGroupIcon";
 import SearchIcon from "icons/SearchIcon";
-import { debounce } from "utils/index";
+import { debounce, getPath } from "utils/index";
 import { useChat } from "store/chat/selectors";
 import { useRef } from "react";
 import { useWSChat } from "store/chat/helpers";
 import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { getEmployeesOfCompany } from "store/manager/actions";
+import { useAuth } from "store/app/selectors";
+import { useEmployeesOfCompany } from "store/manager/selectors";
 
 const SearchBar = ({ onFilterConversation }) => {
   const { mobileMode } = useGetScreenMode();
-
+  const { user } = useAuth();
   const { onSetDrawerType } = useChat();
   const { sendMessage } = useWSChat();
   const { isDarkMode } = useTheme();
+  const { onGetEmployees } = useEmployeesOfCompany();
   const debounceSearchText = debounce((text: string) => {
-    sendMessage({
-      event: CHAT_EVENT_TYPE.GROUP_SEARCH,
-      roomName: text,
-      page: 1,
-    });
+    if (text) {
+      const newQueries = {
+        pageIndex: 1,
+        pageSize: 50,
+        fullname: text,
+        email: text,
+        username: text,
+      };
+      onGetEmployees(user?.company || "", newQueries).then(() => {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.GROUP_SEARCH,
+          roomName: text,
+          page: 1,
+        });
+      });
+    } else {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.ROOM_LIST,
+        page: 1,
+      });
+    }
   }, 1000);
 
   const inputRef = useRef<any>(null);

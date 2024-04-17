@@ -4,12 +4,14 @@ import { useChat } from "./selectors";
 import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage } from "./type";
 import { clientStorage } from "utils/storage";
 import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
+import { useEmployeesOfCompany } from "store/manager/selectors";
 
 const PAGE_INITIAL = 1;
 
 export const useWSChat = () => {
   const { user } = useAuth();
   const { convention, onSetConvention } = useChat();
+  const { items } = useEmployeesOfCompany();
 
   const [ws, setWs] = useState<WebSocket | null>(null);
   const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
@@ -29,19 +31,17 @@ export const useWSChat = () => {
 
         switch (resp.event) {
           case CHAT_EVENT_TYPE.ROOM_LIST:
-          case CHAT_EVENT_TYPE.GROUP_SEARCH:
             return onSetConvention(resp.data?.result || []);
+          case CHAT_EVENT_TYPE.GROUP_SEARCH:
+            const groups = resp.data?.result;
+            const users = items.map((item) => ({
+              type: CHAT_ROOM_TYPE.PERSONAL,
+              avatar: item?.avatar?.link,
+              peer_detail: { ...item, avatar: item?.avatar?.link },
+              ...item,
+            }));
+            return onSetConvention([...groups, ...users] || []);
 
-          case CHAT_EVENT_TYPE.GROUP_CREATE:
-            return onSetConvention([...convention, resp.data?.room]);
-
-          case CHAT_EVENT_TYPE.PERSONAL_ROOM:
-            const roomInfo = resp.data?.room;
-            const detailMembers = resp.data?.detailMembers;
-            return onSetConvention([{
-              ...roomInfo,
-              peer_detail: detailMembers?.[roomInfo?.members?.[1] ?? ""],
-            }, ...convention]);
           default:
             return [];
         }

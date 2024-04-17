@@ -7,7 +7,7 @@ import { useAuth, useSnackbar } from "store/app/selectors";
 import { useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
 import SearchRoundIcon from "icons/SearchRoundIcon";
-import { NS_CHAT_BOX, NS_COMMON, } from "constant/index";
+import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useWSChat } from "store/chat/helpers";
 import useTheme from "hooks/useTheme";
@@ -206,7 +206,7 @@ const ChatList = ({ onCloseChatBox }) => {
             borderRadius: "8px",
           }}
         >
-          <NewGroupIcon/>
+          <NewGroupIcon />
         </Box>
       </Box>
       <Box
@@ -229,9 +229,9 @@ const ChatList = ({ onCloseChatBox }) => {
               }}
               p={2}
             >
-              <Skeleton variant="rounded" width={40} height={40}/>
+              <Skeleton variant="rounded" width={40} height={40} />
               <Box flex={1}>
-                <Skeleton variant="text" sx={{ fontSize: "1rem" }}/>
+                <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
                 <Skeleton
                   variant="text"
                   sx={{ fontSize: "1rem" }}

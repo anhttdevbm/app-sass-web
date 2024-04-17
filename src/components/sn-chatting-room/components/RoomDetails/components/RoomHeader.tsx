@@ -145,7 +145,11 @@ const RoomHeader = () => {
         >
           <Box display="flex" alignItems="center" gap={"10px"} minWidth={200}>
             <Avatar
-              src={isGroup(currentConversation?.type) ? currentConversation?.avatar : currentConversation?.peer_detail?.avatar}
+              src={
+                isGroup(currentConversation?.type)
+                  ? currentConversation?.avatar
+                  : currentConversation?.peer_detail?.avatar
+              }
               sx={{ height: "56px", width: "56px", borderRadius: "10px" }}
             />
             <Box display="flex" flexDirection="column" gap="4px">

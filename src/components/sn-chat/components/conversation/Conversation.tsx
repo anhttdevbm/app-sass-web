@@ -161,8 +161,8 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
           wrapperMessageSx: {
             ...(isOpenInfoChat && !DrawerChatIgnore.includes(typeDrawerChat)
               ? {
-                width: `calc(100% - ${extraDesktopMode ? "424px" : "272px"})`,
-              }
+                  width: `calc(100% - ${extraDesktopMode ? "424px" : "272px"})`,
+                }
               : {}),
           },
         })}
