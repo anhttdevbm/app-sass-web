@@ -3,13 +3,13 @@ import Box from "@mui/material/Box";
 import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
 import { IChatItemInfo, STEP } from "store/chat/type";
-import { useAuth, useSnackbar } from "store/app/selectors";
+import { useAuth } from "store/app/selectors";
 import { useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
 import SearchRoundIcon from "icons/SearchRoundIcon";
 import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import { useWSChat } from "store/chat/helpers";
+import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import useTheme from "hooks/useTheme";
 
 const ChatList = ({ onCloseChatBox }) => {
@@ -27,7 +27,7 @@ const ChatList = ({ onCloseChatBox }) => {
   } = useChat();
 
   useWSChat();
-  const { onAddSnackbar } = useSnackbar();
+  const { searchConversation } = useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
@@ -94,12 +94,6 @@ const ChatList = ({ onCloseChatBox }) => {
       }
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      // TODO:
-    }
-  };
-
   useEffect(() => {
     pageRef.current = pageIndex;
   }, [pageIndex]);
@@ -121,6 +115,11 @@ const ChatList = ({ onCloseChatBox }) => {
 
   const handleCloseChatBox = () => {
     onCloseChatBox();
+  };
+
+  const handleSearch = (textSearch: string) => {
+    setTextSearch(textSearch);
+    searchConversation(textSearch);
   };
 
   return (
@@ -186,8 +185,7 @@ const ChatList = ({ onCloseChatBox }) => {
           placeholder={commonChatBox("chatBox.searchName")}
           fullWidth
           value={textSearch}
-          onChange={(e) => setTextSearch(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onChange={(e) => handleSearch(e.target.value)}
         />
 
         <Box

@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { useChat } from "./selectors";
 import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage } from "./type";
 import { clientStorage } from "utils/storage";
 import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
+import { debounce } from 'utils/index';
 
 const PAGE_INITIAL = 1;
 
@@ -23,7 +24,7 @@ export const useWSChat = () => {
   };
 
   // Connect message websocket
-  const connectMessage = (ws: WebSocket | null) => {
+  const connectMessage = useCallback((ws: WebSocket | null) => {
     if (ws) {
       ws.onmessage = async (event) => {
         const resp: IWsChatRespMessage = JSON.parse(event.data);
@@ -37,7 +38,7 @@ export const useWSChat = () => {
             const users = items.map((item) => ({
               type: CHAT_ROOM_TYPE.PERSONAL,
               avatar: item?.avatar?.link,
-              peer_detail: { ...item, avatar: item?.avatar?.link },
+              peer_detail: { fullname: item?.fullname, avatar: item?.avatar?.link },
               ...item,
             }));
             return onSetConvention([...groups, ...users] || []);
@@ -47,7 +48,8 @@ export const useWSChat = () => {
         }
       };
     }
-  };
+  }, [sendMessage]);
+
   const connectSocket = () => {
     const wsClient = new WebSocket(
       `${process.env.NEXT_APP_WS_URL}/${user?.company}?token=${aT}` || "",
@@ -99,4 +101,42 @@ export const useWSChat = () => {
   };
 };
 
-export const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;
+const TIME_DEBOUNCE_SEARCH = 1000; //ms
+
+export const useChatHelpers = () => {
+  const { user } = useAuth();
+  const { sendMessage } = useWSChat();
+  const { onGetEmployees } = useEmployeesOfCompany();
+
+  const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;
+
+  const searchConversation = debounce((text: string) => {
+    if (text) {
+      const newQueries = {
+        pageIndex: 1,
+        pageSize: 50,
+        fullname: text,
+        email: text,
+        username: text,
+      };
+      onGetEmployees(user?.company || "", newQueries).then(() => {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.GROUP_SEARCH,
+          roomName: text,
+          page: PAGE_INITIAL,
+        });
+      });
+    } else {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.ROOM_LIST,
+        page: PAGE_INITIAL,
+      });
+    }
+  }, TIME_DEBOUNCE_SEARCH);
+
+
+  return {
+    isGroup,
+    searchConversation,
+  };
+}
