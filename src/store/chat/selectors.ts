@@ -49,6 +49,7 @@ import {
   ChangeGroupAvatar,
   TypeDrawerChat,
   IChatInfo,
+  IChatItemV2,
 } from "./type";
 import { useAuth } from "store/app/selectors";
 import {
@@ -72,7 +73,7 @@ import {
   setListNewConversation,
   resetSearchChatText,
   setSelectSearchIndex,
-  resetDataTransfer,
+  resetDataTransfer, setConversation,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -715,8 +716,13 @@ export const useChat = () => {
     [dispatch],
   );
 
+  const onSetConvention = (conversations: IChatItemV2[]) => {
+    return dispatch(setConversation(conversations));
+  };
+
   return {
     convention,
+    onSetConvention,
     mediaListConversation,
     conversationPaging,
     messagePaging,

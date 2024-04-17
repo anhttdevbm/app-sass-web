@@ -25,7 +25,8 @@ import { useChat } from "store/chat/selectors";
 import { debounce } from "utils/index";
 import { Text } from "components/shared";
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
-import { RoomType, STEP } from "store/chat/type";
+import { CHAT_ROOM_TYPE, RoomType, STEP } from "store/chat/type";
+import { isGroup } from "store/chat/helpers";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -144,7 +145,11 @@ const RoomHeader = () => {
         >
           <Box display="flex" alignItems="center" gap={"10px"} minWidth={200}>
             <Avatar
-              src={currentConversation?.avatar}
+              src={
+                isGroup(currentConversation?.type)
+                  ? currentConversation?.avatar
+                  : currentConversation?.peer_detail?.avatar
+              }
               sx={{ height: "56px", width: "56px", borderRadius: "10px" }}
             />
             <Box display="flex" flexDirection="column" gap="4px">
@@ -154,9 +159,9 @@ const RoomHeader = () => {
                 textOverflow="ellipsis"
                 overflow="hidden"
               >
-                {currentConversation?.t !== "d"
-                  ? currentConversation?.name?.replaceAll("_", " ")
-                  : currentConversation?.name}
+                {isGroup(currentConversation?.type)
+                  ? currentConversation?.name
+                  : currentConversation?.peer_detail?.fullname}
               </Typography>
               <Typography variant="body2" color="var(--Gray3, #999)">
                 {currentConversation?.status}

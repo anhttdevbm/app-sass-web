@@ -207,9 +207,9 @@ const ChatEditor = (props: EditorProps) => {
   }, [onEnterText, quillEditor]);
 
   const getUnReadMessage = useCallback(async () => {
-    await onGetUnReadMessages({
+    /*await onGetUnReadMessages({
       type: dataTransfer?.t ?? "d",
-    });
+    });*/
   }, [dataTransfer?.t, onGetUnReadMessages]);
 
   const handleKeyDown = useCallback(

@@ -24,12 +24,12 @@ const useGetLastChatting = () => {
       if (currentRoomId?.length === 0) return;
       if (currentRoomType?.length === 0) return;
       try {
-        await onGetLastMessages({
+        /*await onGetLastMessages({
           roomId: currentRoomId,
           type: currentRoomType,
           offset: page,
           count: size,
-        });
+        });*/
       } catch (error) {
         onAddSnackbar(
           typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),

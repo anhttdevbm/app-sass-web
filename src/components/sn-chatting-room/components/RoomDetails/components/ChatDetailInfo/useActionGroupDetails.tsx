@@ -120,7 +120,7 @@ export const useActionGroupDetails = () => {
   }, [dataTransfer]);
 
   useEffect(() => {
-    setRenameGroup(dataTransfer.name.replaceAll("_", " "));
+    setRenameGroup(dataTransfer?.name);
   }, [dataTransfer.name]);
 
   const handleNewAdd = () => {

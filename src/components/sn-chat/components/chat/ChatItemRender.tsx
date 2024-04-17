@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
 import { ImageList, Typography } from "@mui/material";
-import { IChatItemInfo } from "store/chat/type";
+import { CHAT_ROOM_TYPE, IChatItemInfo } from "store/chat/type";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
@@ -17,18 +17,19 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
     name,
     avatar,
     t,
+    type,
     usersCount,
     unreadCount,
     status: statusPartner,
+    peer_detail,
   } = chatInfo || {};
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
 
   const [avatarClone, setAvatarClone] = useState<string | undefined>(avatar);
   const isUnReadMessage = useMemo(() => unreadCount > 0, [unreadCount]);
-  const isDirectMessage = useMemo(() => t === "d", [t]);
   const isMessageNotConnect = useMemo(() => lastMessage == null, [lastMessage]);
-  const isGroup = useMemo(() => t !== "d", [t]);
+  const isGroup = useMemo(() => type === CHAT_ROOM_TYPE.GROUP, [type]);
   const isCurrentAccByLastMessage = useMemo(
     () => sessionId === lastMessage?.u?.username,
     [lastMessage, sessionId],
@@ -105,7 +106,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
         <Avatar
           alt="Avatar"
           size={56}
-          src={avatarClone || undefined}
+          src={peer_detail?.avatar || avatarClone || undefined}
           style={{
             borderRadius: "50%",
           }}
@@ -125,7 +126,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           lineHeight="18px"
           color={isDarkMode ? "white" : "black"}
         >
-          {isGroup ? name?.replaceAll("_", " ") : name}
+          {isGroup ? name : peer_detail?.fullname}
         </Typography>
         <Typography
           ref={lastMessageRef}
