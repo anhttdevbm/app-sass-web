@@ -2,17 +2,12 @@ import { Skeleton, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
-import { DirectionChat, IChatItemInfo, STEP } from "store/chat/type";
+import { IChatItemInfo, STEP } from "store/chat/type";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
 import SearchRoundIcon from "icons/SearchRoundIcon";
-import {
-  AN_ERROR_TRY_AGAIN,
-  NS_CHAT_BOX,
-  NS_COMMON,
-  NS_PROJECT,
-} from "constant/index";
+import { NS_CHAT_BOX, NS_COMMON, } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useWSChat } from "store/chat/helpers";
 import useTheme from "hooks/useTheme";
@@ -52,9 +47,7 @@ const ChatList = ({ onCloseChatBox }) => {
         const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
 
         if (scrollHeightRef.current > clientHeight) {
-          console.log(initText);
-
-          handleGetConversation(initText, "a", pageRef.current, pageSize);
+          // TODO:
         }
       }
     });
@@ -89,30 +82,6 @@ const ChatList = ({ onCloseChatBox }) => {
       });
   }, [convention, user]);
 
-  const handleGetConversation = useCallback(
-    async (
-      text: string,
-      type: DirectionChat,
-      offset?: number,
-      count?: number,
-    ) => {
-      try {
-        await onGetAllConvention({
-          type,
-          text,
-          offset: offset || 0,
-          count: count || 10,
-        });
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    },
-    [onAddSnackbar, onGetAllConvention, commonT],
-  );
-
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
     onSetRoomId(chatInfo._id);
     onSetConversationInfo(chatInfo);
@@ -127,13 +96,9 @@ const ChatList = ({ onCloseChatBox }) => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      handleGetConversation(event.target.value.toLowerCase(), "a");
+      // TODO:
     }
   };
-
-  useEffect(() => {
-    handleGetConversation("", "a");
-  }, [currStep]);
 
   useEffect(() => {
     pageRef.current = pageIndex;
@@ -241,7 +206,7 @@ const ChatList = ({ onCloseChatBox }) => {
             borderRadius: "8px",
           }}
         >
-          <NewGroupIcon />
+          <NewGroupIcon/>
         </Box>
       </Box>
       <Box
@@ -264,9 +229,9 @@ const ChatList = ({ onCloseChatBox }) => {
               }}
               p={2}
             >
-              <Skeleton variant="rounded" width={40} height={40} />
+              <Skeleton variant="rounded" width={40} height={40}/>
               <Box flex={1}>
-                <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+                <Skeleton variant="text" sx={{ fontSize: "1rem" }}/>
                 <Skeleton
                   variant="text"
                   sx={{ fontSize: "1rem" }}

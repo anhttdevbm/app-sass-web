@@ -25,12 +25,12 @@ interface AddGroupProps {
 }
 
 const AddGroup: FC<AddGroupProps> = ({
-  callbackBackIcon,
-  onSelectNewGroup,
-  CustomCallBackIcon,
-  isNew,
-  type = null,
-}) => {
+                                       callbackBackIcon,
+                                       onSelectNewGroup,
+                                       CustomCallBackIcon,
+                                       isNew,
+                                       type = null,
+                                     }) => {
   const [textSearch, setTextSearch] = useState("");
   const [employeeSelected, setEmployeeSelected] = useState<any>({});
   const [employeeNameSelected, setEmployeeNameSelected] = useState<any>({});
@@ -99,7 +99,7 @@ const AddGroup: FC<AddGroupProps> = ({
   useEffect(() => {
     if (dataTransfer.isNew || isNew || type === "modal") return;
     onFetchGroupMembersMember({
-      roomId: dataTransfer?._id,
+      roomId: dataTransfer?.id,
     });
   }, [dataTransfer, onFetchGroupMembersMember, isNew, type]);
 
@@ -110,7 +110,7 @@ const AddGroup: FC<AddGroupProps> = ({
     }
     onAddSnackbar(commonT("success"), "success");
     onSetRoomId(
-      dataTransfer?.isNew ? result?.payload?.group?._id : dataTransfer?._id,
+      dataTransfer?.isNew ? result?.payload?.group?.id : dataTransfer?.id,
     );
     const dataItem = !dataTransfer?.isNew
       ? dataTransfer
@@ -128,10 +128,10 @@ const AddGroup: FC<AddGroupProps> = ({
           onChangeListConversations([dataItem].concat(convention));
         }
       } else {
-        onGetLastMessages({
-          roomId: dataTransfer?._id,
-          type: dataTransfer?.t,
-        });
+        /*onGetLastMessages({
+          roomId: dataTransfer?.id,
+          type: dataTransfer?.type,
+        });*/
       }
       onCloseDrawer("account");
       return;
@@ -178,19 +178,15 @@ const AddGroup: FC<AddGroupProps> = ({
             memberAddGroup.length > 1
               ? CHAT_EVENT_TYPE.GROUP_CREATE
               : CHAT_EVENT_TYPE.PERSONAL_ROOM,
-          members: [
-            ...Object.keys(employeeSelected).filter(
-              (item) => employeeSelected[item] === true,
-            ),
-            ...(dataTransfer.id ? [dataTransfer?.id] : []),
-          ],
-          userId: Object.keys(employeeSelected).filter(
-            (item) => employeeSelected[item] === true,
-          ),
         };
-        memberAddGroup.length > 1
-          ? delete message.userId
-          : delete message.members;
+        const userUuids = Object.keys(employeeSelected).filter(
+          (item) => employeeSelected[item] === true,
+        );
+        if (memberAddGroup.length > 1) {
+          message['members'] = userUuids;
+        } else {
+          message['userId'] = userUuids[0];
+        }
         sendMessage(message);
         onCloseDrawer("account");
         onAddSnackbar(commonT("success"), "success");
@@ -202,7 +198,7 @@ const AddGroup: FC<AddGroupProps> = ({
       const tasks = users.map(
         async (userId_to_add) =>
           await onAddMembers2Group({
-            roomId: dataTransfer?._id,
+            roomId: dataTransfer?.id,
             userId_to_add,
           }),
       );
@@ -322,7 +318,7 @@ const AddGroup: FC<AddGroupProps> = ({
                       type === "modal" ||
                       (!dataTransfer?.isNew &&
                         !groupMembers
-                          ?.map((m) => m._id)
+                          ?.map((m) => m.id)
                           ?.includes(item.id_rocket)),
                   )
                   ?.filter((m) => m.id_rocket !== user?.id_rocket)
@@ -330,8 +326,7 @@ const AddGroup: FC<AddGroupProps> = ({
                     return (
                       <SelectItem
                         checked={
-                          employeeIdSelected?.hasOwnProperty(item.id_rocket) ||
-                          employeeIdSelected[item.id_rocket as any] === true
+                          employeeIdSelected[item.id_rocket as string] === true
                         }
                         checkbox
                         employee={item}

@@ -106,7 +106,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
         <Avatar
           alt="Avatar"
           size={56}
-          src={avatarClone || undefined}
+          src={peer_detail?.avatar || avatarClone || undefined}
           style={{
             borderRadius: "50%",
           }}

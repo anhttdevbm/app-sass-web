@@ -54,36 +54,12 @@ const ChatList = () => {
         scrollHeightRef.current = chatListRef.current?.scrollHeight || 0;
         const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
         if (scrollHeightRef.current > clientHeight) {
-          handleGetConversation(initText, "a", pageRef.current, pageSize);
+          // TODO:
         }
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize]);
-
-  const handleGetConversation = useCallback(
-    async (
-      text: string,
-      type: DirectionChat,
-      offset?: number,
-      count?: number,
-    ) => {
-      try {
-        await onGetAllConvention({
-          type,
-          text,
-          offset: offset || 0,
-          count: count || 10,
-        });
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    },
-    [onAddSnackbar, onGetAllConvention, commonT],
-  );
 
   useEffect(() => {
     const currentElement = lastElement;

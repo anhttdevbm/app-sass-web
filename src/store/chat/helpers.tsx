@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { useChat } from "./selectors";
-import { CHAT_EVENT_TYPE, IWsChatRespMessage } from "./type";
+import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage } from "./type";
 import { clientStorage } from "utils/storage";
 import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
 
@@ -9,7 +9,7 @@ const PAGE_INITIAL = 1;
 
 export const useWSChat = () => {
   const { user } = useAuth();
-  const { onSetConvention } = useChat();
+  const { convention, onSetConvention } = useChat();
 
   const [ws, setWs] = useState<WebSocket | null>(null);
   const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
@@ -25,6 +25,7 @@ export const useWSChat = () => {
     if (ws) {
       ws.onmessage = async (event) => {
         const resp: IWsChatRespMessage = JSON.parse(event.data);
+        console.info(resp);
 
         switch (resp.event) {
           case CHAT_EVENT_TYPE.ROOM_LIST:
@@ -32,12 +33,15 @@ export const useWSChat = () => {
             return onSetConvention(resp.data?.result || []);
 
           case CHAT_EVENT_TYPE.GROUP_CREATE:
-            console.info(resp);
-            break;
+            return onSetConvention([...convention, resp.data?.room]);
 
           case CHAT_EVENT_TYPE.PERSONAL_ROOM:
-            console.info(resp);
-            break;
+            const roomInfo = resp.data?.room;
+            const detailMembers = resp.data?.detailMembers;
+            return onSetConvention([{
+              ...roomInfo,
+              peer_detail: detailMembers?.[roomInfo?.members?.[1] ?? ""],
+            }, ...convention]);
           default:
             return [];
         }
@@ -94,3 +98,5 @@ export const useWSChat = () => {
     forceCloseSocket,
   };
 };
+
+export const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;

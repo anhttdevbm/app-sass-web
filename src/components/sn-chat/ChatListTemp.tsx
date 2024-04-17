@@ -116,22 +116,6 @@ const ChatListTemp = () => {
     }
   });
 
-  const handleGetConversation = async () => {
-    try {
-      await onGetAllConvention({
-        type: "a",
-        text: "",
-        offset: 0,
-        count: 10,
-      });
-    } catch (error) {
-      onAddSnackbar(
-        typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-        "error",
-      );
-    }
-  };
-
   const handleTrigger = (e: React.MouseEvent<HTMLDivElement>) => {
     popperRef.current = !popperRef.current;
     onSetChatDesktop(false);
@@ -145,7 +129,7 @@ const ChatListTemp = () => {
       setOpen((state) => !state);
     }
     if (popperRef.current) {
-      handleGetConversation();
+      // TODO:
     } else {
       onClearConversation();
       onReset();
