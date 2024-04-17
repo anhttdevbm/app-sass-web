@@ -17,7 +17,6 @@ import colorSchemes from "utils/colorSchemes";
 import ChatDetailInfo from "./ChatDetailInfo";
 import CloseIcon from "icons/CloseIcon";
 import useGetScreenMode from "hooks/useGetScreenMode";
-import _ from "lodash";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useSnackbar } from "store/app/selectors";
@@ -25,8 +24,8 @@ import { useChat } from "store/chat/selectors";
 import { debounce } from "utils/index";
 import { Text } from "components/shared";
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
-import { CHAT_ROOM_TYPE, RoomType, STEP } from "store/chat/type";
-import { isGroup } from "store/chat/helpers";
+import { RoomType } from "store/chat/type";
+import { useChatHelpers } from "store/chat/helpers";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -48,6 +47,7 @@ const RoomHeader = () => {
     onSetIndexSearch,
     selectSearchIndex,
   } = useChat();
+  const { isGroup } = useChatHelpers();
   const [search, setSearchText] = useState({
     text: "",
     isOpen: false,
