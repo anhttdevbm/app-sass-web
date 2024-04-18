@@ -46,6 +46,7 @@ export interface IMembersGroup {
   fullname: string;
   email: string;
   phone: string;
+  position: any; // TODO: update later
 }
 
 export interface IChatPeerDetail {
