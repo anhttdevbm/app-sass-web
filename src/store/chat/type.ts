@@ -182,6 +182,12 @@ export interface ChatState {
     isReloadPageCurrent?: boolean;
     textSearch: string;
   };
+  conversationPagingV2: {
+    current: number;
+    prev: number | null;
+    next: number | null;
+    count: number;
+  };
   conversationInfo: IChatItemInfo | null;
   roomId: string;
 
@@ -506,7 +512,8 @@ export const CHAT_ROOM_TYPE = {
 
 export interface IWsChatRespMessage {
   event: string;
-  data: any;
+  data?: any;
+  message?: string;
 }
 
 export interface IChatListResponseV2 {
