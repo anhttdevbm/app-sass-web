@@ -1,25 +1,13 @@
 import NoData from "components/NoData";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  Box,
-  CircularProgress,
-  LinearProgress,
-  Typography,
-} from "@mui/material";
-import { useAuth, useSnackbar } from "store/app/selectors";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Box, LinearProgress } from "@mui/material";
+import { useAuth } from "store/app/selectors";
 import ChatItemLayout from "components/sn-chat/components/chat/ChatItemLayout";
-import { CHAT_ROOM_TYPE, DirectionChat, IChatItemInfo, STEP } from "store/chat/type";
+import { CHAT_ROOM_TYPE, IChatItemInfo, STEP } from "store/chat/type";
 import { useDeepCompareMemo } from "hooks/useDeepCompare";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { useTranslations } from "next-intl";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { useChatHelpers } from "store/chat/helpers";
 
 const ChatList = () => {
   const {
@@ -28,9 +16,8 @@ const ChatList = () => {
     onSetRoomId,
     onSetDataTransfer,
     onSetConversationInfo,
-    onGetAllConvention,
     onResetSearchChatText,
-    conversationPaging: { pageIndex, pageSize, textSearch: initText },
+    conversationPagingV2: paging,
     onSetStep,
     onSetStateSearchMessage,
     isFetching,
@@ -38,28 +25,23 @@ const ChatList = () => {
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
 
-  const { onAddSnackbar } = useSnackbar();
-  const commonT = useTranslations(NS_COMMON);
-
+  const { loadMoreConversation } = useChatHelpers();
   const [lastElement, setLastElement] = useState(null);
-  const pageRef = useRef(pageIndex);
   const chatListRef = useRef<HTMLDivElement>(null);
   const scrollHeightRef = useRef(0);
   const observer = useMemo(() => {
     return new IntersectionObserver((entries) => {
       const first = entries[0];
       if (first.isIntersecting) {
-        pageRef.current = pageRef.current + pageSize;
-
         scrollHeightRef.current = chatListRef.current?.scrollHeight || 0;
         const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
-        if (scrollHeightRef.current > clientHeight) {
-          // TODO:
+        if (scrollHeightRef.current > clientHeight && !!paging.next) {
+          loadMoreConversation(paging.current);
         }
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize]);
+  }, [chatListRef.current?.scrollHeight]);
 
   useEffect(() => {
     const currentElement = lastElement;

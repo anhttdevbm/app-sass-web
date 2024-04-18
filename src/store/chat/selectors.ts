@@ -73,7 +73,9 @@ import {
   setListNewConversation,
   resetSearchChatText,
   setSelectSearchIndex,
-  resetDataTransfer, setConversation,
+  resetDataTransfer,
+  setConversation,
+  setConversationPaging,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -94,6 +96,7 @@ export const useChat = () => {
     roomId,
     conversationInfo,
     conversationPaging,
+    conversationPagingV2,
     messagePaging,
     conversationStatus,
 
@@ -720,11 +723,17 @@ export const useChat = () => {
     return dispatch(setConversation(conversations));
   };
 
+  const onSetConversationPaging = (pagingInfo) => {
+    return dispatch(setConversationPaging(pagingInfo));
+  };
+
   return {
     convention,
     onSetConvention,
     mediaListConversation,
     conversationPaging,
+    conversationPagingV2,
+    onSetConversationPaging,
     messagePaging,
     messageInfo,
     messageStatus,
