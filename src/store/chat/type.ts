@@ -29,8 +29,23 @@ export interface IChatInfo {
   avatar: string;
   unreadCount: number;
   unreadsFrom: string;
-  members: string[];
+  members: string[] | IMembersGroup[];
   peer_detail: IChatPeerDetail;
+  company: string;
+  creator: string;
+  owner: string;
+  msg_count: number;
+  lastmsg_at: string;
+  admins: string[];
+}
+
+export interface IMembersGroup {
+  id: string;
+  username: string;
+  avatar: string;
+  fullname: string;
+  email: string;
+  phone: string;
 }
 
 export interface IChatPeerDetail {

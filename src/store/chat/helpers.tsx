@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "./selectors";
-import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage } from "./type";
+import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage, STEP } from "./type";
 import { clientStorage } from "utils/storage";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
@@ -32,6 +32,9 @@ export const useWSChat = () => {
     onSetDataTransfer,
     onSetConversationInfo,
     onSetConversationPaging,
+    onSetStateSearchMessage,
+    onResetSearchChatText,
+    onSetStep,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
@@ -87,6 +90,32 @@ export const useWSChat = () => {
               return onSetConvention([room, ...convention]);
 
             case CHAT_EVENT_TYPE.PERSONAL_ROOM:
+              return;
+
+            case CHAT_EVENT_TYPE.DETAIL_ROOM:
+              let roomDetail = resp?.data;
+              if (roomDetail?.type === CHAT_ROOM_TYPE.PERSONAL) {
+                roomDetail = {
+                  ...roomDetail,
+                  peer_detail: roomDetail?.members?.[1],
+                };
+              }
+              onSetRoomId(roomDetail?.id);
+              onSetDataTransfer(roomDetail);
+              onSetConversationInfo(roomDetail);
+              onSetStateSearchMessage(null);
+              onResetSearchChatText();
+              if (roomDetail?.type === CHAT_ROOM_TYPE.GROUP) {
+                onSetStep(STEP.CHAT_GROUP, roomDetail);
+              } else {
+                onSetStep(STEP.CHAT_ONE, roomDetail);
+              }
+              return;
+
+            case CHAT_EVENT_TYPE.GROUP_UPDATE_NAME:
+              const newRoom = resp?.data;
+              onSetDataTransfer(newRoom);
+              onSetConversationInfo(newRoom);
               return;
 
             case "error":

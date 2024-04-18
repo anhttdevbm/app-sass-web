@@ -2,7 +2,12 @@ import { Skeleton, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
-import { IChatItemInfo, STEP } from "store/chat/type";
+import {
+  CHAT_EVENT_TYPE,
+  CHAT_ROOM_TYPE,
+  IChatItemInfo,
+  STEP,
+} from "store/chat/type";
 import { useAuth } from "store/app/selectors";
 import { useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
@@ -18,41 +23,36 @@ const ChatList = ({ onCloseChatBox }) => {
     isError,
     convention,
     conversationPaging: { pageIndex, pageSize, textSearch: initText },
+    conversationPagingV2: paging,
     isFetching,
-    currStep,
     onSetRoomId,
-    onSetConversationInfo,
-    onGetAllConvention,
     onSetStep,
   } = useChat();
 
   useWSChat();
-  const { searchConversation } = useChatHelpers();
+  const { searchConversation, loadMoreConversation } = useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
-
+  const { sendMessage } = useWSChat();
   const [textSearch, setTextSearch] = useState(initText);
   const [lastElement, setLastElement] = useState(null);
-  const pageRef = useRef(pageIndex);
   const chatListRef = useRef<HTMLDivElement>(null);
   const scrollHeightRef = useRef(0);
   const observer = useMemo(() => {
     return new IntersectionObserver((entries) => {
       const first = entries[0];
       if (first.isIntersecting) {
-        pageRef.current = pageRef.current + pageSize;
-
         scrollHeightRef.current = chatListRef.current?.scrollHeight || 0;
         const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
 
-        if (scrollHeightRef.current > clientHeight) {
-          // TODO:
+        if (scrollHeightRef.current > clientHeight && !!paging.next) {
+          loadMoreConversation(paging.current);
         }
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize, initText]);
+  }, [chatListRef.current?.scrollHeight]);
 
   const conversationList = useMemo(() => {
     return convention
@@ -83,20 +83,12 @@ const ChatList = ({ onCloseChatBox }) => {
   }, [convention, user]);
 
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
-    onSetRoomId(chatInfo._id);
-    onSetConversationInfo(chatInfo);
-
-    if (chatInfo?.t)
-      if (chatInfo?.t !== "d") {
-        onSetStep(STEP.CHAT_GROUP, chatInfo);
-      } else {
-        onSetStep(STEP.CHAT_ONE, chatInfo);
-      }
+    if (!chatInfo.id) return;
+    sendMessage({
+      event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+      roomId: chatInfo.id,
+    });
   };
-
-  useEffect(() => {
-    pageRef.current = pageIndex;
-  }, [pageIndex]);
 
   useEffect(() => {
     const currentElement = lastElement;

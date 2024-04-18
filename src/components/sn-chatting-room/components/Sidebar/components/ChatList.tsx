@@ -3,11 +3,16 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Box, LinearProgress } from "@mui/material";
 import { useAuth } from "store/app/selectors";
 import ChatItemLayout from "components/sn-chat/components/chat/ChatItemLayout";
-import { CHAT_ROOM_TYPE, IChatItemInfo, STEP } from "store/chat/type";
+import {
+  CHAT_EVENT_TYPE,
+  CHAT_ROOM_TYPE,
+  IChatItemInfo,
+  STEP,
+} from "store/chat/type";
 import { useDeepCompareMemo } from "hooks/useDeepCompare";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { useChatHelpers } from "store/chat/helpers";
+import { useChatHelpers, useWSChat } from "store/chat/helpers";
 
 const ChatList = () => {
   const {
@@ -24,7 +29,7 @@ const ChatList = () => {
   } = useChat();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
-
+  const { sendMessage } = useWSChat();
   const { loadMoreConversation } = useChatHelpers();
   const [lastElement, setLastElement] = useState(null);
   const chatListRef = useRef<HTMLDivElement>(null);
@@ -64,17 +69,11 @@ const ChatList = () => {
 
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
     try {
-      onSetRoomId(chatInfo.id);
-      onSetDataTransfer(chatInfo);
-      onSetConversationInfo(chatInfo);
-      onSetStateSearchMessage(null);
-      onResetSearchChatText();
-      if (chatInfo?.type)
-        if (chatInfo?.type === CHAT_ROOM_TYPE.GROUP) {
-          onSetStep(STEP.CHAT_GROUP, chatInfo);
-        } else {
-          onSetStep(STEP.CHAT_ONE, chatInfo);
-        }
+      if (!chatInfo.id) return;
+      sendMessage({
+        event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+        roomId: chatInfo.id,
+      });
     } catch (error) {}
   };
 
