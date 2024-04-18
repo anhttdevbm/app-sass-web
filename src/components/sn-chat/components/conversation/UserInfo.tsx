@@ -4,37 +4,17 @@ import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
 import { SxProps, Typography } from "@mui/material";
 import { STEP_INFO } from "store/chat/type";
-import { useEffect } from "react";
 import { DataStatus } from "constant/enums";
-import { useSnackbar } from "store/app/selectors";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
-import { useTranslations } from "next-intl";
 
 interface UserInfoProps {
   onPrevious: (step) => void;
 }
-const UserInfo = ({ onPrevious }: UserInfoProps) => {
-  const { conversationInfo, partnerInfo, partnerInfoStatus, onGetUserInfo } =
-    useChat();
-  const { onAddSnackbar } = useSnackbar();
-  const { avatar, name, username } = conversationInfo || {};
-  const t = useTranslations(NS_COMMON);
 
-  useEffect(() => {
-    const handleGetUserInfo = async () => {
-      try {
-        if (username) {
-          await onGetUserInfo(username);
-        }
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    };
-    handleGetUserInfo();
-  }, [onAddSnackbar, onGetUserInfo, username, t]);
+const UserInfo = ({ onPrevious }: UserInfoProps) => {
+  const { conversationInfo, partnerInfoStatus, onGetUserInfo } =
+    useChat();
+  const { name, members } = conversationInfo || {};
+  const partnerInfo: any = members?.[1];
 
   const styleFormItem: SxProps = {
     display: "flex",
@@ -83,7 +63,7 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
           <>
             <Avatar
               alt="Avatar"
-              src={avatar || undefined}
+              src={partnerInfo?.avatar || undefined}
               size={120}
               style={{
                 borderRadius: "50%",

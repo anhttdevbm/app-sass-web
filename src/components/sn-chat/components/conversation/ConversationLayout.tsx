@@ -23,7 +23,7 @@ const ConversationLayout = () => {
 
   const accountInfo = useMemo(() => {
     const account = convention?.find(
-      (item) => item._id === roomId,
+      (item) => item.id === roomId,
     ) as IChatItemInfo;
     return account;
   }, [convention, roomId]);
@@ -32,8 +32,8 @@ const ConversationLayout = () => {
     <Box height="inherit">
       <Box height="inherit" display="flex" flexDirection="column">
         <ProfileHeader
-          avatar={{ url: accountInfo?.avatar, isShow: true }}
-          name={accountInfo?.name || dataTransfer?.name}
+          avatar={{ url: accountInfo?.avatar || dataTransfer?.peer_detail?.avatar, isShow: true }}
+          name={accountInfo?.name || dataTransfer?.name || dataTransfer?.peer_detail?.fullname}
           statusOnline={conversationInfo?.status || ""}
           onPrevious={() => {
             onSetStep(prevStep);

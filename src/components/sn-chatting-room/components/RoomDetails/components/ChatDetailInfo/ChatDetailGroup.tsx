@@ -1,9 +1,8 @@
-import DrawerInfoChat from "../Drawer";
 import GroupNameIcon from "icons/GroupNameIcon";
 import { TYPE_POPUP } from "components/sn-chat/chatGroup/ChatDetailGroup";
 import ItemMemberDetail from "components/sn-chat/chatGroup/ItemMemberDetail";
 
-import { Box, Typography, styled } from "@mui/material";
+import { Box, styled, Typography } from "@mui/material";
 import ChatDetailInfoMenuItem from "./ChatDetailInfoMenuItem";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
@@ -30,7 +29,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
 
   const { user } = useAuth();
 
-  const { groupMembers, conversationInfo: currentConversation } = useChat();
+  const { groupMembers, dataTransfer: currentConversation } = useChat();
 
   //check owner
   const owners = Object.values(groupMembers).filter((item) =>
@@ -41,10 +40,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
   return (
     <>
       <ChatDetailInfoMenuItem
-        text={
-          "Group Name: " + props.currentName ??
-          currentConversation?.name?.replaceAll("_", " ")
-        }
+        text={"Group Name: " + currentConversation?.name}
         icon={GroupNameIcon}
         callBackOpenDrawer={() =>
           props?.setShowPopup((pre) => ({
