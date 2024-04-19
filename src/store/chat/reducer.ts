@@ -52,6 +52,7 @@ const initialState: ChatState = {
   conversationPagingV2: {
     ...initPaging,
   },
+  isSearchConversation: false,
   roomId: "",
   conversationInfo: null,
   currStep: STEP.CONVENTION,
@@ -180,6 +181,9 @@ const chatSlice = createSlice({
     },
     setConversationPaging: (state, action) => {
       state.conversationPagingV2 = action.payload;
+    },
+    setIsSearchConversation: (state, action) => {
+      state.isSearchConversation = action.payload;
     },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
@@ -587,6 +591,7 @@ export const {
   setConversationInfo,
   setConversation,
   setConversationPaging,
+  setIsSearchConversation,
   setTypeList,
   setDataTransfer,
   setStateSendMessage,

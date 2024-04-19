@@ -209,6 +209,7 @@ export interface ChatState {
     next: number | null;
     count: number;
   };
+  isSearchConversation: boolean;
   conversationInfo: IChatItemInfo | null;
   roomId: string;
 

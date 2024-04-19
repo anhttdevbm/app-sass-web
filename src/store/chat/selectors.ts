@@ -76,13 +76,11 @@ import {
   resetDataTransfer,
   setConversation,
   setConversationPaging,
+  setIsSearchConversation,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
 import { FILE_ACCEPT, IMAGES_ACCEPT } from "constant/index";
-import { useRouter } from "next/navigation";
-import { r } from "@fullcalendar/resource/internal-common";
-import { CHATTING_ROOM_PATH } from "constant/paths";
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
@@ -97,6 +95,7 @@ export const useChat = () => {
     conversationInfo,
     conversationPaging,
     conversationPagingV2,
+    isSearchConversation,
     messagePaging,
     conversationStatus,
 
@@ -727,6 +726,10 @@ export const useChat = () => {
     return dispatch(setConversationPaging(pagingInfo));
   };
 
+  const onSetIsSearchConversation = (searchFlg: boolean) => {
+    return dispatch(setIsSearchConversation(searchFlg));
+  }
+
   return {
     convention,
     onSetConvention,
@@ -734,6 +737,8 @@ export const useChat = () => {
     conversationPaging,
     conversationPagingV2,
     onSetConversationPaging,
+    isSearchConversation,
+    onSetIsSearchConversation,
     messagePaging,
     messageInfo,
     messageStatus,
