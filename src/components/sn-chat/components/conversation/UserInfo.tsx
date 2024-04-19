@@ -5,16 +5,18 @@ import Avatar from "components/Avatar";
 import { SxProps, Typography } from "@mui/material";
 import { STEP_INFO } from "store/chat/type";
 import { DataStatus } from "constant/enums";
+import { useTranslations } from "next-intl";
+import { NS_AUTH } from "constant/index";
 
 interface UserInfoProps {
   onPrevious: (step) => void;
 }
 
 const UserInfo = ({ onPrevious }: UserInfoProps) => {
-  const { conversationInfo, partnerInfoStatus, onGetUserInfo } =
-    useChat();
+  const { conversationInfo, partnerInfoStatus, onGetUserInfo } = useChat();
   const { name, members } = conversationInfo || {};
   const partnerInfo: any = members?.[1];
+  const t = useTranslations(NS_AUTH);
 
   const styleFormItem: SxProps = {
     display: "flex",
@@ -73,19 +75,27 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
             />
             <Box display="flex" flexDirection="column" gap={2} mt={5} p="1rem">
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Họ tên</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.fullName")}
+                </Typography>
                 <Typography>{partnerInfo?.fullname}</Typography>
               </Box>
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Chức vụ</Typography>
-                <Typography>{partnerInfo?.position?.name}</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.position")}
+                </Typography>
+                <Typography>{partnerInfo?.position}</Typography>
               </Box>
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Số điện thoại</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.phone")}
+                </Typography>
                 <Typography>{partnerInfo?.phone}</Typography>
               </Box>
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Email</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.email")}
+                </Typography>
                 <Typography>{partnerInfo?.email}</Typography>
               </Box>
             </Box>

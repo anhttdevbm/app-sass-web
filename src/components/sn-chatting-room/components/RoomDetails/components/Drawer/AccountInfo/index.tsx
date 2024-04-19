@@ -12,30 +12,18 @@ import { useCallback, useEffect } from "react";
 const mapperDataToInfo = (partnerInfo: Partial<UserInfo>) => ({
   fullName: partnerInfo.fullname,
   email: partnerInfo.email,
-  position: partnerInfo.position?.name,
+  position: partnerInfo.position,
   phone: partnerInfo.phone,
 });
 
 const AccountInfo = () => {
   const { extraDesktopMode } = useGetScreenMode();
-  const { partnerInfo, isFetchingDetail } = useChat();
+  const { isFetchingDetail } = useChat();
   const t = useTranslations(NS_AUTH);
   const { isDarkMode } = useTheme();
 
-  const {
-    dataTransfer: currentConversation,
-    onSetDrawerType,
-    onGetUserInfo,
-  } = useChat();
-
-  const callbackOpenAccount = useCallback(() => {
-    if (!currentConversation.username) return;
-    onGetUserInfo(currentConversation?.username);
-  }, [currentConversation?.username, onGetUserInfo]);
-
-  useEffect(() => {
-    callbackOpenAccount();
-  }, [callbackOpenAccount]);
+  const { dataTransfer: currentConversation, onSetDrawerType } = useChat();
+  const partnerInfo = currentConversation?.members?.[1];
 
   return (
     <Box
@@ -71,7 +59,10 @@ const AccountInfo = () => {
             }}
           >
             <Avatar
-              src={currentConversation?.avatar}
+              src={
+                currentConversation?.avatar ||
+                currentConversation?.peer_detail?.avatar
+              }
               sx={{
                 height: "80px",
                 width: "80px",
