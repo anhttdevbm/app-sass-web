@@ -4,8 +4,6 @@ import Avatar from "components/Avatar";
 import {
   Box,
   Button,
-  Fab,
-  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
@@ -18,20 +16,17 @@ import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import FileGroupIcon from "icons/FileGroupIcon";
 import ArrowRightIcon from "icons/ArrowRightIcon";
 import EditGroupNameIcon from "icons/EditGroupNameIcon";
-import UploadImageIcon from "icons/UploadImageIcon";
-import { IconButton } from "components/shared";
 import { useChat } from "store/chat/selectors";
-import { STEP, TYPE_LIST } from "store/chat/type";
-import { DataStatus } from "constant/enums";
+import { CHAT_EVENT_TYPE, STEP, TYPE_LIST } from "store/chat/type";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import ItemDetail from "../components/ItemDetail";
 import MediaFileIconGroup from "icons/MediaFileIconGroup";
 import LinkIconGroup from "icons/LinkIconGroup";
-import { uploadFile } from "store/chat/media/actionMedia";
 import { useAppDispatch } from "store/hooks";
 import useTheme from "hooks/useTheme";
 import { UploadAvatarGroup } from "./UploadAvatarGroup";
 import ForwardLayout from "components/sn-chatting-room/components/RoomDetails/components/Drawer/ChatForward/ForwardLayout";
+import { useWSChat } from "store/chat/helpers";
 
 export const TYPE_POPUP = {
   DELETE: "DELETE",
@@ -71,6 +66,7 @@ const ChatDetailGroup = (props) => {
 
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
+  const { sendMessage } = useWSChat();
 
   const init = {
     type: "",
@@ -308,32 +304,16 @@ const ChatDetailGroup = (props) => {
     const renameGroupApi = async () => {
       const dataTransferNew = {
         ...dataTransfer,
-        name: renameGroup.replace("_", " "),
-        fname: renameGroup.replace("_", " "),
+        name: renameGroup,
       };
 
-      const renameResult = (await onRenameGroup({
-        roomId: dataTransfer?._id,
-        name: renameGroup.replace(" ", "_"),
-      })) as any;
-
-      if (renameResult?.error) {
-        return onAddSnackbar(
-          commonT("form.error.renameGroup", {
-            name: renameResult?.meta?.arg?.name,
-          }),
-          "error",
-        );
-      } else {
-        onGetAllConvention({
-          type: "a",
-          text: "",
-          offset: 0,
-          count: 10,
-        });
-        onSetDataTransfer(dataTransferNew);
-        onAddSnackbar(commonChatBox("chatBox.group.rename_alert"), "success");
-      }
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_UPDATE_NAME,
+        roomId: dataTransfer?.id,
+        roomName: renameGroup,
+      });
+      onSetDataTransfer(dataTransferNew);
+      onAddSnackbar(commonT("success"), "success");
     };
     const left = async () => {
       const leftResult = (await onLeftGroup({

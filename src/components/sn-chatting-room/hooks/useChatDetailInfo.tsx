@@ -5,6 +5,7 @@ import MediaFileIcon from "icons/MediaFileIcon";
 import { useCallback, useMemo } from "react";
 import { useChat } from "store/chat/selectors";
 import { RoomType, TypeDrawerChat } from "store/chat/type";
+import { TypeDrawer } from "components/sn-chatting-room/components/RoomDetails/components/ChatDetailUserMobile/UseChatDetailUserMobile";
 
 interface MenuItem {
   text: string;
@@ -45,11 +46,15 @@ export const useChatDetailInfo = ({
       });
   }, [currentConversation]);
 
+  const handleOpenAccountInfo = useCallback(() => {
+    console.log(currentConversation);
+  }, [currentConversation]);
+
   const menuItems: MenuItem[] = [
     {
       text: "Account infomation",
       icon: AccountProfileIcon,
-      callback: () => console.log("account info"),
+      callback: () => handleOpenAccountInfo(),
       type: "account",
     },
     {
