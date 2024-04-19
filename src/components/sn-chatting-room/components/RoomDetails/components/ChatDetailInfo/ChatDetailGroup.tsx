@@ -12,6 +12,8 @@ import { useAuth } from "store/app/selectors";
 import { ChangeEvent, FC } from "react";
 import { ChatDetailInfoProps } from ".";
 import EditGroupNameIcon from "icons/EditGroupNameIcon";
+import useTheme from "hooks/useTheme";
+import { isOwnerGroup } from "store/chat/helpers";
 
 interface ChatDetailGroupProps extends Partial<ChatDetailInfoProps> {
   handleNewAdd: () => void;
@@ -28,14 +30,11 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
   const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   const { user } = useAuth();
-
-  const { groupMembers, dataTransfer: currentConversation } = useChat();
+  const { isDarkMode } = useTheme();
+  const { dataTransfer: currentConversation } = useChat();
 
   //check owner
-  const owners = Object.values(groupMembers).filter((item) =>
-    item.roles.includes("owner"),
-  );
-  const owner = owners.some((obj) => obj._id === user?.id_rocket);
+  const owner = isOwnerGroup(currentConversation?.creator, user?.id);
 
   return (
     <>
@@ -78,7 +77,27 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
           ))}
       </Box>
       <CustomBox>
-        {groupMembers?.map((member, index) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            margin: "10px 0",
+          }}
+        >
+          <Box>
+            <Typography
+              variant="caption"
+              color={isDarkMode ? "white" : "#212121"}
+              fontSize={16}
+              fontWeight={600}
+            >
+              {`${commonChatBox("chatBox.members")} (${
+                currentConversation?.members?.length || 0
+              })`}
+            </Typography>
+          </Box>
+        </Box>
+        {currentConversation?.members?.map((member, index) => (
           <ItemMemberDetail
             key={index}
             data={member}
@@ -124,7 +143,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
             </Typography>
           </Box>
         )}
-        {groupMembers.length > 1 && (
+        {currentConversation?.members.length > 1 && (
           <Box sx={{ textAlign: "center" }}>
             <Typography
               variant="caption"
@@ -200,5 +219,5 @@ export default ChatDetailGroup;
 const CustomBox = styled(Box)`
   overflow: auto;
   width: 100%;
-  padding-bottom: 110px;
+  padding-bottom: 5%;
 `;

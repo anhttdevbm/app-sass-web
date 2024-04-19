@@ -26,7 +26,12 @@ export interface IChatInfo {
   ro: boolean;
   default: boolean;
   sysMes: boolean;
-  avatar: string;
+  avatar: {
+    fileName: string;
+    fileType: string;
+    link: string;
+    objectId: string;
+  } | null;
   unreadCount: number;
   unreadsFrom: string;
   members: string[] | IMembersGroup[];

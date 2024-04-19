@@ -53,7 +53,7 @@ const AccountInfoMobile: React.FC<AccountInfoMobileProps> = (props) => {
           }}
         >
           <Avatar
-            src={props.currentConversation?.avatar}
+            src={props.currentConversation?.avatar?.link}
             sx={{
               height: "80px",
               width: "80px",
