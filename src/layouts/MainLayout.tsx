@@ -9,6 +9,7 @@ import { useAppSelector } from "store/hooks";
 import { shallowEqual } from "react-redux";
 import { usePathname, useRouter } from "next-intl/client";
 import {
+  AI_CHAT_PATH,
   AUTHORIZED_PATHS,
   CHATTING_ROOM_PATH,
   FORGOT_PASSWORD_PATH,
@@ -31,7 +32,7 @@ type MainLayoutProps = {
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH];
 
-const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH];
+const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH, AI_CHAT_PATH];
 
 const MainLayout = (props: MainLayoutProps) => {
   const { children } = props;

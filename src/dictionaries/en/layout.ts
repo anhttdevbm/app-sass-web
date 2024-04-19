@@ -33,6 +33,7 @@ export const LayoutLang: LayoutDictionary = {
     sales: "Sales",
     docs: "Documents",
     chat: "Chat",
+    aiChat: "AI Chat",
     //feedback
     feedback: "Feedback",
     feedbackList: "Feedback List",

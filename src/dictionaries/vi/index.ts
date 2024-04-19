@@ -20,6 +20,7 @@ import {
   NS_BILLING,
   NS_COST_RATE,
   NS_CONTENTS,
+  NS_AI_CHAT,
 } from "constant/index";
 
 import { AccountLang } from "./account";
@@ -43,6 +44,7 @@ import { BudgetingLang } from "./budgeting";
 import { BillingLang } from "./billing";
 import { CostRateLang } from "./costRate";
 import { ContentsLang } from "./contents"
+import { AIChatLang } from "./aiChat";
 
 export default {
   [NS_COMMON]: CommonLang,
@@ -57,6 +59,7 @@ export default {
   [NS_RESOURCE_PLANNING]: ResourcePlanning,
   [NS_CHAT]: ChatLang,
   [NS_CHAT_BOX]: ChatBoxLang,
+  [NS_AI_CHAT]: AIChatLang,
   [NS_DOCS]: DocsLang,
   [NS_FEEDBACK]: FeedbackLang,
   [NS_BLOG]: BlogLang,

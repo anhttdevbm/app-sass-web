@@ -114,6 +114,7 @@ export const NS_TIME_TRACKING = "timeTracking";
 export const NS_RESOURCE_PLANNING = "resourcePlanning";
 export const NS_CHAT = "chat";
 export const NS_CHAT_BOX = "chatbox";
+export const NS_AI_CHAT = "aiChat";
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
 
