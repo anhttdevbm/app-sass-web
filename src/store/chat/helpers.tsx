@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "./selectors";
-import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage, STEP } from "./type";
+import {
+  CHAT_EVENT_TYPE,
+  CHAT_ROOM_TYPE,
+  IWsChatRespMessage,
+  STEP,
+} from "./type";
 import { clientStorage } from "utils/storage";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
@@ -11,7 +16,7 @@ import {
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
-import { initPaging } from "store/chat/reducer";
+import { initPaging, setListNewConversation } from "store/chat/reducer";
 
 const PAGE_INITIAL = 1;
 
@@ -19,7 +24,7 @@ const isRelatedGroup = (members: string[], userId = "") => {
   return members.find((memberId) => memberId === userId);
 };
 
-const isGroupCreator = (groupCreatorId = "", userId = "") => {
+export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
   return groupCreatorId === userId;
 };
 
@@ -29,6 +34,7 @@ export const useWSChat = () => {
     convention,
     onSetConvention,
     onSetRoomId,
+    dataTransfer,
     onSetDataTransfer,
     onSetConversationInfo,
     onSetConversationPaging,
@@ -82,7 +88,7 @@ export const useWSChat = () => {
               if (!isRelatedGroup(room?.members, user?.id)) {
                 return;
               }
-              if (isGroupCreator(room?.creator, user?.id)) {
+              if (isOwnerGroup(room?.creator, user?.id)) {
                 onSetRoomId(room?.id);
                 onSetDataTransfer(room);
                 onSetConversationInfo(room);
@@ -116,6 +122,23 @@ export const useWSChat = () => {
               const newRoom = resp?.data;
               onSetDataTransfer(newRoom);
               onSetConversationInfo(newRoom);
+              return;
+
+            case CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR:
+              const roomData = {
+                ...resp?.data,
+                avaObj: resp?.data?.avatar,
+                avatar: resp?.data?.avatar?.link,
+                members: dataTransfer?.members,
+              };
+              onSetDataTransfer({ ...dataTransfer, ...roomData });
+              const newConversations: any = convention?.map((item) => {
+                if (item.id === roomData?.id) {
+                  return { ...item, ...roomData };
+                }
+                return item;
+              });
+              onSetConversationInfo(newConversations);
               return;
 
             case "error":

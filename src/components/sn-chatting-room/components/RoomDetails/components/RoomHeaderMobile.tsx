@@ -7,11 +7,13 @@ import ChatDetailUserMobile from "./ChatDetailUserMobile";
 import GroupChatMobile from "./GroupChatMobile";
 import ComponentAvatar from "components/Avatar";
 import { useChat } from "store/chat/selectors";
+import { useChatHelpers } from "store/chat/helpers";
 
 const RoomHeaderMobile = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { conversationInfo: currentConversation, onResetConversationInfo } =
     useChat();
+  const { isGroup } = useChatHelpers();
   // Handler to open the drawer.
   const openDrawer = () => {
     setIsDrawerOpen(true);
@@ -36,16 +38,15 @@ const RoomHeaderMobile = () => {
     p: PrivateChatLayout(),
   };
   const styleIcon = { color: "white", fontSize: "24px", cursor: "pointer" };
-  const typeOfChat = currentConversation?.t;
+  const typeOfChat = currentConversation?.type;
   const RenderedComponent = ObjectLayout[typeOfChat];
 
-  const isGroup = useMemo(
-    () => currentConversation?.t !== "d",
-    [currentConversation],
-  );
-
   const groupAvatar = useMemo(() => {
-    if (isGroup && currentConversation?.usersCount > 3) {
+    if (
+      !isGroup(currentConversation?.type) &&
+      currentConversation?.avatar?.link &&
+      currentConversation?.usersCount > 3
+    ) {
       return (
         <ImageList
           sx={{
@@ -102,7 +103,10 @@ const RoomHeaderMobile = () => {
     } else {
       return (
         <Avatar
-          src={currentConversation?.avatar}
+          src={
+            currentConversation?.avatar?.link ||
+            currentConversation?.peer_detail?.avatar
+          }
           sx={{
             width: "32px",
             height: "32px",
@@ -111,7 +115,7 @@ const RoomHeaderMobile = () => {
         />
       );
     }
-  }, [isGroup, currentConversation?.usersCount, currentConversation?.avatar]);
+  }, [currentConversation?.usersCount, currentConversation?.avatar]);
 
   return (
     <Box

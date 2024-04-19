@@ -147,7 +147,7 @@ const RoomHeader = () => {
             <Avatar
               src={
                 isGroup(currentConversation?.type)
-                  ? currentConversation?.avatar
+                  ? currentConversation?.avatar?.link
                   : currentConversation?.peer_detail?.avatar
               }
               sx={{ height: "56px", width: "56px", borderRadius: "10px" }}

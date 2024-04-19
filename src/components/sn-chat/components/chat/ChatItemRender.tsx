@@ -26,7 +26,9 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
 
-  const [avatarClone, setAvatarClone] = useState<string | undefined>(avatar);
+  const [avatarClone, setAvatarClone] = useState<string | undefined>(
+    avatar?.link,
+  );
   const isUnReadMessage = useMemo(() => unreadCount > 0, [unreadCount]);
   const isMessageNotConnect = useMemo(() => lastMessage == null, [lastMessage]);
   const isGroup = useMemo(() => type === CHAT_ROOM_TYPE.GROUP, [type]);
@@ -48,7 +50,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setAvatarClone(avatar);
+    setAvatarClone(avatar?.link);
   }, [avatar]);
   useEffect(() => {
     if (lastMessageContent && lastMessageRef.current) {

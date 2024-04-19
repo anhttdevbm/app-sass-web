@@ -13,7 +13,7 @@ import { useAuth } from "store/app/selectors";
 import { TYPE_POPUP } from "components/sn-chat/chatGroup/ChatDetailGroup";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
-import { useChatHelpers } from "store/chat/helpers";
+import { isOwnerGroup, useChatHelpers } from "store/chat/helpers";
 
 const MenuInfo = () => {
   const { isDarkMode } = useTheme();
@@ -39,15 +39,12 @@ const MenuInfo = () => {
     }
     if (isDarkMode) return "#313130";
     return "#ffffff";
-  }, [isDarkMode, currentConversation?.t]);
+  }, [isDarkMode, currentConversation?.type]);
 
   const propsActionGroupDetail = useActionGroupDetails();
 
   //check owner
-  const owners = Object.values(groupMembers).filter((item) =>
-    item.roles.includes("owner"),
-  );
-  const owner = owners.some((obj) => obj._id === user?.id_rocket);
+  const owner = isOwnerGroup(currentConversation?.creator, user?.id);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   return (
@@ -77,7 +74,7 @@ const MenuInfo = () => {
         >
           <Avatar
             src={
-              currentConversation?.avatar ||
+              currentConversation?.avatar?.link ||
               currentConversation?.peer_detail?.avatar
             }
             sx={{
@@ -166,7 +163,7 @@ const MenuInfo = () => {
                 </Typography>
               </Box>
             )}
-            {groupMembers.length > 1 && (
+            {conversationInfo?.members?.length > 1 && (
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="caption"
