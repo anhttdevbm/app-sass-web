@@ -1,22 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "./selectors";
-import {
-  CHAT_EVENT_TYPE,
-  CHAT_ROOM_TYPE,
-  IWsChatRespMessage,
-  STEP,
-} from "./type";
+import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage, STEP, } from "./type";
 import { clientStorage } from "utils/storage";
-import {
-  ACCESS_TOKEN_STORAGE_KEY,
-  AN_ERROR_TRY_AGAIN,
-  NS_COMMON,
-} from "constant/index";
+import { ACCESS_TOKEN_STORAGE_KEY, AN_ERROR_TRY_AGAIN, NS_COMMON, } from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
-import { initPaging, setListNewConversation } from "store/chat/reducer";
+import { initPaging } from "store/chat/reducer";
 
 const PAGE_INITIAL = 1;
 
@@ -93,9 +84,15 @@ export const useWSChat = () => {
                 onSetDataTransfer(room);
                 onSetConversationInfo(room);
               }
+              if (convention.find(item => item?.id === room?.id)) return;
               return onSetConvention([room, ...convention]);
 
             case CHAT_EVENT_TYPE.PERSONAL_ROOM:
+              const roomIdPersonal = resp?.data?.room?.id;
+              sendMessage({
+                event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+                roomId: roomIdPersonal,
+              });
               return;
 
             case CHAT_EVENT_TYPE.DETAIL_ROOM:
@@ -127,8 +124,7 @@ export const useWSChat = () => {
             case CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR:
               const roomData = {
                 ...resp?.data,
-                avaObj: resp?.data?.avatar,
-                avatar: resp?.data?.avatar?.link,
+                avatar: resp?.data?.avatar,
                 members: dataTransfer?.members,
               };
               onSetDataTransfer({ ...dataTransfer, ...roomData });
@@ -138,7 +134,7 @@ export const useWSChat = () => {
                 }
                 return item;
               });
-              onSetConversationInfo(newConversations);
+              onSetConvention(newConversations);
               return;
 
             case "error":
@@ -211,7 +207,7 @@ const TIME_DEBOUNCE_SEARCH = 1000; //ms
 export const useChatHelpers = () => {
   const { user } = useAuth();
   const { sendMessage } = useWSChat();
-  const { onSetConversationPaging } = useChat();
+  const { onSetConversationPaging, onSetIsSearchConversation } = useChat();
   const { onGetEmployees } = useEmployeesOfCompany();
 
   const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;
@@ -240,11 +236,13 @@ export const useChatHelpers = () => {
           page: PAGE_INITIAL,
         });
       });
+      onSetIsSearchConversation(true);
     } else {
       sendMessage({
         event: CHAT_EVENT_TYPE.ROOM_LIST,
         page: PAGE_INITIAL,
       });
+      onSetIsSearchConversation(false);
     }
   }, TIME_DEBOUNCE_SEARCH);
 

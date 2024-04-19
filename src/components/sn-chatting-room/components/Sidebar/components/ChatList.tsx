@@ -18,19 +18,15 @@ const ChatList = () => {
   const {
     dataTransfer: currentConversation,
     convention: conversations,
-    onSetRoomId,
-    onSetDataTransfer,
-    onSetConversationInfo,
-    onResetSearchChatText,
     conversationPagingV2: paging,
-    onSetStep,
-    onSetStateSearchMessage,
     isFetching,
+    isSearchConversation,
+    roomIdPersonal,
   } = useChat();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
   const { sendMessage } = useWSChat();
-  const { loadMoreConversation } = useChatHelpers();
+  const { loadMoreConversation, isGroup } = useChatHelpers();
   const [lastElement, setLastElement] = useState(null);
   const chatListRef = useRef<HTMLDivElement>(null);
   const scrollHeightRef = useRef(0);
@@ -70,10 +66,17 @@ const ChatList = () => {
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
     try {
       if (!chatInfo.id) return;
-      sendMessage({
-        event: CHAT_EVENT_TYPE.DETAIL_ROOM,
-        roomId: chatInfo.id,
-      });
+      if (isSearchConversation && !isGroup(chatInfo?.type)) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.PERSONAL_ROOM,
+          userId: chatInfo.id,
+        });
+      } else {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+          roomId: chatInfo.id,
+        });
+      }
     } catch (error) {}
   };
 

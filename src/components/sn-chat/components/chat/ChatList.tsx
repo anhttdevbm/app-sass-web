@@ -4,7 +4,6 @@ import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
 import {
   CHAT_EVENT_TYPE,
-  CHAT_ROOM_TYPE,
   IChatItemInfo,
   STEP,
 } from "store/chat/type";
@@ -25,12 +24,12 @@ const ChatList = ({ onCloseChatBox }) => {
     conversationPaging: { pageIndex, pageSize, textSearch: initText },
     conversationPagingV2: paging,
     isFetching,
-    onSetRoomId,
+    isSearchConversation,
     onSetStep,
   } = useChat();
 
   useWSChat();
-  const { searchConversation, loadMoreConversation } = useChatHelpers();
+  const { searchConversation, loadMoreConversation, isGroup } = useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
@@ -84,10 +83,17 @@ const ChatList = ({ onCloseChatBox }) => {
 
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
     if (!chatInfo.id) return;
-    sendMessage({
-      event: CHAT_EVENT_TYPE.DETAIL_ROOM,
-      roomId: chatInfo.id,
-    });
+    if (isSearchConversation && !isGroup(chatInfo?.type)) {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.PERSONAL_ROOM,
+        userId: chatInfo.id,
+      });
+    } else {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+        roomId: chatInfo.id,
+      });
+    }
   };
 
   useEffect(() => {
