@@ -21,7 +21,6 @@ const ChatList = () => {
     conversationPagingV2: paging,
     isFetching,
     isSearchConversation,
-    roomIdPersonal,
   } = useChat();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
