@@ -73,8 +73,8 @@ export const Endpoint = {
   COST_RATE_NEW: "/cost-rate/new",
   COST_HISTORY: "/cost-history",
 
-  HOLIDAY_CALENDAR: "/cost-rate/holiday_calendar",
-  HOLIDAY_CALENDAR_DETAIL: "/cost-rate/holiday_calendar/{id}",
+  HOLIDAY_CALENDAR: "/cost-rate/holiday-calendar",
+  HOLIDAY_CALENDAR_DETAIL: "/cost-rate/holiday-calendar/{id}",
   HOLIDAY_LIST: "/cost-rate/holiday-list",
   HOLIDAY_LIST_DETAIL: "/cost-rate/holiday-list/{id}",
 
