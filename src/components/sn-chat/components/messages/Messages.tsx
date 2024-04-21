@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Box from "@mui/material/Box";
-import {
-  MutableRefObject,
+import React, {
   forwardRef,
+  MutableRefObject,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -10,12 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  MediaPreviewItem,
-  MessageInfo,
-  MessageSearchInfo,
-  UnreadUserInfo,
-} from "store/chat/type";
+import { MediaPreviewItem, MessageInfoV2, MessageSearchInfo, UnreadUserInfo, } from "store/chat/type";
 import { DataStatus } from "constant/enums";
 import Skeleton from "@mui/material/Skeleton";
 import MessageLayout from "./MessageLayout";
@@ -23,19 +18,18 @@ import MessageContent from "./MessageContent";
 import { formatDate, sleep } from "utils/index";
 import Typography from "@mui/material/Typography";
 import { nameMonthList, NS_CHAT_BOX } from "constant/index";
-import React from "react";
 import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import useGetLastChatting from "components/sn-chatting-room/hooks/useGetLastChatting";
+import { useAuth } from 'store/app/selectors';
 
 interface MessagesProps {
-  sessionId: string;
+  sessionId: string | undefined;
   avatarPartner: string | undefined;
   pageIndex: number;
   pageSize: number;
   isGroup: boolean;
-  initialMessage: MessageInfo[];
+  initialMessage: MessageInfoV2[];
   mediaListPreview: MediaPreviewItem[];
   statusLoadMessage: DataStatus;
   stateMessage?: {
@@ -46,7 +40,6 @@ interface MessagesProps {
   };
   focusMessage: MessageSearchInfo | null;
   unReadMessage: UnreadUserInfo[];
-  onRefetch: (page: number) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   wrapperMessageSx?: any;
 }
@@ -72,7 +65,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     stateMessage,
     focusMessage,
     unReadMessage,
-    onRefetch,
     wrapperMessageSx,
   }: MessagesProps,
   ref,
@@ -82,8 +74,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
   const { isChatDesktop, dataTransfer } = useChat();
-
-  const { getLastMessage } = useGetLastChatting();
 
   const pageRef = useRef(pageIndex);
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -100,11 +90,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         const clientHeight =
           (messagesContentRef.current?.clientHeight || 0) + 50;
         if (scrollHeightRef.current > clientHeight) {
-          if (isChatDesktop) {
-            getLastMessage(pageRef.current, 10);
-          } else {
-            onRefetch(pageRef.current);
-          }
+          // TODO:
         }
       }
     }),
@@ -115,9 +101,9 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
     return (
       messagesContentRef?.current?.scrollHeight >
-        messagesContentRef?.current?.clientHeight ||
+      messagesContentRef?.current?.clientHeight ||
       messagesContentRef?.current?.scrollWidth >
-        messagesContentRef?.current?.clientWidth
+      messagesContentRef?.current?.clientWidth
     );
   }, []);
 
@@ -221,42 +207,42 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     };
   }, [firstElement, isChatDesktop, messagesContentRef]);
 
-  const renderMessage = (message: MessageInfo) => {
+  const renderMessage = (message: MessageInfoV2) => {
     let msg = "";
-    switch (message?.t) {
+    switch (message?.type) {
       case "au":
         msg = commonChatBox("chatBox.group.add", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
+          user1: message?.sender,
+          user2: message?.content,
+          time: getTimeStamp(message?.created_at ?? ""),
         });
         break;
       case "ru":
         msg = commonChatBox("chatBox.group.remove", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
+          user1: message?.sender,
+          user2: message?.content,
+          time: getTimeStamp(message?.created_at ?? ""),
         });
         break;
       case "subscription-role-added":
         msg = commonChatBox("chatBox.group.lead_trans", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
+          user1: message?.sender,
+          user2: message?.content,
+          time: getTimeStamp(message?.created_at ?? ""),
         });
         break;
       case "subscription-role-removed":
         msg = commonChatBox("chatBox.group.lead_remove", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
+          user1: message?.sender,
+          user2: message?.content,
+          time: getTimeStamp(message?.created_at ?? ""),
         });
         break;
       case "r":
         msg = commonChatBox("chatBox.group.rename", {
-          user1: message?.u?.name,
-          name: message?.msg?.replaceAll("_", " "),
-          time: getTimeStamp(message?.ts ?? ""),
+          user1: message?.sender,
+          name: message?.content,
+          time: getTimeStamp(message?.created_at ?? ""),
         });
         break;
     }
@@ -294,14 +280,14 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         {messages.length < 15 && <Box height={"400px"} />}
         {messages.map((message, index) => {
           // Need to separate this cluster into a separate component
-          const isCurrentUser = message.u.username === sessionId;
+          const isCurrentUser = message?.sender === sessionId;
           const hasNextMessageFromSameUser =
-            messages[index + 1]?.u?.username === messages[index]?.u?.username;
+            messages[index + 1]?.sender === messages[index]?.sender;
           const currentTimeMessage = new Date(
-            formatDate(messages[index]?.ts, "MM/dd/yyyy"),
+            formatDate(messages[index]?.created_at, "MM/dd/yyyy"),
           );
           const nextTimeMessage = new Date(
-            formatDate(messages[index + 1]?.ts, "MM/dd/yyyy"),
+            formatDate(messages[index + 1]?.created_at, "MM/dd/yyyy"),
           );
           const hasNextDay =
             index !== messages.length - 1
@@ -316,7 +302,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
           return (
             <React.Fragment key={index}>
-              {!message?.t ? (
+              {['text', 'file', 'media'].includes(message?.type) ? (
                 <MessageLayout
                   sessionId={sessionId}
                   message={message}
@@ -326,7 +312,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                     ...(index === 0 && {
                       ref: setFirstElement,
                     }),
-                    ...(message._id === focusMessage?.messageId && {
+                    ...(message.id === focusMessage?.messageId && {
                       ref: focusMessageRef,
                     }),
                   }}

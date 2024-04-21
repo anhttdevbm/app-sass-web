@@ -12,7 +12,7 @@ import FilePdfIcon from "icons/FilePdfIcon";
 import PlayIcon from "icons/PlayIcon";
 import { useMemo, useRef, useState } from "react";
 import { Attachment, TypeMedia } from "store/chat/media/typeMedia";
-import { MediaPreviewItem, MessageInfo } from "store/chat/type";
+import { MediaPreviewItem, MessageInfo, MessageInfoV2 } from "store/chat/type";
 import { TimeMessage } from "../messages/MessageContent";
 import useTheme from "hooks/useTheme";
 import { copyImage, downloadImage, formatDate } from "utils/index";
@@ -39,7 +39,7 @@ const AttachmentContent = ({
   attachmentProps,
   showOnlyContent,
 }: {
-  message: MessageInfo;
+  message: MessageInfoV2;
   mediaListPreview: MediaPreviewItem[];
   isCurrentUser: boolean;
   isRead: boolean;
@@ -75,13 +75,13 @@ const AttachmentContent = ({
     isPreview: false,
   });
 
-  const media = groupAttachment(message?.attachments, [
+  const media = groupAttachment(message?.files, [
     "image_url",
     "video_url",
   ]) as unknown as { image_url: Attachment[]; video_url: Attachment[] };
 
   const files = useMemo(() => {
-    return message?.attachments
+    return message?.files
       .filter((att) => att.title_link)
       .map((item) => {
         if (item?.title_link) {
@@ -169,7 +169,7 @@ const AttachmentContent = ({
                     ""
                   ) : (
                     <TimeMessage
-                      time={message.ts}
+                      time={message.created_at}
                       isRead={isRead}
                       isCurrentUser={isCurrentUser}
                       timeMessageProps={{
@@ -232,7 +232,7 @@ const AttachmentContent = ({
                     ""
                   ) : (
                     <TimeMessage
-                      time={message.ts}
+                      time={message.created_at}
                       isRead={isRead}
                       isCurrentUser={isCurrentUser}
                       timeMessageProps={{
@@ -297,7 +297,7 @@ const AttachmentContent = ({
                       ""
                     ) : (
                       <TimeMessage
-                        time={message.ts}
+                        time={message.created_at}
                         isRead={isRead}
                         isCurrentUser={isCurrentUser}
                       />
