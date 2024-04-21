@@ -119,8 +119,13 @@ export const Client = (props: {
       rounded="4px"
       borderRadius={1}
     >
-      <Stack sx={{ height: 58 }}>
-        <Stack direction="row" spacing={2} justifyContent="space-between">
+      <Stack>
+        <Stack
+          direction="row"
+          spacing={2}
+          justifyContent="space-between"
+          flexWrap="wrap"
+        >
           <Stack direction="row" alignItems="center">
             {isEditMode ? (
               <Stack sx={{ height: "100%" }}>

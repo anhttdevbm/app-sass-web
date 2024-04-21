@@ -11,7 +11,7 @@ import { useWSChat } from "store/chat/helpers";
 const Sidebar: FC<useFetchingChattingReturns> = ({
  onFilterConversation,
 }) => {
-  useWSChat();
+  // useWSChat();
   const { mobileMode } = useGetScreenMode();
   return (
     <Box

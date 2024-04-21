@@ -49,6 +49,7 @@ import {
   ChangeGroupAvatar,
   TypeDrawerChat,
   IChatInfo,
+  IChatItemV2,
 } from "./type";
 import { useAuth } from "store/app/selectors";
 import {
@@ -73,13 +74,13 @@ import {
   resetSearchChatText,
   setSelectSearchIndex,
   resetDataTransfer,
+  setConversation,
+  setConversationPaging,
+  setIsSearchConversation,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
 import { FILE_ACCEPT, IMAGES_ACCEPT } from "constant/index";
-import { useRouter } from "next/navigation";
-import { r } from "@fullcalendar/resource/internal-common";
-import { CHATTING_ROOM_PATH } from "constant/paths";
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
@@ -93,6 +94,8 @@ export const useChat = () => {
     roomId,
     conversationInfo,
     conversationPaging,
+    conversationPagingV2,
+    isSearchConversation,
     messagePaging,
     conversationStatus,
 
@@ -715,10 +718,27 @@ export const useChat = () => {
     [dispatch],
   );
 
+  const onSetConvention = (conversations: IChatItemV2[]) => {
+    return dispatch(setConversation(conversations));
+  };
+
+  const onSetConversationPaging = (pagingInfo) => {
+    return dispatch(setConversationPaging(pagingInfo));
+  };
+
+  const onSetIsSearchConversation = (searchFlg: boolean) => {
+    return dispatch(setIsSearchConversation(searchFlg));
+  }
+
   return {
     convention,
+    onSetConvention,
     mediaListConversation,
     conversationPaging,
+    conversationPagingV2,
+    onSetConversationPaging,
+    isSearchConversation,
+    onSetIsSearchConversation,
     messagePaging,
     messageInfo,
     messageStatus,

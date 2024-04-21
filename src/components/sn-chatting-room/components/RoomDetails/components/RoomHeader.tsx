@@ -17,7 +17,6 @@ import colorSchemes from "utils/colorSchemes";
 import ChatDetailInfo from "./ChatDetailInfo";
 import CloseIcon from "icons/CloseIcon";
 import useGetScreenMode from "hooks/useGetScreenMode";
-import _ from "lodash";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useSnackbar } from "store/app/selectors";
@@ -25,7 +24,8 @@ import { useChat } from "store/chat/selectors";
 import { debounce } from "utils/index";
 import { Text } from "components/shared";
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
-import { RoomType, STEP } from "store/chat/type";
+import { RoomType } from "store/chat/type";
+import { useChatHelpers } from "store/chat/helpers";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -47,6 +47,7 @@ const RoomHeader = () => {
     onSetIndexSearch,
     selectSearchIndex,
   } = useChat();
+  const { isGroup } = useChatHelpers();
   const [search, setSearchText] = useState({
     text: "",
     isOpen: false,
@@ -144,7 +145,11 @@ const RoomHeader = () => {
         >
           <Box display="flex" alignItems="center" gap={"10px"} minWidth={200}>
             <Avatar
-              src={currentConversation?.avatar}
+              src={
+                isGroup(currentConversation?.type)
+                  ? currentConversation?.avatar?.link
+                  : currentConversation?.peer_detail?.avatar
+              }
               sx={{ height: "56px", width: "56px", borderRadius: "10px" }}
             />
             <Box display="flex" flexDirection="column" gap="4px">
@@ -154,9 +159,9 @@ const RoomHeader = () => {
                 textOverflow="ellipsis"
                 overflow="hidden"
               >
-                {currentConversation?.t !== "d"
-                  ? currentConversation?.name?.replaceAll("_", " ")
-                  : currentConversation?.name}
+                {isGroup(currentConversation?.type)
+                  ? currentConversation?.name
+                  : currentConversation?.peer_detail?.fullname}
               </Typography>
               <Typography variant="body2" color="var(--Gray3, #999)">
                 {currentConversation?.status}

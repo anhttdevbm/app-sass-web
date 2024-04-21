@@ -36,11 +36,11 @@ const AccountInfoHeader = ({
   const [textSearch, setTextSearch] = useState("");
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const [avatar, setAvatar] = useState<string | undefined>(
-    dataTransfer?.avatar,
+    dataTransfer?.avatar?.link,
   );
 
   useEffect(() => {
-    setAvatar(dataTransfer?.avatar);
+    setAvatar(dataTransfer?.avatar?.link);
   }, [dataTransfer?.avatar]);
 
   useEffect(() => {

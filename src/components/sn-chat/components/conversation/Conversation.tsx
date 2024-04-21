@@ -9,7 +9,6 @@ import { useTranslations } from "next-intl";
 import { SxProps, Theme } from "@mui/material";
 import useGetScreenMode from "hooks/useGetScreenMode";
 import { DrawerChatIgnore } from "components/sn-chatting-room/components/RoomDetails";
-import ChatEmoji from "../chat/ChatEmoji";
 
 const initPageIndex = 10;
 
@@ -17,6 +16,7 @@ interface Props {
   wrapperMessageSx?: SxProps<Theme>;
   wrapperInputSx?: SxProps<Theme>;
 }
+
 const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
   const {
     roomId,
@@ -80,12 +80,7 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
       if (currentRoomId?.length === 0) return;
       if (currentRoomType?.length === 0) return;
       try {
-        await onGetLastMessages({
-          roomId: currentRoomId,
-          type: currentRoomType,
-          offset: page,
-          count: size,
-        });
+        // TODO:
       } catch (error) {
         onAddSnackbar(
           typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),
@@ -121,10 +116,6 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
     }
   }, [stateSendMessage.status]);
 
-  useEffect(() => {
-    getUnReadMessage();
-  }, [getUnReadMessage]);
-
   type MessageHandle = React.ElementRef<typeof Messages>;
   const inputRef = useRef<MessageHandle>(null);
 
@@ -155,7 +146,9 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
         pageSize={pageSize}
         sessionId={user?.["username"]}
         isGroup={isGroup}
-        avatarPartner={account?.avatar ?? conversationInfo?.avatar ?? undefined}
+        avatarPartner={
+          account?.avatar?.link ?? conversationInfo?.avatar?.link ?? undefined
+        }
         initialMessage={messageInfo}
         mediaListPreview={mediaListConversation}
         stateMessage={stateSendMessage}

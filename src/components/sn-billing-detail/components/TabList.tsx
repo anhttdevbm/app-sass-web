@@ -210,6 +210,7 @@ const TabInfo = (props: TabListProps) => {
                     display: "none !important",
                   },
                 }}
+                variant="scrollable"
               >
                 {TABS.map((tab) => (
                   <Tab

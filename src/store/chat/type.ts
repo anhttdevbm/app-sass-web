@@ -9,23 +9,58 @@ import {
 } from "./media/typeMedia";
 
 export type IChatItemInfo = IChatInfo & IChatGroup & IChatDirect;
+
 export interface IChatInfo {
   status: string;
   username: string;
   usernames: any;
   _id: string;
+  id: string;
   _updatedAt: string;
   name: string;
   t: string;
+  type: string;
   msgs: number;
   usersCount: number;
   ts: string;
   ro: boolean;
   default: boolean;
   sysMes: boolean;
-  avatar: string;
+  avatar: {
+    fileName: string;
+    fileType: string;
+    link: string;
+    objectId: string;
+  } | null;
   unreadCount: number;
   unreadsFrom: string;
+  members: string[] | IMembersGroup[];
+  peer_detail: IChatPeerDetail;
+  company: string;
+  creator: string;
+  owner: string;
+  msg_count: number;
+  lastmsg_at: string;
+  admins: string[];
+}
+
+export interface IMembersGroup {
+  id: string;
+  username: string;
+  avatar: string;
+  fullname: string;
+  email: string;
+  phone: string;
+  position: any; // TODO: update later
+}
+
+export interface IChatPeerDetail {
+  avatar: string;
+  email: string;
+  fullname: string;
+  id: string;
+  phone: string;
+  username: string;
 }
 
 export interface IChatGroup {
@@ -168,6 +203,13 @@ export interface ChatState {
     isReloadPageCurrent?: boolean;
     textSearch: string;
   };
+  conversationPagingV2: {
+    current: number;
+    prev: number | null;
+    next: number | null;
+    count: number;
+  };
+  isSearchConversation: boolean;
   conversationInfo: IChatItemInfo | null;
   roomId: string;
 
@@ -238,11 +280,13 @@ export interface AuthenRequestCommon {
   authToken: string;
   userId: string;
 }
+
 export interface ChatRequestCommon extends AuthenRequestCommon {
   type: DirectionChat;
   count?: number;
   offset?: number;
 }
+
 export interface ChatConventionItemRequest extends ChatRequestCommon {
   text: string;
   company?: string;
@@ -296,6 +340,7 @@ export interface ChangeGroupAvatar extends AuthenRequestCommon {
 }
 
 export type RoomType = "c" | "d" | "p";
+
 export interface ChatAttachmentsRequest extends AuthenRequestCommon {
   roomId?: string;
   fileType?: "media" | "file" | "link";
@@ -329,6 +374,7 @@ export interface Position {
   id: string;
   name: string;
 }
+
 export interface UserInfo {
   company: string;
   department: string;
@@ -389,6 +435,7 @@ export interface UnreadUserInfo {
   userId: string;
   username: string;
 }
+
 export interface UnReadMessageInfo {
   roomId: string;
   info: UnreadUserInfo[];
@@ -447,3 +494,78 @@ export const mimiMap = {
   "image/jpeg": [".jpeg", ".jpg"],
   "image/png": ".png",
 };
+
+export const CHAT_EVENT_TYPE = {
+  // room list
+  ROOM_LIST: "room.list",
+  // detail
+  DETAIL_ROOM: "detail.room",
+  DETAIL_MEMBER: "detail.member",
+  DETAIL_FILE: "detail.file",
+  DETAIL_MESSAGE: "detail.message",
+  // personal chat
+  PERSONAL_ROOM: "personal.connect",
+  // group chat
+  GROUP_CREATE: "group.create",
+  GROUP_REMOVE: "group.remove",
+  GROUP_SEARCH: "group.search",
+  GROUP_UPDATE_AVATAR: "group.update.avatar",
+  GROUP_UPDATE_NAME: "group.update.name",
+  GROUP_ADD_MEMBER: "group.member.add",
+  GROUP_REMOVE_MEMBER: "group.member.remove",
+  GROUP_ADD_ADMIN: "group.admin.add",
+  GROUP_REMOVE_ADMIN: "group.admin.remove",
+  // message
+  MESSAGE_LIST: "message.list",
+  MESSAGE_LIST_FILE: "message.list.file",
+  MESSAGE_LIST_LINK: "message.list.link",
+  MESSAGE_LIST_MEDIA: "message.list.media",
+  MESSAGE_SEND_TEXT: "message.text.send",
+  MESSAGE_SEND_MEDIA: "message.media.send",
+  MESSAGE_SEND_FILE: "message.file.send",
+  MESSAGE_SEARCH: "message.search",
+  MESSAGE_LOCATION: "message.location",
+};
+
+export const CHAT_ROOM_TYPE = {
+  GROUP: "g",
+  PERSONAL: "p",
+};
+
+export interface IWsChatRespMessage {
+  event: string;
+  data?: any;
+  message?: string;
+}
+
+export interface IChatListResponseV2 {
+  count: number;
+  next: number | null;
+  prev: number | null;
+  result: IChatItemV2[];
+}
+
+export interface IChatItemV2 {
+  admins: string[];
+  avatar: IAvatarChatV2;
+  company: string;
+  created_at: string;
+  creator: string;
+  id: string;
+  lastmsg: string;
+  lastmsg_at: string;
+  members: string[];
+  msg_count: number;
+  name: string;
+  owner: string;
+  status: string;
+  type: string;
+  update_at: string;
+}
+
+export interface IAvatarChatV2 {
+  objectId: string;
+  fileName: string;
+  fileType: string;
+  link: string;
+}
