@@ -1,13 +1,15 @@
 import { Box } from "@mui/material";
-import { Text } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
+import { HEADER_HEIGHT } from "layouts/Header";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import GIFAIChat from "public/images/gif-ai-chat.gif";
 import { useState } from "react";
 import ChatInput from "./components/Chat/ChatInput";
-import { ListPrompt } from "./components/ListPrompt";
+import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
+import { ListPrompt } from "./components/ListPrompt";
+import Image from "next/image";
+import { Text } from "components/shared";
+import GIFAIChat from "public/images/gif-ai-chat.gif";
 
 const options = [
   { label: "Option 1", value: "option1" },
@@ -15,12 +17,13 @@ const options = [
   { label: "Option 3", value: "option3" },
 ];
 
-const BoxChat = () => {
+export const BoxChat = () => {
   const t = useTranslations(NS_AI_CHAT);
 
   const [persona, setPersona] = useState("");
   const [tone, setTone] = useState("");
   const [prompt, setPrompt] = useState("");
+  const [chatData, setChatData] = useState([]);
 
   const handleButtonClick = (value: string) => {
     setPrompt(value);
@@ -28,59 +31,72 @@ const BoxChat = () => {
 
   return (
     <Box sx={boxChatContainerSx}>
-      <Box
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        padding={"40px"}
-        flexDirection={"column"}
-      >
-        <Image src={GIFAIChat} alt="AI Chat" width={80} height={80} />
-        <Text variant={"h3"} marginTop={3}>
-          {t("layout.title")}
-        </Text>
-        <ListPrompt
-          texts={["Button 1", "Button 2", "Button 3", "Button 4", "Button 5", "Button 6"]}
-          handleClick={handleButtonClick}
+      {(chatData.length > 0 && (
+        <MessageLayout>
+          <MessageList chatData={chatData} />
+        </MessageLayout>
+      )) || (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          padding={"40px"}
+          flexDirection={"column"}
+        >
+          <Image src={GIFAIChat} alt="AI Chat" width={80} height={80} />
+          <Text variant={"h3"} marginTop={3}>
+            {t("boxChat.title")}
+          </Text>
+          <ListPrompt
+            texts={[
+              "Button 1",
+              "Button 2",
+              "Button 3",
+              "Button 4",
+              "Button 5",
+              "Button 6",
+            ]}
+            handleClick={handleButtonClick}
+          />
+        </Box>
+      )}
+      <Box padding={"0 24px"}>
+        <Box sx={selectContainerSx}>
+          <SelectAIChat
+            placeholder={t("boxChat.persona")}
+            options={options}
+            value={persona}
+            handleOnChange={(e) => setPersona(e.target.value)}
+          />
+          <SelectAIChat
+            placeholder={t("boxChat.tone")}
+            options={options}
+            value={tone}
+            handleOnChange={(e) => setTone(e.target.value)}
+          />
+        </Box>
+        <ChatInput
+          isLoading={false}
+          initialMessage=""
+          files={[]}
+          onEnterMessage={(message: string) => console.log(message)}
+          onChangeFiles={(file: File[]) => console.log(file)}
+          onResize={(num?: number) => console.log(num)}
+          wrapperInputSx={{}}
         />
       </Box>
-      <Box sx={selectContainerSx}>
-        <SelectAIChat
-          placeholder={t("layout.persona")}
-          options={options}
-          value={persona}
-          handleOnChange={(e) => setPersona(e.target.value)}
-        />
-        <SelectAIChat
-          placeholder={t("layout.tone")}
-          options={options}
-          value={tone}
-          handleOnChange={(e) => setTone(e.target.value)}
-        />
-      </Box>
-      <ChatInput
-        isLoading={false}
-        initialMessage=""
-        files={[]}
-        onEnterMessage={(message: string) => console.log(message)}
-        onChangeFiles={(file: File[]) => console.log(file)}
-        onResize={(num?: number) => console.log(num)}
-        wrapperInputSx={{}}
-      />
     </Box>
   );
 };
 
-export default BoxChat;
-
 const boxChatContainerSx = {
   width: "100%",
-  height: "100%",
+  height: `calc(100vh - ${HEADER_HEIGHT}px)`,
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
-  padding: "24px",
-  boxSizing: "border-box"
+  padding: "24px 0",
+  boxSizing: "border-box",
 };
 
 const selectContainerSx = {

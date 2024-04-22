@@ -8,12 +8,15 @@ export const AIChatLang: AIChatDictionary = {
     clearConversations: "Xóa cuộc trò chuyện",
     newChat: "Trò chuyện mới",
     editChat: "Chỉnh sửa",
-    deleteChat: "Xóa"
+    deleteChat: "Xóa",
   },
   boxChat: {
     title: "Trò chuyện với AI",
     persona: "Hình mẫu",
     tone: "Lối diễn đạt",
-    enterMessage: "Nhập câu hỏi"
-  }
-}
+    enterMessage: "Nhập câu hỏi",
+    copy: "Sao chép",
+    addToDocs: "Thêm vào tài liệu",
+    regenerateResponse: "Tạo lại câu trả lời",
+  },
+};

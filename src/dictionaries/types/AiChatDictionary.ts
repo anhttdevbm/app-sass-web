@@ -13,5 +13,8 @@ export type AIChatDictionary = {
     persona: string;
     tone: string;
     enterMessage: string;
+    copy: string;
+    addToDocs: string;
+    regenerateResponse: string;
   };
 };

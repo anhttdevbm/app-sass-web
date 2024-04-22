@@ -57,7 +57,7 @@ const ChatInput = ({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               handleSubmit(e);
             }
@@ -75,10 +75,19 @@ const ChatInput = ({
           <AttachFileIcon />
           <input type="file" hidden onChange={handleFileChange} />
         </IconButton>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Divider orientation="vertical" flexItem sx={{ my: 0, mx: 1, height: '24px', borderColor: isFocused ? '#3699FF' : undefined }} />
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Divider
+            orientation="vertical"
+            flexItem
+            sx={{
+              my: 0,
+              mx: 1,
+              height: "24px",
+              borderColor: isFocused ? "#3699FF" : undefined,
+            }}
+          />
         </Box>
-        <IconButton type="submit" disabled={isLoading} sx={sendBtn}>
+        <IconButton type="submit" disabled={isLoading} sx={sendBtnSx}>
           <SendGradientIcon fill={isFocused ? "#0575E6" : undefined} />
         </IconButton>
       </Box>
@@ -100,16 +109,16 @@ const container = {
     outline: "1px solid #3699FF",
     "& $divider": {
       borderColor: "#3699FF",
-    }
-  }
+    },
+  },
 };
 
 const attachFileBth = {
   border: "1px solid #E3E3E3",
   borderRadius: "50%",
-  padding: "6px"
+  padding: "6px",
 };
 
-const sendBtn = {
-  padding: "6px"
+const sendBtnSx = {
+  padding: "6px",
 };

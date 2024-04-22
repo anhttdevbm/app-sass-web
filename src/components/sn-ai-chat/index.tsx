@@ -7,8 +7,7 @@ import useGetScreenMode from "hooks/useGetScreenMode";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { useEffect } from "react";
 import { useChat } from "store/chat/selectors";
-import BoxChat from "./components/BoxChat";
-import Sidebar from "./components/Sidebar";
+import { BoxChat, Sidebar } from "./components";
 
 const AIChat = () => {
   const { mobileMode } = useGetScreenMode();

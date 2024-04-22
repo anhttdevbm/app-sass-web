@@ -8,12 +8,15 @@ export const AIChatLang: AIChatDictionary = {
     clearConversations: "Clear conversations",
     newChat: "New Chat",
     editChat: "Edit",
-    deleteChat: "Delete"
+    deleteChat: "Delete",
   },
   boxChat: {
     title: "Chat with AI",
     persona: "Persona",
     tone: "Tone",
-    enterMessage: "Enter message"
-  }
-}
+    enterMessage: "Enter message",
+    copy: "Copy",
+    addToDocs: "Add to docs",
+    regenerateResponse: "Regenerate response",
+  },
+};
