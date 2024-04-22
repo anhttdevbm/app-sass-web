@@ -1,15 +1,16 @@
 import { Box } from "@mui/material";
+import { Text } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import Image from "next/image";
+import GIFAIChat from "public/images/gif-ai-chat.gif";
+import { useEffect, useState } from "react";
+import { useAIChat } from "store/aiChat/selectors";
 import ChatInput from "./components/Chat/ChatInput";
+import { ListPrompt } from "./components/ListPrompt";
 import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
-import { ListPrompt } from "./components/ListPrompt";
-import Image from "next/image";
-import { Text } from "components/shared";
-import GIFAIChat from "public/images/gif-ai-chat.gif";
 
 const options = [
   { label: "Option 1", value: "option1" },
@@ -25,9 +26,26 @@ export const BoxChat = () => {
   const [prompt, setPrompt] = useState("");
   const [chatData, setChatData] = useState([]);
 
-  const handleButtonClick = (value: string) => {
+  const {
+    examplePrompts,
+    status,
+    error,
+    isIdle,
+    isFetching,
+    onGetExamplePrompt,
+  } = useAIChat();
+
+  useEffect(() => {
+    if (isIdle || isFetching) {
+      onGetExamplePrompt({ number_prompt: 6 });
+    }
+  }, [isIdle, isFetching, onGetExamplePrompt]);
+
+  const handleSetPrompt = (value: string) => {
     setPrompt(value);
   };
+
+  console.log("examplePrompts: ", examplePrompts);
 
   return (
     <Box sx={boxChatContainerSx}>
@@ -47,17 +65,12 @@ export const BoxChat = () => {
           <Text variant={"h3"} marginTop={3}>
             {t("boxChat.title")}
           </Text>
-          <ListPrompt
-            texts={[
-              "Button 1",
-              "Button 2",
-              "Button 3",
-              "Button 4",
-              "Button 5",
-              "Button 6",
-            ]}
-            handleClick={handleButtonClick}
-          />
+          {examplePrompts && (
+            <ListPrompt
+              prompts={examplePrompts}
+              handleClick={handleSetPrompt}
+            />
+          )}
         </Box>
       )}
       <Box padding={"0 24px"}>

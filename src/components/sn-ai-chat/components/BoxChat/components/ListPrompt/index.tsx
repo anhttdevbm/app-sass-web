@@ -1,30 +1,39 @@
-import { Button, Grid } from '@mui/material';
-import React from 'react';
+import { Button, Grid, Box } from "@mui/material";
+import React from "react";
+import { ExamplePrompt } from "store/aiChat/type";
 
 interface ListPromptProps {
-  texts: string[];
+  prompts: ExamplePrompt[];
   handleClick: (value: string) => void;
 }
 
-export const ListPrompt: React.FC<ListPromptProps> = ({ texts, handleClick }) => {
+export const ListPrompt: React.FC<ListPromptProps> = ({
+  prompts,
+  handleClick,
+}) => {
   return (
     <Grid container spacing={2} marginTop={4}>
-      {texts.map((text, i) => (
-        <Grid item xs={6} key={i}>
-          <Button 
-            variant="outlined" 
-            fullWidth 
-            onClick={() => handleClick(`Button: ${text}, Row: ${i+1}`)}
-            sx={{
-              backgroundColor: 'white',
-              color: 'grey.300',
-              padding: '16px 21px'
-            }}
-          >
-            {text}
-          </Button>
-        </Grid>
-      ))}
+      {prompts &&
+        prompts.length > 0 &&
+        prompts.map((item, i) => (
+          <Grid item xs={6} key={i}>
+            <Box width={1} height={1}>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={() => handleClick(`${item.prompt}`)}
+                sx={{
+                  backgroundColor: "white",
+                  color: "grey.300",
+                  padding: "16px 21px",
+                  height: "100%",
+                }}
+              >
+                {item.prompt}
+              </Button>
+            </Box>
+          </Grid>
+        ))}
     </Grid>
-  )
-}
+  );
+};
