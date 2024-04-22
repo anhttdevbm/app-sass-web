@@ -3,6 +3,7 @@ import {
   getEmployees,
   GetEmployeeListQueries,
   createEmployee,
+  createEmployeeClient,
   updateEmployee,
   createPosition,
   updatePosition,
@@ -45,6 +46,7 @@ export interface Employee extends User {
   approve?: boolean;
   username?: string;
   id_rocket?: string;
+  client_company?: string;
 }
 
 export interface SearchChatText {
@@ -326,6 +328,22 @@ const companySlice = createSlice({
 
           if (state.employeesPaging.totalItems !== undefined) {
             state.employeesPaging.totalItems += 1;
+          }
+        },
+      )
+      .addCase(
+        createEmployeeClient.fulfilled,
+        (state, action: PayloadAction<Employee>) => {
+          const indexUpdated = state.employees.findIndex(
+            (item) => item.id === action.payload.id,
+          );
+          if (indexUpdated > -1) {
+            state.employees[indexUpdated] = Object.assign(
+              state.employees[indexUpdated],
+              action.payload,
+            );
+          } else {
+            state.employees.push(action.payload)
           }
         },
       )

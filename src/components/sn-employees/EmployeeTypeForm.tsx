@@ -40,7 +40,7 @@ const EmployeeTypeForm = ({
   return (
     <FormLayout
       sx={{
-        minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
+        minWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
       }}
