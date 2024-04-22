@@ -1,39 +1,41 @@
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
-import { DataAction, Permission } from "constant/enums";
+import { DataAction } from "constant/enums";
 import { EMAIL_REGEX } from "constant/regex";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/NewFormLayout";
 import { NewInput as Input, NewSelect as Select } from "components/shared";
 import { useFormik } from "hooks/useFormik";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { EmployeeData } from "store/company/actions";
+import { EmployeeClientData } from "store/company/actions";
+import { useClientCompanies } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 
-type EmployeeCompanyFormProps = {
-  initialValues: EmployeeData;
+type EmployeeClientFormProps = {
+  initialValues: EmployeeClientData;
   type: DataAction;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (values: EmployeeData) => Promise<any>;
+  onSubmit: (values: EmployeeClientData) => Promise<any>;
 } & Omit<DialogLayoutProps, "children" | "onSubmit">;
 
-const EmployeeCompanyForm = ({
+const EmployeeClientForm = ({
   initialValues,
   type,
   onSubmit: onSubmitProps,
   onClose,
   ...rest
-}: EmployeeCompanyFormProps) => {
+}: EmployeeClientFormProps) => {
   const { onAddSnackbar } = useSnackbar();
   const { user, onGetProfile } = useAuth();
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
 
+  const { items: clientCompanies, onGetClientCompanies } = useClientCompanies();
   const { options, onGetOptions, isFetching, totalPages, pageIndex, pageSize } =
     usePositionOptions();
 
@@ -48,9 +50,16 @@ const EmployeeCompanyForm = ({
     }
   }, [commonT, type]);
 
-  const onSubmit = async (values: EmployeeData) => {
+  const onSubmit = async (values: EmployeeClientData) => {
     try {
-      const newItem = await onSubmitProps(values);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const clientCompanyCode = clientCompanies.find(
+        (c) => c.id === values.client_company,
+      )?.code;
+      const newItem = await onSubmitProps({
+        ...values,
+        client_company: clientCompanyCode!,
+      });
 
       if (newItem) {
         onAddSnackbar(
@@ -75,6 +84,10 @@ const EmployeeCompanyForm = ({
     enableReinitialize: true,
     onSubmit,
   });
+
+  useEffect(() => {
+    onGetClientCompanies({});
+  }, [onGetClientCompanies]);
 
   const onEndReached = () => {
     if (isFetching || (totalPages && pageIndex >= totalPages)) return;
@@ -111,12 +124,15 @@ const EmployeeCompanyForm = ({
         />
         <Stack direction="row" spacing={2}>
           <Select
-            title="Permission"
-            name="permission"
-            options={Object.entries(Permission).map(([k, v]) => ({
-              label: k,
-              value: v,
+            title="Client"
+            name="client_company"
+            options={clientCompanies.map((c) => ({
+              label: c.name,
+              value: c.id!,
             }))}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.client_company}
             fullWidth
             rootSx={sxConfig.input}
           />
@@ -127,7 +143,7 @@ const EmployeeCompanyForm = ({
             required
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values?.position}
+            value={formik.values.position}
             error={commonT(formik.touchedError("position"), {
               name: commonT("position"),
             })}
@@ -141,7 +157,7 @@ const EmployeeCompanyForm = ({
   );
 };
 
-export default memo(EmployeeCompanyForm);
+export default memo(EmployeeClientForm);
 
 export const validationSchema = Yup.object().shape({
   email: Yup.string()

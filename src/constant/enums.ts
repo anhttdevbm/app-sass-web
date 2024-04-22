@@ -34,6 +34,8 @@ export enum Permission {
   AM = "AM",
   ST = "ST",
   EU = "EU",
+  CL = "CL",
+  CT = "CT",
 }
 
 export enum Status {
