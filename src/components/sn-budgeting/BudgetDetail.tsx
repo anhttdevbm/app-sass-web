@@ -52,9 +52,11 @@ import CustomDateRangePicker from "components/sn-resource-planing/components/Cus
 import { DateRange } from "mui-daterange-picker";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 import ConfirmDialog from "components/ConfirmDialog";
+import { Client } from "components/sn-budgeting/TabDetail/Client";
 
 enum TABS {
   FEED = "Feed",
+  CLIENT = "Client",
   SERVICES = "Services",
   TIME = "Time",
   EXPENSES = "Expenses",
@@ -98,7 +100,7 @@ export const BudgetDetail = () => {
   const { isDarkMode } = useTheme();
   const { push } = useRouter();
   const { onUpdateProject } = useProjects();
-  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE)
+  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE);
 
   const [isOpenModalTime, openModalTime, hideModalTime] = useToggle();
   const [isOpenModalExpense, openModalExpense, hideModalExpense] = useToggle();
@@ -128,13 +130,14 @@ export const BudgetDetail = () => {
   const commonT = useTranslations(NS_COMMON);
 
   const TAB_NAME = {
-    [TABS.FEED]: budgetT('tab.feed'),
-    [TABS.TIME]: budgetT('tab.time'),
-    [TABS.EXPENSES]: budgetT('tab.expenses'),
-    [TABS.INVOICES]: budgetT('tab.invoices'),
-    [TABS.SERVICES]: budgetT('tab.services'),
-    [TABS.RECURRING]: budgetT('tab.recurring'),
-  }
+    [TABS.FEED]: budgetT("tab.feed"),
+    [TABS.CLIENT]: budgetT("tab.client"),
+    [TABS.TIME]: budgetT("tab.time"),
+    [TABS.EXPENSES]: budgetT("tab.expenses"),
+    [TABS.INVOICES]: budgetT("tab.invoices"),
+    [TABS.SERVICES]: budgetT("tab.services"),
+    [TABS.RECURRING]: budgetT("tab.recurring"),
+  };
 
   useEffect(() => {
     if (!_.isEmpty(serviceQuery)) {
@@ -155,9 +158,9 @@ export const BudgetDetail = () => {
   }, [JSON.stringify(budgetDetailQuery)]);
 
   const scrollToTop = () => {
-    const wrapper = document.querySelector('#budget-detail-container')
+    const wrapper = document.querySelector("#budget-detail-container");
     if (wrapper) {
-      wrapper.scrollTop = 0
+      wrapper.scrollTop = 0;
     }
   };
 
@@ -166,9 +169,9 @@ export const BudgetDetail = () => {
 
     if (isEditService) {
       Swal.fire({
-        title: budgetT('tabService.alert'),
-        text: '',
-        icon: 'info'
+        title: budgetT("tabService.alert"),
+        text: "",
+        icon: "info",
       });
 
       return;
@@ -296,8 +299,8 @@ export const BudgetDetail = () => {
 
   const handleUpdateDate = async (date: DateRange) => {
     try {
-      console.log(budget.id);
-      
+      // console.log(budget.id);
+
       budgetUpdate.mutateAsync(
         {
           id: budget.id,
@@ -306,7 +309,7 @@ export const BudgetDetail = () => {
         },
         {
           onSuccess: () => {
-            onAddSnackbar(budgetT('notification.date'), "success");
+            onAddSnackbar(budgetT("notification.date"), "success");
             budgetDetailQuery.refetch();
           },
         },
@@ -319,7 +322,11 @@ export const BudgetDetail = () => {
   const handleOpenChangeStatusDialog = (status: ProjectStatus) => {
     tempStatus.current = status;
     showModalStatus();
-  }
+  };
+
+  const updateBuggeting = (data: TBudget) => {
+    setBudget(data);
+  };
 
   if (!budget) return <></>;
 
@@ -332,6 +339,7 @@ export const BudgetDetail = () => {
           background: isDarkMode ? "#313130" : "white",
           py: 2,
           zIndex: 11,
+          borderRadius: 1,
         }}
       >
         <Stack
@@ -352,13 +360,17 @@ export const BudgetDetail = () => {
           <Stack direction="row" alignItems="center">
             <CustomDateRangePicker
               value={{
-                startDate: budget.start_date ? dayjs(budget.start_date).toDate() : undefined,
-                endDate: budget.end_date ? dayjs(budget.end_date).toDate() : undefined,
+                startDate: budget.start_date
+                  ? dayjs(budget.start_date).toDate()
+                  : undefined,
+                endDate: budget.end_date
+                  ? dayjs(budget.end_date).toDate()
+                  : undefined,
               }}
               onChange={handleUpdateDate}
               iconPosition="left"
               isDropdown
-              errorMessage=''
+              errorMessage=""
             />
             <IconButton
               sx={{ color: "grey.300" }}
@@ -377,6 +389,7 @@ export const BudgetDetail = () => {
           direction="row"
           justifyContent="space-between"
           borderBottom="1px solid #ECECF3"
+          sx={{ overflowX: "auto" }}
         >
           <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
             <TextStatus
@@ -442,7 +455,7 @@ export const BudgetDetail = () => {
         </Stack>
       </Stack>
 
-      <Stack direction="row" mt={2}>
+      <Stack direction="row" mt={1}>
         <Box
           position="relative"
           sx={{
@@ -463,6 +476,13 @@ export const BudgetDetail = () => {
           </Stack>
           <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
+            {activeTab === TABS.CLIENT && (
+              <Client
+                bugetId={budget.id}
+                clientId={budget?.client}
+                update={updateBuggeting}
+              />
+            )}
             {activeTab === TABS.TIME && (
               <Time
                 timeList={_.get(timeQuery, "data.data.docs", [])}

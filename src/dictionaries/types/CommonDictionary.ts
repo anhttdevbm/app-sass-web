@@ -55,6 +55,7 @@ export type CommonDictionary = {
   company: string;
   fullName: string;
   phone: string;
+  address: string;
   status: string;
   filter: {
     refresh: string;
@@ -117,4 +118,9 @@ export type CommonDictionary = {
   cancel: string;
   success: string;
   crop: string;
+  landingPage: {
+    homePage: string,
+    aboutUs: string,
+    helpCenter: string,
+  }
 };

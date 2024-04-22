@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 import Avatar from "components/Avatar";
-import {
-  Box,
-  Button,
-  Fab,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import ItemMemberDetail from "./ItemMemberDetail";
 import GroupNameIcon from "icons/GroupNameIcon";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
@@ -18,20 +11,17 @@ import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import FileGroupIcon from "icons/FileGroupIcon";
 import ArrowRightIcon from "icons/ArrowRightIcon";
 import EditGroupNameIcon from "icons/EditGroupNameIcon";
-import UploadImageIcon from "icons/UploadImageIcon";
-import { IconButton } from "components/shared";
 import { useChat } from "store/chat/selectors";
-import { STEP, TYPE_LIST } from "store/chat/type";
-import { DataStatus } from "constant/enums";
+import { CHAT_EVENT_TYPE, STEP, TYPE_LIST } from "store/chat/type";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import ItemDetail from "../components/ItemDetail";
 import MediaFileIconGroup from "icons/MediaFileIconGroup";
 import LinkIconGroup from "icons/LinkIconGroup";
-import { uploadFile } from "store/chat/media/actionMedia";
 import { useAppDispatch } from "store/hooks";
 import useTheme from "hooks/useTheme";
 import { UploadAvatarGroup } from "./UploadAvatarGroup";
 import ForwardLayout from "components/sn-chatting-room/components/RoomDetails/components/Drawer/ChatForward/ForwardLayout";
+import { isOwnerGroup, useWSChat } from "store/chat/helpers";
 
 export const TYPE_POPUP = {
   DELETE: "DELETE",
@@ -64,13 +54,11 @@ const ChatDetailGroup = (props) => {
   } = useChat();
   const { user } = useAuth();
   //check owner
-  const owners = Object.values(groupMembers).filter((item) =>
-    item.roles.includes("owner"),
-  );
-  const owner = owners.some((obj) => obj._id === user?.id_rocket);
+  const owner = isOwnerGroup(dataTransfer?.creator, user?.id);
 
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
+  const { sendMessage } = useWSChat();
 
   const init = {
     type: "",
@@ -308,32 +296,16 @@ const ChatDetailGroup = (props) => {
     const renameGroupApi = async () => {
       const dataTransferNew = {
         ...dataTransfer,
-        name: renameGroup.replace("_", " "),
-        fname: renameGroup.replace("_", " "),
+        name: renameGroup,
       };
 
-      const renameResult = (await onRenameGroup({
-        roomId: dataTransfer?._id,
-        name: renameGroup.replace(" ", "_"),
-      })) as any;
-
-      if (renameResult?.error) {
-        return onAddSnackbar(
-          commonT("form.error.renameGroup", {
-            name: renameResult?.meta?.arg?.name,
-          }),
-          "error",
-        );
-      } else {
-        onGetAllConvention({
-          type: "a",
-          text: "",
-          offset: 0,
-          count: 10,
-        });
-        onSetDataTransfer(dataTransferNew);
-        onAddSnackbar(commonChatBox("chatBox.group.rename_alert"), "success");
-      }
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_UPDATE_NAME,
+        roomId: dataTransfer?.id,
+        roomName: renameGroup,
+      });
+      onSetDataTransfer(dataTransferNew);
+      onAddSnackbar(commonT("success"), "success");
     };
     const left = async () => {
       const leftResult = (await onLeftGroup({
@@ -432,7 +404,7 @@ const ChatDetailGroup = (props) => {
           >
             <Avatar
               alt="Avatar"
-              src={dataTransfer?.avatar}
+              src={dataTransfer?.avatar?.link}
               size={80}
               style={{
                 borderRadius: "50%",
@@ -449,9 +421,7 @@ const ChatDetailGroup = (props) => {
           }}
         >
           <ItemDetail
-            text={`${commonChatBox(
-              "chatBox.groupName",
-            )} ${dataTransfer?.name?.replaceAll("_", " ")}`}
+            text={`${commonChatBox("chatBox.groupName")} ${dataTransfer?.name}`}
             icon={<GroupNameIcon />}
             iconClick={<EditGroupNameIcon />}
             onClick={() => {
@@ -509,7 +479,7 @@ const ChatDetailGroup = (props) => {
               fontWeight={600}
             >
               {`${commonChatBox("chatBox.members")} (${
-                dataTransfer?.usersCount
+                dataTransfer?.members?.length || 0
               })`}
             </Typography>
           </Box>
@@ -521,12 +491,12 @@ const ChatDetailGroup = (props) => {
         </Box>
         <Box
           sx={{
-            height: owner ? "30%" : "46%",
+            height: owner ? "30%" : "42%",
             // height: "180px",
             overflow: "auto",
           }}
         >
-          {groupMembers?.map((member, index) => (
+          {dataTransfer?.members?.map((member, index) => (
             <ItemMemberDetail
               key={index}
               data={member}
@@ -570,7 +540,7 @@ const ChatDetailGroup = (props) => {
                 </Typography>
               </Box>
             )}
-            {groupMembers.length > 1 && (
+            {dataTransfer?.members?.length > 1 && (
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="caption"

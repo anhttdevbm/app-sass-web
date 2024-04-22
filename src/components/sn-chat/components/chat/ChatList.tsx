@@ -2,19 +2,18 @@ import { Skeleton, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
-import { DirectionChat, IChatItemInfo, STEP } from "store/chat/type";
-import { useAuth, useSnackbar } from "store/app/selectors";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  CHAT_EVENT_TYPE,
+  IChatItemInfo,
+  STEP,
+} from "store/chat/type";
+import { useAuth } from "store/app/selectors";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
 import SearchRoundIcon from "icons/SearchRoundIcon";
-import {
-  AN_ERROR_TRY_AGAIN,
-  NS_CHAT_BOX,
-  NS_COMMON,
-  NS_PROJECT,
-} from "constant/index";
+import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import { useWSChat } from "store/chat/helpers";
+import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import useTheme from "hooks/useTheme";
 
 const ChatList = ({ onCloseChatBox }) => {
@@ -23,43 +22,36 @@ const ChatList = ({ onCloseChatBox }) => {
     isError,
     convention,
     conversationPaging: { pageIndex, pageSize, textSearch: initText },
+    conversationPagingV2: paging,
     isFetching,
-    currStep,
-    onSetRoomId,
-    onSetConversationInfo,
-    onGetAllConvention,
+    isSearchConversation,
     onSetStep,
   } = useChat();
 
   useWSChat();
-  const { onAddSnackbar } = useSnackbar();
+  const { searchConversation, loadMoreConversation, isGroup } = useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
-
+  const { sendMessage } = useWSChat();
   const [textSearch, setTextSearch] = useState(initText);
   const [lastElement, setLastElement] = useState(null);
-  const pageRef = useRef(pageIndex);
   const chatListRef = useRef<HTMLDivElement>(null);
   const scrollHeightRef = useRef(0);
   const observer = useMemo(() => {
     return new IntersectionObserver((entries) => {
       const first = entries[0];
       if (first.isIntersecting) {
-        pageRef.current = pageRef.current + pageSize;
-
         scrollHeightRef.current = chatListRef.current?.scrollHeight || 0;
         const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
 
-        if (scrollHeightRef.current > clientHeight) {
-          console.log(initText);
-
-          handleGetConversation(initText, "a", pageRef.current, pageSize);
+        if (scrollHeightRef.current > clientHeight && !!paging.next) {
+          loadMoreConversation(paging.current);
         }
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize, initText]);
+  }, [chatListRef.current?.scrollHeight]);
 
   const conversationList = useMemo(() => {
     return convention
@@ -89,55 +81,20 @@ const ChatList = ({ onCloseChatBox }) => {
       });
   }, [convention, user]);
 
-  const handleGetConversation = useCallback(
-    async (
-      text: string,
-      type: DirectionChat,
-      offset?: number,
-      count?: number,
-    ) => {
-      try {
-        await onGetAllConvention({
-          type,
-          text,
-          offset: offset || 0,
-          count: count || 10,
-        });
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    },
-    [onAddSnackbar, onGetAllConvention, commonT],
-  );
-
   const handleClickConversation = (chatInfo: IChatItemInfo) => {
-    onSetRoomId(chatInfo._id);
-    onSetConversationInfo(chatInfo);
-
-    if (chatInfo?.t)
-      if (chatInfo?.t !== "d") {
-        onSetStep(STEP.CHAT_GROUP, chatInfo);
-      } else {
-        onSetStep(STEP.CHAT_ONE, chatInfo);
-      }
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      handleGetConversation(event.target.value.toLowerCase(), "a");
+    if (!chatInfo.id) return;
+    if (isSearchConversation && !isGroup(chatInfo?.type)) {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.PERSONAL_ROOM,
+        userId: chatInfo.id,
+      });
+    } else {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+        roomId: chatInfo.id,
+      });
     }
   };
-
-  useEffect(() => {
-    handleGetConversation("", "a");
-  }, [currStep]);
-
-  useEffect(() => {
-    pageRef.current = pageIndex;
-  }, [pageIndex]);
 
   useEffect(() => {
     const currentElement = lastElement;
@@ -156,6 +113,11 @@ const ChatList = ({ onCloseChatBox }) => {
 
   const handleCloseChatBox = () => {
     onCloseChatBox();
+  };
+
+  const handleSearch = (textSearch: string) => {
+    setTextSearch(textSearch);
+    searchConversation(textSearch);
   };
 
   return (
@@ -221,8 +183,7 @@ const ChatList = ({ onCloseChatBox }) => {
           placeholder={commonChatBox("chatBox.searchName")}
           fullWidth
           value={textSearch}
-          onChange={(e) => setTextSearch(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onChange={(e) => handleSearch(e.target.value)}
         />
 
         <Box

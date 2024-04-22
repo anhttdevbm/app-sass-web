@@ -20,6 +20,7 @@ import { Controller, useFormContext, useWatch } from "react-hook-form";
 export enum SALES_DETAIL_TAB {
   FEED = "feed",
   SERVICE = "service",
+  CLIENT = "client",
 }
 const TABS = [
   {
@@ -29,6 +30,10 @@ const TABS = [
   {
     label: "detail.tab.service",
     value: SALES_DETAIL_TAB.SERVICE,
+  },
+  {
+    label: "detail.tab.client",
+    value: SALES_DETAIL_TAB.CLIENT,
   },
 ];
 
@@ -63,6 +68,7 @@ const TabItem = (props: TabItemProps) => {
       label={salesT(label)}
       {...rest}
       sx={{
+        textTransform: "capitalize",
         minWidth: 120,
         height: 40,
         bgcolor: isActive
@@ -102,6 +108,7 @@ const TabList = ({ value, onChange }: TabListProps) => {
 
   return (
     <Stack
+      display="flex"
       direction={{
         xs: "column",
         sm: "row",
@@ -121,10 +128,14 @@ const TabList = ({ value, onChange }: TabListProps) => {
       <Tabs
         value={value}
         onChange={onChange}
+        variant="scrollable"
         TabIndicatorProps={{
           sx: {
             bgcolor: "transparent",
           },
+        }}
+        sx={{
+          maxWidth: "calc(100vw - 64px)",
         }}
       >
         {TABS.map((tab) => (

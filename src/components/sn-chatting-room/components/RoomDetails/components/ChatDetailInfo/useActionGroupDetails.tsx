@@ -1,5 +1,5 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
-import { STEP } from "store/chat/type";
+import { CHAT_EVENT_TYPE, STEP } from "store/chat/type";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Avatar from "components/Avatar";
 import { useChat } from "store/chat/selectors";
@@ -8,6 +8,7 @@ import { TYPE_POPUP } from "components/sn-chat/chatGroup/ChatDetailGroup";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import useTheme from "hooks/useTheme";
+import { useWSChat } from "store/chat/helpers";
 
 const defaultSx = {
   buttonCancel: {
@@ -42,12 +43,12 @@ export const useActionGroupDetails = () => {
     onChangeGroupRole,
     onRemoveGroupMember,
     onDeleteConversationGroup,
-    onGetAllConvention,
     onChangeListConversations,
     convention,
     onCloseDrawer,
     onResetDataTransfer,
   } = useChat();
+  const { sendMessage } = useWSChat();
 
   const { user } = useAuth();
 
@@ -120,7 +121,7 @@ export const useActionGroupDetails = () => {
   }, [dataTransfer]);
 
   useEffect(() => {
-    setRenameGroup(dataTransfer.name.replaceAll("_", " "));
+    setRenameGroup(dataTransfer?.name);
   }, [dataTransfer.name]);
 
   const handleNewAdd = () => {
@@ -214,12 +215,6 @@ export const useActionGroupDetails = () => {
       return;
     }
     onAddSnackbar(commonT("success"), "success");
-    onGetAllConvention({
-      type: "a",
-      text: "",
-      offset: 0,
-      count: 10,
-    });
     onCloseDrawer("account");
   };
 
@@ -243,32 +238,22 @@ export const useActionGroupDetails = () => {
       if (!renameGroup) return;
       const dataTransferNew = {
         ...dataTransfer,
-        name: renameGroup.replaceAll("_", " "),
-        fname: renameGroup.replaceAll("_", " "),
+        name: renameGroup,
       };
-      const renameResult = (await onRenameGroup({
-        roomId: dataTransfer?._id,
-        name: renameGroup.replaceAll(" ", "_"),
-      })) as any;
-
-      if (renameResult?.error) {
-        return onAddSnackbar(
-          commonT("form.error.renameGroup", {
-            name: renameResult?.meta?.arg?.name,
-          }),
-          "error",
-        );
-      } else {
-        const newConversations = convention?.map((item) => {
-          if (item._id === dataTransfer?._id) {
-            return dataTransferNew;
-          }
-          return item;
-        });
-        onChangeListConversations(newConversations);
-        onSetDataTransfer(dataTransferNew);
-        onAddSnackbar(commonT("success"), "success");
-      }
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_UPDATE_NAME,
+        roomId: dataTransfer?.id,
+        roomName: renameGroup,
+      });
+      const newConversations = convention?.map((item) => {
+        if (item.id === dataTransfer?.id) {
+          return dataTransferNew;
+        }
+        return item;
+      });
+      onChangeListConversations(newConversations);
+      onSetDataTransfer(dataTransferNew);
+      onAddSnackbar(commonT("success"), "success");
     };
     const left = async () => {
       const leftResult = (await onLeftGroup({

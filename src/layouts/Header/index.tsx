@@ -17,9 +17,10 @@ import { HOME_PATH, PROJECTS_PATH } from "constant/paths";
 import { DataStatus } from "constant/enums";
 import useToggle from "hooks/useToggle";
 import SwitchTheme from "components/SwitchTheme";
+import Image from "next/image";
 
 const Header = () => {
-  const { title, searchPlaceholder, prevPath, key } = useHeaderConfig();
+  const { title, searchPlaceholder, prevPath, key, imageUrl } = useHeaderConfig();
   const { breakpoint } = useBreakpoint();
   const { push } = useRouter();
   const { pageSize, filters, status, onGetProjects } = useProjects();
@@ -62,25 +63,34 @@ const Header = () => {
         overflow="hidden"
         flex={1}
       >
+        
         {prevPath ? (
           <Link
             href={prevPath}
             sx={{ height: 24, display: { xs: "none", sm: "initial" } }}
+            underline="none"
           >
-            <ChevronIcon
-              sx={{ color: "text.primary", transform: "rotate(90deg)" }}
-              fontSize="medium"
-            />
-            {!!title && (
-              <Text
-                variant="h5"
-                sx={{ verticalAlign: "super" }}
-                display={{ xs: "none", sm: "initial" }}
-                noWrap
-              >
-                {title ?? ""}
-              </Text>
-            )}
+            <Stack sx={{ height: 28, display: "flex", gap: 1, flexDirection: "row" }}>
+              <ChevronIcon
+                sx={{ color: "text.primary", transform: "rotate(90deg)" }}
+                fontSize="medium"
+              />
+              {!!imageUrl &&
+                <Image
+                  src={imageUrl} width={24}
+                  height={24}
+                  alt="Image" className="rounded"
+                />}
+              {!!title && (
+                <Text
+                  variant="h5"
+                  sx={{ justifyContent: "center", margin: "auto" }}
+                  display={{ xs: "none", sm: "initial" }}
+                >
+                  {title ?? ""}
+                </Text>
+              )}
+            </Stack>
           </Link>
         ) : (
           <Text variant="h5" display={{ xs: "none", sm: "initial" }} noWrap>

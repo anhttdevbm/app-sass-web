@@ -1,5 +1,4 @@
 "use client";
-
 import {
   memo,
   useEffect,
@@ -9,33 +8,34 @@ import {
   ChangeEvent,
 } from "react";
 import { Stack, TableRow } from "@mui/material";
+import { usePathname, useRouter } from "next-intl/client";
+import { useTranslations } from "next-intl";
+
+import ConfirmDialog from "components/ConfirmDialog";
 import {
   TableLayout,
   BodyCell,
   CellProps,
   ActionsCell,
-} from "components/Table";
-import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
-import useQueryParams from "hooks/useQueryParams";
-import Pagination from "components/Pagination";
-import { usePathname, useRouter } from "next-intl/client";
-import { getDataFromKeys, getPath } from "utils/index";
+} from "components/NewTable";
+import Pagination from "components/NewPagination";
 import { IconButton, Checkbox } from "components/shared";
-import { useEmployees } from "store/company/selectors";
-import CardSendIcon from "icons/CardSendIcon";
-import ConfirmDialog from "components/ConfirmDialog";
-import { Employee } from "store/company/reducer";
-import { DataAction, PayStatus } from "constant/enums";
-import { EmployeeData } from "store/company/actions";
-import Form from "./Form";
-import TrashIcon from "icons/TrashIcon";
-import { MobileContentCell, DesktopCells } from "./components";
-import useBreakpoint from "hooks/useBreakpoint";
-import DeleteConfirm from "./components/DeleteConfirm";
-import { useTranslations } from "next-intl";
-import useTheme from "hooks/useTheme";
 import FixedLayout from "components/FixedLayout";
+import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
+import { DataAction, PayStatus } from "constant/enums";
 import { HEADER_HEIGHT } from "layouts/Header";
+import useQueryParams from "hooks/useQueryParams";
+import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import { getPath } from "utils/index";
+import { useEmployees } from "store/company/selectors";
+import { Employee } from "store/company/reducer";
+import { EmployeeData } from "store/company/actions";
+import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
+import TrashIcon from "icons/TrashAltIcon";
+import EmployeeCompanyForm from "./EmployeeCompanyForm";
+import { MobileContentCell, DesktopCells } from "./components";
+import DeleteConfirm from "./components/DeleteConfirm";
 
 const ItemList = () => {
   const {
@@ -84,9 +84,9 @@ const ItemList = () => {
     () => [
       { value: commonT("fullName"), width: "25%", align: "left" },
       { value: "Email", width: "15.5%", align: "left" },
-      { value: commonT("position"), width: "12.5%" },
-      { value: commonT("creationDate"), width: "12.5%" },
-      { value: companyT("employees.expirationDate"), width: "13.5%" },
+      { value: commonT("position"), width: "12.5%", align: "left" },
+      { value: commonT("creationDate"), width: "12.5%", align: "left" },
+      { value: companyT("employees.expirationDate"), width: "13.5%", align: "left" },
       { value: commonT("status"), width: "12.5%" },
     ],
     [commonT, companyT],
@@ -196,12 +196,30 @@ const ItemList = () => {
         <Stack
           direction="row"
           alignItems="center"
-          spacing={2}
           pb={0.25}
           border="1px solid"
           borderColor="grey.100"
           borderBottom="none"
-          sx={{ borderTopLeftRadius: 1, borderTopRightRadius: 1 }}
+          sx={{
+            "& > *": {
+              "--custom-border": "1px solid hsla(0, 0%, 59%, 70%)",
+              "--custom-border-radius": "8px",
+              px: 1,
+              border: 0,
+              borderTop: "var(--custom-border)",
+              borderRight: "var(--custom-border)",
+              borderBottom: "var(--custom-border)",
+            },
+            "& > *:first-of-type": {
+              borderLeft: "var(--custom-border)",
+              borderTopLeftRadius: "var(--custom-border-radius)",
+              borderBottomLeftRadius: "var(--custom-border-radius)",
+            },
+            "& > *:last-of-type": {
+              borderTopRightRadius: "var(--custom-border-radius)",
+              borderBottomRightRadius: "var(--custom-border-radius)",
+            },
+          }}
           px={{ xs: 0.75, md: 1.125 }}
           py={1.125}
           mx={{ xs: 0, md: 3 }}
@@ -215,40 +233,28 @@ const ItemList = () => {
           )}
           <IconButton
             size="small"
-            onClick={onPay}
+            // onClick={onPay}
+            sx={{
+              color: "#1A1A1A",
+            }}
             tooltip={companyT(
               selectedList.length ? "employees.pay" : "employees.isNeedSelect",
             )}
-            sx={{
-              backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-              color: "text.primary",
-              p: { xs: "4px!important", md: 1 },
-              "&:hover svg": {
-                color: "common.white",
-              },
-            }}
-            variant="contained"
             disabled={!selectedList.length}
           >
-            <CardSendIcon fontSize="small" />
+            <EditUnderlineIcon fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
             onClick={onDelete}
+            sx={{
+              color: "#FF4141",
+            }}
             tooltip={
               selectedList.length
                 ? commonT("delete")
                 : companyT("employees.isNeedSelect")
             }
-            sx={{
-              backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-              color: "text.primary",
-              p: { xs: "4px!important", md: 1 },
-              "&:hover svg": {
-                color: "common.white",
-              },
-            }}
-            variant="contained"
             disabled={!selectedList.length}
           >
             <TrashIcon fontSize="small" />
@@ -307,7 +313,7 @@ const ItemList = () => {
                             content: companyT("employees.pay"),
                             onClick: onActionToItem(DataAction.OTHER, item),
                             icon: (
-                              <CardSendIcon
+                              <EditUnderlineIcon
                                 sx={{ color: "grey.400" }}
                                 fontSize="medium"
                               />
@@ -342,7 +348,7 @@ const ItemList = () => {
         />
       )}
       {action === DataAction.UPDATE && (
-        <Form
+        <EmployeeCompanyForm
           open
           onClose={onResetAction}
           type={DataAction.UPDATE}

@@ -11,6 +11,8 @@ import { BaseQueries } from "constant/types";
 import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import StringFormat from "string-format";
 import { getPositions, getProjectTypes } from "store/global/actions";
+import data from "@emoji-mart/data";
+import { ClientCompany } from "components/sn-client-companies/type";
 
 export enum CompanyStatus {
   REJECT,
@@ -48,6 +50,20 @@ export type CompanyData = {
   phone?: string;
   tax_code?: string;
   avatar?: string | File;
+};
+
+export type GetClientConpanyListQueries = BaseQueries & {
+  name?: string;
+  email?: string;
+  position?: string;
+  created_by?: string;
+  searchType?: "and" | "or" | "eq";
+};
+
+export type GetClientConpanyOptionListQueries = BaseQueries & {
+  name?: string;
+  email?: string;
+  searchType?: "and" | "or" | "eq";
 };
 
 export const getEmployees = createAsyncThunk(
@@ -320,6 +336,7 @@ export const updateMyCompany = createAsyncThunk(
     try {
       const state = getState();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const myCompany = (state as any).company.myItem;
 
       const response = await client.put(Endpoint.COMPANIES, data, {
@@ -358,6 +375,181 @@ export const getCostHistory = createAsyncThunk(
 
       if (response?.status === HttpStatusCode.OK) {
         return refactorRawItemListResponse(response.data);
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getClientCompanies = createAsyncThunk(
+  "company/getClientCompanies",
+  async (queries: GetClientConpanyListQueries & { concat?: boolean }) => {
+    queries = serverQueries(
+      { ...queries, sort: "created_time=-1" },
+      ["email", "name"],
+      undefined,
+      ["status"],
+    ) as GetClientConpanyListQueries;
+
+    try {
+      const response = await client.get(Endpoint.CLIENT_COMPANIES, queries, {
+        baseURL: COMPANY_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return refactorRawItemListResponse(response.data);
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getClientCompaniesMemberOptions = createAsyncThunk(
+  "company/getClientCompaniesMemberOptions",
+  async ({
+    concat,
+    ...queries
+  }: GetEmployeeListQueries & { concat?: boolean }) => {
+    queries = serverQueries(
+      { ...queries, sort: "created_time=-1" },
+      ["email", "fullname"],
+      undefined,
+      ["status"],
+    ) as GetEmployeeListQueries;
+
+    try {
+      const response = await client.get(Endpoint.USERS, queries, {
+        baseURL: AUTH_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return { ...refactorRawItemListResponse(response.data), concat };
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const createClientCompany = createAsyncThunk(
+  "company/createClientCompany",
+  async (data: ClientCompany) => {
+    try {
+      const response = await client.post(Endpoint.CLIENT_COMPANIES, data, {
+        baseURL: COMPANY_API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.CREATED) {
+        return response.data?.id
+          ? { ...response.data, contact: data?.contact }
+          : response.data?.body;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteClientCompany = createAsyncThunk(
+  "company/deleteClientCompany",
+  async (id: string) => {
+    try {
+      const response = await client.delete(
+        `${Endpoint.CLIENT_COMPANIES}/${id}`,
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return id;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const multipleDeleteClientCompany = createAsyncThunk(
+  "company/multipleDeleteClientCompany",
+  async (ids: string[]) => {
+    try {
+      const response = await client.post(
+        `${Endpoint.CLIENT_COMPANIES_MULTI}`,
+        { ids },
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return ids;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getClientCompanyDetails = createAsyncThunk(
+  "company/getClientCompany",
+  async (id: string) => {
+    try {
+      const response = await client.get(
+        `${Endpoint.CLIENT_COMPANIES}/${id}`,
+        {},
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+      if (response?.status === HttpStatusCode.OK) {
+        const { data } = response;
+        return data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateClientCompany = createAsyncThunk(
+  "company/updateClientCompany",
+  async (data: ClientCompany) => {
+    const contact = data.contact;
+    const body: ClientCompany = {
+      ...data,
+      contact: {
+        name: contact?.name,
+        avatar: contact?.avatar,
+        address: contact?.address,
+        email: contact?.email,
+        phone: contact?.phone,
+        position: contact?.position,
+        website: contact?.website,
+      },
+    };
+    try {
+      const response = await client.put(
+        `${Endpoint.CLIENT_COMPANIES}/${data?.id}`,
+        body,
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data?.id
+          ? { ...response.data, contact: data?.contact }
+          : response.data?.body;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {

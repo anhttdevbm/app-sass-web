@@ -1,0 +1,194 @@
+"use client";
+import { useCallback, useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import DialogContent from "@mui/material/DialogContent";
+import Stack from "@mui/material/Stack";
+
+import { DataStatus } from "constant/enums";
+import {
+  NewButton as Button,
+  NewInput as Input,
+  Text,
+} from "components/shared";
+import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
+import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import useToggle from "hooks/useToggle";
+import { useFormik } from "hooks/useFormik";
+import HolidayCalendarCard from "./HolidayCalendarCard";
+
+const HolidayCalendar = () => {
+  const [shouldFetch, , setShouldFetchOff] = useToggle(true);
+  const {
+    holidayCalendars,
+    status,
+    handleGetAllHolidayCalendar,
+    handleAddHolidayCalendar,
+    handleGetAllHolidayList,
+    handleAddHolidayList,
+  } = useHolidayCalendar();
+
+  const [isModalOpen, openModal, closeModal] = useToggle(false);
+  const [modalHolidayCalendarId, setModalHolidayCalendarId] = useState("");
+
+  const onSubmit = useCallback(
+    (v: typeof initialValues) => {
+      try {
+        handleAddHolidayList({
+          holiday_calendar_id: modalHolidayCalendarId,
+          items: [],
+          year: +v.year,
+        });
+        setModalHolidayCalendarId("");
+        closeModal();
+      } catch {}
+    },
+    [
+      handleAddHolidayList,
+      modalHolidayCalendarId,
+      closeModal,
+      setModalHolidayCalendarId,
+    ],
+  );
+
+  const {
+    values,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    isSubmitDisabled,
+    resetForm,
+  } = useFormik({
+    initialValues,
+    onSubmit,
+    enableReinitialize: true,
+  });
+
+  const handleOpenModal = useCallback(
+    (id: string) => {
+      setModalHolidayCalendarId(id);
+      resetForm();
+      openModal();
+    },
+    [setModalHolidayCalendarId, resetForm, openModal],
+  );
+
+  const onModalClose = useCallback(() => {
+    setModalHolidayCalendarId("");
+    closeModal();
+  }, [closeModal, setModalHolidayCalendarId]);
+
+  useEffect(() => {
+    if (status !== DataStatus.LOADING && shouldFetch) {
+      (async () => {
+        await handleGetAllHolidayCalendar();
+        await handleGetAllHolidayList();
+      })();
+      setShouldFetchOff();
+    }
+  }, [
+    status,
+    handleGetAllHolidayCalendar,
+    handleGetAllHolidayList,
+    shouldFetch,
+    setShouldFetchOff,
+  ]);
+
+  return (
+    <Stack
+      direction="column"
+      bgcolor="#F7F7FD"
+      sx={{
+        pt: 2,
+        pr: 10,
+        pl: 4,
+        pb: 8,
+        overflowX: "hidden",
+      }}
+    >
+      <Box
+        component="button"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flex: "0 0 112px",
+          mt: 2,
+          border: "1px dashed #14B9E6",
+          backgroundColor: "white",
+          borderRadius: "24px",
+          cursor: "pointer",
+        }}
+        onClick={async () => {
+          await handleAddHolidayCalendar({
+            name: "Holidays in Viet Nam",
+            country: "Viet Nam",
+            province: "",
+          });
+        }}
+      >
+        <AddCircleGradientIcon />
+        <Text color="#0575E6" fontWeight={700} ml={2}>
+          Add new holiday calendar
+        </Text>
+      </Box>
+
+      {holidayCalendars.map((calendar) => (
+        <HolidayCalendarCard
+          key={calendar.id}
+          holidayCalendar={calendar}
+          handleOpenModal={handleOpenModal}
+        />
+      ))}
+
+      <DefaultPopupLayout
+        open={isModalOpen}
+        title="Add Holiday List"
+        onClose={onModalClose}
+        sx={{ maxWidth: 450, borderRadius: 6 }}
+      >
+        <DialogContent>
+          <Box onSubmit={handleSubmit} component="form" noValidate px={4}>
+            <Input
+              title="Year"
+              fullWidth
+              name="year"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.year}
+              // error={commonT(touchedErrors?.cost_per_month, {
+              //   name: costRateT("empty.form.costPerMonth"),
+              // })}
+            />
+            <Stack
+              direction={{
+                xs: "column",
+                sm: "row",
+              }}
+              justifyContent="center"
+              py={3}
+              spacing={3}
+            >
+              <Button variant="secondaryOutlined" onClick={onModalClose}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={isSubmitDisabled}
+              >
+                Confirm
+              </Button>
+            </Stack>
+          </Box>
+        </DialogContent>
+      </DefaultPopupLayout>
+    </Stack>
+  );
+};
+
+export default HolidayCalendar;
+
+const initialValues = {
+  year: "",
+};

@@ -16,9 +16,11 @@ export type LayoutDictionary = {
     task: string;
     company: string;
     employees: string;
+    holidayCalendar: string;
     costHistory: string;
     listOfPositions: string;
     projectTypeList: string;
+    clientCompanies: string;
     companyInformation: string;
     manager: string;
     companyList: string;
@@ -40,5 +42,13 @@ export type LayoutDictionary = {
     career:string;
     careerList:string;
     billing:string;
+    //content
+    contents: string;
+    landingHome: string;
+    landingAboutUs: string;
+    landingHelpCenter: string;
+    landingTrustCenter: string;
+    landingAI: string;
+    landingPricing: string;
   };
 };

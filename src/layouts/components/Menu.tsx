@@ -13,6 +13,7 @@ import {
   POSITIONS_PATH,
   PROJECTS_PATH,
   PROJECT_TYPES_PATH,
+  CLIENT_COMPANIES_PATH,
   STATEMENT_HISTORY_PATH,
   TIME_TRACKING_PATH,
   RESOURCE_PLANING_PATH,
@@ -25,6 +26,13 @@ import {
   CAREER_PATH,
   BUDGETING_PATH,
   BILLING_PATH,
+  LANDING_HOME_PATH,
+  LANDING_ABOUT_US_PATH,
+  LANDING_HELP_CENTER_PATH,
+  LANDING_TRUST_CENTER_PATH,
+  LANDING_AI_PATH,
+  LANDING_PRICING_PATH,
+  HOLIDAY_CALENDAR_PATH
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
@@ -44,6 +52,7 @@ import CardReceive from "icons/CardReceive";
 import MenuDocsIcon from "icons/MenuDocsIcon";
 import FeedbackIcon from "icons/FeedbackIcon";
 import MenuBlogIcon from "icons/MenuBlogIcon";
+import HomeOutlinedIcon from "icons/HomeOutlinedIcon";
 import CareerIcon from "icons/CareerIcon";
 import DocsItem from "icons/DocsItem";
 import BillingIcon from "icons/BillingIcon";
@@ -235,8 +244,18 @@ const DATA: MenuItemProps[] = [
         roles: [Permission.AM],
       },
       {
+        label: "menu.clientCompanies",
+        href: CLIENT_COMPANIES_PATH,
+        roles: [Permission.AM],
+      },
+      {
         label: "menu.companyInformation",
         href: MY_COMPANY_PATH,
+        roles: [Permission.AM],
+      },
+      {
+        label: "menu.holidayCalendar",
+        href: HOLIDAY_CALENDAR_PATH,
         roles: [Permission.AM],
       },
     ],
@@ -332,6 +351,44 @@ const DATA: MenuItemProps[] = [
     label: "menu.career",
     icon: <CareerIcon />,
     href: CAREER_PATH,
+    roles: [Permission.SA],
+  },
+  // Contents
+  {
+    label: "menu.contents",
+    icon: <HomeOutlinedIcon />,
+    subs: [
+      {
+        label: "menu.landingHome",
+        roles: [Permission.SA],
+        href: LANDING_HOME_PATH,
+      },
+      {
+        label: "menu.landingAboutUs",
+        roles: [Permission.SA],
+        href: LANDING_ABOUT_US_PATH,
+      },
+      {
+        label: "menu.landingHelpCenter",
+        roles: [Permission.SA],
+        href: LANDING_HELP_CENTER_PATH,
+      },
+      {
+        label: "menu.landingTrustCenter",
+        roles: [Permission.SA],
+        href: LANDING_TRUST_CENTER_PATH,
+      },
+      {
+        label: "menu.landingAI",
+        roles: [Permission.SA],
+        href: LANDING_AI_PATH,
+      },
+      {
+        label: "menu.landingPricing",
+        roles: [Permission.SA],
+        href: LANDING_PRICING_PATH,
+      },
+    ],
     roles: [Permission.SA],
   },
 ];

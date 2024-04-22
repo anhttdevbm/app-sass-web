@@ -37,11 +37,22 @@ const initalPage = {
   isRefetchPage: false,
   pageSizeDefault: 10,
 };
+
+export const initPaging = {
+  current: 1,
+  next: null,
+  prev: null,
+  count: 0,
+};
 const initialState: ChatState = {
   convention: [],
   mediaListConversation: [],
   conversationStatus: DataStatus.IDLE,
   conversationPaging: { ...initalPage, textSearch: "" },
+  conversationPagingV2: {
+    ...initPaging,
+  },
+  isSearchConversation: false,
   roomId: "",
   conversationInfo: null,
   currStep: STEP.CONVENTION,
@@ -160,6 +171,19 @@ const chatSlice = createSlice({
     },
     setConversationInfo: (state, action) => {
       state.conversationInfo = action.payload;
+    },
+    setConversation: (state, action) => {
+      if (state.conversationPagingV2.current === 1) {
+        state.convention = action.payload;
+      } else {
+        state.convention = [...state.convention, ...action.payload];
+      }
+    },
+    setConversationPaging: (state, action) => {
+      state.conversationPagingV2 = action.payload;
+    },
+    setIsSearchConversation: (state, action) => {
+      state.isSearchConversation = action.payload;
     },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
@@ -565,6 +589,9 @@ export const {
   setRoomId,
   setMessage,
   setConversationInfo,
+  setConversation,
+  setConversationPaging,
+  setIsSearchConversation,
   setTypeList,
   setDataTransfer,
   setStateSendMessage,

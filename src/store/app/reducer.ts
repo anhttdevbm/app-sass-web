@@ -13,6 +13,7 @@ import {
   REFRESH_TOKEN_STORAGE_KEY,
 } from "constant/index";
 import { User } from "constant/types";
+import { StaticImageData } from "next/image";
 
 export interface Snackbar {
   message: string;
@@ -42,6 +43,7 @@ export type HeaderConfig = {
   searchPlaceholder?: string;
   endpoint?: string;
   key?: string;
+  imageUrl?: string | StaticImageData;
 };
 
 export enum SignupStep {

@@ -65,8 +65,18 @@ export const Endpoint = {
   TAGS: "/tags",
   TAGS_ALL: "/tags/all",
   TAGS_DETAIL: "/tags/{id}",
+  CLIENT_COMPANIES: "/clients",
+  CLIENT_COMPANIES_MULTI: "/clients/multi-id",
 
+  COST_RATE: "/cost-rate",
+  COST_RATE_DETAIL: "/cost-rate/detail/{id}",
+  COST_RATE_NEW: "/cost-rate/new",
   COST_HISTORY: "/cost-history",
+
+  HOLIDAY_CALENDAR: "/cost-rate/holiday-calendar",
+  HOLIDAY_CALENDAR_DETAIL: "/cost-rate/holiday-calendar/{id}",
+  HOLIDAY_LIST: "/cost-rate/holiday-list",
+  HOLIDAY_LIST_DETAIL: "/cost-rate/holiday-list/{id}",
 
   BUDGET_ALL: "/budgets/all",
   BUDGET_CREATE: "/budgets",
@@ -136,7 +146,10 @@ export const Endpoint = {
   //carrer
   CAREER: "/job-post",
   UPADATECAREER: "/job-post/{id}",
-  DETAIL_CAREER: "/post/{id}",
+  DETAIL_CAREER: "/job-post/{slug}",
+  UPDATE_STATUS_CAREER: "/job-post/{id}/status/{status}",
+  GET_APPLICANTS_CAREER: "/job-post/{slug}/applicants",
+  RESPONDAPPLICANT: "/job-post/response-applicant",
 
   //Billing
   BILLING: "/bill",
@@ -157,4 +170,32 @@ export const Endpoint = {
   DETAIL_BUDGET: "/budgets/budget-by-id/{id}",
   CREATE_SERVICE_BUDGET: "/budgets/service",
   SERVICE_BY_BUDGET: "/budgets/service/{id}",
+
+  //Content
+  CONTENT_HOME_BANNER: "/content/home/banner",
+  CONTENT_HOME_EXPLORE: "/content/home/explore-how-we",
+  CONTENT_HOME_POWER: "/content/home/powerful-agent",
+
+  CONTENT_ABOUT_US_BANNER: "/content/about-us/banners",
+  CONTENT_ABOUT_US_QUESTIONS: "/content/about-us/questions",
+  CONTENT_ABOUT_US_MISSIONS: "/content/about-us/missions",
+  CONTENT_ABOUT_US_MOST_VIEW_ARTICLES: "/content/about-us/most-viewed-articles",
+  CONTENT_ABOUT_US_ALL_START_TEAM: "/content/about-us/all-star-team",
+  CONTENT_ABOUT_US_ONE_START_TEAM: "/content/about-us/all-star-team/{id}",
+
+  CONTENT_HELP_CENTER_BANNER: "/content/help-center/banner",
+  CONTENT_HELP_CENTER_USAGE_TIPS: "/content/help-center/usage-tips",
+
+  CONTENT_TRUST_CENTER_BANNER: "/content/trust-center/banner",
+  CONTENT_TRUST_CENTER_BUILDING_TRUST: "/content/trust-center/building-trust",
+
+  CONTENT_AI_BANNER: "content/AI/banner",
+  CONTENT_AI_BRANDS: "content/AI/brands",
+  CONTENT_AI_PRODUCTIVITY: "content/AI/productivity",
+  CONTENT_AI_PROMOTE: "content/AI/promote-your-operation",
+
+  CONTENT_PRICING_BANNER: "content/pricing/banner",
+  CONTENT_PRICING_BANNER2: "content/pricing/banner2",
+  CONTENT_PRICING_UNLOCK: "content/pricing/unlock-unbeatable-value",
+  CONTENT_PRICING_PARTNERS: "content/pricing/partners",
 };

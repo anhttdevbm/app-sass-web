@@ -273,7 +273,6 @@ export const useTasksOfProject = () => {
 
   const onGetTasksOfProject = useCallback(
     async (id: string, queries: GetTasksOfProjectQueries) => {
-      console.log(id, queries);
       await dispatch(
         getTasksOfProject({ ...queries, project: id, prefixKey: "tasks" }),
       );

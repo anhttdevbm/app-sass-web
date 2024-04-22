@@ -639,3 +639,50 @@ export const updateTagBill = createAsyncThunk(
     }
   },
 );
+
+export const updateClientBill = createAsyncThunk(
+  "Billing/updateClientBill",
+  async ({ id, clientId }: { id?: string; clientId?: string }) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.CHANGE_BILL, { id }),
+        { client: clientId },
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      return response.data;
+
+      // throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const setShowEditClient = createAsyncThunk(
+  "Billing/setShowEditClient",
+  async (value: boolean) => {
+    return value;
+  },
+);
+
+export const getBillingClientDetail = createAsyncThunk(
+  "Billing/getBillingClientDetail",
+  async ({ id }: { id: string }) => {
+    try {
+      const response = await client.get(
+        StringFormat(Endpoint.CHANGE_BILL, { id }),
+        {},
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);

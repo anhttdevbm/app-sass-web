@@ -98,7 +98,7 @@ const TabItem = (props: TabItemProps) => {
 
   return (
     <Link
-      href={getPath(href, undefined, { id: params.id as string })}
+      href={getPath(href, undefined, { slug: params.slug as string })}
       underline="none"
       sx={{
         minWidth: 120,

@@ -4,18 +4,15 @@ import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
 import NewGroupIcon from "icons/NewGroupIcon";
 import SearchIcon from "icons/SearchIcon";
-import { debounce } from "utils/index";
 import { useChat } from "store/chat/selectors";
 import { useRef } from "react";
+import { useChatHelpers } from "store/chat/helpers";
 
 const SearchBar = ({ onFilterConversation }) => {
   const { mobileMode } = useGetScreenMode();
-
   const { onSetDrawerType } = useChat();
   const { isDarkMode } = useTheme();
-  const debounceSearchText = debounce((text: string) => {
-    onFilterConversation("text", text);
-  }, 1000);
+  const { searchConversation } = useChatHelpers();
 
   const inputRef = useRef<any>(null);
 
@@ -73,7 +70,7 @@ const SearchBar = ({ onFilterConversation }) => {
                 padding: "0px !important",
               },
             }}
-            onChange={(e) => debounceSearchText(e.target.value)}
+            onChange={(e) => searchConversation(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -90,7 +87,7 @@ const SearchBar = ({ onFilterConversation }) => {
             justifyContent: "center",
             backgroundColor: isDarkMode ? "#3a3b3c" : "white",
             marginLeft: "10px",
-            borderRadius: 2, 
+            borderRadius: 2,
           }}
           onClick={() => onSetDrawerType("group-modal")}
         >

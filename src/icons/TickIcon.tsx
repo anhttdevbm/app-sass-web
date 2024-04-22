@@ -18,6 +18,7 @@ const TickIcon = (props: SvgIconProps) => {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
+        fill="none"
       />
     </SvgIcon>
   );

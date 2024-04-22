@@ -1,22 +1,22 @@
 "use client";
-
 import { memo, useMemo, useEffect, useRef, useState } from "react";
-import { FormControl, InputLabel, Select, Stack } from "@mui/material";
-import { Button, Text } from "components/shared";
-import PlusIcon from "icons/PlusIcon";
-import { Clear, Dropdown, Refresh, Search } from "components/Filters";
-import { TEXT_STATUS } from "./helpers";
-import { getPath } from "utils/index";
+import Stack from "@mui/material/Stack";
 import { usePathname, useRouter } from "next-intl/client";
-import useToggle from "hooks/useToggle";
-import { DataAction, PayStatus } from "constant/enums";
-import Form from "./Form";
-import { useEmployees } from "store/company/selectors";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { GetEmployeeListQueries } from "store/company/actions";
-import { usePositionOptions } from "store/global/selectors";
-import { NS_COMPANY, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
+
+import { NS_COMPANY, NS_COMMON } from "constant/index";
+import { DataAction, EmployeeType, PayStatus } from "constant/enums";
+import { NewButton as Button, Text } from "components/shared";
+import { Dropdown, Search } from "components/NewFilters";
+import { TEXT_STATUS } from "./helpers";
+import useToggle from "hooks/useToggle";
+import { getPath } from "utils/index";
+import { useEmployees } from "store/company/selectors";
+import { usePositionOptions } from "store/global/selectors";
+import AddCircleIcon from "icons/AddCircleIcon";
+import EmployeeCompanyForm from "./EmployeeCompanyForm";
+import EmployeeTypeForm from "./EmployeeTypeForm";
 
 const Actions = () => {
   const {
@@ -38,6 +38,8 @@ const Actions = () => {
   } = useEmployees();
 
   const [isShow, onShow, onHide] = useToggle();
+  const [formStage, setFormStage] = useState<1 | 2>(1);
+  const [employeeTypeToAdd, setEmployeeTypeToAdd] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
 
   const pathname = usePathname();
   const { push } = useRouter();
@@ -99,11 +101,12 @@ const Actions = () => {
   return (
     <>
       <Stack
-        direction={{ xs: "column", md: "row" }}
+        direction="column"
         alignItems={{ md: "center" }}
         justifyContent="space-between"
         spacing={{ xs: 1, md: 3 }}
         px={{ xs: 0, md: 3 }}
+        pt={2}
       >
         <Stack
           direction="row"
@@ -112,13 +115,11 @@ const Actions = () => {
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Text variant="h4" display={{ md: "none" }}>
-            {companyT("employees.title")}
-          </Text>
+          <Text variant="h4">{companyT("employees.title")}</Text>
           <Button
             onClick={onShow}
-            startIcon={<PlusIcon />}
-            size="extraSmall"
+            startIcon={<AddCircleIcon />}
+            size="small"
             variant="primary"
             sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
           >
@@ -128,14 +129,13 @@ const Actions = () => {
 
         <Stack
           direction="row"
-          alignItems="center"
           spacing={3}
           py={{ xs: 1.25, md: 0.5, lg: 1.25 }}
           px={{ md: 1, lg: 2 }}
           borderRadius={1}
           width={{ xs: "100%", md: undefined }}
-          justifyContent={{ xs: "flex-start", md: "flex-end" }}
-          maxWidth={{ xs: "100%", md: "fit-content" }}
+          justifyContent="flex-start"
+          alignItems="center"
           overflow="auto"
           minWidth={{ md: "fit-content" }}
         >
@@ -144,10 +144,13 @@ const Actions = () => {
             name={"email"}
             onChange={onChangeQueries}
             value={queries["email"]}
-            sx={{ width: 300, minWidth: 200 }}
+            sx={{
+              width: 300,
+              minWidth: 200,
+            }}
             onKeyDown={(e) => {
-              if(e.key === 'Enter') {
-                onSearch()
+              if (e.key === "Enter") {
+                onSearch();
               }
             }}
           />
@@ -167,16 +170,7 @@ const Actions = () => {
             onChange={onChangeQueries}
             value={Number(queries?.status)}
           />
-          <Button
-            size="extraSmall"
-            sx={{
-              display: { xs: "none", md: "flex" },
-              height: 32,
-              px: ({ spacing }) => `${spacing(2)}!important`,
-            }}
-            onClick={onSearch}
-            variant="secondary"
-          >
+          <Button size="small" onClick={onSearch} variant="secondaryOutlined">
             {commonT("search")}
           </Button>
           {/* <Stack direction="row" alignItems="center" spacing={3}>
@@ -196,15 +190,76 @@ const Actions = () => {
           {commonT("search")}
         </Button>
       </Stack>
-      {isShow && (
-        <Form
-          open={isShow}
-          onClose={onHide}
-          type={DataAction.CREATE}
-          initialValues={INITIAL_VALUES}
-          onSubmit={onCreateEmployee}
-        />
-      )}
+
+      {
+        // 3 level nested condition, so if-else statements in IFFE instead of chained ternary operator
+        (() => {
+          if (isShow) {
+            if (formStage === 2) {
+              switch (employeeTypeToAdd) {
+                case EmployeeType.EMPLOYEE:
+                  return (
+                    <EmployeeCompanyForm
+                      open={isShow}
+                      onClose={() => {
+                        onHide();
+                        setFormStage(1);
+                      }}
+                      type={DataAction.CREATE}
+                      initialValues={INITIAL_VALUES}
+                      onSubmit={onCreateEmployee}
+                    />
+                  );
+                case EmployeeType.CLIENT:
+                  return (
+                    <EmployeeCompanyForm
+                      open={isShow}
+                      onClose={() => {
+                        onHide();
+                        setFormStage(1);
+                      }}
+                      type={DataAction.CREATE}
+                      initialValues={INITIAL_VALUES}
+                      onSubmit={onCreateEmployee}
+                    />
+                  );
+                case EmployeeType.CONTRACTOR:
+                  return (
+                    <EmployeeCompanyForm
+                      open={isShow}
+                      onClose={() => {
+                        onHide();
+                        setFormStage(1);
+                      }}
+                      type={DataAction.CREATE}
+                      initialValues={INITIAL_VALUES}
+                      onSubmit={onCreateEmployee}
+                    />
+                  );
+              }
+            } else {
+              return (
+                <EmployeeTypeForm
+                  open={isShow && formStage === 1}
+                  onClose={() => {
+                    onHide();
+                    setFormStage(1);
+                  }}
+                  onSubmit={(type: EmployeeType) => {
+                    setEmployeeTypeToAdd(type);
+                    setFormStage(2);
+                  }}
+                  options={[
+                    { label: "Employee", value: EmployeeType.EMPLOYEE },
+                    { label: "Client", value: EmployeeType.CLIENT },
+                    { label: "Contractor", value: EmployeeType.CONTRACTOR },
+                  ]}
+                />
+              );
+            }
+          }
+        })()
+      }
     </>
   );
 };

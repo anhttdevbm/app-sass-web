@@ -22,6 +22,7 @@ interface UserLandingProps {
   displayUserInfo: boolean;
   onPrevious: () => void;
 }
+
 const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   const { conversationInfo, onSetStateSearchMessage, onSearchChatText } =
     useChat();
@@ -29,7 +30,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
 
   const { onAddSnackbar } = useSnackbar();
   const t = useTranslations(NS_COMMON);
-  const { avatar, name } = conversationInfo || {};
+  const { avatar, name, peer_detail } = conversationInfo || {};
   const [stateSearch, setStateSearch] = useState<{
     isSearch: boolean;
     isToggle?: boolean;
@@ -88,7 +89,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
         <Box overflow="auto" maxHeight="calc(600px - 65px)">
           <MessageListSearch
             text={stateSearch.text}
-            type="d"
+            type="p"
             onSelectMessage={handleSelectMessage}
           />
         </Box>
@@ -98,7 +99,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
         <Box textAlign="center" pt={2} pb={4} overflow="auto">
           <Avatar
             alt="Avatar"
-            src={avatar || undefined}
+            src={avatar?.link || peer_detail?.avatar || undefined}
             size={120}
             style={{
               borderRadius: "50%",
@@ -171,7 +172,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
     >
       <>
         <ProfileHeader
-          name={name || ""}
+          name={name || peer_detail?.fullname || ""}
           onPrevious={onPrevious}
           textSearch={stateSearch.text}
           isSearch={stateSearch.isSearch}
