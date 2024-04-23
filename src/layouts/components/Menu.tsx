@@ -18,6 +18,7 @@ import {
   TIME_TRACKING_PATH,
   RESOURCE_PLANING_PATH,
   CHATTING_ROOM_PATH,
+  AI_CHAT_PATH,
   SALES_LIST_PATH,
   DOCS_PATH,
   FEEDBACK_PATH,
@@ -58,6 +59,7 @@ import DocsItem from "icons/DocsItem";
 import BillingIcon from "icons/BillingIcon";
 import WalletMoneyIcon from "icons/WalletMoneyIcon";
 import BudgetIcon from "icons/BudgetIcon";
+import AIChatIcon from "icons/AIChatIcon";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -308,6 +310,12 @@ const DATA: MenuItemProps[] = [
     label: "menu.chat",
     href: CHATTING_ROOM_PATH,
     icon: <MenuChatIcon />,
+    roles: [Permission.AM, Permission.ST],
+  },
+  {
+    label: "menu.aiChat",
+    href: AI_CHAT_PATH,
+    icon: <AIChatIcon />,
     roles: [Permission.AM, Permission.ST],
   },
   {

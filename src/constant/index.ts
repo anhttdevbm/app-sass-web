@@ -29,6 +29,8 @@ export const BILLING_API_URL = process.env.BILLING_API_URL as string;
 //Content
 export const CONTENT_API_URL = process.env.CONTENT_API_URL as string;
 
+export const AI_CHAT_API_URL = process.env.AI_CHAT_API_URL as string;
+
 export const DARK_THEME_MEDIA_SYSTEM = "(prefers-color-scheme: dark)";
 export const DOCS_API_URL = process.env.DOCS_API_URL as string;
 export const DATE_FORMAT_FORM = "yyyy-MM-dd";
@@ -114,6 +116,7 @@ export const NS_TIME_TRACKING = "timeTracking";
 export const NS_RESOURCE_PLANNING = "resourcePlanning";
 export const NS_CHAT = "chat";
 export const NS_CHAT_BOX = "chatbox";
+export const NS_AI_CHAT = "aiChat";
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
 
