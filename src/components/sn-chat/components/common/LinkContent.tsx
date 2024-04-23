@@ -3,50 +3,18 @@ import Typography from "@mui/material/Typography";
 import Link from "components/Link";
 import Media from "components/Media";
 import { DataStatus } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo } from "react";
-import { useSnackbar } from "store/app/selectors";
 import { useChat } from "store/chat/selectors";
 
 const LinkContent = () => {
   const {
     chatLinks,
     chatLinksStatus,
-    conversationInfo,
-    roomId,
-    onGetChatUrls,
   } = useChat();
-  const { onAddSnackbar } = useSnackbar();
   const commonT = useTranslations(NS_COMMON);
 
-  const handleGetUrl = useCallback(async () => {
-    try {
-      await onGetChatUrls({ type: conversationInfo?.t, roomId });
-    } catch (error) {
-      onAddSnackbar(
-        typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-        "error",
-      );
-    }
-  }, [commonT, conversationInfo?.t, onAddSnackbar, onGetChatUrls, roomId]);
-
-  useEffect(() => {
-    handleGetUrl();
-  }, [handleGetUrl]);
-
-  const chatLinkClone = useMemo(() => {
-    return chatLinks?.reduce((result, current) => {
-      const { urls, ...rest } = current;
-      const url = current.urls.map((item) => ({ ...rest, ...item }));
-      return [...result, ...url];
-    }, [] as unknown as { url: string; meta: {}; messageId: string; ts: string }[]);
-  }, [chatLinks]);
-
-  if (
-    chatLinksStatus === DataStatus.LOADING ||
-    chatLinksStatus === DataStatus.FAILED
-  ) {
+  if (chatLinksStatus !== DataStatus.SUCCEEDED) {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 
@@ -60,8 +28,8 @@ const LinkContent = () => {
         paddingRight: "0.3rem",
       }}
     >
-      {chatLinkClone?.length > 0 ? (
-        chatLinkClone.map((item, index) => {
+      {chatLinks?.length ? (
+        chatLinks.map((item, index) => {
           return (
             <Box
               key={index}

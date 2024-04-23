@@ -3,34 +3,34 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   addMembersToDirectMessageGroup,
   createDirectMessageGroup,
+  deleteConversation,
+  fetchGroupMembers,
   getAllConvention,
+  getChatAttachments,
   getLatestMessages,
+  getUnreadMessages,
   getUserInfoById,
   leftDirectMessageGroup,
-  fetchGroupMembers,
-  getChatAttachments,
-  deleteConversation,
-  sendMessages,
   searchChatText,
-  getUnreadMessages,
+  sendMessages,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import {
   ChatGroup,
   ChatState,
+  MediaPreviewItem,
   MessageInfo,
   MessageSearchInfo,
-  UnReadMessageInfo,
+  SetParamConversationProps,
   STEP,
   TYPE_LIST,
+  UnReadMessageInfo,
   UserInfo,
-  MediaPreviewItem,
-  IChatInfo,
-  SetParamConversationProps,
 } from "./type";
 import { getChatRoomFile, getChatUrls } from "./media/actionMedia";
-import { ChatLinkType, MediaResponse, MediaType } from "./media/typeMedia";
+import { MediaResponse, MediaType } from "./media/typeMedia";
 import dayjs from "dayjs";
+
 const initalPage = {
   pageIndex: 0,
   pageSize: 10,
@@ -66,6 +66,10 @@ const initialState: ChatState = {
   //chatLinks
   chatLinks: [],
   chatLinksStatus: DataStatus.IDLE,
+  chatFiles: [],
+  chatFilesStatus: DataStatus.IDLE,
+  chatMedias: [],
+  chatMediasStatus: DataStatus.IDLE,
   //ListSearchConversation
   listSearchMessage: [],
   statusListSearchMessage: DataStatus.IDLE,
@@ -194,6 +198,18 @@ const chatSlice = createSlice({
     },
     setMessagePaging: (state, action) => {
       state.messagePagingV2 = action.payload;
+    },
+    setChatLinks: (state, action) => {
+      state.chatLinks = action.payload;
+      state.chatLinksStatus = DataStatus.SUCCEEDED;
+    },
+    setChatMedias: (state, action) => {
+      state.chatMedias = action.payload;
+      state.chatMediasStatus = DataStatus.SUCCEEDED;
+    },
+    setChatFiles: (state, action) => {
+      state.chatFiles = action.payload;
+      state.chatFilesStatus = DataStatus.SUCCEEDED;
     },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
@@ -478,13 +494,13 @@ const chatSlice = createSlice({
       .addCase(getChatUrls.pending, (state) => {
         state.chatLinksStatus = DataStatus.LOADING;
       })
-      .addCase(
+      /*.addCase(
         getChatUrls.fulfilled,
         (state, action: PayloadAction<{ links: ChatLinkType[] }>) => {
           state.chatLinks = action.payload.links;
           state.chatLinksStatus = DataStatus.SUCCEEDED;
         },
-      )
+      )*/
       .addCase(getChatUrls.rejected, (state, action) => {
         state.chatLinksStatus = DataStatus.FAILED;
       })
@@ -604,6 +620,9 @@ export const {
   setIsSearchConversation,
   setMessages,
   setMessagePaging,
+  setChatLinks,
+  setChatMedias,
+  setChatFiles,
   setTypeList,
   setDataTransfer,
   setStateSendMessage,

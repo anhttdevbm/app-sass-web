@@ -60,6 +60,9 @@ export const useWSChat = () => {
     onSetMessagePaging,
     messages,
     onSetMessages,
+    onSetChatLinks,
+    onSetChatMedias,
+    onSetChatFiles,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
@@ -179,6 +182,18 @@ export const useWSChat = () => {
               onSetMessages(
                 sortASCArray(resp?.data?.result, "created_at") || [],
               );
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_LIST_LINK:
+              onSetChatLinks(resp?.data?.result || []);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_LIST_FILE:
+              onSetChatFiles(resp?.data?.result || []);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_LIST_MEDIA:
+              onSetChatMedias(resp?.data?.result || []);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:

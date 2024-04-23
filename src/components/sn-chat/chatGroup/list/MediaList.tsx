@@ -9,7 +9,7 @@ import PlayIcon from "icons/PlayIcon";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
-import { MediaType, TypeMedia } from "store/chat/media/typeMedia";
+import { IChatFile, MediaType, TypeMedia } from "store/chat/media/typeMedia";
 import { useChat } from "store/chat/selectors";
 export interface MediaPreview extends Partial<MediaType> {
   link: string;
@@ -17,12 +17,12 @@ export interface MediaPreview extends Partial<MediaType> {
 }
 export const MediaClone = ({
   src,
-  type,
+  attachment,
   listMedia,
 }: {
   src: string;
-  type: TypeMedia;
-  listMedia: MediaPreview[];
+  attachment: IChatFile;
+  listMedia: IChatFile[];
 }) => {
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
   const [isError, setError] = useState<boolean>(false);
@@ -41,111 +41,100 @@ export const MediaClone = ({
     });
   }, [listMedia]);
 
+  const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];
+
   const switchMedia = useMemo(() => {
-    switch (type) {
-      case "image_url": {
-        return !isError ? (
-          <Media
-            size={92}
-            src={src}
-            loading="lazy"
+    const fileExtension = attachment?.type?.split("/")[1];
+    if (IMAGES_EXTENSION.includes(fileExtension)) {
+      return !isError ? (
+        <Media
+          size={92}
+          src={src}
+          loading="lazy"
+          style={{
+            display: isError ? "none" : "block",
+            width: "100%",
+            objectFit: "cover",
+          }}
+          onError={(e) => {
+            setError(true);
+          }}
+          onClick={() =>
+            setMediaPreview((state) => ({
+              ...state,
+              isPreview: true,
+              src: src,
+              type: 'image_url',
+            }))
+          }
+        />
+      ) : (
+        <Skeleton
+          variant="rounded"
+          style={{
+            width: "100%",
+            height: "92px",
+          }}
+        />
+      );
+    }
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "92px",
+          position: "relative",
+        }}
+      >
+        <PlayIcon
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            cursor: "pointer",
+            color: "common.white",
+            fontSize: 24,
+            zIndex: 1,
+
+            backgroundColor: "#FFFFFF4D",
+            borderRadius: "50px",
+            width: "30px",
+            height: "30px",
+          }}
+          onClick={() =>
+            setMediaPreview((state) => ({
+              ...state,
+              isPreview: true,
+              src: src,
+              type: "video_url",
+            }))
+          }
+        />
+        {!isError ? (
+          <Box
+            component="video"
+            ref={ref}
+            width="100%"
+            height={92}
             style={{
-              display: isError ? "none" : "block",
-              width: "100%",
               objectFit: "cover",
             }}
-            onError={(e) => {
-              setError(true);
-            }}
-            onClick={() =>
-              setMediaPreview((state) => ({
-                ...state,
-                isPreview: true,
-                src: src,
-                type: type,
-              }))
-            }
-          />
+          >
+            <source src={src} onError={() => setError(true)} />
+          </Box>
         ) : (
           <Skeleton
             variant="rounded"
             style={{
-              width: "100%",
+              width: "92px",
               height: "92px",
             }}
           />
-        );
-      }
-      case "video_url": {
-        return (
-          <Box
-            sx={{
-              width: "100%",
-              height: "92px",
-              position: "relative",
-            }}
-          >
-            <PlayIcon
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                cursor: "pointer",
-                color: "common.white",
-                fontSize: 24,
-                zIndex: 1,
-
-                backgroundColor: "#FFFFFF4D",
-                borderRadius: "50px",
-                width: "30px",
-                height: "30px",
-              }}
-              onClick={() =>
-                setMediaPreview((state) => ({
-                  ...state,
-                  isPreview: true,
-                  src: src,
-                  type: "video_url",
-                }))
-              }
-            />
-            {!isError ? (
-              <Box
-                component="video"
-                ref={ref}
-                width="100%"
-                height={92}
-                style={{
-                  objectFit: "cover",
-                }}
-              >
-                <source src={src} onError={() => setError(true)} />
-              </Box>
-            ) : (
-              <Skeleton
-                variant="rounded"
-                style={{
-                  width: "92px",
-                  height: "92px",
-                }}
-              />
-            )}
-          </Box>
-        );
-      }
-      default:
-        return (
-          <Skeleton
-            variant="rounded"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        );
-    }
-  }, [isError, src, type]);
+        )}
+      </Box>
+    );
+  }, [isError, src]);
 
   return (
     <>
@@ -168,27 +157,8 @@ export const MediaClone = ({
 };
 
 const MediaList = () => {
-  const { mediaList, mediaListStatus, onGetChatAttachments, dataTransfer } = useChat();
-  const { onAddSnackbar } = useSnackbar();
+  const { chatMedias, chatMediasStatus, mediaList, mediaListStatus, onGetChatAttachments, dataTransfer } = useChat();
   const commonT = useTranslations(NS_COMMON);
-
-  useEffect(() => {
-    const handleGetAttachment = async () => {
-      try {
-        await onGetChatAttachments({ 
-          fileType: "media" ,
-          roomId: dataTransfer?._id,
-      roomType: "p",
-      });
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    };
-    handleGetAttachment();
-  }, [onAddSnackbar, onGetChatAttachments, commonT]);
 
   const mediaClone = useMemo(() => {
     const acceptType = ACCEPT_MEDIA.map((item) => item.split("/")?.[1]);
@@ -212,13 +182,12 @@ const MediaList = () => {
       });
   }, [mediaList]);
   if (
-    mediaListStatus === DataStatus.LOADING ||
-    mediaListStatus === DataStatus.FAILED
+    chatMediasStatus !== DataStatus.SUCCEEDED
   ) {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 
-  return mediaClone?.length > 0 ? (
+  return chatMedias?.length > 0 ? (
     <Box
       sx={{
         display: "grid",
@@ -231,12 +200,12 @@ const MediaList = () => {
         maxHeight: "100%",
       }}
     >
-      {mediaClone?.map((item, index) => (
+      {chatMedias?.map((item, index) => (
         <MediaClone
           key={index}
           src={item.url}
-          type={item.type}
-          listMedia={mediaClone as unknown as MediaPreview[]}
+          attachment={item}
+          listMedia={chatMedias}
         />
       ))}
     </Box>

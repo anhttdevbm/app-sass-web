@@ -50,7 +50,6 @@ const ChatDetailGroup = (props) => {
     onChangeGroupRole,
     onRemoveGroupMember,
     onDeleteConversationGroup,
-    onGetAllConvention,
   } = useChat();
   const { user } = useAuth();
   //check owner
@@ -280,12 +279,7 @@ const ChatDetailGroup = (props) => {
       return;
     }
     onAddSnackbar(commonT("success"), "success");
-    onGetAllConvention({
-      type: "a",
-      text: "",
-      offset: 0,
-      count: 10,
-    });
+    // TODO: get list conversation again
     onSetStep(STEP.CONVENTION);
   };
 

@@ -233,8 +233,7 @@ const MediaContent = () => {
   }, [mediaList]);
 
   if (
-    mediaListStatus === DataStatus.LOADING ||
-    mediaListStatus === DataStatus.FAILED
+    mediaListStatus !== DataStatus.SUCCEEDED
   ) {
     return <Typography textAlign="center">Loading...</Typography>;
   }

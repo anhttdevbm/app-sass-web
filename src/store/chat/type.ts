@@ -2,8 +2,8 @@
 import { DataStatus } from "constant/enums";
 import { Paging } from "constant/types";
 import {
-  Attachment,
-  ChatLinkType,
+  Attachment, IChatFile,
+  IChatLinkV2,
   MediaType,
   TypeMedia,
 } from "./media/typeMedia";
@@ -241,8 +241,14 @@ export interface ChatState {
   partnerInfo: UserInfo | null;
   partnerInfoStatus: DataStatus;
   //chat links
-  chatLinks: ChatLinkType[];
+  chatLinks: IChatLinkV2[];
   chatLinksStatus: DataStatus;
+  // chat medias
+  chatMedias: IChatFile[];
+  chatMediasStatus: DataStatus;
+  // chat medias
+  chatFiles: IChatFile[];
+  chatFilesStatus: DataStatus;
   //ListSearchConversation
   listSearchMessage: MessageSearchInfo[];
   statusListSearchMessage: DataStatus;
