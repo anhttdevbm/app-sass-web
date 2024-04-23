@@ -67,13 +67,17 @@ const EmployeeDetailMain = () => {
                     xs: 5,
                     sm: "initial",
                   },
+                  justifyContent: {
+                    xs: "center",
+                    sm: "end",
+                  },
+                  "& .MuiTabs-scroller": {
+                    width: "initial",
+                    flex: "0 0 auto",
+                  },
                   "& .MuiTabs-flexContainer": {
                     position: "relative",
                     zIndex: 10,
-                    justifyContent: {
-                      xs: "center",
-                      sm: "end",
-                    },
                   },
                   "& .MuiTabs-indicator": {
                     height: "100%",

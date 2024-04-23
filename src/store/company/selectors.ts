@@ -95,8 +95,14 @@ export const useEmployees = () => {
     [dispatch],
   );
 
+  const clientEmployees = useMemo(
+    () => items.filter((e) => !!e.client_company),
+    [items],
+  );
+
   return {
     items,
+    clientEmployees,
     status,
     error,
     filters,

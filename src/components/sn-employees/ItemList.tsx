@@ -22,7 +22,7 @@ import Pagination from "components/NewPagination";
 import { IconButton, Checkbox } from "components/shared";
 import FixedLayout from "components/FixedLayout";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
-import { DataAction, PayStatus } from "constant/enums";
+import { DataAction, EmployeeType, PayStatus } from "constant/enums";
 import { HEADER_HEIGHT } from "layouts/Header";
 import useQueryParams from "hooks/useQueryParams";
 import useBreakpoint from "hooks/useBreakpoint";
@@ -37,9 +37,10 @@ import EmployeeCompanyForm from "./EmployeeCompanyForm";
 import { MobileContentCell, DesktopCells } from "./components";
 import DeleteConfirm from "./components/DeleteConfirm";
 
-const ItemList = () => {
+const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
   const {
     items,
+    clientEmployees,
     isFetching,
     isIdle,
     error,
@@ -64,20 +65,26 @@ const ItemList = () => {
   const [selectedList, setSelectedList] = useState<Employee[]>([]);
   const [action, setAction] = useState<DataAction | undefined>();
 
+  const employees = useMemo(
+    () => { console.log(items); console.log(clientEmployees); return employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees },
+    [employeeType, items, clientEmployees],
+  );
+
   const isCheckedAll = useMemo(
-    () => Boolean(selectedList.length && selectedList.length === items.length),
-    [selectedList.length, items.length],
+    () =>
+      Boolean(selectedList.length && selectedList.length === employees.length),
+    [selectedList.length, employees.length],
   );
   const onChangeAll = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const isChecked = event.target.checked;
       if (isChecked) {
-        setSelectedList(items);
+        setSelectedList(employees);
       } else {
         setSelectedList([]);
       }
     },
-    [items],
+    [employees],
   );
 
   const desktopHeaderList: CellProps[] = useMemo(
@@ -86,7 +93,11 @@ const ItemList = () => {
       { value: "Email", width: "15.5%", align: "left" },
       { value: commonT("position"), width: "12.5%", align: "left" },
       { value: commonT("creationDate"), width: "12.5%", align: "left" },
-      { value: companyT("employees.expirationDate"), width: "13.5%", align: "left" },
+      {
+        value: companyT("employees.expirationDate"),
+        width: "13.5%",
+        align: "left",
+      },
       { value: commonT("status"), width: "12.5%" },
     ],
     [commonT, companyT],
@@ -274,7 +285,7 @@ const ItemList = () => {
           }}
           sx={{ bgcolor: { xs: "grey.50", md: "transparent" } }}
         >
-          {items.map((item) => {
+          {employees.map((item) => {
             const indexSelected = selectedList.findIndex(
               (selected) => selected.id === item.id,
             );

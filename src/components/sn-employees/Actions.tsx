@@ -1,5 +1,5 @@
 "use client";
-import { memo, useMemo, useEffect, useRef, useState } from "react";
+import { memo, useMemo, useEffect, useState, ReactNode } from "react";
 import Stack from "@mui/material/Stack";
 import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -20,7 +20,7 @@ import EmployeeCompanyForm from "./EmployeeCompanyForm";
 import EmployeeClientForm from "./EmployeeClientForm";
 import EmployeeTypeForm from "./EmployeeTypeForm";
 
-const Actions = () => {
+const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
   const {
     options,
     onGetOptions,
@@ -120,7 +120,7 @@ const Actions = () => {
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Text variant="h4">{companyT("employees.title")}</Text>
+          {tabSwitcher}
           <Button
             onClick={onShow}
             startIcon={<AddCircleIcon />}
