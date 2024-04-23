@@ -143,6 +143,19 @@ export interface MessageInfo {
   md?: unknown[];
 }
 
+export interface MessageInfoV2 {
+  id: string;
+  type: string;
+  content: string;
+  files: any[];
+  links: [];
+  sender: string;
+  forwarded_from: string;
+  created_at: string;
+  update_at: string;
+  room: string;
+}
+
 export interface UserOnlinePage {
   active: boolean;
   name: string;
@@ -194,6 +207,13 @@ export interface MediaPreviewItem {
   type: TypeMedia;
 }
 
+interface PagingV2 {
+  current: number;
+  prev: number | null;
+  next: number | null;
+  count: number;
+}
+
 export interface ChatState {
   convention: IChatItemInfo[];
   mediaListConversation: MediaPreviewItem[];
@@ -203,12 +223,7 @@ export interface ChatState {
     isReloadPageCurrent?: boolean;
     textSearch: string;
   };
-  conversationPagingV2: {
-    current: number;
-    prev: number | null;
-    next: number | null;
-    count: number;
-  };
+  conversationPagingV2: PagingV2;
   isSearchConversation: boolean;
   conversationInfo: IChatItemInfo | null;
   roomId: string;
@@ -220,6 +235,8 @@ export interface ChatState {
   messageInfo: MessageInfo[];
   messageStatus: DataStatus;
   messagePaging: Paging & { isRefetchPage?: boolean; pageSizeDefault: number };
+  messages: MessageInfoV2[];
+  messagePagingV2: PagingV2;
   //partner info
   partnerInfo: UserInfo | null;
   partnerInfoStatus: DataStatus;
@@ -530,6 +547,12 @@ export const CHAT_EVENT_TYPE = {
 export const CHAT_ROOM_TYPE = {
   GROUP: "g",
   PERSONAL: "p",
+};
+
+export const MESSAGE_TYPE = {
+  TEXT: "text",
+  MEDIA: "media",
+  FILE: "file",
 };
 
 export interface IWsChatRespMessage {

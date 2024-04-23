@@ -3,29 +3,29 @@ import Avatar from "components/Avatar";
 import Forward from "icons/Forward";
 import { useState } from "react";
 import { useChat } from "store/chat/selectors";
-import { MessageInfo, STEP } from "store/chat/type";
+import { MessageInfoV2, STEP } from "store/chat/type";
 import "../../../Editor/style.css";
 import useTheme from "hooks/useTheme";
 import ForwardSmall from "icons/ForwardSmall";
 
 interface MessageLayoutProps {
-  sessionId: string;
-  message: MessageInfo;
+  sessionId: string | undefined;
+  message: MessageInfoV2;
   children: React.ReactNode;
   avatarPartner: string | undefined;
   hasNextMessageFromSameUser: boolean;
   messageProps: BoxProps;
   callBackForward?: () => void;
 }
+
 const MessageLayout = ({
   sessionId,
   message,
   children,
-  avatarPartner,
   hasNextMessageFromSameUser,
   messageProps,
 }: MessageLayoutProps) => {
-  const isCurrentUser = message.u.username === sessionId;
+  const isCurrentUser = message?.sender === sessionId;
   const { sx, ...props } = messageProps || {};
   const [isForward, setIsForward] = useState(true);
   const {
@@ -36,6 +36,9 @@ const MessageLayout = ({
     onSetDrawerType,
   } = useChat();
   const { isDarkMode } = useTheme();
+  const avatarPartner = dataTransfer?.members?.find(
+    (mem) => mem?.id === message?.sender,
+  );
 
   return (
     <>
@@ -92,7 +95,7 @@ const MessageLayout = ({
           </>
         )}
         {/* Message content */}
-        {message?.alias ? (
+        {message?.forwarded_from ? (
           <Box order={"2"}>
             <Box
               sx={{
@@ -103,7 +106,7 @@ const MessageLayout = ({
               }}
             >
               <ForwardSmall />
-              {message?.alias}
+              {message?.forwarded_from}
             </Box>
             {children}
           </Box>
@@ -123,7 +126,7 @@ const MessageLayout = ({
               <Avatar
                 alt="Avatar"
                 size={30}
-                src={avatarPartner}
+                src={avatarPartner?.avatar}
                 style={{
                   // borderRadius: "10px",
                   visibility: hasNextMessageFromSameUser ? "hidden" : "visible",

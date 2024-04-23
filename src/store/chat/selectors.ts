@@ -77,6 +77,8 @@ import {
   setConversation,
   setConversationPaging,
   setIsSearchConversation,
+  setMessagePaging,
+  setMessages,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -98,7 +100,8 @@ export const useChat = () => {
     isSearchConversation,
     messagePaging,
     conversationStatus,
-
+    messages,
+    messagePagingV2,
     currStep,
     prevStep,
     partnerInfo,
@@ -730,6 +733,14 @@ export const useChat = () => {
     return dispatch(setIsSearchConversation(searchFlg));
   }
 
+  const onSetMessages = (messages) => {
+    return dispatch(setMessages(messages));
+  }
+
+  const onSetMessagePaging = (newPaging) => {
+    return dispatch(setMessagePaging(newPaging));
+  }
+
   return {
     convention,
     onSetConvention,
@@ -739,6 +750,10 @@ export const useChat = () => {
     onSetConversationPaging,
     isSearchConversation,
     onSetIsSearchConversation,
+    messages,
+    onSetMessages,
+    messagePagingV2,
+    onSetMessagePaging,
     messagePaging,
     messageInfo,
     messageStatus,

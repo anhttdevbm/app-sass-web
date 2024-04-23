@@ -1,6 +1,11 @@
 import Box from "@mui/material/Box";
 import Typography, { TypographyProps } from "@mui/material/Typography";
-import { MediaPreviewItem, MessageInfo, UnreadUserInfo } from "store/chat/type";
+import {
+  MediaPreviewItem,
+  MESSAGE_TYPE,
+  MessageInfoV2,
+  UnreadUserInfo,
+} from "store/chat/type";
 import { formatDate } from "utils/index";
 import Linkify from "linkify-react";
 import linkifyHtml from "linkify-html";
@@ -60,7 +65,7 @@ export const TimeMessage = ({
   );
 };
 interface MessageContentProps {
-  message: MessageInfo;
+  message: MessageInfoV2;
   mediaListPreview: MediaPreviewItem[];
   isCurrentUser: boolean;
   isGroup: boolean;
@@ -79,7 +84,7 @@ const MessageContent = ({
   const isUnReadCheck = unReadMessage.some((item) => item.unreadCount === 0);
   const { isDarkMode } = useTheme();
   const isReadMessage = useMemo(() => {
-    const timeMessage = new Date(message.ts);
+    const timeMessage = new Date(message.created_at);
     if (isGroup) {
       return isUnReadCheck;
     } else {
@@ -88,18 +93,18 @@ const MessageContent = ({
         ? timeMessage.getTime() < timeRead.getTime()
         : false;
     }
-  }, [isGroup, isUnReadCheck, message.ts, unReadMessage]);
+  }, [isGroup, isUnReadCheck, message.created_at, unReadMessage]);
 
   useEffect(() => {
-    if (message.msg && textRef.current) {
-      textRef.current.innerHTML = linkifyHtml(message.msg, {
+    if (message.content && textRef.current) {
+      textRef.current.innerHTML = linkifyHtml(message.content, {
         target: "_blank",
       });
     }
   }, [message]);
 
   const renderBackgroundColor = useMemo(() => {
-    if (listSearchMessage.map((item) => item.messageId).includes(message._id)) {
+    if (listSearchMessage.map((item) => item.messageId).includes(message.id)) {
       return isDarkMode ? "#333333" : "#EBF5FF";
     }
     if (isCurrentUser) {
@@ -107,17 +112,17 @@ const MessageContent = ({
       return "#EBF5FF";
     }
     return isDarkMode ? "#3a3b3c" : "#F7F7FD";
-  }, [isCurrentUser, isDarkMode, listSearchMessage, message._id]);
+  }, [isCurrentUser, isDarkMode, listSearchMessage, message.id]);
 
   const renderBorderColor = useMemo(() => {
     const findMessage = listSearchMessage[selectSearchIndex];
     if (!findMessage) return "#F7F7FD";
-    if (findMessage?.messageId.includes(message._id)) {
+    if (findMessage?.messageId.includes(message.id)) {
       return isDarkMode ? "#F7F7FD" : "#3699FF";
     }
-  }, [isDarkMode, listSearchMessage, message._id, selectSearchIndex]);
+  }, [isDarkMode, listSearchMessage, message.id, selectSearchIndex]);
 
-  if (message.msg) {
+  if (message?.type === MESSAGE_TYPE.TEXT) {
     return (
       <Box
         sx={{
@@ -168,11 +173,14 @@ const MessageContent = ({
         <TimeMessage
           isCurrentUser={isCurrentUser}
           isRead={isReadMessage}
-          time={message.ts}
+          time={message.created_at}
         />
       </Box>
     );
-  } else if (message.attachments?.length > 0) {
+  } else if (
+    message?.type === MESSAGE_TYPE.FILE ||
+    message?.type === MESSAGE_TYPE.MEDIA
+  ) {
     return (
       <Box
         sx={{

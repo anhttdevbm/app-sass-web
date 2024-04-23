@@ -8,8 +8,10 @@ interface ChatInputProps {
   isLoading: boolean;
   initalMessage?: string;
   files?: File[];
+  medias?: File[];
   onEnterMessage: (message: string) => void;
   onChangeFiles?: (file: File[]) => void;
+  onChangeMedias?: (file: File[]) => void;
   onResize?: (num?: number) => void;
   wrapperInputSx?: any;
 }
@@ -17,8 +19,10 @@ const ChatInput = ({
   isLoading,
   initalMessage,
   files,
+  medias,
   onEnterMessage,
   onChangeFiles,
+  onChangeMedias,
   onResize,
   wrapperInputSx,
 }: ChatInputProps) => {
@@ -60,8 +64,10 @@ const ChatInput = ({
           isLoading={isLoading}
           initalValue={initalMessage}
           files={files}
+          medias={medias}
           onEnterText={onEnterMessage}
           onChangeFiles={onChangeFiles}
+          onChangeMedias={onChangeMedias}
         />
       </Box>
     </Box>

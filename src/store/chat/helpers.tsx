@@ -1,13 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "./selectors";
-import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage, STEP, } from "./type";
+import {
+  CHAT_EVENT_TYPE,
+  CHAT_ROOM_TYPE,
+  IWsChatRespMessage,
+  STEP,
+} from "./type";
 import { clientStorage } from "utils/storage";
-import { ACCESS_TOKEN_STORAGE_KEY, AN_ERROR_TRY_AGAIN, NS_COMMON, } from "constant/index";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AN_ERROR_TRY_AGAIN,
+  NS_COMMON,
+} from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
-import { initPaging } from "store/chat/reducer";
+import { initPagingV2 } from "store/chat/reducer";
 
 const PAGE_INITIAL = 1;
 
@@ -19,9 +28,24 @@ export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
   return groupCreatorId === userId;
 };
 
+const sortASCArray = (list: any[], sortBy: string) => {
+  if (list && list.length) {
+    if (sortBy === "created_at") {
+      return [...list]?.sort((a, b) => {
+        return (
+          new Date(a?.[sortBy])?.valueOf() - new Date(b?.[sortBy])?.valueOf()
+        );
+      });
+    }
+    return list;
+  }
+  return [];
+};
+
 export const useWSChat = () => {
   const { user } = useAuth();
   const {
+    roomId,
     convention,
     onSetConvention,
     onSetRoomId,
@@ -32,6 +56,10 @@ export const useWSChat = () => {
     onSetStateSearchMessage,
     onResetSearchChatText,
     onSetStep,
+    messagePagingV2,
+    onSetMessagePaging,
+    messages,
+    onSetMessages,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
@@ -48,7 +76,7 @@ export const useWSChat = () => {
 
   // Connect message websocket
   const connectMessage = useCallback(
-    (ws: WebSocket | null) => {
+    async (ws: WebSocket | null) => {
       if (ws) {
         ws.onmessage = async (event) => {
           const resp: IWsChatRespMessage = JSON.parse(event.data);
@@ -56,9 +84,11 @@ export const useWSChat = () => {
 
           switch (resp.event) {
             case CHAT_EVENT_TYPE.ROOM_LIST:
-              const { data } = resp;
-              onSetConversationPaging({ current: data?.prev + 1, ...data });
-              onSetConvention(data?.result || []);
+              onSetConversationPaging({
+                current: resp?.data?.prev + 1,
+                ...resp?.data,
+              });
+              onSetConvention(resp?.data?.result || []);
               break;
 
             case CHAT_EVENT_TYPE.GROUP_SEARCH:
@@ -84,7 +114,7 @@ export const useWSChat = () => {
                 onSetDataTransfer(room);
                 onSetConversationInfo(room);
               }
-              if (convention.find(item => item?.id === room?.id)) return;
+              if (convention.find((item) => item?.id === room?.id)) return;
               return onSetConvention([room, ...convention]);
 
             case CHAT_EVENT_TYPE.PERSONAL_ROOM:
@@ -113,28 +143,63 @@ export const useWSChat = () => {
               } else {
                 onSetStep(STEP.CHAT_ONE, roomDetail);
               }
+              sendMessage({
+                event: CHAT_EVENT_TYPE.MESSAGE_LIST,
+                roomId: roomDetail?.id,
+                page: PAGE_INITIAL,
+              });
               return;
 
             case CHAT_EVENT_TYPE.GROUP_UPDATE_NAME:
-              const newRoom = resp?.data;
-              onSetDataTransfer(newRoom);
-              onSetConversationInfo(newRoom);
+              onSetDataTransfer(resp?.data);
+              onSetConversationInfo(resp?.data);
               return;
 
             case CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR:
-              const roomData = {
+              const newRoom = {
                 ...resp?.data,
                 avatar: resp?.data?.avatar,
                 members: dataTransfer?.members,
               };
-              onSetDataTransfer({ ...dataTransfer, ...roomData });
-              const newConversations: any = convention?.map((item) => {
-                if (item.id === roomData?.id) {
-                  return { ...item, ...roomData };
+              onSetDataTransfer({ ...dataTransfer, ...newRoom });
+              const newConversations = convention?.map((item) => {
+                if (item.id === newRoom?.id) {
+                  return { ...item, ...newRoom };
                 }
                 return item;
               });
               onSetConvention(newConversations);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_LIST:
+              onSetMessagePaging({
+                current: resp?.data?.prev + 1,
+                ...resp?.data,
+              });
+              onSetMessages(
+                sortASCArray(resp?.data?.result, "created_at") || [],
+              );
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
+              const newMsg = resp?.data?.message;
+              if (newMsg?.room !== roomId) return;
+              if (messages.find((item) => item?.id === newMsg?.id)) return;
+              onSetMessages([...messages, newMsg]);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
+              const newMsgFile = resp?.data?.message;
+              if (newMsgFile?.room !== roomId) return;
+              if (messages.find((item) => item?.id === newMsgFile?.id)) return;
+              onSetMessages([...messages, newMsgFile]);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
+              const newMsgMedia = resp?.data?.message;
+              if (newMsgMedia?.room !== roomId) return;
+              if (messages.find((item) => item?.id === newMsgMedia?.id)) return;
+              onSetMessages([...messages, newMsgMedia]);
               return;
 
             case "error":
@@ -207,7 +272,7 @@ const TIME_DEBOUNCE_SEARCH = 1000; //ms
 export const useChatHelpers = () => {
   const { user } = useAuth();
   const { sendMessage } = useWSChat();
-  const { onSetConversationPaging, onSetIsSearchConversation } = useChat();
+  const { roomId, onSetConversationPaging, onSetIsSearchConversation } = useChat();
   const { onGetEmployees } = useEmployeesOfCompany();
 
   const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;
@@ -215,6 +280,14 @@ export const useChatHelpers = () => {
   const loadMoreConversation = (currentPage: number) => {
     sendMessage({
       event: CHAT_EVENT_TYPE.ROOM_LIST,
+      page: currentPage + 1,
+    });
+  };
+
+  const loadMoreMessages = (currentPage: number) => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.MESSAGE_LIST,
+      roomId: roomId,
       page: currentPage + 1,
     });
   };
@@ -229,7 +302,7 @@ export const useChatHelpers = () => {
         username: text,
       };
       onGetEmployees(user?.company || "", newQueries).then(() => {
-        onSetConversationPaging(initPaging);
+        onSetConversationPaging(initPagingV2);
         sendMessage({
           event: CHAT_EVENT_TYPE.GROUP_SEARCH,
           roomName: text,
@@ -250,5 +323,6 @@ export const useChatHelpers = () => {
     isGroup,
     searchConversation,
     loadMoreConversation,
+    loadMoreMessages,
   };
 };

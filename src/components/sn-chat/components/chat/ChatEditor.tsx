@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, InputBase, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import {
   ChangeEvent,
   useCallback,
@@ -10,26 +10,17 @@ import {
   useState,
 } from "react";
 import "react-quill/dist/quill.snow.css";
-import {
-  ACCEPT_MEDIA,
-  FILE_ACCEPT,
-  NS_CHAT_BOX,
-  NS_COMMON,
-} from "constant/index";
+import { ACCEPT_MEDIA, FILE_ACCEPT, NS_CHAT_BOX } from "constant/index";
 import AttachmentPreview from "components/AttachmentPreview";
 import "quill/dist/quill.snow.css";
 import ImageImportIcon from "icons/ImageImportIcon";
 import UploadFileIcon from "icons/UploadFileIcon";
 import ChatEmoji, { Emoji } from "./ChatEmoji";
 import hljs from "highlight.js";
-import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import type ReactQuill from "react-quill";
 import { useChat } from "store/chat/selectors";
 import { useTranslations } from "next-intl";
-import useTheme from "hooks/useTheme";
-import SendMesIcon from "icons/SendMesIcon";
-import { Input } from "components/shared";
 
 const QuillNoSSRWrapper = dynamic(
   async () => {
@@ -88,10 +79,12 @@ export type EditorProps = {
   hasAttachment?: boolean;
   children?: React.ReactNode;
   files?: File[];
+  medias?: File[];
   noCss?: boolean;
   isLoading: boolean;
   initalValue: string | undefined;
   onChangeFiles?: (files: File[]) => void;
+  onChangeMedias?: (files: File[]) => void;
   onEnterText?: (text: string) => void;
 };
 
@@ -99,17 +92,17 @@ const ChatEditor = (props: EditorProps) => {
   const {
     hasAttachment,
     onChangeFiles,
+    onChangeMedias,
     onEnterText,
     children,
     files = [],
+    medias = [],
     noCss,
     initalValue,
     isLoading,
   } = props;
-  const { onGetUnReadMessages, dataTransfer } = useChat();
+  const { dataTransfer } = useChat();
   const commonChatBox = useTranslations(NS_CHAT_BOX);
-
-  const { isDarkMode } = useTheme();
 
   const quillRef = useRef<ReactQuill>(null);
   const inputMediaRef = useRef<HTMLInputElement | null>(null);
@@ -119,6 +112,11 @@ const ChatEditor = (props: EditorProps) => {
     () => files.map((file) => URL.createObjectURL(file)),
     [files],
   );
+  const urlMedias = useMemo(
+    () => medias.map((med) => URL.createObjectURL(med)),
+    [medias],
+  );
+
   const toolbarAttachment = useMemo(
     () => ({
       container: [
@@ -146,6 +144,30 @@ const ChatEditor = (props: EditorProps) => {
 
   const quillEditor = quillRef.current?.getEditor();
 
+  const onChangeMedia = useCallback(
+    (event: ChangeEvent<HTMLInputElement>, type: string[]) => {
+      console.info(event.target.files);
+      if (!event.target.files?.length) return;
+      let newMedias = Array.from(event.target.files);
+
+      newMedias = newMedias.reduce(
+        (out: File[], file) => {
+          if (type?.includes(file.type)) {
+            out.push(file);
+          }
+          return out;
+        },
+        [...medias],
+      );
+      onChangeMedias && onChangeMedias(newMedias);
+      if (inputMediaRef.current) {
+        inputMediaRef.current.value = "";
+      }
+      quillEditor?.focus();
+    },
+    [medias, onChangeMedias, quillEditor],
+  );
+
   const onChangeFile = useCallback(
     (event: ChangeEvent<HTMLInputElement>, type: string[]) => {
       if (!event.target.files?.length) return;
@@ -161,8 +183,8 @@ const ChatEditor = (props: EditorProps) => {
         [...files],
       );
       onChangeFiles && onChangeFiles(newFiles);
-      if (inputMediaRef.current) {
-        inputMediaRef.current.value = "";
+      if (inputFileRef.current) {
+        inputFileRef.current.value = "";
       }
       quillEditor?.focus();
     },
@@ -170,14 +192,18 @@ const ChatEditor = (props: EditorProps) => {
   );
 
   const onRemove = useCallback(
-    (index: number) => {
+    (list, index: number, type: string) => {
       return () => {
-        const newFiles = [...files];
-        newFiles.splice(index, 1);
-        onChangeFiles && onChangeFiles(newFiles);
+        const newList = [...list];
+        newList.splice(index, 1);
+        if (type === "file") {
+          onChangeFiles && onChangeFiles(newList);
+        } else {
+          onChangeMedias && onChangeMedias(newList);
+        }
       };
     },
-    [files, onChangeFiles],
+    [files, medias, onChangeFiles, onChangeMedias],
   );
 
   const handleMessage = useCallback(() => {
@@ -206,14 +232,9 @@ const ChatEditor = (props: EditorProps) => {
     setValue("");
   }, [onEnterText, quillEditor]);
 
-  const getUnReadMessage = useCallback(async () => {
-    // TODO:
-  }, [dataTransfer?.t, onGetUnReadMessages]);
-
   const handleKeyDown = useCallback(
     (event) => {
       if (event.key === "Enter" && !event.shiftKey) {
-        getUnReadMessage();
         handleMessage();
       }
     },
@@ -410,7 +431,7 @@ const ChatEditor = (props: EditorProps) => {
         flexWrap="nowrap"
         overflow="auto"
         p={noCss ? 0 : 1}
-        display={urlFiles?.length > 0 ? "flex" : "none"}
+        display={urlFiles?.length || urlMedias.length ? "flex" : "none"}
         sx={
           noCss
             ? {}
@@ -427,7 +448,15 @@ const ChatEditor = (props: EditorProps) => {
             key={attachment}
             src={attachment}
             name={files[index].name}
-            onRemove={onRemove(index)}
+            onRemove={onRemove(files, index, "file")}
+          />
+        ))}
+        {urlMedias.map((attachment, index) => (
+          <AttachmentPreview
+            key={attachment}
+            src={attachment}
+            name={medias[index].name}
+            onRemove={onRemove(medias, index, "media")}
           />
         ))}
       </Stack>
@@ -438,13 +467,13 @@ const ChatEditor = (props: EditorProps) => {
         accept={ACCEPT_MEDIA.join(",")}
         display="none"
         ref={inputMediaRef}
-        onChange={(e) => onChangeFile(e, ACCEPT_ALL)}
+        onChange={(e) => onChangeMedia(e, ACCEPT_MEDIA)}
       />
       <Box
         multiple
         component="input"
         type="file"
-        accept={FILE_ACCEPT.join(",")}
+        accept={ACCEPT_ALL.join(",")}
         display="none"
         ref={inputFileRef}
         onChange={(e) => onChangeFile(e, ACCEPT_ALL)}
