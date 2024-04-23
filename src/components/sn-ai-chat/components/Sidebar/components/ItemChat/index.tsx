@@ -3,10 +3,17 @@ import { Box, IconButton, MenuItem } from "@mui/material";
 import { Text } from "components/shared";
 import { PopperMenu } from "components/shared/PopperMenu";
 import { NS_AI_CHAT } from "constant/index";
+import useTheme from "hooks/useTheme";
 import EditUnderlineIconWithGradientIcon from "icons/EditUnderlineWithGradientIcon";
 import TrashFillIcon from "icons/TrashFillIcon";
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
+
+// Define constants for colors
+const PRIMARY_MAIN = "primary.main";
+const PRIMARY_LIGHT = "primary.light";
+const GREY_900 = "grey.900";
+const INFOR_DARK = "info.dark";
 
 interface ItemChatProps {
   title: string;
@@ -15,42 +22,59 @@ interface ItemChatProps {
   setSelectedChat: () => void;
 }
 
-const ItemChat = ({ title, id, selectedChat, setSelectedChat }: ItemChatProps) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+const ItemChat = ({
+  title,
+  id,
+  selectedChat,
+  setSelectedChat,
+}: ItemChatProps) => {
+  const [menuAnchorElement, setMenuAnchorElement] =
+    useState<null | HTMLElement>(null);
+
   const t = useTranslations(NS_AI_CHAT);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const { isDarkMode } = useTheme();
+
+  const handleMenuButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     event.stopPropagation();
-    setAnchorEl(event.currentTarget);
+    setMenuAnchorElement(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const closeMenu = () => {
+    setMenuAnchorElement(null);
   };
 
-  const onOptionClick = (
+  const handleMenuOptionClick = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
   ) => {
     event.stopPropagation();
-    handleClose();
+    closeMenu();
   };
 
   return (
     <Box
       sx={{
         ...itemSx,
-        backgroundColor: selectedChat === id ? "primary.main" : "primary.light",
+        backgroundColor:
+          selectedChat === id
+            ? PRIMARY_MAIN
+            : isDarkMode
+            ? INFOR_DARK
+            : PRIMARY_LIGHT,
       }}
       onClick={setSelectedChat}
     >
-      <Text fontSize={14} fontWeight={400} color={"grey.900"}>
-        {title}
-      </Text>
-      <IconButton onClick={handleClick}>
+      <Text sx={titleSx}>{title}</Text>
+      <IconButton onClick={handleMenuButtonClick}>
         <MoreHorizIcon />
       </IconButton>
-      <PopperMenu anchorEl={anchorEl} setAnchorEl={setAnchorEl}>
-        <MenuItem sx={menuItemSx} onClick={onOptionClick}>
+      <PopperMenu
+        anchorEl={menuAnchorElement}
+        setAnchorEl={setMenuAnchorElement}
+      >
+        <MenuItem sx={menuItemSx} onClick={handleMenuOptionClick}>
           <EditUnderlineIconWithGradientIcon sx={iconSx} />
           <Text
             sx={{
@@ -61,13 +85,13 @@ const ItemChat = ({ title, id, selectedChat, setSelectedChat }: ItemChatProps) =
               WebkitTextFillColor: "transparent",
             }}
           >
-            {t('sideBar.edit')}
+            {t("sideBar.editChat")}
           </Text>
         </MenuItem>
-        <MenuItem sx={menuItemSx} onClick={onOptionClick}>
+        <MenuItem sx={menuItemSx} onClick={handleMenuOptionClick}>
           <TrashFillIcon fill="#666666" sx={iconSx} />
           <Text sx={textSx} color={"grey.400"}>
-          {t('sideBar.delete')}
+            {t("sideBar.deleteChat")}
           </Text>
         </MenuItem>
       </PopperMenu>
@@ -85,7 +109,7 @@ const itemSx = {
   width: "100%",
   padding: "12px",
   "&:hover": {
-    backgroundColor: "primary.main",
+    backgroundColor: PRIMARY_MAIN,
     color: "white",
   },
   marginBottom: "8px",
@@ -107,4 +131,13 @@ const textSx = {
 
 const iconSx = {
   fontSize: 20,
+};
+
+const titleSx = {
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  fontSize: "14px",
+  fontWeight: "400",
+  color: GREY_900,
 };

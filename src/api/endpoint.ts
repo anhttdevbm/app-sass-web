@@ -203,5 +203,5 @@ export const Endpoint = {
 
   //AI Chat
   AI_CHAT_EXAMPLE_PROMPT: "ai-chat/example-prompt",
-  AI_CHAT_CHAT_SESSION: "ai-chat/chat-session",
+  AI_CHAT_SESSION: "ai-chat/chat-session",
 };

@@ -1,45 +1,92 @@
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { Text } from "components/shared";
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useChatSession } from "store/aiChat/selectors";
+import { ChatSession } from "store/aiChat/type";
 import ItemChat from "../ItemChat";
 
-export interface Chat {
-  id: string;
-  chatname: string;
-  last_question_at: string;
-}
+const ChatList = () => {
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const {
+    chatSessions,
+    onGetChatSessions,
+    isIdle,
+    isFetching,
+    nextPage,
+    status,
+  } = useChatSession();
+  const intersectionObserverRef = useRef<HTMLDivElement>(null);
 
-interface ChatListProps {
-  chats: Chat[];
-}
-
-const ChatList: React.FC<ChatListProps> = ({ chats }) => {
-  const [selectedChat, setSelectedChat] = useState<string | null>(null);
-
-  const groupedChats = chats.reduce((groups, chat) => {
-    const date = new Date(chat.last_question_at).toDateString();
-    if (!groups[date]) {
-      groups[date] = [];
+  useEffect(() => {
+    if (isIdle || isFetching) {
+      onGetChatSessions({});
     }
-    groups[date].push(chat);
-    return groups;
-  }, {});
+  }, []);
+
+  function handleIntersection(entries, observer) {
+    for (const entry of entries) {
+      if (entry.isIntersecting && nextPage) {
+        onGetChatSessions({ pageIndex: nextPage + 1 });
+      }
+    }
+  }
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleIntersection, {
+      threshold: 0.5,
+    });
+    if (intersectionObserverRef.current)
+      observer.observe(intersectionObserverRef.current);
+    return () => {
+      if (intersectionObserverRef.current)
+        observer.unobserve(intersectionObserverRef.current);
+    };
+  }, [intersectionObserverRef, nextPage, onGetChatSessions]);
+
+  const chatSessionsGroupedByDate = groupChatSessionsByDate(chatSessions);
+
+  function groupChatSessionsByDate(chatSessions: ChatSession[]) {
+    return chatSessions.reduce((groups, chat) => {
+      const date = new Date(chat.last_question_at).toLocaleDateString();
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(chat);
+      return groups;
+    }, {});
+  }
 
   return (
     <Box sx={scrollableSx}>
-      {Object.entries(groupedChats).map(([date, chats], index) => {
-        const typedChats = chats as Chat[];
+      {Object.entries(chatSessionsGroupedByDate).map(([date, chats], index) => {
+        const chatsByDate = chats as ChatSession[];
         return (
           <Box key={index}>
             <Text sx={titleSx}>{date}</Text>
-            {typedChats.map((chat, index) => (
+            {chatsByDate.map((chat, index) => (
               <Box key={index} sx={listChatSx}>
-                <ItemChat  key={index} title={chat.chatname} id={chat.id} selectedChat={selectedChat} setSelectedChat={() => setSelectedChat(chat.id)} />
+                <ItemChat
+                  key={index}
+                  title={chat.chatname}
+                  id={chat.id}
+                  selectedChat={selectedChatId}
+                  setSelectedChat={() => setSelectedChatId(chat.id)}
+                />
               </Box>
             ))}
+            <div ref={intersectionObserverRef} style={{ opacity: 0 }}>
+              .
+            </div>
           </Box>
-        )
+        );
       })}
+      {isFetching && (
+        <Box
+          sx={{ display: "flex", justifyContent: "center", padding: "10px" }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
     </Box>
   );
 };
@@ -47,11 +94,11 @@ const ChatList: React.FC<ChatListProps> = ({ chats }) => {
 export default ChatList;
 
 const scrollableSx = {
-  marginTop: '20px',
-  overflowY: 'auto',
-  padding: '0px 8px',
-  width: '100%',
-  height: '100vh'
+  marginTop: "20px",
+  overflowY: "auto",
+  padding: "0px 8px",
+  width: "100%",
+  height: "100vh",
 };
 
 const listChatSx = {

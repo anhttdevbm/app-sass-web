@@ -6,60 +6,67 @@ import SendGradientIcon from "icons/SendGradientIcon";
 import { useTranslations } from "next-intl";
 import React, { memo, useState } from "react";
 
-interface ChatInputProps {
+const BLUE = "#3699FF";
+const DARK_BLUE = "#0575E6";
+const LIGHT_GRAY = "#E3E3E3";
+const GREY = "#E7E7E7";
+
+interface ChatInputProperties {
   isLoading: boolean;
   initialMessage?: string;
   files?: File[];
-  onEnterMessage: (message: string) => void;
-  onChangeFiles?: (file: File[]) => void;
-  onResize?: (num?: number) => void;
-  wrapperInputSx?: any;
+  onMessageSubmit: (message: string) => void;
+  onFileChange?: (file: File[]) => void;
+  onResizeEvent?: (num?: number) => void;
+  wrapperInputStyles?: any;
 }
 
 const ChatInput = ({
   isLoading,
   initialMessage = "",
   files,
-  onEnterMessage,
-  onChangeFiles,
-  onResize,
-  wrapperInputSx,
-}: ChatInputProps) => {
+  onMessageSubmit,
+  onFileChange,
+  onResizeEvent,
+  wrapperInputStyles,
+}: ChatInputProperties) => {
   const [message, setMessage] = useState(initialMessage);
   const [isFocused, setIsFocused] = useState(false);
   const t = useTranslations(NS_AI_CHAT);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      onChangeFiles?.(Array.from(event.target.files));
+  const handleFileInputChange = ({
+    target: { files },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    if (files) {
+      onFileChange?.(Array.from(files));
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleMessageSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onEnterMessage(message);
+    onMessageSubmit(message);
     setMessage("");
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleMessageSubmit}
       sx={{
         width: "100%",
         bottom: "1rem",
-        ...(wrapperInputSx ? { ...wrapperInputSx } : {}),
+        ...wrapperInputStyles,
       }}
     >
-      <Box sx={container}>
+      <Box sx={containerStyles}>
         <TextField
           disabled={isLoading}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={({ target: { value } }) => setMessage(value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              handleSubmit(e);
+              handleMessageSubmit(e);
             }
           }}
           onFocus={() => setIsFocused(true)}
@@ -71,9 +78,9 @@ const ChatInput = ({
           variant="standard"
           InputProps={{ disableUnderline: true }}
         />
-        <IconButton sx={attachFileBth}>
+        <IconButton sx={attachFileButtonStyles}>
           <AttachFileIcon />
-          <input type="file" hidden onChange={handleFileChange} />
+          <input type="file" hidden onChange={handleFileInputChange} />
         </IconButton>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Divider
@@ -83,12 +90,12 @@ const ChatInput = ({
               my: 0,
               mx: 1,
               height: "24px",
-              borderColor: isFocused ? "#3699FF" : undefined,
+              borderColor: isFocused ? BLUE : undefined,
             }}
           />
         </Box>
-        <IconButton type="submit" disabled={isLoading} sx={sendBtnSx}>
-          <SendGradientIcon fill={isFocused ? "#0575E6" : undefined} />
+        <IconButton type="submit" disabled={isLoading} sx={sendButtonStyles}>
+          <SendGradientIcon fill={isFocused ? DARK_BLUE : undefined} />
         </IconButton>
       </Box>
     </Box>
@@ -97,28 +104,28 @@ const ChatInput = ({
 
 export default memo(ChatInput);
 
-const container = {
+const containerStyles = {
   position: "relative",
-  outline: "1px solid #e7e7e7",
+  outline: `1px solid ${GREY}`,
   display: "flex",
   alignItems: "center",
   borderRadius: "4px",
   justifyContent: "space-between",
   padding: "15px 20px",
   "&:focus-within": {
-    outline: "1px solid #3699FF",
+    outline: `1px solid ${BLUE}`,
     "& $divider": {
-      borderColor: "#3699FF",
+      borderColor: `${BLUE}`,
     },
   },
 };
 
-const attachFileBth = {
-  border: "1px solid #E3E3E3",
+const attachFileButtonStyles = {
+  border: `1px solid ${LIGHT_GRAY}`,
   borderRadius: "50%",
   padding: "6px",
 };
 
-const sendBtnSx = {
+const sendButtonStyles = {
   padding: "6px",
 };

@@ -2,28 +2,15 @@
 
 import { Box } from "@mui/material";
 import { NewButton } from "components/shared";
+import { NS_AI_CHAT } from "constant/index";
 import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
 import PlusFillIcon from "icons/PlusFillIcon";
 import TrashFillIcon from "icons/TrashFillIcon";
-import { useMemo } from "react";
-import ChatList, { Chat } from "./components/ChatList";
 import { HEADER_HEIGHT } from "layouts/Header";
-import { NS_AI_CHAT } from "constant/index";
 import { useTranslations } from "next-intl";
-
-const chats: Chat[] = [
-  {
-    id: "6621fa46b7a346dbc7a0a3be",
-    chatname: "How are you?",
-    last_question_at: "2024-04-19T05:00:08.614000Z",
-  },
-  {
-    id: "6621fa02b7a346dbc7a0a3bc",
-    chatname: "bạn là ai",
-    last_question_at: "2024-04-19T04:59:08.992000Z",
-  },
-];
+import { useMemo } from "react";
+import ChatList from "./components/ChatList";
 
 export const Sidebar = () => {
   const { mobileMode } = useGetScreenMode();
@@ -56,7 +43,7 @@ export const Sidebar = () => {
       >
         {t("sideBar.newChat")}
       </NewButton>
-      <ChatList chats={chats} />
+      <ChatList />
       <NewButton startIcon={<TrashFillIcon />} sx={clearAllBtnSx}>
         {t("sideBar.clearConversations")}
       </NewButton>

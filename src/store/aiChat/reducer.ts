@@ -1,17 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { DataStatus } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN } from "constant/index";
-import { getExamplePrompt } from "./actions";
+import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
+import { getChatSessions, getExamplePrompt } from "./actions";
 import { AIChatState } from "./type";
-import { ItemListResponse } from "constant/types";
 
 const initialState: AIChatState = {
-  examplePrompts: [],
-  status: DataStatus.IDLE,
-  error: "",
-  filters: {
-    number_prompt: 6,
-  },
+  chatSessions: [],
+  chatSessionsStatus: DataStatus.IDLE,
+  chatSessionsError: undefined,
+  chatSessionsFilters: {},
+  chatSessionsNextPage: 1,
+
+  examplePrompts: undefined,
+  examplePromptsStatus: DataStatus.IDLE,
+  examplePromptsError: undefined,
+  examplePromptsFilters: { number_prompt: 6 },
 };
 
 const aiChatSlice = createSlice({
@@ -20,17 +23,41 @@ const aiChatSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // get example prompts
       .addCase(getExamplePrompt.pending, (state) => {
-        state.status = DataStatus.LOADING;
+        state.examplePromptsStatus = DataStatus.LOADING;
       })
       .addCase(getExamplePrompt.fulfilled, (state, { payload }) => {
         const data = payload;
-        state.status = DataStatus.SUCCEEDED;
+        state.examplePromptsStatus = DataStatus.SUCCEEDED;
         state.examplePrompts = data;
       })
       .addCase(getExamplePrompt.rejected, (state, action) => {
-        state.status = DataStatus.FAILED;
-        state.error = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+        state.examplePromptsStatus = DataStatus.FAILED;
+        state.examplePromptsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+
+      // get chat sessions
+      .addCase(getChatSessions.pending, (state) => {
+        state.chatSessionsStatus = DataStatus.LOADING;
+      })
+      .addCase(getChatSessions.fulfilled, (state, { payload }) => {
+        state.chatSessionsStatus = DataStatus.SUCCEEDED;
+        state.chatSessions.push(...payload.results);
+
+        let pageNumber;
+
+        if (payload.next) {
+          const url = new URL(payload.next);
+          const pageNumberString = url.searchParams.get("page");
+          pageNumber = Number(pageNumberString);
+        }
+
+        state.chatSessionsNextPage = pageNumber;
+      })
+      .addCase(getChatSessions.rejected, (state, action) => {
+        state.chatSessionsStatus = DataStatus.FAILED;
+        state.chatSessionsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       });
   },
 });
