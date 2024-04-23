@@ -4,6 +4,7 @@ import { AN_ERROR_TRY_AGAIN } from "constant/index";
 import {
   chatWithAI,
   createChatSession,
+  deleteAllChatSessions,
   deleteChatSession,
   editChatSession,
   getChatSessions,
@@ -19,6 +20,8 @@ const initialState: AIChatState = {
   chatSessionsError: undefined,
   chatSessionsFilters: {},
   chatSessionsNextPage: 1,
+  deleteAllChatSessionsStatus: DataStatus.IDLE,
+  deleteAllChatSessionsError: undefined,
 
   examplePrompts: [],
   examplePromptsStatus: DataStatus.IDLE,
@@ -160,7 +163,10 @@ const aiChatSlice = createSlice({
           pageNumber = Number(pageNumberString);
         }
 
-        state.personaFilters = { ...state.personaFilters, pageIndex: pageNumber };
+        state.personaFilters = {
+          ...state.personaFilters,
+          pageIndex: pageNumber,
+        };
       })
       .addCase(getPersona.rejected, (state, action) => {
         state.personaStatus = DataStatus.FAILED;
@@ -188,6 +194,20 @@ const aiChatSlice = createSlice({
       .addCase(getTone.rejected, (state, action) => {
         state.toneStatus = DataStatus.FAILED;
         state.toneError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+
+      .addCase(deleteAllChatSessions.pending, (state) => {
+        state.deleteAllChatSessionsStatus = DataStatus.LOADING;
+      })
+      .addCase(deleteAllChatSessions.fulfilled, (state) => {
+        state.deleteAllChatSessionsStatus = DataStatus.SUCCEEDED;
+        // Clear the chat sessions data
+        state.chatSessions = [];
+      })
+      .addCase(deleteAllChatSessions.rejected, (state, action) => {
+        state.deleteAllChatSessionsStatus = DataStatus.FAILED;
+        state.deleteAllChatSessionsError =
+          action.error?.message ?? AN_ERROR_TRY_AGAIN;
       });
   },
 });

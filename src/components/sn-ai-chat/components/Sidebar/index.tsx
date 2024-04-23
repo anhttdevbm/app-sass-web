@@ -11,11 +11,17 @@ import { HEADER_HEIGHT } from "layouts/Header";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import ChatList from "./components/ChatList";
+import { useChatSession } from "store/aiChat/selectors";
+import { useAuth } from "store/app/selectors";
 
 export const Sidebar = () => {
   const { mobileMode } = useGetScreenMode();
   const t = useTranslations(NS_AI_CHAT);
   const theme = useTheme();
+
+  const { user } = useAuth();
+
+  const { onDeleteAllChatSessions } = useChatSession();
 
   const styles = useMemo(
     () => ({
@@ -35,6 +41,13 @@ export const Sidebar = () => {
     [mobileMode, theme.palette.mode],
   );
 
+
+  const handleCloseAllChatSession = () => {
+    if (user) {
+      onDeleteAllChatSessions({ userId: user.id });
+    }
+  }
+
   return (
     <Box sx={styles}>
       <NewButton
@@ -44,7 +57,11 @@ export const Sidebar = () => {
         {t("sideBar.newChat")}
       </NewButton>
       <ChatList />
-      <NewButton startIcon={<TrashFillIcon />} sx={clearAllBtnSx}>
+      <NewButton
+        startIcon={<TrashFillIcon />}
+        sx={clearAllBtnSx}
+        onClick={handleCloseAllChatSession}
+      >
         {t("sideBar.clearConversations")}
       </NewButton>
     </Box>

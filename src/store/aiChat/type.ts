@@ -32,6 +32,8 @@ export type AIChatState = {
   chatSessionsError?: string;
   chatSessionsFilters: Omit<GetChatSessionsQueries, "pageIndex" | "pageSize">;
   chatSessionsNextPage: number;
+  deleteAllChatSessionsStatus: DataStatus;
+  deleteAllChatSessionsError: string | undefined;
 
   examplePrompts: ExamplePrompt[];
   examplePromptsStatus: DataStatus;
@@ -73,3 +75,7 @@ export type GetOpenAIChatQueries = BaseQueries & {
 export type GetPersonaQueries = BaseQueries;
 
 export type GetToneQueries = BaseQueries;
+
+export type DeleteAllChatSessionQueries = {
+  userId: string;
+}

@@ -10,7 +10,9 @@ import {
   GetOpenAIChatQueries,
   GetPersonaQueries,
   GetToneQueries,
+  DeleteAllChatSessionQueries,
 } from "./type";
+import { QueriesObserver } from "react-query";
 
 export const getExamplePrompt = createAsyncThunk(
   "aiChat/getExamplePrompt",
@@ -182,6 +184,24 @@ export const getTone = createAsyncThunk(
       });
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteAllChatSessions = createAsyncThunk(
+  "aiChat/deleteAllChatSessions",
+  async (queries: DeleteAllChatSessionQueries) => {
+    try {
+      const response = await client.delete(Endpoint.AI_CHAT_CLOSE_ALL_SESSION, {
+        baseURL: AI_CHAT_API_URL,
+        data: queries,
+      });
+      if (response?.status === 204) {
+        return true;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {

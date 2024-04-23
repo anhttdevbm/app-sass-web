@@ -3,6 +3,7 @@ import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  deleteAllChatSessions,
   deleteChatSession,
   editChatSession,
   getChatSessions,
@@ -12,6 +13,7 @@ import {
 } from "./actions";
 import {
   ChatSessionData,
+  DeleteAllChatSessionQueries,
   GetChatSessionsQueries,
   GetExamplePromptQueries,
   GetPersonaQueries,
@@ -89,6 +91,13 @@ export const useChatSession = () => {
     [dispatch],
   );
 
+  const onDeleteAllChatSessions = useCallback(
+    (queries: DeleteAllChatSessionQueries) => {
+      dispatch(deleteAllChatSessions(queries));
+    },
+    [dispatch],
+  );
+
   return {
     chatSessions,
     status,
@@ -101,6 +110,7 @@ export const useChatSession = () => {
     nextPage,
     onEditChatSession,
     onDeleteChatSession,
+    onDeleteAllChatSessions,
   };
 };
 
