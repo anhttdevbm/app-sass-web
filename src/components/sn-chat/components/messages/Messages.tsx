@@ -27,7 +27,7 @@ import { nameMonthList, NS_CHAT_BOX } from "constant/index";
 import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { useWSChat } from "store/chat/helpers";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface MessagesProps {
   sessionId: string | undefined;
@@ -84,7 +84,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     dataTransfer,
     messagePagingV2: messagePaging,
   } = useChat();
-  const { sendMessage } = useWSChat();
+  const { loadMoreMessages } = useChatHelpers();
 
   const pageRef = useRef(pageIndex);
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -100,13 +100,8 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         scrollHeightRef.current = messagesContentRef.current?.scrollHeight || 0;
         const clientHeight =
           (messagesContentRef.current?.clientHeight || 0) + 50;
-        console.info(messagePaging);
-        if (scrollHeightRef.current > clientHeight && messagePaging.next) {
-          sendMessage({
-            event: CHAT_EVENT_TYPE.MESSAGE_LIST,
-            roomId: dataTransfer?.id,
-            page: messagePaging.current + 1,
-          });
+        if (scrollHeightRef.current > clientHeight && !!messagePaging.next) {
+          loadMoreMessages(messagePaging.current);
         }
       }
     });

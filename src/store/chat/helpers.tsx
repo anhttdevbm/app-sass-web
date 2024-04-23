@@ -76,7 +76,7 @@ export const useWSChat = () => {
 
   // Connect message websocket
   const connectMessage = useCallback(
-    (ws: WebSocket | null) => {
+    async (ws: WebSocket | null) => {
       if (ws) {
         ws.onmessage = async (event) => {
           const resp: IWsChatRespMessage = JSON.parse(event.data);
@@ -272,7 +272,7 @@ const TIME_DEBOUNCE_SEARCH = 1000; //ms
 export const useChatHelpers = () => {
   const { user } = useAuth();
   const { sendMessage } = useWSChat();
-  const { onSetConversationPaging, onSetIsSearchConversation } = useChat();
+  const { roomId, onSetConversationPaging, onSetIsSearchConversation } = useChat();
   const { onGetEmployees } = useEmployeesOfCompany();
 
   const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;
@@ -280,6 +280,14 @@ export const useChatHelpers = () => {
   const loadMoreConversation = (currentPage: number) => {
     sendMessage({
       event: CHAT_EVENT_TYPE.ROOM_LIST,
+      page: currentPage + 1,
+    });
+  };
+
+  const loadMoreMessages = (currentPage: number) => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.MESSAGE_LIST,
+      roomId: roomId,
       page: currentPage + 1,
     });
   };
@@ -315,5 +323,6 @@ export const useChatHelpers = () => {
     isGroup,
     searchConversation,
     loadMoreConversation,
+    loadMoreMessages,
   };
 };
