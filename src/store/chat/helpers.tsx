@@ -1,9 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "./selectors";
-import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, IWsChatRespMessage, STEP, } from "./type";
+import {
+  CHAT_EVENT_TYPE,
+  CHAT_ROOM_TYPE,
+  IWsChatRespMessage,
+  STEP,
+} from "./type";
 import { clientStorage } from "utils/storage";
-import { ACCESS_TOKEN_STORAGE_KEY, AN_ERROR_TRY_AGAIN, NS_COMMON, } from "constant/index";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AN_ERROR_TRY_AGAIN,
+  NS_COMMON,
+} from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
@@ -19,14 +28,19 @@ export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
   return groupCreatorId === userId;
 };
 
-const sortASCArray = (list = [], sortBy: string) => {
-  if (sortBy === 'created_at') {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return list.sort((a, b) => new Date(a?.created_at) - new Date(b?.created_at));
+const sortASCArray = (list: any[], sortBy: string) => {
+  if (list && list.length) {
+    if (sortBy === "created_at") {
+      return [...list]?.sort((a, b) => {
+        return (
+          new Date(a?.[sortBy])?.valueOf() - new Date(b?.[sortBy])?.valueOf()
+        );
+      });
+    }
+    return list;
   }
-  return list;
-}
+  return [];
+};
 
 export const useWSChat = () => {
   const { user } = useAuth();
@@ -42,6 +56,7 @@ export const useWSChat = () => {
     onSetStateSearchMessage,
     onResetSearchChatText,
     onSetStep,
+    messagePagingV2,
     onSetMessagePaging,
     messages,
     onSetMessages,
@@ -69,7 +84,10 @@ export const useWSChat = () => {
 
           switch (resp.event) {
             case CHAT_EVENT_TYPE.ROOM_LIST:
-              onSetConversationPaging({ current: resp?.data?.prev + 1, ...resp?.data });
+              onSetConversationPaging({
+                current: resp?.data?.prev + 1,
+                ...resp?.data,
+              });
               onSetConvention(resp?.data?.result || []);
               break;
 
@@ -96,7 +114,7 @@ export const useWSChat = () => {
                 onSetDataTransfer(room);
                 onSetConversationInfo(room);
               }
-              if (convention.find(item => item?.id === room?.id)) return;
+              if (convention.find((item) => item?.id === room?.id)) return;
               return onSetConvention([room, ...convention]);
 
             case CHAT_EVENT_TYPE.PERSONAL_ROOM:
@@ -128,7 +146,7 @@ export const useWSChat = () => {
               sendMessage({
                 event: CHAT_EVENT_TYPE.MESSAGE_LIST,
                 roomId: roomDetail?.id,
-                page: PAGE_INITIAL
+                page: PAGE_INITIAL,
               });
               return;
 
@@ -154,21 +172,34 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_LIST:
-              onSetMessagePaging({ current: resp?.data?.prev + 1, ...resp?.data });
-              onSetMessages(sortASCArray(resp?.data?.result, 'created_at') || []);
+              onSetMessagePaging({
+                current: resp?.data?.prev + 1,
+                ...resp?.data,
+              });
+              onSetMessages(
+                sortASCArray(resp?.data?.result, "created_at") || [],
+              );
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
               const newMsg = resp?.data?.message;
               if (newMsg?.room !== roomId) return;
-              if (messages.find(item => item?.id === newMsg?.id)) return;
+              if (messages.find((item) => item?.id === newMsg?.id)) return;
               onSetMessages([...messages, newMsg]);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
+              const newMsgFile = resp?.data?.message;
+              if (newMsgFile?.room !== roomId) return;
+              if (messages.find((item) => item?.id === newMsgFile?.id)) return;
+              onSetMessages([...messages, newMsgFile]);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
+              const newMsgMedia = resp?.data?.message;
+              if (newMsgMedia?.room !== roomId) return;
+              if (messages.find((item) => item?.id === newMsgMedia?.id)) return;
+              onSetMessages([...messages, newMsgMedia]);
               return;
 
             case "error":

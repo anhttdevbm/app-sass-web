@@ -144,16 +144,16 @@ export interface MessageInfo {
 }
 
 export interface MessageInfoV2 {
-  "id": string;
-  "type": string;
-  "content": string;
-  "files": any[];
-  "links": [];
-  "sender": string;
-  "forwarded_from": string;
-  "created_at": string;
-  "update_at": string;
-  "room": string;
+  id: string;
+  type: string;
+  content: string;
+  files: any[];
+  links: [];
+  sender: string;
+  forwarded_from: string;
+  created_at: string;
+  update_at: string;
+  room: string;
 }
 
 export interface UserOnlinePage {
@@ -547,6 +547,12 @@ export const CHAT_EVENT_TYPE = {
 export const CHAT_ROOM_TYPE = {
   GROUP: "g",
   PERSONAL: "p",
+};
+
+export const MESSAGE_TYPE = {
+  TEXT: "text",
+  MEDIA: "media",
+  FILE: "file",
 };
 
 export interface IWsChatRespMessage {

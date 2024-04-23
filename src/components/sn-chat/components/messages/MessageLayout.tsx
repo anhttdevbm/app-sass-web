@@ -24,7 +24,7 @@ const MessageLayout = ({
   children,
   hasNextMessageFromSameUser,
   messageProps,
-  }: MessageLayoutProps) => {
+}: MessageLayoutProps) => {
   const isCurrentUser = message?.sender === sessionId;
   const { sx, ...props } = messageProps || {};
   const [isForward, setIsForward] = useState(true);
@@ -36,7 +36,9 @@ const MessageLayout = ({
     onSetDrawerType,
   } = useChat();
   const { isDarkMode } = useTheme();
-  const avatarPartner = dataTransfer?.members?.find(mem => mem?.id === message?.sender);
+  const avatarPartner = dataTransfer?.members?.find(
+    (mem) => mem?.id === message?.sender,
+  );
 
   return (
     <>
@@ -103,7 +105,7 @@ const MessageLayout = ({
                 fontSize: "12px",
               }}
             >
-              <ForwardSmall/>
+              <ForwardSmall />
               {message?.forwarded_from}
             </Box>
             {children}

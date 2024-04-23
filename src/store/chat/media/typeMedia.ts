@@ -62,7 +62,15 @@ export interface Attachment {
   name?: string;
   image_url?: string;
   video_url?: string;
-  downloadlink?: string
+  downloadlink?: string;
+}
+
+export interface AttachmentV2 {
+  name: string;
+  object: string;
+  size: number;
+  type: string;
+  url: string;
 }
 
 export interface AttachmentFields {

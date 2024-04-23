@@ -189,7 +189,7 @@ const chatSlice = createSlice({
       if (state.messagePagingV2.current === 1) {
         state.messages = action.payload;
       } else {
-        state.messages = [...state.messages, ...action.payload];
+        state.messages = [...action.payload, ...state.messages];
       }
     },
     setMessagePaging: (state, action) => {

@@ -9,7 +9,9 @@ import { useTranslations } from "next-intl";
 import { SxProps, Theme } from "@mui/material";
 import useGetScreenMode from "hooks/useGetScreenMode";
 import { DrawerChatIgnore } from "components/sn-chatting-room/components/RoomDetails";
-import { CHAT_EVENT_TYPE } from 'store/chat/type';
+import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { uploadFile } from "store/chat/media/actionMedia";
+import { useAppDispatch } from "store/hooks";
 
 const initPageIndex = 10;
 
@@ -31,14 +33,13 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
     dataTransfer,
     stateSearchMessage,
     unReadMessage,
-    onUploadAndSendFile,
     isChatDesktop,
     isOpenInfoChat,
     typeDrawerChat,
   } = useChat();
 
   const { user } = useAuth();
-
+  const dispatch = useAppDispatch();
   const { sendMessage } = useWSChat();
   const { extraDesktopMode } = useGetScreenMode();
   const t = useTranslations(NS_COMMON);
@@ -91,20 +92,48 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
 
   const handleSendMessage = useCallback(
     async (message: string) => {
-      sendMessage({
-        event: CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT,
-        roomId: dataTransfer?.id,
-        message: message
-      });
-      inputRef?.current?.clearScrollContentMessage();
-      if (files.length > 0) {
-        await onUploadAndSendFile({
-          endpoint: "files/upload-link",
-          files,
+      if (message) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT,
+          roomId: dataTransfer?.id,
+          message: message,
         });
       }
+      inputRef?.current?.clearScrollContentMessage();
+      if (files.length) {
+        const resultFiles = await Promise.all(
+          files.map((file) =>
+            dispatch(uploadFile({ endpoint: "files/upload-link", file })),
+          ),
+        );
+        const listObjectId = resultFiles.map((item) => item?.payload?.object);
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEND_FILE,
+          roomId: dataTransfer?.id,
+          files: listObjectId,
+        });
+      }
+
+      if (medias.length) {
+        const resultMedias = await Promise.all(
+          medias.map((media) =>
+            dispatch(
+              uploadFile({ endpoint: "files/upload-link", file: media }),
+            ),
+          ),
+        );
+        const listObjectId = resultMedias.map((item) => item?.payload?.object);
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA,
+          roomId: dataTransfer?.id,
+          files: listObjectId,
+        });
+      }
+
+      setFiles([]);
+      setMedias([]);
     },
-    [files, onUploadAndSendFile, sendMessage],
+    [files, medias, sendMessage],
   );
 
   return (

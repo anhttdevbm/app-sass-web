@@ -11,8 +11,8 @@ import FileExcelIcon from "icons/FileExcelIcon";
 import FilePdfIcon from "icons/FilePdfIcon";
 import PlayIcon from "icons/PlayIcon";
 import { useMemo, useRef, useState } from "react";
-import { Attachment, TypeMedia } from "store/chat/media/typeMedia";
-import { MediaPreviewItem, MessageInfo, MessageInfoV2 } from "store/chat/type";
+import { TypeMedia } from "store/chat/media/typeMedia";
+import { MediaPreviewItem, MESSAGE_TYPE, MessageInfoV2 } from "store/chat/type";
 import { TimeMessage } from "../messages/MessageContent";
 import useTheme from "hooks/useTheme";
 import { copyImage, downloadImage, formatDate } from "utils/index";
@@ -24,6 +24,7 @@ interface MediaPreview {
   ts: string;
   name: string;
 }
+
 const IconFile = {
   [FILE_MAP.DOC]: FileDocIcon,
   [FILE_MAP.EXCEL]: FileExcelIcon,
@@ -49,49 +50,24 @@ const AttachmentContent = ({
   const { sx, ...props } = attachmentProps || {};
 
   const styleForFile = (title: string) => {
-    const type = title?.split(".")[1];
+    const type = title?.split("/")[1];
     for (const [key, value] of Object.entries(mapType)) {
       if (value.includes(type)) return IconFile[key];
     }
-  };
-  const groupAttachment = (
-    attachments: Attachment[],
-    keys: string | string[],
-  ) => {
-    return attachments?.reduce((result, current) => {
-      if (typeof keys === "string") {
-        current[keys] &&
-          (result[keys] = result[keys] || []).push(current[keys]);
-      } else {
-        for (const key of keys) {
-          current[key] && (result[key] = result[key] || []).push(current);
-        }
-      }
-      return result;
-    }, {});
   };
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
   const [mediaPreview, setMediaPreview] = useState<Partial<MediaPreview>>({
     isPreview: false,
   });
 
-  const media = groupAttachment(message?.files, [
-    "image_url",
-    "video_url",
-  ]) as unknown as { image_url: Attachment[]; video_url: Attachment[] };
-
   const files = useMemo(() => {
-    return message?.files
-      .filter((att) => att.title_link)
-      .map((item) => {
-        if (item?.title_link) {
-          return {
-            title: item.title,
-            title_link: item.title_link,
-            title_link_download: item.title_link_download,
-          };
-        }
-      });
+    return message?.files.map((item) => {
+      return {
+        title: item.name,
+        title_link: item.url,
+        title_link_download: item.url,
+      };
+    });
   }, [message]);
 
   const { isDarkMode } = useTheme();
@@ -127,12 +103,14 @@ const AttachmentContent = ({
     });
   };
 
+  const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];
+
   return (
     <>
       {
         <Box
           sx={{
-            marginTop: '17px',
+            marginTop: "17px",
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
@@ -143,115 +121,119 @@ const AttachmentContent = ({
           }}
           {...props}
         >
-          {media &&
-            media?.image_url?.map((image, index) => {
-              return (
-                <Box position="relative" key={index} height={112}>
-                  <Avatar
-                    size={112}
-                    src={image.image_url}
-                    style={{
-                      borderRadius: "8px",
-                      border: "1px solid #efefef",
-                      objectFit: "cover",
-                    }}
-                    onClick={() =>
-                      forceUpdatePreview({
-                        ts: image.ts as string,
-                        isPreview: true,
-                        src: image.image_url || "",
-                        type: "image_url",
-                        name: image.name as string,
-                      })
-                    }
-                  />
-                  {showOnlyContent ? (
-                    ""
-                  ) : (
-                    <TimeMessage
-                      time={message.created_at}
-                      isRead={isRead}
-                      isCurrentUser={isCurrentUser}
-                      timeMessageProps={{
-                        sx: {
-                          position: "absolute",
-                          bottom: ".4rem",
-                          right: ".3rem",
-                          gap: "0.2rem",
-                          padding: "0 6px",
-                          borderRadius: "15px",
-                          backgroundColor: "#00000080",
-                        },
-                      }}
-                    />
-                  )}
-                </Box>
-              );
-            })}
-          {media &&
-            media?.video_url?.map((video, index) => {
-              return (
-                <Box position="relative" key={index} height={112}>
-                  <>
-                    <PlayIcon
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        cursor: "pointer",
-                        color: "common.white",
-                        fontSize: 24,
-                        zIndex: 1,
-                        backgroundColor: "#FFFFFF4D",
-                        borderRadius: "50px",
-                        width: "30px",
-                        height: "30px",
-                      }}
-                      onClick={() =>
-                        forceUpdatePreview({
-                          ts: video.ts as string,
-                          isPreview: true,
-                          src: video.video_url || "",
-                          type: "video_url",
-                          name: video.name as string,
-                        })
-                      }
-                    />
-                    <Box
-                      component="video"
-                      ref={ref}
-                      width={112}
-                      height={112}
-                      sx={{ objectFit: "cover", borderRadius: "8px" }}
-                    >
-                      <source src={video.video_url} />
+          {message?.type === MESSAGE_TYPE.MEDIA && message?.files?.length && (
+            <>
+              {message?.files?.map((file, index) => {
+                const fileExtension = file?.type?.split("/")[1];
+                if (IMAGES_EXTENSION.includes(fileExtension)) {
+                  return (
+                    <Box position="relative" key={index} height={112}>
+                      <Avatar
+                        size={112}
+                        src={file?.url}
+                        style={{
+                          borderRadius: "8px",
+                          border: "1px solid #efefef",
+                          objectFit: "cover",
+                        }}
+                        onClick={() =>
+                          forceUpdatePreview({
+                            ts: file?.created_at as string,
+                            isPreview: true,
+                            src: file?.url || "",
+                            type: "image_url",
+                            name: file?.name as string,
+                          })
+                        }
+                      />
+                      {showOnlyContent ? (
+                        ""
+                      ) : (
+                        <TimeMessage
+                          time={message.created_at}
+                          isRead={isRead}
+                          isCurrentUser={isCurrentUser}
+                          timeMessageProps={{
+                            sx: {
+                              position: "absolute",
+                              bottom: ".4rem",
+                              right: ".3rem",
+                              gap: "0.2rem",
+                              padding: "0 6px",
+                              borderRadius: "15px",
+                              backgroundColor: "#00000080",
+                            },
+                          }}
+                        />
+                      )}
                     </Box>
-                  </>
-                  {showOnlyContent ? (
-                    ""
-                  ) : (
-                    <TimeMessage
-                      time={message.created_at}
-                      isRead={isRead}
-                      isCurrentUser={isCurrentUser}
-                      timeMessageProps={{
-                        sx: {
+                  );
+                }
+                return (
+                  <Box position="relative" key={index} height={112}>
+                    <>
+                      <PlayIcon
+                        sx={{
                           position: "absolute",
-                          bottom: ".4rem",
-                          right: ".3rem",
-                          gap: "0.2rem",
-                          padding: "0 6px",
-                          borderRadius: "15px",
-                          backgroundColor: "#00000080",
-                        },
-                      }}
-                    />
-                  )}
-                </Box>
-              );
-            })}
-          {files?.length > 0 && (
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          cursor: "pointer",
+                          color: "common.white",
+                          fontSize: 24,
+                          zIndex: 1,
+                          backgroundColor: "#FFFFFF4D",
+                          borderRadius: "50px",
+                          width: "30px",
+                          height: "30px",
+                        }}
+                        onClick={() =>
+                          forceUpdatePreview({
+                            ts: file?.created_at as string,
+                            isPreview: true,
+                            src: file?.url || "",
+                            type: "video_url",
+                            name: file?.name as string,
+                          })
+                        }
+                      />
+                      <Box
+                        component="video"
+                        ref={ref}
+                        width={112}
+                        height={112}
+                        sx={{ objectFit: "cover", borderRadius: "8px" }}
+                      >
+                        <source src={file?.url} />
+                      </Box>
+                    </>
+                    {showOnlyContent ? (
+                      ""
+                    ) : (
+                      <TimeMessage
+                        time={message.created_at}
+                        isRead={isRead}
+                        isCurrentUser={isCurrentUser}
+                        timeMessageProps={{
+                          sx: {
+                            position: "absolute",
+                            bottom: ".4rem",
+                            right: ".3rem",
+                            gap: "0.2rem",
+                            padding: "0 6px",
+                            borderRadius: "15px",
+                            backgroundColor: "#00000080",
+                          },
+                        }}
+                      />
+                    )}
+                  </Box>
+                );
+              })}
+            </>
+          )}
+
+          {message?.type === MESSAGE_TYPE.FILE && files?.length && (
             <Box
               display="flex"
               flexDirection="column"

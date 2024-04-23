@@ -1,6 +1,11 @@
 import Box from "@mui/material/Box";
 import Typography, { TypographyProps } from "@mui/material/Typography";
-import { MediaPreviewItem, MessageInfo, MessageInfoV2, UnreadUserInfo } from "store/chat/type";
+import {
+  MediaPreviewItem,
+  MESSAGE_TYPE,
+  MessageInfoV2,
+  UnreadUserInfo,
+} from "store/chat/type";
 import { formatDate } from "utils/index";
 import Linkify from "linkify-react";
 import linkifyHtml from "linkify-html";
@@ -117,7 +122,7 @@ const MessageContent = ({
     }
   }, [isDarkMode, listSearchMessage, message.id, selectSearchIndex]);
 
-  if (message.content) {
+  if (message?.type === MESSAGE_TYPE.TEXT) {
     return (
       <Box
         sx={{
@@ -172,7 +177,10 @@ const MessageContent = ({
         />
       </Box>
     );
-  } else if (message.files?.length > 0) {
+  } else if (
+    message?.type === MESSAGE_TYPE.FILE ||
+    message?.type === MESSAGE_TYPE.MEDIA
+  ) {
     return (
       <Box
         sx={{

@@ -10,7 +10,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { MediaPreviewItem, MessageInfoV2, MessageSearchInfo, UnreadUserInfo, } from "store/chat/type";
+import {
+  CHAT_EVENT_TYPE,
+  MediaPreviewItem,
+  MessageInfoV2,
+  MessageSearchInfo,
+  UnreadUserInfo,
+} from "store/chat/type";
 import { DataStatus } from "constant/enums";
 import Skeleton from "@mui/material/Skeleton";
 import MessageLayout from "./MessageLayout";
@@ -21,7 +27,7 @@ import { nameMonthList, NS_CHAT_BOX } from "constant/index";
 import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { useAuth } from 'store/app/selectors';
+import { useWSChat } from "store/chat/helpers";
 
 interface MessagesProps {
   sessionId: string | undefined;
@@ -73,15 +79,20 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
   const [isBottomScrollMessage, setBottomScrollMessage] = useState(false);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
-  const { isChatDesktop, dataTransfer } = useChat();
+  const {
+    isChatDesktop,
+    dataTransfer,
+    messagePagingV2: messagePaging,
+  } = useChat();
+  const { sendMessage } = useWSChat();
 
   const pageRef = useRef(pageIndex);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const messagesContentRef = useRef<HTMLDivElement>(null);
 
   const scrollHeightRef = useRef(0);
-  const observer = useRef(
-    new IntersectionObserver((entries) => {
+  const observer = useMemo(() => {
+    return new IntersectionObserver((entries) => {
       const first = entries[0];
 
       if (first.isIntersecting) {
@@ -89,21 +100,26 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         scrollHeightRef.current = messagesContentRef.current?.scrollHeight || 0;
         const clientHeight =
           (messagesContentRef.current?.clientHeight || 0) + 50;
-        if (scrollHeightRef.current > clientHeight) {
-          // TODO:
+        console.info(messagePaging);
+        if (scrollHeightRef.current > clientHeight && messagePaging.next) {
+          sendMessage({
+            event: CHAT_EVENT_TYPE.MESSAGE_LIST,
+            roomId: dataTransfer?.id,
+            page: messagePaging.current + 1,
+          });
         }
       }
-    }),
-  );
+    });
+  }, [messagesContentRef.current?.scrollHeight]);
 
   const isScrolling = useMemo(() => {
     if (!messagesContentRef?.current) return false;
 
     return (
       messagesContentRef?.current?.scrollHeight >
-      messagesContentRef?.current?.clientHeight ||
+        messagesContentRef?.current?.clientHeight ||
       messagesContentRef?.current?.scrollWidth >
-      messagesContentRef?.current?.clientWidth
+        messagesContentRef?.current?.clientWidth
     );
   }, []);
 
@@ -195,7 +211,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
   useEffect(() => {
     const currentElement = firstElement;
-    const currentObserver = observer.current;
+    const currentObserver = observer;
     if (currentElement) {
       currentObserver.observe(currentElement);
     }
@@ -302,7 +318,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
           return (
             <React.Fragment key={index}>
-              {['text', 'file', 'media'].includes(message?.type) ? (
+              {["text", "file", "media"].includes(message?.type) ? (
                 <MessageLayout
                   sessionId={sessionId}
                   message={message}

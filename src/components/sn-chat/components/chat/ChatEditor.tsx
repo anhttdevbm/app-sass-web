@@ -1,9 +1,16 @@
 "use client";
 
 import { Box, Stack } from "@mui/material";
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState, } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "react-quill/dist/quill.snow.css";
-import { ACCEPT_MEDIA, FILE_ACCEPT, NS_CHAT_BOX, } from "constant/index";
+import { ACCEPT_MEDIA, FILE_ACCEPT, NS_CHAT_BOX } from "constant/index";
 import AttachmentPreview from "components/AttachmentPreview";
 import "quill/dist/quill.snow.css";
 import ImageImportIcon from "icons/ImageImportIcon";
@@ -110,7 +117,6 @@ const ChatEditor = (props: EditorProps) => {
     [medias],
   );
 
-  console.log(urlFiles, urlMedias);
   const toolbarAttachment = useMemo(
     () => ({
       container: [
@@ -190,7 +196,7 @@ const ChatEditor = (props: EditorProps) => {
       return () => {
         const newList = [...list];
         newList.splice(index, 1);
-        if (type === 'file') {
+        if (type === "file") {
           onChangeFiles && onChangeFiles(newList);
         } else {
           onChangeMedias && onChangeMedias(newList);
@@ -441,16 +447,16 @@ const ChatEditor = (props: EditorProps) => {
           <AttachmentPreview
             key={attachment}
             src={attachment}
-            name={attachment}
-            onRemove={onRemove(files, index, 'file')}
+            name={files[index].name}
+            onRemove={onRemove(files, index, "file")}
           />
         ))}
         {urlMedias.map((attachment, index) => (
           <AttachmentPreview
             key={attachment}
             src={attachment}
-            name={attachment}
-            onRemove={onRemove(medias, index, 'media')}
+            name={medias[index].name}
+            onRemove={onRemove(medias, index, "media")}
           />
         ))}
       </Stack>
