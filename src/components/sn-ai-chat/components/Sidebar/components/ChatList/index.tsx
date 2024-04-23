@@ -46,12 +46,30 @@ const ChatList = () => {
   const chatSessionsGroupedByDate = groupChatSessionsByDate(chatSessions);
 
   function groupChatSessionsByDate(chatSessions: ChatSession[]) {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+
     return chatSessions.reduce((groups, chat) => {
-      const date = new Date(chat.last_question_at).toLocaleDateString();
-      if (!groups[date]) {
-        groups[date] = [];
+      const chatDate = new Date(chat.last_question_at);
+      let dateGroup = "";
+
+      if (chatDate.toDateString() === today.toDateString()) {
+        dateGroup = "Today";
+      } else if (chatDate.toDateString() === yesterday.toDateString()) {
+        dateGroup = "Yesterday";
+      } else if (chatDate > thirtyDaysAgo) {
+        dateGroup = "Previous 30 days";
+      } else {
+        dateGroup = "Older";
       }
-      groups[date].push(chat);
+
+      if (!groups[dateGroup]) {
+        groups[dateGroup] = [];
+      }
+      groups[dateGroup].push(chat);
       return groups;
     }, {});
   }
