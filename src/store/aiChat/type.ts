@@ -36,3 +36,11 @@ export type AIChatState = {
 export type GetChatSessionsQueries = BaseQueries & {
   chat_name?: string;
 };
+
+export type EditChatSessionQueries = {
+  id: string;
+};
+
+export type ChatSessionData = {
+  chatname: string;
+};

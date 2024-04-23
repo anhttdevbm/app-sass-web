@@ -3,7 +3,11 @@ import { Endpoint, client } from "api";
 import { HttpStatusCode } from "constant/enums";
 import { AI_CHAT_API_URL, AN_ERROR_TRY_AGAIN } from "constant/index";
 import { serverQueries } from "utils/index";
-import { GetExamplePromptQueries, GetChatSessionsQueries } from "./type";
+import {
+  GetExamplePromptQueries,
+  GetChatSessionsQueries,
+  ChatSessionData,
+} from "./type";
 
 export const getExamplePrompt = createAsyncThunk(
   "aiChat/getExamplePrompt",
@@ -37,6 +41,47 @@ export const getChatSessions = createAsyncThunk(
       });
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const editChatSession = createAsyncThunk(
+  "aiChat/editChatSession",
+  async ({ id, ...data }: Partial<ChatSessionData> & { id: string }) => {
+    try {
+      const response = await client.put(
+        `${Endpoint.AI_CHAT_SESSION}/${id}/`,
+        data,
+        {
+          baseURL: AI_CHAT_API_URL,
+        },
+      );
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteChatSession = createAsyncThunk(
+  "aiChat/deleteChatSession",
+  async (id: string) => {
+    try {
+      const response = await client.delete(
+        `${Endpoint.AI_CHAT_SESSION}/${id}/`,
+        {
+          baseURL: AI_CHAT_API_URL,
+        },
+      );
+      if (response?.status === 204) {
+        return id;
       }
       throw AN_ERROR_TRY_AGAIN;
     } catch (error) {

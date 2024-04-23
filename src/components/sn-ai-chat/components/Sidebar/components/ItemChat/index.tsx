@@ -1,6 +1,6 @@
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Box, IconButton, MenuItem } from "@mui/material";
-import { Text } from "components/shared";
+import { Input, Text } from "components/shared";
 import { PopperMenu } from "components/shared/PopperMenu";
 import { NS_AI_CHAT } from "constant/index";
 import useTheme from "hooks/useTheme";
@@ -8,12 +8,17 @@ import EditUnderlineIconWithGradientIcon from "icons/EditUnderlineWithGradientIc
 import TrashFillIcon from "icons/TrashFillIcon";
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
+import { useChatSession } from "store/aiChat/selectors";
 
-// Define constants for colors
 const PRIMARY_MAIN = "primary.main";
 const PRIMARY_LIGHT = "primary.light";
 const GREY_900 = "grey.900";
 const INFOR_DARK = "info.dark";
+const WHITE = "white";
+const GREY_400 = "grey.400";
+const TRASH_FILL_ICON_COLOR = "#666666";
+const TEXT_BACKGROUND =
+  "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)";
 
 interface ItemChatProps {
   title: string;
@@ -22,18 +27,54 @@ interface ItemChatProps {
   setSelectedChat: () => void;
 }
 
+const EditChatForm = ({ chatname, handleTitleChange, handleTitleSubmit }) => (
+  <form
+    onSubmit={(event) => {
+      handleTitleSubmit(event);
+    }}
+  >
+    <Input
+      value={chatname}
+      onChange={handleTitleChange}
+      onBlur={handleTitleSubmit}
+      autoFocus
+    />
+  </form>
+);
+
+const ChatTitle = ({ title }) => <Text sx={titleSx}>{title}</Text>;
+
 const ItemChat = ({
   title,
   id,
   selectedChat,
   setSelectedChat,
 }: ItemChatProps) => {
+  // State variables
   const [menuAnchorElement, setMenuAnchorElement] =
     useState<null | HTMLElement>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [chatname, setChatname] = useState(title);
 
+  // Hooks and selectors
   const t = useTranslations(NS_AI_CHAT);
-
   const { isDarkMode } = useTheme();
+  const { onEditChatSession, onDeleteChatSession } = useChatSession();
+
+  // Event handlers
+  const handleEditChatSession = () => {
+    setIsEditing(true);
+    closeMenu();
+  };
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChatname(event.target.value);
+  };
+
+  const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    onEditChatSession({ id, chatname });
+    setIsEditing(false);
+  };
 
   const handleMenuButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -46,10 +87,8 @@ const ItemChat = ({
     setMenuAnchorElement(null);
   };
 
-  const handleMenuOptionClick = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-  ) => {
-    event.stopPropagation();
+  const handleDeleteChatClick = () => {
+    onDeleteChatSession(id);
     closeMenu();
   };
 
@@ -64,9 +103,21 @@ const ItemChat = ({
             ? INFOR_DARK
             : PRIMARY_LIGHT,
       }}
-      onClick={setSelectedChat}
+      onClick={() => {
+        if (!isEditing && !menuAnchorElement) {
+          setSelectedChat();
+        }
+      }}
     >
-      <Text sx={titleSx}>{title}</Text>
+      {isEditing ? (
+        <EditChatForm
+          chatname={chatname}
+          handleTitleChange={handleTitleChange}
+          handleTitleSubmit={handleTitleSubmit}
+        />
+      ) : (
+        <ChatTitle title={title} />
+      )}
       <IconButton onClick={handleMenuButtonClick}>
         <MoreHorizIcon />
       </IconButton>
@@ -74,13 +125,12 @@ const ItemChat = ({
         anchorEl={menuAnchorElement}
         setAnchorEl={setMenuAnchorElement}
       >
-        <MenuItem sx={menuItemSx} onClick={handleMenuOptionClick}>
+        <MenuItem sx={menuItemSx} onClick={handleEditChatSession}>
           <EditUnderlineIconWithGradientIcon sx={iconSx} />
           <Text
             sx={{
               ...textSx,
-              background:
-                "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)",
+              background: TEXT_BACKGROUND,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -88,9 +138,9 @@ const ItemChat = ({
             {t("sideBar.editChat")}
           </Text>
         </MenuItem>
-        <MenuItem sx={menuItemSx} onClick={handleMenuOptionClick}>
-          <TrashFillIcon fill="#666666" sx={iconSx} />
-          <Text sx={textSx} color={"grey.400"}>
+        <MenuItem sx={menuItemSx} onClick={handleDeleteChatClick}>
+          <TrashFillIcon fill={TRASH_FILL_ICON_COLOR} sx={iconSx} />
+          <Text sx={textSx} color={GREY_400}>
             {t("sideBar.deleteChat")}
           </Text>
         </MenuItem>
@@ -110,7 +160,7 @@ const itemSx = {
   padding: "12px",
   "&:hover": {
     backgroundColor: PRIMARY_MAIN,
-    color: "white",
+    color: WHITE,
   },
   marginBottom: "8px",
   cursor: "pointer",

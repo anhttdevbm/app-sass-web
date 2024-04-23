@@ -1,7 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { DataStatus } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
-import { getChatSessions, getExamplePrompt } from "./actions";
+import { AN_ERROR_TRY_AGAIN } from "constant/index";
+import {
+  deleteChatSession,
+  editChatSession,
+  getChatSessions,
+  getExamplePrompt,
+} from "./actions";
 import { AIChatState } from "./type";
 
 const initialState: AIChatState = {
@@ -56,6 +61,39 @@ const aiChatSlice = createSlice({
         state.chatSessionsNextPage = pageNumber;
       })
       .addCase(getChatSessions.rejected, (state, action) => {
+        state.chatSessionsStatus = DataStatus.FAILED;
+        state.chatSessionsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+
+      // edit chat session
+      .addCase(editChatSession.pending, (state) => {
+        state.chatSessionsStatus = DataStatus.LOADING;
+      })
+      .addCase(editChatSession.fulfilled, (state, { payload }) => {
+        state.chatSessionsStatus = DataStatus.SUCCEEDED;
+        const index = state.chatSessions.findIndex(
+          (chatSession) => chatSession.id === payload.id,
+        );
+        if (index !== -1) {
+          state.chatSessions[index] = payload;
+        }
+      })
+      .addCase(editChatSession.rejected, (state, action) => {
+        state.chatSessionsStatus = DataStatus.FAILED;
+        state.chatSessionsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+
+      // delete chat session
+      .addCase(deleteChatSession.pending, (state) => {
+        state.chatSessionsStatus = DataStatus.LOADING;
+      })
+      .addCase(deleteChatSession.fulfilled, (state, { payload }) => {
+        state.chatSessionsStatus = DataStatus.SUCCEEDED;
+        state.chatSessions = state.chatSessions.filter(
+          (chatSession) => chatSession.id !== payload,
+        );
+      })
+      .addCase(deleteChatSession.rejected, (state, action) => {
         state.chatSessionsStatus = DataStatus.FAILED;
         state.chatSessionsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       });

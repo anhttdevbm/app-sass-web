@@ -2,8 +2,17 @@ import { DataStatus } from "constant/enums";
 import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { getChatSessions, getExamplePrompt } from "./actions";
-import { GetChatSessionsQueries, GetExamplePromptQueries } from "./type";
+import {
+  deleteChatSession,
+  editChatSession,
+  getChatSessions,
+  getExamplePrompt,
+} from "./actions";
+import {
+  ChatSessionData,
+  GetChatSessionsQueries,
+  GetExamplePromptQueries,
+} from "./type";
 
 export const useExamplePrompt = () => {
   const dispatch = useAppDispatch();
@@ -62,6 +71,20 @@ export const useChatSession = () => {
     [dispatch],
   );
 
+  const onEditChatSession = useCallback(
+    ({ id, ...data }: Partial<ChatSessionData> & { id: string }) => {
+      dispatch(editChatSession({ id, ...data }));
+    },
+    [dispatch],
+  );
+
+  const onDeleteChatSession = useCallback(
+    (id: string) => {
+      dispatch(deleteChatSession(id));
+    },
+    [dispatch],
+  );
+
   return {
     chatSessions,
     status,
@@ -72,5 +95,7 @@ export const useChatSession = () => {
     dispatch,
     onGetChatSessions,
     nextPage,
+    onEditChatSession,
+    onDeleteChatSession,
   };
 };
