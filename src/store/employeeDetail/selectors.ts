@@ -2,7 +2,12 @@ import { useCallback, useMemo } from "react";
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { resetEmployee, resetCostRates, CostRateWorkingHours } from "./reducer";
+import {
+  resetEmployee,
+  resetCostRates,
+  CostRateWorkingHours,
+  CostRate,
+} from "./reducer";
 import {
   getEmployeeDetail,
   updateEmployee,
@@ -68,8 +73,8 @@ export const useEmployeeDetail = () => {
 export const useCostRate = () => {
   const dispatch = useAppDispatch();
 
-  const selectAllCostRate = useAppSelector(
-    (state) => state.employeeDetail.costRates.items,
+  const selectAllCostRate = useAppSelector((state) =>
+    state.employeeDetail.costRates.items.map((cr) => getCalculatedCostRate(cr)),
   );
 
   const selectCurrentCostRate = useMemo(
@@ -86,8 +91,10 @@ export const useCostRate = () => {
     [selectAllCostRate],
   );
 
-  const selectCostRate = (id: string) =>
-    selectAllCostRate.find((cr) => cr.id === id);
+  const selectCostRate = useCallback(
+    (id: string) => selectAllCostRate.find((cr) => cr.id === id),
+    [selectAllCostRate],
+  );
 
   const handleGetAllCostRate = useCallback(async () => {
     try {
@@ -123,26 +130,7 @@ export const useCostRate = () => {
     async (data: NewCostRate) => {
       try {
         return await dispatch(
-          addNewCostRate({
-            ...data,
-            type: data.type.toUpperCase(),
-            currency: data.currency.toUpperCase(),
-            working_hours: data.working_hours.map(
-              (h) => +h,
-            ) as CostRateWorkingHours,
-            total_hours: calculateWorkingHours(
-              data.start_date,
-              data.end_date,
-              data.working_hours,
-              0,
-            ),
-            total_days: calculateWorkingDays(
-              data.start_date,
-              data.end_date,
-              data.working_hours,
-              0,
-            ),
-          }),
+          addNewCostRate(getCalculatedCostRate(data)),
         ).unwrap();
       } catch (error) {
         throw error;
@@ -155,26 +143,7 @@ export const useCostRate = () => {
     async (data: UpdateCostRate) => {
       try {
         return await dispatch(
-          updateCostRate({
-            ...data,
-            type: data.type.toUpperCase(),
-            currency: data.currency.toUpperCase(),
-            working_hours: data.working_hours.map(
-              (h) => +h,
-            ) as CostRateWorkingHours,
-            total_hours: calculateWorkingHours(
-              data.start_date,
-              data.end_date,
-              data.working_hours,
-              0,
-            ),
-            total_days: calculateWorkingDays(
-              data.start_date,
-              data.end_date,
-              data.working_hours,
-              0,
-            ),
-          }),
+          updateCostRate(getCalculatedCostRate(data)),
         ).unwrap();
       } catch (error) {
         throw error;
@@ -247,3 +216,60 @@ export const calculateWorkingDays = (
     workingHours.map((h) => (h == 0 ? 0 : 1)) as CostRateWorkingHours,
     subtractedDays,
   );
+
+const calculateCostPerHour = (
+  totalCost: number,
+  startDateStr: string,
+  endDateStr: string,
+  workingHours: CostRateWorkingHours,
+) =>
+  +(
+    Math.round(
+      +(
+        totalCost /
+          calculateWorkingHours(startDateStr, endDateStr, workingHours, 0) +
+        "e+2"
+      ),
+    ) + "e-2"
+  );
+
+function getCalculatedCostRate<
+  T extends CostRate | NewCostRate | UpdateCostRate,
+>(cr: T): T {
+  return {
+    ...cr,
+    type: cr.type.toUpperCase(),
+    currency: cr.currency.toUpperCase(),
+    working_hours: cr.working_hours.map((h) => +h) as CostRateWorkingHours,
+    total_hours: calculateWorkingHours(
+      cr.start_date,
+      cr.end_date,
+      cr.working_hours,
+      0,
+    ),
+    total_days: calculateWorkingDays(
+      cr.start_date,
+      cr.end_date,
+      cr.working_hours,
+      0,
+    ),
+    remaining_hours: calculateWorkingHours(
+      dayjs().startOf("day").toISOString(),
+      cr.end_date,
+      cr.working_hours,
+      0,
+    ),
+    remaining_days: calculateWorkingDays(
+      dayjs().startOf("day").toISOString(),
+      cr.end_date,
+      cr.working_hours,
+      0,
+    ),
+    cost_per_hour: calculateCostPerHour(
+      cr.cost_per_month,
+      cr.start_date,
+      cr.end_date,
+      cr.working_hours,
+    ),
+  };
+}

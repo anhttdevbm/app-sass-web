@@ -36,30 +36,17 @@ const CostRateEmpty = () => {
 
   const onSubmit = async (values: NewCostRateForm) => {
     try {
-      const working_hours = [
-        values.working_hours.mon,
-        values.working_hours.tue,
-        values.working_hours.wed,
-        values.working_hours.thu,
-        values.working_hours.fri,
-        values.working_hours.sat,
-        values.working_hours.sun,
-      ];
-      const total_hours = working_hours.reduce((sum, val) => sum + val, 0);
-      const total_days = Math.round(
-        (new Date(values.end_date).getTime() -
-          new Date(values.start_date).getTime()) /
-          1000 /
-          60 /
-          60 /
-          24,
-      );
-
       const data = {
         ...values,
-        working_hours,
-        total_hours,
-        total_days,
+        working_hours: [
+          values.working_hours.mon,
+          values.working_hours.tue,
+          values.working_hours.wed,
+          values.working_hours.thu,
+          values.working_hours.fri,
+          values.working_hours.sat,
+          values.working_hours.sun,
+        ],
       } as NewCostRate;
       await handleAddNewCostRate(data);
       onAddSnackbar(costRateT("empty.notification.addSuccess"), "success");

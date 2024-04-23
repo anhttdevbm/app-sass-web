@@ -1,5 +1,6 @@
 "use client";
 import { ReactElement, useCallback, useMemo, useState } from "react";
+import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
@@ -16,6 +17,7 @@ import {
 } from "chart.js";
 import { useTranslations } from "next-intl";
 import { Formik } from "formik";
+import _ from "lodash";
 
 import { Permission } from "constant/enums";
 import { NS_COMMON, NS_COST_RATE } from "constant/index";
@@ -53,7 +55,7 @@ const CurrentRateBlock = ({
       pl={3}
       pr={2}
       maxWidth={{
-        xs: "initia",
+        xs: "initial",
         sm: 266,
       }}
     >
@@ -80,8 +82,12 @@ const CostRateInfo = () => {
   const costRateT = useTranslations(NS_COST_RATE);
   const { onAddSnackbar } = useSnackbar();
   const [isModalOpen, openModal, closeModal] = useToggle(false);
-  const { selectCurrentCostRate, selectAllCostRate, handleUpdateCostRate, handleDeleteCostRate } =
-    useCostRate();
+  const {
+    selectCurrentCostRate,
+    selectAllCostRate,
+    handleUpdateCostRate,
+    handleDeleteCostRate,
+  } = useCostRate();
 
   const [costRateToEdit, setCostRateToEdit] = useState<CostRate | undefined>(
     undefined,
@@ -154,6 +160,7 @@ const CostRateInfo = () => {
               "end_date",
               "holiday_calendar",
               "note",
+              "over_head",
             ]),
             working_hours: {
               mon: costRateToEdit?.working_hours[0] ?? 8,
@@ -164,59 +171,88 @@ const CostRateInfo = () => {
               sat: costRateToEdit?.working_hours[5] ?? 0,
               sun: costRateToEdit?.working_hours[6] ?? 0,
             },
-            over_head: true,
           }
         : undefined,
     [costRateToEdit],
   ) as EditCostRateForm;
 
-  const labels = [
-    "Mar 18",
-    "Mar 19",
-    "Mar 20",
-    "Mar 21",
-    "Mar 22",
-    "Mar 23",
-    "Mar 24",
-    "Mar 27",
-    "Mar 30",
-  ];
-  const datapoints = [80, 120, 300, 100, 70, 100, 40, 120, 200];
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        data: datapoints,
-        borderColor: "#14B9E5",
-        pointBorderColor: "#14B9E5",
-        pointBackgroundColor: "#14B9E5",
-        backgroundColor: ({ chart: { ctx } }) => {
-          const bg = ctx.createLinearGradient(0, 0, 400, 0);
-          bg.addColorStop(0, "#2AF59833");
-          bg.addColorStop(1, "#009EFD33");
-          return bg;
+  const chartCostData = useMemo(() => {
+    const data: { label: string; data: number }[] = [];
+    const today = dayjs().startOf("day");
+    const dateFormat = "MMM DD";
+    if (!selectCurrentCostRate) {
+      for (let i = -4; i <= 4; i++) {
+        data.push({
+          label: today.add(i, "day").format(dateFormat),
+          data: 0,
+        });
+      }
+    } else {
+      const startDate = dayjs(selectCurrentCostRate.start_date).startOf("day");
+      const endDate = dayjs(selectCurrentCostRate.end_date).startOf("day");
+      let tmpDate = today.add(-1, "day");
+      while (
+        !tmpDate.isBefore(today.add(-4, "day")) &&
+        !tmpDate.isBefore(startDate)
+      ) {
+        tmpDate = tmpDate.add(-1, "day");
+      }
+      while (
+        !tmpDate.isAfter(today.add(4, "day")) &&
+        !tmpDate.isAfter(endDate)
+      ) {
+        const hours =
+          selectCurrentCostRate.working_hours[(tmpDate.day() + 6) % 7];
+        data.push({
+          label: tmpDate.format(dateFormat),
+          data: hours * (selectCurrentCostRate.cost_per_hour ?? 0),
+        });
+        tmpDate = tmpDate.add(1, "day");
+      }
+    }
+    return data;
+  }, [selectCurrentCostRate]);
+  const chartData = useMemo(
+    () => ({
+      labels: chartCostData.map((i) => i.label),
+      datasets: [
+        {
+          data: chartCostData.map((i) => i.data),
+          borderColor: "#14B9E5",
+          pointBorderColor: "#14B9E5",
+          pointBackgroundColor: "#14B9E5",
+          backgroundColor: ({ chart: { ctx } }) => {
+            const bg = ctx.createLinearGradient(0, 0, 400, 0);
+            bg.addColorStop(0, "#2AF59833");
+            bg.addColorStop(1, "#009EFD33");
+            return bg;
+          },
+          fill: "start",
+          tension: 0.4,
         },
-        fill: "start",
-        tension: 0.4,
-      },
-    ],
-  };
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        grid: {
-          display: false,
+      ],
+    }),
+    [chartCostData],
+  );
+  const chartOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          grid: {
+            display: false,
+          },
+        },
+        y: {
+          grid: {
+            display: false,
+          },
         },
       },
-      y: {
-        grid: {
-          display: false,
-        },
-      },
-    },
-  };
+    }),
+    [],
+  );
   ChartJS.register(
     LineElement,
     PointElement,
@@ -269,8 +305,18 @@ const CostRateInfo = () => {
         </Grid>
         <Grid item container xs={12} md={4} justifyContent="center">
           <Stack direction="column" alignItems="center">
-            <ProcessRing size={240} percentage={75}>
-              <Text fontSize={28}>22</Text>
+            <ProcessRing
+              size={240}
+              percentage={Math.round(
+                (((selectCurrentCostRate?.total_days ?? 0) -
+                  (selectCurrentCostRate?.remaining_days ?? 0)) /
+                  (selectCurrentCostRate?.total_days ?? 1)) *
+                  100,
+              )}
+            >
+              <Text fontSize={28}>
+                {selectCurrentCostRate?.remaining_days ?? 0}
+              </Text>
             </ProcessRing>
             <Text fontSize={20} fontWeight={600} mt={3}>
               Working Days
@@ -292,7 +338,7 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Type"
-            content={selectCurrentCostRate?.type ?? "N/A"}
+            content={_.capitalize(selectCurrentCostRate?.type) ?? "N/A"}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
@@ -301,7 +347,7 @@ const CostRateInfo = () => {
             title="Cost Per Month"
             content={
               selectCurrentCostRate?.cost_per_month
-                ? `${selectCurrentCostRate.cost_per_month}.$`
+                ? `${selectCurrentCostRate?.cost_per_month}.$`
                 : "N/A"
             }
           />
@@ -310,7 +356,11 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="At current cost rate"
-            content="N/A"
+            content={
+              selectCurrentCostRate?.total_days
+                ? `${selectCurrentCostRate?.total_days}h`
+                : "N/A"
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
@@ -318,7 +368,9 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title="Capacity"
             content={
-              selectCurrentCostRate?.total_hours ? `${selectCurrentCostRate.total_hours}h` : "N/A"
+              selectCurrentCostRate?.total_hours
+                ? `${selectCurrentCostRate?.total_hours}h`
+                : "N/A"
             }
           />
         </Grid>
@@ -326,7 +378,11 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Current Hourly Cost"
-            content="N/A"
+            content={
+              selectCurrentCostRate?.cost_per_hour
+                ? `${selectCurrentCostRate?.cost_per_hour}`
+                : "N/A"
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>

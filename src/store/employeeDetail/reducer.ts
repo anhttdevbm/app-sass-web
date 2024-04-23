@@ -27,6 +27,9 @@ export type CostRate = {
   working_hours: CostRateWorkingHours;
   total_hours: number;
   total_days: number;
+  remaining_hours?: number;
+  remaining_days?: number;
+  cost_per_hour?: number;
   over_head: boolean;
   note?: string;
   created_by: string;
