@@ -16,6 +16,12 @@ export type ChatSession = {
   created_at: string;
 };
 
+export type SelectChatAI = {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export type GetExamplePromptQueries = {
   number_prompt: number;
 };
@@ -27,10 +33,20 @@ export type AIChatState = {
   chatSessionsFilters: Omit<GetChatSessionsQueries, "pageIndex" | "pageSize">;
   chatSessionsNextPage: number;
 
-  examplePrompts?: ExamplePrompt[];
+  examplePrompts: ExamplePrompt[];
   examplePromptsStatus: DataStatus;
   examplePromptsError?: string;
   examplePromptsFilters: GetExamplePromptQueries;
+
+  persona: SelectChatAI[];
+  personaStatus: DataStatus;
+  personaError?: string;
+  personaFilters: GetPersonaQueries;
+
+  tone: SelectChatAI[];
+  toneStatus: DataStatus;
+  toneError?: string;
+  toneFilters: GetToneQueries;
 };
 
 export type GetChatSessionsQueries = BaseQueries & {
@@ -42,5 +58,18 @@ export type EditChatSessionQueries = {
 };
 
 export type ChatSessionData = {
-  chatname: string;
+  chatname?: string;
+  persona: string;
+  tone: string;
+  chat_status: string;
+  user_prompt: string;
+  file?: File;
 };
+
+export type GetOpenAIChatQueries = BaseQueries & {
+  id: string;
+};
+
+export type GetPersonaQueries = BaseQueries;
+
+export type GetToneQueries = BaseQueries;

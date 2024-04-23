@@ -7,11 +7,15 @@ import {
   editChatSession,
   getChatSessions,
   getExamplePrompt,
+  getPersona,
+  getTone,
 } from "./actions";
 import {
   ChatSessionData,
   GetChatSessionsQueries,
   GetExamplePromptQueries,
+  GetPersonaQueries,
+  GetToneQueries,
 } from "./type";
 
 export const useExamplePrompt = () => {
@@ -97,5 +101,54 @@ export const useChatSession = () => {
     nextPage,
     onEditChatSession,
     onDeleteChatSession,
+  };
+};
+
+export const useChatWithAI = () => {
+  const dispatch = useAppDispatch();
+  const {
+    persona,
+    personaFilters,
+    personaStatus,
+    personaError,
+    tone,
+    toneFilters,
+    toneStatus,
+    toneError,
+  } = useAppSelector((state) => state.aiChat, shallowEqual);
+
+  const isPersonaIdle = useMemo(() => personaStatus === DataStatus.IDLE, [personaStatus]);
+  const isPersonaFetching = useMemo(() => personaStatus === DataStatus.LOADING, [personaStatus]);
+
+  const isToneIdle = useMemo(() => toneStatus === DataStatus.IDLE, [toneStatus]);
+  const isToneFetching = useMemo(() => toneStatus === DataStatus.LOADING, [toneStatus]);
+
+  const onGetPersona = useCallback((queries: GetPersonaQueries) => {
+    dispatch(getPersona(queries));
+  }, [dispatch]);
+
+  const onGetTone = useCallback(
+    (queries: GetToneQueries) => {
+      dispatch(getTone(queries));
+    },
+    [dispatch],
+  );
+
+  return {
+    persona,
+    personaStatus,
+    personaError,
+    tone,
+    toneStatus,
+    toneError,
+    isPersonaIdle,
+    isPersonaFetching,
+    isToneIdle,
+    isToneFetching,
+    dispatch,
+    onGetPersona,
+    onGetTone,
+    personaFilters,
+    toneFilters,
   };
 };

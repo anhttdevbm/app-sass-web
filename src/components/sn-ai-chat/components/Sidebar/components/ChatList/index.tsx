@@ -23,18 +23,19 @@ const ChatList = () => {
     }
   }, []);
 
-  function handleIntersection(entries, observer) {
-    for (const entry of entries) {
-      if (entry.isIntersecting && nextPage) {
-        onGetChatSessions({ pageIndex: nextPage + 1 });
-      }
-    }
-  }
-
   useEffect(() => {
-    const observer = new IntersectionObserver(handleIntersection, {
-      threshold: 0.5,
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && nextPage) {
+            onGetChatSessions({ pageIndex: nextPage + 1 });
+          }
+        }
+      },
+      {
+        threshold: 0.5,
+      },
+    );
     if (intersectionObserverRef.current)
       observer.observe(intersectionObserverRef.current);
     return () => {

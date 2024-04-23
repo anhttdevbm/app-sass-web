@@ -1,29 +1,32 @@
 import { Box } from "@mui/material";
 import { Text } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
-import useTheme from "hooks/useTheme";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import GIFAIChat from "public/images/gif-ai-chat.gif";
 import { useEffect, useState } from "react";
-import { useExamplePrompt } from "store/aiChat/selectors";
+import { useChatWithAI, useExamplePrompt } from "store/aiChat/selectors";
 import ChatInput from "./components/Chat/ChatInput";
 import { ListPrompt } from "./components/ListPrompt";
 import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
-import { is } from "date-fns/locale";
-
-const options = [
-  { label: "Option 1", value: "option1" },
-  { label: "Option 2", value: "option2" },
-  { label: "Option 3", value: "option3" },
-];
 
 export const BoxChat = () => {
   const t = useTranslations(NS_AI_CHAT);
 
-  const { isDarkMode } = useTheme();
+  const {
+    persona: personaList,
+    onGetPersona,
+    tone: toneList,
+    onGetTone,
+    isToneIdle,
+    isPersonaIdle,
+    isToneFetching,
+    isPersonaFetching,
+    toneFilters,
+    personaFilters,
+  } = useChatWithAI();
 
   const [persona, setPersona] = useState("");
   const [tone, setTone] = useState("");
@@ -42,6 +45,28 @@ export const BoxChat = () => {
       onGetExamplePrompt({ number_prompt: 6 });
     }
   }, [isExamplePromptIdle, isExamplePromptFetching, onGetExamplePrompt]);
+
+  useEffect(() => {
+    if (isPersonaIdle || isPersonaFetching) {
+      onGetPersona({});
+    }
+
+    if (isToneIdle || isToneFetching) {
+      onGetTone({});
+    }
+  }, []);
+
+  const onLoadMorePersona = () => {
+    if (personaFilters.pageIndex && personaFilters.pageIndex > 0) {
+      onGetPersona({ pageIndex: personaFilters.pageIndex + 1 });
+    }
+  };
+
+  const onLoadMoreTone = () => {
+    if (toneFilters.pageIndex && toneFilters.pageIndex > 0) {
+      onGetTone({ pageIndex: toneFilters.pageIndex + 1 });
+    }
+  };
 
   const handleSetPrompt = (value: string) => {
     setPrompt(value);
@@ -71,6 +96,27 @@ export const BoxChat = () => {
     </Box>
   );
 
+  const toTitleCase = (str: string) => {
+    return str
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const personaOptions = Array.isArray(personaList)
+    ? personaList.map((item) => ({
+        label: toTitleCase(item.name),
+        value: item.id,
+      }))
+    : [];
+
+  const toneOptions = Array.isArray(toneList)
+    ? toneList.map((item) => ({
+        label: item.name,
+        value: item.name,
+      }))
+    : [];
+
   return (
     <Box sx={boxChatContainerSx}>
       {chatData.length > 0 ? renderChatData() : renderEmptyChat()}
@@ -78,15 +124,17 @@ export const BoxChat = () => {
         <Box sx={selectContainerSx}>
           <SelectAIChat
             placeholder={t("boxChat.persona")}
-            options={options}
+            options={personaOptions}
             selectedValue={persona}
             onOptionChange={(e) => setPersona(e.target.value)}
+            onLoadMore={onLoadMorePersona}
           />
           <SelectAIChat
             placeholder={t("boxChat.tone")}
-            options={options}
+            options={toneOptions}
             selectedValue={tone}
             onOptionChange={(e) => setTone(e.target.value)}
+            onLoadMore={onLoadMoreTone}
           />
         </Box>
         <ChatInput
