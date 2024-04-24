@@ -8,10 +8,7 @@ import { useTranslations } from "next-intl";
 import { useChat } from "store/chat/selectors";
 
 const LinkContent = () => {
-  const {
-    chatLinks,
-    chatLinksStatus,
-  } = useChat();
+  const { chatLinks, chatLinksStatus } = useChat();
   const commonT = useTranslations(NS_COMMON);
 
   if (chatLinksStatus !== DataStatus.SUCCEEDED) {
@@ -48,13 +45,13 @@ const LinkContent = () => {
                 }}
               />
               <Link
-                href={item.url}
+                href={item?.url}
                 target="_blank"
                 sx={{
                   overflowWrap: "anywhere",
                 }}
               >
-                {item.url}
+                {item?.url}
               </Link>
             </Box>
           );

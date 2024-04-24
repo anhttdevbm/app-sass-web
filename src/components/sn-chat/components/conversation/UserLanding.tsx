@@ -17,6 +17,7 @@ import UserInfo from "./UserInfo";
 import GroupMediaProfile from "./GroupMediaProfile";
 import ItemProfile from "../common/ItemProfile";
 import useTheme from "hooks/useTheme";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface UserLandingProps {
   displayUserInfo: boolean;
@@ -27,7 +28,8 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   const { conversationInfo, onSetStateSearchMessage, onSearchChatText } =
     useChat();
   const { isDarkMode } = useTheme();
-
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
   const { onAddSnackbar } = useSnackbar();
   const t = useTranslations(NS_COMMON);
   const { avatar, name, peer_detail } = conversationInfo || {};
@@ -72,6 +74,13 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   );
 
   const handleSetStep = (step: STEP_INFO) => {
+    if (step === STEP_INFO.MEDIA) {
+      handleGetChatMedias(1);
+    } else if (step === STEP_INFO.LINK) {
+      handleGetChatLinks(1);
+    } else if (step === STEP_INFO.FILE) {
+      handleGetChatFiles(1);
+    }
     setStepMedia(step);
     setShowMedia(true);
   };

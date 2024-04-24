@@ -4,34 +4,30 @@ import Typography from "@mui/material/Typography";
 import Media from "components/Media";
 import Preview, { TitlePreview } from "components/Preview";
 import { DataStatus } from "constant/enums";
-import { ACCEPT_MEDIA, AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { NS_COMMON } from "constant/index";
 import PlayIcon from "icons/PlayIcon";
 import { useTranslations } from "next-intl";
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { useSnackbar } from "store/app/selectors";
-import { MediaType, TypeMedia } from "store/chat/media/typeMedia";
+import { useMemo, useRef, useState } from "react";
+import { IChatFile } from "store/chat/media/typeMedia";
 import { useChat } from "store/chat/selectors";
 import { copyImage, downloadImage, formatDate } from "utils/index";
-export type MediaInfo = MediaType & {
-  type: TypeMedia;
-};
-export type MediaPreview = Partial<MediaInfo> & {
-  isPreview: boolean;
-};
+import { IMAGES_EXTENSION } from "store/chat/type";
+
 export const MediaClone = ({
   media,
   listMedia,
 }: {
-  media: MediaInfo;
-  listMedia: MediaInfo[];
+  media: IChatFile;
+  listMedia: IChatFile[];
 }) => {
   const commonT = useTranslations(NS_COMMON);
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
   const [isError, setError] = useState<boolean>(false);
-  const [mediaPreview, setMediaPreview] = useState<MediaPreview>({
+  const [mediaPreview, setMediaPreview] = useState<any>({
     isPreview: false,
     url: "",
-    type: "image_url",
+    name: "",
+    type: "",
   });
   const { url, type } = media;
   const listMediaClone = useMemo(() => {
@@ -39,7 +35,7 @@ export const MediaClone = ({
       return {
         link: item.url || "",
         name: item.name || "",
-        object: item.path,
+        object: item.object,
       } as { link: string; name: string; object: string };
     });
   }, [listMedia]);
@@ -50,112 +46,99 @@ export const MediaClone = ({
   };
 
   const switchMedia = useMemo(() => {
-    switch (type) {
-      case "image_url": {
-        return !isError ? (
-          <Media
-            size={92}
-            src={url}
-            loading="lazy"
+    const fileExtension = type?.split("/")[1];
+    if (IMAGES_EXTENSION.includes(fileExtension)) {
+      return !isError ? (
+        <Media
+          size={92}
+          src={url}
+          loading="lazy"
+          style={{
+            display: isError ? "none" : "block",
+            width: "100%",
+            objectFit: "cover",
+          }}
+          onError={(e) => {
+            setError(true);
+          }}
+          onClick={() =>
+            setMediaPreview((state) => ({
+              ...state,
+              ...media,
+              isPreview: true,
+            }))
+          }
+        />
+      ) : (
+        <Skeleton
+          variant="rounded"
+          style={{
+            width: "100%",
+            height: "92px",
+          }}
+        />
+      );
+    }
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "92px",
+          position: "relative",
+        }}
+      >
+        <PlayIcon
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            cursor: "pointer",
+            color: "common.white",
+            fontSize: 24,
+            zIndex: 1,
+            backgroundColor: "#FFFFFF4D",
+            borderRadius: "50px",
+            width: "30px",
+            height: "30px",
+          }}
+          onClick={() =>
+            setMediaPreview((state) => ({
+              ...state,
+              ...media,
+              isPreview: true,
+            }))
+          }
+        />
+        {!isError ? (
+          <Box
+            component="video"
+            ref={ref}
+            width="100%"
+            height={92}
             style={{
-              display: isError ? "none" : "block",
-              width: "100%",
               objectFit: "cover",
             }}
-            onError={(e) => {
-              setError(true);
-            }}
-            onClick={() =>
-              setMediaPreview((state) => ({
-                ...state,
-                ...media,
-                isPreview: true,
-              }))
-            }
-          />
+          >
+            <source src={url} onError={() => setError(true)} />
+          </Box>
         ) : (
           <Skeleton
             variant="rounded"
             style={{
-              width: "100%",
+              width: "92px",
               height: "92px",
             }}
           />
-        );
-      }
-      case "video_url": {
-        return (
-          <Box
-            sx={{
-              width: "100%",
-              height: "92px",
-              position: "relative",
-            }}
-          >
-            <PlayIcon
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                cursor: "pointer",
-                color: "common.white",
-                fontSize: 24,
-                zIndex: 1,
-                backgroundColor: "#FFFFFF4D",
-                borderRadius: "50px",
-                width: "30px",
-                height: "30px",
-              }}
-              onClick={() =>
-                setMediaPreview((state) => ({
-                  ...state,
-                  ...media,
-                  isPreview: true,
-                }))
-              }
-            />
-            {!isError ? (
-              <Box
-                component="video"
-                ref={ref}
-                width="100%"
-                height={92}
-                style={{
-                  objectFit: "cover",
-                }}
-              >
-                <source src={url} onError={() => setError(true)} />
-              </Box>
-            ) : (
-              <Skeleton
-                variant="rounded"
-                style={{
-                  width: "92px",
-                  height: "92px",
-                }}
-              />
-            )}
-          </Box>
-        );
-      }
-      default:
-        return (
-          <Skeleton
-            variant="rounded"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        );
-    }
+        )}
+      </Box>
+    );
   }, [type, isError, url, media]);
 
   const time = useMemo(() => {
-    const date = new Date(mediaPreview.uploadedAt as string);
+    const date = new Date(media?.created_at as string);
     return formatDate(date, "HH:mm dd/MM/yyyy");
-  }, [mediaPreview.uploadedAt]);
+  }, [media?.created_at]);
 
   return (
     <>
@@ -192,53 +175,14 @@ export const MediaClone = ({
 };
 
 const MediaContent = () => {
-  const { mediaList, mediaListStatus, onGetChatAttachments } = useChat();
-  const { onAddSnackbar } = useSnackbar();
+  const { chatMedias, chatMediasStatus } = useChat();
   const commonT = useTranslations(NS_COMMON);
 
-  useEffect(() => {
-    const handleGetAttachment = async () => {
-      try {
-        await onGetChatAttachments({ fileType: "media" });
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    };
-    handleGetAttachment();
-  }, [onAddSnackbar, onGetChatAttachments, commonT]);
-
-  const mediaClone = useMemo<MediaInfo[]>(() => {
-    const acceptType = ACCEPT_MEDIA.map((item) => item.split("/")?.[1]);
-    return mediaList
-      ?.filter((file) => {
-        const typeByNameFile = file.name.split(".")?.[1];
-        return file.url && acceptType.includes(typeByNameFile);
-      })
-      .map((item) => {
-        if (item.url.indexOf("mp4") > -1) {
-          return {
-            ...item,
-            type: "video_url" as TypeMedia,
-          };
-        } else {
-          return {
-            ...item,
-            type: "image_url" as TypeMedia,
-          };
-        }
-      });
-  }, [mediaList]);
-
-  if (
-    mediaListStatus !== DataStatus.SUCCEEDED
-  ) {
+  if (chatMediasStatus !== DataStatus.SUCCEEDED) {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 
-  return mediaClone?.length > 0 ? (
+  return chatMedias?.length > 0 ? (
     <Box
       sx={{
         display: "grid",
@@ -251,12 +195,8 @@ const MediaContent = () => {
         maxHeight: "100%",
       }}
     >
-      {mediaClone?.map((item, index) => (
-        <MediaClone
-          key={index}
-          media={item}
-          listMedia={mediaClone}
-        />
+      {chatMedias?.map((item, index) => (
+        <MediaClone key={index} media={item} listMedia={chatMedias} />
       ))}
     </Box>
   ) : (

@@ -2,10 +2,8 @@ import AccountProfileIcon from "icons/AccountProfileIcon";
 import FileBasicIcon from "icons/FileBasicIcon";
 import LinkIcon from "icons/LinkIcon";
 import MediaFileIcon from "icons/MediaFileIcon";
-import { useCallback, useMemo } from "react";
-import { useChat } from "store/chat/selectors";
-import { RoomType, TypeDrawerChat } from "store/chat/type";
-import { TypeDrawer } from "components/sn-chatting-room/components/RoomDetails/components/ChatDetailUserMobile/UseChatDetailUserMobile";
+import { TypeDrawerChat } from "store/chat/type";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface MenuItem {
   text: string;
@@ -21,58 +19,33 @@ export interface useChatDetailInfoReturns {
 
 export const useChatDetailInfo = ({
   currentConversation,
-  conversationInfo,
 }): useChatDetailInfoReturns => {
-  const { onGetChatAttachments, onGetChatUrls } = useChat();
-
-  const callbackChatAttachment = useCallback(
-    (fileType: "link" | "media" | "file") => {
-      if (!currentConversation) return;
-      onGetChatAttachments({
-        roomId: currentConversation?._id,
-        roomType: (currentConversation?.t as RoomType) || "d",
-        fileType,
-      });
-    },
-    [currentConversation],
-  );
-
-  const callbackChatUrls = useCallback(() => {
-    if (!currentConversation?.t || !currentConversation?._id) return;
-    if (currentConversation)
-      onGetChatUrls({
-        roomId: currentConversation?._id,
-        type: currentConversation?.t,
-      });
-  }, [currentConversation]);
-
-  const handleOpenAccountInfo = useCallback(() => {
-    console.log(currentConversation);
-  }, [currentConversation]);
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
 
   const menuItems: MenuItem[] = [
     {
       text: "Account infomation",
       icon: AccountProfileIcon,
-      callback: () => handleOpenAccountInfo(),
+      callback: () => console.log(currentConversation),
       type: "account",
     },
     {
       text: "Media file",
       icon: MediaFileIcon,
-      callback: () => callbackChatAttachment("media"),
+      callback: () => handleGetChatMedias(1),
       type: "media",
     },
     {
       text: "Link",
       icon: LinkIcon,
-      callback: () => callbackChatUrls(),
+      callback: () => handleGetChatLinks(1),
       type: "link",
     },
     {
       text: "File",
       icon: FileBasicIcon,
-      callback: () => callbackChatAttachment("file"),
+      callback: () => handleGetChatFiles(1),
       type: "file",
     },
   ];

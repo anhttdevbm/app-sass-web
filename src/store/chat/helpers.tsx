@@ -141,6 +141,9 @@ export const useWSChat = () => {
               onSetConversationInfo(roomDetail);
               onSetStateSearchMessage(null);
               onResetSearchChatText();
+              onSetChatFiles([]);
+              onSetChatLinks([]);
+              onSetChatMedias([]);
               if (roomDetail?.type === CHAT_ROOM_TYPE.GROUP) {
                 onSetStep(STEP.CHAT_GROUP, roomDetail);
               } else {
@@ -287,10 +290,35 @@ const TIME_DEBOUNCE_SEARCH = 1000; //ms
 export const useChatHelpers = () => {
   const { user } = useAuth();
   const { sendMessage } = useWSChat();
-  const { roomId, onSetConversationPaging, onSetIsSearchConversation } = useChat();
+  const { roomId, onSetConversationPaging, onSetIsSearchConversation } =
+    useChat();
   const { onGetEmployees } = useEmployeesOfCompany();
 
   const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;
+
+  const handleGetChatMedias = (currentPage: number) => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.MESSAGE_LIST_MEDIA,
+      roomId: roomId,
+      page: currentPage,
+    });
+  };
+
+  const handleGetChatLinks = (currentPage: number) => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.MESSAGE_LIST_LINK,
+      roomId: roomId,
+      page: currentPage,
+    });
+  };
+
+  const handleGetChatFiles = (currentPage: number) => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.MESSAGE_LIST_FILE,
+      roomId: roomId,
+      page: currentPage,
+    });
+  };
 
   const loadMoreConversation = (currentPage: number) => {
     sendMessage({
@@ -339,5 +367,8 @@ export const useChatHelpers = () => {
     searchConversation,
     loadMoreConversation,
     loadMoreMessages,
+    handleGetChatMedias,
+    handleGetChatFiles,
+    handleGetChatLinks,
   };
 };

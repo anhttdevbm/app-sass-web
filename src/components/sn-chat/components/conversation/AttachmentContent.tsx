@@ -21,7 +21,7 @@ interface MediaPreview {
   isPreview;
   src: string;
   type: TypeMedia;
-  ts: string;
+  created_at: string;
   name: string;
 }
 
@@ -84,12 +84,12 @@ const AttachmentContent = ({
     isPreview: boolean;
     src: string;
     type: TypeMedia;
-    ts: string;
+    created_at: string;
     name: string;
   }) => {
-    const date = new Date(data.ts as string);
+    const date = new Date(message.created_at as string);
     const time = formatDate(date, "HH:mm dd/MM/yyyy");
-    setMediaPreview({ ...data, ts: time });
+    setMediaPreview({ ...data, created_at: time });
   };
 
   const handleChangeSlide = (url) => {
@@ -97,7 +97,7 @@ const AttachmentContent = ({
     forceUpdatePreview({
       src: info?.link as string,
       type: info?.type as TypeMedia,
-      ts: info?.ts as string,
+      created_at: info?.created_at as string,
       name: info?.name as string,
       isPreview: true,
     });
@@ -138,7 +138,7 @@ const AttachmentContent = ({
                         }}
                         onClick={() =>
                           forceUpdatePreview({
-                            ts: file?.created_at as string,
+                            created_at: file?.created_at as string,
                             isPreview: true,
                             src: file?.url || "",
                             type: "image_url",
@@ -189,7 +189,7 @@ const AttachmentContent = ({
                         }}
                         onClick={() =>
                           forceUpdatePreview({
-                            ts: file?.created_at as string,
+                            created_at: file?.created_at as string,
                             isPreview: true,
                             src: file?.url || "",
                             type: "video_url",
@@ -309,7 +309,7 @@ const AttachmentContent = ({
           titleProps={{
             children: (
               <TitlePreview
-                time={mediaPreview.ts as string}
+                time={mediaPreview.created_at as string}
                 onClose={() =>
                   setMediaPreview((state) => ({ ...state, isPreview: false }))
                 }

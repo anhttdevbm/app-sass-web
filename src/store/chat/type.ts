@@ -2,7 +2,8 @@
 import { DataStatus } from "constant/enums";
 import { Paging } from "constant/types";
 import {
-  Attachment, IChatFile,
+  Attachment,
+  IChatFile,
   IChatLinkV2,
   MediaType,
   TypeMedia,
@@ -204,6 +205,7 @@ export interface MediaPreviewItem {
   name: string;
   object: string;
   ts: string;
+  created_at: string;
   type: TypeMedia;
 }
 
@@ -559,7 +561,10 @@ export const MESSAGE_TYPE = {
   TEXT: "text",
   MEDIA: "media",
   FILE: "file",
+  LINK: "link",
 };
+
+export const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];
 
 export interface IWsChatRespMessage {
   event: string;

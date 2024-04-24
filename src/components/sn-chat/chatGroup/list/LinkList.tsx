@@ -8,15 +8,10 @@ import { useTranslations } from "next-intl";
 import { useChat } from "store/chat/selectors";
 
 const LinkList = () => {
-  const {
-    chatLinks,
-    chatLinksStatus,
-  } = useChat();
+  const { chatLinks, chatLinksStatus } = useChat();
   const commonT = useTranslations(NS_COMMON);
 
-  if (
-    chatLinksStatus !== DataStatus.SUCCEEDED
-  ) {
+  if (chatLinksStatus !== DataStatus.SUCCEEDED) {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 

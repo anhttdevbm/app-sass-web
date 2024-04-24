@@ -4,17 +4,14 @@ import Typography from "@mui/material/Typography";
 import Media from "components/Media";
 import Preview from "components/Preview";
 import { DataStatus } from "constant/enums";
-import { ACCEPT_MEDIA, AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { NS_COMMON } from "constant/index";
 import PlayIcon from "icons/PlayIcon";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useSnackbar } from "store/app/selectors";
-import { IChatFile, MediaType, TypeMedia } from "store/chat/media/typeMedia";
+import { useMemo, useRef, useState } from "react";
+import { IChatFile, TypeMedia } from "store/chat/media/typeMedia";
 import { useChat } from "store/chat/selectors";
-export interface MediaPreview extends Partial<MediaType> {
-  link: string;
-  object: string;
-}
+import { IMAGES_EXTENSION } from "store/chat/type";
+
 export const MediaClone = ({
   src,
   attachment,
@@ -41,8 +38,6 @@ export const MediaClone = ({
     });
   }, [listMedia]);
 
-  const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];
-
   const switchMedia = useMemo(() => {
     const fileExtension = attachment?.type?.split("/")[1];
     if (IMAGES_EXTENSION.includes(fileExtension)) {
@@ -64,7 +59,7 @@ export const MediaClone = ({
               ...state,
               isPreview: true,
               src: src,
-              type: 'image_url',
+              type: "image_url",
             }))
           }
         />
@@ -157,33 +152,10 @@ export const MediaClone = ({
 };
 
 const MediaList = () => {
-  const { chatMedias, chatMediasStatus, mediaList, mediaListStatus, onGetChatAttachments, dataTransfer } = useChat();
+  const { chatMedias, chatMediasStatus } = useChat();
   const commonT = useTranslations(NS_COMMON);
 
-  const mediaClone = useMemo(() => {
-    const acceptType = ACCEPT_MEDIA.map((item) => item.split("/")?.[1]);
-    return mediaList
-      ?.filter((file) => {
-        const typeByNameFile = file.name.split(".")?.[1];
-        return file.url && acceptType.includes(typeByNameFile);
-      })
-      .map((item) => {
-        if (item.url.indexOf("mp4") > -1) {
-          return {
-            ...item,
-            type: "video_url" as TypeMedia,
-          };
-        } else {
-          return {
-            ...item,
-            type: "image_url" as TypeMedia,
-          };
-        }
-      });
-  }, [mediaList]);
-  if (
-    chatMediasStatus !== DataStatus.SUCCEEDED
-  ) {
+  if (chatMediasStatus !== DataStatus.SUCCEEDED) {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 
@@ -215,4 +187,3 @@ const MediaList = () => {
 };
 
 export default MediaList;
-

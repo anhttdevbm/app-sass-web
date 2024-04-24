@@ -222,7 +222,7 @@ const chatSlice = createSlice({
         }
 
         if (action.payload.attachments?.length > 0) {
-          const mediaMessages: MediaPreviewItem[] = action.payload.attachments
+          const mediaMessages: any[] = action.payload.attachments
             .filter(
               (item) =>
                 item.hasOwnProperty("video_url") ||
@@ -404,7 +404,7 @@ const chatSlice = createSlice({
               .filter((item) => item?.attachments?.length > 0)
               .map((item) => item.attachments)
               .flat();
-            const mediaMessages: MediaPreviewItem[] = attachments
+            const mediaMessages: any[] = attachments
               .filter(
                 (item) =>
                   item.hasOwnProperty("video_url") ||

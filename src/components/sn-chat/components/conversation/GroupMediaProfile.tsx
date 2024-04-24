@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { memo, useEffect, useMemo, useState } from "react";
-import { CHAT_EVENT_TYPE, STEP_INFO } from "store/chat/type";
+import { STEP_INFO } from "store/chat/type";
 import ProfileHeader from "../common/ProfileHeader";
 import { useChat } from "store/chat/selectors";
 import { SxProps } from "@mui/material";
@@ -10,7 +10,7 @@ import MediaContent from "../common/MediaContent";
 import FileContent from "../common/FileContent";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
-import { useWSChat } from 'store/chat/helpers';
+import { useChatHelpers } from "store/chat/helpers";
 
 interface GroupMediaProfileProps {
   type?: STEP_INFO;
@@ -24,30 +24,16 @@ const GroupMediaProfile = ({
   const { conversationInfo, roomId } = useChat();
   const { name } = conversationInfo || {};
   const commonChatBox = useTranslations(NS_CHAT_BOX);
-  const { sendMessage } = useWSChat();
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
 
   const renderContent = useMemo(() => {
     switch (tab) {
       case STEP_INFO.MEDIA:
-        sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_LIST_MEDIA,
-          roomId: roomId,
-          page: 1
-        });
         return <MediaContent />;
       case STEP_INFO.LINK:
-        sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_LIST_LINK,
-          roomId: roomId,
-          page: 1
-        })
         return <LinkContent />;
       case STEP_INFO.FILE:
-        sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_LIST_FILE,
-          roomId: roomId,
-          page: 1
-        });
         return <FileContent />;
     }
   }, [tab]);
@@ -110,7 +96,10 @@ const GroupMediaProfile = ({
         >
           <Button
             variant="outlined"
-            onClick={() => setTab(STEP_INFO.MEDIA)}
+            onClick={() => {
+              handleGetChatMedias(1);
+              setTab(STEP_INFO.MEDIA);
+            }}
             sx={styleButtonTab}
             className={tab === STEP_INFO.MEDIA ? "active" : ""}
           >
@@ -118,7 +107,10 @@ const GroupMediaProfile = ({
           </Button>
           <Button
             variant="outlined"
-            onClick={() => setTab(STEP_INFO.LINK)}
+            onClick={() => {
+              handleGetChatLinks(1);
+              setTab(STEP_INFO.LINK);
+            }}
             sx={styleButtonTab}
             className={tab === STEP_INFO.LINK ? "active" : ""}
           >
@@ -126,7 +118,10 @@ const GroupMediaProfile = ({
           </Button>
           <Button
             variant="outlined"
-            onClick={() => setTab(STEP_INFO.FILE)}
+            onClick={() => {
+              handleGetChatFiles(1);
+              setTab(STEP_INFO.FILE);
+            }}
             sx={styleButtonTab}
             className={tab === STEP_INFO.FILE ? "active" : ""}
           >

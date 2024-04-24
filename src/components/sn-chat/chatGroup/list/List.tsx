@@ -7,8 +7,7 @@ import { useChat } from "store/chat/selectors";
 import MediaList from "./MediaList";
 import LinkList from "./LinkList";
 import FileList from "./FileList";
-import { CHAT_EVENT_TYPE } from 'store/chat/type';
-import { useWSChat } from 'store/chat/helpers';
+import { useChatHelpers } from "store/chat/helpers";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,28 +43,17 @@ function a11yProps(index: number) {
 
 const List = () => {
   const { onSetTypeList, typeList, roomId } = useChat();
-  const { sendMessage } = useWSChat();
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     onSetTypeList(newValue);
     if (newValue === 0) {
-      sendMessage({
-        event: CHAT_EVENT_TYPE.MESSAGE_LIST_MEDIA,
-        roomId: roomId,
-        page: 1
-      });
+      handleGetChatMedias(1);
     } else if (newValue === 1) {
-      sendMessage({
-        event: CHAT_EVENT_TYPE.MESSAGE_LIST_LINK,
-        roomId: roomId,
-        page: 1
-      });
+      handleGetChatLinks(1);
     } else if (newValue === 2) {
-      sendMessage({
-        event: CHAT_EVENT_TYPE.MESSAGE_LIST_FILE,
-        roomId: roomId,
-        page: 1
-      });
+      handleGetChatFiles(1);
     }
   };
 
@@ -97,19 +85,19 @@ const List = () => {
             },
           }}
         >
-          <Tab label="Media file dasd" {...a11yProps(0)} sx={styleTab?.tab}/>
-          <Tab label="Link dsadas" {...a11yProps(1)} sx={styleTab?.tab}/>
-          <Tab label="File" {...a11yProps(2)} sx={styleTab?.tab}/>
+          <Tab label="Media file" {...a11yProps(0)} sx={styleTab?.tab} />
+          <Tab label="Link" {...a11yProps(1)} sx={styleTab?.tab} />
+          <Tab label="File" {...a11yProps(2)} sx={styleTab?.tab} />
         </Tabs>
       </Box>
       <CustomTabPanel value={typeList} index={0}>
-        <MediaList/>
+        <MediaList />
       </CustomTabPanel>
       <CustomTabPanel value={typeList} index={1}>
-        <LinkList/>
+        <LinkList />
       </CustomTabPanel>
       <CustomTabPanel value={typeList} index={2}>
-        <FileList/>
+        <FileList />
       </CustomTabPanel>
     </Box>
   );
