@@ -430,7 +430,7 @@ const ChatDetailGroup = (props) => {
             }}
           />
           <ItemDetail
-            text={"media mobile"}
+            text={commonChatBox("chatBox.media")}
             icon={<MediaFileIconGroup />}
             iconClick={<ArrowRightIcon />}
             onClick={() => {

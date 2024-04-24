@@ -79,7 +79,9 @@ import {
   setIsSearchConversation,
   setMessagePaging,
   setMessages,
-  setChatLinks, setChatMedias, setChatFiles,
+  setChatLinks,
+  setChatMedias,
+  setChatFiles,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -736,27 +738,27 @@ export const useChat = () => {
 
   const onSetIsSearchConversation = (searchFlg: boolean) => {
     return dispatch(setIsSearchConversation(searchFlg));
-  }
+  };
 
   const onSetMessages = (messages) => {
     return dispatch(setMessages(messages));
-  }
+  };
 
   const onSetMessagePaging = (newPaging) => {
     return dispatch(setMessagePaging(newPaging));
-  }
+  };
 
   const onSetChatLinks = (data) => {
     return dispatch(setChatLinks(data));
-  }
+  };
 
   const onSetChatMedias = (data) => {
     return dispatch(setChatMedias(data));
-  }
+  };
 
   const onSetChatFiles = (data) => {
     return dispatch(setChatFiles(data));
-  }
+  };
 
   return {
     convention,
