@@ -18,6 +18,7 @@ interface SelectAIChatProps {
     child: React.ReactNode,
   ) => void;
   onLoadMore: () => void;
+  isError?: boolean;
 }
 
 export const SelectAIChat: React.FC<SelectAIChatProps> = ({
@@ -26,10 +27,11 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
   onOptionChange,
   selectedValue,
   onLoadMore,
+  isError
 }) => {
   const { isDarkMode } = useTheme();
 
-  const lastOptionRef = useRef<HTMLLIElement>(null);
+  const lastOptionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
@@ -41,7 +43,7 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
     };
 
     const observer = new IntersectionObserver(observerCallback, {
-      threshold: 0.5,
+      threshold: 1,
     });
 
     if (lastOptionRef.current) {
@@ -90,7 +92,8 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
               padding: "8px 8px 8px 16px",
             },
           ".MuiOutlinedInput-notchedOutline": {
-            border: isDarkMode ? "1px solid #3D3D3D" : "0px",
+            // border: isDarkMode ? "1px solid #3D3D3D" : "0px",
+            border: isError ? "1px solid #FF0000" : isDarkMode ? "1px solid #3D3D3D" : "0px",
           },
         }}
         MenuProps={{
@@ -116,11 +119,11 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
           <MenuItem
             key={index}
             value={option.value}
-            ref={index === options.length - 1 ? lastOptionRef : null}
           >
             {option.label}
           </MenuItem>
         ))}
+        {/* <div ref={lastOptionRef}>.</div> */}
       </Select>
     </FormControl>
   );

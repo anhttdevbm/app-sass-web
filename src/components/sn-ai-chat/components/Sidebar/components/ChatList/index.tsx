@@ -5,30 +5,83 @@ import { useChatSession } from "store/aiChat/selectors";
 import { ChatSession } from "store/aiChat/type";
 import ItemChat from "../ItemChat";
 
+const TODAY = "Today";
+const YESTERDAY = "Yesterday";
+const PREVIOUS_30_DAYS = "Previous 30 days";
+const OLDER = "Older";
+
+function groupChatSessionsByDate(chatSessions: ChatSession[]) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+
+  return chatSessions.reduce((groups, chat) => {
+    const chatDate = new Date(chat.last_question_at);
+    let dateGroup = "";
+
+    if (chatDate.toDateString() === today.toDateString()) {
+      dateGroup = TODAY;
+    } else if (chatDate.toDateString() === yesterday.toDateString()) {
+      dateGroup = YESTERDAY;
+    } else if (chatDate > thirtyDaysAgo) {
+      dateGroup = PREVIOUS_30_DAYS;
+    } else {
+      dateGroup = OLDER;
+    }
+
+    if (!groups[dateGroup]) {
+      groups[dateGroup] = [];
+    }
+    groups[dateGroup].push(chat);
+    return groups;
+  }, {});
+}
+
 const ChatList = () => {
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
+    undefined,
+  );
+
   const {
     chatSessions,
-    onGetChatSessions,
-    isIdle,
-    isFetching,
-    nextPage,
-    status,
+    onGetChatSessions: fetchChatSessions,
+    isChatSessionsIdle: isIdle,
+    isChatSessionsFetching: isFetching,
+    chatSessionsNextPage: nextPage,
+    chatSessionStatus: status,
+    onSelectChatId,
+    chatSession,
+    newChatSessionCreated
   } = useChatSession();
+
   const intersectionObserverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isIdle || isFetching) {
-      onGetChatSessions({});
+    onSelectChatId(selectedChatId);
+  }, [selectedChatId, onSelectChatId]);
+
+  useEffect(() => {
+      fetchChatSessions({});
+      onSelectChatId(newChatSessionCreated);
+  }, [newChatSessionCreated]);
+
+  useEffect(() => {
+    if (chatSession) {
+      setSelectedChatId(chatSession);
+      fetchChatSessions({});
+    } else {
+      setSelectedChatId(undefined);
     }
-  }, []);
+  }, [chatSession]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting && nextPage) {
-            onGetChatSessions({ pageIndex: nextPage + 1 });
+            fetchChatSessions({ pageIndex: nextPage + 1 });
           }
         }
       },
@@ -42,38 +95,9 @@ const ChatList = () => {
       if (intersectionObserverRef.current)
         observer.unobserve(intersectionObserverRef.current);
     };
-  }, [intersectionObserverRef, nextPage, onGetChatSessions]);
+  }, [intersectionObserverRef, nextPage, fetchChatSessions]);
 
   const chatSessionsGroupedByDate = groupChatSessionsByDate(chatSessions);
-
-  function groupChatSessionsByDate(chatSessions: ChatSession[]) {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const thirtyDaysAgo = new Date(today);
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-
-    return chatSessions.reduce((groups, chat) => {
-      const chatDate = new Date(chat.last_question_at);
-      let dateGroup = "";
-
-      if (chatDate.toDateString() === today.toDateString()) {
-        dateGroup = "Today";
-      } else if (chatDate.toDateString() === yesterday.toDateString()) {
-        dateGroup = "Yesterday";
-      } else if (chatDate > thirtyDaysAgo) {
-        dateGroup = "Previous 30 days";
-      } else {
-        dateGroup = "Older";
-      }
-
-      if (!groups[dateGroup]) {
-        groups[dateGroup] = [];
-      }
-      groups[dateGroup].push(chat);
-      return groups;
-    }, {});
-  }
 
   return (
     <Box sx={scrollableSx}>
@@ -103,7 +127,7 @@ const ChatList = () => {
         <Box
           sx={{ display: "flex", justifyContent: "center", padding: "10px" }}
         >
-          <CircularProgress />
+          {/* <CircularProgress /> */}
         </Box>
       )}
     </Box>
