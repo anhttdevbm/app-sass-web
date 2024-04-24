@@ -69,7 +69,7 @@ export const BoxChat = () => {
     setPrompt(message);
 
     const data: ChatWithAIData = {
-      user_prompt: prompt,
+      user_prompt: message,
       persona,
       tone,
       chat_session: "",
@@ -83,10 +83,8 @@ export const BoxChat = () => {
         console.error(error);
       }
     } else {
-      onCreateChatSession({ chatname: prompt });
+      onCreateChatSession({ chatname: message });
     }
-
-    setPrompt("");
   };
 
   const onLoadMorePersona = useCallback(() => {
@@ -142,6 +140,7 @@ export const BoxChat = () => {
   useEffect(() => {
     if (newChatSessionCreated) {
       onChatWithAI({ user_prompt: prompt, persona, tone, chat_session: newChatSessionCreated });
+      setPrompt("");
     }
   }, [newChatSessionCreated]);
 
