@@ -18,7 +18,7 @@ import { NS_COMMON } from "constant/index";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { STEP } from "store/chat/type";
 import InfoUserIcon from "icons/InfoUserIcon";
-import { CenterFocusStrong } from "@mui/icons-material";
+
 interface ProfileHeaderProps {
   textSearch?: string;
   isSearch?: boolean;
@@ -53,22 +53,12 @@ const ProfileHeader = ({
   const { sx: nameSx, ...nameProp } = nameProps || {};
 
   const {
-    prevStep,
     dataTransfer,
-    groupMembers,
     onSetRoomId,
     onSetStep,
     onCreateDirectMessageGroup,
-    onAddMembers2Group,
-    currStep,
-    onFetchGroupMembersMember,
     onSetDataTransfer,
-    onChangeListConversations,
-    convention,
-    isChatDesktop,
-    onCloseDrawer,
     onSetConversationInfo,
-    onGetChatAttachments,
   } = useChat();
   const commonT = useTranslations(NS_COMMON);
 

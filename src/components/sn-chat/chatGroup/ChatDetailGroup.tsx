@@ -21,7 +21,7 @@ import { useAppDispatch } from "store/hooks";
 import useTheme from "hooks/useTheme";
 import { UploadAvatarGroup } from "./UploadAvatarGroup";
 import ForwardLayout from "components/sn-chatting-room/components/RoomDetails/components/Drawer/ChatForward/ForwardLayout";
-import { isOwnerGroup, useWSChat } from "store/chat/helpers";
+import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
 
 export const TYPE_POPUP = {
   DELETE: "DELETE",
@@ -38,21 +38,20 @@ const ChatDetailGroup = (props) => {
   const { isDarkMode } = useTheme();
 
   const {
-    typeList,
     dataTransfer,
     groupMembers,
     onSetStep,
     onLeftGroup,
-    onRenameGroup,
     onSetTypeList,
     onSetDataTransfer,
     onFetchGroupMembersMember,
     onChangeGroupRole,
     onRemoveGroupMember,
     onDeleteConversationGroup,
-    onGetAllConvention,
   } = useChat();
   const { user } = useAuth();
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
   //check owner
   const owner = isOwnerGroup(dataTransfer?.creator, user?.id);
 
@@ -280,12 +279,7 @@ const ChatDetailGroup = (props) => {
       return;
     }
     onAddSnackbar(commonT("success"), "success");
-    onGetAllConvention({
-      type: "a",
-      text: "",
-      offset: 0,
-      count: 10,
-    });
+    // TODO: get list conversation again
     onSetStep(STEP.CONVENTION);
   };
 
@@ -442,6 +436,7 @@ const ChatDetailGroup = (props) => {
             onClick={() => {
               onSetStep(STEP.LIST);
               onSetTypeList(TYPE_LIST.MEDIA_LIST);
+              handleGetChatMedias(1);
             }}
           />
           <ItemDetail
@@ -451,6 +446,7 @@ const ChatDetailGroup = (props) => {
             onClick={() => {
               onSetStep(STEP.LIST);
               onSetTypeList(TYPE_LIST.LINK_LIST);
+              handleGetChatLinks(1);
             }}
           />
 
@@ -461,6 +457,7 @@ const ChatDetailGroup = (props) => {
             onClick={() => {
               onSetStep(STEP.LIST);
               onSetTypeList(TYPE_LIST.FILE_LIST);
+              handleGetChatFiles(1);
             }}
           />
         </Box>

@@ -2,45 +2,16 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "components/Link";
 import { DataStatus } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { NS_COMMON } from "constant/index";
 import FileBasicIcon from "icons/FileBasicIcon";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo } from "react";
-import { useSnackbar } from "store/app/selectors";
 import { useChat } from "store/chat/selectors";
 
 const FileList = () => {
-  const { mediaList, mediaListStatus, onGetChatAttachments, dataTransfer } = useChat();
-  const { onAddSnackbar } = useSnackbar();
+  const { chatFiles, chatFilesStatus } = useChat();
   const commonT = useTranslations(NS_COMMON);
 
-  useEffect(() => {
-    const handleGetAttachment = async () => {
-      try {
-        await onGetChatAttachments({
-          fileType: "file",
-          roomId: dataTransfer?._id,
-          roomType: "p",
-        });
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    };
-
-    handleGetAttachment();
-  }, [onAddSnackbar, onGetChatAttachments, commonT]);
-
-  const fileClone = useMemo(() => {
-    return mediaList?.filter((file) => file.name && file.path);
-  }, [mediaList]);
-
-  if (
-    mediaListStatus === DataStatus.LOADING ||
-    mediaListStatus === DataStatus.FAILED
-  ) {
+  if (chatFilesStatus !== DataStatus.SUCCEEDED) {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 
@@ -54,8 +25,8 @@ const FileList = () => {
         paddingRight: "0.3rem",
       }}
     >
-      {fileClone.length > 0 ? (
-        fileClone?.map((item, index) => {
+      {chatFiles.length > 0 ? (
+        chatFiles?.map((item, index) => {
           return (
             <Box
               key={index}
@@ -72,7 +43,7 @@ const FileList = () => {
                 }}
               />
               <Link
-                href={item.path}
+                href={item?.url}
                 target="_blank"
                 sx={{
                   color: "#212121",
@@ -81,7 +52,7 @@ const FileList = () => {
                   textDecoration: "auto",
                 }}
               >
-                {item.name}
+                {item?.name}
               </Link>
             </Box>
           );
@@ -94,4 +65,3 @@ const FileList = () => {
 };
 
 export default FileList;
-

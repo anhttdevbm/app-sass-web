@@ -29,7 +29,6 @@ const MenuInfo = () => {
   const { isGroup } = useChatHelpers();
   const { menuItems } = useChatDetailInfo({
     currentConversation,
-    conversationInfo,
   });
 
   const renderColorByType = useMemo(() => {

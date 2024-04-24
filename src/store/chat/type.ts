@@ -3,7 +3,8 @@ import { DataStatus } from "constant/enums";
 import { Paging } from "constant/types";
 import {
   Attachment,
-  ChatLinkType,
+  IChatFile,
+  IChatLinkV2,
   MediaType,
   TypeMedia,
 } from "./media/typeMedia";
@@ -204,6 +205,7 @@ export interface MediaPreviewItem {
   name: string;
   object: string;
   ts: string;
+  created_at: string;
   type: TypeMedia;
 }
 
@@ -241,8 +243,14 @@ export interface ChatState {
   partnerInfo: UserInfo | null;
   partnerInfoStatus: DataStatus;
   //chat links
-  chatLinks: ChatLinkType[];
+  chatLinks: IChatLinkV2[];
   chatLinksStatus: DataStatus;
+  // chat medias
+  chatMedias: IChatFile[];
+  chatMediasStatus: DataStatus;
+  // chat medias
+  chatFiles: IChatFile[];
+  chatFilesStatus: DataStatus;
   //ListSearchConversation
   listSearchMessage: MessageSearchInfo[];
   statusListSearchMessage: DataStatus;
@@ -553,7 +561,10 @@ export const MESSAGE_TYPE = {
   TEXT: "text",
   MEDIA: "media",
   FILE: "file",
+  LINK: "link",
 };
+
+export const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];
 
 export interface IWsChatRespMessage {
   event: string;

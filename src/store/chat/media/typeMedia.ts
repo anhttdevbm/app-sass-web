@@ -4,6 +4,26 @@ export interface ChatLinkType {
   urls: UrlInfo[];
 }
 
+export interface IChatLinkV2 {
+  created_at: string;
+  id: string;
+  message: string;
+  room: string;
+  url: string;
+}
+
+export interface IChatFile {
+  created_at: string;
+  id: string;
+  message: string;
+  name: string;
+  object: string;
+  room: string;
+  size: number;
+  type: string;
+  url: string;
+}
+
 export interface UrlInfo {
   url: string;
   meta: {
@@ -93,6 +113,7 @@ export interface MediaTypeCommon {
   user: User;
   name: string;
 }
+
 export interface MediaHistoryType extends MediaTypeCommon {
   url: string;
 }

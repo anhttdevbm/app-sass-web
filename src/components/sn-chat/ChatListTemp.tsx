@@ -17,7 +17,7 @@ import useTheme from "hooks/useTheme";
 
 const ChatListTemp = () => {
   const { user } = useAuth();
-  const { onGetAllConvention, onClearConversation, onReset, onSetChatDesktop } =
+  const { onClearConversation, onReset, onSetChatDesktop } =
     useChat();
   const popperRef = useRef(false);
   const [open, setOpen] = useState(false);

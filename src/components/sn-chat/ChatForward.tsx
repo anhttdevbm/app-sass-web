@@ -75,12 +75,12 @@ const ChatForward: FC<Props> = (props) => {
       onAddSnackbar("Forward message successfully!", "success");
       if (isChatDesktop) {
         onSetDataTransfer(dataTransfer);
-        onGetAllConvention({
+        /*onGetAllConvention({
           count: 10,
           offset: 0,
           text: "",
           type: "a",
-        });
+        });*/
       } else {
         // console.log({ dataTransfer });
         const targetEmployeeId = Object.keys(employeeIdSelected)
