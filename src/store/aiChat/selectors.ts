@@ -3,19 +3,27 @@ import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  addChatWithAI,
+  chatWithAI,
+  createChatSession,
   deleteAllChatSessions,
   deleteChatSession,
   editChatSession,
   getChatSessions,
   getExamplePrompt,
+  getOpenAIChat,
   getPersona,
   getTone,
+  newChat,
+  setSelectedChatId,
 } from "./actions";
 import {
   ChatSessionData,
+  ChatWithAIData,
   DeleteAllChatSessionQueries,
   GetChatSessionsQueries,
   GetExamplePromptQueries,
+  GetOpenAIChatQueries,
   GetPersonaQueries,
   GetToneQueries,
 } from "./type";
@@ -61,14 +69,27 @@ export const useChatSession = () => {
   const dispatch = useAppDispatch();
   const {
     chatSessions,
-    chatSessionsFilters: filters,
-    chatSessionsStatus: status,
-    chatSessionsError: error,
-    chatSessionsNextPage: nextPage,
+    chatSessionsFilters,
+    chatSessionsStatus,
+    chatSessionsError,
+    chatSessionsNextPage,
+
+    chatSession,
+    chatSessionStatus,
+    chatSessionError,
+    chatSessionFilters,
+    newChatSessionCreated
   } = useAppSelector((state) => state.aiChat, shallowEqual);
 
-  const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
-  const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+  const isChatSessionsIdle = useMemo(
+    () => chatSessionsStatus === DataStatus.IDLE,
+    [chatSessionsStatus],
+  );
+
+  const isChatSessionsFetching = useMemo(
+    () => chatSessionsStatus === DataStatus.LOADING,
+    [chatSessionsStatus],
+  );
 
   const onGetChatSessions = useCallback(
     (queries: GetChatSessionsQueries) => {
@@ -94,48 +115,98 @@ export const useChatSession = () => {
   const onDeleteAllChatSessions = useCallback(
     (queries: DeleteAllChatSessionQueries) => {
       dispatch(deleteAllChatSessions(queries));
+      dispatch(newChat());
     },
     [dispatch],
   );
 
+  const onCreateChatSession = useCallback(
+    (data: ChatSessionData) => {
+      dispatch(createChatSession(data));
+    },  
+    [dispatch],
+  );
+
+  const onSelectChatId = useCallback(
+    (chatId?: string) => {
+      dispatch(setSelectedChatId(chatId));
+    },
+    [dispatch],
+  );
+
+  const onNewChat = useCallback(() => {
+    dispatch(newChat());
+  }, [dispatch]);
+
   return {
     chatSessions,
-    status,
-    error,
-    filters,
-    isIdle,
-    isFetching,
-    dispatch,
+    chatSessionStatus,
+    chatSessionsError,
+    chatSessionsFilters,
     onGetChatSessions,
-    nextPage,
+    chatSessionsNextPage,
+    isChatSessionsIdle,
+    isChatSessionsFetching,
     onEditChatSession,
     onDeleteChatSession,
     onDeleteAllChatSessions,
+
+    onCreateChatSession,
+    chatSession,
+    chatSessionError,
+    chatSessionFilters, 
+    newChatSessionCreated,
+
+    onSelectChatId,
+    onNewChat,
   };
 };
 
 export const useChatWithAI = () => {
   const dispatch = useAppDispatch();
   const {
+    // persona selector
     persona,
     personaFilters,
     personaStatus,
     personaError,
+
+    // tone selector
     tone,
     toneFilters,
     toneStatus,
     toneError,
+
+    openAIChat,
+    openAIChatStatus,
+    openAIChatError,
+    openAIChatFilters,
   } = useAppSelector((state) => state.aiChat, shallowEqual);
 
-  const isPersonaIdle = useMemo(() => personaStatus === DataStatus.IDLE, [personaStatus]);
-  const isPersonaFetching = useMemo(() => personaStatus === DataStatus.LOADING, [personaStatus]);
+  const isPersonaIdle = useMemo(
+    () => personaStatus === DataStatus.IDLE,
+    [personaStatus],
+  );
+  const isPersonaFetching = useMemo(
+    () => personaStatus === DataStatus.LOADING,
+    [personaStatus],
+  );
 
-  const isToneIdle = useMemo(() => toneStatus === DataStatus.IDLE, [toneStatus]);
-  const isToneFetching = useMemo(() => toneStatus === DataStatus.LOADING, [toneStatus]);
+  const isToneIdle = useMemo(
+    () => toneStatus === DataStatus.IDLE,
+    [toneStatus],
+  );
+  const isToneFetching = useMemo(
+    () => toneStatus === DataStatus.LOADING,
+    [toneStatus],
+  );
 
-  const onGetPersona = useCallback((queries: GetPersonaQueries) => {
-    dispatch(getPersona(queries));
-  }, [dispatch]);
+  const onGetPersona = useCallback(
+    (queries: GetPersonaQueries) => {
+      dispatch(getPersona(queries));
+    },
+    [dispatch],
+  );
 
   const onGetTone = useCallback(
     (queries: GetToneQueries) => {
@@ -144,21 +215,60 @@ export const useChatWithAI = () => {
     [dispatch],
   );
 
+  const isIdleOpenAIChat = useMemo(
+    () => openAIChatStatus === DataStatus.IDLE,
+    [openAIChatStatus],
+  );
+
+  const isFetchingOpenAIChat = useMemo(
+    () => openAIChatStatus === DataStatus.LOADING,
+    [openAIChatStatus],
+  );
+
+  const onGetOpenAIChat = useCallback(
+    (queries: GetOpenAIChatQueries) => {
+      dispatch(getOpenAIChat(queries));
+    },
+    [dispatch],
+  );
+
+  const onChatWithAI = useCallback(
+    (data: ChatWithAIData) => {
+      dispatch(
+        addChatWithAI({
+          ...data,
+          assistant_content: "",
+        }),
+      );
+      dispatch(chatWithAI(data));
+    },
+    [dispatch],
+  );
+
   return {
     persona,
+    onGetPersona,
     personaStatus,
     personaError,
-    tone,
-    toneStatus,
-    toneError,
     isPersonaIdle,
     isPersonaFetching,
+    personaFilters,
+
+    tone,
+    onGetTone,
+    toneStatus,
+    toneError,
     isToneIdle,
     isToneFetching,
-    dispatch,
-    onGetPersona,
-    onGetTone,
-    personaFilters,
     toneFilters,
+
+    openAIChat,
+    openAIChatStatus,
+    openAIChatError,
+    openAIChatFilters,
+    isIdleOpenAIChat,
+    isFetchingOpenAIChat,
+    onGetOpenAIChat,
+    onChatWithAI,
   };
 };

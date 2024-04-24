@@ -31,9 +31,15 @@ export type AIChatState = {
   chatSessionsStatus: DataStatus;
   chatSessionsError?: string;
   chatSessionsFilters: Omit<GetChatSessionsQueries, "pageIndex" | "pageSize">;
-  chatSessionsNextPage: number;
+  chatSessionsNextPage?: number;
   deleteAllChatSessionsStatus: DataStatus;
   deleteAllChatSessionsError: string | undefined;
+
+  chatSession?: string;
+  chatSessionStatus: DataStatus;
+  chatSessionError?: string;
+  chatSessionFilters?: { id: string };
+  newChatSessionCreated: string;
 
   examplePrompts: ExamplePrompt[];
   examplePromptsStatus: DataStatus;
@@ -49,6 +55,12 @@ export type AIChatState = {
   toneStatus: DataStatus;
   toneError?: string;
   toneFilters: GetToneQueries;
+
+  openAIChat: OpenAIChat[];
+  openAIChatStatus: DataStatus;
+  openAIChatError?: string;
+  openAIChatFilters?: GetOpenAIChatQueries;
+  
 };
 
 export type GetChatSessionsQueries = BaseQueries & {
@@ -61,15 +73,6 @@ export type EditChatSessionQueries = {
 
 export type ChatSessionData = {
   chatname?: string;
-  persona: string;
-  tone: string;
-  chat_status: string;
-  user_prompt: string;
-  file?: File;
-};
-
-export type GetOpenAIChatQueries = BaseQueries & {
-  id: string;
 };
 
 export type GetPersonaQueries = BaseQueries;
@@ -79,3 +82,28 @@ export type GetToneQueries = BaseQueries;
 export type DeleteAllChatSessionQueries = {
   userId: string;
 }
+
+export type ChatWithAIData = {
+  persona: string;
+  tone: string;
+  chat_session: string;
+  user_prompt: string;
+  files?: File[];
+};
+
+export type OpenAIChat = {
+  id?: string;
+  persona: string;
+  tone: string;
+  system_prompt?: string;
+  user_prompt: string;
+  assistant_content: string;
+  model?: string;
+  chat_session: string;
+  created_at?: string;
+};
+
+export type GetOpenAIChatQueries = {
+  page?: number;
+  id?: string;
+};

@@ -1,43 +1,36 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { OpenAIChat } from "store/aiChat/type";
 import { Message } from "./Message";
 
-interface ChatData {
-  id: string;
-  persona: string;
-  tone: string;
-  system_prompt: string;
-  user_prompt: string;
-  assistant_content: string;
-  model: string;
-  usage: {
-    completion_tokens: number;
-    prompt_tokens: number;
-    total_tokens: number;
-  };
-  created_at: string;
-  chat_session: string;
-}
-
 interface MessageListProps {
-  chatData: ChatData[];
+  chatData: Partial<OpenAIChat>[];
+  onLoadMore: () => void;
+  page?: number;
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ chatData }) => {
+export const MessageList: React.FC<MessageListProps> = ({
+  chatData,
+  onLoadMore,
+  page,
+}) => {
   return (
-    <Box height={"100%"} padding={"0 24px"}>
-      {chatData.map((message, index) => {
-        const hasNextMessageFromSameUser =
-          index < chatData.length - 1 &&
-          chatData[index + 1].persona === message.persona;
-
-        return (
-          <Message
-            key={message.id}
-            message={message}
-            hasNextMessageFromSameUser={hasNextMessageFromSameUser}
-          />
-        );
+    <Box
+      key={"message-list"}
+      height={"100%"}
+      padding={"0 24px"}
+      display="flex"
+      overflow="auto"
+      flexDirection="column-reverse"
+      width="100%"
+    >
+      {chatData.map((message) => {
+        return <Message key={message.id} {...message} />;
       })}
+      {page && (
+        <Button onClick={onLoadMore}>
+          Load More
+        </Button>
+      )}
     </Box>
   );
 };

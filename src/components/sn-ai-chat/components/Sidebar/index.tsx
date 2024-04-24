@@ -21,7 +21,7 @@ export const Sidebar = () => {
 
   const { user } = useAuth();
 
-  const { onDeleteAllChatSessions } = useChatSession();
+  const { onDeleteAllChatSessions, onNewChat } = useChatSession();
 
   const styles = useMemo(
     () => ({
@@ -53,6 +53,7 @@ export const Sidebar = () => {
       <NewButton
         sx={addNewBtnSx}
         startIcon={<PlusFillIcon style={{ fontSize: "24px" }} />}
+        onClick={onNewChat}
       >
         {t("sideBar.newChat")}
       </NewButton>

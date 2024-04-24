@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { DataStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN } from "constant/index";
 import {
@@ -9,10 +9,11 @@ import {
   editChatSession,
   getChatSessions,
   getExamplePrompt,
+  getOpenAIChat,
   getPersona,
-  getTone,
+  getTone
 } from "./actions";
-import { AIChatState } from "./type";
+import { AIChatState, OpenAIChat } from "./type";
 
 const initialState: AIChatState = {
   chatSessions: [],
@@ -22,6 +23,12 @@ const initialState: AIChatState = {
   chatSessionsNextPage: 1,
   deleteAllChatSessionsStatus: DataStatus.IDLE,
   deleteAllChatSessionsError: undefined,
+
+  chatSession: "",
+  chatSessionStatus: DataStatus.IDLE,
+  chatSessionError: undefined,
+  chatSessionFilters: { id: "" },
+  newChatSessionCreated: "",
 
   examplePrompts: [],
   examplePromptsStatus: DataStatus.IDLE,
@@ -37,12 +44,37 @@ const initialState: AIChatState = {
   toneStatus: DataStatus.IDLE,
   toneError: undefined,
   toneFilters: {},
+
+  openAIChat: [],
+  openAIChatStatus: DataStatus.IDLE,
+  openAIChatError: undefined,
+  openAIChatFilters: {},
 };
+
+const getPageNumber = (url: string | null) => {
+  if (url) {
+    const urlObject = new URL(url);
+    const pageNumber = urlObject.searchParams.get("page");
+    return Number(pageNumber);
+  }
+  return undefined;
+}
 
 const aiChatSlice = createSlice({
   name: "aiChat",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedChatId: (state, action: PayloadAction<string | undefined>) => {
+      state.chatSession = action.payload;
+    },
+    newChat: (state, action) => {
+      state.chatSession = "";
+      state.openAIChat = [];
+    },
+    addChatWithAI: (state, action: PayloadAction<OpenAIChat>) => {
+      state.openAIChat.unshift(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       // get example prompts
@@ -65,17 +97,18 @@ const aiChatSlice = createSlice({
       })
       .addCase(getChatSessions.fulfilled, (state, { payload }) => {
         state.chatSessionsStatus = DataStatus.SUCCEEDED;
-        state.chatSessions.push(...payload.results);
 
-        let pageNumber;
+        const newChatSessions = payload.results.filter(
+          (newChatSession) =>
+            !state.chatSessions.some(
+              (existingChatSession) =>
+                existingChatSession.id === newChatSession.id,
+            ),
+        );
 
-        if (payload.next) {
-          const url = new URL(payload.next);
-          const pageNumberString = url.searchParams.get("page");
-          pageNumber = Number(pageNumberString);
-        }
+        state.chatSessions.push(...newChatSessions);
 
-        state.chatSessionsNextPage = pageNumber;
+        state.chatSessionsNextPage = getPageNumber(payload.next);
       })
       .addCase(getChatSessions.rejected, (state, action) => {
         state.chatSessionsStatus = DataStatus.FAILED;
@@ -117,15 +150,16 @@ const aiChatSlice = createSlice({
 
       // create chat session
       .addCase(createChatSession.pending, (state) => {
-        state.chatSessionsStatus = DataStatus.LOADING;
+        state.chatSessionStatus = DataStatus.LOADING;
       })
       .addCase(createChatSession.fulfilled, (state, { payload }) => {
         state.chatSessionsStatus = DataStatus.SUCCEEDED;
-        state.chatSessions.push(payload);
+        // state.chatSession = payload.chat_session;
+        state.newChatSessionCreated = payload.chat_session;
       })
       .addCase(createChatSession.rejected, (state, action) => {
-        state.chatSessionsStatus = DataStatus.FAILED;
-        state.chatSessionsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+        state.chatSessionStatus = DataStatus.FAILED;
+        state.chatSessionError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       })
 
       // chat with AI
@@ -135,11 +169,8 @@ const aiChatSlice = createSlice({
       .addCase(chatWithAI.fulfilled, (state, { payload }) => {
         state.chatSessionsStatus = DataStatus.SUCCEEDED;
 
-        const index = state.chatSessions.findIndex(
-          (chatSession) => chatSession.id === payload.id,
-        );
-        if (index !== -1) {
-          state.chatSessions[index] = payload;
+        if (state.openAIChat.length > 0) {
+          state.openAIChat[0].assistant_content = payload.AI;
         }
       })
       .addCase(chatWithAI.rejected, (state, action) => {
@@ -155,17 +186,9 @@ const aiChatSlice = createSlice({
         state.personaStatus = DataStatus.SUCCEEDED;
         state.persona.push(...payload.results);
 
-        let pageNumber;
-
-        if (payload.next) {
-          const url = new URL(payload.next);
-          const pageNumberString = url.searchParams.get("page");
-          pageNumber = Number(pageNumberString);
-        }
-
         state.personaFilters = {
           ...state.personaFilters,
-          pageIndex: pageNumber,
+          pageIndex: getPageNumber(payload.next),
         };
       })
       .addCase(getPersona.rejected, (state, action) => {
@@ -181,33 +204,48 @@ const aiChatSlice = createSlice({
         state.toneStatus = DataStatus.SUCCEEDED;
         state.tone.push(...payload.results);
 
-        let pageNumber;
-
-        if (payload.next) {
-          const url = new URL(payload.next);
-          const pageNumberString = url.searchParams.get("page");
-          pageNumber = Number(pageNumberString);
-        }
-
-        state.toneFilters = { ...state.toneFilters, pageIndex: pageNumber };
+        state.toneFilters = {
+          ...state.toneFilters,
+          pageIndex: getPageNumber(payload.next),
+        };
       })
       .addCase(getTone.rejected, (state, action) => {
         state.toneStatus = DataStatus.FAILED;
         state.toneError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       })
 
+      // Delete all chat sessions
       .addCase(deleteAllChatSessions.pending, (state) => {
         state.deleteAllChatSessionsStatus = DataStatus.LOADING;
       })
       .addCase(deleteAllChatSessions.fulfilled, (state) => {
         state.deleteAllChatSessionsStatus = DataStatus.SUCCEEDED;
-        // Clear the chat sessions data
         state.chatSessions = [];
       })
       .addCase(deleteAllChatSessions.rejected, (state, action) => {
         state.deleteAllChatSessionsStatus = DataStatus.FAILED;
         state.deleteAllChatSessionsError =
           action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+
+      // Get openAI chat
+      .addCase(getOpenAIChat.pending, (state) => {
+        state.openAIChatStatus = DataStatus.LOADING;
+      })
+      .addCase(getOpenAIChat.fulfilled, (state, { payload }) => {
+        state.openAIChatStatus = DataStatus.SUCCEEDED;
+
+        if (state.openAIChat.length > 0 && payload.results.length > 0 && payload.results[0].chat_session !== state.openAIChat[0].chat_session) {
+          state.openAIChat = [];
+        }
+
+        state.openAIChat.push(...payload.results);
+
+        state.openAIChatFilters = { page: getPageNumber(payload.next) };
+      })
+      .addCase(getOpenAIChat.rejected, (state, action) => {
+        state.openAIChatStatus = DataStatus.FAILED;
+        state.openAIChatError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       });
   },
 });

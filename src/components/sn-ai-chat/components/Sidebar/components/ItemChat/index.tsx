@@ -23,7 +23,7 @@ const TEXT_BACKGROUND =
 interface ItemChatProps {
   title: string;
   id: string;
-  selectedChat: string | null;
+  selectedChat?: string;
   setSelectedChat: () => void;
 }
 

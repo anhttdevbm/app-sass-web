@@ -4,7 +4,7 @@ import { NS_AI_CHAT } from "constant/index";
 import AttachFileIcon from "icons/AttachFileIcon";
 import SendGradientIcon from "icons/SendGradientIcon";
 import { useTranslations } from "next-intl";
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 
 const BLUE = "#3699FF";
 const DARK_BLUE = "#0575E6";
@@ -18,7 +18,7 @@ interface ChatInputProperties {
   onMessageSubmit: (message: string) => void;
   onFileChange?: (file: File[]) => void;
   onResizeEvent?: (num?: number) => void;
-  wrapperInputStyles?: any;
+  wrapperInputStyles?: React.CSSProperties;
 }
 
 const ChatInput = ({
@@ -41,6 +41,10 @@ const ChatInput = ({
       onFileChange?.(Array.from(files));
     }
   };
+
+  useEffect(() => {
+    setMessage(initialMessage);
+  }, [initialMessage]);
 
   const handleMessageSubmit = (event: React.FormEvent) => {
     event.preventDefault();
