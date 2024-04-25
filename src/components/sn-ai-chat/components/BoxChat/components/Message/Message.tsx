@@ -11,7 +11,7 @@ import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
 import useTheme from "hooks/useTheme";
 import { useState } from "react";
-import { AddDocModal } from "components/sn-ai-chat/components/Docs";
+import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
 import EditMessageAIChatIcon from "icons/EditMessageAIChatIcon";
 
 export const Message = (messageProps: Partial<OpenAIChat>) => {

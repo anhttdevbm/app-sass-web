@@ -78,7 +78,8 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
             backgroundColor: "transparent",
             color: isDarkMode ? "info.dark" : "grey.300",
             fontSize: "14px",
-            fontWeight: 400
+            fontWeight: 400,
+            lineHeight: "16px",
           }}
         >
           {placeholder}
@@ -93,6 +94,7 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
           ".css-1idmfta-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input":
             {
               padding: "8px 8px 8px 16px",
+              lineHeight: "16px",
             },
           ".MuiOutlinedInput-notchedOutline": {
             // border: isDarkMode ? "1px solid #3D3D3D" : "0px",
@@ -133,7 +135,7 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
                 textOverflow: "ellipsis",
                 fontSize: "14px",
                 fontWeight: 400,
-                lineHeight: "15px",
+                lineHeight: "16px",
               }}
             />
           </MenuItem>
