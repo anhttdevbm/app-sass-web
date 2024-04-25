@@ -47,7 +47,6 @@ const ChatTitle = ({ title }) => <Text sx={titleSx}>{title}</Text>;
 const ItemChat = ({
   title,
   id,
-  selectedChat,
   setSelectedChat,
 }: ItemChatProps) => {
   // State variables
@@ -96,12 +95,7 @@ const ItemChat = ({
     <Box
       sx={{
         ...itemSx,
-        backgroundColor:
-          selectedChat === id
-            ? PRIMARY_MAIN
-            : isDarkMode
-            ? INFOR_DARK
-            : PRIMARY_LIGHT,
+        backgroundColor: isDarkMode ? INFOR_DARK : PRIMARY_LIGHT,
       }}
       onClick={() => {
         if (!isEditing && !menuAnchorElement) {
@@ -159,8 +153,7 @@ const itemSx = {
   width: "100%",
   padding: "12px",
   "&:hover": {
-    backgroundColor: PRIMARY_MAIN,
-    color: WHITE,
+    opacity: 0.8,
   },
   marginBottom: "8px",
   cursor: "pointer",

@@ -1,8 +1,8 @@
-import { Alert, Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
-import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useChatSession,
   useChatWithAI,
@@ -11,11 +11,11 @@ import {
 import { ChatWithAIData, OpenAIChat } from "store/aiChat/type";
 import ChatInput from "./components/Chat/ChatInput";
 import { RenderEmptyChat } from "./components/Chat/EmptyChat";
-import { MessageLayout, MessageList } from "./components/Message";
+import { MessageList, MessageLayout } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
 
-
 export const BoxChat = () => {
+
   const t = useTranslations(NS_AI_CHAT);
 
   const {
@@ -50,6 +50,8 @@ export const BoxChat = () => {
 
   const { chatSession, onCreateChatSession, newChatSessionCreated } = useChatSession();
 
+  const locale = useLocale();
+
   const [persona, setPersona] = useState("");
   const [tone, setTone] = useState("");
   const [prompt, setPrompt] = useState("");
@@ -73,6 +75,7 @@ export const BoxChat = () => {
       persona,
       tone,
       chat_session: "",
+      lang: locale,
     };
 
     if (chatSession) {
@@ -106,40 +109,37 @@ export const BoxChat = () => {
         page: openAIChatFilters.page,
       });
     }
-  }, [openAIChatFilters, onGetOpenAIChat]);
-
-  const toTitleCase = useCallback((str: string) => {
-    return str
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  }, []);
+  }, [openAIChatFilters]);
 
   const personaOptions = useMemo(
     () =>
       Array.isArray(personaList)
-        ? personaList.map((item) => ({
-            label: toTitleCase(item.name),
-            value: item.name,
-          }))
+        ? personaList.map((item) => {
+          return { label: item.name[locale], value: item.name[locale] };
+        })
         : [],
-    [personaList],
+    [personaList, locale],
   );
 
   const toneOptions = useMemo(
     () =>
       Array.isArray(toneList)
-        ? toneList.map((item) => ({
-            label: item.name,
-            value: item.name,
-          }))
+        ? toneList.map((item) =>{
+          return { label: item.name[locale], value: item.name[locale] };
+        })
         : [],
-    [toneList],
+    [toneList, locale],
   );
 
   useEffect(() => {
     if (newChatSessionCreated) {
-      onChatWithAI({ user_prompt: prompt, persona, tone, chat_session: newChatSessionCreated });
+      onChatWithAI({
+        user_prompt: prompt,
+        persona,
+        tone,
+        chat_session: newChatSessionCreated,
+        lang: locale,
+      });
       setPrompt("");
     }
   }, [newChatSessionCreated]);
@@ -177,63 +177,77 @@ export const BoxChat = () => {
   }, [chatSession]);
 
   useEffect(() => {
-    if (openAIChat && openAIChat.length > 0) {
-      setChatData(openAIChat);
-      setPersona(openAIChat[0].persona);
-      setTone(openAIChat[0].tone);
-    }
-  }, [openAIChat]);
+    if (!isIdleOpenAIChat || !isFetchingOpenAIChat) {
+      if (openAIChat && openAIChat.length > 0) {
+        console.log("openAIChat", openAIChat[0]);
+        setChatData(openAIChat);
+        setPersona(openAIChat[0].persona);
+        setTone(openAIChat[0].tone);
+     }
+      }
+  }, [openAIChat, isIdleOpenAIChat, isFetchingOpenAIChat]);
 
-  return (
-    <Box sx={boxChatContainerSx}>
-      {chatData.length > 0 ? (
-        <MessageLayout>
-          <MessageList
-            onLoadMore={onLoadMoreOpenAIChat}
-            chatData={chatData}
-            page={openAIChatFilters?.page}
-          />
-        </MessageLayout>
-      ) : (
-        <RenderEmptyChat
-          t={t}
-          prompts={examplePrompts}
-          handleClick={setPrompt}
-        />
-      )}
-      <Box padding={"0 24px"}>
-        <Box sx={selectContainerSx}>
-          <SelectAIChat
-            key={"persona"}
-            placeholder={t("boxChat.persona")}
-            options={personaOptions}
-            selectedValue={persona}
-            onOptionChange={(e) => setPersona(e.target.value)}
-            onLoadMore={onLoadMorePersona}
-            isError={showPersonaError}
-          />
-          <SelectAIChat
-            key={"tone"}
-            placeholder={t("boxChat.tone")}
-            options={toneOptions}
-            selectedValue={tone}
-            onOptionChange={(e) => setTone(e.target.value)}
-            onLoadMore={onLoadMoreTone}
-            isError={showToneError}
-          />
-        </Box>
-        <ChatInput
-          isLoading={false}
-          initialMessage={prompt}
-          files={[]}
-          onMessageSubmit={handleSubmitMessage}
-          onFileChange={(file: File[]) => console.log(file)}
-          onResizeEvent={(num?: number) => console.log(num)}
-          wrapperInputStyles={{}}
-        />
-      </Box>
-    </Box>
-  );
+ return (
+   <Box sx={boxChatContainerSx}>
+     {isFetchingOpenAIChat ? (
+       <Box
+         sx={{
+           display: "flex",
+           justifyContent: "center",
+           alignItems: "center",
+           height: "100%",
+         }}
+       >
+         <CircularProgress />
+       </Box>
+     ) : chatData.length > 0 ? (
+       <MessageLayout>
+         <MessageList
+           onLoadMore={onLoadMoreOpenAIChat}
+           chatData={chatData}
+           page={openAIChatFilters?.page}
+         />
+       </MessageLayout>
+     ) : (
+       <RenderEmptyChat
+         t={t}
+         prompts={examplePrompts}
+         handleClick={setPrompt}
+       />
+     )}
+     <Box padding={"0 24px"}>
+       <Box sx={selectContainerSx}>
+         <SelectAIChat
+           key={"persona"}
+           placeholder={t("boxChat.persona")}
+           options={personaOptions}
+           selectedValue={persona}
+           onOptionChange={(e) => setPersona(e.target.value)}
+           onLoadMore={onLoadMorePersona}
+           isError={showPersonaError}
+         />
+         <SelectAIChat
+           key={"tone"}
+           placeholder={t("boxChat.tone")}
+           options={toneOptions}
+           selectedValue={tone}
+           onOptionChange={(e) => setTone(e.target.value)}
+           onLoadMore={onLoadMoreTone}
+           isError={showToneError}
+         />
+       </Box>
+       <ChatInput
+         isLoading={false}
+         initialMessage={prompt}
+         files={[]}
+         onMessageSubmit={handleSubmitMessage}
+         onFileChange={(file: File[]) => console.log(file)}
+         onResizeEvent={(num?: number) => console.log(num)}
+         wrapperInputStyles={{}}
+       />
+     </Box>
+   </Box>
+ );
 };
 
 const boxChatContainerSx = {

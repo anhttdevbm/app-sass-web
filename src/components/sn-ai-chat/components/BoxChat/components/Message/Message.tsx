@@ -10,11 +10,30 @@ import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
 import useTheme from "hooks/useTheme";
+import { useState } from "react";
+import { AddDocModal } from "components/sn-ai-chat/components/Docs";
 
 export const Message = (messageProps: Partial<OpenAIChat>) => {
   const { user } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user_prompt, assistant_content, id } = messageProps;
   const { isDarkMode } = useTheme();
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCopy = () => {
+    console.log("handle copy")
+  }
+
+  const handleRegenerateResponse = () => {
+    console.log("handle regenerate response")
+  }
 
   return (
     <Box key={id}>
@@ -72,14 +91,22 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
           justifyContent={"flex-end"}
           width={"100%"}
         >
-          <ActionButton icon={<CopyTextIcon />} label="boxChat.copy" />
-          <ActionButton icon={<AddToDocIcon />} label="boxChat.addToDocs" />
+          <ActionButton 
+            onClick={handleCopy}
+            icon={<CopyTextIcon />} label="boxChat.copy" />
           <ActionButton
+            onClick={handleOpenModal}
+            icon={<AddToDocIcon />}
+            label="boxChat.addToDocs"
+          />
+          <ActionButton
+            onClick={handleRegenerateResponse}
             icon={<RegenerateIcon />}
             label="boxChat.regenerateResponse"
           />
         </Box>
       </Box>
+      <AddDocModal open={isModalOpen} onClose={handleCloseModal} />
     </Box>
   );
 };
@@ -93,4 +120,3 @@ const avatarSx = {
   height: "40px",
   backgroundImage: "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)",
 };
-

@@ -88,6 +88,7 @@ export type ChatWithAIData = {
   tone: string;
   chat_session: string;
   user_prompt: string;
+  lang: string;
   files?: File[];
 };
 

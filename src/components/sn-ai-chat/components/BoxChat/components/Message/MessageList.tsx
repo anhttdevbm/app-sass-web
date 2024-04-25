@@ -23,8 +23,8 @@ export const MessageList: React.FC<MessageListProps> = ({
       flexDirection="column-reverse"
       width="100%"
     >
-      {chatData.map((message) => {
-        return <Message key={message.id} {...message} />;
+      {chatData.map((message, index) => {
+        return <Message key={index} {...message} />;
       })}
       {page && (
         <Button onClick={onLoadMore}>

@@ -2,10 +2,10 @@ import { NewButton } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
 import { useTranslations } from "next-intl";
 
-export const ActionButton = ({ icon, label }) => {
+export const ActionButton = ({ icon, label, onClick }) => {
   const t = useTranslations(NS_AI_CHAT);
   return (
-    <NewButton startIcon={icon} sx={ButtonSx}>
+    <NewButton startIcon={icon} sx={ButtonSx} onClick={onClick}>
       {t(label)}
     </NewButton>
   );
