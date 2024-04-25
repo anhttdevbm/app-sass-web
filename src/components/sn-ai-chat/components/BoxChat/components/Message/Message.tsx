@@ -1,5 +1,5 @@
 import { Avatar, Box, Skeleton } from "@mui/material";
-import { Text } from "components/shared";
+import { IconButton, Text } from "components/shared";
 import { AddToDocIcon } from "icons/AddToDocIcon";
 import { CopyTextIcon } from "icons/CopyTextIcon";
 import { RegenerateIcon } from "icons/RegenerateIcon";
@@ -12,6 +12,7 @@ import { MessageBox } from "./MessageBox";
 import useTheme from "hooks/useTheme";
 import { useState } from "react";
 import { AddDocModal } from "components/sn-ai-chat/components/Docs";
+import EditMessageAIChatIcon from "icons/EditMessageAIChatIcon";
 
 export const Message = (messageProps: Partial<OpenAIChat>) => {
   const { user } = useAuth();
@@ -49,10 +50,16 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
           variant="rounded"
           sx={{ borderRadius: "10px" }}
         />
-        <MessageBox bgcolor={isDarkMode ? "info.main" : "#e1f5fe"}>
+        <MessageBox bgcolor={isDarkMode ? "info.main" : "#EBF5FF"}>
           <Text variant="body1" flex={1}>
             {user_prompt}
           </Text>
+          <IconButton
+            size="small"
+            sx={{ borderRadius: "50%" }}
+          >
+            <EditMessageAIChatIcon width={18} height={18} />
+          </IconButton>
         </MessageBox>
       </Box>
       <Box

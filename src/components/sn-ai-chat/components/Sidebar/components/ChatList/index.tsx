@@ -1,4 +1,4 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { Text } from "components/shared";
 import { useEffect, useRef, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";

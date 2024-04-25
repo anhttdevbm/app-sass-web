@@ -78,7 +78,7 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
             backgroundColor: "transparent",
             color: isDarkMode ? "info.dark" : "grey.300",
             fontSize: "14px",
-            fontWeight: 400,
+            fontWeight: 400
           }}
         >
           {placeholder}
@@ -131,6 +131,9 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
                 noWrap: true,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
+                fontSize: "14px",
+                fontWeight: 400,
+                lineHeight: "15px",
               }}
             />
           </MenuItem>
