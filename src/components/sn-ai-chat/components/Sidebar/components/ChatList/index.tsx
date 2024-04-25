@@ -1,4 +1,4 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { Text } from "components/shared";
 import { useEffect, useRef, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
@@ -18,17 +18,22 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
   thirtyDaysAgo.setDate(today.getDate() - 30);
 
   return chatSessions.reduce((groups, chat) => {
-    const chatDate = new Date(chat.last_question_at);
     let dateGroup = "";
 
-    if (chatDate.toDateString() === today.toDateString()) {
+    if (chat.last_question_at === null) {
       dateGroup = TODAY;
-    } else if (chatDate.toDateString() === yesterday.toDateString()) {
-      dateGroup = YESTERDAY;
-    } else if (chatDate > thirtyDaysAgo) {
-      dateGroup = PREVIOUS_30_DAYS;
     } else {
-      dateGroup = OLDER;
+      const chatDate = new Date(chat.last_question_at);
+
+      if (chatDate.toDateString() === today.toDateString()) {
+        dateGroup = TODAY;
+      } else if (chatDate.toDateString() === yesterday.toDateString()) {
+        dateGroup = YESTERDAY;
+      } else if (chatDate > thirtyDaysAgo) {
+        dateGroup = PREVIOUS_30_DAYS;
+      } else {
+        dateGroup = OLDER;
+      }
     }
 
     if (!groups[dateGroup]) {
@@ -40,9 +45,8 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
 }
 
 const ChatList = () => {
-  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
-    undefined,
-  );
+  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(undefined);
+  const [chatSessionsGroupedByDate, setChatSessionsGroupedByDate] = useState<Record<string, ChatSession[]>>({});
 
   const {
     chatSessions,
@@ -60,7 +64,7 @@ const ChatList = () => {
 
   useEffect(() => {
     onSelectChatId(selectedChatId);
-  }, [selectedChatId, onSelectChatId]);
+  }, [selectedChatId]);
 
   useEffect(() => {
       fetchChatSessions({});
@@ -70,11 +74,16 @@ const ChatList = () => {
   useEffect(() => {
     if (chatSession) {
       setSelectedChatId(chatSession);
-      fetchChatSessions({});
     } else {
       setSelectedChatId(undefined);
     }
   }, [chatSession]);
+
+  useEffect(() => {
+   setChatSessionsGroupedByDate(groupChatSessionsByDate(chatSessions));
+  }, [chatSessions])
+
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -96,8 +105,6 @@ const ChatList = () => {
         observer.unobserve(intersectionObserverRef.current);
     };
   }, [intersectionObserverRef, nextPage, fetchChatSessions]);
-
-  const chatSessionsGroupedByDate = groupChatSessionsByDate(chatSessions);
 
   return (
     <Box sx={scrollableSx}>

@@ -17,6 +17,11 @@ export const AIChatLang: AIChatDictionary = {
     enterMessage: "Enter message",
     copy: "Copy",
     addToDocs: "Add to docs",
-    regenerateResponse: "Regenerate response",
+    regenerateResponse: "Regenerate response"
   },
+  addDoc: {
+    title: "Choose Document",
+    search: "Enter document name",
+    add: "Add document",
+  }
 };

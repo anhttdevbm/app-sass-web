@@ -19,4 +19,9 @@ export const AIChatLang: AIChatDictionary = {
     addToDocs: "Thêm vào tài liệu",
     regenerateResponse: "Tạo lại câu trả lời",
   },
+  addDoc: {
+    title: "Chọn tài liệu",
+    search: "Nhập tên tài liệu",
+    add: "Thêm tài liệu",
+  }
 };

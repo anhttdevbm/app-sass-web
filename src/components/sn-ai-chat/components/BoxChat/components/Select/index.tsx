@@ -1,12 +1,15 @@
 import {
   FormControl,
   InputLabel,
+  ListItemIcon,
+  ListItemText,
   MenuItem,
   Select,
   SelectChangeEvent,
 } from "@mui/material";
 import { Option } from "constant/types";
 import useTheme from "hooks/useTheme";
+import { useLocale } from "next-intl";
 import React, { useEffect, useRef } from "react";
 
 interface SelectAIChatProps {
@@ -27,10 +30,10 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
   onOptionChange,
   selectedValue,
   onLoadMore,
-  isError
+  isError,
+
 }) => {
   const { isDarkMode } = useTheme();
-
   const lastOptionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,6 +79,7 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
             color: isDarkMode ? "info.dark" : "grey.300",
             fontSize: "14px",
             fontWeight: 400,
+            lineHeight: "16px",
           }}
         >
           {placeholder}
@@ -90,10 +94,15 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
           ".css-1idmfta-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input":
             {
               padding: "8px 8px 8px 16px",
+              lineHeight: "16px",
             },
           ".MuiOutlinedInput-notchedOutline": {
             // border: isDarkMode ? "1px solid #3D3D3D" : "0px",
-            border: isError ? "1px solid #FF0000" : isDarkMode ? "1px solid #3D3D3D" : "0px",
+            border: isError
+              ? "1px solid #FF0000"
+              : isDarkMode
+              ? "1px solid #3D3D3D"
+              : "0px",
           },
         }}
         MenuProps={{
@@ -116,11 +125,19 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
           Default
         </MenuItem>
         {options.map((option, index) => (
-          <MenuItem
-            key={index}
-            value={option.value}
-          >
-            {option.label}
+          <MenuItem key={index} value={option.value}>
+            {option.icon && <ListItemIcon>{option.icon}</ListItemIcon>}
+            <ListItemText
+              primary={option.label}
+              primaryTypographyProps={{
+                noWrap: true,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontSize: "14px",
+                fontWeight: 400,
+                lineHeight: "16px",
+              }}
+            />
           </MenuItem>
         ))}
         {/* <div ref={lastOptionRef}>.</div> */}

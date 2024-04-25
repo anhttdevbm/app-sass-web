@@ -39,7 +39,7 @@ const useDocs = () => {
     [dispatch],
   );
 
-  const onCreateDoc = async (projectId) => {
+  const onCreateDoc = async (projectId?: string, content?: string) => {
     setLoading(true);
     try {
       const response = await client.post(
@@ -48,6 +48,7 @@ const useDocs = () => {
           name: "No Name",
           description: "",
           project_id: projectId,
+          content,
         },
         {
           baseURL: DOCS_API_URL,
@@ -58,6 +59,7 @@ const useDocs = () => {
         dispatch(changeId(response.data.id));
         dispatch(getDocDetails(response.data.id));
         push(`/documents/${response.data.id}`);
+        return response.data.id;
       }
       setLoading(false);
       throw AN_ERROR_TRY_AGAIN;
@@ -73,7 +75,7 @@ const useDocs = () => {
     });
   };
 
-  const handleGetDocDetail = async (id) => {
+  const handleGetDocDetail = async (id, content?: string) => {
     const resPrem = await client.get(
       Endpoint.PERM_DOCS + id,
       {},
@@ -102,6 +104,9 @@ const useDocs = () => {
 
     if (res.status === HttpStatusCode.OK) {
       console.log({ data: res.data });
+      if (content) {
+        res.data.content = content;
+      }
       dispatch(getDocDetails(res.data));
     }
   };
@@ -121,7 +126,7 @@ const useDocs = () => {
     onCreateDoc,
     loading,
     handleUpdateDoc,
-    handleGetDocDetail,
+    handleGetDocDetail
   };
 };
 

@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 
 export const MessageBox = ({ children, ...props }) => (
   <Box
-    bgcolor={"#e1f5fe"}
+    bgcolor={"#EBF5FF"}
     borderRadius={"20px"}
     p={2}
     marginLeft={"12px"}

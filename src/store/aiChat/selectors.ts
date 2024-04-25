@@ -107,6 +107,9 @@ export const useChatSession = () => {
 
   const onDeleteChatSession = useCallback(
     (id: string) => {
+      if (chatSession === id) {
+        dispatch(newChat());
+      }
       dispatch(deleteChatSession(id));
     },
     [dispatch],
