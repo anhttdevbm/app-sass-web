@@ -115,7 +115,7 @@ export const BoxChat = () => {
     () =>
       Array.isArray(personaList)
         ? personaList.map((item) => {
-          return { label: item.name[locale], value: item.name[locale] };
+          return { label: item.name[locale], value: item.id };
         })
         : [],
     [personaList, locale],
@@ -125,7 +125,7 @@ export const BoxChat = () => {
     () =>
       Array.isArray(toneList)
         ? toneList.map((item) =>{
-          return { label: item.name[locale], value: item.name[locale] };
+          return { label: item.name[locale], value: item.id };
         })
         : [],
     [toneList, locale],
@@ -179,7 +179,6 @@ export const BoxChat = () => {
   useEffect(() => {
     if (!isIdleOpenAIChat || !isFetchingOpenAIChat) {
       if (openAIChat && openAIChat.length > 0) {
-        console.log("openAIChat", openAIChat[0]);
         setChatData(openAIChat);
         setPersona(openAIChat[0].persona);
         setTone(openAIChat[0].tone);

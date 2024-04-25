@@ -10,15 +10,26 @@ import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
 import useTheme from "hooks/useTheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
 import EditMessageAIChatIcon from "icons/EditMessageAIChatIcon";
+import { useChatWithAI } from "store/aiChat/selectors";
 
 export const Message = (messageProps: Partial<OpenAIChat>) => {
   const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user_prompt, assistant_content, id } = messageProps;
   const { isDarkMode } = useTheme();
+  const [isLoading, setIsLoading] = useState(false);
+  const {isFetchingOpenAIChat} = useChatWithAI();
+
+  useEffect(() => {
+    if (!isFetchingOpenAIChat) {
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
+  }, [isFetchingOpenAIChat]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -73,7 +84,7 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
             <Image alt="AI assistant" src={AIIcon} width={28} height={28} />
           </Box>
           <MessageBox bgcolor={isDarkMode ? "info.dark" : "#f5f5f5"} flex={1}>
-            {assistant_content ? (
+            {!isLoading ? (
               <Text variant="body1" flex={1}>
                 {assistant_content}
               </Text>
@@ -113,7 +124,7 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
           />
         </Box>
       </Box>
-      <AddDocModal open={isModalOpen} onClose={handleCloseModal} />
+      <AddDocModal open={isModalOpen} onClose={handleCloseModal} assistantContent={assistant_content as string} />
     </Box>
   );
 };

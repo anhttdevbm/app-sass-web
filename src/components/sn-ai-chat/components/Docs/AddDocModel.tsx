@@ -11,29 +11,99 @@ import {
   List,
   ListItem,
   TextField,
+  Typography,
 } from "@mui/material";
 import { IconButton, Text } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
 import DocOutlineIcon from "icons/DocOutlineIcon";
 import PlusIcon from "icons/PlusIcon";
+import { debounce } from "lodash";
 import { useTranslations } from "next-intl";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef } from "react";
+import { useAuth } from "store/app/selectors";
 import { useDocs } from "store/docs/selectors";
 
-export const AddDocModal = ({ open, onClose }) => {
-  const { onCreateDoc, onGetDocs, handleUpdateDoc } = useDocs();
+interface AddDocModalProps {
+  open: boolean;
+  onClose: () => void;
+  assistantContent: string;
+}
+
+interface DocItem {
+  id: string;
+  name: string;
+}
+
+export const AddDocModal: React.FC<AddDocModalProps> = ({
+  open,
+  onClose,
+  assistantContent,
+}) => {
+  const { onGetDocs, items, onCreateDoc, handleGetDocDetail } = useDocs();
   const [search, setSearch] = React.useState("");
+  const { user } = useAuth();
+  const router = useRouter();
 
   const t = useTranslations(NS_AI_CHAT);
 
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
-  };
+  const loadMoreRef = useRef(null);
+
+   const debouncedSearch = React.useCallback(
+     debounce(
+       (value) =>
+         onGetDocs({
+          user_id: user?.id,
+          search_key: value,
+         }),
+       300,
+     ),
+     [],
+   );
+
+   const handleSearchChange = (event) => {
+     setSearch(event.target.value);
+     debouncedSearch(event.target.value);
+   };
 
   const handleAddDoc = async () => {
-    const doc = await onCreateDoc(search);
-    onClose();
+    const docId = await onCreateDoc(undefined, assistantContent);
+    router.push(`http://localhost:3000/documents/${docId}`);
   };
+
+  const handleDocClick = (doc: DocItem) => {
+    console.log("doc", doc.id);
+    handleGetDocDetail(doc.id, assistantContent);
+    router.push(`http://localhost:3000/documents/${doc.id}`);
+  };
+
+  useEffect(() => {
+      onGetDocs({
+        user_id: user?.id,
+      });
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        onGetDocs({
+          user_id: user?.id,
+          search_key: search,
+          page: items[0]?.docsPaging.pageIndex + 1,
+        });
+      }
+    });
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current);
+      }
+    };
+  }, [loadMoreRef]);
 
   return (
     <Dialog
@@ -88,7 +158,10 @@ export const AddDocModal = ({ open, onClose }) => {
               transition: "none",
               fontSize: "14px",
               fontWeight: "400",
-              color: "grey.300",
+              color: "text.primary",
+              "&::placeholder": {
+                color: "grey.300",
+              },
             },
             "& .MuiSvgIcon-root": {
               width: "24px",
@@ -105,13 +178,36 @@ export const AddDocModal = ({ open, onClose }) => {
           }}
         />
         <Box>
-          <List>
-            <ListItem alignItems="center">
-              <div style={{ marginRight: '8px' }}>
-                <DocOutlineIcon width={20} height={20} />
-              </div>
-              <Text variant="body1">Document 1</Text>
-            </ListItem>
+          <List sx={{ maxHeight: "300px", overflow: "auto" }}>
+            {items &&
+              items[0]?.docs.map((doc: DocItem) => (
+                <ListItem alignItems="center" key={doc.id}>
+                  <Button
+                    onClick={() => handleDocClick(doc)}
+                    sx={{
+                      border: "none",
+                      outline: "none",
+                      background: "none",
+                      padding: "8px",
+                      "&:hover": {
+                        background: "primary.dark",
+                      },
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start"
+                    }}
+                  >
+                    <Box marginRight={1}>
+                      <DocOutlineIcon />
+                    </Box>
+                    <Typography color={"grey.900"} variant="body1">
+                      {doc.name}
+                    </Typography>
+                  </Button>
+                </ListItem>
+              ))}
+            <div ref={loadMoreRef} />
           </List>
           <DialogActions
             sx={{
@@ -130,6 +226,7 @@ export const AddDocModal = ({ open, onClose }) => {
                     marginLeft: "8px",
                   },
                 }}
+                onClick={handleAddDoc}
                 startIcon={<PlusIcon />}
               >
                 {t("addDoc.add")}
