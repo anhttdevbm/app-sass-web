@@ -57,7 +57,7 @@ const useDocs = () => {
 
       if (response?.status === HttpStatusCode.CREATED) {
         dispatch(changeId(response.data.id));
-        dispatch(getDocDetails(response.data.id));
+        dispatch(getDocDetails(response.data));
         push(`/documents/${response.data.id}`);
         return response.data.id;
       }
