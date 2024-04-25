@@ -3,6 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,19 +21,19 @@ import PlusIcon from "icons/PlusIcon";
 import { debounce } from "lodash";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { useDocs } from "store/docs/selectors";
+
+interface DocItem {
+  id: string;
+  name: string;
+}
 
 interface AddDocModalProps {
   open: boolean;
   onClose: () => void;
   assistantContent: string;
-}
-
-interface DocItem {
-  id: string;
-  name: string;
 }
 
 export const AddDocModal: React.FC<AddDocModalProps> = ({
@@ -41,47 +42,39 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
   assistantContent,
 }) => {
   const { onGetDocs, items, onCreateDoc, handleGetDocDetail } = useDocs();
-  const [search, setSearch] = React.useState("");
+  const [search, setSearch] = useState("");
   const { user } = useAuth();
   const router = useRouter();
-
   const t = useTranslations(NS_AI_CHAT);
-
   const loadMoreRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
-   const debouncedSearch = React.useCallback(
-     debounce(
-       (value) =>
-         onGetDocs({
-          user_id: user?.id,
-          search_key: value,
-         }),
-       300,
-     ),
-     [],
-   );
+  const debouncedSearch = useCallback(
+    debounce((value) => onGetDocs({ user_id: user?.id, search_key: value }), 300),
+    []
+  );
 
-   const handleSearchChange = (event) => {
-     setSearch(event.target.value);
-     debouncedSearch(event.target.value);
-   };
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+    debouncedSearch(event.target.value);
+  };
 
   const handleAddDoc = async () => {
+    setLoading(true);
     const docId = await onCreateDoc(undefined, assistantContent);
     router.push(`http://localhost:3000/documents/${docId}`);
   };
 
   const handleDocClick = (doc: DocItem) => {
-    console.log("doc", doc.id);
+    setLoading(true);
     handleGetDocDetail(doc.id, assistantContent);
     router.push(`http://localhost:3000/documents/${doc.id}`);
   };
 
   useEffect(() => {
-      onGetDocs({
-        user_id: user?.id,
-      });
+    onGetDocs({ user_id: user?.id });
   }, []);
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
@@ -116,6 +109,24 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
         },
       }}
     >
+      {loading && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 9999, 
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
       <IconButton
         style={{
           position: "absolute",
@@ -195,7 +206,7 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
                       width: "100%",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "flex-start"
+                      justifyContent: "flex-start",
                     }}
                   >
                     <Box marginRight={1}>
