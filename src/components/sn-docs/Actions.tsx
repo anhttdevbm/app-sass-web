@@ -53,7 +53,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const { id } = useParams();
 
   const handleCreateDoc = () => {
-    onCreateDoc(id);
+    onCreateDoc(id as string);
     // if (id && id !== undefined && isProjectTabMode) {
     // }
   };
