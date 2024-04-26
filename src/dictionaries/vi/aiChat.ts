@@ -18,6 +18,7 @@ export const AIChatLang: AIChatDictionary = {
     copy: "Sao chép",
     addToDocs: "Thêm vào tài liệu",
     regenerateResponse: "Tạo lại câu trả lời",
+    loadMore: "Xem thêm",
   },
   addDoc: {
     title: "Chọn tài liệu",

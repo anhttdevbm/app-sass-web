@@ -1,6 +1,7 @@
 import { Button, Grid, Box, Skeleton } from "@mui/material";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
+import { useLocale } from "next-intl";
 import React from "react";
 import { ExamplePrompt } from "store/aiChat/type";
 
@@ -17,6 +18,8 @@ export const ListPrompt: React.FC<ListPromptProps> = ({
 
   const { isDarkMode } = useTheme();
 
+  const locale = useLocale();
+
   let displayedPrompts = prompts;
   if (isMdSmaller) {
     displayedPrompts = prompts?.slice(0, 2);
@@ -30,7 +33,7 @@ export const ListPrompt: React.FC<ListPromptProps> = ({
           <Button
             variant="outlined"
             fullWidth
-            onClick={() => handleClick(`${item.prompt}`)}
+            onClick={() => handleClick(`${item.prompt[locale]}`)}
             sx={{
               backgroundColor: isDarkMode ? "info.dark" : "white",
               color: "grey.300",
@@ -39,7 +42,7 @@ export const ListPrompt: React.FC<ListPromptProps> = ({
               borderColor: isDarkMode ? "info.dark" : "primary.main",
             }}
           >
-            {item.prompt}
+            {item.prompt[locale]}
           </Button>
       </Box>
     </Grid>

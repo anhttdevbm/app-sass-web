@@ -1,8 +1,8 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useLocale, useTranslations } from "next-intl";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useChatSession,
   useChatWithAI,
@@ -11,7 +11,7 @@ import {
 import { ChatWithAIData, OpenAIChat } from "store/aiChat/type";
 import ChatInput from "./components/Chat/ChatInput";
 import { RenderEmptyChat } from "./components/Chat/EmptyChat";
-import { MessageList, MessageLayout } from "./components/Message";
+import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
 
 export const BoxChat = () => {
@@ -68,8 +68,6 @@ export const BoxChat = () => {
       return;
     }
 
-    setPrompt(message);
-
     const data: ChatWithAIData = {
       user_prompt: message,
       persona,
@@ -87,20 +85,10 @@ export const BoxChat = () => {
       }
     } else {
       onCreateChatSession({ chatname: message });
+      setPrompt(message);
     }
   };
 
-  const onLoadMorePersona = useCallback(() => {
-    if (personaFilters.pageIndex && personaFilters.pageIndex > 0) {
-      onGetPersona({ pageIndex: personaFilters.pageIndex + 1 });
-    }
-  }, [personaFilters, onGetPersona]);
-
-  const onLoadMoreTone = useCallback(() => {
-    if (toneFilters.pageIndex && toneFilters.pageIndex > 0) {
-      onGetTone({ pageIndex: toneFilters.pageIndex + 1 });
-    }
-  }, [toneFilters, onGetTone]);
 
   const onLoadMoreOpenAIChat = useCallback(() => {
     if (openAIChatFilters?.page && openAIChatFilters.page > 0) {
@@ -152,19 +140,20 @@ export const BoxChat = () => {
     setShowToneError(false);
   }, [tone]);
 
-  useEffect(() => {
-    if (isExamplePromptIdle || isExamplePromptFetching) {
-      onGetExamplePrompt({ number_prompt: 6 });
-    }
+ 
+useEffect(() => {
+  if (isExamplePromptIdle || isExamplePromptFetching) {
+    onGetExamplePrompt({ number_prompt: 6 });
+  }
 
-    if (isPersonaIdle || isPersonaFetching) {
-      onGetPersona({});
-    }
+  if (isPersonaIdle || isPersonaFetching) {
+    onGetPersona({});
+  }
 
-    if (isToneIdle || isToneFetching) {
-      onGetTone({});
-    }
-  }, []);
+  if (isToneIdle || isToneFetching) {
+    onGetTone({});
+  }
+}, []);
 
   useEffect(() => {
     if (chatSession) {
@@ -188,18 +177,7 @@ export const BoxChat = () => {
 
  return (
    <Box sx={boxChatContainerSx}>
-     {isFetchingOpenAIChat ? (
-       <Box
-         sx={{
-           display: "flex",
-           justifyContent: "center",
-           alignItems: "center",
-           height: "100%",
-         }}
-       >
-         <CircularProgress />
-       </Box>
-     ) : chatData.length > 0 ? (
+     {chatData.length > 0 ? (
        <MessageLayout>
          <MessageList
            onLoadMore={onLoadMoreOpenAIChat}
@@ -222,7 +200,6 @@ export const BoxChat = () => {
            options={personaOptions}
            selectedValue={persona}
            onOptionChange={(e) => setPersona(e.target.value)}
-           onLoadMore={onLoadMorePersona}
            isError={showPersonaError}
          />
          <SelectAIChat
@@ -231,7 +208,6 @@ export const BoxChat = () => {
            options={toneOptions}
            selectedValue={tone}
            onOptionChange={(e) => setTone(e.target.value)}
-           onLoadMore={onLoadMoreTone}
            isError={showToneError}
          />
        </Box>

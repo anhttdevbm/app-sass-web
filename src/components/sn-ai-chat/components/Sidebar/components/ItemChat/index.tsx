@@ -49,18 +49,14 @@ const ItemChat = ({
   id,
   setSelectedChat,
 }: ItemChatProps) => {
-  // State variables
-  const [menuAnchorElement, setMenuAnchorElement] =
-    useState<null | HTMLElement>(null);
+  const [menuAnchorElement, setMenuAnchorElement] = useState<null | HTMLElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [chatname, setChatname] = useState(title);
 
-  // Hooks and selectors
   const t = useTranslations(NS_AI_CHAT);
   const { isDarkMode } = useTheme();
   const { onEditChatSession, onDeleteChatSession } = useChatSession();
 
-  // Event handlers
   const handleEditChatSession = () => {
     setIsEditing(true);
     closeMenu();

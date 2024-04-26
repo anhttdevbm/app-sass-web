@@ -17,7 +17,7 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
   const thirtyDaysAgo = new Date(today);
   thirtyDaysAgo.setDate(today.getDate() - 30);
 
-  return chatSessions.reduce((groups, chat) => {
+  const groups = chatSessions.reduce((groups, chat) => {
     let dateGroup = "";
 
     if (chat.last_question_at === null) {
@@ -42,11 +42,26 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
     groups[dateGroup].push(chat);
     return groups;
   }, {});
+
+  const sortedGroups = {};
+  [TODAY, YESTERDAY, PREVIOUS_30_DAYS, OLDER].forEach((dateGroup) => {
+    if (groups[dateGroup]) {
+      sortedGroups[dateGroup] = groups[dateGroup];
+    }
+  });
+
+  console.log("sortedGroups", sortedGroups);
+
+  return sortedGroups;
 }
 
 const ChatList = () => {
-  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(undefined);
-  const [chatSessionsGroupedByDate, setChatSessionsGroupedByDate] = useState<Record<string, ChatSession[]>>({});
+  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
+    undefined,
+  );
+  const [chatSessionsGroupedByDate, setChatSessionsGroupedByDate] = useState<
+    Record<string, ChatSession[]>
+  >({});
 
   const {
     chatSessions,
@@ -57,7 +72,7 @@ const ChatList = () => {
     chatSessionStatus: status,
     onSelectChatId,
     chatSession,
-    newChatSessionCreated
+    newChatSessionCreated,
   } = useChatSession();
 
   const intersectionObserverRef = useRef<HTMLDivElement>(null);
@@ -67,8 +82,8 @@ const ChatList = () => {
   }, [selectedChatId]);
 
   useEffect(() => {
-      fetchChatSessions({});
-      onSelectChatId(newChatSessionCreated);
+    fetchChatSessions({});
+    onSelectChatId(newChatSessionCreated);
   }, [newChatSessionCreated]);
 
   useEffect(() => {
@@ -80,10 +95,8 @@ const ChatList = () => {
   }, [chatSession]);
 
   useEffect(() => {
-   setChatSessionsGroupedByDate(groupChatSessionsByDate(chatSessions));
-  }, [chatSessions])
-
-
+    setChatSessionsGroupedByDate(groupChatSessionsByDate(chatSessions));
+  }, [chatSessions]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

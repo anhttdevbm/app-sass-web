@@ -86,7 +86,7 @@ export type DeleteAllChatSessionQueries = {
 export type ChatWithAIData = {
   persona: string;
   tone: string;
-  chat_session: string;
+  chat_session?: string;
   user_prompt: string;
   lang: string;
   files?: File[];
@@ -100,7 +100,7 @@ export type OpenAIChat = {
   user_prompt: string;
   assistant_content: string;
   model?: string;
-  chat_session: string;
+  chat_session?: string;
   created_at?: string;
 };
 

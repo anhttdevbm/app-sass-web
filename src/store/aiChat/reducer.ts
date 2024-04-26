@@ -142,6 +142,10 @@ const aiChatSlice = createSlice({
         state.chatSessions = state.chatSessions.filter(
           (chatSession) => chatSession.id !== payload,
         );
+
+        if (state.chatSession === payload) {
+          state.chatSession = "";
+        }
       })
       .addCase(deleteChatSession.rejected, (state, action) => {
         state.chatSessionsStatus = DataStatus.FAILED;

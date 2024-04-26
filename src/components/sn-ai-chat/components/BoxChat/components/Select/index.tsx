@@ -9,8 +9,7 @@ import {
 } from "@mui/material";
 import { Option } from "constant/types";
 import useTheme from "hooks/useTheme";
-import { useLocale } from "next-intl";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 interface SelectAIChatProps {
   placeholder?: string;
@@ -20,7 +19,6 @@ interface SelectAIChatProps {
     event: SelectChangeEvent<string>,
     child: React.ReactNode,
   ) => void;
-  onLoadMore: () => void;
   isError?: boolean;
 }
 
@@ -29,37 +27,10 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
   options,
   onOptionChange,
   selectedValue,
-  onLoadMore,
   isError,
 
 }) => {
   const { isDarkMode } = useTheme();
-  const lastOptionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          onLoadMore();
-        }
-      }
-    };
-
-    const observer = new IntersectionObserver(observerCallback, {
-      threshold: 1,
-    });
-
-    if (lastOptionRef.current) {
-      observer.observe(lastOptionRef.current);
-    }
-
-    return () => {
-      if (lastOptionRef.current) {
-        observer.unobserve(lastOptionRef.current);
-      }
-    };
-  }, [onLoadMore]);
-
   return (
     <FormControl
       fullWidth
@@ -97,7 +68,6 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
               lineHeight: "16px",
             },
           ".MuiOutlinedInput-notchedOutline": {
-            // border: isDarkMode ? "1px solid #3D3D3D" : "0px",
             border: isError
               ? "1px solid #FF0000"
               : isDarkMode
@@ -140,7 +110,6 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
             />
           </MenuItem>
         ))}
-        {/* <div ref={lastOptionRef}>.</div> */}
       </Select>
     </FormControl>
   );

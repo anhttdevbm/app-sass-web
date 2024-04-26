@@ -107,9 +107,6 @@ export const useChatSession = () => {
 
   const onDeleteChatSession = useCallback(
     (id: string) => {
-      if (chatSession === id) {
-        dispatch(newChat());
-      }
       dispatch(deleteChatSession(id));
     },
     [dispatch],
@@ -205,15 +202,15 @@ export const useChatWithAI = () => {
   );
 
   const onGetPersona = useCallback(
-    (queries: GetPersonaQueries) => {
-      dispatch(getPersona(queries));
+    async (queries: GetPersonaQueries) => {
+     await dispatch(getPersona(queries));
     },
     [dispatch],
   );
 
   const onGetTone = useCallback(
-    (queries: GetToneQueries) => {
-      dispatch(getTone(queries));
+    async (queries: GetToneQueries) => {
+      await dispatch(getTone(queries));
     },
     [dispatch],
   );
