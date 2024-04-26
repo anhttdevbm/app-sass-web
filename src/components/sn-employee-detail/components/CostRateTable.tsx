@@ -2,6 +2,7 @@
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import TableRow from "@mui/material/TableRow";
 import dayjs from "dayjs";
+import _ from "lodash";
 
 import { Checkbox } from "components/shared";
 import {
@@ -104,11 +105,11 @@ const CostRateTable = ({
                 {dayjs(item.start_date).format("DD MMM, YYYY")}
               </BodyCell>
               <BodyCell>{dayjs(item.end_date).format("DD MMM, YYYY")}</BodyCell>
-              <BodyCell>{item.type}</BodyCell>
-              <BodyCell>--</BodyCell>
-              <BodyCell>--</BodyCell>
-              <BodyCell>--</BodyCell>
-              <BodyCell>--</BodyCell>
+              <BodyCell>{_.capitalize(item.type)}</BodyCell>
+              <BodyCell>{item.cost_per_month}</BodyCell>
+              <BodyCell>{item.cost_per_hour ?? "--"}</BodyCell>
+              <BodyCell>{item.total_hours}</BodyCell>
+              <BodyCell>{item.note ?? "--"}</BodyCell>
               <ActionsCell
                 sx={{
                   pl: { xs: 0.5, md: 0 },
