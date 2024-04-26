@@ -15,7 +15,6 @@ import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
 
 export const BoxChat = () => {
-
   const t = useTranslations(NS_AI_CHAT);
 
   const {
@@ -89,7 +88,6 @@ export const BoxChat = () => {
     }
   };
 
-
   const onLoadMoreOpenAIChat = useCallback(() => {
     if (openAIChatFilters?.page && openAIChatFilters.page > 0) {
       onGetOpenAIChat({
@@ -103,8 +101,8 @@ export const BoxChat = () => {
     () =>
       Array.isArray(personaList)
         ? personaList.map((item) => {
-          return { label: item.name[locale], value: item.id };
-        })
+            return { label: item.name[locale], value: item.id };
+          })
         : [],
     [personaList, locale],
   );
@@ -112,9 +110,9 @@ export const BoxChat = () => {
   const toneOptions = useMemo(
     () =>
       Array.isArray(toneList)
-        ? toneList.map((item) =>{
-          return { label: item.name[locale], value: item.id };
-        })
+        ? toneList.map((item) => {
+            return { label: item.name[locale], value: item.id };
+          })
         : [],
     [toneList, locale],
   );
@@ -140,20 +138,19 @@ export const BoxChat = () => {
     setShowToneError(false);
   }, [tone]);
 
- 
-useEffect(() => {
-  if (isExamplePromptIdle || isExamplePromptFetching) {
-    onGetExamplePrompt({ number_prompt: 6 });
-  }
+  useEffect(() => {
+    if (isExamplePromptIdle || isExamplePromptFetching) {
+      onGetExamplePrompt({ number_prompt: 6 });
+    }
 
-  if (isPersonaIdle || isPersonaFetching) {
-    onGetPersona({});
-  }
+    if (isPersonaIdle || isPersonaFetching) {
+      onGetPersona({});
+    }
 
-  if (isToneIdle || isToneFetching) {
-    onGetTone({});
-  }
-}, []);
+    if (isToneIdle || isToneFetching) {
+      onGetTone({});
+    }
+  }, []);
 
   useEffect(() => {
     if (chatSession) {
@@ -171,8 +168,8 @@ useEffect(() => {
         setChatData(openAIChat);
         setPersona(openAIChat[0].persona);
         setTone(openAIChat[0].tone);
-     }
       }
+    }
   }, [openAIChat, isIdleOpenAIChat, isFetchingOpenAIChat]);
 
  return (
@@ -180,6 +177,7 @@ useEffect(() => {
      {chatData.length > 0 ? (
        <MessageLayout>
          <MessageList
+           regenerateResponse={handleSubmitMessage}
            onLoadMore={onLoadMoreOpenAIChat}
            chatData={chatData}
            page={openAIChatFilters?.page}

@@ -50,8 +50,6 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
     }
   });
 
-  console.log("sortedGroups", sortedGroups);
-
   return sortedGroups;
 }
 

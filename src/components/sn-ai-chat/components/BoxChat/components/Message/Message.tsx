@@ -14,13 +14,18 @@ import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
 
-export const Message = (messageProps: Partial<OpenAIChat>) => {
-  const { user_prompt, assistant_content, id } = messageProps;
+interface MessageProps {
+  message: Partial<OpenAIChat>;
+  regenerateResponse: (message: string) => void;
+}
+
+export const Message: React.FC<MessageProps> = ({ message, regenerateResponse }) => {
+  const { user_prompt, assistant_content, id } = message;
 
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (assistant_content) {
@@ -35,10 +40,11 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
   const handleCopy = async () => {
-      await navigator.clipboard.writeText(assistant_content as string);
+    await navigator.clipboard.writeText(assistant_content as string);
   };
-  const handleRegenerateResponse = () =>
-    console.log("handle regenerate response");
+  const handleRegenerateResponse = () => {
+    regenerateResponse(user_prompt);
+  };
 
   return (
     <Box key={id}>

@@ -8,12 +8,14 @@ interface MessageListProps {
   chatData: Partial<OpenAIChat>[];
   onLoadMore: () => void;
   page?: number;
+  regenerateResponse: (message: string) => void;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
   chatData,
   onLoadMore,
   page,
+  regenerateResponse,
 }) => {
   const t = useTranslations(NS_AI_CHAT);
 
@@ -28,13 +30,15 @@ export const MessageList: React.FC<MessageListProps> = ({
       width="100%"
     >
       {chatData.map((message, index) => {
-        return <Message key={index} {...message} />;
+        return (
+          <Message
+            key={index}
+            message={message}
+            regenerateResponse={regenerateResponse}
+          />
+        );
       })}
-      {page && (
-        <Button onClick={onLoadMore}>
-          {t("boxChat.loadMore")}
-        </Button>
-      )}
+      {page && <Button onClick={onLoadMore}>{t("boxChat.loadMore")}</Button>}
     </Box>
   );
 };
