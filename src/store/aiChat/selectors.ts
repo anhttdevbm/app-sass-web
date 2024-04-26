@@ -27,6 +27,7 @@ import {
   GetPersonaQueries,
   GetToneQueries,
 } from "./type";
+import { getPageNumber } from "./helper";
 
 export const useExamplePrompt = () => {
   const dispatch = useAppDispatch();
@@ -78,7 +79,7 @@ export const useChatSession = () => {
     chatSessionStatus,
     chatSessionError,
     chatSessionFilters,
-    newChatSessionCreated
+    newChatSessionCreated,
   } = useAppSelector((state) => state.aiChat, shallowEqual);
 
   const isChatSessionsIdle = useMemo(
@@ -123,7 +124,7 @@ export const useChatSession = () => {
   const onCreateChatSession = useCallback(
     (data: ChatSessionData) => {
       dispatch(createChatSession(data));
-    },  
+    },
     [dispatch],
   );
 
@@ -154,7 +155,7 @@ export const useChatSession = () => {
     onCreateChatSession,
     chatSession,
     chatSessionError,
-    chatSessionFilters, 
+    chatSessionFilters,
     newChatSessionCreated,
 
     onSelectChatId,
@@ -203,14 +204,29 @@ export const useChatWithAI = () => {
 
   const onGetPersona = useCallback(
     async (queries: GetPersonaQueries) => {
-     await dispatch(getPersona(queries));
+      const response = await dispatch(getPersona(queries));
+      const nextPage = getPageNumber(response.payload.next);
+
+      if (nextPage) {
+        await onGetPersona({
+          ...queries,
+          pageIndex: nextPage + 1,
+        });
+      }
     },
     [dispatch],
   );
 
   const onGetTone = useCallback(
     async (queries: GetToneQueries) => {
-      await dispatch(getTone(queries));
+      const response = await dispatch(getTone(queries));
+      const nextPage = getPageNumber(response.payload.next);
+      if (nextPage) {
+        await onGetTone({
+          ...queries,
+          pageIndex: nextPage + 1,
+        });
+      }
     },
     [dispatch],
   );
