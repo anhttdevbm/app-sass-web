@@ -34,7 +34,9 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
-  const handleCopy = () => console.log("handle copy");
+  const handleCopy = async () => {
+      await navigator.clipboard.writeText(assistant_content as string);
+  };
   const handleRegenerateResponse = () =>
     console.log("handle regenerate response");
 
