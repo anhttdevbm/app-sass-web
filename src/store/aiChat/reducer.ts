@@ -14,6 +14,7 @@ import {
   getTone
 } from "./actions";
 import { AIChatState, OpenAIChat } from "./type";
+import { getPageNumber } from "./helper";
 
 const initialState: AIChatState = {
   chatSessions: [],
@@ -50,15 +51,6 @@ const initialState: AIChatState = {
   openAIChatError: undefined,
   openAIChatFilters: {},
 };
-
-const getPageNumber = (url: string | null) => {
-  if (url) {
-    const urlObject = new URL(url);
-    const pageNumber = urlObject.searchParams.get("page");
-    return Number(pageNumber);
-  }
-  return undefined;
-}
 
 const aiChatSlice = createSlice({
   name: "aiChat",
@@ -142,6 +134,10 @@ const aiChatSlice = createSlice({
         state.chatSessions = state.chatSessions.filter(
           (chatSession) => chatSession.id !== payload,
         );
+
+        if (state.chatSession === payload) {
+          state.chatSession = "";
+        }
       })
       .addCase(deleteChatSession.rejected, (state, action) => {
         state.chatSessionsStatus = DataStatus.FAILED;
@@ -185,11 +181,6 @@ const aiChatSlice = createSlice({
       .addCase(getPersona.fulfilled, (state, { payload }) => {
         state.personaStatus = DataStatus.SUCCEEDED;
         state.persona.push(...payload.results);
-
-        state.personaFilters = {
-          ...state.personaFilters,
-          pageIndex: getPageNumber(payload.next),
-        };
       })
       .addCase(getPersona.rejected, (state, action) => {
         state.personaStatus = DataStatus.FAILED;
@@ -203,11 +194,6 @@ const aiChatSlice = createSlice({
       .addCase(getTone.fulfilled, (state, { payload }) => {
         state.toneStatus = DataStatus.SUCCEEDED;
         state.tone.push(...payload.results);
-
-        state.toneFilters = {
-          ...state.toneFilters,
-          pageIndex: getPageNumber(payload.next),
-        };
       })
       .addCase(getTone.rejected, (state, action) => {
         state.toneStatus = DataStatus.FAILED;

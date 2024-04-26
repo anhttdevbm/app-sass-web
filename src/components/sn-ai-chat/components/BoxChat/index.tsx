@@ -1,8 +1,8 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useLocale, useTranslations } from "next-intl";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useChatSession,
   useChatWithAI,
@@ -11,11 +11,10 @@ import {
 import { ChatWithAIData, OpenAIChat } from "store/aiChat/type";
 import ChatInput from "./components/Chat/ChatInput";
 import { RenderEmptyChat } from "./components/Chat/EmptyChat";
-import { MessageList, MessageLayout } from "./components/Message";
+import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
 
 export const BoxChat = () => {
-
   const t = useTranslations(NS_AI_CHAT);
 
   const {
@@ -68,8 +67,6 @@ export const BoxChat = () => {
       return;
     }
 
-    setPrompt(message);
-
     const data: ChatWithAIData = {
       user_prompt: message,
       persona,
@@ -87,20 +84,9 @@ export const BoxChat = () => {
       }
     } else {
       onCreateChatSession({ chatname: message });
+      setPrompt(message);
     }
   };
-
-  const onLoadMorePersona = useCallback(() => {
-    if (personaFilters.pageIndex && personaFilters.pageIndex > 0) {
-      onGetPersona({ pageIndex: personaFilters.pageIndex + 1 });
-    }
-  }, [personaFilters, onGetPersona]);
-
-  const onLoadMoreTone = useCallback(() => {
-    if (toneFilters.pageIndex && toneFilters.pageIndex > 0) {
-      onGetTone({ pageIndex: toneFilters.pageIndex + 1 });
-    }
-  }, [toneFilters, onGetTone]);
 
   const onLoadMoreOpenAIChat = useCallback(() => {
     if (openAIChatFilters?.page && openAIChatFilters.page > 0) {
@@ -115,8 +101,8 @@ export const BoxChat = () => {
     () =>
       Array.isArray(personaList)
         ? personaList.map((item) => {
-          return { label: item.name[locale], value: item.id };
-        })
+            return { label: item.name[locale], value: item.id };
+          })
         : [],
     [personaList, locale],
   );
@@ -124,9 +110,9 @@ export const BoxChat = () => {
   const toneOptions = useMemo(
     () =>
       Array.isArray(toneList)
-        ? toneList.map((item) =>{
-          return { label: item.name[locale], value: item.id };
-        })
+        ? toneList.map((item) => {
+            return { label: item.name[locale], value: item.id };
+          })
         : [],
     [toneList, locale],
   );
@@ -182,26 +168,16 @@ export const BoxChat = () => {
         setChatData(openAIChat);
         setPersona(openAIChat[0].persona);
         setTone(openAIChat[0].tone);
-     }
       }
+    }
   }, [openAIChat, isIdleOpenAIChat, isFetchingOpenAIChat]);
 
  return (
    <Box sx={boxChatContainerSx}>
-     {isFetchingOpenAIChat ? (
-       <Box
-         sx={{
-           display: "flex",
-           justifyContent: "center",
-           alignItems: "center",
-           height: "100%",
-         }}
-       >
-         <CircularProgress />
-       </Box>
-     ) : chatData.length > 0 ? (
+     {chatData.length > 0 ? (
        <MessageLayout>
          <MessageList
+           regenerateResponse={handleSubmitMessage}
            onLoadMore={onLoadMoreOpenAIChat}
            chatData={chatData}
            page={openAIChatFilters?.page}
@@ -222,7 +198,6 @@ export const BoxChat = () => {
            options={personaOptions}
            selectedValue={persona}
            onOptionChange={(e) => setPersona(e.target.value)}
-           onLoadMore={onLoadMorePersona}
            isError={showPersonaError}
          />
          <SelectAIChat
@@ -231,7 +206,6 @@ export const BoxChat = () => {
            options={toneOptions}
            selectedValue={tone}
            onOptionChange={(e) => setTone(e.target.value)}
-           onLoadMore={onLoadMoreTone}
            isError={showToneError}
          />
        </Box>

@@ -1,18 +1,24 @@
 import { Box, Button } from "@mui/material";
 import { OpenAIChat } from "store/aiChat/type";
 import { Message } from "./Message";
+import { useTranslations } from "next-intl";
+import { NS_AI_CHAT } from "constant/index";
 
 interface MessageListProps {
   chatData: Partial<OpenAIChat>[];
   onLoadMore: () => void;
   page?: number;
+  regenerateResponse: (message: string) => void;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
   chatData,
   onLoadMore,
   page,
+  regenerateResponse,
 }) => {
+  const t = useTranslations(NS_AI_CHAT);
+
   return (
     <Box
       key={"message-list"}
@@ -24,13 +30,15 @@ export const MessageList: React.FC<MessageListProps> = ({
       width="100%"
     >
       {chatData.map((message, index) => {
-        return <Message key={index} {...message} />;
+        return (
+          <Message
+            key={index}
+            message={message}
+            regenerateResponse={regenerateResponse}
+          />
+        );
       })}
-      {page && (
-        <Button onClick={onLoadMore}>
-          Load More
-        </Button>
-      )}
+      {page && <Button onClick={onLoadMore}>{t("boxChat.loadMore")}</Button>}
     </Box>
   );
 };

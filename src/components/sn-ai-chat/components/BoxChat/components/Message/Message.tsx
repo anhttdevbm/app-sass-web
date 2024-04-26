@@ -1,51 +1,50 @@
 import { Avatar, Box, Skeleton } from "@mui/material";
 import { IconButton, Text } from "components/shared";
+import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
+import useTheme from "hooks/useTheme";
 import { AddToDocIcon } from "icons/AddToDocIcon";
 import { CopyTextIcon } from "icons/CopyTextIcon";
+import EditMessageAIChatIcon from "icons/EditMessageAIChatIcon";
 import { RegenerateIcon } from "icons/RegenerateIcon";
 import Image from "next/image";
 import AIIcon from "public/images/ic-ai-chat.svg";
+import { useEffect, useState } from "react";
 import { OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
-import useTheme from "hooks/useTheme";
-import { useEffect, useState } from "react";
-import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
-import EditMessageAIChatIcon from "icons/EditMessageAIChatIcon";
-import { useChatWithAI } from "store/aiChat/selectors";
 
-export const Message = (messageProps: Partial<OpenAIChat>) => {
+interface MessageProps {
+  message: Partial<OpenAIChat>;
+  regenerateResponse: (message: string) => void;
+}
+
+export const Message: React.FC<MessageProps> = ({ message, regenerateResponse }) => {
+  const { user_prompt, assistant_content, id } = message;
+
   const { user } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user_prompt, assistant_content, id } = messageProps;
   const { isDarkMode } = useTheme();
-  const [isLoading, setIsLoading] = useState(false);
-  const {isFetchingOpenAIChat} = useChatWithAI();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isFetchingOpenAIChat) {
+    if (assistant_content) {
       setIsLoading(false);
-    } else {
-      setIsLoading(true);
     }
-  }, [isFetchingOpenAIChat]);
+  }, [assistant_content]);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCopy = () => {
-    console.log("handle copy")
+  if (!user_prompt) {
+    return null;
   }
 
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(assistant_content as string);
+  };
   const handleRegenerateResponse = () => {
-    console.log("handle regenerate response")
-  }
+    regenerateResponse(user_prompt);
+  };
 
   return (
     <Box key={id}>
@@ -65,10 +64,7 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
           <Text variant="body1" flex={1}>
             {user_prompt}
           </Text>
-          <IconButton
-            size="small"
-            sx={{ borderRadius: "50%" }}
-          >
+          <IconButton size="small" sx={{ borderRadius: "50%" }}>
             <EditMessageAIChatIcon width={18} height={18} />
           </IconButton>
         </MessageBox>
@@ -109,9 +105,11 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
           justifyContent={"flex-end"}
           width={"100%"}
         >
-          <ActionButton 
+          <ActionButton
             onClick={handleCopy}
-            icon={<CopyTextIcon />} label="boxChat.copy" />
+            icon={<CopyTextIcon />}
+            label="boxChat.copy"
+          />
           <ActionButton
             onClick={handleOpenModal}
             icon={<AddToDocIcon />}
@@ -124,7 +122,11 @@ export const Message = (messageProps: Partial<OpenAIChat>) => {
           />
         </Box>
       </Box>
-      <AddDocModal open={isModalOpen} onClose={handleCloseModal} assistantContent={assistant_content as string} />
+      <AddDocModal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        assistantContent={assistant_content as string}
+      />
     </Box>
   );
 };

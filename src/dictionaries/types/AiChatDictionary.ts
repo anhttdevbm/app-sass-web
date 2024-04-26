@@ -16,6 +16,7 @@ export type AIChatDictionary = {
     copy: string;
     addToDocs: string;
     regenerateResponse: string;
+    loadMore: string;
   };
   addDoc: {
     title: string;

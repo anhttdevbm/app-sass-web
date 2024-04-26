@@ -17,7 +17,8 @@ export const AIChatLang: AIChatDictionary = {
     enterMessage: "Enter message",
     copy: "Copy",
     addToDocs: "Add to docs",
-    regenerateResponse: "Regenerate response"
+    regenerateResponse: "Regenerate response",
+    loadMore: "Load more",
   },
   addDoc: {
     title: "Choose Document",
