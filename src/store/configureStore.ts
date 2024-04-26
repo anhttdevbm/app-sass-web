@@ -23,6 +23,8 @@ import employeeDetailReducer, { EmployeeDetailState } from "./employeeDetail/red
 import ContentReducer, { ContentState } from "./content/reducer";
 import holidayCalendarReducer, { HolidayCalendarState } from "./holidayCalendar/reducer";
 
+import meetingReducer, {  } from "./meeting/reducer";
+
 export interface State {
   app: AppState;
   global: GlobalState;
@@ -65,6 +67,9 @@ export const store = configureStore({
     employeeDetail: employeeDetailReducer,
     content: ContentReducer,
     holidayCalendar: holidayCalendarReducer,
+
+    //Meetings: MeetingsReducer,
+    meeting: meetingReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -32,7 +32,8 @@ import {
   LANDING_TRUST_CENTER_PATH,
   LANDING_AI_PATH,
   LANDING_PRICING_PATH,
-  HOLIDAY_CALENDAR_PATH
+  HOLIDAY_CALENDAR_PATH,
+  MEETING_HOME_PATH
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
@@ -390,6 +391,12 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
+  },
+  {
+    label: "menu.meeting",
+    icon: <CareerIcon />,
+    href: MEETING_HOME_PATH,
+    roles: [Permission.AM, Permission.SA, Permission.ST],
   },
 ];
 

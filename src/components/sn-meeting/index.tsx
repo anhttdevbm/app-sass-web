@@ -1,14 +1,12 @@
-
 import React from 'react';
-import MeetingLayout from './meeting-layout/MeetingLayout';
+import MeetingLayout from './meeting-layout/footer/MeetingLayout';
 
-const MeetingRoom: React.FC = () => {
+const Meeting: React.FC = () => {
   return (
     <div>
-      <h1>Meeting Room</h1>
       <MeetingLayout />
     </div>
   );
 };
 
-export default MeetingRoom;
+export default Meeting;
