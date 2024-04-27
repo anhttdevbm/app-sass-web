@@ -173,9 +173,9 @@ export const useCostRate = () => {
   };
 };
 
-export const calculateWorkingHours = (
-  startDateStr: string,
-  endDateStr: string,
+const calculateWorkingHours = (
+  startDateStr: string | Date,
+  endDateStr: string | Date,
   workingHours: CostRateWorkingHours,
   subtractedDays?: number,
 ) => {
@@ -204,9 +204,9 @@ export const calculateWorkingHours = (
   return result;
 };
 
-export const calculateWorkingDays = (
-  startDateStr: string,
-  endDateStr: string,
+const calculateWorkingDays = (
+  startDateStr: string | Date,
+  endDateStr: string | Date,
   workingHours: CostRateWorkingHours,
   subtractedDays?: number,
 ) =>
@@ -218,22 +218,31 @@ export const calculateWorkingDays = (
   );
 
 const calculateCostPerHour = (
+  type: string,
   totalCost: number,
-  startDateStr: string,
-  endDateStr: string,
+  startDateStr: string | Date,
   workingHours: CostRateWorkingHours,
 ) =>
   +(
     Math.round(
       +(
-        totalCost /
-          calculateWorkingHours(startDateStr, endDateStr, workingHours, 0) +
+        (totalCost * (type.toUpperCase() === "WEEKLY" ? 52 : 12)) /
+          calculateWorkingHours(
+            dayjs(startDateStr).startOf("year").toDate(),
+            dayjs(startDateStr)
+              .startOf("year")
+              .add(1, "year")
+              .add(-1, "day")
+              .toDate(),
+            workingHours,
+            0,
+          ) +
         "e+2"
       ),
     ) + "e-2"
   );
 
-function getCalculatedCostRate<
+export function getCalculatedCostRate<
   T extends CostRate | NewCostRate | UpdateCostRate,
 >(cr: T): T {
   return {
@@ -266,9 +275,9 @@ function getCalculatedCostRate<
       0,
     ),
     cost_per_hour: calculateCostPerHour(
+      cr.type,
       cr.cost_per_month,
       cr.start_date,
-      cr.end_date,
       cr.working_hours,
     ),
   };
