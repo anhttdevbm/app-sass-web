@@ -47,7 +47,8 @@ export const BoxChat = () => {
     onGetExamplePrompt,
   } = useExamplePrompt();
 
-  const { chatSession, onCreateChatSession, newChatSessionCreated } = useChatSession();
+  const { chatSession, onCreateChatSession, newChatSessionCreated } =
+    useChatSession();
 
   const locale = useLocale();
 
@@ -58,6 +59,11 @@ export const BoxChat = () => {
   const [error, setError] = useState<string | null>(null);
   const [showPersonaError, setShowPersonaError] = useState(false);
   const [showToneError, setShowToneError] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const handleFileChange = (newFiles: File[]) => {
+    setFiles(newFiles);
+  };
 
   const handleSubmitMessage = async (message: string) => {
     if (!persona || !tone) {
@@ -118,7 +124,13 @@ export const BoxChat = () => {
   );
 
   useEffect(() => {
-    if (newChatSessionCreated && prompt && persona && tone && prompt.length > 0) {
+    if (
+      newChatSessionCreated &&
+      prompt &&
+      persona &&
+      tone &&
+      prompt.length > 0
+    ) {
       onChatWithAI({
         user_prompt: prompt,
         persona,
@@ -162,7 +174,6 @@ export const BoxChat = () => {
     }
   }, [chatSession]);
 
-
   useEffect(() => {
     if (!isIdleOpenAIChat || !isFetchingOpenAIChat) {
       if (openAIChat && openAIChat.length > 0) {
@@ -173,55 +184,54 @@ export const BoxChat = () => {
     }
   }, [openAIChat, isIdleOpenAIChat, isFetchingOpenAIChat]);
 
- return (
-   <Box sx={boxChatContainerSx}>
-     {chatData.length > 0 ? (
-       <MessageLayout>
-         <MessageList
-           regenerateResponse={handleSubmitMessage}
-           onLoadMore={onLoadMoreOpenAIChat}
-           chatData={chatData}
-           page={openAIChatFilters?.page}
-         />
-       </MessageLayout>
-     ) : (
-       <RenderEmptyChat
-         t={t}
-         prompts={examplePrompts}
-         handleClick={setPrompt}
-       />
-     )}
-     <Box padding={"0 24px"}>
-       <Box sx={selectContainerSx}>
-         <SelectAIChat
-           key={"persona"}
-           placeholder={t("boxChat.persona")}
-           options={personaOptions}
-           selectedValue={persona}
-           onOptionChange={(e) => setPersona(e.target.value)}
-           isError={showPersonaError}
-         />
-         <SelectAIChat
-           key={"tone"}
-           placeholder={t("boxChat.tone")}
-           options={toneOptions}
-           selectedValue={tone}
-           onOptionChange={(e) => setTone(e.target.value)}
-           isError={showToneError}
-         />
-       </Box>
-       <ChatInput
-         isLoading={false}
-         initialMessage={prompt}
-         files={[]}
-         onMessageSubmit={handleSubmitMessage}
-         onFileChange={(file: File[]) => console.log(file)}
-         onResizeEvent={(num?: number) => console.log(num)}
-         wrapperInputStyles={{}}
-       />
-     </Box>
-   </Box>
- );
+  return (
+    <Box sx={boxChatContainerSx}>
+      {chatData.length > 0 ? (
+        <MessageLayout>
+          <MessageList
+            regenerateResponse={handleSubmitMessage}
+            onLoadMore={onLoadMoreOpenAIChat}
+            chatData={chatData}
+            page={openAIChatFilters?.page}
+          />
+        </MessageLayout>
+      ) : (
+        <RenderEmptyChat
+          t={t}
+          prompts={examplePrompts}
+          handleClick={setPrompt}
+        />
+      )}
+      <Box padding={"0 24px"}>
+        <Box sx={selectContainerSx}>
+          <SelectAIChat
+            key={"persona"}
+            placeholder={t("boxChat.persona")}
+            options={personaOptions}
+            selectedValue={persona}
+            onOptionChange={(e) => setPersona(e.target.value)}
+            isError={showPersonaError}
+          />
+          <SelectAIChat
+            key={"tone"}
+            placeholder={t("boxChat.tone")}
+            options={toneOptions}
+            selectedValue={tone}
+            onOptionChange={(e) => setTone(e.target.value)}
+            isError={showToneError}
+          />
+        </Box>
+        <ChatInput
+          isLoading={false}
+          initialMessage={prompt}
+          files={files}
+          onMessageSubmit={handleSubmitMessage}
+          onFileChange={handleFileChange}
+          wrapperInputStyles={{}}
+        />
+      </Box>
+    </Box>
+  );
 };
 
 const boxChatContainerSx = {

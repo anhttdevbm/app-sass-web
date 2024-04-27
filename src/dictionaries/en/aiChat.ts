@@ -19,10 +19,12 @@ export const AIChatLang: AIChatDictionary = {
     addToDocs: "Add to docs",
     regenerateResponse: "Regenerate response",
     loadMore: "Load more",
+    uploadFile: "Upload file",
+    dragOrSelectFile: "Drag file here or select to upload (.pdf, .docx, .txt)",
   },
   addDoc: {
     title: "Choose Document",
     search: "Enter document name",
     add: "Add document",
-  }
+  },
 };
