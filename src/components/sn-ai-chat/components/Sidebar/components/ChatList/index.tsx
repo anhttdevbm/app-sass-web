@@ -20,20 +20,16 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
   const groups = chatSessions.reduce((groups, chat) => {
     let dateGroup = "";
 
-    if (chat.last_question_at === null) {
-      dateGroup = TODAY;
-    } else {
-      const chatDate = new Date(chat.last_question_at);
+    const chatDate = new Date(chat.last_question_at || chat.created_at);
 
-      if (chatDate.toDateString() === today.toDateString()) {
-        dateGroup = TODAY;
-      } else if (chatDate.toDateString() === yesterday.toDateString()) {
-        dateGroup = YESTERDAY;
-      } else if (chatDate > thirtyDaysAgo) {
-        dateGroup = PREVIOUS_30_DAYS;
-      } else {
-        dateGroup = OLDER;
-      }
+    if (chatDate.toDateString() === today.toDateString()) {
+      dateGroup = TODAY;
+    } else if (chatDate.toDateString() === yesterday.toDateString()) {
+      dateGroup = YESTERDAY;
+    } else if (chatDate > thirtyDaysAgo) {
+      dateGroup = PREVIOUS_30_DAYS;
+    } else {
+      dateGroup = OLDER;
     }
 
     if (!groups[dateGroup]) {
@@ -86,6 +82,7 @@ const ChatList = () => {
 
   useEffect(() => {
     if (chatSession) {
+      console.log("chatSession", chatSession);
       setSelectedChatId(chatSession);
     } else {
       setSelectedChatId(undefined);

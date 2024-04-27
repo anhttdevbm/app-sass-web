@@ -118,7 +118,7 @@ export const BoxChat = () => {
   );
 
   useEffect(() => {
-    if (newChatSessionCreated) {
+    if (newChatSessionCreated && prompt && persona && tone && prompt.length > 0) {
       onChatWithAI({
         user_prompt: prompt,
         persona,
@@ -161,6 +161,7 @@ export const BoxChat = () => {
       setTone("");
     }
   }, [chatSession]);
+
 
   useEffect(() => {
     if (!isIdleOpenAIChat || !isFetchingOpenAIChat) {

@@ -39,7 +39,7 @@ export type AIChatState = {
   chatSessionStatus: DataStatus;
   chatSessionError?: string;
   chatSessionFilters?: { id: string };
-  newChatSessionCreated: string;
+  newChatSessionCreated?: string;
 
   examplePrompts: ExamplePrompt[];
   examplePromptsStatus: DataStatus;
