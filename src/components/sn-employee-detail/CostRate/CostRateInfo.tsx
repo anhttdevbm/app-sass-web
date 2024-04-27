@@ -134,6 +134,11 @@ const CostRateInfo = () => {
     () => ({
       responsive: true,
       maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
       scales: {
         x: {
           grid: {

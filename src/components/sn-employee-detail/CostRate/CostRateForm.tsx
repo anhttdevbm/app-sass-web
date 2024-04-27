@@ -303,17 +303,18 @@ const CostRateForm = ({
         </Grid>
 
         <Grid item xs={12}>
-          <Input
+          <NoteInput
             title={costRateT("empty.form.note")}
             fullWidth
             name="note"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values?.note}
-            error={commonT(formik.touchedError("note"), {
-              name: costRateT("empty.form.note"),
-            })}
-            sx={{ mb: 6 }}
+            error={
+              !!commonT(formik.touchedError("note"), {
+                name: costRateT("empty.form.note"),
+              })
+            }
           />
         </Grid>
 
@@ -410,6 +411,8 @@ const CostRateForm = ({
   );
 };
 
+export default CostRateForm;
+
 const WorkingHoursBlock = memo(function WorkingHoursBlock({
   title,
   fullWidth,
@@ -486,6 +489,66 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
   );
 });
 
-export default CostRateForm;
+const NoteInput = memo(function NoteInput({
+  title,
+  fullWidth,
+  name,
+  onChange,
+  onBlur,
+  value,
+  error,
+}: MuiInputProps) {
+  return (
+    <>
+      <FormControl
+        sx={{
+          width: "100%",
+          borderRadius: 3,
+          border: "1px solid transparent",
+          background: `linear-gradient(#fff, #fff) padding-box,
+                       linear-gradient(90deg, #2AF598 0%, #009EFD 100%)`,
+          px: 4,
+          py: 2,
+        }}
+      >
+        <MuiInputLabel
+          sx={{
+            position: "static",
+            maxWidth: "initial",
+            color: "#333333",
+            fontSize: 20,
+            fontWeight: 600,
+            transform: "initial",
+            transition: "initial",
+            "&.Mui-focused": {
+              color: "#333333",
+            },
+            "&+.MuiInputBase-root": {
+              mt: 1,
+            },
+          }}
+        >
+          {title}
+        </MuiInputLabel>
+        <MuiInput
+          fullWidth={fullWidth}
+          name={name}
+          onChange={onChange}
+          onBlur={onBlur}
+          value={value}
+          error={error}
+          sx={{
+            "&:before": {
+              display: "none",
+            },
+            "&:after": {
+              display: "none",
+            },
+          }}
+        />
+      </FormControl>
+    </>
+  );
+});
 
 const daysOfWeekKeys = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
