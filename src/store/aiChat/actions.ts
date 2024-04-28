@@ -3,6 +3,7 @@ import { Endpoint, client } from "api";
 import { HttpStatusCode } from "constant/enums";
 import { AI_CHAT_API_URL, AN_ERROR_TRY_AGAIN } from "constant/index";
 import { serverQueries } from "utils/index";
+import { serialize } from "v8";
 import {
   ChatSessionData,
   ChatWithAIData,
@@ -118,10 +119,23 @@ export const chatWithAI = createAsyncThunk(
   async (data: ChatWithAIData) => {
     try {
       const formData = new FormData();
-      Object.keys(data).forEach((key) => formData.append(key, data[key]));
+      Object.entries(data).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            if (item instanceof File) {
+              formData.append(`${key}`, item, item.name);
+            }
+          });
+        } else {
+          formData.append(key, value);
+        }
+      });
 
       const response = await client.post(Endpoint.AI_CHAT + "/", formData, {
         baseURL: AI_CHAT_API_URL,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (response?.status === HttpStatusCode.CREATED) {

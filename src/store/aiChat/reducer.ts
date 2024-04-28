@@ -25,11 +25,11 @@ const initialState: AIChatState = {
   deleteAllChatSessionsStatus: DataStatus.IDLE,
   deleteAllChatSessionsError: undefined,
 
-  chatSession: "",
+  chatSession: undefined,
   chatSessionStatus: DataStatus.IDLE,
   chatSessionError: undefined,
   chatSessionFilters: { id: "" },
-  newChatSessionCreated: "",
+  newChatSessionCreated: undefined,
 
   examplePrompts: [],
   examplePromptsStatus: DataStatus.IDLE,
@@ -60,7 +60,8 @@ const aiChatSlice = createSlice({
       state.chatSession = action.payload;
     },
     newChat: (state, action) => {
-      state.chatSession = "";
+      state.chatSession = undefined;
+      state.newChatSessionCreated = undefined;
       state.openAIChat = [];
     },
     addChatWithAI: (state, action: PayloadAction<OpenAIChat>) => {
@@ -136,7 +137,7 @@ const aiChatSlice = createSlice({
         );
 
         if (state.chatSession === payload) {
-          state.chatSession = "";
+          state.chatSession = undefined;
         }
       })
       .addCase(deleteChatSession.rejected, (state, action) => {
@@ -221,11 +222,28 @@ const aiChatSlice = createSlice({
       .addCase(getOpenAIChat.fulfilled, (state, { payload }) => {
         state.openAIChatStatus = DataStatus.SUCCEEDED;
 
-        if (state.openAIChat.length > 0 && payload.results.length > 0 && payload.results[0].chat_session !== state.openAIChat[0].chat_session) {
+        if (
+          state.openAIChat.length > 0 &&
+          payload.results.length > 0 &&
+          payload.results[0].chat_session !== state.openAIChat[0].chat_session
+        ) {
           state.openAIChat = [];
         }
 
-        state.openAIChat.push(...payload.results);
+        const newChats = payload.results.filter(
+          (newChat) =>
+            !state.openAIChat.some(
+              (existingChat) => {
+                if (!existingChat.id) {
+                  return true;
+                }
+
+                return existingChat.id === newChat.id;
+              }
+            ),
+        );
+
+        state.openAIChat.push(...newChats);
 
         state.openAIChatFilters = { page: getPageNumber(payload.next) };
       })
