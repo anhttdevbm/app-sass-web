@@ -82,7 +82,6 @@ const ChatList = () => {
 
   useEffect(() => {
     if (chatSession) {
-      console.log("chatSession", chatSession);
       setSelectedChatId(chatSession);
     } else {
       setSelectedChatId(undefined);

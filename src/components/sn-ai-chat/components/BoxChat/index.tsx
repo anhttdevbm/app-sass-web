@@ -79,14 +79,20 @@ export const BoxChat = () => {
       tone,
       chat_session: "",
       lang: locale,
+      files,
     };
 
     if (chatSession) {
       try {
         data.chat_session = chatSession;
         onChatWithAI(data);
+        setFiles([]);
       } catch (error) {
-        console.error(error);
+        if (error.status === 400) {
+          setError("You didn't upload any files!");
+        } else {
+          console.error(error);
+        }
       }
     } else {
       onCreateChatSession({ chatname: message });
@@ -123,24 +129,38 @@ export const BoxChat = () => {
     [toneList, locale],
   );
 
-  useEffect(() => {
-    if (
-      newChatSessionCreated &&
-      prompt &&
-      persona &&
-      tone &&
-      prompt.length > 0
-    ) {
-      onChatWithAI({
-        user_prompt: prompt,
-        persona,
-        tone,
-        chat_session: newChatSessionCreated,
-        lang: locale,
-      });
-      setPrompt("");
+useEffect(() => {
+  const sendChat = async () => {
+    try {
+      if (
+        newChatSessionCreated &&
+        prompt &&
+        persona &&
+        tone &&
+        prompt.length > 0
+      ) {
+        await onChatWithAI({
+          user_prompt: prompt,
+          persona,
+          tone,
+          chat_session: newChatSessionCreated,
+          lang: locale,
+          files,
+        });
+        setPrompt("");
+        setFiles([]);
+      }
+    } catch (error) {
+      if (error.status === 400) {
+        setError("You didn't upload any files!");
+      } else
+      console.error(error);
+      // Handle the error here
     }
-  }, [newChatSessionCreated]);
+  };
+
+  sendChat();
+}, [newChatSessionCreated]);
 
   useEffect(() => {
     setShowPersonaError(false);
@@ -171,6 +191,7 @@ export const BoxChat = () => {
       setChatData([]);
       setPersona("");
       setTone("");
+      setFiles([]);
     }
   }, [chatSession]);
 
@@ -202,6 +223,7 @@ export const BoxChat = () => {
           handleClick={setPrompt}
         />
       )}
+      {error && <div style={{ color: "red" }}>{error}</div>}
       <Box padding={"0 24px"}>
         <Box sx={selectContainerSx}>
           <SelectAIChat

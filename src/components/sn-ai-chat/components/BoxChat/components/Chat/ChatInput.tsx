@@ -38,15 +38,6 @@ const ChatInput = ({
 
   const t = useTranslations(NS_AI_CHAT);
 
-  const fileInputRef = React.createRef<HTMLInputElement>();
-
-  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      onFileChange?.(Array.from(files));
-    }
-  };
-
   const handleRemoveFile = (indexToRemove: number) => {
     const newFiles = files?.filter((file, index) => index !== indexToRemove);
     onFileChange?.(newFiles);
@@ -80,12 +71,6 @@ const ChatInput = ({
           <Box sx={fileContainerStyles}>
             <IconButton sx={uploadFileStyles} onClick={handleImportFile}>
               <UploadFileOutlineIcon />
-              <input
-                type="file"
-                hidden
-                onChange={handleFileInputChange}
-                ref={fileInputRef}
-              />
             </IconButton>
             {files.map((file, index) => (
               <Box
@@ -172,12 +157,6 @@ const ChatInput = ({
             onClick={handleImportFile}
           >
             <AttachFileIcon />
-            <input
-              type="file"
-              hidden
-              onChange={handleFileInputChange}
-              ref={fileInputRef}
-            />
           </IconButton>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Divider

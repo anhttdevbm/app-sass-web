@@ -230,8 +230,6 @@ const aiChatSlice = createSlice({
           state.openAIChat = [];
         }
 
-        console.log("before ", state.openAIChat);
-
         const newChats = payload.results.filter(
           (newChat) =>
             !state.openAIChat.some(
@@ -246,8 +244,6 @@ const aiChatSlice = createSlice({
         );
 
         state.openAIChat.push(...newChats);
-
-        console.log("after ", state.openAIChat);
 
         state.openAIChatFilters = { page: getPageNumber(payload.next) };
       })

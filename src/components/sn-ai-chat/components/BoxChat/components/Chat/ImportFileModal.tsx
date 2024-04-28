@@ -26,12 +26,16 @@ export const ImportFileModal: React.FC<ImportFileModalProps> = ({
   const theme = useTheme();
   const t = useTranslations(NS_AI_CHAT);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && onFileUpload) {
-      onFileUpload(Array.from(event.target.files));
-      onClose();
-    }
-  };
+ const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+   if (event.target.files && onFileUpload) {
+     const formData = new FormData();
+     Array.from(event.target.files).forEach((file, index) => {
+       formData.append(`file${index}`, file);
+     });
+     onFileUpload(Array.from(event.target.files));
+     onClose();
+   }
+ };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
