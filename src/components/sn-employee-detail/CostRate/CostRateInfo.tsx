@@ -16,7 +16,6 @@ import {
   Title,
 } from "chart.js";
 import { useTranslations } from "next-intl";
-import { Formik } from "formik";
 import _ from "lodash";
 
 import { Permission } from "constant/enums";
@@ -26,72 +25,23 @@ import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import CalendarIcon from "icons/CalendarIcon";
 import ProcessRing from "../components/ProcessRing";
 import useToggle from "hooks/useToggle";
-import { UpdateCostRate } from "store/employeeDetail/actions";
-import { CostRate } from "store/employeeDetail/reducer";
 import { useCostRate } from "store/employeeDetail/selectors";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
-import CostRateForm, { EditCostRateForm } from "./CostRateForm";
+import { getMessageErrorByAPI } from "utils/index";
+import CostRateForm from "./CostRateForm";
 import CostRateTable from "../components/CostRateTable";
-
-const CurrentRateBlock = ({
-  title,
-  content,
-  icon,
-}: {
-  title: string;
-  content: string;
-  icon: ReactElement;
-}) => {
-  return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      spacing={2}
-      border={1}
-      borderColor="divider"
-      borderRadius={3}
-      py={1.5}
-      pl={3}
-      pr={2}
-      maxWidth={{
-        xs: "initial",
-        sm: 266,
-      }}
-    >
-      {icon}
-      <Stack direction="column" spacing={{ xs: 0, sm: 0.5 }}>
-        <Text
-          color="grey.800"
-          fontSize={18}
-          fontWeight={600}
-          whiteSpace="nowrap"
-          textOverflow="ellipsis"
-        >
-          {title}
-        </Text>
-        <Text color="grey.800">{content}</Text>
-      </Stack>
-    </Stack>
-  );
-};
 
 const CostRateInfo = () => {
   const { user } = useAuth();
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
+
+  const { selectCurrentCostRate, selectAllCostRate, handleDeleteCostRate } =
+    useCostRate();
+
   const { onAddSnackbar } = useSnackbar();
   const [isModalOpen, openModal, closeModal] = useToggle(false);
-  const {
-    selectCurrentCostRate,
-    selectAllCostRate,
-    handleUpdateCostRate,
-    handleDeleteCostRate,
-  } = useCostRate();
-
-  const [costRateToEdit, setCostRateToEdit] = useState<CostRate | undefined>(
-    undefined,
-  );
+  const [costRateToEditId, setCostRateToEditId] = useState("");
   const isAdmin = useMemo(
     () => user?.roles.includes(Permission.AM),
     [user?.roles],
@@ -99,13 +49,10 @@ const CostRateInfo = () => {
 
   const handleItemEdit = useCallback(
     (id: string) => {
-      const rate = selectAllCostRate.find((r) => r?.id === id);
-      if (rate) {
-        setCostRateToEdit(rate);
-        openModal();
-      }
+      setCostRateToEditId(id);
+      openModal();
     },
-    [selectAllCostRate, openModal],
+    [openModal],
   );
 
   const handleItemDelete = useCallback(
@@ -121,60 +68,9 @@ const CostRateInfo = () => {
   );
 
   const handleCloseForm = () => {
-    setCostRateToEdit(undefined);
+    setCostRateToEditId("");
     closeModal();
   };
-
-  const onSubmit = async (values: EditCostRateForm) => {
-    try {
-      const data = {
-        ...values,
-        id: costRateToEdit?.id ?? "",
-        working_hours: [
-          values.working_hours.mon,
-          values.working_hours.tue,
-          values.working_hours.wed,
-          values.working_hours.thu,
-          values.working_hours.fri,
-          values.working_hours.sat,
-          values.working_hours.sun,
-        ],
-      } as UpdateCostRate;
-      await handleUpdateCostRate(data);
-      onAddSnackbar(costRateT("empty.notification.updateSuccess"), "success");
-    } catch (error) {
-      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-    }
-  };
-
-  const initialValues = useMemo(
-    () =>
-      costRateToEdit
-        ? {
-            ...getDataFromKeys(costRateToEdit, [
-              "id",
-              "type",
-              "cost_per_month",
-              "currency",
-              "start_date",
-              "end_date",
-              "holiday_calendar",
-              "note",
-              "over_head",
-            ]),
-            working_hours: {
-              mon: costRateToEdit?.working_hours[0] ?? 8,
-              tue: costRateToEdit?.working_hours[1] ?? 8,
-              wed: costRateToEdit?.working_hours[2] ?? 8,
-              thu: costRateToEdit?.working_hours[3] ?? 8,
-              fri: costRateToEdit?.working_hours[4] ?? 8,
-              sat: costRateToEdit?.working_hours[5] ?? 0,
-              sun: costRateToEdit?.working_hours[6] ?? 0,
-            },
-          }
-        : undefined,
-    [costRateToEdit],
-  ) as EditCostRateForm;
 
   const chartCostData = useMemo(() => {
     const data: { label: string; data: number }[] = [];
@@ -238,6 +134,11 @@ const CostRateInfo = () => {
     () => ({
       responsive: true,
       maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
       scales: {
         x: {
           grid: {
@@ -447,11 +348,10 @@ const CostRateInfo = () => {
             sx={{ borderRadius: "24px" }}
           >
             <DialogContent>
-              <Formik initialValues={initialValues} onSubmit={onSubmit}>
-                {(props) => (
-                  <CostRateForm formik={props} onCancel={handleCloseForm} />
-                )}
-              </Formik>
+              <CostRateForm
+                costRateId={costRateToEditId}
+                onCancel={handleCloseForm}
+              />
             </DialogContent>
           </DefaultPopupLayout>
         </>
@@ -463,3 +363,45 @@ const CostRateInfo = () => {
 };
 
 export default CostRateInfo;
+
+const CurrentRateBlock = ({
+  title,
+  content,
+  icon,
+}: {
+  title: string;
+  content: string;
+  icon: ReactElement;
+}) => {
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      spacing={2}
+      border={1}
+      borderColor="divider"
+      borderRadius={3}
+      py={1.5}
+      pl={3}
+      pr={2}
+      maxWidth={{
+        xs: "initial",
+        sm: 266,
+      }}
+    >
+      {icon}
+      <Stack direction="column" spacing={{ xs: 0, sm: 0.5 }}>
+        <Text
+          color="grey.800"
+          fontSize={18}
+          fontWeight={600}
+          whiteSpace="nowrap"
+          textOverflow="ellipsis"
+        >
+          {title}
+        </Text>
+        <Text color="grey.800">{content}</Text>
+      </Stack>
+    </Stack>
+  );
+};
