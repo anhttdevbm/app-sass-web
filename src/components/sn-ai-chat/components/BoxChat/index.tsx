@@ -13,6 +13,7 @@ import ChatInput from "./components/Chat/ChatInput";
 import { RenderEmptyChat } from "./components/Chat/EmptyChat";
 import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
+import { AxiosError } from "axios";
 
 export const BoxChat = () => {
   const t = useTranslations(NS_AI_CHAT);
@@ -88,10 +89,13 @@ export const BoxChat = () => {
         onChatWithAI(data);
         setFiles([]);
       } catch (error) {
-        if (error.status === 400) {
-          setError("You didn't upload any files!");
-        } else {
-          console.error(error);
+        if (error instanceof Error) {
+          const axiosError = error as AxiosError;
+          if (axiosError.response?.status === 400) {
+            setError("You didn't upload any files!");
+          } else {
+            console.error(error);
+          }
         }
       }
     } else {
@@ -129,38 +133,41 @@ export const BoxChat = () => {
     [toneList, locale],
   );
 
-useEffect(() => {
-  const sendChat = async () => {
-    try {
-      if (
-        newChatSessionCreated &&
-        prompt &&
-        persona &&
-        tone &&
-        prompt.length > 0
-      ) {
-        await onChatWithAI({
-          user_prompt: prompt,
-          persona,
-          tone,
-          chat_session: newChatSessionCreated,
-          lang: locale,
-          files,
-        });
-        setPrompt("");
-        setFiles([]);
+  useEffect(() => {
+    const sendChat = async () => {
+      try {
+        if (
+          newChatSessionCreated &&
+          prompt &&
+          persona &&
+          tone &&
+          prompt.length > 0
+        ) {
+          await onChatWithAI({
+            user_prompt: prompt,
+            persona,
+            tone,
+            chat_session: newChatSessionCreated,
+            lang: locale,
+            files,
+          });
+          setPrompt("");
+          setFiles([]);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          const axiosError = error as AxiosError;
+          if (axiosError.response?.status === 400) {
+            setError("You didn't upload any files!");
+          } else {
+            console.error(error);
+          }
+        }
       }
-    } catch (error) {
-      if (error.status === 400) {
-        setError("You didn't upload any files!");
-      } else
-      console.error(error);
-      // Handle the error here
-    }
-  };
+    };
 
-  sendChat();
-}, [newChatSessionCreated]);
+    sendChat();
+  }, [newChatSessionCreated]);
 
   useEffect(() => {
     setShowPersonaError(false);

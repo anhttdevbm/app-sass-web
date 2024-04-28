@@ -39,9 +39,11 @@ const ChatInput = ({
   const t = useTranslations(NS_AI_CHAT);
 
   const handleRemoveFile = (indexToRemove: number) => {
-    const newFiles = files?.filter((file, index) => index !== indexToRemove);
+    const newFiles =
+      files?.filter((file, index) => index !== indexToRemove) || [];
     onFileChange?.(newFiles);
   };
+
   const handleImportFile = () => {
     setIsModalOpen(true);
   };
@@ -109,7 +111,6 @@ const ChatInput = ({
                     position: "absolute",
                     top: "-23%",
                     right: "-7%",
-                    padding: "8px",
                     background: "white",
                     borderRadius: "50%",
                     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
