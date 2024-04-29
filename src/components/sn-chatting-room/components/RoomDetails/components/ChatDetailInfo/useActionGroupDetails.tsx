@@ -33,6 +33,7 @@ const defaultSx = {
 
 export const useActionGroupDetails = () => {
   const {
+    roomId,
     dataTransfer,
     groupMembers,
     onSetConversationInfo,
@@ -285,15 +286,17 @@ export const useActionGroupDetails = () => {
         return onAddSnackbar(removeOwner?.error?.message, "error");
       }
     };
+
+    const deleteGroup = () => {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_REMOVE,
+        roomId: roomId,
+      });
+    };
+
     switch (showPopup?.type) {
       case TYPE_POPUP.DELETE:
-        //CALL API DELETE
-        const result = onDeleteConversationGroup({
-          type: "p",
-          roomId: dataTransfer?._id,
-        });
-        onChangeConversationWhenLeave();
-        handleSuccess(result);
+        deleteGroup();
         break;
       case TYPE_POPUP.LEAVE_MEMBER:
         await left();
@@ -328,9 +331,9 @@ export const useActionGroupDetails = () => {
     return (
       <>
         <Box sx={{ width: "100%", margin: "0 50px" }}>
-          {groupMembers?.length > 0
-            ? groupMembers
-                .filter((m) => m._id !== user?.id_rocket)
+          {dataTransfer?.members?.length > 0
+            ? dataTransfer?.members
+                .filter((m) => m.id !== user?.id)
                 .map((item, index) => {
                   return (
                     <Box
@@ -346,7 +349,7 @@ export const useActionGroupDetails = () => {
                       }}
                       p={1}
                       onClick={() => {
-                        setUserId(item?._id);
+                        setUserId(item?.id);
                         setShowPopup((pre) => ({
                           ...pre,
                           type: TYPE_POPUP.LEAVE_AND_NEW_ADD,

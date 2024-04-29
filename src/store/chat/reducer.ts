@@ -183,6 +183,9 @@ const chatSlice = createSlice({
         state.convention = [...state.convention, ...action.payload];
       }
     },
+    setListConversation: (state, action) => {
+      state.convention = action.payload;
+    },
     setConversationPaging: (state, action) => {
       state.conversationPagingV2 = action.payload;
     },
@@ -617,6 +620,7 @@ export const {
   setConversationInfo,
   setConversation,
   setConversationPaging,
+  setListConversation,
   setIsSearchConversation,
   setMessages,
   setMessagePaging,

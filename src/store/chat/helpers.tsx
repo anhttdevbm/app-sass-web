@@ -21,7 +21,7 @@ import { initPagingV2 } from "store/chat/reducer";
 const PAGE_INITIAL = 1;
 
 const isRelatedGroup = (members: string[], userId = "") => {
-  return members.find((memberId) => memberId === userId);
+  return members?.find((memberId) => memberId === userId);
 };
 
 export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
@@ -55,6 +55,8 @@ export const useWSChat = () => {
     onSetConversationPaging,
     onSetStateSearchMessage,
     onResetSearchChatText,
+    onResetDataTransfer,
+    onResetConversationInfo,
     onSetStep,
     messagePagingV2,
     onSetMessagePaging,
@@ -63,6 +65,7 @@ export const useWSChat = () => {
     onSetChatLinks,
     onSetChatMedias,
     onSetChatFiles,
+    onSetListConvention,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
@@ -70,6 +73,22 @@ export const useWSChat = () => {
 
   const [ws, setWs] = useState<WebSocket | null>(null);
   const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
+
+  const resetData = () => {
+    onSetStateSearchMessage(null);
+    onResetSearchChatText();
+    onSetChatFiles([]);
+    onSetChatLinks([]);
+    onSetChatMedias([]);
+  };
+
+  const resetDataRoom = () => {
+    onSetRoomId("");
+    onResetDataTransfer();
+    onResetConversationInfo();
+    onSetMessagePaging(initPagingV2);
+    onSetMessages([]);
+  };
 
   const sendMessage = (message) => {
     if (ws) {
@@ -113,6 +132,8 @@ export const useWSChat = () => {
                 return;
               }
               if (isOwnerGroup(room?.creator, user?.id)) {
+                onSetMessagePaging(initPagingV2);
+                onSetMessages([]);
                 onSetRoomId(room?.id);
                 onSetDataTransfer(room);
                 onSetConversationInfo(room);
@@ -139,11 +160,7 @@ export const useWSChat = () => {
               onSetRoomId(roomDetail?.id);
               onSetDataTransfer(roomDetail);
               onSetConversationInfo(roomDetail);
-              onSetStateSearchMessage(null);
-              onResetSearchChatText();
-              onSetChatFiles([]);
-              onSetChatLinks([]);
-              onSetChatMedias([]);
+              resetData();
               if (roomDetail?.type === CHAT_ROOM_TYPE.GROUP) {
                 onSetStep(STEP.CHAT_GROUP, roomDetail);
               } else {
@@ -175,6 +192,21 @@ export const useWSChat = () => {
                 return item;
               });
               onSetConvention(newConversations);
+              return;
+
+            case CHAT_EVENT_TYPE.GROUP_REMOVE:
+              if (!isRelatedGroup(resp?.data?.members, user?.id)) {
+                return;
+              }
+
+              const roomIdRemove = resp?.data?.id;
+              const conversationFilter = convention.filter(
+                (item) => item.id != roomIdRemove,
+              );
+              onSetListConvention(conversationFilter);
+              resetData();
+              resetDataRoom();
+              onSetStep(STEP.CONVENTION);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_LIST:

@@ -82,6 +82,7 @@ import {
   setChatLinks,
   setChatMedias,
   setChatFiles,
+  setListConversation,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -736,6 +737,10 @@ export const useChat = () => {
     return dispatch(setConversationPaging(pagingInfo));
   };
 
+  const onSetListConvention = (conversations) => {
+    return dispatch(setListConversation(conversations));
+  };
+
   const onSetIsSearchConversation = (searchFlg: boolean) => {
     return dispatch(setIsSearchConversation(searchFlg));
   };
@@ -767,6 +772,7 @@ export const useChat = () => {
     conversationPaging,
     conversationPagingV2,
     onSetConversationPaging,
+    onSetListConvention,
     isSearchConversation,
     onSetIsSearchConversation,
     messages,
