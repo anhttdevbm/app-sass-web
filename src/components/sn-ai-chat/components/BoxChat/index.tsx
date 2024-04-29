@@ -117,7 +117,11 @@ export const BoxChat = () => {
     () =>
       Array.isArray(personaList)
         ? personaList.map((item) => {
-            return { label: item.name[locale], value: item.id };
+            return {
+              label: item.name[locale],
+              value: item.id,
+              icon: item.icon,
+            };
           })
         : [],
     [personaList, locale],
@@ -127,7 +131,11 @@ export const BoxChat = () => {
     () =>
       Array.isArray(toneList)
         ? toneList.map((item) => {
-            return { label: item.name[locale], value: item.id };
+            return {
+              label: item.name[locale],
+              value: item.id,
+              icon: item.icon,
+            };
           })
         : [],
     [toneList, locale],

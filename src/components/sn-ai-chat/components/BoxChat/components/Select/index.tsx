@@ -1,4 +1,5 @@
 import {
+  Box,
   FormControl,
   InputLabel,
   ListItemIcon,
@@ -7,9 +8,12 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import { Endpoint, client } from "api";
+import { UPLOAD_API_URL } from "constant/index";
 import { Option } from "constant/types";
 import useTheme from "hooks/useTheme";
-import React from "react";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 
 interface SelectAIChatProps {
   placeholder?: string;
@@ -28,9 +32,31 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
   onOptionChange,
   selectedValue,
   isError,
-
 }) => {
   const { isDarkMode } = useTheme();
+  const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    const fetchImageUrls = async () => {
+      const urls = await Promise.all(
+        options.map(async (option) => {
+          const response = await client.post(
+            Endpoint.DOWNLOAD_LINK,
+            [option.icon],
+            {
+              baseURL: UPLOAD_API_URL,
+            },
+          );
+          const data = await response.data;
+
+          return { [option.value]: data[0].link };
+        }),
+      );
+      setImageUrls(Object.assign({}, ...urls));
+    };
+    fetchImageUrls();
+  }, [options]);
+
   return (
     <FormControl
       fullWidth
@@ -96,18 +122,29 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
         </MenuItem>
         {options.map((option, index) => (
           <MenuItem key={index} value={option.value}>
-            {option.icon && <ListItemIcon>{option.icon}</ListItemIcon>}
-            <ListItemText
-              primary={option.label}
-              primaryTypographyProps={{
-                noWrap: true,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                fontSize: "14px",
-                fontWeight: 400,
-                lineHeight: "16px",
-              }}
-            />
+            <Box display="flex" alignItems="center">
+              {option.icon && imageUrls[option.value] && (
+                <ListItemIcon style={{ minWidth: "20px" }}>
+                  <Image
+                    src={imageUrls[option.value]}
+                    alt={option.label}
+                    width={12}
+                    height={12}
+                  />
+                </ListItemIcon>
+              )}
+              <ListItemText
+                primary={option.label}
+                primaryTypographyProps={{
+                  noWrap: true,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  fontSize: "14px",
+                  fontWeight: 400,
+                  lineHeight: "16px",
+                }}
+              />
+            </Box>
           </MenuItem>
         ))}
       </Select>
