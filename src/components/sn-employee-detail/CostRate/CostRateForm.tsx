@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import { NS_COST_RATE, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
 import { Option } from "constant/types";
+import Link from "components/Link";
 import {
   NewButton as Button,
   NewInput as Input,
@@ -19,6 +20,7 @@ import {
   Text,
 } from "components/shared";
 import { useFormik } from "hooks/useFormik";
+import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import { useSnackbar } from "store/app/selectors";
 import { NewCostRate, UpdateCostRate } from "store/employeeDetail/actions";
 import { useCostRate } from "store/employeeDetail/selectors";
@@ -290,6 +292,18 @@ const CostRateForm = ({
         <Grid item xs={12} sm={4}>
           <Select
             options={holidayCalendarOptions}
+            lastNode={
+              <Link href="/holiday-calendar" sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                px: 2,
+                py: 1,
+                textDecoration: "none",
+              }}>
+                <AddCircleGradientIcon/>
+                <Text pl={1} fontSize={14}>Add new holiday calendar</Text>
+              </Link>
+            }
             title={costRateT("empty.form.holidayCalendar")}
             fullWidth
             name="holiday_calendar"
