@@ -19,8 +19,9 @@ export type ChatSession = {
 export type SelectChatAI = {
   id: number;
   name: string;
+  icon: string;
   description: string;
-}
+};
 
 export type GetExamplePromptQueries = {
   number_prompt: number;
@@ -60,7 +61,6 @@ export type AIChatState = {
   openAIChatStatus: DataStatus;
   openAIChatError?: string;
   openAIChatFilters?: GetOpenAIChatQueries;
-  
 };
 
 export type GetChatSessionsQueries = BaseQueries & {
@@ -81,7 +81,7 @@ export type GetToneQueries = BaseQueries;
 
 export type DeleteAllChatSessionQueries = {
   userId: string;
-}
+};
 
 export type ChatWithAIData = {
   persona: string;

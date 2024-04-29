@@ -6,7 +6,7 @@ import { Editor } from "@tiptap/core";
 export interface Option {
   label: string;
   value: string | number;
-  icon?: string;
+  icon?: string | React.ReactNode;
   avatar?: string;
   subText?: string;
 }
