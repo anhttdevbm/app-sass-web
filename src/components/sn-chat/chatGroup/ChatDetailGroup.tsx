@@ -38,6 +38,7 @@ const ChatDetailGroup = (props) => {
   const { isDarkMode } = useTheme();
 
   const {
+    roomId,
     dataTransfer,
     groupMembers,
     onSetStep,
@@ -329,15 +330,16 @@ const ChatDetailGroup = (props) => {
         return onAddSnackbar(removeOwner?.error?.message, "error");
       }
     };
+
+    const deleteGroup = () => {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_REMOVE,
+        roomId: roomId,
+      });
+    };
     switch (showPopup?.type) {
       case TYPE_POPUP.DELETE:
-        //CALL API DELETE
-        const result = onDeleteConversationGroup({
-          type: "p",
-          roomId: dataTransfer?._id,
-        });
-        onSetStep(STEP.CONVENTION);
-        handleSuccess(result);
+        deleteGroup();
         break;
       case TYPE_POPUP.LEAVE_MEMBER:
         await left();
@@ -488,7 +490,7 @@ const ChatDetailGroup = (props) => {
         </Box>
         <Box
           sx={{
-            height: owner ? "30%" : "42%",
+            height: owner ? "24%" : "42%",
             // height: "180px",
             overflow: "auto",
           }}
