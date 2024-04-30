@@ -11,7 +11,7 @@ import {
   getExamplePrompt,
   getOpenAIChat,
   getPersona,
-  getTone
+  getTone,
 } from "./actions";
 import { AIChatState, OpenAIChat } from "./type";
 import { getPageNumber } from "./helper";
@@ -232,15 +232,13 @@ const aiChatSlice = createSlice({
 
         const newChats = payload.results.filter(
           (newChat) =>
-            !state.openAIChat.some(
-              (existingChat) => {
-                if (!existingChat.id) {
-                  return true;
-                }
-
-                return existingChat.id === newChat.id;
+            !state.openAIChat.some((existingChat) => {
+              if (!existingChat.id) {
+                return true;
               }
-            ),
+
+              return existingChat.id === newChat.id;
+            }),
         );
 
         state.openAIChat.push(...newChats);
