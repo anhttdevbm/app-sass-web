@@ -77,6 +77,9 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
             fontSize: "14px",
             fontWeight: 400,
             lineHeight: "16px",
+            "&.Mui-focused": {
+              color: isDarkMode ? "info.dark" : "grey.300",
+            },
           }}
         >
           {placeholder}
@@ -141,7 +144,7 @@ export const SelectAIChat: React.FC<SelectAIChatProps> = ({
                   textOverflow: "ellipsis",
                   fontSize: "14px",
                   fontWeight: 400,
-                  lineHeight: "16px",
+                  lineHeight: "15.9px",
                 }}
               />
             </Box>

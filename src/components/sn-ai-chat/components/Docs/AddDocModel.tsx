@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { IconButton, Text } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
+import { DOCS_DETAIL_PATH } from "constant/paths";
 import DocOutlineIcon from "icons/DocOutlineIcon";
 import PlusIcon from "icons/PlusIcon";
 import { debounce } from "lodash";
@@ -50,8 +51,11 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
   const [loading, setLoading] = useState(false);
 
   const debouncedSearch = useCallback(
-    debounce((value) => onGetDocs({ user_id: user?.id, search_key: value }), 300),
-    []
+    debounce(
+      (value) => onGetDocs({ user_id: user?.id, search_key: value }),
+      300,
+    ),
+    [],
   );
 
   const handleSearchChange = (event) => {
@@ -62,19 +66,20 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
   const handleAddDoc = async () => {
     setLoading(true);
     const docId = await onCreateDoc(undefined, assistantContent);
-    router.push(`http://localhost:3000/documents/${docId}`);
+    const path = DOCS_DETAIL_PATH.replace("{id}", docId);
+    router.push(`${path}`);
   };
 
   const handleDocClick = (doc: DocItem) => {
     setLoading(true);
     handleGetDocDetail(doc.id, assistantContent);
-    router.push(`http://localhost:3000/documents/${doc.id}`);
+    const path = DOCS_DETAIL_PATH.replace("{id}", doc.id);
+    router.push(`${path}`);
   };
 
   useEffect(() => {
     onGetDocs({ user_id: user?.id });
   }, []);
-
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
@@ -121,7 +126,7 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
             width: "100%",
             height: "100%",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 9999, 
+            zIndex: 9999,
           }}
         >
           <CircularProgress />

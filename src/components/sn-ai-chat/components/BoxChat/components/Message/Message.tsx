@@ -19,7 +19,10 @@ interface MessageProps {
   regenerateResponse: (message: string) => void;
 }
 
-export const Message: React.FC<MessageProps> = ({ message, regenerateResponse }) => {
+export const Message: React.FC<MessageProps> = ({
+  message,
+  regenerateResponse,
+}) => {
   const { user_prompt, assistant_content, id } = message;
 
   const { user } = useAuth();
@@ -40,7 +43,18 @@ export const Message: React.FC<MessageProps> = ({ message, regenerateResponse })
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(assistant_content as string);
+    const textToCopy = assistant_content as string;
+
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(textToCopy);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = textToCopy;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
   };
   const handleRegenerateResponse = () => {
     regenerateResponse(user_prompt);
