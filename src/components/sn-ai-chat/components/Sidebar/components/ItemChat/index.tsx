@@ -19,6 +19,7 @@ const GREY_400 = "grey.400";
 const TRASH_FILL_ICON_COLOR = "#666666";
 const TEXT_BACKGROUND =
   "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)";
+const BORDER_COLOR = "#ECECF3";
 
 interface ItemChatProps {
   title: string;
@@ -48,8 +49,10 @@ const ItemChat = ({
   title,
   id,
   setSelectedChat,
+  selectedChat,
 }: ItemChatProps) => {
-  const [menuAnchorElement, setMenuAnchorElement] = useState<null | HTMLElement>(null);
+  const [menuAnchorElement, setMenuAnchorElement] =
+    useState<null | HTMLElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [chatname, setChatname] = useState(title);
 
@@ -91,7 +94,17 @@ const ItemChat = ({
     <Box
       sx={{
         ...itemSx,
-        backgroundColor: isDarkMode ? INFOR_DARK : PRIMARY_LIGHT,
+        // backgroundColor: isDarkMode ? INFOR_DARK : PRIMARY_LIGHT,
+        borderBottom: `1px solid ${isDarkMode ? WHITE : BORDER_COLOR}`,
+        "&:hover": {
+          backgroundColor: isDarkMode ? INFOR_DARK : PRIMARY_LIGHT,
+          borderRadius: "4px",
+        },
+        ...(selectedChat === id && {
+          backgroundColor: isDarkMode ? INFOR_DARK : PRIMARY_LIGHT,
+          borderRadius: "4px",
+          borderBottom: 0,
+        }),
       }}
       onClick={() => {
         if (!isEditing && !menuAnchorElement) {
@@ -145,14 +158,11 @@ const itemSx = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  borderRadius: "4px",
   width: "100%",
   padding: "12px",
-  "&:hover": {
-    opacity: 0.8,
-  },
-  marginBottom: "8px",
   cursor: "pointer",
+  marginBottom: "8px",
+  backgroundColor: "transparent",
 };
 
 const menuItemSx = {
