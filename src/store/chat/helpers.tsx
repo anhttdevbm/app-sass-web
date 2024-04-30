@@ -194,6 +194,49 @@ export const useWSChat = () => {
               onSetConvention(newConversations);
               return;
 
+            case CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER:
+            case CHAT_EVENT_TYPE.GROUP_REMOVE_ADMIN:
+              if (
+                !isRelatedGroup(resp?.data?.room?.members, user?.id) &&
+                resp?.data?.detailMember?.id !== user?.id
+              ) {
+                return;
+              }
+              const roomIdOut = resp?.data?.room?.id;
+              const newConversation = convention.filter(
+                (item) => item.id != roomIdOut,
+              );
+              const newInfoRoom = {
+                ...dataTransfer,
+                members: dataTransfer?.members?.filter(
+                  (mem) => mem?.id != resp?.data?.detailMember?.id,
+                ),
+              };
+              onSetListConvention(newConversation);
+              onSetDataTransfer(newInfoRoom);
+              onSetConversationInfo(newInfoRoom);
+              if (resp?.data?.detailMember?.id === user?.id) {
+                resetData();
+                resetDataRoom();
+                onSetStep(STEP.CONVENTION);
+              }
+              return;
+
+            case CHAT_EVENT_TYPE.GROUP_ADD_ADMIN:
+              if (!isRelatedGroup(resp?.data?.room?.members, user?.id)) {
+                return;
+              }
+              const newRoomAdmin = {
+                ...dataTransfer,
+                admins: [
+                  ...(dataTransfer?.admins || []),
+                  resp?.data?.detailAdmin?.id,
+                ],
+              };
+              onSetDataTransfer(newRoomAdmin);
+              onSetConversationInfo(newRoomAdmin);
+              return;
+
             case CHAT_EVENT_TYPE.GROUP_REMOVE:
               if (!isRelatedGroup(resp?.data?.members, user?.id)) {
                 return;

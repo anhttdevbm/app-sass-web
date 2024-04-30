@@ -35,6 +35,8 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
 
   //check owner
   const owner = isOwnerGroup(currentConversation?.creator, user?.id);
+  const admin = currentConversation?.admins?.find((item) => item === user?.id);
+  const isOwnerOrAdmin = owner || admin;
 
   return (
     <>
@@ -107,7 +109,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
             callbackRemove={() => {
               props?.handleManageMember("remove", member);
             }}
-            admin={owner}
+            admin={isOwnerOrAdmin}
           />
         ))}
       </CustomBox>
@@ -120,7 +122,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
           flexDirection: "column",
         }}
       >
-        {owner && (
+        {isOwnerOrAdmin && (
           <Box sx={{ marginBottom: 1 }}>
             <Typography
               variant="caption"
@@ -152,7 +154,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
               fontWeight={600}
               sx={{ cursor: "pointer" }}
               onClick={() => {
-                if (owner) {
+                if (isOwnerOrAdmin) {
                   props?.setShowPopup((pre) => ({
                     ...pre,
                     type: TYPE_POPUP.LEAVE_OWNER,
