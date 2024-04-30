@@ -55,6 +55,8 @@ const ChatDetailGroup = (props) => {
     useChatHelpers();
   //check owner
   const owner = isOwnerGroup(dataTransfer?.creator, user?.id);
+  const admin = dataTransfer?.admins?.find((item) => item === user?.id);
+  const isOwnerOrAdmin = owner || admin;
 
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
@@ -490,7 +492,7 @@ const ChatDetailGroup = (props) => {
         </Box>
         <Box
           sx={{
-            height: owner ? "24%" : "42%",
+            height: isOwnerOrAdmin ? "24%" : "42%",
             // height: "180px",
             overflow: "auto",
           }}
@@ -505,7 +507,7 @@ const ChatDetailGroup = (props) => {
               callbackRemove={() => {
                 handleManageMember("remove", member);
               }}
-              admin={owner}
+              admin={isOwnerOrAdmin}
             />
           ))}
         </Box>
@@ -516,7 +518,7 @@ const ChatDetailGroup = (props) => {
           }}
         >
           <Box>
-            {owner && (
+            {isOwnerOrAdmin && (
               <Box sx={{ marginBottom: 1 }}>
                 <Typography
                   variant="caption"
@@ -548,7 +550,7 @@ const ChatDetailGroup = (props) => {
                   fontWeight={600}
                   sx={{ cursor: "pointer" }}
                   onClick={() => {
-                    if (owner) {
+                    if (isOwnerOrAdmin) {
                       setShowPopup((pre) => ({
                         ...pre,
                         type: TYPE_POPUP.LEAVE_OWNER,

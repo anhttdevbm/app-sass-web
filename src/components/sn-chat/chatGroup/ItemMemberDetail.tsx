@@ -7,6 +7,10 @@ import { IconButton } from "components/shared";
 import { useState } from "react";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import useTheme from "hooks/useTheme";
+import { useChat } from "store/chat/selectors";
+import { useWSChat } from "store/chat/helpers";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { useAuth } from "store/app/selectors";
 
 interface ItemMemberDetailProp {
   admin?: boolean;
@@ -35,7 +39,9 @@ const ItemMemberDetail = ({
     actionType: 0,
     widthPopup: "500px",
   };
-
+  const { dataTransfer, roomId } = useChat();
+  const { sendMessage } = useWSChat();
+  const { user } = useAuth();
   const [showPopup, setShowPopup] = useState(init);
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
@@ -46,11 +52,28 @@ const ItemMemberDetail = ({
   };
   const handleClickMenu = (action: "addAdmin" | "remove") => {
     setAnchorEl(null);
-    if (action === "addAdmin" && callbackAddAdmin) {
-      callbackAddAdmin();
+    if (action === "addAdmin") {
       setShowPopup(init);
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_ADD_ADMIN,
+        roomId: roomId,
+        userId: data?.id,
+      });
+    } else if (action === "remove") {
+      if (dataTransfer?.admins?.find((item) => item?.id === data?.id)) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.GROUP_REMOVE_ADMIN,
+          roomId: roomId,
+          userId: data?.id,
+        });
+      } else {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER,
+          roomId: roomId,
+          userId: data?.id,
+        });
+      }
     }
-    if (action === "remove" && callbackRemove) callbackRemove();
   };
 
   const handleClosePopup = () => {
