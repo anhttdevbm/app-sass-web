@@ -50,13 +50,6 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
 }
 
 const ChatList = () => {
-  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
-    undefined,
-  );
-  const [chatSessionsGroupedByDate, setChatSessionsGroupedByDate] = useState<
-    Record<string, ChatSession[]>
-  >({});
-
   const {
     chatSessions,
     onGetChatSessions: fetchChatSessions,
@@ -69,6 +62,14 @@ const ChatList = () => {
     newChatSessionCreated,
   } = useChatSession();
 
+  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
+    chatSession,
+  );
+
+  const [chatSessionsGroupedByDate, setChatSessionsGroupedByDate] = useState<
+    Record<string, ChatSession[]>
+  >({});
+
   const intersectionObserverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,7 +78,9 @@ const ChatList = () => {
 
   useEffect(() => {
     fetchChatSessions({});
-    onSelectChatId(newChatSessionCreated);
+    if (newChatSessionCreated) {
+      onSelectChatId(newChatSessionCreated);
+    }
   }, [newChatSessionCreated]);
 
   useEffect(() => {
