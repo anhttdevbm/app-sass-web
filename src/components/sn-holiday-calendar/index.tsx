@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/material/Stack";
@@ -14,6 +14,7 @@ import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import useToggle from "hooks/useToggle";
+import useWindowSize from "hooks/useWindowSize";
 import { useFormik } from "hooks/useFormik";
 import HolidayCalendarCard from "./HolidayCalendarCard";
 
@@ -94,52 +95,75 @@ const HolidayCalendar = () => {
     setShouldFetchOff,
   ]);
 
+  const windowSize = useWindowSize();
+  const [containerHeight, setContainerHeight] = useState(0);
+  const containerRef = useRef();
+  useEffect(() => {
+    if (containerRef.current) {
+      const top =
+        (windowSize.height ?? 0) -
+        getContainerBoundingClientRect(containerRef.current).top -
+        5;
+      setContainerHeight(top);
+    }
+  }, [windowSize]);
+
   return (
-    <Stack
-      direction="column"
-      bgcolor="#F7F7FD"
+    <Box
+      ref={containerRef}
       sx={{
-        pt: 2,
-        pr: 10,
-        pl: 4,
-        pb: 8,
+        backgroundColor: "#F7F7FD",
+        width: "100%",
+        height: `${containerHeight}px`,
         overflowX: "hidden",
+        overflowY: "scroll",
       }}
     >
-      <Box
-        component="button"
+      <Stack
+        direction="column"
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flex: "0 0 112px",
-          mt: 2,
-          border: "1px dashed #14B9E6",
-          backgroundColor: "white",
-          borderRadius: "24px",
-          cursor: "pointer",
-        }}
-        onClick={async () => {
-          await handleAddHolidayCalendar({
-            name: "Holidays in Viet Nam",
-            country: "Viet Nam",
-            province: "",
-          });
+          width: "100%",
+          pt: 2,
+          pr: 10,
+          pl: 4,
+          pb: 8,
         }}
       >
-        <AddCircleGradientIcon />
-        <Text color="#0575E6" fontWeight={700} ml={2}>
-          Add new holiday calendar
-        </Text>
-      </Box>
+        <Box
+          component="button"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flex: "0 0 112px",
+            mt: 2,
+            border: "1px dashed #14B9E6",
+            backgroundColor: "white",
+            borderRadius: "24px",
+            cursor: "pointer",
+          }}
+          onClick={async () => {
+            await handleAddHolidayCalendar({
+              name: "Holidays in Viet Nam",
+              country: "Viet Nam",
+              province: "",
+            });
+          }}
+        >
+          <AddCircleGradientIcon />
+          <Text color="#0575E6" fontWeight={700} ml={2}>
+            Add new holiday calendar
+          </Text>
+        </Box>
 
-      {holidayCalendars.map((calendar) => (
-        <HolidayCalendarCard
-          key={calendar.id}
-          holidayCalendar={calendar}
-          handleOpenModal={handleOpenModal}
-        />
-      ))}
+        {holidayCalendars.map((calendar) => (
+          <HolidayCalendarCard
+            key={calendar.id}
+            holidayCalendar={calendar}
+            handleOpenModal={handleOpenModal}
+          />
+        ))}
+      </Stack>
 
       <DefaultPopupLayout
         open={isModalOpen}
@@ -183,7 +207,7 @@ const HolidayCalendar = () => {
           </Box>
         </DialogContent>
       </DefaultPopupLayout>
-    </Stack>
+    </Box>
   );
 };
 
@@ -192,3 +216,6 @@ export default HolidayCalendar;
 const initialValues = {
   year: "",
 };
+
+const getContainerBoundingClientRect = (element: HTMLElement) =>
+  element.getBoundingClientRect();
