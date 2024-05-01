@@ -123,7 +123,7 @@ const MenuInfo = () => {
             />
           )}
         </Box>
-        {isGroup(currentConversation?.type) && (
+        {/*{isGroup(currentConversation?.type) && (
           <Box
             sx={{
               display: "flex",
@@ -226,7 +226,7 @@ const MenuInfo = () => {
               </Box>
             )}
           </Box>
-        )}
+        )}*/}
       </>
     </Box>
   );
