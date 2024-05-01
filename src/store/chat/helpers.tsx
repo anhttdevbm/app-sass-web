@@ -135,8 +135,10 @@ export const useWSChat = () => {
                 onSetMessagePaging(initPagingV2);
                 onSetMessages([]);
                 onSetRoomId(room?.id);
-                onSetDataTransfer(room);
-                onSetConversationInfo(room);
+                sendMessage({
+                  event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+                  roomId: room?.id,
+                })
               }
               if (convention.find((item) => item?.id === room?.id)) return;
               return onSetConvention([room, ...convention]);
@@ -151,6 +153,7 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.DETAIL_ROOM:
               let roomDetail = resp?.data;
+              if (roomId === roomDetail?.id) return;
               if (roomDetail?.type === CHAT_ROOM_TYPE.PERSONAL) {
                 roomDetail = {
                   ...roomDetail,
