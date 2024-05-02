@@ -1,4 +1,5 @@
 import LandingAboutUsPage from "components/sn-landing-about-us";
+import Wrapper from "components/Wrapper";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { NS_CONTENTS } from "constant"

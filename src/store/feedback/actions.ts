@@ -67,10 +67,11 @@ export const getFeedbacks = createAsyncThunk(
 export const respondToFeedback = createAsyncThunk(
   "feedback/respondToFeedback",
   async ({ id, data, Token }: { id: string, data: FeedbackData, Token: string | undefined | null }) => {
+    
     try {
       const respondToFeedback = {
         content: data.responsed_content,
-        title : data.title,
+        subject : data.title,
         type: 'BCC',
         forwardEmail: data.forward_email
       } as Responsed_Feedback
