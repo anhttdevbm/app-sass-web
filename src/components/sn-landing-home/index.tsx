@@ -12,7 +12,7 @@ export { BannerHomePage, ExploreHowWe, PowerFullAgent };
 
 const LandingHomePage = () => {
     return (
-        <>
+        <Stack overflow="auto" height="100vh">
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                     <BannerHomePage />
@@ -26,7 +26,7 @@ const LandingHomePage = () => {
                     <PowerFullAgent />
                 </Grid>
             </Grid>
-        </>
+        </Stack>
     )
 }
 

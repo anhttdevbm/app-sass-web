@@ -9,10 +9,10 @@ export const ContentsLang: ContentsDictionary = {
             updateSuccess: "Cập nhật thành công!",
         },
         banner: "Biểu ngữ",
-        explore_how_we: "Explore how we",
-        update_explore_how_we: "Cập nhật Explore how we",
+        explore_how_we: "Khám phá cách chúng tôi",
+        update_explore_how_we: "Cập nhật Khám phá cách chúng tôi",
         powerfull_agent: "Đặc vụ mạnh mẽ",
-        update_powerfull_agent: "Cập nhật Powerfull Agent",
+        update_powerfull_agent: "Cập nhật Đặc vụ mạnh mẽ",
     },
     aboutUs: {
         head: {
