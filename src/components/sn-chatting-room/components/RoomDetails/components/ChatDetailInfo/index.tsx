@@ -27,7 +27,7 @@ const ChatDetailInfo = () => {
         flexShrink: 0,
         ...styleDrawerOpen,
         "& .MuiDrawer-paper": {
-          top: "50px",
+          top: "37px",
           width: extraDesktopMode ? "424px" : "272px",
           boxSizing: "border-box",
           border: "none",

@@ -138,7 +138,7 @@ export const useWSChat = () => {
                 sendMessage({
                   event: CHAT_EVENT_TYPE.DETAIL_ROOM,
                   roomId: room?.id,
-                })
+                });
               }
               if (convention.find((item) => item?.id === room?.id)) return;
               return onSetConvention([room, ...convention]);
@@ -195,6 +195,33 @@ export const useWSChat = () => {
                 return item;
               });
               onSetConvention(newConversations);
+              return;
+
+            case CHAT_EVENT_TYPE.GROUP_ADD_MEMBER:
+              if (
+                !isRelatedGroup(resp?.data?.room?.members, user?.id) &&
+                resp?.data?.detailMember?.id !== user?.id
+              ) {
+                return;
+              }
+              // TODO: append message add member later
+              const isAlreadyInRoom = dataTransfer?.members?.find(
+                (mem) => mem?.id === resp?.data?.detailMember?.id,
+              );
+              if (resp?.data?.room?.id === roomId && !isAlreadyInRoom) {
+                const newRoomInfo = {
+                  ...dataTransfer,
+                  members: [
+                    ...(dataTransfer?.members || []),
+                    resp?.data?.detailMember,
+                  ],
+                };
+                onSetDataTransfer(newRoomInfo);
+                onSetConversationInfo(newRoomInfo);
+              }
+              if (convention.find((item) => item?.id === resp?.data?.room?.id))
+                return;
+              onSetListConvention([resp?.data?.room, ...convention]);
               return;
 
             case CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER:
@@ -374,6 +401,23 @@ export const useChatHelpers = () => {
 
   const isGroup = (type: string) => type === CHAT_ROOM_TYPE.GROUP;
 
+  const handleCreateGroupWS = (members: string[]) => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_CREATE,
+      members: members,
+    });
+  };
+
+  const handleAddMemberToGroup = (users: string[]) => {
+    users.map((user) => {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_ADD_MEMBER,
+        roomId: roomId,
+        userId: user,
+      });
+    });
+  };
+
   const handleGetChatMedias = (currentPage: number) => {
     sendMessage({
       event: CHAT_EVENT_TYPE.MESSAGE_LIST_MEDIA,
@@ -448,5 +492,7 @@ export const useChatHelpers = () => {
     handleGetChatMedias,
     handleGetChatFiles,
     handleGetChatLinks,
+    handleCreateGroupWS,
+    handleAddMemberToGroup,
   };
 };

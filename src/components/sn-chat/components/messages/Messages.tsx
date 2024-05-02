@@ -351,7 +351,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                       display: "inline-block",
                     }}
                   >
-                    {renderMessage(message)}
+                    {message?.content}
                   </Typography>
                 </Box>
               )}
