@@ -2,7 +2,7 @@ import { memo } from "react";
 import { SvgIcon, SvgIconProps } from "@mui/material";
 
 const ProfileAdd = (props: SvgIconProps) => {
-  const color = "#FFFFFF";
+  const color = props.htmlColor || "#FFFFFF";
   return (
     <SvgIcon
       width="24"
