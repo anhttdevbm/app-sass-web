@@ -67,7 +67,7 @@ const RoomHeader = () => {
   const canAddMember = () => {
     return (
       (isGroup(currentConversation?.type) && isOwner) ||
-      currentConversation?.admins?.find((item) => item?.id === user?.id)
+      currentConversation?.admins?.find((item) => item === user?.id)
     );
   };
 

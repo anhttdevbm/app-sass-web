@@ -232,20 +232,20 @@ export const useWSChat = () => {
               ) {
                 return;
               }
-              const roomIdOut = resp?.data?.room?.id;
-              const newConversation = convention.filter(
-                (item) => item.id != roomIdOut,
-              );
               const newInfoRoom = {
                 ...dataTransfer,
                 members: dataTransfer?.members?.filter(
                   (mem) => mem?.id != resp?.data?.detailMember?.id,
                 ),
               };
-              onSetListConvention(newConversation);
               onSetDataTransfer(newInfoRoom);
               onSetConversationInfo(newInfoRoom);
               if (resp?.data?.detailMember?.id === user?.id) {
+                const roomIdOut = resp?.data?.room?.id;
+                const newConversation = convention.filter(
+                  (item) => item.id != roomIdOut,
+                );
+                onSetListConvention(newConversation);
                 resetData();
                 resetDataRoom();
                 onSetStep(STEP.CONVENTION);
@@ -256,6 +256,7 @@ export const useWSChat = () => {
               if (!isRelatedGroup(resp?.data?.room?.members, user?.id)) {
                 return;
               }
+              if (dataTransfer?.admins?.find(item => item === resp?.data?.detailAdmin?.id)) return;
               const newRoomAdmin = {
                 ...dataTransfer,
                 admins: [
@@ -484,6 +485,53 @@ export const useChatHelpers = () => {
     }
   }, TIME_DEBOUNCE_SEARCH);
 
+  const groupUpdateName = (renameGroup = "") => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_UPDATE_NAME,
+      roomId: roomId,
+      roomName: renameGroup,
+    });
+  };
+
+  const groupUpdateAvatar = (avatarId = "") => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR,
+      roomId: roomId,
+      avatar: avatarId,
+    });
+  };
+
+  const addNewAdmin = (id = "") => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_ADD_ADMIN,
+      roomId: roomId,
+      userId: id,
+    });
+  };
+
+  const memberLeftGroup = (userIdLeft = "") => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER,
+      roomId: roomId,
+      userId: userIdLeft,
+    });
+  };
+
+  const adminLeftGroup = (adminIdLeft = "") => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_REMOVE_ADMIN,
+      roomId: roomId,
+      userId: adminIdLeft,
+    });
+  };
+
+  const deleteGroup = () => {
+    sendMessage({
+      event: CHAT_EVENT_TYPE.GROUP_REMOVE,
+      roomId: roomId,
+    });
+  };
+
   return {
     isGroup,
     searchConversation,
@@ -494,5 +542,11 @@ export const useChatHelpers = () => {
     handleGetChatLinks,
     handleCreateGroupWS,
     handleAddMemberToGroup,
+    groupUpdateName,
+    groupUpdateAvatar,
+    addNewAdmin,
+    memberLeftGroup,
+    adminLeftGroup,
+    deleteGroup,
   };
 };

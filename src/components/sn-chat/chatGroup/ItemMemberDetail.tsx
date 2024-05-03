@@ -8,9 +8,7 @@ import { useState } from "react";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { useWSChat } from "store/chat/helpers";
-import { CHAT_EVENT_TYPE } from "store/chat/type";
-import { useAuth } from "store/app/selectors";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface ItemMemberDetailProp {
   admin?: boolean;
@@ -20,12 +18,7 @@ interface ItemMemberDetailProp {
   callbackRemove?: () => void;
 }
 
-const ItemMemberDetail = ({
-  admin,
-  data,
-  callbackAddAdmin,
-  callbackRemove,
-}: ItemMemberDetailProp) => {
+const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
   const TYPE_POPUP = {
     ADD_ADMIN: "ADD_ADMIN",
   };
@@ -40,8 +33,7 @@ const ItemMemberDetail = ({
     widthPopup: "500px",
   };
   const { dataTransfer, roomId } = useChat();
-  const { sendMessage } = useWSChat();
-  const { user } = useAuth();
+  const { addNewAdmin, adminLeftGroup, memberLeftGroup } = useChatHelpers();
   const [showPopup, setShowPopup] = useState(init);
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
@@ -54,24 +46,12 @@ const ItemMemberDetail = ({
     setAnchorEl(null);
     if (action === "addAdmin") {
       setShowPopup(init);
-      sendMessage({
-        event: CHAT_EVENT_TYPE.GROUP_ADD_ADMIN,
-        roomId: roomId,
-        userId: data?.id,
-      });
+      addNewAdmin(data?.id);
     } else if (action === "remove") {
-      if (dataTransfer?.admins?.find((item) => item?.id === data?.id)) {
-        sendMessage({
-          event: CHAT_EVENT_TYPE.GROUP_REMOVE_ADMIN,
-          roomId: roomId,
-          userId: data?.id,
-        });
+      if (dataTransfer?.admins?.find((item) => item === data?.id)) {
+        adminLeftGroup(data?.id);
       } else {
-        sendMessage({
-          event: CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER,
-          roomId: roomId,
-          userId: data?.id,
-        });
+        memberLeftGroup(data?.id);
       }
     }
   };

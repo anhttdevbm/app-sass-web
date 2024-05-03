@@ -1,6 +1,5 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
-import { CHAT_EVENT_TYPE, STEP } from "store/chat/type";
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Avatar from "components/Avatar";
 import { useChat } from "store/chat/selectors";
 import { useAuth, useSnackbar } from "store/app/selectors";
@@ -8,7 +7,7 @@ import { TYPE_POPUP } from "components/sn-chat/chatGroup/ChatDetailGroup";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import useTheme from "hooks/useTheme";
-import { useWSChat } from "store/chat/helpers";
+import { useChatHelpers } from "store/chat/helpers";
 
 const defaultSx = {
   buttonCancel: {
@@ -33,24 +32,21 @@ const defaultSx = {
 
 export const useActionGroupDetails = () => {
   const {
-    roomId,
     dataTransfer,
-    groupMembers,
-    onSetConversationInfo,
-    onLeftGroup,
-    onRenameGroup,
     onSetDataTransfer,
     onFetchGroupMembersMember,
     onChangeGroupRole,
     onRemoveGroupMember,
-    onDeleteConversationGroup,
     onChangeListConversations,
     convention,
-    onCloseDrawer,
-    onResetDataTransfer,
   } = useChat();
-  const { sendMessage } = useWSChat();
-
+  const {
+    memberLeftGroup,
+    deleteGroup,
+    addNewAdmin,
+    adminLeftGroup,
+    groupUpdateName,
+  } = useChatHelpers();
   const { user } = useAuth();
 
   const init = {
@@ -210,30 +206,6 @@ export const useActionGroupDetails = () => {
     );
   };
 
-  const handleSuccess = (result) => {
-    if (result?.error) {
-      onAddSnackbar(result?.error?.message, "error");
-      return;
-    }
-    onAddSnackbar(commonT("success"), "success");
-    onCloseDrawer("account");
-  };
-
-  const onChangeConversationWhenLeave = useCallback(() => {
-    const newConversations = convention?.filter(
-      (item) => item._id !== dataTransfer?._id,
-    );
-    onResetDataTransfer();
-    onSetConversationInfo(null);
-    onChangeListConversations(newConversations);
-  }, [
-    convention,
-    dataTransfer?._id,
-    onChangeListConversations,
-    onSetConversationInfo,
-    onResetDataTransfer,
-  ]);
-
   const handlePopup = async () => {
     const renameGroupApi = async () => {
       if (!renameGroup) return;
@@ -241,11 +213,7 @@ export const useActionGroupDetails = () => {
         ...dataTransfer,
         name: renameGroup,
       };
-      sendMessage({
-        event: CHAT_EVENT_TYPE.GROUP_UPDATE_NAME,
-        roomId: dataTransfer?.id,
-        roomName: renameGroup,
-      });
+      groupUpdateName(renameGroup);
       const newConversations = convention?.map((item) => {
         if (item.id === dataTransfer?.id) {
           return dataTransferNew;
@@ -256,42 +224,28 @@ export const useActionGroupDetails = () => {
       onSetDataTransfer(dataTransferNew);
       onAddSnackbar(commonT("success"), "success");
     };
-    const left = async () => {
-      const leftResult = (await onLeftGroup({
-        roomId: dataTransfer?._id,
-      })) as any;
-      if (leftResult?.error) {
-        return onAddSnackbar(leftResult?.error?.message, "error");
+
+    const ownerLeftAndAddNewAdmin = () => {
+      if (!userId) {
+        onAddSnackbar("Please select a new admin!", "error");
+        return;
+      }
+
+      // add new admin
+      addNewAdmin(userId);
+
+      // remove admin or owner
+      if (dataTransfer?.admins?.find((item) => item === user?.id)) {
+        adminLeftGroup(user?.id);
       } else {
-        handleSuccess(leftResult);
+        memberLeftGroup(user?.id);
       }
-    };
-    const addAndRemove = async (add: string, remove: string) => {
-      if (add) {
-        const addOwnerResult = (await onChangeGroupRole({
-          groupId: dataTransfer?._id,
-          userIdToChange: add,
-          newRole: "addOwner",
-        })) as any;
-        if (addOwnerResult?.error) {
-          return onAddSnackbar(addOwnerResult?.error?.message, "error");
-        }
-      }
-      const removeOwner = (await onChangeGroupRole({
-        groupId: dataTransfer?._id,
-        userIdToChange: remove,
-        newRole: "removeOwner",
-      })) as any;
-      if (removeOwner?.error) {
-        return onAddSnackbar(removeOwner?.error?.message, "error");
-      }
+
+      setUserId("");
     };
 
-    const deleteGroup = () => {
-      sendMessage({
-        event: CHAT_EVENT_TYPE.GROUP_REMOVE,
-        roomId: roomId,
-      });
+    const ownerLeftGroup = () => {
+      memberLeftGroup(user?.id);
     };
 
     switch (showPopup?.type) {
@@ -299,24 +253,13 @@ export const useActionGroupDetails = () => {
         deleteGroup();
         break;
       case TYPE_POPUP.LEAVE_MEMBER:
-        await left();
-        onChangeConversationWhenLeave();
+        memberLeftGroup(user?.id);
         break;
-      case TYPE_POPUP.LEAVE_AND_NEW_ADD:
-        await addAndRemove(userId, user?.id_rocket ?? "");
-        await left();
-        onChangeConversationWhenLeave();
+      case TYPE_POPUP.LEAVE_OWNER_AND_ADD_ADMIN:
+        ownerLeftAndAddNewAdmin();
         break;
       case TYPE_POPUP.LEAVE_OWNER:
-        //NEW OWNER RANDOM
-        const random = groupMembers
-          ?.filter((m) => m._id !== user?.id_rocket)
-          ?.filter((m) => m.roles.includes("member"))
-          ?.pop()?._id;
-
-        await addAndRemove(random, user?.id_rocket ?? "");
-        await left();
-        onChangeConversationWhenLeave();
+        ownerLeftGroup();
         break;
       case TYPE_POPUP.RENAME_GROUP:
         await renameGroupApi();
@@ -352,7 +295,7 @@ export const useActionGroupDetails = () => {
                         setUserId(item?.id);
                         setShowPopup((pre) => ({
                           ...pre,
-                          type: TYPE_POPUP.LEAVE_AND_NEW_ADD,
+                          type: TYPE_POPUP.LEAVE_OWNER_AND_ADD_ADMIN,
                           statusPopup: true,
                           title: commonChatBox("chatBox.leaveGroup"),
                           content: (
