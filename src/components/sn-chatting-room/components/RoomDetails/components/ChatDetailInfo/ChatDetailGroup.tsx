@@ -34,7 +34,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
   const { dataTransfer: currentConversation } = useChat();
 
   //check owner
-  const owner = isOwnerGroup(currentConversation?.creator, user?.id);
+  const owner = isOwnerGroup(currentConversation?.owner, user?.id);
   const admin = currentConversation?.admins?.find((item) => item === user?.id);
   const isOwnerOrAdmin = owner || admin;
 

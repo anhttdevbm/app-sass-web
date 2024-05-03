@@ -55,7 +55,7 @@ const ChatDetailGroup = (props) => {
     adminLeftGroup,
   } = useChatHelpers();
   //check owner
-  const owner = isOwnerGroup(dataTransfer?.creator, user?.id);
+  const owner = isOwnerGroup(dataTransfer?.owner, user?.id);
   const admin = dataTransfer?.admins?.find((item) => item === user?.id);
   const isOwnerOrAdmin = owner || admin;
 

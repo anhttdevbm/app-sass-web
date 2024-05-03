@@ -131,7 +131,7 @@ export const useWSChat = () => {
               if (!isRelatedGroup(room?.members, user?.id)) {
                 return;
               }
-              if (isOwnerGroup(room?.creator, user?.id)) {
+              if (isOwnerGroup(room?.owner, user?.id)) {
                 onSetMessagePaging(initPagingV2);
                 onSetMessages([]);
                 onSetRoomId(room?.id);

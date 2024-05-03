@@ -54,7 +54,7 @@ const RoomHeader = () => {
   });
   const { user } = useAuth();
   const inputRef = useRef<any>(null);
-  const isOwner = isOwnerGroup(currentConversation?.creator, user?.id);
+  const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
       ...prev,
