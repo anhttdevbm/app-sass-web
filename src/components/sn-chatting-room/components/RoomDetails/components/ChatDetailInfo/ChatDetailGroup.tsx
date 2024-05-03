@@ -34,7 +34,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
   const { dataTransfer: currentConversation } = useChat();
 
   //check owner
-  const owner = isOwnerGroup(currentConversation?.creator, user?.id);
+  const owner = isOwnerGroup(currentConversation?.owner, user?.id);
   const admin = currentConversation?.admins?.find((item) => item === user?.id);
   const isOwnerOrAdmin = owner || admin;
 
@@ -78,7 +78,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
             />
           ))}
       </Box>
-      <CustomBox>
+      <CustomBox height={"50%"}>
         <Box
           sx={{
             display: "flex",
@@ -99,19 +99,16 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
             </Typography>
           </Box>
         </Box>
-        {currentConversation?.members?.map((member, index) => (
-          <ItemMemberDetail
-            key={index}
-            data={member}
-            callbackAddAdmin={() => {
-              props?.handleManageMember("addAdmin", member);
-            }}
-            callbackRemove={() => {
-              props?.handleManageMember("remove", member);
-            }}
-            admin={isOwnerOrAdmin}
-          />
-        ))}
+        <Box
+          sx={{
+            overflow: "auto",
+            height: "80%",
+          }}
+        >
+          {currentConversation?.members?.map((member, index) => (
+            <ItemMemberDetail key={index} data={member} admin={isOwnerOrAdmin} />
+          ))}
+        </Box>
       </CustomBox>
       <Box
         sx={{
@@ -155,38 +152,45 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
               sx={{ cursor: "pointer" }}
               onClick={() => {
                 if (isOwnerOrAdmin) {
-                  props?.setShowPopup((pre) => ({
-                    ...pre,
-                    type: TYPE_POPUP.LEAVE_OWNER,
-                    statusPopup: true,
-                    title: commonChatBox("chatBox.leaveGroup"),
-                    content: (
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                        }}
-                      >
-                        <Typography>
-                          {commonChatBox("chatBox.leaveGroupConfirm.text_1")}
-                        </Typography>
-                        <Typography>
-                          {commonChatBox("chatBox.leaveGroupConfirm.text_2")}{" "}
-                          <span
-                            style={{
-                              color: "var(--brand-primary, #3699FF)",
-                              cursor: "pointer",
-                            }}
-                            onClick={props?.handleNewAdd}
-                          >
-                            {commonChatBox("chatBox.selectAdminNew")}
-                          </span>
-                        </Typography>
-                        <Typography>
-                          {commonChatBox("chatBox.leaveGroupConfirm.text_3")}
-                        </Typography>
-                      </Box>
-                    ),
-                  }));
+                  if (currentConversation?.admins?.length > 1) {
+                    props?.setShowPopup((pre) => ({
+                      ...pre,
+                      type: TYPE_POPUP.LEAVE_OWNER,
+                      statusPopup: true,
+                      title: commonChatBox("chatBox.leaveGroup"),
+                      content: <>{commonChatBox("chatBox.sureLeaveGroup")}</>,
+                    }));
+                  } else {
+                    props?.setShowPopup((pre) => ({
+                      ...pre,
+                      type: TYPE_POPUP.LEAVE_OWNER_AND_ADD_ADMIN,
+                      statusPopup: true,
+                      title: commonChatBox("chatBox.leaveGroup"),
+                      content: (
+                        <Box
+                          sx={{
+                            textAlign: "center",
+                          }}
+                        >
+                          <Typography>
+                            {commonChatBox("chatBox.leaveGroupConfirm.text_1")}
+                          </Typography>
+                          <Typography>
+                            {commonChatBox("chatBox.leaveGroupConfirm.text_2")}{" "}
+                            <span
+                              style={{
+                                color: "var(--brand-primary, #3699FF)",
+                                cursor: "pointer",
+                              }}
+                              onClick={props?.handleNewAdd}
+                            >
+                              {commonChatBox("chatBox.selectAdminNew")}
+                            </span>
+                          </Typography>
+                        </Box>
+                      ),
+                    }));
+                  }
                 } else {
                   props?.setShowPopup((pre) => ({
                     ...pre,

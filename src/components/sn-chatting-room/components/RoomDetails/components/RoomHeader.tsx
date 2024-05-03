@@ -54,7 +54,7 @@ const RoomHeader = () => {
   });
   const { user } = useAuth();
   const inputRef = useRef<any>(null);
-  const isOwner = isOwnerGroup(currentConversation?.creator, user?.id);
+  const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
       ...prev,
@@ -67,7 +67,7 @@ const RoomHeader = () => {
   const canAddMember = () => {
     return (
       (isGroup(currentConversation?.type) && isOwner) ||
-      currentConversation?.admins?.find((item) => item?.id === user?.id)
+      currentConversation?.admins?.find((item) => item === user?.id)
     );
   };
 
