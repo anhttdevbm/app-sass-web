@@ -19,7 +19,7 @@ interface Props {
   callbackCancel?: () => void;
   conversations?: any[];
   loading?: boolean;
-  textFilter: string;
+  textFilter?: string;
 }
 
 const ChatForward: FC<Props> = (props) => {
