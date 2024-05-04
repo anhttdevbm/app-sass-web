@@ -239,6 +239,7 @@ export interface ChatState {
   messagePaging: Paging & { isRefetchPage?: boolean; pageSizeDefault: number };
   messages: MessageInfoV2[];
   messagePagingV2: PagingV2;
+  members: IMembersGroup[];
   //partner info
   partnerInfo: UserInfo | null;
   partnerInfoStatus: DataStatus;

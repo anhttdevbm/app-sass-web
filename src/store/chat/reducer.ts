@@ -60,6 +60,7 @@ const initialState: ChatState = {
   messagePagingV2: { ...initPagingV2 },
   messageStatus: DataStatus.IDLE,
   messagePaging: initalPage,
+  members: [],
   //Partner Infomation
   partnerInfo: null,
   partnerInfoStatus: DataStatus.IDLE,
@@ -213,6 +214,9 @@ const chatSlice = createSlice({
     setChatFiles: (state, action) => {
       state.chatFiles = action.payload;
       state.chatFilesStatus = DataStatus.SUCCEEDED;
+    },
+    setMembers: (state, action) => {
+      state.members = [...state.members, action.payload];
     },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
@@ -627,6 +631,7 @@ export const {
   setChatLinks,
   setChatMedias,
   setChatFiles,
+  setMembers,
   setTypeList,
   setDataTransfer,
   setStateSendMessage,
