@@ -42,11 +42,11 @@ const ItemList = () => {
     const desktopHeaderList: CellProps[] = useMemo(
         () => [
           { value: contentT("aboutUs.startTeamMemberTable.name"), width: "25%", align: "left" },
-          { value: contentT("aboutUs.startTeamMemberTable.work_experience"), width: "25%", align: "center" },
+          { value: contentT("aboutUs.startTeamMemberTable.work_experience"), width: "20%", align: "center" },
           { value: contentT("aboutUs.startTeamMemberTable.college"), width: "20%", align: "center" },
           { value: contentT("aboutUs.startTeamMemberTable.email"), width: "24%", align: "center" },
-          { value: "", width: "3%", align: "center" },
-          { value: "", width: "3%", align: "center" },
+          { value: "", width: "5%", align: "center" },
+          { value: "", width: "5%", align: "center" },
         ],
         [contentT],
     );

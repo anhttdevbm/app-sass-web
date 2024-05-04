@@ -1,5 +1,6 @@
 "use client";
 import { ReactElement, useCallback, useMemo, useState } from "react";
+import dayjs from "dayjs";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
@@ -15,7 +16,7 @@ import {
   Title,
 } from "chart.js";
 import { useTranslations } from "next-intl";
-import { Formik } from "formik";
+import _ from "lodash";
 
 import { Permission } from "constant/enums";
 import { NS_COMMON, NS_COST_RATE } from "constant/index";
@@ -24,68 +25,23 @@ import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import CalendarIcon from "icons/CalendarIcon";
 import ProcessRing from "../components/ProcessRing";
 import useToggle from "hooks/useToggle";
-import { UpdateCostRate } from "store/employeeDetail/actions";
-import { CostRate } from "store/employeeDetail/reducer";
 import { useCostRate } from "store/employeeDetail/selectors";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
-import CostRateForm, { EditCostRateForm } from "./CostRateForm";
+import { getMessageErrorByAPI } from "utils/index";
+import CostRateForm from "./CostRateForm";
 import CostRateTable from "../components/CostRateTable";
-
-const CurrentRateBlock = ({
-  title,
-  content,
-  icon,
-}: {
-  title: string;
-  content: string;
-  icon: ReactElement;
-}) => {
-  return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      spacing={2}
-      border={1}
-      borderColor="divider"
-      borderRadius={3}
-      py={1.5}
-      pl={3}
-      pr={2}
-      maxWidth={{
-        xs: "initia",
-        sm: 266,
-      }}
-    >
-      {icon}
-      <Stack direction="column" spacing={{ xs: 0, sm: 0.5 }}>
-        <Text
-          color="grey.800"
-          fontSize={18}
-          fontWeight={600}
-          whiteSpace="nowrap"
-          textOverflow="ellipsis"
-        >
-          {title}
-        </Text>
-        <Text color="grey.800">{content}</Text>
-      </Stack>
-    </Stack>
-  );
-};
 
 const CostRateInfo = () => {
   const { user } = useAuth();
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
-  const { onAddSnackbar } = useSnackbar();
-  const [isModalOpen, openModal, closeModal] = useToggle(false);
-  const { currentRate, costRates, handleUpdateCostRate, handleDeleteCostRate } =
+
+  const { selectCurrentCostRate, selectAllCostRate, handleDeleteCostRate } =
     useCostRate();
 
-  const [costRateToEdit, setCostRateToEdit] = useState<CostRate | undefined>(
-    undefined,
-  );
+  const { onAddSnackbar } = useSnackbar();
+  const [isModalOpen, openModal, closeModal] = useToggle(false);
+  const [costRateToEditId, setCostRateToEditId] = useState("");
   const isAdmin = useMemo(
     () => user?.roles.includes(Permission.AM),
     [user?.roles],
@@ -93,13 +49,10 @@ const CostRateInfo = () => {
 
   const handleItemEdit = useCallback(
     (id: string) => {
-      const rate = costRates.find((r) => r?.id === id);
-      if (rate) {
-        setCostRateToEdit(rate);
-        openModal();
-      }
+      setCostRateToEditId(id);
+      openModal();
     },
-    [costRates, openModal],
+    [openModal],
   );
 
   const handleItemDelete = useCallback(
@@ -115,108 +68,92 @@ const CostRateInfo = () => {
   );
 
   const handleCloseForm = () => {
-    setCostRateToEdit(undefined);
+    setCostRateToEditId("");
     closeModal();
   };
 
-  const onSubmit = async (values: EditCostRateForm) => {
-    try {
-      const data = {
-        ...values,
-        id: costRateToEdit?.id ?? "",
-        working_hours: [
-          values.working_hours.mon,
-          values.working_hours.tue,
-          values.working_hours.wed,
-          values.working_hours.thu,
-          values.working_hours.fri,
-          values.working_hours.sat,
-          values.working_hours.sun,
-        ],
-      } as UpdateCostRate;
-      await handleUpdateCostRate(data);
-      onAddSnackbar(costRateT("empty.notification.updateSuccess"), "success");
-    } catch (error) {
-      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+  const chartCostData = useMemo(() => {
+    const data: { label: string; data: number }[] = [];
+    const today = dayjs().startOf("day");
+    const dateFormat = "MMM DD";
+    if (!selectCurrentCostRate) {
+      for (let i = -4; i <= 4; i++) {
+        data.push({
+          label: today.add(i, "day").format(dateFormat),
+          data: 0,
+        });
+      }
+    } else {
+      const startDate = dayjs(selectCurrentCostRate.start_date).startOf("day");
+      const endDate = dayjs(selectCurrentCostRate.end_date).startOf("day");
+      let tmpDate = today.add(-1, "day");
+      while (
+        !tmpDate.isBefore(today.add(-4, "day")) &&
+        !tmpDate.isBefore(startDate)
+      ) {
+        tmpDate = tmpDate.add(-1, "day");
+      }
+      while (
+        !tmpDate.isAfter(today.add(4, "day")) &&
+        !tmpDate.isAfter(endDate)
+      ) {
+        const hours =
+          selectCurrentCostRate.working_hours[(tmpDate.day() + 6) % 7];
+        data.push({
+          label: tmpDate.format(dateFormat),
+          data: hours * (selectCurrentCostRate.cost_per_hour ?? 0),
+        });
+        tmpDate = tmpDate.add(1, "day");
+      }
     }
-  };
-
-  const initialValues = useMemo(
-    () =>
-      costRateToEdit
-        ? {
-            ...getDataFromKeys(costRateToEdit, [
-              "id",
-              "type",
-              "cost_per_month",
-              "currency",
-              "start_date",
-              "end_date",
-              "holiday_calendar",
-              "note",
-            ]),
-            working_hours: {
-              mon: costRateToEdit?.working_hours[0] ?? 8,
-              tue: costRateToEdit?.working_hours[1] ?? 8,
-              wed: costRateToEdit?.working_hours[2] ?? 8,
-              thu: costRateToEdit?.working_hours[3] ?? 8,
-              fri: costRateToEdit?.working_hours[4] ?? 8,
-              sat: costRateToEdit?.working_hours[5] ?? 0,
-              sun: costRateToEdit?.working_hours[6] ?? 0,
-            },
-            over_head: true,
-          }
-        : undefined,
-    [costRateToEdit],
-  ) as EditCostRateForm;
-
-  const labels = [
-    "Mar 18",
-    "Mar 19",
-    "Mar 20",
-    "Mar 21",
-    "Mar 22",
-    "Mar 23",
-    "Mar 24",
-    "Mar 27",
-    "Mar 30",
-  ];
-  const datapoints = [80, 120, 300, 100, 70, 100, 40, 120, 200];
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        data: datapoints,
-        borderColor: "#14B9E5",
-        pointBorderColor: "#14B9E5",
-        pointBackgroundColor: "#14B9E5",
-        backgroundColor: ({ chart: { ctx } }) => {
-          const bg = ctx.createLinearGradient(0, 0, 400, 0);
-          bg.addColorStop(0, "#2AF59833");
-          bg.addColorStop(1, "#009EFD33");
-          return bg;
+    return data;
+  }, [selectCurrentCostRate]);
+  const chartData = useMemo(
+    () => ({
+      labels: chartCostData.map((i) => i.label),
+      datasets: [
+        {
+          data: chartCostData.map((i) => i.data),
+          borderColor: "#14B9E5",
+          pointBorderColor: "#14B9E5",
+          pointBackgroundColor: "#14B9E5",
+          backgroundColor: ({ chart: { ctx } }) => {
+            const bg = ctx.createLinearGradient(0, 0, 400, 0);
+            bg.addColorStop(0, "#2AF59833");
+            bg.addColorStop(1, "#009EFD33");
+            return bg;
+          },
+          fill: "start",
+          tension: 0.4,
         },
-        fill: "start",
-        tension: 0.4,
-      },
-    ],
-  };
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        grid: {
+      ],
+    }),
+    [chartCostData],
+  );
+  const chartOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
           display: false,
         },
       },
-      y: {
-        grid: {
-          display: false,
+      scales: {
+        x: {
+          grid: {
+            display: false,
+          },
+        },
+        y: {
+          grid: {
+            display: false,
+          },
         },
       },
-    },
-  };
+    }),
+    [],
+  );
   ChartJS.register(
     LineElement,
     PointElement,
@@ -269,8 +206,18 @@ const CostRateInfo = () => {
         </Grid>
         <Grid item container xs={12} md={4} justifyContent="center">
           <Stack direction="column" alignItems="center">
-            <ProcessRing size={240} percentage={75}>
-              <Text fontSize={28}>22</Text>
+            <ProcessRing
+              size={240}
+              percentage={Math.round(
+                (((selectCurrentCostRate?.total_days ?? 0) -
+                  (selectCurrentCostRate?.remaining_days ?? 0)) /
+                  (selectCurrentCostRate?.total_days ?? 1)) *
+                  100,
+              )}
+            >
+              <Text fontSize={28}>
+                {selectCurrentCostRate?.remaining_days ?? 0}
+              </Text>
             </ProcessRing>
             <Text fontSize={20} fontWeight={600} mt={3}>
               Working Days
@@ -292,7 +239,7 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Type"
-            content={currentRate?.type ?? "N/A"}
+            content={_.capitalize(selectCurrentCostRate?.type) ?? "N/A"}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
@@ -300,8 +247,8 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title="Cost Per Month"
             content={
-              currentRate?.cost_per_month
-                ? `${currentRate.cost_per_month}.$`
+              selectCurrentCostRate?.cost_per_month
+                ? `${selectCurrentCostRate?.cost_per_month}.$`
                 : "N/A"
             }
           />
@@ -310,7 +257,11 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="At current cost rate"
-            content="N/A"
+            content={
+              selectCurrentCostRate?.total_days
+                ? `${selectCurrentCostRate?.total_days}h`
+                : "N/A"
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
@@ -318,7 +269,9 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title="Capacity"
             content={
-              currentRate?.total_hours ? `${currentRate.total_hours}h` : "N/A"
+              selectCurrentCostRate?.total_hours
+                ? `${selectCurrentCostRate?.total_hours}h`
+                : "N/A"
             }
           />
         </Grid>
@@ -326,14 +279,18 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Current Hourly Cost"
-            content="N/A"
+            content={
+              selectCurrentCostRate?.cost_per_hour
+                ? `${selectCurrentCostRate?.cost_per_hour}`
+                : "N/A"
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Overhead"
-            content={currentRate?.over_head ? "Yes" : "No"}
+            content={selectCurrentCostRate?.over_head ? "Yes" : "No"}
           />
         </Grid>
       </Grid>
@@ -352,7 +309,7 @@ const CostRateInfo = () => {
           Note
         </Text>
         <Text color="grey.700" mt={0.5}>
-          {currentRate?.note}
+          {selectCurrentCostRate?.note}
         </Text>
       </Stack>
 
@@ -375,7 +332,7 @@ const CostRateInfo = () => {
 
       <Box width="100%" overflow="hidden">
         <CostRateTable
-          items={costRates}
+          items={selectAllCostRate}
           isEditable={isAdmin}
           handleItemEdit={handleItemEdit}
           handleItemDelete={handleItemDelete}
@@ -391,11 +348,10 @@ const CostRateInfo = () => {
             sx={{ borderRadius: "24px" }}
           >
             <DialogContent>
-              <Formik initialValues={initialValues} onSubmit={onSubmit}>
-                {(props) => (
-                  <CostRateForm formik={props} onCancel={handleCloseForm} />
-                )}
-              </Formik>
+              <CostRateForm
+                costRateId={costRateToEditId}
+                onCancel={handleCloseForm}
+              />
             </DialogContent>
           </DefaultPopupLayout>
         </>
@@ -407,3 +363,45 @@ const CostRateInfo = () => {
 };
 
 export default CostRateInfo;
+
+const CurrentRateBlock = ({
+  title,
+  content,
+  icon,
+}: {
+  title: string;
+  content: string;
+  icon: ReactElement;
+}) => {
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      spacing={2}
+      border={1}
+      borderColor="divider"
+      borderRadius={3}
+      py={1.5}
+      pl={3}
+      pr={2}
+      maxWidth={{
+        xs: "initial",
+        sm: 266,
+      }}
+    >
+      {icon}
+      <Stack direction="column" spacing={{ xs: 0, sm: 0.5 }}>
+        <Text
+          color="grey.800"
+          fontSize={18}
+          fontWeight={600}
+          whiteSpace="nowrap"
+          textOverflow="ellipsis"
+        >
+          {title}
+        </Text>
+        <Text color="grey.800">{content}</Text>
+      </Stack>
+    </Stack>
+  );
+};

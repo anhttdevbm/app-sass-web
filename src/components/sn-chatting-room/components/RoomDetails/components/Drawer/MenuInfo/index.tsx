@@ -29,7 +29,6 @@ const MenuInfo = () => {
   const { isGroup } = useChatHelpers();
   const { menuItems } = useChatDetailInfo({
     currentConversation,
-    conversationInfo,
   });
 
   const renderColorByType = useMemo(() => {
@@ -44,7 +43,7 @@ const MenuInfo = () => {
   const propsActionGroupDetail = useActionGroupDetails();
 
   //check owner
-  const owner = isOwnerGroup(currentConversation?.creator, user?.id);
+  const owner = isOwnerGroup(currentConversation?.owner, user?.id);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   return (
@@ -124,7 +123,7 @@ const MenuInfo = () => {
             />
           )}
         </Box>
-        {isGroup(currentConversation?.type) && (
+        {/*{isGroup(currentConversation?.type) && (
           <Box
             sx={{
               display: "flex",
@@ -227,7 +226,7 @@ const MenuInfo = () => {
               </Box>
             )}
           </Box>
-        )}
+        )}*/}
       </>
     </Box>
   );

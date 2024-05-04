@@ -2,9 +2,11 @@ import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   CompanyData,
   EmployeeData,
+  EmployeeClientData,
   GetEmployeeListQueries,
   PositionData,
   createEmployee,
+  createEmployeeClient,
   createPosition,
   createProjectType,
   deleteEmployees,
@@ -64,6 +66,13 @@ export const useEmployees = () => {
     [dispatch],
   );
 
+  const onCreateEmployeeClient = useCallback(
+    async (data: EmployeeClientData) => {
+      return await dispatch(createEmployeeClient(data)).unwrap();
+    },
+    [dispatch],
+  );
+
   const onUpdateEmployee = useCallback(
     async (id: string, position: string) => {
       try {
@@ -86,8 +95,14 @@ export const useEmployees = () => {
     [dispatch],
   );
 
+  const clientEmployees = useMemo(
+    () => items.filter((e) => !!e.client_company),
+    [items],
+  );
+
   return {
     items,
+    clientEmployees,
     status,
     error,
     filters,
@@ -99,6 +114,7 @@ export const useEmployees = () => {
     totalPages,
     onGetEmployees,
     onCreateEmployee,
+    onCreateEmployeeClient,
     onUpdateEmployee,
     onDeleteEmployees,
   };

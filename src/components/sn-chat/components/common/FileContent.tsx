@@ -2,43 +2,18 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "components/Link";
 import { DataStatus } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { NS_COMMON } from "constant/index";
 import useTheme from "hooks/useTheme";
 import FileBasicIcon from "icons/FileBasicIcon";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo } from "react";
-import { useSnackbar } from "store/app/selectors";
 import { useChat } from "store/chat/selectors";
 
 const FileContent = () => {
-  const { mediaList, mediaListStatus, onGetChatAttachments } = useChat();
-  const { onAddSnackbar } = useSnackbar();
+  const { chatFiles, chatFilesStatus } = useChat();
   const commonT = useTranslations(NS_COMMON);
   const { isDarkMode } = useTheme();
 
-  useEffect(() => {
-    const handleGetAttachment = async () => {
-      try {
-        await onGetChatAttachments({ fileType: "file" });
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : commonT(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    };
-
-    handleGetAttachment();
-  }, [onAddSnackbar, onGetChatAttachments, commonT]);
-
-  const fileClone = useMemo(() => {
-    return mediaList?.filter((file) => file.name && file.path);
-  }, [mediaList]);
-
-  if (
-    mediaListStatus === DataStatus.LOADING ||
-    mediaListStatus === DataStatus.FAILED
-  ) {
+  if (chatFilesStatus !== DataStatus.SUCCEEDED) {
     return <Typography textAlign="center">Loading...</Typography>;
   }
 
@@ -52,8 +27,8 @@ const FileContent = () => {
         paddingRight: "0.3rem",
       }}
     >
-      {fileClone.length > 0 ? (
-        fileClone?.map((item, index) => {
+      {chatFiles.length > 0 ? (
+        chatFiles?.map((item, index) => {
           return (
             <Box
               key={index}
@@ -70,7 +45,7 @@ const FileContent = () => {
                 }}
               />
               <Link
-                href={item.path}
+                href={item?.url}
                 target="_blank"
                 sx={{
                   color: isDarkMode ? "white" : "#212121",
@@ -79,7 +54,7 @@ const FileContent = () => {
                   textDecoration: "auto",
                 }}
               >
-                {item.name}
+                {item?.name}
               </Link>
             </Box>
           );

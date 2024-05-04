@@ -4,13 +4,20 @@ import StringFormat from "string-format";
 import { Endpoint, client } from "api";
 import { HttpStatusCode } from "constant/enums";
 import { Employee, CostRate } from "./reducer";
-import { AN_ERROR_TRY_AGAIN, AUTH_API_URL, COMPANY_API_URL } from "constant/index";
+import {
+  AN_ERROR_TRY_AGAIN,
+  AUTH_API_URL,
+  COMPANY_API_URL,
+} from "constant/index";
 
 export type UpdateEmployee = Partial<Employee>;
 
-export type UpdateCostRate = Partial<Omit<CostRate, "created_by" | "created_time" | "company">>
+export type UpdateCostRate = Omit<
+  CostRate,
+  "created_by" | "created_time" | "company"
+>;
 
-export type NewCostRate = Omit<UpdateCostRate, "id" | "start_date" | "end_date"> & Pick<CostRate, "start_date" | "end_date">
+export type NewCostRate = Omit<UpdateCostRate, "id">;
 
 export const getEmployeeDetail = createAsyncThunk(
   "costRate/getEmployeeDetail",
@@ -109,7 +116,7 @@ export const deleteCostRate = createAsyncThunk(
 
       if (response?.status === HttpStatusCode.OK) {
         if (!response.data.id) {
-          response.data.id = id
+          response.data.id = id;
         }
         return response.data;
       }

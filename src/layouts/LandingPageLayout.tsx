@@ -13,7 +13,7 @@ type LandingPageLayoutProps = {
 
 const LandingPageLayout = ({ children }: LandingPageLayoutProps) => {
     return (
-        <Wrapper overflow="auto">
+        <Wrapper>
             {children}
         </Wrapper>
     );

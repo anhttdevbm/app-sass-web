@@ -1,5 +1,5 @@
 "use client";
-import { memo, useMemo, useEffect, useRef, useState } from "react";
+import { memo, useMemo, useEffect, useState, ReactNode } from "react";
 import Stack from "@mui/material/Stack";
 import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -12,13 +12,15 @@ import { Dropdown, Search } from "components/NewFilters";
 import { TEXT_STATUS } from "./helpers";
 import useToggle from "hooks/useToggle";
 import { getPath } from "utils/index";
+import { EmployeeClientData } from "store/company/actions";
 import { useEmployees } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
 import AddCircleIcon from "icons/AddCircleIcon";
 import EmployeeCompanyForm from "./EmployeeCompanyForm";
+import EmployeeClientForm from "./EmployeeClientForm";
 import EmployeeTypeForm from "./EmployeeTypeForm";
 
-const Actions = () => {
+const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
   const {
     options,
     onGetOptions,
@@ -35,11 +37,14 @@ const Actions = () => {
     onGetEmployees,
     pageSize,
     onCreateEmployee,
+    onCreateEmployeeClient,
   } = useEmployees();
 
   const [isShow, onShow, onHide] = useToggle();
   const [formStage, setFormStage] = useState<1 | 2>(1);
-  const [employeeTypeToAdd, setEmployeeTypeToAdd] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
+  const [employeeTypeToAdd, setEmployeeTypeToAdd] = useState<EmployeeType>(
+    EmployeeType.EMPLOYEE,
+  );
 
   const pathname = usePathname();
   const { push } = useRouter();
@@ -115,7 +120,7 @@ const Actions = () => {
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Text variant="h4">{companyT("employees.title")}</Text>
+          {tabSwitcher}
           <Button
             onClick={onShow}
             startIcon={<AddCircleIcon />}
@@ -212,28 +217,28 @@ const Actions = () => {
                   );
                 case EmployeeType.CLIENT:
                   return (
-                    <EmployeeCompanyForm
+                    <EmployeeClientForm
                       open={isShow}
                       onClose={() => {
                         onHide();
                         setFormStage(1);
                       }}
                       type={DataAction.CREATE}
-                      initialValues={INITIAL_VALUES}
-                      onSubmit={onCreateEmployee}
+                      initialValues={INITIAL_VALUES_CLIENT}
+                      onSubmit={onCreateEmployeeClient}
                     />
                   );
                 case EmployeeType.CONTRACTOR:
                   return (
-                    <EmployeeCompanyForm
+                    <EmployeeClientForm
                       open={isShow}
                       onClose={() => {
                         onHide();
                         setFormStage(1);
                       }}
                       type={DataAction.CREATE}
-                      initialValues={INITIAL_VALUES}
-                      onSubmit={onCreateEmployee}
+                      initialValues={INITIAL_VALUES_CONTRACTOR}
+                      onSubmit={onCreateEmployeeClient}
                     />
                   );
               }
@@ -276,3 +281,17 @@ const INITIAL_VALUES = {
   email: "",
   position: "",
 };
+
+const INITIAL_VALUES_CLIENT = {
+  email: "",
+  client_company: "",
+  position: "",
+  role: "CL",
+} as EmployeeClientData;
+
+const INITIAL_VALUES_CONTRACTOR = {
+  email: "",
+  client_company: "",
+  position: "",
+  role: "CT",
+} as EmployeeClientData;

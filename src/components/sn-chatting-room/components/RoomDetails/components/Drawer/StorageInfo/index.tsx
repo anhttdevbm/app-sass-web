@@ -1,13 +1,13 @@
 import { Box } from "@mui/material";
 import useGetScreenMode from "hooks/useGetScreenMode";
-import { FC } from "react";
 import InfoHeader from "../AccountInfo/InfoHeader";
 import MediaContent from "components/sn-chat/components/common/MediaContent";
 import FileContent from "components/sn-chat/components/common/FileContent";
 import LinkContent from "components/sn-chat/components/common/LinkContent";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { TypeDrawerChat } from "store/chat/type";
+import { MESSAGE_TYPE, TypeDrawerChat } from "store/chat/type";
+import { useChatHelpers } from "store/chat/helpers";
 
 const TYPES = [
   {
@@ -27,7 +27,9 @@ const TYPES = [
 const StorageInfo = () => {
   const { extraDesktopMode } = useGetScreenMode();
   const { isDarkMode } = useTheme();
-  const { typeDrawerChat, onSetDrawerType } = useChat();
+  const { typeDrawerChat, onSetDrawerType, roomId } = useChat();
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
 
   return (
     <Box
@@ -69,9 +71,16 @@ const StorageInfo = () => {
               fontSize: "14px",
               cursor: "pointer",
             }}
-            onClick={() =>
-              onSetDrawerType && onSetDrawerType(type?.type as TypeDrawerChat)
-            }
+            onClick={() => {
+              if (type?.type === MESSAGE_TYPE.MEDIA) {
+                handleGetChatMedias(1);
+              } else if (type?.type === MESSAGE_TYPE.LINK) {
+                handleGetChatLinks(1);
+              } else if (type?.type === MESSAGE_TYPE.FILE) {
+                handleGetChatFiles(1);
+              }
+              onSetDrawerType && onSetDrawerType(type?.type as TypeDrawerChat);
+            }}
           >
             {type.text}
           </Box>

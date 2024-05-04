@@ -7,6 +7,8 @@ import { IconButton } from "components/shared";
 import { useState } from "react";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import useTheme from "hooks/useTheme";
+import { useChat } from "store/chat/selectors";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface ItemMemberDetailProp {
   admin?: boolean;
@@ -16,12 +18,7 @@ interface ItemMemberDetailProp {
   callbackRemove?: () => void;
 }
 
-const ItemMemberDetail = ({
-  admin,
-  data,
-  callbackAddAdmin,
-  callbackRemove,
-}: ItemMemberDetailProp) => {
+const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
   const TYPE_POPUP = {
     ADD_ADMIN: "ADD_ADMIN",
   };
@@ -35,7 +32,8 @@ const ItemMemberDetail = ({
     actionType: 0,
     widthPopup: "500px",
   };
-
+  const { dataTransfer, roomId } = useChat();
+  const { addNewAdmin, adminLeftGroup, memberLeftGroup } = useChatHelpers();
   const [showPopup, setShowPopup] = useState(init);
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
@@ -46,11 +44,16 @@ const ItemMemberDetail = ({
   };
   const handleClickMenu = (action: "addAdmin" | "remove") => {
     setAnchorEl(null);
-    if (action === "addAdmin" && callbackAddAdmin) {
-      callbackAddAdmin();
+    if (action === "addAdmin") {
       setShowPopup(init);
+      addNewAdmin(data?.id);
+    } else if (action === "remove") {
+      if (dataTransfer?.admins?.find((item) => item === data?.id)) {
+        adminLeftGroup(data?.id);
+      } else {
+        memberLeftGroup(data?.id);
+      }
     }
-    if (action === "remove" && callbackRemove) callbackRemove();
   };
 
   const handleClosePopup = () => {

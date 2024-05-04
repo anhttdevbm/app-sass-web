@@ -12,9 +12,9 @@ import { useEmployeesOfCompany } from "store/manager/selectors";
 import { Employee } from "store/company/reducer";
 import SelectItem from "../components/SelectItem";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { CHAT_EVENT_TYPE, STEP } from "store/chat/type";
+import { STEP } from "store/chat/type";
 import useGetScreenMode from "hooks/useGetScreenMode";
-import { useWSChat } from "store/chat/helpers";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface AddGroupProps {
   callbackBackIcon?: any;
@@ -52,7 +52,6 @@ const AddGroup: FC<AddGroupProps> = ({
     groupMembers,
     onSetRoomId,
     onSetStep,
-    onAddMembers2Group,
     onFetchGroupMembersMember,
     onSetDataTransfer,
     onChangeListConversations,
@@ -60,8 +59,7 @@ const AddGroup: FC<AddGroupProps> = ({
     isChatDesktop,
     onCloseDrawer,
   } = useChat();
-  const { sendMessage } = useWSChat();
-
+  const { handleCreateGroupWS, handleAddMemberToGroup } = useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { onAddSnackbar } = useSnackbar();
@@ -167,29 +165,19 @@ const AddGroup: FC<AddGroupProps> = ({
     }
     if (dataTransfer?.isNew || isNew) {
       if (memberAddGroup.length > 0) {
-        const message = {
-          event: CHAT_EVENT_TYPE.GROUP_CREATE,
-          members: Object.keys(employeeSelected).filter(
-            (item) => employeeSelected[item] === true,
-          )
-        };
-        sendMessage(message);
-        onCloseDrawer("account");
+        const members = Object.keys(employeeSelected).filter(
+          (item) => employeeSelected[item] === true,
+        );
+        handleCreateGroupWS(members);
       }
     } else {
-      const users = Object.keys(employeeIdSelected).filter(
-        (item) => employeeIdSelected[item] === true,
+      const users = Object.keys(employeeSelected).filter(
+        (item) => employeeSelected[item] === true,
       );
-      const tasks = users.map(
-        async (userId_to_add) =>
-          await onAddMembers2Group({
-            roomId: dataTransfer?.id,
-            userId_to_add,
-          }),
-      );
-      const result = await Promise.all(tasks);
-      handleSuccess(result.pop());
+      handleAddMemberToGroup(users);
     }
+
+    onCloseDrawer("account");
   };
 
   return (

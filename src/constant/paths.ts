@@ -38,6 +38,8 @@ export const SALES_LIST_PATH = "/sales";
 export const CHATTING_ROOM_PATH = "/chat";
 export const CHATTING_INFO_PATH = "/chat/{id}";
 
+export const AI_CHAT_PATH = "/ai-chat";
+
 export const SALE_DETAIL_PATH = "/sales/{id}";
 
 export const DOCS_PATH = "/documents";
@@ -113,6 +115,7 @@ export const AUTHORIZED_PATHS = {
     DOCS_DETAIL_PATH,
     DOCS_CREATE_PATH,
     CHATTING_ROOM_PATH,
+    AI_CHAT_PATH,
     FEEDBACK_PATH,
     // Billing
     BILLING_PATH,
@@ -167,6 +170,7 @@ export const AUTHORIZED_PATHS = {
     DOCS_DETAIL_PATH,
     DOCS_CREATE_PATH,
     CHATTING_ROOM_PATH,
+    AI_CHAT_PATH,
     FEEDBACK_PATH,
     // Billing
     BILLING_PATH,

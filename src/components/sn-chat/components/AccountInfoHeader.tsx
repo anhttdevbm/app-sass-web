@@ -28,7 +28,7 @@ const AccountInfoHeader = ({
   onPrevious,
   viewStep,
 }: AccountInfoHeaderProp) => {
-  const { dataTransfer, onSetStep, prevStep, currStep, onGetAllConvention } =
+  const { dataTransfer, onSetStep, prevStep, currStep } =
     useChat();
   const { usersCount, t, name } = accountInfo;
   const isGroup = useMemo(() => t !== "d", [t]);
@@ -42,17 +42,6 @@ const AccountInfoHeader = ({
   useEffect(() => {
     setAvatar(dataTransfer?.avatar?.link);
   }, [dataTransfer?.avatar]);
-
-  useEffect(() => {
-    (async () => {
-      await onGetAllConvention({
-        type: "a",
-        text: textSearch ?? "",
-        offset: 0,
-        count: 30,
-      });
-    })();
-  }, [currStep, textSearch]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {

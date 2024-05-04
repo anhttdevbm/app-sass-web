@@ -4,11 +4,11 @@ import Question from "./Question";
 import Mission from "./Mission";
 import MostViewedArticles from "./MosViewedArticles"
 import StarTeamMember from "./StarTeamMember";
-import { Grid } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 
 const LandingAboutUsPage = () => {
     return (
-        <>
+        <Stack overflow="auto" height="100vh">
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                     <Banners />
@@ -30,7 +30,7 @@ const LandingAboutUsPage = () => {
                     <StarTeamMember />
                 </Grid>
             </Grid>
-        </>
+        </Stack>
     )
 }
 

@@ -1,7 +1,6 @@
 import { memo, useMemo } from "react";
 import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
-import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
 
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
@@ -10,6 +9,7 @@ import { EMAIL_REGEX } from "constant/regex";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/NewFormLayout";
 import { NewInput as Input, NewSelect as Select } from "components/shared";
+import { useFormik } from "hooks/useFormik";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { EmployeeData } from "store/company/actions";
 import { usePositionOptions } from "store/global/selectors";
@@ -76,23 +76,6 @@ const EmployeeCompanyForm = ({
     onSubmit,
   });
 
-  const touchedErrors = useMemo(() => {
-    return Object.entries(formik.errors).reduce(
-      (out: FormikErrors<EmployeeData>, [key, error]) => {
-        if (formik.touched[key]) {
-          out[key] = error;
-        }
-        return out;
-      },
-      {},
-    );
-  }, [formik.touched, formik.errors]);
-
-  const disabled = useMemo(
-    () => !!Object.values(touchedErrors)?.length || formik.isSubmitting,
-    [touchedErrors, formik.isSubmitting],
-  );
-
   const onEndReached = () => {
     if (isFetching || (totalPages && pageIndex >= totalPages)) return;
     onGetOptions({ pageSize, pageIndex: pageIndex + 1 });
@@ -101,13 +84,13 @@ const EmployeeCompanyForm = ({
   return (
     <FormLayout
       sx={{
-        minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
+        minWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
       }}
       label={`${label} ${companyT("employees.key")}`}
       submitting={formik.isSubmitting}
-      disabled={disabled}
+      disabled={formik.isSubmitDisabled}
       onSubmit={formik.handleSubmit}
       onClose={onClose}
       {...rest}
@@ -120,7 +103,7 @@ const EmployeeCompanyForm = ({
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values?.email}
-          error={commonT(touchedErrors?.email, {
+          error={commonT(formik.touchedError("email"), {
             name: "Email",
           })}
           disabled={type === DataAction.UPDATE}
@@ -130,12 +113,10 @@ const EmployeeCompanyForm = ({
           <Select
             title="Permission"
             name="permission"
-            options={[
-              { label: "AM", value: Permission.AM, },
-              { label: "SA", value: Permission.SA, },
-              { label: "ST", value: Permission.ST, },
-              { label: "EU", value: Permission.EU, },
-            ]}
+            options={Object.entries(Permission).map(([k, v]) => ({
+              label: k,
+              value: v,
+            }))}
             fullWidth
             rootSx={sxConfig.input}
           />
@@ -147,7 +128,7 @@ const EmployeeCompanyForm = ({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values?.position}
-            error={commonT(touchedErrors?.position, {
+            error={commonT(formik.touchedError("position"), {
               name: commonT("position"),
             })}
             fullWidth
@@ -172,6 +153,6 @@ export const validationSchema = Yup.object().shape({
 
 const sxConfig = {
   input: {
-    height: 56,
+    height: 50,
   },
 };

@@ -77,6 +77,13 @@ import {
   setConversation,
   setConversationPaging,
   setIsSearchConversation,
+  setMessagePaging,
+  setMessages,
+  setChatLinks,
+  setChatMedias,
+  setChatFiles,
+  setListConversation,
+  setMembers,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -98,7 +105,9 @@ export const useChat = () => {
     isSearchConversation,
     messagePaging,
     conversationStatus,
-
+    messages,
+    messagePagingV2,
+    members,
     currStep,
     prevStep,
     partnerInfo,
@@ -106,6 +115,10 @@ export const useChat = () => {
 
     chatLinks,
     chatLinksStatus,
+    chatMedias,
+    chatMediasStatus,
+    chatFiles,
+    chatFilesStatus,
     //ListSearchTextMessage
     listSearchMessage,
     statusListSearchMessage,
@@ -726,9 +739,37 @@ export const useChat = () => {
     return dispatch(setConversationPaging(pagingInfo));
   };
 
+  const onSetListConvention = (conversations) => {
+    return dispatch(setListConversation(conversations));
+  };
+
   const onSetIsSearchConversation = (searchFlg: boolean) => {
     return dispatch(setIsSearchConversation(searchFlg));
-  }
+  };
+
+  const onSetMessages = (messages) => {
+    return dispatch(setMessages(messages));
+  };
+
+  const onSetMessagePaging = (newPaging) => {
+    return dispatch(setMessagePaging(newPaging));
+  };
+
+  const onSetChatLinks = (data) => {
+    return dispatch(setChatLinks(data));
+  };
+
+  const onSetChatMedias = (data) => {
+    return dispatch(setChatMedias(data));
+  };
+
+  const onSetChatFiles = (data) => {
+    return dispatch(setChatFiles(data));
+  };
+
+  const onSetMembers = (data) => {
+    return dispatch(setMembers(data));
+  };
 
   return {
     convention,
@@ -737,8 +778,18 @@ export const useChat = () => {
     conversationPaging,
     conversationPagingV2,
     onSetConversationPaging,
+    onSetListConvention,
     isSearchConversation,
     onSetIsSearchConversation,
+    messages,
+    onSetMessages,
+    messagePagingV2,
+    onSetMessagePaging,
+    onSetChatLinks,
+    onSetChatMedias,
+    onSetChatFiles,
+    members,
+    onSetMembers,
     messagePaging,
     messageInfo,
     messageStatus,
@@ -764,6 +815,10 @@ export const useChat = () => {
 
     mediaList,
     mediaListStatus,
+    chatMedias,
+    chatMediasStatus,
+    chatFiles,
+    chatFilesStatus,
 
     stateSendMessage,
     stateSearchMessage,

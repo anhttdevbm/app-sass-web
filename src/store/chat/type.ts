@@ -3,7 +3,8 @@ import { DataStatus } from "constant/enums";
 import { Paging } from "constant/types";
 import {
   Attachment,
-  ChatLinkType,
+  IChatFile,
+  IChatLinkV2,
   MediaType,
   TypeMedia,
 } from "./media/typeMedia";
@@ -143,6 +144,19 @@ export interface MessageInfo {
   md?: unknown[];
 }
 
+export interface MessageInfoV2 {
+  id: string;
+  type: string;
+  content: string;
+  files: any[];
+  links: [];
+  sender: string;
+  forwarded_from: string;
+  created_at: string;
+  update_at: string;
+  room: string;
+}
+
 export interface UserOnlinePage {
   active: boolean;
   name: string;
@@ -191,7 +205,15 @@ export interface MediaPreviewItem {
   name: string;
   object: string;
   ts: string;
+  created_at: string;
   type: TypeMedia;
+}
+
+interface PagingV2 {
+  current: number;
+  prev: number | null;
+  next: number | null;
+  count: number;
 }
 
 export interface ChatState {
@@ -203,12 +225,7 @@ export interface ChatState {
     isReloadPageCurrent?: boolean;
     textSearch: string;
   };
-  conversationPagingV2: {
-    current: number;
-    prev: number | null;
-    next: number | null;
-    count: number;
-  };
+  conversationPagingV2: PagingV2;
   isSearchConversation: boolean;
   conversationInfo: IChatItemInfo | null;
   roomId: string;
@@ -220,12 +237,21 @@ export interface ChatState {
   messageInfo: MessageInfo[];
   messageStatus: DataStatus;
   messagePaging: Paging & { isRefetchPage?: boolean; pageSizeDefault: number };
+  messages: MessageInfoV2[];
+  messagePagingV2: PagingV2;
+  members: IMembersGroup[];
   //partner info
   partnerInfo: UserInfo | null;
   partnerInfoStatus: DataStatus;
   //chat links
-  chatLinks: ChatLinkType[];
+  chatLinks: IChatLinkV2[];
   chatLinksStatus: DataStatus;
+  // chat medias
+  chatMedias: IChatFile[];
+  chatMediasStatus: DataStatus;
+  // chat medias
+  chatFiles: IChatFile[];
+  chatFilesStatus: DataStatus;
   //ListSearchConversation
   listSearchMessage: MessageSearchInfo[];
   statusListSearchMessage: DataStatus;
@@ -523,6 +549,7 @@ export const CHAT_EVENT_TYPE = {
   MESSAGE_SEND_TEXT: "message.text.send",
   MESSAGE_SEND_MEDIA: "message.media.send",
   MESSAGE_SEND_FILE: "message.file.send",
+  MESSAGE_FORWARD: "message.forward",
   MESSAGE_SEARCH: "message.search",
   MESSAGE_LOCATION: "message.location",
 };
@@ -531,6 +558,15 @@ export const CHAT_ROOM_TYPE = {
   GROUP: "g",
   PERSONAL: "p",
 };
+
+export const MESSAGE_TYPE = {
+  TEXT: "text",
+  MEDIA: "media",
+  FILE: "file",
+  LINK: "link",
+};
+
+export const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];
 
 export interface IWsChatRespMessage {
   event: string;

@@ -214,8 +214,15 @@ const docSlice = createSlice({
       state.contentRow = action.payload;
     },
     getDocDetails: (state, action: PayloadAction<any>) => {
-      console.log("action.payload", action.payload);
-      state.content = action.payload?.content || "";
+      const oldContent = state.content;
+      const newContent = action.payload?.content || "";
+      if (newContent && oldContent) {
+        state.content += '\n' + newContent;
+      } else if (newContent) {
+        state.content = newContent;
+      } else {
+        state.content = "";
+      }
       state.docInfo = action.payload || {};
       state.title = action.payload?.name || state.title;
       state.description = action.payload?.description || "";

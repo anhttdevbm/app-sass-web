@@ -1,3 +1,5 @@
+import { aI } from "@fullcalendar/core/internal-common";
+
 export const Endpoint = {
   SIGNIN: "/auth/login",
   SIGNUP: "/auth/register",
@@ -67,6 +69,8 @@ export const Endpoint = {
   TAGS_DETAIL: "/tags/{id}",
   CLIENT_COMPANIES: "/clients",
   CLIENT_COMPANIES_MULTI: "/clients/multi-id",
+  CLIENT_COMPANIES_ADD_MEMBER: "/clients/add-member",
+  CLIENT_COMPANIES_EMPLOYEES: "/clients/employees",
 
   COST_RATE: "/cost-rate",
   COST_RATE_DETAIL: "/cost-rate/detail/{id}",
@@ -198,4 +202,12 @@ export const Endpoint = {
   CONTENT_PRICING_BANNER2: "content/pricing/banner2",
   CONTENT_PRICING_UNLOCK: "content/pricing/unlock-unbeatable-value",
   CONTENT_PRICING_PARTNERS: "content/pricing/partners",
+
+  //AI Chat
+  AI_CHAT_EXAMPLE_PROMPT: "aichat/api/ai-chat/example-prompt",
+  AI_CHAT_SESSION: "aichat/api/ai-chat/chat-session",
+  AI_CHAT_CLOSE_ALL_SESSION: "aichat/api/ai-chat/close-all-chat-session",
+  AI_CHAT: "aichat/api/ai-chat/chat",
+  AI_CHAT_PERSONA: "aichat/api/ai-chat/persona",
+  AI_CHAT_TONE: "aichat/api/ai-chat/tone",
 };

@@ -12,6 +12,8 @@ import {
   updateCostRate,
 } from "./actions";
 
+export type CostRateWorkingHours = [number, number, number, number, number, number, number];
+
 export type CostRate = {
   id: string;
   company: string;
@@ -22,14 +24,17 @@ export type CostRate = {
   end_date: string;
   is_active: boolean;
   holiday_calendar: string;
-  working_hours: number[];
+  working_hours: CostRateWorkingHours;
   total_hours: number;
   total_days: number;
+  remaining_hours?: number;
+  remaining_days?: number;
+  cost_per_hour?: number;
   over_head: boolean;
   note?: string;
   created_by: string;
   created_time: string;
-}
+};
 
 export interface Employee extends User {
   created_time: string;
@@ -47,12 +52,12 @@ export type EmployeeDetailState = {
   employee: {
     status: DataStatus;
     detail?: Employee;
-  },
+  };
   costRates: {
     status: DataStatus;
-    items: CostRate[]
+    items: CostRate[];
   };
-}
+};
 
 const initialState: EmployeeDetailState = {
   employee: {
@@ -62,123 +67,126 @@ const initialState: EmployeeDetailState = {
     status: DataStatus.IDLE,
     items: [],
   },
-}
+};
 
 const employeeDetailSlice = createSlice({
-  name: 'employeeDetail',
+  name: "employeeDetail",
   initialState,
   reducers: {
-    resetEmployee: (state) => ({ ...state, employee: { ...initialState.employee } }),
-    resetCostRates: (state) => ({ ...state, costRates: { ...initialState.costRates } }),
+    resetEmployee: (state) => ({
+      ...state,
+      employee: { ...initialState.employee },
+    }),
+    resetCostRates: (state) => ({
+      ...state,
+      costRates: { ...initialState.costRates },
+    }),
     reset: () => ({ ...initialState }),
   },
   extraReducers: (builder) =>
     builder
-      .addCase(
-        getEmployeeDetail.pending,
-        (state) => {
-          state.employee.status = DataStatus.LOADING
-        }
-      )
+      .addCase(getEmployeeDetail.pending, (state) => {
+        state.employee.status = DataStatus.LOADING;
+      })
       .addCase(
         getEmployeeDetail.fulfilled,
         (state, action: PayloadAction<Employee>) => {
-          state.employee.detail = { ...action.payload }
-          state.employee.status = DataStatus.SUCCEEDED
-        }
+          state.employee.detail = action.payload;
+          state.employee.status = DataStatus.SUCCEEDED;
+        },
       )
-      .addCase(
-        updateEmployee.pending,
-        (state) => {
-          state.employee.status = DataStatus.LOADING
-        }
-      )
+      .addCase(updateEmployee.pending, (state) => {
+        state.employee.status = DataStatus.LOADING;
+      })
       .addCase(
         updateEmployee.fulfilled,
         (state, action: PayloadAction<Employee>) => {
-          state.employee.detail = { ...action.payload }
-          state.employee.status = DataStatus.SUCCEEDED
-        }
+          state.employee.detail = action.payload;
+          state.employee.status = DataStatus.SUCCEEDED;
+        },
       )
-      .addCase(
-        getAllCostRate.pending,
-        (state) => {
-          state.costRates.status = DataStatus.LOADING
-        }
-      )
+      .addCase(getAllCostRate.pending, (state) => {
+        state.costRates.status = DataStatus.LOADING;
+      })
       .addCase(
         getAllCostRate.fulfilled,
         (state, action: PayloadAction<CostRate[]>) => {
-          state.costRates.items = [ ...action.payload ];
-          state.costRates.status = DataStatus.SUCCEEDED
-        }
+          // sanitize data
+          state.costRates.items = action.payload.map((cr) => ({
+            ...cr,
+            type: cr.type.toUpperCase(),
+            currency: cr.currency.toUpperCase(),
+            working_hours: cr.working_hours.map((h) => +h) as CostRateWorkingHours,
+          }));
+          state.costRates.status = DataStatus.SUCCEEDED;
+        },
       )
-      .addCase(
-        getCostRate.pending,
-        (state) => {
-          state.costRates.status = DataStatus.LOADING
-        }
-      )
+      .addCase(getCostRate.pending, (state) => {
+        state.costRates.status = DataStatus.LOADING;
+      })
       .addCase(
         getCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          const index = state.costRates.items.findIndex(rate => rate.id === action.payload.id);
+          // sanitize data
+          const data = {
+            ...action.payload,
+            type: action.payload.type.toUpperCase(),
+            currency: action.payload.currency.toUpperCase(),
+            working_hours: action.payload.working_hours.map((h) => +h) as CostRateWorkingHours,
+          };
+          const index = state.costRates.items.findIndex(
+            (rate) => rate.id === data.id,
+          );
           if (index > -1) {
-            state.costRates.items[index] = { ...action.payload }
+            state.costRates.items[index] = data;
           } else {
-            state.costRates.items.unshift({ ...action.payload });
+            state.costRates.items.unshift(data);
           }
-          state.costRates.status = DataStatus.SUCCEEDED
-        }
+          state.costRates.status = DataStatus.SUCCEEDED;
+        },
       )
-      .addCase(
-        deleteCostRate.pending,
-        (state) => {
-          state.costRates.status = DataStatus.LOADING
-        }
-      )
+      .addCase(deleteCostRate.pending, (state) => {
+        state.costRates.status = DataStatus.LOADING;
+      })
       .addCase(
         deleteCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          const index = state.costRates.items.findIndex(rate => rate.id === action.payload.id);
+          const index = state.costRates.items.findIndex(
+            (rate) => rate.id === action.payload.id,
+          );
           if (index > -1) {
             state.costRates.items.splice(index, 1);
           }
-          state.costRates.status = DataStatus.SUCCEEDED
-        }
+          state.costRates.status = DataStatus.SUCCEEDED;
+        },
       )
-      .addCase(
-        addNewCostRate.pending,
-        (state) => {
-          state.costRates.status = DataStatus.LOADING
-        }
-      )
+      .addCase(addNewCostRate.pending, (state) => {
+        state.costRates.status = DataStatus.LOADING;
+      })
       .addCase(
         addNewCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          state.costRates.items.unshift({ ...action.payload });
-          state.costRates.status = DataStatus.SUCCEEDED
-        }
+          state.costRates.items.unshift(action.payload);
+          state.costRates.status = DataStatus.SUCCEEDED;
+        },
       )
-      .addCase(
-        updateCostRate.pending,
-        (state) => {
-          state.costRates.status = DataStatus.LOADING
-        }
-      )
+      .addCase(updateCostRate.pending, (state) => {
+        state.costRates.status = DataStatus.LOADING;
+      })
       .addCase(
         updateCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          state.costRates.items[state.costRates.items.findIndex(rate => rate.id === action.payload.id)] = { ...action.payload }
-          state.costRates.status = DataStatus.SUCCEEDED
-        }
-      )
-})
+          state.costRates.items[
+            state.costRates.items.findIndex(
+              (rate) => rate.id === action.payload.id,
+            )
+          ] = action.payload;
+          state.costRates.status = DataStatus.SUCCEEDED;
+        },
+      ),
+});
 
-export const {
-  reset,
-  resetEmployee,
-  resetCostRates,
-} = employeeDetailSlice.actions;
+export const { reset, resetEmployee, resetCostRates } =
+  employeeDetailSlice.actions;
 
 export default employeeDetailSlice.reducer;

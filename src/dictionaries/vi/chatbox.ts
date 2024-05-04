@@ -35,16 +35,23 @@ export const ChatBoxLang: ChatBox = {
     added: "đã thêm",
     removed: "đã xoá",
     group: {
-      add: '{user1} đã thêm {user2} vào nhóm vào lúc {time}.',
-      remove: '{user1} đã xoá {user2} ra khỏi nhóm vào lúc {time}.',
-      lead_trans: '{user1} đã chuyển quyền quản trị viên cho {user2} vào lúc {time}.',
-      lead_remove: '{user1} đã xoá quyền quản trị viên của {user2} vào lúc {time}.',
-      rename: '{user1} đã đổi tên nhóm thành {name} vào lúc {time}.',
-      edit_avatar: '{user1} đã thay đổi ảnh đại diện nhóm vào lúc {time}.',
-      rename_alert: 'Thay đổi tên nhóm thành công!',
-      change_avatar_alert: 'Thay đổi ảnh đại diện thành công',
-      adminChange: 'Chuyển quyền quản lý thành công.',
-      removeMember: 'Đã xóa thành viên khỏi group.',
-    }
-  }
+      add: "{user1} đã thêm {user2} vào nhóm vào lúc {time}.",
+      remove: "{user1} đã xoá {user2} ra khỏi nhóm vào lúc {time}.",
+      lead_trans:
+        "{user1} đã chuyển quyền quản trị viên cho {user2} vào lúc {time}.",
+      lead_remove:
+        "{user1} đã xoá quyền quản trị viên của {user2} vào lúc {time}.",
+      rename: "{user1} đã đổi tên nhóm thành {name} vào lúc {time}.",
+      edit_avatar: "{user1} đã thay đổi ảnh đại diện nhóm vào lúc {time}.",
+      rename_alert: "Thay đổi tên nhóm thành công!",
+      change_avatar_alert: "Thay đổi ảnh đại diện thành công",
+      adminChange: "Chuyển quyền quản lý thành công.",
+      removeMember: "Đã xóa thành viên khỏi group.",
+      userJoin: "{user} đã tham gia nhóm",
+      userLeave: "{user} đã rời nhóm",
+      adminAdd: "{user} đã được bổ nhiệm làm admin",
+      adminLeave: "{user} đã bị xóa quyền admin",
+      forwardMsg: "Chuyển tiếp từ: ",
+    },
+  },
 };

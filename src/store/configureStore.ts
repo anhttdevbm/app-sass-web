@@ -19,9 +19,15 @@ import { categoryBlogReducer } from "./blog-category/reducer";
 import { CareerReducer } from "./career/reducer";
 import documentApi from "./docs/api";
 import { BillingState, billingReducer } from "./billing/reducer";
-import employeeDetailReducer, { EmployeeDetailState } from "./employeeDetail/reducer";
+import employeeDetailReducer, {
+  EmployeeDetailState,
+} from "./employeeDetail/reducer";
 import ContentReducer, { ContentState } from "./content/reducer";
-import holidayCalendarReducer, { HolidayCalendarState } from "./holidayCalendar/reducer";
+import holidayCalendarReducer, {
+  HolidayCalendarState,
+} from "./holidayCalendar/reducer";
+import { aiChatReducer } from "./aiChat/reducer";
+import { AIChatState } from "./aiChat/type";
 
 import meetingReducer, {  } from "./meeting/reducer";
 
@@ -40,6 +46,7 @@ export interface State {
   employeeDetail: EmployeeDetailState;
   content: ContentState;
   holidayCalendar: HolidayCalendarState;
+  aiChat: AIChatState;
 }
 
 export const store = configureStore({
@@ -67,9 +74,13 @@ export const store = configureStore({
     employeeDetail: employeeDetailReducer,
     content: ContentReducer,
     holidayCalendar: holidayCalendarReducer,
+<<<<<<< HEAD
 
     //Meetings: MeetingsReducer,
     meeting: meetingReducer
+=======
+    aiChat: aiChatReducer,
+>>>>>>> 8c419f9e2590d21a322e23da5bb3577e504dc29d
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -10,6 +10,7 @@ import MediaContent from "../common/MediaContent";
 import FileContent from "../common/FileContent";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface GroupMediaProfileProps {
   type?: STEP_INFO;
@@ -20,9 +21,11 @@ const GroupMediaProfile = ({
   onPrevious,
 }: GroupMediaProfileProps) => {
   const [tab, setTab] = useState<STEP_INFO>(type);
-  const { conversationInfo } = useChat();
+  const { conversationInfo, roomId } = useChat();
   const { name } = conversationInfo || {};
   const commonChatBox = useTranslations(NS_CHAT_BOX);
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
 
   const renderContent = useMemo(() => {
     switch (tab) {
@@ -93,7 +96,10 @@ const GroupMediaProfile = ({
         >
           <Button
             variant="outlined"
-            onClick={() => setTab(STEP_INFO.MEDIA)}
+            onClick={() => {
+              handleGetChatMedias(1);
+              setTab(STEP_INFO.MEDIA);
+            }}
             sx={styleButtonTab}
             className={tab === STEP_INFO.MEDIA ? "active" : ""}
           >
@@ -101,7 +107,10 @@ const GroupMediaProfile = ({
           </Button>
           <Button
             variant="outlined"
-            onClick={() => setTab(STEP_INFO.LINK)}
+            onClick={() => {
+              handleGetChatLinks(1);
+              setTab(STEP_INFO.LINK);
+            }}
             sx={styleButtonTab}
             className={tab === STEP_INFO.LINK ? "active" : ""}
           >
@@ -109,7 +118,10 @@ const GroupMediaProfile = ({
           </Button>
           <Button
             variant="outlined"
-            onClick={() => setTab(STEP_INFO.FILE)}
+            onClick={() => {
+              handleGetChatFiles(1);
+              setTab(STEP_INFO.FILE);
+            }}
             sx={styleButtonTab}
             className={tab === STEP_INFO.FILE ? "active" : ""}
           >

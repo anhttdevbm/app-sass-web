@@ -7,6 +7,7 @@ import { useChat } from "store/chat/selectors";
 import MediaList from "./MediaList";
 import LinkList from "./LinkList";
 import FileList from "./FileList";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -41,10 +42,19 @@ function a11yProps(index: number) {
 }
 
 const List = () => {
-  const { onSetTypeList, typeList } = useChat();
+  const { onSetTypeList, typeList, roomId } = useChat();
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     onSetTypeList(newValue);
+    if (newValue === 0) {
+      handleGetChatMedias(1);
+    } else if (newValue === 1) {
+      handleGetChatLinks(1);
+    } else if (newValue === 2) {
+      handleGetChatFiles(1);
+    }
   };
 
   const styleTab = {

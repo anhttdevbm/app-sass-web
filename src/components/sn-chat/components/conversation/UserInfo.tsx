@@ -7,15 +7,18 @@ import { STEP_INFO } from "store/chat/type";
 import { DataStatus } from "constant/enums";
 import { useTranslations } from "next-intl";
 import { NS_AUTH } from "constant/index";
+import { useAuth } from "store/app/selectors";
 
 interface UserInfoProps {
   onPrevious: (step) => void;
 }
 
 const UserInfo = ({ onPrevious }: UserInfoProps) => {
+  const { user } = useAuth();
   const { conversationInfo, partnerInfoStatus, onGetUserInfo } = useChat();
   const { name, members } = conversationInfo || {};
-  const partnerInfo: any = members?.[1];
+  // @ts-ignore
+  const partnerInfo = members?.find((item) => item?.id != user?.id);
   const t = useTranslations(NS_AUTH);
 
   const styleFormItem: SxProps = {

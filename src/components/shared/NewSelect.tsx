@@ -1,24 +1,23 @@
+import * as React from "react";
 import { memo, useMemo } from "react";
-import Input, { InputProps } from "./NewInput";
-import {
-  CircularProgress,
-  MenuItem,
-  Stack,
-  inputBaseClasses,
-} from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import MenuItem from "@mui/material/MenuItem";
+import Stack from "@mui/material/Stack";
+import { inputBaseClasses } from "@mui/material/InputBase";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+
 import { Option } from "constant/types";
 import CircleChevronDownIcon from "icons/CircleChevronDownIcon";
 import { Search } from "components/Filters";
 import { debounce, uuid } from "utils/index";
 import Avatar from "components/Avatar";
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
-import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
 import useToggle from "hooks/useToggle";
 import Text from "./Text";
 import { SearchProps } from "components/Filters/Search";
-import Image from "next/image";
-import * as React from "react";
+import Input, { InputProps } from "./NewInput";
 
 export type SelectProps = InputProps & {
   options: Option[];
@@ -41,6 +40,7 @@ export type SelectProps = InputProps & {
   emitSearchWhenEnter?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   renderValue?: (value: any) => React.ReactNode;
+  lastNode?: React.ReactNode;
 };
 
 const ID_PLACEHOLDER = uuid();
@@ -65,6 +65,7 @@ const NewSelect = (props: SelectProps) => {
     onClose: handleClose,
     emitSearchWhenEnter,
     renderValue,
+    lastNode,
     ...rest
   } = props;
 
@@ -217,6 +218,9 @@ const NewSelect = (props: SelectProps) => {
             <CircularProgress size={20} sx={{ mx: "auto" }} color="primary" />
           </MenuItem>
         )}
+
+        {lastNode}
+
       </Input>
     </>
   );
