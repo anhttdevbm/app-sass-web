@@ -83,6 +83,7 @@ import {
   setChatMedias,
   setChatFiles,
   setListConversation,
+  setMembers,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -106,6 +107,7 @@ export const useChat = () => {
     conversationStatus,
     messages,
     messagePagingV2,
+    members,
     currStep,
     prevStep,
     partnerInfo,
@@ -765,6 +767,10 @@ export const useChat = () => {
     return dispatch(setChatFiles(data));
   };
 
+  const onSetMembers = (data) => {
+    return dispatch(setMembers(data));
+  };
+
   return {
     convention,
     onSetConvention,
@@ -782,6 +788,8 @@ export const useChat = () => {
     onSetChatLinks,
     onSetChatMedias,
     onSetChatFiles,
+    members,
+    onSetMembers,
     messagePaging,
     messageInfo,
     messageStatus,

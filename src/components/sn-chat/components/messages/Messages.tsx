@@ -83,6 +83,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     isChatDesktop,
     dataTransfer,
     messagePagingV2: messagePaging,
+    members,
   } = useChat();
   const { loadMoreMessages } = useChatHelpers();
 
@@ -220,41 +221,20 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
   const renderMessage = (message: MessageInfoV2) => {
     let msg = "";
-    switch (message?.type) {
-      case "au":
-        msg = commonChatBox("chatBox.group.add", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
+    const senderInfo = members?.find((item) => item?.id === message?.sender);
+    const user = { user: senderInfo?.fullname || message?.sender };
+    switch (message?.content) {
+      case "user.join":
+        msg = commonChatBox("chatBox.group.userJoin", user);
         break;
-      case "ru":
-        msg = commonChatBox("chatBox.group.remove", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
+      case "user.leave":
+        msg = commonChatBox("chatBox.group.userLeave", user);
         break;
-      case "subscription-role-added":
-        msg = commonChatBox("chatBox.group.lead_trans", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
+      case "admin.add":
+        msg = commonChatBox("chatBox.group.adminAdd", user);
         break;
-      case "subscription-role-removed":
-        msg = commonChatBox("chatBox.group.lead_remove", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
-        break;
-      case "r":
-        msg = commonChatBox("chatBox.group.rename", {
-          user1: message?.sender,
-          name: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
+      case "admin.remove":
+        msg = commonChatBox("chatBox.group.adminLeave", user);
         break;
     }
     return msg;
@@ -351,7 +331,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                       display: "inline-block",
                     }}
                   >
-                    {message?.content}
+                    {renderMessage(message)}
                   </Typography>
                 </Box>
               )}

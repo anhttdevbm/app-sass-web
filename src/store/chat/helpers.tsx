@@ -66,6 +66,8 @@ export const useWSChat = () => {
     onSetChatMedias,
     onSetChatFiles,
     onSetListConvention,
+    members,
+    onSetMembers,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
@@ -93,6 +95,29 @@ export const useWSChat = () => {
   const sendMessage = (message) => {
     if (ws) {
       ws.send(JSON.stringify(message));
+    }
+  };
+
+  const handleMessageSystem = (resp) => {
+    const senderId =
+      resp?.data?.detailMember?.id || resp?.data?.detailAdmin?.id;
+    if (!members?.find((mem) => mem?.id === senderId)) {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.DETAIL_MEMBER,
+        memberId: senderId,
+      });
+    }
+    if (!messages?.find((msg) => msg?.id === resp?.data?.systemMessage?.id)) {
+      const newMessage = {
+        id: resp?.data?.systemMessage?.id,
+        content: resp?.data?.systemMessage?.type,
+        sender: senderId,
+        files: [],
+        links: [],
+        type: "system",
+        created_at: new Date().getTime(),
+      };
+      onSetMessages([...messages, newMessage]);
     }
   };
 
@@ -198,13 +223,9 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_MEMBER:
-              if (
-                !isRelatedGroup(resp?.data?.room?.members, user?.id) &&
-                resp?.data?.detailMember?.id !== user?.id
-              ) {
+              if (!isRelatedGroup(resp?.data?.room?.members, user?.id)) {
                 return;
               }
-              // TODO: append message add member later
               const isAlreadyInRoom = dataTransfer?.members?.find(
                 (mem) => mem?.id === resp?.data?.detailMember?.id,
               );
@@ -219,6 +240,7 @@ export const useWSChat = () => {
                 onSetDataTransfer(newRoomInfo);
                 onSetConversationInfo(newRoomInfo);
               }
+              handleMessageSystem(resp);
               if (convention.find((item) => item?.id === resp?.data?.room?.id))
                 return;
               onSetListConvention([resp?.data?.room, ...convention]);
@@ -226,20 +248,6 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER:
             case CHAT_EVENT_TYPE.GROUP_REMOVE_ADMIN:
-              if (
-                !isRelatedGroup(resp?.data?.room?.members, user?.id) &&
-                resp?.data?.detailMember?.id !== user?.id
-              ) {
-                return;
-              }
-              const newInfoRoom = {
-                ...dataTransfer,
-                members: dataTransfer?.members?.filter(
-                  (mem) => mem?.id != resp?.data?.detailMember?.id,
-                ),
-              };
-              onSetDataTransfer(newInfoRoom);
-              onSetConversationInfo(newInfoRoom);
               if (resp?.data?.detailMember?.id === user?.id) {
                 const roomIdOut = resp?.data?.room?.id;
                 const newConversation = convention.filter(
@@ -250,13 +258,37 @@ export const useWSChat = () => {
                 resetDataRoom();
                 onSetStep(STEP.CONVENTION);
               }
+              if (
+                !isRelatedGroup(resp?.data?.room?.members, user?.id) ||
+                resp?.data?.room?.id !== roomId
+              ) {
+                return;
+              }
+              handleMessageSystem(resp);
+              const newInfoRoom = {
+                ...dataTransfer,
+                members: dataTransfer?.members?.filter(
+                  (mem) => mem?.id != resp?.data?.detailMember?.id,
+                ),
+              };
+              onSetDataTransfer(newInfoRoom);
+              onSetConversationInfo(newInfoRoom);
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_ADMIN:
-              if (!isRelatedGroup(resp?.data?.room?.members, user?.id)) {
+              if (
+                !isRelatedGroup(resp?.data?.room?.members, user?.id) ||
+                resp?.data?.room?.id !== roomId
+              ) {
                 return;
               }
-              if (dataTransfer?.admins?.find(item => item === resp?.data?.detailAdmin?.id)) return;
+              if (
+                dataTransfer?.admins?.find(
+                  (item) => item === resp?.data?.detailAdmin?.id,
+                )
+              )
+                return;
+              handleMessageSystem(resp);
               const newRoomAdmin = {
                 ...dataTransfer,
                 admins: [
@@ -287,6 +319,17 @@ export const useWSChat = () => {
               onSetMessagePaging({
                 current: resp?.data?.prev + 1,
                 ...resp?.data,
+              });
+              resp?.data?.result?.forEach((item) => {
+                if (
+                  item?.type === "system" &&
+                  !members?.find((mem) => mem?.id === item?.sender)
+                ) {
+                  sendMessage({
+                    event: CHAT_EVENT_TYPE.DETAIL_MEMBER,
+                    memberId: item?.sender,
+                  });
+                }
               });
               onSetMessages(
                 sortASCArray(resp?.data?.result, "created_at") || [],
@@ -324,6 +367,10 @@ export const useWSChat = () => {
               if (newMsgMedia?.room !== roomId) return;
               if (messages.find((item) => item?.id === newMsgMedia?.id)) return;
               onSetMessages([...messages, newMsgMedia]);
+              return;
+
+            case CHAT_EVENT_TYPE.DETAIL_MEMBER:
+              onSetMembers(resp?.data);
               return;
 
             case "error":
