@@ -29,6 +29,8 @@ import holidayCalendarReducer, {
 import { aiChatReducer } from "./aiChat/reducer";
 import { AIChatState } from "./aiChat/type";
 
+import meetingReducer, {  } from "./meeting/reducer";
+
 export interface State {
   app: AppState;
   global: GlobalState;
@@ -72,6 +74,7 @@ export const store = configureStore({
     employeeDetail: employeeDetailReducer,
     content: ContentReducer,
     holidayCalendar: holidayCalendarReducer,
+    meeting: meetingReducer,
     aiChat: aiChatReducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -1,3 +1,4 @@
+import { Meeting } from 'components/sn-meeting';
 import { AlertColor } from "@mui/material";
 import { FILE_MAP, Status, ThemeMode } from "./enums";
 import {
@@ -119,7 +120,6 @@ export const NS_CHAT_BOX = "chatbox";
 export const NS_AI_CHAT = "aiChat";
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
-
 //Feedback
 export const NS_FEEDBACK = "feeback";
 //blog
@@ -134,6 +134,10 @@ export const NS_BILLING = "billing";
 export const NS_BUDGETING = "budgeting";
 //Content
 export const NS_CONTENTS = "contents";
+
+//Meeting
+export const NS_MEETING = "meeting";
+
 
 export const IMAGES_ACCEPT = ["image/png", "image/jpeg", "image/jpg"];
 export const VIDEO_ACCEPT = ["video/mp4"];
