@@ -74,13 +74,8 @@ export const store = configureStore({
     employeeDetail: employeeDetailReducer,
     content: ContentReducer,
     holidayCalendar: holidayCalendarReducer,
-<<<<<<< HEAD
-
-    //Meetings: MeetingsReducer,
-    meeting: meetingReducer
-=======
+    meeting: meetingReducer,
     aiChat: aiChatReducer,
->>>>>>> 8c419f9e2590d21a322e23da5bb3577e504dc29d
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
