@@ -1,4 +1,3 @@
-import { Meeting } from 'components/sn-meeting';
 import { AlertColor } from "@mui/material";
 import { FILE_MAP, Status, ThemeMode } from "./enums";
 import {

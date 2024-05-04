@@ -1,7 +1,4 @@
 import { DirectionChat } from "store/chat/type";
-import { MobileScreen } from "./const";
-
-export type MobileScreenType = `${MobileScreen}`;
 
 export type HeaderMobileProps = {
   children?: React.ReactNode;

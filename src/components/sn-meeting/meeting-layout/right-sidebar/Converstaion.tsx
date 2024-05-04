@@ -1,14 +1,18 @@
 import React from 'react';
 
 interface message {
-    user: object;
+    user: {
+        name: string;
+        avatar: string;
+    };
     content: string;
     time: string;
+    id: string;
 }
 
 
 interface ConversationProps {
-    messages: Message[];
+    messages: message[];
 }
 
 
