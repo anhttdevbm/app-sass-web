@@ -14,8 +14,8 @@ const ForwardHeader = ({ onPrevious, onSearchTxt }: ForwardHeaderProp) => {
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
+      onSearchTxt(event.target.value);
     }
-    onSearchTxt(event.target.value);
   };
 
   return (

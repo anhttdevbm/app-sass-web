@@ -549,6 +549,7 @@ export const CHAT_EVENT_TYPE = {
   MESSAGE_SEND_TEXT: "message.text.send",
   MESSAGE_SEND_MEDIA: "message.media.send",
   MESSAGE_SEND_FILE: "message.file.send",
+  MESSAGE_FORWARD: "message.forward",
   MESSAGE_SEARCH: "message.search",
   MESSAGE_LOCATION: "message.location",
 };

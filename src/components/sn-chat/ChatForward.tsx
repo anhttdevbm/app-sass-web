@@ -2,7 +2,7 @@
 import { Box } from "@mui/system";
 import SelectItem from "./components/SelectItem";
 import { Skeleton, Typography } from "@mui/material";
-import { Button, Input } from "components/shared";
+import { Button } from "components/shared";
 import { useChat } from "store/chat/selectors";
 import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
@@ -10,14 +10,16 @@ import { useEmployeesOfCompany } from "store/manager/selectors";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { Employee } from "store/company/reducer";
-import { STEP } from "store/chat/type";
+import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, STEP } from "store/chat/type";
 import useTheme from "hooks/useTheme";
 import AttachmentContent from "./components/conversation/AttachmentContent";
+import { useWSChat } from "store/chat/helpers";
 
 interface Props {
   callbackCancel?: () => void;
   conversations?: any[];
   loading?: boolean;
+  textFilter: string;
 }
 
 const ChatForward: FC<Props> = (props) => {
@@ -31,18 +33,9 @@ const ChatForward: FC<Props> = (props) => {
     onApproveOrReject: onApproveOrRejectAction,
   } = useEmployeesOfCompany();
   const { user } = useAuth();
-
+  const { sendMessage } = useWSChat();
   const { isDarkMode } = useTheme();
-  const {
-    convention,
-    dataTransfer,
-    onSetStep,
-    onForwardMessage,
-    isChatDesktop,
-    onSetDataTransfer,
-    onGetAllConvention,
-    onSetConversationInfo,
-  } = useChat();
+  const { dataTransfer, onSetStep, isChatDesktop, onCloseDrawer } = useChat();
 
   useEffect(() => {
     onGetEmployees(user?.company ?? "", { pageIndex: 0, pageSize: 30 });
@@ -54,7 +47,7 @@ const ChatForward: FC<Props> = (props) => {
   ) => {
     setEmployeeIdSelected({
       ...employeeIdSelected,
-      [employee?._id ?? ""]: event.target.checked,
+      [employee?.id ?? ""]: event.target.checked,
     });
   };
 
@@ -63,38 +56,16 @@ const ChatForward: FC<Props> = (props) => {
       onAddSnackbar("Please select at least one member!", "error");
       return;
     }
-    const fws = Object.keys(employeeIdSelected)
+    Object.keys(employeeIdSelected)
       .filter((item) => employeeIdSelected[item])
       .map(async (item) => {
-        return await onForwardMessage({
-          messageId: dataTransfer?.message?._id,
-          roomId: item,
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_FORWARD,
+          forwardMessageId: dataTransfer?.message?.id,
+          forwardRoomId: item,
         });
       });
-    Promise.all(fws).then((values) => {
-      onAddSnackbar("Forward message successfully!", "success");
-      if (isChatDesktop) {
-        onSetDataTransfer(dataTransfer);
-        /*onGetAllConvention({
-          count: 10,
-          offset: 0,
-          text: "",
-          type: "a",
-        });*/
-      } else {
-        // console.log({ dataTransfer });
-        const targetEmployeeId = Object.keys(employeeIdSelected)
-          .filter((item) => employeeIdSelected[item])
-          ?.at(-1);
-        const target = (isChatDesktop ? props?.conversations : convention)
-          ?.filter((i) => i?._id === targetEmployeeId)
-          ?.at(-1);
-        // console.log({ dataTransfer, targetEmployeeId, target });
-        onSetDataTransfer(target);
-        onSetConversationInfo(target);
-        onSetStep(target.t === "d" ? STEP.CHAT_ONE : STEP.CHAT_GROUP, target);
-      }
-    });
+    onCloseDrawer("info");
   };
 
   return (
@@ -161,23 +132,26 @@ const ChatForward: FC<Props> = (props) => {
               ))
             ) : (
               <>
-                {(isChatDesktop ? props?.conversations : convention)
-                  ?.filter((item) => item?._id !== dataTransfer?._id)
-                  ?.filter((item) => item?.name)
+                {props?.conversations
+                  ?.filter((item) => item?.id !== dataTransfer?.id)
+                  ?.filter((item) =>
+                    (item?.name || item?.peer_detail?.fullname)?.includes(
+                      props?.textFilter,
+                    ),
+                  )
                   ?.map((item, index) => (
                     <SelectItem
-                      checked={
-                        employeeIdSelected?.hasOwnProperty(item._id) &&
-                        employeeIdSelected[item._id] === true
-                      }
+                      checked={employeeIdSelected[item.id] === true}
                       checkbox
                       onClick={(event) => handleClickConversation(item, event)}
                       employee={
                         {
-                          avatar: { link: item?.avatar },
-                          fullname: item?.name,
-                          email: "",
-                          _id: item?._id,
+                          avatar:
+                            item?.type === CHAT_ROOM_TYPE.GROUP
+                              ? { ...item?.avatar }
+                              : { link: item?.peer_detail?.avatar },
+                          fullname: item?.name || item?.peer_detail?.fullname,
+                          id: item?.id,
                         } as unknown as Employee
                       }
                       key={index}
@@ -277,7 +251,7 @@ const ChatForward: FC<Props> = (props) => {
                 },
               }}
             >
-              {dataTransfer?.message?.attachments?.length > 0 ? (
+              {dataTransfer?.message?.files?.length > 0 ? (
                 <AttachmentContent
                   mediaListPreview={[]}
                   showOnlyContent={true}
@@ -288,7 +262,7 @@ const ChatForward: FC<Props> = (props) => {
               ) : (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: dataTransfer?.message?.msg,
+                    __html: dataTransfer?.message?.content,
                   }}
                 />
               )}

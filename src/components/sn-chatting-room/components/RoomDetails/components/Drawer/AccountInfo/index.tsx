@@ -7,7 +7,7 @@ import { NS_AUTH } from "constant/index";
 import { useChat } from "store/chat/selectors";
 import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
-import { useCallback, useEffect } from "react";
+import { useAuth } from 'store/app/selectors';
 
 const mapperDataToInfo = (partnerInfo: Partial<UserInfo>) => ({
   fullName: partnerInfo.fullname,
@@ -21,9 +21,10 @@ const AccountInfo = () => {
   const { isFetchingDetail } = useChat();
   const t = useTranslations(NS_AUTH);
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
 
   const { dataTransfer: currentConversation, onSetDrawerType } = useChat();
-  const partnerInfo = currentConversation?.members?.[1];
+  const partnerInfo = currentConversation?.members?.find(item => item?.id != user?.id);
 
   return (
     <Box
