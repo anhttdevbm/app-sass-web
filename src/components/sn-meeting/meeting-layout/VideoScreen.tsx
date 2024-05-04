@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import VideoParticipant from "./VideoParticipant";
 import { Box, Stack } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
@@ -9,8 +9,40 @@ import ImageListItemBar from "@mui/material/ImageListItemBar";
 import ListSubheader from "@mui/material/ListSubheader";
 import IconButton from "@mui/material/IconButton";
 import InfoIcon from "@mui/icons-material/Info";
-import { relative } from "path";
+import { io } from "socket.io-client";
 
+const socket = io("your_socket_server_url");
+
+import websocket from "websocket"
+const WebSocketClient = websocket.client;
+// const client = new WebSocketClient();
+
+// Configure socket.io-client options
+// const socket = io("your_socket_server_url", {
+//   transports: ["websocket"],
+//   autoConnect: true,
+//   // other options...
+// });
+
+// socket.on("connect", () => {
+//   console.log("Connected to socket server");
+// });
+
+// socket.on("disconnect", () => {
+//   console.log("Disconnected from socket server");
+// });
+
+// socket.emit("customEvent", { data: "Hello, server!" });
+
+// socket.on("customEventResponse", (response) => {
+//   console.log("Received response from server:", response);
+// });
+
+// useEffect(() => {
+//   return () => {
+//     socket.disconnect();
+//   };
+// }, []);
 
 interface VideoScreenProps {
   users: Array<UserI>;
@@ -21,6 +53,44 @@ const layoutArr = ["galaxy", "speaker", "content"];
 
 const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
   const {users, sx} = props;
+
+  const [stream, setStream] = useState<MediaStream | null>(null);
+
+  const startMedia = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: window.confirm("Allow access to microphone?"),
+        video: window.confirm("Allow access to camera?"),
+      });
+      setStream(mediaStream);
+    } catch (error) {
+      console.error("Error accessing media devices:", error);
+    }
+  };
+
+  useEffect(() => {
+    startMedia();
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+    };
+
+    //Handle connect with socket connection
+
+    
+  }, []);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
+
 
   const [layout, setLayout] = useState<"galaxy" | "speaker" | "content">(
     "speaker",
@@ -43,6 +113,7 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
       <button
         onClick={changeLayout}
       >{`Change Layout: ${layoutArr[count]}`}</button>
+
       {layout === "galaxy" && (
         <Grid2
           className="galaxy"
@@ -50,6 +121,16 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
           spacing={1}
           justifyContent={"space-around"}
         >
+          <Grid2 >
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              style={{ width: "100%", height: "100%" }}
+              playsInline
+            />
+          </Grid2>
+
           {users.map((user) => (
             <Grid2 key={user.id}>
               <VideoParticipant sx={{ width: "100%" }} />
@@ -60,7 +141,14 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
       {layout === "speaker" && (
         <Grid2 container gap={1}>
           <Grid2 component="div" xs={12} sx={{ height: "450px" }}>
-            <VideoParticipant sx={{ width: "100%", height: "100%" }} />
+            <Grid2 >
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                style={{ width: "100%", height: "100%" }}
+              />
+            </Grid2>
           </Grid2>
           <Grid2 xs={12}>
             <Stack
@@ -80,14 +168,22 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
       {layout === "content" && (
         <div className="video-content">
           <Box position={"relative"} width={'100%'} height={'550px'}>
-            <VideoParticipant sx={{ width: "100%", height: '100%'}} />
+            {/* <VideoParticipant sx={{ width: "100%", height: '100%'}} /> */}
+            <Grid2>
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                style={{ width: "100%", height: "100%" }}
+              />
+            </Grid2>
 
             <VideoParticipant
               sx={{
                 position: "absolute",
                 top: 0,
                 right: 0,
-                bgcolor: 'blueviolet',
+                bgcolor: 'red',
                 zIndex: 1,
               }}
             />

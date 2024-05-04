@@ -91,15 +91,7 @@ const initUsers = [
     isMicOn: true,
     isCameraOn: false,
     isSpeaker: false,
-  },
-  {
-    id: '6',
-    name: "Steven Doe",
-    avatar: "https://via.placeholder.com/150",
-    isMicOn: true,
-    isCameraOn: false,
-    isSpeaker: false,
-  },
+  }
 ];
 
 const initMessagesArray = [
@@ -142,13 +134,5 @@ const initMessagesArray = [
       avatar: "https://via.placeholder.com/150",
     },
     message: "Good morning!",
-  },
-  {
-    user: {
-      id: 6,
-      name: "Steven Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    message: "How's everyone doing?",
-  },
+  }
 ];

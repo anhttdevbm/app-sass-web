@@ -8,7 +8,7 @@ import {
   VideocamOff,
 } from "@mui/icons-material";
 import { Box, IconButton } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { sxBtnCircleActive, sxBtn } from "../style";
 
 interface VideoParticipantProps {
@@ -18,6 +18,40 @@ interface VideoParticipantProps {
 const VideoParticipant: React.FC<VideoParticipantProps> = (
   props: VideoParticipantProps,
 ) => {
+  // const [stream, setStream] = useState<MediaStream | null>(null);
+
+  // const startMedia = async () => {
+  //   try {
+  //     const mediaStream = await navigator.mediaDevices.getUserMedia({
+  //       audio: true,
+  //       video: true,
+  //     });
+  //     setStream(mediaStream);
+  //   } catch (error) {
+  //     console.error("Error accessing media devices:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   startMedia();
+  //   return () => {
+  //     if (stream) {
+  //       stream.getTracks().forEach((track) => {
+  //         track.stop();
+  //       });
+  //     }
+  //   };
+  // }, []);
+
+  // const videoRef = useRef<HTMLVideoElement>(null);
+
+  // useEffect(() => {
+  //   if (videoRef.current && stream) {
+  //     videoRef.current.srcObject = stream;
+  //   }
+  // }, [stream]);
+
+
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
 
