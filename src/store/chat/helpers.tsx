@@ -182,7 +182,9 @@ export const useWSChat = () => {
               if (roomDetail?.type === CHAT_ROOM_TYPE.PERSONAL) {
                 roomDetail = {
                   ...roomDetail,
-                  peer_detail: roomDetail?.members?.[1],
+                  peer_detail: roomDetail?.members?.find(
+                    (item) => item?.id != user?.id,
+                  ),
                 };
               }
               onSetRoomId(roomDetail?.id);
@@ -367,6 +369,18 @@ export const useWSChat = () => {
               if (newMsgMedia?.room !== roomId) return;
               if (messages.find((item) => item?.id === newMsgMedia?.id)) return;
               onSetMessages([...messages, newMsgMedia]);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_FORWARD:
+              if (
+                !isRelatedGroup(resp?.data?.room?.members, user?.id) ||
+                resp?.data?.room?.id !== roomId
+              ) {
+                return;
+              }
+              if (messages.find((item) => item?.id === resp?.data?.message?.id))
+                return;
+              onSetMessages([...messages, resp?.data?.message]);
               return;
 
             case CHAT_EVENT_TYPE.DETAIL_MEMBER:

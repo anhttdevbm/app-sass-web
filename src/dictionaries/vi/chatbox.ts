@@ -51,6 +51,7 @@ export const ChatBoxLang: ChatBox = {
       userLeave: "{user} đã rời nhóm",
       adminAdd: "{user} đã được bổ nhiệm làm admin",
       adminLeave: "{user} đã bị xóa quyền admin",
+      forwardMsg: "Chuyển tiếp từ: ",
     },
   },
 };

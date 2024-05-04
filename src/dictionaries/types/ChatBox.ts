@@ -47,6 +47,7 @@ export type ChatBox = {
       userLeave: string;
       adminAdd: string;
       adminLeave: string;
+      forwardMsg: string;
     };
   };
 };

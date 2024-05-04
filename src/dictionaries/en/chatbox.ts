@@ -49,6 +49,7 @@ export const ChatBoxLang: ChatBox = {
       userLeave: "{user} has leaved the group",
       adminAdd: "{user} has been promoted to admin",
       adminLeave: "{user} has been demoted to member",
+      forwardMsg: "Forward from: ",
     },
   },
 };
