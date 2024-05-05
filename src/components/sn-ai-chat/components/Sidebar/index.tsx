@@ -3,19 +3,25 @@
 import { Box } from "@mui/material";
 import { NewButton } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
-import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
 import PlusFillIcon from "icons/PlusFillIcon";
 import TrashFillIcon from "icons/TrashFillIcon";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
-import ChatList from "./components/ChatList";
 import { useChatSession } from "store/aiChat/selectors";
 import { useAuth } from "store/app/selectors";
+import ChatList from "./components/ChatList";
 
-export const Sidebar = () => {
-  const { mobileMode } = useGetScreenMode();
+interface SidebarProps {
+  mobileMode?: boolean;
+  onSwitchToBoxChat?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  mobileMode,
+  onSwitchToBoxChat,
+}) => {
   const t = useTranslations(NS_AI_CHAT);
   const theme = useTheme();
 
@@ -27,37 +33,46 @@ export const Sidebar = () => {
     () => ({
       display: "flex",
       flexDirection: "column",
-      height: `calc(100vh - ${HEADER_HEIGHT}px)`,
-      boxShadow: `2px 2px 20px 0px ${
-        theme.palette.mode === "dark"
-          ? "rgba(255, 255, 255, 0.18)"
-          : "rgba(0, 0, 0, 0.085)"
-      }`,
       bgcolor: "background.paper",
       ...(mobileMode
-        ? { width: "100%" }
-        : { minWidth: "300px", maxWidth: "300px" }),
+        ? { width: "100%", height: "100%" }
+        : {
+            minWidth: "300px",
+            maxWidth: "300px",
+            boxShadow: `2px 2px 20px 0px ${
+              theme.palette.mode === "dark"
+                ? "rgba(255, 255, 255, 0.18)"
+                : "rgba(0, 0, 0, 0.085)"
+            }`,
+            height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+          }),
     }),
     [mobileMode, theme.palette.mode],
   );
-
 
   const handleCloseAllChatSession = () => {
     if (user) {
       onDeleteAllChatSessions({ userId: user.id });
     }
-  }
+  };
+
+  const handleNewChat = () => {
+    if (onSwitchToBoxChat) {
+      onSwitchToBoxChat();
+    }
+    onNewChat();
+  };
 
   return (
     <Box sx={styles}>
       <NewButton
-        sx={addNewBtnSx}
+        sx={{ ...addNewBtnSx, background: mobileMode ? "#EEF8FF" : "white" }}
         startIcon={<PlusFillIcon style={{ fontSize: "24px" }} />}
-        onClick={onNewChat}
+        onClick={handleNewChat}
       >
         {t("sideBar.newChat")}
       </NewButton>
-      <ChatList />
+      <ChatList popupMode={mobileMode} onSwitchToBoxChat={onSwitchToBoxChat} />
       <NewButton
         startIcon={<TrashFillIcon />}
         sx={clearAllBtnSx}
@@ -89,6 +104,6 @@ const clearAllBtnSx = {
   fontSize: "14px",
   fontWeight: "400",
   color: "error.main",
-  backgroundColor: "error.light",
   width: "100%",
+  background: "#FFF0F1",
 };

@@ -1,4 +1,4 @@
-import { Avatar, Box, Skeleton } from "@mui/material";
+import { Avatar, Box, Skeleton, useMediaQuery } from "@mui/material";
 import { IconButton, Text } from "components/shared";
 import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
 import useTheme from "hooks/useTheme";
@@ -13,15 +13,18 @@ import { OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
+import { backgroundImage } from "html2canvas/dist/types/css/property-descriptors/background-image";
 
 interface MessageProps {
   message: Partial<OpenAIChat>;
   regenerateResponse: (message: string) => void;
+  mobileMode?: boolean;
 }
 
 export const Message: React.FC<MessageProps> = ({
   message,
   regenerateResponse,
+  mobileMode,
 }) => {
   const { user_prompt, assistant_content, id } = message;
 
@@ -29,6 +32,8 @@ export const Message: React.FC<MessageProps> = ({
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const isMobile = useMediaQuery("(max-width: 600px)") || mobileMode;
 
   useEffect(() => {
     if (assistant_content) {
@@ -66,15 +71,19 @@ export const Message: React.FC<MessageProps> = ({
         display="flex"
         alignItems="flex-start"
         justifyContent="space-around"
+        flexDirection={isMobile ? "column" : "row"}
         mb={"12px"}
       >
         <Avatar
           alt={user?.name || "User"}
           src={user?.avatar?.link}
           variant="rounded"
-          sx={{ borderRadius: "10px" }}
+          sx={{ borderRadius: "10px", marginBottom: isMobile ? "8px" : "0px" }}
         />
-        <MessageBox bgcolor={isDarkMode ? "info.main" : "#EBF5FF"}>
+        <MessageBox
+          bgcolor={isDarkMode ? "info.main" : "#EBF5FF"}
+          isMobile={isMobile}
+        >
           <Text variant="body1" flex={1}>
             {user_prompt}
           </Text>
@@ -89,11 +98,19 @@ export const Message: React.FC<MessageProps> = ({
         mb={"12px"}
         flexDirection={"column"}
       >
-        <Box display="flex" width={"100%"}>
-          <Box sx={avatarSx}>
+        <Box
+          display="flex"
+          width={"100%"}
+          flexDirection={isMobile ? "column" : "row"}
+        >
+          <Box sx={{ ...avatarSx, marginBottom: isMobile ? "8px" : "0px" }}>
             <Image alt="AI assistant" src={AIIcon} width={28} height={28} />
           </Box>
-          <MessageBox bgcolor={isDarkMode ? "info.dark" : "#f5f5f5"} flex={1}>
+          <MessageBox
+            bgcolor={isDarkMode ? "info.dark" : "#f5f5f5"}
+            flex={1}
+            isMobile={isMobile}
+          >
             {!isLoading ? (
               <Text variant="body1" flex={1}>
                 {assistant_content}
@@ -115,20 +132,44 @@ export const Message: React.FC<MessageProps> = ({
         </Box>
         <Box
           display={"flex"}
-          alignItems={"center"}
+          flexDirection={isMobile ? "column" : "row"}
+          alignItems={isMobile ? "flex-end" : "center"}
           justifyContent={"flex-end"}
           width={"100%"}
         >
-          <ActionButton
-            onClick={handleCopy}
-            icon={<CopyTextIcon />}
-            label="boxChat.copy"
-          />
-          <ActionButton
-            onClick={handleOpenModal}
-            icon={<AddToDocIcon />}
-            label="boxChat.addToDocs"
-          />
+          {isMobile && (
+            <Box
+              display={"flex"}
+              flexDirection={"row"}
+              justifyContent={"flex-end"}
+            >
+              <ActionButton
+                onClick={handleCopy}
+                icon={<CopyTextIcon />}
+                label="boxChat.copy"
+              />
+              <ActionButton
+                onClick={handleOpenModal}
+                icon={<AddToDocIcon />}
+                label="boxChat.addToDocs"
+              />
+            </Box>
+          )}
+          {!isMobile && (
+            <>
+              <ActionButton
+                onClick={handleCopy}
+                icon={<CopyTextIcon />}
+                label="boxChat.copy"
+              />
+              <ActionButton
+                onClick={handleOpenModal}
+                icon={<AddToDocIcon />}
+                label="boxChat.addToDocs"
+              />
+            </>
+          )}
+          {isMobile && <Box height={2} />}
           <ActionButton
             onClick={handleRegenerateResponse}
             icon={<RegenerateIcon />}
@@ -150,7 +191,7 @@ const avatarSx = {
   alignItems: "center",
   justifyContent: "center",
   borderRadius: "10px",
-  minWidth: "40px",
+  width: "40px",
   height: "40px",
   backgroundImage: "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)",
 };

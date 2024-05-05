@@ -9,6 +9,7 @@ interface MessageListProps {
   onLoadMore: () => void;
   page?: number;
   regenerateResponse: (message: string) => void;
+  mobileMode?: boolean;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -16,6 +17,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   onLoadMore,
   page,
   regenerateResponse,
+  mobileMode,
 }) => {
   const t = useTranslations(NS_AI_CHAT);
 
@@ -32,6 +34,7 @@ export const MessageList: React.FC<MessageListProps> = ({
       {chatData.map((message, index) => {
         return (
           <Message
+            mobileMode={mobileMode}
             key={index}
             message={message}
             regenerateResponse={regenerateResponse}

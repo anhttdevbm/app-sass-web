@@ -1,4 +1,4 @@
-import { Button, Grid, Box, Skeleton } from "@mui/material";
+import { Button, Grid, Box } from "@mui/material";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useLocale } from "next-intl";
@@ -8,51 +8,68 @@ import { ExamplePrompt } from "store/aiChat/type";
 interface ListPromptProps {
   prompts?: ExamplePrompt[];
   handleClick: (value: string) => void;
+  isMobile?: boolean;
 }
 
 export const ListPrompt: React.FC<ListPromptProps> = ({
-  prompts,
-  handleClick
+  prompts = [],
+  handleClick,
+  isMobile = false,
 }) => {
   const { isMdSmaller, isLgSmaller } = useBreakpoint();
-
   const { isDarkMode } = useTheme();
-
   const locale = useLocale();
 
-  let displayedPrompts = prompts;
-  if (isMdSmaller) {
-    displayedPrompts = prompts?.slice(0, 2);
-  } else if (isLgSmaller) {
-    displayedPrompts = prompts?.slice(0, 4);
-  }
+  const getDisplayedPrompts = () => {
+    if (isMobile) {
+      return prompts.slice(0, 2);
+    } else if (isMdSmaller) {
+      return prompts.slice(0, 2);
+    } else if (isLgSmaller) {
+      return prompts.slice(0, 4);
+    } else {
+      return prompts;
+    }
+  };
 
-  const renderPrompt = (item: ExamplePrompt, i: number) => (
-    <Grid item xs={isMdSmaller ? 12 : 6} key={i}>
-      <Box width={1} height={1}>
+  const displayedPrompts = getDisplayedPrompts();
+
+  const renderPrompt = (item: ExamplePrompt, i: number) => {
+    const padding = isMobile
+      ? "12px 16px"
+      : isMdSmaller
+      ? "8px 10px"
+      : "16px 21px";
+
+    const backgroundColor = isDarkMode ? "info.dark" : "white";
+    const borderColor = isDarkMode ? "info.dark" : "primary.main";
+
+    return (
+      <Grid item xs={isMobile ? 12 : 6} key={i}>
+        <Box width={1} height={1}>
           <Button
             variant="outlined"
             fullWidth
             onClick={() => handleClick(`${item.prompt[locale]}`)}
             sx={{
-              backgroundColor: isDarkMode ? "info.dark" : "white",
+              backgroundColor,
               color: "grey.300",
-              padding: isMdSmaller ? "8px 10px" : "16px 21px",
+              padding,
               height: "100%",
-              borderColor: isDarkMode ? "info.dark" : "primary.main",
+              borderColor,
+              fontSize: "14px",
             }}
           >
             {item.prompt[locale]}
           </Button>
-      </Box>
-    </Grid>
-  );
+        </Box>
+      </Grid>
+    );
+  };
 
   return (
-    <Grid container spacing={2} marginTop={4}>
-      {displayedPrompts &&
-        displayedPrompts.length > 0 &&
-        displayedPrompts.map(renderPrompt)}
+    <Grid container spacing={2} rowSpacing={1} marginTop={4}>
+      {displayedPrompts.map(renderPrompt)}
     </Grid>
   );
 };

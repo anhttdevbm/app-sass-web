@@ -1,49 +1,35 @@
 "use client";
 
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import ChattingRoomLayout from "components/sn-chatting-room/components/Layout";
-import useModalChatting from "components/sn-chatting-room/hooks/useModalChatting";
-import useGetScreenMode from "hooks/useGetScreenMode";
-import DefaultPopupLayout from "layouts/DefaultPopupLayout";
-import { useEffect } from "react";
-import { useChat } from "store/chat/selectors";
+import { useState } from "react";
 import { BoxChat, Sidebar } from "./components";
+import SwitchChatAI, { CHAT_AI_STEP } from "./components/SwitchChatAI";
 
 const AIChat = () => {
-  const { mobileMode } = useGetScreenMode();
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const [currStep, setCurrStep] = useState(CHAT_AI_STEP.IDLE);
 
-  const {
-    conversationInfo: currentConversation,
-    dataTransfer,
-    onSetChatDesktop,
-  } = useChat();
-  const contentModalChatting = useModalChatting();
+  const boxStyles = {
+    width: "100%",
+    height: "100%",
+    ...(isMobile ? {} : { display: "flex", alignItems: "flex-start" }),
+  };
 
-  useEffect(() => {
-    onSetChatDesktop(true);
-  }, [onSetChatDesktop]);
-
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        ...(!mobileMode && { display: "flex", alignItems: "flex-start" }),
-      }}
-    >
-      {!mobileMode ? (
+  const renderContent = () => {
+    if (isMobile) {
+      return <SwitchChatAI currStep={currStep} setCurrStep={setCurrStep} />;
+    } else {
+      return (
         <ChattingRoomLayout>
           <Sidebar />
           <BoxChat />
         </ChattingRoomLayout>
-      ) : (
-        <>
-          <Box></Box>
-        </>
-      )}
-      <DefaultPopupLayout {...contentModalChatting} />
-    </Box>
-  );
+      );
+    }
+  };
+
+  return <Box sx={boxStyles}>{renderContent()}</Box>;
 };
 
 export default AIChat;

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { Text } from "components/shared";
 import { useEffect, useRef, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
@@ -49,7 +49,15 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
   return sortedGroups;
 }
 
-const ChatList = () => {
+interface ChatListProps {
+  popupMode?: boolean;
+  onSwitchToBoxChat?: () => void;
+}
+
+const ChatList: React.FC<ChatListProps> = ({
+  popupMode,
+  onSwitchToBoxChat,
+}) => {
   const {
     chatSessions,
     onGetChatSessions: fetchChatSessions,
@@ -61,6 +69,26 @@ const ChatList = () => {
     chatSession,
     newChatSessionCreated,
   } = useChatSession();
+
+  const mobileMode = useMediaQuery("(max-width: 600px)");
+
+  const calculateHeight = (mobileMode: boolean, popupMode = false) => {
+    if (mobileMode) {
+      return "calc(100vh - 175px)";
+    }
+    if (popupMode) {
+      return "calc(100vh - 310px)";
+    }
+    return "flex: 1";
+  };
+
+  const scrollableSx = {
+    marginTop: "20px",
+    overflowY: "auto",
+    padding: "0px 8px",
+    width: "100%",
+    height: calculateHeight(mobileMode, popupMode),
+  };
 
   const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
     chatSession,
@@ -116,6 +144,15 @@ const ChatList = () => {
     };
   }, [intersectionObserverRef, nextPage, fetchChatSessions]);
 
+  const handleSelected = (id: string) => {
+    setSelectedChatId(id);
+    setTimeout(() => {
+      if (popupMode && onSwitchToBoxChat) {
+        onSwitchToBoxChat();
+      }
+    }, 100);
+  };
+
   return (
     <Box sx={scrollableSx}>
       {Object.entries(chatSessionsGroupedByDate).map(([date, chats], index) => {
@@ -130,7 +167,7 @@ const ChatList = () => {
                   title={chat.chatname}
                   id={chat.id}
                   selectedChat={selectedChatId}
-                  setSelectedChat={() => setSelectedChatId(chat.id)}
+                  setSelectedChat={() => handleSelected(chat.id)}
                 />
               </Box>
             ))}
@@ -152,14 +189,6 @@ const ChatList = () => {
 };
 
 export default ChatList;
-
-const scrollableSx = {
-  marginTop: "20px",
-  overflowY: "auto",
-  padding: "0px 8px",
-  width: "100%",
-  height: "100vh",
-};
 
 const listChatSx = {
   display: "flex",

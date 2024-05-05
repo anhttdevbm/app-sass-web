@@ -21,6 +21,7 @@ export const AIChatLang: AIChatDictionary = {
     loadMore: "Load more",
     uploadFile: "Upload file",
     dragOrSelectFile: "Drag file here or select to upload (.pdf, .docx, .txt)",
+    description: "Get started with prompts below ",
   },
   addDoc: {
     title: "Choose Document",

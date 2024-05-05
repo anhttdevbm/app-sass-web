@@ -5,7 +5,7 @@ export const MessageBox = ({ children, ...props }) => (
     bgcolor={"#EBF5FF"}
     borderRadius={"20px"}
     p={2}
-    marginLeft={"12px"}
+    marginLeft={props.isMobile ? "0" : "10px"}
     flex={1}
     display={"flex"}
     justifyContent={"space-around"}
