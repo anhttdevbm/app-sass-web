@@ -72,6 +72,8 @@ const ChatList: React.FC<ChatListProps> = ({
 
   const mobileMode = useMediaQuery("(max-width: 600px)");
 
+  const scrollableContainerRef = useRef(null);
+
   const calculateHeight = (mobileMode: boolean, popupMode = false) => {
     if (mobileMode) {
       return "calc(100vh - 175px)";
@@ -154,7 +156,7 @@ const ChatList: React.FC<ChatListProps> = ({
   };
 
   return (
-    <Box sx={scrollableSx}>
+    <Box ref={scrollableContainerRef} sx={scrollableSx}>
       {Object.entries(chatSessionsGroupedByDate).map(([date, chats], index) => {
         const chatsByDate = chats as ChatSession[];
         return (
@@ -168,6 +170,7 @@ const ChatList: React.FC<ChatListProps> = ({
                   id={chat.id}
                   selectedChat={selectedChatId}
                   setSelectedChat={() => handleSelected(chat.id)}
+                  scrollRef={scrollableContainerRef}
                 />
               </Box>
             ))}
