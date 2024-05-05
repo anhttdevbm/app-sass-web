@@ -21,10 +21,11 @@ export const AIChatLang: AIChatDictionary = {
     loadMore: "Xem thêm",
     uploadFile: "Tải tài liệu lên",
     dragOrSelectFile: "Kéo hoặc chọn tài liệu để tải lên (.pdf, .docx, .txt)",
+    description: "Bắt đầu với các gợi ý dưới đây",
   },
   addDoc: {
     title: "Chọn tài liệu",
     search: "Nhập tên tài liệu",
     add: "Thêm tài liệu",
-  }
+  },
 };

@@ -22,6 +22,7 @@ interface ChatInputProperties {
   onMessageSubmit: (message: string) => void;
   onFileChange?: (files: File[]) => void;
   wrapperInputStyles?: React.CSSProperties;
+  isMobile?: boolean;
 }
 
 const ChatInput = ({
@@ -31,6 +32,7 @@ const ChatInput = ({
   onMessageSubmit,
   onFileChange,
   wrapperInputStyles,
+  isMobile,
 }: ChatInputProperties) => {
   const [message, setMessage] = useState(initialMessage);
   const [isFocused, setIsFocused] = useState(false);
@@ -68,7 +70,12 @@ const ChatInput = ({
         ...wrapperInputStyles,
       }}
     >
-      <Box sx={containerStyles}>
+      <Box
+        sx={{
+          ...containerStyles,
+          padding: isMobile ? "12px" : "15px 20px",
+        }}
+      >
         {files && files.length > 0 && (
           <Box sx={fileContainerStyles}>
             <IconButton sx={uploadFileStyles} onClick={handleImportFile}>
@@ -193,7 +200,6 @@ const containerStyles = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: "15px 20px",
   borderRadius: "4px",
   marginBottom: "10px",
   flexDirection: "column",

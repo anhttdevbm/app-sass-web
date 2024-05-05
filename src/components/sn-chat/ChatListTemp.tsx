@@ -1,30 +1,35 @@
 "use client";
 
+import { Grow, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
+import { Button } from "components/shared";
+import SwitchChatAI, {
+  CHAT_AI_STEP,
+} from "components/sn-ai-chat/components/SwitchChatAI";
 import SwitchChat from "components/sn-chat/SwitchChat";
+import { Permission } from "constant/enums";
+import { NS_COMMON } from "constant/index";
+import useTheme from "hooks/useTheme";
 import ChatMessageIcon from "icons/ChatMessageIcon";
 import CloseIcon from "icons/CloseIcon";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useChat } from "store/chat/selectors";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
-import { Grow, Typography } from "@mui/material";
-import { Button } from "components/shared";
 import { useTranslations } from "next-intl";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import { useMemo, useRef, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { Permission } from "constant/enums";
-import useTheme from "hooks/useTheme";
+import { useChat } from "store/chat/selectors";
+import HeaderChatListTemp from "./components/HeaderChatListTemp";
 
 const ChatListTemp = () => {
   const { user } = useAuth();
-  const { onClearConversation, onReset, onSetChatDesktop } =
-    useChat();
+  const { onClearConversation, onReset, onSetChatDesktop } = useChat();
   const popperRef = useRef(false);
   const [open, setOpen] = useState(false);
   const [show, setShow] = useState(false);
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar } = useSnackbar();
   const { isDarkMode } = useTheme();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [currentStepChatAI, setCurrentStepChatAI] = useState(CHAT_AI_STEP.IDLE);
 
   const init = {
     type: "",
@@ -106,6 +111,12 @@ const ChatListTemp = () => {
     setOpen(false);
   };
 
+  const handleBackToSidebar = () => {
+    if (selectedTab === 1) {
+      setCurrentStepChatAI(CHAT_AI_STEP.SIDEBAR);
+    }
+  };
+
   window.addEventListener("resize", () => {
     browserWidth = window.innerWidth;
     if (browserWidth < 768) {
@@ -170,7 +181,7 @@ const ChatListTemp = () => {
               sx={{
                 position: "absolute",
                 width: "348px",
-                height: "calc(100% - 8rem)",
+                height: "calc(100% - 4rem)",
                 maxHeight: "600px",
                 overflow: "hidden",
                 bottom: "2rem",
@@ -187,7 +198,23 @@ const ChatListTemp = () => {
                   backgroundColor: isDarkMode ? "#303130" : "white",
                 }}
               >
-                {open && <SwitchChat onCloseChatBox={handleCloseChatBox} />}
+                <HeaderChatListTemp
+                  onBack={handleBackToSidebar}
+                  onClose={handleCloseChatBox}
+                  value={selectedTab}
+                  handleChange={(event, newValue) => {
+                    setSelectedTab(newValue);
+                  }}
+                />
+                {open && selectedTab === 0 && (
+                  <SwitchChat onCloseChatBox={handleCloseChatBox} />
+                )}
+                {open && selectedTab === 1 && (
+                  <SwitchChatAI
+                    currStep={currentStepChatAI}
+                    setCurrStep={setCurrentStepChatAI}
+                  />
+                )}
               </Box>
             </Box>
           </Grow>

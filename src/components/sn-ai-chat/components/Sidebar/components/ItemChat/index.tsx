@@ -94,7 +94,6 @@ const ItemChat = ({
     <Box
       sx={{
         ...itemSx,
-        // backgroundColor: isDarkMode ? INFOR_DARK : PRIMARY_LIGHT,
         borderBottom: `1px solid ${isDarkMode ? WHITE : BORDER_COLOR}`,
         "&:hover": {
           backgroundColor: isDarkMode ? INFOR_DARK : PRIMARY_LIGHT,

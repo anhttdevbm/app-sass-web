@@ -49,7 +49,15 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
   return sortedGroups;
 }
 
-const ChatList = () => {
+interface ChatListProps {
+  mobileMode?: boolean;
+  onSwitchToBoxChat?: () => void;
+}
+
+const ChatList: React.FC<ChatListProps> = ({
+  mobileMode,
+  onSwitchToBoxChat,
+}) => {
   const {
     chatSessions,
     onGetChatSessions: fetchChatSessions,
@@ -61,6 +69,14 @@ const ChatList = () => {
     chatSession,
     newChatSessionCreated,
   } = useChatSession();
+
+  const scrollableSx = {
+    marginTop: "20px",
+    overflowY: "auto",
+    padding: "0px 8px",
+    width: "100%",
+    ...(mobileMode ? { height: "calc(100vh - 310px)" } : { flex: 1 }),
+  };
 
   const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
     chatSession,
@@ -116,6 +132,13 @@ const ChatList = () => {
     };
   }, [intersectionObserverRef, nextPage, fetchChatSessions]);
 
+  const handleSelected = (id: string) => {
+    setSelectedChatId(id);
+    if (onSwitchToBoxChat) {
+      onSwitchToBoxChat();
+    }
+  };
+
   return (
     <Box sx={scrollableSx}>
       {Object.entries(chatSessionsGroupedByDate).map(([date, chats], index) => {
@@ -130,7 +153,7 @@ const ChatList = () => {
                   title={chat.chatname}
                   id={chat.id}
                   selectedChat={selectedChatId}
-                  setSelectedChat={() => setSelectedChatId(chat.id)}
+                  setSelectedChat={() => handleSelected(chat.id)}
                 />
               </Box>
             ))}
@@ -152,14 +175,6 @@ const ChatList = () => {
 };
 
 export default ChatList;
-
-const scrollableSx = {
-  marginTop: "20px",
-  overflowY: "auto",
-  padding: "0px 8px",
-  width: "100%",
-  height: "100vh",
-};
 
 const listChatSx = {
   display: "flex",

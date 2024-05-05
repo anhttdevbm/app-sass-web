@@ -19,6 +19,7 @@ export type AIChatDictionary = {
     loadMore: string;
     uploadFile: string;
     dragOrSelectFile: string;
+    description: string;
   };
   addDoc: {
     title: string;
