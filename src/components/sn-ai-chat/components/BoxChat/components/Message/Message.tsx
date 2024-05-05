@@ -13,6 +13,7 @@ import { OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
+import { backgroundImage } from "html2canvas/dist/types/css/property-descriptors/background-image";
 
 interface MessageProps {
   message: Partial<OpenAIChat>;
@@ -77,7 +78,7 @@ export const Message: React.FC<MessageProps> = ({
           alt={user?.name || "User"}
           src={user?.avatar?.link}
           variant="rounded"
-          sx={{ borderRadius: "10px" }}
+          sx={{ borderRadius: "10px", marginBottom: isMobile ? "8px" : "0px" }}
         />
         <MessageBox
           bgcolor={isDarkMode ? "info.main" : "#EBF5FF"}
@@ -102,7 +103,7 @@ export const Message: React.FC<MessageProps> = ({
           width={"100%"}
           flexDirection={isMobile ? "column" : "row"}
         >
-          <Box sx={avatarSx}>
+          <Box sx={{ ...avatarSx, marginBottom: isMobile ? "8px" : "0px" }}>
             <Image alt="AI assistant" src={AIIcon} width={28} height={28} />
           </Box>
           <MessageBox
@@ -132,7 +133,7 @@ export const Message: React.FC<MessageProps> = ({
         <Box
           display={"flex"}
           flexDirection={isMobile ? "column" : "row"}
-          alignItems={isMobile ? "center" : "flex-end"}
+          alignItems={isMobile ? "flex-end" : "center"}
           justifyContent={"flex-end"}
           width={"100%"}
         >

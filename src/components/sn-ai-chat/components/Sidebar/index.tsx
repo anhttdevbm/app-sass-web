@@ -72,7 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {t("sideBar.newChat")}
       </NewButton>
-      <ChatList mobileMode={mobileMode} onSwitchToBoxChat={onSwitchToBoxChat} />
+      <ChatList popupMode={mobileMode} onSwitchToBoxChat={onSwitchToBoxChat} />
       <NewButton
         startIcon={<TrashFillIcon />}
         sx={clearAllBtnSx}

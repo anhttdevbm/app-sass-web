@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useLocale, useTranslations } from "next-intl";
@@ -15,12 +15,17 @@ import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
 import { AxiosError } from "axios";
 import { useMediaQuery } from "@mui/material";
+import BackTabIcon from "icons/BackTabIcon";
 
 interface BoxChatProps {
   mobileMode?: boolean;
+  onBackToSidebar?: () => void;
 }
 
-export const BoxChat: React.FC<BoxChatProps> = ({ mobileMode }) => {
+export const BoxChat: React.FC<BoxChatProps> = ({
+  mobileMode,
+  onBackToSidebar,
+}) => {
   const t = useTranslations(NS_AI_CHAT);
 
   const {
@@ -70,8 +75,11 @@ export const BoxChat: React.FC<BoxChatProps> = ({ mobileMode }) => {
   const isMobile = useMediaQuery("(max-width:600px)") || mobileMode;
 
   const boxChatContainerSx = {
+    position: "relative",
     width: "100%",
-    height: isMobile
+    height: useMediaQuery("(max-width:600px)")
+      ? `calc(100vh - ${HEADER_HEIGHT}px)`
+      : mobileMode
       ? "calc(100vh - 190px)"
       : `calc(100vh - ${HEADER_HEIGHT}px)`,
     display: "flex",
@@ -226,6 +234,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({ mobileMode }) => {
   }, []);
 
   useEffect(() => {
+    console.log("chatSession", chatSession);
     if (chatSession) {
       onGetOpenAIChat({ id: chatSession });
     } else {
@@ -248,6 +257,19 @@ export const BoxChat: React.FC<BoxChatProps> = ({ mobileMode }) => {
 
   return (
     <Box sx={boxChatContainerSx}>
+      {useMediaQuery("(max-width:600px)") && (
+        <IconButton
+          onClick={onBackToSidebar}
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            margin: "10px",
+          }}
+        >
+          <BackTabIcon />
+        </IconButton>
+      )}
       {chatData.length > 0 ? (
         <MessageLayout>
           <MessageList

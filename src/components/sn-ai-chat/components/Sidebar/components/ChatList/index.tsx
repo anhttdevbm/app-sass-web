@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { Text } from "components/shared";
 import { useEffect, useRef, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
@@ -50,12 +50,12 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
 }
 
 interface ChatListProps {
-  mobileMode?: boolean;
+  popupMode?: boolean;
   onSwitchToBoxChat?: () => void;
 }
 
 const ChatList: React.FC<ChatListProps> = ({
-  mobileMode,
+  popupMode,
   onSwitchToBoxChat,
 }) => {
   const {
@@ -70,12 +70,24 @@ const ChatList: React.FC<ChatListProps> = ({
     newChatSessionCreated,
   } = useChatSession();
 
+  const mobileMode = useMediaQuery("(max-width: 600px)");
+
+  const calculateHeight = (mobileMode: boolean, popupMode = false) => {
+    if (mobileMode) {
+      return "calc(100vh - 175px)";
+    }
+    if (popupMode) {
+      return "calc(100vh - 310px)";
+    }
+    return "flex: 1";
+  };
+
   const scrollableSx = {
     marginTop: "20px",
     overflowY: "auto",
     padding: "0px 8px",
     width: "100%",
-    ...(mobileMode ? { height: "calc(100vh - 310px)" } : { flex: 1 }),
+    height: calculateHeight(mobileMode, popupMode),
   };
 
   const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
@@ -134,9 +146,11 @@ const ChatList: React.FC<ChatListProps> = ({
 
   const handleSelected = (id: string) => {
     setSelectedChatId(id);
-    if (onSwitchToBoxChat) {
-      onSwitchToBoxChat();
-    }
+    setTimeout(() => {
+      if (popupMode && onSwitchToBoxChat) {
+        onSwitchToBoxChat();
+      }
+    }, 100);
   };
 
   return (
