@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 import { ChatSession } from "store/aiChat/type";
 import ItemChat from "../ItemChat";
+import { HEADER_HEIGHT } from "layouts/Header";
 
 const TODAY = "Today";
 const YESTERDAY = "Yesterday";
@@ -70,26 +71,14 @@ const ChatList: React.FC<ChatListProps> = ({
     newChatSessionCreated,
   } = useChatSession();
 
-  const mobileMode = useMediaQuery("(max-width: 600px)");
-
   const scrollableContainerRef = useRef(null);
-
-  const calculateHeight = (mobileMode: boolean, popupMode = false) => {
-    if (mobileMode) {
-      return "calc(100vh - 175px)";
-    }
-    if (popupMode) {
-      return "calc(100vh - 310px)";
-    }
-    return "flex: 1";
-  };
 
   const scrollableSx = {
     marginTop: "20px",
     overflowY: "auto",
     padding: "0px 8px",
     width: "100%",
-    height: calculateHeight(mobileMode, popupMode),
+    flex: 1,
   };
 
   const [selectedChatId, setSelectedChatId] = useState<string | undefined>(

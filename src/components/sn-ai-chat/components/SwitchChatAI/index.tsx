@@ -33,12 +33,10 @@ const SwitchChatAI = ({ currStep, setCurrStep }: SwitchChatAIProps) => {
   const renderContent = useCallback(() => {
     switch (currStep) {
       case CHAT_AI_STEP.SIDEBAR:
-        return (
-          <Sidebar mobileMode={true} onSwitchToBoxChat={switchToBoxChat} />
-        );
+        return <Sidebar popupMode={true} onSwitchToBoxChat={switchToBoxChat} />;
       case CHAT_AI_STEP.BOX_CHAT:
         return (
-          <BoxChat mobileMode={true} onBackToSidebar={handleBackToSidebar} />
+          <BoxChat popupMode={true} onBackToSidebar={handleBackToSidebar} />
         );
       default:
         return null;

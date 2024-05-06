@@ -18,12 +18,12 @@ import { useMediaQuery } from "@mui/material";
 import BackTabIcon from "icons/BackTabIcon";
 
 interface BoxChatProps {
-  mobileMode?: boolean;
+  popupMode?: boolean;
   onBackToSidebar?: () => void;
 }
 
 export const BoxChat: React.FC<BoxChatProps> = ({
-  mobileMode,
+  popupMode,
   onBackToSidebar,
 }) => {
   const t = useTranslations(NS_AI_CHAT);
@@ -72,15 +72,15 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   const [showToneError, setShowToneError] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
-  const isMobile = useMediaQuery("(max-width:600px)") || mobileMode;
+  const isMobile = useMediaQuery("(max-width:600px)") || popupMode;
 
   const boxChatContainerSx = {
     position: "relative",
     width: "100%",
     height: useMediaQuery("(max-width:600px)")
       ? `calc(100vh - ${HEADER_HEIGHT}px)`
-      : mobileMode
-      ? "calc(100vh - 190px)"
+      : popupMode
+      ? "89.8%"
       : `calc(100vh - ${HEADER_HEIGHT}px)`,
     display: "flex",
     flexDirection: "column",
@@ -234,7 +234,6 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log("chatSession", chatSession);
     if (chatSession) {
       onGetOpenAIChat({ id: chatSession });
     } else {
@@ -283,7 +282,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
       ) : (
         <RenderEmptyChat
           t={t}
-          mobileMode={mobileMode}
+          mobileMode={popupMode || isMobile}
           prompts={examplePrompts}
           handleClick={setPrompt}
         />
