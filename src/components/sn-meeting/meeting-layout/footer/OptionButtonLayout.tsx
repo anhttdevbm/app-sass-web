@@ -10,9 +10,9 @@ import {
   VideocamOutlined,
 } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, IconButton, Stack } from "@mui/material";
-import { sxBtnCircleActive, sxDangerBtn } from "../style";
+import { sxBtnCircleActive, sxDangerBtn } from "../../style";
 import React, { useState } from "react";
-import OptionPopup from "./footer/OptionPopup";
+import OptionPopup from "./OptionPopup";
 import { random } from "lodash";
 
 interface OptionButtonLayoutProps {
