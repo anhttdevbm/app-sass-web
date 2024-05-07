@@ -12,8 +12,6 @@ import { useMemo } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 import { useAuth } from "store/app/selectors";
 import ChatList from "./components/ChatList";
-import useBreakpoint from "hooks/useBreakpoint";
-import { ppid } from "process";
 
 interface SidebarProps {
   popupMode?: boolean;
