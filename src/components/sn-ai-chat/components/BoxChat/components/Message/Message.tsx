@@ -83,6 +83,7 @@ export const Message: React.FC<MessageProps> = ({
         <MessageBox
           bgcolor={isDarkMode ? "info.main" : "#EBF5FF"}
           isMobile={isMobile}
+          width={"100%"}
         >
           <Text variant="body1" flex={1}>
             {user_prompt}

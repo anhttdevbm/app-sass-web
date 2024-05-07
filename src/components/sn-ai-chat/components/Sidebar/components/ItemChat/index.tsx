@@ -7,7 +7,7 @@ import useTheme from "hooks/useTheme";
 import EditUnderlineIconWithGradientIcon from "icons/EditUnderlineWithGradientIcon";
 import TrashFillIcon from "icons/TrashFillIcon";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 
 const PRIMARY_MAIN = "primary.main";
@@ -26,6 +26,7 @@ interface ItemChatProps {
   id: string;
   selectedChat?: string;
   setSelectedChat: () => void;
+  scrollRef?: React.RefObject<HTMLDivElement>;
 }
 
 const EditChatForm = ({ chatname, handleTitleChange, handleTitleSubmit }) => (
@@ -50,6 +51,7 @@ const ItemChat = ({
   id,
   setSelectedChat,
   selectedChat,
+  scrollRef,
 }: ItemChatProps) => {
   const [menuAnchorElement, setMenuAnchorElement] =
     useState<null | HTMLElement>(null);
@@ -89,6 +91,20 @@ const ItemChat = ({
     onDeleteChatSession(id);
     closeMenu();
   };
+
+  useEffect(() => {
+    const scrollableContainer = scrollRef?.current;
+
+    if (scrollableContainer) {
+      scrollableContainer.addEventListener("scroll", closeMenu);
+    }
+
+    return () => {
+      if (scrollableContainer) {
+        scrollableContainer.removeEventListener("scroll", closeMenu);
+      }
+    };
+  }, []);
 
   return (
     <Box

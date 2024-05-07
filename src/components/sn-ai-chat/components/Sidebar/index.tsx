@@ -1,6 +1,6 @@
 "use client";
 
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { NewButton } from "components/shared";
 import { NS_AI_CHAT } from "constant/index";
 import useTheme from "hooks/useTheme";
@@ -12,14 +12,16 @@ import { useMemo } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 import { useAuth } from "store/app/selectors";
 import ChatList from "./components/ChatList";
+import useBreakpoint from "hooks/useBreakpoint";
+import { ppid } from "process";
 
 interface SidebarProps {
-  mobileMode?: boolean;
+  popupMode?: boolean;
   onSwitchToBoxChat?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
-  mobileMode,
+  popupMode,
   onSwitchToBoxChat,
 }) => {
   const t = useTranslations(NS_AI_CHAT);
@@ -29,13 +31,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const { onDeleteAllChatSessions, onNewChat } = useChatSession();
 
+  const mobileMode = useMediaQuery("(max-width:600px)");
+
   const styles = useMemo(
     () => ({
       display: "flex",
       flexDirection: "column",
       bgcolor: "background.paper",
       ...(mobileMode
-        ? { width: "100%", height: "100%" }
+        ? { width: "100%", height: `calc(100vh - ${HEADER_HEIGHT}px)` }
+        : popupMode
+        ? {
+            width: "100%",
+            height: "88.7%",
+          }
         : {
             minWidth: "300px",
             maxWidth: "300px",
@@ -72,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {t("sideBar.newChat")}
       </NewButton>
-      <ChatList popupMode={mobileMode} onSwitchToBoxChat={onSwitchToBoxChat} />
+      <ChatList popupMode={popupMode} onSwitchToBoxChat={onSwitchToBoxChat} />
       <NewButton
         startIcon={<TrashFillIcon />}
         sx={clearAllBtnSx}

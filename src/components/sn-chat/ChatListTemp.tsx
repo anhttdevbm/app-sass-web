@@ -28,7 +28,7 @@ const ChatListTemp = () => {
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar } = useSnackbar();
   const { isDarkMode } = useTheme();
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(1);
   const [currentStepChatAI, setCurrentStepChatAI] = useState(CHAT_AI_STEP.IDLE);
 
   const init = {
