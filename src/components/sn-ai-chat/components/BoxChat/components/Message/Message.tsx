@@ -35,7 +35,9 @@ export const Message: React.FC<MessageProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedMessage, setEditedMessage] = useState<string | undefined>(user_prompt);
+  const [editedMessage, setEditedMessage] = useState<string | undefined>(
+    user_prompt,
+  );
   const { onChatWithAI } = useChatWithAI();
 
   const isMobile = useMediaQuery("(max-width: 600px)") || mobileMode;
@@ -43,6 +45,8 @@ export const Message: React.FC<MessageProps> = ({
   useEffect(() => {
     if (assistant_content) {
       setIsLoading(false);
+    } else {
+      setIsLoading(true);
     }
   }, [assistant_content]);
 
@@ -84,6 +88,7 @@ export const Message: React.FC<MessageProps> = ({
       persona: message.persona as string,
       chat_session: message.chat_session,
     });
+    setEditedMessage("");
   };
 
   const handleKeyDown = (event) => {
