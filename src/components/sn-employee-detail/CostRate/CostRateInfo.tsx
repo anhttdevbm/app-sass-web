@@ -235,14 +235,14 @@ const CostRateInfo = () => {
           md: 6,
         }}
       >
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={4} container>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Type"
             content={_.capitalize(selectCurrentCostRate?.type) ?? "N/A"}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end", md: "center" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Cost Per Month"
@@ -253,7 +253,7 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={4} container justifyContent={{ md: "end" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="At current cost rate"
@@ -264,7 +264,7 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end", md: "initial" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Capacity"
@@ -275,7 +275,7 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={4} container justifyContent={{ md: "center" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Current Hourly Cost"
@@ -286,7 +286,7 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title="Overhead"
@@ -387,6 +387,9 @@ const CurrentRateBlock = ({
       maxWidth={{
         xs: "initial",
         sm: 266,
+      }}
+      sx={{
+        width: "100%",
       }}
     >
       {icon}
