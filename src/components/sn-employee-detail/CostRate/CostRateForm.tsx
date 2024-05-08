@@ -521,12 +521,14 @@ const NoteInput = memo(function NoteInput({
           border: "1px solid transparent",
           background: `linear-gradient(#fff, #fff) padding-box,
                        linear-gradient(90deg, #2AF598 0%, #009EFD 100%)`,
-          px: 4,
-          py: 2,
         }}
       >
         <MuiInputLabel
+          htmlFor={`cost-rate-${name}`}
           sx={{
+            px: 4,
+            pt: 2,
+            pb: 1,
             position: "static",
             maxWidth: "initial",
             color: "#333333",
@@ -538,13 +540,14 @@ const NoteInput = memo(function NoteInput({
               color: "#333333",
             },
             "&+.MuiInputBase-root": {
-              mt: 1,
+              mt: 0,
             },
           }}
         >
           {title}
         </MuiInputLabel>
         <MuiInput
+          id={`cost-rate-${name}`}
           fullWidth={fullWidth}
           name={name}
           onChange={onChange}
@@ -552,6 +555,9 @@ const NoteInput = memo(function NoteInput({
           value={value}
           error={error}
           sx={{
+            px: 4,
+            pb: 2,
+            mt: 0,
             "&:before": {
               display: "none",
             },
