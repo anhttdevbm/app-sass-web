@@ -1,20 +1,20 @@
 import Box, { BoxProps } from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Avatar from "components/Avatar";
-import { NS_CHAT_BOX } from "constant/index";
+import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { useChat } from "store/chat/selectors";
-import { MessageSearchInfo, RoomType } from "store/chat/type";
+import { MessageInfoV2, MessageSearchInfo, RoomType } from "store/chat/type";
 import { renderTimeDiff } from "utils/index";
 
 interface MesageListSearchProps {
   text: string;
   type: RoomType;
   messageItemProps?: BoxProps;
-  onSelectMessage: (message: MessageSearchInfo) => void;
+  onSelectMessage: (message: MessageInfoV2) => void;
 }
 
 const MessageItemRender = ({
@@ -22,23 +22,30 @@ const MessageItemRender = ({
   message,
 }: {
   text: string;
-  message: MessageSearchInfo;
+  message: MessageInfoV2;
 }) => {
   const { user } = useAuth();
+  const { dataTransfer } = useChat();
+  const userInfo = dataTransfer?.members?.find(
+    (mem) => mem?.id === message?.sender,
+  );
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const [avatarClone, setAvatarClone] = useState<string | undefined>(
-    message.avatar,
+    userInfo?.avatar,
   );
   const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   const isCurrentAcc = useMemo(
-    () => user?.["id_rocket"] === message.userId,
+    () => user?.["id_rocket"] === message?.sender,
     [message, user],
   );
 
-  const strippedHtml = message.matchedText.replace(/<[^>]+>/g, "");
+  const strippedHtml = message?.content?.replace(/<[^>]+>/g, "");
   const messageMatched = useMemo(
-    () => (isCurrentAcc ? `<p>${commonChatBox("chatBox.you")} ${strippedHtml}</p>` : strippedHtml),
+    () =>
+      isCurrentAcc
+        ? `<p>${commonChatBox("chatBox.you")} ${strippedHtml}</p>`
+        : strippedHtml,
     [isCurrentAcc, strippedHtml],
   );
 
@@ -72,7 +79,7 @@ const MessageItemRender = ({
       >
         <>
           <Typography variant="inherit" fontWeight="bold">
-            {message.fullname}
+            {userInfo?.fullname}
           </Typography>
           <Typography
             ref={lastMessageRef}
@@ -123,8 +130,8 @@ const MessageListSearch = ({
 }: MesageListSearchProps) => {
   const { sx, ...props } = messageItemProps || {};
   const { listSearchMessage, statusListSearchMessage } = useChat();
-
-  const handleShowConversation = (message: MessageSearchInfo) => {
+  const commonT = useTranslations(NS_COMMON);
+  const handleShowConversation = (message: MessageInfoV2) => {
     onSelectMessage(message);
   };
 
@@ -135,8 +142,7 @@ const MessageListSearch = ({
         <Typography textAlign="center" mt={3}>
           Loading...
         </Typography>
-      ) : (
-        listSearchMessage.length > 0 &&
+      ) : listSearchMessage.length > 0 ? (
         listSearchMessage.map((message, index) => {
           return (
             <Box
@@ -163,11 +169,13 @@ const MessageListSearch = ({
                 ml="auto"
                 whiteSpace="nowrap"
               >
-                {renderTimeDiff(message?.ts)}
+                {renderTimeDiff(message?.created_at)}
               </Typography>
             </Box>
           );
         })
+      ) : (
+        <Typography textAlign="center">{commonT("noData")}</Typography>
       )}
     </>
   );

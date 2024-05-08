@@ -19,9 +19,10 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
     t,
     type,
     usersCount,
-    unreadCount,
+    members,
     status: statusPartner,
     peer_detail,
+    unseen_message_count,
   } = chatInfo || {};
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
@@ -29,7 +30,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const [avatarClone, setAvatarClone] = useState<string | undefined>(
     avatar?.link,
   );
-  const isUnReadMessage = useMemo(() => unreadCount > 0, [unreadCount]);
+  const isUnReadMessage = useMemo(() => unseen_message_count > 0, [unseen_message_count]);
   const isMessageNotConnect = useMemo(() => lastMessage == null, [lastMessage]);
   const isGroup = useMemo(() => type === CHAT_ROOM_TYPE.GROUP, [type]);
   const isCurrentAccByLastMessage = useMemo(
@@ -89,7 +90,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
               borderRadius: "5px",
             }}
           />
-          {usersCount - 3 > 0 ? (
+          {members?.length - 3 > 0 ? (
             <Box
               sx={{
                 textAlign: "center",
@@ -98,7 +99,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
                 color: "white",
               }}
             >
-              <Typography variant="caption">+ {usersCount - 3}</Typography>
+              <Typography variant="caption">+ {members?.length - 3}</Typography>
             </Box>
           ) : null}
         </ImageList>
@@ -185,7 +186,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   }, [isCurrentAccByLastMessage, isUnReadMessage, name, isDarkMode]);
 
   return (
-    <>
+    <Box sx={{ display: "flex", gap: "1rem", alignItems: "center",}}>
       <Box
         display={isUnReadMessage ? "block" : "none"}
         sx={{
@@ -205,14 +206,14 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           "&::before": {
             content: `''`,
             position: "absolute",
-            right: "-1px",
-            bottom: "-1px",
+            right: "-5px",
+            bottom: "-5px",
             width: "16px",
             height: "16px",
             border: "2px solid #ffffff",
             backgroundColor: "#55C000",
             borderRadius: "50%",
-            visibility: statusPartner === "online" ? "visible" : "hidden",
+            visibility: statusPartner === "active" ? "visible" : "hidden",
           },
         }}
       >
@@ -228,7 +229,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
       >
         {switchChat}
       </Box>
-    </>
+    </Box>
   );
 };
 

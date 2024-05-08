@@ -15,6 +15,7 @@ import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import useTheme from "hooks/useTheme";
+import { useWSChatConnect } from 'store/chat/ws';
 
 const ChatList = ({ onCloseChatBox }) => {
   const { user } = useAuth();
@@ -28,7 +29,7 @@ const ChatList = ({ onCloseChatBox }) => {
     onSetStep,
   } = useChat();
 
-  useWSChat();
+  useWSChatConnect();
   const { searchConversation, loadMoreConversation, isGroup } = useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
@@ -93,6 +94,13 @@ const ChatList = ({ onCloseChatBox }) => {
         event: CHAT_EVENT_TYPE.DETAIL_ROOM,
         roomId: chatInfo.id,
       });
+    }
+
+    if (chatInfo?.unseen_message_count > 0) {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
+        messageId: chatInfo?.lastmsg
+      })
     }
   };
 

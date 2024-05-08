@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "./selectors";
 import {
@@ -45,6 +45,7 @@ const sortASCArray = (list: any[], sortBy: string) => {
 export const useWSChat = () => {
   const { user } = useAuth();
   const {
+    wsClient: ws,
     roomId,
     convention,
     onSetConvention,
@@ -68,13 +69,11 @@ export const useWSChat = () => {
     onSetListConvention,
     members,
     onSetMembers,
+    onSetMessageSearch,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar } = useSnackbar();
-
-  const [ws, setWs] = useState<WebSocket | null>(null);
-  const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
   const resetData = () => {
     onSetStateSearchMessage(null);
@@ -178,7 +177,7 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.DETAIL_ROOM:
               let roomDetail = resp?.data;
-              if (roomId === roomDetail?.id) return;
+              // if (roomId === roomDetail?.id) return;
               if (roomDetail?.type === CHAT_ROOM_TYPE.PERSONAL) {
                 roomDetail = {
                   ...roomDetail,
@@ -383,6 +382,10 @@ export const useWSChat = () => {
               onSetMessages([...messages, resp?.data?.message]);
               return;
 
+            case CHAT_EVENT_TYPE.MESSAGE_SEARCH:
+              onSetMessageSearch(resp.data?.result || []);
+              return;
+
             case CHAT_EVENT_TYPE.DETAIL_MEMBER:
               onSetMembers(resp?.data);
               return;
@@ -400,38 +403,6 @@ export const useWSChat = () => {
     },
     [sendMessage],
   );
-
-  const connectSocket = () => {
-    const wsClient = new WebSocket(
-      `${process.env.NEXT_APP_WS_URL}/${user?.company}?token=${aT}` || "",
-    );
-
-    wsClient.onopen = () => {
-      setWs(wsClient);
-      wsClient.send(
-        JSON.stringify({
-          event: CHAT_EVENT_TYPE.ROOM_LIST,
-          page: PAGE_INITIAL,
-        }),
-      );
-    };
-
-    wsClient.onerror = () => wsClient.close();
-
-    wsClient.onclose = () => {
-      setTimeout(() => {
-        connectSocket();
-      }, 3000);
-    };
-  };
-
-  useEffect(() => {
-    connectSocket();
-
-    return () => {
-      if (ws) ws.close();
-    };
-  }, []);
 
   useEffect(() => {
     if (ws) {

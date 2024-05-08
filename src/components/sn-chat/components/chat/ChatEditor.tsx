@@ -146,7 +146,6 @@ const ChatEditor = (props: EditorProps) => {
 
   const onChangeMedia = useCallback(
     (event: ChangeEvent<HTMLInputElement>, type: string[]) => {
-      console.info(event.target.files);
       if (!event.target.files?.length) return;
       let newMedias = Array.from(event.target.files);
 

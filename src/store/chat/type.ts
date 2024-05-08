@@ -43,6 +43,8 @@ export interface IChatInfo {
   msg_count: number;
   lastmsg_at: string;
   admins: string[];
+  unseen_message_count: number;
+  lastmsg: string;
 }
 
 export interface IMembersGroup {
@@ -217,6 +219,7 @@ interface PagingV2 {
 }
 
 export interface ChatState {
+  wsClient: WebSocket | null;
   convention: IChatItemInfo[];
   mediaListConversation: MediaPreviewItem[];
   conversationStatus: DataStatus;
@@ -253,7 +256,7 @@ export interface ChatState {
   chatFiles: IChatFile[];
   chatFilesStatus: DataStatus;
   //ListSearchConversation
-  listSearchMessage: MessageSearchInfo[];
+  listSearchMessage: MessageInfoV2[];
   statusListSearchMessage: DataStatus;
   //media list
   mediaList: MediaType[];
@@ -263,7 +266,7 @@ export interface ChatState {
     filePreview?: File | File[] | null;
     status: DataStatus;
   };
-  stateSearchMessage: MessageSearchInfo | null;
+  stateSearchMessage: MessageInfoV2 | null;
   unReadMessage: UnReadMessageInfo | null;
   //UnReadMessage
   statusUnReadMessage: DataStatus;
@@ -549,6 +552,7 @@ export const CHAT_EVENT_TYPE = {
   MESSAGE_SEND_TEXT: "message.text.send",
   MESSAGE_SEND_MEDIA: "message.media.send",
   MESSAGE_SEND_FILE: "message.file.send",
+  MESSAGE_SEEN: "message.seen",
   MESSAGE_FORWARD: "message.forward",
   MESSAGE_SEARCH: "message.search",
   MESSAGE_LOCATION: "message.location",

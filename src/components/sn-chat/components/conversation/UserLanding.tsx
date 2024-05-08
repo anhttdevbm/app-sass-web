@@ -7,7 +7,12 @@ import ProfileCircleIcon from "icons/ProfileCircleIcon";
 import MediaFileIcon from "icons/MediaFileIcon";
 import LinkIcon from "icons/LinkIcon";
 import FileBasicIcon from "icons/FileBasicIcon";
-import { MessageSearchInfo, STEP_INFO } from "store/chat/type";
+import {
+  CHAT_EVENT_TYPE,
+  MessageInfoV2,
+  MessageSearchInfo,
+  STEP_INFO,
+} from "store/chat/type";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MessageListSearch from "../messages/MessageListSearch";
 import { useSnackbar } from "store/app/selectors";
@@ -17,7 +22,7 @@ import UserInfo from "./UserInfo";
 import GroupMediaProfile from "./GroupMediaProfile";
 import ItemProfile from "../common/ItemProfile";
 import useTheme from "hooks/useTheme";
-import { useChatHelpers } from "store/chat/helpers";
+import { useChatHelpers, useWSChat } from "store/chat/helpers";
 
 interface UserLandingProps {
   displayUserInfo: boolean;
@@ -25,8 +30,13 @@ interface UserLandingProps {
 }
 
 const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
-  const { conversationInfo, onSetStateSearchMessage, onSearchChatText } =
-    useChat();
+  const {
+    roomId,
+    conversationInfo,
+    onSetStateSearchMessage,
+    onSearchChatText,
+  } = useChat();
+  const { sendMessage } = useWSChat();
   const { isDarkMode } = useTheme();
   const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
     useChatHelpers();
@@ -49,7 +59,12 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   const handleSearchChatText = useCallback(async () => {
     try {
       if (text && isSearch) {
-        await onSearchChatText({ text: stateSearch.text, type: "d" });
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEARCH,
+          roomId: roomId,
+          content: text,
+          page: 1,
+        });
       }
     } catch (error) {
       onAddSnackbar(
@@ -65,7 +80,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   }, [handleSearchChatText]);
 
   const handleSelectMessage = useCallback(
-    (message: MessageSearchInfo) => {
+    (message: MessageInfoV2) => {
       onSetStateSearchMessage(message);
       setStateSearch({ isSearch: false, text: "" });
       onPrevious();
