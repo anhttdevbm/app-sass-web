@@ -59,7 +59,7 @@ const CostRateInfo = () => {
     async (id: string) => {
       try {
         await handleDeleteCostRate(id);
-        onAddSnackbar(costRateT("empty.notification.updateSuccess"), "success");
+        onAddSnackbar(costRateT("notification.deleteSuccess"), "success");
       } catch (error) {
         onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
       }
@@ -195,7 +195,7 @@ const CostRateInfo = () => {
         variant="h3"
         color="grey.800"
       >
-        Current Cost Rate
+        {costRateT("info.currentCostRate")}
       </Text>
 
       <Grid container mt={5} spacing={3}>
@@ -220,7 +220,7 @@ const CostRateInfo = () => {
               </Text>
             </ProcessRing>
             <Text fontSize={20} fontWeight={600} mt={3}>
-              Working Days
+              {costRateT("info.workingDays")}
             </Text>
           </Stack>
         </Grid>
@@ -238,14 +238,14 @@ const CostRateInfo = () => {
         <Grid item xs={12} sm={6} md={4} container>
           <CurrentRateBlock
             icon={<CalendarIcon />}
-            title="Cost Type"
+            title={costRateT("info.costType")}
             content={_.capitalize(selectCurrentCostRate?.type) ?? "N/A"}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end", md: "center" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
-            title="Cost Per Month"
+            title={costRateT("info.costPerMonth")}
             content={
               selectCurrentCostRate?.cost_per_month
                 ? `${selectCurrentCostRate?.cost_per_month}.$`
@@ -256,7 +256,7 @@ const CostRateInfo = () => {
         <Grid item xs={12} sm={6} md={4} container justifyContent={{ md: "end" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
-            title="At current cost rate"
+            title={costRateT("info.atCurrentCostRate")}
             content={
               selectCurrentCostRate?.total_days
                 ? `${selectCurrentCostRate?.total_days}h`
@@ -267,7 +267,7 @@ const CostRateInfo = () => {
         <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end", md: "initial" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
-            title="Capacity"
+            title={costRateT("info.capacity")}
             content={
               selectCurrentCostRate?.total_hours
                 ? `${selectCurrentCostRate?.total_hours}h`
@@ -278,7 +278,7 @@ const CostRateInfo = () => {
         <Grid item xs={12} sm={6} md={4} container justifyContent={{ md: "center" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
-            title="Current Hourly Cost"
+            title={costRateT("info.currentHourlyCost")}
             content={
               selectCurrentCostRate?.cost_per_hour
                 ? `${selectCurrentCostRate?.cost_per_hour}`
@@ -289,7 +289,7 @@ const CostRateInfo = () => {
         <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end" }}>
           <CurrentRateBlock
             icon={<CalendarIcon />}
-            title="Overhead"
+            title={costRateT("info.overhead")}
             content={selectCurrentCostRate?.over_head ? "Yes" : "No"}
           />
         </Grid>

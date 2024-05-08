@@ -2,8 +2,10 @@
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import TableRow from "@mui/material/TableRow";
 import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
 import _ from "lodash";
 
+import { NS_COMMON, NS_COST_RATE } from "constant/index";
 import { Checkbox } from "components/shared";
 import {
   TableLayout,
@@ -26,6 +28,8 @@ const CostRateTable = ({
   handleItemEdit,
   handleItemDelete,
 }: CostRateTableProps) => {
+  const commonT = useTranslations(NS_COMMON);
+  const costRateT = useTranslations(NS_COST_RATE);
   const [selectedList, setSelectedList] = useState<string[]>([]);
 
   const onToggleSelect = (item: string, indexSelected: number) => {
@@ -57,13 +61,13 @@ const CostRateTable = ({
 
   const columns = useMemo<CellProps[]>(() => {
     const cols: CellProps[] = [
-      { value: "Start Date", sx: { width: "12ch" } },
-      { value: "End Date", sx: { width: "12ch" } },
-      { value: "Cost Type", sx: { width: "11ch" } },
-      { value: "Cost", sx: { width: "6ch" } },
-      { value: "Hourly", sx: { width: "8ch" } },
-      { value: "Capacity", sx: { width: "12ch" } },
-      { value: "Note" },
+      { value: costRateT("table.startDate"), sx: { width: "12ch" } },
+      { value: costRateT("table.endDate"), sx: { width: "12ch" } },
+      { value: costRateT("table.type"), sx: { width: "11ch" } },
+      { value: costRateT("table.cost"), sx: { width: "6ch" } },
+      { value: costRateT("table.hourly"), sx: { width: "8ch" } },
+      { value: costRateT("table.capacity"), sx: { width: "12ch" } },
+      { value: costRateT("table.note"), },
     ];
     if (isEditable) {
       cols.unshift({
