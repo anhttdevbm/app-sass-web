@@ -49,7 +49,8 @@ import {
   ChangeGroupAvatar,
   TypeDrawerChat,
   IChatInfo,
-  IChatItemV2, MessageInfoV2,
+  IChatItemV2,
+  MessageInfoV2,
 } from "./type";
 import { useAuth } from "store/app/selectors";
 import {
@@ -780,7 +781,7 @@ export const useChat = () => {
 
   const onSetWsClient = (ws) => {
     return dispatch(setWsClient(ws));
-  }
+  };
 
   return {
     wsClient,

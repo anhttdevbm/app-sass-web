@@ -206,8 +206,8 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           "&::before": {
             content: `''`,
             position: "absolute",
-            right: "-5px",
-            bottom: "-5px",
+            right: "-1px",
+            bottom: "-1px",
             width: "16px",
             height: "16px",
             border: "2px solid #ffffff",
