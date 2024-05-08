@@ -6,14 +6,15 @@ import { AddToDocIcon } from "icons/AddToDocIcon";
 import { CopyTextIcon } from "icons/CopyTextIcon";
 import EditMessageAIChatIcon from "icons/EditMessageAIChatIcon";
 import { RegenerateIcon } from "icons/RegenerateIcon";
+import { useLocale } from "next-intl";
 import Image from "next/image";
 import AIIcon from "public/images/ic-ai-chat.svg";
 import { useEffect, useState } from "react";
+import { useChatWithAI } from "store/aiChat/selectors";
 import { OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
-import { backgroundImage } from "html2canvas/dist/types/css/property-descriptors/background-image";
 
 interface MessageProps {
   message: Partial<OpenAIChat>;
@@ -28,16 +29,24 @@ export const Message: React.FC<MessageProps> = ({
 }) => {
   const { user_prompt, assistant_content, id } = message;
 
+  const locale = useLocale();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedMessage, setEditedMessage] = useState<string | undefined>(
+    user_prompt,
+  );
+  const { onChatWithAI } = useChatWithAI();
 
   const isMobile = useMediaQuery("(max-width: 600px)") || mobileMode;
 
   useEffect(() => {
     if (assistant_content) {
       setIsLoading(false);
+    } else {
+      setIsLoading(true);
     }
   }, [assistant_content]);
 
@@ -61,8 +70,35 @@ export const Message: React.FC<MessageProps> = ({
       document.body.removeChild(textarea);
     }
   };
+
   const handleRegenerateResponse = () => {
     regenerateResponse(user_prompt);
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    onChatWithAI({
+      user_prompt: editedMessage as string,
+      lang: locale,
+      tone: message.tone as string,
+      persona: message.persona as string,
+      chat_session: message.chat_session,
+    });
+    setEditedMessage("");
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleBlur();
+    }
+  };
+
+  const handleChange = (event) => {
+    setEditedMessage(event.target.value);
   };
 
   return (
@@ -85,12 +121,37 @@ export const Message: React.FC<MessageProps> = ({
           isMobile={isMobile}
           width={"100%"}
         >
-          <Text variant="body1" flex={1}>
-            {user_prompt}
-          </Text>
-          <IconButton size="small" sx={{ borderRadius: "50%" }}>
-            <EditMessageAIChatIcon width={18} height={18} />
-          </IconButton>
+          {isEditing ? (
+            <input
+              value={editedMessage}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+              onChange={handleChange}
+              autoFocus
+              style={{
+                width: "100%",
+                alignSelf: "flex-start",
+                border: "none",
+                outline: "none",
+                background: "transparent",
+                fontSize: "16px",
+                padding: "5px",
+              }}
+            />
+          ) : (
+            <>
+              <Text variant="body1" flex={1}>
+                {user_prompt}
+              </Text>
+              <IconButton
+                size="small"
+                sx={{ borderRadius: "50%" }}
+                onClick={handleEdit}
+              >
+                <EditMessageAIChatIcon width={18} height={18} />
+              </IconButton>
+            </>
+          )}
         </MessageBox>
       </Box>
       <Box
