@@ -2,11 +2,7 @@ import { Skeleton, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
-import {
-  CHAT_EVENT_TYPE,
-  IChatItemInfo,
-  STEP,
-} from "store/chat/type";
+import { CHAT_EVENT_TYPE, IChatItemInfo, STEP } from "store/chat/type";
 import { useAuth } from "store/app/selectors";
 import { useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
@@ -15,7 +11,7 @@ import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import useTheme from "hooks/useTheme";
-import { useWSChatConnect } from 'store/chat/ws';
+import { useWSChatConnect } from "store/chat/ws";
 
 const ChatList = ({ onCloseChatBox }) => {
   const { user } = useAuth();
@@ -30,7 +26,8 @@ const ChatList = ({ onCloseChatBox }) => {
   } = useChat();
 
   useWSChatConnect();
-  const { searchConversation, loadMoreConversation, isGroup } = useChatHelpers();
+  const { searchConversation, loadMoreConversation, isGroup } =
+    useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
@@ -99,8 +96,8 @@ const ChatList = ({ onCloseChatBox }) => {
     if (chatInfo?.unseen_message_count > 0) {
       sendMessage({
         event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
-        messageId: chatInfo?.lastmsg
-      })
+        messageId: chatInfo?.lastmsg,
+      });
     }
   };
 

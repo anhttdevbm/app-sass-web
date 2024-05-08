@@ -30,7 +30,10 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const [avatarClone, setAvatarClone] = useState<string | undefined>(
     avatar?.link,
   );
-  const isUnReadMessage = useMemo(() => unseen_message_count > 0, [unseen_message_count]);
+  const isUnReadMessage = useMemo(
+    () => unseen_message_count > 0,
+    [unseen_message_count],
+  );
   const isMessageNotConnect = useMemo(() => lastMessage == null, [lastMessage]);
   const isGroup = useMemo(() => type === CHAT_ROOM_TYPE.GROUP, [type]);
   const isCurrentAccByLastMessage = useMemo(
@@ -186,7 +189,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   }, [isCurrentAccByLastMessage, isUnReadMessage, name, isDarkMode]);
 
   return (
-    <Box sx={{ display: "flex", gap: "1rem", alignItems: "center",}}>
+    <Box sx={{ display: "flex", gap: "1rem", alignItems: "center" }}>
       <Box
         display={isUnReadMessage ? "block" : "none"}
         sx={{
@@ -206,8 +209,8 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           "&::before": {
             content: `''`,
             position: "absolute",
-            right: "-1px",
-            bottom: "-1px",
+            right: "-5px",
+            bottom: "-5px",
             width: "16px",
             height: "16px",
             border: "2px solid #ffffff",

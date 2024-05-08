@@ -558,7 +558,7 @@ export const useChat = () => {
     dispatch(setMessage(message));
   };
 
-  const onSetConversationInfo = (conversationInfo: IChatItemInfo | null) => {
+  const onSetConversationInfo = (conversationInfo) => {
     dispatch(setConversationInfo(conversationInfo));
   };
 
@@ -735,7 +735,7 @@ export const useChat = () => {
     [dispatch],
   );
 
-  const onSetConvention = (conversations: IChatItemV2[]) => {
+  const onSetConvention = (conversations) => {
     return dispatch(setConversation(conversations));
   };
 
