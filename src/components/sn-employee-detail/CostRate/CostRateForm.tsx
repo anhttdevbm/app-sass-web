@@ -85,12 +85,12 @@ const CostRateForm = ({
             id: costRateId,
           } as UpdateCostRate);
           onAddSnackbar(
-            costRateT("empty.notification.updateSuccess"),
+            costRateT("notification.updateSuccess"),
             "success",
           );
         } else {
           await handleAddNewCostRate(data as NewCostRate);
-          onAddSnackbar(costRateT("empty.notification.addSuccess"), "success");
+          onAddSnackbar(costRateT("notification.addSuccess"), "success");
         }
         onCancel();
       } catch (error) {
@@ -187,31 +187,31 @@ const CostRateForm = ({
         <Grid item xs={12} sm={4}>
           <Select
             options={[
-              { label: "Monthly", value: "MONTHLY" },
-              { label: "Weekly", value: "WEEKLY" },
+              { label: costRateT("form.monthly"), value: "MONTHLY" },
+              { label: costRateT("form.weekly"), value: "WEEKLY" },
             ]}
-            title={costRateT("empty.form.type")}
+            title={costRateT("form.type")}
             fullWidth
             name="type"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values?.type}
             error={commonT(formik.touchedError("type"), {
-              name: costRateT("empty.form.type"),
+              name: costRateT("form.type"),
             })}
           />
         </Grid>
 
         <Grid item xs={12} sm={5}>
           <Input
-            title={costRateT("empty.form.costPerMonth")}
+            title={costRateT("form.costPerMonth")}
             fullWidth
             name="cost_per_month"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values?.cost_per_month}
             error={commonT(formik.touchedError("cost_per_month"), {
-              name: costRateT("empty.form.costPerMonth"),
+              name: costRateT("form.costPerMonth"),
             })}
             endNode={<Text sx={{ mr: 1 }}>$</Text>}
           />
@@ -223,14 +223,14 @@ const CostRateForm = ({
               { label: "USD ($)", value: "USD" },
               { label: "VNĐ (đ)", value: "VND" },
             ]}
-            title={costRateT("empty.form.currency")}
+            title={costRateT("form.currency")}
             fullWidth
             name="currency"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values?.currency}
             error={commonT(formik.touchedError("currency"), {
-              name: costRateT("empty.form.currency"),
+              name: costRateT("form.currency"),
             })}
           />
         </Grid>
@@ -249,7 +249,7 @@ const CostRateForm = ({
             {daysOfWeekKeys.map((day) => (
               <WorkingHoursBlock
                 key={day}
-                title={costRateT(`empty.form.${day}`)}
+                title={costRateT(`form.${day}`)}
                 fullWidth
                 name={`working_hours.${day}`}
                 onChange={formik.handleChange}
@@ -263,28 +263,28 @@ const CostRateForm = ({
 
         <Grid item xs={12} sm={4}>
           <DatePicker
-            title={costRateT("empty.form.startDate")}
+            title={costRateT("form.startDate")}
             fullWidth
             name="start_date"
             onChange={formik.handleChangeDate}
             onBlur={formik.handleBlur}
             value={formik.values?.start_date}
             error={commonT(formik.touchedError("start_date"), {
-              name: costRateT("empty.form.startDate"),
+              name: costRateT("form.startDate"),
             })}
           />
         </Grid>
 
         <Grid item xs={12} sm={4}>
           <DatePicker
-            title={costRateT("empty.form.endDate")}
+            title={costRateT("form.endDate")}
             fullWidth
             name="end_date"
             onChange={formik.handleChangeDate}
             onBlur={formik.handleBlur}
             value={formik.values?.end_date}
             error={commonT(formik.touchedError("end_date"), {
-              name: costRateT("empty.form.endDate"),
+              name: costRateT("form.endDate"),
             })}
           />
         </Grid>
@@ -304,21 +304,21 @@ const CostRateForm = ({
                 <Text pl={1} fontSize={14}>Add new holiday calendar</Text>
               </Link>
             }
-            title={costRateT("empty.form.holidayCalendar")}
+            title={costRateT("form.holidayCalendar")}
             fullWidth
             name="holiday_calendar"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values?.holiday_calendar}
             error={commonT(formik.touchedError("holiday_calendar"), {
-              name: costRateT("empty.form.holidayCalendar"),
+              name: costRateT("form.holidayCalendar"),
             })}
           />
         </Grid>
 
         <Grid item xs={12}>
           <NoteInput
-            title={costRateT("empty.form.note")}
+            title={costRateT("form.note")}
             fullWidth
             name="note"
             onChange={formik.handleChange}
@@ -326,7 +326,7 @@ const CostRateForm = ({
             value={formik.values?.note}
             error={
               !!commonT(formik.touchedError("note"), {
-                name: costRateT("empty.form.note"),
+                name: costRateT("form.note"),
               })
             }
           />
@@ -334,7 +334,7 @@ const CostRateForm = ({
 
         <Grid item xs={12} sm={4}>
           <FormControlLabel
-            label={costRateT("empty.form.overhead")}
+            label={costRateT("form.overhead")}
             labelPlacement="start"
             sx={{
               "& .MuiFormControlLabel-label": {
@@ -409,14 +409,14 @@ const CostRateForm = ({
             spacing={3}
           >
             <Button variant="primaryOutlined" onClick={() => onCancel()}>
-              Cancel
+              {commonT("form.cancel")}
             </Button>
             <Button
               variant="primary"
               type="submit"
               disabled={formik.isSubmitDisabled}
             >
-              Confirm
+              {commonT("form.confirm")}
             </Button>
           </Stack>
         </Grid>
@@ -521,12 +521,14 @@ const NoteInput = memo(function NoteInput({
           border: "1px solid transparent",
           background: `linear-gradient(#fff, #fff) padding-box,
                        linear-gradient(90deg, #2AF598 0%, #009EFD 100%)`,
-          px: 4,
-          py: 2,
         }}
       >
         <MuiInputLabel
+          htmlFor={`cost-rate-${name}`}
           sx={{
+            px: 4,
+            pt: 2,
+            pb: 1,
             position: "static",
             maxWidth: "initial",
             color: "#333333",
@@ -538,13 +540,14 @@ const NoteInput = memo(function NoteInput({
               color: "#333333",
             },
             "&+.MuiInputBase-root": {
-              mt: 1,
+              mt: 0,
             },
           }}
         >
           {title}
         </MuiInputLabel>
         <MuiInput
+          id={`cost-rate-${name}`}
           fullWidth={fullWidth}
           name={name}
           onChange={onChange}
@@ -552,6 +555,9 @@ const NoteInput = memo(function NoteInput({
           value={value}
           error={error}
           sx={{
+            px: 4,
+            pb: 2,
+            mt: 0,
             "&:before": {
               display: "none",
             },

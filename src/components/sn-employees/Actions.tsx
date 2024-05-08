@@ -109,7 +109,7 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
         direction="column"
         alignItems={{ md: "center" }}
         justifyContent="space-between"
-        spacing={{ xs: 1, md: 3 }}
+        spacing={{ xs: 1, md: 1 }}
         px={{ xs: 0, md: 3 }}
         pt={2}
       >
