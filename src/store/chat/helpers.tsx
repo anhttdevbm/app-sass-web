@@ -51,6 +51,7 @@ export const useWSChat = () => {
     onSetConvention,
     onSetRoomId,
     dataTransfer,
+    conversationInfo,
     onSetDataTransfer,
     onSetConversationInfo,
     onSetConversationPaging,
@@ -203,8 +204,25 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_UPDATE_NAME:
-              onSetDataTransfer(resp?.data);
-              onSetConversationInfo(resp?.data);
+              if (roomId === resp?.data?.id) {
+                const newInfoRoomName = {
+                  ...conversationInfo,
+                  name: resp?.data?.name,
+                };
+
+                onSetDataTransfer(newInfoRoomName);
+                onSetConversationInfo(newInfoRoomName);
+              }
+              if (isRelatedGroup(resp?.data?.members, user?.id)) {
+                convention?.map((item) => {
+                  if (item.id === resp?.data?.id) {
+                    return {
+                      ...item,
+                      name: resp?.data?.name,
+                    };
+                  }
+                });
+              }
               return;
 
             case CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR:

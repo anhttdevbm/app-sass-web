@@ -68,9 +68,7 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
   );
 
   useEffect(() => {
-    const countNew = stateSearchMessage?.offset
-      ? stateSearchMessage?.offset + initPageIndex
-      : initPageIndex;
+    const countNew = initPageIndex;
     setFiles([]);
     setMedias([]);
     if ((!roomId || roomId?.length === 0) && !dataTransfer?.id) return;

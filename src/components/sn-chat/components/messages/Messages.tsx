@@ -44,7 +44,7 @@ interface MessagesProps {
     filePreview?: any;
     status: DataStatus;
   };
-  focusMessage: MessageSearchInfo | null;
+  focusMessage: any | null;
   unReadMessage: UnreadUserInfo[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   wrapperMessageSx?: any;
