@@ -1,4 +1,4 @@
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, SelectChangeEvent } from "@mui/material";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useLocale, useTranslations } from "next-intl";
@@ -136,6 +136,16 @@ export const BoxChat: React.FC<BoxChatProps> = ({
       onCreateChatSession({ chatname: message });
       setPrompt(message);
     }
+  };
+
+  const handleToneChange = (e: SelectChangeEvent<string>) => {
+    setTone(e.target.value as string);
+    setError(null);
+  };
+
+  const handlePersonaChange = (e: SelectChangeEvent<string>) => {
+    setPersona(e.target.value as string);
+    setError(null);
   };
 
   const onLoadMoreOpenAIChat = useCallback(() => {
@@ -287,15 +297,15 @@ export const BoxChat: React.FC<BoxChatProps> = ({
           handleClick={setPrompt}
         />
       )}
-      {error && <div style={{ color: "red" }}>{error}</div>}
       <Box padding={isMobile ? "0 4px" : "0 24px"}>
+        {error && <div style={{ color: "red" }}>{error}</div>}
         <Box sx={selectContainerSx}>
           <SelectAIChat
             key={"persona"}
             placeholder={t("boxChat.persona")}
             options={personaOptions}
             selectedValue={persona}
-            onOptionChange={(e) => setPersona(e.target.value)}
+            onOptionChange={handlePersonaChange}
             isError={showPersonaError}
           />
           <SelectAIChat
@@ -303,7 +313,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
             placeholder={t("boxChat.tone")}
             options={toneOptions}
             selectedValue={tone}
-            onOptionChange={(e) => setTone(e.target.value)}
+            onOptionChange={handleToneChange}
             isError={showToneError}
           />
         </Box>

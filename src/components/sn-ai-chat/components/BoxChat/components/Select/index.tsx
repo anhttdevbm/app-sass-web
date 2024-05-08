@@ -19,10 +19,7 @@ interface SelectAIChatProps {
   placeholder?: string;
   options: Array<Option>;
   selectedValue?: string;
-  onOptionChange: (
-    event: SelectChangeEvent<string>,
-    child: React.ReactNode,
-  ) => void;
+  onOptionChange: (event: SelectChangeEvent<string>) => void;
   isError?: boolean;
 }
 
