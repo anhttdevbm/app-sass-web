@@ -64,13 +64,13 @@ const EmployeesPage = () => {
             </TabList>
           }
         />
-        <TabPanel value={EmployeeType.EMPLOYEE.toString()}>
+        <TabPanel value={EmployeeType.EMPLOYEE.toString()} sx={tabPanelStyles}>
           <ItemList employeeType={EmployeeType.EMPLOYEE} />
         </TabPanel>
-        <TabPanel value={EmployeeType.CLIENT.toString()}>
+        <TabPanel value={EmployeeType.CLIENT.toString()} sx={tabPanelStyles}>
           <ItemList employeeType={EmployeeType.CLIENT} />
         </TabPanel>
-        <TabPanel value={EmployeeType.CONTRACTOR.toString()}>
+        <TabPanel value={EmployeeType.CONTRACTOR.toString()} sx={tabPanelStyles}>
           <ItemList employeeType={EmployeeType.CONTRACTOR} />
         </TabPanel>
       </TabContext>
@@ -111,3 +111,9 @@ const tabStyles = {
     borderRightColor: "#EFEFEF",
   },
 };
+
+const tabPanelStyles = {
+  px: 3,
+  pt: 1,
+  pb: 3,
+}
