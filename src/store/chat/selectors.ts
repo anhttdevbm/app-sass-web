@@ -50,6 +50,7 @@ import {
   TypeDrawerChat,
   IChatInfo,
   IChatItemV2,
+  MessageInfoV2,
 } from "./type";
 import { useAuth } from "store/app/selectors";
 import {
@@ -84,6 +85,8 @@ import {
   setChatFiles,
   setListConversation,
   setMembers,
+  setMessageSearch,
+  setWsClient,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -93,6 +96,7 @@ export const useChat = () => {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const {
+    wsClient,
     convention,
     mediaListConversation,
     messageInfo,
@@ -390,7 +394,7 @@ export const useChat = () => {
     dispatch(resetDataTransfer());
   };
   const onSetStateSearchMessage = useCallback(
-    async (message: MessageSearchInfo | null) => {
+    async (message: MessageInfoV2 | null) => {
       const messageSearch = message ? { ...message } : null;
       dispatch(setStateSearchMessage(messageSearch));
     },
@@ -751,6 +755,10 @@ export const useChat = () => {
     return dispatch(setMessages(messages));
   };
 
+  const onSetMessageSearch = (messages) => {
+    return dispatch(setMessageSearch(messages));
+  };
+
   const onSetMessagePaging = (newPaging) => {
     return dispatch(setMessagePaging(newPaging));
   };
@@ -771,7 +779,13 @@ export const useChat = () => {
     return dispatch(setMembers(data));
   };
 
+  const onSetWsClient = (ws) => {
+    return dispatch(setWsClient(ws));
+  };
+
   return {
+    wsClient,
+    onSetWsClient,
     convention,
     onSetConvention,
     mediaListConversation,
@@ -783,6 +797,7 @@ export const useChat = () => {
     onSetIsSearchConversation,
     messages,
     onSetMessages,
+    onSetMessageSearch,
     messagePagingV2,
     onSetMessagePaging,
     onSetChatLinks,

@@ -81,7 +81,7 @@ const RoomHeaderMobile = () => {
               borderRadius: "5px",
             }}
           />
-          {currentConversation.usersCount - 3 > 0 ? (
+          {currentConversation?.members?.length - 3 > 0 ? (
             <Box
               sx={{
                 textAlign: "center",
@@ -94,7 +94,7 @@ const RoomHeaderMobile = () => {
               }}
             >
               <Typography variant="caption">
-                +{currentConversation.usersCount - 3}
+                +{currentConversation?.members?.length - 3}
               </Typography>
             </Box>
           ) : null}
@@ -115,7 +115,7 @@ const RoomHeaderMobile = () => {
         />
       );
     }
-  }, [currentConversation?.usersCount, currentConversation?.avatar]);
+  }, [currentConversation?.members, currentConversation?.avatar]);
 
   return (
     <Box

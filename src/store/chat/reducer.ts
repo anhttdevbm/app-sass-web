@@ -20,6 +20,7 @@ import {
   ChatState,
   MediaPreviewItem,
   MessageInfo,
+  MessageInfoV2,
   MessageSearchInfo,
   SetParamConversationProps,
   STEP,
@@ -45,6 +46,7 @@ export const initPagingV2 = {
   count: 0,
 };
 const initialState: ChatState = {
+  wsClient: null,
   convention: [],
   mediaListConversation: [],
   conversationStatus: DataStatus.IDLE,
@@ -200,6 +202,10 @@ const chatSlice = createSlice({
         state.messages = [...action.payload, ...state.messages];
       }
     },
+    setMessageSearch: (state, action) => {
+      state.listSearchMessage = action.payload;
+      state.statusListSearchMessage = DataStatus.SUCCEEDED;
+    },
     setMessagePaging: (state, action) => {
       state.messagePagingV2 = action.payload;
     },
@@ -217,6 +223,9 @@ const chatSlice = createSlice({
     },
     setMembers: (state, action) => {
       state.members = [...state.members, action.payload];
+    },
+    setWsClient: (state, action) => {
+      state.wsClient = action.payload;
     },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
@@ -314,10 +323,10 @@ const chatSlice = createSlice({
     },
     setStateSearchMessage: (
       state,
-      action: PayloadAction<MessageSearchInfo | null>,
+      action: PayloadAction<MessageInfoV2 | null>,
     ) => {
       state.messagePaging.pageIndex = 0;
-      state.messagePaging.pageSize = (action.payload?.offset || 0) + 10;
+      // state.messagePaging.pageSize = (action.payload?.offset || 0) + 10;
       state.stateSearchMessage = action.payload;
       state.messageInfo = [];
     },
@@ -518,7 +527,7 @@ const chatSlice = createSlice({
       .addCase(
         searchChatText.fulfilled,
         (state, action: PayloadAction<{ matches: MessageSearchInfo[] }>) => {
-          state.listSearchMessage = action.payload.matches;
+          // state.listSearchMessage = action.payload.matches;
           state.statusListSearchMessage = DataStatus.SUCCEEDED;
         },
       )
@@ -627,6 +636,7 @@ export const {
   setListConversation,
   setIsSearchConversation,
   setMessages,
+  setMessageSearch,
   setMessagePaging,
   setChatLinks,
   setChatMedias,
@@ -648,6 +658,7 @@ export const {
   resetSearchChatText,
   setSelectSearchIndex,
   resetDataTransfer,
+  setWsClient,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

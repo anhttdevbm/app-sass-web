@@ -76,6 +76,13 @@ const ChatList = () => {
           roomId: chatInfo.id,
         });
       }
+
+      if (chatInfo?.unseen_message_count > 0) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
+          messageId: chatInfo?.lastmsg,
+        });
+      }
     } catch (error) {}
   };
 

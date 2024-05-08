@@ -21,7 +21,7 @@ const ChatItemLayout = ({
   isActive,
 }: ChatItemProp) => {
   const { sx, ...props } = chatItemProps || {};
-  const { lastMessage } = chatInfo || {};
+  const { lastmsg_at, unseen_message_count } = chatInfo || {};
   const { isDarkMode } = useTheme();
 
   const renderColorByType = useMemo(() => {
@@ -41,6 +41,7 @@ const ChatItemLayout = ({
         padding: "8px 0px",
         display: "flex",
         alignItems: "center",
+        justifyContent: "space-between",
         gap: "1rem",
         marginBottom: 1,
         cursor: "pointer",
@@ -55,14 +56,37 @@ const ChatItemLayout = ({
       {...props}
     >
       <ChatItemRender chatInfo={chatInfo} sessionId={sessionId} />
-      <Typography
-        variant="caption"
-        color="#999999"
-        ml="auto"
-        whiteSpace="nowrap"
-      >
-        {renderTimeDiff(lastMessage?.ts)}
-      </Typography>
+      <Box>
+        <Typography
+          variant="caption"
+          color="#999999"
+          ml="auto"
+          whiteSpace="nowrap"
+        >
+          {renderTimeDiff(lastmsg_at)}
+        </Typography>
+        <br />
+        {unseen_message_count > 0 && (
+          <Typography
+            variant="caption"
+            color="#999999"
+            ml="auto"
+            whiteSpace="nowrap"
+            sx={{
+              width: "20px",
+              height: "20px",
+              display: "flex",
+              backgroundColor: "red",
+              color: "white",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+            }}
+          >
+            {unseen_message_count >= 10 ? "9+" : unseen_message_count}
+          </Typography>
+        )}
+      </Box>
     </Box>
   );
 };

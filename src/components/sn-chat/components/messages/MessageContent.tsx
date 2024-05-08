@@ -104,7 +104,7 @@ const MessageContent = ({
   }, [message]);
 
   const renderBackgroundColor = useMemo(() => {
-    if (listSearchMessage.map((item) => item.messageId).includes(message.id)) {
+    if (listSearchMessage.map((item) => item?.id).includes(message.id)) {
       return isDarkMode ? "#333333" : "#EBF5FF";
     }
     if (isCurrentUser) {
@@ -117,7 +117,7 @@ const MessageContent = ({
   const renderBorderColor = useMemo(() => {
     const findMessage = listSearchMessage[selectSearchIndex];
     if (!findMessage) return "#F7F7FD";
-    if (findMessage?.messageId.includes(message.id)) {
+    if (findMessage?.id?.includes(message.id)) {
       return isDarkMode ? "#F7F7FD" : "#3699FF";
     }
   }, [isDarkMode, listSearchMessage, message.id, selectSearchIndex]);
