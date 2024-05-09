@@ -19,8 +19,10 @@ import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import TrashIcon from "icons/TrashAltIcon";
+import { useSnackbar } from "store/app/selectors";
 import { HolidayCalendar } from "store/holidayCalendar/reducer";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import { getMessageErrorByAPI } from "utils/index";
 import HolidayItems from "./HolidayItems";
 
 type HolidayCalendarCardProps = {
@@ -34,6 +36,7 @@ const HolidayCalendarCard = ({
 }: HolidayCalendarCardProps) => {
   const commonT = useTranslations(NS_COMMON);
   const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
+  const { onAddSnackbar } = useSnackbar();
   const [isEdit, , , toggleEdit] = useToggle(false);
   const {
     status,
@@ -154,8 +157,12 @@ const HolidayCalendarCard = ({
             sx={{ color: "#FF4141" }}
             disabled={status === DataStatus.LOADING || isSubmitDisabled}
             onClick={async () => {
-              await handleDeleteHolidayCalendar(holidayCalendar.id);
-              // setShouldFetchOn();
+              try {
+                await handleDeleteHolidayCalendar(holidayCalendar.id);
+                // setShouldFetchOn();
+              } catch (error) {
+                onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+              }
             }}
           >
             <TrashIcon />
