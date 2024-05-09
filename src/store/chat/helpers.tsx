@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "./selectors";
 import {
@@ -7,12 +7,7 @@ import {
   IWsChatRespMessage,
   STEP,
 } from "./type";
-import { clientStorage } from "utils/storage";
-import {
-  ACCESS_TOKEN_STORAGE_KEY,
-  AN_ERROR_TRY_AGAIN,
-  NS_COMMON,
-} from "constant/index";
+import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
@@ -22,6 +17,10 @@ const PAGE_INITIAL = 1;
 
 const isRelatedGroup = (members: string[], userId = "") => {
   return members?.find((memberId) => memberId === userId);
+};
+
+const isExitsInList = (list, item) => {
+  return list?.find((elm) => elm?.id === item?.id);
 };
 
 export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
@@ -71,6 +70,7 @@ export const useWSChat = () => {
     members,
     onSetMembers,
     onSetMessageSearch,
+    onSetListMessages,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
@@ -89,7 +89,7 @@ export const useWSChat = () => {
     onResetDataTransfer();
     onResetConversationInfo();
     onSetMessagePaging(initPagingV2);
-    onSetMessages([]);
+    onSetListMessages([]);
   };
 
   const sendMessage = (message) => {
@@ -107,7 +107,7 @@ export const useWSChat = () => {
         memberId: senderId,
       });
     }
-    if (!messages?.find((msg) => msg?.id === resp?.data?.systemMessage?.id)) {
+    if (!isExitsInList(messages, resp?.data?.systemMessage)) {
       const newMessage = {
         id: resp?.data?.systemMessage?.id,
         content: resp?.data?.systemMessage?.type,
@@ -117,7 +117,7 @@ export const useWSChat = () => {
         type: "system",
         created_at: new Date().getTime(),
       };
-      onSetMessages([...messages, newMessage]);
+      onSetListMessages([...messages, newMessage]);
     }
   };
 
@@ -158,15 +158,17 @@ export const useWSChat = () => {
               }
               if (isOwnerGroup(room?.owner, user?.id)) {
                 onSetMessagePaging(initPagingV2);
-                onSetMessages([]);
+                onSetListMessages([]);
                 onSetRoomId(room?.id);
                 sendMessage({
                   event: CHAT_EVENT_TYPE.DETAIL_ROOM,
                   roomId: room?.id,
                 });
               }
-              if (convention.find((item) => item?.id === room?.id)) return;
-              return onSetConvention([room, ...convention]);
+              if (!isExitsInList(convention, room)) {
+                onSetConvention([room, ...convention]);
+              }
+              return;
 
             case CHAT_EVENT_TYPE.PERSONAL_ROOM:
               const roomIdPersonal = resp?.data?.room?.id;
@@ -226,43 +228,54 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR:
-              const newRoom = {
-                ...resp?.data,
+              const newRoomAvatar = {
                 avatar: resp?.data?.avatar,
-                members: dataTransfer?.members,
               };
-              onSetDataTransfer({ ...dataTransfer, ...newRoom });
-              const newConversations = convention?.map((item) => {
-                if (item.id === newRoom?.id) {
-                  return { ...item, ...newRoom };
-                }
-                return item;
-              });
-              onSetConvention(newConversations);
+
+              if (roomId === resp?.data?.id) {
+                onSetDataTransfer({ ...dataTransfer, ...newRoomAvatar });
+                onSetConversationInfo({
+                  ...conversationInfo,
+                  ...newRoomAvatar,
+                });
+              }
+              if (
+                isRelatedGroup(resp?.data?.members, user?.id) &&
+                isExitsInList(convention, resp?.data)
+              ) {
+                const newConversations = convention?.map((item) => {
+                  if (item?.id === resp?.data?.id) {
+                    return { ...item, ...newRoomAvatar };
+                  }
+                  return item;
+                });
+                onSetConvention(newConversations);
+              }
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_MEMBER:
-              if (!isRelatedGroup(resp?.data?.room?.members, user?.id)) {
-                return;
+              if (resp?.data?.detailMember?.id === user?.id) {
+                onSetListConvention([resp?.data?.room, ...convention]);
               }
-              const isAlreadyInRoom = dataTransfer?.members?.find(
-                (mem) => mem?.id === resp?.data?.detailMember?.id,
-              );
-              if (resp?.data?.room?.id === roomId && !isAlreadyInRoom) {
-                const newRoomInfo = {
-                  ...dataTransfer,
-                  members: [
-                    ...(dataTransfer?.members || []),
+              if (resp?.data?.room?.id === roomId) {
+                if (
+                  !isExitsInList(
+                    dataTransfer?.members,
                     resp?.data?.detailMember,
-                  ],
-                };
-                onSetDataTransfer(newRoomInfo);
-                onSetConversationInfo(newRoomInfo);
+                  )
+                ) {
+                  const newRoomInfo = {
+                    ...dataTransfer,
+                    members: [
+                      ...(dataTransfer?.members || []),
+                      resp?.data?.detailMember,
+                    ],
+                  };
+                  onSetDataTransfer(newRoomInfo);
+                  onSetConversationInfo(newRoomInfo);
+                }
+                handleMessageSystem(resp);
               }
-              handleMessageSystem(resp);
-              if (convention.find((item) => item?.id === resp?.data?.room?.id))
-                return;
-              onSetListConvention([resp?.data?.room, ...convention]);
               return;
 
             case CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER:
@@ -295,18 +308,9 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_ADMIN:
-              if (
-                !isRelatedGroup(resp?.data?.room?.members, user?.id) ||
-                resp?.data?.room?.id !== roomId
-              ) {
+              if (resp?.data?.room?.id !== roomId) {
                 return;
               }
-              if (
-                dataTransfer?.admins?.find(
-                  (item) => item === resp?.data?.detailAdmin?.id,
-                )
-              )
-                return;
               handleMessageSystem(resp);
               const newRoomAdmin = {
                 ...dataTransfer,
@@ -329,9 +333,11 @@ export const useWSChat = () => {
                 (item) => item.id != roomIdRemove,
               );
               onSetListConvention(conversationFilter);
-              resetData();
-              resetDataRoom();
-              onSetStep(STEP.CONVENTION);
+              if (roomId === resp?.data?.id) {
+                resetData();
+                resetDataRoom();
+                onSetStep(STEP.CONVENTION);
+              }
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_LIST:
@@ -370,34 +376,34 @@ export const useWSChat = () => {
             case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
               const newMsg = resp?.data?.message;
               if (newMsg?.room !== roomId) return;
-              if (messages.find((item) => item?.id === newMsg?.id)) return;
-              onSetMessages([...messages, newMsg]);
+              if (!isExitsInList(messages, newMsg)) {
+                onSetListMessages([...messages, newMsg]);
+              }
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
               const newMsgFile = resp?.data?.message;
               if (newMsgFile?.room !== roomId) return;
-              if (messages.find((item) => item?.id === newMsgFile?.id)) return;
-              onSetMessages([...messages, newMsgFile]);
+              if (!isExitsInList(messages, newMsgFile)) {
+                onSetListMessages([...messages, newMsgFile]);
+              }
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
               const newMsgMedia = resp?.data?.message;
               if (newMsgMedia?.room !== roomId) return;
-              if (messages.find((item) => item?.id === newMsgMedia?.id)) return;
-              onSetMessages([...messages, newMsgMedia]);
+              if (!isExitsInList(messages, newMsgMedia)) {
+                onSetListMessages([...messages, newMsgMedia]);
+              }
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_FORWARD:
               if (
-                !isRelatedGroup(resp?.data?.room?.members, user?.id) ||
-                resp?.data?.room?.id !== roomId
+                resp?.data?.room?.id === roomId &&
+                !isExitsInList(messages, resp?.data?.message)
               ) {
-                return;
+                onSetListMessages([...messages, resp?.data?.message]);
               }
-              if (messages.find((item) => item?.id === resp?.data?.message?.id))
-                return;
-              onSetMessages([...messages, resp?.data?.message]);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEARCH:

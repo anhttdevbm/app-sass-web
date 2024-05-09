@@ -87,6 +87,7 @@ import {
   setMembers,
   setMessageSearch,
   setWsClient,
+  setListMessage,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -755,6 +756,10 @@ export const useChat = () => {
     return dispatch(setMessages(messages));
   };
 
+  const onSetListMessages = (messages) => {
+    return dispatch(setListMessage(messages));
+  };
+
   const onSetMessageSearch = (messages) => {
     return dispatch(setMessageSearch(messages));
   };
@@ -798,6 +803,7 @@ export const useChat = () => {
     messages,
     onSetMessages,
     onSetMessageSearch,
+    onSetListMessages,
     messagePagingV2,
     onSetMessagePaging,
     onSetChatLinks,

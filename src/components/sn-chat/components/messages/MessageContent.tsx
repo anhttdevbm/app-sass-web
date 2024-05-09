@@ -122,7 +122,7 @@ const MessageContent = ({
     }
   }, [isDarkMode, listSearchMessage, message.id, selectSearchIndex]);
 
-  if (message?.type === MESSAGE_TYPE.TEXT) {
+  if ([MESSAGE_TYPE.LINK, MESSAGE_TYPE.TEXT].includes(message?.type)) {
     return (
       <Box
         sx={{
