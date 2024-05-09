@@ -139,18 +139,18 @@ const ChatList = ({ onCloseChatBox }) => {
           alignItems: "center",
           gap: 2,
           padding: 2,
-          backgroundColor: "#3699FF",
+          backgroundColor: "#D9F0FD",
         }}
       >
-        <Typography color="white" variant="h4" onClick={handleCloseChatBox}>
+        {/* <Typography color="white" variant="h4" onClick={handleCloseChatBox}>
           {commonChatBox("chatBox.chat")}
-        </Typography>
+        </Typography> */}
 
         <TextField
           size="small"
           sx={{
             backgroundColor: "white",
-            borderRadius: "8px",
+            borderRadius: 10,
             "& .MuiInputBase-root": {
               color: "black",
               border: "1px solid transparent",
@@ -204,7 +204,7 @@ const ChatList = ({ onCloseChatBox }) => {
             fontSize: "24rem!important",
             width: "38px",
             height: "100%",
-            borderRadius: "8px",
+            borderRadius: 10,
           }}
         >
           <NewGroupIcon />
