@@ -202,6 +202,9 @@ const chatSlice = createSlice({
         state.messages = [...action.payload, ...state.messages];
       }
     },
+    setListMessage: (state, action) => {
+      state.messages = action.payload;
+    },
     setMessageSearch: (state, action) => {
       state.listSearchMessage = action.payload;
       state.statusListSearchMessage = DataStatus.SUCCEEDED;
@@ -637,6 +640,7 @@ export const {
   setIsSearchConversation,
   setMessages,
   setMessageSearch,
+  setListMessage,
   setMessagePaging,
   setChatLinks,
   setChatMedias,

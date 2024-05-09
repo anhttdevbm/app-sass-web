@@ -293,7 +293,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
           return (
             <React.Fragment key={index}>
-              {["text", "file", "media"].includes(message?.type) ? (
+              {["text", "file", "media", "link"].includes(message?.type) ? (
                 <MessageLayout
                   sessionId={sessionId}
                   message={message}

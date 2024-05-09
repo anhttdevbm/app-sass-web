@@ -48,11 +48,7 @@ const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
       setShowPopup(init);
       addNewAdmin(data?.id);
     } else if (action === "remove") {
-      if (dataTransfer?.admins?.find((item) => item === data?.id)) {
-        adminLeftGroup(data?.id);
-      } else {
-        memberLeftGroup(data?.id);
-      }
+      memberLeftGroup(data?.id);
     }
   };
 

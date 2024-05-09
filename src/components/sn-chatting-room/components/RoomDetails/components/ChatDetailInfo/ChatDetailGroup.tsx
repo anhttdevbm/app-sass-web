@@ -106,7 +106,11 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
           }}
         >
           {currentConversation?.members?.map((member, index) => (
-            <ItemMemberDetail key={index} data={member} admin={isOwnerOrAdmin} />
+            <ItemMemberDetail
+              key={index}
+              data={member}
+              admin={isOwnerOrAdmin}
+            />
           ))}
         </Box>
       </CustomBox>
@@ -142,7 +146,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
             </Typography>
           </Box>
         )}
-        {currentConversation?.members.length > 1 && (
+        {currentConversation?.members?.length > 1 && (
           <Box sx={{ textAlign: "center" }}>
             <Typography
               variant="caption"
