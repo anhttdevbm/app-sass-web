@@ -107,7 +107,7 @@ export const useWSChat = () => {
         memberId: senderId,
       });
     }
-    if (!messages?.find((msg) => msg?.id === resp?.data?.systemMessage?.id)) {
+    if (!isExitsInList(messages, resp?.data?.systemMessage)) {
       const newMessage = {
         id: resp?.data?.systemMessage?.id,
         content: resp?.data?.systemMessage?.type,
@@ -308,18 +308,9 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_ADMIN:
-              if (
-                !isRelatedGroup(resp?.data?.room?.members, user?.id) ||
-                resp?.data?.room?.id !== roomId
-              ) {
+              if (resp?.data?.room?.id !== roomId) {
                 return;
               }
-              if (
-                dataTransfer?.admins?.find(
-                  (item) => item === resp?.data?.detailAdmin?.id,
-                )
-              )
-                return;
               handleMessageSystem(resp);
               const newRoomAdmin = {
                 ...dataTransfer,
