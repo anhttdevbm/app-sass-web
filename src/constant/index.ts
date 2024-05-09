@@ -119,6 +119,7 @@ export const NS_CHAT_BOX = "chatbox";
 export const NS_AI_CHAT = "aiChat";
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
+export const NS_HOLIDAY_CALENDAR = "holidayCalendar";
 //Feedback
 export const NS_FEEDBACK = "feeback";
 //blog

@@ -3,8 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/material/Stack";
+import { useTranslations } from "next-intl";
 
 import { DataStatus } from "constant/enums";
+import { NS_COMMON, NS_HOLIDAY_CALENDAR } from "constant/index";
 import {
   NewButton as Button,
   NewInput as Input,
@@ -19,6 +21,8 @@ import { useFormik } from "hooks/useFormik";
 import HolidayCalendarCard from "./HolidayCalendarCard";
 
 const HolidayCalendar = () => {
+  const commonT = useTranslations(NS_COMMON);
+  const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
   const [shouldFetch, , setShouldFetchOff] = useToggle(true);
   const {
     holidayCalendars,
@@ -152,7 +156,7 @@ const HolidayCalendar = () => {
         >
           <AddCircleGradientIcon />
           <Text color="#0575E6" fontWeight={700} ml={2}>
-            Add new holiday calendar
+            {holidayCalendarT("form.addHolidayCalendar")}
           </Text>
         </Box>
 
@@ -167,14 +171,14 @@ const HolidayCalendar = () => {
 
       <DefaultPopupLayout
         open={isModalOpen}
-        title="Add Holiday List"
+        title={holidayCalendarT("form.addHolidayList")}
         onClose={onModalClose}
         sx={{ maxWidth: 450, borderRadius: 6 }}
       >
         <DialogContent>
           <Box onSubmit={handleSubmit} component="form" noValidate px={4}>
             <Input
-              title="Year"
+              title={holidayCalendarT("form.year")}
               fullWidth
               name="year"
               onChange={handleChange}
@@ -194,14 +198,14 @@ const HolidayCalendar = () => {
               spacing={3}
             >
               <Button variant="secondaryOutlined" onClick={onModalClose}>
-                Cancel
+                {commonT("form.cancel")}
               </Button>
               <Button
                 variant="primary"
                 type="submit"
                 disabled={isSubmitDisabled}
               >
-                Confirm
+                {commonT("form.confirm")}
               </Button>
             </Stack>
           </Box>
