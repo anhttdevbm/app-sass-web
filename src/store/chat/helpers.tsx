@@ -27,6 +27,10 @@ export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
   return groupCreatorId === userId;
 };
 
+export const isAdminGroup = (admins, userId) => {
+  return admins?.find((item) => item === userId);
+}
+
 const sortASCArray = (list: any[], sortBy: string) => {
   if (list && list.length) {
     if (sortBy === "created_at") {
