@@ -22,6 +22,7 @@ const ChatList = ({ onCloseChatBox }) => {
     conversationPagingV2: paging,
     isFetching,
     isSearchConversation,
+    onSetIsSearchConversation,
     onSetStep,
   } = useChat();
 
@@ -99,6 +100,8 @@ const ChatList = ({ onCloseChatBox }) => {
         messageId: chatInfo?.lastmsg,
       });
     }
+
+    onSetIsSearchConversation(false);
   };
 
   useEffect(() => {
