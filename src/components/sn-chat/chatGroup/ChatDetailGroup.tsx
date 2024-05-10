@@ -20,8 +20,7 @@ import LinkIconGroup from "icons/LinkIconGroup";
 import useTheme from "hooks/useTheme";
 import { UploadAvatarGroup } from "./UploadAvatarGroup";
 import ForwardLayout from "components/sn-chatting-room/components/RoomDetails/components/Drawer/ChatForward/ForwardLayout";
-import { isOwnerGroup, useChatHelpers } from "store/chat/helpers";
-import { da } from "date-fns/locale";
+import { isAdminGroup, isOwnerGroup, useChatHelpers } from "store/chat/helpers";
 
 export const TYPE_POPUP = {
   DELETE: "DELETE",
@@ -56,8 +55,8 @@ const ChatDetailGroup = (props) => {
   } = useChatHelpers();
   //check owner
   const owner = isOwnerGroup(dataTransfer?.owner, user?.id);
-  const admin = dataTransfer?.admins?.find((item) => item === user?.id);
-  const isOwnerOrAdmin = owner || admin;
+  const admin = isAdminGroup(dataTransfer?.admins, user?.id);
+  const isOwnerOrAdmin = owner || admin; // current user
 
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);

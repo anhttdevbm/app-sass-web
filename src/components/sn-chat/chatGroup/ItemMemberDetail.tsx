@@ -8,7 +8,7 @@ import { useState } from "react";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { useChatHelpers } from "store/chat/helpers";
+import { isAdminGroup, useChatHelpers } from "store/chat/helpers";
 
 interface ItemMemberDetailProp {
   admin?: boolean;
@@ -152,7 +152,8 @@ const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
         </Box>
       </Box>
       <Box>
-        {data?.roles?.includes("owner") ? (
+        {data?.id === dataTransfer?.owner ||
+        isAdminGroup(dataTransfer?.admins, data?.id) ? (
           <Button
             variant="primary"
             sx={{
@@ -162,6 +163,7 @@ const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
             }}
             type="button"
             size="small"
+            onClick={handleClick}
           >
             {commonT("form.admin")}
           </Button>
@@ -171,44 +173,48 @@ const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
               <IconButton noPadding size="normal">
                 <MoreSquareIcon onClick={handleClick} />
               </IconButton>
-              <Menu
-                id="demo-positioned-menu"
-                aria-labelledby="demo-positioned-button"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={() => setAnchorEl(null)}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                sx={{
-                  zIndex: "1301",
-                }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    setShowPopup((pre) => ({
-                      ...pre,
-                      type: TYPE_POPUP.ADD_ADMIN,
-                      statusPopup: true,
-                      title: commonChatBox("chatBox.addAsAdmin"),
-                      content: <>{commonChatBox("chatBox.sureAddAsAdmin")}</>,
-                    }));
-                  }}
-                >
-                  {commonChatBox("chatBox.addAsAdmin")}
-                </MenuItem>
-                <MenuItem onClick={() => handleClickMenu("remove")}>
-                  {commonChatBox("chatBox.removeFromChat")}
-                </MenuItem>
-              </Menu>
             </>
           )
         )}
+
+        <Menu
+          id="demo-positioned-menu"
+          aria-labelledby="demo-positioned-button"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={() => setAnchorEl(null)}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          sx={{
+            zIndex: "1301",
+          }}
+        >
+          {data?.id !== dataTransfer?.owner &&
+            !isAdminGroup(dataTransfer?.admins, data?.id) && (
+              <MenuItem
+                onClick={() => {
+                  setShowPopup((pre) => ({
+                    ...pre,
+                    type: TYPE_POPUP.ADD_ADMIN,
+                    statusPopup: true,
+                    title: commonChatBox("chatBox.addAsAdmin"),
+                    content: <>{commonChatBox("chatBox.sureAddAsAdmin")}</>,
+                  }));
+                }}
+              >
+                {commonChatBox("chatBox.addAsAdmin")}
+              </MenuItem>
+            )}
+          <MenuItem onClick={() => handleClickMenu("remove")}>
+            {commonChatBox("chatBox.removeFromChat")}
+          </MenuItem>
+        </Menu>
       </Box>
       {showPopup?.statusPopup && (
         <DefaultPopupLayout
