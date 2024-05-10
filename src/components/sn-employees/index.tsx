@@ -2,17 +2,23 @@
 import { useCallback, useState } from "react";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Tab from "@mui/material/Tab";
+import { useTranslations } from "next-intl";
 
 import { EmployeeType } from "constant/enums";
+import { NS_COMPANY } from "constant/index";
 import Actions from "./Actions";
 import ItemList from "./ItemList";
 
 const EmployeesPage = () => {
+  const companyT = useTranslations(NS_COMPANY);
   const [tab, setTab] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
 
-  const handleSetTab = useCallback((employeeType: EmployeeType) => {
-    setTab(employeeType);
-  }, []);
+  const handleSetTab = useCallback(
+    (_event: React.SyntheticEvent, newValue: EmployeeType) => {
+      setTab(newValue);
+    },
+    [],
+  );
 
   return (
     <>
@@ -45,19 +51,20 @@ const EmployeesPage = () => {
                   zIndex: 1,
                 },
               }}
-              onChange={(
-                _event: React.SyntheticEvent,
-                newValue: EmployeeType,
-              ) => setTab(newValue)}
+              onChange={handleSetTab}
             >
               <Tab
-                label="Employee"
+                label={companyT("employees.employee")}
                 value={EmployeeType.EMPLOYEE}
                 sx={tabStyles}
               />
-              <Tab label="Client" value={EmployeeType.CLIENT} sx={tabStyles} />
               <Tab
-                label="Contractor"
+                label={companyT("employees.client")}
+                value={EmployeeType.CLIENT}
+                sx={tabStyles}
+              />
+              <Tab
+                label={companyT("employees.contractor")}
                 value={EmployeeType.CONTRACTOR}
                 sx={tabStyles}
               />
@@ -70,7 +77,10 @@ const EmployeesPage = () => {
         <TabPanel value={EmployeeType.CLIENT.toString()} sx={tabPanelStyles}>
           <ItemList employeeType={EmployeeType.CLIENT} />
         </TabPanel>
-        <TabPanel value={EmployeeType.CONTRACTOR.toString()} sx={tabPanelStyles}>
+        <TabPanel
+          value={EmployeeType.CONTRACTOR.toString()}
+          sx={tabPanelStyles}
+        >
           <ItemList employeeType={EmployeeType.CONTRACTOR} />
         </TabPanel>
       </TabContext>
@@ -116,4 +126,4 @@ const tabPanelStyles = {
   px: 3,
   pt: 1,
   pb: 3,
-}
+};
