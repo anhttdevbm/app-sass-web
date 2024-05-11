@@ -14,6 +14,8 @@ interface StatusSelectProps {
   status: string;
   setStatus: (status: string) => void;
   handleChangeStatus: (event: SelectChangeEvent) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  theme?: any;
 }
 
 const StyledMenuItem = (props) => (
@@ -24,9 +26,8 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
   status,
   setStatus,
   handleChangeStatus: handleStatusChange,
+  theme
 }) => {
-  const theme = useTheme();
-
   const inputLabelStyle: CSSProperties = {
     color: `${theme.palette.info.main}`,
     position: "absolute",

@@ -1,0 +1,25 @@
+import { SvgIcon, SvgIconProps } from "@mui/material";
+
+const FirstPageIcon = (props: SvgIconProps) => {
+  return (
+    <SvgIcon
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M11.7265 12L12.6665 11.06L9.61317 8L12.6665 4.94L11.7265 4L7.7265 8L11.7265 12Z"
+        fill="#212121"
+      />
+      <path
+        d="M7.33344 12L8.27344 11.06L5.2201 8L8.27344 4.94L7.33344 4L3.33344 8L7.33344 12Z"
+        fill="#212121"
+      />
+    </SvgIcon>
+  );
+};
+
+export default FirstPageIcon;

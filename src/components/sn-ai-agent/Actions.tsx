@@ -1,10 +1,7 @@
 "use client";
 
 import PlusIcon from "@mui/icons-material/Add";
-import {
-  SelectChangeEvent,
-  Stack
-} from "@mui/material";
+import { SelectChangeEvent, Stack } from "@mui/material";
 import useTheme from "hooks/useTheme";
 import React from "react";
 import { Button, SearchInput, StatusSelect } from "./components";
@@ -39,11 +36,12 @@ const Actions = () => {
           alignItems={"center"}
           height={"100%"}
         >
-          <SearchInput />
+          <SearchInput theme={theme} />
           <StatusSelect
             status={status}
             setStatus={setStatus}
             handleChangeStatus={handleStatusChange}
+            theme={theme}
           />
         </Stack>
       </Stack>

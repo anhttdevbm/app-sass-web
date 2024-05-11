@@ -4,9 +4,12 @@ import { InputAdornment, OutlinedInput } from "@mui/material";
 import useTheme from "hooks/useTheme";
 import SearchIcon from "icons/SearchIcon";
 
-export const SearchInput: React.FC<{}> = ({}) => {
-  const theme = useTheme();
+interface SearchInputProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  theme?: any;
+}
 
+export const SearchInput: React.FC<SearchInputProps> = ({ theme }) => {
   return (
     <OutlinedInput
       startAdornment={
