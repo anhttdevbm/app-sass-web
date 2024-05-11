@@ -219,7 +219,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         currentObserver.unobserve(currentElement);
       }
     };
-  }, [firstElement, isChatDesktop, messagesContentRef]);
+  }, [firstElement, isChatDesktop, messagesContentRef, messagePaging]);
 
   const renderMessage = (message: MessageInfoV2) => {
     const senderInfo = members?.find((item) => item?.id === message?.sender);
