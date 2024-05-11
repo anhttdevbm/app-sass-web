@@ -8,7 +8,7 @@ import { NS_CHAT_BOX } from "constant/index";
 import useTheme from "hooks/useTheme";
 
 interface ChatItemRenderProps {
-  sessionId: string;
+  sessionId: string | undefined;
   chatInfo: IChatItemInfo;
 }
 const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {

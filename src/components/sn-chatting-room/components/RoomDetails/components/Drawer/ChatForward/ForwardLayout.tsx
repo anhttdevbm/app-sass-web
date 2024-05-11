@@ -32,7 +32,7 @@ const ForwardLayout = () => {
         display="flex"
         flexDirection="column"
         overflow="hidden"
-        height="calc(500px - 77px)"
+        height="calc(500px - 30px)"
       >
         <ChatForward
           loading={loading}

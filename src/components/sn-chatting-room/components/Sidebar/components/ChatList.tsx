@@ -34,7 +34,7 @@ const ChatList = () => {
       const first = entries[0];
       if (first.isIntersecting) {
         scrollHeightRef.current = chatListRef.current?.scrollHeight || 0;
-        const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
+        const clientHeight = chatListRef.current?.clientHeight || 0;
         if (scrollHeightRef.current > clientHeight && !!paging.next) {
           loadMoreConversation(paging.current);
         }
@@ -80,7 +80,7 @@ const ChatList = () => {
       if (chatInfo?.unseen_message_count > 0) {
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
-          messageId: chatInfo?.lastmsg,
+          messageId: chatInfo?.lastmsg?.id,
         });
       }
     } catch (error) {}
@@ -90,7 +90,7 @@ const ChatList = () => {
     return _conversations.map((conversation, index) => (
       <ChatItemLayout
         chatInfo={conversation}
-        sessionId={user?.["username"]}
+        sessionId={user?.["id"]}
         key={conversation.id}
         onClickConvention={handleClickConversation}
         isActive={idActive === conversation.id || false}

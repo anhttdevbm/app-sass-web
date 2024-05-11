@@ -210,6 +210,8 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     const currentObserver = observer;
     if (currentElement) {
       currentObserver.observe(currentElement);
+    } else if (!!messagePaging.next) {
+      loadMoreMessages(messagePaging.current);
     }
 
     return () => {
@@ -217,27 +219,12 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         currentObserver.unobserve(currentElement);
       }
     };
-  }, [firstElement, isChatDesktop, messagesContentRef]);
+  }, [firstElement, isChatDesktop, messagesContentRef, messagePaging]);
 
   const renderMessage = (message: MessageInfoV2) => {
-    let msg = "";
     const senderInfo = members?.find((item) => item?.id === message?.sender);
     const user = { user: senderInfo?.fullname || message?.sender };
-    switch (message?.content) {
-      case "user.join":
-        msg = commonChatBox("chatBox.group.userJoin", user);
-        break;
-      case "user.leave":
-        msg = commonChatBox("chatBox.group.userLeave", user);
-        break;
-      case "admin.add":
-        msg = commonChatBox("chatBox.group.adminAdd", user);
-        break;
-      case "admin.remove":
-        msg = commonChatBox("chatBox.group.adminLeave", user);
-        break;
-    }
-    return msg;
+    return commonChatBox(`chatBox.group.${message?.content}`, user);
   };
 
   return (
@@ -312,8 +299,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                     message={message}
                     mediaListPreview={mediaListPreview}
                     isCurrentUser={isCurrentUser}
-                    isGroup={isGroup}
-                    unReadMessage={unReadMessage}
                   />
                 </MessageLayout>
               ) : (
@@ -348,57 +333,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
             </React.Fragment>
           );
         })}
-        {stateMessage?.status === DataStatus.LOADING && (
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              gap: "0.5rem",
-              alignItems: "flex-end",
-              justifyContent: "flex-end",
-              "&:last-child": {
-                paddingBottom: "1rem",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "0.3rem",
-                alignItems: "flex-end",
-                borderRadius: "10px",
-              }}
-              order={2}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  justifyContent: "flex-end",
-                  gap: "0.2rem",
-                  maxWidth: "232px",
-                }}
-              >
-                {Array.from(
-                  { length: stateMessage?.filePreview?.length || 0 },
-                  (_, i) => {
-                    return (
-                      <Skeleton
-                        key={i}
-                        variant="rounded"
-                        width={112}
-                        height={112}
-                      />
-                    );
-                  },
-                )}
-              </Box>
-            </Box>
-          </Box>
-        )}
         <Box ref={messageEndRef} />
       </Box>
     </>
