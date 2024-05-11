@@ -34,7 +34,8 @@ import {
   LANDING_AI_PATH,
   LANDING_PRICING_PATH,
   HOLIDAY_CALENDAR_PATH,
-  MEETING_HOME_PATH
+  MEETING_HOME_PATH,
+  AI_AGENT_PATH,
 } from "constant/paths";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuCompanyIcon from "icons/MenuCompanyIcon";
@@ -60,7 +61,7 @@ import DocsItem from "icons/DocsItem";
 import BillingIcon from "icons/BillingIcon";
 import WalletMoneyIcon from "icons/WalletMoneyIcon";
 import BudgetIcon from "icons/BudgetIcon";
-import AIChatIcon from "icons/AIChatIcon";
+import TaskcoverAIIcon from "icons/TaskcoverIcon";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -314,10 +315,21 @@ const DATA: MenuItemProps[] = [
     roles: [Permission.AM, Permission.ST],
   },
   {
-    label: "menu.aiChat",
-    href: AI_CHAT_PATH,
-    icon: <AIChatIcon />,
+    label: "menu.taskcoverAI",
+    icon: <TaskcoverAIIcon />,
     roles: [Permission.AM, Permission.ST],
+    subs: [
+      {
+        label: "menu.aiChat",
+        roles: [Permission.AM, Permission.ST],
+        href: AI_CHAT_PATH,
+      },
+      {
+        label: "menu.aiAgent",
+        roles: [Permission.AM, Permission.ST],
+        href: AI_AGENT_PATH,
+      },
+    ],
   },
   {
     label: "menu.sales",

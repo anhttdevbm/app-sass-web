@@ -210,4 +210,6 @@ export const Endpoint = {
   AI_CHAT: "aichat/api/ai-chat/chat",
   AI_CHAT_PERSONA: "aichat/api/ai-chat/persona",
   AI_CHAT_TONE: "aichat/api/ai-chat/tone",
+
+  //AI Agent
 };

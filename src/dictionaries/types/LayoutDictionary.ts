@@ -31,7 +31,12 @@ export type LayoutDictionary = {
     sales: string;
     docs: string;
     chat: string;
+
+    // taskcover ai
+    taskcoverAI: string;
     aiChat: string;
+    aiAgent: string;
+
     //feedback
     feedback: string;
     feedbackList: string;

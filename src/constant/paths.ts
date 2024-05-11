@@ -38,7 +38,9 @@ export const SALES_LIST_PATH = "/sales";
 export const CHATTING_ROOM_PATH = "/chat";
 export const CHATTING_INFO_PATH = "/chat/{id}";
 
+// TASKCOVER AI
 export const AI_CHAT_PATH = "/ai-chat";
+export const AI_AGENT_PATH = "/ai-agent";
 
 export const SALE_DETAIL_PATH = "/sales/{id}";
 
