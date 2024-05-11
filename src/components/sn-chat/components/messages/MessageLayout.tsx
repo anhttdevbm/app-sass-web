@@ -9,7 +9,7 @@ import useTheme from "hooks/useTheme";
 import ForwardSmall from "icons/ForwardSmall";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
-import { useWSChat } from "store/chat/helpers";
+import { isExitsInList, useWSChat } from "store/chat/helpers";
 
 interface MessageLayoutProps {
   sessionId: string | undefined;
@@ -46,20 +46,17 @@ const MessageLayout = ({
     (mem) => mem?.id === message?.sender,
   );
   const userForward = useCallback(() => {
-    if (
-      dataTransfer?.members?.find(
-        (item) => item?.id === message?.forwarded_from,
-      )
-    ) {
+    if (isExitsInList(dataTransfer?.members, { id: message?.forwarded_from })) {
       return dataTransfer?.members?.find(
         (item) => item?.id === message?.forwarded_from,
       )?.fullname;
     }
 
-    if (members?.find((item) => item?.id === message?.forwarded_from)) {
+    if (isExitsInList(members, { id: message?.forwarded_from })) {
       return members?.find((item) => item?.id === message?.forwarded_from)
         ?.fullname;
     } else {
+      if (!message?.forwarded_from) return;
       sendMessage({
         event: CHAT_EVENT_TYPE.DETAIL_MEMBER,
         memberId: message?.forwarded_from,

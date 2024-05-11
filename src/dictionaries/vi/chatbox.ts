@@ -47,11 +47,16 @@ export const ChatBoxLang: ChatBox = {
       change_avatar_alert: "Thay đổi ảnh đại diện thành công",
       adminChange: "Chuyển quyền quản lý thành công.",
       removeMember: "Đã xóa thành viên khỏi group.",
-      userJoin: "{user} đã tham gia nhóm",
-      userLeave: "{user} đã rời nhóm",
-      adminAdd: "{user} đã được bổ nhiệm làm admin",
-      adminLeave: "{user} đã bị xóa quyền admin",
+      user: {
+        join: "{user} đã tham gia nhóm",
+        leave: "{user} đã rời nhóm",
+      },
+      admin: {
+        add: "{user} đã được bổ nhiệm làm admin",
+        leave: "{user} đã bị xóa quyền admin",
+      },
       forwardMsg: "Chuyển tiếp từ: ",
+      sendFile: "{user} đã gửi file",
     },
   },
 };

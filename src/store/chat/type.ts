@@ -44,7 +44,12 @@ export interface IChatInfo {
   lastmsg_at: string;
   admins: string[];
   unseen_message_count: number;
-  lastmsg: string;
+  lastmsg: {
+    id: string;
+    content: string;
+    type: string;
+    sender: string;
+  };
 }
 
 export interface IMembersGroup {
@@ -157,6 +162,7 @@ export interface MessageInfoV2 {
   created_at: string;
   update_at: string;
   room: string;
+  seen_by: string[];
 }
 
 export interface UserOnlinePage {
@@ -568,6 +574,7 @@ export const MESSAGE_TYPE = {
   MEDIA: "media",
   FILE: "file",
   LINK: "link",
+  SYSTEM: "system",
 };
 
 export const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];

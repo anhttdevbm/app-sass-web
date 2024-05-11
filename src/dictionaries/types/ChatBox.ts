@@ -43,11 +43,16 @@ export type ChatBox = {
       change_avatar_alert: string;
       adminChange: string;
       removeMember: string;
-      userJoin: string;
-      userLeave: string;
-      adminAdd: string;
-      adminLeave: string;
+      user: {
+        join: string;
+        leave: string;
+      };
+      admin: {
+        add: string;
+        leave: string;
+      };
       forwardMsg: string;
+      sendFile: string;
     };
   };
 };

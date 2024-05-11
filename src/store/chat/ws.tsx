@@ -1,6 +1,6 @@
 import { useAuth } from "store/app/selectors";
 import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { clientStorage } from "utils/storage";
 import { CHAT_EVENT_TYPE } from "store/chat/type";
 import { useChat } from "store/chat/selectors";
@@ -35,8 +35,8 @@ export const useWSChatConnect = () => {
   };
 
   useEffect(() => {
-    connectSocket();
-  }, []);
+    if (user && aT) connectSocket();
+  }, [user, aT]);
 
   return {};
 };

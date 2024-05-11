@@ -19,11 +19,13 @@ import { useChat } from "store/chat/selectors";
 export const TimeMessage = ({
   time,
   isRead,
+  isShowTime = true,
   isCurrentUser,
   timeMessageProps,
 }: {
   time: string | Date;
   isRead: boolean;
+  isShowTime?: boolean;
   isCurrentUser: boolean;
   timeMessageProps?: TypographyProps;
 }) => {
@@ -54,7 +56,7 @@ export const TimeMessage = ({
       sx={sx}
       {...props}
     >
-      {getTimeStamp}
+      {isShowTime ? getTimeStamp : ""}
       {isCurrentUser &&
         (isRead ? (
           <ReadedIcon sx={{ fontSize: "14px" }} />
@@ -68,32 +70,15 @@ interface MessageContentProps {
   message: MessageInfoV2;
   mediaListPreview: MediaPreviewItem[];
   isCurrentUser: boolean;
-  isGroup: boolean;
-  unReadMessage: UnreadUserInfo[];
 }
 const MessageContent = ({
   message,
   mediaListPreview,
   isCurrentUser,
-  isGroup,
-  unReadMessage,
 }: MessageContentProps) => {
   const textRef = useRef<HTMLDivElement>(null);
   const { listSearchMessage, selectSearchIndex } = useChat();
-
-  const isUnReadCheck = unReadMessage.some((item) => item.unreadCount === 0);
   const { isDarkMode } = useTheme();
-  const isReadMessage = useMemo(() => {
-    const timeMessage = new Date(message.created_at);
-    if (isGroup) {
-      return isUnReadCheck;
-    } else {
-      const timeRead = new Date(unReadMessage?.[0]?.unreadsFrom || "");
-      return unReadMessage?.[0]?.unreadsFrom
-        ? timeMessage.getTime() < timeRead.getTime()
-        : false;
-    }
-  }, [isGroup, isUnReadCheck, message.created_at, unReadMessage]);
 
   useEffect(() => {
     if (message.content && textRef.current) {
@@ -172,7 +157,7 @@ const MessageContent = ({
         </Typography>
         <TimeMessage
           isCurrentUser={isCurrentUser}
-          isRead={isReadMessage}
+          isRead={message?.seen_by?.length > 0}
           time={message.created_at}
         />
       </Box>
@@ -195,7 +180,7 @@ const MessageContent = ({
         <AttachmentContent
           message={message}
           isCurrentUser={isCurrentUser}
-          isRead={isReadMessage}
+          isRead={message?.seen_by?.length > 0}
           mediaListPreview={mediaListPreview}
           attachmentProps={{
             sx: {

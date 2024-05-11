@@ -19,7 +19,7 @@ const isRelatedGroup = (members: string[], userId = "") => {
   return members?.find((memberId) => memberId === userId);
 };
 
-const isExitsInList = (list, item) => {
+export const isExitsInList = (list, item) => {
   return list?.find((elm) => elm?.id === item?.id);
 };
 
@@ -29,7 +29,7 @@ export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
 
 export const isAdminGroup = (admins, userId) => {
   return admins?.find((item) => item === userId);
-}
+};
 
 const sortASCArray = (list: any[], sortBy: string) => {
   if (list && list.length) {
@@ -105,7 +105,7 @@ export const useWSChat = () => {
   const handleMessageSystem = (resp) => {
     const senderId =
       resp?.data?.detailMember?.id || resp?.data?.detailAdmin?.id;
-    if (!members?.find((mem) => mem?.id === senderId)) {
+    if (senderId && !members?.find((mem) => mem?.id === senderId)) {
       sendMessage({
         event: CHAT_EVENT_TYPE.DETAIL_MEMBER,
         memberId: senderId,
@@ -184,6 +184,7 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.DETAIL_ROOM:
               let roomDetail = resp?.data;
+              await onSetMessagePaging(initPagingV2);
               // if (roomId === roomDetail?.id) return;
               if (roomDetail?.type === CHAT_ROOM_TYPE.PERSONAL) {
                 roomDetail = {
@@ -345,13 +346,14 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_LIST:
-              onSetMessagePaging({
+              await onSetMessagePaging({
                 current: resp?.data?.prev + 1,
                 ...resp?.data,
               });
               resp?.data?.result?.forEach((item) => {
                 if (
                   item?.type === "system" &&
+                  item?.sender &&
                   !members?.find((mem) => mem?.id === item?.sender)
                 ) {
                   sendMessage({
@@ -412,6 +414,22 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.MESSAGE_SEARCH:
               onSetMessageSearch(resp.data?.result || []);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_SEEN:
+              if (resp?.data?.userId === user?.id) {
+                const conversationUpdate = convention?.map((item) => {
+                  if (item?.id === resp?.data?.roomId) {
+                    return {
+                      ...item,
+                      unseen_message_count: 0,
+                    };
+                  }
+                  return item;
+                });
+
+                await onSetListConvention(conversationUpdate);
+              }
               return;
 
             case CHAT_EVENT_TYPE.DETAIL_MEMBER:

@@ -736,57 +736,96 @@ export const useChat = () => {
     [dispatch],
   );
 
-  const onSetConvention = (conversations) => {
-    return dispatch(setConversation(conversations));
-  };
+  const onSetConvention = useCallback(
+    async (conversations) => {
+      return dispatch(setConversation(conversations));
+    },
+    [dispatch],
+  );
 
-  const onSetConversationPaging = (pagingInfo) => {
-    return dispatch(setConversationPaging(pagingInfo));
-  };
+  const onSetConversationPaging = useCallback(
+    async (pagingInfo) => {
+      return dispatch(setConversationPaging(pagingInfo));
+    },
+    [dispatch],
+  );
 
-  const onSetListConvention = (conversations) => {
-    return dispatch(setListConversation(conversations));
-  };
+  const onSetListConvention = useCallback(
+    async (conversations) => {
+      return dispatch(setListConversation(conversations));
+    },
+    [dispatch],
+  );
 
-  const onSetIsSearchConversation = (searchFlg: boolean) => {
-    return dispatch(setIsSearchConversation(searchFlg));
-  };
+  const onSetIsSearchConversation = useCallback(
+    async (searchFlg) => {
+      return dispatch(setIsSearchConversation(searchFlg));
+    },
+    [dispatch],
+  );
 
-  const onSetMessages = (messages) => {
-    return dispatch(setMessages(messages));
-  };
+  const onSetMessages = useCallback(
+    async (messages) => {
+      return dispatch(setMessages(messages));
+    },
+    [dispatch],
+  );
 
-  const onSetListMessages = (messages) => {
-    return dispatch(setListMessage(messages));
-  };
+  const onSetListMessages = useCallback(
+    async (messages) => {
+      return dispatch(setListMessage(messages));
+    },
+    [dispatch],
+  );
 
-  const onSetMessageSearch = (messages) => {
-    return dispatch(setMessageSearch(messages));
-  };
+  const onSetMessageSearch = useCallback(
+    async (messages) => {
+      return dispatch(setMessageSearch(messages));
+    },
+    [dispatch],
+  );
 
-  const onSetMessagePaging = (newPaging) => {
-    return dispatch(setMessagePaging(newPaging));
-  };
+  const onSetMessagePaging = useCallback(
+    async (newPaging) => {
+      return dispatch(setMessagePaging(newPaging));
+    },
+    [dispatch],
+  );
 
-  const onSetChatLinks = (data) => {
-    return dispatch(setChatLinks(data));
-  };
+  const onSetChatLinks = useCallback(
+    async (data) => {
+      return dispatch(setChatLinks(data));
+    },
+    [dispatch],
+  );
 
-  const onSetChatMedias = (data) => {
-    return dispatch(setChatMedias(data));
-  };
+  const onSetChatMedias = useCallback(
+    async (data) => {
+      return dispatch(setChatMedias(data));
+    },
+    [dispatch],
+  );
 
-  const onSetChatFiles = (data) => {
-    return dispatch(setChatFiles(data));
-  };
+  const onSetChatFiles = useCallback(
+    async (data) => {
+      return dispatch(setChatFiles(data));
+    },
+    [dispatch],
+  );
 
-  const onSetMembers = (data) => {
-    return dispatch(setMembers(data));
-  };
+  const onSetMembers = useCallback(
+    async (data) => {
+      return dispatch(setMembers(data));
+    },
+    [dispatch],
+  );
 
-  const onSetWsClient = (ws) => {
-    return dispatch(setWsClient(ws));
-  };
+  const onSetWsClient = useCallback(
+    async (ws) => {
+      return dispatch(setWsClient(ws));
+    },
+    [dispatch],
+  );
 
   return {
     wsClient,
