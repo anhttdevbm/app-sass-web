@@ -11,9 +11,10 @@ import {
   CellProps,
   TableLayout,
 } from "components/Table";
-import { TableRow } from "@mui/material";
+import { Box, TableRow } from "@mui/material";
 import { usePathname, useRouter } from "next-intl/client";
 import FixedLayout from "components/FixedLayout";
+import styled from "styled-components";
 
 const AgentList = () => {
   const { aiAgents, limit, page, totalAIAgents, totalPages, onGetAgents } =
@@ -63,7 +64,20 @@ const AgentList = () => {
             <BodyCell>{index + 1 + (page - 1) * limit}</BodyCell>
             <BodyCell>{agent.name}</BodyCell>
             <BodyCell>{agent.creationDate}</BodyCell>
-            <BodyCell>{agent.status}</BodyCell>
+            <BodyCell>
+              <Box
+                display={"flex"}
+                width={"100%"}
+                alignItems={"center"}
+                justifyContent={"center"}
+              >
+                <StyledBox isActive={agent.status === "Active"}>
+                  <StyledDiv isActive={agent.status === "Active"}>
+                    {agent.status}
+                  </StyledDiv>
+                </StyledBox>
+              </Box>
+            </BodyCell>
             <ActionsCell onEdit={handleEdit} onDelete={handleDelete} />
           </TableRow>
         ))}
@@ -86,3 +100,24 @@ const AgentList = () => {
 };
 
 export default AgentList;
+
+const StyledBox = styled(Box)<{ isActive: boolean }>`
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 0;
+  border-radius: 6px;
+  width: 81px;
+  text-align: center;
+  color: ${(props) => (props.isActive ? "transparent" : "#666666")};
+  background-color: ${(props) => (props.isActive ? "#E8F2EF" : "#ECECF3")};
+`;
+
+const StyledDiv = styled("div")<{ isActive: boolean }>`
+  ${(props) =>
+    props.isActive &&
+    `
+    background: linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  `}
+`;
