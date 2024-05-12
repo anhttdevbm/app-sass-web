@@ -1,20 +1,16 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
-import { useAgents } from "store/aiAgent/selectors";
-import useQueryParams from "hooks/useQueryParams";
-import Pagination from "./components/Pagination";
-import { getPath } from "utils/index";
-import {
-  ActionsCell,
-  BodyCell,
-  CellProps,
-  TableLayout,
-} from "components/Table";
 import { Box, TableRow } from "@mui/material";
-import { usePathname, useRouter } from "next-intl/client";
 import FixedLayout from "components/FixedLayout";
+import { BodyCell, CellProps, TableLayout } from "components/Table";
+import useQueryParams from "hooks/useQueryParams";
+import { usePathname, useRouter } from "next-intl/client";
+import { useEffect, useMemo } from "react";
+import { useAgents } from "store/aiAgent/selectors";
 import styled from "styled-components";
+import { getPath } from "utils/index";
+import ActionsCell, { PRIMARY_GRADIENT } from "./components/ActionCell";
+import Pagination from "./components/Pagination";
 
 const AgentList = () => {
   const { aiAgents, limit, page, totalAIAgents, totalPages, onGetAgents } =
@@ -53,6 +49,7 @@ const AgentList = () => {
     onGetAgents({ ...initQuery });
   }, [initQuery, isReady, onGetAgents]);
 
+  const handleChat = () => console.log("Chat agent");
   const handleDelete = () => console.log("Delete agent");
   const handleEdit = () => console.log("Edit agent");
 
@@ -78,7 +75,11 @@ const AgentList = () => {
                 </StyledBox>
               </Box>
             </BodyCell>
-            <ActionsCell onEdit={handleEdit} onDelete={handleDelete} />
+            <ActionsCell
+              onChat={handleChat}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           </TableRow>
         ))}
       </TableLayout>
@@ -116,7 +117,7 @@ const StyledDiv = styled("div")<{ isActive: boolean }>`
   ${(props) =>
     props.isActive &&
     `
-    background: linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%);
+    background: ${PRIMARY_GRADIENT};
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   `}

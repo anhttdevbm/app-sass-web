@@ -70,6 +70,7 @@ export type CommonDictionary = {
   update: string;
   edit: string;
   delete: string;
+  chat: string;
   close: string;
   search: string;
   assigner: string;

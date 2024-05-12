@@ -1,4 +1,5 @@
 import { Button as MuiButtons, SvgIconProps, Typography } from "@mui/material";
+import { PRIMARY_GRADIENT } from "./ActionCell";
 
 type ButtonType = "primary" | "gradient";
 
@@ -31,7 +32,7 @@ const primaryBtnSx = {
 };
 
 const gradientBtnSx = {
-  background: "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)",
+  background: `${PRIMARY_GRADIENT}`,
   color: "#FFFFFF",
   textTransform: "capitalize",
   boxShadow: "none",

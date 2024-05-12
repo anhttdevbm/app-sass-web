@@ -4,7 +4,7 @@ import { Input, Text } from "components/shared";
 import { PopperMenu } from "components/shared/PopperMenu";
 import { NS_AI_CHAT } from "constant/index";
 import useTheme from "hooks/useTheme";
-import EditUnderlineIconWithGradientIcon from "icons/EditUnderlineWithGradientIcon";
+import PenUnderlineIcon from "icons/PenUnderlineIcon";
 import TrashFillIcon from "icons/TrashFillIcon";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
@@ -144,7 +144,7 @@ const ItemChat = ({
         setAnchorEl={setMenuAnchorElement}
       >
         <MenuItem sx={menuItemSx} onClick={handleEditChatSession}>
-          <EditUnderlineIconWithGradientIcon sx={iconSx} />
+          <PenUnderlineIcon sx={iconSx} />
           <Text
             sx={{
               ...textSx,

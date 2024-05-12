@@ -1,6 +1,6 @@
 import { SvgIcon, SvgIconProps } from "@mui/material";
 
-const EditUnderlineIconWithGradientIcon = (props: SvgIconProps) => {
+const PenUnderlineIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon
       width="20"
@@ -31,8 +31,8 @@ const EditUnderlineIconWithGradientIcon = (props: SvgIconProps) => {
           y2="16.8437"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0575E6" />
-          <stop offset="1" stop-color="#38E27B" />
+          <stop stop-color={props.fill || "#0575E6"} />
+          <stop offset="1" stop-color={props.fill || "#38E27B"} />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1642_461"
@@ -42,8 +42,8 @@ const EditUnderlineIconWithGradientIcon = (props: SvgIconProps) => {
           y2="7.22643"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0575E6" />
-          <stop offset="1" stop-color="#38E27B" />
+          <stop stop-color={props.fill || "#0575E6"} />
+          <stop offset="1" stop-color={props.fill || "#38E27B"} />
         </linearGradient>
         <linearGradient
           id="paint2_linear_1642_461"
@@ -53,12 +53,12 @@ const EditUnderlineIconWithGradientIcon = (props: SvgIconProps) => {
           y2="13.3741"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0575E6" />
-          <stop offset="1" stop-color="#38E27B" />
+          <stop stop-color={props.fill || "#38E27B"} />
+          <stop offset="1" stop-color={props.fill || "#38E27B"} />
         </linearGradient>
       </defs>
     </SvgIcon>
   );
 };
 
-export default EditUnderlineIconWithGradientIcon;
+export default PenUnderlineIcon;

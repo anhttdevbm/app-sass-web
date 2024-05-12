@@ -72,7 +72,7 @@ const HeaderChatListTemp: React.FC<HeaderProps> = ({
           <Tab
             icon={
               <AITabIcon
-                {...(value === 0 ? { fill: "#BABCC6" } : { fill: "white" })}
+                sx={value === 0 ? { color: "#BABCC6" } : { color: "white" }}
               />
             }
             aria-label="AI Chat"
