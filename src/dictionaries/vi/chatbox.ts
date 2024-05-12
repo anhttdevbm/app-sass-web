@@ -5,7 +5,7 @@ export const ChatBoxLang: ChatBox = {
     chat: "Trò chuyện",
     searchName: "Tìm kiếm tên",
     searchConversation: "Tìm kiếm hội thoại",
-    you: "Bạn:",
+    you: "Bạn",
     active: "Đang hoạt động",
     typeMessage: "Nhập tin nhắn...",
     groupName: "Tên nhóm:",

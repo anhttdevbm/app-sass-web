@@ -91,8 +91,8 @@ const ChatItemLayout = ({
         ) : (
           <TimeMessage
             isShowTime={false}
-            isCurrentUser={true} // TODO: handle later
-            isRead={true}
+            isCurrentUser={lastmsg?.sender?.id === user?.id}
+            isRead={lastmsg?.seen_user_count > 0}
             time={lastmsg_at}
           />
         )}
