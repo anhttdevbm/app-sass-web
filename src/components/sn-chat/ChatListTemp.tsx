@@ -8,7 +8,7 @@ import SwitchChatAI, {
 } from "components/sn-ai-chat/components/SwitchChatAI";
 import SwitchChat from "components/sn-chat/SwitchChat";
 import { Permission } from "constant/enums";
-import { NS_COMMON } from "constant/index";
+import { NS_CHAT, NS_COMMON } from "constant/index";
 import useTheme from "hooks/useTheme";
 import ChatMessageIcon from "icons/ChatMessageIcon";
 import CloseIcon from "icons/CloseIcon";
@@ -26,6 +26,7 @@ const ChatListTemp = () => {
   const [open, setOpen] = useState(false);
   const [show, setShow] = useState(false);
   const commonT = useTranslations(NS_COMMON);
+  const t = useTranslations(NS_CHAT);
   const { onAddSnackbar } = useSnackbar();
   const { isDarkMode } = useTheme();
   const [selectedTab, setSelectedTab] = useState(1);
@@ -65,7 +66,7 @@ const ChatListTemp = () => {
               padding: "15px 0",
             }}
           >
-            <Typography>Bạn có muốn chuyển sang message?</Typography>
+            <Typography>{t("popupChat.question")}</Typography>
           </Box>
           <Box
             sx={{
