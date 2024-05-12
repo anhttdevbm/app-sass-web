@@ -5,6 +5,7 @@ import {
   CHAT_EVENT_TYPE,
   CHAT_ROOM_TYPE,
   IWsChatRespMessage,
+  MESSAGE_TYPE,
   STEP,
 } from "./type";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
@@ -122,6 +123,67 @@ export const useWSChat = () => {
         created_at: new Date().getTime(),
       };
       onSetListMessages([...messages, newMessage]);
+    }
+  };
+
+  const isCurrentUserInRoom = (roomSelect, userId) => {
+    return roomId === roomSelect && userId !== user?.id;
+  };
+
+  const handleReceiveMsg = async (resp) => {
+    const msg = resp?.data?.message;
+    const newMsg = {
+      ...msg,
+      seen_by: isCurrentUserInRoom(resp?.data?.room?.id, msg?.sender)
+        ? [user?.id]
+        : [],
+    };
+    await handleDisplayNewMessage(resp);
+    if (newMsg?.room !== roomId) return;
+    if (!isExitsInList(messages, newMsg)) {
+      await onSetListMessages([...messages, newMsg]);
+    }
+  };
+
+  const handleDisplayNewMessage = async (resp) => {
+    const newMsg = resp?.data?.message;
+    const sysMsg = resp?.data?.systemMessage;
+    const newRoomMsg = resp?.data?.room;
+    if (isExitsInList(convention, newRoomMsg)) {
+      let conversationUpdate: any = [];
+      conversationUpdate = convention.map((item) => {
+        if (item?.id === newRoomMsg?.id) {
+          return {
+            ...item,
+            files: newMsg?.files,
+            unseen_message_count: isCurrentUserInRoom(
+              newRoomMsg?.id,
+              newMsg?.sender,
+            )
+              ? item?.unseen_message_count + 1
+              : 0,
+            lastmsg: {
+              id: newRoomMsg?.lastmsg,
+              type: sysMsg ? MESSAGE_TYPE.SYSTEM : newMsg?.type,
+              content: sysMsg ? sysMsg?.type : newMsg?.content,
+              seen_user_count: 0,
+              sender: sysMsg
+                ? resp?.data?.detailMember
+                : resp?.data?.detailSenderMember,
+            },
+          };
+        }
+        return item;
+      });
+
+      if (isCurrentUserInRoom(newRoomMsg?.id, newMsg?.sender)) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
+          messageId: newRoomMsg?.lastmsg,
+        });
+      }
+
+      await onSetListConvention(conversationUpdate);
     }
   };
 
@@ -259,6 +321,7 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_MEMBER:
+              handleDisplayNewMessage(resp);
               if (resp?.data?.detailMember?.id === user?.id) {
                 onSetListConvention([resp?.data?.room, ...convention]);
               }
@@ -285,6 +348,7 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER:
             case CHAT_EVENT_TYPE.GROUP_REMOVE_ADMIN:
+              handleDisplayNewMessage(resp);
               if (resp?.data?.detailMember?.id === user?.id) {
                 const roomIdOut = resp?.data?.room?.id;
                 const newConversation = convention.filter(
@@ -313,6 +377,7 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_ADMIN:
+              handleDisplayNewMessage(resp);
               if (resp?.data?.room?.id !== roomId) {
                 return;
               }
@@ -380,30 +445,19 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
-              const newMsg = resp?.data?.message;
-              if (newMsg?.room !== roomId) return;
-              if (!isExitsInList(messages, newMsg)) {
-                onSetListMessages([...messages, newMsg]);
-              }
+              handleReceiveMsg(resp);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
-              const newMsgFile = resp?.data?.message;
-              if (newMsgFile?.room !== roomId) return;
-              if (!isExitsInList(messages, newMsgFile)) {
-                onSetListMessages([...messages, newMsgFile]);
-              }
+              handleReceiveMsg(resp);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
-              const newMsgMedia = resp?.data?.message;
-              if (newMsgMedia?.room !== roomId) return;
-              if (!isExitsInList(messages, newMsgMedia)) {
-                onSetListMessages([...messages, newMsgMedia]);
-              }
+              handleReceiveMsg(resp);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_FORWARD:
+              handleDisplayNewMessage(resp);
               if (
                 resp?.data?.room?.id === roomId &&
                 !isExitsInList(messages, resp?.data?.message)
@@ -417,6 +471,37 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEEN:
+              if (isExitsInList(convention, { id: resp?.data?.roomId })) {
+                if (roomId === resp?.data?.roomId) {
+                  const newMsg = messages?.map((msg) => {
+                    if (
+                      resp?.data?.listMessageId?.length &&
+                      resp?.data?.listMessageId?.includes(msg?.id)
+                    ) {
+                      return {
+                        ...msg,
+                        seen_by: [...msg?.seen_by, resp?.data?.userId],
+                      };
+                    }
+                    return msg;
+                  });
+                  await onSetListMessages(newMsg);
+                }
+                const newConversation = convention.map((item) => {
+                  if (item?.id === resp?.data?.roomId) {
+                    return {
+                      ...item,
+                      lastmsg: {
+                        ...item.lastmsg,
+                        seen_user_count: 1,
+                      },
+                    };
+                  }
+                  return item;
+                });
+
+                await onSetListConvention(newConversation);
+              }
               if (resp?.data?.userId === user?.id) {
                 const conversationUpdate = convention?.map((item) => {
                   if (item?.id === resp?.data?.roomId) {

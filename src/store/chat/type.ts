@@ -48,7 +48,12 @@ export interface IChatInfo {
     id: string;
     content: string;
     type: string;
-    sender: string;
+    seen_user_count: number;
+    sender: {
+      fullname: string;
+      id: string;
+      username: string;
+    };
   };
 }
 
