@@ -24,6 +24,7 @@ import { useTranslations } from "next-intl";
 import { MouseEvent, memo, useId, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
+import { Dialog } from "../Dialog";
 
 export const PRIMARY_GRADIENT =
   "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)";
@@ -244,13 +245,15 @@ const ActionsCell = (props: ActionsCellProps) => {
           </MenuList>
         </Stack>
       </Popover>
-      <ConfirmDialog
-        onSubmit={onDelete}
+      <Dialog
         open={isShow}
         onClose={onCloseDialogDelete}
         title={t("confirmDelete.title")}
         content={t("confirmDelete.content")}
-        {...deleteProps}
+        onSubmit={onDelete}
+        headerProps={{
+          justifyContent: "center",
+        }}
       />
     </BodyCell>
   );

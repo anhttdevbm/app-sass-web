@@ -12,6 +12,7 @@ export type DialogProps = Omit<DialogLayoutProps, "children"> & {
   submitText?: string;
   pending?: boolean;
   children?: React.ReactNode;
+  headerProps?: {};
 };
 
 export const Dialog = (props: DialogProps) => {
@@ -27,6 +28,7 @@ export const Dialog = (props: DialogProps) => {
     pending,
     sx,
     children,
+    headerProps,
     ...rest
   } = props;
   return (
@@ -35,7 +37,10 @@ export const Dialog = (props: DialogProps) => {
       sx={{ ...defaultSx.root, ...sx }}
       renderHeader={title}
       headerProps={{
-        sx: defaultSx.header,
+        sx: {
+          ...defaultSx.header,
+          ...headerProps,
+        },
       }}
       bottomProps={{
         sx: defaultSx.bottom,

@@ -46,4 +46,8 @@ export const TextField = styled(({ theme, ...props }: TextFieldCustomProps) => (
     },
     left: "8px",
   },
+  "& .MuiInputBase-input": {
+    paddingLeft: "20px",
+    paddingRight: "20px",
+  },
 }));
