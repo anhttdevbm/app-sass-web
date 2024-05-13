@@ -4,14 +4,32 @@ import PlusIcon from "@mui/icons-material/Add";
 import { SelectChangeEvent, Stack } from "@mui/material";
 import useTheme from "hooks/useTheme";
 import React from "react";
-import { Button, SearchInput, StatusSelect } from "./components";
+import {
+  Button,
+  CreateAIAgentModal,
+  SearchInput,
+  StatusSelect,
+} from "./components";
 
 const Actions = () => {
+  const [open, setOpen] = React.useState(false);
   const [status, setStatus] = React.useState("");
   const theme = useTheme();
 
   const handleStatusChange = (event: SelectChangeEvent<string>) => {
     setStatus(event.target.value as string);
+  };
+
+  const handleCloseCreateModal = () => {
+    setOpen(false);
+  };
+
+  const handleOpenCreateModal = () => {
+    setOpen(true);
+  };
+
+  const handleSubmitCreateModal = () => {
+    console.log("Submit");
   };
 
   return (
@@ -25,7 +43,12 @@ const Actions = () => {
         height={"80px"}
       >
         <Stack>
-          <Button type="gradient" text="Create" icon={PlusIcon} />
+          <Button
+            type="gradient"
+            text="Create"
+            icon={PlusIcon}
+            onClick={handleOpenCreateModal}
+          />
         </Stack>
         <Stack
           direction="row"
@@ -45,6 +68,12 @@ const Actions = () => {
           />
         </Stack>
       </Stack>
+      <CreateAIAgentModal
+        onClose={handleCloseCreateModal}
+        onSubmit={handleSubmitCreateModal}
+        open={open}
+        theme={theme}
+      />
     </>
   );
 };
