@@ -11,6 +11,8 @@ import styled from "styled-components";
 import { getPath } from "utils/index";
 import ActionsCell, { PRIMARY_GRADIENT } from "./components/ActionCell";
 import Pagination from "./components/Pagination";
+import { useTranslations } from "next-intl";
+import { NS_AI_AGENT } from "constant/index";
 
 const AgentList = () => {
   const { aiAgents, limit, page, totalAIAgents, totalPages, onGetAgents } =
@@ -18,6 +20,7 @@ const AgentList = () => {
   const { initQuery, isReady, query } = useQueryParams();
   const { push } = useRouter();
   const pathname = usePathname();
+  const t = useTranslations(NS_AI_AGENT);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleQueryChange = (newQueries: { [key: string]: any }) => {
@@ -35,10 +38,10 @@ const AgentList = () => {
 
   const tableHeaders: CellProps[] = useMemo(
     () => [
-      { value: "STT", width: "10%", align: "center" },
-      { value: "Agent", width: "25%", align: "center" },
-      { value: "Creation date", width: "25%", align: "center" },
-      { value: "Status", width: "25%", align: "center" },
+      { value: t("layout.table.index"), width: "10%", align: "center" },
+      { value: t("layout.table.agent"), width: "25%", align: "center" },
+      { value: t("layout.table.creationDate"), width: "25%", align: "center" },
+      { value: t("layout.table.status"), width: "25%", align: "center" },
       { value: "", width: "15%", align: "center" },
     ],
     [],

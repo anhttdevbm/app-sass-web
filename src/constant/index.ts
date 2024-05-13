@@ -15,7 +15,8 @@ export const UPLOAD_API_URL = process.env.UPLOAD_API_URL as string;
 export const TIME_SHEET_API_URL = process.env.TIME_SHEET_API_URL as string;
 export const CHAT_API_URL = process.env.CHAT_API_URL as string;
 export const SALE_API_URL = process.env.SALE_API_URL as string;
-export const BUDGET_UPLOAD_FILE_API_URL = process.env.BUDGET_UPLOAD_FILE_API_URL as string;
+export const BUDGET_UPLOAD_FILE_API_URL = process.env
+  .BUDGET_UPLOAD_FILE_API_URL as string;
 export const DEFAULT_MODE: Mode = ThemeMode.LIGHT;
 export const RESOURCE_API_URL = process.env.RESOURCE_API_URL as string;
 //feedback
@@ -116,7 +117,11 @@ export const NS_TIME_TRACKING = "timeTracking";
 export const NS_RESOURCE_PLANNING = "resourcePlanning";
 export const NS_CHAT = "chat";
 export const NS_CHAT_BOX = "chatbox";
+
+// AI
 export const NS_AI_CHAT = "aiChat";
+export const NS_AI_AGENT = "aiAgent";
+
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
 export const NS_HOLIDAY_CALENDAR = "holidayCalendar";
@@ -137,7 +142,6 @@ export const NS_CONTENTS = "contents";
 
 //Meeting
 export const NS_MEETING = "meeting";
-
 
 export const IMAGES_ACCEPT = ["image/png", "image/jpeg", "image/jpg"];
 export const VIDEO_ACCEPT = ["video/mp4"];

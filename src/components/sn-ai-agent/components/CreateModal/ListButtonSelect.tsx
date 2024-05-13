@@ -7,12 +7,14 @@ interface ListButtonSelectProps {
   selected: number | null;
   setSelected: (value: number) => void;
   theme: Theme;
+  label?: string;
 }
 
 export const ListButtonSelect: FC<ListButtonSelectProps> = ({
   selected,
   setSelected,
   theme,
+  label,
 }) => {
   return (
     <Box
@@ -30,7 +32,7 @@ export const ListButtonSelect: FC<ListButtonSelectProps> = ({
         color={theme.palette.grey[300]}
         mb={1}
       >
-        Agent name
+        {label}
       </Text>
       <List
         sx={{

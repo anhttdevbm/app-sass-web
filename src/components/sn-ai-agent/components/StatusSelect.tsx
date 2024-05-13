@@ -6,8 +6,10 @@ import {
   SelectChangeEvent,
   MenuItem,
 } from "@mui/material";
+import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { DropDownOutlineIcon } from "icons/DropDownOutlineIcon";
+import { useLocale, useTranslations } from "next-intl";
 import { CSSProperties } from "react";
 
 interface StatusSelectProps {
@@ -26,8 +28,11 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
   status,
   setStatus,
   handleChangeStatus: handleStatusChange,
-  theme
+  theme,
 }) => {
+  const t = useTranslations(NS_AI_AGENT);
+  const locale = useLocale();
+
   const inputLabelStyle: CSSProperties = {
     color: `${theme.palette.info.main}`,
     position: "absolute",
@@ -40,7 +45,7 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
   };
 
   const selectStyle = {
-    minWidth: "100px",
+    minWidth: locale === "en" ? "100px" : "170px",
     border: "none",
     outline: "none",
     color: `${theme.palette.info.main}`,
@@ -76,19 +81,19 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
     <FormControl variant="outlined" sx={{ position: "relative" }}>
       {status === "" && (
         <InputLabel htmlFor="status-label" style={inputLabelStyle}>
-          Status
+          {t("header.status")}
         </InputLabel>
       )}
       <Select
         labelId="status-label"
         value={status}
         onChange={handleStatusChange}
-        label="Status"
+        label={t("header.status")}
         input={
           <OutlinedInput
             label=""
             notched={false}
-            name="Status"
+            name={t("header.status")}
             id="outlined-status"
           />
         }
@@ -96,10 +101,10 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
         IconComponent={DropDownOutlineIcon}
       >
         <StyledMenuItem value="">
-          <em>None</em>
+          <em>{t("header.none")}</em>
         </StyledMenuItem>
-        <StyledMenuItem value="active">Active</StyledMenuItem>
-        <StyledMenuItem value="inactive">Inactive</StyledMenuItem>
+        <StyledMenuItem value="active">{t("header.active")}</StyledMenuItem>
+        <StyledMenuItem value="inactive">{t("header.inactive")}</StyledMenuItem>
       </Select>
     </FormControl>
   );

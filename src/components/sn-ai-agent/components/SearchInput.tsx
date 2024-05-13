@@ -7,9 +7,13 @@ import SearchIcon from "icons/SearchIcon";
 interface SearchInputProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   theme?: any;
+  placeholder?: string;
 }
 
-export const SearchInput: React.FC<SearchInputProps> = ({ theme }) => {
+export const SearchInput: React.FC<SearchInputProps> = ({
+  theme,
+  placeholder,
+}) => {
   return (
     <OutlinedInput
       startAdornment={
@@ -17,7 +21,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({ theme }) => {
           <SearchIcon fontSize="medium" color="info" />
         </InputAdornment>
       }
-      placeholder="Search"
+      placeholder={placeholder}
       sx={{ ...outlinedInput, background: `${theme.palette.grey[50]}` }}
     />
   );

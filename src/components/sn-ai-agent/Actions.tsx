@@ -2,7 +2,9 @@
 
 import PlusIcon from "@mui/icons-material/Add";
 import { SelectChangeEvent, Stack } from "@mui/material";
+import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
 import React from "react";
 import {
   Button,
@@ -15,6 +17,7 @@ const Actions = () => {
   const [open, setOpen] = React.useState(false);
   const [status, setStatus] = React.useState("");
   const theme = useTheme();
+  const t = useTranslations(NS_AI_AGENT);
 
   const handleStatusChange = (event: SelectChangeEvent<string>) => {
     setStatus(event.target.value as string);
@@ -45,7 +48,7 @@ const Actions = () => {
         <Stack>
           <Button
             type="gradient"
-            text="Create"
+            text={t("header.create")}
             icon={PlusIcon}
             onClick={handleOpenCreateModal}
           />
@@ -59,7 +62,7 @@ const Actions = () => {
           alignItems={"center"}
           height={"100%"}
         >
-          <SearchInput theme={theme} />
+          <SearchInput theme={theme} placeholder={t("header.search")} />
           <StatusSelect
             status={status}
             setStatus={setStatus}

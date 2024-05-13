@@ -1,10 +1,12 @@
 import { Theme } from "@mui/material";
 import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
 import { FC, useRef, useState } from "react";
 import { Dialog } from "../Dialog";
 import { TextField } from "../TextField";
-import { UploadAvatar } from "./UploadAvatar";
 import { ListButtonSelect } from "./ListButtonSelect";
+import { UploadAvatar } from "./UploadAvatar";
+import { NS_AI_AGENT } from "constant/index";
 
 export const OUTLINE_COLOR = "rgba(54, 153, 255, 0.5)";
 
@@ -24,6 +26,7 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const t = useTranslations(NS_AI_AGENT);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.length) {
@@ -53,26 +56,33 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
   return (
     <Dialog
-      title="Create agent"
-      cancelText="Cancel"
-      submitText="Create"
+      title={t("header.createAgent")}
+      submitText={t("header.create")}
       onClose={handleClose}
       onSubmit={handleSubmit}
       open={open}
       sizeCloseIcon="medium"
       sx={{ width: "60vw" }}
     >
-      <TextField fullWidth label="Agent name" theme={theme} variant="filled" />
+      <TextField
+        fullWidth
+        label={t("header.agentName")}
+        theme={theme}
+        variant="filled"
+      />
       <UploadAvatar
         fileInputRef={fileInputRef}
         handleFileChange={handleFileChange}
         handleUploadClick={handleUploadClick}
         image={image}
+        label={t("header.avatar")}
+        titleButton={t("header.upload")}
       />
       <ListButtonSelect
         selected={selected}
         setSelected={setSelected}
         theme={theme}
+        label={t("header.agentName")}
       />
     </Dialog>
   );

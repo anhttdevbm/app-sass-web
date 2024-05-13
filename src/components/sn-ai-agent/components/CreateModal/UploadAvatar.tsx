@@ -9,6 +9,8 @@ interface UploadAvatarProps {
   handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleUploadClick: () => void;
   image: string | null;
+  label?: string;
+  titleButton?: string;
 }
 
 export const UploadAvatar: React.FC<UploadAvatarProps> = ({
@@ -16,6 +18,8 @@ export const UploadAvatar: React.FC<UploadAvatarProps> = ({
   handleFileChange,
   handleUploadClick,
   image,
+  label,
+  titleButton,
 }) => {
   return (
     <Box
@@ -29,7 +33,7 @@ export const UploadAvatar: React.FC<UploadAvatarProps> = ({
       gap={1}
     >
       <Text fontSize={"12px"} fontWeight={400} color={"grey.300"}>
-        Avatar
+        {label}
       </Text>
       <Box
         display="flex"
@@ -63,7 +67,7 @@ export const UploadAvatar: React.FC<UploadAvatarProps> = ({
         </label>
         <Button
           type="upload"
-          text="Upload"
+          text={titleButton || "Upload"}
           onClick={handleUploadClick}
           icon={IosShareRoundedIcon}
         />
