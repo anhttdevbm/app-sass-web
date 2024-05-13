@@ -3,10 +3,11 @@ import { useAppDispatch, useAppSelector } from "store/hooks";
 import { GetAIAgentListQueries } from "./types";
 import { actions } from "./reducer";
 
-export const useAgents = () => {
+export const useAIAgent = () => {
   const dispatch = useAppDispatch();
 
   const {
+    aiAgent,
     aiAgents,
     aiAgentFilters,
     isReady,
@@ -21,14 +22,23 @@ export const useAgents = () => {
     dispatch(actions.getAgents(queries));
   };
 
+  const onGetAgent = (id: string) => {
+    // dispatch(getAgent(id));
+    dispatch(actions.getAgent(id));
+  };
+
   return {
     aiAgents,
     aiAgentFilters,
     isReady,
     totalAIAgents,
-    onGetAgents,
     totalPages,
     page,
     limit,
+
+    aiAgent,
+
+    onGetAgents,
+    onGetAgent,
   };
 };

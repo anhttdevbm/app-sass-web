@@ -6,6 +6,9 @@ const exampleAIAgents: AIAgent[] = Array.from({ length: 20 }, (_, i) => ({
   name: `AI Agent ${i + 1}`,
   creationDate: `2021-07-${String(i + 1).padStart(2, "0")}`,
   status: i % 2 === 0 ? "Active" : "Inactive",
+  avatar: {
+    link: undefined,
+  },
 }));
 
 const initialState: AIAgentState = {
@@ -16,6 +19,8 @@ const initialState: AIAgentState = {
   totalPages: 0,
   page: 1,
   limit: 10,
+
+  aiAgent: null,
 };
 
 const aiAgentSlice = createSlice({
@@ -27,6 +32,11 @@ const aiAgentSlice = createSlice({
       state.totalAIAgents = exampleAIAgents.length;
       state.isReady = true;
       state.totalPages = Math.ceil(exampleAIAgents.length / state.limit);
+    },
+    getAgent(state, action: PayloadAction<string>) {
+      state.aiAgent =
+        exampleAIAgents.find((aiAgent) => aiAgent.id === action.payload) ||
+        null;
     },
   },
   extraReducers: {},

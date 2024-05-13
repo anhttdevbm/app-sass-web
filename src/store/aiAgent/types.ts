@@ -3,6 +3,9 @@ import { BaseQueries } from "constant/types";
 export interface AIAgent {
   id: string;
   name: string;
+  avatar: {
+    link?: string;
+  };
   creationDate: string;
   status: string;
 }
@@ -19,4 +22,6 @@ export interface AIAgentState {
   totalPages: number;
   page: number;
   limit: number;
+
+  aiAgent: AIAgent | null;
 }

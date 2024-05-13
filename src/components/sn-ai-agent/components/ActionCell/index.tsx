@@ -10,7 +10,7 @@ import {
   popoverClasses,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import ConfirmDialog, { ConfirmDialogProps } from "components/ConfirmDialog";
+import { ConfirmDialogProps } from "components/ConfirmDialog";
 import { BodyCell } from "components/Table";
 import { IconButton, IconButtonProps, Text } from "components/shared";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";

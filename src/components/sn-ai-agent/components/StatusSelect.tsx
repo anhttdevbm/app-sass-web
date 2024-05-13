@@ -1,13 +1,12 @@
 import {
   FormControl,
   InputLabel,
+  MenuItem,
   OutlinedInput,
   Select,
   SelectChangeEvent,
-  MenuItem,
 } from "@mui/material";
 import { NS_AI_AGENT } from "constant/index";
-import useTheme from "hooks/useTheme";
 import { DropDownOutlineIcon } from "icons/DropDownOutlineIcon";
 import { useLocale, useTranslations } from "next-intl";
 import { CSSProperties } from "react";
@@ -81,19 +80,19 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
     <FormControl variant="outlined" sx={{ position: "relative" }}>
       {status === "" && (
         <InputLabel htmlFor="status-label" style={inputLabelStyle}>
-          {t("header.status")}
+          {t("layout.header.status")}
         </InputLabel>
       )}
       <Select
         labelId="status-label"
         value={status}
         onChange={handleStatusChange}
-        label={t("header.status")}
+        label={t("layout.header.status")}
         input={
           <OutlinedInput
             label=""
             notched={false}
-            name={t("header.status")}
+            name={t("layout.header.status")}
             id="outlined-status"
           />
         }
@@ -101,10 +100,10 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
         IconComponent={DropDownOutlineIcon}
       >
         <StyledMenuItem value="">
-          <em>{t("header.none")}</em>
+          <em>{t("layout.header.none")}</em>
         </StyledMenuItem>
-        <StyledMenuItem value="active">{t("header.active")}</StyledMenuItem>
-        <StyledMenuItem value="inactive">{t("header.inactive")}</StyledMenuItem>
+        <StyledMenuItem value="active">{t("layout.header.active")}</StyledMenuItem>
+        <StyledMenuItem value="inactive">{t("layout.header.inactive")}</StyledMenuItem>
       </Select>
     </FormControl>
   );

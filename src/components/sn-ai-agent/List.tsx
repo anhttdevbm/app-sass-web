@@ -1,22 +1,26 @@
 "use client";
 
-import { Box, TableRow } from "@mui/material";
+import { Box, Stack, TableRow } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
 import useQueryParams from "hooks/useQueryParams";
 import { usePathname, useRouter } from "next-intl/client";
 import { useEffect, useMemo } from "react";
-import { useAgents } from "store/aiAgent/selectors";
+import { useAIAgent } from "store/aiAgent/selectors";
 import styled from "styled-components";
 import { getPath } from "utils/index";
 import ActionsCell, { PRIMARY_GRADIENT } from "./components/ActionCell";
 import Pagination from "./components/Pagination";
 import { useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
+import { AI_AGENT_GENERAL_PATH, AI_AGENT_PATH } from "constant/paths";
+import Avatar from "components/Avatar";
+import { Text } from "components/shared";
+import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 
 const AgentList = () => {
   const { aiAgents, limit, page, totalAIAgents, totalPages, onGetAgents } =
-    useAgents();
+    useAIAgent();
   const { initQuery, isReady, query } = useQueryParams();
   const { push } = useRouter();
   const pathname = usePathname();
@@ -62,7 +66,25 @@ const AgentList = () => {
         {aiAgents.map((agent, index) => (
           <TableRow key={agent.id}>
             <BodyCell>{index + 1 + (page - 1) * limit}</BodyCell>
-            <BodyCell>{agent.name}</BodyCell>
+            <BodyCell
+              href={getPath(AI_AGENT_GENERAL_PATH, undefined, { id: agent.id })}
+            >
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Avatar
+                  size={32}
+                  src={agent.avatar?.link ?? ImgPlaceHolderAgent}
+                />
+                <Text
+                  variant="body2"
+                  color="text.primary"
+                  fontWeight={600}
+                  lineHeight={1.28}
+                  sx={{ "&:hover": { color: "primary.main" } }}
+                >
+                  {agent.name}
+                </Text>
+              </Stack>
+            </BodyCell>
             <BodyCell>{agent.creationDate}</BodyCell>
             <BodyCell>
               <Box

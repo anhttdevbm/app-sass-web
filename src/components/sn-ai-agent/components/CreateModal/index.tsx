@@ -56,8 +56,8 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
   return (
     <Dialog
-      title={t("header.createAgent")}
-      submitText={t("header.create")}
+      title={t("layout.header.createAgent")}
+      submitText={t("layout.header.create")}
       onClose={handleClose}
       onSubmit={handleSubmit}
       open={open}
@@ -66,7 +66,7 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
     >
       <TextField
         fullWidth
-        label={t("header.agentName")}
+        label={t("layout.header.agentName")}
         theme={theme}
         variant="filled"
       />
@@ -75,14 +75,14 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
         handleFileChange={handleFileChange}
         handleUploadClick={handleUploadClick}
         image={image}
-        label={t("header.avatar")}
-        titleButton={t("header.upload")}
+        label={t("layout.header.avatar")}
+        titleButton={t("layout.header.upload")}
       />
       <ListButtonSelect
         selected={selected}
         setSelected={setSelected}
         theme={theme}
-        label={t("header.agentName")}
+        label={t("layout.header.agentName")}
       />
     </Dialog>
   );

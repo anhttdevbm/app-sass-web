@@ -41,6 +41,11 @@ export const CHATTING_INFO_PATH = "/chat/{id}";
 // TASKCOVER AI
 export const AI_CHAT_PATH = "/ai-chat";
 export const AI_AGENT_PATH = "/ai-agent";
+export const AI_AGENT_GENERAL_PATH = "/ai-agent/{id}/general";
+export const AI_AGENT_TOOLS_PATH = "/ai-agent/{id}/tools";
+export const AI_AGENT_KNOWLEDGE_PATH = "/ai-agent/{id}/knowledge";
+export const AI_AGENT_COMMANDS_PATH = "/ai-agent/{id}/commands";
+export const AI_AGENT_PROMPT_TEMPLATES_PATH = "/ai-agent/{id}/prompt-templates";
 
 export const SALE_DETAIL_PATH = "/sales/{id}";
 
@@ -117,7 +122,11 @@ export const AUTHORIZED_PATHS = {
     DOCS_DETAIL_PATH,
     DOCS_CREATE_PATH,
     CHATTING_ROOM_PATH,
+
+    // AI
     AI_CHAT_PATH,
+    AI_AGENT_PATH,
+
     FEEDBACK_PATH,
     // Billing
     BILLING_PATH,
@@ -131,7 +140,7 @@ export const AUTHORIZED_PATHS = {
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
     BUDGET_EXPENSE_EXPORT_PATH,
-    MEETING_HOME_PATH
+    MEETING_HOME_PATH,
   ],
   [Permission.SA]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -151,7 +160,7 @@ export const AUTHORIZED_PATHS = {
     CAREER_PATH,
     CAREER_DETAIL_PATH,
     BLOGS_RELATED_PATH,
-    BUDGET_EXPENSE_EXPORT_PATH
+    BUDGET_EXPENSE_EXPORT_PATH,
   ],
   [Permission.ST]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -172,7 +181,11 @@ export const AUTHORIZED_PATHS = {
     DOCS_DETAIL_PATH,
     DOCS_CREATE_PATH,
     CHATTING_ROOM_PATH,
+
+    // AI
     AI_CHAT_PATH,
+    AI_AGENT_PATH,
+
     FEEDBACK_PATH,
     // Billing
     BILLING_PATH,
@@ -187,7 +200,7 @@ export const AUTHORIZED_PATHS = {
     BUDGET_DETAIL_PATH,
     BUDGET_EXPENSE_EXPORT_PATH,
 
-    MEETING_HOME_PATH
+    MEETING_HOME_PATH,
   ],
   [Permission.EU]: [...AUTHORIZED_LOGGED_IN_PATHS, UPGRADE_ACCOUNT_PATH],
 };

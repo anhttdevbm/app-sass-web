@@ -1,5 +1,7 @@
 "use client";
 
+import AIAgentDetailLayout from "layouts/AIAgentDetailLayout";
+
 type RootLayoutProps = {
   children: React.ReactNode;
   params: {
@@ -8,7 +10,7 @@ type RootLayoutProps = {
 };
 
 const RootLayout = ({ children, params: { id } }: RootLayoutProps) => {
-  return <div id={id}>{children}</div>;
+  return <AIAgentDetailLayout id={id}>{children}</AIAgentDetailLayout>;
 };
 
 export default RootLayout;

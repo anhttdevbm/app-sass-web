@@ -48,7 +48,7 @@ const Actions = () => {
         <Stack>
           <Button
             type="gradient"
-            text={t("header.create")}
+            text={t("layout.header.create")}
             icon={PlusIcon}
             onClick={handleOpenCreateModal}
           />
@@ -62,7 +62,7 @@ const Actions = () => {
           alignItems={"center"}
           height={"100%"}
         >
-          <SearchInput theme={theme} placeholder={t("header.search")} />
+          <SearchInput theme={theme} placeholder={t("layout.header.search")} />
           <StatusSelect
             status={status}
             setStatus={setStatus}
