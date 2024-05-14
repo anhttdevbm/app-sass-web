@@ -42,7 +42,7 @@ const ChatList = ({ onCloseChatBox }) => {
       const first = entries[0];
       if (first.isIntersecting) {
         scrollHeightRef.current = chatListRef.current?.scrollHeight || 0;
-        const clientHeight = (chatListRef.current?.clientHeight || 0);
+        const clientHeight = chatListRef.current?.clientHeight || 0;
 
         if (scrollHeightRef.current > clientHeight && !!paging.next) {
           loadMoreConversation(paging.current);
