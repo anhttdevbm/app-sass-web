@@ -8,6 +8,8 @@ export interface AIAgent {
   };
   creationDate: string;
   status: string;
+  description?: string;
+  tone?: string;
 }
 
 export type GetAIAgentListQueries = BaseQueries & {

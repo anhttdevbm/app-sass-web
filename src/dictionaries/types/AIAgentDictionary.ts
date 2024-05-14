@@ -43,6 +43,15 @@ export type AIAgentDictionary = {
     header: {
       title: string;
     };
+    title: string;
+    cancel: string;
+    update: string;
+    agentName: string;
+    viewPrompts: string;
+    description: string;
+    placeholderTextarea: string;
+    tone: string;
+    default: string;
   };
   tools: {
     header: {

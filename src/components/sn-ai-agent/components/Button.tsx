@@ -41,6 +41,7 @@ export const Button = ({
       sx={{
         ...btnSx,
         ...style,
+        minWidth: "150px",
       }}
       onClick={onClick}
     >

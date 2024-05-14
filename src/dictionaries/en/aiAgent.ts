@@ -45,6 +45,15 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "General | Taskcover",
     },
+    title: "General",
+    cancel: "Cancel",
+    update: "Update",
+    agentName: "Agent name",
+    viewPrompts: "View Prompts",
+    description: "Description",
+    placeholderTextarea: "Personalize your agent...",
+    tone: "Tone",
+    default: "Default",
   },
   tools: {
     header: {

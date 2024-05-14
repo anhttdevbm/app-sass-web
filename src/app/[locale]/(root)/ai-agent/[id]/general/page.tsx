@@ -1,3 +1,4 @@
+import { General } from "components/sn-ai-agent-detail";
 import { NS_AI_AGENT } from "constant/index";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -11,5 +12,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Page() {
-  return <div>Generals</div>;
+  return <General />;
 }

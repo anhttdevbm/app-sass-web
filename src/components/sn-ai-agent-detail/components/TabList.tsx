@@ -1,3 +1,5 @@
+"use client";
+
 import { Stack } from "@mui/material";
 import Link from "components/Link";
 import { Text } from "components/shared";

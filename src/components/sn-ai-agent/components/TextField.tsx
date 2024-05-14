@@ -16,7 +16,7 @@ export const TextField = styled(({ theme, ...props }: TextFieldCustomProps) => (
     InputProps={{ disableUnderline: true } as Partial<OutlinedInputProps>}
     {...props}
   />
-))(({ theme }) => ({
+))(({ theme, value }) => ({
   "& .MuiFilledInput-root": {
     overflow: "hidden",
     borderRadius: 0,
@@ -40,8 +40,9 @@ export const TextField = styled(({ theme, ...props }: TextFieldCustomProps) => (
   "& .MuiInputLabel-root": {
     fontWeight: 400,
     color: theme.palette.grey[300],
+    ...(value ? { fontSize: "0.75rem", color: theme.palette.grey[300] } : {}),
     "&.Mui-focused": {
-      fontSize: "12px",
+      fontSize: "0.75rem",
       color: theme.palette.grey[300],
     },
     left: "8px",

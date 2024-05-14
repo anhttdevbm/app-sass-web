@@ -45,6 +45,15 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Chung | Taskcover",
     },
+    title: "Chung",
+    cancel: "Hủy",
+    update: "Cập nhật",
+    agentName: "Tên trợ lý",
+    viewPrompts: "Xem mẫu câu lệnh",
+    description: "Mô tả",
+    placeholderTextarea: "Cá nhân hóa trợ lý của bạn...",
+    tone: "Lối diễn đạt",
+    default: "Mặc định",
   },
   tools: {
     header: {
