@@ -5,9 +5,11 @@ import ChatItemRender from "./ChatItemRender";
 import { renderTimeDiff } from "utils/index";
 import useTheme from "hooks/useTheme";
 import { useMemo } from "react";
+import { TimeMessage } from "components/sn-chat/components/messages/MessageContent";
+import { useAuth } from "store/app/selectors";
 
 interface ChatItemProp {
-  sessionId: string;
+  sessionId: string | undefined;
   chatInfo: IChatItemInfo;
   chatItemProps?: BoxProps;
   onClickConvention: (data: IChatItemInfo) => void;
@@ -20,8 +22,9 @@ const ChatItemLayout = ({
   onClickConvention,
   isActive,
 }: ChatItemProp) => {
+  const { user } = useAuth();
   const { sx, ...props } = chatItemProps || {};
-  const { lastmsg_at, unseen_message_count } = chatInfo || {};
+  const { lastmsg_at, unseen_message_count, owner, lastmsg } = chatInfo || {};
   const { isDarkMode } = useTheme();
 
   const renderColorByType = useMemo(() => {
@@ -66,7 +69,7 @@ const ChatItemLayout = ({
           {renderTimeDiff(lastmsg_at)}
         </Typography>
         <br />
-        {unseen_message_count > 0 && (
+        {unseen_message_count > 0 ? (
           <Typography
             variant="caption"
             color="#999999"
@@ -85,6 +88,13 @@ const ChatItemLayout = ({
           >
             {unseen_message_count >= 10 ? "9+" : unseen_message_count}
           </Typography>
+        ) : (
+          <TimeMessage
+            isShowTime={false}
+            isCurrentUser={lastmsg?.sender?.id === user?.id}
+            isRead={lastmsg?.seen_user_count > 0}
+            time={lastmsg_at}
+          />
         )}
       </Box>
     </Box>

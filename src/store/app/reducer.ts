@@ -54,6 +54,7 @@ export enum SignupStep {
 export interface AppState {
   appReady: boolean;
   snackbarList: SnackbarItem[];
+  notificationList: any[];
   token?: string;
   user?: UserInfo;
 
@@ -68,6 +69,7 @@ export interface AppState {
 const initialState: AppState = {
   appReady: false,
   snackbarList: [],
+  notificationList: [],
 
   signupStep: SignupStep.SIGNUP,
 
@@ -86,12 +88,28 @@ const appSlice = createSlice({
         ...action.payload,
       });
     },
+    addNotification: (state, action) => {
+      const indexElm = state.notificationList.findIndex(
+        (item) => item?.id === action.payload?.id,
+      );
+      if (indexElm === -1) {
+        state.notificationList.push(action.payload);
+      }
+    },
     removeSnackbar: (state, action: PayloadAction<string>) => {
       const indexDeleted = state.snackbarList.findIndex(
         (item) => item.id === action.payload,
       );
       if (indexDeleted !== -1) {
         state.snackbarList.splice(indexDeleted, 1);
+      }
+    },
+    removeNotification: (state, action: PayloadAction<string>) => {
+      const indexDeleted = state.notificationList.findIndex(
+        (item) => item.id === action.payload,
+      );
+      if (indexDeleted !== -1) {
+        state.notificationList.splice(indexDeleted, 1);
       }
     },
     toggleAppReady: (state, action: PayloadAction<boolean | undefined>) => {
@@ -170,7 +188,9 @@ const appSlice = createSlice({
 
 export const {
   addSnackbar,
+  addNotification,
   removeSnackbar,
+  removeNotification,
   toggleAppReady,
   clearAuth,
   updateAuth,

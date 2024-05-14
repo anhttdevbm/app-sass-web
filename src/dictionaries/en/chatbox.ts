@@ -45,11 +45,16 @@ export const ChatBoxLang: ChatBox = {
       change_avatar_alert: "Profile picture changed successfully!",
       adminChange: "Successfully transferred administrative rights.",
       removeMember: "Member has been removed from the group.",
-      userJoin: "{user} has joined the group",
-      userLeave: "{user} has leaved the group",
-      adminAdd: "{user} has been promoted to admin",
-      adminLeave: "{user} has been demoted to member",
+      user: {
+        join: "{user} has joined the group",
+        leave: "{user} has leaved the group",
+      },
+      admin: {
+        add: "{user} has been promoted to admin",
+        leave: "{user} has been demoted to member",
+      },
       forwardMsg: "Forward from: ",
+      sendFile: "{user} send a file",
     },
   },
 };

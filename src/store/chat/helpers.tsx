@@ -5,6 +5,7 @@ import {
   CHAT_EVENT_TYPE,
   CHAT_ROOM_TYPE,
   IWsChatRespMessage,
+  MESSAGE_TYPE,
   STEP,
 } from "./type";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
@@ -19,7 +20,7 @@ const isRelatedGroup = (members: string[], userId = "") => {
   return members?.find((memberId) => memberId === userId);
 };
 
-const isExitsInList = (list, item) => {
+export const isExitsInList = (list, item) => {
   return list?.find((elm) => elm?.id === item?.id);
 };
 
@@ -29,7 +30,7 @@ export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
 
 export const isAdminGroup = (admins, userId) => {
   return admins?.find((item) => item === userId);
-}
+};
 
 const sortASCArray = (list: any[], sortBy: string) => {
   if (list && list.length) {
@@ -78,7 +79,7 @@ export const useWSChat = () => {
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
-  const { onAddSnackbar } = useSnackbar();
+  const { onAddSnackbar, onAddNotification } = useSnackbar();
 
   const resetData = () => {
     onSetStateSearchMessage(null);
@@ -105,7 +106,7 @@ export const useWSChat = () => {
   const handleMessageSystem = (resp) => {
     const senderId =
       resp?.data?.detailMember?.id || resp?.data?.detailAdmin?.id;
-    if (!members?.find((mem) => mem?.id === senderId)) {
+    if (senderId && !members?.find((mem) => mem?.id === senderId)) {
       sendMessage({
         event: CHAT_EVENT_TYPE.DETAIL_MEMBER,
         memberId: senderId,
@@ -122,6 +123,78 @@ export const useWSChat = () => {
         created_at: new Date().getTime(),
       };
       onSetListMessages([...messages, newMessage]);
+    }
+  };
+
+  const isCurrentUserInRoom = (roomSelect, userId) => {
+    return roomId === roomSelect && userId !== user?.id;
+  };
+
+  const handleReceiveMsg = async (resp) => {
+    const msg = resp?.data?.message;
+    const newMsg = {
+      ...msg,
+      seen_by: isCurrentUserInRoom(resp?.data?.room?.id, msg?.sender)
+        ? [user?.id]
+        : [],
+    };
+    await handleDisplayNewMessage(resp);
+    if (newMsg?.room !== roomId) return;
+    if (!isExitsInList(messages, newMsg)) {
+      await onSetListMessages([...messages, newMsg]);
+    }
+  };
+
+  const handleDisplayNewMessage = async (resp) => {
+    const newMsg = resp?.data?.message;
+    const sysMsg = resp?.data?.systemMessage;
+    const newRoomMsg = resp?.data?.room;
+    if (isExitsInList(convention, newRoomMsg)) {
+      const conversationUpdate = convention.map((item) => {
+        if (item?.id === newRoomMsg?.id) {
+          return {
+            ...item,
+            files: newMsg?.files,
+            unseen_message_count:
+              user?.id === newMsg?.sender ? 0 : item?.unseen_message_count + 1,
+            lastmsg: {
+              id: newRoomMsg?.lastmsg,
+              type: sysMsg ? MESSAGE_TYPE.SYSTEM : newMsg?.type,
+              content: sysMsg ? sysMsg?.type : newMsg?.content,
+              seen_user_count: 0,
+              sender: sysMsg
+                ? resp?.data?.detailMember
+                : resp?.data?.detailSenderMember,
+            },
+          };
+        }
+        return item;
+      });
+
+      if (isCurrentUserInRoom(newRoomMsg?.id, newMsg?.sender)) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
+          messageId: newRoomMsg?.lastmsg,
+        });
+      }
+
+      await onSetListConvention(conversationUpdate);
+    }
+  };
+
+  const handleNotiMsg = (resp) => {
+    const msg = resp?.data?.message;
+    if (resp?.data?.systemMessage) return;
+
+    if (!isRelatedGroup(resp?.data?.room?.members, user?.id)) return;
+
+    if (resp?.data?.detailSenderMember?.id !== user?.id) {
+      onAddNotification({
+        id: msg?.id,
+        msg,
+        sender: resp?.data?.detailSenderMember,
+        room: resp?.data?.room,
+      });
     }
   };
 
@@ -184,6 +257,7 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.DETAIL_ROOM:
               let roomDetail = resp?.data;
+              await onSetMessagePaging(initPagingV2);
               // if (roomId === roomDetail?.id) return;
               if (roomDetail?.type === CHAT_ROOM_TYPE.PERSONAL) {
                 roomDetail = {
@@ -258,6 +332,7 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_MEMBER:
+              handleDisplayNewMessage(resp);
               if (resp?.data?.detailMember?.id === user?.id) {
                 onSetListConvention([resp?.data?.room, ...convention]);
               }
@@ -284,6 +359,7 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER:
             case CHAT_EVENT_TYPE.GROUP_REMOVE_ADMIN:
+              handleDisplayNewMessage(resp);
               if (resp?.data?.detailMember?.id === user?.id) {
                 const roomIdOut = resp?.data?.room?.id;
                 const newConversation = convention.filter(
@@ -312,6 +388,7 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.GROUP_ADD_ADMIN:
+              handleDisplayNewMessage(resp);
               if (resp?.data?.room?.id !== roomId) {
                 return;
               }
@@ -345,13 +422,14 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_LIST:
-              onSetMessagePaging({
+              await onSetMessagePaging({
                 current: resp?.data?.prev + 1,
                 ...resp?.data,
               });
               resp?.data?.result?.forEach((item) => {
                 if (
                   item?.type === "system" &&
+                  item?.sender &&
                   !members?.find((mem) => mem?.id === item?.sender)
                 ) {
                   sendMessage({
@@ -378,30 +456,14 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
-              const newMsg = resp?.data?.message;
-              if (newMsg?.room !== roomId) return;
-              if (!isExitsInList(messages, newMsg)) {
-                onSetListMessages([...messages, newMsg]);
-              }
-              return;
-
             case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
-              const newMsgFile = resp?.data?.message;
-              if (newMsgFile?.room !== roomId) return;
-              if (!isExitsInList(messages, newMsgFile)) {
-                onSetListMessages([...messages, newMsgFile]);
-              }
-              return;
-
             case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
-              const newMsgMedia = resp?.data?.message;
-              if (newMsgMedia?.room !== roomId) return;
-              if (!isExitsInList(messages, newMsgMedia)) {
-                onSetListMessages([...messages, newMsgMedia]);
-              }
+              handleReceiveMsg(resp);
+              handleNotiMsg(resp);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_FORWARD:
+              handleDisplayNewMessage(resp);
               if (
                 resp?.data?.room?.id === roomId &&
                 !isExitsInList(messages, resp?.data?.message)
@@ -412,6 +474,44 @@ export const useWSChat = () => {
 
             case CHAT_EVENT_TYPE.MESSAGE_SEARCH:
               onSetMessageSearch(resp.data?.result || []);
+              return;
+
+            case CHAT_EVENT_TYPE.MESSAGE_SEEN:
+              if (isExitsInList(convention, { id: resp?.data?.roomId })) {
+                if (roomId === resp?.data?.roomId) {
+                  const newMsg = messages?.map((msg) => {
+                    if (
+                      resp?.data?.listMessageId?.length &&
+                      resp?.data?.listMessageId?.includes(msg?.id)
+                    ) {
+                      return {
+                        ...msg,
+                        seen_by: [...msg?.seen_by, resp?.data?.userId],
+                      };
+                    }
+                    return msg;
+                  });
+                  await onSetListMessages(newMsg);
+                }
+                const newConversation = convention.map((item) => {
+                  if (item?.id === resp?.data?.roomId) {
+                    return {
+                      ...item,
+                      unseen_message_count:
+                        user?.id === resp?.data?.userId
+                          ? 0
+                          : item?.unseen_message_count,
+                      lastmsg: {
+                        ...item.lastmsg,
+                        seen_user_count: 1,
+                      },
+                    };
+                  }
+                  return item;
+                });
+
+                await onSetListConvention(newConversation);
+              }
               return;
 
             case CHAT_EVENT_TYPE.DETAIL_MEMBER:

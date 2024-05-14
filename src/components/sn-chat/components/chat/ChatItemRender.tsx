@@ -1,16 +1,17 @@
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
 import { ImageList, Typography } from "@mui/material";
-import { CHAT_ROOM_TYPE, IChatItemInfo } from "store/chat/type";
+import { CHAT_ROOM_TYPE, IChatItemInfo, MESSAGE_TYPE } from "store/chat/type";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
 import useTheme from "hooks/useTheme";
 
 interface ChatItemRenderProps {
-  sessionId: string;
+  sessionId: string | undefined;
   chatInfo: IChatItemInfo;
 }
+
 const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const {
     lastMessage,
@@ -23,6 +24,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
     status: statusPartner,
     peer_detail,
     unseen_message_count,
+    lastmsg,
   } = chatInfo || {};
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
@@ -34,22 +36,43 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
     () => unseen_message_count > 0,
     [unseen_message_count],
   );
-  const isMessageNotConnect = useMemo(() => lastMessage == null, [lastMessage]);
+  const isMessageNotConnect = useMemo(() => lastmsg == null, [lastmsg]);
   const isGroup = useMemo(() => type === CHAT_ROOM_TYPE.GROUP, [type]);
   const isCurrentAccByLastMessage = useMemo(
-    () => sessionId === lastMessage?.u?.username,
-    [lastMessage, sessionId],
+    () => sessionId === lastmsg?.sender?.id,
+    [lastmsg, sessionId],
   );
+
   const lastMessageContent = useMemo(() => {
-    const sendAttachment = lastMessage?.attachments?.length > 0;
+    const sendAttachment = [MESSAGE_TYPE.FILE, MESSAGE_TYPE.MEDIA].includes(
+      lastmsg?.type,
+    );
     if (sendAttachment) {
-      return isCurrentAccByLastMessage ? "You sent a file." : "Sent a file.";
+      if (isCurrentAccByLastMessage) {
+        return commonChatBox("chatBox.group.sendFile", {
+          user: commonChatBox("chatBox.you"),
+        });
+      }
+      return commonChatBox("chatBox.group.sendFile", {
+        user: lastmsg?.sender?.fullname,
+      });
     } else {
-      return isCurrentAccByLastMessage
-        ? `<p>${commonChatBox("chatBox.you")} ${lastMessage?.msg}</p>`
-        : lastMessage?.msg;
+      if (lastmsg?.type === MESSAGE_TYPE.SYSTEM) {
+        return commonChatBox(`chatBox.group.${lastmsg?.content}`, {
+          user: lastmsg?.sender?.fullname,
+        });
+      }
+      return `<div style="display: flex; max-width: 170px; white-space: nowrap; overflow: hidden;"}>
+          ${
+            isCurrentAccByLastMessage
+              ? `${commonChatBox("chatBox.you")}: <p>${lastmsg?.content}</p>`
+              : isGroup
+              ? `${lastmsg?.sender?.fullname}: <p style="margin-left: 3px;">${lastmsg?.content}</p>`
+              : lastmsg?.content
+          }
+        </div>`;
     }
-  }, [isCurrentAccByLastMessage, lastMessage]);
+  }, [isCurrentAccByLastMessage, lastmsg]);
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
