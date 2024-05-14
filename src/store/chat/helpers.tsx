@@ -79,7 +79,7 @@ export const useWSChat = () => {
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
-  const { onAddSnackbar } = useSnackbar();
+  const { onAddSnackbar, onAddNotification } = useSnackbar();
 
   const resetData = () => {
     onSetStateSearchMessage(null);
@@ -150,18 +150,13 @@ export const useWSChat = () => {
     const sysMsg = resp?.data?.systemMessage;
     const newRoomMsg = resp?.data?.room;
     if (isExitsInList(convention, newRoomMsg)) {
-      let conversationUpdate: any = [];
-      conversationUpdate = convention.map((item) => {
+      const conversationUpdate = convention.map((item) => {
         if (item?.id === newRoomMsg?.id) {
           return {
             ...item,
             files: newMsg?.files,
-            unseen_message_count: isCurrentUserInRoom(
-              newRoomMsg?.id,
-              newMsg?.sender,
-            )
-              ? item?.unseen_message_count + 1
-              : 0,
+            unseen_message_count:
+              user?.id === newMsg?.sender ? 0 : item?.unseen_message_count + 1,
             lastmsg: {
               id: newRoomMsg?.lastmsg,
               type: sysMsg ? MESSAGE_TYPE.SYSTEM : newMsg?.type,
@@ -184,6 +179,22 @@ export const useWSChat = () => {
       }
 
       await onSetListConvention(conversationUpdate);
+    }
+  };
+
+  const handleNotiMsg = (resp) => {
+    const msg = resp?.data?.message;
+    if (resp?.data?.systemMessage) return;
+
+    if (!isRelatedGroup(resp?.data?.room?.members, user?.id)) return;
+
+    if (resp?.data?.detailSenderMember?.id !== user?.id) {
+      onAddNotification({
+        id: msg?.id,
+        msg,
+        sender: resp?.data?.detailSenderMember,
+        room: resp?.data?.room,
+      });
     }
   };
 
@@ -445,15 +456,10 @@ export const useWSChat = () => {
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
-              handleReceiveMsg(resp);
-              return;
-
             case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
-              handleReceiveMsg(resp);
-              return;
-
             case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
               handleReceiveMsg(resp);
+              handleNotiMsg(resp);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_FORWARD:
@@ -491,6 +497,10 @@ export const useWSChat = () => {
                   if (item?.id === resp?.data?.roomId) {
                     return {
                       ...item,
+                      unseen_message_count:
+                        user?.id === resp?.data?.userId
+                          ? 0
+                          : item?.unseen_message_count,
                       lastmsg: {
                         ...item.lastmsg,
                         seen_user_count: 1,
@@ -501,19 +511,6 @@ export const useWSChat = () => {
                 });
 
                 await onSetListConvention(newConversation);
-              }
-              if (resp?.data?.userId === user?.id) {
-                const conversationUpdate = convention?.map((item) => {
-                  if (item?.id === resp?.data?.roomId) {
-                    return {
-                      ...item,
-                      unseen_message_count: 0,
-                    };
-                  }
-                  return item;
-                });
-
-                await onSetListConvention(conversationUpdate);
               }
               return;
 

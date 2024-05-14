@@ -167,6 +167,7 @@ const ChatListTemp = () => {
           onClose={() => {
             setShowPopup(init);
             setOpen(false);
+            console.log("kkk");
           }}
           sx={{ width: showPopup?.widthPopup }}
         />
