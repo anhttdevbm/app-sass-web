@@ -26,7 +26,7 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import { Dialog } from "../Dialog";
 
-export const PRIMARY_GRADIENT =
+export const PRIMARY_GRADIENT_COLOR =
   "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)";
 
 type ActionOption = {
@@ -271,7 +271,7 @@ const sxConfig = {
 
 const GradientText = styled("span")`
   margin-left: 16px;
-  background: ${PRIMARY_GRADIENT};
+  background: ${PRIMARY_GRADIENT_COLOR};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `;

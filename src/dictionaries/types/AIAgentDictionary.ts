@@ -57,6 +57,10 @@ export type AIAgentDictionary = {
     header: {
       title: string;
     };
+    title: string;
+    description: string;
+    webSearch: string;
+    webSearchDescription: string;
   };
   knowledge: {
     header: {

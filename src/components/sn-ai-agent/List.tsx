@@ -9,7 +9,7 @@ import { useEffect, useMemo } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import styled from "styled-components";
 import { getPath } from "utils/index";
-import ActionsCell, { PRIMARY_GRADIENT } from "./components/ActionCell";
+import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "./components/ActionCell";
 import Pagination from "./components/Pagination";
 import { useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
@@ -142,7 +142,7 @@ const StyledDiv = styled("div")<{ isActive: boolean }>`
   ${(props) =>
     props.isActive &&
     `
-    background: ${PRIMARY_GRADIENT};
+    background: ${PRIMARY_GRADIENT_COLOR};
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   `}

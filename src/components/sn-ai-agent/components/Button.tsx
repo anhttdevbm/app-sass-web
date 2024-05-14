@@ -1,5 +1,5 @@
 import { Button as MuiButtons, SvgIconProps, Typography } from "@mui/material";
-import { PRIMARY_GRADIENT } from "./ActionCell";
+import { PRIMARY_GRADIENT_COLOR } from "./ActionCell";
 
 type ButtonType = "outlined" | "gradient" | "upload";
 
@@ -63,7 +63,7 @@ const outlineBtnSx = {
 };
 
 const gradientBtnSx = {
-  background: `${PRIMARY_GRADIENT}`,
+  background: `${PRIMARY_GRADIENT_COLOR}`,
   color: "#FFFFFF",
   textTransform: "capitalize",
   boxShadow: "none",

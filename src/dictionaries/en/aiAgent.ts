@@ -59,6 +59,12 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Tools | Taskcover",
     },
+    title: "Tools",
+    description:
+      "Enhance your agent with tools for comprehensive data gathering and preprocessing inside commands.",
+    webSearch: "Web Search",
+    webSearchDescription:
+      "Can be enabled with each commands to access information from the web.",
   },
   knowledge: {
     header: {

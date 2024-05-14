@@ -39,54 +39,40 @@ export const General = () => {
   };
 
   return (
-    <Stack direction={"column"} justifyContent={"space-between"}>
-      <Stack flex={1} direction={"column"} spacing={3} padding={4}>
-        <Text variant={"h5"}>{t("general.title")}</Text>
-        <TextField
-          fullWidth
-          label={t("general.agentName")}
-          theme={theme}
-          variant="filled"
-          value={aiAgent?.name}
-        />
-        <UploadAvatar
-          fileInputRef={fileInputRef}
-          handleFileChange={handleFileChange}
-          handleUploadClick={handleUploadClick}
-          image={image}
-          label={t("layout.header.avatar")}
-          titleButton={t("layout.header.upload")}
-        />
-        <Textarea
-          label={t("general.description")}
-          placeholder={t("general.placeholderTextarea")}
-          value={aiAgent?.description}
-        />
-        <Select
-          label={t("general.tone")}
-          value={selectedTone}
-          theme={theme}
-          onChange={(e) => setSelectedTone(e.target.value)}
-        >
-          <MenuItem disabled value={"default"}>
-            <em>{t("general.default")}</em>
-          </MenuItem>
-          <MenuItem value={"test"}>test</MenuItem>
-          <MenuItem value={"casual"}>casual</MenuItem>
-        </Select>
-      </Stack>
-      <Stack
-        direction={"row"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        spacing={3}
-        paddingTop={2}
-        paddingBottom={2}
-        borderTop={`1px solid ${theme.palette.grey[100]}`}
+    <Stack flex={1} direction={"column"} spacing={3} padding={4}>
+      <Text variant={"h5"}>{t("general.title")}</Text>
+      <TextField
+        fullWidth
+        label={t("general.agentName")}
+        theme={theme}
+        variant="filled"
+        value={aiAgent?.name}
+      />
+      <UploadAvatar
+        fileInputRef={fileInputRef}
+        handleFileChange={handleFileChange}
+        handleUploadClick={handleUploadClick}
+        image={image}
+        label={t("layout.header.avatar")}
+        titleButton={t("layout.header.upload")}
+      />
+      <Textarea
+        label={t("general.description")}
+        placeholder={t("general.placeholderTextarea")}
+        value={aiAgent?.description}
+      />
+      <Select
+        label={t("general.tone")}
+        value={selectedTone}
+        theme={theme}
+        onChange={(e) => setSelectedTone(e.target.value)}
       >
-        <Button type="outlined" text={t("general.cancel")} />
-        <Button type="gradient" text={t("general.update")} />
-      </Stack>
+        <MenuItem disabled value={"default"}>
+          <em>{t("general.default")}</em>
+        </MenuItem>
+        <MenuItem value={"test"}>test</MenuItem>
+        <MenuItem value={"casual"}>casual</MenuItem>
+      </Select>
     </Stack>
   );
 };

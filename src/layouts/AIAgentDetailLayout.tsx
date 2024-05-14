@@ -12,6 +12,8 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { useHeaderConfig } from "store/app/selectors";
 import { getPath } from "utils/index";
+import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
+import { Button } from "components/sn-ai-agent/components";
 
 type AIAgentDetailLayoutProps = {
   children: React.ReactNode;
@@ -25,6 +27,7 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
   const commonT = useTranslations(NS_COMMON);
   const aiAgentT = useTranslations(NS_AI_AGENT);
   const { isLgBigger } = useBreakpoint();
+  const theme = useTheme();
 
   const dataStringifyRef = useRef<string | undefined>();
 
@@ -49,6 +52,7 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
     const prevPath = getPath(AI_AGENT_PATH, parsedQueries);
 
     onUpdateHeaderConfig({
+      imageUrl: aiAgent?.avatar.link || ImgPlaceHolderAgent,
       title: aiAgent?.name,
       searchPlaceholder: commonT("searchBy", { name: aiAgentT("list.key") }),
       prevPath,
@@ -80,10 +84,24 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
         position="relative"
         zIndex={12}
         bgcolor={isDarkMode ? "background.default" : "background.paper"}
+        direction={"column"}
+        justifyContent={"space-between"}
       >
         <TabList />
       </Stack>
       {children}
+      <Stack
+        direction={"row"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        spacing={3}
+        paddingTop={2}
+        paddingBottom={2}
+        borderTop={`1px solid ${theme.palette.grey[100]}`}
+      >
+        <Button type="outlined" text={aiAgentT("general.cancel")} />
+        <Button type="gradient" text={aiAgentT("general.update")} />
+      </Stack>
     </Wrapper>
   );
 };
