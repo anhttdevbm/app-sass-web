@@ -14,6 +14,7 @@ type SelectTagProps = {
   label?: string;
   onEnter?: (value: string | undefined) => void;
   onSelect?: (event: React.ChangeEvent<{}>, value: any) => void;
+  handleDelete: (value: any) => void;
   value?: MailData[]; // Update the type
 };
 
@@ -25,6 +26,7 @@ const SelectMailMultiple: React.FC<SelectTagProps> = ({
   label,
   onEnter,
   onSelect,
+  handleDelete,
   value,
 }) => {
   const { palette } = useTheme();
@@ -52,6 +54,11 @@ const SelectMailMultiple: React.FC<SelectTagProps> = ({
         return null; 
       }
       const { key, ...rest } = getTagProps({ index });
+
+      const onDelete = (label) => {        
+        const newValue = value.filter((mail) => mail.mail !== label);
+        handleDelete(newValue)
+      }
       return (
         <Chip
           label={mail.mail}
@@ -64,6 +71,9 @@ const SelectMailMultiple: React.FC<SelectTagProps> = ({
             mb: 1,
             backgroundColor: palette?.primary.light,
           }}
+          onDelete={(e) => 
+            onDelete(mail.mail)
+          }
         />
       );
     });
@@ -100,8 +110,8 @@ const SelectMailMultiple: React.FC<SelectTagProps> = ({
         <ArrowDownIcon
           sx={{
             transform: "rotate(270deg)",
-            width: '14px',
-            height: '14px',
+            width: '0',
+            height: '0',
           }}
           color="inherit"
         />

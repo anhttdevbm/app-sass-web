@@ -4,6 +4,7 @@ import { Paging_Career } from "constant/types";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING_CAREER } from "constant/index";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { IApplicant } from "constant/types";
+import { getFiltersFromQueries } from "utils/index";
 
 export interface FeedbackState {
     careers: CareerData[];
@@ -35,6 +36,7 @@ const careerSlice = createSlice({
                 // console.log(action.meta.arg.page);
                 // console.log(action.meta.arg.size);
                 state.careersStatus = DataStatus.LOADING;
+                state.careersFilters = getFiltersFromQueries(action.meta.arg);
                 state.careersPaging.page = Number(
                     action.meta.arg.page ?? DEFAULT_PAGING_CAREER.page,
                 );

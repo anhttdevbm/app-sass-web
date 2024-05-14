@@ -37,6 +37,7 @@ export type ApplicantsDictionary={
         name: string,
         phone: string,
         email: string,
+        mailCc: string,
         mailBcc: string,
         subject: string,
         content: string,

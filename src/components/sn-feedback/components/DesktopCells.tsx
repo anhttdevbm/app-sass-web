@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { memo, useState } from "react";
 import { FeedbackData } from "store/feedback/actions";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
+import SendIcon from '@mui/icons-material/Send';
 import { DataAction } from "constant/enums";
 import Form from "./Form";
 import { useFeedback } from "store/feedback/selectors";
@@ -56,16 +57,16 @@ const DesktopCells = (props: DesktopCellsProps) => {
       <BodyCell align="left">{props.item.content}</BodyCell>
       {/* <BodyCell align="left">{item.responsed_content}</BodyCell> */}
       <BodyCell align="left">
-        {props.item.status === "WATTING_RESPONSE" ? (
+        {props.item.status === "WATTING_RESPONDE" ? (
           <Chip
             size="small"
-            label={feedbackT("feedbackTable.statusList.watting_response")}
+            label={feedbackT("feedbackTable.statusList.watting_responde")}
             color="primary"
           />
         ) : (
           <Chip
             size="small"
-            label={feedbackT("feedbackTable.statusList.responsed")}
+            label={feedbackT("feedbackTable.statusList.responded")}
             color="success"
 
           />
@@ -73,19 +74,18 @@ const DesktopCells = (props: DesktopCellsProps) => {
       </BodyCell>
       <BodyCell align="left">
         {props.item.status === "WATTING_RESPONSE" ? (
-          <Tooltip title={feedbackT("feedbackTable.editResponsed")}>
+          <Tooltip title={feedbackT("feedbackTable.statusList.watting_responde")}>
             <IconButton color="primary" size="large" onClick={onActionToItem(DataAction.UPDATE, props.item)} >
               <ForwardToInboxIcon />
             </IconButton>
           </Tooltip>
         ) : (
-          <></>
-        )}
-        {/* <Tooltip title={feedbackT("feedbackTable.editResponsed")}>
-            <IconButton color="primary" size="large" onClick={onActionToItem(DataAction.UPDATE, item)} >
-              <ForwardToInboxIcon />
+          <Tooltip title={feedbackT("feedbackTable.statusList.responded")}>
+            <IconButton color="primary" size="large" >
+              <SendIcon />
             </IconButton>
-          </Tooltip>*/}
+          </Tooltip>
+        )}
       </BodyCell> 
       {action === DataAction.UPDATE && (
         <Form
@@ -105,7 +105,8 @@ const DesktopCells = (props: DesktopCellsProps) => {
               responsed_by: props.item?.responsed_by,
               responsed_content: props.item?.responsed_content,
               responsed_time: props.item?.responsed_time,
-              forward_email: props.item?.forward_email ?? [],
+              response_cc: props.item?.response_cc ?? [],
+              response_bcc: props.item?.response_bcc ?? [],
             } as FeedbackData
           }
           onSubmit={onResponsedContent}
