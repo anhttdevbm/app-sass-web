@@ -101,11 +101,12 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   };
 
   const handleSubmitMessage = async (message: string) => {
-    if (!persona || !tone) {
-      setError("Persona and tone are required!");
-      if (!persona) setShowPersonaError(true);
-      if (!tone) setShowToneError(true);
-      return;
+    if (!persona) {
+      setPersona(personaList[0].id);
+    }
+
+    if (!tone) {
+      setTone(toneList[0].id);
     }
 
     const data: ChatWithAIData = {
@@ -298,7 +299,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
         />
       )}
       <Box padding={isMobile ? "0 4px" : "0 24px"}>
-        {error && <div style={{ color: "red" }}>{error}</div>}
+        {/* {error && <div style={{ color: "red" }}>{error}</div>} */}
         <Box sx={selectContainerSx}>
           <SelectAIChat
             key={"persona"}

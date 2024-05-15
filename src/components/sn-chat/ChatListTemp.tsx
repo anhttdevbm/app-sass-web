@@ -180,9 +180,9 @@ const ChatListTemp = () => {
             <Box
               sx={{
                 position: "absolute",
-                width: "348px",
+                width: "300px",
                 height: "calc(100% - 4rem)",
-                maxHeight: "700px",
+                maxHeight: "800px",
                 overflow: "hidden",
                 bottom: "2rem",
                 right: "4rem",
