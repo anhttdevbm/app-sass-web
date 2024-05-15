@@ -3,6 +3,7 @@ import { DataStatus } from "constant/enums";
 import { FeedbackData, GetFeedbackDataListQueries, getFeedbacks, respondToFeedback } from "./actions"; // Import respondToFeedback
 import { Paging_Feedback } from "constant/types";
 import { DEFAULT_PAGING_FEEDBACK } from "constant/index";
+import { getFiltersFromQueries } from "utils/index";
 
 
 
@@ -34,6 +35,7 @@ const feedbackSlice = createSlice({
         // console.log(action.meta.arg.page);
         // console.log(action.meta.arg.size);
         state.feedbacksStatus = DataStatus.LOADING;
+        state.feedbacksFilters = getFiltersFromQueries(action.meta.arg);
         state.feedbackPaging.page = Number(
           action.meta.arg.page ?? DEFAULT_PAGING_FEEDBACK.page,
         );

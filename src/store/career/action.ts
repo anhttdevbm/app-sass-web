@@ -40,7 +40,7 @@ export type CareerData = {
 
 export type GetCareerListQueries = BaseQueries_Feedback & {
   searchKey?: string;
-  isOpening?: string;
+  status?: string;
 };
 
 export type ApplicantData = {
@@ -51,7 +51,8 @@ export type ApplicantData = {
   content?: string,
   responsed_content?: string,
   type?: string,
-  forward_email: string[],
+  mail_cc: string[],
+  mail_bcc: string[],
   title?: string
   phone?: string
   name?: string
@@ -66,7 +67,6 @@ export const getAllCareer = createAsyncThunk(
   "/getAllCareer",
   async ({ ...queries }: GetCareerListQueries) => {
     try {
-      console.log(queries);
       // Sử dụng fetch để gọi API và truyền tham số searchKey vào URL
       const response = await client.get(Endpoint.CAREER, queries, { baseURL: CAREER_API_URL });
 
@@ -260,8 +260,8 @@ export const respondToApplicant = createAsyncThunk(
         applicantId: data.applicantId,
         content: data.responsed_content,
         subject : data.title,
-        type: 'BCC',
-        forward_email: data.forward_email
+        mail_cc: data.mail_cc,
+        mail_bcc: data.mail_bcc,
       } as ApplicantData
       const response = await client.post(StringFormat(Endpoint.RESPONDAPPLICANT),
         respondToFeedback,

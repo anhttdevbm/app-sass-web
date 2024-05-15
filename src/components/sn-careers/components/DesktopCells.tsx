@@ -92,7 +92,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
         {chuyen_dinh_dang_ngay(props.item.end_time)}
       </BodyCell>
       <BodyCell align="left">{props.item.numberOfHires}</BodyCell>
-      <BodyCell align="left">{props.item.description}</BodyCell>
+      <BodyCell align="left" noWrap>{props.item.description}</BodyCell>
       {/* <BodyCell align="left">{item.responsed_content}</BodyCell> */}
       <BodyCell align="left">
         {props.item?.status === UpdateStatusCareer.REOPEN ? (

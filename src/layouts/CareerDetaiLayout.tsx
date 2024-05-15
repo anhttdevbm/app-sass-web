@@ -61,7 +61,7 @@ const CareerDetaiLayout = ({ children, slug }: CareerDetaiLayoutProps) => {
     }, [item?.slug, onUpdateHeaderConfig]);
 
     return (
-        <Wrapper overflow="auto" inFrame={isCareerDetailPath}>
+        <Wrapper overflow="auto">
             <TabList />
             {children}
         </Wrapper>

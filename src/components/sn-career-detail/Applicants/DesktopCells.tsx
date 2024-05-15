@@ -16,6 +16,7 @@ import Form from "./components/Form";
 import { clientStorage } from "utils/storage";
 import { useCareer } from "store/career/selectors";
 import { ApplicantData } from "store/career/action";
+import SendIcon from '@mui/icons-material/Send';
 
 type DesktopCellsProps = {
   item: IApplicant;
@@ -151,7 +152,8 @@ const DesktopCells = (props: DesktopCellsProps) => {
               subject: "",
               content: "",
               responsed_content: "",
-              forward_email: [],
+              mail_cc: [],
+              mail_bcc: [],
             } as ApplicantData
           }
           onSubmit={onResponsedContent}

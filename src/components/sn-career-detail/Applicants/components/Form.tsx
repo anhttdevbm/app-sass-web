@@ -19,6 +19,11 @@ import { useTranslations } from "next-intl";
 import { ApplicantData, MailData } from "store/career/action";
 import SelectMailMultiple from "./SelectMailMultiple";
 
+export type MailList = {
+  mail_cc: MailData[];
+  mail_bcc: MailData[];
+}
+
 type FormProps = {
   initialValues: ApplicantData;
   type: DataAction;
@@ -31,7 +36,10 @@ const Form = (props: FormProps) => {
   const { onAddSnackbar } = useSnackbar();
   const applicantT = useTranslations(NS_APPLICANTS);
   const commonT = useTranslations(NS_COMMON);
-  const [mails, setMails] = useState<MailData[]>([]);
+  const [mails, setMails] = useState<MailList>({
+    mail_cc: [],
+    mail_bcc: []
+  });
 
   const label = useMemo(() => {
     switch (type) {
@@ -71,28 +79,50 @@ const Form = (props: FormProps) => {
     onSubmit
   });
 
-  const onSelect = (data) => {
-    const uniqueData = Array.from(new Set(data.map(item => item.mail))).map(mail => ({ mail }));
-    formik.setFieldValue("forward_email", uniqueData.map((item) => item.mail));
+  const onSelect = (data, key) => {
+    const uniqueData = Array.from(new Set(data.map(item => item.mail))).map(mail => ({ mail }));    
+    formik.setFieldValue(key, uniqueData.map((item) => item.mail));
   };
 
-  const onEnter = (value) => {
+  const onEnter = (value, key) => {            
     if (!value) return;
-    const itemValues = formik.values?.forward_email ?? [];
+    const itemValues = formik.values?.[key] ?? [];
     const isExisted = itemValues.find((item) => item == value);
-
+    
     if (isExisted) {
       const updatedTags = itemValues.map(mail => ({ mail }));
-      onSelect([...updatedTags, { mail: value }]);
-    } else {
+      onSelect([...updatedTags, { mail: value }], key);
+    } else {      
       const newMailOption = {
         mail: value,
       };
-      setMails((prevListMail) => [...prevListMail, newMailOption]);
+      setMails(prevMails => {
+        const mail = prevMails[key].find(item => item.mail == value)
+        if (mail) {
+          return prevMails
+        } else {
+          return {
+            ...prevMails,
+            [key]: [...prevMails[key], newMailOption]
+          }
+        }
+      })
       const updatedMails = itemValues.map(mail => ({ mail }));
-      onSelect([...updatedMails, { mail: value }]);
+      onSelect([...updatedMails, { mail: value }], key);
     }
   };
+
+  const onDelete = (data, key) => {
+    if (!data) return;
+    const uniqueData = Array.from(new Set(data.map((mail) => mail.mail))).map(
+      (mail) => ({ mail }),
+    );
+    setMails({
+      ...mails,
+      [key]: uniqueData
+    })
+    formik.setFieldValue(key, uniqueData.map((item) => item.mail));
+  }
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
@@ -130,48 +160,62 @@ const Form = (props: FormProps) => {
             <Typography gutterBottom variant="h5" component="div">
               {initialValues.name}
             </Typography>
-            <Typography sx={{ mb: 1 }} variant="body2" color="#212121">
+            <Typography sx={{ mb: 1 }} variant="body2">
               {applicantT("applicantTable.phone")}: {initialValues.phone}
             </Typography>
-            <Typography sx={{ mb: 1 }} variant="body2" color="#424242">
+            <Typography sx={{ mb: 1 }} variant="body2">
               {applicantT("applicantTable.email")}: {initialValues.email}
             </Typography>
             <hr />
             <Stack>
-              <Typography sx={{ mb: 1 }} color="#424242">
+              <Typography sx={{ my: 1 }} variant="body2">
+                {applicantT("applicantTable.mailCc")}
+              </Typography>
+              <SelectMailMultiple
+                items={mails.mail_cc}
+                sx={sxConfig}
+                onSelect={(e, data) => onSelect(data, 'mail_cc')}
+                onEnter={(value) => onEnter(value, 'mail_cc')}
+                handleDelete={(value) => onDelete(value, 'mail_cc')}
+                value={formik.values.mail_cc?.map((mail) => ({ mail }))}
+              />
+              <Typography sx={{ mt: 1 }} variant="body2">
                 {applicantT("applicantTable.mailBcc")}
               </Typography>
               <SelectMailMultiple
-                items={mails}
+                items={mails.mail_bcc}
                 sx={sxConfig}
-                onSelect={(e, data) => onSelect(data)}
-                onEnter={onEnter}
-                value={formik.values.forward_email?.map((mail) => ({ mail }))}
+                onSelect={(e, data) => onSelect(data, 'mail_bcc')}
+                onEnter={(value) => onEnter(value, 'mail_bcc')}
+                handleDelete={(value) => onDelete(value, 'mail_bcc')}
+                value={formik.values.mail_bcc?.map((mail) => ({ mail }))}
               />
-              <Typography sx={{ mb: 1 }} color="#424242" variant="h5">
-                {applicantT("applicantTable.subject")}:
-              </Typography>
-              <Input
-                title={applicantT("applicantTable.subject")}
-                name="title"
-                required
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values?.title}
-                color="secondary"
-              />
+              
             </Stack>
-            <Typography
-              variant="body2"
-              color="#212121"
-              style={{ paddingTop: 7 }}
-            >
-              {applicantT("applicantTable.content")}: {initialValues.content}
-            </Typography>
+            
           </CardContent>
         </Grid>
         <Grid item xs={12} md={7}>
           <Stack spacing={2} py={3}>
+            <Typography sx={{ mb: 1 }} variant="body2">
+              {applicantT("applicantTable.subject")}:
+            </Typography>
+            <Input
+              sx={{ mt: '3px !important '}}
+              title={applicantT("applicantTable.subject")}
+              name="title"
+              required
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values?.title}
+              color="secondary"
+            />
+            <Typography
+              variant="body2"
+              style={{ paddingBottom: 10 }}
+            >
+              {applicantT("applicantTable.content")}: {initialValues.content}
+            </Typography>
             <TextField
               id="outlined-multiline-static"
               label={applicantT("form_Applicant.responsed_content")}
