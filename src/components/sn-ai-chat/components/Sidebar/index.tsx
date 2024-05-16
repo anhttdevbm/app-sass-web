@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         : popupMode
         ? {
             width: "100%",
-            height: "90.4%",
+            height: "92.5%",
           }
         : {
             minWidth: "300px",
