@@ -85,6 +85,20 @@ export type AIAgentDictionary = {
     header: {
       title: string;
     };
+    title: string;
+    description: string;
+    addCommand: string;
+    createCommand: string;
+    name: string;
+    prompt: string;
+    viewPrompts: string;
+    backgroundTask: string;
+    webSearch: string;
+    useKnowledge: string;
+    tools: string;
+    settings: string;
+    writeYourCommand: string;
+    create: string;
   };
   promptTemplates: {
     header: {

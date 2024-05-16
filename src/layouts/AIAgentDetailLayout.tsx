@@ -76,7 +76,6 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
         overflow: "hidden",
         padding: `${isLgBigger ? "24" : "16"}px!important`,
         paddingTop: "0px!important",
-        zIndex: -99,
       }}
       id={SCROLL_ID}
       overflow="auto"

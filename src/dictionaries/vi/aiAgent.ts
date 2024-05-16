@@ -90,6 +90,21 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Lệnh | Taskcover",
     },
+    title: "Lệnh",
+    description:
+      "Tạo các lệnh để trợ lý ảo thực hiện các hành động cụ thể khi được kích hoạt.",
+    addCommand: "Thêm lệnh",
+    createCommand: "Tạo lệnh mới",
+    backgroundTask: "Nhiệm vụ nền",
+    name: "Tên",
+    prompt: "Mẫu câu",
+    viewPrompts: "Xem mẫu câu",
+    tools: "Công cụ",
+    settings: "Cài đặt",
+    useKnowledge: "Sử dụng kiến thức",
+    webSearch: "Tìm kiếm trên web",
+    writeYourCommand: "Viết mẫu câu lệnh của bạn...",
+    create: "Tạo",
   },
   promptTemplates: {
     header: {

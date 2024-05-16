@@ -7,9 +7,11 @@ import styled from "styled-components";
 
 interface ToolItemProps {
   name: string;
-  description: string;
+  description?: string;
   icon: React.ReactNode;
   onClick?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sxText?: any;
 }
 
 export const GradientBorderStack = styled(Stack)(({ theme }) => ({
@@ -46,6 +48,7 @@ export const ToolItem = ({
   description,
   icon,
   onClick,
+  sxText,
 }: ToolItemProps) => {
   const theme = useTheme();
 
@@ -67,13 +70,15 @@ export const ToolItem = ({
         alignItems={"center"}
       >
         {icon}
-        <Stack direction={"column"} spacing={"4px"}>
-          <Text variant={"h6"} fontWeight={400}>
+        <Stack direction={"column"} spacing={"4px"} alignItems={"center"}>
+          <Text variant={"h6"} fontWeight={400} sx={sxText}>
             {name}
           </Text>
-          <Text fontSize={"14px"} fontWeight={400} color={"grey.300"}>
-            {description}
-          </Text>
+          {description && (
+            <Text fontSize={"14px"} fontWeight={400} color={"grey.300"}>
+              {description}
+            </Text>
+          )}
         </Stack>
       </Content>
     </GradientBorderStack>

@@ -90,6 +90,21 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Commands | Taskcover",
     },
+    title: "Commands",
+    description:
+      "Create custom /commands to use in projects. Enable tools per command for more refined results.",
+    addCommand: "Add Command",
+    createCommand: "Create a new command",
+    name: "Name",
+    prompt: "Prompt",
+    viewPrompts: "View Prompts",
+    backgroundTask: "Background Task",
+    webSearch: "Web Search",
+    useKnowledge: "Use Knowledge",
+    tools: "Tools",
+    settings: "Settings",
+    writeYourCommand: "Write your command prompt...",
+    create: "Create",
   },
   promptTemplates: {
     header: {
