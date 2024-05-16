@@ -54,25 +54,7 @@ const TabList = () => {
       zIndex={1}
       mb={{ xs: 2, md: 0 }}
     >
-      {!!isSmSmaller && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          pb={2}
-          pt={{ md: 2 }}
-        >
-          {!!prevPath && (
-            <Link href={prevPath} sx={{ height: 24 }}>
-              <ChevronIcon
-                sx={{ color: "text.primary", transform: "rotate(90deg)" }}
-                fontSize="medium"
-              />
-            </Link>
-          )}
-          <Text variant="h5">{title ?? ""}</Text>
-        </Stack>
-      )}
+      
       <Stack direction="row" alignItems="center">
         {TABS.map((tab) => (
           <TabItem key={tab.label} {...tab} />

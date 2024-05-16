@@ -10,6 +10,7 @@ import { DataAction } from "constant/enums";
 import Form from "./Form";
 import { clientStorage } from "utils/storage";
 import { useFeedback } from "store/feedback/selectors";
+import SendIcon from '@mui/icons-material/Send';
 
 type MobileContentCellProps = {
   item: FeedbackData;
@@ -69,28 +70,32 @@ const MobileContentCell = (props: MobileContentCellProps) => {
           {props.item.content}
         </InformationItem>
         <InformationItem label={feedbackT("feedbackTable.status")}>
-          {props.item.status === "WATTING_RESPONSE" ? (
+          {props.item.status === "WATTING_RESPONDE" ? (
             <Chip
               size="small"
-              label={feedbackT("feedbackTable.statusList.watting_response")}
+              label={feedbackT("feedbackTable.statusList.watting_responde")}
               color="primary"
             />
           ) : (
             <Chip
               size="small"
-              label={feedbackT("feedbackTable.statusList.responsed")}
+              label={feedbackT("feedbackTable.statusList.responded")}
               color="success"
             />
           )}
           <BodyCell align="left">
-            {props.item.status === "WATTING_RESPONSE" ? (
+            {props.item.status === "WATTING_RESPONDE" ? (
               <Tooltip title={feedbackT("feedbackTable.editResponsed")}>
                 <IconButton color="primary" size="large" onClick={onActionToItem(DataAction.UPDATE, props.item)}>
                   <ForwardToInboxIcon />
                 </IconButton>
               </Tooltip>
             ) : (
-              <></>
+              <Tooltip title={feedbackT("feedbackTable.statusList.responded")}>
+                <IconButton color="primary" size="large" >
+                  <SendIcon />
+                </IconButton>
+              </Tooltip>
             )}
           </BodyCell>
           {action === DataAction.UPDATE && (
@@ -111,7 +116,8 @@ const MobileContentCell = (props: MobileContentCellProps) => {
                   responsed_by: props.item?.responsed_by,
                   responsed_content: props.item?.responsed_content,
                   responsed_time: props.item?.responsed_time,
-                  forward_email: props.item?.forward_email ?? [],
+                  response_cc: props.item?.response_cc ?? [],
+                  response_bcc: props.item?.response_bcc ?? [],
                 } as FeedbackData
               }
               onSubmit={onResponsedContent}

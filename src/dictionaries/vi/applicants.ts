@@ -39,6 +39,7 @@ export const ApplicantsLang: ApplicantsDictionary = {
         name: "Người gửi",
         phone: "Di động",
         email: "Email",
+        mailCc: "Mail CC",
         mailBcc: "Mail BCC",
         subject: "Tiêu đề",
         content: "Nội dung",

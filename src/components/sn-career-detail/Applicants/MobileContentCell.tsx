@@ -158,7 +158,8 @@ const MobileContentCell = (props: MobileContentCellProps) => {
                 subject: "",
                 content: "",
                 responsed_content: "",
-                forward_email: [],
+                mail_cc: [],
+                mail_bcc: [],
               } as ApplicantData
             }
             onSubmit={onResponsedContent}

@@ -527,7 +527,7 @@ export const getClientCompanyDetails = createAsyncThunk(
   async (id: string) => {
     try {
       const response = await client.get(
-        `${Endpoint.CLIENT_COMPANIES}/${id}`,
+        `${Endpoint.CLIENT_COMPANIES_DETAIL}/${id}`,
         {},
         {
           baseURL: COMPANY_API_URL,

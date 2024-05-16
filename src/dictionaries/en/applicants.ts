@@ -20,7 +20,7 @@ export const ApplicantsLang: ApplicantsDictionary = {
         },
     },
     form_Applicant : {
-        label_form_update: "Respond to Applicant",
+        label_form_update: "Response Applicant",
         name: "Name",
         phone: "Phone",
         title: "Title",
@@ -39,6 +39,7 @@ export const ApplicantsLang: ApplicantsDictionary = {
         name: "Name",
         phone: "Phone",
         email: "Email",
+        mailCc: "Mail CC",
         mailBcc: "Mail BCC",
         subject: "Subject",
         content: "Content",
