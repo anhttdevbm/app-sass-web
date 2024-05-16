@@ -6,13 +6,14 @@ import { Button } from "./Button";
 import { Box } from "@mui/material";
 
 export type DialogProps = Omit<DialogLayoutProps, "children"> & {
-  title: string;
+  title: React.ReactNode;
   content?: string;
   cancelText?: string;
   submitText?: string;
   pending?: boolean;
   children?: React.ReactNode;
   headerProps?: {};
+  contentProps?: {};
 };
 
 export const Dialog = (props: DialogProps) => {
@@ -29,6 +30,7 @@ export const Dialog = (props: DialogProps) => {
     sx,
     children,
     headerProps,
+    contentProps,
     ...rest
   } = props;
   return (
@@ -45,7 +47,7 @@ export const Dialog = (props: DialogProps) => {
       bottomProps={{
         sx: defaultSx.bottom,
       }}
-      contentProps={{ sx: { mt: 3, pr: 0 } }}
+      contentProps={{ sx: { mt: 3, pr: 0, ...contentProps } }}
       renderBottom={
         <Box
           sx={{

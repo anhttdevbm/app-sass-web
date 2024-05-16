@@ -70,6 +70,21 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Knowledge | Taskcover",
     },
+    title: "Knowledge",
+    description:
+      "Enhance your agent's knowledge to improve its awareness and achieve better results.",
+    enableKnowledge: "Enable Knowledge",
+    addFromMedia: "Add from Media",
+    dragOrSelect: "Drag file here or select to upload (.pdf, .csv, .txt)",
+    addLink: "Add Link",
+    addYoutube: "Add Youtube",
+    addSource: "Add Source",
+    add: "Add",
+    cancel: "Cancel",
+    addYoutubeDescription: "Add Youtube transcripts as knowledge",
+    addYoutubePlaceholder: "Type or paste a Youtube link...",
+    addLinkDescription: "Add knowledge from a URL to crawl the content",
+    addLinkPlaceholder: "Type or paste a URL...",
   },
   commands: {
     header: {

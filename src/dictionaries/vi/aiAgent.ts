@@ -59,11 +59,32 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Công cụ | Taskcover",
     },
+    title: "Công cụ",
+    description:
+      "Cải thiện trợ lí của bạn với các công cụ thu thập và xử lý dữ liệu toàn diện trong các lệnh",
+    webSearch: "Tìm kiếm trên web",
+    webSearchDescription:
+      "Có thể kích hoạt với mỗi lệnh để truy cập thông tin từ web.",
   },
   knowledge: {
     header: {
       title: "Kiến thức | Taskcover",
     },
+    title: "Kiến thức",
+    description:
+      "Cải thiện kiến thức của trợ lý ảo để nâng cao nhận thức và đạt được kết quả tốt hơn.",
+    addFromMedia: "Thêm từ phương tiện",
+    addSource: "Thêm nguồn",
+    dragOrSelect: "Kéo tệp vào đây hoặc chọn để tải lên (.pdf, .csv, .txt)",
+    addLink: "Thêm liên kết",
+    addYoutube: "Thêm liên kết Youtube",
+    enableKnowledge: "Kích hoạt kiến thức",
+    add: "Thêm",
+    cancel: "Hủy",
+    addYoutubeDescription: "Nạp bản ghi YouTube vào kho kiến thức",
+    addYoutubePlaceholder: "Dán hoặc nhập liên kết YouTube...",
+    addLinkDescription: "Lấy thông tin từ URL để thu thập dữ liệu",
+    addLinkPlaceholder: "Nhập hoặc dán địa chỉ web...",
   },
   commands: {
     header: {

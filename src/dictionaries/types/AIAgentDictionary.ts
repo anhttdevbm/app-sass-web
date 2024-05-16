@@ -66,6 +66,20 @@ export type AIAgentDictionary = {
     header: {
       title: string;
     };
+    title: string;
+    description: string;
+    enableKnowledge: string;
+    addSource: string;
+    dragOrSelect: string;
+    addFromMedia: string;
+    addLink: string;
+    addYoutube: string;
+    add: string;
+    cancel: string;
+    addLinkDescription: string;
+    addLinkPlaceholder: string;
+    addYoutubeDescription: string;
+    addYoutubePlaceholder: string;
   };
   commands: {
     header: {

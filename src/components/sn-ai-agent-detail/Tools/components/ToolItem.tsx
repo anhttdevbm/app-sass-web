@@ -12,7 +12,7 @@ interface ToolItemProps {
   onClick?: () => void;
 }
 
-const GradientBorderStack = styled(Stack)(({ theme }) => ({
+export const GradientBorderStack = styled(Stack)(({ theme }) => ({
   position: "relative",
   padding: "2px",
   "&:before": {
@@ -34,7 +34,7 @@ const GradientBorderStack = styled(Stack)(({ theme }) => ({
   },
 }));
 
-const Content = styled(Stack)(({ theme }) => ({
+export const Content = styled(Stack)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   zIndex: 2,
   width: "100%",
