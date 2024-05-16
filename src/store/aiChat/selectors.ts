@@ -114,9 +114,9 @@ export const useChatSession = () => {
   );
 
   const onDeleteAllChatSessions = useCallback(
-    (queries: DeleteAllChatSessionQueries) => {
+    () => {
       dispatch(newChat());
-      dispatch(deleteAllChatSessions(queries));
+      dispatch(deleteAllChatSessions());
     },
     [dispatch],
   );

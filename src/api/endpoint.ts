@@ -206,7 +206,6 @@ export const Endpoint = {
   //AI Chat
   AI_CHAT_EXAMPLE_PROMPT: "aichat/api/ai-chat/example-prompt",
   AI_CHAT_SESSION: "aichat/api/ai-chat/chat-session",
-  AI_CHAT_CLOSE_ALL_SESSION: "aichat/api/ai-chat/close-all-chat-session",
   AI_CHAT: "aichat/api/ai-chat/chat",
   AI_CHAT_PERSONA: "aichat/api/ai-chat/persona",
   AI_CHAT_TONE: "aichat/api/ai-chat/tone",
