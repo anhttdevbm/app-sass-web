@@ -1,7 +1,6 @@
 "use client";
 
 import { InputAdornment, OutlinedInput } from "@mui/material";
-import useTheme from "hooks/useTheme";
 import SearchIcon from "icons/SearchIcon";
 
 interface SearchInputProps {

@@ -104,5 +104,6 @@ export type AIAgentDictionary = {
     header: {
       title: string;
     };
+    searchTemplate: string;
   };
 };

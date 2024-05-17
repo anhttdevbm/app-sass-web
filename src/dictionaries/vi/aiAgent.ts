@@ -110,5 +110,6 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Mẫu câu | Taskcover",
     },
+    searchTemplate: "Tìm kiếm mẫu...",
   },
 };

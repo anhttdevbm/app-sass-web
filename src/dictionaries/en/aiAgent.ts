@@ -110,5 +110,6 @@ export const AIAgentLang: AIAgentDictionary = {
     header: {
       title: "Prompt Templates | Taskcover",
     },
+    searchTemplate: "Search template...",
   },
 };
