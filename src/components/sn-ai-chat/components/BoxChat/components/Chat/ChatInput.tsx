@@ -73,7 +73,8 @@ const ChatInput = ({
       <Box
         sx={{
           ...containerStyles,
-          padding: isMobile ? "12px" : "15px 20px",
+          padding: isMobile ? "6px 12px" : "15px 20px",
+          // height: isMobile ? "48px" : "auto",
         }}
       >
         {files && files.length > 0 && (
@@ -158,6 +159,11 @@ const ChatInput = ({
             fullWidth
             variant="standard"
             InputProps={{ disableUnderline: true }}
+            sx={{
+              "& textarea": {
+                fontSize: isMobile ? "14px" : "16px",
+              },
+            }}
           />
           <IconButton
             variant="normal"

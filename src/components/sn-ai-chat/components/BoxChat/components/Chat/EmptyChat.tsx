@@ -6,6 +6,7 @@ import { ListPrompt } from "../ListPrompt";
 import { ExamplePrompt } from "store/aiChat/type";
 
 interface RenderEmptyChatProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   t: any;
   mobileMode?: boolean;
   prompts: ExamplePrompt[];
@@ -24,6 +25,12 @@ export const RenderEmptyChat: React.FC<RenderEmptyChatProps> = ({
     justifyContent={"center"}
     padding={mobileMode ? "8px" : "40px"}
     flexDirection={"column"}
+    sx={{
+      ...(mobileMode && {
+        overflowY: "auto",
+        height: "100%",
+      }),
+    }}
   >
     <Image src={GIFAIChat} alt="AI Chat" width={80} height={80} />
     <Text variant={mobileMode ? "h5" : "h3"} marginTop={mobileMode ? 1 : 3}>

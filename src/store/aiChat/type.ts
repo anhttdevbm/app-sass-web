@@ -17,7 +17,7 @@ export type ChatSession = {
 };
 
 export type SelectChatAI = {
-  id: number;
+  id: string;
   name: string;
   icon: string;
   description: string;
