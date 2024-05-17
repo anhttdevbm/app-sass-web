@@ -112,4 +112,16 @@ export const AIAgentLang: AIAgentDictionary = {
     },
     searchTemplate: "Search template...",
   },
+  chatAIAgent: {
+    header: {
+      title: "Chat AI Agent | Taskcover",
+    },
+    editAgent: "Edit agent",
+    addCommand: "Add command",
+    askMeAnything: "Ask me anything...",
+    chatWithAI: "Chat with AI",
+    description:
+      "Ask questions to get insights based on your agent's description, persona, tone, and access to knowledge.",
+    viewPrompts: "View Prompts",
+  },
 };

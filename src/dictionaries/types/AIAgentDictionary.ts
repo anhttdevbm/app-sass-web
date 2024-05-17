@@ -106,4 +106,15 @@ export type AIAgentDictionary = {
     };
     searchTemplate: string;
   };
+  chatAIAgent: {
+    header: {
+      title: string;
+    };
+    editAgent: string;
+    chatWithAI: string;
+    description: string;
+    addCommand: string;
+    askMeAnything: string;
+    viewPrompts: string;
+  };
 };

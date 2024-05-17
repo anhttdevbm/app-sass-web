@@ -6,6 +6,7 @@ import { Text } from "components/shared";
 import { Button } from "components/sn-ai-agent/components";
 import { NS_AI_AGENT } from "constant/index";
 import {
+  AI_AGENT_CHAT,
   AI_AGENT_COMMANDS_PATH,
   AI_AGENT_GENERAL_PATH,
   AI_AGENT_KNOWLEDGE_PATH,
@@ -19,21 +20,30 @@ import { usePathname } from "next-intl/client";
 import { useParams } from "next/navigation";
 import { memo, useMemo } from "react";
 import { getPath } from "utils/index";
+import { useRouter } from "next/navigation";
+
+interface Params {
+  [key: string]: string | string[];
+}
 
 type TabItemProps = {
   href: string;
   label: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   aiAgentT?: any;
+  params: Params;
 };
 
 type TabActionsProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   aiAgentT?: any;
+  params: Params;
 };
 
 const TabList = () => {
   const aiAgentT = useTranslations(NS_AI_AGENT);
+
+  const params = useParams();
 
   return (
     <>
@@ -49,10 +59,15 @@ const TabList = () => {
       >
         <Stack direction="row" alignItems="center">
           {TABS.map((tab) => (
-            <TabItem key={tab.label} {...tab} aiAgentT={aiAgentT} />
+            <TabItem
+              key={tab.label}
+              {...tab}
+              aiAgentT={aiAgentT}
+              params={params}
+            />
           ))}
         </Stack>
-        <TabActions aiAgentT={aiAgentT} />
+        <TabActions aiAgentT={aiAgentT} params={params} />
       </Stack>
     </>
   );
@@ -61,12 +76,11 @@ const TabList = () => {
 export default memo(TabList);
 
 const TabItem = (props: TabItemProps) => {
-  const { href, label, aiAgentT } = props;
+  const { href, label, aiAgentT, params } = props;
 
   const { isDarkMode } = useTheme();
 
   const pathname = usePathname();
-  const params = useParams();
 
   const isActiveLink = useMemo(() => {
     const suffixPath = getSuffixPath(pathname);
@@ -106,13 +120,24 @@ const TabItem = (props: TabItemProps) => {
 };
 
 const TabActions = (props: TabActionsProps) => {
-  const { aiAgentT } = props;
+  const { aiAgentT, params } = props;
+  const router = useRouter();
+
+  const handleRefToChat = () => {
+    router.push(
+      getPath(AI_AGENT_CHAT, undefined, {
+        id: params.id as string,
+      }),
+    );
+  };
+
   return (
     <Stack direction="row" alignItems="center" spacing={3} px={3} {...props}>
       <Button
         type="gradient"
         text={aiAgentT("tabList.chat")}
         icon={AITabIcon}
+        onClick={handleRefToChat}
       />
     </Stack>
   );

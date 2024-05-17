@@ -1,0 +1,20 @@
+import { ChatAI } from "components/sn-ai-agent-detail";
+import { NS_AI_AGENT } from "constant/index";
+import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations(NS_AI_AGENT);
+
+  return {
+    title: t("chatAIAgent.header.title"),
+  };
+}
+
+interface Params {
+  id: string;
+}
+
+export default function AIChatAgentPage({ id }: Params) {
+  return <ChatAI id={id} />;
+}

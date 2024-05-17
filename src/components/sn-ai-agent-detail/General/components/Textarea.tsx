@@ -1,9 +1,11 @@
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 import { Box } from "@mui/material";
+import { IconButton } from "components/shared";
 import { Button } from "components/sn-ai-agent/components";
 import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
 import MagicPenIcon from "icons/MagicPenIcon";
+import SendGradientIcon from "icons/SendGradientIcon";
 import { useTranslations } from "next-intl";
 import React, { useEffect } from "react";
 import styled from "styled-components";
@@ -11,8 +13,10 @@ import styled from "styled-components";
 type TextareaElementProps = JSX.IntrinsicElements["textarea"];
 
 interface TextareaProps extends TextareaElementProps {
-  label: string;
+  label?: string;
   placeholder: string;
+  isCount?: boolean;
+  onSend?: () => void;
 }
 
 const StyledTextarea = styled(TextareaAutosize)({
@@ -21,7 +25,7 @@ const StyledTextarea = styled(TextareaAutosize)({
   width: "100%",
   outline: 0,
   padding: "0 20px",
-  paddingBlockStart: "1em",
+  paddingBlockStart: `${({ label }) => (label ? "1rem" : "0")}`,
   paddingInlineEnd: `var(--Textarea-paddingInline)`,
   flex: "auto",
   alignSelf: "stretch",
@@ -33,7 +37,7 @@ const StyledTextarea = styled(TextareaAutosize)({
   fontWeight: "inherit",
   lineHeight: "inherit",
   "&::placeholder": {
-    opacity: 0,
+    opacity: `${({ label }) => (label ? "1" : "0")}`,
     transition: "0.1s ease-out",
   },
   "&:focus::placeholder": {
@@ -63,11 +67,14 @@ const StyledFooter = styled("div")({
   borderTop: "2px solid #ECECF3",
   padding: "8px 20px",
   display: "flex",
-  justifyContent: "flex-start",
+  justifyContent: "space-between",
 });
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  function InnerTextarea({ label, placeholder, ...props }, ref) {
+  function InnerTextarea(
+    { label, placeholder, isCount = true, onSend, ...props },
+    ref,
+  ) {
     const t = useTranslations(NS_AI_AGENT);
     const id = React.useId();
     const theme = useTheme();
@@ -96,6 +103,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           flexDirection: "column",
           justifyContent: "flex-start",
           height: "100%",
+          width: "100%",
         }}
       >
         <StyledTextarea
@@ -105,11 +113,14 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={id}
           placeholder={placeholder}
           theme={theme}
+          label={label}
           onChange={handleInputChange}
         />
-        <StyledLabel htmlFor={id} theme={theme}>
-          {label}
-        </StyledLabel>
+        {label && (
+          <StyledLabel htmlFor={id} theme={theme}>
+            {label}
+          </StyledLabel>
+        )}
         <StyledFooter>
           <Button
             type="gradient"
@@ -117,19 +128,30 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             icon={MagicPenIcon}
             style={{ padding: "8px 16px" }}
           />
+          {onSend && (
+            <IconButton
+              icon={MagicPenIcon}
+              onClick={onSend}
+              style={{ padding: "8px 16px" }}
+            >
+              <SendGradientIcon fill={"#3699FF"} />
+            </IconButton>
+          )}
         </StyledFooter>
-        <div
-          style={{
-            color: charCount > 1000 ? "error.main" : "#999999",
-            marginLeft: "auto",
-            fontSize: "0.75rem",
-            position: "absolute",
-            bottom: "-18px",
-            right: "0px",
-          }}
-        >
-          {charCount}/1000
-        </div>
+        {isCount && (
+          <div
+            style={{
+              color: charCount > 1000 ? "error.main" : "#999999",
+              marginLeft: "auto",
+              fontSize: "0.75rem",
+              position: "absolute",
+              bottom: "-18px",
+              right: "0px",
+            }}
+          >
+            {charCount}/1000
+          </div>
+        )}
       </Box>
     );
   },

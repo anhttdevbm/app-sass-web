@@ -112,4 +112,16 @@ export const AIAgentLang: AIAgentDictionary = {
     },
     searchTemplate: "Tìm kiếm mẫu...",
   },
+  chatAIAgent: {
+    header: {
+      title: "Trò chuyện với AI | Taskcover",
+    },
+    editAgent: "Chỉnh sửa trợ lý",
+    addCommand: "Thêm lệnh",
+    askMeAnything: "Hãy hỏi tôi điều gì đó...",
+    chatWithAI: "Trò chuyện với AI",
+    description:
+      "Hãy đặt câu hỏi để có được những hiểu biết sâu sắc dựa trên mô tả, tính cách, giọng điệu và khả năng truy cập kiến thức của trợ lý ảo.",
+    viewPrompts: "Xem mẫu câu",
+  },
 };

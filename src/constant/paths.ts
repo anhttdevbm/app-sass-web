@@ -41,6 +41,7 @@ export const CHATTING_INFO_PATH = "/chat/{id}";
 // TASKCOVER AI
 export const AI_CHAT_PATH = "/ai-chat";
 export const AI_AGENT_PATH = "/ai-agent";
+export const AI_AGENT_CHAT = "/ai-agent-chat/{id}";
 export const AI_AGENT_GENERAL_PATH = "/ai-agent/{id}/general";
 export const AI_AGENT_TOOLS_PATH = "/ai-agent/{id}/tools";
 export const AI_AGENT_KNOWLEDGE_PATH = "/ai-agent/{id}/knowledge";

@@ -6,6 +6,7 @@ import { ListPrompt } from "../ListPrompt";
 import { ExamplePrompt } from "store/aiChat/type";
 
 interface RenderEmptyChatProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   t: any;
   mobileMode?: boolean;
   prompts: ExamplePrompt[];
