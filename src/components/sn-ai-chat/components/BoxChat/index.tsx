@@ -58,8 +58,12 @@ export const BoxChat: React.FC<BoxChatProps> = ({
     onGetExamplePrompt,
   } = useExamplePrompt();
 
-  const { chatSession, onCreateChatSession, newChatSessionCreated } =
-    useChatSession();
+  const {
+    chatSession,
+    onCreateChatSession,
+    newChatSessionCreated,
+    onSelectChatId,
+  } = useChatSession();
 
   const locale = useLocale();
 
@@ -206,6 +210,9 @@ export const BoxChat: React.FC<BoxChatProps> = ({
           });
           setPrompt("");
           setFiles([]);
+          if (isMobile) {
+            onSelectChatId(newChatSessionCreated);
+          }
         }
       } catch (error) {
         if (error instanceof Error) {

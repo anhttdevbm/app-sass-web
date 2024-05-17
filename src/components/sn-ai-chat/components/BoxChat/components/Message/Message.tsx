@@ -174,7 +174,12 @@ export const Message: React.FC<MessageProps> = ({
             isMobile={isMobile}
           >
             {!isLoading ? (
-              <Text variant="body1" flex={1}>
+              <Text
+                variant="body1"
+                flex={1}
+                width={"100%"}
+                sx={{ wordBreak: "break-word", whiteSpace: "pre-wrap" }}
+              >
                 {assistant_content}
               </Text>
             ) : (
