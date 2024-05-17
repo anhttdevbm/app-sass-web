@@ -2,10 +2,9 @@ import {
   FormControl,
   InputLabel,
   OutlinedInput,
-  Select as SelectMui,
-  SelectProps,
-  MenuItem,
   SelectChangeEvent,
+  Select as SelectMui,
+  SelectProps
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { styled } from "@mui/system";

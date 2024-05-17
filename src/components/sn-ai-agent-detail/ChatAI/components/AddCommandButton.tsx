@@ -3,7 +3,11 @@ import { NS_AI_AGENT } from "constant/index";
 import PlusFillIcon from "icons/PlusFillIcon";
 import { useTranslations } from "next-intl";
 
-export const AddCommandButton = () => {
+interface AddCommandButtonProps {
+  width?: string;
+}
+
+export const AddCommandButton = ({ width }: AddCommandButtonProps) => {
   const t = useTranslations(NS_AI_AGENT);
 
   const handleAddCommand = () => {
@@ -27,7 +31,10 @@ export const AddCommandButton = () => {
         fontWeight: 600,
         "&:hover": {
           backgroundColor: "#E1F0FF",
+          boxShadow: "none",
         },
+        width: width,
+        padding: "16px",
       }}
       startIcon={<PlusFillIcon />}
     >

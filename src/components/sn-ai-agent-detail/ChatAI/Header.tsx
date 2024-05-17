@@ -5,17 +5,27 @@ import { Button, Text } from "components/shared";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
 import PencilUnderlineFillIcon from "icons/PencilUnderlineFillIcon";
+import { useRouter } from "next/navigation";
+import { getPath } from "utils/index";
+import { AI_AGENT_GENERAL_PATH } from "constant/paths";
 
 interface HeaderProps {
+  id: string;
   title: string;
   avatar?: string;
 }
 
-export const Header = ({ title, avatar }: HeaderProps) => {
+export const Header = ({ id, title, avatar }: HeaderProps) => {
   const t = useTranslations(NS_AI_AGENT);
+  const route = useRouter();
 
   const handleSendMsg = () => {
     console.log("Send Message");
+  };
+
+  const handleEditAgent = () => {
+    const generalPath = getPath(AI_AGENT_GENERAL_PATH, undefined, { id });
+    route.push(generalPath);
   };
 
   return (
@@ -36,6 +46,7 @@ export const Header = ({ title, avatar }: HeaderProps) => {
         color="primary"
         size="small"
         startIcon={<PencilUnderlineFillIcon />}
+        onClick={handleEditAgent}
       >
         {t("chatAIAgent.editAgent")}
       </Button>

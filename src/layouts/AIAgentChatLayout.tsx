@@ -41,7 +41,7 @@ const AIAgentChatLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
       ? JSON.parse(dataStringifyRef.current)
       : {};
 
-    const prevPath = getPath(AI_AGENT_GENERAL_PATH, parsedQueries);
+    const prevPath = getPath(AI_AGENT_GENERAL_PATH, undefined, { id });
 
     onUpdateHeaderConfig({
       imageUrl: aiAgent?.avatar.link || ImgPlaceHolderAgent,

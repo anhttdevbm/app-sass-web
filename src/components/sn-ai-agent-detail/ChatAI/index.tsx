@@ -19,7 +19,11 @@ export const ChatAI: React.FC<ChatAIProps> = ({ id }) => {
 
   return (
     <Stack>
-      <Header title={aiAgent?.name as string} avatar={aiAgent?.avatar.link} />
+      <Header
+        id={aiAgent?.id as string}
+        title={aiAgent?.name as string}
+        avatar={aiAgent?.avatar.link}
+      />
       <Body />
     </Stack>
   );

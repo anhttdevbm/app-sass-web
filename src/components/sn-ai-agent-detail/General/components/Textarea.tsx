@@ -19,13 +19,13 @@ interface TextareaProps extends TextareaElementProps {
   onSend?: () => void;
 }
 
-const StyledTextarea = styled(TextareaAutosize)({
+const StyledTextarea = styled(TextareaAutosize)<TextareaProps>(({ label }) => ({
   resize: "none",
   border: "none",
   width: "100%",
   outline: 0,
   padding: "0 20px",
-  paddingBlockStart: `${({ label }) => (label ? "1rem" : "0")}`,
+  paddingBlockStart: label ? "1rem" : "0",
   paddingInlineEnd: `var(--Textarea-paddingInline)`,
   flex: "auto",
   alignSelf: "stretch",
@@ -37,7 +37,7 @@ const StyledTextarea = styled(TextareaAutosize)({
   fontWeight: "inherit",
   lineHeight: "inherit",
   "&::placeholder": {
-    opacity: `${({ label }) => (label ? "1" : "0")}`,
+    opacity: label ? 0 : 1,
     transition: "0.1s ease-out",
   },
   "&:focus::placeholder": {
@@ -51,7 +51,7 @@ const StyledTextarea = styled(TextareaAutosize)({
   "&:focus + textarea + label": {
     color: "grey.300",
   },
-});
+}));
 
 const StyledLabel = styled("label")(({ theme }) => ({
   position: "absolute",
@@ -113,8 +113,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={id}
           placeholder={placeholder}
           theme={theme}
-          label={label}
           onChange={handleInputChange}
+          label={label}
         />
         {label && (
           <StyledLabel htmlFor={id} theme={theme}>
@@ -129,11 +129,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             style={{ padding: "8px 16px" }}
           />
           {onSend && (
-            <IconButton
-              icon={MagicPenIcon}
-              onClick={onSend}
-              style={{ padding: "8px 16px" }}
-            >
+            <IconButton onClick={onSend} style={{ padding: "8px 16px" }}>
               <SendGradientIcon fill={"#3699FF"} />
             </IconButton>
           )}
