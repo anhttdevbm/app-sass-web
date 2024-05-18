@@ -1,8 +1,8 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Stack } from "@mui/material";
-import { Button, Input } from "components/shared";
+import { Box, Checkbox, FormControlLabel, Stack, Typography } from "@mui/material";
+import { Button, Input, Text } from "components/shared";
 import Link from "components/Link";
 import { FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
 import * as Yup from "yup";
@@ -18,7 +18,8 @@ import { ErrorResponse } from "constant/types";
 import { sessionStorage } from "utils/storage";
 import { Permission } from "constant/enums";
 import { useRouter } from "next-intl/client";
-
+import GoogleLogo from "public/images/ic-google.svg";
+import Image from "next/image";
 const Form = () => {
   const { onSignin } = useAuth();
   const { onAddSnackbar } = useSnackbar();
@@ -83,12 +84,12 @@ const Form = () => {
       flex={1}
       component="form"
       width="100%"
-      mt={3}
+      mt={2}
       onSubmit={formik.handleSubmit}
-      overflow="hidden"
+      // overflow="hidden"
       noValidate
     >
-      <Stack overflow="auto" spacing={3}>
+      <Stack overflow="auto" spacing={2}>
         <Input
           rootSx={sxConfig.input}
           fullWidth
@@ -101,7 +102,7 @@ const Form = () => {
         />
         <Input
           rootSx={sxConfig.input}
-          sx={{ mt: 3 }}
+          sx={{ mt: 1 }}
           fullWidth
           title={authT("common.form.title.password")}
           name="password"
@@ -115,38 +116,72 @@ const Form = () => {
             max: 30,
           })}
         />
-        <Link
-          sx={{
-            mt: 1,
-            fontSize: 14,
-            alignSelf: "flex-end",
-            "&:hover": {
-              color: "#3699FF",
-            },
-          }}
-          href={FORGOT_PASSWORD_PATH}
-          color="#3699FF"
-          underline="none"
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
         >
-          {authT("signin.forgotPassword")}
-        </Link>
+          <FormControlLabel
+            sx={{
+              fontSize: 14,
+            }}
+            control={<Checkbox disableRipple />}
+            label="Remember password"
+          />
+          <Box>
+            <Link
+              sx={{
+
+                fontSize: 14,
+                alignSelf: "flex-end",
+                "&:hover": {
+                  color: "#3699FF",
+                },
+              }}
+              href={FORGOT_PASSWORD_PATH}
+              color="#3699FF"
+              underline="none"
+            >
+              {authT("signin.forgotPassword")}
+            </Link>
+          </Box>
+        </Stack>
       </Stack>
 
       <Button
         type="submit"
         disabled={disabled}
-        sx={{ mt: 4,
+        sx={{
+          mt: 2,
           borderRadius: "4px",
-          background:'linear-gradient(90deg, #2AF598 0%, #009EFD 100%)',
+          background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
           "&:hover": {
-            background:'linear-gradient(90deg, #2AF598 0%, #009EFD 100%)',
+            background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
           },
-         }}
+        }}
         // variant="primary"
         fullWidth
         pending={formik.isSubmitting}
       >
         {authT("signin.key")}
+      </Button>
+      <Button
+        sx={{
+          mt:2,
+          background: 
+        "linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #2AF598, #009EFD) border-box",
+        color: "black",
+        border: "1px solid transparent",
+        borderRadius: "4px",
+        }}
+        fullWidth
+      >
+        <Typography sx={{
+
+
+  color: "#3699FF",
+
+}} mr={2} variant="body2" gutterBottom>or login by</Typography> <Image src={GoogleLogo} alt="App logo" width={32} />
       </Button>
     </Stack>
   );

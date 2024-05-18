@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Stack } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import Image from "next/image";
 import AppLogo from "public/images/img-app-logo.webp";
 import { Text } from "components/shared";
@@ -10,9 +10,7 @@ import { SIGNUP_PATH } from "constant/paths";
 import Form from "./Form";
 import { NS_AUTH } from "constant/index";
 import { useTranslations } from "next-intl";
-import SwitchLanguage from "components/SwitchLanguage";
 import useTheme from "hooks/useTheme";
-import SwitchTheme from "components/SwitchTheme";
 
 const MainSection = () => {
   const t = useTranslations(NS_AUTH);
@@ -48,16 +46,16 @@ const MainSection = () => {
         <SwitchLanguage />
         <SwitchTheme />
       </Stack> */}
-
-      <Image src={AppLogo} alt="App logo" width={440} />
+ <Box   mt={{ xs: 0, sm:"-100px" }}>  <Image src={AppLogo} alt="App logo" width={440} /></Box>
+    
 
       <Stack
         flex={1}
-        p={{sm:"52px 122px 76px 122px"}}
-        mt={{ xs: 3, sm:"39px" }}
+        p={{sm:"22px 92px 46px 92px",lg:"37px 88px"}}
+        mt={{ xs: 3, sm:"-20px" }}
         alignItems="center"
-        maxWidth={744}
-        maxHeight={500}
+        maxWidth={{ sm:"644px", lg:"744px" }}
+        maxHeight={{ sm:"450px", lg:"500px" }}
         width="100%"
         overflow="hidden"
         bgcolor={{
