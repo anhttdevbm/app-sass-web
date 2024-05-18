@@ -139,9 +139,10 @@ const HolidayCalendar = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            flex: "0 0 112px",
+            flex: `0 0 ${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`,
             mt: 2,
-            border: "1px dashed #14B9E6",
+            border: "none",
+            position: "relative",
             backgroundColor: "white",
             borderRadius: "24px",
             cursor: "pointer",
@@ -154,6 +155,31 @@ const HolidayCalendar = () => {
             });
           }}
         >
+          <Box
+            position="absolute"
+            width="100%"
+            height={`${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`}
+          >
+            <svg
+              x="0"
+              y="0"
+              width="100%"
+              height={`${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`}
+              preserveAspectRatio="none"
+            >
+              <rect
+                width="100%"
+                height={`${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`}
+                fill="none"
+                stroke="#14B9E6"
+                strokeWidth="2px"
+                strokeDasharray="8px 8px"
+                rx="24px"
+                ry="24px"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+          </Box>
           <AddCircleGradientIcon />
           <Text color="#0575E6" fontWeight={700} ml={2}>
             {holidayCalendarT("form.addHolidayCalendar")}
@@ -216,6 +242,8 @@ const HolidayCalendar = () => {
 };
 
 export default HolidayCalendar;
+
+const ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT = 80;
 
 const initialValues = {
   year: "",
