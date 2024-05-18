@@ -121,11 +121,11 @@ const Form = () => {
             fontSize: 14,
             alignSelf: "flex-end",
             "&:hover": {
-              color: "grey.900",
+              color: "#3699FF",
             },
           }}
           href={FORGOT_PASSWORD_PATH}
-          color="grey.400"
+          color="#3699FF"
           underline="none"
         >
           {authT("signin.forgotPassword")}
@@ -135,8 +135,14 @@ const Form = () => {
       <Button
         type="submit"
         disabled={disabled}
-        sx={{ mt: 4 }}
-        variant="primary"
+        sx={{ mt: 4,
+          borderRadius: "4px",
+          background:'linear-gradient(90deg, #2AF598 0%, #009EFD 100%)',
+          "&:hover": {
+            background:'linear-gradient(90deg, #2AF598 0%, #009EFD 100%)',
+          },
+         }}
+        // variant="primary"
         fullWidth
         pending={formik.isSubmitting}
       >
