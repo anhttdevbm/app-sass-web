@@ -53,8 +53,8 @@ const MainSection = () => {
 
       <Stack
         flex={1}
-        p={{lg:"52px 122px 76px 122px"}}
-        mt={{ xs: 3, sm: 6, lg:"39px" }}
+        p={{sm:"52px 122px 76px 122px"}}
+        mt={{ xs: 3, sm:"39px" }}
         alignItems="center"
         maxWidth={744}
         maxHeight={500}

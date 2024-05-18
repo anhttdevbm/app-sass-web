@@ -37,8 +37,8 @@ const Wrapper = (props: WrapperProps) => {
   return (
     <Stack
       flex={1}
-      mx={{ sm: 6, lg: 0 }}
-      my={{ sm: isSmallHeight ? 3 : 6, lg: 0}}
+      mx={{ sm: 6, md: 0 }}
+      my={{ sm: isSmallHeight ? 3 : 6, md: 0}}
       direction="row"
       sx={{
         background:"url('/images/img-signin-background.svg') no-repeat center center",
@@ -46,10 +46,10 @@ const Wrapper = (props: WrapperProps) => {
       }}
       height={({ spacing }) => ({
         xs: "calc(var(--vh, 1vh) * 100)",
-        sm: `calc(calc(var(--vh, 1vh) * 100) - ${spacing(
-          (isSmallHeight ? 3 : 6) * 2,
-        )})`,
-        lg: `100vh`,
+        // sm: `calc(calc(var(--vh, 1vh) * 100) - ${spacing(
+        //   (isSmallHeight ? 3 : 6) * 2,
+        // )})`,
+        sm: `100vh`,
         // lg: `calc(calc(var(--vh, 1vh) * 100) - ${spacing(
         //   (isSmallHeight ? 3 : 8) * 2,
         // )})`,
