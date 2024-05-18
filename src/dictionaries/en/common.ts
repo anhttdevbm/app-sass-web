@@ -25,6 +25,8 @@ export const CommonLang: CommonDictionary = {
       datePast: "{name} cannot be a date in the past.",
       gte: "{name} must be greater than or equal to {name2}",
       renameGroup: "{name} is not a valid room name",
+      typeError: "{name} must be a {type}",
+      positiveNumber: "{name} should be a positive number",
     },
     title: {
       upload: "Upload",
@@ -45,6 +47,9 @@ export const CommonLang: CommonDictionary = {
     add: "Add",
     forward: "Forward",
     admin: "Admin",
+    type: {
+      number: "Number",
+    },
   },
   notification: {
     imageTypeInvalid:

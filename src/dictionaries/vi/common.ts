@@ -24,6 +24,8 @@ export const CommonLang: CommonDictionary = {
       datePast: "{name} không thể là một ngày trong quá khứ.",
       gte: "{name} phải lớn hơn hoặc bằng {name2}",
       renameGroup: "{name} là tên phòng không hợp lệ",
+      typeError: "{name} phải là một {type}",
+      positiveNumber: "{name} phải là một số dương",
     },
     title: {
       upload: "Tải lên",
@@ -44,6 +46,9 @@ export const CommonLang: CommonDictionary = {
     add: "Thêm",
     forward: "Chuyển tiếp",
     admin: "Quản lý",
+    type: {
+      number: "Số",
+    },
   },
   notification: {
     imageTypeInvalid:

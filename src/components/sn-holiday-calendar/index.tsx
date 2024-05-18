@@ -1,23 +1,19 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
+import * as Yup from "yup";
 
 import { DataStatus } from "constant/enums";
 import { NS_COMMON, NS_HOLIDAY_CALENDAR } from "constant/index";
-import {
-  NewButton as Button,
-  NewInput as Input,
-  Text,
-} from "components/shared";
-import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
-import DefaultPopupLayout from "layouts/DefaultPopupLayout";
-import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import { NewInput as Input, Text } from "components/shared";
+import FormLayout from "components/NewFormLayout";
 import useToggle from "hooks/useToggle";
 import useWindowSize from "hooks/useWindowSize";
 import { useFormik } from "hooks/useFormik";
+import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
+import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import HolidayCalendarCard from "./HolidayCalendarCard";
 
 const HolidayCalendar = () => {
@@ -56,15 +52,60 @@ const HolidayCalendar = () => {
     ],
   );
 
+  const existingHolidayYears = useMemo(() => {
+    if (!modalHolidayCalendarId || modalHolidayCalendarId.length === 0) {
+      return [];
+    }
+    const holidayCalendar = holidayCalendars.find(
+      (c) => c.id === modalHolidayCalendarId,
+    );
+    if (!holidayCalendar) {
+      return [];
+    }
+    return holidayCalendar.list.map((l) => +l.year);
+  }, [holidayCalendars, modalHolidayCalendarId]);
+
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        year: Yup.number()
+          .typeError(
+            commonT("form.error.typeError", {
+              name: holidayCalendarT("form.year"),
+              type: commonT("form.type.number").toLowerCase(),
+            }),
+          )
+          .positive(
+            commonT("form.error.positiveNumber", {
+              name: holidayCalendarT("form.year"),
+            }),
+          )
+          .required(
+            commonT("form.error.required", {
+              name: holidayCalendarT("form.year"),
+            }),
+          )
+          .notOneOf(
+            existingHolidayYears,
+            commonT("form.error.existed", {
+              name: holidayCalendarT("form.year"),
+            }),
+          ),
+      }),
+    [commonT, existingHolidayYears, holidayCalendarT],
+  );
+
   const {
     values,
     handleChange,
     handleBlur,
     handleSubmit,
-    isSubmitDisabled,
     resetForm,
+    isSubmitDisabled,
+    touchedError,
   } = useFormik({
     initialValues,
+    validationSchema,
     onSubmit,
     enableReinitialize: true,
   });
@@ -195,48 +236,39 @@ const HolidayCalendar = () => {
         ))}
       </Stack>
 
-      <DefaultPopupLayout
+      <FormLayout
         open={isModalOpen}
         title={holidayCalendarT("form.addHolidayList")}
         onClose={onModalClose}
-        sx={{ maxWidth: 450, borderRadius: 6 }}
+        onSubmit={handleSubmit}
+        disabled={isSubmitDisabled}
+        sx={{
+          minWidth: { xs: "calc(100vw - 24px)", sm: 400 },
+          maxWidth: { xs: "calc(100vw - 24px)", sm: 400 },
+          minHeight: "auto",
+        }}
+        bottomProps={{
+          sx: {
+            pt: 3,
+            pb: 5,
+            px: 5,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        }}
       >
-        <DialogContent>
-          <Box onSubmit={handleSubmit} component="form" noValidate px={4}>
-            <Input
-              title={holidayCalendarT("form.year")}
-              fullWidth
-              name="year"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.year}
-              // error={commonT(touchedErrors?.cost_per_month, {
-              //   name: costRateT("empty.form.costPerMonth"),
-              // })}
-            />
-            <Stack
-              direction={{
-                xs: "column",
-                sm: "row",
-              }}
-              justifyContent="center"
-              py={3}
-              spacing={3}
-            >
-              <Button variant="secondaryOutlined" onClick={onModalClose}>
-                {commonT("form.cancel")}
-              </Button>
-              <Button
-                variant="primary"
-                type="submit"
-                disabled={isSubmitDisabled}
-              >
-                {commonT("form.confirm")}
-              </Button>
-            </Stack>
-          </Box>
-        </DialogContent>
-      </DefaultPopupLayout>
+        <Input
+          title={holidayCalendarT("form.year")}
+          fullWidth
+          name="year"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.year}
+          error={touchedError("year")}
+        />
+      </FormLayout>
     </Box>
   );
 };
