@@ -37,11 +37,11 @@ const Wrapper = (props: WrapperProps) => {
   return (
     <Stack
       flex={1}
-      mx={{ sm: 6, md: 0 }}
-      my={{ sm: isSmallHeight ? 3 : 6, md: 0}}
+      mx={{ sm: 0}}
+      my={{ sm: 0}}
       direction="row"
       sx={{
-        background:"url('/images/img-signin-background.svg') no-repeat center center",
+        background:"url('/images/img-signin-background.svg') no-repeat center center #f7f7fd",
         backgroundSize: { xs: "cover", sm: undefined },
       }}
       height={({ spacing }) => ({
