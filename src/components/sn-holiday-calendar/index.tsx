@@ -102,7 +102,7 @@ const HolidayCalendar = () => {
     handleSubmit,
     resetForm,
     isSubmitDisabled,
-    touchedError,
+    touchedErrors,
   } = useFormik({
     initialValues,
     validationSchema,
@@ -266,7 +266,7 @@ const HolidayCalendar = () => {
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.year}
-          error={touchedError("year")}
+          error={touchedErrors.year}
         />
       </FormLayout>
     </Box>

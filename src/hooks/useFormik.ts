@@ -1,39 +1,27 @@
 import { useCallback, useMemo } from "react";
-import {
-  FormikConfig,
-  FormikValues,
-  getIn,
-  useFormik as useFormikLib,
-} from "formik";
+import { FormikConfig, FormikValues, useFormik as useFormikLib } from "formik";
 
 export function useFormik<Values extends FormikValues = FormikValues>(
   props: FormikConfig<Values>,
 ) {
   const formik = useFormikLib(props);
-  const {
-    errors,
-    touched,
-    values,
-    isSubmitting,
-    setFieldValue,
-    setFieldTouched,
-  } = formik;
+  const { errors, touched, isSubmitting, setFieldValue, setFieldTouched } =
+    formik;
 
-  const touchedError = useCallback(
-    (key: string) => {
-      const error = getIn(errors, key);
-      const touch = getIn(touched, key);
-      return error && touch ? error : undefined;
-    },
-    [errors, touched],
-  );
+  const touchedErrors = useMemo(() => {
+    const out = { ...errors };
+    Object.keys(out).forEach((k) => {
+      if (!touched[k]) {
+        delete out[k];
+      }
+    });
+    return out;
+  }, [touched, errors]);
 
   const isSubmitDisabled = useMemo(
     () =>
-      !!Object.keys(values)
-        .map((key) => touchedError(key))
-        .filter((v) => !!v).length || isSubmitting,
-    [values, touchedError, isSubmitting],
+      !!Object.values(touchedErrors).filter((v) => !!v).length || isSubmitting,
+    [touchedErrors, isSubmitting],
   );
 
   const handleChangeDate = useCallback(
@@ -46,7 +34,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   return {
     ...formik,
-    touchedError,
+    touchedErrors,
     isSubmitDisabled,
     handleChangeDate,
   };
