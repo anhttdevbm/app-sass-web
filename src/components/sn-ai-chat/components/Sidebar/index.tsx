@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         : popupMode
         ? {
             width: "100%",
-            height: "92.5%",
+            height: "92%",
           }
         : {
             minWidth: "300px",
@@ -60,10 +60,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const handleNewChat = () => {
+    onNewChat();
     if (onSwitchToBoxChat) {
       onSwitchToBoxChat();
     }
-    onNewChat();
   };
 
   return (
