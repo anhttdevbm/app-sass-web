@@ -11,6 +11,7 @@ export const HolidayCalendarLang: HolidayCalendarDictionary = {
     country: "Nước",
     year: "Năm",
     month: "Tháng",
+    searchHere: "Tìm kiếm tại đây",
   },
   notification: {
     addHolidayCalendarSuccess: "Added Holiday Calendar Successfully",

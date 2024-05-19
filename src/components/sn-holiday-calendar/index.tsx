@@ -2,7 +2,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import { FormControl } from "@mui/base/FormControl";
 import { useTranslations } from "next-intl";
+import fuzzysort from "fuzzysort";
 import * as Yup from "yup";
 
 import { DataStatus } from "constant/enums";
@@ -15,6 +17,8 @@ import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import HolidayCalendarCard from "./HolidayCalendarCard";
+import Search from "./components/Search";
+import HiddenLabel from "./components/HiddenLabel";
 
 const HolidayCalendar = () => {
   const commonT = useTranslations(NS_COMMON);
@@ -153,6 +157,24 @@ const HolidayCalendar = () => {
     }
   }, [windowSize]);
 
+  const [holidayCalendarSearchInput, setHolidayCalendarSearchInput] =
+    useState("");
+
+  const handleHolidayCalendarSearchChange = useCallback((e) => {
+    setHolidayCalendarSearchInput(e.target.value);
+  }, []);
+
+  const filteredHolidayCalendars = useMemo(
+    () =>
+      fuzzysort
+        .go(holidayCalendarSearchInput, holidayCalendars, {
+          keys: ["name", "country"],
+          all: true,
+        })
+        .map((r) => r.obj),
+    [holidayCalendarSearchInput, holidayCalendars],
+  );
+
   return (
     <Box
       ref={containerRef}
@@ -174,6 +196,23 @@ const HolidayCalendar = () => {
           pb: 8,
         }}
       >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "end",
+          }}
+        >
+          <FormControl
+            value={holidayCalendarSearchInput}
+            onChange={handleHolidayCalendarSearchChange}
+          >
+            <HiddenLabel />
+            <Search
+              placeholder={holidayCalendarT("form.searchHere")}
+              rootSx={{ maxWidth: { xs: "initial", sm: "600px" } }}
+            />
+          </FormControl>
+        </Box>
         <Box
           component="button"
           sx={{
@@ -227,7 +266,7 @@ const HolidayCalendar = () => {
           </Text>
         </Box>
 
-        {holidayCalendars.map((calendar) => (
+        {filteredHolidayCalendars.map((calendar) => (
           <HolidayCalendarCard
             key={calendar.id}
             holidayCalendar={calendar}

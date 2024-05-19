@@ -9,6 +9,7 @@ export type HolidayCalendarDictionary = {
     country: string;
     year: string;
     month: string;
+    searchHere: string;
   };
   notification: {
     addHolidayCalendarSuccess: string;
