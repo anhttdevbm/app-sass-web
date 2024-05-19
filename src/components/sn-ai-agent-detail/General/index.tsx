@@ -19,7 +19,7 @@ export const General = () => {
   const t = useTranslations(NS_AI_AGENT);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [image, setImage] = React.useState<string>(
-    aiAgent?.avatar || ImgPlaceHolderAgent,
+    aiAgent?.avatar.link || ImgPlaceHolderAgent.src,
   );
   const [selectedTone, setSelectedTone] = React.useState<string>("default");
 

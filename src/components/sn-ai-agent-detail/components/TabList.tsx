@@ -93,6 +93,9 @@ const TabItem = (props: TabItemProps) => {
       href={getPath(href, undefined, { id: params.id as string })}
       underline="none"
       sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         minWidth: 120,
         bgcolor: isActiveLink
           ? isDarkMode
