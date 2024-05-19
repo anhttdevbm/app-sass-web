@@ -9,7 +9,6 @@ import { useTranslations } from "next-intl";
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
 import {
-  NewInput as Input,
   NewSelect as Select,
   IconButton,
   Text,
@@ -24,6 +23,7 @@ import { HolidayCalendar } from "store/holidayCalendar/reducer";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import HolidayItems from "./HolidayItems";
+import TitleInput from "./components/TitleInput";
 
 type HolidayCalendarCardProps = {
   holidayCalendar: HolidayCalendar;
@@ -152,23 +152,17 @@ const HolidayCalendarCard = ({
     >
       <Box component="form" noValidate>
         <Stack direction="row" alignItems="center">
-          <Input
-            rootSx={{
-              border: 0,
-              backgroundColor: "transparent",
-              fontSize: 18,
-              fontWeight: 700,
-            }}
-            fullWidth
-            name="name"
-            disabled={!isEdit || isSubmitDisabled}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.name}
-            // error={commonT(touchedError("name"), {
-            //   name: costRateT("empty.form.note"),
-            // })}
-          />
+            <TitleInput
+              name="name"
+              isEdit={isEdit}
+              disabled={!isEdit || isSubmitDisabled}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.name}
+              // error={commonT(touchedError("name"), {
+              //   name: costRateT("empty.form.note"),
+              // })}
+            />
           <IconButton onClick={toggleEdit}>
             <EditUnderlineIcon />
           </IconButton>
