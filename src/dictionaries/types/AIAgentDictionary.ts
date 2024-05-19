@@ -80,6 +80,11 @@ export type AIAgentDictionary = {
     addLinkPlaceholder: string;
     addYoutubeDescription: string;
     addYoutubePlaceholder: string;
+    agent: string;
+    status: string;
+    type: string;
+    resync: string;
+    remove: string;
   };
   commands: {
     header: {

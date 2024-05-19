@@ -85,6 +85,11 @@ export const AIAgentLang: AIAgentDictionary = {
     addYoutubePlaceholder: "Type or paste a Youtube link...",
     addLinkDescription: "Add knowledge from a URL to crawl the content",
     addLinkPlaceholder: "Type or paste a URL...",
+    agent: "Agent",
+    status: "Status",
+    type: "Type",
+    resync: "Resync",
+    remove: "Remove",
   },
   commands: {
     header: {

@@ -85,6 +85,11 @@ export const AIAgentLang: AIAgentDictionary = {
     addYoutubePlaceholder: "Dán hoặc nhập liên kết YouTube...",
     addLinkDescription: "Lấy thông tin từ URL để thu thập dữ liệu",
     addLinkPlaceholder: "Nhập hoặc dán địa chỉ web...",
+    agent: "Trợ lý",
+    status: "Trạng thái",
+    type: "Loại",
+    resync: "Đồng bộ lại",
+    remove: "Xóa",
   },
   commands: {
     header: {

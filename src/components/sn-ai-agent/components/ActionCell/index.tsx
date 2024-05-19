@@ -32,6 +32,7 @@ export const PRIMARY_GRADIENT_COLOR =
 type ActionOption = {
   icon: React.ReactNode;
   content: string;
+  color?: string;
   onClick?: ButtonBaseProps["onClick"];
 };
 
@@ -196,7 +197,7 @@ const ActionsCell = (props: ActionsCellProps) => {
                 <Text
                   ml={2}
                   variant="body2"
-                  color={"grey.400"}
+                  color={option.color || "grey.400"}
                   textTransform="capitalize"
                 >
                   {option.content}
