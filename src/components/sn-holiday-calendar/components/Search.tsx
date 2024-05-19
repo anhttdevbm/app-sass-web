@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Input as BaseInput } from "@mui/base/Input";
-import { styled, SxProps } from "@mui/system";
+import { styled, SxProps } from "@mui/material/styles";
 
 import SearchIcon from "icons/SearchIcon";
 
@@ -18,7 +18,7 @@ export default React.forwardRef(function Search(
       slotProps={{
         root: {
           sx: rootSx,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any,
       }}
       {...rest}
@@ -28,32 +28,26 @@ export default React.forwardRef(function Search(
   );
 });
 
-const StyledRoot = styled("div")(
-  () => `
-    display: flex;
-    background-color: white;
-    border-radius: 9999px;
-  `,
-);
+const StyledRoot = styled("div")({
+  display: "flex",
+  backgroundColor: "white",
+  borderRadius: "9999px",
+});
 
-const StyledInput = styled("input")(
-  () => `
-    flex-grow: 1;
-    padding: 12px 24px;
-    color: rgba(0, 0, 0, 50%);
-    background-color: transparent;
-    border: none;
-    outline: none;
-  `,
-);
+const StyledInput = styled("input")({
+  flexGrow: 1,
+  padding: "12px 24px",
+  color: "rgba(0, 0, 0, 50%)",
+  backgroundColor: "transparent",
+  border: "none",
+  outline: "none",
+});
 
-const StyledSearchIcon = styled(SearchIcon)(
-  () => `
-    flex-grow: 0;
-    flex-shrink: 0;
-    margin-top: 12px;
-    margin-right: 12px;
-    color: #0575E6;
-    cursor: pointer;
-  `,
-);
+const StyledSearchIcon = styled(SearchIcon)({
+  flexGrow: 0,
+  flexShrink: 0,
+  marginTop: "12px",
+  marginRight: "12px",
+  color: "#0575E6",
+  cursor: "pointer",
+});

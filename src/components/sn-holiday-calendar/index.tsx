@@ -18,7 +18,6 @@ import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import HolidayCalendarCard from "./HolidayCalendarCard";
 import Search from "./components/Search";
-import HiddenLabel from "./components/HiddenLabel";
 
 const HolidayCalendar = () => {
   const commonT = useTranslations(NS_COMMON);
@@ -206,7 +205,6 @@ const HolidayCalendar = () => {
             value={holidayCalendarSearchInput}
             onChange={handleHolidayCalendarSearchChange}
           >
-            <HiddenLabel />
             <Search
               placeholder={holidayCalendarT("form.searchHere")}
               rootSx={{ maxWidth: { xs: "initial", sm: "600px" } }}
