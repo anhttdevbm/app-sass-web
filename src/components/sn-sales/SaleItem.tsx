@@ -133,15 +133,15 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           backgroundColor: "grey.50",
         },
         w: "100%",
-        "td":{border: "none"}
       }}
     >
-      <BodyCell sx={{paddingLeft:"34px"}}
+      <BodyCell
         align="left"
         href={getPath(SALE_DETAIL_PATH, undefined, { id: item.id })}
         onClick={() => onSetRevenue(item.revenue)}
       >
-       
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Avatar size={32} src={mappedowner.avatar || ""}></Avatar>
           <Text
             variant="body2"
             color="text.primary"
@@ -159,7 +159,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           >
             {item.name}
           </Text>
-       
+        </Stack>
       </BodyCell>
       <BodyCell>
         <LabelStatusCell
@@ -171,7 +171,6 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
             onSubmit({ status: e.target.value });
             setStage(e.target.value);
           }}
-          sx={{".MuiInputBase-input":{borderRadius: "50px"}}}
         ></LabelStatusCell>
       </BodyCell>
       <BodyCell align="left">
@@ -218,19 +217,16 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           options={mappedOwners}
         /> */}
         {!isEditOwner ? (
-           <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar size={32} src={mappedowner.avatar || ""}></Avatar>
-            <Text
-              fontSize={14}
-              color="gray.400"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditOwner(true);
-              }}
-            >
-              {mappedowner.label}
-            </Text>
-          </Stack>
+          <Text
+            fontSize={14}
+            color="gray.400"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditOwner(true);
+            }}
+          >
+            {mappedowner.label}
+          </Text>
         ) : (
           <InputDropdown
             onBlur={(e) => {

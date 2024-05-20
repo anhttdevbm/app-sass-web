@@ -18,7 +18,6 @@ const SalesWrapper: React.FC<IProps> = ({ children }) => {
   const salesT = useTranslations(NS_SALES);
 
   useEffect(() => {
-    
     onUpdateHeaderConfig({
       title: salesT("list.title"),
       endpoint: Endpoint.PROJECTS,
