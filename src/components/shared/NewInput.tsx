@@ -209,7 +209,7 @@ const getDefaultSx = (
       borderRadius: 999,
       color: "text.primary",
 
-      py: 1.25,
+      py: 1,
       pl: 3,
       fontSize: 16,
       lineHeight: "22px",
@@ -239,8 +239,8 @@ const getDefaultSx = (
 
       [`&.${inputBaseClasses.sizeSmall}`]: {
         px: 2,
-        pt: hasTitle ? 2 : 1.25,
-        pb: hasTitle ? 0.875 : 1.25,
+        pt: hasTitle ? 2 : 1,
+        pb: hasTitle ? 0.875 : 1,
       },
       [`& .${inputBaseClasses.inputAdornedStart}`]: {
         ml: 1.25,

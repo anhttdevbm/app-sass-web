@@ -70,7 +70,6 @@ const HolidayItems = ({
     handleChange,
     handleBlur: formikHandleBlur,
     handleChangeDate: formikHandleChangeDate,
-    touchedError,
     isSubmitDisabled,
   } = useFormik({
     initialValues,

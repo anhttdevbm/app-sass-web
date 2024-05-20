@@ -116,7 +116,7 @@ const EmployeeClientForm = ({
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values?.email}
-          error={commonT(formik.touchedError("email"), {
+          error={commonT(formik.touchedErrors.email, {
             name: "Email",
           })}
           disabled={type === DataAction.UPDATE}
@@ -144,7 +144,7 @@ const EmployeeClientForm = ({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.position}
-            error={commonT(formik.touchedError("position"), {
+            error={commonT(formik.touchedErrors.position, {
               name: commonT("position"),
             })}
             fullWidth

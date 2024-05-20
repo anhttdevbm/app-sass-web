@@ -195,8 +195,8 @@ const CostRateForm = ({
             name="type"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values?.type}
-            error={commonT(formik.touchedError("type"), {
+            value={formik.values.type}
+            error={commonT(formik.touchedErrors.type, {
               name: costRateT("form.type"),
             })}
           />
@@ -209,8 +209,8 @@ const CostRateForm = ({
             name="cost_per_month"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values?.cost_per_month}
-            error={commonT(formik.touchedError("cost_per_month"), {
+            value={formik.values.cost_per_month}
+            error={commonT(formik.touchedErrors.cost_per_month, {
               name: costRateT("form.costPerMonth"),
             })}
             endNode={<Text sx={{ mr: 1 }}>$</Text>}
@@ -228,8 +228,8 @@ const CostRateForm = ({
             name="currency"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values?.currency}
-            error={commonT(formik.touchedError("currency"), {
+            value={formik.values.currency}
+            error={commonT(formik.touchedErrors.currency, {
               name: costRateT("form.currency"),
             })}
           />
@@ -255,7 +255,7 @@ const CostRateForm = ({
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.working_hours[day]}
-                error={!!formik.touchedError("working_hours.day")}
+                error={!!formik.touchedErrors.working_hours?.[day]}
               />
             ))}
           </Stack>
@@ -268,8 +268,8 @@ const CostRateForm = ({
             name="start_date"
             onChange={formik.handleChangeDate}
             onBlur={formik.handleBlur}
-            value={formik.values?.start_date}
-            error={commonT(formik.touchedError("start_date"), {
+            value={formik.values.start_date}
+            error={commonT(formik.touchedErrors.start_date, {
               name: costRateT("form.startDate"),
             })}
           />
@@ -282,8 +282,8 @@ const CostRateForm = ({
             name="end_date"
             onChange={formik.handleChangeDate}
             onBlur={formik.handleBlur}
-            value={formik.values?.end_date}
-            error={commonT(formik.touchedError("end_date"), {
+            value={formik.values.end_date}
+            error={commonT(formik.touchedErrors.end_date, {
               name: costRateT("form.endDate"),
             })}
           />
@@ -309,8 +309,8 @@ const CostRateForm = ({
             name="holiday_calendar"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values?.holiday_calendar}
-            error={commonT(formik.touchedError("holiday_calendar"), {
+            value={formik.values.holiday_calendar}
+            error={commonT(formik.touchedErrors.holiday_calendar, {
               name: costRateT("form.holidayCalendar"),
             })}
           />
@@ -323,9 +323,9 @@ const CostRateForm = ({
             name="note"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values?.note}
+            value={formik.values.note}
             error={
-              !!commonT(formik.touchedError("note"), {
+              !!commonT(formik.touchedErrors.note, {
                 name: costRateT("form.note"),
               })
             }
@@ -349,8 +349,8 @@ const CostRateForm = ({
                 name="overhead"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                checked={formik.values?.over_head}
-                value={formik.values?.over_head}
+                checked={formik.values.over_head}
+                value={formik.values.over_head}
                 sx={(theme) => ({
                   ml: "16px",
                   width: "37px",

@@ -48,6 +48,26 @@ const HolidayCalendarCard = ({
   const [selectedHolidayList, setSelectedHolidayList] = useState("");
   const [shouldReset, setShouldResetOn, setShouldResetOff] = useToggle(false);
 
+  useEffect(() => {
+    const currentList = holidayCalendar.list.find(
+      (l) => +l.year === new Date().getFullYear(),
+    );
+    if (currentList) {
+      setSelectedHolidayList(currentList.id);
+    }
+  }, [holidayCalendar]);
+
+  const listYears = useMemo(
+    () =>
+      holidayCalendar.list
+        .map((l) => ({
+          label: `${l.year}`,
+          value: l.id,
+        }))
+        .sort((l1, l2) => +l1.label - +l2.label),
+    [holidayCalendar],
+  );
+
   const initialValues = useMemo(
     () => ({
       id: holidayCalendar.id,
@@ -70,7 +90,6 @@ const HolidayCalendarCard = ({
     handleSubmit,
     handleChange,
     handleBlur: formikHandleBlur,
-    touchedError,
     isSubmitDisabled,
   } = useFormik({
     initialValues,
@@ -199,10 +218,7 @@ const HolidayCalendarCard = ({
 
           <Grid item xs={11} sm={4}>
             <Select
-              options={holidayCalendar.list.map((l) => ({
-                label: `${l.year}`,
-                value: l.id,
-              }))}
+              options={listYears}
               title={holidayCalendarT("form.year")}
               fullWidth
               name="year"
