@@ -29,30 +29,13 @@ type ActionsProps = {
   index: number;
 };
 
-
 const ServiceItemAction = (props: ActionsProps) => {
   const { saleId, onChangeAction, index, onClose } = props;
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const commonT = useTranslations(NS_COMMON);
   const salesT = useTranslations(NS_SALES);
   const [isDelete, openConfirm, closeConfirm] = useToggle();
-  const defaultSx = {
-    item: {
-      fontSize: 16,
-      color: "text.primary",
-      lineHeight: "22px",
-      width: "100%",
-      "& > img": {
-        mr: 1,
-      },
-      "&:hover": {
-        backgroundColor: "#D9F0FD",
-        // "& svg": {
-        //   color: "common.white",
-        // },
-      },
-    },
-  };
+
   const options = useMemo(() => {
     return [
       {
@@ -61,12 +44,12 @@ const ServiceItemAction = (props: ActionsProps) => {
         icon: <DuplicateIcon />,
         color: "",
       },
-      {
-        label: commonT("delete"),
-        value: Action.DELETE,
-        icon: <TrashIcon color="error" />,
-        color: "error.main",
-      },
+      // {
+      //   label: commonT("delete"),
+      //   value: Action.DELETE,
+      //   icon: <TrashIcon color="error" />,
+      //   color: "error.main",
+      // },
     ];
   }, [commonT]);
 
@@ -106,7 +89,6 @@ const ServiceItemAction = (props: ActionsProps) => {
               onClick={onAction(option.value)}
               sx={defaultSx.item}
               key={option.value}
-              
             >
               <Stack direction="row" spacing={1} alignItems="center">
                 {option.icon}
@@ -131,3 +113,20 @@ const ServiceItemAction = (props: ActionsProps) => {
 
 export default ServiceItemAction;
 
+const defaultSx = {
+  item: {
+    fontSize: 16,
+    color: "text.primary",
+    lineHeight: "22px",
+    width: "100%",
+    "& > img": {
+      mr: 1,
+    },
+    "&:hover": {
+      backgroundColor: "primary.main",
+      "& svg": {
+        color: "common.white",
+      },
+    },
+  },
+};
