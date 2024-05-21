@@ -12,6 +12,7 @@ import { Button, Input, Text } from "components/shared";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import { debounce, uuid } from "utils/index";
 import PlusIcon from "icons/PlusIcon";
+import ChevronIcon from "icons/ChevronIcon";
 
 interface IProps {
   label: string;
@@ -155,13 +156,14 @@ const SelectMultiple = ({
         );
       }}
       popupIcon={
-        <ArrowDownIcon
-          sx={{
-            transform: "rotate(270deg)",
-            width: "20px",
-          }}
-          color="inherit"
-        />
+        <ChevronIcon onClick={undefined} />
+        // <ArrowDownIcon
+        //   sx={{
+        //     transform: "rotate(270deg)",
+        //     width: "20px",
+        //   }}
+        //   color="inherit"
+        // />
       }
       renderTags={(value, getTagProps) => {
         return value.map((option, index) => {

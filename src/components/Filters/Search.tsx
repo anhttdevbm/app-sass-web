@@ -103,6 +103,7 @@ const Search = (props: SearchProps) => {
           onEnter && onEnter(name, text as string);
         }
       }}
+      
       placeholder={commonT("search")}
       onChangeValue={onChangeValue}
       value={text}
