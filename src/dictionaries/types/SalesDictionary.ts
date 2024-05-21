@@ -24,6 +24,7 @@ export type SalesDictionary = {
     };
     table: {
       stage: string;
+      filter:string;
       pjRevenue: string;
       revenue: string;
       time: string;

@@ -26,6 +26,7 @@ export const SalesLang: SalesDictionary = {
     },
     table: {
       stage: "Stage",
+      filter:"Tìm kiếm dự án",
       pjRevenue: "Project Revenue",
       revenue: "Revenue",
       time: "Time",

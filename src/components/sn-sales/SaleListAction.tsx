@@ -93,7 +93,7 @@ const SalesListAction = () => {
     ],
     [salesT],
   );
-
+  {console.log(salesT("list.table.pjRevenue"))}
   return (
     <Stack
       direction={{
@@ -115,12 +115,13 @@ const SalesListAction = () => {
       overflow="hidden"
     >
       <Stack direction="row" alignItems="center" gap={2} flexWrap={"wrap"}>
-      <Text variant="h2" display={{ md: "none" }}>
+        <Text variant="h2" display={{ md: "none" }}>
           {salesT("list.title")}
         </Text>
+        
         <Search
           name="search_key"
-          placeholder={"Tìm kiếm dự án"}
+          placeholder={salesT("list.table.filter")}
           onEnter={(name, value) => {
             onChangeQueries(name, value);
             onSearch();
@@ -129,7 +130,7 @@ const SalesListAction = () => {
           sx={{
             height: 48,
             width: {
-              lg: 332, 
+              lg: 332,
             },
             ".MuiInputBase-root": { height: 48, borderRadius: "100px" },
           }}
@@ -226,7 +227,6 @@ const SalesListAction = () => {
           xs: 3,
         }}
       >
-     
         <Stack direction={"row"} gap={2}>
           <Button
             onClick={() => onOpenModal(modalName.EXPORT)}
@@ -262,7 +262,7 @@ const SalesListAction = () => {
             variant="contained"
             sx={{
               boxShadow: "none",
-              
+
               fontWeight: "700",
               background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               "&:hover": {
