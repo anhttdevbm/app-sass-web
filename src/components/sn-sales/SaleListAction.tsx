@@ -93,7 +93,6 @@ const SalesListAction = () => {
     ],
     [salesT],
   );
-  {console.log(salesT("list.table.pjRevenue"))}
   return (
     <Stack
       direction={{

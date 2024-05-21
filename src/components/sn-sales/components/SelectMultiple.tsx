@@ -61,6 +61,7 @@ const SelectMultiple = ({
       getOptionLabel={(option) => option?.label || ""}
       multiple
       fullWidth
+      sx={sx}
       onOpen={(e) => {
         onOpen && onOpen();
       }}

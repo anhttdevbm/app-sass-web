@@ -108,7 +108,31 @@ const AddDealModal = ({ open, onClose }: IProps) => {
       email: (value as string) || "",
     });
   };
-
+  const newInput = {
+    // height: "65px",
+    ".MuiInputBase-root": {
+      background:
+        " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+      padding: "7px",
+      borderRadius: "100px",
+      border: "none",
+      mt: 3,
+      fontSize: "16px",
+      // height:"38px",
+      ".MuiInputBase-input": { px: "10px" },
+    },
+    "label.MuiInputLabel-root": {
+      left: 0,
+      fontSize: "13px",
+      transform: "translate(0, 16px) scale(1)",
+    },
+  };
+  const newMultipleInput = {
+    ".MuiInputBase-root": {
+      mt: 3,
+      padding: "3px 7px!important",
+    },
+  };
   return (
     <FormLayout
       sx={{
@@ -129,6 +153,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
           name="dealName"
           render={({ field, fieldState: { error } }) => (
             <Input
+              sx={newInput}
               fullWidth
               error={error?.message}
               {...field}
@@ -146,6 +171,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
                   onChangeSearch={(_, newValue) =>
                     onSearchMember(field.name, newValue as string)
                   }
+                  sx={newInput}
                   error={error?.message}
                   fullWidth
                   options={employeeOptions}
@@ -163,6 +189,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
               name="currency"
               render={({ field, fieldState: { error } }) => (
                 <Select
+                  sx={newInput}
                   error={error?.message}
                   options={UNIT_OPTIONS}
                   fullWidth
@@ -187,6 +214,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             );
             return (
               <SelectMultiple
+                sx={{ ...newInput, ...newMultipleInput }}
                 options={filteredOption}
                 onSelect={onSelect}
                 onOpen={() => onSearchMember(field.name, "")}
@@ -244,6 +272,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             };
             return (
               <SelectMultiple
+                sx={{ ...newInput, ...newMultipleInput }}
                 options={tagsOptions}
                 onSelect={onSelect}
                 error={error?.message}
