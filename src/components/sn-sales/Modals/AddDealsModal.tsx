@@ -112,25 +112,35 @@ const AddDealModal = ({ open, onClose }: IProps) => {
     // height: "65px",
     ".MuiInputBase-root": {
       background:
-        " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
-      padding: "7px",
-      borderRadius: "100px",
-      border: "none",
+        " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
+      padding: "7px!important",
+      borderRadius: "100px!important",
+      border: "none!important",
       mt: 3,
-      fontSize: "16px",
+      fontSize: "16px!important",
       // height:"38px",
-      ".MuiInputBase-input": { px: "10px" },
+      ".MuiInputBase-input": { p: "0 10px!important" },
+      svg: {
+        borderRadius: "50px",
+        border: "0.2px solid #5C5C5C",
+        fontSize: "16px",
+        color: "black",
+        "&:hover": { color: "black" },
+      },
+      ".MuiChip-root": {
+        color: "#0575e6",
+        padding: "5px",
+        svg: {
+          border: "0.2px solid transparent",
+          color: "white",
+          background: " #0575e6",
+        },
+      },
     },
     "label.MuiInputLabel-root": {
       left: 0,
       fontSize: "13px",
       transform: "translate(0, 16px) scale(1)",
-    },
-  };
-  const newMultipleInput = {
-    ".MuiInputBase-root": {
-      mt: 3,
-      padding: "3px 7px!important",
     },
   };
   return (
@@ -139,6 +149,18 @@ const AddDealModal = ({ open, onClose }: IProps) => {
         minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
+        ".MuiDialogTitle-root": { border: "none" },
+        ".MuiDialogActions-root": {
+          border: "none", ".MuiButtonBase-root": {
+            "&:last-child": {
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)", color: "white", borderRadius: "100px"
+            },
+            "&:first-child": {
+              background: "white", color: "#14B9E5", border: "1px solid #14B9E5", borderRadius: "100px"
+            }
+          }
+        }
+
       }}
       open={open}
       label={salesT(`${salesFormTranslatePrefix}.title`)}
@@ -171,6 +193,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
                   onChangeSearch={(_, newValue) =>
                     onSearchMember(field.name, newValue as string)
                   }
+
                   sx={newInput}
                   error={error?.message}
                   fullWidth
@@ -214,7 +237,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             );
             return (
               <SelectMultiple
-                sx={{ ...newInput, ...newMultipleInput }}
+                sx={newInput}
                 options={filteredOption}
                 onSelect={onSelect}
                 onOpen={() => onSearchMember(field.name, "")}
@@ -272,7 +295,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             };
             return (
               <SelectMultiple
-                sx={{ ...newInput, ...newMultipleInput }}
+                sx={newInput}
                 options={tagsOptions}
                 onSelect={onSelect}
                 error={error?.message}
