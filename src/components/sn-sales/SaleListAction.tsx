@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "next-intl/client";
 import { getPath } from "utils/index";
 import AddSquareIcon from "icons/AddSquareIcon";
 import ExportModal from "./Modals/ExportModal";
+import SearchIcon from "icons/SearchIcon";
 
 const modalName = {
   DEAL: "deal",
@@ -83,7 +84,15 @@ const SalesListAction = () => {
     ],
     [salesT],
   );
-
+  const SORT_FITLER_COMPANY = useMemo(
+    () => [
+      {
+        label: "Company",
+        value: "DESC",
+      },
+    ],
+    [salesT],
+  );
   return (
     <Stack
       direction={{
@@ -104,64 +113,89 @@ const SalesListAction = () => {
       maxWidth="100%"
       overflow="hidden"
     >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        spacing={{
-          md: 0,
-          xs: 3,
-        }}
-      >
+      <Stack direction="row" alignItems="center" gap={2} flexWrap={"wrap"}>
         <Text variant="h2" display={{ md: "none" }}>
           {salesT("list.title")}
         </Text>
-        <Stack direction={"row"} gap={2}>
-          <Button
-            onClick={() => onOpenModal(modalName.DEAL)}
-            size="small"
-            variant="contained"
-            sx={{ height: 40, width: "fit-content" }}
-          >
-            <AddSquareIcon
-              sx={{
-                display: { xs: "block", md: "none" },
-                width: 24,
-                height: 24,
-              }}
-            />
-            <PlusIcon
-              sx={{
-                display: { xs: "none", md: "block" },
-                mr: 1,
-                width: 18,
-                height: 18,
-              }}
-            />
-            <Text sx={{ display: { xs: "none", md: "block" } }} color="inherit">
-              {salesT("list.action.deal")}
-            </Text>
-          </Button>
-          <Button
-            onClick={() => onOpenModal(modalName.EXPORT)}
-            size="small"
+        
+        <Search
+          name="search_key"
+          placeholder={salesT("list.table.filter")}
+          onEnter={(name, value) => {
+            onChangeQueries(name, value);
+            onSearch();
+          }}
+          onChange={(name, value) => onChangeQueries(name, value)}
+          sx={{
+            height: 48,
+            width: {
+              lg: 332,
+            },
+            ".MuiInputBase-root": { height: 48, borderRadius: "100px" },
+          }}
+          value={queries?.search_key}
+          startNode={""}
+          endNode={<SearchIcon style={{ color: "#0575E6" }} />}
+        />
+
+        {/* <Button
+            size="extraSmall"
+            sx={{
+              // display: { xs: "flex", md: "none" },
+              height: 32,
+            }}
+            onClick={onSearch}
             variant="secondary"
-            sx={{ height: 40, width: "fit-content" }}
           >
-            <ArrowExport
-              sx={{
-                width: { xs: 24, md: 18 },
-                height: { xs: 24, md: 18 },
-                mr: 1,
-              }}
-            />
-            <Text sx={{ display: { xs: "none", md: "block" } }} color="inherit">
-              {salesT("list.action.export")}
-            </Text>
-          </Button>
-        </Stack>
+            {commonT("search")}
+          </Button> */}
+        <Dropdown
+          sx={{
+            borderRadius: "100px",
+            border: "1px solid #EFEFEF",
+            padding: "0 20px",
+            height: 48,
+            fontWeight: 500,
+            ".MuiInputBase-root": { pl: "0!important", height: 48 },
+            color: "black",
+            svg: {
+              color: "black",
+              borderRadius: "50px",
+              border: "0.001px solid #5C5C5C",
+            },
+          }}
+          name="sort"
+          hasAll={false}
+          onChange={(name, value) => {
+            //  onChangeQueries(name, value)}
+          }}
+          options={SORT_FITLER_COMPANY}
+          value={queries?.sort || "DESC"}
+        />
+        <Dropdown
+          sx={{
+            borderRadius: "100px",
+            border: "1px solid #EFEFEF",
+            padding: "0 20px",
+            height: 48,
+            fontWeight: 500,
+            ".MuiInputBase-root": { pl: "0!important", height: 48 },
+            color: "black",
+            svg: {
+              color: "black",
+              borderRadius: "50px",
+              border: "0.001px solid #5C5C5C",
+            },
+          }}
+          name="sort"
+          hasAll={false}
+          onChange={(name, value) => onChangeQueries(name, value)}
+          options={SORT_FITLER}
+          value={queries?.sort || "DESC"}
+        />
       </Stack>
-      <Stack
+
+      {/* <Stack
         direction={{
           md: "row",
           xs: "row-reverse",
@@ -181,28 +215,88 @@ const SalesListAction = () => {
             value={queries?.sort || "DESC"}
           />
         </Stack>
-        <Stack direction="row" alignItems="center" gap={2} flexWrap={"wrap"}>
-          <Search
-            name="search_key"
-            placeholder={commonT("search")}
-            onEnter={(name, value) => {
-              onChangeQueries(name, value);
-              onSearch();
-            }}
-            onChange={(name, value) => onChangeQueries(name, value)}
-            sx={{ width: 210 }}
-            value={queries?.search_key}
-          />
+      
+      </Stack> */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={{
+          md: 0,
+          xs: 3,
+        }}
+      >
+        <Stack direction={"row"} gap={2}>
           <Button
-            size="extraSmall"
-            sx={{
-              // display: { xs: "flex", md: "none" },
-              height: 32,
-            }}
-            onClick={onSearch}
+            onClick={() => onOpenModal(modalName.EXPORT)}
+            size="small"
             variant="secondary"
+            sx={{
+              height: 48,
+              width: 129,
+              background:
+                "linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #2AF598, #009EFD) border-box",
+              color: "#0575E6",
+              border: "1px solid transparent",
+              fontWeight: "700",
+              borderRadius: "100px",
+              ":hover": { color: "#0575E6" },
+              "p,svg": { fontWeight: "700" },
+            }}
           >
-            {commonT("search")}
+            <ArrowExport
+              sx={{
+                width: { xs: 24, md: 18 },
+                height: { xs: 24, md: 18 },
+                mr: 1,
+              }}
+            />
+            <Text sx={{ display: { xs: "none", md: "block" } }} color="inherit">
+              {salesT("list.action.export")}
+            </Text>
+          </Button>
+          <Button
+            onClick={() => onOpenModal(modalName.DEAL)}
+            size="small"
+            variant="contained"
+            sx={{
+              boxShadow: "none",
+
+              fontWeight: "700",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
+              borderRadius: "100px",
+              height: 48,
+              width: 129,
+              "p,svg": { fontWeight: "700" },
+              svg: {
+                border: "1px solid white",
+                borderRadius: "50px",
+                color: "#2AF598",
+                background: "white",
+              },
+            }}
+          >
+            <AddSquareIcon
+              sx={{
+                display: { xs: "block", md: "none" },
+                width: 24,
+                height: 24,
+              }}
+            />
+            <PlusIcon
+              sx={{
+                display: { xs: "none", md: "block" },
+                mr: 1,
+                width: 18,
+                height: 18,
+              }}
+            />
+            <Text sx={{ display: { xs: "none", md: "block" } }} color="inherit">
+              {salesT("list.action.deal")}
+            </Text>
           </Button>
         </Stack>
       </Stack>
