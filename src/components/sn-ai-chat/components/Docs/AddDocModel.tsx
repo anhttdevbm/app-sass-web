@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { useDocs } from "store/docs/selectors";
+import { getPath } from "utils/index";
 
 interface DocItem {
   id: string;
@@ -42,13 +43,12 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
   onClose,
   assistantContent,
 }) => {
-  const { onGetDocs, items, onCreateDoc, handleGetDocDetail } = useDocs();
+  const { onGetDocs, items, onCreateDoc, onGetDocCustom, onUpdateDocCustom } = useDocs();
   const [search, setSearch] = useState("");
   const { user } = useAuth();
   const router = useRouter();
   const t = useTranslations(NS_AI_CHAT);
   const loadMoreRef = useRef(null);
-  const [loading, setLoading] = useState(false);
 
   const debouncedSearch = useCallback(
     debounce(
@@ -64,17 +64,19 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
   };
 
   const handleAddDoc = async () => {
-    setLoading(true);
     const docId = await onCreateDoc(undefined, assistantContent);
-    const path = DOCS_DETAIL_PATH.replace("{id}", docId);
+    const path = getPath(DOCS_DETAIL_PATH, undefined, { id: docId })
     router.push(`${path}`);
+    onClose();
   };
 
-  const handleDocClick = (doc: DocItem) => {
-    setLoading(true);
-    handleGetDocDetail(doc.id, assistantContent);
-    const path = DOCS_DETAIL_PATH.replace("{id}", doc.id);
+  const handleDocClick = async (doc: DocItem) => {
+    const docDetail = await onGetDocCustom(doc.id)
+    const newContent = docDetail.content ? docDetail.content + "</br>" + assistantContent : assistantContent;
+    await onUpdateDocCustom( doc.id, { content: newContent } );
+    const path = getPath(DOCS_DETAIL_PATH, undefined, { id: docDetail.id })
     router.push(`${path}`);
+    onClose();
   };
 
   useEffect(() => {
@@ -114,24 +116,24 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
         },
       }}
     >
-      {loading && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 9999,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      )}
+      {/*{loading && (*/}
+      {/*  <Box*/}
+      {/*    sx={{*/}
+      {/*      display: "flex",*/}
+      {/*      justifyContent: "center",*/}
+      {/*      alignItems: "center",*/}
+      {/*      position: "absolute",*/}
+      {/*      top: 0,*/}
+      {/*      left: 0,*/}
+      {/*      width: "100%",*/}
+      {/*      height: "100%",*/}
+      {/*      backgroundColor: "rgba(0, 0, 0, 0.5)",*/}
+      {/*      zIndex: 9999,*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    <CircularProgress />*/}
+      {/*  </Box>*/}
+      {/*)}*/}
       <IconButton
         style={{
           position: "absolute",

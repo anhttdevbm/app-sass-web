@@ -50,6 +50,8 @@ const initialState: AIChatState = {
   openAIChatStatus: DataStatus.IDLE,
   openAIChatError: undefined,
   openAIChatFilters: {},
+
+  chatAIStatus: DataStatus.IDLE,
 };
 
 const aiChatSlice = createSlice({
@@ -161,17 +163,17 @@ const aiChatSlice = createSlice({
 
       // chat with AI
       .addCase(chatWithAI.pending, (state) => {
-        state.chatSessionsStatus = DataStatus.LOADING;
+        state.chatAIStatus = DataStatus.LOADING;
       })
       .addCase(chatWithAI.fulfilled, (state, { payload }) => {
-        state.chatSessionsStatus = DataStatus.SUCCEEDED;
+        state.chatAIStatus = DataStatus.SUCCEEDED;
 
         if (state.openAIChat.length > 0) {
           state.openAIChat[0].assistant_content = payload.AI;
         }
       })
       .addCase(chatWithAI.rejected, (state, action) => {
-        state.chatSessionsStatus = DataStatus.FAILED;
+        state.chatAIStatus = DataStatus.FAILED;
         state.chatSessionsError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       })
 

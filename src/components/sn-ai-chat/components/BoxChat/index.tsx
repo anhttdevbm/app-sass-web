@@ -2,7 +2,7 @@ import { Box, IconButton, SelectChangeEvent } from "@mui/material";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   useChatSession,
   useChatWithAI,
@@ -48,7 +48,10 @@ export const BoxChat: React.FC<BoxChatProps> = ({
     isIdleOpenAIChat,
     isFetchingOpenAIChat,
     onGetOpenAIChat,
+
     onChatWithAI,
+    isFetchingChatAI,
+    isIdleChatAI
   } = useChatWithAI();
 
   const {
@@ -75,6 +78,8 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   const [showPersonaError, setShowPersonaError] = useState(false);
   const [showToneError, setShowToneError] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const chatInputRef = useRef<HTMLInputElement | null>(null);
 
   const isMobile = useMediaQuery("(max-width:600px)") || popupMode;
 
@@ -105,6 +110,12 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   };
 
   const handleSubmitMessage = async (message: string) => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
     if (!persona) {
       setPersona(personaList[0].id);
     }
@@ -190,6 +201,20 @@ export const BoxChat: React.FC<BoxChatProps> = ({
     [toneList, locale],
   );
 
+  const handleSelectPrompt = (prompt: string) => {
+    setPrompt(prompt);
+    chatInputRef.current?.focus();
+  }
+
+  useEffect(() => {
+    if (!isFetchingChatAI && !isIdleChatAI) {
+      setIsSubmitting(false)
+      setTimeout(() => {
+        chatInputRef.current?.focus();
+      }, 0);
+    }
+  }, [isFetchingChatAI, isIdleChatAI]);
+
   useEffect(() => {
     const sendChat = async () => {
       try {
@@ -200,7 +225,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
           tone &&
           prompt.length > 0
         ) {
-          await onChatWithAI({
+          onChatWithAI({
             user_prompt: prompt,
             persona,
             tone,
@@ -302,7 +327,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
           t={t}
           mobileMode={popupMode || isMobile}
           prompts={examplePrompts}
-          handleClick={setPrompt}
+          handleClick={handleSelectPrompt}
         />
       )}
       <Box padding={isMobile ? "0 4px" : "0 24px"}>
@@ -326,7 +351,8 @@ export const BoxChat: React.FC<BoxChatProps> = ({
           />
         </Box>
         <ChatInput
-          isLoading={false}
+          ref={chatInputRef}
+          isLoading={isSubmitting}
           initialMessage={prompt}
           files={files}
           onMessageSubmit={handleSubmitMessage}

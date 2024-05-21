@@ -54,3 +54,35 @@ export const getDocHistory = createAsyncThunk(
     }
   },
 );
+
+export const getDocCustom = createAsyncThunk(
+  "docs/getDoc",
+  async (docId: string) => {
+    try {
+      const response = await client.get(
+        Endpoint.DETAIL_DOCS + docId, {}, {
+          baseURL: DOCS_API_URL,
+        },
+      );
+      if (response.status === HttpStatusCode.OK) return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateDocCustom = createAsyncThunk(
+  "docs/updateDoc",
+  async ({ id, data }: { id: string; data:  { content: string } }) => {
+    try {
+      const response = await client.put(
+        Endpoint.DOCS + `/${id}`, data, {
+          baseURL: DOCS_API_URL,
+        },
+      );
+      if (response.status === HttpStatusCode.OK) return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+);

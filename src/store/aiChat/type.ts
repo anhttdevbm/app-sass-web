@@ -61,6 +61,8 @@ export type AIChatState = {
   openAIChatStatus: DataStatus;
   openAIChatError?: string;
   openAIChatFilters?: GetOpenAIChatQueries;
+
+  chatAIStatus: DataStatus;
 };
 
 export type GetChatSessionsQueries = BaseQueries & {
