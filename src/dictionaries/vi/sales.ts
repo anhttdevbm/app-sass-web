@@ -20,6 +20,7 @@ export const salesLang: SalesDictionary = {
       dealMember: "Thành viên giao dịch",
       unit: "Đơn vị",
       owner: "Chủ sở hữu",
+      client: "Khách hàng",
       tags: "Thẻ",
       submit: "Thêm Giao Dịch",
       update: "Cập nhật Giao Dịch",

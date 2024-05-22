@@ -93,7 +93,7 @@ const Form = () => {
         <Input
           rootSx={sxConfig.input}
           fullWidth
-          title="Email"
+          title="Email or Username"
           name="email"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}

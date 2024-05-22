@@ -46,21 +46,24 @@ const MainSection = () => {
         <SwitchLanguage />
         <SwitchTheme />
       </Stack> */}
- <Box   mt={{ xs: 0, sm:"-100px" }}>  <Image src={AppLogo} alt="App logo" width={440} /></Box>
-    
+      <Box mt={{ xs: 0, sm: "-100px" }}>
+        {" "}
+        <Image src={AppLogo} alt="App logo" width={440} />
+      </Box>
 
       <Stack
         flex={1}
-        p={{sm:"22px 92px 46px 92px",lg:"37px 88px"}}
-        mt={{ xs: 3, sm:"-20px" }}
+        p={{ sm: "22px 92px 46px 92px", lg: "37px 88px" }}
+        mt={{ xs: 3, sm: "-20px" }}
         alignItems="center"
-        maxWidth={{ sm:"644px", lg:"744px" }}
-        maxHeight={{ sm:"450px", lg:"500px" }}
+        maxWidth={{ sm: "644px", lg: "744px" }}
+        maxHeight={{ sm: "450px", lg: "500px" }}
         width="100%"
         overflow="hidden"
         bgcolor={{
           sm: "common.white",
         }}
+        borderRadius={"12px"}
       >
         <Text variant="h3">{t("signin.title")}</Text>
         <Stack mt={1} direction="row" alignItems="center" spacing={0.5}>
