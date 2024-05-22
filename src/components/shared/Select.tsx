@@ -23,6 +23,7 @@ import Text from "./Text";
 import { SearchProps } from "components/Filters/Search";
 import Image from "next/image";
 import * as React from "react";
+import SearchIcon from "icons/SearchIcon";
 
 export type SelectProps = InputProps & {
   options: Option[];
@@ -43,6 +44,7 @@ export type SelectProps = InputProps & {
   onOpen?: Function;
   isShowSearch?: boolean;
   emitSearchWhenEnter?: boolean;
+  startAdornment?: () => React.ReactNode;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   renderValue?: (value: any) => React.ReactNode;
 };
@@ -148,6 +150,7 @@ const Select = (props: SelectProps) => {
             MenuListProps: {
               sx: {
                 maxHeight: 300,
+                p:"10px"
               },
             },
           },
@@ -164,7 +167,18 @@ const Select = (props: SelectProps) => {
               mt: 1,
               px: 2,
               my: 1,
+              borderRadius: "100px",
+              background: "#F7F7FD",
+              border: "none",
+              svg: { color: "#0575E6" },
+              ".MuiInputBase-root": {
+                border: "none",
+                "&:hover": { border: "none" },
+                "&:forcus-visible": { border: "none" },
+              },
             }}
+            startNode={<></>}
+            endNode={<SearchIcon />}
             name="email"
             onChange={onChangeSearch}
             emitWhenEnter={emitSearchWhenEnter}
