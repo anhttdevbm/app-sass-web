@@ -73,7 +73,7 @@ export const useSales = () => {
       const convertedBody: DealData = {
         currency: data.currency,
         owner: data.owner,
-        client: data.client,
+        id: data.client,
         description: description,
         name: data.dealName,
         members,
