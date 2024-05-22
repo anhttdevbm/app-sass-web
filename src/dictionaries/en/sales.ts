@@ -20,6 +20,7 @@ export const SalesLang: SalesDictionary = {
       dealMember: "Deal Member",
       unit: "Unit",
       owner: "Owner",
+      client: "Client",
       tags: "Tags",
       submit: "Create Deal",
       update: "Update Deal",
