@@ -1,5 +1,5 @@
 import { Stack, Grid } from "@mui/material";
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import FormLayout from "components/FormLayout";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
@@ -15,6 +15,7 @@ import useGetProjectTypeOptions from "../hooks/useGetProjectTypeOptions";
 import { useTagOptions, useTags } from "store/tags/selector";
 import { Tag } from "store/tags/reducer";
 import { TagData } from "store/tags/actions";
+import { useClientCompanies } from "store/company/selectors";
 
 interface IProps {
   open: boolean;
@@ -40,7 +41,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
     projectTypeOptions,
     onEndReachedProjectTypeOptions,
   } = useGetProjectTypeOptions();
-
+  const { items: clientCompanies, onGetClientCompanies } = useClientCompanies();
   const { onCreateDeal } = useSales();
   const { tagsOptions, isTagLoading, onSearchTags } = useTagOptions();
   const { onCreateTags } = useTags();
@@ -72,6 +73,11 @@ const AddDealModal = ({ open, onClose }: IProps) => {
         name: salesT(`${salesFormTranslatePrefix}.owner`),
       }),
     ),
+    client: yup.string().required(
+      commonT("form.error.required", {
+        name: salesT(`${salesFormTranslatePrefix}.client`),
+      }),
+    ),
     members: yup
       .array()
       .of(yup.string())
@@ -89,6 +95,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
       dealName: "",
       currency: UNIT_OPTIONS[0].value,
       owner: "",
+      client: "",
       members: [],
       tags: [],
     },
@@ -108,6 +115,9 @@ const AddDealModal = ({ open, onClose }: IProps) => {
       email: (value as string) || "",
     });
   };
+  useEffect(() => {
+    onGetClientCompanies({});
+  }, [onGetClientCompanies]);
   const newInput = {
     // height: "65px",
     ".MuiInputBase-root": {
@@ -151,16 +161,21 @@ const AddDealModal = ({ open, onClose }: IProps) => {
         minHeight: "auto",
         ".MuiDialogTitle-root": { border: "none" },
         ".MuiDialogActions-root": {
-          border: "none", ".MuiButtonBase-root": {
+          border: "none",
+          ".MuiButtonBase-root": {
             "&:last-child": {
-              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)", color: "white", borderRadius: "100px"
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
             },
             "&:first-child": {
-              background: "white", color: "#14B9E5", border: "1px solid #14B9E5", borderRadius: "100px"
-            }
-          }
-        }
-
+              background: "white",
+              color: "#14B9E5",
+              border: "1px solid #14B9E5",
+              borderRadius: "100px",
+            },
+          },
+        },
       }}
       open={open}
       label={salesT(`${salesFormTranslatePrefix}.title`)}
@@ -193,7 +208,6 @@ const AddDealModal = ({ open, onClose }: IProps) => {
                   onChangeSearch={(_, newValue) =>
                     onSearchMember(field.name, newValue as string)
                   }
-
                   sx={newInput}
                   error={error?.message}
                   fullWidth
@@ -223,6 +237,28 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             />
           </Grid>
         </Grid>
+        <Controller
+          control={control}
+          name="client"
+          render={({ field, fieldState: { error } }) => (
+            <Select
+              options={clientCompanies.map((c) => ({
+                label: c.name,
+                value: c.id!,
+              }))}
+              onChangeSearch={(_, newValue) =>
+                onSearchMember(field.name, newValue as string)
+              }
+              sx={newInput}
+              error={error?.message}
+              fullWidth
+              onEndReached={onEndReachedEmployeeOptions}
+              pending={employeeIsFetching}
+              {...field}
+              title={salesT(`${salesFormTranslatePrefix}.client`)}
+            />
+          )}
+        />
         <Controller
           control={control}
           name="members"
