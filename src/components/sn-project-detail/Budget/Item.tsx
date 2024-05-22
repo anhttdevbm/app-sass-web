@@ -69,12 +69,13 @@ const Item = ({ projectId }: { projectId?: string }) => {
           py={1}
           alignItems="center"
           justifyContent="space-between"
-          sx={{ bgcolor: "primary.light" }}
+          sx={{ bgcolor: "#D9F0FD" }}
         >
           <Stack direction="row" alignItems="center">
             <Text>
-              {idSelecteds.length} {idSelecteds.length > 1 ? "items" : "item"}
-              &nbsp;selected
+              <span style={{ color: "#0575E6" }}>{idSelecteds.length}</span>
+              &nbsp;selected&nbsp;
+              {idSelecteds.length > 1 ? "items" : "item"}
             </Text>
             <IconButton sx={{ ml: 1 }} onClick={() => setIdSelected([])}>
               <CloseIcon />
@@ -96,9 +97,7 @@ const Item = ({ projectId }: { projectId?: string }) => {
               direction="row"
               alignItems="center"
               sx={{ cursor: "pointer", color: "grey.400" }}
-              onClick={(e) =>
-                setStatusEl(statusEl ? null : e.currentTarget)
-              }
+              onClick={(e) => setStatusEl(statusEl ? null : e.currentTarget)}
             >
               <Text>Status</Text>
               <KeyboardArrowDownIcon />
