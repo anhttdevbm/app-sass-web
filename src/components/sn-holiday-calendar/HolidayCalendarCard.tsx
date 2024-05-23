@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 
@@ -13,6 +14,7 @@ import useToggle from "hooks/useToggle";
 import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
+import GreenTickIcon from "icons/GreenTickIcon";
 import TrashIcon from "icons/TrashAltIcon";
 import { useSnackbar } from "store/app/selectors";
 import { HolidayCalendar } from "store/holidayCalendar/reducer";
@@ -40,14 +42,6 @@ const HolidayCalendarCard = ({
     handleAddHolidayItem: reduxAddHolidayItem,
   } = useHolidayCalendar();
 
-  const [isEdit, , , toggleEdit] = useToggle(false);
-  const titleRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (isEdit && titleRef.current) {
-      titleRef.current.focus();
-    }
-  }, [isEdit]);
-
   const [selectedHolidayList, setSelectedHolidayList] = useState("");
   const [shouldReset, setShouldResetOn, setShouldResetOff] = useToggle(false);
 
@@ -71,6 +65,9 @@ const HolidayCalendarCard = ({
     [holidayCalendar],
   );
 
+  const [isEdit, setEditOn, setEditOff] = useToggle(false);
+  const titleRef = useRef<HTMLInputElement>(null);
+
   const initialValues = useMemo(
     () => ({
       id: holidayCalendar.id,
@@ -90,15 +87,24 @@ const HolidayCalendarCard = ({
   const {
     values,
     resetForm,
-    handleSubmit,
     handleChange,
-    handleBlur: formikHandleBlur,
+    handleBlur,
     isSubmitDisabled,
+    submitForm,
   } = useFormik({
     initialValues,
     onSubmit,
     enableReinitialize: true,
   });
+
+  const toggleEdit = useCallback(async () => {
+    if (isEdit) {
+      await submitForm();
+      setEditOff();
+    } else {
+      setEditOn();
+    }
+  }, [submitForm, isEdit, setEditOff, setEditOn]);
 
   useEffect(() => {
     if (isEdit) {
@@ -109,21 +115,13 @@ const HolidayCalendarCard = ({
     }
   }, [isEdit, shouldReset, setShouldResetOn, setShouldResetOff, resetForm]);
 
-  const handleBlur = useCallback(
-    (e) => {
-      formikHandleBlur(e);
-      handleSubmit();
-    },
-    [formikHandleBlur, handleSubmit],
-  );
-
-  const handleSelectChange = useCallback(
-    (e) => {
-      handleChange(e);
-      handleSubmit();
-    },
-    [handleChange, handleSubmit],
-  );
+  useEffect(() => {
+    if (isEdit) {
+      if (titleRef.current) {
+        titleRef.current.focus();
+      }
+    }
+  }, [isEdit]);
 
   const handleAddHolidayItem = useCallback(() => {
     if (
@@ -167,23 +165,30 @@ const HolidayCalendarCard = ({
             // })}
             inputRef={titleRef}
           />
-          <IconButton onClick={toggleEdit}>
-            <EditUnderlineIcon />
-          </IconButton>
-          <IconButton
-            sx={{ color: "#FF4141" }}
-            disabled={status === DataStatus.LOADING || isSubmitDisabled}
-            onClick={async () => {
-              try {
-                await handleDeleteHolidayCalendar(holidayCalendar.id);
-                // setShouldFetchOn();
-              } catch (error) {
-                onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-              }
-            }}
-          >
-            <TrashIcon />
-          </IconButton>
+          <IconButtonContainer>
+            <IconButton size="small" onClick={toggleEdit}>
+              {isEdit ? (
+                <GreenTickIcon />
+              ) : (
+                <EditUnderlineIcon sx={{ color: "#333333" }} />
+              )}
+            </IconButton>
+            <IconButton
+              size="small"
+              sx={{ color: "#FF4141" }}
+              disabled={status === DataStatus.LOADING || isSubmitDisabled}
+              onClick={async () => {
+                try {
+                  await handleDeleteHolidayCalendar(holidayCalendar.id);
+                  // setShouldFetchOn();
+                } catch (error) {
+                  onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+                }
+              }}
+            >
+              <TrashIcon />
+            </IconButton>
+          </IconButtonContainer>
         </Stack>
 
         <Grid
@@ -205,8 +210,8 @@ const HolidayCalendarCard = ({
               fullWidth
               name="country"
               disabled={!isEdit || isSubmitDisabled}
-              onChange={handleSelectChange}
-              onBlur={formikHandleBlur}
+              onChange={handleChange}
+              onBlur={handleBlur}
               value={values.country}
               // error={commonT(touchedError("country"), {
               //   name: costRateT("empty.form.country"),
@@ -275,3 +280,23 @@ const HolidayCalendarCard = ({
 };
 
 export default HolidayCalendarCard;
+
+const IconButtonContainer = styled(Stack)({
+  flexDirection: "row",
+  "& > *:not(.\\9)": {
+    padding: "4px 8px",
+    borderTop: "1px solid #D5D5D5",
+    borderBottom: "1px solid #D5D5D5",
+    borderLeft: "1px solid #D5D5D5",
+    borderRadius: 0,
+  },
+  "& > :last-of-type:not(.\\9)": {
+    borderRight: "1px solid #D5D5D5",
+    borderTopRightRadius: "8px",
+    borderBottomRightRadius: "8px",
+  },
+  "& > :first-of-type:not(.\\9)": {
+    borderTopLeftRadius: "8px",
+    borderBottomLeftRadius: "8px",
+  },
+});
