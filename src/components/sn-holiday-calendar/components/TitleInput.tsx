@@ -4,23 +4,22 @@ import {
   Input as BaseInput,
   InputProps as BaseInputProps,
 } from "@mui/base/Input";
-import { styled, SxProps } from "@mui/system";
+import { Box } from "@mui/system";
+import { styled } from "@mui/material/styles";
 
 type TitleInputProps = {
   isEdit?: boolean;
-  rootSx?: SxProps;
-  sx?: SxProps;
+  inputRef?: React.ForwardedRef<HTMLInputElement>;
 } & FormControlProps &
   BaseInputProps;
 
 export default React.forwardRef(function TitleInput(
   props: TitleInputProps,
-  ref: React.ForwardedRef<HTMLInputElement>,
+  ref: React.ForwardedRef<HTMLDivElement>,
 ) {
   const {
-    isEdit,
-    rootSx,
-    sx,
+    isEdit = false,
+    inputRef,
     disabled,
     onChange,
     onBlur,
@@ -29,59 +28,73 @@ export default React.forwardRef(function TitleInput(
     error,
     ...rest
   } = props;
+
+  const textRef = React.useRef(null);
+  const [currentWidth, setCurrentWidth] = React.useState(0);
+  React.useEffect(() => {
+    if (textRef.current) {
+      setCurrentWidth(getBoundingClientRect(textRef.current).width);
+    }
+  }, [isEdit]);
+
   return isEdit ? (
-    <FormControl
+    <StyledFormControl
       disabled={disabled}
       onChange={onChange}
       onFocus={onFocus}
       onBlur={onBlur}
       value={value}
       error={error}
+      width={currentWidth}
     >
       <BaseInput
         slots={{ root: StyledRoot, input: StyledInput }}
         slotProps={{
-          root: {
-            sx: rootSx,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          } as any,
+          input: {
+            ref: inputRef,
+          },
         }}
         {...rest}
         ref={ref}
       />
-    </FormControl>
+    </StyledFormControl>
   ) : (
-    <StyledText>{`${value}`}</StyledText>
+    <StyledText ref={textRef}>{`${value}`}</StyledText>
   );
 });
 
-const StyledRoot = styled("div")(
-  () => `
-    display: flex;
-    background-color: transparent;
-    max-width: calc(100% - 80px);
-    padding: 0;
-  `,
+const StyledFormControl = styled(FormControl)(
+  ({ width }: { width: number }) => ({
+    width: `${width}px`,
+  }),
 );
 
-const StyledInput = styled("input")(
-  () => `
-    flex-grow: 1;
-    padding: 12px 24px;
-    color: #333333;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    font-size: 18px;
-    font-weight: 600;
-  `,
-);
+const StyledRoot = styled("div")({
+  display: "flex",
+  backgroundColor: "transparent",
+  width: "100%",
+  padding: 0,
+});
 
-const StyledText = styled("div")(
-  () => `
-    padding: 12px 24px;
-    color: #333333;
-    font-size: 18px;
-    font-weight: 600;
-  `,
-);
+const StyledInput = styled("input")(({ theme }) => ({
+  flexGrow: 1,
+  backgroundColor: "transparent",
+  border: "none",
+  outline: "none",
+  padding: "12px 24px",
+  color: "#333333",
+  fontFamily: theme.typography.fontFamily,
+  fontSize: "18px",
+  fontWeight: 600,
+}));
+
+const StyledText = styled(Box)(({ theme }) => ({
+  padding: "12px 24px",
+  color: "#333333",
+  fontFamily: theme.typography.fontFamily,
+  fontSize: "18px",
+  fontWeight: 600,
+}));
+
+const getBoundingClientRect = (element: HTMLElement): DOMRect =>
+  element.getBoundingClientRect();

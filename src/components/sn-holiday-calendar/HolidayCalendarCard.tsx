@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -8,11 +8,7 @@ import { useTranslations } from "next-intl";
 
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
-import {
-  NewSelect as Select,
-  IconButton,
-  Text,
-} from "components/shared";
+import { NewSelect as Select, IconButton, Text } from "components/shared";
 import useToggle from "hooks/useToggle";
 import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
@@ -37,13 +33,20 @@ const HolidayCalendarCard = ({
   const commonT = useTranslations(NS_COMMON);
   const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
   const { onAddSnackbar } = useSnackbar();
-  const [isEdit, , , toggleEdit] = useToggle(false);
   const {
     status,
     handleUpdateHolidayCalendar,
     handleDeleteHolidayCalendar,
     handleAddHolidayItem: reduxAddHolidayItem,
   } = useHolidayCalendar();
+
+  const [isEdit, , , toggleEdit] = useToggle(false);
+  const titleRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (isEdit && titleRef.current) {
+      titleRef.current.focus();
+    }
+  }, [isEdit]);
 
   const [selectedHolidayList, setSelectedHolidayList] = useState("");
   const [shouldReset, setShouldResetOn, setShouldResetOff] = useToggle(false);
@@ -152,17 +155,18 @@ const HolidayCalendarCard = ({
     >
       <Box component="form" noValidate>
         <Stack direction="row" alignItems="center">
-            <TitleInput
-              name="name"
-              isEdit={isEdit}
-              disabled={!isEdit || isSubmitDisabled}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.name}
-              // error={commonT(touchedError("name"), {
-              //   name: costRateT("empty.form.note"),
-              // })}
-            />
+          <TitleInput
+            name="name"
+            isEdit={isEdit}
+            disabled={!isEdit || isSubmitDisabled}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.name}
+            // error={commonT(touchedError("name"), {
+            //   name: costRateT("empty.form.note"),
+            // })}
+            inputRef={titleRef}
+          />
           <IconButton onClick={toggleEdit}>
             <EditUnderlineIcon />
           </IconButton>
