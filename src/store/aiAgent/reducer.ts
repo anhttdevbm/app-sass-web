@@ -1,15 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AIAgent, AIAgentState, GetAIAgentListQueries } from "./types";
-
-const exampleAIAgents: AIAgent[] = Array.from({ length: 20 }, (_, i) => ({
-  id: (i + 1).toString(),
-  name: `AI Agent ${i + 1}`,
-  creationDate: `2021-07-${String(i + 1).padStart(2, "0")}`,
-  status: i % 2 === 0 ? "Active" : "Inactive",
-  avatar: {
-    link: undefined,
-  },
-}));
+import { AIAgent, AIAgentState, GetAIAgentListQueries, GetAIAgentsPayload } from "./types";
+import { deleteAgent, getAgents } from "store/aiAgent/actions";
+import { DataStatus } from "constant/enums";
 
 const initialState: AIAgentState = {
   aiAgents: [],
@@ -20,6 +12,9 @@ const initialState: AIAgentState = {
   page: 1,
   limit: 10,
 
+  getAgentsStatus: DataStatus.IDLE,
+  deleteAgentStatus: DataStatus.IDLE,
+
   aiAgent: null,
 };
 
@@ -27,19 +22,42 @@ const aiAgentSlice = createSlice({
   name: "aiAgent",
   initialState,
   reducers: {
-    getAgents(state, action: PayloadAction<GetAIAgentListQueries>) {
-      state.aiAgents = exampleAIAgents;
-      state.totalAIAgents = exampleAIAgents.length;
-      state.isReady = true;
-      state.totalPages = Math.ceil(exampleAIAgents.length / state.limit);
-    },
-    getAgent(state, action: PayloadAction<string>) {
-      state.aiAgent =
-        exampleAIAgents.find((aiAgent) => aiAgent.id === action.payload) ||
-        null;
-    },
+    // getAgent(state, action: PayloadAction<string>) {
+    //   state.aiAgent =
+    //     exampleAIAgents.find((aiAgent) => aiAgent.id === action.payload) ||
+    //     null;
+    // },
   },
-  extraReducers: {},
+  extraReducers: (builder) => {
+    // Get ai agents
+    builder.addCase(getAgents.pending, (state) => {
+      state.getAgentsStatus = DataStatus.LOADING;
+    });
+    builder.addCase(getAgents.fulfilled, (state, action: PayloadAction<GetAIAgentsPayload>) => {
+      const { data, page, size, total_page } = action.payload;
+
+      state.getAgentsStatus = DataStatus.SUCCEEDED;
+
+      state.aiAgents = data;
+      state.page = page;
+      state.limit = size;
+      state.totalPages = total_page;
+    });
+    builder.addCase(getAgents.rejected, (state) => {
+      state.getAgentsStatus = DataStatus.FAILED;
+    });
+
+    // Delete ai agent
+    builder.addCase(deleteAgent.pending, (state) => {
+      state.deleteAgentStatus = DataStatus.LOADING;
+    });
+    builder.addCase(deleteAgent.fulfilled, (state, action: PayloadAction<string>) => {
+      state.deleteAgentStatus = DataStatus.SUCCEEDED;
+    });
+    builder.addCase(deleteAgent.rejected, (state) => {
+      state.deleteAgentStatus = DataStatus.FAILED;
+    });
+  },
 });
 
 export const aiAgentReducer = aiAgentSlice.reducer;

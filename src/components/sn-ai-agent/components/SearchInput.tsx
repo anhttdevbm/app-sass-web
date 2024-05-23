@@ -2,16 +2,19 @@
 
 import { InputAdornment, OutlinedInput } from "@mui/material";
 import SearchIcon from "icons/SearchIcon";
+import { ChangeEventHandler } from "react";
 
 interface SearchInputProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   theme?: any;
   placeholder?: string;
+  onChange: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>
 }
 
 export const SearchInput: React.FC<SearchInputProps> = ({
   theme,
   placeholder,
+  onChange
 }) => {
   return (
     <OutlinedInput
@@ -20,6 +23,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
           <SearchIcon fontSize="medium" color="info" />
         </InputAdornment>
       }
+      onChange={onChange}
       placeholder={placeholder}
       sx={{ ...outlinedInput, background: `${theme.palette.grey[50]}` }}
     />

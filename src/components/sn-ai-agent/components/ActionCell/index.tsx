@@ -113,7 +113,8 @@ const ActionsCell = (props: ActionsCellProps) => {
         onAddSnackbar("Delete successfully!", "success");
         onHide();
       } else {
-        throw AN_ERROR_TRY_AGAIN;
+        onHide();
+        // throw AN_ERROR_TRY_AGAIN;
       }
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, t), "error");

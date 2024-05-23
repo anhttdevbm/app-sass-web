@@ -1,13 +1,17 @@
 import { BaseQueries } from "constant/types";
+import { DataStatus } from "constant/enums";
+
+export enum StatusAIAgent {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE"
+}
 
 export interface AIAgent {
   id: string;
   name: string;
-  avatar: {
-    link?: string;
-  };
-  creationDate: string;
-  status: string;
+  avatar: string;
+  created_time: string;
+  status: StatusAIAgent;
   description?: string;
   tone?: string;
 }
@@ -25,5 +29,15 @@ export interface AIAgentState {
   page: number;
   limit: number;
 
+  getAgentsStatus: DataStatus;
+  deleteAgentStatus: DataStatus;
+
   aiAgent: AIAgent | null;
+}
+
+export interface GetAIAgentsPayload {
+  data: AIAgent[];
+  page: number;
+  size: number;
+  total_page: number;
 }

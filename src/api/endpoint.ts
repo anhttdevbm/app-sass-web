@@ -214,5 +214,6 @@ export const Endpoint = {
   AI_CHAT_TONE: "aichat/api/ai-chat/tone",
 
   //AI Agent
-  AI_AGENT: "/ai-agent",
+  AI_AGENT: "/agent",
+  AI_AGENT_DELETE: "/agent/delete",
 };

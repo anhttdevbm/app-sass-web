@@ -10,6 +10,7 @@ import { NS_AI_AGENT } from "constant/index";
 import { DropDownOutlineIcon } from "icons/DropDownOutlineIcon";
 import { useLocale, useTranslations } from "next-intl";
 import { CSSProperties } from "react";
+import { StatusAIAgent } from "store/aiAgent/types";
 
 interface StatusSelectProps {
   status: string;
@@ -102,8 +103,8 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
         <StyledMenuItem value="">
           <em>{t("layout.header.none")}</em>
         </StyledMenuItem>
-        <StyledMenuItem value="active">{t("layout.header.active")}</StyledMenuItem>
-        <StyledMenuItem value="inactive">{t("layout.header.inactive")}</StyledMenuItem>
+        <StyledMenuItem value={StatusAIAgent.ACTIVE}>{t("layout.header.active")}</StyledMenuItem>
+        <StyledMenuItem value={StatusAIAgent.INACTIVE}>{t("layout.header.inactive")}</StyledMenuItem>
       </Select>
     </FormControl>
   );

@@ -1,11 +1,11 @@
 "use client";
 
-import { Box, Stack, TableRow } from "@mui/material";
+import { Box, Stack, TableRow, Typography } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
 import useQueryParams from "hooks/useQueryParams";
 import { usePathname, useRouter } from "next-intl/client";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import styled from "styled-components";
 import { getPath } from "utils/index";
@@ -13,18 +13,31 @@ import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "./components/ActionCell";
 import Pagination from "./components/Pagination";
 import { useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
-import { AI_AGENT_GENERAL_PATH, AI_AGENT_PATH } from "constant/paths";
+import { AI_AGENT_GENERAL_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
-import { Text } from "components/shared";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
+import { AIAgent, StatusAIAgent } from "store/aiAgent/types";
 
 const AgentList = () => {
-  const { aiAgents, limit, page, totalAIAgents, totalPages, onGetAgents } =
-    useAIAgent();
+  const {
+    aiAgents,
+    limit,
+    page,
+    totalAIAgents,
+    totalPages,
+
+    onGetAgents,
+    onDeleteAgent,
+
+    isFetchingAgents,
+    isDeletingAgent
+  } = useAIAgent();
   const { initQuery, isReady, query } = useQueryParams();
   const { push } = useRouter();
   const pathname = usePathname();
   const t = useTranslations(NS_AI_AGENT);
+
+  const [data, setData] = useState<AIAgent[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleQueryChange = (newQueries: { [key: string]: any }) => {
@@ -37,8 +50,34 @@ const AgentList = () => {
 
   const handlePageChange = (newPage: number) =>
     handleQueryChange({ page: newPage, limit });
+
   const handleSizeChange = (newPageSize: number) =>
     handleQueryChange({ page: 1, size: newPageSize });
+
+  const handleChat = () => console.log("Chat agent");
+
+  const handleDelete = (id: string) => {
+    onDeleteAgent(id);
+  }
+
+  const handleEdit = () => console.log("Edit agent");
+
+  useEffect(() => {
+    if (!isFetchingAgents && aiAgents.length) {
+      setData(aiAgents);
+    }
+  }, [aiAgents, isFetchingAgents]);
+
+  useEffect(() => {
+    if (!isDeletingAgent) {
+      onGetAgents({ ...initQuery });
+    }
+  }, [isDeletingAgent]);
+
+  useEffect(() => {
+    if (!isReady) return;
+    onGetAgents({ ...initQuery });
+  }, [initQuery, isReady, onGetAgents]);
 
   const tableHeaders: CellProps[] = useMemo(
     () => [
@@ -51,41 +90,41 @@ const AgentList = () => {
     [],
   );
 
-  useEffect(() => {
-    if (!isReady) return;
-    onGetAgents({ ...initQuery });
-  }, [initQuery, isReady, onGetAgents]);
-
-  const handleChat = () => console.log("Chat agent");
-  const handleDelete = () => console.log("Delete agent");
-  const handleEdit = () => console.log("Edit agent");
-
   return (
     <FixedLayout rounded="0 0 12px 12px" padding={3}>
-      <TableLayout headerList={tableHeaders} noData={totalAIAgents === 0}>
-        {aiAgents.map((agent, index) => (
+      <TableLayout headerList={tableHeaders} noData={totalPages === 0}>
+        {data.length && data.map((agent: AIAgent, index) => (
           <TableRow key={agent.id}>
             <BodyCell>{index + 1 + (page - 1) * limit}</BodyCell>
             <BodyCell
               href={getPath(AI_AGENT_GENERAL_PATH, undefined, { id: agent.id })}
+              align={"left"}
+              linkProps={ { sx: { display: "block"  } } }
             >
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Avatar
                   size={32}
-                  src={agent.avatar?.link ?? ImgPlaceHolderAgent}
+                  src={agent.avatar ?? ImgPlaceHolderAgent}
                 />
-                <Text
-                  variant="body2"
-                  color="text.primary"
-                  fontWeight={600}
-                  lineHeight={1.28}
-                  sx={{ "&:hover": { color: "primary.main" } }}
-                >
-                  {agent.name}
-                </Text>
+                <Box width="100%">
+                  <Typography
+                    variant="body2"
+                    color="text.primary"
+                    fontWeight={600}
+                    lineHeight={1.28}
+                    sx={{
+                      "&:hover": { color: "primary.main" },
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {agent.name}
+                  </Typography>
+                </Box>
               </Stack>
             </BodyCell>
-            <BodyCell>{agent.creationDate}</BodyCell>
+            <BodyCell>{agent.created_time}</BodyCell>
             <BodyCell>
               <Box
                 display={"flex"}
@@ -93,8 +132,8 @@ const AgentList = () => {
                 alignItems={"center"}
                 justifyContent={"center"}
               >
-                <StyledBox isActive={agent.status === "Active"}>
-                  <StyledDiv isActive={agent.status === "Active"}>
+                <StyledBox isActive={agent.status === StatusAIAgent.ACTIVE}>
+                  <StyledDiv isActive={agent.status === StatusAIAgent.ACTIVE}>
                     {agent.status}
                   </StyledDiv>
                 </StyledBox>
@@ -103,13 +142,13 @@ const AgentList = () => {
             <ActionsCell
               onChat={handleChat}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={() => handleDelete(agent.id)}
             />
           </TableRow>
         ))}
       </TableLayout>
       <Pagination
-        totalItems={totalAIAgents}
+        totalItems={totalPages}
         totalPages={totalPages}
         page={page}
         pageSize={limit}
