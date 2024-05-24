@@ -21,6 +21,7 @@ export type TBudgetCreateParam = {
   start_date: string;
   end_date: string;
   owner: string;
+  client:string;
 };
 
 export type TBudgetListQueries = BaseQueries & {

@@ -210,6 +210,7 @@ export const ProjectLang: ProjectDictionary = {
       end_date: "Budget end date",
       owner: "Owner",
       project_id: "Project",
+      client:"Client"
     },
     createBudgetSuccess: "Create new budget success!",
     duplicateBudgetSuccess: "Duplicate budget success!",
