@@ -81,7 +81,7 @@ const StyledInput = styled("input")(({ theme }) => ({
   backgroundColor: "transparent",
   border: "none",
   outline: "none",
-  padding: "12px 24px",
+  padding: "12px 24px 12px 0",
   color: "#333333",
   fontFamily: theme.typography.fontFamily,
   fontSize: "18px",
@@ -89,7 +89,7 @@ const StyledInput = styled("input")(({ theme }) => ({
 }));
 
 const StyledText = styled(Box)(({ theme }) => ({
-  padding: "12px 24px",
+  padding: "12px 24px 12px 0",
   color: "#333333",
   fontFamily: theme.typography.fontFamily,
   fontSize: "18px",

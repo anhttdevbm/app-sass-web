@@ -9,10 +9,11 @@ import { useTranslations } from "next-intl";
 
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
-import { NewSelect as Select, IconButton, Text } from "components/shared";
+import { NewButton as Button, IconButton, Text } from "components/shared";
 import useToggle from "hooks/useToggle";
 import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
+import AddCircleIcon from "icons/AddCircleIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import GreenTickIcon from "icons/GreenTickIcon";
 import TrashIcon from "icons/TrashAltIcon";
@@ -22,6 +23,7 @@ import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import HolidayItems from "./HolidayItems";
 import TitleInput from "./components/TitleInput";
+import Select from "./components/Select";
 
 type HolidayCalendarCardProps = {
   holidayCalendar: HolidayCalendar;
@@ -88,8 +90,10 @@ const HolidayCalendarCard = ({
     values,
     resetForm,
     handleChange,
+    setFieldValue,
     handleBlur,
     isSubmitDisabled,
+    isSubmitting,
     submitForm,
   } = useFormik({
     initialValues,
@@ -201,52 +205,78 @@ const HolidayCalendarCard = ({
           }}
         >
           <Grid item xs={12} sm={4}>
-            <Select
-              options={[
-                { label: "Viet Nam", value: "vietnam" },
-                { label: "Japan", value: "japan" },
-              ]}
-              title={holidayCalendarT("form.country")}
-              fullWidth
-              name="country"
-              disabled={!isEdit || isSubmitDisabled}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.country}
-              // error={commonT(touchedError("country"), {
-              //   name: costRateT("empty.form.country"),
-              // })}
-            />
+            <StyledLabel>
+              <span>{holidayCalendarT("form.country")}</span>
+              <Select
+                options={[
+                  { label: "Viet Nam", value: "vietnam" },
+                  { label: "Japan", value: "japan" },
+                  { label: "Singapore", value: "singapore" },
+                  { label: "Thailand", value: "thailand" },
+                  { label: "China", value: "china" },
+                ]}
+                title={holidayCalendarT("form.country")}
+                name="country"
+                rootSx={{ width: "100%" }}
+                disabled={!isEdit || isSubmitDisabled}
+                onChange={(_, newVal) => {
+                  setFieldValue("country", newVal);
+                }}
+                onBlur={handleBlur}
+                value={values.country}
+                endAdornment={isEdit ? undefined : <></>}
+                // error={commonT(touchedError("country"), {
+                //   name: costRateT("empty.form.country"),
+                // })}
+              />
+            </StyledLabel>
           </Grid>
 
           <Grid item xs={11} sm={4}>
-            <Select
-              options={listYears}
-              title={holidayCalendarT("form.year")}
-              fullWidth
-              name="year"
-              disabled={!isEdit || isSubmitDisabled}
-              onChange={(e) => {
-                setSelectedHolidayList(e.target.value);
-              }}
-              value={selectedHolidayList}
-              // error={commonT(touchedError("listId"), {
-              //   name: costRateT("empty.form.year"),
-              // })}
-            />
-          </Grid>
-
-          <Grid item xs={1} mt={5}>
-            <IconButton
-              disabled={
-                status === DataStatus.LOADING || isSubmitDisabled || !isEdit
-              }
-              onClick={() => {
-                handleOpenModal(holidayCalendar.id);
-              }}
-            >
-              <AddCircleGradientIcon />
-            </IconButton>
+            <StyledLabel>
+              <span>{holidayCalendarT("form.year")}</span>
+              <Select
+                options={listYears}
+                title={holidayCalendarT("form.year")}
+                name="year"
+                rootSx={{ width: "100%" }}
+                disabled={!isEdit || isSubmitDisabled}
+                onChange={(_, newVal) => {
+                  setSelectedHolidayList(newVal as string);
+                }}
+                value={selectedHolidayList}
+                endAdornment={isEdit ? undefined : <></>}
+                bottomItem={
+                  <Stack direction="row" justifyContent="center">
+                    <Button
+                      disabled={isSubmitDisabled}
+                      pending={isSubmitting}
+                      sx={{
+                        "&.MuiButton-sizeMedium": {
+                          px: 3,
+                          py: 0.5,
+                        },
+                        "& .MuiButton-startIcon": {
+                          display: "flex",
+                          alignItems: "center",
+                        },
+                      }}
+                      variant="primary"
+                      type="button"
+                      startIcon={<AddCircleIcon />}
+                      onClick={() => {
+                        handleOpenModal(holidayCalendar.id);
+                      }}
+                    >
+                      {holidayCalendarT("form.addHolidayList")}
+                    </Button>
+                  </Stack>
+                }
+                // error={commonT(touchedError("listId"), {
+                //   name: costRateT("empty.form.year"),
+                // })}
+              />
+            </StyledLabel>
           </Grid>
         </Grid>
       </Box>
@@ -280,6 +310,19 @@ const HolidayCalendarCard = ({
 };
 
 export default HolidayCalendarCard;
+
+const StyledLabel = styled("label")(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily,
+  fontSize: "13px",
+  fontWeight: 500,
+  color: "#4D4D4D",
+  textTransform: "capitalize",
+  display: "flex",
+  flexDirection: "column",
+  "& > span:first-of-type": {
+    marginBottom: "12px",
+  },
+}));
 
 const IconButtonContainer = styled(Stack)({
   flexDirection: "row",
