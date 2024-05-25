@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
+import { Option } from "constant/types";
 import { NewButton as Button, IconButton, Text } from "components/shared";
 import useToggle from "hooks/useToggle";
 import { useFormik } from "hooks/useFormik";
@@ -16,6 +17,7 @@ import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import AddCircleIcon from "icons/AddCircleIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import GreenTickIcon from "icons/GreenTickIcon";
+import SearchIcon from "icons/SearchIcon";
 import TrashIcon from "icons/TrashAltIcon";
 import { useSnackbar } from "store/app/selectors";
 import { HolidayCalendar } from "store/holidayCalendar/reducer";
@@ -24,6 +26,7 @@ import { getMessageErrorByAPI } from "utils/index";
 import HolidayItems from "./HolidayItems";
 import TitleInput from "./components/TitleInput";
 import Select from "./components/Select";
+import Input from "./components/Input";
 
 type HolidayCalendarCardProps = {
   holidayCalendar: HolidayCalendar;
@@ -109,6 +112,17 @@ const HolidayCalendarCard = ({
       setEditOn();
     }
   }, [submitForm, isEdit, setEditOff, setEditOn]);
+
+  const [countrySearch, setCountrySearch] = useState("");
+  const countryList = useMemo(
+    () =>
+      (countrySearch === ""
+        ? initialCountryList
+        : initialCountryList.filter((option) =>
+            option.label.toLowerCase().includes(countrySearch.toLowerCase()),
+          )) as Option[],
+    [countrySearch],
+  );
 
   useEffect(() => {
     if (isEdit) {
@@ -209,13 +223,7 @@ const HolidayCalendarCard = ({
             <StyledLabel>
               <span>{holidayCalendarT("form.country")}</span>
               <Select
-                options={[
-                  { label: "Viet Nam", value: "vietnam" },
-                  { label: "Japan", value: "japan" },
-                  { label: "Singapore", value: "singapore" },
-                  { label: "Thailand", value: "thailand" },
-                  { label: "China", value: "china" },
-                ]}
+                options={countryList}
                 title={holidayCalendarT("form.country")}
                 name="country"
                 rootSx={{ width: "100%" }}
@@ -226,6 +234,25 @@ const HolidayCalendarCard = ({
                 onBlur={handleBlur}
                 value={values.country}
                 endAdornment={isEdit ? undefined : <></>}
+                topItem={
+                  <Box px={2}>
+                    <Input
+                      name="country-search"
+                      placeholder={holidayCalendarT(
+                        "placeholder.countrySearch",
+                      )}
+                      value={countrySearch}
+                      onChange={(e) => {
+                        setCountrySearch(e.target.value);
+                      }}
+                      startAdornment={
+                        <SearchIcon
+                          sx={{ marginLeft: "6px", color: "#172B4D" }}
+                        />
+                      }
+                    />
+                  </Box>
+                }
                 // error={commonT(touchedError("country"), {
                 //   name: costRateT("empty.form.country"),
                 // })}
@@ -344,3 +371,11 @@ const IconButtonContainer = styled(Stack)({
     borderBottomLeftRadius: "8px",
   },
 });
+
+const initialCountryList = [
+  { label: "Viet Nam", value: "vietnam" },
+  { label: "Japan", value: "japan" },
+  { label: "Singapore", value: "singapore" },
+  { label: "Thailand", value: "thailand" },
+  { label: "China", value: "china" },
+];

@@ -13,6 +13,7 @@ export type HolidayCalendarDictionary = {
   };
   placeholder: {
     holidayCalendarName: string;
+    countrySearch: string;
   };
   notification: {
     addHolidayCalendarSuccess: string;

@@ -15,6 +15,7 @@ export const HolidayCalendarLang: HolidayCalendarDictionary = {
   },
   placeholder: {
     holidayCalendarName: "Nhập tên lịch nghỉ lễ",
+    countrySearch: "Tìm kiếm quốc gia",
   },
   notification: {
     addHolidayCalendarSuccess: "Thêm lịch nghỉ lễ thành công",
