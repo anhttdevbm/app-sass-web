@@ -12,7 +12,7 @@ import { getPath } from "utils/index";
 import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "./components/ActionCell";
 import Pagination from "./components/Pagination";
 import { useTranslations } from "next-intl";
-import { NS_AI_AGENT } from "constant/index";
+import { DEFAULT_PAGING, NS_AI_AGENT } from "constant/index";
 import { AI_AGENT_GENERAL_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
@@ -30,7 +30,8 @@ const AgentList = () => {
     onDeleteAgent,
 
     isFetchingAgents,
-    isDeletingAgent
+    isDeletingAgent,
+    isCreatingAgent
   } = useAIAgent();
   const { initQuery, isReady, query } = useQueryParams();
   const { push } = useRouter();
@@ -69,10 +70,10 @@ const AgentList = () => {
   }, [aiAgents, isFetchingAgents]);
 
   useEffect(() => {
-    if (!isDeletingAgent) {
-      onGetAgents({ ...initQuery });
+    if (!isCreatingAgent && !isDeletingAgent) {
+      onGetAgents({...query });
     }
-  }, [isDeletingAgent]);
+  }, [isCreatingAgent, isDeletingAgent]);
 
   useEffect(() => {
     if (!isReady) return;

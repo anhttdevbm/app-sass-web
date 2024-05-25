@@ -59,10 +59,6 @@ const Actions = () => {
     setOpen(true);
   };
 
-  const handleSubmitCreateModal = () => {
-    console.log("Submit");
-  };
-
   useEffect(() => {
     if (!isReady) return;
     onGetAgents({ ...initQuery });
@@ -110,7 +106,6 @@ const Actions = () => {
       </Stack>
       <CreateAIAgentModal
         onClose={handleCloseCreateModal}
-        onSubmit={handleSubmitCreateModal}
         open={open}
         theme={theme}
       />

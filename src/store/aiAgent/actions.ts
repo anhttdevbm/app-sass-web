@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { GetAIAgentListQueries } from "./types";
+import { CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
 import { client, Endpoint } from "api";
 import { AI_AGENT_API_URL, AI_CHAT_API_URL, AN_ERROR_TRY_AGAIN } from "constant/index";
 import { HttpStatusCode } from "constant/enums";
@@ -33,6 +33,25 @@ export const deleteAgent = createAsyncThunk(
 
       if (response?.status === HttpStatusCode.OK) {
         return id;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const createAgent = createAsyncThunk(
+  "aiAgent/createAgent",
+  async (data: CreateAIAgentPayload) => {
+    try {
+      const response = await client.post(
+        Endpoint.AI_AGENT_CREATE, data, { baseURL: AI_AGENT_API_URL }
+      )
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
       }
 
       throw AN_ERROR_TRY_AGAIN;

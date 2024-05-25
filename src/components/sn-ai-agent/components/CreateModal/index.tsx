@@ -1,32 +1,39 @@
 import { Theme } from "@mui/material";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { FC, useRef, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { Dialog } from "../Dialog";
 import { TextField } from "../TextField";
 import { ListButtonSelect } from "./ListButtonSelect";
 import { UploadAvatar } from "./UploadAvatar";
 import { NS_AI_AGENT } from "constant/index";
+import { Textarea } from "components/sn-ai-agent-detail/General/components";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { AIAgent, CreateAIAgentPayload } from "store/aiAgent/types";
 
 export const OUTLINE_COLOR = "rgba(54, 153, 255, 0.5)";
 
 interface CreateModalProps {
   onClose: () => void;
-  onSubmit: () => void;
   open: boolean;
   theme: Theme;
 }
 
 export const CreateAIAgentModal: FC<CreateModalProps> = ({
   onClose,
-  onSubmit,
   open,
+  theme
 }) => {
-  const theme = useTheme();
-  const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [name, setName] = useState<string>("");
+  const [image, setImage] = useState<string | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const [description, setDescription] = useState<string>("");
+
   const t = useTranslations(NS_AI_AGENT);
+
+  const { onCreateAgent } = useAIAgent();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.length) {
@@ -39,6 +46,14 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
     }
   };
 
+  const handleOnChangeTextarea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
+  }
+
+  const handleOnChangeTextField = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  }
+
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
@@ -46,11 +61,23 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
   const handleClose = () => {
     setImage(null);
     setSelected(null);
+    setDescription("");
+    setName("");
     onClose();
   };
 
   const handleSubmit = () => {
-    onSubmit();
+    if (!description && !name) {
+      return;
+    }
+
+    const agentData: CreateAIAgentPayload = {
+      avatar: image,
+      description,
+      name,
+    }
+    onCreateAgent(agentData);
+
     handleClose();
   };
 
@@ -69,6 +96,8 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
         label={t("layout.header.agentName")}
         theme={theme}
         variant="filled"
+        value={name}
+        onChange={handleOnChangeTextField}
       />
       <UploadAvatar
         fileInputRef={fileInputRef}
@@ -77,6 +106,15 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
         image={image}
         label={t("layout.header.avatar")}
         titleButton={t("layout.header.upload")}
+      />
+      <Textarea
+        label={t("general.description")}
+        placeholder={t("general.placeholderTextarea")}
+        value={description}
+        onChange={handleOnChangeTextarea}
+        containerStyle={{
+          marginTop: "24px",
+        }}
       />
       <ListButtonSelect
         selected={selected}

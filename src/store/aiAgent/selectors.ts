@@ -1,8 +1,8 @@
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { GetAIAgentListQueries } from "./types";
+import { CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
 import { actions } from "./reducer";
-import { deleteAgent, getAgents } from "store/aiAgent/actions";
+import { createAgent, deleteAgent, getAgents } from "store/aiAgent/actions";
 import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";
 
@@ -19,7 +19,10 @@ export const useAIAgent = () => {
     page,
     limit,
 
-    getAgentsStatus
+    getAgentsStatus,
+    createAgentStatus,
+    deleteAgentStatus
+
   } = useAppSelector((state) => state.aiAgent, shallowEqual);
 
   const onGetAgents = useCallback((queries: GetAIAgentListQueries) => {
@@ -35,7 +38,12 @@ export const useAIAgent = () => {
   const onDeleteAgent = useCallback((id: string) => {
     dispatch(deleteAgent(id));
   }, [dispatch]);
-  const isDeletingAgent = useMemo(() => getAgentsStatus === DataStatus.LOADING, [getAgentsStatus]);
+  const isDeletingAgent = useMemo(() => deleteAgentStatus === DataStatus.LOADING, [deleteAgentStatus]);
+
+  const onCreateAgent = useCallback((data: CreateAIAgentPayload) => {
+    dispatch(createAgent(data));
+  }, [dispatch]);
+  const isCreatingAgent = useMemo(() => createAgentStatus === DataStatus.LOADING, [createAgentStatus]);
 
   return {
     aiAgents,
@@ -47,11 +55,15 @@ export const useAIAgent = () => {
     limit,
 
     aiAgent,
+    onGetAgent,
 
     onGetAgents,
     isFetchingAgents,
-    onGetAgent,
+
     onDeleteAgent,
-    isDeletingAgent
+    isDeletingAgent,
+
+    onCreateAgent,
+    isCreatingAgent
   };
 };

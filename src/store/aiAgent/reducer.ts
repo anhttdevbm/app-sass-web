@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { AIAgent, AIAgentState, GetAIAgentListQueries, GetAIAgentsPayload } from "./types";
-import { deleteAgent, getAgents } from "store/aiAgent/actions";
+import { createAgent, deleteAgent, getAgents } from "store/aiAgent/actions";
 import { DataStatus } from "constant/enums";
 
 const initialState: AIAgentState = {
@@ -14,6 +14,7 @@ const initialState: AIAgentState = {
 
   getAgentsStatus: DataStatus.IDLE,
   deleteAgentStatus: DataStatus.IDLE,
+  createAgentStatus: DataStatus.IDLE,
 
   aiAgent: null,
 };
@@ -51,11 +52,22 @@ const aiAgentSlice = createSlice({
     builder.addCase(deleteAgent.pending, (state) => {
       state.deleteAgentStatus = DataStatus.LOADING;
     });
-    builder.addCase(deleteAgent.fulfilled, (state, action: PayloadAction<string>) => {
+    builder.addCase(deleteAgent.fulfilled, (state) => {
       state.deleteAgentStatus = DataStatus.SUCCEEDED;
     });
     builder.addCase(deleteAgent.rejected, (state) => {
       state.deleteAgentStatus = DataStatus.FAILED;
+    });
+
+    // Create ai agent
+    builder.addCase(createAgent.pending, (state) => {
+      state.createAgentStatus = DataStatus.LOADING;
+    });
+    builder.addCase(createAgent.fulfilled, (state) => {
+      state.createAgentStatus = DataStatus.SUCCEEDED;
+    });
+    builder.addCase(createAgent.rejected, (state) => {
+      state.createAgentStatus = DataStatus.FAILED;
     });
   },
 });

@@ -9,7 +9,7 @@ export enum StatusAIAgent {
 export interface AIAgent {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
   created_time: string;
   status: StatusAIAgent;
   description?: string;
@@ -31,6 +31,7 @@ export interface AIAgentState {
 
   getAgentsStatus: DataStatus;
   deleteAgentStatus: DataStatus;
+  createAgentStatus: DataStatus;
 
   aiAgent: AIAgent | null;
 }
@@ -40,4 +41,10 @@ export interface GetAIAgentsPayload {
   page: number;
   size: number;
   total_page: number;
+}
+
+export interface CreateAIAgentPayload {
+  name: string;
+  description: string;
+  avatar: string | null;
 }
