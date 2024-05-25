@@ -77,10 +77,10 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
             flexDirection: "row",
             gap: "4px",
             color: !!isDarkMode ? "common.white" : "common.black",
-            backgroundColor: !!isDarkMode ? "#393939" : "grey.50",
+            // backgroundColor: !!isDarkMode ? "#393939" : "grey.50",
             borderRadius: "4px",
-            padding: "8px 20px",
-            height: "58px",
+            padding: "5px 20px",
+            // height: "58px",
             ":hover": {
               cursor: disabled ? "not-allowed" : "text",
             },

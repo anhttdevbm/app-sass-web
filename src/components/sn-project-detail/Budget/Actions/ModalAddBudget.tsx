@@ -9,7 +9,7 @@ import { Input, Select } from "components/shared";
 import { FormikErrors, useFormik } from "formik";
 import { TBudgetCreateParam } from "store/project/budget/action";
 import * as Yup from "yup";
-import { useEmployeeOptions } from "store/company/selectors";
+import { useClientCompanies, useEmployeeOptions } from "store/company/selectors";
 import { formatDate, getMessageErrorByAPI } from "utils/index";
 import { useBudgets } from "store/project/budget/selector";
 import { DateTimePicker } from "components/shared/DatePicker";
@@ -34,6 +34,7 @@ const ModalAddBudget = (props: Props) => {
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
   const projectBudget = useBudgets();
+  const { items: clientCompanies, onGetClientCompanies } = useClientCompanies();
 
   const {
     options: employeeOptions,
@@ -150,12 +151,14 @@ const ModalAddBudget = (props: Props) => {
     name: "",
     end_date: "",
     owner: "",
+    client: "",
     start_date: "",
   };
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().trim().required("form.error.required"),
     owner: Yup.string().trim().required("form.error.required"),
+    client: Yup.string().trim().required("form.error.required"),
     project_id: Yup.string().required("form.error.required"),
     start_date: Yup.number(),
     end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
@@ -181,12 +184,55 @@ const ModalAddBudget = (props: Props) => {
   }, [formik.touched, formik.errors]);
 
   const sxInput = {
-    height: 58,
+    height: "auto",
     "& input": {
       color: ({ palette }) => `${palette.grey[900]}!important`,
+    },  
+  };
+  useEffect(() => {
+    onGetClientCompanies({});
+  }, [onGetClientCompanies]);
+  const newInput = {
+    // height: "65px",
+    ".MuiInputBase-root": {
+      background:
+        " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
+      padding: "7px!important",
+      borderRadius: "100px!important",
+      border: "none!important",
+      mt: 3,
+      fontSize: "16px!important",
+      // height:"38px",
+      ".MuiInputBase-input": { p: "0 10px!important" },
+    
+      ".MuiChip-root": {
+        color: "#0575e6",
+        padding: "5px",
+        svg: {
+          border: "0.2px solid transparent",
+          color: "white",
+          background: " #0575e6",
+        },
+      },
+    },
+    "label.MuiInputLabel-root": {
+      left: 0,
+      fontSize: "13px",
+      transform: "translate(0, 16px) scale(1)",
     },
   };
+  const newBorderSVG ={
+    ".MuiInputBase-root.MuiOutlinedInput-root":{svg: {
+      borderRadius: "50px",
+      border: "0.2px solid #5C5C5C",
+      fontSize: "16px",
+      color: "black",
+      "&:hover": { color: "black" },
+    },}
+      
+  }
 
+  
   return (
     <FormLayout
       label={projectT("budget.action.addBudgetTitleModal")}
@@ -195,18 +241,39 @@ const ModalAddBudget = (props: Props) => {
       submitWhenEnter={false}
       bodyFlex={0}
       sx={{
-        overflow: 'visible !important',
-        '& .MuiDialogContent-root': {
-          overflow: 'visible !important',
-          '& .MuiStack-root': { overflow: 'visible !important' }
-        }
+        minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
+        maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
+        minHeight: "auto",
+        // overflow: "visible !important",
+        // "& .MuiDialogContent-root": {
+        //   overflow: "visible !important",
+        //   "& .MuiStack-root": { overflow: "visible !important" },
+        // },
+        ".MuiDialogTitle-root": { border: "none" },
+        ".MuiDialogActions-root": {
+          border: "none",
+          ".MuiButtonBase-root": {
+            "&:last-child": {
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+            },
+            "&:first-child": {
+              background: "white",
+              color: "#14B9E5",
+              border: "1px solid #14B9E5",
+              borderRadius: "100px",
+            },
+          },
+        },
       }}
       {...rest}
     >
-      <Stack ref={bodyModalRef} sx={{ overflow: 'visible !important' }}>
-        <MenuList component={Stack} spacing={2} sx={{ overflow: 'visible' }}>
+      <Stack ref={bodyModalRef} sx={{ overflow: "visible !important" }}>
+        <MenuList component={Stack} spacing={2} sx={{ overflow: "visible" }}>
           {!props.projectId && (
             <Select
+              sx={{...newBorderSVG,...newInput}}
               options={projectOptions}
               title={projectT("budget.form.project_id")}
               name="project_id"
@@ -222,6 +289,7 @@ const ModalAddBudget = (props: Props) => {
             />
           )}
           <Input
+          sx={{...newBorderSVG,...newInput}}
             rootSx={sxInput}
             title={projectT("budget.form.name")}
             fullWidth
@@ -235,8 +303,38 @@ const ModalAddBudget = (props: Props) => {
             })}
             autoComplete="off"
           />
-          <Stack direction={{ sm: "row" }} spacing={2} sx={{ '& .react-datepicker-popper': { zIndex: 999 }}}>
+          <Select
+              sx={{...newBorderSVG,...newInput}}
+              options={clientCompanies.map((c) => ({
+                label: c.name,
+                value: c.id!,
+              }))}
+              title={projectT("budget.form.client")}
+              name="client"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.client}
+              error={commonT(touchedErrors?.client, {
+                name: projectT("budget.form.client"),
+              })}
+              onChangeSearch={(_, newValue) =>
+                onGetEmployeeOptions({
+                  pageIndex: 1,
+                  pageSize: 20,
+                  email: (newValue as string) || "",
+                })
+              }
+              rootSx={sxInput}
+              fullWidth
+              autoComplete="off"
+            />
+          <Stack
+            direction={{ sm: "row" }}
+            spacing={2}
+            sx={{ "& .react-datepicker-popper": { zIndex: 999 } }}
+          >
             <DateTimePicker
+            sx={newInput}
               title={projectT("budget.form.start_date")}
               name="start_date"
               onChange={onChangeDate}
@@ -276,6 +374,7 @@ const ModalAddBudget = (props: Props) => {
               onClickEndNode={() => toggleFocusInputDate(true)}
               sx={{
                 mt: { xs: 2, sm: 0 },
+                ...newInput,
               }}
               pickerProps={{
                 onFocus() {
@@ -292,6 +391,7 @@ const ModalAddBudget = (props: Props) => {
             />
           </Stack>
           <Select
+            sx={{...newBorderSVG,...newInput}}
             options={employeeOptions}
             title={projectT("budget.form.owner")}
             name="owner"

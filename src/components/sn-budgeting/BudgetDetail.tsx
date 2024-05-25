@@ -31,6 +31,7 @@ import {
 } from "react";
 import { TBudget } from "store/project/budget/action";
 import CloseIcon from "../../icons/CloseIcon";
+import BackIcon from "public/images/ic-back.svg";
 import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
@@ -45,7 +46,7 @@ import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
 import { ProjectStatus } from "store/project/actions";
 import { useProjects } from "store/project/selectors";
 import { useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI } from "utils/index";
+import { formatNumber, getMessageErrorByAPI } from "utils/index";
 import { TBudgetExpense } from "store/expense/actions";
 import Swal from "sweetalert2";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
@@ -53,6 +54,8 @@ import { DateRange } from "mui-daterange-picker";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 import ConfirmDialog from "components/ConfirmDialog";
 import { Client } from "components/sn-budgeting/TabDetail/Client";
+import Image from "next/image";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 
 enum TABS {
   FEED = "Feed",
@@ -236,7 +239,18 @@ export const BudgetDetail = () => {
             startIcon={<EditIcon />}
             variant="primary"
             size="small"
-            sx={{ height: "40px", mx: "2px" }}
+            sx={{
+              height: "40px", mx: "2px",
+
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                color: "white",
+              },
+
+            }}
           >
             {budgetT("toolbar.serviceEdit")}
           </Button>
@@ -337,18 +351,25 @@ export const BudgetDetail = () => {
           position: "sticky !important",
           top: 0,
           background: isDarkMode ? "#313130" : "white",
-          py: 2,
+          pb: 2,
           zIndex: 11,
           borderRadius: 1,
         }}
       >
         <Stack
+          sx={{ background: "#F3F3F3" }}
           direction="row"
           p="15px"
           justifyContent="space-between"
           borderBottom="1px solid #ECECF3"
+          gap={2}
         >
-          <Stack direction="row" alignItems="center">
+          <Stack gap={2} flexWrap="wrap" direction="row" alignItems="center">
+            <Link href={BUDGETING_PATH}>
+              <IconButton>
+                <Image src={BackIcon} alt="App logo" width={20} />
+              </IconButton>
+            </Link>
             <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
             <Stack pl="7px">
               <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
@@ -356,33 +377,99 @@ export const BudgetDetail = () => {
               </Text>
               <Text lineHeight={1.2}>{budget.name}</Text>
             </Stack>
-          </Stack>
-          <Stack direction="row" alignItems="center">
-            <CustomDateRangePicker
-              value={{
-                startDate: budget.start_date
-                  ? dayjs(budget.start_date).toDate()
-                  : undefined,
-                endDate: budget.end_date
-                  ? dayjs(budget.end_date).toDate()
-                  : undefined,
-              }}
-              onChange={handleUpdateDate}
-              iconPosition="left"
-              isDropdown
-              errorMessage=""
-            />
-            <IconButton
-              sx={{ color: "grey.300" }}
-              onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}
-            >
-              <OpenSidebarIcon />
-            </IconButton>
-            <Link href={BUDGETING_PATH}>
-              <IconButton>
-                <CloseIcon fontSize="medium" sx={{ color: "grey.300" }} />
+            <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
+              <TextStatus
+                text="status.open"
+                color={
+                  _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
+                    ? "success"
+                    : "common"
+                }
+                namespace={NS_BUDGETING}
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  handleOpenChangeStatusDialog(ProjectStatus.ACTIVE);
+                }}
+              />
+              <Box
+                sx={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "2px",
+                  backgroundColor: "#BABCC6",
+                }}
+              />
+              <TextStatus
+                text="status.close"
+                color={
+                  _.get(budget, "project.status", "") === ProjectStatus.CLOSE
+                    ? "error"
+                    : "common"
+                }
+                namespace={NS_BUDGETING}
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  handleOpenChangeStatusDialog(ProjectStatus.CLOSE);
+                }}
+              />
+            </Stack>
+            <Stack pl="15px" direction="row" alignItems="center">
+              <CustomDateRangePicker
+                value={{
+                  startDate: budget.start_date
+                    ? dayjs(budget.start_date).toDate()
+                    : undefined,
+                  endDate: budget.end_date
+                    ? dayjs(budget.end_date).toDate()
+                    : undefined,
+                }}
+                sx={{ background: "white", borderRadius: "100px" }}
+                onChange={handleUpdateDate}
+                iconPosition="left"
+                isDropdown
+                errorMessage=""
+              />
+              <IconButton
+                sx={{ color: "grey.300" }}
+                onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}
+              >
+                <OpenSidebarIcon />
               </IconButton>
-            </Link>
+
+            </Stack>
+          </Stack>
+          <Stack gap={2} direction="row" alignItems="center">
+            <Stack direction="column" alignItems="center">
+              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+                {projectT("budget.table.revenue")}
+              </Text>
+              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+                {formatNumber(109000567, {
+                  prefix: CURRENCY_SYMBOL["USD"],
+                  numberOfFixed: 0,
+                })}
+              </Text>
+            </Stack>
+            <Stack direction="column" alignItems="center">
+              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+                {projectT("budget.table.margin")}
+              </Text>
+              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+                {formatNumber(123, {
+                  prefix: CURRENCY_SYMBOL["USD"],
+                  numberOfFixed: 0,
+                })}
+              </Text>
+            </Stack>
+            <Stack direction="column" alignItems="center">
+              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+                {projectT("budget.table.invoiced") + " %"}
+              </Text>
+              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+                {formatNumber(123, {}) + " %"}
+              </Text>
+            </Stack>
+
           </Stack>
         </Stack>
         <Stack
@@ -390,72 +477,46 @@ export const BudgetDetail = () => {
           justifyContent="space-between"
           borderBottom="1px solid #ECECF3"
           sx={{ overflowX: "auto" }}
+          p={"10px"}
         >
-          <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
-            <TextStatus
-              text="status.open"
-              color={
-                _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
-                  ? "success"
-                  : "common"
-              }
-              namespace={NS_BUDGETING}
-              sx={{ cursor: "pointer" }}
-              onClick={() => {
-                handleOpenChangeStatusDialog(ProjectStatus.ACTIVE);
-              }}
-            />
-            <Box
-              sx={{
-                display: "inline-block",
-                width: "20px",
-                height: "2px",
-                backgroundColor: "#BABCC6",
-              }}
-            />
-            <TextStatus
-              text="status.close"
-              color={
-                _.get(budget, "project.status", "") === ProjectStatus.CLOSE
-                  ? "error"
-                  : "common"
-              }
-              namespace={NS_BUDGETING}
-              sx={{ cursor: "pointer" }}
-              onClick={() => {
-                handleOpenChangeStatusDialog(ProjectStatus.CLOSE);
-              }}
-            />
-          </Stack>
+
           <Stack direction="row" alignItems="center">
-            {Object.keys(TABS).map((tab, index) => {
-              const currentTab = TABS[tab];
-              return (
-                <Box
-                  key={`budget-detail-tab-${index}`}
-                  p={1}
-                  mx="2px"
-                  borderBottom="2px solid transparent"
-                  sx={{
-                    cursor: "pointer",
-                    transaction: "all .2s",
-                    ...(activeTab === currentTab && {
-                      color: "primary.main",
-                      borderColor: "primary.main",
-                    }),
-                  }}
-                  onClick={() => changeActiveTab(currentTab)}
-                >
-                  {TAB_NAME[currentTab]}
-                </Box>
-              );
-            })}
+            <Stack
+              sx={{ border: "1px solid #EFEFEF", borderRadius: "100px", mr: { xs: "10px", md: "20px", xl: "38px" } }}
+              direction="row"
+              alignItems="center">
+              {Object.keys(TABS).map((tab, index) => {
+                const currentTab = TABS[tab];
+                return (
+                  <Box
+                    key={`budget-detail-tab-${index}`}
+                    p={1}
+                    mx="2px"
+                    borderBottom="2px solid transparent"
+                    sx={{
+                      padding: { xs: "7px 20px", md: "10px 30px", xl: "14px 50px" },
+                      borderRadius: "100px",
+                      cursor: "pointer",
+                      transaction: "all .2s",
+                      ...(activeTab === currentTab && {
+                        color: "primary.main",
+                        background: "#D9F0FD",
+                      }),
+                    }}
+                    onClick={() => changeActiveTab(currentTab)}
+                  >
+                    {TAB_NAME[currentTab]}
+                  </Box>
+                );
+              })}
+
+            </Stack>
             {ButtonAction}
           </Stack>
         </Stack>
       </Stack>
 
-      <Stack direction="row" mt={1}>
+      <Stack p={"10px"} direction="row" mt={1}>
         <Box
           position="relative"
           sx={{
