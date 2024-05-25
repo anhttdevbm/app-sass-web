@@ -16,12 +16,12 @@ export const PTag = ({ children }: PropsWithChildren) => {
 
 export const ServiceBox = ({
   children,
-  remaining,
+  remaining
 }: PropsWithChildren<{ remaining?: string }>) => {
   return (
     <Stack
-      p="10px"
-      boxShadow="0 0 2px 1px rgba(0,0,0,0.1)"
+      // p="10px"
+      // boxShadow="0 0 2px 1px rgba(0,0,0,0.1)"
       borderRadius="4px"
       gap={1}
       sx={{
@@ -37,7 +37,7 @@ export const ServiceBox = ({
             left: 0,
             bgcolor: "secondary.main",
           },
-        }),
+        })
       }}
     >
       {children}
