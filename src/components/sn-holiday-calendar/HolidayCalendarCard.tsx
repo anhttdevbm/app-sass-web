@@ -51,13 +51,22 @@ const HolidayCalendarCard = ({
   const [shouldReset, setShouldResetOn, setShouldResetOff] = useToggle(false);
 
   useEffect(() => {
-    const currentList = holidayCalendar.list.find(
-      (l) => +l.year === new Date().getFullYear(),
-    );
-    if (currentList) {
-      setSelectedHolidayList(currentList.id);
+    if (!selectedHolidayList) {
+      const sortedHolidayList = [
+        ...holidayCalendar.list
+          .filter((l) => +l.year >= new Date().getFullYear())
+          .sort((l1, l2) => +l1.year - +l2.year),
+        ...holidayCalendar.list
+          .filter((l) => +l.year < new Date().getFullYear())
+          .sort((l1, l2) => +l1.year - +l2.year),
+      ];
+      if (sortedHolidayList.length > 0) {
+        setSelectedHolidayList(sortedHolidayList[0].id);
+      } else {
+        setSelectedHolidayList("");
+      }
     }
-  }, [holidayCalendar]);
+  }, [holidayCalendar, selectedHolidayList]);
 
   const listYears = useMemo(
     () =>
