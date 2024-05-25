@@ -164,6 +164,7 @@ const HolidayCalendarCard = ({
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.name}
+            placeholder={holidayCalendarT("placeholder.holidayCalendarName")}
             // error={commonT(touchedError("name"), {
             //   name: costRateT("empty.form.note"),
             // })}
@@ -316,7 +317,7 @@ const StyledLabel = styled("label")(({ theme }) => ({
   fontSize: "13px",
   fontWeight: 500,
   color: "#4D4D4D",
-  textTransform: "capitalize",
+  // textTransform: "capitalize",
   display: "flex",
   flexDirection: "column",
   "& > span:first-of-type": {

@@ -8,14 +8,17 @@ export const HolidayCalendarLang: HolidayCalendarDictionary = {
     addHolidayCalendar: "Thêm lịch nghỉ lễ",
     addHolidayList: "Thêm danh sách ngày nghỉ",
     addHolidayItem: "Thêm ngày nghỉ",
-    country: "Nước",
+    country: "Quốc gia",
     year: "Năm",
     month: "Tháng",
     searchHere: "Tìm kiếm tại đây",
   },
+  placeholder: {
+    holidayCalendarName: "Nhập tên lịch nghỉ lễ",
+  },
   notification: {
-    addHolidayCalendarSuccess: "Added Holiday Calendar Successfully",
-    updateHolidayCalendarSuccess: "Update Holiday Calendar Successfully",
-    deleteHolidayCalendarSuccess: "Delete Holiday Calendar Successfully",
+    addHolidayCalendarSuccess: "Thêm lịch nghỉ lễ thành công",
+    updateHolidayCalendarSuccess: "Sửa lịch nghỉ lễ thành công",
+    deleteHolidayCalendarSuccess: "Xóa lịch nghỉ lễ thành công",
   },
 };

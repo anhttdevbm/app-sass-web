@@ -11,6 +11,9 @@ export type HolidayCalendarDictionary = {
     month: string;
     searchHere: string;
   };
+  placeholder: {
+    holidayCalendarName: string;
+  };
   notification: {
     addHolidayCalendarSuccess: string;
     updateHolidayCalendarSuccess: string;
