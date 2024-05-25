@@ -6,13 +6,14 @@ import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
+import { Formik, FormikProps, FormikValues } from "formik";
 
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
 import { Option } from "constant/types";
 import { NewButton as Button, IconButton, Text } from "components/shared";
+import { useAdditionalFormikUtils } from "hooks/useFormik";
 import useToggle from "hooks/useToggle";
-import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import AddCircleIcon from "icons/AddCircleIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
@@ -37,18 +38,70 @@ const HolidayCalendarCard = ({
   holidayCalendar,
   handleOpenModal,
 }: HolidayCalendarCardProps) => {
+  const { handleUpdateHolidayCalendar } = useHolidayCalendar();
+
+  const initialValues = useMemo(
+    () => ({
+      id: holidayCalendar.id,
+      name: holidayCalendar.name,
+      country: holidayCalendar.country,
+    }),
+    [holidayCalendar],
+  );
+
+  const onSubmit = useCallback(
+    async (values: typeof initialValues) => {
+      await handleUpdateHolidayCalendar({ ...values, province: "" });
+    },
+    [handleUpdateHolidayCalendar],
+  );
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize={true}
+    >
+      {(formik) => (
+        <HolidayCalendarCardForm
+          holidayCalendar={holidayCalendar}
+          handleOpenModal={handleOpenModal}
+          formik={formik}
+        />
+      )}
+    </Formik>
+  );
+};
+
+export default HolidayCalendarCard;
+
+function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
+  holidayCalendar,
+  handleOpenModal,
+  formik,
+}: HolidayCalendarCardProps & { formik: FormikProps<Values> }) {
   const commonT = useTranslations(NS_COMMON);
   const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
   const { onAddSnackbar } = useSnackbar();
+
+  const {
+    values,
+    resetForm,
+    handleChange,
+    setFieldValue,
+    handleBlur,
+    isSubmitting,
+    submitForm,
+  } = formik;
+  const { isSubmitDisabled } = useAdditionalFormikUtils(formik);
+
   const {
     status,
-    handleUpdateHolidayCalendar,
     handleDeleteHolidayCalendar,
     handleAddHolidayItem: reduxAddHolidayItem,
   } = useHolidayCalendar();
 
   const [selectedHolidayList, setSelectedHolidayList] = useState("");
-  const [shouldReset, setShouldResetOn, setShouldResetOff] = useToggle(false);
 
   useEffect(() => {
     if (!selectedHolidayList) {
@@ -80,38 +133,8 @@ const HolidayCalendarCard = ({
   );
 
   const [isEdit, setEditOn, setEditOff] = useToggle(false);
+  const [shouldReset, setShouldResetOn, setShouldResetOff] = useToggle(false);
   const titleRef = useRef<HTMLInputElement>(null);
-
-  const initialValues = useMemo(
-    () => ({
-      id: holidayCalendar.id,
-      name: holidayCalendar.name,
-      country: holidayCalendar.country,
-    }),
-    [holidayCalendar],
-  );
-
-  const onSubmit = useCallback(
-    async (values: typeof initialValues) => {
-      await handleUpdateHolidayCalendar({ ...values, province: "" });
-    },
-    [handleUpdateHolidayCalendar],
-  );
-
-  const {
-    values,
-    resetForm,
-    handleChange,
-    setFieldValue,
-    handleBlur,
-    isSubmitDisabled,
-    isSubmitting,
-    submitForm,
-  } = useFormik({
-    initialValues,
-    onSubmit,
-    enableReinitialize: true,
-  });
 
   const toggleEdit = useCallback(async () => {
     if (isEdit) {
@@ -122,16 +145,13 @@ const HolidayCalendarCard = ({
     }
   }, [submitForm, isEdit, setEditOff, setEditOn]);
 
-  const [countrySearch, setCountrySearch] = useState("");
-  const countryList = useMemo(
-    () =>
-      (countrySearch === ""
-        ? initialCountryList
-        : initialCountryList.filter((option) =>
-            option.label.toLowerCase().includes(countrySearch.toLowerCase()),
-          )) as Option[],
-    [countrySearch],
-  );
+  useEffect(() => {
+    if (isEdit) {
+      if (titleRef.current) {
+        titleRef.current.focus();
+      }
+    }
+  }, [isEdit]);
 
   useEffect(() => {
     if (isEdit) {
@@ -141,14 +161,6 @@ const HolidayCalendarCard = ({
       setShouldResetOff();
     }
   }, [isEdit, shouldReset, setShouldResetOn, setShouldResetOff, resetForm]);
-
-  useEffect(() => {
-    if (isEdit) {
-      if (titleRef.current) {
-        titleRef.current.focus();
-      }
-    }
-  }, [isEdit]);
 
   const handleAddHolidayItem = useCallback(() => {
     if (
@@ -164,6 +176,17 @@ const HolidayCalendarCard = ({
       });
     }
   }, [isEdit, isSubmitDisabled, selectedHolidayList, reduxAddHolidayItem]);
+
+  const [countrySearch, setCountrySearch] = useState("");
+  const countryList = useMemo(
+    () =>
+      (countrySearch === ""
+        ? initialCountryList
+        : initialCountryList.filter((option) =>
+            option.label.toLowerCase().includes(countrySearch.toLowerCase()),
+          )) as Option[],
+    [countrySearch],
+  );
 
   return (
     <Stack
@@ -344,9 +367,7 @@ const HolidayCalendarCard = ({
       </Stack>
     </Stack>
   );
-};
-
-export default HolidayCalendarCard;
+}
 
 const StyledLabel = styled("label")(({ theme }) => ({
   fontFamily: theme.typography.fontFamily,
