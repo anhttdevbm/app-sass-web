@@ -293,8 +293,11 @@ const SalesPage = () => {
           sx: {
             px: { xs: 2, md: 2 },
             overflow: "auto",
-            verticalAlign: "top",
             py: "4px",
+            padding: "25px 34px!important",
+            verticalAlign: "middle",
+            background: "#D9F0FD",
+            color: "#999999",
           },
         }}
         containerHeaderProps={{
@@ -313,6 +316,27 @@ const SalesPage = () => {
         ))}
       </TableLayout>
       <Pagination
+        sx={{
+          ".MuiPaginationItem-page.Mui-selected": {
+            background: "#14B9E5!important",
+            borderColor: "transparent",
+            color: "white",
+            borderRadius: "12px",
+          },
+          ".MuiPaginationItem-previousNext": {
+            background: "#D9F0FD!important",
+            borderColor: "transparent",
+            color: "black",
+            borderRadius: "12px",
+          },
+          ".MuiPaginationItem-page": {
+            background: "#D9F0FD!important",
+            borderColor: "transparent",
+            color: "black",
+            borderRadius: "12px",
+          },
+          
+        }}
         onChangePage={onChangePage}
         onChangeSize={onChangeSize}
         pageSize={pageSize}

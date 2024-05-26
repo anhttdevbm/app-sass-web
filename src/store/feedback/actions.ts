@@ -7,8 +7,8 @@ import StringFormat from "string-format";
 import { serverQueries } from "utils/index";
 
 export enum FeedbackStatus {
-  RESPONSED = "RESPONSED",
-  WATTING_RESPONSE = "WATTING_RESPONSE"
+  RESPONDED = "RESPONDED",
+  WATTING_RESPONDE = "WATTING_RESPONDE"
 }
 
 export type FeedbackData = {
@@ -25,13 +25,15 @@ export type FeedbackData = {
   responsed_by?: string;
   responsed_content?: string;
   responsed_time?: Date;
-  forward_email?: string[]
+  response_cc?: string[];
+  response_bcc?: string[];
 };
 
 export type Responsed_Feedback = {
   content?: string;
-  type?: string;
-  forwardEmail: string[]
+  subject?: string;
+  response_cc: string[];
+  response_bcc: string[];
 }
 
 export type GetFeedbackDataListQueries = BaseQueries_Feedback & {
@@ -72,8 +74,8 @@ export const respondToFeedback = createAsyncThunk(
       const respondToFeedback = {
         content: data.responsed_content,
         subject : data.title,
-        type: 'BCC',
-        forwardEmail: data.forward_email
+        response_cc: data.response_cc,
+        response_bcc: data.response_bcc,
       } as Responsed_Feedback
       const response = await client.post(StringFormat(Endpoint.RESPONDFEEDBACK, { id }),
         respondToFeedback,

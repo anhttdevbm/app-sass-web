@@ -7,7 +7,7 @@ import useTheme from "hooks/useTheme";
 import { renderTimeDiff } from "utils/index";
 
 interface ItemSearchChatTextProp {
-  employee: SearchChatText;
+  employee: any;
   onClick?: (event: ChangeEvent<HTMLInputElement>) => void;
   onClickItem?: () => void;
 }

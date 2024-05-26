@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "next-intl/client";
 import { useParams, useSearchParams } from "next/navigation";
 import Filter from "components/sn-project-detail/Budget/Actions/Filter";
 import { TBudgetListQueries } from "store/project/budget/action";
+import SearchIcon from "icons/SearchIcon";
 
 const Search = ({ projectId }: { projectId?: string }) => {
   const [queries, setQueries] = useState<any>({});
@@ -178,10 +179,17 @@ export const SearchWithOnlyInput = () => {
         onChangeQueries(name, value ?? "");
         onSearch();
       }}
+      startNode={""}
+      endNode={<SearchIcon style={{ color: "#0575E6" }} />}
       value={queries.search_key ?? ""}
       sx={{
-        width: { xs: is1440Larger ? 250 : 180 },
+        // width: { xs: is1440Larger ? 250 : 180 },
         minWidth: { xs: is1440Larger ? 250 : 180 },
+        height: 48,
+        width: {
+          lg: 332,
+        },
+        ".MuiInputBase-root": { height: 48, borderRadius: "100px" },
       }}
     />
   );

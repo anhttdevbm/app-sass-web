@@ -44,7 +44,7 @@ interface MessagesProps {
     filePreview?: any;
     status: DataStatus;
   };
-  focusMessage: MessageSearchInfo | null;
+  focusMessage: any | null;
   unReadMessage: UnreadUserInfo[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   wrapperMessageSx?: any;
@@ -83,6 +83,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     isChatDesktop,
     dataTransfer,
     messagePagingV2: messagePaging,
+    members,
   } = useChat();
   const { loadMoreMessages } = useChatHelpers();
 
@@ -209,6 +210,8 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     const currentObserver = observer;
     if (currentElement) {
       currentObserver.observe(currentElement);
+    } else if (!!messagePaging.next) {
+      loadMoreMessages(messagePaging.current);
     }
 
     return () => {
@@ -216,48 +219,12 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         currentObserver.unobserve(currentElement);
       }
     };
-  }, [firstElement, isChatDesktop, messagesContentRef]);
+  }, [firstElement, isChatDesktop, messagesContentRef, messagePaging]);
 
   const renderMessage = (message: MessageInfoV2) => {
-    let msg = "";
-    switch (message?.type) {
-      case "au":
-        msg = commonChatBox("chatBox.group.add", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
-        break;
-      case "ru":
-        msg = commonChatBox("chatBox.group.remove", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
-        break;
-      case "subscription-role-added":
-        msg = commonChatBox("chatBox.group.lead_trans", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
-        break;
-      case "subscription-role-removed":
-        msg = commonChatBox("chatBox.group.lead_remove", {
-          user1: message?.sender,
-          user2: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
-        break;
-      case "r":
-        msg = commonChatBox("chatBox.group.rename", {
-          user1: message?.sender,
-          name: message?.content,
-          time: getTimeStamp(message?.created_at ?? ""),
-        });
-        break;
-    }
-    return msg;
+    const senderInfo = members?.find((item) => item?.id === message?.sender);
+    const user = { user: senderInfo?.fullname || message?.sender };
+    return commonChatBox(`chatBox.group.${message?.content}`, user);
   };
 
   return (
@@ -313,7 +280,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
           return (
             <React.Fragment key={index}>
-              {["text", "file", "media"].includes(message?.type) ? (
+              {["text", "file", "media", "link"].includes(message?.type) ? (
                 <MessageLayout
                   sessionId={sessionId}
                   message={message}
@@ -332,8 +299,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                     message={message}
                     mediaListPreview={mediaListPreview}
                     isCurrentUser={isCurrentUser}
-                    isGroup={isGroup}
-                    unReadMessage={unReadMessage}
                   />
                 </MessageLayout>
               ) : (
@@ -351,7 +316,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                       display: "inline-block",
                     }}
                   >
-                    {message?.content}
+                    {renderMessage(message)}
                   </Typography>
                 </Box>
               )}
@@ -368,57 +333,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
             </React.Fragment>
           );
         })}
-        {stateMessage?.status === DataStatus.LOADING && (
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              gap: "0.5rem",
-              alignItems: "flex-end",
-              justifyContent: "flex-end",
-              "&:last-child": {
-                paddingBottom: "1rem",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "0.3rem",
-                alignItems: "flex-end",
-                borderRadius: "10px",
-              }}
-              order={2}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  justifyContent: "flex-end",
-                  gap: "0.2rem",
-                  maxWidth: "232px",
-                }}
-              >
-                {Array.from(
-                  { length: stateMessage?.filePreview?.length || 0 },
-                  (_, i) => {
-                    return (
-                      <Skeleton
-                        key={i}
-                        variant="rounded"
-                        width={112}
-                        height={112}
-                      />
-                    );
-                  },
-                )}
-              </Box>
-            </Box>
-          </Box>
-        )}
         <Box ref={messageEndRef} />
       </Box>
     </>

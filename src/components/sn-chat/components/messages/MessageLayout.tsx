@@ -1,12 +1,15 @@
 import Box, { BoxProps } from "@mui/material/Box";
 import Avatar from "components/Avatar";
 import Forward from "icons/Forward";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useChat } from "store/chat/selectors";
-import { MessageInfoV2, STEP } from "store/chat/type";
+import { CHAT_EVENT_TYPE, MessageInfoV2, STEP } from "store/chat/type";
 import "../../../Editor/style.css";
 import useTheme from "hooks/useTheme";
 import ForwardSmall from "icons/ForwardSmall";
+import { useTranslations } from "next-intl";
+import { NS_CHAT_BOX } from "constant/index";
+import { isExitsInList, useWSChat } from "store/chat/helpers";
 
 interface MessageLayoutProps {
   sessionId: string | undefined;
@@ -28,17 +31,38 @@ const MessageLayout = ({
   const isCurrentUser = message?.sender === sessionId;
   const { sx, ...props } = messageProps || {};
   const [isForward, setIsForward] = useState(true);
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
   const {
     onSetStep,
     dataTransfer,
     isChatDesktop,
     onSetDataTransfer,
     onSetDrawerType,
+    members,
   } = useChat();
+  const { sendMessage } = useWSChat();
   const { isDarkMode } = useTheme();
   const avatarPartner = dataTransfer?.members?.find(
     (mem) => mem?.id === message?.sender,
   );
+  const userForward = useCallback(() => {
+    if (isExitsInList(dataTransfer?.members, { id: message?.forwarded_from })) {
+      return dataTransfer?.members?.find(
+        (item) => item?.id === message?.forwarded_from,
+      )?.fullname;
+    }
+
+    if (isExitsInList(members, { id: message?.forwarded_from })) {
+      return members?.find((item) => item?.id === message?.forwarded_from)
+        ?.fullname;
+    } else {
+      if (!message?.forwarded_from) return;
+      sendMessage({
+        event: CHAT_EVENT_TYPE.DETAIL_MEMBER,
+        memberId: message?.forwarded_from,
+      });
+    }
+  }, [members]);
 
   return (
     <>
@@ -106,7 +130,7 @@ const MessageLayout = ({
               }}
             >
               <ForwardSmall />
-              {message?.forwarded_from}
+              {commonChatBox("chatBox.group.forwardMsg")} {userForward()}
             </Box>
             {children}
           </Box>

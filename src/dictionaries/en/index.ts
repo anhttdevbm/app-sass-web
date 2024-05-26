@@ -19,6 +19,7 @@ import {
   NS_BILLING,
   NS_APPLICANTS,
   NS_COST_RATE,
+  NS_HOLIDAY_CALENDAR,
   NS_CONTENTS,
   NS_AI_CHAT,
 } from "constant/index";
@@ -42,6 +43,7 @@ import { BudgetingLang } from "./budgeting";
 import { BillingLang } from "./billing";
 import { ApplicantsLang } from "./applicants";
 import { CostRateLang } from "./costRate";
+import { HolidayCalendarLang } from "./holidayCalendar";
 import { ContentsLang } from "./contents"
 import { AIChatLang } from "./aiChat";
 
@@ -67,5 +69,6 @@ export default {
   [NS_BILLING]: BillingLang,
   [NS_APPLICANTS]: ApplicantsLang,
   [NS_COST_RATE]: CostRateLang,
+  [NS_HOLIDAY_CALENDAR]: HolidayCalendarLang,
   [NS_CONTENTS]: ContentsLang
 };

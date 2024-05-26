@@ -207,6 +207,7 @@ export const ProjectLang: ProjectDictionary = {
       end_date: "Ngày kết thúc",
       owner: "Người tạo",
       project_id: "Dự án",
+      client: "Khách hàng",
     },
     createBudgetSuccess: "Thêm ngân sách mới thành công",
     duplicateBudgetSuccess: "Nhân bản ngân sách thành công",

@@ -77,6 +77,9 @@ export const LANDING_TRUST_CENTER_PATH = "/landing/trust-center";
 export const LANDING_AI_PATH = "/landing/ai";
 export const LANDING_PRICING_PATH = "/landing/pricing";
 
+// Meetings
+export const MEETING_HOME_PATH = "/meeting";
+
 const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,
   SIGNUP_PATH,
@@ -125,7 +128,8 @@ export const AUTHORIZED_PATHS = {
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
-    BUDGET_EXPENSE_EXPORT_PATH
+    BUDGET_EXPENSE_EXPORT_PATH,
+    MEETING_HOME_PATH
   ],
   [Permission.SA]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -179,7 +183,9 @@ export const AUTHORIZED_PATHS = {
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
-    BUDGET_EXPENSE_EXPORT_PATH
+    BUDGET_EXPENSE_EXPORT_PATH,
+
+    MEETING_HOME_PATH
   ],
   [Permission.EU]: [...AUTHORIZED_LOGGED_IN_PATHS, UPGRADE_ACCOUNT_PATH],
 };

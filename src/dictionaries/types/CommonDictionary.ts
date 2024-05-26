@@ -22,6 +22,8 @@ export type CommonDictionary = {
       datePast: string;
       gte: string;
       renameGroup: string;
+      typeError: string;
+      positiveNumber: string;
     };
     title: {
       upload: string;
@@ -42,6 +44,9 @@ export type CommonDictionary = {
     add: string;
     forward: string;
     admin: string;
+    type: {
+      number: string;
+    }
   };
   notification: {
     imageTypeInvalid: string;

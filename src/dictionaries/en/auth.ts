@@ -14,8 +14,9 @@ export const AuthLang: AuthDictionary = {
     head: {
       title: "Sign in | Taskcover",
     },
-    title: "Sign in",
-    notSignup: "or do not have an account yet?",
+    title: "Login",
+    // notSignup: "or do not have an account yet?",
+    notSignup: "Haven't got account?",
     signupNow: "Sign up now",
     forgotPassword: "Forgot password?",
     key: "Sign in",

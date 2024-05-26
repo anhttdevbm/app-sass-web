@@ -2,11 +2,7 @@ import { Skeleton, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import ChatItemLayout from "./ChatItemLayout";
 import { useChat } from "store/chat/selectors";
-import {
-  CHAT_EVENT_TYPE,
-  IChatItemInfo,
-  STEP,
-} from "store/chat/type";
+import { CHAT_EVENT_TYPE, IChatItemInfo, STEP } from "store/chat/type";
 import { useAuth } from "store/app/selectors";
 import { useEffect, useMemo, useRef, useState } from "react";
 import NewGroupIcon from "icons/NewGroupIcon";
@@ -15,6 +11,7 @@ import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import useTheme from "hooks/useTheme";
+import { useWSChatConnect } from "store/chat/ws";
 
 const ChatList = ({ onCloseChatBox }) => {
   const { user } = useAuth();
@@ -25,11 +22,13 @@ const ChatList = ({ onCloseChatBox }) => {
     conversationPagingV2: paging,
     isFetching,
     isSearchConversation,
+    onSetIsSearchConversation,
     onSetStep,
   } = useChat();
 
-  useWSChat();
-  const { searchConversation, loadMoreConversation, isGroup } = useChatHelpers();
+  useWSChatConnect();
+  const { searchConversation, loadMoreConversation, isGroup } =
+    useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
@@ -43,7 +42,7 @@ const ChatList = ({ onCloseChatBox }) => {
       const first = entries[0];
       if (first.isIntersecting) {
         scrollHeightRef.current = chatListRef.current?.scrollHeight || 0;
-        const clientHeight = (chatListRef.current?.clientHeight || 0) + 100;
+        const clientHeight = chatListRef.current?.clientHeight || 0;
 
         if (scrollHeightRef.current > clientHeight && !!paging.next) {
           loadMoreConversation(paging.current);
@@ -94,6 +93,15 @@ const ChatList = ({ onCloseChatBox }) => {
         roomId: chatInfo.id,
       });
     }
+
+    if (chatInfo?.unseen_message_count > 0) {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
+        messageId: chatInfo?.lastmsg?.id,
+      });
+    }
+
+    onSetIsSearchConversation(false);
   };
 
   useEffect(() => {
@@ -134,18 +142,18 @@ const ChatList = ({ onCloseChatBox }) => {
           alignItems: "center",
           gap: 2,
           padding: 2,
-          backgroundColor: "#3699FF",
+          backgroundColor: "#D9F0FD",
         }}
       >
-        <Typography color="white" variant="h4" onClick={handleCloseChatBox}>
+        {/* <Typography color="white" variant="h4" onClick={handleCloseChatBox}>
           {commonChatBox("chatBox.chat")}
-        </Typography>
+        </Typography> */}
 
         <TextField
           size="small"
           sx={{
             backgroundColor: "white",
-            borderRadius: "8px",
+            borderRadius: 10,
             "& .MuiInputBase-root": {
               color: "black",
               border: "1px solid transparent",
@@ -199,7 +207,7 @@ const ChatList = ({ onCloseChatBox }) => {
             fontSize: "24rem!important",
             width: "38px",
             height: "100%",
-            borderRadius: "8px",
+            borderRadius: 10,
           }}
         >
           <NewGroupIcon />
@@ -243,7 +251,7 @@ const ChatList = ({ onCloseChatBox }) => {
                 return (
                   <ChatItemLayout
                     chatInfo={item}
-                    sessionId={user?.["username"]}
+                    sessionId={user?.["id"]}
                     key={index}
                     onClickConvention={handleClickConversation}
                     chatItemProps={{

@@ -24,8 +24,8 @@ import { useChat } from "store/chat/selectors";
 import { debounce } from "utils/index";
 import { Text } from "components/shared";
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
-import { RoomType } from "store/chat/type";
-import { isOwnerGroup, useChatHelpers } from "store/chat/helpers";
+import { CHAT_EVENT_TYPE, RoomType } from "store/chat/type";
+import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -48,13 +48,14 @@ const RoomHeader = () => {
     selectSearchIndex,
   } = useChat();
   const { isGroup } = useChatHelpers();
+  const { sendMessage } = useWSChat();
   const [search, setSearchText] = useState({
     text: "",
     isOpen: false,
   });
   const { user } = useAuth();
   const inputRef = useRef<any>(null);
-  const isOwner = isOwnerGroup(currentConversation?.creator, user?.id);
+  const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
       ...prev,
@@ -67,17 +68,20 @@ const RoomHeader = () => {
   const canAddMember = () => {
     return (
       (isGroup(currentConversation?.type) && isOwner) ||
-      currentConversation?.admins?.find((item) => item?.id === user?.id)
+      currentConversation?.admins?.find((item) => item === user?.id)
     );
   };
 
   const handleSearchChatText = useCallback(async () => {
     try {
-      await onSearchChatText({
-        text: search?.text,
-        type: currentConversation?.t as RoomType,
-        roomId: currentConversation?._id,
-      });
+      if (search.isOpen && search.text) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEARCH,
+          roomId: roomId,
+          content: search?.text,
+          page: 1,
+        });
+      }
     } catch (error) {
       onAddSnackbar(
         typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),

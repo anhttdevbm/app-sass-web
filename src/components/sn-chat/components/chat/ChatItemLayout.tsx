@@ -5,9 +5,11 @@ import ChatItemRender from "./ChatItemRender";
 import { renderTimeDiff } from "utils/index";
 import useTheme from "hooks/useTheme";
 import { useMemo } from "react";
+import { TimeMessage } from "components/sn-chat/components/messages/MessageContent";
+import { useAuth } from "store/app/selectors";
 
 interface ChatItemProp {
-  sessionId: string;
+  sessionId: string | undefined;
   chatInfo: IChatItemInfo;
   chatItemProps?: BoxProps;
   onClickConvention: (data: IChatItemInfo) => void;
@@ -20,8 +22,9 @@ const ChatItemLayout = ({
   onClickConvention,
   isActive,
 }: ChatItemProp) => {
+  const { user } = useAuth();
   const { sx, ...props } = chatItemProps || {};
-  const { lastMessage } = chatInfo || {};
+  const { lastmsg_at, unseen_message_count, owner, lastmsg } = chatInfo || {};
   const { isDarkMode } = useTheme();
 
   const renderColorByType = useMemo(() => {
@@ -41,6 +44,7 @@ const ChatItemLayout = ({
         padding: "8px 0px",
         display: "flex",
         alignItems: "center",
+        justifyContent: "space-between",
         gap: "1rem",
         marginBottom: 1,
         cursor: "pointer",
@@ -55,14 +59,44 @@ const ChatItemLayout = ({
       {...props}
     >
       <ChatItemRender chatInfo={chatInfo} sessionId={sessionId} />
-      <Typography
-        variant="caption"
-        color="#999999"
-        ml="auto"
-        whiteSpace="nowrap"
-      >
-        {renderTimeDiff(lastMessage?.ts)}
-      </Typography>
+      <Box>
+        <Typography
+          variant="caption"
+          color="#999999"
+          ml="auto"
+          whiteSpace="nowrap"
+        >
+          {renderTimeDiff(lastmsg_at)}
+        </Typography>
+        <br />
+        {unseen_message_count > 0 ? (
+          <Typography
+            variant="caption"
+            color="#999999"
+            ml="auto"
+            whiteSpace="nowrap"
+            sx={{
+              width: "20px",
+              height: "20px",
+              display: "flex",
+              backgroundColor: "red",
+              color: "white",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "50%",
+            }}
+          >
+            {unseen_message_count >= 10 ? "9+" : unseen_message_count}
+          </Typography>
+        ) : (
+          <TimeMessage
+            isShowTime={false}
+            isCurrentUser={lastmsg?.sender?.id === user?.id}
+            isRead={lastmsg?.seen_user_count > 0}
+            time={lastmsg_at}
+          />
+        )}
+      </Box>
     </Box>
   );
 };

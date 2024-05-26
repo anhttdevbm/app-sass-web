@@ -14,7 +14,7 @@ const Banner = () => {
       flex={1}
       sx={{
         background:
-          "url('/images/img-auth-banner.webp') no-repeat center center",
+          "url('/images/img-signin-background.svg') no-repeat center center",
         backgroundSize: "cover",
       }}
       display={{ xs: "none", sm: "flex" }}

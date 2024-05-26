@@ -2,13 +2,13 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import HolidayCalendar from "components/sn-holiday-calendar";
-import { NS_ACCOUNT } from "constant/index";
+import { NS_HOLIDAY_CALENDAR } from "constant/index";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations(NS_ACCOUNT);
+  const t = await getTranslations(NS_HOLIDAY_CALENDAR);
 
   return {
-    title: t("accountInformation.head.title"),
+    title: t("head.title"),
   };
 }
 

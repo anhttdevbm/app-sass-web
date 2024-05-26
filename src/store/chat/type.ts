@@ -43,6 +43,18 @@ export interface IChatInfo {
   msg_count: number;
   lastmsg_at: string;
   admins: string[];
+  unseen_message_count: number;
+  lastmsg: {
+    id: string;
+    content: string;
+    type: string;
+    seen_user_count: number;
+    sender: {
+      fullname: string;
+      id: string;
+      username: string;
+    };
+  };
 }
 
 export interface IMembersGroup {
@@ -155,6 +167,7 @@ export interface MessageInfoV2 {
   created_at: string;
   update_at: string;
   room: string;
+  seen_by: string[];
 }
 
 export interface UserOnlinePage {
@@ -217,6 +230,7 @@ interface PagingV2 {
 }
 
 export interface ChatState {
+  wsClient: WebSocket | null;
   convention: IChatItemInfo[];
   mediaListConversation: MediaPreviewItem[];
   conversationStatus: DataStatus;
@@ -239,6 +253,7 @@ export interface ChatState {
   messagePaging: Paging & { isRefetchPage?: boolean; pageSizeDefault: number };
   messages: MessageInfoV2[];
   messagePagingV2: PagingV2;
+  members: IMembersGroup[];
   //partner info
   partnerInfo: UserInfo | null;
   partnerInfoStatus: DataStatus;
@@ -252,7 +267,7 @@ export interface ChatState {
   chatFiles: IChatFile[];
   chatFilesStatus: DataStatus;
   //ListSearchConversation
-  listSearchMessage: MessageSearchInfo[];
+  listSearchMessage: MessageInfoV2[];
   statusListSearchMessage: DataStatus;
   //media list
   mediaList: MediaType[];
@@ -262,7 +277,7 @@ export interface ChatState {
     filePreview?: File | File[] | null;
     status: DataStatus;
   };
-  stateSearchMessage: MessageSearchInfo | null;
+  stateSearchMessage: MessageInfoV2 | null;
   unReadMessage: UnReadMessageInfo | null;
   //UnReadMessage
   statusUnReadMessage: DataStatus;
@@ -548,6 +563,8 @@ export const CHAT_EVENT_TYPE = {
   MESSAGE_SEND_TEXT: "message.text.send",
   MESSAGE_SEND_MEDIA: "message.media.send",
   MESSAGE_SEND_FILE: "message.file.send",
+  MESSAGE_SEEN: "message.seen",
+  MESSAGE_FORWARD: "message.forward",
   MESSAGE_SEARCH: "message.search",
   MESSAGE_LOCATION: "message.location",
 };
@@ -562,6 +579,7 @@ export const MESSAGE_TYPE = {
   MEDIA: "media",
   FILE: "file",
   LINK: "link",
+  SYSTEM: "system",
 };
 
 export const IMAGES_EXTENSION = ["png", "jpeg", "jpg", "ico", "gif"];

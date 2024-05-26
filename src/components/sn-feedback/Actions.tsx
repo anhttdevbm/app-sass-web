@@ -182,8 +182,8 @@ const Actions = () => {
 
 export default memo(Actions);
 const PAYMENT_OPTIONS = [
-  { label: TEXT_PAY_STATUS_FEEDBACK[FeedbackStatus.RESPONSED], value: FeedbackStatus.RESPONSED },
+  { label: TEXT_PAY_STATUS_FEEDBACK[FeedbackStatus.RESPONDED], value: FeedbackStatus.RESPONDED },
 
-  { label: TEXT_PAY_STATUS_FEEDBACK[FeedbackStatus.WATTING_RESPONSE], value: FeedbackStatus.WATTING_RESPONSE },
+  { label: TEXT_PAY_STATUS_FEEDBACK[FeedbackStatus.WATTING_RESPONDE], value: FeedbackStatus.WATTING_RESPONDE },
 
 ];

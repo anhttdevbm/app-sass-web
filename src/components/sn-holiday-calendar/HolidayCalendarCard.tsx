@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 
-import { NS_COST_RATE, NS_COMMON } from "constant/index";
+import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
 import {
   NewInput as Input,
@@ -19,8 +19,10 @@ import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import TrashIcon from "icons/TrashAltIcon";
+import { useSnackbar } from "store/app/selectors";
 import { HolidayCalendar } from "store/holidayCalendar/reducer";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import { getMessageErrorByAPI } from "utils/index";
 import HolidayItems from "./HolidayItems";
 
 type HolidayCalendarCardProps = {
@@ -33,7 +35,8 @@ const HolidayCalendarCard = ({
   handleOpenModal,
 }: HolidayCalendarCardProps) => {
   const commonT = useTranslations(NS_COMMON);
-  const costRateT = useTranslations(NS_COST_RATE);
+  const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
+  const { onAddSnackbar } = useSnackbar();
   const [isEdit, , , toggleEdit] = useToggle(false);
   const {
     status,
@@ -44,6 +47,26 @@ const HolidayCalendarCard = ({
 
   const [selectedHolidayList, setSelectedHolidayList] = useState("");
   const [shouldReset, setShouldResetOn, setShouldResetOff] = useToggle(false);
+
+  useEffect(() => {
+    const currentList = holidayCalendar.list.find(
+      (l) => +l.year === new Date().getFullYear(),
+    );
+    if (currentList) {
+      setSelectedHolidayList(currentList.id);
+    }
+  }, [holidayCalendar]);
+
+  const listYears = useMemo(
+    () =>
+      holidayCalendar.list
+        .map((l) => ({
+          label: `${l.year}`,
+          value: l.id,
+        }))
+        .sort((l1, l2) => +l1.label - +l2.label),
+    [holidayCalendar],
+  );
 
   const initialValues = useMemo(
     () => ({
@@ -67,7 +90,6 @@ const HolidayCalendarCard = ({
     handleSubmit,
     handleChange,
     handleBlur: formikHandleBlur,
-    touchedError,
     isSubmitDisabled,
   } = useFormik({
     initialValues,
@@ -154,8 +176,12 @@ const HolidayCalendarCard = ({
             sx={{ color: "#FF4141" }}
             disabled={status === DataStatus.LOADING || isSubmitDisabled}
             onClick={async () => {
-              await handleDeleteHolidayCalendar(holidayCalendar.id);
-              // setShouldFetchOn();
+              try {
+                await handleDeleteHolidayCalendar(holidayCalendar.id);
+                // setShouldFetchOn();
+              } catch (error) {
+                onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+              }
             }}
           >
             <TrashIcon />
@@ -177,7 +203,7 @@ const HolidayCalendarCard = ({
                 { label: "Viet Nam", value: "vietnam" },
                 { label: "Japan", value: "japan" },
               ]}
-              title="Country"
+              title={holidayCalendarT("form.country")}
               fullWidth
               name="country"
               disabled={!isEdit || isSubmitDisabled}
@@ -192,11 +218,8 @@ const HolidayCalendarCard = ({
 
           <Grid item xs={11} sm={4}>
             <Select
-              options={holidayCalendar.list.map((l) => ({
-                label: `${l.year}`,
-                value: l.id,
-              }))}
-              title="Year"
+              options={listYears}
+              title={holidayCalendarT("form.year")}
               fullWidth
               name="year"
               disabled={!isEdit || isSubmitDisabled}
@@ -245,7 +268,7 @@ const HolidayCalendarCard = ({
         >
           <AddCircleGradientIcon />
           <Text ml={1.5} color="#0575E6" fontWeight={700}>
-            Add holiday item
+            {holidayCalendarT("form.addHolidayItem")}
           </Text>
         </Stack>
       </Stack>

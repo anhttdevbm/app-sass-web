@@ -38,6 +38,11 @@ export const ItemWithProject = ({
       {
         value: (
           <Checkbox
+            sx={{
+              "&.Mui-checked": {
+                color: "#0575E6",
+              },
+            }}
             checked={idSelecteds.length === budgets.length}
             onChange={() => {
               if (idSelecteds.length === budgets.length) {
@@ -138,6 +143,11 @@ export const ItemWithProject = ({
           <TableRow key={budget.id}>
             <BodyCell sx={{ pl: { xs: 0.5, md: 2 }, ...getXsCell(0) }}>
               <Checkbox
+                sx={{
+                  "&.Mui-checked": {
+                    color: "#0575E6",
+                  },
+                }}
                 checked={idSelecteds.indexOf(budget.id) !== -1}
                 onChange={() => {
                   selectBudget(budget.id);

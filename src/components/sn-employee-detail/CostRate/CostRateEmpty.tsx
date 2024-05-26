@@ -91,7 +91,7 @@ const CostRateEmpty = () => {
 
           <DefaultPopupLayout
             open={isModalOpen}
-            title="Add New Cost Rate"
+            title={costRateT("empty.addCostRate")}
             onClose={() => {
               closeModal();
             }}

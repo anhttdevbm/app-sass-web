@@ -37,27 +37,24 @@ const Wrapper = (props: WrapperProps) => {
   return (
     <Stack
       flex={1}
-      mx={{ sm: 6, lg: 8 }}
-      my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
+      mx={{ sm: 0}}
+      my={{ sm: 0}}
       direction="row"
       sx={{
-        background: {
-          xs: "url('/images/img-auth-banner.webp') no-repeat center center",
-          sm: "none",
-        },
-
+        background:"url('/images/img-signin-background.svg') no-repeat center center #f7f7fd",
         backgroundSize: { xs: "cover", sm: undefined },
       }}
       height={({ spacing }) => ({
         xs: "calc(var(--vh, 1vh) * 100)",
-        sm: `calc(calc(var(--vh, 1vh) * 100) - ${spacing(
-          (isSmallHeight ? 3 : 6) * 2,
-        )})`,
-        lg: `calc(calc(var(--vh, 1vh) * 100) - ${spacing(
-          (isSmallHeight ? 3 : 8) * 2,
-        )})`,
+        // sm: `calc(calc(var(--vh, 1vh) * 100) - ${spacing(
+        //   (isSmallHeight ? 3 : 6) * 2,
+        // )})`,
+        sm: `100vh`,
+        // lg: `calc(calc(var(--vh, 1vh) * 100) - ${spacing(
+        //   (isSmallHeight ? 3 : 8) * 2,
+        // )})`,
       })}
-      bgcolor={{ sm: "common.white" }}
+      // bgcolor={{ sm: "common.white" }}
       justifyContent={{ xs: "center", sm: "initial" }}
       alignItems={{ xs: "center", sm: "initial" }}
     >
