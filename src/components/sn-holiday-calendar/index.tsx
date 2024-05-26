@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { FormControl } from "@mui/base/FormControl";
+import { styled } from "@mui/material/styles";
 import { useTranslations } from "next-intl";
 import fuzzysort from "fuzzysort";
 import dayjs from "dayjs";
@@ -10,16 +10,17 @@ import * as Yup from "yup";
 
 import { DataStatus } from "constant/enums";
 import { NS_COMMON, NS_HOLIDAY_CALENDAR } from "constant/index";
-import { NewInput as Input, Text } from "components/shared";
+import { NewInput, Text } from "components/shared";
 import FormLayout from "components/NewFormLayout";
 import useToggle from "hooks/useToggle";
 import useWindowSize from "hooks/useWindowSize";
 import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
+import SearchIcon from "icons/SearchIcon";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import { HolidayCalendar as HolidayCalendarType } from "store/holidayCalendar/reducer";
 import HolidayCalendarCard from "./HolidayCalendarCard";
-import Search from "./components/Search";
+import Input from "./components/Input";
 
 const HolidayCalendar = () => {
   const commonT = useTranslations(NS_COMMON);
@@ -220,15 +221,33 @@ const HolidayCalendar = () => {
             justifyContent: "end",
           }}
         >
-          <FormControl
+          <Input
             value={holidayCalendarSearchInput}
             onChange={handleHolidayCalendarSearchChange}
-          >
-            <Search
-              placeholder={holidayCalendarT("form.searchHere")}
-              rootSx={{ maxWidth: { xs: "initial", sm: "600px" } }}
-            />
-          </FormControl>
+            name="holiday-calendar-search"
+            placeholder={holidayCalendarT("form.searchHere")}
+            endAdornment={
+              <SearchIcon
+                sx={{
+                  flexGrow: 0,
+                  flexShrink: 0,
+                  fontSize: "16px",
+                  marginRight: "12px",
+                  color: "#0575E6",
+                  cursor: "pointer",
+                }}
+              />
+            }
+            rootSx={{
+              maxWidth: { xs: "initial", sm: "600px" },
+              width: "initial",
+              backgroundColor: "white",
+            }}
+            sx={{
+              padding: "12px 24px",
+              color: "rgba(0, 0, 0, 50%)",
+            }}
+          />
         </Box>
         <Box
           component="button"
@@ -333,7 +352,7 @@ const HolidayCalendar = () => {
           },
         }}
       >
-        <Input
+        <NewInput
           title={holidayCalendarT("form.year")}
           fullWidth
           name="year"
