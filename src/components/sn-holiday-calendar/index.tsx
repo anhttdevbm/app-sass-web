@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import { FormControl } from "@mui/base/FormControl";
 import { useTranslations } from "next-intl";
 import fuzzysort from "fuzzysort";
+import dayjs from "dayjs";
 import * as Yup from "yup";
 
 import { DataStatus } from "constant/enums";
@@ -166,10 +167,18 @@ const HolidayCalendar = () => {
   const filteredHolidayCalendars = useMemo(
     () =>
       fuzzysort
-        .go(holidayCalendarSearchInput, holidayCalendars, {
-          keys: ["name", "country"],
-          all: true,
-        })
+        .go(
+          holidayCalendarSearchInput,
+          [...holidayCalendars].sort(
+            (c1, c2) =>
+              dayjs(c2.created_time).get("millisecond") -
+              dayjs(c1.created_time).get("millisecond"),
+          ),
+          {
+            keys: ["name", "country"],
+            all: true,
+          },
+        )
         .map((r) => r.obj),
     [holidayCalendarSearchInput, holidayCalendars],
   );
