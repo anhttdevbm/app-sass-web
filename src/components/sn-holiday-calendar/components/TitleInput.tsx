@@ -33,9 +33,11 @@ export default React.forwardRef(function TitleInput(
   const [currentWidth, setCurrentWidth] = React.useState(0);
   React.useEffect(() => {
     if (textRef.current) {
-      setCurrentWidth(getBoundingClientRect(textRef.current).width);
+      setCurrentWidth(
+        value ? getBoundingClientRect(textRef.current).width : MIN_WIDTH,
+      );
     }
-  }, [isEdit]);
+  }, [isEdit, value]);
 
   return isEdit ? (
     <StyledFormControl
@@ -63,11 +65,13 @@ export default React.forwardRef(function TitleInput(
   );
 });
 
-const StyledFormControl = styled(FormControl)(
-  ({ width }: { width: number }) => ({
-    width: `${width}px`,
-  }),
-);
+const MIN_WIDTH = 280;
+
+const StyledFormControl = styled(FormControl, {
+  shouldForwardProp: (prop) => prop !== "width",
+})<{ width: number }>(({ width }) => ({
+  width: `min(${width}px, calc(100% - 70px))`,
+}));
 
 const StyledRoot = styled("div")({
   display: "flex",

@@ -17,6 +17,7 @@ import useWindowSize from "hooks/useWindowSize";
 import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import { HolidayCalendar as HolidayCalendarType } from "store/holidayCalendar/reducer";
 import HolidayCalendarCard from "./HolidayCalendarCard";
 import Search from "./components/Search";
 
@@ -28,7 +29,6 @@ const HolidayCalendar = () => {
     holidayCalendars,
     status,
     handleGetAllHolidayCalendar,
-    handleAddHolidayCalendar,
     handleGetAllHolidayList,
     handleAddHolidayList,
   } = useHolidayCalendar();
@@ -183,6 +183,16 @@ const HolidayCalendar = () => {
     [holidayCalendarSearchInput, holidayCalendars],
   );
 
+  const [
+    isNewHolidayCalendarShown,
+    showNewHolidayCalendar,
+    hideNewHolidayCalendar,
+  ] = useToggle(false);
+
+  const handleAddHolidayCalendar = useCallback(() => {
+    showNewHolidayCalendar();
+  }, [showNewHolidayCalendar]);
+
   return (
     <Box
       ref={containerRef}
@@ -234,13 +244,7 @@ const HolidayCalendar = () => {
             borderRadius: "24px",
             cursor: "pointer",
           }}
-          onClick={async () => {
-            await handleAddHolidayCalendar({
-              name: "Holidays in Viet Nam",
-              country: "Viet Nam",
-              province: "",
-            });
-          }}
+          onClick={handleAddHolidayCalendar}
         >
           <Box
             position="absolute"
@@ -273,11 +277,35 @@ const HolidayCalendar = () => {
           </Text>
         </Box>
 
+        {isNewHolidayCalendarShown ? (
+          <HolidayCalendarCard
+            key="new-calendar"
+            isNew={true}
+            holidayCalendar={
+              {
+                id: "new-calendar",
+                name: "",
+                country: "",
+                province: "",
+                list: [],
+                company: "",
+                created_time: "",
+                updated_time: "",
+              } as HolidayCalendarType
+            }
+            handleOpenModal={handleOpenModal}
+            hideNewHolidayCalendar={hideNewHolidayCalendar}
+          />
+        ) : (
+          <></>
+        )}
         {filteredHolidayCalendars.map((calendar) => (
           <HolidayCalendarCard
             key={calendar.id}
+            isNew={false}
             holidayCalendar={calendar}
             handleOpenModal={handleOpenModal}
+            hideNewHolidayCalendar={() => undefined}
           />
         ))}
       </Stack>

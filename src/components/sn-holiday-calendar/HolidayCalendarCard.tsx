@@ -31,20 +31,25 @@ import Select from "./components/Select";
 import Input from "./components/Input";
 
 type HolidayCalendarCardProps = {
+  isNew?: boolean;
   holidayCalendar: HolidayCalendar;
   handleOpenModal: (id: string) => void;
+  hideNewHolidayCalendar: () => void;
 };
 
 // MAIN COMPONENT
 const HolidayCalendarCard = ({
+  isNew = false,
   holidayCalendar,
   handleOpenModal,
+  hideNewHolidayCalendar,
 }: HolidayCalendarCardProps) => {
   const commonT = useTranslations(NS_COMMON);
   const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
   const { onAddSnackbar } = useSnackbar();
 
-  const { handleUpdateHolidayCalendar } = useHolidayCalendar();
+  const { handleAddHolidayCalendar, handleUpdateHolidayCalendar } =
+    useHolidayCalendar();
 
   const initialValues = useMemo(
     () => ({
@@ -73,14 +78,28 @@ const HolidayCalendarCard = ({
   );
 
   const onSubmit = useCallback(
-    async (values: typeof initialValues) => {
+    async (values: typeof initialValues, { resetForm }) => {
       try {
-        await handleUpdateHolidayCalendar({ ...values, province: "" });
+        if (isNew) {
+          const { name, country } = values;
+          await handleAddHolidayCalendar({ name, country, province: "" });
+          resetForm();
+          hideNewHolidayCalendar();
+        } else {
+          await handleUpdateHolidayCalendar({ ...values, province: "" });
+        }
       } catch (error) {
         onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
       }
     },
-    [commonT, handleUpdateHolidayCalendar, onAddSnackbar],
+    [
+      commonT,
+      handleAddHolidayCalendar,
+      handleUpdateHolidayCalendar,
+      hideNewHolidayCalendar,
+      isNew,
+      onAddSnackbar,
+    ],
   );
 
   return (
@@ -92,8 +111,10 @@ const HolidayCalendarCard = ({
     >
       {(formik) => (
         <HolidayCalendarCardForm
+          isNew={isNew}
           holidayCalendar={holidayCalendar}
           handleOpenModal={handleOpenModal}
+          hideNewHolidayCalendar={hideNewHolidayCalendar}
           formik={formik}
         />
       )}
@@ -105,8 +126,10 @@ export default HolidayCalendarCard;
 
 // MAIN RENDERING COMPONENT
 function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
+  isNew,
   holidayCalendar,
   handleOpenModal,
+  hideNewHolidayCalendar,
   formik,
 }: HolidayCalendarCardProps & { formik: FormikProps<Values> }) {
   const commonT = useTranslations(NS_COMMON);
@@ -121,6 +144,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
     handleBlur,
     isSubmitting,
     submitForm,
+    validateForm,
   } = formik;
   const { isSubmitDisabled, touchedErrors } = useAdditionalFormikUtils(formik);
 
@@ -167,12 +191,19 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
 
   const toggleEdit = useCallback(async () => {
     if (isEdit) {
-      await submitForm();
-      setEditOff();
+      validateForm();
+      if (!isSubmitDisabled) {
+        try {
+          await submitForm();
+          setEditOff();
+        } catch (error) {
+          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+        }
+      }
     } else {
       setEditOn();
     }
-  }, [submitForm, isEdit, setEditOff, setEditOn]);
+  }, [isEdit, validateForm, isSubmitDisabled, submitForm, setEditOff, onAddSnackbar, commonT, setEditOn]);
 
   useEffect(() => {
     if (isEdit) {
@@ -254,11 +285,16 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
             <IconButton
               size="small"
               sx={{ color: "#FF4141" }}
-              disabled={status === DataStatus.LOADING || isSubmitDisabled}
+              disabled={status === DataStatus.LOADING}
               onClick={async () => {
                 try {
-                  await handleDeleteHolidayCalendar(holidayCalendar.id);
-                  // setShouldFetchOn();
+                  if (isNew) {
+                    resetForm();
+                    hideNewHolidayCalendar();
+                  } else {
+                    await handleDeleteHolidayCalendar(holidayCalendar.id);
+                    // setShouldFetchOn();
+                  }
                 } catch (error) {
                   onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
                 }
