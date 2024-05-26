@@ -7,6 +7,7 @@ import { styled } from "@mui/material/styles";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import { Formik, FormikProps, FormikValues } from "formik";
+import * as Yup from "yup";
 
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
@@ -34,10 +35,15 @@ type HolidayCalendarCardProps = {
   handleOpenModal: (id: string) => void;
 };
 
+// MAIN COMPONENT
 const HolidayCalendarCard = ({
   holidayCalendar,
   handleOpenModal,
 }: HolidayCalendarCardProps) => {
+  const commonT = useTranslations(NS_COMMON);
+  const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
+  const { onAddSnackbar } = useSnackbar();
+
   const { handleUpdateHolidayCalendar } = useHolidayCalendar();
 
   const initialValues = useMemo(
@@ -49,16 +55,38 @@ const HolidayCalendarCard = ({
     [holidayCalendar],
   );
 
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        name: Yup.string().required(
+          commonT("form.error.required", {
+            name: holidayCalendarT("form.name"),
+          }),
+        ),
+        country: Yup.string().required(
+          commonT("form.error.required", {
+            name: holidayCalendarT("form.country"),
+          }),
+        ),
+      }),
+    [commonT, holidayCalendarT],
+  );
+
   const onSubmit = useCallback(
     async (values: typeof initialValues) => {
-      await handleUpdateHolidayCalendar({ ...values, province: "" });
+      try {
+        await handleUpdateHolidayCalendar({ ...values, province: "" });
+      } catch (error) {
+        onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+      }
     },
-    [handleUpdateHolidayCalendar],
+    [commonT, handleUpdateHolidayCalendar, onAddSnackbar],
   );
 
   return (
     <Formik
       initialValues={initialValues}
+      validationSchema={validationSchema}
       onSubmit={onSubmit}
       enableReinitialize={true}
     >
@@ -75,6 +103,7 @@ const HolidayCalendarCard = ({
 
 export default HolidayCalendarCard;
 
+// MAIN RENDERING COMPONENT
 function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
   holidayCalendar,
   handleOpenModal,
@@ -93,7 +122,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
     isSubmitting,
     submitForm,
   } = formik;
-  const { isSubmitDisabled } = useAdditionalFormikUtils(formik);
+  const { isSubmitDisabled, touchedErrors } = useAdditionalFormikUtils(formik);
 
   const {
     status,
@@ -211,9 +240,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
             onBlur={handleBlur}
             value={values.name}
             placeholder={holidayCalendarT("placeholder.holidayCalendarName")}
-            // error={commonT(touchedError("name"), {
-            //   name: costRateT("empty.form.note"),
-            // })}
+            error={!!touchedErrors["name"]}
             inputRef={titleRef}
           />
           <IconButtonContainer>
