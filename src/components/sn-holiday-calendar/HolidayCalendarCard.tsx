@@ -206,7 +206,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
           <TitleInput
             name="name"
             isEdit={isEdit}
-            disabled={!isEdit || isSubmitDisabled}
+            disabled={!isEdit}
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.name}
@@ -259,7 +259,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                 title={holidayCalendarT("form.country")}
                 name="country"
                 rootSx={{ width: "100%" }}
-                disabled={!isEdit || isSubmitDisabled}
+                disabled={!isEdit}
                 onChange={(_, newVal) => {
                   setFieldValue("country", newVal);
                 }}
@@ -300,7 +300,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                 title={holidayCalendarT("form.year")}
                 name="year"
                 rootSx={{ width: "100%" }}
-                disabled={!isEdit || isSubmitDisabled}
+                disabled={!isEdit}
                 onChange={(_, newVal) => {
                   setSelectedHolidayList(newVal as string);
                 }}
@@ -347,24 +347,26 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
         holidayListId={selectedHolidayList}
       />
 
-      <Stack direction="row" mt={2} justifyContent="end">
-        <Stack
-          direction="row"
-          sx={{ cursor: "pointer" }}
-          onClick={() => {
-            if (
-              !(status === DataStatus.LOADING || isSubmitDisabled || !isEdit)
-            ) {
-              handleAddHolidayItem();
-            }
-          }}
-        >
-          <AddCircleGradientIcon />
-          <Text ml={1.5} color="#0575E6" fontWeight={700}>
-            {holidayCalendarT("form.addHolidayItem")}
-          </Text>
+      {selectedHolidayList && selectedHolidayList.length > 0 ? (
+        <Stack direction="row" mt={2} justifyContent="end">
+          <Stack
+            direction="row"
+            sx={{ cursor: "pointer" }}
+            onClick={() => {
+              if (!(status === DataStatus.LOADING || !isEdit)) {
+                handleAddHolidayItem();
+              }
+            }}
+          >
+            <AddCircleGradientIcon />
+            <Text ml={1.5} color="#0575E6" fontWeight={700}>
+              {holidayCalendarT("form.addHolidayItem")}
+            </Text>
+          </Stack>
         </Stack>
-      </Stack>
+      ) : (
+        <></>
+      )}
     </Stack>
   );
 }
