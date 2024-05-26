@@ -22,6 +22,9 @@ export default React.forwardRef(function Select<
     topItem?: React.ReactNode;
     bottomItem?: React.ReactNode;
     rootSx?: SxProps<Theme>;
+    optionSx?: SxProps<Theme>;
+    listboxSx?: SxProps<Theme>;
+    popupSx?: SxProps<Theme>;
   },
   ref: React.ForwardedRef<HTMLButtonElement>,
 ) {
@@ -31,6 +34,9 @@ export default React.forwardRef(function Select<
     bottomItem,
     endAdornment = <CircleChevronDownIcon sx={{ fontSize: "18px" }} />,
     rootSx,
+    optionSx,
+    listboxSx,
+    popupSx,
     ...rest
   } = props;
 
@@ -69,12 +75,14 @@ export default React.forwardRef(function Select<
     listbox: {
       topItem,
       bottomItem,
+      sx: [...(Array.isArray(listboxSx) ? listboxSx : [listboxSx])],
     },
     popup: {
       sx: [
         {
           minWidth: `${popupMinWidth}px`,
         },
+        ...(Array.isArray(popupSx) ? popupSx : [popupSx]),
       ],
     },
   };
@@ -82,7 +90,11 @@ export default React.forwardRef(function Select<
   return (
     <BaseSelect {...rest} ref={ref} slots={slots} slotProps={slotProps}>
       {options.map((o) => (
-        <StyledOption key={o.value} value={o.value}>
+        <StyledOption
+          key={o.value}
+          value={o.value}
+          sx={[...(Array.isArray(optionSx) ? optionSx : [optionSx])]}
+        >
           {o.label}
         </StyledOption>
       ))}
@@ -112,18 +124,24 @@ const CustomListbox = (
   props: React.HTMLAttributes<HTMLUListElement> & {
     topItem?: React.ReactNode;
     bottomItem?: React.ReactNode;
+    sx?: SxProps<Theme>;
   },
 ) => {
-  const { children, topItem, bottomItem, ...rest } = props;
-  const sx: SxProps = {
-    ...(topItem ? { marginTop: "12px" } : {}),
-    ...(bottomItem ? { marginBottom: "12px" } : {}),
-  };
+  const { children, topItem, bottomItem, sx, ...rest } = props;
 
   return (
     <>
       {topItem}
-      <StyledUList sx={sx} {...rest}>
+      <StyledUList
+        sx={[
+          {
+            ...(topItem ? { marginTop: "12px" } : {}),
+            ...(bottomItem ? { marginBottom: "12px" } : {}),
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
+        {...rest}
+      >
         {children}
       </StyledUList>
       {bottomItem}

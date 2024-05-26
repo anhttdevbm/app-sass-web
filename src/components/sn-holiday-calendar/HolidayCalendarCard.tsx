@@ -477,6 +477,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                 title={holidayCalendarT("form.year")}
                 name="year"
                 rootSx={{ width: "100%" }}
+                optionSx={{ px: "12px" }}
                 disabled={!isEdit}
                 onChange={(_, newVal) => {
                   setSelectedHolidayListId(newVal as string);
@@ -490,9 +491,10 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                         disabled={isSubmitDisabled}
                         pending={isSubmitting}
                         sx={{
+                          mx: 2,
                           "&.MuiButton-sizeMedium": {
                             px: 3,
-                            py: 0.5,
+                            py: 0.75,
                           },
                           "& .MuiButton-startIcon": {
                             display: "flex",
