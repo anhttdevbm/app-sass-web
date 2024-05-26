@@ -278,6 +278,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
   const formik = useFormikContext<Values>();
   const {
     values,
+    touched,
     resetForm,
     handleChange,
     setFieldValue,
@@ -480,6 +481,9 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                 optionSx={{ px: "12px" }}
                 disabled={!isEdit}
                 onChange={(_, newVal) => {
+                  if (Object.values(touched).length > 0) {
+                    submitForm();
+                  }
                   setSelectedHolidayListId(newVal as string);
                 }}
                 value={selectedHolidayListId}
