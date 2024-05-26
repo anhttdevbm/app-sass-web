@@ -2,14 +2,17 @@ import * as React from "react";
 import {
   Input as BaseInput,
   InputProps as BaseInputProps,
+  inputClasses as baseInputClasses,
 } from "@mui/base/Input";
-import { styled, SxProps } from "@mui/material/styles";
+import { styled, SxProps, Theme } from "@mui/material/styles";
 
-type InputProps = {
+export type InputProps = {
   inputRef?: React.ForwardedRef<HTMLInputElement>;
-  sx?: SxProps;
-  rootSx?: SxProps;
+  sx?: SxProps<Theme>;
+  rootSx?: SxProps<Theme>;
 } & BaseInputProps;
+
+export const inputClasses = baseInputClasses;
 
 export default React.forwardRef(function Input(
   props: InputProps,
@@ -54,8 +57,6 @@ const StyledInput = styled("input")(({ theme }) => ({
   outline: "none",
   padding: "6px 16px",
   fontFamily: theme.typography.fontFamily,
-  fontSize: "13px",
-  fontWeight: 600,
   color: "rgba(122, 134, 154, 1)",
   "&::placeholder": {
     color: "rgba(122, 134, 154, 0.6)",

@@ -11,7 +11,8 @@ import {
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import { styled } from "@mui/material/styles";
+import { styled, SxProps, Theme } from "@mui/material/styles";
+import DatePicker from "react-datepicker";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import { FieldArray, Formik, FormikValues, useFormikContext } from "formik";
@@ -20,16 +21,12 @@ import * as Yup from "yup";
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
 import { Option } from "constant/types";
-import {
-  NewButton as Button,
-  NewDatePicker as DatePicker,
-  IconButton,
-  Text,
-} from "components/shared";
+import { NewButton as Button, IconButton, Text } from "components/shared";
 import { useAdditionalFormikUtils } from "hooks/useFormik";
 import useToggle from "hooks/useToggle";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import AddCircleIcon from "icons/AddCircleIcon";
+import CalendarIcon from "icons/NewCalendarIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import GreenTickIcon from "icons/GreenTickIcon";
 import SearchIcon from "icons/SearchIcon";
@@ -289,8 +286,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
     submitForm,
     validateForm,
   } = formik;
-  const { isSubmitDisabled, touchedError, handleChangeDate } =
-    useAdditionalFormikUtils(formik);
+  const { isSubmitDisabled, touchedError } = useAdditionalFormikUtils(formik);
 
   const { status, handleDeleteHolidayCalendar } = useHolidayCalendar();
 
@@ -454,6 +450,10 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                       onChange={(e) => {
                         setCountrySearch(e.target.value);
                       }}
+                      sx={{
+                        fontSize: "13px",
+                        fontWeight: 600,
+                      }}
                       startAdornment={
                         <SearchIcon
                           sx={{ marginLeft: "6px", color: "#172B4D" }}
@@ -469,7 +469,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
             </StyledLabel>
           </Grid>
 
-          <Grid item xs={11} sm={4}>
+          <Grid item xs={12} sm={4}>
             <StyledLabel>
               <span>{holidayCalendarT("form.year")}</span>
               <Select
@@ -526,46 +526,81 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
         {(arrayHelpers) => (
           <Box>
             {values.items.map((item, idx) => (
-              <Stack key={item.id} direction="row">
+              <Stack key={item.id} direction="row" flexWrap="wrap">
                 <Input
                   name={`items[${idx}].name`}
                   disabled={!isEdit}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.items[idx].name}
-                  rootSx={{ width: "300px" }}
+                  rootSx={{
+                    ...holidayItemInputSx,
+                    flexBasis: { xs: "100%", sm: "calc(100% * 4 / 12)" },
+                  }}
                 />
-                <DatePicker
-                  fullWidth
-                  name={`items[${idx}].date`}
-                  disabled={!isEdit}
-                  onChange={handleChangeDate}
-                  onBlur={handleBlur}
-                  value={values.items[idx].date}
-                  // error={commonT(touchedError(`items[${idx}].date`), {
-                  //   name: costRateT("empty.form.endDate"),
-                  // })}
-                />
-                {isEdit ? (
-                  <IconButton
-                    sx={{ color: "#FF4141" }}
-                    disabled={status === DataStatus.LOADING}
-                    onClick={() => {
-                      arrayHelpers.remove(idx);
+                <Stack
+                  direction="row"
+                  sx={{
+                    flexBasis: {
+                      xs: "100%",
+                      sm: "calc(100% * 5 / 12)",
+                    },
+                    "& > .react-datepicker-wrapper": {
+                      "& > .react-datepicker__input-container": {
+                        display: "inline-flex",
+                      },
+                    },
+                  }}
+                >
+                  <DatePicker
+                    name={`items[${idx}].date`}
+                    disabled={!isEdit}
+                    onChange={(date) => {
+                      setFieldValue(`items[${idx}].date`, date ? date : null);
                     }}
-                  >
-                    <TrashIcon />
-                  </IconButton>
-                ) : (
-                  <></>
-                )}
+                    onBlur={handleBlur}
+                    selected={
+                      values.items[idx].date
+                        ? new Date(values.items[idx].date)
+                        : null
+                    }
+                    fixedHeight
+                    dateFormat="dd/MM/yyyy"
+                    customInput={
+                      <Input
+                        rootSx={{ ...holidayItemInputSx }}
+                        endAdornment={<CalendarIcon />}
+                      />
+                    }
+                    // error={commonT(touchedError(`items[${idx}].date`), {
+                    //   name: costRateT("empty.form.endDate"),
+                    // })}
+                  />
+                  {isEdit ? (
+                    <IconButton
+                      sx={{ color: "#FF4141" }}
+                      disabled={status === DataStatus.LOADING}
+                      onClick={() => {
+                        arrayHelpers.remove(idx);
+                      }}
+                    >
+                      <TrashIcon />
+                    </IconButton>
+                  ) : (
+                    <></>
+                  )}
+                </Stack>
               </Stack>
             ))}
 
             {isEdit &&
             selectedHolidayListId &&
             selectedHolidayListId.length > 0 ? (
-              <Stack direction="row" mt={2} justifyContent="end">
+              <Stack
+                direction="row"
+                mt={2}
+                justifyContent={{ xs: "start", sm: "end" }}
+              >
                 <Stack
                   direction="row"
                   sx={{ cursor: "pointer" }}
@@ -627,6 +662,11 @@ const IconButtonContainer = styled(Stack)({
     borderBottomLeftRadius: "8px",
   },
 });
+
+const holidayItemInputSx: SxProps<Theme> = {
+  border: "none",
+  outline: "none",
+};
 
 const initialCountryList = [
   { label: "Viet Nam", value: "vietnam" },
