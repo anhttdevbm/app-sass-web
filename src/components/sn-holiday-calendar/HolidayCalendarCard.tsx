@@ -1,18 +1,31 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
-import { Formik, FormikProps, FormikValues } from "formik";
+import { FieldArray, Formik, FormikValues, useFormikContext } from "formik";
 import * as Yup from "yup";
 
 import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
 import { DataStatus } from "constant/enums";
 import { Option } from "constant/types";
-import { NewButton as Button, IconButton, Text } from "components/shared";
+import {
+  NewButton as Button,
+  NewDatePicker as DatePicker,
+  IconButton,
+  Text,
+} from "components/shared";
 import { useAdditionalFormikUtils } from "hooks/useFormik";
 import useToggle from "hooks/useToggle";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
@@ -22,10 +35,9 @@ import GreenTickIcon from "icons/GreenTickIcon";
 import SearchIcon from "icons/SearchIcon";
 import TrashIcon from "icons/TrashAltIcon";
 import { useSnackbar } from "store/app/selectors";
-import { HolidayCalendar } from "store/holidayCalendar/reducer";
+import { HolidayCalendar, HolidayItem } from "store/holidayCalendar/reducer";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import { getMessageErrorByAPI } from "utils/index";
-import HolidayItems from "./HolidayItems";
 import TitleInput from "./components/TitleInput";
 import Select from "./components/Select";
 import Input from "./components/Input";
@@ -48,16 +60,53 @@ const HolidayCalendarCard = ({
   const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
   const { onAddSnackbar } = useSnackbar();
 
-  const { handleAddHolidayCalendar, handleUpdateHolidayCalendar } =
-    useHolidayCalendar();
+  const {
+    handleAddHolidayCalendar,
+    handleUpdateHolidayCalendar,
+    handleUpdateHolidayList,
+    handleAddHolidayItem,
+    handleDeleteHolidayItem,
+    selectHolidayList,
+  } = useHolidayCalendar();
+
+  const [selectedHolidayListId, setSelectedHolidayListId] = useState("");
+
+  useEffect(() => {
+    if (!selectedHolidayListId) {
+      const sortedHolidayList = [
+        ...holidayCalendar.list
+          .filter((l) => +l.year >= new Date().getFullYear())
+          .sort((l1, l2) => +l1.year - +l2.year),
+        ...holidayCalendar.list
+          .filter((l) => +l.year < new Date().getFullYear())
+          .sort((l1, l2) => +l1.year - +l2.year),
+      ];
+      if (sortedHolidayList.length > 0) {
+        setSelectedHolidayListId(sortedHolidayList[0].id);
+      } else {
+        setSelectedHolidayListId("");
+      }
+    }
+  }, [holidayCalendar, selectedHolidayListId]);
 
   const initialValues = useMemo(
     () => ({
       id: holidayCalendar.id,
       name: holidayCalendar.name,
       country: holidayCalendar.country,
+      items:
+        selectHolidayList(
+          holidayCalendar.id,
+          selectedHolidayListId,
+        )?.items.filter(() => true) ?? [],
     }),
-    [holidayCalendar],
+    [
+      holidayCalendar.country,
+      holidayCalendar.id,
+      holidayCalendar.name,
+      selectHolidayList,
+      selectedHolidayListId,
+    ],
   );
 
   const validationSchema = useMemo(
@@ -73,8 +122,38 @@ const HolidayCalendarCard = ({
             name: holidayCalendarT("form.country"),
           }),
         ),
+        items: Yup.array(
+          Yup.object().shape({
+            name: Yup.string().required(),
+            date: Yup.mixed()
+              .required()
+              .test(
+                "date-same-year",
+                "Date should be within selected year",
+                async (value) => {
+                  const selectedHolidayList = selectHolidayList(
+                    holidayCalendar.id,
+                    selectedHolidayListId,
+                  );
+                  if (!selectedHolidayList) {
+                    return true;
+                  }
+                  return (
+                    dayjs(value as string | Date).year() ===
+                    +selectedHolidayList.year
+                  );
+                },
+              ),
+          }),
+        ),
       }),
-    [commonT, holidayCalendarT],
+    [
+      commonT,
+      holidayCalendar.id,
+      holidayCalendarT,
+      selectHolidayList,
+      selectedHolidayListId,
+    ],
   );
 
   const onSubmit = useCallback(
@@ -86,19 +165,77 @@ const HolidayCalendarCard = ({
           resetForm();
           hideNewHolidayCalendar();
         } else {
-          await handleUpdateHolidayCalendar({ ...values, province: "" });
+          const { id, name, country } = values;
+          await handleUpdateHolidayCalendar({
+            id,
+            name,
+            country,
+            province: "",
+          });
         }
+        const [existingItems, newItems] = values.items
+          .map((item) => ({
+            ...item,
+            date: dayjs(item.date).format("YYYY-MM-DD"),
+          }))
+          .reduce(
+            (acc, item) => {
+              if (item.id.startsWith("new")) {
+                return [[...acc[0]], [...acc[1], item]];
+              } else {
+                return [[...acc[0], item], [...acc[1]]];
+              }
+            },
+            [[], []] as HolidayItem[][],
+          );
+        await handleUpdateHolidayList({
+          id: selectedHolidayListId,
+          items: existingItems,
+        });
+        await Promise.all(
+          newItems.map((item) =>
+            handleAddHolidayItem({
+              name: item.name,
+              date: item.date,
+              holidayListId: selectedHolidayListId,
+            }),
+          ),
+        );
+        const deletedItems = initialValues.items.filter(
+          (initialItem) =>
+            !values.items.map((item) => item.id).includes(initialItem.id),
+        );
+        await Promise.all(
+          deletedItems.map((item) =>
+            handleDeleteHolidayItem({
+              holidayListId: selectedHolidayListId,
+              id: item.id,
+            }),
+          ),
+        );
+        onAddSnackbar(
+          commonT("notification.success", {
+            label: commonT("form.save"),
+          }),
+          "success",
+        );
       } catch (error) {
         onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+        resetForm();
       }
     },
     [
-      commonT,
-      handleAddHolidayCalendar,
-      handleUpdateHolidayCalendar,
-      hideNewHolidayCalendar,
       isNew,
+      handleUpdateHolidayList,
+      selectedHolidayListId,
+      initialValues.items,
+      handleAddHolidayCalendar,
+      hideNewHolidayCalendar,
+      handleUpdateHolidayCalendar,
+      handleAddHolidayItem,
+      handleDeleteHolidayItem,
       onAddSnackbar,
+      commonT,
     ],
   );
 
@@ -109,13 +246,14 @@ const HolidayCalendarCard = ({
       onSubmit={onSubmit}
       enableReinitialize={true}
     >
-      {(formik) => (
-        <HolidayCalendarCardForm
+      {() => (
+        <HolidayCalendarCardForm<typeof initialValues>
           isNew={isNew}
           holidayCalendar={holidayCalendar}
           handleOpenModal={handleOpenModal}
           hideNewHolidayCalendar={hideNewHolidayCalendar}
-          formik={formik}
+          selectedHolidayListId={selectedHolidayListId}
+          setSelectedHolidayListId={setSelectedHolidayListId}
         />
       )}
     </Formik>
@@ -130,12 +268,17 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
   holidayCalendar,
   handleOpenModal,
   hideNewHolidayCalendar,
-  formik,
-}: HolidayCalendarCardProps & { formik: FormikProps<Values> }) {
+  selectedHolidayListId,
+  setSelectedHolidayListId,
+}: HolidayCalendarCardProps & {
+  selectedHolidayListId: string;
+  setSelectedHolidayListId: Dispatch<SetStateAction<string>>;
+}) {
   const commonT = useTranslations(NS_COMMON);
   const holidayCalendarT = useTranslations(NS_HOLIDAY_CALENDAR);
   const { onAddSnackbar } = useSnackbar();
 
+  const formik = useFormikContext<Values>();
   const {
     values,
     resetForm,
@@ -146,33 +289,10 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
     submitForm,
     validateForm,
   } = formik;
-  const { isSubmitDisabled, touchedErrors } = useAdditionalFormikUtils(formik);
+  const { isSubmitDisabled, touchedError, handleChangeDate } =
+    useAdditionalFormikUtils(formik);
 
-  const {
-    status,
-    handleDeleteHolidayCalendar,
-    handleAddHolidayItem: reduxAddHolidayItem,
-  } = useHolidayCalendar();
-
-  const [selectedHolidayList, setSelectedHolidayList] = useState("");
-
-  useEffect(() => {
-    if (!selectedHolidayList) {
-      const sortedHolidayList = [
-        ...holidayCalendar.list
-          .filter((l) => +l.year >= new Date().getFullYear())
-          .sort((l1, l2) => +l1.year - +l2.year),
-        ...holidayCalendar.list
-          .filter((l) => +l.year < new Date().getFullYear())
-          .sort((l1, l2) => +l1.year - +l2.year),
-      ];
-      if (sortedHolidayList.length > 0) {
-        setSelectedHolidayList(sortedHolidayList[0].id);
-      } else {
-        setSelectedHolidayList("");
-      }
-    }
-  }, [holidayCalendar, selectedHolidayList]);
+  const { status, handleDeleteHolidayCalendar } = useHolidayCalendar();
 
   const listYears = useMemo(
     () =>
@@ -203,7 +323,16 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
     } else {
       setEditOn();
     }
-  }, [isEdit, validateForm, isSubmitDisabled, submitForm, setEditOff, onAddSnackbar, commonT, setEditOn]);
+  }, [
+    isEdit,
+    validateForm,
+    isSubmitDisabled,
+    submitForm,
+    setEditOff,
+    onAddSnackbar,
+    commonT,
+    setEditOn,
+  ]);
 
   useEffect(() => {
     if (isEdit) {
@@ -221,21 +350,6 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
       setShouldResetOff();
     }
   }, [isEdit, shouldReset, setShouldResetOn, setShouldResetOff, resetForm]);
-
-  const handleAddHolidayItem = useCallback(() => {
-    if (
-      isEdit &&
-      !isSubmitDisabled &&
-      selectedHolidayList &&
-      selectedHolidayList.length > 0
-    ) {
-      reduxAddHolidayItem({
-        name: "New Holiday",
-        date: dayjs().startOf("day").format("YYYY-MM-DD"),
-        holidayListId: selectedHolidayList,
-      });
-    }
-  }, [isEdit, isSubmitDisabled, selectedHolidayList, reduxAddHolidayItem]);
 
   const [countrySearch, setCountrySearch] = useState("");
   const countryList = useMemo(
@@ -271,7 +385,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
             onBlur={handleBlur}
             value={values.name}
             placeholder={holidayCalendarT("placeholder.holidayCalendarName")}
-            error={!!touchedErrors["name"]}
+            error={!!touchedError("name")}
             inputRef={titleRef}
           />
           <IconButtonContainer>
@@ -365,35 +479,37 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                 rootSx={{ width: "100%" }}
                 disabled={!isEdit}
                 onChange={(_, newVal) => {
-                  setSelectedHolidayList(newVal as string);
+                  setSelectedHolidayListId(newVal as string);
                 }}
-                value={selectedHolidayList}
+                value={selectedHolidayListId}
                 endAdornment={isEdit ? undefined : <></>}
                 bottomItem={
-                  <Stack direction="row" justifyContent="center">
-                    <Button
-                      disabled={isSubmitDisabled}
-                      pending={isSubmitting}
-                      sx={{
-                        "&.MuiButton-sizeMedium": {
-                          px: 3,
-                          py: 0.5,
-                        },
-                        "& .MuiButton-startIcon": {
-                          display: "flex",
-                          alignItems: "center",
-                        },
-                      }}
-                      variant="primary"
-                      type="button"
-                      startIcon={<AddCircleIcon />}
-                      onClick={() => {
-                        handleOpenModal(holidayCalendar.id);
-                      }}
-                    >
-                      {holidayCalendarT("form.addHolidayList")}
-                    </Button>
-                  </Stack>
+                  !isNew ? (
+                    <Stack direction="row" justifyContent="center">
+                      <Button
+                        disabled={isSubmitDisabled}
+                        pending={isSubmitting}
+                        sx={{
+                          "&.MuiButton-sizeMedium": {
+                            px: 3,
+                            py: 0.5,
+                          },
+                          "& .MuiButton-startIcon": {
+                            display: "flex",
+                            alignItems: "center",
+                          },
+                        }}
+                        variant="primary"
+                        type="button"
+                        startIcon={<AddCircleIcon />}
+                        onClick={() => {
+                          handleOpenModal(holidayCalendar.id);
+                        }}
+                      >
+                        {holidayCalendarT("form.addHolidayList")}
+                      </Button>
+                    </Stack>
+                  ) : undefined
                 }
                 // error={commonT(touchedError("listId"), {
                 //   name: costRateT("empty.form.year"),
@@ -404,32 +520,75 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
         </Grid>
       </Box>
 
-      <HolidayItems
-        isEdit={isEdit}
-        holidayCalendarId={holidayCalendar.id}
-        holidayListId={selectedHolidayList}
-      />
+      <FieldArray name="items">
+        {(arrayHelpers) => (
+          <Box>
+            {values.items.map((item, idx) => (
+              <Stack key={item.id} direction="row">
+                <Input
+                  name={`items[${idx}].name`}
+                  disabled={!isEdit}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.items[idx].name}
+                  rootSx={{ width: "300px" }}
+                />
+                <DatePicker
+                  fullWidth
+                  name={`items[${idx}].date`}
+                  disabled={!isEdit}
+                  onChange={handleChangeDate}
+                  onBlur={handleBlur}
+                  value={values.items[idx].date}
+                  // error={commonT(touchedError(`items[${idx}].date`), {
+                  //   name: costRateT("empty.form.endDate"),
+                  // })}
+                />
+                {isEdit ? (
+                  <IconButton
+                    sx={{ color: "#FF4141" }}
+                    disabled={status === DataStatus.LOADING}
+                    onClick={() => {
+                      arrayHelpers.remove(idx);
+                    }}
+                  >
+                    <TrashIcon />
+                  </IconButton>
+                ) : (
+                  <></>
+                )}
+              </Stack>
+            ))}
 
-      {selectedHolidayList && selectedHolidayList.length > 0 ? (
-        <Stack direction="row" mt={2} justifyContent="end">
-          <Stack
-            direction="row"
-            sx={{ cursor: "pointer" }}
-            onClick={() => {
-              if (!(status === DataStatus.LOADING || !isEdit)) {
-                handleAddHolidayItem();
-              }
-            }}
-          >
-            <AddCircleGradientIcon />
-            <Text ml={1.5} color="#0575E6" fontWeight={700}>
-              {holidayCalendarT("form.addHolidayItem")}
-            </Text>
-          </Stack>
-        </Stack>
-      ) : (
-        <></>
-      )}
+            {isEdit &&
+            selectedHolidayListId &&
+            selectedHolidayListId.length > 0 ? (
+              <Stack direction="row" mt={2} justifyContent="end">
+                <Stack
+                  direction="row"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => {
+                    if (!(status === DataStatus.LOADING || !isEdit)) {
+                      arrayHelpers.push({
+                        id: `new-${values.items.length + 1}`,
+                        name: "",
+                        date: "",
+                      });
+                    }
+                  }}
+                >
+                  <AddCircleGradientIcon />
+                  <Text ml={1.5} color="#0575E6" fontWeight={700}>
+                    {holidayCalendarT("form.addHolidayItem")}
+                  </Text>
+                </Stack>
+              </Stack>
+            ) : (
+              <></>
+            )}
+          </Box>
+        )}
+      </FieldArray>
     </Stack>
   );
 }
