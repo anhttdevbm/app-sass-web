@@ -202,7 +202,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
       }}
     >
       <Box component="form" noValidate>
-        <Stack direction="row" alignItems="center">
+        <Stack direction="row" alignItems="center" mb={1}>
           <TitleInput
             name="name"
             isEdit={isEdit}
@@ -244,7 +244,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
 
         <Grid
           container
-          my={2}
+          mb={2}
           columnSpacing={3}
           rowSpacing={{
             xs: 2,
