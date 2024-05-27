@@ -2,10 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { styled } from "@mui/material/styles";
 import { useTranslations } from "next-intl";
 import fuzzysort from "fuzzysort";
-import dayjs from "dayjs";
 import * as Yup from "yup";
 
 import { DataStatus } from "constant/enums";
@@ -165,23 +163,26 @@ const HolidayCalendar = () => {
     setHolidayCalendarSearchInput(e.target.value);
   }, []);
 
+  const sortedHolidayCalendars = useMemo(
+    () =>
+      holidayCalendars
+        .filter(() => true)
+        .sort(
+          (c1, c2) =>
+            new Date(c2.created_time).getTime() -
+            new Date(c1.created_time).getTime(),
+        ),
+    [holidayCalendars],
+  );
   const filteredHolidayCalendars = useMemo(
     () =>
       fuzzysort
-        .go(
-          holidayCalendarSearchInput,
-          [...holidayCalendars].sort(
-            (c1, c2) =>
-              dayjs(c2.created_time).get("millisecond") -
-              dayjs(c1.created_time).get("millisecond"),
-          ),
-          {
-            keys: ["name", "country"],
-            all: true,
-          },
-        )
+        .go(holidayCalendarSearchInput, sortedHolidayCalendars, {
+          keys: ["name", "country"],
+          all: true,
+        })
         .map((r) => r.obj),
-    [holidayCalendarSearchInput, holidayCalendars],
+    [holidayCalendarSearchInput, sortedHolidayCalendars],
   );
 
   const [

@@ -169,47 +169,47 @@ const HolidayCalendarCard = ({
             country,
             province: "",
           });
-        }
-        const [existingItems, newItems] = values.items
-          .map((item) => ({
-            ...item,
-            date: dayjs(item.date).format("YYYY-MM-DD"),
-          }))
-          .reduce(
-            (acc, item) => {
-              if (item.id.startsWith("new")) {
-                return [[...acc[0]], [...acc[1], item]];
-              } else {
-                return [[...acc[0], item], [...acc[1]]];
-              }
-            },
-            [[], []] as HolidayItem[][],
+          const [existingItems, newItems] = values.items
+            .map((item) => ({
+              ...item,
+              date: dayjs(item.date).format("YYYY-MM-DD"),
+            }))
+            .reduce(
+              (acc, item) => {
+                if (item.id.startsWith("new")) {
+                  return [[...acc[0]], [...acc[1], item]];
+                } else {
+                  return [[...acc[0], item], [...acc[1]]];
+                }
+              },
+              [[], []] as HolidayItem[][],
+            );
+          await handleUpdateHolidayList({
+            id: selectedHolidayListId,
+            items: existingItems,
+          });
+          await Promise.all(
+            newItems.map((item) =>
+              handleAddHolidayItem({
+                name: item.name,
+                date: item.date,
+                holidayListId: selectedHolidayListId,
+              }),
+            ),
           );
-        await handleUpdateHolidayList({
-          id: selectedHolidayListId,
-          items: existingItems,
-        });
-        await Promise.all(
-          newItems.map((item) =>
-            handleAddHolidayItem({
-              name: item.name,
-              date: item.date,
-              holidayListId: selectedHolidayListId,
-            }),
-          ),
-        );
-        const deletedItems = initialValues.items.filter(
-          (initialItem) =>
-            !values.items.map((item) => item.id).includes(initialItem.id),
-        );
-        await Promise.all(
-          deletedItems.map((item) =>
-            handleDeleteHolidayItem({
-              holidayListId: selectedHolidayListId,
-              id: item.id,
-            }),
-          ),
-        );
+          const deletedItems = initialValues.items.filter(
+            (initialItem) =>
+              !values.items.map((item) => item.id).includes(initialItem.id),
+          );
+          await Promise.all(
+            deletedItems.map((item) =>
+              handleDeleteHolidayItem({
+                holidayListId: selectedHolidayListId,
+                id: item.id,
+              }),
+            ),
+          );
+        }
         onAddSnackbar(
           commonT("notification.success", {
             label: commonT("form.save"),
@@ -573,7 +573,7 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                     customInput={
                       <Input
                         rootSx={{ ...holidayItemInputSx }}
-                        endAdornment={<CalendarIcon />}
+                        endAdornment={isEdit ? <CalendarIcon /> : undefined}
                       />
                     }
                     // error={commonT(touchedError(`items[${idx}].date`), {
