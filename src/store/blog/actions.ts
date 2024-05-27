@@ -1,14 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Endpoint, client } from "api";
-import axios, { AxiosRequestConfig } from "axios";
 import { HttpStatusCode } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, BLOG_API_URL, UPLOAD_API_URL } from "constant/index";
-import { BaseQueries, BaseQueries_Feedback } from "constant/types";
-import { type } from "os";
-import { config } from "process";
+import { BaseQueries_Feedback } from "constant/types";
 import { Category } from "store/blog-category/reducer";
-import { refactorRawItemListResponse, serverQueries } from "utils/index";
-import { string } from "yup";
 
 export enum BlogStatus {
   PUBLISHED = "PUBLISHED",
@@ -47,6 +42,8 @@ export type BlogData = {
   ignoredId?: string,
   categories?: Category[],
   short_description?: string,
+  meta_title?: string,
+  meta_description?: string,
 };
 
 
@@ -65,6 +62,8 @@ export type BlogFormData = {
   attachments?: string[];
   attachmentsUpload?: File[] | [];
   short_description?: string;
+  meta_title?: string;
+  meta_description?: string;
 }
 export type BlogSubmitData = {
   title?: string;
@@ -74,6 +73,7 @@ export type BlogSubmitData = {
   tag?: string[] | undefined; // Use union type with undefined
   slug?: string | undefined;
   attachments?: string[];
+  
 }
 export type GetBlogListQueries = BaseQueries_Feedback & {
   searchKey?: string;
@@ -121,8 +121,6 @@ export const createNewBlogs = createAsyncThunk(
   "blogs/createNewBlogs",
   async ({ data, Token }: { data: BlogFormData; Token: string | null }) => {
     try {
-      console.log("Request Payload:", JSON.stringify(data));
-
       const response = await client.post(Endpoint.BLOGS, data, {
         method: "POST",
         headers: {
@@ -146,7 +144,6 @@ export const createNewBlogs = createAsyncThunk(
 export const updateBlog = createAsyncThunk("blogs/updateBlog",
   async ({ id, blog, Token }: { id: string, blog: BlogFormData, Token: string | undefined | null }) => {
     try {
-      console.log("Request Payload:", JSON.stringify(blog));
       const response = await client.put(Endpoint.BLOGS + "/" + id, blog, {
         method: "PUT",
         headers: {

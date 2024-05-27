@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import React, { ChangeEvent, memo, useEffect, useState } from "react";
 import { ImportFileModal } from "./ImportFileModal";
 import { CloseOutlined } from "@mui/icons-material";
+import { File } from "store/aiChat/type";
 
 const BLUE = "#3699FF";
 const DARK_BLUE = "#0575E6";
@@ -25,7 +26,8 @@ interface ChatInputProperties {
   isMobile?: boolean;
 }
 
-const ChatInput = ({
+// eslint-disable-next-line react/display-name
+const ChatInput =  React.forwardRef(({
   isLoading,
   initialMessage = "",
   files,
@@ -33,7 +35,7 @@ const ChatInput = ({
   onFileChange,
   wrapperInputStyles,
   isMobile,
-}: ChatInputProperties) => {
+}: ChatInputProperties,  ref: React.Ref<HTMLInputElement>) => {
   const [message, setMessage] = useState(initialMessage);
   const [isFocused, setIsFocused] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -142,6 +144,7 @@ const ChatInput = ({
           }}
         >
           <TextField
+            inputRef={ref}
             disabled={isLoading}
             value={message}
             onChange={({ target: { value } }) => setMessage(value)}
@@ -197,7 +200,7 @@ const ChatInput = ({
       />
     </Box>
   );
-};
+});
 
 export default memo(ChatInput);
 
