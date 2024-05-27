@@ -13,6 +13,10 @@ export const HolidayCalendarLang: HolidayCalendarDictionary = {
     month: "Month",
     searchHere: "Search here",
   },
+  placeholder: {
+    holidayCalendarName: "Enter holiday calendar name",
+    countrySearch: "Search country",
+  },
   notification: {
     addHolidayCalendarSuccess: "Added Holiday Calendar Successfully",
     updateHolidayCalendarSuccess: "Update Holiday Calendar Successfully",

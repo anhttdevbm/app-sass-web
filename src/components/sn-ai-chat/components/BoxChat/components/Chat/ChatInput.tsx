@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import React, { ChangeEvent, memo, useEffect, useState } from "react";
 import { ImportFileModal } from "./ImportFileModal";
 import { CloseOutlined } from "@mui/icons-material";
+import { File } from "store/aiChat/type";
 
 const BLUE = "#3699FF";
 const DARK_BLUE = "#0575E6";

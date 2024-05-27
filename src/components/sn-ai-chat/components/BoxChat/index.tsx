@@ -16,6 +16,7 @@ import { SelectAIChat } from "./components/Select";
 import { AxiosError } from "axios";
 import { useMediaQuery } from "@mui/material";
 import BackTabIcon from "icons/BackTabIcon";
+import { File } from "store/aiChat/type";
 
 interface BoxChatProps {
   popupMode?: boolean;
@@ -106,6 +107,11 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   };
 
   const handleFileChange = (newFiles: File[]) => {
+    newFiles.map((file) => {
+      return Object.assign(file, {
+        link: URL.createObjectURL(file),
+      });
+    })
     setFiles(newFiles);
   };
 

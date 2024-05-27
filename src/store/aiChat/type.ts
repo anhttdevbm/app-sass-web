@@ -94,6 +94,13 @@ export type ChatWithAIData = {
   files?: File[];
 };
 
+export type File = Blob & {
+  name?: string;
+  type?: string;
+  link?: string;
+  size?: number;
+}
+
 export type OpenAIChat = {
   id?: string;
   persona: string;
@@ -104,6 +111,7 @@ export type OpenAIChat = {
   model?: string;
   chat_session?: string;
   created_at?: string;
+  files?: File[]
 };
 
 export type GetOpenAIChatQueries = {
