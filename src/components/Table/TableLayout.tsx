@@ -175,7 +175,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                     handleRequestSort={handleRequestSort}
                     width={item.width ?? `${100 / nOfColumnsNotWidthFixed}%`}
                     sx={
-                      {
+                      {height:"40px",
                         maxWidth:
                           item.width ?? `${100 / nOfColumnsNotWidthFixed}%`,
                         minWidth: item?.minWidth,
@@ -213,7 +213,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                     {...item}
                     width={item.width ?? `${100 / nOfColumnsNotWidthFixed}%`}
                     sx={
-                      {
+                      {height:"40px",
                         maxWidth:
                           item.width ?? `${100 / nOfColumnsNotWidthFixed}%`,
                         minWidth: item?.minWidth,

@@ -50,7 +50,7 @@ const AddBudget = ({ projectId }: { projectId?: string }) => {
               "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)!important",
           },
           borderRadius: "100px",
-          height: 48,
+          height: 40,
           width: 129,
           "p,svg": { fontWeight: "700" },
           svg: {

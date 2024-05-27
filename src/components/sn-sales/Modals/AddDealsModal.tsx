@@ -95,7 +95,6 @@ const AddDealModal = ({ open, onClose }: IProps) => {
       dealName: "",
       currency: UNIT_OPTIONS[0].value,
       owner: "",
-      client: "",
       members: [],
       tags: [],
     },
@@ -121,12 +120,14 @@ const AddDealModal = ({ open, onClose }: IProps) => {
   const newInput = {
     // height: "65px",
     ".MuiInputBase-root": {
+      ".MuiAutocomplete-endAdornment":{right:"21px"},
       background:
         " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
-      padding: "7px!important",
+      padding: "9px!important",
+      paddingRight: "22px !important",
       borderRadius: "100px!important",
       border: "none!important",
-      mt: 3,
+      mt: "35px",
       fontSize: "16px!important",
       // height:"38px",
       ".MuiInputBase-input": { p: "0 10px!important" },
@@ -156,11 +157,13 @@ const AddDealModal = ({ open, onClose }: IProps) => {
   return (
     <FormLayout
       sx={{
+        borderRadius:"24px",
         minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
         ".MuiDialogTitle-root": { border: "none" },
         ".MuiDialogActions-root": {
+          justifyContent: "end",
           border: "none",
           ".MuiButtonBase-root": {
             "&:last-child": {
