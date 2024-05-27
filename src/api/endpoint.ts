@@ -205,9 +205,9 @@ export const Endpoint = {
   CONTENT_PRICING_PARTNERS: "content/pricing/partners",
 
   //AI Chat
-  AI_CHAT_EXAMPLE_PROMPT: "aichat/api/ai-chat/example-prompt",
-  AI_CHAT_SESSION: "aichat/api/ai-chat/chat-session",
-  AI_CHAT: "aichat/api/ai-chat/chat",
-  AI_CHAT_PERSONA: "aichat/api/ai-chat/persona",
-  AI_CHAT_TONE: "aichat/api/ai-chat/tone",
+  AI_CHAT_EXAMPLE_PROMPT: "api/v1/ai-chat/example-prompt",
+  AI_CHAT_SESSION: "api/v1/ai-chat/chat-session",
+  AI_CHAT: "api/v1/ai-chat/chat",
+  AI_CHAT_PERSONA: "api/v1/ai-chat/persona",
+  AI_CHAT_TONE: "api/v1/ai-chat/tone",
 };
