@@ -104,8 +104,6 @@ export const Message: React.FC<MessageProps> = ({
     setEditedMessage(event.target.value);
   };
 
-  console.log("MessageProps", message.files)
-
   return (
     <Box key={id}>
       <Box
@@ -185,9 +183,9 @@ export const Message: React.FC<MessageProps> = ({
           >
             {!isLoading ? (
               <Stack width="100%" style={{ wordWrap: 'break-word' }}>
-                <ReactMarkdown>
-                  {assistant_content}
-                </ReactMarkdown>
+                <p
+                  style={{margin: "0px"}}
+                  dangerouslySetInnerHTML={{ __html: assistant_content as string }}></p>
               </Stack>
             ) : (
               <Box
