@@ -11,7 +11,7 @@ export const BudgetingLang: BudgetingDictionary = {
         addExpense: 'Tạo chi phí',
         addInvoice: 'Tạo hóa đơn',
         serviceEdit: 'Sửa',
-        search: 'Tìm kiếm'
+        search: 'Tìm kiếm dự án'
     },
     status: {
         open: 'Đang mở',

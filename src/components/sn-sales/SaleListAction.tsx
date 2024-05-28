@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { Button, Text } from "components/shared";
 import { NS_COMMON, NS_SALES } from "constant/index";
 import { useTranslations } from "next-intl";
@@ -127,15 +127,15 @@ const SalesListAction = () => {
           }}
           onChange={(name, value) => onChangeQueries(name, value)}
           sx={{
-            height: 48,
+            height: 40,
             width: {
               lg: 332,
             },
-            ".MuiInputBase-root": { height: 48, borderRadius: "100px" },
+            ".MuiInputBase-root": { height: 40, borderRadius: "100px" },
           }}
           value={queries?.search_key}
           startNode={""}
-          endNode={<SearchIcon style={{ color: "#0575E6" }} />}
+          endNode={<IconButton aria-label="search"><SearchIcon onClick={onSearch} style={{ color: "#0575E6" ,height:"18px",width:"18px"}} /></IconButton>}
         />
 
         {/* <Button
@@ -154,7 +154,7 @@ const SalesListAction = () => {
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
             padding: "0 20px",
-            height: 48,
+            height: 40,
             fontWeight: 500,
             ".MuiInputBase-root": { pl: "0!important", height: 48 },
             color: "black",
@@ -177,7 +177,7 @@ const SalesListAction = () => {
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
             padding: "0 20px",
-            height: 48,
+            height: 40,
             fontWeight: 500,
             ".MuiInputBase-root": { pl: "0!important", height: 48 },
             color: "black",
@@ -232,7 +232,8 @@ const SalesListAction = () => {
             size="small"
             variant="secondary"
             sx={{
-              height: 48,
+
+              height: 40,
               width: 129,
               background:
                 "linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #2AF598, #009EFD) border-box",
@@ -251,7 +252,7 @@ const SalesListAction = () => {
                 mr: 1,
               }}
             />
-            <Text sx={{ display: { xs: "none", md: "block" } }} color="inherit">
+            <Text sx={{ fontSize:"16px", display: { xs: "none", md: "block" } }} color="inherit">
               {salesT("list.action.export")}
             </Text>
           </Button>
@@ -268,7 +269,7 @@ const SalesListAction = () => {
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               },
               borderRadius: "100px",
-              height: 48,
+              height: 40,
               width: 129,
               "p,svg": { fontWeight: "700" },
               svg: {
@@ -294,7 +295,7 @@ const SalesListAction = () => {
                 height: 18,
               }}
             />
-            <Text sx={{ display: { xs: "none", md: "block" } }} color="inherit">
+            <Text sx={{ fontSize:"16px", display: { xs: "none", md: "block" } }} color="inherit">
               {salesT("list.action.deal")}
             </Text>
           </Button>

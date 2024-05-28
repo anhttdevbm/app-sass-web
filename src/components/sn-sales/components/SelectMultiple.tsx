@@ -13,6 +13,7 @@ import ArrowDownIcon from "icons/ArrowDownIcon";
 import { debounce, uuid } from "utils/index";
 import PlusIcon from "icons/PlusIcon";
 import ChevronIcon from "icons/ChevronIcon";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 interface IProps {
   label: string;
@@ -174,6 +175,7 @@ const SelectMultiple = ({
               {...rest}
               key={key}
               size="small"
+              deleteIcon={<HighlightOffIcon sx={{height:"20px",width:"20px",color:"#0575E6"}} />}
               sx={{
                 color: "black",
                 mt: 2,

@@ -35,7 +35,6 @@ export interface DealData {
   tags?: string[];
   stage?: string;
   client?: string;
-  id?: string;
 }
 export interface TodoItemData {
   name: string;
