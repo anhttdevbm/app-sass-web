@@ -372,12 +372,12 @@ export const BudgetDetail = () => {
             </Link>
             <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
             <Stack pl="7px">
-              <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
+              <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}
               </Text>
-              <Text lineHeight={1.2}>{budget.name}</Text>
+              <Text fontSize="16px" lineHeight={1.2}>{budget.name}</Text>
             </Stack>
-            <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
+            <Stack direction="row" gap={2} alignItems="center" py="10px" pr={0}>
               <TextStatus
                 text="status.open"
                 color={
@@ -413,7 +413,7 @@ export const BudgetDetail = () => {
                 }}
               />
             </Stack>
-            <Stack pl="15px" direction="row" alignItems="center">
+            <Stack  direction="row" alignItems="center">
               <CustomDateRangePicker
                 value={{
                   startDate: budget.start_date

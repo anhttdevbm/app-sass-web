@@ -93,7 +93,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
       }}
     >
       <Grid container spacing={2}>
-        <Grid height={"auto"} xs={12} sm={6} xl={3}>
+        <Grid height={"auto"} xs={12} sm={6} sx={{width:{md:"33.8461538462%"}}}>
           <Box
             height={"100%"}
             sx={{
@@ -122,35 +122,35 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
               >
                 <Stack flexDirection={"row"}>
                   <Image src={TimeIcon} alt="Time Icon" width={24} />
-                  <H6>{budgetT("tabService.totalArea.time.title")}</H6>
+                  <H6 >{budgetT("tabService.totalArea.time.title")}</H6>
                 </Stack>
                 <PTag>{moment().format("D MMM, YYYY")}</PTag>
               </Stack>
               <Stack gap={1} p={"10px"} pt={"0px"}>
 
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.time.budgetedTime")}</H6>
-                  <PTag>00:00</PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.time.budgetedTime")}</H6>
+                  <PTag fontSize="13px">00:00</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.time.billableTime")}</H6>
-                  <PTag>00:00</PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.time.billableTime")}</H6>
+                  <PTag fontSize="13px">00:00</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.time.estimatedTime")}</H6>
-                  <PTag>{_.get(serviceData, "allTime", "00:00")}</PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.time.estimatedTime")}</H6>
+                  <PTag fontSize="13px"> {_.get(serviceData, "allTime", "00:00")}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.time.workedTime")}</H6>
-                  <PTag>{_.get(serviceData, "allTimeUsed", "00:00")}</PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.time.workedTime")}</H6>
+                  <PTag fontSize="13px">{_.get(serviceData, "allTimeUsed", "00:00")}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>
+                  <H6 fontSize="13px">
                     {budgetT("tabService.totalArea.time.remainingTime")}
                     {/*(*/}
                     {/*{_.isEmpty(remainingTimeRate) ? 0 : remainingTimeRate}%)*/}
                   </H6>
-                  <Typography sx={{
+                  <Typography fontSize="13px" sx={{
                     background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
@@ -160,7 +160,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
             </ServiceBox>
           </Box>
         </Grid>
-        <Grid height={"auto"} xs={12} sm={6} xl={3}> <Box height={"100%"}
+        <Grid height={"auto"} xs={12} sm={6} sx={{width:{md:"22.0512820513%"}}}> <Box height={"100%"}
           sx={{
             border: "none",
             overflow: "hidden",
@@ -184,22 +184,22 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
               >
                 <Stack flexDirection={"row"}>
                   <Image src={ProfitIcon} alt="Profit Icon" width={24} />
-                  <H6>{budgetT("tabService.totalArea.profit.title")}</H6>
+                  <H6 >{budgetT("tabService.totalArea.profit.title")}</H6>
                 </Stack>
                 <PTag>{moment().format("D MMM, YYYY")}</PTag>
               </Stack>
               <Stack gap={1} p={"10px"} pt={"0px"}>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.profit.revenue")}</H6>
-                  <PTag>$0,00</PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.profit.revenue")}</H6>
+                  <PTag fontSize="13px">$0,00</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.profit.cost")}</H6>
-                  <PTag>$0,00</PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.profit.cost")}</H6>
+                  <PTag fontSize="13px">$0,00</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.profit.profit")}</H6>
-                  <Typography sx={{
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.profit.profit")}</H6>
+                  <Typography fontSize="13px" sx={{
                     background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
@@ -210,7 +210,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
             </ServiceBox>
           </Stack>
         </Box> </Grid>
-        <Grid height={"auto"} xs={12} sm={6} xl={3}> <Box height={"100%"}
+        <Grid height={"auto"} xs={12} sm={6}  sx={{width:{md:"22.0512820513%"}}}> <Box height={"100%"}
           sx={{
             border: "none",
             overflow: "hidden",
@@ -240,22 +240,22 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
 
               <Stack gap={1} p={"10px"} pt={"0px"}>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.budget.budgetTotal")}</H6>
-                  <PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.budget.budgetTotal")}</H6>
+                  <PTag fontSize="13px">
                     ${_.round(_.get(serviceData, "allBudgetTotal", 0), 2)}
                   </PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.budget.budgetUsed")}</H6>
-                  <PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.budget.budgetUsed")}</H6>
+                  <PTag fontSize="13px">
                     ${_.round(_.get(serviceData, "allBudgetUsed", 0))}
                   </PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>
+                  <H6 fontSize="13px">
                     {budgetT("tabService.totalArea.budget.budgetRemaining")}
                   </H6>
-                  <Typography sx={{
+                  <Typography fontSize="13px" sx={{
                     background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
@@ -267,7 +267,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
           </Stack>
         </Box>
         </Grid>
-        <Grid height={"auto"} xs={12} sm={6} xl={3}> <Box height={"100%"}
+        <Grid height={"auto"} xs={12} sm={6}  sx={{width:{md:"22.0512820513%"}}}> <Box height={"100%"}
           sx={{
             border: "none",
             overflow: "hidden",
@@ -294,25 +294,25 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                   <Image src={InvoicingIcon} alt="Invoicing Icon" width={24} />
                   <H6>{budgetT("tabService.totalArea.invoicing.title")}</H6>
                 </Stack>
-                <PTag>{moment().format("D MMM, YYYY")}</PTag>
+                <PTag >{moment().format("D MMM, YYYY")}</PTag>
               </Stack>
               <Stack gap={1} p={"10px"} pt={"0px"}>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>{budgetT("tabService.totalArea.invoicing.total")}</H6>
-                  <PTag>$5.880,00</PTag>
+                  <H6 fontSize="13px">{budgetT("tabService.totalArea.invoicing.total")}</H6>
+                  <PTag fontSize="13px">$5.880,00</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>
+                  <H6 fontSize="13px">
                     {budgetT("tabService.totalArea.invoicing.invoiced")} (0%)
                   </H6>
-                  <PTag>$0.00</PTag>
+                  <PTag fontSize="13px">$0.00</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                  <H6>
+                  <H6 fontSize="13px">
                     {budgetT("tabService.totalArea.invoicing.forInvoicing")}
                     (100%)
                   </H6>
-                  <PTag>$5.880,00</PTag>
+                  <PTag fontSize="13px">$5.880,00</PTag>
                 </Stack>
 
                 {Progress(50)}
