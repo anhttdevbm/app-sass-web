@@ -82,6 +82,7 @@
     "formik": "^2.4.1",
     "fuzzysort": "^2.0.4",
     "highlight.js": "^11.9.0",
+    "html-react-parser": "^5.1.10",
     "html2canvas": "^1.4.1",
     "js-file-download": "^0.4.12",
     "jspdf": "^2.5.1",
