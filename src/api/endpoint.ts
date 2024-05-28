@@ -1,4 +1,3 @@
-import { aI } from "@fullcalendar/core/internal-common";
 
 export const Endpoint = {
   SIGNIN: "/auth/login",
@@ -205,9 +204,9 @@ export const Endpoint = {
   CONTENT_PRICING_PARTNERS: "content/pricing/partners",
 
   //AI Chat
-  AI_CHAT_EXAMPLE_PROMPT: "api/v1/ai-chat/example-prompt",
-  AI_CHAT_SESSION: "api/v1/ai-chat/chat-session",
-  AI_CHAT: "api/v1/ai-chat/chat",
-  AI_CHAT_PERSONA: "api/v1/ai-chat/persona",
-  AI_CHAT_TONE: "api/v1/ai-chat/tone",
+  AI_CHAT_EXAMPLE_PROMPT: "ai-chat/example-prompt",
+  AI_CHAT_SESSION: "ai-chat/chat-session",
+  AI_CHAT: "ai-chat/chat",
+  AI_CHAT_PERSONA: "ai-chat/persona",
+  AI_CHAT_TONE: "ai-chat/tone",
 };
