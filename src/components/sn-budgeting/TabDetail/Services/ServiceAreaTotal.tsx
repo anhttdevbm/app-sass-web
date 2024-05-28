@@ -70,7 +70,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
         <Box
           sx={{
             top: 0,
-            left: `${value - 10}%`,
+            left: `${value - 15}%`,
             bottom: 0,
             right: 0,
             position: "absolute",
@@ -95,7 +95,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
       }}
     >
       <Grid container spacing={2}>
-        <Grid height={"auto"} xs={12} sm={6} sx={{width:{md:"33.8461538462%"}}}>
+        <Grid height={"auto"} xs={12} sm={6} sx={{width:{md:"28%",lg:"33.8461538462%"}}}>
           <Box
             height={"100%"}
             sx={{
@@ -162,7 +162,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
             </ServiceBox>
           </Box>
         </Grid>
-        <Grid height={"auto"} xs={12} sm={6} sx={{width:{md:"22.0512820513%"}}}> <Box height={"100%"}
+        <Grid height={"auto"} xs={12} sm={6} sx={{width:{md:"24%" ,lg:"22.0512820513%"}}}> <Box height={"100%"}
           sx={{
             border: "none",
             overflow: "hidden",
@@ -212,7 +212,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
             </ServiceBox>
           </Stack>
         </Box> </Grid>
-        <Grid height={"auto"} xs={12} sm={6}  sx={{width:{md:"22.0512820513%"}}}> <Box height={"100%"}
+        <Grid height={"auto"} xs={12} sm={6}  sx={{width:{md:"24%" ,lg:"22.0512820513%"}}}> <Box height={"100%"}
           sx={{
             border: "none",
             overflow: "hidden",
@@ -269,7 +269,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
           </Stack>
         </Box>
         </Grid>
-        <Grid height={"auto"} xs={12} sm={6}  sx={{width:{md:"22.0512820513%"}}}> <Box height={"100%"}
+        <Grid height={"auto"} xs={12} sm={6}   sx={{width:{md:"24%" ,lg:"22.0512820513%"}}}> <Box height={"100%"}
           sx={{
             border: "none",
             overflow: "hidden",
