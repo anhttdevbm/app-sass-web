@@ -1,5 +1,3 @@
-import { StringMap } from "quill";
-import { string } from "yup"
 
 export type BlogDictionary = {
     blogs: {
@@ -85,6 +83,10 @@ export type BlogDictionary = {
         notification: {
             success: string
         },
+        meta: string,
+        meta_title: string,
+        meta_description: string,
+        meta_router: string,
     },
     status: {
         published: string,

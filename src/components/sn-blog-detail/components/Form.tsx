@@ -1,37 +1,32 @@
 import {
-  Autocomplete,
-  Button,
-  Checkbox,
-  FormControlLabel,
+  Box,
   Grid,
   Stack,
-  TextField,
+  Typography
 } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
-import { Input, Upload } from "components/shared";
+import { Input } from "components/shared";
+import UploadFile from "components/shared/UploadFile";
 import { DataAction } from "constant/enums";
 import {
-  ACCESS_TOKEN_STORAGE_KEY,
   AN_ERROR_TRY_AGAIN,
   NS_BLOG,
-  NS_COMMON,
+  NS_COMMON
 } from "constant/index";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { useAuth, useSnackbar } from "store/app/selectors";
-import { BlogData, BlogFormData, TagData } from "store/blog/actions";
+import { UnprivilegedEditor } from "react-quill";
+import slugify from "slugify";
+import { useSnackbar } from "store/app/selectors";
+import { useCategoryBlog } from "store/blog-category/selectors";
+import { BlogFormData, TagData } from "store/blog/actions";
+import { useBlogs } from "store/blog/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
-import { UnprivilegedEditor } from "react-quill";
-import UploadFile from "components/shared/UploadFile";
-import { useCategoryBlog } from "store/blog-category/selectors";
-import SelectMultiple from "./SelectMultiple";
 import EditorView from "./EditorView";
-import { useBlogs } from "store/blog/selectors";
 import SelectCategoriescomplete from "./SelectCategories";
-import slugify from "slugify";
 import SelectTagMultiple from "./SelectMultiple";
 
 type FormProps = {
@@ -311,7 +306,7 @@ const Form = (props: FormProps) => {
               title={blogT(`${blogFormTranslatePrefix}.short_description`)}
             />
           </Stack>
-          <Stack height={300}>
+          <Stack>
             <EditorView
               hasAttachment
               placeholder={blogT("blogForm.content")}
@@ -329,6 +324,55 @@ const Form = (props: FormProps) => {
               ></Stack>
             </EditorView>
           </Stack>
+          <Box border={1} borderColor="divider">
+            <Typography variant="h6" sx={{ padding: 2 }}>
+              {blogT("blogForm.meta")} 
+            </Typography>
+            <Stack sx={{ padding: 2 }}>
+              <Input
+                fullWidth
+                name="meta_title"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                }}
+                onBlur={formik.handleBlur}
+                value={formik.values?.meta_title}
+                rootSx={sxConfig.input}
+                error={
+                  commonT(touchedErrors?.meta_title, {
+                    name: blogT("blogForm.meta_title"),
+                  })
+                    ? "error"
+                    : undefined
+                }
+                helperText={commonT(touchedErrors?.meta_title, {
+                  name: blogT("blogForm.meta_title"),
+                })}
+                title={blogT(`${blogFormTranslatePrefix}.meta_title`)}
+              />
+              <Input
+                fullWidth
+                name="meta_description"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                }}
+                onBlur={formik.handleBlur}
+                value={formik.values?.meta_description}
+                rootSx={sxConfig.input}
+                error={
+                  commonT(touchedErrors?.meta_description, {
+                    name: blogT("blogForm.meta_description"),
+                  })
+                    ? "error"
+                    : undefined
+                }
+                helperText={commonT(touchedErrors?.meta_description, {
+                  name: blogT("blogForm.meta_description"),
+                })}
+                title={blogT(`${blogFormTranslatePrefix}.meta_description`)}
+              />
+            </Stack>
+          </Box>
         </Grid>
       </Grid>
     </FormLayout>

@@ -1,5 +1,5 @@
-import { memo, useEffect, useState } from "react";
-import { Stack, useMediaQuery, useTheme } from "@mui/material";
+import React, { memo, useEffect, useState } from "react";
+import { IconButton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { Dropdown, Search as SearchInput } from "components/Filters";
 import { Button } from "components/shared";
 import { useTranslations } from "next-intl";
@@ -180,16 +180,16 @@ export const SearchWithOnlyInput = () => {
         onSearch();
       }}
       startNode={""}
-      endNode={<SearchIcon style={{ color: "#0575E6" }} />}
+      endNode={<IconButton aria-label="search"><SearchIcon onClick={onSearch} style={{ color: "#0575E6",height:"18px",width:"18px" }} /></IconButton>}
       value={queries.search_key ?? ""}
       sx={{
         // width: { xs: is1440Larger ? 250 : 180 },
         minWidth: { xs: is1440Larger ? 250 : 180 },
-        height: 48,
+        height: 40,
         width: {
           lg: 332,
         },
-        ".MuiInputBase-root": { height: 48, borderRadius: "100px" },
+        ".MuiInputBase-root": { height: 40, borderRadius: "100px" },
       }}
     />
   );

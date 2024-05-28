@@ -77,9 +77,9 @@ const Item = ({ projectId }: { projectId?: string }) => {
               &nbsp;selected&nbsp;
               {idSelecteds.length > 1 ? "items" : "item"}
             </Text>
-            <IconButton sx={{ ml: 1 }} onClick={() => setIdSelected([])}>
-              <CloseIcon />
-            </IconButton>
+            {/*<IconButton sx={{ ml: 1 }} onClick={() => setIdSelected([])}>*/}
+            {/*  <CloseIcon />*/}
+            {/*</IconButton>*/}
           </Stack>
           <Stack direction="row" gap={2}>
             <Stack

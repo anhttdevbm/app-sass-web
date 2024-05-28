@@ -85,6 +85,10 @@ export const BlogLang: BlogDictionary = {
         notification: {
             success: "{label} bài viết thành công"
         },
+        meta: "Nội dung cho SEO",
+        meta_title: "Tiêu đề cho thẻ meta title (SEO)",
+        meta_description: "Nội dung cho thẻ meta description (SEO)",
+        meta_router: "Điều hướng Robots",
     },
     status: {
         published: "Xuất bản",

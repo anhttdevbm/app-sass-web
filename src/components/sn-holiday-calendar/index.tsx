@@ -2,23 +2,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { FormControl } from "@mui/base/FormControl";
 import { useTranslations } from "next-intl";
 import fuzzysort from "fuzzysort";
 import * as Yup from "yup";
 
 import { DataStatus } from "constant/enums";
 import { NS_COMMON, NS_HOLIDAY_CALENDAR } from "constant/index";
-import { NewInput as Input, Text } from "components/shared";
+import { NewInput, Text } from "components/shared";
 import FormLayout from "components/NewFormLayout";
 import useToggle from "hooks/useToggle";
 import useWindowSize from "hooks/useWindowSize";
 import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
+import SearchIcon from "icons/SearchIcon";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import { HolidayCalendar as HolidayCalendarType } from "store/holidayCalendar/reducer";
 import HolidayCalendarCard from "./HolidayCalendarCard";
-import Search from "./components/Search";
-import HiddenLabel from "./components/HiddenLabel";
+import Input from "./components/Input";
 
 const HolidayCalendar = () => {
   const commonT = useTranslations(NS_COMMON);
@@ -28,7 +28,6 @@ const HolidayCalendar = () => {
     holidayCalendars,
     status,
     handleGetAllHolidayCalendar,
-    handleAddHolidayCalendar,
     handleGetAllHolidayList,
     handleAddHolidayList,
   } = useHolidayCalendar();
@@ -164,16 +163,37 @@ const HolidayCalendar = () => {
     setHolidayCalendarSearchInput(e.target.value);
   }, []);
 
+  const sortedHolidayCalendars = useMemo(
+    () =>
+      holidayCalendars
+        .filter(() => true)
+        .sort(
+          (c1, c2) =>
+            new Date(c2.created_time).getTime() -
+            new Date(c1.created_time).getTime(),
+        ),
+    [holidayCalendars],
+  );
   const filteredHolidayCalendars = useMemo(
     () =>
       fuzzysort
-        .go(holidayCalendarSearchInput, holidayCalendars, {
+        .go(holidayCalendarSearchInput, sortedHolidayCalendars, {
           keys: ["name", "country"],
           all: true,
         })
         .map((r) => r.obj),
-    [holidayCalendarSearchInput, holidayCalendars],
+    [holidayCalendarSearchInput, sortedHolidayCalendars],
   );
+
+  const [
+    isNewHolidayCalendarShown,
+    showNewHolidayCalendar,
+    hideNewHolidayCalendar,
+  ] = useToggle(false);
+
+  const handleAddHolidayCalendar = useCallback(() => {
+    showNewHolidayCalendar();
+  }, [showNewHolidayCalendar]);
 
   return (
     <Box
@@ -202,16 +222,33 @@ const HolidayCalendar = () => {
             justifyContent: "end",
           }}
         >
-          <FormControl
+          <Input
             value={holidayCalendarSearchInput}
             onChange={handleHolidayCalendarSearchChange}
-          >
-            <HiddenLabel />
-            <Search
-              placeholder={holidayCalendarT("form.searchHere")}
-              rootSx={{ maxWidth: { xs: "initial", sm: "600px" } }}
-            />
-          </FormControl>
+            name="holiday-calendar-search"
+            placeholder={holidayCalendarT("form.searchHere")}
+            endAdornment={
+              <SearchIcon
+                sx={{
+                  flexGrow: 0,
+                  flexShrink: 0,
+                  fontSize: "16px",
+                  marginRight: "12px",
+                  color: "#0575E6",
+                  cursor: "pointer",
+                }}
+              />
+            }
+            rootSx={{
+              maxWidth: { xs: "initial", sm: "600px" },
+              width: "initial",
+              backgroundColor: "white",
+            }}
+            sx={{
+              padding: "12px 24px",
+              color: "rgba(0, 0, 0, 50%)",
+            }}
+          />
         </Box>
         <Box
           component="button"
@@ -227,13 +264,7 @@ const HolidayCalendar = () => {
             borderRadius: "24px",
             cursor: "pointer",
           }}
-          onClick={async () => {
-            await handleAddHolidayCalendar({
-              name: "Holidays in Viet Nam",
-              country: "Viet Nam",
-              province: "",
-            });
-          }}
+          onClick={handleAddHolidayCalendar}
         >
           <Box
             position="absolute"
@@ -266,11 +297,35 @@ const HolidayCalendar = () => {
           </Text>
         </Box>
 
+        {isNewHolidayCalendarShown ? (
+          <HolidayCalendarCard
+            key="new-calendar"
+            isNew={true}
+            holidayCalendar={
+              {
+                id: "new-calendar",
+                name: "",
+                country: "",
+                province: "",
+                list: [],
+                company: "",
+                created_time: "",
+                updated_time: "",
+              } as HolidayCalendarType
+            }
+            handleOpenModal={handleOpenModal}
+            hideNewHolidayCalendar={hideNewHolidayCalendar}
+          />
+        ) : (
+          <></>
+        )}
         {filteredHolidayCalendars.map((calendar) => (
           <HolidayCalendarCard
             key={calendar.id}
+            isNew={false}
             holidayCalendar={calendar}
             handleOpenModal={handleOpenModal}
+            hideNewHolidayCalendar={() => undefined}
           />
         ))}
       </Stack>
@@ -298,7 +353,7 @@ const HolidayCalendar = () => {
           },
         }}
       >
-        <Input
+        <NewInput
           title={holidayCalendarT("form.year")}
           fullWidth
           name="year"

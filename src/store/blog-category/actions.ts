@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Endpoint, client } from "api";
 import { HttpStatusCode } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, BLOG_API_URL,  } from "constant/index";
+import { AN_ERROR_TRY_AGAIN, BLOG_API_URL, } from "constant/index";
 import { BaseQueries } from "constant/types";
 import { CategoryBlogData } from "./reducer";
 
@@ -24,21 +24,16 @@ export type GetBlogCategoryListQueries = BaseQueries & {
 // export const getAllBlogCategory = createAsyncThunk("blog-category/getAllBlogCategory",
 //     async (searchKey: string | undefined) => {
 //         try {
-//             // Sử dụng fetch để gọi API và truyền tham số searchKey vào URL
 //             const response = await fetch(`${Endpoint.CATEGORY_BLOG}?searchKey=${searchKey}`);
 
 //             if (!response.ok) {
-//                 // Xử lý lỗi nếu có lỗi trong phản hồi từ API
 //                 throw new Error(`Error fetching data: ${response.status}`);
 //             }
 
-//             // Chuyển đổi phản hồi thành JSON
 //             const data = await response.json();
 
-//             // Gọi hàm refactorRawItemListResponse để xử lý dữ liệu (nếu cần)
 //             const finalPayload = refactorRawItemListResponse(data);
 
-//             // Trả về kết quả cho hành động
 //             return finalPayload;
 //         } catch (error) {
 //             throw error;
