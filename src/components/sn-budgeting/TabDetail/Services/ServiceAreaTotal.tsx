@@ -76,6 +76,8 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
             position: "absolute",
             display: "flex",
             color: "white",
+            fontSize:"13px",
+            fontWeight:700
           }}
         >
           {value}%
