@@ -14,6 +14,7 @@ import { formatDate } from 'utils/index';
 
 import { DataAction } from 'constant/enums';
 import useToggle from 'hooks/useToggle';
+import parse, { HTMLReactParserOptions, domToReact } from 'html-react-parser';
 import EditIcon from 'icons/EditIcon';
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
 import CommentsTreeView from './components/Comments';
@@ -105,6 +106,21 @@ const BlogDetailSection = () => {
   
     fetchBackgroundFile();
   }, [detailItem?.background_down]);
+
+  const optionsRenderHtml: HTMLReactParserOptions = {
+    replace: (domNode) => {
+      if (domNode.type === 'tag' && domNode.name === 'code') {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        return (
+          <div style={{ width: '100%', overflowX: "auto" }}>
+            <code>
+              {domToReact(domNode.children as any, optionsRenderHtml)}
+            </code>
+          </div>
+        );
+      }
+    }
+  };
     return (
         <>
             <StatusServer isFetching={detailItemIsFetching} error={detailItemError} noData={!detailItem}>
@@ -169,8 +185,9 @@ const BlogDetailSection = () => {
                                                 </Text>
                                             </Stack>
                                         </Stack>
-                                        <Stack marginTop={5}>
-                                            {renderContentWithAttachments(detailItem?.content as string, detailItem?.attachments_down as AttachmentsBlogs[])}
+                                        <Stack marginTop={5} width={"100%"} sx={{wordBreak: "break-word"}}>
+                                            {/* {renderContentWithAttachments(detailItem?.content as string, detailItem?.attachments_down as AttachmentsBlogs[])} */}
+                                            {typeof detailItem?.content === 'string' ? parse(detailItem.content, optionsRenderHtml) : 'Content is not a string'}
                                         </Stack>
                                         <Stack>
                                             <CommentEditor
