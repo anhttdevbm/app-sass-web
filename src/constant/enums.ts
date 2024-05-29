@@ -34,6 +34,8 @@ export enum Permission {
   AM = "AM",
   ST = "ST",
   EU = "EU",
+  MN = "MN",
+  LE = "LE",
   CL = "CL",
   CT = "CT",
 }
