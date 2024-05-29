@@ -15,6 +15,7 @@ import {
   NS_COMMON
 } from "constant/index";
 import { FormikErrors, useFormik } from "formik";
+import JoditEditor from "jodit-react";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { UnprivilegedEditor } from "react-quill";
@@ -25,7 +26,6 @@ import { BlogFormData, TagData } from "store/blog/actions";
 import { useBlogs } from "store/blog/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
-import Editor from "./Editor";
 import CustomAutocomplete from "./SelectCategories";
 import SelectTagMultiple from "./SelectMultiple";
 
@@ -48,6 +48,12 @@ const Form = (props: FormProps) => {
   const [tags, setTags] = useState<TagData[]>([]);
   const blogFormTranslatePrefix = "blogForm";
   const { items, onGetOptions: onGetCategoryOptions } = useCategoryBlog();
+
+  const editor = useRef(null);
+  const config = {
+    readonly: false,
+    height: 400
+  };
 
   useEffect(() => {
     onGetListTag();
@@ -320,7 +326,19 @@ const Form = (props: FormProps) => {
             />
           </Stack>
           <Stack>
-            <Editor
+            <JoditEditor
+              ref={editor}
+              value={content}
+              config={config}
+              onBlur={(newContent) => {
+                setContent(newContent); 
+                formik.setFieldValue("content", newContent);
+              }}
+              // onChange={(newContent) => {
+              //   setContent(newContent); formik.setFieldValue("content", newContent);
+              // }}
+            />
+            {/* <Editor
               hasAttachment
               placeholder={blogT("blogForm.content")}
               onChange={onChangeContent}
@@ -334,7 +352,7 @@ const Form = (props: FormProps) => {
                 justifyContent="space-between"
                 mt={2}
               ></Stack>
-            </Editor>
+            </Editor> */}
           </Stack>
           
           <Box border={1} borderColor="divider">
