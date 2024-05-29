@@ -83,8 +83,9 @@ export const ServiceAreaSection = ({
               maxHeight={920}
               headerProps={{
                 sx: {
+                  height:"44px",
                   px: 2,
-                  background: "#D9F0FD", p: "20px",
+                  background: "#D9F0FD",
                   fontWeight:"600",
                   "h6":{fontSize:"16px"}
                 },

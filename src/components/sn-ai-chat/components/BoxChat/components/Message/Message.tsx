@@ -15,8 +15,8 @@ import { OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
-import ReactMarkdown from 'react-markdown';
 import { FileItem } from "components/sn-ai-chat/components/BoxChat/components/Message/FileItem";
+import parse, { domToReact, HTMLReactParserOptions } from 'html-react-parser';
 
 interface MessageProps {
   message: Partial<OpenAIChat>;
@@ -104,7 +104,20 @@ export const Message: React.FC<MessageProps> = ({
     setEditedMessage(event.target.value);
   };
 
-  console.log("MessageProps", message.files)
+  const optionsRenderHtml: HTMLReactParserOptions = {
+    replace: (domNode) => {
+      if (domNode.type === 'tag' && domNode.name === 'code') {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        return (
+          <div style={{ width: '100%', overflowX: "auto" }}>
+            <code>
+              {domToReact(domNode.children as any, optionsRenderHtml)}
+            </code>
+          </div>
+        );
+      }
+    }
+  };
 
   return (
     <Box key={id}>
@@ -113,6 +126,7 @@ export const Message: React.FC<MessageProps> = ({
         alignItems="flex-start"
         justifyContent="space-around"
         flexDirection={isMobile ? "column" : "row"}
+        width={"100%"}
         mb={"12px"}
       >
         <Avatar
@@ -180,14 +194,11 @@ export const Message: React.FC<MessageProps> = ({
           </Box>
           <MessageBox
             bgcolor={isDarkMode ? "info.dark" : "#f5f5f5"}
-            flex={1}
             isMobile={isMobile}
           >
             {!isLoading ? (
-              <Stack width="100%" style={{ wordWrap: 'break-word' }}>
-                <ReactMarkdown>
-                  {assistant_content}
-                </ReactMarkdown>
+              <Stack width={"100%"} sx={{wordBreak: "break-word"}}>
+                  {parse(assistant_content as string, optionsRenderHtml)}
               </Stack>
             ) : (
               <Box

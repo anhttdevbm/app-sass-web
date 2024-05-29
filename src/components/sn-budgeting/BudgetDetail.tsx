@@ -359,7 +359,7 @@ export const BudgetDetail = () => {
         <Stack
           sx={{ background: "#F3F3F3" }}
           direction="row"
-          p="15px"
+          p="10px"
           justifyContent="space-between"
           borderBottom="1px solid #ECECF3"
           gap={2}
@@ -413,7 +413,7 @@ export const BudgetDetail = () => {
                 }}
               />
             </Stack>
-            <Stack pl="2px" direction="row" alignItems="center">
+            <Stack direction="row" alignItems="center">
               <CustomDateRangePicker
                 value={{
                   startDate: budget.start_date
@@ -423,7 +423,7 @@ export const BudgetDetail = () => {
                     ? dayjs(budget.end_date).toDate()
                     : undefined,
                 }}
-                sx={{ background: "white", borderRadius: "100px","label.MuiBox-root":{p:"5px"} }}
+                sx={{ background: "white", borderRadius: "100px","label.MuiBox-root":{p:"2px 15px"} }}
                 onChange={handleUpdateDate}
                 iconPosition="left"
                 isDropdown
@@ -480,10 +480,11 @@ export const BudgetDetail = () => {
           p={"10px"}
         >
 
-          <Stack direction="row" alignItems="center">
+
             <Stack
-              sx={{ border: "1px solid #EFEFEF", borderRadius: "100px", mr: { xs: "10px", md: "20px", xl: "38px" } }}
+              sx={{height:"40px", border: "1px solid #EFEFEF", borderRadius: "100px", mr: { xs: "10px", md: "20px", xl: "38px" } }}
               direction="row"
+              justifyContent="start"
               alignItems="center">
               {Object.keys(TABS).map((tab, index) => {
                 const currentTab = TABS[tab];
@@ -491,10 +492,10 @@ export const BudgetDetail = () => {
                   <Box
                     key={`budget-detail-tab-${index}`}
                     p={1}
-                    mx="2px"
+                    // mx="2px"
                     borderBottom="2px solid transparent"
                     sx={{
-                      padding: { xs: "7px 20px", md: "10px 30px", xl: "14px 50px" },
+                      px: { xs: "20px",md:"30px"},
                       borderRadius: "100px",
                       cursor: "pointer",
                       transaction: "all .2s",
@@ -513,7 +514,7 @@ export const BudgetDetail = () => {
             </Stack>
             {ButtonAction}
           </Stack>
-        </Stack>
+
       </Stack>
 
       <Stack p={"10px"} direction="row" mt={1}>

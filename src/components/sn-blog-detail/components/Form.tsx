@@ -15,6 +15,7 @@ import {
   NS_COMMON
 } from "constant/index";
 import { FormikErrors, useFormik } from "formik";
+import JoditEditor from "jodit-react";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { UnprivilegedEditor } from "react-quill";
@@ -25,7 +26,6 @@ import { BlogFormData, TagData } from "store/blog/actions";
 import { useBlogs } from "store/blog/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
-import EditorView from "./EditorView";
 import SelectCategoriescomplete from "./SelectCategories";
 import SelectTagMultiple from "./SelectMultiple";
 
@@ -53,6 +53,14 @@ const Form = (props: FormProps) => {
     onGetListTag();
     onGetCategoryOptions({ pageIndex: 1, pageSize: 50 });
   }, [onGetCategoryOptions, onGetListTag]);
+
+  const editor = useRef(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const config: any = {
+    placeholder: blogT("blogForm.content"),
+    readonly: false,
+    height: 400
+  };
 
   // set value
   const label = useMemo(() => {
@@ -307,7 +315,16 @@ const Form = (props: FormProps) => {
             />
           </Stack>
           <Stack>
-            <EditorView
+            <JoditEditor
+                ref={editor}
+                value={content}
+                config={config}
+                onBlur={(newContent) => {
+                  setContent(newContent); 
+                  formik.setFieldValue("content", newContent);
+                }}
+            />
+            {/* <EditorView
               hasAttachment
               placeholder={blogT("blogForm.content")}
               onChange={onChangeContent}
@@ -322,7 +339,7 @@ const Form = (props: FormProps) => {
                 justifyContent="space-between"
                 mt={2}
               ></Stack>
-            </EditorView>
+            </EditorView> */}
           </Stack>
           <Box border={1} borderColor="divider">
             <Typography variant="h6" sx={{ padding: 2 }}>
