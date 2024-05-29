@@ -364,20 +364,20 @@ export const BudgetDetail = () => {
           borderBottom="1px solid #ECECF3"
           gap={2}
         >
-          <Stack gap={2} flexWrap="wrap" direction="row" alignItems="center">
+          <Stack gap={1} direction="row" alignItems="center">
             <Link href={BUDGETING_PATH}>
               <IconButton>
                 <Image src={BackIcon} alt="App logo" width={20} />
               </IconButton>
             </Link>
             <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
-            <Stack pl="7px">
-              <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
+            <Stack width={"150px"}>
+              <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}
               </Text>
-              <Text lineHeight={1.2}>{budget.name}</Text>
+              <Text fontSize="16px" lineHeight={1.2}>{budget.name}</Text>
             </Stack>
-            <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
+            <Stack direction="row" gap={1} alignItems="center" >
               <TextStatus
                 text="status.open"
                 color={
@@ -413,7 +413,7 @@ export const BudgetDetail = () => {
                 }}
               />
             </Stack>
-            <Stack pl="15px" direction="row" alignItems="center">
+            <Stack pl="2px" direction="row" alignItems="center">
               <CustomDateRangePicker
                 value={{
                   startDate: budget.start_date
@@ -423,18 +423,18 @@ export const BudgetDetail = () => {
                     ? dayjs(budget.end_date).toDate()
                     : undefined,
                 }}
-                sx={{ background: "white", borderRadius: "100px" }}
+                sx={{ background: "white", borderRadius: "100px","label.MuiBox-root":{p:"5px"} }}
                 onChange={handleUpdateDate}
                 iconPosition="left"
                 isDropdown
                 errorMessage=""
               />
-              <IconButton
-                sx={{ color: "grey.300" }}
-                onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}
-              >
-                <OpenSidebarIcon />
-              </IconButton>
+              {/*<IconButton*/}
+              {/*  sx={{ color: "grey.300" }}*/}
+              {/*  onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}*/}
+              {/*>*/}
+              {/*  <OpenSidebarIcon />*/}
+              {/*</IconButton>*/}
 
             </Stack>
           </Stack>
