@@ -96,6 +96,10 @@ const ChatList: React.FC<ChatListProps> = ({
 
   useEffect(() => {
     fetchChatSessions({});
+  }, []);
+
+  useEffect(() => {
+    // fetchChatSessions({});
     if (newChatSessionCreated) {
       onSelectChatId(newChatSessionCreated);
     }
