@@ -28,6 +28,7 @@ export type GetEmployeeListQueries = BaseQueries & {
   status?: boolean;
   company?: string;
   date?: string;
+  typeEmployee?: string;
   searchType?: "and" | "or" | "eq";
 };
 
@@ -82,6 +83,8 @@ export const getEmployees = createAsyncThunk(
       ["email", "fullname"],
       undefined,
       ["status"],
+      {},
+      ["typeEmployee"]
     ) as GetEmployeeListQueries;
 
     try {

@@ -8,7 +8,7 @@ import {
   ChangeEvent,
 } from "react";
 import { Stack, TableRow } from "@mui/material";
-import { usePathname, useRouter } from "next-intl/client";
+import { usePathname } from "next-intl/client";
 import { useTranslations } from "next-intl";
 
 import ConfirmDialog from "components/ConfirmDialog";
@@ -39,8 +39,7 @@ import DeleteConfirm from "./components/DeleteConfirm";
 
 const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
   const {
-    items,
-    clientEmployees,
+    items: employees,
     isFetching,
     isIdle,
     error,
@@ -57,7 +56,6 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
 
   const { initQuery, isReady, query } = useQueryParams();
   const pathname = usePathname();
-  const { push } = useRouter();
   const { isMdSmaller } = useBreakpoint();
   // const { isDarkMode } = useTheme();
 
@@ -65,10 +63,10 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
   const [selectedList, setSelectedList] = useState<Employee[]>([]);
   const [action, setAction] = useState<DataAction | undefined>();
 
-  const employees = useMemo(
-    () => (employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees),
-    [employeeType, items, clientEmployees],
-  );
+  // const employees = useMemo(
+  //   () => (employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees),
+  //   [employeeType, items, clientEmployees],
+  // );
 
   const isCheckedAll = useMemo(
     () =>
@@ -150,9 +148,17 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChangeQueries = (queries: { [key: string]: any }) => {
-    const newQueries = { ...query, ...queries };
+    const newQueries = {
+      typeEmployee: employeeType.toString(),
+      ...query,
+      ...queries,
+    };
     const path = getPath(pathname, newQueries);
-    push(path);
+    window.history.pushState(
+      { ...window.history.state, as: path, url: path },
+      "",
+      path,
+    );
 
     onGetEmployees({ ...newQueries });
   };
@@ -194,8 +200,12 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
 
   useEffect(() => {
     if (!isReady) return;
-    onGetEmployees({ ...DEFAULT_PAGING, ...initQuery });
-  }, [initQuery, isReady, onGetEmployees]);
+    onGetEmployees({
+      ...DEFAULT_PAGING,
+      typeEmployee: employeeType.toString(),
+      ...initQuery,
+    });
+  }, [employeeType, initQuery, isReady, onGetEmployees]);
 
   useEffect(() => {
     setSelectedList([]);

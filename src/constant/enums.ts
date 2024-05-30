@@ -47,9 +47,9 @@ export enum Status {
 }
 
 export enum EmployeeType {
-  EMPLOYEE = "EMPLOYEE",
-  CLIENT = "CLIENT",
-  CONTRACTOR = "CONTRACTOR",
+  EMPLOYEE = "Employee",
+  CLIENT = "Client",
+  CONTRACTOR = "Contructor",
 }
 
 export enum PayStatus {

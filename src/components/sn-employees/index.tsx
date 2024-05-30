@@ -1,5 +1,6 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Tab from "@mui/material/Tab";
 import { useTranslations } from "next-intl";
@@ -11,7 +12,16 @@ import ItemList from "./ItemList";
 
 const EmployeesPage = () => {
   const companyT = useTranslations(NS_COMPANY);
+
   const [tab, setTab] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
+  const searchParams = useSearchParams();
+  const typeEmployeeParams = useMemo(
+    () => searchParams.get("typeEmployee") as EmployeeType,
+    [searchParams],
+  );
+  useEffect(() => {
+    setTab(typeEmployeeParams || EmployeeType.EMPLOYEE);
+  }, [typeEmployeeParams]);
 
   const handleSetTab = useCallback(
     (_event: React.SyntheticEvent, newValue: EmployeeType) => {
