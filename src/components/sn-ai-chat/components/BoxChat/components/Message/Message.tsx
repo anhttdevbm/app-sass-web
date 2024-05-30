@@ -58,14 +58,19 @@ export const Message: React.FC<MessageProps> = ({
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
   const handleCopy = async () => {
     const textToCopy = assistant_content as string;
 
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(textToCopy, 'text/html');
+    const plainText = doc.body.textContent || '';
+
     if (navigator.clipboard) {
-      await navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(plainText);
     } else {
       const textarea = document.createElement("textarea");
-      textarea.value = textToCopy;
+      textarea.value = plainText;
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand("copy");
