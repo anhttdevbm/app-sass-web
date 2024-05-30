@@ -1,10 +1,9 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import { Text } from "components/shared";
 import { useEffect, useRef, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 import { ChatSession } from "store/aiChat/type";
 import ItemChat from "../ItemChat";
-import { HEADER_HEIGHT } from "layouts/Header";
 
 const TODAY = "Today";
 const YESTERDAY = "Yesterday";
@@ -97,6 +96,10 @@ const ChatList: React.FC<ChatListProps> = ({
 
   useEffect(() => {
     fetchChatSessions({});
+  }, []);
+
+  useEffect(() => {
+    // fetchChatSessions({});
     if (newChatSessionCreated) {
       onSelectChatId(newChatSessionCreated);
     }

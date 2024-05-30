@@ -9,7 +9,6 @@ export interface FileItemProps {
 }
 
 export const FileItem: React.FC<FileItemProps> = ({ file }) => {
-  console.log(file);
   const icons = {
     "application/pdf": "pdf",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "doc",

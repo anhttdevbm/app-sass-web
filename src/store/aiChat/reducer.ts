@@ -13,7 +13,7 @@ import {
   getPersona,
   getTone,
 } from "./actions";
-import { AIChatState, OpenAIChat } from "./type";
+import { AIChatState, ChatSession, ChatSessionData, OpenAIChat } from "./type";
 import { getPageNumber } from "./helper";
 
 const initialState: AIChatState = {
@@ -69,6 +69,12 @@ const aiChatSlice = createSlice({
     addChatWithAI: (state, action: PayloadAction<OpenAIChat>) => {
       state.openAIChat.unshift(action.payload);
     },
+    addNewChatSession: (state, action: PayloadAction<ChatSessionData>) => {
+      state.chatSessions.unshift({
+        ...action.payload,
+        last_question_at: new Date().toISOString(),
+      } as ChatSession);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -120,7 +126,8 @@ const aiChatSlice = createSlice({
           (chatSession) => chatSession.id === payload.id,
         );
         if (index !== -1) {
-          state.chatSessions[index] = payload;
+          state.chatSessions.splice(index, 1);
+          state.chatSessions.unshift(payload);
         }
       })
       .addCase(editChatSession.rejected, (state, action) => {
@@ -153,8 +160,8 @@ const aiChatSlice = createSlice({
       })
       .addCase(createChatSession.fulfilled, (state, { payload }) => {
         state.chatSessionsStatus = DataStatus.SUCCEEDED;
-        // state.chatSession = payload.chat_session;
         state.newChatSessionCreated = payload.chat_session;
+        state.chatSessions[0].id = payload.chat_session;
       })
       .addCase(createChatSession.rejected, (state, action) => {
         state.chatSessionStatus = DataStatus.FAILED;
