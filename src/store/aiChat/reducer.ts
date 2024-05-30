@@ -120,7 +120,8 @@ const aiChatSlice = createSlice({
           (chatSession) => chatSession.id === payload.id,
         );
         if (index !== -1) {
-          state.chatSessions[index] = payload;
+          state.chatSessions.splice(index, 1);
+          state.chatSessions.unshift(payload);
         }
       })
       .addCase(editChatSession.rejected, (state, action) => {

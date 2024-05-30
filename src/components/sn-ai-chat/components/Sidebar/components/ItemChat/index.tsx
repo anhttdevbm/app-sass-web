@@ -10,7 +10,6 @@ import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 
-const PRIMARY_MAIN = "primary.main";
 const PRIMARY_LIGHT = "primary.light";
 const GREY_900 = "grey.900";
 const INFOR_DARK = "info.dark";
