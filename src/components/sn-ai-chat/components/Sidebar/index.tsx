@@ -25,8 +25,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const t = useTranslations(NS_AI_CHAT);
   const theme = useTheme();
 
-  const { user } = useAuth();
-
   const { onDeleteAllChatSessions, onNewChat } = useChatSession();
 
   const mobileMode = useMediaQuery("(max-width:600px)");
@@ -41,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         : popupMode
         ? {
             width: "100%",
-            height: "90.4%",
+            height: "92%",
           }
         : {
             minWidth: "300px",
@@ -58,16 +56,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   );
 
   const handleCloseAllChatSession = () => {
-    if (user) {
-      onDeleteAllChatSessions({ userId: user.id });
-    }
+    onDeleteAllChatSessions();
   };
 
   const handleNewChat = () => {
+    onNewChat();
     if (onSwitchToBoxChat) {
       onSwitchToBoxChat();
     }
-    onNewChat();
   };
 
   return (

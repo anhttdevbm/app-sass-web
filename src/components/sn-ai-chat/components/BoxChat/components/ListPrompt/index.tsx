@@ -22,7 +22,7 @@ export const ListPrompt: React.FC<ListPromptProps> = ({
 
   const getDisplayedPrompts = () => {
     if (isMobile) {
-      return prompts.slice(0, 2);
+      return prompts.slice(0, 6);
     } else if (isMdSmaller) {
       return prompts.slice(0, 2);
     } else if (isLgSmaller) {
@@ -36,7 +36,7 @@ export const ListPrompt: React.FC<ListPromptProps> = ({
 
   const renderPrompt = (item: ExamplePrompt, i: number) => {
     const padding = isMobile
-      ? "12px 16px"
+      ? "10px 14px"
       : isMdSmaller
       ? "8px 10px"
       : "16px 21px";
@@ -57,7 +57,7 @@ export const ListPrompt: React.FC<ListPromptProps> = ({
               padding,
               height: "100%",
               borderColor,
-              fontSize: "14px",
+              fontSize: isMobile ? "13px" : "14px",
             }}
           >
             {item.prompt[locale]}
@@ -68,7 +68,7 @@ export const ListPrompt: React.FC<ListPromptProps> = ({
   };
 
   return (
-    <Grid container spacing={2} rowSpacing={1} marginTop={4}>
+    <Grid container spacing={2} rowSpacing={1} marginTop={isMobile ? 1 : 4}>
       {displayedPrompts.map(renderPrompt)}
     </Grid>
   );

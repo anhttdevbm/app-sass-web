@@ -1,8 +1,10 @@
+import { DataStatus } from "constant/enums";
+import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
 import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
+import { clientStorage } from "utils/storage";
 import {
-    BlogData,
     BlogFormData,
     CommentBlogData,
     GetBlogListQueries,
@@ -16,11 +18,8 @@ import {
     getRelatedBlog,
     updateBlog,
     updatePublished,
-    uploadFile,
+    uploadFile
 } from "./actions";
-import { DataStatus } from "constant/enums";
-import { clientStorage } from "utils/storage";
-import { ACCESS_TOKEN_STORAGE_KEY, IMAGES_ACCEPT } from "constant/index";
 
 
 export const useBlogs = () => {
@@ -50,7 +49,6 @@ export const useBlogs = () => {
     const onUpdateBlog = useCallback(
         async (blog: BlogFormData) => {
             try {
-                console.log(blog);
                 if (blog.backgroundUpload) {
                     const backgroundUploadResponse = await dispatch(
                         uploadFile({
@@ -59,9 +57,8 @@ export const useBlogs = () => {
                     );
                     blog.background = backgroundUploadResponse.payload.object;
                 }
-                console.log(blog.attachments);
                 const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
-                var id = blog.id as string;
+                const id = blog.id as string;
                 return await dispatch(updateBlog({ id, blog, Token: Token ?? null })).unwrap();
             } catch (error) {
                 throw error;
@@ -143,7 +140,6 @@ export const useBlogs = () => {
     const onDeleteBlog = useCallback(
         async (blogIds: string) => {
             try {
-                console.log("ids : " + blogIds);
                 const Token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
                 return await dispatch(deleteBlog({ ids: blogIds, Token: Token })).unwrap();
             } catch (error) {

@@ -17,7 +17,7 @@ export type ChatSession = {
 };
 
 export type SelectChatAI = {
-  id: number;
+  id: string;
   name: string;
   icon: string;
   description: string;
@@ -61,6 +61,8 @@ export type AIChatState = {
   openAIChatStatus: DataStatus;
   openAIChatError?: string;
   openAIChatFilters?: GetOpenAIChatQueries;
+
+  chatAIStatus: DataStatus;
 };
 
 export type GetChatSessionsQueries = BaseQueries & {
@@ -92,6 +94,13 @@ export type ChatWithAIData = {
   files?: File[];
 };
 
+export type File = Blob & {
+  name?: string;
+  type?: string;
+  link?: string;
+  size?: number;
+}
+
 export type OpenAIChat = {
   id?: string;
   persona: string;
@@ -102,6 +111,7 @@ export type OpenAIChat = {
   model?: string;
   chat_session?: string;
   created_at?: string;
+  files?: File[]
 };
 
 export type GetOpenAIChatQueries = {

@@ -1,4 +1,4 @@
-import { Avatar, Box, Skeleton, useMediaQuery } from "@mui/material";
+import { Avatar, Box, Skeleton, Stack, useMediaQuery } from "@mui/material";
 import { IconButton, Text } from "components/shared";
 import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
 import useTheme from "hooks/useTheme";
@@ -15,6 +15,8 @@ import { OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
+import { FileItem } from "components/sn-ai-chat/components/BoxChat/components/Message/FileItem";
+import parse, { domToReact, HTMLReactParserOptions } from 'html-react-parser';
 
 interface MessageProps {
   message: Partial<OpenAIChat>;
@@ -87,6 +89,7 @@ export const Message: React.FC<MessageProps> = ({
       tone: message.tone as string,
       persona: message.persona as string,
       chat_session: message.chat_session,
+      ...(message.files && { files: message.files })
     });
     setEditedMessage("");
   };
@@ -101,6 +104,21 @@ export const Message: React.FC<MessageProps> = ({
     setEditedMessage(event.target.value);
   };
 
+  const optionsRenderHtml: HTMLReactParserOptions = {
+    replace: (domNode) => {
+      if (domNode.type === 'tag' && domNode.name === 'code') {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        return (
+          <div style={{ width: '100%', overflowX: "auto" }}>
+            <code>
+              {domToReact(domNode.children as any, optionsRenderHtml)}
+            </code>
+          </div>
+        );
+      }
+    }
+  };
+
   return (
     <Box key={id}>
       <Box
@@ -108,6 +126,7 @@ export const Message: React.FC<MessageProps> = ({
         alignItems="flex-start"
         justifyContent="space-around"
         flexDirection={isMobile ? "column" : "row"}
+        width={"100%"}
         mb={"12px"}
       >
         <Avatar
@@ -140,9 +159,14 @@ export const Message: React.FC<MessageProps> = ({
             />
           ) : (
             <>
-              <Text variant="body1" flex={1}>
-                {user_prompt}
-              </Text>
+              <Stack direction={"column"} spacing={1} flex={1}>
+                {message.files && message.files.map((file, index) => (
+                  <FileItem file={file} key={index} />
+                ))}
+                <Text variant="body1" flex={1}>
+                  {user_prompt}
+                </Text>
+              </Stack>
               <IconButton
                 size="small"
                 sx={{ borderRadius: "50%" }}
@@ -170,13 +194,12 @@ export const Message: React.FC<MessageProps> = ({
           </Box>
           <MessageBox
             bgcolor={isDarkMode ? "info.dark" : "#f5f5f5"}
-            flex={1}
             isMobile={isMobile}
           >
             {!isLoading ? (
-              <Text variant="body1" flex={1}>
-                {assistant_content}
-              </Text>
+              <Stack width={"100%"} sx={{wordBreak: "break-word"}}>
+                  {parse(assistant_content as string, optionsRenderHtml)}
+              </Stack>
             ) : (
               <Box
                 display={"flex"}

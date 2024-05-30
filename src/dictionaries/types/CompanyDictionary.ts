@@ -11,6 +11,9 @@ export type CompanyDictionary = {
     waiting: string;
     key: string;
     isNeedSelect: string;
+    employee: string;
+    client: string;
+    contractor: string;
     confirmPayment: {
       title: string;
       content: string;

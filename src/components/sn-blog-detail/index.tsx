@@ -1,25 +1,24 @@
 "use client"
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Paper, Stack, StackProps, Typography }
-    from '@mui/material';
+import { Box, Button, Card, Divider, Grid, List, ListItem, ListItemText, Paper, Stack } from '@mui/material';
+import Avatar from "components/Avatar";
+import StatusServer from 'components/StatusServer';
 import { Text } from 'components/shared';
 import CommentEditor from 'components/sn-blog-detail/components/CommentEditor';
-import { useTranslations } from 'next-intl';
 import { DATE_TIME_FORMAT_SLASH, NS_BLOG } from 'constant/index';
-import { useBlogs } from 'store/blog/selectors';
+import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import StatusServer from 'components/StatusServer';
+import React, { memo, useEffect, useRef, useState } from 'react';
+import { AttachmentsBlogs, BlogFormData } from 'store/blog/actions';
+import { useBlogs } from 'store/blog/selectors';
 import { formatDate } from 'utils/index';
-import React from 'react';
-import Avatar from "components/Avatar";
-import { AttachmentsBlogs, BlogFormData, CommentBlogData } from 'store/blog/actions';
 
+import { DataAction } from 'constant/enums';
+import useToggle from 'hooks/useToggle';
+import parse, { HTMLReactParserOptions, domToReact } from 'html-react-parser';
+import EditIcon from 'icons/EditIcon';
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
 import CommentsTreeView from './components/Comments';
-import EditIcon from 'icons/EditIcon';
-import useToggle from 'hooks/useToggle';
 import Form from './components/Form';
-import { DataAction } from 'constant/enums';
 
 const BlogDetailSection = () => {
     const blogT = useTranslations(NS_BLOG);
@@ -107,6 +106,21 @@ const BlogDetailSection = () => {
   
     fetchBackgroundFile();
   }, [detailItem?.background_down]);
+
+  const optionsRenderHtml: HTMLReactParserOptions = {
+    replace: (domNode) => {
+      if (domNode.type === 'tag' && domNode.name === 'code') {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        return (
+          <div style={{ width: '100%', overflowX: "auto" }}>
+            <code>
+              {domToReact(domNode.children as any, optionsRenderHtml)}
+            </code>
+          </div>
+        );
+      }
+    }
+  };
     return (
         <>
             <StatusServer isFetching={detailItemIsFetching} error={detailItemError} noData={!detailItem}>
@@ -171,8 +185,9 @@ const BlogDetailSection = () => {
                                                 </Text>
                                             </Stack>
                                         </Stack>
-                                        <Stack marginTop={5}>
-                                            {renderContentWithAttachments(detailItem?.content as string, detailItem?.attachments_down as AttachmentsBlogs[])}
+                                        <Stack marginTop={5} width={"100%"} sx={{wordBreak: "break-word"}}>
+                                            {/* {renderContentWithAttachments(detailItem?.content as string, detailItem?.attachments_down as AttachmentsBlogs[])} */}
+                                            {typeof detailItem?.content === 'string' ? parse(detailItem.content, optionsRenderHtml) : 'Content is not a string'}
                                         </Stack>
                                         <Stack>
                                             <CommentEditor
@@ -328,7 +343,9 @@ const BlogDetailSection = () => {
                                 attachmentsUpload : files,
                                 attachments : detailItem?.attachments_down?.map(a=>a.object),
                                 background : detailItem?.background_down?.object,
-                                short_description :  detailItem?.short_description
+                                short_description :  detailItem?.short_description,
+                                meta_title : detailItem?.meta_title,
+                                meta_description : detailItem?.meta_description,
                             } as  BlogFormData}
                             onSubmit={onUpdateBlog}
                         />

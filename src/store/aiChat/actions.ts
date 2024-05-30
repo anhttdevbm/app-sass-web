@@ -101,7 +101,7 @@ export const createChatSession = createAsyncThunk(
   "aiChat/createChatSession",
   async (data: ChatSessionData) => {
     try {
-      const response = await client.post(Endpoint.AI_CHAT_SESSION + '/', data, {
+      const response = await client.post(Endpoint.AI_CHAT_SESSION + "/", data, {
         baseURL: AI_CHAT_API_URL,
       });
       if (response?.status === HttpStatusCode.CREATED) {
@@ -211,11 +211,10 @@ export const getTone = createAsyncThunk(
 
 export const deleteAllChatSessions = createAsyncThunk(
   "aiChat/deleteAllChatSessions",
-  async (queries: DeleteAllChatSessionQueries) => {
+  async () => {
     try {
-      const response = await client.delete(Endpoint.AI_CHAT_CLOSE_ALL_SESSION, {
+      const response = await client.delete(Endpoint.AI_CHAT_SESSION, {
         baseURL: AI_CHAT_API_URL,
-        data: queries,
       });
       if (response?.status === 204) {
         return true;

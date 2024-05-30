@@ -14,8 +14,8 @@ const Action = ({ projectId }: { projectId?: string }) => {
       px={{ xs: 0, md: 3 }}
       display={{ xs: "none", md: "flex" }}
     >
-      <AddBudget projectId={projectId} />
       <SearchWithOnlyInput />
+      <AddBudget projectId={projectId} />
     </Stack>
   );
 };

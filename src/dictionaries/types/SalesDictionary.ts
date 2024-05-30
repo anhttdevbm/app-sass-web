@@ -18,12 +18,14 @@ export type SalesDictionary = {
       dealMember: string;
       unit: string;
       owner: string;
+      client: string;
       tags: string;
       submit: string;
       update: string;
     };
     table: {
       stage: string;
+      filter:string;
       pjRevenue: string;
       revenue: string;
       time: string;

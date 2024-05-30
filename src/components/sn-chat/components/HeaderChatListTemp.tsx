@@ -1,5 +1,13 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { AppBar, Box, IconButton, Tab, Tabs } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  IconButton,
+  Tab,
+  TabProps,
+  Tabs,
+  styled,
+} from "@mui/material";
 import AITabIcon from "icons/AITabIcon";
 import BackTabIcon from "icons/BackTabIcon";
 import ChatTabIcon from "icons/ChatTabIcon";
@@ -34,14 +42,18 @@ const HeaderChatListTemp: React.FC<HeaderProps> = ({
   return (
     <AppBar
       position="static"
-      sx={{ boxShadow: "none", backgroundColor: "transparent" }}
+      sx={{
+        boxShadow: "none",
+        backgroundColor: "transparent",
+        borderBottom: "1px solid #ECECF3",
+      }}
     >
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "10px 16px",
+          padding: "4px 16px",
         }}
       >
         <IconButton
@@ -59,24 +71,39 @@ const HeaderChatListTemp: React.FC<HeaderProps> = ({
           TabIndicatorProps={{
             style: { display: "none" },
           }}
+          sx={{ alignItems: "center" }}
         >
           <Tab
             icon={
               <ChatTabIcon
+                fontSize="small"
                 {...(value === 1 ? { fill: "#BABCC6" } : { fill: "white" })}
               />
             }
             aria-label="Chat"
-            sx={value === 0 ? selectedTabStyle : unselectedTabStyle}
+            sx={{
+              ...(value === 0 ? selectedTabStyle : unselectedTabStyle),
+              width: "44px",
+              height: "28px",
+              minWidth: "44px",
+              minHeight: "28px",
+            }}
           />
           <Tab
             icon={
               <AITabIcon
                 sx={value === 0 ? { color: "#BABCC6" } : { color: "white" }}
+                fontSize="small"
               />
             }
             aria-label="AI Chat"
-            sx={value === 1 ? selectedTabStyle : unselectedTabStyle}
+            sx={{
+              ...(value === 1 ? selectedTabStyle : unselectedTabStyle),
+              width: "44px",
+              height: "28px",
+              minWidth: "44px",
+              minHeight: "28px",
+            }}
           />
         </Tabs>
         <IconButton

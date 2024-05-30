@@ -60,7 +60,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
 
   useEffect(() => {
     setTextAreaValue(name);
-    dispatch(getDocDetails(currentId));
+    // dispatch(getDocDetails(currentId));
   }, [name, currentId]);
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     } else {
       setMounted(true);
     }
-  }, [description, name, content, project_id, currentId]);
+  }, [description, name, project_id, currentId]);
 
   const editor = useDocEditor() as Editor;
   const [fontFamily, setFontFamily] = useState<unknown>(

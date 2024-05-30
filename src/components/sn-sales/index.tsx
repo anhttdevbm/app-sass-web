@@ -106,7 +106,7 @@ const SalesPage = () => {
         value: commonT("name"),
         align: "left",
         width: "18%",
-        minWidth: 160,
+        minWidth: 130,
         sort: true,
       },
       {
@@ -124,7 +124,7 @@ const SalesPage = () => {
 
         width: "12%",
         sort: true,
-        minWidth: 130,
+        minWidth: 160,
       },
       {
         name: "revenue",
@@ -262,7 +262,7 @@ const SalesPage = () => {
         value: salesT("list.table.lastActivity"),
         align: "left",
         width: "12%",
-        minWidth: 100,
+        minWidth: 130,
         sort: true,
       },
     ],
@@ -291,10 +291,14 @@ const SalesPage = () => {
         pending={isFetching && shouldLoad}
         headerProps={{
           sx: {
-            px: { xs: 2, md: 2 },
+            // px: { xs: 2, md: 2 },
             overflow: "auto",
-            verticalAlign: "top",
             py: "4px",
+            height:"70px",
+            verticalAlign: "middle",
+            background: "#D9F0FD",
+            color: "#999999",
+            h6:{fontSize:"13px"}
           },
         }}
         containerHeaderProps={{
@@ -313,6 +317,27 @@ const SalesPage = () => {
         ))}
       </TableLayout>
       <Pagination
+        sx={{
+          ".MuiPaginationItem-page.Mui-selected": {
+            background: "#14B9E5!important",
+            borderColor: "transparent",
+            color: "white",
+            borderRadius: "12px",
+          },
+          ".MuiPaginationItem-previousNext": {
+            background: "#D9F0FD!important",
+            borderColor: "transparent",
+            color: "black",
+            borderRadius: "12px",
+          },
+          ".MuiPaginationItem-page": {
+            background: "#D9F0FD!important",
+            borderColor: "transparent",
+            color: "black",
+            borderRadius: "12px",
+          },
+          
+        }}
         onChangePage={onChangePage}
         onChangeSize={onChangeSize}
         pageSize={pageSize}

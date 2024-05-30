@@ -32,19 +32,27 @@ export const ItemWithoutProject = ({
 
   const getXsCell = (index: number) => {
     return {
-      width: desktopHeaderList[index]?.width || '0px' + "!important",
-      minWidth: desktopHeaderList[index]?.minwidth || '0px' + "!important",
-      maxWidth: desktopHeaderList[index]?.width || '0px' + "!important",
+      width: desktopHeaderList[index]?.width || "0px" + "!important",
+      minWidth: desktopHeaderList[index]?.minwidth || "0px" + "!important",
+      maxWidth: desktopHeaderList[index]?.width || "0px" + "!important",
     } as any;
   };
 
   const desktopHeaderList: CellProps[] = useMemo(() => {
-    const _totalRevenue = budgets.reduce((prev, curr) => prev + curr.revenue,0)
+    const _totalRevenue = budgets.reduce(
+      (prev, curr) => prev + curr.revenue,
+      0,
+    );
 
     return [
       {
         value: (
           <Checkbox
+            sx={{
+              "&.Mui-checked": {
+                color: "#0575E6",
+              },
+            }}
             checked={idSelecteds.length === budgets.length}
             onChange={() => {
               if (idSelecteds.length === budgets.length) {
@@ -84,10 +92,10 @@ export const ItemWithoutProject = ({
         width: "160px",
         minwidth: "160px",
         data: formatNumber(_totalRevenue, {
-          prefix: CURRENCY_SYMBOL['USD'],
+          prefix: CURRENCY_SYMBOL["USD"],
           numberOfFixed: 0,
         }),
-        color: 'green',
+        color: "green",
       },
       {
         value: projectT("budget.table.margin"),
@@ -151,6 +159,11 @@ export const ItemWithoutProject = ({
           <TableRow key={budget.id}>
             <BodyCell sx={{ pl: { xs: 0.5, md: 2 }, ...getXsCell(0) }}>
               <Checkbox
+                sx={{
+                  "&.Mui-checked": {
+                    color: "#0575E6",
+                  },
+                }}
                 checked={idSelecteds.indexOf(budget.id) !== -1}
                 onChange={() => {
                   selectBudget(budget.id);
@@ -182,9 +195,12 @@ export const ItemWithoutProject = ({
               )}
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
-                    <Text paddingLeft="10px" align="left">
-                      {budget.company}
-                    </Text>
+              <Stack direction="row" alignItems="center">
+                <Avatar src={budget?.created_by?.avatar?.link} size={35} />
+                <Text paddingLeft="10px" align="left">
+                  {budget.company}
+                </Text>
+              </Stack>
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
               {budget.project?.avatar &&
@@ -199,8 +215,8 @@ export const ItemWithoutProject = ({
             </BodyCell>
             <BodyCell sx={getXsCell(3)}>
               <Text>
-                {formatNumber(_.get(budget, 'revenue'), {
-                  prefix: CURRENCY_SYMBOL[_.get(budget, 'currency', 'USD')],
+                {formatNumber(_.get(budget, "revenue"), {
+                  prefix: CURRENCY_SYMBOL[_.get(budget, "currency", "USD")],
                   numberOfFixed: 0,
                 })}
               </Text>

@@ -42,6 +42,7 @@ interface IProps {
   setShouldLoad: (value: boolean) => void;
   item: Sales; // change to data type
 }
+
 const SaleItem = ({ item, setShouldLoad }: IProps) => {
   const commonT = useTranslations(NS_SALES);
   const { employeeOptions, onEndReachedEmployeeOptions, onSearchEmployee } =
@@ -133,33 +134,33 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           backgroundColor: "grey.50",
         },
         w: "100%",
+        "td": { border: "none" },
       }}
     >
-      <BodyCell
-        align="left"
-        href={getPath(SALE_DETAIL_PATH, undefined, { id: item.id })}
-        onClick={() => onSetRevenue(item.revenue)}
+      <BodyCell sx={{ paddingLeft: "34px" }}
+                align="left"
+                href={getPath(SALE_DETAIL_PATH, undefined, { id: item.id })}
+                onClick={() => onSetRevenue(item.revenue)}
       >
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={mappedowner.avatar || ""}></Avatar>
-          <Text
-            variant="body2"
-            color="text.primary"
-            fontWeight={600}
-            lineHeight={1.28}
-            sx={{
-              "&:hover": { color: "primary.main" },
-              WebkitBoxOrient: "vertical",
-              WebkitLineClamp: 1,
-              overflow: "hidden",
-              wordBreak: "break-word",
-              display: "-webkit-box",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {item.name}
-          </Text>
-        </Stack>
+
+        <Text
+          variant="body2"
+          color="text.primary"
+          fontWeight={600}
+          lineHeight={1.28}
+          sx={{
+            "&:hover": { color: "primary.main" },
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: 1,
+            overflow: "hidden",
+            wordBreak: "break-word",
+            display: "-webkit-box",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {item.name}
+        </Text>
+
       </BodyCell>
       <BodyCell>
         <LabelStatusCell
@@ -171,6 +172,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
             onSubmit({ status: e.target.value });
             setStage(e.target.value);
           }}
+          sx={{ ".MuiInputBase-input": { borderRadius: "50px" } }}
         ></LabelStatusCell>
       </BodyCell>
       <BodyCell align="left">
@@ -217,16 +219,19 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           options={mappedOwners}
         /> */}
         {!isEditOwner ? (
-          <Text
-            fontSize={14}
-            color="gray.400"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsEditOwner(true);
-            }}
-          >
-            {mappedowner.label}
-          </Text>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Avatar size={32} src={mappedowner.avatar || ""}></Avatar>
+            <Text
+              fontSize={14}
+              color="gray.400"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditOwner(true);
+              }}
+            >
+              {mappedowner.label}
+            </Text>
+          </Stack>
         ) : (
           <InputDropdown
             onBlur={(e) => {
@@ -362,14 +367,15 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           />
         )}
       </BodyCell>
-      <BodyCell align="left" padding={isFocused ? "none" : "normal"}>
+      <BodyCell align="left" padding={"none"}>
         <Stack
           direction={"row"}
           spacing={0}
+
           sx={{
             position: "relative",
             zIndex: 99,
-            pr: 2,
+            pr: 0,
           }}
           justifyContent={"space-between"}
           alignItems={"center"}
@@ -382,26 +388,26 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           >
             {dayjs(item.updated_time).format(DATE_LOCALE_FORMAT)}
           </Stack>
-          {isFocused && (
-            <ServiceItemAction
-              onChangeAction={(action) => {
-                if (action === Action.DUPLICATE) {
-                  onCreateDeal({
-                    currency: item.currency,
-                    dealName: item.name,
-                    owner: item.owner?.id,
-                    members: item.members?.map((member) => ({ id: member.id })),
-                    description: item.description,
-                    tags: item.description?.split(","),
-                  });
-                }
-                setIsFocused(false);
-              }}
-              onClose={() => setIsFocused(false)}
-              saleId={item.id}
-              index={1}
-            />
-          )}
+
+          <ServiceItemAction
+            onChangeAction={(action) => {
+              if (action === Action.DUPLICATE) {
+                onCreateDeal({
+                  currency: item.currency,
+                  dealName: item.name,
+                  owner: item.owner?.id,
+                  members: item.members?.map((member) => ({ id: member.id })),
+                  description: item.description,
+                  tags: item.description?.split(","),
+                });
+              }
+              setIsFocused(false);
+            }}
+            onClose={() => setIsFocused(false)}
+            saleId={item.id}
+            index={1}
+          />
+
         </Stack>
       </BodyCell>
     </TableRow>

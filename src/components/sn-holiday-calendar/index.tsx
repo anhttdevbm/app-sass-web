@@ -1,24 +1,24 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-import DialogContent from "@mui/material/DialogContent";
 import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
+import fuzzysort from "fuzzysort";
+import * as Yup from "yup";
 
 import { DataStatus } from "constant/enums";
 import { NS_COMMON, NS_HOLIDAY_CALENDAR } from "constant/index";
-import {
-  NewButton as Button,
-  NewInput as Input,
-  Text,
-} from "components/shared";
-import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
-import DefaultPopupLayout from "layouts/DefaultPopupLayout";
-import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import { NewInput, Text } from "components/shared";
+import FormLayout from "components/NewFormLayout";
 import useToggle from "hooks/useToggle";
 import useWindowSize from "hooks/useWindowSize";
 import { useFormik } from "hooks/useFormik";
+import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
+import SearchIcon from "icons/SearchIcon";
+import { useHolidayCalendar } from "store/holidayCalendar/selectors";
+import { HolidayCalendar as HolidayCalendarType } from "store/holidayCalendar/reducer";
 import HolidayCalendarCard from "./HolidayCalendarCard";
+import Input from "./components/Input";
 
 const HolidayCalendar = () => {
   const commonT = useTranslations(NS_COMMON);
@@ -28,7 +28,6 @@ const HolidayCalendar = () => {
     holidayCalendars,
     status,
     handleGetAllHolidayCalendar,
-    handleAddHolidayCalendar,
     handleGetAllHolidayList,
     handleAddHolidayList,
   } = useHolidayCalendar();
@@ -56,15 +55,60 @@ const HolidayCalendar = () => {
     ],
   );
 
+  const existingHolidayYears = useMemo(() => {
+    if (!modalHolidayCalendarId || modalHolidayCalendarId.length === 0) {
+      return [];
+    }
+    const holidayCalendar = holidayCalendars.find(
+      (c) => c.id === modalHolidayCalendarId,
+    );
+    if (!holidayCalendar) {
+      return [];
+    }
+    return holidayCalendar.list.map((l) => +l.year);
+  }, [holidayCalendars, modalHolidayCalendarId]);
+
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        year: Yup.number()
+          .typeError(
+            commonT("form.error.typeError", {
+              name: holidayCalendarT("form.year"),
+              type: commonT("form.type.number").toLowerCase(),
+            }),
+          )
+          .positive(
+            commonT("form.error.positiveNumber", {
+              name: holidayCalendarT("form.year"),
+            }),
+          )
+          .required(
+            commonT("form.error.required", {
+              name: holidayCalendarT("form.year"),
+            }),
+          )
+          .notOneOf(
+            existingHolidayYears,
+            commonT("form.error.existed", {
+              name: holidayCalendarT("form.year"),
+            }),
+          ),
+      }),
+    [commonT, existingHolidayYears, holidayCalendarT],
+  );
+
   const {
     values,
     handleChange,
     handleBlur,
     handleSubmit,
-    isSubmitDisabled,
     resetForm,
+    isSubmitDisabled,
+    touchedErrors,
   } = useFormik({
     initialValues,
+    validationSchema,
     onSubmit,
     enableReinitialize: true,
   });
@@ -112,6 +156,45 @@ const HolidayCalendar = () => {
     }
   }, [windowSize]);
 
+  const [holidayCalendarSearchInput, setHolidayCalendarSearchInput] =
+    useState("");
+
+  const handleHolidayCalendarSearchChange = useCallback((e) => {
+    setHolidayCalendarSearchInput(e.target.value);
+  }, []);
+
+  const sortedHolidayCalendars = useMemo(
+    () =>
+      holidayCalendars
+        .filter(() => true)
+        .sort(
+          (c1, c2) =>
+            new Date(c2.created_time).getTime() -
+            new Date(c1.created_time).getTime(),
+        ),
+    [holidayCalendars],
+  );
+  const filteredHolidayCalendars = useMemo(
+    () =>
+      fuzzysort
+        .go(holidayCalendarSearchInput, sortedHolidayCalendars, {
+          keys: ["name", "country"],
+          all: true,
+        })
+        .map((r) => r.obj),
+    [holidayCalendarSearchInput, sortedHolidayCalendars],
+  );
+
+  const [
+    isNewHolidayCalendarShown,
+    showNewHolidayCalendar,
+    hideNewHolidayCalendar,
+  ] = useToggle(false);
+
+  const handleAddHolidayCalendar = useCallback(() => {
+    showNewHolidayCalendar();
+  }, [showNewHolidayCalendar]);
+
   return (
     <Box
       ref={containerRef}
@@ -134,88 +217,159 @@ const HolidayCalendar = () => {
         }}
       >
         <Box
+          sx={{
+            display: "flex",
+            justifyContent: "end",
+          }}
+        >
+          <Input
+            value={holidayCalendarSearchInput}
+            onChange={handleHolidayCalendarSearchChange}
+            name="holiday-calendar-search"
+            placeholder={holidayCalendarT("form.searchHere")}
+            endAdornment={
+              <SearchIcon
+                sx={{
+                  flexGrow: 0,
+                  flexShrink: 0,
+                  fontSize: "16px",
+                  marginRight: "12px",
+                  color: "#0575E6",
+                  cursor: "pointer",
+                }}
+              />
+            }
+            rootSx={{
+              maxWidth: { xs: "initial", sm: "600px" },
+              width: "initial",
+              backgroundColor: "white",
+            }}
+            sx={{
+              padding: "12px 24px",
+              color: "rgba(0, 0, 0, 50%)",
+            }}
+          />
+        </Box>
+        <Box
           component="button"
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            flex: "0 0 112px",
+            flex: `0 0 ${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`,
             mt: 2,
-            border: "1px dashed #14B9E6",
+            border: "none",
+            position: "relative",
             backgroundColor: "white",
             borderRadius: "24px",
             cursor: "pointer",
           }}
-          onClick={async () => {
-            await handleAddHolidayCalendar({
-              name: "Holidays in Viet Nam",
-              country: "Viet Nam",
-              province: "",
-            });
-          }}
+          onClick={handleAddHolidayCalendar}
         >
+          <Box
+            position="absolute"
+            width="100%"
+            height={`${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`}
+          >
+            <svg
+              x="0"
+              y="0"
+              width="100%"
+              height={`${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`}
+              preserveAspectRatio="none"
+            >
+              <rect
+                width="100%"
+                height={`${ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT}px`}
+                fill="none"
+                stroke="#14B9E6"
+                strokeWidth="2px"
+                strokeDasharray="8px 8px"
+                rx="24px"
+                ry="24px"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+          </Box>
           <AddCircleGradientIcon />
           <Text color="#0575E6" fontWeight={700} ml={2}>
             {holidayCalendarT("form.addHolidayCalendar")}
           </Text>
         </Box>
 
-        {holidayCalendars.map((calendar) => (
+        {isNewHolidayCalendarShown ? (
+          <HolidayCalendarCard
+            key="new-calendar"
+            isNew={true}
+            holidayCalendar={
+              {
+                id: "new-calendar",
+                name: "",
+                country: "",
+                province: "",
+                list: [],
+                company: "",
+                created_time: "",
+                updated_time: "",
+              } as HolidayCalendarType
+            }
+            handleOpenModal={handleOpenModal}
+            hideNewHolidayCalendar={hideNewHolidayCalendar}
+          />
+        ) : (
+          <></>
+        )}
+        {filteredHolidayCalendars.map((calendar) => (
           <HolidayCalendarCard
             key={calendar.id}
+            isNew={false}
             holidayCalendar={calendar}
             handleOpenModal={handleOpenModal}
+            hideNewHolidayCalendar={() => undefined}
           />
         ))}
       </Stack>
 
-      <DefaultPopupLayout
+      <FormLayout
         open={isModalOpen}
         title={holidayCalendarT("form.addHolidayList")}
         onClose={onModalClose}
-        sx={{ maxWidth: 450, borderRadius: 6 }}
+        onSubmit={handleSubmit}
+        disabled={isSubmitDisabled}
+        sx={{
+          minWidth: { xs: "calc(100vw - 24px)", sm: 400 },
+          maxWidth: { xs: "calc(100vw - 24px)", sm: 400 },
+          minHeight: "auto",
+        }}
+        bottomProps={{
+          sx: {
+            pt: 3,
+            pb: 5,
+            px: 5,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        }}
       >
-        <DialogContent>
-          <Box onSubmit={handleSubmit} component="form" noValidate px={4}>
-            <Input
-              title={holidayCalendarT("form.year")}
-              fullWidth
-              name="year"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.year}
-              // error={commonT(touchedErrors?.cost_per_month, {
-              //   name: costRateT("empty.form.costPerMonth"),
-              // })}
-            />
-            <Stack
-              direction={{
-                xs: "column",
-                sm: "row",
-              }}
-              justifyContent="center"
-              py={3}
-              spacing={3}
-            >
-              <Button variant="secondaryOutlined" onClick={onModalClose}>
-                {commonT("form.cancel")}
-              </Button>
-              <Button
-                variant="primary"
-                type="submit"
-                disabled={isSubmitDisabled}
-              >
-                {commonT("form.confirm")}
-              </Button>
-            </Stack>
-          </Box>
-        </DialogContent>
-      </DefaultPopupLayout>
+        <NewInput
+          title={holidayCalendarT("form.year")}
+          fullWidth
+          name="year"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.year}
+          error={touchedErrors.year}
+        />
+      </FormLayout>
     </Box>
   );
 };
 
 export default HolidayCalendar;
+
+const ADD_HOLIDAY_CALENDAR_BUTTON_HEIGHT = 80;
 
 const initialValues = {
   year: "",

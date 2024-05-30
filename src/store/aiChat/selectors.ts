@@ -114,9 +114,9 @@ export const useChatSession = () => {
   );
 
   const onDeleteAllChatSessions = useCallback(
-    (queries: DeleteAllChatSessionQueries) => {
+    () => {
       dispatch(newChat());
-      dispatch(deleteAllChatSessions(queries));
+      dispatch(deleteAllChatSessions());
     },
     [dispatch],
   );
@@ -182,6 +182,8 @@ export const useChatWithAI = () => {
     openAIChatStatus,
     openAIChatError,
     openAIChatFilters,
+
+    chatAIStatus
   } = useAppSelector((state) => state.aiChat, shallowEqual);
 
   const isPersonaIdle = useMemo(
@@ -261,6 +263,9 @@ export const useChatWithAI = () => {
     [dispatch],
   );
 
+  const isFetchingChatAI = useMemo(() => chatAIStatus === DataStatus.LOADING, [chatAIStatus]);
+  const isIdleChatAI = useMemo(() => chatAIStatus === DataStatus.IDLE, [chatAIStatus]);
+
   return {
     persona,
     onGetPersona,
@@ -285,6 +290,9 @@ export const useChatWithAI = () => {
     isIdleOpenAIChat,
     isFetchingOpenAIChat,
     onGetOpenAIChat,
+
     onChatWithAI,
+    isFetchingChatAI,
+    isIdleChatAI
   };
 };

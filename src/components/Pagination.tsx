@@ -81,17 +81,21 @@ const Pagination = (props: PaginationProps) => {
         display={{ xs: "none", md: "flex" }}
       >
         <Text variant="body2" fontWeight={600}>
-          {t("paging.show")}
+          {/* {t("paging.show")} */} Show
         </Text>
         <Select
-          rootSx={{ borderColor: "grey.100", borderRadius: 2, height: 40 }}
+          rootSx={{  height: 40,background: "#D9F0FD!important",
+          borderColor: "transparent",
+          color: "black",
+          borderRadius: "12px", }}
           options={OPTIONS}
           onChange={onChangePageSize}
           value={pageSize}
           size="small"
         />
         <Text variant="body2" fontWeight={600}>
-          {t("paging.outOf", { count: formatNumber(totalItems) })}
+          {/* {t("paging.outOf", { count: formatNumber(totalItems) })} */}
+          all of {formatNumber(totalItems)}
         </Text>
       </Stack>
     </Stack>

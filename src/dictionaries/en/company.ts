@@ -13,6 +13,9 @@ export const CompanyLang: CompanyDictionary = {
     waiting: "Waiting",
     key: "employee",
     isNeedSelect: "No employee selected",
+    employee: "Employee",
+    client: "Client",
+    contractor: "Contractor",
     confirmPayment: {
       title: "Confirm payment",
       content:

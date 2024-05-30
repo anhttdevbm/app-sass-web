@@ -26,7 +26,7 @@ import { DataAction, EmployeeType, PayStatus } from "constant/enums";
 import { HEADER_HEIGHT } from "layouts/Header";
 import useQueryParams from "hooks/useQueryParams";
 import useBreakpoint from "hooks/useBreakpoint";
-import useTheme from "hooks/useTheme";
+// import useTheme from "hooks/useTheme";
 import { getPath } from "utils/index";
 import { useEmployees } from "store/company/selectors";
 import { Employee } from "store/company/reducer";
@@ -59,14 +59,14 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
   const pathname = usePathname();
   const { push } = useRouter();
   const { isMdSmaller } = useBreakpoint();
-  const { isDarkMode } = useTheme();
+  // const { isDarkMode } = useTheme();
 
   const [item, setItem] = useState<Employee | undefined>();
   const [selectedList, setSelectedList] = useState<Employee[]>([]);
   const [action, setAction] = useState<DataAction | undefined>();
 
   const employees = useMemo(
-    () => { console.log(items); console.log(clientEmployees); return employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees },
+    () => (employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees),
     [employeeType, items, clientEmployees],
   );
 

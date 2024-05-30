@@ -5,7 +5,7 @@ import { useRouter } from "next-intl/client";
 import { useCallback, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { getDocs } from "./actions";
+import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 import {
   changeDocInfo,
   changeId,
@@ -24,6 +24,9 @@ const useDocs = () => {
     docsStatus: status,
     docsError: error,
     docsFilters: filters,
+
+    getDocCustomStatus,
+    docCustom
   } = useAppSelector((state) => state.doc, shallowEqual);
   const { pageIndex, pageSize, totalDocs, totalPages } = useAppSelector(
     (state) => state.doc.docsPaging,
@@ -111,6 +114,23 @@ const useDocs = () => {
     }
   };
 
+  const onGetDocCustom = useCallback(
+    async (id: string) => {
+      const actionResult = await dispatch(getDocCustom(id));
+      if (getDocCustom.fulfilled.match(actionResult)) {
+        return actionResult.payload;
+      }
+    },
+    [dispatch],
+  );
+
+  const onUpdateDocCustom = useCallback(
+    async (id: string, data: { content: string }) => {
+      await dispatch(updateDocCustom({id, data}));
+    },
+    [dispatch],
+  );
+
   return {
     items,
     status,
@@ -126,7 +146,11 @@ const useDocs = () => {
     onCreateDoc,
     loading,
     handleUpdateDoc,
-    handleGetDocDetail
+    handleGetDocDetail,
+
+    onGetDocCustom,
+    docCustom,
+    onUpdateDocCustom
   };
 };
 
