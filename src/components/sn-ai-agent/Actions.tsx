@@ -48,7 +48,7 @@ const Actions = () => {
   };
 
   const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch({ search: e.target.value });
+    onSearch({ searchKey: e.target.value });
   }
 
   const handleCloseCreateModal = () => {
