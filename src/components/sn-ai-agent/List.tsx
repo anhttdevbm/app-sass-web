@@ -5,7 +5,7 @@ import FixedLayout from "components/FixedLayout";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
 import useQueryParams from "hooks/useQueryParams";
 import { usePathname, useRouter } from "next-intl/client";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import styled from "styled-components";
 import { getPath } from "utils/index";
@@ -17,6 +17,7 @@ import { AI_AGENT_GENERAL_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 import { AIAgent, StatusAIAgent } from "store/aiAgent/types";
+import avatar from "components/Avatar";
 
 const AgentList = () => {
   const {
@@ -28,6 +29,7 @@ const AgentList = () => {
 
     onGetAgents,
     onDeleteAgent,
+    onGetAvatarLink,
 
     isFetchingAgents,
     isDeletingAgent,
@@ -41,13 +43,13 @@ const AgentList = () => {
   const [data, setData] = useState<AIAgent[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleQueryChange = (newQueries: { [key: string]: any }) => {
+  const handleQueryChange = useCallback((newQueries: { [key: string]: any }) => {
     const updatedQueries = { ...query, ...newQueries };
     const updatedPath = getPath(pathname, updatedQueries);
 
     push(updatedPath);
     onGetAgents(updatedQueries);
-  };
+  }, [query, pathname, push, onGetAgents]);
 
   const handlePageChange = (newPage: number) =>
     handleQueryChange({ page: newPage, limit });
@@ -63,10 +65,32 @@ const AgentList = () => {
 
   const handleEdit = () => console.log("Edit agent");
 
-  useEffect(() => {
-    if (!isFetchingAgents && aiAgents.length) {
-      setData(aiAgents);
+  const updateAgentAvatar = async (agent: AIAgent) => {
+    let avatar = agent.avatar;
+    if (agent.avatar) {
+      avatar = await onGetAvatarLink(agent.avatar);
     }
+    return { ...agent, avatar };
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+  const fetchAgents = useCallback(async () => {
+    if (!isFetchingAgents && aiAgents.length) {
+      const updatedAgents = await Promise.all(aiAgents.map(updateAgentAvatar));
+      setData(updatedAgents);
+    }
+  }, [aiAgents, isFetchingAgents]);
+
+  useEffect(() => {
+     fetchAgents();
   }, [aiAgents, isFetchingAgents]);
 
   useEffect(() => {
@@ -125,7 +149,7 @@ const AgentList = () => {
                 </Box>
               </Stack>
             </BodyCell>
-            <BodyCell>{agent.created_time}</BodyCell>
+            <BodyCell>{formatDate(agent.created_time)}</BodyCell>
             <BodyCell>
               <Box
                 display={"flex"}

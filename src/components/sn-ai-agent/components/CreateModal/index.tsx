@@ -28,16 +28,19 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
   const [name, setName] = useState<string>("");
   const [image, setImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [description, setDescription] = useState<string>("");
 
   const t = useTranslations(NS_AI_AGENT);
 
-  const { onCreateAgent } = useAIAgent();
+  const { onCreateAgent, onUploadAvatar } = useAIAgent();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.length) {
       const file = event.target.files[0];
+      setFile(file);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
@@ -63,19 +66,24 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
     setSelected(null);
     setDescription("");
     setName("");
+    setFile(null);
     onClose();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!description && !name) {
       return;
     }
 
     const agentData: CreateAIAgentPayload = {
-      avatar: image,
-      description,
       name,
+      description
     }
+
+    if (file) {
+      agentData.avatar = await onUploadAvatar(file);
+    }
+
     onCreateAgent(agentData);
 
     handleClose();
@@ -90,6 +98,11 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
       open={open}
       sizeCloseIcon="medium"
       sx={{ width: "60vw" }}
+      contentProps={{
+        sx: {
+          '&::-webkit-scrollbar': {display: "none"}
+        },
+      }}
     >
       <TextField
         fullWidth

@@ -46,5 +46,29 @@ export interface GetAIAgentsPayload {
 export interface CreateAIAgentPayload {
   name: string;
   description: string;
-  avatar: string | null;
+  avatar?: string;
 }
+
+export interface PromptTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  created_time: string;
+  updated_time: string;
+}
+
+export interface PromptTemplateGroup {
+  total: number;
+  data: PromptTemplate[];
+}
+
+export interface PromptTemplateStatus {
+  getPromptTemplatesStatus: DataStatus;
+}
+
+export interface PromptTemplateStateBase {
+  [category: string]: PromptTemplateGroup;
+}
+
+export type PromptTemplateState = PromptTemplateStateBase & PromptTemplateStatus;

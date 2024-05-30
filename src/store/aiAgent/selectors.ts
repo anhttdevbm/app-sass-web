@@ -2,7 +2,7 @@ import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
 import { actions } from "./reducer";
-import { createAgent, deleteAgent, getAgents } from "store/aiAgent/actions";
+import { createAgent, deleteAgent, getAgents, getAvatarLink, uploadAvatar } from "store/aiAgent/actions";
 import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";
 
@@ -21,7 +21,7 @@ export const useAIAgent = () => {
 
     getAgentsStatus,
     createAgentStatus,
-    deleteAgentStatus
+    deleteAgentStatus,
 
   } = useAppSelector((state) => state.aiAgent, shallowEqual);
 
@@ -45,6 +45,24 @@ export const useAIAgent = () => {
   }, [dispatch]);
   const isCreatingAgent = useMemo(() => createAgentStatus === DataStatus.LOADING, [createAgentStatus]);
 
+  const onUploadAvatar = useCallback(async (file: File): Promise<string | undefined> => {
+    try {
+      const result = await dispatch(uploadAvatar(file));
+      return result.payload;
+    } catch (error) {
+      console.error(error);
+    }
+  }, [dispatch]);
+
+  const onGetAvatarLink = useCallback(async (id: string) => {
+    try {
+      const result = await dispatch(getAvatarLink(id));
+      return result.payload[0].link;
+    } catch (error) {
+      console.error(error);
+    }
+  }, [dispatch])
+
   return {
     aiAgents,
     aiAgentFilters,
@@ -64,6 +82,9 @@ export const useAIAgent = () => {
     isDeletingAgent,
 
     onCreateAgent,
-    isCreatingAgent
+    isCreatingAgent,
+
+    onUploadAvatar,
+    onGetAvatarLink
   };
 };

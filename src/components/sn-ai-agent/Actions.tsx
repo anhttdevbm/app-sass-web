@@ -5,7 +5,7 @@ import { SelectChangeEvent, Stack } from "@mui/material";
 import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import React, { useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import {
   Button,
   CreateAIAgentModal,
@@ -30,8 +30,10 @@ const Actions = () => {
   const [onSearch] = useDebounce((newQueries: Params) => {
     handleQueryChange(newQueries);
   }, 500);
+
   const [open, setOpen] = React.useState(false);
-  const [status, setStatus] = React.useState("");
+  const [status, setStatus] = React.useState(query.status ? query.status : "");
+  const [searchKey, setSearchKey] = React.useState(query.searchKey ? query.searchKey : "");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleQueryChange = (newQueries: Params) => {
@@ -48,8 +50,10 @@ const Actions = () => {
   };
 
   const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch({ searchKey: e.target.value });
-  }
+    const newSearchValue = e.target.value;
+    setSearchKey(newSearchValue);
+    onSearch({ searchKey: newSearchValue, page: 1 });
+  };
 
   const handleCloseCreateModal = () => {
     setOpen(false);
@@ -93,6 +97,7 @@ const Actions = () => {
         >
           <SearchInput
             theme={theme}
+            value={searchKey}
             placeholder={t("layout.header.search")}
             onChange={handleOnChangeSearch}
           />
@@ -113,4 +118,4 @@ const Actions = () => {
   );
 };
 
-export default Actions;
+export default memo(Actions);
