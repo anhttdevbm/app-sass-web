@@ -89,14 +89,18 @@ export const Message: React.FC<MessageProps> = ({
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       setIsEditing(false);
-      onChatWithAI({
-        user_prompt: editedMessage as string,
-        lang: locale,
-        tone: message.tone as string,
-        persona: message.persona as string,
-        chat_session: message.chat_session,
-        ...(message.files && { files: message.files })
-      });
+      console.log(editedMessage);
+      console.log(editedMessage !== user_prompt)
+      if (editedMessage !== user_prompt) {
+        onChatWithAI({
+          user_prompt: editedMessage as string,
+          lang: locale,
+          tone: message.tone as string,
+          persona: message.persona as string,
+          chat_session: message.chat_session,
+          ...(message.files && { files: message.files })
+        });
+      }
       setEditedMessage("");
     }
   };
