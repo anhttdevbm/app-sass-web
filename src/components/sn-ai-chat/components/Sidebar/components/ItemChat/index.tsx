@@ -10,7 +10,6 @@ import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 
-const PRIMARY_MAIN = "primary.main";
 const PRIMARY_LIGHT = "primary.light";
 const GREY_900 = "grey.900";
 const INFOR_DARK = "info.dark";
@@ -29,7 +28,7 @@ interface ItemChatProps {
   scrollRef?: React.RefObject<HTMLDivElement>;
 }
 
-const EditChatForm = ({ chatname, handleTitleChange, handleTitleSubmit }) => (
+const EditChatForm = ({ chatname, handleTitleChange, handleBlur, handleTitleSubmit }) => (
   <form
     onSubmit={(event) => {
       handleTitleSubmit(event);
@@ -38,7 +37,7 @@ const EditChatForm = ({ chatname, handleTitleChange, handleTitleSubmit }) => (
     <Input
       value={chatname}
       onChange={handleTitleChange}
-      onBlur={handleTitleSubmit}
+      onBlur={handleBlur}
       autoFocus
     />
   </form>
@@ -64,6 +63,7 @@ const ItemChat = ({
 
   const handleEditChatSession = () => {
     setIsEditing(true);
+    setChatname(title)
     closeMenu();
   };
 
@@ -72,8 +72,15 @@ const ItemChat = ({
   };
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    onEditChatSession({ id, chatname });
+    if(title !== chatname) {
+       onEditChatSession({ id, chatname });
+     }
+     setIsEditing(false);
+  };
+
+  const handleBlur = () => {
     setIsEditing(false);
+    setChatname(title);
   };
 
   const handleMenuButtonClick = (
@@ -130,6 +137,7 @@ const ItemChat = ({
       {isEditing ? (
         <EditChatForm
           chatname={chatname}
+          handleBlur={handleBlur}
           handleTitleChange={handleTitleChange}
           handleTitleSubmit={handleTitleSubmit}
         />

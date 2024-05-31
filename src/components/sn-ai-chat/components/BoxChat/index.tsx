@@ -322,6 +322,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
         <MessageLayout>
           <MessageList
             mobileMode={isMobile}
+            isSubmitting={isSubmitting}
             regenerateResponse={handleSubmitMessage}
             onLoadMore={onLoadMoreOpenAIChat}
             chatData={chatData}

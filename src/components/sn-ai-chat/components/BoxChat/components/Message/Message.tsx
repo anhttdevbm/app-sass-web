@@ -58,14 +58,19 @@ export const Message: React.FC<MessageProps> = ({
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
   const handleCopy = async () => {
     const textToCopy = assistant_content as string;
 
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(textToCopy, 'text/html');
+    const plainText = doc.body.textContent || '';
+
     if (navigator.clipboard) {
-      await navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(plainText);
     } else {
       const textarea = document.createElement("textarea");
-      textarea.value = textToCopy;
+      textarea.value = plainText;
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand("copy");
@@ -78,25 +83,28 @@ export const Message: React.FC<MessageProps> = ({
   };
 
   const handleEdit = () => {
+    setEditedMessage(user_prompt)
     setIsEditing(true);
   };
 
   const handleBlur = () => {
     setIsEditing(false);
-    onChatWithAI({
-      user_prompt: editedMessage as string,
-      lang: locale,
-      tone: message.tone as string,
-      persona: message.persona as string,
-      chat_session: message.chat_session,
-      ...(message.files && { files: message.files })
-    });
-    setEditedMessage("");
-  };
+  }
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      handleBlur();
+      setIsEditing(false);
+      if (editedMessage !== user_prompt) {
+        onChatWithAI({
+          user_prompt: editedMessage as string,
+          lang: locale,
+          tone: message.tone as string,
+          persona: message.persona as string,
+          chat_session: message.chat_session,
+          ...(message.files && { files: message.files })
+        });
+      }
+      setEditedMessage("");
     }
   };
 

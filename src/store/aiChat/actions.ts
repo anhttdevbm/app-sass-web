@@ -233,3 +233,5 @@ export const setSelectedChatId = createAction<string | undefined>(
 export const newChat = createAction<void>("aiChat/newChat");
 
 export const addChatWithAI = createAction<OpenAIChat>("aiChat/addChatWithAI");
+
+export const addNewChatSession = createAction<ChatSessionData>( "aiChat/addNewChatSession");

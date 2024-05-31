@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
-  addChatWithAI,
+  addChatWithAI, addNewChatSession,
   chatWithAI,
   createChatSession,
   deleteAllChatSessions,
@@ -123,6 +123,7 @@ export const useChatSession = () => {
 
   const onCreateChatSession = useCallback(
     (data: ChatSessionData) => {
+      dispatch(addNewChatSession(data));
       dispatch(createChatSession(data));
     },
     [dispatch],
