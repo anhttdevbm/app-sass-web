@@ -1,7 +1,6 @@
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
-import { actions } from "./reducer";
 import { createAgent, deleteAgent, getAgents, getAvatarLink, uploadAvatar } from "store/aiAgent/actions";
 import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";

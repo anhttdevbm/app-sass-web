@@ -1,15 +1,15 @@
 import { Theme } from "@mui/material";
-import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { Dialog } from "../Dialog";
 import { TextField } from "../TextField";
-import { ListButtonSelect } from "./ListButtonSelect";
+import { ListTemplateSelect } from "./ListTemplateSelect";
 import { UploadAvatar } from "./UploadAvatar";
 import { NS_AI_AGENT } from "constant/index";
-import { Textarea } from "components/sn-ai-agent-detail/General/components";
 import { useAIAgent } from "store/aiAgent/selectors";
-import { AIAgent, CreateAIAgentPayload } from "store/aiAgent/types";
+import { CreateAIAgentPayload } from "store/aiAgent/types";
+import { usePromptTemplate } from "store/promptTemplate/selectors";
+import { PromptTemplate } from "store/promptTemplate/types";
 
 export const OUTLINE_COLOR = "rgba(54, 153, 255, 0.5)";
 
@@ -26,15 +26,27 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const blankTemplate: PromptTemplate = {
+    id: "",
+    name: "Blank agent",
+    icon: "📄",
+    description: "Blank agent",
+    category: "",
+    created_time: "",
+    updated_time: "",
+  }
+
   const [name, setName] = useState<string>("");
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selectedPrompt, setSelectedPrompt] = useState<PromptTemplate>(blankTemplate);
   const [description, setDescription] = useState<string>("");
+  const [templates, setTemplates] = useState<PromptTemplate[]>([]);
 
   const t = useTranslations(NS_AI_AGENT);
 
   const { onCreateAgent, onUploadAvatar } = useAIAgent();
+  const { promptTemplates, onGetPromptTemplates, isFetchingPromptTemplates, mapDynamicStateToTemplateArray } = usePromptTemplate()
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.length) {
@@ -63,8 +75,8 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
   const handleClose = () => {
     setImage(null);
-    setSelected(null);
-    setDescription("");
+    setSelectedPrompt(blankTemplate);
+    // setDescription("");
     setName("");
     setFile(null);
     onClose();
@@ -77,7 +89,7 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
     const agentData: CreateAIAgentPayload = {
       name,
-      description
+      description: selectedPrompt.description
     }
 
     if (file) {
@@ -88,6 +100,16 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
     handleClose();
   };
+
+  useEffect(() => {
+    onGetPromptTemplates();
+  }, []);
+
+  useEffect(() => {
+    if (!isFetchingPromptTemplates && promptTemplates) {
+      setTemplates(mapDynamicStateToTemplateArray(promptTemplates));
+    }
+  }, [promptTemplates, isFetchingPromptTemplates]);
 
   return (
     <Dialog
@@ -120,20 +142,22 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
         label={t("layout.header.avatar")}
         titleButton={t("layout.header.upload")}
       />
-      <Textarea
-        label={t("general.description")}
-        placeholder={t("general.placeholderTextarea")}
-        value={description}
-        onChange={handleOnChangeTextarea}
-        containerStyle={{
-          marginTop: "24px",
-        }}
-      />
-      <ListButtonSelect
-        selected={selected}
-        setSelected={setSelected}
+      {/*<Textarea*/}
+      {/*  label={t("general.description")}*/}
+      {/*  placeholder={t("general.placeholderTextarea")}*/}
+      {/*  value={description}*/}
+      {/*  onChange={handleOnChangeTextarea}*/}
+      {/*  containerStyle={{*/}
+      {/*    marginTop: "24px",*/}
+      {/*  }}*/}
+      {/*/>*/}
+      <ListTemplateSelect
+        selected={selectedPrompt}
+        setSelected={setSelectedPrompt}
         theme={theme}
         label={t("layout.header.agentName")}
+        templates={templates}
+        blankTemplate={blankTemplate}
       />
     </Dialog>
   );
