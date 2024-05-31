@@ -16,6 +16,11 @@ export const CompanyLang: CompanyDictionary = {
     employee: "Employee",
     client: "Client",
     contractor: "Contractor",
+    form: {
+      addNewEmployee: "Add New Employee",
+      chooseCompanyType: "Choose Company Type",
+      isInvite: "Send invitation to email",
+    },
     confirmPayment: {
       title: "Confirm payment",
       content:
@@ -27,7 +32,7 @@ export const CompanyLang: CompanyDictionary = {
         "Are you sure to remove {count, plural, =1 {this employee} other {these employees}}?",
     },
     notification: {
-      success: "{label} employee successfully!",
+      success: "{label} {typeEmployee} successfully!",
     },
   },
   costHistory: {

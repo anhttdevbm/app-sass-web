@@ -30,7 +30,6 @@ import useBreakpoint from "hooks/useBreakpoint";
 import { getPath } from "utils/index";
 import { useEmployees } from "store/company/selectors";
 import { Employee } from "store/company/reducer";
-import { EmployeeData } from "store/company/actions";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import TrashIcon from "icons/TrashAltIcon";
 import EmployeeCompanyForm from "./EmployeeCompanyForm";
@@ -48,7 +47,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
     pageIndex,
     totalPages,
     onGetEmployees,
-    onUpdateEmployee: onUpdateEmployeeAction,
+    onUpdateEmployee,
     onDeleteEmployees,
   } = useEmployees();
   const companyT = useTranslations(NS_COMPANY);
@@ -171,10 +170,10 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
     onChangeQueries({ pageIndex: 1, pageSize: newPageSize });
   };
 
-  const onUpdateEmployee = async (data: EmployeeData) => {
-    if (!item) return;
-    return await onUpdateEmployeeAction(item.id, data.position);
-  };
+  // const onUpdateEmployee = async (data: EmployeeData) => {
+  //   if (!item) return;
+  //   return await onUpdateEmployeeAction(item.id, data.position);
+  // };
 
   const onPay = () => {
     setAction(DataAction.OTHER);
@@ -368,17 +367,19 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
           content={companyT("employees.confirmPayment.content", { count: 1 })}
         />
       )}
-      {action === DataAction.UPDATE && (
+      {item && action === DataAction.UPDATE && (
         <EmployeeCompanyForm
           open
           onClose={onResetAction}
           type={DataAction.UPDATE}
-          initialValues={
-            {
-              email: item?.email,
-              position: item?.position?.id,
-            } as EmployeeData
-          }
+          typeEmployee={employeeType}
+          initialValues={{
+            id: item.id,
+            email: item.email,
+            client: item.client_company,
+            position: item.position?.id ?? "",
+            permission: item.roles[0],
+          }}
           onSubmit={onUpdateEmployee}
         />
       )}

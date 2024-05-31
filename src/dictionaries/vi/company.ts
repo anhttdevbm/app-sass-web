@@ -16,6 +16,11 @@ export const CompanyLang: CompanyDictionary = {
     employee: "Nhân viên",
     client: "Nhân viên Khách hàng",
     contractor: "Cộng tác viên",
+    form: {
+      addNewEmployee: "Thêm Nhân viên",
+      chooseCompanyType: "Chọn kiểu công ty",
+      isInvite: "Gửi lời mời qua email",
+    },
     confirmPayment: {
       title: "Xác nhận thanh toán",
       content:
@@ -27,7 +32,7 @@ export const CompanyLang: CompanyDictionary = {
         "Bạn chắc chắn muốn loại bỏ {count, plural, =1 {nhân viên này} other {những nhân viên dưới}}?",
     },
     notification: {
-      success: "{label} nhân viên thành công!",
+      success: "{label} {typeEmployee} thành công!",
     },
   },
   costHistory: {

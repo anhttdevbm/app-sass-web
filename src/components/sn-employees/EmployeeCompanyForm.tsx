@@ -1,29 +1,56 @@
-import { memo, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
-import { DataAction, Permission } from "constant/enums";
+import { DataAction, EmployeeType, Permission } from "constant/enums";
 import { EMAIL_REGEX } from "constant/regex";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/NewFormLayout";
-import { NewInput as Input, NewSelect as Select } from "components/shared";
+import {
+  Checkbox,
+  NewInput as Input,
+  NewSelect as Select,
+} from "components/shared";
 import { useFormik } from "hooks/useFormik";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { EmployeeData } from "store/company/actions";
+import { InviteEmployeeData } from "store/company/actions";
+import { useClientCompanies } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 
-type EmployeeCompanyFormProps = {
-  initialValues: EmployeeData;
-  type: DataAction;
+type CommonProps = {
+  typeEmployee: EmployeeType;
+};
+
+type AddNewProps = {
+  type: DataAction.CREATE;
+  initialValues: Omit<InviteEmployeeData, "roles" | "password" | "company"> & {
+    permission: Permission;
+  };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (values: EmployeeData) => Promise<any>;
-} & Omit<DialogLayoutProps, "children" | "onSubmit">;
+  onSubmit: (values: InviteEmployeeData) => Promise<any>;
+} & CommonProps &
+  Omit<DialogLayoutProps, "children" | "onSubmit">;
+
+type UpdateProps = {
+  type: DataAction.UPDATE;
+  initialValues: Omit<InviteEmployeeData, "roles" | "password" | "company"> & {
+    id: string;
+    permission: Permission;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSubmit: (id: string, position: string) => Promise<any>;
+} & CommonProps &
+  Omit<DialogLayoutProps, "children" | "onSubmit">;
+
+type EmployeeCompanyFormProps = AddNewProps | UpdateProps;
 
 const EmployeeCompanyForm = ({
   initialValues,
+  typeEmployee,
   type,
   onSubmit: onSubmitProps,
   onClose,
@@ -37,6 +64,11 @@ const EmployeeCompanyForm = ({
   const { options, onGetOptions, isFetching, totalPages, pageIndex, pageSize } =
     usePositionOptions();
 
+  const { items: clientCompanies, onGetClientCompanies } = useClientCompanies();
+  useEffect(() => {
+    onGetClientCompanies({});
+  }, [onGetClientCompanies]);
+
   const label = useMemo(() => {
     switch (type) {
       case DataAction.CREATE:
@@ -48,26 +80,94 @@ const EmployeeCompanyForm = ({
     }
   }, [commonT, type]);
 
-  const onSubmit = async (values: EmployeeData) => {
-    try {
-      const newItem = await onSubmitProps(values);
-
-      if (newItem) {
-        onAddSnackbar(
-          companyT("employees.notification.success", { label }),
-          "success",
-        );
-        if (values?.email === user?.email) {
-          onGetProfile();
+  const onSubmit = useCallback(
+    async (values) => {
+      try {
+        let newItem;
+        if (type === DataAction.CREATE) {
+          const { email, position, permission, client, is_invite } =
+            values as typeof initialValues;
+          switch (typeEmployee) {
+            case EmployeeType.EMPLOYEE:
+              newItem = await onSubmitProps({
+                email,
+                position,
+                roles: [permission],
+                is_invite,
+                password: "123456",
+                company: "FPT",
+              });
+              break;
+            case EmployeeType.CLIENT:
+              newItem = await onSubmitProps({
+                email,
+                position,
+                roles: [Permission.CL],
+                client,
+                is_invite,
+                password: "123456",
+                company: "FPT",
+              });
+              break;
+            case EmployeeType.CONTRACTOR:
+              newItem = await onSubmitProps({
+                email,
+                position,
+                roles: [Permission.CT],
+                client,
+                is_invite,
+                password: "123456",
+                company: "FPT",
+              });
+              break;
+            default:
+              newItem = undefined;
+          }
+        } else {
+          const { id, position } = values as typeof initialValues;
+          newItem = await onSubmitProps(id, position);
         }
-        onClose();
-      } else {
-        throw AN_ERROR_TRY_AGAIN;
+
+        if (newItem) {
+          onAddSnackbar(
+            companyT("employees.notification.success", {
+              label,
+              typeEmployee: companyT(
+                `employees.${
+                  typeEmployee === EmployeeType.CLIENT
+                    ? "client"
+                    : typeEmployee === EmployeeType.CONTRACTOR
+                    ? "contractor"
+                    : "employee"
+                }`,
+              ).toLowerCase(),
+            }),
+            "success",
+          );
+          if (values?.email === user?.email) {
+            onGetProfile();
+          }
+          onClose();
+        } else {
+          throw AN_ERROR_TRY_AGAIN;
+        }
+      } catch (error) {
+        onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
       }
-    } catch (error) {
-      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-    }
-  };
+    },
+    [
+      commonT,
+      companyT,
+      label,
+      onAddSnackbar,
+      onClose,
+      onGetProfile,
+      onSubmitProps,
+      type,
+      typeEmployee,
+      user?.email,
+    ],
+  );
 
   const formik = useFormik({
     initialValues,
@@ -110,16 +210,38 @@ const EmployeeCompanyForm = ({
           rootSx={sxConfig.input}
         />
         <Stack direction="row" spacing={2}>
-          <Select
-            title="Permission"
-            name="permission"
-            options={Object.entries(Permission).map(([k, v]) => ({
-              label: k,
-              value: v,
-            }))}
-            fullWidth
-            rootSx={sxConfig.input}
-          />
+          {typeEmployee === EmployeeType.EMPLOYEE ? (
+            <Select
+              title={commonT("permissionV")}
+              name="permission"
+              options={[
+                { value: Permission.AM, label: "Admin" },
+                { value: Permission.MN, label: "Manager" },
+                { value: Permission.LE, label: "Leader" },
+                { value: Permission.ST, label: "Staff" },
+              ]}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.permission}
+              required
+              fullWidth
+              rootSx={sxConfig.input}
+            />
+          ) : (
+            <Select
+              title={companyT("clientCompany.title")}
+              name="client"
+              options={clientCompanies.map((c) => ({
+                label: c.name,
+                value: c.code,
+              }))}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.client}
+              fullWidth
+              rootSx={sxConfig.input}
+            />
+          )}
           <Select
             options={options}
             title={commonT("position")}
@@ -136,6 +258,17 @@ const EmployeeCompanyForm = ({
             onEndReached={onEndReached}
           />
         </Stack>
+        {type === DataAction.CREATE && (
+          <Stack direction="row">
+            <FormControlLabel
+              label={companyT("employees.form.isInvite")}
+              name="is_invite"
+              control={<Checkbox />}
+              checked={formik.values.is_invite}
+              onChange={formik.handleChange}
+            />
+          </Stack>
+        )}
       </Stack>
     </FormLayout>
   );
