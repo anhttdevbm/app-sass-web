@@ -10,6 +10,7 @@ import { useAIAgent } from "store/aiAgent/selectors";
 import { CreateAIAgentPayload } from "store/aiAgent/types";
 import { usePromptTemplate } from "store/promptTemplate/selectors";
 import { PromptTemplate } from "store/promptTemplate/types";
+import { mapDynamicStateToTemplateArray } from "store/promptTemplate/helper";
 
 export const OUTLINE_COLOR = "rgba(54, 153, 255, 0.5)";
 
@@ -45,8 +46,8 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
   const t = useTranslations(NS_AI_AGENT);
 
-  const { onCreateAgent, onUploadAvatar } = useAIAgent();
-  const { promptTemplates, onGetPromptTemplates, isFetchingPromptTemplates, mapDynamicStateToTemplateArray } = usePromptTemplate()
+  const {onCreateAgent, onUploadAvatar} = useAIAgent();
+  const {promptTemplates, onGetPromptTemplates, isFetchingPromptTemplates} = usePromptTemplate()
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.length) {

@@ -33,7 +33,7 @@ export interface AIAgentState {
   deleteAgentStatus: DataStatus;
   createAgentStatus: DataStatus;
 
-  aiAgent: AIAgent | null;
+  aiAgent?: AIAgent;
 }
 
 export interface GetAIAgentsPayload {

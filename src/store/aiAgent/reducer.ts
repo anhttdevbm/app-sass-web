@@ -16,7 +16,7 @@ const initialState: AIAgentState = {
   deleteAgentStatus: DataStatus.IDLE,
   createAgentStatus: DataStatus.IDLE,
 
-  aiAgent: null,
+  aiAgent: undefined
 };
 
 const aiAgentSlice = createSlice({
