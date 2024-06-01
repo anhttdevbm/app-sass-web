@@ -32,6 +32,7 @@ export interface AIAgentState {
   getAgentsStatus: DataStatus;
   deleteAgentStatus: DataStatus;
   createAgentStatus: DataStatus;
+  updateAgentStatus: DataStatus;
 
   aiAgent?: AIAgent;
 }
@@ -49,3 +50,9 @@ export interface CreateAIAgentPayload {
   avatar?: string;
 }
 
+export interface UpdateAIAgentPayload {
+  name?: string;
+  description?: string;
+  avatar?: string;
+  tone?: string;
+}

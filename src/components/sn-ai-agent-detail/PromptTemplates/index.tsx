@@ -9,6 +9,7 @@ import { Sidebar, SidebarPromptCategory } from "./components/Sidebar";
 import { ListTemplates } from "./components/ListTemplates";
 import { useEffect, useState } from "react";
 import { usePromptTemplate } from "store/promptTemplate/selectors";
+import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
 
 export const PromptTemplates = () => {
   const t = useTranslations(NS_AI_AGENT);
@@ -21,6 +22,10 @@ export const PromptTemplates = () => {
 
   const handleSearchTemplate = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+  }
+
+  const handleUpdate = () => {
+    console.log("Update");
   }
 
   useEffect(() => {
@@ -54,6 +59,7 @@ export const PromptTemplates = () => {
         <Sidebar listCategories={categories} selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
         <ListTemplates listTemplates={selectedTemplates} />
       </Stack>
+      <FooterDetailAgent onClickUpdate={handleUpdate} />
     </Stack>
   );
 };

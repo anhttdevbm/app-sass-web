@@ -1,7 +1,15 @@
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
-import { createAgent, deleteAgent, getAgent, getAgents, getAvatarLink, uploadAvatar } from "store/aiAgent/actions";
+import { CreateAIAgentPayload, GetAIAgentListQueries, UpdateAIAgentPayload } from "./types";
+import {
+  createAgent,
+  deleteAgent,
+  getAgent,
+  getAgents,
+  getAvatarLink,
+  updateAgent,
+  uploadAvatar,
+} from "store/aiAgent/actions";
 import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";
 
@@ -21,7 +29,7 @@ export const useAIAgent = () => {
     getAgentsStatus,
     createAgentStatus,
     deleteAgentStatus,
-
+    updateAgentStatus,
   } = useAppSelector((state) => state.aiAgent, shallowEqual);
 
   const onGetAgents = useCallback((queries: GetAIAgentListQueries) => {
@@ -57,9 +65,13 @@ export const useAIAgent = () => {
       const result = await dispatch(getAvatarLink(id));
       return result.payload[0].link;
     } catch (error) {
-      console.error(error);
     }
   }, [dispatch])
+
+  const onUpdateAgent = useCallback((id: string, data: UpdateAIAgentPayload) => {
+    dispatch(updateAgent({ id, data }));
+  }, [dispatch])
+  const isUpdatingAgent = useMemo(() => updateAgentStatus === DataStatus.LOADING, [updateAgentStatus]);
 
   return {
     aiAgents,
@@ -83,6 +95,9 @@ export const useAIAgent = () => {
     isCreatingAgent,
 
     onUploadAvatar,
-    onGetAvatarLink
+    onGetAvatarLink,
+
+    onUpdateAgent,
+    isUpdatingAgent,
   };
 };

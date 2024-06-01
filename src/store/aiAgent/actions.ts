@@ -1,5 +1,5 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { AIAgent, CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
+import { AIAgent, CreateAIAgentPayload, GetAIAgentListQueries, UpdateAIAgentPayload } from "./types";
 import { client, Endpoint } from "api";
 import { AI_AGENT_API_URL, AN_ERROR_TRY_AGAIN, UPLOAD_API_URL } from "constant/index";
 import { HttpStatusCode } from "constant/enums";
@@ -88,5 +88,24 @@ export const getAvatarLink =  createAsyncThunk(
     }
   },
 )
+
+export const updateAgent = createAsyncThunk(
+  "aiAgent/updateAgent",
+  async ({ id, data }: { id: string; data: UpdateAIAgentPayload }) => {
+    try {
+      const response = await client.put(
+        `${Endpoint.AI_AGENT_UPDATE}/${id}`, data, { baseURL: AI_AGENT_API_URL }
+      )
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
 
 export const getAgent = createAction<string>("aiAgent/getAgent");

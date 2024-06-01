@@ -215,4 +215,5 @@ export const Endpoint = {
   AI_AGENT_DELETE: "/agent/delete",
   AI_AGENT_CREATE: "/agent/create",
   AI_AGENT_PROMPT_TEMPLATE: "/agent/prompt-template",
+  AI_AGENT_UPDATE: "/agent/update",
 };

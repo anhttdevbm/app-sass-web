@@ -15,7 +15,7 @@ export const ChatAI: React.FC<ChatAIProps> = ({ id }) => {
 
   useEffect(() => {
     onGetAgent(id);
-  }, [id, onGetAgent]);
+  }, [id]);
 
   return (
     <Stack>

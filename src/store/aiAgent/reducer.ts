@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { AIAgent, AIAgentState, GetAIAgentListQueries, GetAIAgentsPayload } from "./types";
-import { createAgent, deleteAgent, getAgents, uploadAvatar } from "store/aiAgent/actions";
+import { createAgent, deleteAgent, getAgents, updateAgent, uploadAvatar } from "store/aiAgent/actions";
 import { DataStatus } from "constant/enums";
 
 const initialState: AIAgentState = {
@@ -15,6 +15,7 @@ const initialState: AIAgentState = {
   getAgentsStatus: DataStatus.IDLE,
   deleteAgentStatus: DataStatus.IDLE,
   createAgentStatus: DataStatus.IDLE,
+  updateAgentStatus: DataStatus.IDLE,
 
   aiAgent: undefined
 };
@@ -25,6 +26,7 @@ const aiAgentSlice = createSlice({
   reducers: {
     getAgent: (state, action: PayloadAction<string>) => {
       state.aiAgent = state.aiAgents.find((aiAgent) => aiAgent.id === action.payload);
+      console.log("aiAgent", state.aiAgent);
     }
   },
   extraReducers: (builder) => {
@@ -34,7 +36,6 @@ const aiAgentSlice = createSlice({
     });
     builder.addCase(getAgents.fulfilled,(state, action: PayloadAction<GetAIAgentsPayload>) => {
       const { data, page, size, total_page } = action.payload;
-
       state.getAgentsStatus = DataStatus.SUCCEEDED;
 
       state.aiAgents = data;
@@ -77,6 +78,18 @@ const aiAgentSlice = createSlice({
     });
     builder.addCase(uploadAvatar.rejected, (state) => {
       state.createAgentStatus = DataStatus.FAILED;
+    });
+
+    // Update ai agent
+    builder.addCase(updateAgent.pending, (state) => {
+      state.updateAgentStatus = DataStatus.LOADING;
+    });
+    builder.addCase(updateAgent.fulfilled, (state, action: PayloadAction<AIAgent>) => {
+      state.updateAgentStatus = DataStatus.SUCCEEDED;
+      state.aiAgent = action.payload;
+    });
+    builder.addCase(updateAgent.rejected, (state) => {
+      state.updateAgentStatus = DataStatus.FAILED;
     });
   },
 });

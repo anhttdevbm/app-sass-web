@@ -1,7 +1,9 @@
 import { Button as MuiButtons, SvgIconProps, Typography } from "@mui/material";
-import { PRIMARY_GRADIENT_COLOR } from "./ActionCell";
 
 type ButtonType = "outlined" | "gradient" | "upload";
+
+const PRIMARY_GRADIENT_COLOR =
+  "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)";
 
 interface ButtonProps {
   type: ButtonType;

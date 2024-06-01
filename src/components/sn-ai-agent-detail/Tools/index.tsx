@@ -6,10 +6,14 @@ import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
 import { ToolItem } from "./components";
 import WebSearchIcon from "icons/WebSearchIcon";
-import { TitleTab } from "../components";
+import { FooterDetailAgent, TitleTab } from "../components";
 
 export const Tools = () => {
   const t = useTranslations(NS_AI_AGENT);
+
+  const handleUpdate = () => {
+    console.log("Update");
+  }
 
   return (
     <Stack flex={1} direction={"column"} spacing={3} padding={4}>
@@ -19,6 +23,7 @@ export const Tools = () => {
         description={t("tools.webSearchDescription")}
         icon={<WebSearchIcon />}
       />
+      <FooterDetailAgent onClickUpdate={handleUpdate} />
     </Stack>
   );
 };

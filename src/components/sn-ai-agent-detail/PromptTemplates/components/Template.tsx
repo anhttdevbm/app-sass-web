@@ -2,6 +2,8 @@ import { Alert, Snackbar, Stack } from "@mui/material";
 import { IconButton, Text } from "components/shared";
 import { CopyTextIcon } from "icons/CopyTextIcon";
 import { SyntheticEvent, useState } from "react";
+import { useTranslations } from "next-intl";
+import { NS_AI_AGENT } from "constant/index";
 
 export interface TemplateProps {
   id: string;
@@ -20,6 +22,8 @@ export const Template = ({
   title,
   description,
 }: TemplateProps) => {
+  const t = useTranslations(NS_AI_AGENT);
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleCopy = () => {
@@ -87,12 +91,12 @@ export const Template = ({
       </IconButton>
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={6000}
+        autoHideDuration={1500}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          Copied to clipboard!
+          {t("promptTemplates.copyToClipboard")}
         </Alert>
       </Snackbar>
     </Stack>

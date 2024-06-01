@@ -54,6 +54,8 @@ export const AIAgentLang: AIAgentDictionary = {
     placeholderTextarea: "Personalize your agent...",
     tone: "Tone",
     default: "Default",
+    updatedSuccess: "Updated successfully",
+    nothingChanged: "Nothing changed",
   },
   tools: {
     header: {
@@ -116,6 +118,7 @@ export const AIAgentLang: AIAgentDictionary = {
       title: "Prompt Templates | Taskcover",
     },
     searchTemplate: "Search template...",
+    copyToClipboard: "Copied to clipboard!",
   },
   chatAIAgent: {
     header: {

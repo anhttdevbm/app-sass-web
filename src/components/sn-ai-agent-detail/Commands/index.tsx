@@ -5,7 +5,7 @@ import { Stack } from "@mui/material";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
 import { ToolItem } from "../Tools/components";
-import { TitleTab } from "../components";
+import { FooterDetailAgent, TitleTab } from "../components";
 import { CreateCommandModal } from "./components/CreateCommandModal";
 import { useState } from "react";
 import { ListCommand } from "./components/ListCommand";
@@ -42,6 +42,10 @@ export const Commands = () => {
     setOpen(true);
   };
 
+  const handleUpdate = () => {
+    console.log("Update");
+  }
+
   return (
     <Stack flex={1} direction={"column"} spacing={3} padding={4}>
       <TitleTab
@@ -56,6 +60,7 @@ export const Commands = () => {
       />
       <ListCommand list={ListCommandExample} />
       <CreateCommandModal open={open} onClose={() => setOpen(false)} />
+      <FooterDetailAgent onClickUpdate={handleUpdate} />
     </Stack>
   );
 };

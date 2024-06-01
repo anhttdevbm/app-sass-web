@@ -54,6 +54,8 @@ export const AIAgentLang: AIAgentDictionary = {
     placeholderTextarea: "Cá nhân hóa trợ lý của bạn...",
     tone: "Lối diễn đạt",
     default: "Mặc định",
+    updatedSuccess: "Cập nhật thành công",
+    nothingChanged: "Không có thay đổi",
   },
   tools: {
     header: {
@@ -116,6 +118,7 @@ export const AIAgentLang: AIAgentDictionary = {
       title: "Mẫu câu | Taskcover",
     },
     searchTemplate: "Tìm kiếm mẫu...",
+    copyToClipboard: "Sao chép vào bảng ghi",
   },
   chatAIAgent: {
     header: {

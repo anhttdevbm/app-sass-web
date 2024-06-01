@@ -3,7 +3,7 @@
 import { Stack } from "@mui/material";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
-import { TitleTab } from "../components";
+import { FooterDetailAgent, TitleTab } from "../components";
 import { Switch } from "./components/Switch";
 import { useState } from "react";
 import { AddSource, TableKnowledge } from "./components";
@@ -115,6 +115,10 @@ export const Knowledge = () => {
     setKnowledgeEnabled(!isKnowledgeEnabled);
   };
 
+  const handleUpdate = () => {
+    console.log("Update");
+  }
+
   return (
     <Stack direction={"column"} spacing={3} flex={1} padding={4}>
       <TitleTab
@@ -127,6 +131,7 @@ export const Knowledge = () => {
         name={t("knowledge.enableKnowledge")}
       />
       {isKnowledgeEnabled && <KnowledgeContent />}
+      <FooterDetailAgent onClickUpdate={handleUpdate} />
     </Stack>
   );
 };

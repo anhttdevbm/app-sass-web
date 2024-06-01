@@ -52,6 +52,8 @@ export type AIAgentDictionary = {
     placeholderTextarea: string;
     tone: string;
     default: string;
+    updatedSuccess: string;
+    nothingChanged: string;
   };
   tools: {
     header: {
@@ -110,6 +112,7 @@ export type AIAgentDictionary = {
       title: string;
     };
     searchTemplate: string;
+    copyToClipboard: string;
   };
   chatAIAgent: {
     header: {
