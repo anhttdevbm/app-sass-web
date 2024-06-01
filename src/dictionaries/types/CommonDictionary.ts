@@ -57,6 +57,8 @@ export type CommonDictionary = {
     anErrorTryReload: string;
   };
   position: string;
+  permissionV: string;
+  permissionN: string;
   company: string;
   fullName: string;
   phone: string;

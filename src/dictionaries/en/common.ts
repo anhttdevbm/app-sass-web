@@ -61,6 +61,8 @@ export const CommonLang: CommonDictionary = {
     anErrorTryReload: "An error occurred. Please try reload page.",
   },
   position: "Position",
+  permissionV: "Permission",
+  permissionN: "Permission",
   company: "Company",
   fullName: "Full name",
   phone: "Phone number",

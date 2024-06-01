@@ -6,18 +6,22 @@ import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
 
 import { NS_COMPANY, NS_COMMON } from "constant/index";
-import { DataAction, EmployeeType, PayStatus } from "constant/enums";
+import {
+  DataAction,
+  EmployeeType,
+  PayStatus,
+  Permission,
+} from "constant/enums";
 import { NewButton as Button, Text } from "components/shared";
 import { Dropdown, Search } from "components/NewFilters";
 import { TEXT_STATUS } from "./helpers";
 import useToggle from "hooks/useToggle";
 import { getPath } from "utils/index";
-import { EmployeeClientData } from "store/company/actions";
+import { InviteEmployeeData } from "store/company/actions";
 import { useEmployees } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
 import AddCircleIcon from "icons/AddCircleIcon";
 import EmployeeCompanyForm from "./EmployeeCompanyForm";
-import EmployeeClientForm from "./EmployeeClientForm";
 import EmployeeTypeForm from "./EmployeeTypeForm";
 
 const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
@@ -32,13 +36,8 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
   const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
 
-  const {
-    filters,
-    onGetEmployees,
-    pageSize,
-    onCreateEmployee,
-    onCreateEmployeeClient,
-  } = useEmployees();
+  const { filters, onGetEmployees, pageSize, onInviteEmployee } =
+    useEmployees();
 
   const [isShow, onShow, onHide] = useToggle();
   const [formStage, setFormStage] = useState<1 | 2>(1);
@@ -196,75 +195,49 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
         </Button>
       </Stack>
 
-      {
-        // 3 level nested condition, so if-else statements in IFFE instead of chained ternary operator
-        (() => {
-          if (isShow) {
-            if (formStage === 2) {
-              switch (employeeTypeToAdd) {
-                case EmployeeType.EMPLOYEE:
-                  return (
-                    <EmployeeCompanyForm
-                      open={isShow}
-                      onClose={() => {
-                        onHide();
-                        setFormStage(1);
-                      }}
-                      type={DataAction.CREATE}
-                      initialValues={INITIAL_VALUES}
-                      onSubmit={onCreateEmployee}
-                    />
-                  );
-                case EmployeeType.CLIENT:
-                  return (
-                    <EmployeeClientForm
-                      open={isShow}
-                      onClose={() => {
-                        onHide();
-                        setFormStage(1);
-                      }}
-                      type={DataAction.CREATE}
-                      initialValues={INITIAL_VALUES_CLIENT}
-                      onSubmit={onCreateEmployeeClient}
-                    />
-                  );
-                case EmployeeType.CONTRACTOR:
-                  return (
-                    <EmployeeClientForm
-                      open={isShow}
-                      onClose={() => {
-                        onHide();
-                        setFormStage(1);
-                      }}
-                      type={DataAction.CREATE}
-                      initialValues={INITIAL_VALUES_CONTRACTOR}
-                      onSubmit={onCreateEmployeeClient}
-                    />
-                  );
-              }
-            } else {
-              return (
-                <EmployeeTypeForm
-                  open={isShow && formStage === 1}
-                  onClose={() => {
-                    onHide();
-                    setFormStage(1);
-                  }}
-                  onSubmit={(type: EmployeeType) => {
-                    setEmployeeTypeToAdd(type);
-                    setFormStage(2);
-                  }}
-                  options={[
-                    { label: "Employee", value: EmployeeType.EMPLOYEE },
-                    { label: "Client", value: EmployeeType.CLIENT },
-                    { label: "Contractor", value: EmployeeType.CONTRACTOR },
-                  ]}
-                />
-              );
-            }
-          }
-        })()
-      }
+      {isShow ? (
+        formStage === 2 ? (
+          <EmployeeCompanyForm
+            open={isShow}
+            onClose={() => {
+              onHide();
+              setFormStage(1);
+            }}
+            typeEmployee={employeeTypeToAdd}
+            type={DataAction.CREATE}
+            initialValues={INITIAL_VALUES}
+            onSubmit={onInviteEmployee}
+          />
+        ) : (
+          <EmployeeTypeForm
+            open={isShow && formStage === 1}
+            onClose={() => {
+              onHide();
+              setFormStage(1);
+            }}
+            onSubmit={(type: EmployeeType) => {
+              setEmployeeTypeToAdd(type);
+              setFormStage(2);
+            }}
+            options={[
+              {
+                label: companyT("employees.employee"),
+                value: EmployeeType.EMPLOYEE,
+              },
+              {
+                label: companyT("employees.client"),
+                value: EmployeeType.CLIENT,
+              },
+              {
+                label: companyT("employees.contractor"),
+                value: EmployeeType.CONTRACTOR,
+              },
+            ]}
+          />
+        )
+      ) : (
+        <></>
+      )}
     </>
   );
 };
@@ -280,18 +253,7 @@ const PAYMENT_OPTIONS = [
 const INITIAL_VALUES = {
   email: "",
   position: "",
+  client: "",
+  permission: Permission.ST,
+  is_invite: false,
 };
-
-const INITIAL_VALUES_CLIENT = {
-  email: "",
-  client_company: "",
-  position: "",
-  role: "CL",
-} as EmployeeClientData;
-
-const INITIAL_VALUES_CONTRACTOR = {
-  email: "",
-  client_company: "",
-  position: "",
-  role: "CT",
-} as EmployeeClientData;

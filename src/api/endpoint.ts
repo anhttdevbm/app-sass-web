@@ -14,6 +14,7 @@ export const Endpoint = {
   USER_ITEM: "/users/{id}",
   USERS_INACTIVE: "/users/inactive",
   PROFILE: "/users/me",
+  INVITE_USER_TO_COMPANY: "/users/inviteUserToCompany",
   COMPANIES: "/companies",
   COMPANY_ADD_MEMBER: "/companies/add-member",
   COMPANY_MEMBERS: "/users/members",
