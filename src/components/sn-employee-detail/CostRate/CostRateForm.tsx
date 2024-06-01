@@ -202,7 +202,11 @@ const CostRateForm = ({
             error={commonT(formik.touchedErrors.cost_per_month, {
               name: costRateT("form.costPerMonth"),
             })}
-            endNode={<Text sx={{ mr: 1 }}>$</Text>}
+            endNode={
+              <Text sx={{ mr: 1 }}>
+                {CURRENCY_SYMBOL[formik.values.currency]}
+              </Text>
+            }
           />
         </Grid>
 

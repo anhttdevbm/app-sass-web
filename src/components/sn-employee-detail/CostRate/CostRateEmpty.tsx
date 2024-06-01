@@ -15,12 +15,15 @@ import useToggle from "hooks/useToggle";
 import AddCircleIcon from "icons/AddCircleIcon";
 import { useAuth } from "store/app/selectors";
 import CostRateForm from "./CostRateForm";
+import { useEmployeeDetailContext } from "../EmployeeDetailContext";
 
 const CostRateEmpty = () => {
   const { user } = useAuth();
   const costRateT = useTranslations(NS_COST_RATE);
   const [isModalOpen, openModal, closeModal] = useToggle(false);
   const { isMdSmaller } = useBreakpoint();
+
+  const { employee } = useEmployeeDetailContext();
 
   const isAdmin = useMemo(
     () => user?.roles.includes(Permission.AM),
@@ -52,7 +55,7 @@ const CostRateEmpty = () => {
         fontWeight={600}
         pt={4}
       >
-        <span style={{ color: "#045EB8" }}>{user?.fullname}</span>{" "}
+        <span style={{ color: "#045EB8" }}>{employee?.fullname}</span>{" "}
         {costRateT("empty.title")}
       </Text>
       <Text
