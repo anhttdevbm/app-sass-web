@@ -52,6 +52,11 @@ export enum EmployeeType {
   CONTRACTOR = "Contructor",
 }
 
+export enum CostRateType {
+  MONTHLY = "MONTHLY",
+  WEEKLY = "WEEKLY",
+}
+
 export enum PayStatus {
   // ALL,
   PAID = 1,
