@@ -22,7 +22,7 @@ export const ChatAI: React.FC<ChatAIProps> = ({ id }) => {
       <Header
         id={aiAgent?.id as string}
         title={aiAgent?.name as string}
-        avatar={aiAgent?.avatar.link}
+        avatar={aiAgent?.avatar}
       />
       <Body />
     </Stack>

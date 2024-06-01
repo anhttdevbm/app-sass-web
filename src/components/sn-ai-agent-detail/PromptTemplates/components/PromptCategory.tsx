@@ -1,20 +1,20 @@
 import React from "react";
-import { PromptTemplate } from "./Sidebar";
+import { SidebarPromptCategory } from "./Sidebar";
 import { Stack } from "@mui/material";
 import { Text } from "components/shared";
 import { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components";
 
-interface PromptTemplateItemProps {
-  template: PromptTemplate;
+interface PromptCategoryProps {
+  category: SidebarPromptCategory;
   onClick: () => void;
   isSelected: boolean;
 }
 
-export const PromptTemplateItem = ({
-  template,
+export const PromptCategory = ({
+  category,
   onClick,
   isSelected,
-}: PromptTemplateItemProps) => {
+}: PromptCategoryProps) => {
   return (
     <Stack
       padding={"8px 12px"}
@@ -39,17 +39,17 @@ export const PromptTemplateItem = ({
           maxWidth: "100%",
         }}
       >
-        {template.name}
+        {category.name}
       </Text>
       <Stack
         borderRadius={"8px"}
         padding={"2px 8px"}
         bgcolor={isSelected ? "background.default" : "transparent"}
         border={"1px solid"}
-        borderColor={isSelected ? "white" : "grey.400"}
+        borderColor={isSelected ? "white" : "grey.100"}
       >
         <Text fontSize={"12px"} fontWeight={700} color={"#404040"}>
-          {template.quantity}
+          {category.quantity}
         </Text>
       </Stack>
     </Stack>

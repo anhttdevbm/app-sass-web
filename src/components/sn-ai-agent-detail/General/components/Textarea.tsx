@@ -7,8 +7,11 @@ import useTheme from "hooks/useTheme";
 import MagicPenIcon from "icons/MagicPenIcon";
 import SendGradientIcon from "icons/SendGradientIcon";
 import { useTranslations } from "next-intl";
-import React, { useEffect } from "react";
+import React, { useId } from "react";
 import styled from "styled-components";
+import { useParams, useRouter } from "next/navigation";
+import { getPath } from "utils/index";
+import { AI_AGENT_PROMPT_TEMPLATES_PATH } from "constant/paths";
 
 type TextareaElementProps = JSX.IntrinsicElements["textarea"];
 
@@ -77,8 +80,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     ref,
   ) {
     const t = useTranslations(NS_AI_AGENT);
-    const id = React.useId();
+    const id = useId();
     const theme = useTheme();
+    const params = useParams();
+    const { push } = useRouter();
+
     const [charCount, setCharCount] = React.useState(0);
 
     const handleInputChange = (
@@ -92,6 +98,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         }
       }
     };
+
+    const handleViewPrompts = () => {
+      const path = getPath(AI_AGENT_PROMPT_TEMPLATES_PATH, undefined, {id: params.id as string});
+      push(path);
+    }
 
     return (
       <Box
@@ -129,6 +140,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             text={t("general.viewPrompts")}
             icon={MagicPenIcon}
             style={{ padding: "8px 16px" }}
+            onClick={handleViewPrompts}
           />
           {onSend && (
             <IconButton onClick={onSend} style={{ padding: "8px 16px" }}>

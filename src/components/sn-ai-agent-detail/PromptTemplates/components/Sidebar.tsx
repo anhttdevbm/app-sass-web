@@ -1,32 +1,31 @@
 import { Stack } from "@mui/material";
-import { PromptTemplateItem } from "./PromptTemplateItem";
 import { useState } from "react";
+import { PromptCategory } from "components/sn-ai-agent-detail/PromptTemplates/components/PromptCategory";
 
-export interface PromptTemplate {
-  id: string;
+export interface SidebarPromptCategory {
   name: string;
   quantity: number;
 }
 
 interface SidebarProps {
-  listTemplates: PromptTemplate[];
+  listCategories: SidebarPromptCategory[];
+  selectedCategory: string | null;
+  onSelectCategory: (category: string | null) => void;
 }
 
-export const Sidebar = ({ listTemplates }: SidebarProps) => {
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-
-  const handleSelectTemplate = (id: string) => {
-    setSelectedTemplate(id);
-  };
-
+export const Sidebar = ({
+  listCategories,
+  onSelectCategory,
+  selectedCategory
+}: SidebarProps) => {
   return (
     <Stack direction={"column"} padding={2} width={"240px"}>
-      {listTemplates.map((template) => (
-        <PromptTemplateItem
-          key={template.id}
-          template={template}
-          onClick={() => handleSelectTemplate(template.id)}
-          isSelected={selectedTemplate === template.id}
+      {listCategories.map((category) => (
+        <PromptCategory
+          key={category.name}
+          category={category}
+          onClick={() => onSelectCategory(category.name)}
+          isSelected={selectedCategory === category.name}
         />
       ))}
     </Stack>

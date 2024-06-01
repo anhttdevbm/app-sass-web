@@ -22,7 +22,11 @@ const initialState: AIAgentState = {
 const aiAgentSlice = createSlice({
   name: "aiAgent",
   initialState,
-  reducers: {},
+  reducers: {
+    getAgent: (state, action: PayloadAction<string>) => {
+      state.aiAgent = state.aiAgents.find((aiAgent) => aiAgent.id === action.payload);
+    }
+  },
   extraReducers: (builder) => {
     // Get ai agents
     builder.addCase(getAgents.pending, (state) => {

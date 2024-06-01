@@ -1,5 +1,5 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
+import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { AIAgent, CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
 import { client, Endpoint } from "api";
 import { AI_AGENT_API_URL, AN_ERROR_TRY_AGAIN, UPLOAD_API_URL } from "constant/index";
 import { HttpStatusCode } from "constant/enums";
@@ -88,3 +88,5 @@ export const getAvatarLink =  createAsyncThunk(
     }
   },
 )
+
+export const getAgent = createAction<string>("aiAgent/getAgent");

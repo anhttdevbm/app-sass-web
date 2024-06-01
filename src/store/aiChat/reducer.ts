@@ -190,7 +190,12 @@ const aiChatSlice = createSlice({
       })
       .addCase(getPersona.fulfilled, (state, { payload }) => {
         state.personaStatus = DataStatus.SUCCEEDED;
-        state.persona.push(...payload.results);
+
+        const newPersonas = payload.results.filter(
+          (newPersona) => !state.persona.some((existingPersona) => existingPersona.id === newPersona.id)
+        );
+
+        state.persona.push(...newPersonas);
       })
       .addCase(getPersona.rejected, (state, action) => {
         state.personaStatus = DataStatus.FAILED;
@@ -202,9 +207,14 @@ const aiChatSlice = createSlice({
         state.toneStatus = DataStatus.LOADING;
       })
       .addCase(getTone.fulfilled, (state, { payload }) => {
-        state.toneStatus = DataStatus.SUCCEEDED;
-        state.tone.push(...payload.results);
-      })
+      state.toneStatus = DataStatus.SUCCEEDED;
+
+      const newTones = payload.results.filter(
+        (newTone) => !state.tone.some((existingTone) => existingTone.id === newTone.id)
+      );
+
+      state.tone.push(...newTones);
+    })
       .addCase(getTone.rejected, (state, action) => {
         state.toneStatus = DataStatus.FAILED;
         state.toneError = action.error?.message ?? AN_ERROR_TRY_AGAIN;

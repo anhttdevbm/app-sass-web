@@ -7,7 +7,6 @@ import { AI_AGENT_PATH } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { useHeaderConfig } from "store/app/selectors";
@@ -21,7 +20,7 @@ type AIAgentDetailLayoutProps = {
 };
 
 const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
-  const { aiAgentFilters, aiAgent, onGetAgent, page, limit } = useAIAgent();
+  const { aiAgentFilters, aiAgent, onGetAgent, page, limit, onGetAvatarLink } = useAIAgent();
   const { onUpdateHeaderConfig } = useHeaderConfig();
   const { isDarkMode } = useTheme();
   const commonT = useTranslations(NS_COMMON);
@@ -30,6 +29,15 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
   const theme = useTheme();
 
   const dataStringifyRef = useRef<string | undefined>();
+
+  const fetchAvatarLink =  async () => {
+    if (!aiAgent?.avatar) return ImgPlaceHolderAgent.src;
+    try {
+      return onGetAvatarLink(aiAgent?.avatar);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -51,14 +59,19 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
 
     const prevPath = getPath(AI_AGENT_PATH, parsedQueries);
 
-    onUpdateHeaderConfig({
-      imageUrl: aiAgent?.avatar.link || ImgPlaceHolderAgent,
-      title: aiAgent?.name,
-      searchPlaceholder: commonT("searchBy", { name: aiAgentT("list.key") }),
-      prevPath,
-      endpoint: Endpoint.AI_AGENT,
-      key: "name",
-    });
+    (async () => {
+      const imageUrl = await fetchAvatarLink();
+
+      onUpdateHeaderConfig({
+        imageUrl: imageUrl,
+        title: aiAgent?.name,
+        searchPlaceholder: commonT("searchBy", { name: aiAgentT("list.key") }),
+        prevPath,
+        endpoint: Endpoint.AI_AGENT,
+        key: "name",
+      });
+    })();
+
     return () => {
       onUpdateHeaderConfig({
         title: undefined,

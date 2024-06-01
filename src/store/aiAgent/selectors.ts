@@ -1,7 +1,7 @@
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { CreateAIAgentPayload, GetAIAgentListQueries } from "./types";
-import { createAgent, deleteAgent, getAgents, getAvatarLink, uploadAvatar } from "store/aiAgent/actions";
+import { createAgent, deleteAgent, getAgent, getAgents, getAvatarLink, uploadAvatar } from "store/aiAgent/actions";
 import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";
 
@@ -30,8 +30,7 @@ export const useAIAgent = () => {
   const isFetchingAgents = useMemo(() => getAgentsStatus === DataStatus.LOADING, [getAgentsStatus]);
 
   const onGetAgent = (id: string) => {
-    // dispatch(getAgent(id));
-    // dispatch(actions.getAgent(id));
+    dispatch(getAgent(id));
   };
 
   const onDeleteAgent = useCallback((id: string) => {

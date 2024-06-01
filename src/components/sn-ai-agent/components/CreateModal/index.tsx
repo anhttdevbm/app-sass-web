@@ -31,7 +31,7 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
     id: "",
     name: "Blank agent",
     icon: "📄",
-    description: "Blank agent",
+    description: "Personalize your agent...",
     category: "",
     created_time: "",
     updated_time: "",

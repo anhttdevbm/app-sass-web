@@ -1,16 +1,44 @@
-"use client";
+"use client"
 
 import { Stack } from "@mui/material";
 import { SearchInput } from "components/sn-ai-agent/components";
 import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { Sidebar } from "./components/Sidebar";
-import { Content } from "./components/Content";
+import { Sidebar, SidebarPromptCategory } from "./components/Sidebar";
+import { ListTemplates } from "./components/ListTemplates";
+import { useEffect, useState } from "react";
+import { usePromptTemplate } from "store/promptTemplate/selectors";
 
 export const PromptTemplates = () => {
   const t = useTranslations(NS_AI_AGENT);
   const theme = useTheme();
+  const {promptTemplates, onGetPromptTemplates, isFetchingPromptTemplates} = usePromptTemplate();
+
+  const [categories, setCategories] = useState<SidebarPromptCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [search, setSearch] = useState<string>("");
+
+  const handleSearchTemplate = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  }
+
+  useEffect(() => {
+    if (!Object.keys(promptTemplates).length && !isFetchingPromptTemplates) {
+      onGetPromptTemplates();
+    }
+  }, [isFetchingPromptTemplates]);
+
+  useEffect(() => {
+    const categories = Object.keys(promptTemplates).map(category => ({
+      name: category,
+      quantity: promptTemplates[category].total,
+    }));
+    setCategories(categories);
+    setSelectedCategory(categories[0]?.name || null);
+  }, [promptTemplates]);
+
+  const selectedTemplates = selectedCategory ? promptTemplates[selectedCategory].data : [];
 
   return (
     <Stack direction={"column"}>
@@ -18,38 +46,13 @@ export const PromptTemplates = () => {
         <SearchInput
           theme={theme}
           placeholder={t("promptTemplates.searchTemplate")}
+          onChange={handleSearchTemplate}
+          value={search}
         />
       </Stack>
       <Stack padding={"24px 32px"} direction={"row"}>
-        <Sidebar
-          listTemplates={[
-            { id: "1", name: "Project Manager sdfsdfsd", quantity: 10 },
-            { id: "2", name: "Template 2", quantity: 20 },
-            { id: "3", name: "Template 3", quantity: 30 },
-          ]}
-        />
-        <Content
-          listContent={[
-            {
-              id: "1",
-              title: "Content 1",
-              description: "Description 1",
-              isSelected: true,
-            },
-            {
-              id: "2",
-              title: "Content 2",
-              description: "Description 2",
-              isSelected: false,
-            },
-            {
-              id: "3",
-              title: "Content 3",
-              description: "Description 3",
-              isSelected: false,
-            },
-          ]}
-        />
+        <Sidebar listCategories={categories} selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+        <ListTemplates listTemplates={selectedTemplates} />
       </Stack>
     </Stack>
   );
