@@ -95,7 +95,7 @@ const EmployeeCompanyForm = ({
                 roles: [permission],
                 is_invite,
                 password: "123456",
-                company: "FPT",
+                company: user?.company ?? "",
               });
               break;
             case EmployeeType.CLIENT:
@@ -106,7 +106,7 @@ const EmployeeCompanyForm = ({
                 client,
                 is_invite,
                 password: "123456",
-                company: "FPT",
+                company: user?.company ?? "",
               });
               break;
             case EmployeeType.CONTRACTOR:
@@ -117,7 +117,7 @@ const EmployeeCompanyForm = ({
                 client,
                 is_invite,
                 password: "123456",
-                company: "FPT",
+                company: user?.company ?? "",
               });
               break;
             default:
@@ -165,6 +165,7 @@ const EmployeeCompanyForm = ({
       onSubmitProps,
       type,
       typeEmployee,
+      user?.company,
       user?.email,
     ],
   );
