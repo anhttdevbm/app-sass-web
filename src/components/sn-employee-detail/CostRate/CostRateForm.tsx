@@ -9,7 +9,7 @@ import Switch from "@mui/material/Switch";
 import { useTranslations } from "next-intl";
 
 import { NS_COST_RATE, NS_COMMON } from "constant/index";
-import { DataStatus } from "constant/enums";
+import { CURRENCY_CODE, CostRateType, DataStatus } from "constant/enums";
 import { Option } from "constant/types";
 import Link from "components/Link";
 import {
@@ -22,22 +22,14 @@ import {
 import { useFormik } from "hooks/useFormik";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import { useSnackbar } from "store/app/selectors";
-import { NewCostRate, UpdateCostRate } from "store/employeeDetail/actions";
+import { CostRateRequest } from "store/employeeDetail/actions";
 import { useCostRate } from "store/employeeDetail/selectors";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
-import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
+import { getMessageErrorByAPI } from "utils/index";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { useEmployeeDetailContext } from "../EmployeeDetailContext";
 
-type CostRateForm = Omit<NewCostRate, "working_hours"> & {
-  working_hours: {
-    mon: number;
-    tue: number;
-    wed: number;
-    thu: number;
-    fri: number;
-    sat: number;
-    sun: number;
-  };
-};
+type CostRateFormData = CostRateRequest;
 
 const CostRateForm = ({
   costRateId,
@@ -49,8 +41,9 @@ const CostRateForm = ({
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
 
+  const { employee } = useEmployeeDetailContext();
   const { onAddSnackbar } = useSnackbar();
-  const { selectCostRate, handleAddNewCostRate, handleUpdateCostRate } =
+  const { selectCostRate, handleAddCostRate, handleUpdateCostRate } =
     useCostRate();
 
   const {
@@ -59,37 +52,30 @@ const CostRateForm = ({
     handleGetAllHolidayCalendar,
   } = useHolidayCalendar();
 
-  const holidayCalendarOptions: Option[] = holidayCalendars.map((c) => ({
-    label: c.name,
-    value: c.id,
-  }));
+  const holidayCalendarOptions: Option[] = useMemo(
+    () =>
+      holidayCalendars.map((c) => ({
+        label: c.name,
+        value: c.id,
+      })),
+    [holidayCalendars],
+  );
 
   const onSubmit = useCallback(
-    async (values: CostRateForm) => {
+    async (values: CostRateFormData) => {
       try {
-        const data = {
-          ...values,
-          working_hours: [
-            values.working_hours.mon,
-            values.working_hours.tue,
-            values.working_hours.wed,
-            values.working_hours.thu,
-            values.working_hours.fri,
-            values.working_hours.sat,
-            values.working_hours.sun,
-          ],
-        };
         if (costRateId.length > 0) {
           await handleUpdateCostRate({
-            ...data,
+            employeeId: employee.id,
             id: costRateId,
-          } as UpdateCostRate);
-          onAddSnackbar(
-            costRateT("notification.updateSuccess"),
-            "success",
-          );
+            data: values,
+          });
+          onAddSnackbar(costRateT("notification.updateSuccess"), "success");
         } else {
-          await handleAddNewCostRate(data as NewCostRate);
+          await handleAddCostRate({
+            employeeId: employee.id,
+            data: values,
+          });
           onAddSnackbar(costRateT("notification.addSuccess"), "success");
         }
         onCancel();
@@ -98,13 +84,14 @@ const CostRateForm = ({
       }
     },
     [
-      commonT,
-      onCancel,
       costRateId,
-      costRateT,
-      handleAddNewCostRate,
+      onCancel,
       handleUpdateCostRate,
+      employee.id,
       onAddSnackbar,
+      costRateT,
+      handleAddCostRate,
+      commonT,
     ],
   );
 
@@ -115,48 +102,50 @@ const CostRateForm = ({
         onAddSnackbar("Error!", "error");
         return {};
       }
+      const {
+        type,
+        cost_per_month,
+        currency,
+        working_hours,
+        start_date,
+        end_date,
+        holiday_calendar,
+        note,
+        over_head,
+      } = costRateToEdit;
       return {
-        ...getDataFromKeys(costRateToEdit, [
-          "type",
-          "cost_per_month",
-          "currency",
-          "start_date",
-          "end_date",
-          "holiday_calendar",
-          "note",
-          "over_head",
-        ]),
-        working_hours: {
-          mon: costRateToEdit?.working_hours[0] ?? 8,
-          tue: costRateToEdit?.working_hours[1] ?? 8,
-          wed: costRateToEdit?.working_hours[2] ?? 8,
-          thu: costRateToEdit?.working_hours[3] ?? 8,
-          fri: costRateToEdit?.working_hours[4] ?? 8,
-          sat: costRateToEdit?.working_hours[5] ?? 0,
-          sun: costRateToEdit?.working_hours[6] ?? 0,
-        },
+        type,
+        cost_per_month,
+        currency,
+        working_hours,
+        start_date,
+        end_date,
+        holiday_calendar,
+        note,
+        over_head,
       };
     } else {
       return {
-        type: "",
+        type: CostRateType.MONTHLY,
         cost_per_month: 0,
-        currency: "",
-        total_hours: 0,
+        currency: CURRENCY_CODE.VND,
+        working_hours: {
+          MON: 8,
+          TUE: 8,
+          WED: 8,
+          THU: 8,
+          FRI: 8,
+          SAT: 0,
+          SUN: 0,
+        },
+        start_date: "",
+        end_date: "",
         holiday_calendar: "",
         note: "",
-        working_hours: {
-          mon: 8,
-          tue: 8,
-          wed: 8,
-          thu: 8,
-          fri: 8,
-          sat: 0,
-          sun: 0,
-        },
         over_head: true,
       };
     }
-  }, [costRateId, onAddSnackbar, selectCostRate]) as CostRateForm;
+  }, [costRateId, onAddSnackbar, selectCostRate]) as CostRateFormData;
 
   const formik = useFormik({
     initialValues,
@@ -187,8 +176,8 @@ const CostRateForm = ({
         <Grid item xs={12} sm={4}>
           <Select
             options={[
-              { label: costRateT("form.monthly"), value: "MONTHLY" },
-              { label: costRateT("form.weekly"), value: "WEEKLY" },
+              { label: costRateT("form.monthly"), value: CostRateType.MONTHLY },
+              { label: costRateT("form.weekly"), value: CostRateType.WEEKLY },
             ]}
             title={costRateT("form.type")}
             fullWidth
@@ -213,16 +202,17 @@ const CostRateForm = ({
             error={commonT(formik.touchedErrors.cost_per_month, {
               name: costRateT("form.costPerMonth"),
             })}
-            endNode={<Text sx={{ mr: 1 }}>$</Text>}
+            endNode={
+              <Text sx={{ mr: 1 }}>
+                {CURRENCY_SYMBOL[formik.values.currency]}
+              </Text>
+            }
           />
         </Grid>
 
         <Grid item xs={12} sm={3}>
           <Select
-            options={[
-              { label: "USD ($)", value: "USD" },
-              { label: "VNĐ (đ)", value: "VND" },
-            ]}
+            options={currencyOptions}
             title={costRateT("form.currency")}
             fullWidth
             name="currency"
@@ -293,15 +283,20 @@ const CostRateForm = ({
           <Select
             options={holidayCalendarOptions}
             lastNode={
-              <Link href="/holiday-calendar" sx={{
-                display: "inline-flex",
-                alignItems: "center",
-                px: 2,
-                py: 1,
-                textDecoration: "none",
-              }}>
-                <AddCircleGradientIcon/>
-                <Text pl={1} fontSize={14}>Add new holiday calendar</Text>
+              <Link
+                href="/holiday-calendar"
+                sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  px: 2,
+                  py: 1,
+                  textDecoration: "none",
+                }}
+              >
+                <AddCircleGradientIcon />
+                <Text pl={1} fontSize={14}>
+                  Add new holiday calendar
+                </Text>
               </Link>
             }
             title={costRateT("form.holidayCalendar")}
@@ -571,4 +566,11 @@ const NoteInput = memo(function NoteInput({
   );
 });
 
-const daysOfWeekKeys = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+const daysOfWeekKeys = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+const currencyOptions: Option[] = Object.entries(CURRENCY_SYMBOL).map(
+  (entry) => ({
+    label: `${entry[0]} (${entry[1]})`,
+    value: entry[0],
+  }),
+);

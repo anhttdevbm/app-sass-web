@@ -1,40 +1,68 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { User } from "constant/types";
-import { DataStatus } from "constant/enums";
+import { CostRateType, CURRENCY_CODE, DataStatus } from "constant/enums";
 import {
   getEmployeeDetail,
   updateEmployee,
   getAllCostRate,
+  addCostRate,
   getCostRate,
-  deleteCostRate,
-  addNewCostRate,
   updateCostRate,
+  deleteCostRate,
+  deleteMultiCostRate,
+  DeleteMultiCostRateResponse,
+  getCostRateChart,
 } from "./actions";
 
-export type CostRateWorkingHours = [number, number, number, number, number, number, number];
+export type CostRateWorkingHours = {
+  MON: number;
+  TUE: number;
+  WED: number;
+  THU: number;
+  FRI: number;
+  SAT: number;
+  SUN: number;
+};
 
-export type CostRate = {
-  id: string;
-  company: string;
+export type BaseCostRate = {
+  type: CostRateType;
   cost_per_month: number;
-  currency: string;
-  type: string;
+  currency: CURRENCY_CODE;
+  working_hours: CostRateWorkingHours;
   start_date: string;
   end_date: string;
-  is_active: boolean;
-  holiday_calendar: string;
-  working_hours: CostRateWorkingHours;
+};
+
+export type CostRateOptional = {
+  holiday_calendar?: string;
+  note?: string;
+  over_head?: boolean;
+};
+
+export type CostRateResponse = {
+  message?: string;
+  id: string;
   total_hours: number;
   total_days: number;
+  total_working_days: number;
+  current_working_days: number;
+  created_time: string;
+  created_by: string;
+  is_active: boolean;
+  user_id: string;
+};
+
+export type CostRateTransient = {
   remaining_hours?: number;
   remaining_days?: number;
   cost_per_hour?: number;
-  over_head: boolean;
-  note?: string;
-  created_by: string;
-  created_time: string;
 };
+
+export type CostRate = BaseCostRate &
+  CostRateOptional &
+  CostRateResponse &
+  CostRateTransient;
 
 export interface Employee extends User {
   created_time: string;
@@ -88,6 +116,9 @@ const employeeDetailSlice = createSlice({
       .addCase(getEmployeeDetail.pending, (state) => {
         state.employee.status = DataStatus.LOADING;
       })
+      .addCase(getEmployeeDetail.rejected, (state) => {
+        state.employee.status = DataStatus.FAILED;
+      })
       .addCase(
         getEmployeeDetail.fulfilled,
         (state, action: PayloadAction<Employee>) => {
@@ -97,6 +128,9 @@ const employeeDetailSlice = createSlice({
       )
       .addCase(updateEmployee.pending, (state) => {
         state.employee.status = DataStatus.LOADING;
+      })
+      .addCase(updateEmployee.rejected, (state) => {
+        state.employee.status = DataStatus.FAILED;
       })
       .addCase(
         updateEmployee.fulfilled,
@@ -108,45 +142,72 @@ const employeeDetailSlice = createSlice({
       .addCase(getAllCostRate.pending, (state) => {
         state.costRates.status = DataStatus.LOADING;
       })
+      .addCase(getAllCostRate.rejected, (state) => {
+        state.costRates.status = DataStatus.FAILED;
+      })
       .addCase(
         getAllCostRate.fulfilled,
         (state, action: PayloadAction<CostRate[]>) => {
-          // sanitize data
-          state.costRates.items = action.payload.map((cr) => ({
-            ...cr,
-            type: cr.type.toUpperCase(),
-            currency: cr.currency.toUpperCase(),
-            working_hours: cr.working_hours.map((h) => +h) as CostRateWorkingHours,
-          }));
+          state.costRates.items = action.payload;
+          state.costRates.status = DataStatus.SUCCEEDED;
+        },
+      )
+      .addCase(addCostRate.pending, (state) => {
+        state.costRates.status = DataStatus.LOADING;
+      })
+      .addCase(addCostRate.rejected, (state) => {
+        state.costRates.status = DataStatus.FAILED;
+      })
+      .addCase(
+        addCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          state.costRates.items.unshift(action.payload);
           state.costRates.status = DataStatus.SUCCEEDED;
         },
       )
       .addCase(getCostRate.pending, (state) => {
         state.costRates.status = DataStatus.LOADING;
       })
+      .addCase(getCostRate.rejected, (state) => {
+        state.costRates.status = DataStatus.FAILED;
+      })
       .addCase(
         getCostRate.fulfilled,
         (state, action: PayloadAction<CostRate>) => {
-          // sanitize data
-          const data = {
-            ...action.payload,
-            type: action.payload.type.toUpperCase(),
-            currency: action.payload.currency.toUpperCase(),
-            working_hours: action.payload.working_hours.map((h) => +h) as CostRateWorkingHours,
-          };
           const index = state.costRates.items.findIndex(
-            (rate) => rate.id === data.id,
+            (rate) => rate.id === action.payload.id,
           );
           if (index > -1) {
-            state.costRates.items[index] = data;
+            state.costRates.items[index] = action.payload;
           } else {
-            state.costRates.items.unshift(data);
+            state.costRates.items.unshift(action.payload);
+          }
+          state.costRates.status = DataStatus.SUCCEEDED;
+        },
+      )
+      .addCase(updateCostRate.pending, (state) => {
+        state.costRates.status = DataStatus.LOADING;
+      })
+      .addCase(updateCostRate.rejected, (state) => {
+        state.costRates.status = DataStatus.FAILED;
+      })
+      .addCase(
+        updateCostRate.fulfilled,
+        (state, action: PayloadAction<CostRate>) => {
+          const index = state.costRates.items.findIndex(
+            (rate) => rate.id === action.payload.id,
+          );
+          if (index > -1) {
+            state.costRates.items[index] = action.payload;
           }
           state.costRates.status = DataStatus.SUCCEEDED;
         },
       )
       .addCase(deleteCostRate.pending, (state) => {
         state.costRates.status = DataStatus.LOADING;
+      })
+      .addCase(deleteCostRate.rejected, (state) => {
+        state.costRates.status = DataStatus.FAILED;
       })
       .addCase(
         deleteCostRate.fulfilled,
@@ -160,30 +221,30 @@ const employeeDetailSlice = createSlice({
           state.costRates.status = DataStatus.SUCCEEDED;
         },
       )
-      .addCase(addNewCostRate.pending, (state) => {
+      .addCase(deleteMultiCostRate.pending, (state) => {
         state.costRates.status = DataStatus.LOADING;
       })
+      .addCase(deleteMultiCostRate.rejected, (state) => {
+        state.costRates.status = DataStatus.FAILED;
+      })
       .addCase(
-        addNewCostRate.fulfilled,
-        (state, action: PayloadAction<CostRate>) => {
-          state.costRates.items.unshift(action.payload);
+        deleteMultiCostRate.fulfilled,
+        (state, action: PayloadAction<DeleteMultiCostRateResponse>) => {
+          state.costRates.items = state.costRates.items.filter(
+            (i) => !action.payload.cost_rate_ids.includes(i.id),
+          );
           state.costRates.status = DataStatus.SUCCEEDED;
         },
       )
-      .addCase(updateCostRate.pending, (state) => {
+      .addCase(getCostRateChart.pending, (state) => {
         state.costRates.status = DataStatus.LOADING;
       })
-      .addCase(
-        updateCostRate.fulfilled,
-        (state, action: PayloadAction<CostRate>) => {
-          state.costRates.items[
-            state.costRates.items.findIndex(
-              (rate) => rate.id === action.payload.id,
-            )
-          ] = action.payload;
-          state.costRates.status = DataStatus.SUCCEEDED;
-        },
-      ),
+      .addCase(getCostRateChart.rejected, (state) => {
+        state.costRates.status = DataStatus.FAILED;
+      })
+      .addCase(getCostRateChart.fulfilled, (state) => {
+        state.costRates.status = DataStatus.SUCCEEDED;
+      }),
 });
 
 export const { reset, resetEmployee, resetCostRates } =

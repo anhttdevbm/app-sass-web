@@ -73,9 +73,11 @@ export const Endpoint = {
   CLIENT_COMPANIES_ADD_MEMBER: "/clients/add-member",
   CLIENT_COMPANIES_EMPLOYEES: "/clients/employees",
 
-  COST_RATE: "/cost-rate",
-  COST_RATE_DETAIL: "/cost-rate/detail/{id}",
-  COST_RATE_NEW: "/cost-rate/new",
+  COST_RATE: "/cost-rate/{employeeId}",
+  COST_RATE_DETAIL: "/cost-rate/{employeeId}/{id}",
+  COST_RATE_DELETE_MULTI: "/cost-rate/delete-multi-cost-rate/{employeeId}",
+  COST_RATE_CHART: "/cost-rate/chart/{employeeId}",
+
   COST_HISTORY: "/cost-history",
 
   HOLIDAY_CALENDAR: "/cost-rate/holiday-calendar",
