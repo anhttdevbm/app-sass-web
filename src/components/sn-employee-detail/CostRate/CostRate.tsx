@@ -8,13 +8,11 @@ import CostRateInfo from "./CostRateInfo";
 
 const CostRate = () => {
   const { selectAllCostRate, handleGetAllCostRate } = useCostRate();
-  const { type } = useEmployeeDetailContext();
+  const { employee } = useEmployeeDetailContext();
 
   useEffect(() => {
-    if (type === "SELF") {
-      handleGetAllCostRate();
-    }
-  }, [type, handleGetAllCostRate]);
+    handleGetAllCostRate(employee.id);
+  }, [employee, handleGetAllCostRate]);
 
   return (
     <>{selectAllCostRate.length > 0 ? <CostRateInfo /> : <CostRateEmpty />}</>

@@ -5,15 +5,23 @@ import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import _ from "lodash";
 
+import { DataStatus } from "constant/enums";
 import { NS_COMMON, NS_COST_RATE } from "constant/index";
-import { Checkbox } from "components/shared";
+import { Checkbox, IconButton, Text } from "components/shared";
+import FormLayout from "components/NewFormLayout";
 import {
   TableLayout,
   BodyCell,
   CellProps,
   ActionsCell,
 } from "components/NewTable";
+import TrashAltIcon from "icons/TrashAltIcon";
+import useToggle from "hooks/useToggle";
+import { useSnackbar } from "store/app/selectors";
 import { CostRate } from "store/employeeDetail/reducer";
+import { useCostRate } from "store/employeeDetail/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+import { useEmployeeDetailContext } from "../EmployeeDetailContext";
 
 type CostRateTableProps = {
   items: CostRate[];
@@ -30,7 +38,12 @@ const CostRateTable = ({
 }: CostRateTableProps) => {
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
+  const { onAddSnackbar } = useSnackbar();
   const [selectedList, setSelectedList] = useState<string[]>([]);
+
+  const { employee } = useEmployeeDetailContext();
+  const { status, handleDeleteMultiCostRate: handleDeleteMultiCostRateAPI } =
+    useCostRate();
 
   const onToggleSelect = (item: string, indexSelected: number) => {
     return () => {
@@ -47,6 +60,10 @@ const CostRateTable = ({
     () => !!(selectedList.length && selectedList.length === items.length),
     [selectedList.length, items.length],
   );
+  const isCheckedNone = useMemo(
+    () => selectedList.length === 0,
+    [selectedList.length],
+  );
   const onChangeAll = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const isChecked = event.target.checked;
@@ -59,15 +76,64 @@ const CostRateTable = ({
     [items],
   );
 
+  const [isConfirmModalShown, showConfirmModal, hideConfirmModal] = useToggle();
+  const handleDeleteMultiCostRate = useCallback(async () => {
+    try {
+      await handleDeleteMultiCostRateAPI({
+        employeeId: employee.id,
+        data: { cost_rate_ids: selectedList },
+      });
+      hideConfirmModal();
+      onAddSnackbar(costRateT("notification.deleteSuccess"));
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  }, [
+    commonT,
+    costRateT,
+    employee.id,
+    handleDeleteMultiCostRateAPI,
+    hideConfirmModal,
+    onAddSnackbar,
+    selectedList,
+  ]);
+
   const columns = useMemo<CellProps[]>(() => {
     const cols: CellProps[] = [
-      { value: costRateT("table.startDate"), sx: { width: "12ch" } },
-      { value: costRateT("table.endDate"), sx: { width: "12ch" } },
-      { value: costRateT("table.type"), sx: { width: "11ch" } },
-      { value: costRateT("table.cost"), sx: { width: "6ch" } },
-      { value: costRateT("table.hourly"), sx: { width: "8ch" } },
-      { value: costRateT("table.capacity"), sx: { width: "12ch" } },
-      { value: costRateT("table.note"), },
+      {
+        value:
+          isEditable && !isCheckedNone ? (
+            <IconButton onClick={showConfirmModal}>
+              <TrashAltIcon />
+            </IconButton>
+          ) : (
+            costRateT("table.startDate")
+          ),
+        sx: {
+          width: "12ch",
+        },
+      },
+      {
+        value: isEditable && !isCheckedNone ? "" : costRateT("table.endDate"),
+        sx: { width: "12ch" },
+      },
+      {
+        value: isEditable && !isCheckedNone ? "" : costRateT("table.type"),
+        sx: { width: "11ch" },
+      },
+      {
+        value: isEditable && !isCheckedNone ? "" : costRateT("table.cost"),
+        sx: { width: "6ch" },
+      },
+      {
+        value: isEditable && !isCheckedNone ? "" : costRateT("table.hourly"),
+        sx: { width: "8ch" },
+      },
+      {
+        value: isEditable && !isCheckedNone ? "" : costRateT("table.capacity"),
+        sx: { width: "12ch" },
+      },
+      { value: isEditable && !isCheckedNone ? "" : costRateT("table.note") },
     ];
     if (isEditable) {
       cols.unshift({
@@ -83,7 +149,14 @@ const CostRateTable = ({
       cols.push({ value: "", sx: { width: "2ch" } });
     }
     return cols;
-  }, [isEditable, isCheckedAll, onChangeAll]);
+  }, [
+    isEditable,
+    isCheckedNone,
+    showConfirmModal,
+    costRateT,
+    isCheckedAll,
+    onChangeAll,
+  ]);
 
   return (
     <>
@@ -109,7 +182,11 @@ const CostRateTable = ({
                 {dayjs(item.start_date).format("DD MMM, YYYY")}
               </BodyCell>
               <BodyCell>{dayjs(item.end_date).format("DD MMM, YYYY")}</BodyCell>
-              <BodyCell>{_.capitalize(item.type)}</BodyCell>
+              <BodyCell>
+                {_.capitalize(
+                  costRateT(`form.${item.type.toString().toLowerCase()}`),
+                )}
+              </BodyCell>
               <BodyCell>{item.cost_per_month}</BodyCell>
               <BodyCell>{item.cost_per_hour ?? "--"}</BodyCell>
               <BodyCell>{item.total_hours}</BodyCell>
@@ -137,6 +214,39 @@ const CostRateTable = ({
           );
         })}
       </TableLayout>
+
+      <FormLayout
+        open={isConfirmModalShown}
+        onClose={hideConfirmModal}
+        submitting={status === DataStatus.LOADING}
+        onSubmit={handleDeleteMultiCostRate}
+        label={costRateT("confirmDelete.title")}
+        sx={{
+          minWidth: { xs: "calc(100vw - 24px)", sm: 500 },
+          maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
+          minHeight: "auto",
+        }}
+        headerProps={{
+          sx: {
+            mt: 2,
+          },
+        }}
+        bottomProps={{
+          sx: {
+            pt: 3,
+            pb: 5,
+            px: 5,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        }}
+      >
+        <Text pt={3} color="#4D4D4D" fontSize={14}>
+          {costRateT("confirmDelete.content")}
+        </Text>
+      </FormLayout>
     </>
   );
 };
