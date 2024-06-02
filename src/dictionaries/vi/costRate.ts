@@ -52,6 +52,11 @@ export const CostRateLang: CostRateDictionary = {
     currentHourlyCost: "Lương giờ",
     overhead: "Overhead",
   },
+  confirmDelete: {
+    title: "Xác nhận xóa cost rate",
+    content:
+      "Bạn có chắc chắn muốn xóa {count, plural, =1 {cost rate này} other {# cost rate}}?",
+  },
   notification: {
     addSuccess: "Thêm Cost Rate thành công.",
     updateSuccess: "Sửa Cost Rate thành công.",

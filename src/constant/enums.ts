@@ -34,6 +34,8 @@ export enum Permission {
   AM = "AM",
   ST = "ST",
   EU = "EU",
+  MN = "MN",
+  LE = "LE",
   CL = "CL",
   CT = "CT",
 }
@@ -45,9 +47,14 @@ export enum Status {
 }
 
 export enum EmployeeType {
-  EMPLOYEE = "EMPLOYEE",
-  CLIENT = "CLIENT",
-  CONTRACTOR = "CONTRACTOR",
+  EMPLOYEE = "Employee",
+  CLIENT = "Client",
+  CONTRACTOR = "Contructor",
+}
+
+export enum CostRateType {
+  MONTHLY = "MONTHLY",
+  WEEKLY = "WEEKLY",
 }
 
 export enum PayStatus {

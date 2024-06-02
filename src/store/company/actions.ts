@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "api/client";
 import { Endpoint } from "api/endpoint";
-import { HttpStatusCode } from "constant/enums";
+import { HttpStatusCode, Permission } from "constant/enums";
 import {
   AN_ERROR_TRY_AGAIN,
   AUTH_API_URL,
@@ -11,7 +11,6 @@ import { BaseQueries } from "constant/types";
 import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import StringFormat from "string-format";
 import { getPositions, getProjectTypes } from "store/global/actions";
-import data from "@emoji-mart/data";
 import { ClientCompany } from "components/sn-client-companies/type";
 
 export enum CompanyStatus {
@@ -28,6 +27,7 @@ export type GetEmployeeListQueries = BaseQueries & {
   status?: boolean;
   company?: string;
   date?: string;
+  typeEmployee?: string;
   searchType?: "and" | "or" | "eq";
 };
 
@@ -36,10 +36,18 @@ export type EmployeeData = {
   position: string;
 };
 
+export type InviteEmployeeData = EmployeeData & {
+  password: string;
+  company: string;
+  roles: Permission[];
+  client?: string;
+  is_invite?: boolean;
+};
+
 export type EmployeeClientData = EmployeeData & {
   client_company: string;
   role: "CT" | "CL";
-}
+};
 
 export type PositionData = {
   name: string;
@@ -82,6 +90,8 @@ export const getEmployees = createAsyncThunk(
       ["email", "fullname"],
       undefined,
       ["status"],
+      {},
+      ["typeEmployee"],
     ) as GetEmployeeListQueries;
 
     try {
@@ -139,13 +149,45 @@ export const createEmployee = createAsyncThunk(
   },
 );
 
+export const inviteEmployee = createAsyncThunk(
+  "company/inviteEmployee",
+  async (data: InviteEmployeeData) => {
+    try {
+      const { is_invite, ...rest } = data;
+      const response = await client.post(
+        Endpoint.INVITE_USER_TO_COMPANY,
+        { ...rest },
+        {
+          baseURL: AUTH_API_URL,
+          params: is_invite
+            ? {
+                is_invite: "true",
+              }
+            : {},
+        },
+      );
+
+      if (response?.status === HttpStatusCode.CREATED) {
+        return response.data?.id ? response.data : response.data?.body;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const createEmployeeClient = createAsyncThunk(
   "company/createEmployeeClient",
   async (data: EmployeeClientData) => {
     try {
-      const response = await client.post(Endpoint.CLIENT_COMPANIES_ADD_MEMBER, data, {
-        baseURL: COMPANY_API_URL,
-      });
+      const response = await client.post(
+        Endpoint.CLIENT_COMPANIES_ADD_MEMBER,
+        data,
+        {
+          baseURL: COMPANY_API_URL,
+        },
+      );
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data?.id ? response.data : response.data?.body;

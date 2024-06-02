@@ -42,6 +42,11 @@ export const CostRateLang: CostRateDictionary = {
     capacity: "Capacity",
     note: "Note",
   },
+  confirmDelete: {
+    title: "Confirm delete cost rate",
+    content:
+      "Are you sure to delete {count, plural, =1 {this cost rate} other {# cost rates}}?",
+  },
   info: {
     currentCostRate: "Current Cost Rate",
     workingDays: "Working Days",

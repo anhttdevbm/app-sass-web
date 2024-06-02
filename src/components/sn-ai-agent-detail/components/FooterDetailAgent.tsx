@@ -1,15 +1,15 @@
 "use client"
 
-import { Button } from "components/sn-ai-agent/components";
 import { Stack } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import { Button } from "components/sn-ai-agent/components";
 import { NS_AI_AGENT } from "constant/index";
-import { useTranslations } from "next-intl";
-import useTheme from "hooks/useTheme";
-import { getPath } from "utils/index";
 import { AI_AGENT_PATH } from "constant/paths";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useRef } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
+import { getPath } from "utils/index";
 
 interface FooterDetailAgentProps {
   onUpdate?: () => void;

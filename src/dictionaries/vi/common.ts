@@ -60,6 +60,8 @@ export const CommonLang: CommonDictionary = {
     anErrorTryReload: "Đã xảy ra lỗi. Vui lòng thử tải lại trang.",
   },
   position: "Chức vụ",
+  permissionV: "Phân quyền",
+  permissionN: "Quyền hạn",
   company: "Công ty",
   fullName: "Họ tên",
   phone: "Số điện thoại",

@@ -30,12 +30,14 @@ import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import CostRateForm from "./CostRateForm";
 import CostRateTable from "../components/CostRateTable";
+import { useEmployeeDetailContext } from "../EmployeeDetailContext";
 
 const CostRateInfo = () => {
   const { user } = useAuth();
   const commonT = useTranslations(NS_COMMON);
   const costRateT = useTranslations(NS_COST_RATE);
 
+  const { employee } = useEmployeeDetailContext();
   const { selectCurrentCostRate, selectAllCostRate, handleDeleteCostRate } =
     useCostRate();
 
@@ -58,13 +60,13 @@ const CostRateInfo = () => {
   const handleItemDelete = useCallback(
     async (id: string) => {
       try {
-        await handleDeleteCostRate(id);
-        onAddSnackbar(costRateT("notification.deleteSuccess"), "success");
+        await handleDeleteCostRate({ employeeId: employee.id, id });
+        onAddSnackbar(costRateT("notification.deleteSuccess"));
       } catch (error) {
         onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
       }
     },
-    [commonT, costRateT, handleDeleteCostRate, onAddSnackbar],
+    [commonT, costRateT, employee.id, handleDeleteCostRate, onAddSnackbar],
   );
 
   const handleCloseForm = () => {
@@ -242,7 +244,14 @@ const CostRateInfo = () => {
             content={_.capitalize(selectCurrentCostRate?.type) ?? "N/A"}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end", md: "center" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          container
+          justifyContent={{ sm: "end", md: "center" }}
+        >
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title={costRateT("info.costPerMonth")}
@@ -253,7 +262,14 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4} container justifyContent={{ md: "end" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          container
+          justifyContent={{ md: "end" }}
+        >
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title={costRateT("info.atCurrentCostRate")}
@@ -264,7 +280,14 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end", md: "initial" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          container
+          justifyContent={{ sm: "end", md: "initial" }}
+        >
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title={costRateT("info.capacity")}
@@ -275,7 +298,14 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4} container justifyContent={{ md: "center" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          container
+          justifyContent={{ md: "center" }}
+        >
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title={costRateT("info.currentHourlyCost")}
@@ -286,7 +316,14 @@ const CostRateInfo = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4} container justifyContent={{ sm: "end" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          container
+          justifyContent={{ sm: "end" }}
+        >
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title={costRateT("info.overhead")}

@@ -49,7 +49,11 @@ export type CostRateDictionary = {
     capacity: string;
     currentHourlyCost: string;
     overhead: string;
-  },
+  };
+  confirmDelete: {
+    title: string;
+    content: string;
+  };
   notification: {
     addSuccess: string;
     updateSuccess: string;

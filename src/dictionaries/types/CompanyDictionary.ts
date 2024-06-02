@@ -14,6 +14,11 @@ export type CompanyDictionary = {
     employee: string;
     client: string;
     contractor: string;
+    form: {
+      addNewEmployee: string;
+      chooseCompanyType: string;
+      isInvite: string;
+    };
     confirmPayment: {
       title: string;
       content: string;

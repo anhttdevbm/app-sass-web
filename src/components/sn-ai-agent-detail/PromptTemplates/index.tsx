@@ -1,15 +1,15 @@
 "use client"
 
 import { Stack } from "@mui/material";
+import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
 import { SearchInput } from "components/sn-ai-agent/components";
 import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { Sidebar, SidebarPromptCategory } from "./components/Sidebar";
-import { ListTemplates } from "./components/ListTemplates";
 import { useEffect, useState } from "react";
 import { usePromptTemplate } from "store/promptTemplate/selectors";
-import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
+import { ListTemplates } from "./components/ListTemplates";
+import { Sidebar, SidebarPromptCategory } from "./components/Sidebar";
 
 export const PromptTemplates = () => {
   const t = useTranslations(NS_AI_AGENT);

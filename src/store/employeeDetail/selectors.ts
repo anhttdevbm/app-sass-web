@@ -11,14 +11,15 @@ import {
 import {
   getEmployeeDetail,
   updateEmployee,
-  getAllCostRate,
-  getCostRate,
-  deleteCostRate,
-  addNewCostRate,
-  updateCostRate,
   UpdateEmployee,
-  NewCostRate,
-  UpdateCostRate,
+  getAllCostRate,
+  CostRateRequest,
+  addCostRate,
+  getCostRate,
+  updateCostRate,
+  deleteCostRate,
+  deleteMultiCostRate,
+  getCostRateChart,
 } from "./actions";
 
 export const useEmployeeDetail = () => {
@@ -73,6 +74,10 @@ export const useEmployeeDetail = () => {
 export const useCostRate = () => {
   const dispatch = useAppDispatch();
 
+  const status = useAppSelector(
+    (state) => state.employeeDetail.costRates.status,
+  );
+
   const selectAllCostRate = useAppSelector((state) =>
     state.employeeDetail.costRates.items.map((cr) => getCalculatedCostRate(cr)),
   );
@@ -96,42 +101,32 @@ export const useCostRate = () => {
     [selectAllCostRate],
   );
 
-  const handleGetAllCostRate = useCallback(async () => {
-    try {
-      return await dispatch(getAllCostRate()).unwrap();
-    } catch (error) {
-      throw error;
-    }
-  }, [dispatch]);
+  const handleGetAllCostRate = useCallback(
+    async (employeeId: string) => {
+      try {
+        return await dispatch(getAllCostRate(employeeId)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const handleAddCostRate = useCallback(
+    async (payload: { employeeId: string; data: CostRateRequest }) => {
+      try {
+        return await dispatch(addCostRate(payload)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
 
   const handleGetCostRate = useCallback(
-    async (id: string) => {
+    async (payload: { employeeId: string; id: string }) => {
       try {
-        return await dispatch(getCostRate(id)).unwrap();
-      } catch (error) {
-        throw error;
-      }
-    },
-    [dispatch],
-  );
-
-  const handleDeleteCostRate = useCallback(
-    async (id: string) => {
-      try {
-        return await dispatch(deleteCostRate(id)).unwrap();
-      } catch (error) {
-        throw error;
-      }
-    },
-    [dispatch],
-  );
-
-  const handleAddNewCostRate = useCallback(
-    async (data: NewCostRate) => {
-      try {
-        return await dispatch(
-          addNewCostRate(getCalculatedCostRate(data)),
-        ).unwrap();
+        return await dispatch(getCostRate(payload)).unwrap();
       } catch (error) {
         throw error;
       }
@@ -140,11 +135,49 @@ export const useCostRate = () => {
   );
 
   const handleUpdateCostRate = useCallback(
-    async (data: UpdateCostRate) => {
+    async (payload: {
+      employeeId: string;
+      id: string;
+      data: CostRateRequest;
+    }) => {
       try {
-        return await dispatch(
-          updateCostRate(getCalculatedCostRate(data)),
-        ).unwrap();
+        return await dispatch(updateCostRate(payload)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const handleDeleteCostRate = useCallback(
+    async (payload: { employeeId: string; id: string }) => {
+      try {
+        return await dispatch(deleteCostRate(payload)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const handleDeleteMultiCostRate = useCallback(
+    async (payload: {
+      employeeId: string;
+      data: { cost_rate_ids: string[] };
+    }) => {
+      try {
+        return await dispatch(deleteMultiCostRate(payload)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const handleGetCostRateChart = useCallback(
+    async (employeeId: string) => {
+      try {
+        return await dispatch(getCostRateChart(employeeId)).unwrap();
       } catch (error) {
         throw error;
       }
@@ -161,17 +194,36 @@ export const useCostRate = () => {
   }, [dispatch]);
 
   return {
+    status,
     selectCurrentCostRate,
     selectAllCostRate,
     selectCostRate,
     handleGetAllCostRate,
+    handleAddCostRate,
     handleGetCostRate,
-    handleDeleteCostRate,
-    handleAddNewCostRate,
     handleUpdateCostRate,
+    handleDeleteCostRate,
+    handleDeleteMultiCostRate,
+    handleGetCostRateChart,
     handleResetCostRates,
   };
 };
+
+const convertWorkingHoursObj = (
+  obj: CostRateWorkingHours,
+  countDaysOnly = false,
+): CostRateWorkingHours => {
+  const result = { ...obj };
+  Object.keys(result).forEach((key) => {
+    result[key] = countDaysOnly ? (result[key] == 0 ? 0 : 1) : +result[key];
+  });
+  return result;
+};
+
+const convertCostRateObj = (costRate: CostRate): CostRate => ({
+  ...costRate,
+  working_hours: convertWorkingHoursObj(costRate.working_hours),
+});
 
 const calculateWorkingHours = (
   startDateStr: string | Date,
@@ -192,7 +244,7 @@ const calculateWorkingHours = (
 
   let result = 0;
   const weekDiff = endDate.diff(startDate, "week");
-  const mappedWorkingHours = workingHours.map((h) => +h);
+  const mappedWorkingHours = Object.values(workingHours);
   const weekHours = mappedWorkingHours.reduce((sum, hour) => sum + hour, 0);
   startDate = startDate.add(weekDiff, "week");
   while (!startDate.isAfter(endDate)) {
@@ -213,7 +265,7 @@ const calculateWorkingDays = (
   calculateWorkingHours(
     startDateStr,
     endDateStr,
-    workingHours.map((h) => (h == 0 ? 0 : 1)) as CostRateWorkingHours,
+    convertWorkingHoursObj(workingHours, true) as CostRateWorkingHours,
     subtractedDays,
   );
 
@@ -242,26 +294,22 @@ const calculateCostPerHour = (
     ) + "e-2"
   );
 
-export function getCalculatedCostRate<
-  T extends CostRate | NewCostRate | UpdateCostRate,
->(cr: T): T {
+export function getCalculatedCostRate(cr: CostRate): CostRate {
+  const converted = convertCostRateObj(cr);
   return {
-    ...cr,
-    type: cr.type.toUpperCase(),
-    currency: cr.currency.toUpperCase(),
-    working_hours: cr.working_hours.map((h) => +h) as CostRateWorkingHours,
-    total_hours: calculateWorkingHours(
-      cr.start_date,
-      cr.end_date,
-      cr.working_hours,
-      0,
-    ),
-    total_days: calculateWorkingDays(
-      cr.start_date,
-      cr.end_date,
-      cr.working_hours,
-      0,
-    ),
+    ...converted,
+    // total_hours: calculateWorkingHours(
+    //   cr.start_date,
+    //   cr.end_date,
+    //   cr.working_hours,
+    //   0,
+    // ),
+    // total_days: calculateWorkingDays(
+    //   cr.start_date,
+    //   cr.end_date,
+    //   cr.working_hours,
+    //   0,
+    // ),
     remaining_hours: calculateWorkingHours(
       dayjs().startOf("day").toISOString(),
       cr.end_date,
