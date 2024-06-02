@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { Button } from "./Button";
 import { Box } from "@mui/material";
 
-export type DialogProps = Omit<DialogLayoutProps, "children"> & {
-  title: React.ReactNode;
+export type DialogProps = Omit<DialogLayoutProps, "children" | "title"> & {
+  title: React.ReactNode | string;
   content?: string;
   cancelText?: string;
   submitText?: string;

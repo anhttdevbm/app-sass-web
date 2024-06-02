@@ -11,10 +11,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-interface Params {
-  id: string;
-}
-
-export default function AIChatAgentPage({ id }: Params) {
-  return <ChatAI id={id} />;
+export default function AIChatAgentPage() {
+  return <ChatAI />;
 }

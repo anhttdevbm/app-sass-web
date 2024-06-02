@@ -36,7 +36,6 @@ export const General = () => {
   const [name, setName] = React.useState<string>(aiAgent?.name || "");
   const [description, setDescription] = React.useState<string>(aiAgent?.description || "");
   const [tone, setTone] = React.useState<string>("default");
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   const getAvatarLink = useCallback(async () => {
     if (aiAgent?.avatar) {
@@ -100,17 +99,7 @@ export const General = () => {
     if (isChanged) {
       onUpdateAgent(aiAgent.id, newAgentData as UpdateAIAgentPayload);
     }
-
-    setOpenSnackbar(true);
   }, [name, description, tone, image, aiAgent, onUpdateAgent]);
-
-  const handleCloseSnackbar = (event?: Event | SyntheticEvent<Element, Event>, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenSnackbar(false);
-  };
 
   const toneOptions = useMemo(
     () =>
@@ -174,17 +163,7 @@ export const General = () => {
         options={toneOptions}
         onChange={handleToneChange}
       />
-      <FooterDetailAgent onClickUpdate={handleUpdateAgent} />
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={1500}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          {t("general.updatedSuccess")}
-        </Alert>
-      </Snackbar>
+      <FooterDetailAgent onUpdate={handleUpdateAgent} />
     </Stack>
   );
 };

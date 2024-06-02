@@ -56,7 +56,6 @@ export const useAIAgent = () => {
       const result = await dispatch(uploadAvatar(file));
       return result.payload;
     } catch (error) {
-      console.error(error);
     }
   }, [dispatch]);
 

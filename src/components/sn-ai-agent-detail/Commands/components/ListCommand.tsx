@@ -1,8 +1,5 @@
-import { Stack, Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { Text } from "components/shared";
-import BookIcon from "icons/BookIcon";
-import TaskIcon from "icons/TaskIcon";
-import WebSearchIcon from "icons/WebSearchIcon";
 import { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components";
 import CompassIcon from "icons/CompassIcon";
 import CheckIcon from "icons/CheckIcon";
@@ -29,7 +26,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             webSearch: {
               icon: (
                 <CompassIcon
-                  color={command.isWebSearch ? "#43BC6A" : "#3333"}
+                  style={{color: command.isWebSearch ? "#43BC6A" : "#3333"}}
                 />
               ),
               name: "Web Search",
@@ -37,7 +34,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             backgroundTask: {
               icon: (
                 <CheckIcon
-                  color={command.isBackgroundTask ? "#43BC6A" : "#3333"}
+                  style={{color: command.isBackgroundTask ? "#43BC6A" : "#3333"}}
                 />
               ),
               name: "Background Task",
@@ -45,7 +42,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             useKnowledge: {
               icon: (
                 <KnowledgeIcon
-                  color={command.isUseKnowledge ? "#43BC6A" : "#3333"}
+                   style={{color: command.isUseKnowledge ? "#43BC6A" : "#3333"}}
                 />
               ),
               name: "Use Knowledge",

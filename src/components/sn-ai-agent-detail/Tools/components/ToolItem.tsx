@@ -2,7 +2,6 @@ import { Stack } from "@mui/material";
 import { Text } from "components/shared";
 import { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components";
 import useTheme from "hooks/useTheme";
-import { backgroundImage } from "html2canvas/dist/types/css/property-descriptors/background-image";
 import styled from "styled-components";
 
 interface ToolItemProps {
@@ -14,7 +13,7 @@ interface ToolItemProps {
   sxText?: any;
 }
 
-export const GradientBorderStack = styled(Stack)(({ theme }) => ({
+export const GradientBorderStack = styled(Stack)(() => ({
   position: "relative",
   padding: "2px",
   "&:before": {
@@ -27,13 +26,7 @@ export const GradientBorderStack = styled(Stack)(({ theme }) => ({
     backgroundImage: PRIMARY_GRADIENT_COLOR,
     borderRadius: "inherit",
     zIndex: 1,
-  },
-  "&:hover": {
-    "&:before": {
-      background: "linear-gradient(90deg, #3699FF 0%, #00B8D9 100%)",
-      transition: "background-image 0.5s",
-    },
-  },
+  }
 }));
 
 export const Content = styled(Stack)(({ theme }) => ({
@@ -41,6 +34,10 @@ export const Content = styled(Stack)(({ theme }) => ({
   zIndex: 2,
   width: "100%",
   borderRadius: "2px",
+  "&:hover": {
+    backgroundColor: theme.palette.background.paper,
+    transition: "background-color 0.5s",
+  }
 }));
 
 export const ToolItem = ({
@@ -60,7 +57,6 @@ export const ToolItem = ({
       sx={{
         cursor: "pointer",
       }}
-      theme={theme}
     >
       <Content
         padding={"16px 24px"}
@@ -70,7 +66,7 @@ export const ToolItem = ({
         alignItems={"center"}
       >
         {icon}
-        <Stack direction={"column"} spacing={"4px"} alignItems={"center"}>
+        <Stack direction={"column"} spacing={"4px"} alignItems={"flex-start"} justifyContent={"space-between"}>
           <Text variant={"h6"} fontWeight={400} sx={sxText}>
             {name}
           </Text>

@@ -17,7 +17,7 @@ const initialState: AIAgentState = {
   createAgentStatus: DataStatus.IDLE,
   updateAgentStatus: DataStatus.IDLE,
 
-  aiAgent: undefined
+  aiAgent: undefined,
 };
 
 const aiAgentSlice = createSlice({
@@ -25,8 +25,8 @@ const aiAgentSlice = createSlice({
   initialState,
   reducers: {
     getAgent: (state, action: PayloadAction<string>) => {
+      console.log(state.aiAgents.length);
       state.aiAgent = state.aiAgents.find((aiAgent) => aiAgent.id === action.payload);
-      console.log("aiAgent", state.aiAgent);
     }
   },
   extraReducers: (builder) => {

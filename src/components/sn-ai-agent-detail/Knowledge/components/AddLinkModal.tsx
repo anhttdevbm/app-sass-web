@@ -21,9 +21,7 @@ export const AddLinkModal = (props: AddLinkModalProps) => {
 
   return (
     <Dialog
-      title={
-        <HeaderModal title={title} description={description} icon={icon} />
-      }
+      title={<HeaderModal title={title} description={description} icon={icon}/> as React.ReactNode}
       open={open}
       onClose={onClose}
       onSubmit={onSubmit}

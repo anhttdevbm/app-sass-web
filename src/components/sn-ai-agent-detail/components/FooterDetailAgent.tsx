@@ -12,10 +12,10 @@ import { useRouter } from "next/navigation";
 import { useAIAgent } from "store/aiAgent/selectors";
 
 interface FooterDetailAgentProps {
-  onClickUpdate: () => void;
+  onUpdate?: () => void;
 }
 
-export const FooterDetailAgent: React.FC<FooterDetailAgentProps> = ({ onClickUpdate }) => {
+export const FooterDetailAgent: React.FC<FooterDetailAgentProps> = ({ onUpdate }) => {
   const aiAgentT = useTranslations(NS_AI_AGENT);
   const theme = useTheme();
   const router = useRouter();
@@ -28,7 +28,7 @@ export const FooterDetailAgent: React.FC<FooterDetailAgentProps> = ({ onClickUpd
 
   const dataStringifyRef = useRef<string | undefined>();
 
-  const handleCancel = () => {
+  const onBackPrevPath = () => {
     const parsedQueries = dataStringifyRef.current
       ? JSON.parse(dataStringifyRef.current)
       : {};
@@ -37,6 +37,11 @@ export const FooterDetailAgent: React.FC<FooterDetailAgentProps> = ({ onClickUpd
 
     router.push(prevPath);
   };
+
+  const handleUpdate = () => {
+    onUpdate && onUpdate();
+    onBackPrevPath()
+  }
 
   useEffect(() => {
     dataStringifyRef.current = JSON.stringify({
@@ -56,8 +61,8 @@ export const FooterDetailAgent: React.FC<FooterDetailAgentProps> = ({ onClickUpd
     paddingBottom={2}
     borderTop={`1px solid ${theme.palette.grey[100]}`}
     >
-      <Button type="outlined" text={aiAgentT("general.cancel")} onClick={handleCancel} />
-      <Button type="gradient" text={aiAgentT("general.update")} onClick={onClickUpdate}/>
+      <Button type="outlined" text={aiAgentT("general.cancel")} onClick={onBackPrevPath} />
+      <Button type="gradient" text={aiAgentT("general.update")} onClick={handleUpdate}/>
     </Stack>
   )
 }
