@@ -19,17 +19,16 @@ export const AddSource = () => {
 
   const {onAddSource, aiAgent, onUploadFile} = useAIAgent();
 
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isDragActive, setIsDragActive] = useState(false);
   const [openAddYoutube, setOpenAddYoutube] = useState(false);
   const [openAddLink, setOpenAddLink] = useState(false);
   const [link, setLink] = useState<string>("");
   const [youtube, setYoutube] = useState<string>("");
-  const [file, setFile] = useState<File | null>(null);
   const [errorLink, setErrorLink] = useState<boolean>(false);
 
-  const onDragOver = (event) => {
+  const onDragOver = (event:  React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragActive(true);
   };
@@ -38,16 +37,36 @@ export const AddSource = () => {
     setIsDragActive(false);
   };
 
-  const onDrop = (event) => {
+  const onDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragActive(false);
-    // Process the files here
-    const files = event.dataTransfer.files;
-    console.log(files);
+    const file = event.dataTransfer.files[0];
+    if (file && aiAgent) {
+      const objectId = await onUploadFile(file);
+      onAddSource({
+        name: objectId as string,
+        type: TypeKnowledge.FILE,
+        agentId: aiAgent.id
+      });
+    }
   };
 
-  const handleAddFromMedia = () => {
-    console.log("Add From Media");
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && aiAgent) {
+      const objectId = await onUploadFile(file);
+      onAddSource({
+        name: objectId as string,
+        type: TypeKnowledge.MEDIA,
+        agentId: aiAgent.id
+      });
+    }
+  };
+
+  const handleAddFromMedia = async () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const handleAddLink = () => {
@@ -130,6 +149,12 @@ export const AddSource = () => {
         onDrop={onDrop}
         placeholder={t("knowledge.dragOrSelect")}
       />
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
       <Stack direction={"row"} spacing={1} width={"100%"}>
         <ButtonOutlineGradient
           name={t("knowledge.addFromMedia")}
@@ -176,8 +201,8 @@ export const AddSource = () => {
 };
 
 const isValidUrl = (url: string): boolean => {
-  const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+  const pattern = new RegExp("^(https?:\\/\\/)?" + // protocol
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|"+ // domain name
     '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
     '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string

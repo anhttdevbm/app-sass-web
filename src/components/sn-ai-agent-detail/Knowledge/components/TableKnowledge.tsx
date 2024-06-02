@@ -1,18 +1,19 @@
-import { Stack, TableRow } from "@mui/material";
+import { Box, Stack, TableRow, Typography } from "@mui/material";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
-import ActionsCell from "components/sn-ai-agent/components/ActionCell";
+import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components/ActionCell";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import SyncIcon from "icons/SyncIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useAIAgent } from "store/aiAgent/selectors";
-import { Knowledge } from "store/aiAgent/types";
+import { Knowledge, StatusKnowledge } from "store/aiAgent/types";
+import styled from "styled-components";
 
 export const TableKnowledge = () => {
   const t = useTranslations(NS_AI_AGENT);
 
-  const { listKnowledge , onDeleteSource, aiAgent} = useAIAgent();
+  const { listKnowledge , onDeleteSource, aiAgent, onAddSource} = useAIAgent();
 
   const [data, setData] = useState<Knowledge[]>([]);
 
@@ -26,8 +27,12 @@ export const TableKnowledge = () => {
     [],
   );
 
-  const handleResync = () => {
-    console.log("resync");
+  const handleResync = (knowledge: Knowledge) => {
+      onAddSource({
+        agentId: knowledge.agentId,
+        name: knowledge.name,
+        type: knowledge.type,
+      });
   }
 
   const handleDelete = (knowledgeId: string) => {
@@ -65,7 +70,32 @@ export const TableKnowledge = () => {
              >
                {knowledge.name}
              </BodyCell>
-             <BodyCell>{knowledge.status}</BodyCell>
+             <BodyCell>
+               <Box
+                 display={"flex"}
+                 width={"100%"}
+                 alignItems={"center"}
+                 justifyContent={"center"}
+               >
+                 <Stack
+                   width={"81px"}
+                   height={"26px"}
+                   borderRadius={"6px"}
+                   padding={"10px"}
+                   gap={"10px"}
+                   bgcolor={knowledge.status === StatusKnowledge.ACTIVE ? "#E8F2EF" : "#ECECF3"}
+                   alignItems={"center"}
+                   justifyContent={"center"}
+                 >
+                   <Typography
+                     fontSize={"12px"}
+                     fontWeight={600}
+                     color={knowledge.status === StatusKnowledge.ACTIVE ? "#0BB783" : "#666666"}
+                   >
+                     {knowledge.status.charAt(0).toUpperCase() + knowledge.status.slice(1).toLowerCase()}</Typography>
+                 </Stack>
+               </Box>
+             </BodyCell>
              <BodyCell>{knowledge.type.charAt(0).toUpperCase() + knowledge.type.slice(1).toLowerCase()}</BodyCell>
              <ActionsCell
                sx={{
@@ -76,7 +106,7 @@ export const TableKnowledge = () => {
                  {
                    icon: <SyncIcon fontSize="medium" />,
                    content: t("knowledge.resync"),
-                   onClick: () => handleResync,
+                   onClick: () => handleResync(knowledge),
                  },
                  {
                    icon: <TrashIcon color="error" fontSize="medium" />,

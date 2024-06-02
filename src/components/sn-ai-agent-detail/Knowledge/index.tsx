@@ -8,6 +8,8 @@ import { Switch } from "./components/Switch";
 import { useEffect, useState } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { AddSource, TableKnowledge } from "components/sn-ai-agent-detail/Knowledge/components";
+import styled from "styled-components";
+import { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components";
 
 export const Knowledge = () => {
   const t = useTranslations(NS_AI_AGENT);

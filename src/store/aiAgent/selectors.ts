@@ -104,24 +104,18 @@ export const useAIAgent = () => {
     limit,
 
     aiAgent,
+    listKnowledge,
     onGetAgent,
-
     onGetAgents,
-
     onDeleteAgent,
-    isDeletingAgent,
-
     onCreateAgent,
-    isCreatingAgent,
-
     onUploadFile,
-    // onGetAvatarLink,
-
     onUpdateAgent,
-    isUpdatingAgent,
-
     onAddSource,
     onDeleteSource,
-    listKnowledge
+
+    isDeletingAgent,
+    isCreatingAgent,
+    isUpdatingAgent,
   };
 };
