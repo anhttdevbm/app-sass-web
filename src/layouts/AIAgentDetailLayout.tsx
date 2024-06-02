@@ -9,11 +9,13 @@ import { AI_AGENT_PATH } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, ComponentProps } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { useHeaderConfig } from "store/app/selectors";
 import { getPath } from "utils/index";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
+import { HEADER_HEIGHT } from "./Header";
+import WrapperAIAgentDetail from "components/sn-ai-agent-detail/Wrapper";
 
 type AIAgentDetailLayoutProps = {
   children: React.ReactNode;
@@ -84,9 +86,8 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
   }, [commonT, aiAgent?.name, aiAgent?.avatar, onUpdateHeaderConfig, aiAgentT]);
 
   return (
-    <Wrapper
+    <WrapperAIAgentDetail
       sx={{
-        overflow: "hidden",
         padding: `${isLgBigger ? "24" : "16"}px!important`,
         paddingTop: "0px!important",
       }}
@@ -103,7 +104,7 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
         <TabList />
       </Stack>
       {children}
-    </Wrapper>
+    </WrapperAIAgentDetail>
   );
 };
 

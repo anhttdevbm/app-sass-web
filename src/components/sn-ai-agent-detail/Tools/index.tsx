@@ -23,15 +23,17 @@ export const Tools = () => {
   }
 
   return (
-    <Stack flex={1} direction={"column"} spacing={3} padding={4}>
-      <TitleTab title={t("tools.title")} description={t("tools.description")} />
-      <ToolItem
-        onClick={handleWebSearch}
-        name={t("tools.webSearch")}
-        description={t("tools.webSearchDescription")}
-        icon={<WebSearchIcon />}
-      />
-      <FooterDetailAgent />
-    </Stack>
+   <>
+     <Stack flex={1} direction={"column"} spacing={3} padding={4} height={"100%"}>
+       <TitleTab title={t("tools.title")} description={t("tools.description")} />
+       <ToolItem
+         onClick={handleWebSearch}
+         name={t("tools.webSearch")}
+         description={t("tools.webSearchDescription")}
+         icon={<WebSearchIcon />}
+       />
+     </Stack>
+     <FooterDetailAgent />
+   </>
   );
 };

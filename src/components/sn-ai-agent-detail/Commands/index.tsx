@@ -47,20 +47,22 @@ export const Commands = () => {
   }
 
   return (
-    <Stack flex={1} direction={"column"} spacing={3} padding={4}>
-      <TitleTab
-        title={t("commands.title")}
-        description={t("commands.description")}
-      />
-      <ToolItem
-        name={t("commands.addCommand")}
-        icon={<PlusIcon color="primary" fontSize="small" />}
-        onClick={handleAddCommand}
-        sxText={{ color: "primary.main", fontSize: "13px", fontWeight: 600 }}
-      />
-      <ListCommand list={ListCommandExample} />
-      <CreateCommandModal open={open} onClose={() => setOpen(false)} />
-      <FooterDetailAgent onClickUpdate={handleUpdate} />
-    </Stack>
+   <>
+     <Stack flex={1} direction={"column"} spacing={3} padding={4} height={"100%"}>
+       <TitleTab
+         title={t("commands.title")}
+         description={t("commands.description")}
+       />
+       <ToolItem
+         name={t("commands.addCommand")}
+         icon={<PlusIcon color="primary" fontSize="small" />}
+         onClick={handleAddCommand}
+         sxText={{ color: "primary.main", fontSize: "13px", fontWeight: 600 }}
+       />
+       <ListCommand list={ListCommandExample} />
+       <CreateCommandModal open={open} onClose={() => setOpen(false)} />
+     </Stack>
+     <FooterDetailAgent onUpdate={handleUpdate} />
+   </>
   );
 };

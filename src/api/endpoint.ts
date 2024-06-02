@@ -216,4 +216,6 @@ export const Endpoint = {
   AI_AGENT_CREATE: "/agent/create",
   AI_AGENT_PROMPT_TEMPLATE: "/agent/prompt-template",
   AI_AGENT_UPDATE: "/agent/update",
+  AI_AGENT_ADD_SOURCE: "/agent/add-source-knowledge",
+  AI_AGENT_DELETE_SOURCE: "/agent/:agentID/delete-source-knowledge/:knowledgeId",
 };

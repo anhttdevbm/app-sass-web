@@ -1,6 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AIAgent, AIAgentState, GetAIAgentListQueries, GetAIAgentsPayload } from "./types";
-import { createAgent, deleteAgent, getAgents, updateAgent, uploadAvatar } from "store/aiAgent/actions";
+import { AIAgent, AIAgentState, GetAIAgentListQueries, GetAIAgentsPayload, Knowledge } from "./types";
+import {
+  addSource,
+  createAgent,
+  deleteAgent,
+  deleteSource,
+  getAgents,
+  updateAgent,
+} from "store/aiAgent/actions";
 import { DataStatus } from "constant/enums";
 
 const initialState: AIAgentState = {
@@ -18,6 +25,7 @@ const initialState: AIAgentState = {
   updateAgentStatus: DataStatus.IDLE,
 
   aiAgent: undefined,
+  listKnowledge: [],
 };
 
 const aiAgentSlice = createSlice({
@@ -69,17 +77,6 @@ const aiAgentSlice = createSlice({
       state.createAgentStatus = DataStatus.FAILED;
     });
 
-    // Upload avatar
-    builder.addCase(uploadAvatar.pending, (state) => {
-      state.createAgentStatus = DataStatus.LOADING;
-    });
-    builder.addCase(uploadAvatar.fulfilled, (state) => {
-      state.createAgentStatus = DataStatus.SUCCEEDED;
-    });
-    builder.addCase(uploadAvatar.rejected, (state) => {
-      state.createAgentStatus = DataStatus.FAILED;
-    });
-
     // Update ai agent
     builder.addCase(updateAgent.pending, (state) => {
       state.updateAgentStatus = DataStatus.LOADING;
@@ -90,6 +87,14 @@ const aiAgentSlice = createSlice({
     });
     builder.addCase(updateAgent.rejected, (state) => {
       state.updateAgentStatus = DataStatus.FAILED;
+    });
+
+    //Delete source
+    builder.addCase(addSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
+      state.listKnowledge.push(payload.payload);
+    });
+    builder.addCase(deleteSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
+      state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== payload.payload.id);
     });
   },
 });

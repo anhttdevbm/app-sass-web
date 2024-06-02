@@ -29,7 +29,6 @@ export const UploadAvatar: React.FC<UploadAvatarProps> = ({
       flexDirection="column"
       justifyContent="space-between"
       alignItems="flex-start"
-      height="100%"
       gap={1}
     >
       <Text fontSize={"12px"} fontWeight={400} color={"grey.300"}>

@@ -48,7 +48,7 @@ export const Button = ({
       onClick={onClick}
     >
       {Icon && <Icon fontSize="small" sx={{ marginRight: "6px" }} />}
-      <Typography>{text}</Typography>
+      <Typography fontSize={"14px"} lineHeight={"16px"}>{text}</Typography>
     </MuiButtons>
   );
 

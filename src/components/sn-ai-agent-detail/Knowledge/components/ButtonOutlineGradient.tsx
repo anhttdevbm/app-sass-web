@@ -43,7 +43,7 @@ export const ButtonOutlineGradient: React.FC<ButtonOutlineGradientProps> = ({
       alignItems={"center"}
     >
       <Content
-        padding={"16px 24px"}
+        padding={"12px 24px"}
         direction={"row"}
         theme={theme}
         flex={1}

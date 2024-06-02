@@ -114,7 +114,6 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-start",
-          height: "100%",
           width: "100%",
           ...containerStyle,
         }}

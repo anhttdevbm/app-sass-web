@@ -1,14 +1,21 @@
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { CreateAIAgentPayload, GetAIAgentListQueries, UpdateAIAgentPayload } from "./types";
 import {
+  AddSourceInput,
+  CreateAIAgentPayload,
+  DeleteSourceInput,
+  GetAIAgentListQueries,
+  UpdateAIAgentPayload,
+} from "./types";
+import {
+  addSource,
   createAgent,
-  deleteAgent,
+  deleteAgent, deleteSource,
   getAgent,
   getAgents,
   getAvatarLink,
   updateAgent,
-  uploadAvatar,
+  uploadFile,
 } from "store/aiAgent/actions";
 import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";
@@ -30,6 +37,8 @@ export const useAIAgent = () => {
     createAgentStatus,
     deleteAgentStatus,
     updateAgentStatus,
+
+    listKnowledge
   } = useAppSelector((state) => state.aiAgent, shallowEqual);
 
   const onGetAgents = useCallback((queries: GetAIAgentListQueries) => {
@@ -51,9 +60,9 @@ export const useAIAgent = () => {
   }, [dispatch]);
   const isCreatingAgent = useMemo(() => createAgentStatus === DataStatus.LOADING, [createAgentStatus]);
 
-  const onUploadAvatar = useCallback(async (file: File): Promise<string | undefined> => {
+  const onUploadFile = useCallback(async (file: File): Promise<string | undefined> => {
     try {
-      const result = await dispatch(uploadAvatar(file));
+      const result = await dispatch(uploadFile(file));
       return result.payload;
     } catch (error) {
     }
@@ -71,6 +80,14 @@ export const useAIAgent = () => {
     dispatch(updateAgent({ id, data }));
   }, [dispatch])
   const isUpdatingAgent = useMemo(() => updateAgentStatus === DataStatus.LOADING, [updateAgentStatus]);
+
+  const onAddSource = useCallback((data: AddSourceInput) => {
+    dispatch(addSource(data));
+  }, [dispatch]);
+
+  const onDeleteSource = useCallback(({agentId, knowledgeId}: DeleteSourceInput) => {
+    dispatch(deleteSource({agentId, knowledgeId}));
+  }, [dispatch]);
 
   return {
     aiAgents,
@@ -93,10 +110,14 @@ export const useAIAgent = () => {
     onCreateAgent,
     isCreatingAgent,
 
-    onUploadAvatar,
+    onUploadFile,
     onGetAvatarLink,
 
     onUpdateAgent,
     isUpdatingAgent,
+
+    onAddSource,
+    onDeleteSource,
+    listKnowledge
   };
 };

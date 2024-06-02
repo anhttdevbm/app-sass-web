@@ -12,11 +12,24 @@ interface AddLinkModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  errorLink?: boolean;
 }
 
 export const AddLinkModal = (props: AddLinkModalProps) => {
-  const { title, description, icon, placeholder, open, onClose, onSubmit } =
-    props;
+  const {
+    title,
+    description,
+    icon,
+    placeholder,
+    open,
+    onClose,
+    onSubmit,
+    value,
+    onChange,
+    errorLink,
+  } = props;
   const t = useTranslations(NS_AI_AGENT);
 
   return (
@@ -40,6 +53,9 @@ export const AddLinkModal = (props: AddLinkModalProps) => {
             borderBottom: "none",
           },
         }}
+        onChange={onChange}
+        value={value}
+        error={errorLink}
       />
     </Dialog>
   );

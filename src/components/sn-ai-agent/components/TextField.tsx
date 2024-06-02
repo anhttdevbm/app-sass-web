@@ -42,10 +42,11 @@ export const TextField = styled(({ theme, ...props }: TextFieldCustomProps) => (
     color: theme.palette.grey[300],
     ...(value ? { fontSize: "0.75rem", color: theme.palette.grey[300] } : {}),
     "&.Mui-focused": {
-      fontSize: "0.75rem",
+      fontSize: "14px",
       color: theme.palette.grey[300],
     },
     left: "8px",
+    top: "2px"
   },
   "& .MuiInputBase-input": {
     paddingLeft: "20px",

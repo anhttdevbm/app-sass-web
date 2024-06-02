@@ -1,13 +1,7 @@
-"use client"
+"use client";
 
-import React, {
-  useEffect,
-  useMemo,
-  useCallback,
-  useState,
-  SyntheticEvent,
-} from "react";
-import { Alert, SelectChangeEvent, Snackbar, Stack } from "@mui/material";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { SelectChangeEvent, Stack } from "@mui/material";
 import { TextField } from "components/sn-ai-agent/components";
 import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
@@ -27,7 +21,7 @@ export const General = () => {
   const t = useTranslations(NS_AI_AGENT);
   const locale = useLocale();
 
-  const {aiAgent, onGetAvatarLink, onUpdateAgent, isUpdatingAgent, onUploadAvatar} = useAIAgent();
+  const {aiAgent, onGetAvatarLink, onUpdateAgent, isUpdatingAgent, onUploadFile} = useAIAgent();
   const {tone: toneList, onGetTone} = useChatWithAI();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -92,7 +86,7 @@ export const General = () => {
     }
 
     if ((image !== ImgPlaceHolderAgent.src || image !== aiAgent.avatar) && file) {
-      newAgentData.avatar = await onUploadAvatar(file);
+      newAgentData.avatar = await onUploadFile(file);
       isChanged = true;
     }
 
@@ -132,38 +126,40 @@ export const General = () => {
   }, [aiAgent]);
 
   return (
-    <Stack flex={1} direction={"column"} spacing={3} padding={4}>
-      <Text variant={"h5"}>{t("general.title")}</Text>
-      <TextField
-        fullWidth
-        label={t("general.agentName")}
-        theme={theme}
-        variant="filled"
-        value={name}
-        onChange={handleOnChangeName}
-      />
-      <UploadAvatar
-        fileInputRef={fileInputRef}
-        handleFileChange={handleFileChange}
-        handleUploadClick={handleUploadClick}
-        image={image}
-        label={t("layout.header.avatar")}
-        titleButton={t("layout.header.upload")}
-      />
-      <Textarea
-        label={t("general.description")}
-        placeholder={t("general.placeholderTextarea")}
-        value={description}
-        onChange={handleOnChangeDescription}
-      />
-      <Select
-        label={t("general.tone")}
-        value={tone}
-        theme={theme}
-        options={toneOptions}
-        onChange={handleToneChange}
-      />
-      <FooterDetailAgent onUpdate={handleUpdateAgent} />
-    </Stack>
+   <>
+     <Stack flex={1} direction={"column"} spacing={3} padding={4}>
+       <Text variant={"h5"}>{t("general.title")}</Text>
+       <TextField
+         fullWidth
+         label={t("general.agentName")}
+         theme={theme}
+         variant="filled"
+         value={name}
+         onChange={handleOnChangeName}
+       />
+       <UploadAvatar
+         fileInputRef={fileInputRef}
+         handleFileChange={handleFileChange}
+         handleUploadClick={handleUploadClick}
+         image={image}
+         label={t("layout.header.avatar")}
+         titleButton={t("layout.header.upload")}
+       />
+       <Textarea
+         label={t("general.description")}
+         placeholder={t("general.placeholderTextarea")}
+         value={description}
+         onChange={handleOnChangeDescription}
+       />
+       <Select
+         label={t("general.tone")}
+         value={tone}
+         theme={theme}
+         options={toneOptions}
+         onChange={handleToneChange}
+       />
+     </Stack>
+     <FooterDetailAgent onUpdate={handleUpdateAgent} />
+   </>
   );
 };
