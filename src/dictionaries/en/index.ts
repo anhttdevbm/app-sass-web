@@ -22,6 +22,7 @@ import {
   NS_HOLIDAY_CALENDAR,
   NS_CONTENTS,
   NS_AI_CHAT,
+  NS_AI_AGENT,
 } from "constant/index";
 import { AccountLang } from "./account";
 import { AuthLang } from "./auth";
@@ -44,8 +45,9 @@ import { BillingLang } from "./billing";
 import { ApplicantsLang } from "./applicants";
 import { CostRateLang } from "./costRate";
 import { HolidayCalendarLang } from "./holidayCalendar";
-import { ContentsLang } from "./contents"
+import { ContentsLang } from "./contents";
 import { AIChatLang } from "./aiChat";
+import { AIAgentLang } from "./aiAgent";
 
 export default {
   [NS_COMMON]: CommonLang,
@@ -60,15 +62,16 @@ export default {
   [NS_RESOURCE_PLANNING]: ResourcePlanningLang,
   [NS_CHAT]: ChatLang,
   [NS_AI_CHAT]: AIChatLang,
+  [NS_AI_AGENT]: AIAgentLang,
   [NS_CHAT_BOX]: ChatBoxLang,
   [NS_DOCS]: DocsLang,
   [NS_FEEDBACK]: FeedbackLang,
-  [NS_BLOG]:BlogLang,
-  [NS_BUDGETING]:BudgetingLang,
+  [NS_BLOG]: BlogLang,
+  [NS_BUDGETING]: BudgetingLang,
   [NS_CAREER]: CareerLang,
   [NS_BILLING]: BillingLang,
   [NS_APPLICANTS]: ApplicantsLang,
   [NS_COST_RATE]: CostRateLang,
   [NS_HOLIDAY_CALENDAR]: HolidayCalendarLang,
-  [NS_CONTENTS]: ContentsLang
+  [NS_CONTENTS]: ContentsLang,
 };

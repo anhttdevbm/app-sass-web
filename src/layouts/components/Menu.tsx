@@ -31,8 +31,10 @@ import {
   PROJECT_TYPES_PATH,
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
+  MEETING_HOME_PATH,
+  AI_AGENT_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH
+  TIME_TRACKING_PATH,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -58,6 +60,9 @@ import { useAuth, useSidebar } from "store/app/selectors";
 import Collapse from "./Collapse";
 import SubMenu from "./SubMenu";
 import { MenuItemProps } from "./helpers";
+import DocsItem from "icons/DocsItem";
+import WalletMoneyIcon from "icons/WalletMoneyIcon";
+import TaskcoverAIIcon from "icons/TaskcoverIcon";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -311,10 +316,21 @@ const DATA: MenuItemProps[] = [
     roles: [Permission.AM, Permission.ST],
   },
   {
-    label: "menu.aiChat",
-    href: AI_CHAT_PATH,
-    icon: <AIChatIcon />,
+    label: "menu.taskcoverAI",
+    icon: <TaskcoverAIIcon />,
     roles: [Permission.AM, Permission.ST],
+    subs: [
+      {
+        label: "menu.aiChat",
+        roles: [Permission.AM, Permission.ST],
+        href: AI_CHAT_PATH,
+      },
+      {
+        label: "menu.aiAgent",
+        roles: [Permission.AM, Permission.ST],
+        href: AI_AGENT_PATH,
+      },
+    ],
   },
   {
     label: "menu.sales",
@@ -396,7 +412,7 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
-  }
+  },
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {

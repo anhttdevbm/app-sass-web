@@ -1,4 +1,3 @@
-
 export const Endpoint = {
   SIGNIN: "/auth/login",
   SIGNUP: "/auth/register",
@@ -87,8 +86,8 @@ export const Endpoint = {
 
   BUDGET_ALL: "/budgets/all",
   BUDGET_CREATE: "/budgets",
-  BUDGET_UPDATE: '/budgets/{budgetId}',
-  BUDGET_DELETE_BY_ID: '/budgets/{budgetId}',
+  BUDGET_UPDATE: "/budgets/{budgetId}",
+  BUDGET_DELETE_BY_ID: "/budgets/{budgetId}",
   BUDGET_GET_BY_ID: "/budgets/budget-by-id/{id}",
   BUDGET_GET_FEED: "/budgets/feed/{id}",
   BUDGET_GET_TIME_RANGES: "/budgets/times/{id}",
@@ -104,7 +103,8 @@ export const Endpoint = {
   BUDGET_EXPENSE_CREATE: "/budgets/expense/create-expense",
   BUDGET_EXPENSE_LIST: "/budgets/expense/get-all-expense/{budgetId}",
   BUDGET_EXPENSE_DETAIL: "/budgets/expense/get-detail-expense/{expenseId}",
-  BUDGET_EXPENSE_DETAIL_EXPORT: "/budgets/expense/export-all-expense/{expenseId}",
+  BUDGET_EXPENSE_DETAIL_EXPORT:
+    "/budgets/expense/export-all-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_UPDATE: "/budgets/expense/update-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_DELETE: "/budgets/expense/delete-expense/{expenseId}",
 
@@ -116,7 +116,7 @@ export const Endpoint = {
   UPLOAD: "/files/upload-avatar",
   SIGNUP_UPLOAD: "/avatar/upload",
   UPLOAD_LINK: "/files/upload-link",
-  DOWNLOAD_LINK: '/in/files/download-links',
+  DOWNLOAD_LINK: "/in/files/download-links",
 
   RESOURCE_PLANNING: "/resources",
   RESOURCE_PLANNING_LIST: "/resources/all",
@@ -148,7 +148,7 @@ export const Endpoint = {
   BLOGS: "/post",
   DETAIL_BLOG: "/post/{id}",
   GET_BLOG_COMMENT: "/post/{id}/comment",
-  GET_BLOG_TAGS : "/post/tags",
+  GET_BLOG_TAGS: "/post/tags",
 
   //carrer
   CAREER: "/job-post",
@@ -212,4 +212,11 @@ export const Endpoint = {
   AI_CHAT: "ai-chat/chat",
   AI_CHAT_PERSONA: "ai-chat/persona",
   AI_CHAT_TONE: "ai-chat/tone",
+
+  //AI Agent
+  AI_AGENT: "/agent",
+  AI_AGENT_DELETE: "/agent/delete",
+  AI_AGENT_CREATE: "/agent/create",
+  AI_AGENT_PROMPT_TEMPLATE: "/agent/prompt-template",
+  AI_AGENT_UPDATE: "/agent/update",
 };

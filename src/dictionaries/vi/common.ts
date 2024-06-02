@@ -82,6 +82,7 @@ export const CommonLang: CommonDictionary = {
   update: "Cập nhật",
   edit: "Sửa",
   delete: "Xóa",
+  chat: "Trò chuyện",
   close: "Đóng",
   search: "Tìm kiếm",
   assigner: "Người phụ trách",
