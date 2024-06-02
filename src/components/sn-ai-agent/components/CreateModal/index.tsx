@@ -46,7 +46,7 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
 
   const t = useTranslations(NS_AI_AGENT);
 
-  const {onCreateAgent, onUploadAvatar} = useAIAgent();
+  const {onCreateAgent, onUploadFile} = useAIAgent();
   const {promptTemplates, onGetPromptTemplates, isFetchingPromptTemplates} = usePromptTemplate()
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +94,7 @@ export const CreateAIAgentModal: FC<CreateModalProps> = ({
     }
 
     if (file) {
-      agentData.avatar = await onUploadAvatar(file);
+      agentData.avatar = await onUploadFile(file);
     }
 
     onCreateAgent(agentData);

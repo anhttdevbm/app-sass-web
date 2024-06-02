@@ -46,20 +46,22 @@ export const PromptTemplates = () => {
   const selectedTemplates = selectedCategory ? promptTemplates[selectedCategory].data : [];
 
   return (
-    <Stack direction={"column"}>
-      <Stack padding={"16px 32px"} borderBottom={"1px solid #ECECF3"}>
-        <SearchInput
-          theme={theme}
-          placeholder={t("promptTemplates.searchTemplate")}
-          onChange={handleSearchTemplate}
-          value={search}
-        />
-      </Stack>
-      <Stack padding={"24px 32px"} direction={"row"}>
-        <Sidebar listCategories={categories} selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
-        <ListTemplates listTemplates={selectedTemplates} />
-      </Stack>
-      <FooterDetailAgent onUpdate={handleUpdate} />
-    </Stack>
+   <>
+     <Stack direction={"column"} height={"100%"}>
+       <Stack padding={"16px 32px"} borderBottom={"1px solid #ECECF3"}>
+         <SearchInput
+           theme={theme}
+           placeholder={t("promptTemplates.searchTemplate")}
+           onChange={handleSearchTemplate}
+           value={search}
+         />
+       </Stack>
+       <Stack padding={"24px 32px"} direction={"row"}>
+         <Sidebar listCategories={categories} selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+         <ListTemplates listTemplates={selectedTemplates} />
+       </Stack>
+     </Stack>
+     <FooterDetailAgent onUpdate={handleUpdate} />
+   </>
   );
 };

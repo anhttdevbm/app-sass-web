@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import { Endpoint } from "api";
 import { NS_AI_AGENT, NS_COMMON, SCROLL_ID } from "constant/index";
-import { AI_AGENT_GENERAL_PATH, AI_AGENT_PATH } from "constant/paths";
+import { AI_AGENT_GENERAL_PATH } from "constant/paths";
 import { useTranslations } from "next-intl";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 import React, { useEffect, useRef } from "react";
@@ -22,17 +22,6 @@ const AIAgentChatLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
 
   const dataStringifyRef = useRef<string | undefined>();
 
-  const { onGetAvatarLink } = useAIAgent();
-
-  const fetchAvatarLink =  async () => {
-    if (!aiAgent?.avatar) return ImgPlaceHolderAgent.src;
-    try {
-      return onGetAvatarLink(aiAgent?.avatar);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
     if (!id) return;
     onGetAgent(id);
@@ -52,18 +41,15 @@ const AIAgentChatLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
       : {};
 
     const prevPath = getPath(AI_AGENT_GENERAL_PATH, undefined, { id });
-    (async () => {
-      const imageUrl = await fetchAvatarLink();
 
       onUpdateHeaderConfig({
-        imageUrl: imageUrl,
+        imageUrl: aiAgent?.avatar || ImgPlaceHolderAgent.src,
         title: aiAgent?.name,
         searchPlaceholder: commonT("searchBy", { name: aiAgentT("list.key") }),
         prevPath,
         endpoint: Endpoint.AI_AGENT,
         key: "name",
       });
-    })();
 
     return () => {
       onUpdateHeaderConfig({

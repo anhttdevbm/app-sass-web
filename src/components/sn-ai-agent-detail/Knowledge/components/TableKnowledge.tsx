@@ -1,22 +1,21 @@
-import { TableRow } from "@mui/material";
+import { Box, Stack, TableRow, Typography } from "@mui/material";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
-import ActionsCell from "components/sn-ai-agent/components/ActionCell";
+import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components/ActionCell";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SyncIcon from "icons/SyncIcon";
 import TrashIcon from "icons/TrashIcon";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { Knowledge, StatusKnowledge } from "store/aiAgent/types";
+import styled from "styled-components";
 
-interface KnowledgeProps {
-  ListKnowledge: {
-    agent: string;
-    status: string;
-    type: string;
-  }[];
-}
-
-export const TableKnowledge = ({ ListKnowledge }: KnowledgeProps) => {
+export const TableKnowledge = () => {
   const t = useTranslations(NS_AI_AGENT);
+
+  const { listKnowledge , onDeleteSource, aiAgent, onAddSource} = useAIAgent();
+
+  const [data, setData] = useState<Knowledge[]>([]);
 
   const tableHeaders: CellProps[] = useMemo(
     () => [
@@ -28,53 +27,99 @@ export const TableKnowledge = ({ ListKnowledge }: KnowledgeProps) => {
     [],
   );
 
-  const handleDelete = () => {
-    console.log("delete");
+  const handleResync = (knowledge: Knowledge) => {
+      onAddSource({
+        agentId: knowledge.agentId,
+        name: knowledge.name,
+        type: knowledge.type,
+      });
+  }
+
+  const handleDelete = (knowledgeId: string) => {
+    if (aiAgent) {
+      onDeleteSource({
+        agentId: aiAgent.id,
+        knowledgeId: knowledgeId,
+      })
+    }
   };
 
+  useEffect(() => {
+    setData(listKnowledge);
+  }, [listKnowledge]);
+
   return (
-    <div style={{ overflowX: "auto" }}>
-      <TableLayout
-        headerList={tableHeaders}
-        noData={ListKnowledge.length === 0}
-      >
-        {ListKnowledge.map((agent, index) => (
-          <TableRow key={index}>
-            <BodyCell
-              sx={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                width: "90%",
-                textAlign: "left",
-              }}
-            >
-              {agent.agent}
-            </BodyCell>
-            <BodyCell>{agent.status}</BodyCell>
-            <BodyCell>{agent.type}</BodyCell>
-            <ActionsCell
-              sx={{
-                width: "190px",
-                textAlign: "right",
-              }}
-              options={[
-                {
-                  icon: <SyncIcon fontSize="medium" />,
-                  content: t("knowledge.resync"),
-                  onClick: () => console.log("sync"),
-                },
-                {
-                  icon: <TrashIcon color="error" fontSize="medium" />,
-                  content: t("knowledge.remove"),
-                  color: "error.main",
-                  onClick: handleDelete,
-                },
-              ]}
-            />
-          </TableRow>
-        ))}
-      </TableLayout>
-    </div>
+   <>
+     {data.length > 0 && (
+       <TableLayout
+         headerList={tableHeaders}
+         noData={data.length === 0}
+         height={"100%"}
+         maxHeight={"300px"}
+       >
+         {data.map((knowledge, index) => (
+           <TableRow key={index}>
+             <BodyCell
+               sx={{
+                 overflow: "hidden",
+                 textOverflow: "ellipsis",
+                 whiteSpace: "nowrap",
+                 width: "90%",
+                 textAlign: "left",
+               }}
+             >
+               {knowledge.name}
+             </BodyCell>
+             <BodyCell>
+               <Box
+                 display={"flex"}
+                 width={"100%"}
+                 alignItems={"center"}
+                 justifyContent={"center"}
+               >
+                 <Stack
+                   width={"81px"}
+                   height={"26px"}
+                   borderRadius={"6px"}
+                   padding={"10px"}
+                   gap={"10px"}
+                   bgcolor={knowledge.status === StatusKnowledge.ACTIVE ? "#E8F2EF" : "#ECECF3"}
+                   alignItems={"center"}
+                   justifyContent={"center"}
+                 >
+                   <Typography
+                     fontSize={"12px"}
+                     fontWeight={600}
+                     color={knowledge.status === StatusKnowledge.ACTIVE ? "#0BB783" : "#666666"}
+                   >
+                     {knowledge.status.charAt(0).toUpperCase() + knowledge.status.slice(1).toLowerCase()}</Typography>
+                 </Stack>
+               </Box>
+             </BodyCell>
+             <BodyCell>{knowledge.type.charAt(0).toUpperCase() + knowledge.type.slice(1).toLowerCase()}</BodyCell>
+             <ActionsCell
+               sx={{
+                 width: "190px",
+                 textAlign: "right",
+               }}
+               options={[
+                 {
+                   icon: <SyncIcon fontSize="medium" />,
+                   content: t("knowledge.resync"),
+                   onClick: () => handleResync(knowledge),
+                 },
+                 {
+                   icon: <TrashIcon color="error" fontSize="medium" />,
+                   content: t("knowledge.remove"),
+                   color: "error.main",
+                   onClick: () => handleDelete(knowledge.id),
+                 },
+               ]}
+             />
+           </TableRow>
+         ))}
+       </TableLayout>
+     )}
+   </>
   );
 };

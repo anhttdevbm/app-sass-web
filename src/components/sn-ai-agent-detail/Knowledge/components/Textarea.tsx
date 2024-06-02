@@ -76,7 +76,7 @@ const Textarea: React.FC<TextFieldInputProps> = React.forwardRef(
             borderWidth: "1px",
             borderStyle: "solid",
             borderColor: error
-              ? "rgba(246, 78, 96, 1)"
+              ? "transparent"
               : isDarkMode
               ? "#393939"
               : "#F7F7FD",
@@ -142,6 +142,7 @@ const Textarea: React.FC<TextFieldInputProps> = React.forwardRef(
               onChange={onChange}
               disabled={disabled}
               InputLabelProps={{ shrink: true }}
+              error={error}
               variant="filled"
               required={required}
               placeholder={placeholder}

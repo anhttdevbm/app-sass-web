@@ -1,13 +1,7 @@
-"use client"
+"use client";
 
-import React, {
-  useEffect,
-  useMemo,
-  useCallback,
-  useState,
-  SyntheticEvent,
-} from "react";
-import { Alert, SelectChangeEvent, Snackbar, Stack } from "@mui/material";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { SelectChangeEvent, Stack } from "@mui/material";
 import { TextField } from "components/sn-ai-agent/components";
 import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
@@ -19,7 +13,7 @@ import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 import { Textarea } from "./components";
 import { Select } from "./components/Select";
 import { useChatWithAI } from "store/aiChat/selectors";
-import { UpdateAIAgentPayload } from "store/aiAgent/types";
+import { AIAgent, UpdateAIAgentPayload } from "store/aiAgent/types";
 import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
 
 export const General = () => {
@@ -27,24 +21,15 @@ export const General = () => {
   const t = useTranslations(NS_AI_AGENT);
   const locale = useLocale();
 
-  const {aiAgent, onGetAvatarLink, onUpdateAgent, isUpdatingAgent, onUploadAvatar} = useAIAgent();
+  const {aiAgent, onUpdateAgent, onUploadFile} = useAIAgent();
   const {tone: toneList, onGetTone} = useChatWithAI();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [image, setImage] = React.useState<string>(ImgPlaceHolderAgent.src);
+  const [image, setImage] = React.useState<string | null>(null);
   const [file, setFile] = React.useState<File | null>(null);
   const [name, setName] = React.useState<string>(aiAgent?.name || "");
   const [description, setDescription] = React.useState<string>(aiAgent?.description || "");
   const [tone, setTone] = React.useState<string>("default");
-
-  const getAvatarLink = useCallback(async () => {
-    if (aiAgent?.avatar) {
-      const avatarLink = await onGetAvatarLink(aiAgent.avatar);
-      if (avatarLink) {
-        setImage(avatarLink);
-      }
-    }
-  }, [aiAgent?.avatar, onGetAvatarLink]);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,7 +77,7 @@ export const General = () => {
     }
 
     if ((image !== ImgPlaceHolderAgent.src || image !== aiAgent.avatar) && file) {
-      newAgentData.avatar = await onUploadAvatar(file);
+      newAgentData.avatar = await onUploadFile(file);
       isChanged = true;
     }
 
@@ -116,54 +101,53 @@ export const General = () => {
   );
 
   useEffect(() => {
-    getAvatarLink();
-  }, []);
-
-  useEffect(() => {
     onGetTone({});
   }, [onGetTone]);
 
   useEffect(() => {
-    if (aiAgent) {
-      setName(aiAgent.name);
-      setDescription(aiAgent.description || "");
-      setTone(aiAgent.tone || "default");
-    }
+      if (aiAgent) {
+        setImage(aiAgent.avatar || null);
+        setName(aiAgent.name);
+        setDescription(aiAgent.description || "");
+        setTone(aiAgent.tone || "default");
+      }
   }, [aiAgent]);
 
   return (
-    <Stack flex={1} direction={"column"} spacing={3} padding={4}>
-      <Text variant={"h5"}>{t("general.title")}</Text>
-      <TextField
-        fullWidth
-        label={t("general.agentName")}
-        theme={theme}
-        variant="filled"
-        value={name}
-        onChange={handleOnChangeName}
-      />
-      <UploadAvatar
-        fileInputRef={fileInputRef}
-        handleFileChange={handleFileChange}
-        handleUploadClick={handleUploadClick}
-        image={image}
-        label={t("layout.header.avatar")}
-        titleButton={t("layout.header.upload")}
-      />
-      <Textarea
-        label={t("general.description")}
-        placeholder={t("general.placeholderTextarea")}
-        value={description}
-        onChange={handleOnChangeDescription}
-      />
-      <Select
-        label={t("general.tone")}
-        value={tone}
-        theme={theme}
-        options={toneOptions}
-        onChange={handleToneChange}
-      />
-      <FooterDetailAgent onUpdate={handleUpdateAgent} />
-    </Stack>
+   <>
+     <Stack flex={1} direction={"column"} spacing={3} padding={4}>
+       <Text variant={"h5"}>{t("general.title")}</Text>
+       <TextField
+         fullWidth
+         label={t("general.agentName")}
+         theme={theme}
+         variant="filled"
+         value={name}
+         onChange={handleOnChangeName}
+       />
+       <UploadAvatar
+         fileInputRef={fileInputRef}
+         handleFileChange={handleFileChange}
+         handleUploadClick={handleUploadClick}
+         image={image}
+         label={t("layout.header.avatar")}
+         titleButton={t("layout.header.upload")}
+       />
+       <Textarea
+         label={t("general.description")}
+         placeholder={t("general.placeholderTextarea")}
+         value={description}
+         onChange={handleOnChangeDescription}
+       />
+       <Select
+         label={t("general.tone")}
+         value={tone}
+         theme={theme}
+         options={toneOptions}
+         onChange={handleToneChange}
+       />
+     </Stack>
+     <FooterDetailAgent onUpdate={handleUpdateAgent} />
+   </>
   );
 };

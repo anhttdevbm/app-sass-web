@@ -13,7 +13,7 @@ import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "./components/ActionCell";
 import Pagination from "./components/Pagination";
 import { useTranslations } from "next-intl";
 import { DEFAULT_PAGING, NS_AI_AGENT } from "constant/index";
-import { AI_AGENT_GENERAL_PATH } from "constant/paths";
+import { AI_AGENT_CHAT, AI_AGENT_GENERAL_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 import { AIAgent, StatusAIAgent } from "store/aiAgent/types";
@@ -29,11 +29,10 @@ const AgentList = () => {
 
     onGetAgents,
     onDeleteAgent,
-    onGetAvatarLink,
 
-    isFetchingAgents,
     isDeletingAgent,
-    isCreatingAgent
+    isCreatingAgent,
+    isUpdatingAgent
   } = useAIAgent();
   const { initQuery, isReady, query } = useQueryParams();
   const { push } = useRouter();
@@ -57,21 +56,19 @@ const AgentList = () => {
   const handleSizeChange = (newPageSize: number) =>
     handleQueryChange({ page: 1, size: newPageSize });
 
-  const handleChat = () => console.log("Chat agent");
+  const handleChat = (agentId: string) => {
+    const path = getPath(AI_AGENT_CHAT, undefined, { id: agentId });
+    push(path);
+  }
 
   const handleDelete = (id: string) => {
     onDeleteAgent(id);
   }
 
-  const handleEdit = () => console.log("Edit agent");
-
-  const updateAgentAvatar = async (agent: AIAgent) => {
-    let avatar = agent.avatar;
-    if (agent.avatar) {
-      avatar = await onGetAvatarLink(agent.avatar);
-    }
-    return { ...agent, avatar };
-  };
+  const handleEdit = (agentId: string) => {
+    const path = getPath(AI_AGENT_GENERAL_PATH, undefined, { id: agentId });
+    push(path);
+  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -82,22 +79,15 @@ const AgentList = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const fetchAgents = useCallback(async () => {
-    if (!isFetchingAgents && aiAgents.length) {
-      const updatedAgents = await Promise.all(aiAgents.map(updateAgentAvatar));
-      setData(updatedAgents);
-    }
-  }, [aiAgents, isFetchingAgents]);
+  useEffect(() => {
+      setData(aiAgents);
+  }, [aiAgents]);
 
   useEffect(() => {
-     fetchAgents();
-  }, [aiAgents, isFetchingAgents]);
-
-  useEffect(() => {
-    if (!isCreatingAgent && !isDeletingAgent) {
+    if (!isCreatingAgent && !isDeletingAgent && !isUpdatingAgent) {
       onGetAgents({...query });
     }
-  }, [isCreatingAgent, isDeletingAgent]);
+  }, [isCreatingAgent, isDeletingAgent, isUpdatingAgent]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -165,8 +155,8 @@ const AgentList = () => {
               </Box>
             </BodyCell>
             <ActionsCell
-              onChat={handleChat}
-              onEdit={handleEdit}
+              onChat={() => handleChat(agent.id)}
+              onEdit={() => handleEdit(agent.id)}
               onDelete={() => handleDelete(agent.id)}
             />
           </TableRow>

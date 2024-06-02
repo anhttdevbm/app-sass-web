@@ -1,10 +1,8 @@
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
-import { Box, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import useTheme from "hooks/useTheme";
-import styled from "styled-components";
-import { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Text } from "components/shared";
 import { ButtonOutlineGradient } from "./ButtonOutlineGradient";
 import AddLinkIcon from "icons/AddLinkIcon";
@@ -12,15 +10,25 @@ import AddMediaIcon from "icons/AddMediaIcon";
 import YoutubeIcon from "icons/YoutubeIcon";
 import { AddLinkModal } from "./AddLinkModal";
 import { DropZoneGradient } from "./DropZoneGradient";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { TypeKnowledge } from "store/aiAgent/types";
 
 export const AddSource = () => {
   const t = useTranslations(NS_AI_AGENT);
   const theme = useTheme();
+
+  const {onAddSource, aiAgent, onUploadFile} = useAIAgent();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [isDragActive, setIsDragActive] = useState(false);
   const [openAddYoutube, setOpenAddYoutube] = useState(false);
   const [openAddLink, setOpenAddLink] = useState(false);
+  const [link, setLink] = useState<string>("");
+  const [youtube, setYoutube] = useState<string>("");
+  const [errorLink, setErrorLink] = useState<boolean>(false);
 
-  const onDragOver = (event) => {
+  const onDragOver = (event:  React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragActive(true);
   };
@@ -29,16 +37,36 @@ export const AddSource = () => {
     setIsDragActive(false);
   };
 
-  const onDrop = (event) => {
+  const onDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragActive(false);
-    // Process the files here
-    const files = event.dataTransfer.files;
-    console.log(files);
+    const file = event.dataTransfer.files[0];
+    if (file && aiAgent) {
+      const objectId = await onUploadFile(file);
+      onAddSource({
+        name: objectId as string,
+        type: TypeKnowledge.FILE,
+        agentId: aiAgent.id
+      });
+    }
   };
 
-  const handleAddFromMedia = () => {
-    console.log("Add From Media");
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && aiAgent) {
+      const objectId = await onUploadFile(file);
+      onAddSource({
+        name: objectId as string,
+        type: TypeKnowledge.MEDIA,
+        agentId: aiAgent.id
+      });
+    }
+  };
+
+  const handleAddFromMedia = async () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const handleAddLink = () => {
@@ -49,12 +77,58 @@ export const AddSource = () => {
     setOpenAddYoutube(true);
   };
 
-  const handleSubmitAddYoutube = () => {
-    console.log("Add youtube");
+  const handleClose = (
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    setOpen(false);
+    setErrorLink(false);
+  };
+
+  const handleCloseAddLink = () => handleClose(setOpenAddLink)
+
+  const handleCloseAddYoutube = () => handleClose(setOpenAddYoutube)
+
+  const handleOnChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+    setUrl: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    setUrl(event.target.value);
+    setErrorLink(false);
+  };
+
+  const handleOnChangeLink = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleOnChange(event, setLink)
+  }
+
+  const handleOnChangeYoutube = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleOnChange(event, setYoutube)
+  }
+
+  const handleSubmit = (
+    url: string,
+    isValidUrl: (url: string) => boolean,
+    type: TypeKnowledge,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    if (aiAgent && isValidUrl(url)) {
+      onAddSource({
+        name: url,
+        type: type,
+        agentId: aiAgent.id
+      });
+      setErrorLink(false);
+      setOpen(false);
+    } else {
+      setErrorLink(true);
+    }
   };
 
   const handleSubmitAddLink = () => {
-    console.log("Add link");
+    handleSubmit(link, isValidUrl, TypeKnowledge.LINK, setOpenAddLink);
+  };
+
+  const handleSubmitAddYoutube = () => {
+    handleSubmit(youtube, isValidYoutubeUrl, TypeKnowledge.YOUTUBE, setOpenAddYoutube);
   };
 
   return (
@@ -75,6 +149,12 @@ export const AddSource = () => {
         onDrop={onDrop}
         placeholder={t("knowledge.dragOrSelect")}
       />
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
       <Stack direction={"row"} spacing={1} width={"100%"}>
         <ButtonOutlineGradient
           name={t("knowledge.addFromMedia")}
@@ -94,24 +174,43 @@ export const AddSource = () => {
       </Stack>
       <AddLinkModal
         open={openAddYoutube}
-        onClose={() => setOpenAddYoutube(false)}
+        onClose={handleCloseAddYoutube}
         description={t("knowledge.addYoutubeDescription")}
         title={t("knowledge.addYoutube")}
         placeholder={t("knowledge.addYoutubePlaceholder")}
         icon={<YoutubeIcon />}
         onSubmit={handleSubmitAddYoutube}
+        value={youtube}
+        onChange={handleOnChangeYoutube}
+        errorLink={errorLink}
       />
       <AddLinkModal
         open={openAddLink}
-        onClose={() => {
-          setOpenAddLink(false);
-        }}
+        onClose={handleCloseAddLink}
         description={t("knowledge.addLinkDescription")}
         title={t("knowledge.addLink")}
         placeholder={t("knowledge.addLinkPlaceholder")}
         icon={<AddLinkIcon />}
         onSubmit={handleSubmitAddLink}
+        value={link}
+        onChange={handleOnChangeLink}
+        errorLink={errorLink}
       />
     </Stack>
   );
 };
+
+const isValidUrl = (url: string): boolean => {
+  const pattern = new RegExp("^(https?:\\/\\/)?" + // protocol
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|"+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return pattern.test(url);
+}
+
+const isValidYoutubeUrl = (url: string): boolean => {
+  const pattern = new RegExp('^(https?\\:\\/\\/)?(www\\.youtube\\.com|youtu\\.?be)\\/.+$','i');
+  return pattern.test(url);
+}

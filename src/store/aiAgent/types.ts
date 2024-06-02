@@ -6,6 +6,18 @@ export enum StatusAIAgent {
   INACTIVE = "INACTIVE"
 }
 
+export enum TypeKnowledge {
+  LINK = "LINK",
+  MEDIA = "MEDIA",
+  YOUTUBE = "YOUTUBE",
+  FILE = "FILE"
+}
+
+export enum StatusKnowledge {
+  ACTIVE = "ACTIVE",
+  DEACTIVE = "DEACTIVE"
+}
+
 export interface AIAgent {
   id: string;
   name: string;
@@ -14,6 +26,7 @@ export interface AIAgent {
   status: StatusAIAgent;
   description?: string;
   tone?: string;
+  enableKnowledge: boolean;
 }
 
 export type GetAIAgentListQueries = BaseQueries & {
@@ -29,12 +42,12 @@ export interface AIAgentState {
   page: number;
   limit: number;
 
-  getAgentsStatus: DataStatus;
   deleteAgentStatus: DataStatus;
   createAgentStatus: DataStatus;
   updateAgentStatus: DataStatus;
 
   aiAgent?: AIAgent;
+  listKnowledge: Knowledge[];
 }
 
 export interface GetAIAgentsPayload {
@@ -55,4 +68,24 @@ export interface UpdateAIAgentPayload {
   description?: string;
   avatar?: string;
   tone?: string;
+  enableKnowledge?: boolean;
+}
+
+export interface AddSourceInput {
+  name: string
+  type: string
+  agentId: string
+}
+
+export interface Knowledge {
+  id: string
+  name: string
+  type: string
+  status: string
+  agentId: string
+}
+
+export interface DeleteSourceInput {
+  agentId: string
+  knowledgeId: string
 }

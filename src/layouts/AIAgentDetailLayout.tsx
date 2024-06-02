@@ -9,11 +9,13 @@ import { AI_AGENT_PATH } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, ComponentProps } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { useHeaderConfig } from "store/app/selectors";
 import { getPath } from "utils/index";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
+import { HEADER_HEIGHT } from "./Header";
+import WrapperAIAgentDetail from "components/sn-ai-agent-detail/Wrapper";
 
 type AIAgentDetailLayoutProps = {
   children: React.ReactNode;
@@ -21,7 +23,7 @@ type AIAgentDetailLayoutProps = {
 };
 
 const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
-  const { aiAgentFilters, aiAgent, onGetAgent, page, limit, onGetAvatarLink, aiAgents } = useAIAgent();
+  const { aiAgentFilters, aiAgent, onGetAgent, page, limit } = useAIAgent();
   const { onUpdateHeaderConfig } = useHeaderConfig();
   const { isDarkMode } = useTheme();
   const commonT = useTranslations(NS_COMMON);
@@ -30,14 +32,6 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
 
   const dataStringifyRef = useRef<string | undefined>();
 
-  const fetchAvatarLink =  async () => {
-    if (!aiAgent?.avatar) return ImgPlaceHolderAgent.src;
-    try {
-      return onGetAvatarLink(aiAgent?.avatar);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     if (!id) return
@@ -60,10 +54,8 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
     const prevPath = getPath(AI_AGENT_PATH, parsedQueries);
 
     (async () => {
-      const imageUrl = await fetchAvatarLink();
-
       onUpdateHeaderConfig({
-        imageUrl: imageUrl || ImgPlaceHolderAgent.src,
+        imageUrl: aiAgent?.avatar || ImgPlaceHolderAgent.src,
         title: aiAgent?.name,
         searchPlaceholder: commonT("searchBy", { name: aiAgentT("list.key") }),
         prevPath,
@@ -81,12 +73,11 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
         key: undefined,
       });
     };
-  }, [commonT, aiAgent?.name, aiAgent?.avatar, onUpdateHeaderConfig, aiAgentT]);
+  }, [aiAgent]);
 
   return (
-    <Wrapper
+    <WrapperAIAgentDetail
       sx={{
-        overflow: "hidden",
         padding: `${isLgBigger ? "24" : "16"}px!important`,
         paddingTop: "0px!important",
       }}
@@ -103,7 +94,7 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
         <TabList />
       </Stack>
       {children}
-    </Wrapper>
+    </WrapperAIAgentDetail>
   );
 };
 

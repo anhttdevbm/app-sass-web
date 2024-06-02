@@ -1,5 +1,12 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { AIAgent, CreateAIAgentPayload, GetAIAgentListQueries, UpdateAIAgentPayload } from "./types";
+import {
+  AddSourceInput,
+  AIAgent,
+  CreateAIAgentPayload,
+  DeleteSourceInput,
+  GetAIAgentListQueries, GetAIAgentsPayload,
+  UpdateAIAgentPayload,
+} from "./types";
 import { client, Endpoint } from "api";
 import { AI_AGENT_API_URL, AN_ERROR_TRY_AGAIN, UPLOAD_API_URL } from "constant/index";
 import { HttpStatusCode } from "constant/enums";
@@ -61,7 +68,7 @@ export const createAgent = createAsyncThunk(
   },
 );
 
-export const uploadAvatar = createAsyncThunk(
+export const uploadFile = createAsyncThunk(
     "aiAgent/uploadAvatar",
   async (file: File) => {
       try {
@@ -108,4 +115,46 @@ export const updateAgent = createAsyncThunk(
   },
 );
 
+export const addSource = createAsyncThunk(
+  "aiAgent/addSource",
+  async (data: AddSourceInput) => {
+    try {
+      const response = await client.post(
+        Endpoint.AI_AGENT_ADD_SOURCE, data, { baseURL: AI_AGENT_API_URL }
+      )
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteSource = createAsyncThunk(
+  "aiAgent/deleteSource",
+  async ({agentId, knowledgeId}: DeleteSourceInput) => {
+    try {
+      const endpoint = Endpoint.AI_AGENT_DELETE_SOURCE
+        .replace(':agentID', agentId)
+        .replace(':knowledgeId', knowledgeId);
+
+      const response = await client.delete(endpoint, { baseURL: AI_AGENT_API_URL });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const getAgent = createAction<string>("aiAgent/getAgent");
+
+export const setAgents = createAction<GetAIAgentsPayload>("aiAgent/setAgents");
