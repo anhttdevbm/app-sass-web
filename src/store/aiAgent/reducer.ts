@@ -1,13 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AIAgent, AIAgentState, GetAIAgentListQueries, GetAIAgentsPayload, Knowledge } from "./types";
-import {
-  addSource,
-  createAgent,
-  deleteAgent,
-  deleteSource,
-  getAgents,
-  updateAgent,
-} from "store/aiAgent/actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AIAgent, AIAgentState, GetAIAgentsPayload, Knowledge } from "./types";
+import { addSource, createAgent, deleteAgent, deleteSource, getAgents, updateAgent } from "store/aiAgent/actions";
 import { DataStatus } from "constant/enums";
 
 const initialState: AIAgentState = {
@@ -19,7 +12,6 @@ const initialState: AIAgentState = {
   page: 1,
   limit: 10,
 
-  getAgentsStatus: DataStatus.IDLE,
   deleteAgentStatus: DataStatus.IDLE,
   createAgentStatus: DataStatus.IDLE,
   updateAgentStatus: DataStatus.IDLE,
@@ -33,28 +25,17 @@ const aiAgentSlice = createSlice({
   initialState,
   reducers: {
     getAgent: (state, action: PayloadAction<string>) => {
-      console.log(state.aiAgents.length);
       state.aiAgent = state.aiAgents.find((aiAgent) => aiAgent.id === action.payload);
-    }
-  },
-  extraReducers: (builder) => {
-    // Get ai agents
-    builder.addCase(getAgents.pending, (state) => {
-      state.getAgentsStatus = DataStatus.LOADING;
-    });
-    builder.addCase(getAgents.fulfilled,(state, action: PayloadAction<GetAIAgentsPayload>) => {
+    },
+    setAgents: (state, action: PayloadAction<GetAIAgentsPayload>) => {
       const { data, page, size, total_page } = action.payload;
-      state.getAgentsStatus = DataStatus.SUCCEEDED;
-
       state.aiAgents = data;
       state.page = page;
       state.limit = size;
       state.totalPages = total_page;
-    });
-    builder.addCase(getAgents.rejected, (state) => {
-      state.getAgentsStatus = DataStatus.FAILED;
-    });
-
+    }
+  },
+  extraReducers: (builder) => {
     // Delete ai agent
     builder.addCase(deleteAgent.pending, (state) => {
       state.deleteAgentStatus = DataStatus.LOADING;
@@ -83,7 +64,6 @@ const aiAgentSlice = createSlice({
     });
     builder.addCase(updateAgent.fulfilled, (state, action: PayloadAction<AIAgent>) => {
       state.updateAgentStatus = DataStatus.SUCCEEDED;
-      state.aiAgent = action.payload;
     });
     builder.addCase(updateAgent.rejected, (state) => {
       state.updateAgentStatus = DataStatus.FAILED;

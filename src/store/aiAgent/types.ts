@@ -42,7 +42,6 @@ export interface AIAgentState {
   page: number;
   limit: number;
 
-  getAgentsStatus: DataStatus;
   deleteAgentStatus: DataStatus;
   createAgentStatus: DataStatus;
   updateAgentStatus: DataStatus;

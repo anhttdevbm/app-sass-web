@@ -4,7 +4,7 @@ import {
   AddSourceInput,
   CreateAIAgentPayload,
   DeleteSourceInput,
-  GetAIAgentListQueries,
+  GetAIAgentListQueries, GetAIAgentsPayload,
   UpdateAIAgentPayload,
 } from "./types";
 import {
@@ -12,13 +12,14 @@ import {
   createAgent,
   deleteAgent, deleteSource,
   getAgent,
-  getAgents,
-  getAvatarLink,
+  getAgents, getAvatarLink,
+  setAgents,
   updateAgent,
   uploadFile,
 } from "store/aiAgent/actions";
 import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 export const useAIAgent = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +34,6 @@ export const useAIAgent = () => {
     page,
     limit,
 
-    getAgentsStatus,
     createAgentStatus,
     deleteAgentStatus,
     updateAgentStatus,
@@ -41,10 +41,23 @@ export const useAIAgent = () => {
     listKnowledge
   } = useAppSelector((state) => state.aiAgent, shallowEqual);
 
-  const onGetAgents = useCallback((queries: GetAIAgentListQueries) => {
-      dispatch(getAgents(queries));
+  const onGetAgents = useCallback(async (queries: GetAIAgentListQueries) => {
+    const action = await dispatch(getAgents(queries)) as PayloadAction<GetAIAgentsPayload>;
+
+    const { data, page, size, total_page } = action.payload;
+
+    const agents = await Promise.all(data.map(async (agent) => {
+      if (agent.avatar) {
+        const result = await dispatch(getAvatarLink(agent.avatar));
+        if (result.payload) {
+          agent.avatar = result.payload[0].link
+        }
+      }
+      return agent;
+    }));
+
+    dispatch(setAgents({data: agents, page, size, total_page}));
   }, [dispatch]);
-  const isFetchingAgents = useMemo(() => getAgentsStatus === DataStatus.LOADING, [getAgentsStatus]);
 
   const onGetAgent = (id: string) => {
     dispatch(getAgent(id));
@@ -67,14 +80,6 @@ export const useAIAgent = () => {
     } catch (error) {
     }
   }, [dispatch]);
-
-  const onGetAvatarLink = useCallback(async (id: string) => {
-    try {
-      const result = await dispatch(getAvatarLink(id));
-      return result.payload[0].link;
-    } catch (error) {
-    }
-  }, [dispatch])
 
   const onUpdateAgent = useCallback((id: string, data: UpdateAIAgentPayload) => {
     dispatch(updateAgent({ id, data }));
@@ -102,7 +107,6 @@ export const useAIAgent = () => {
     onGetAgent,
 
     onGetAgents,
-    isFetchingAgents,
 
     onDeleteAgent,
     isDeletingAgent,
@@ -111,7 +115,7 @@ export const useAIAgent = () => {
     isCreatingAgent,
 
     onUploadFile,
-    onGetAvatarLink,
+    // onGetAvatarLink,
 
     onUpdateAgent,
     isUpdatingAgent,

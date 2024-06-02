@@ -29,11 +29,10 @@ const AgentList = () => {
 
     onGetAgents,
     onDeleteAgent,
-    onGetAvatarLink,
 
-    isFetchingAgents,
     isDeletingAgent,
-    isCreatingAgent
+    isCreatingAgent,
+    isUpdatingAgent
   } = useAIAgent();
   const { initQuery, isReady, query } = useQueryParams();
   const { push } = useRouter();
@@ -65,14 +64,6 @@ const AgentList = () => {
 
   const handleEdit = () => console.log("Edit agent");
 
-  const updateAgentAvatar = async (agent: AIAgent) => {
-    let avatar = agent.avatar;
-    if (agent.avatar) {
-      avatar = await onGetAvatarLink(agent.avatar);
-    }
-    return { ...agent, avatar };
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -82,22 +73,15 @@ const AgentList = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const fetchAgents = useCallback(async () => {
-    if (!isFetchingAgents && aiAgents.length) {
-      const updatedAgents = await Promise.all(aiAgents.map(updateAgentAvatar));
-      setData(updatedAgents);
-    }
-  }, [aiAgents, isFetchingAgents]);
+  useEffect(() => {
+      setData(aiAgents);
+  }, [aiAgents]);
 
   useEffect(() => {
-     fetchAgents();
-  }, [aiAgents, isFetchingAgents]);
-
-  useEffect(() => {
-    if (!isCreatingAgent && !isDeletingAgent) {
+    if (!isCreatingAgent && !isDeletingAgent && !isUpdatingAgent) {
       onGetAgents({...query });
     }
-  }, [isCreatingAgent, isDeletingAgent]);
+  }, [isCreatingAgent, isDeletingAgent, isUpdatingAgent]);
 
   useEffect(() => {
     if (!isReady) return;

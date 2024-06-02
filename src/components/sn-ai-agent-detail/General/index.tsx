@@ -13,7 +13,7 @@ import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 import { Textarea } from "./components";
 import { Select } from "./components/Select";
 import { useChatWithAI } from "store/aiChat/selectors";
-import { UpdateAIAgentPayload } from "store/aiAgent/types";
+import { AIAgent, UpdateAIAgentPayload } from "store/aiAgent/types";
 import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
 
 export const General = () => {
@@ -21,24 +21,15 @@ export const General = () => {
   const t = useTranslations(NS_AI_AGENT);
   const locale = useLocale();
 
-  const {aiAgent, onGetAvatarLink, onUpdateAgent, isUpdatingAgent, onUploadFile} = useAIAgent();
+  const {aiAgent, onUpdateAgent, onUploadFile} = useAIAgent();
   const {tone: toneList, onGetTone} = useChatWithAI();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [image, setImage] = React.useState<string>(ImgPlaceHolderAgent.src);
+  const [image, setImage] = React.useState<string | null>(null);
   const [file, setFile] = React.useState<File | null>(null);
   const [name, setName] = React.useState<string>(aiAgent?.name || "");
   const [description, setDescription] = React.useState<string>(aiAgent?.description || "");
   const [tone, setTone] = React.useState<string>("default");
-
-  const getAvatarLink = useCallback(async () => {
-    if (aiAgent?.avatar) {
-      const avatarLink = await onGetAvatarLink(aiAgent.avatar);
-      if (avatarLink) {
-        setImage(avatarLink);
-      }
-    }
-  }, [aiAgent?.avatar, onGetAvatarLink]);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -110,19 +101,16 @@ export const General = () => {
   );
 
   useEffect(() => {
-    getAvatarLink();
-  }, []);
-
-  useEffect(() => {
     onGetTone({});
   }, [onGetTone]);
 
   useEffect(() => {
-    if (aiAgent) {
-      setName(aiAgent.name);
-      setDescription(aiAgent.description || "");
-      setTone(aiAgent.tone || "default");
-    }
+      if (aiAgent) {
+        setImage(aiAgent.avatar || null);
+        setName(aiAgent.name);
+        setDescription(aiAgent.description || "");
+        setTone(aiAgent.tone || "default");
+      }
   }, [aiAgent]);
 
   return (

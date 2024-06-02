@@ -23,7 +23,7 @@ type AIAgentDetailLayoutProps = {
 };
 
 const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
-  const { aiAgentFilters, aiAgent, onGetAgent, page, limit, onGetAvatarLink, aiAgents } = useAIAgent();
+  const { aiAgentFilters, aiAgent, onGetAgent, page, limit } = useAIAgent();
   const { onUpdateHeaderConfig } = useHeaderConfig();
   const { isDarkMode } = useTheme();
   const commonT = useTranslations(NS_COMMON);
@@ -32,14 +32,6 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
 
   const dataStringifyRef = useRef<string | undefined>();
 
-  const fetchAvatarLink =  async () => {
-    if (!aiAgent?.avatar) return ImgPlaceHolderAgent.src;
-    try {
-      return onGetAvatarLink(aiAgent?.avatar);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     if (!id) return
@@ -62,10 +54,8 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
     const prevPath = getPath(AI_AGENT_PATH, parsedQueries);
 
     (async () => {
-      const imageUrl = await fetchAvatarLink();
-
       onUpdateHeaderConfig({
-        imageUrl: imageUrl || ImgPlaceHolderAgent.src,
+        imageUrl: aiAgent?.avatar || ImgPlaceHolderAgent.src,
         title: aiAgent?.name,
         searchPlaceholder: commonT("searchBy", { name: aiAgentT("list.key") }),
         prevPath,
@@ -83,7 +73,7 @@ const AIAgentDetailLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
         key: undefined,
       });
     };
-  }, [commonT, aiAgent?.name, aiAgent?.avatar, onUpdateHeaderConfig, aiAgentT]);
+  }, [aiAgent]);
 
   return (
     <WrapperAIAgentDetail

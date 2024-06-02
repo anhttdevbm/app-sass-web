@@ -4,7 +4,7 @@ import {
   AIAgent,
   CreateAIAgentPayload,
   DeleteSourceInput,
-  GetAIAgentListQueries,
+  GetAIAgentListQueries, GetAIAgentsPayload,
   UpdateAIAgentPayload,
 } from "./types";
 import { client, Endpoint } from "api";
@@ -156,3 +156,5 @@ export const deleteSource = createAsyncThunk(
 );
 
 export const getAgent = createAction<string>("aiAgent/getAgent");
+
+export const setAgents = createAction<GetAIAgentsPayload>("aiAgent/setAgents");
