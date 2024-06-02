@@ -4,10 +4,10 @@ import PlusIcon from "@mui/icons-material/Add";
 import { Stack } from "@mui/material";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { ToolItem } from "../Tools/components";
 import { FooterDetailAgent, TitleTab } from "../components";
 import { CreateCommandModal } from "./components/CreateCommandModal";
-import { useState } from "react";
 import { ListCommand } from "./components/ListCommand";
 
 const ListCommandExample = [
@@ -60,7 +60,7 @@ export const Commands = () => {
       />
       <ListCommand list={ListCommandExample} />
       <CreateCommandModal open={open} onClose={() => setOpen(false)} />
-      <FooterDetailAgent onClickUpdate={handleUpdate} />
+      <FooterDetailAgent onUpdate={handleUpdate} />
     </Stack>
   );
 };
