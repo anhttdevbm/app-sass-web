@@ -3,10 +3,10 @@
 import { Stack } from "@mui/material";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
-import { FooterDetailAgent, TitleTab } from "../components";
-import { Switch } from "./components/Switch";
 import { useState } from "react";
+import { FooterDetailAgent, TitleTab } from "../components";
 import { AddSource, TableKnowledge } from "./components";
+import { Switch } from "./components/Switch";
 
 const ListKnowledge = [
   {
@@ -131,7 +131,7 @@ export const Knowledge = () => {
         name={t("knowledge.enableKnowledge")}
       />
       {isKnowledgeEnabled && <KnowledgeContent />}
-      <FooterDetailAgent onClickUpdate={handleUpdate} />
+      <FooterDetailAgent onUpdate={handleUpdate} />
     </Stack>
   );
 };
