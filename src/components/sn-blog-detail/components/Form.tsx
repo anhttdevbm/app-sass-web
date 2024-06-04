@@ -317,10 +317,14 @@ const Form = (props: FormProps) => {
           <Stack>
             <JoditEditor
                 ref={editor}
-                value={content}
+                value={formik.values.content || formik.initialValues.content || ''}
                 config={config}
                 onBlur={(newContent) => {
                   setContent(newContent); 
+                  formik.setFieldValue("content", newContent);
+                }}
+                onChange={newContent => {
+                  setContent(newContent);
                   formik.setFieldValue("content", newContent);
                 }}
             />

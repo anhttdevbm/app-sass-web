@@ -14,7 +14,9 @@ import { formatDate } from 'utils/index';
 
 import { DataAction } from 'constant/enums';
 import useToggle from 'hooks/useToggle';
-import parse, { HTMLReactParserOptions, domToReact } from 'html-react-parser';
+import { HTMLReactParserOptions, domToReact } from 'html-react-parser';
+import ReactHtmlParser from 'react-html-parser';
+
 import EditIcon from 'icons/EditIcon';
 import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
 import CommentsTreeView from './components/Comments';
@@ -187,7 +189,8 @@ const BlogDetailSection = () => {
                                         </Stack>
                                         <Stack marginTop={5} width={"100%"} sx={{wordBreak: "break-word"}}>
                                             {/* {renderContentWithAttachments(detailItem?.content as string, detailItem?.attachments_down as AttachmentsBlogs[])} */}
-                                            {typeof detailItem?.content === 'string' ? parse(detailItem.content, optionsRenderHtml) : 'Content is not a string'}
+                                            {/* {typeof detailItem?.content === 'string' ? parse(detailItem.content, optionsRenderHtml) : 'Content is not a string'} */}
+                                            {ReactHtmlParser(detailItem?.content)}
                                         </Stack>
                                         <Stack>
                                             <CommentEditor
