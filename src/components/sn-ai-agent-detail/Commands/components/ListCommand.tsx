@@ -4,14 +4,7 @@ import { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components";
 import CompassIcon from "icons/CompassIcon";
 import CheckIcon from "icons/CheckIcon";
 import KnowledgeIcon from "icons/KnowledgeIcon";
-
-interface Command {
-  title: string;
-  description: string;
-  isWebSearch: boolean;
-  isBackgroundTask: boolean;
-  isUseKnowledge: boolean;
-}
+import { Command } from "store/aiAgent/types";
 
 interface ListCommandProps {
   list: Command[];
@@ -26,7 +19,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             webSearch: {
               icon: (
                 <CompassIcon
-                  style={{color: command.isWebSearch ? "#43BC6A" : "#3333"}}
+                  style={{color: command.web_search ? "#43BC6A" : "#3333"}}
                 />
               ),
               name: "Web Search",
@@ -34,7 +27,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             backgroundTask: {
               icon: (
                 <CheckIcon
-                  style={{color: command.isBackgroundTask ? "#43BC6A" : "#3333"}}
+                  style={{color: command.background_task ? "#43BC6A" : "#3333"}}
                 />
               ),
               name: "Background Task",
@@ -42,7 +35,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             useKnowledge: {
               icon: (
                 <KnowledgeIcon
-                   style={{color: command.isUseKnowledge ? "#43BC6A" : "#3333"}}
+                   style={{color: command.knowledge ? "#43BC6A" : "#3333"}}
                 />
               ),
               name: "Use Knowledge",
@@ -79,10 +72,10 @@ export const ListCommand = ({ list }: ListCommandProps) => {
                 }}
               >
                 <Text fontSize={"13px"} fontWeight={600}>
-                  {command.title}
+                  {command.name}
                 </Text>
                 <Text fontSize={"13px"} fontWeight={400} color={"grey.300"}>
-                  {command.description}
+                  {command.prompt}
                 </Text>
                 <Stack direction={"row"} spacing={"4px"}>
                   {Object.keys(listOptions).map((key) => (
