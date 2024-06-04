@@ -59,7 +59,9 @@ const Form = (props: FormProps) => {
   const config: any = {
     placeholder: blogT("blogForm.content"),
     readonly: false,
-    height: 400
+    height: 400,
+    askBeforePasteHTML: false, // allow complex HTML content to be pasted
+    askBeforePasteFromWord: false,
   };
 
   // set value

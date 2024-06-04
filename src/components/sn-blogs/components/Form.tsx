@@ -52,7 +52,9 @@ const Form = (props: FormProps) => {
   const editor = useRef(null);
   const config = {
     readonly: false,
-    height: 400
+    height: 400,
+    askBeforePasteHTML: false, // allow complex HTML content to be pasted
+    askBeforePasteFromWord: false, // specifically allow content from Word
   };
 
   useEffect(() => {
@@ -334,9 +336,10 @@ const Form = (props: FormProps) => {
                 setContent(newContent); 
                 formik.setFieldValue("content", newContent);
               }}
-              // onChange={(newContent) => {
-              //   setContent(newContent); formik.setFieldValue("content", newContent);
-              // }}
+              onChange={(newContent) => {
+                setContent(newContent); 
+                setContent(newContent); formik.setFieldValue("content", newContent);
+              }}
             />
             {/* <Editor
               hasAttachment
