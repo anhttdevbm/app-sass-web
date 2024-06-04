@@ -1,6 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AIAgent, AIAgentState, GetAIAgentsPayload, Knowledge } from "./types";
-import { addSource, createAgent, deleteAgent, deleteSource, getAgents, updateAgent } from "store/aiAgent/actions";
+import { AIAgent, AIAgentState, Command, GetAIAgentsPayload, Knowledge } from "./types";
+import {
+  addSource,
+  createAgent, createCommand,
+  deleteAgent,
+  deleteSource,
+  getAgents,
+  getCommands,
+  updateAgent,
+} from "store/aiAgent/actions";
 import { DataStatus } from "constant/enums";
 
 const initialState: AIAgentState = {
@@ -18,6 +26,7 @@ const initialState: AIAgentState = {
 
   aiAgent: undefined,
   listKnowledge: [],
+  listCommand: [],
 };
 
 const aiAgentSlice = createSlice({
@@ -69,12 +78,20 @@ const aiAgentSlice = createSlice({
       state.updateAgentStatus = DataStatus.FAILED;
     });
 
-    //Delete source
+    //Manage source
     builder.addCase(addSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
       state.listKnowledge.push(payload.payload);
     });
     builder.addCase(deleteSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
       state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== payload.payload.id);
+    });
+
+    // Manage command
+    builder.addCase(getCommands.fulfilled, (state, action: PayloadAction<Command[]>) => {
+      state.listCommand = action.payload;
+    });
+    builder.addCase(createCommand.fulfilled, (state, action: PayloadAction<Command>) => {
+      state.listCommand.push(action.payload);
     });
   },
 });

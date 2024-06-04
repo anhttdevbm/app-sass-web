@@ -2,17 +2,17 @@ import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   AddSourceInput,
-  CreateAIAgentPayload,
+  CreateAIAgentPayload, CreateCommandInput,
   DeleteSourceInput,
   GetAIAgentListQueries, GetAIAgentsPayload,
   UpdateAIAgentPayload,
 } from "./types";
 import {
   addSource,
-  createAgent,
+  createAgent, createCommand,
   deleteAgent, deleteSource,
   getAgent,
-  getAgents, getAvatarLink,
+  getAgents, getAvatarLink, getCommands,
   setAgents,
   updateAgent,
   uploadFile,
@@ -38,13 +38,14 @@ export const useAIAgent = () => {
     deleteAgentStatus,
     updateAgentStatus,
 
-    listKnowledge
+    listKnowledge,
+    listCommand
   } = useAppSelector((state) => state.aiAgent, shallowEqual);
 
   const onGetAgents = useCallback(async (queries: GetAIAgentListQueries) => {
     const action = await dispatch(getAgents(queries)) as PayloadAction<GetAIAgentsPayload>;
 
-    const { data, page, size, total_page } = action.payload;
+    const { data, page, size, total_page } = action.payload || { data: [], page: 0, size: 0, total_page: 0 };
 
     const agents = await Promise.all(data.map(async (agent) => {
       if (agent.avatar) {
@@ -94,6 +95,14 @@ export const useAIAgent = () => {
     dispatch(deleteSource({agentId, knowledgeId}));
   }, [dispatch]);
 
+  const onCreateCommand = useCallback((data: CreateCommandInput) => {
+    dispatch(createCommand(data));
+  }, [dispatch]);
+
+  const onGetCommands = useCallback((agentId: string) => {
+    dispatch(getCommands(agentId));
+  }, [dispatch]);
+
   return {
     aiAgents,
     aiAgentFilters,
@@ -105,6 +114,8 @@ export const useAIAgent = () => {
 
     aiAgent,
     listKnowledge,
+    listCommand,
+
     onGetAgent,
     onGetAgents,
     onDeleteAgent,
@@ -113,6 +124,8 @@ export const useAIAgent = () => {
     onUpdateAgent,
     onAddSource,
     onDeleteSource,
+    onGetCommands,
+    onCreateCommand,
 
     isDeletingAgent,
     isCreatingAgent,

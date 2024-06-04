@@ -48,6 +48,7 @@ export interface AIAgentState {
 
   aiAgent?: AIAgent;
   listKnowledge: Knowledge[];
+  listCommand: Command[];
 }
 
 export interface GetAIAgentsPayload {
@@ -88,4 +89,23 @@ export interface Knowledge {
 export interface DeleteSourceInput {
   agentId: string
   knowledgeId: string
+}
+
+export interface CreateCommandInput {
+  name: string
+  prompt: string
+  agentId: string
+  background_task: boolean
+  web_search: boolean
+  knowledge: boolean
+}
+
+export interface Command {
+  id: string
+  name: string
+  prompt: string
+  agentId: string
+  background_task: boolean
+  web_search: boolean
+  knowledge: boolean
 }
