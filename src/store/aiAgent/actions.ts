@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   AddSourceInput,
   AIAgent,
-  CreateAIAgentPayload,
+  CreateAIAgentPayload, CreateCommandInput,
   DeleteSourceInput,
   GetAIAgentListQueries, GetAIAgentsPayload,
   UpdateAIAgentPayload,
@@ -143,6 +143,44 @@ export const deleteSource = createAsyncThunk(
         .replace(':knowledgeId', knowledgeId);
 
       const response = await client.delete(endpoint, { baseURL: AI_AGENT_API_URL });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const createCommand = createAsyncThunk(
+  "aiAgent/createCommand",
+  async (data: CreateCommandInput) => {
+    try {
+      const response = await client.post(
+        Endpoint.AI_AGENT_CREATE_COMMAND, data, { baseURL: AI_AGENT_API_URL }
+      )
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getCommands = createAsyncThunk(
+  "aiAgent/getCommands",
+  async (id: string) => {
+    try {
+      const response = await client.get(
+        `${Endpoint.AI_AGENT_GET_COMMAND.replace(':agentId', id)}`, {},{ baseURL: AI_AGENT_API_URL }
+      )
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data.data;

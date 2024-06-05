@@ -10,27 +10,54 @@ import { ListSwitch } from "./ListToggle";
 import BookIcon from "icons/BookIcon";
 import TaskIcon from "icons/TaskIcon";
 import WebSearchIcon from "icons/WebSearchIcon";
+import { useAIAgent } from "store/aiAgent/selectors";
 
 interface CreateCommandModalProps {
   open: boolean;
   onClose: () => void;
+  agentId: string;
 }
 
 export const CreateCommandModal = ({
   open,
   onClose,
+  agentId,
 }: CreateCommandModalProps) => {
   const t = useTranslations(NS_AI_AGENT);
   const theme = useTheme();
+
+  const {onCreateCommand} = useAIAgent();
+
+  const [name, setName] = useState("");
   const [prompt, setPrompt] = useState("");
   const [useKnowledge, setUseKnowledge] = useState(false);
   const [webSearch, setWebSearch] = useState(false);
   const [bgTask, setBgTask] = useState(false);
 
   const handleSubmit = () => {
-    console.log("Submit");
+    onCreateCommand({
+      name: name,
+      prompt,
+      background_task: bgTask,
+      web_search: webSearch,
+      knowledge: useKnowledge,
+      agentId: agentId,
+    });
+    resetForm();
     onClose();
   };
+
+  const resetForm = () => {
+    setName("");
+    setPrompt("");
+    setUseKnowledge(false);
+    setWebSearch(false);
+    setBgTask(false);
+  }
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  }
 
   const handleTextareChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
@@ -64,6 +91,8 @@ export const CreateCommandModal = ({
           label={t("commands.name")}
           theme={theme}
           variant="filled"
+          value={name}
+          onChange={handleNameChange}
         />
         <Textarea
           label={t("commands.prompt")}

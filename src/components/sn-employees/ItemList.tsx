@@ -1,39 +1,39 @@
 "use client";
-import {
-  memo,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  ChangeEvent,
-} from "react";
 import { Stack, TableRow } from "@mui/material";
-import { usePathname } from "next-intl/client";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next-intl/client";
+import {
+  ChangeEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import ConfirmDialog from "components/ConfirmDialog";
+import FixedLayout from "components/FixedLayout";
+import Pagination from "components/NewPagination";
 import {
-  TableLayout,
+  ActionsCell,
   BodyCell,
   CellProps,
-  ActionsCell,
+  TableLayout,
 } from "components/NewTable";
-import Pagination from "components/NewPagination";
-import { IconButton, Checkbox } from "components/shared";
-import FixedLayout from "components/FixedLayout";
-import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
+import { Checkbox, IconButton } from "components/shared";
 import { DataAction, EmployeeType, PayStatus } from "constant/enums";
-import { HEADER_HEIGHT } from "layouts/Header";
-import useQueryParams from "hooks/useQueryParams";
+import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
+import useQueryParams from "hooks/useQueryParams";
+import { HEADER_HEIGHT } from "layouts/Header";
 // import useTheme from "hooks/useTheme";
-import { getPath } from "utils/index";
-import { useEmployees } from "store/company/selectors";
-import { Employee } from "store/company/reducer";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import TrashIcon from "icons/TrashAltIcon";
+import { Employee } from "store/company/reducer";
+import { useEmployees } from "store/company/selectors";
+import { getPath } from "utils/index";
 import EmployeeCompanyForm from "./EmployeeCompanyForm";
-import { MobileContentCell, DesktopCells } from "./components";
+import { DesktopCells, MobileContentCell } from "./components";
 import DeleteConfirm from "./components/DeleteConfirm";
 
 const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
@@ -217,9 +217,9 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
           direction="row"
           alignItems="center"
           pb={0.25}
-          border="1px solid"
-          borderColor="grey.100"
-          borderBottom="none"
+          // border="1px solid"
+          // borderColor="grey.100"
+          // borderBottom="none"
           sx={{
             "& > *": {
               "--custom-border": "1px solid hsla(0, 0%, 59%, 70%)",

@@ -222,7 +222,7 @@ export const useChatWithAI = () => {
   const onGetTone = useCallback(
     async (queries: GetToneQueries) => {
       const response = await dispatch(getTone(queries));
-      const nextPage = getPageNumber(response.payload.next);
+      const nextPage = getPageNumber(response.payload?.next);
       if (nextPage) {
         await onGetTone({
           ...queries,
