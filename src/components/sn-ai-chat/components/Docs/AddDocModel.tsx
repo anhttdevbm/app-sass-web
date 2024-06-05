@@ -3,7 +3,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -64,9 +63,7 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
   };
 
   const handleAddDoc = async () => {
-    const docId = await onCreateDoc(undefined, assistantContent);
-    const path = getPath(DOCS_DETAIL_PATH, undefined, { id: docId })
-    router.push(`${path}`);
+    await onCreateDoc(undefined, assistantContent);
     onClose();
   };
 
