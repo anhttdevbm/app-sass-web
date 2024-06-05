@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useChatSession } from "store/aiChat/selectors";
 import { ChatSession } from "store/aiChat/type";
 import ItemChat from "../ItemChat";
+import { useAuth } from "store/app/selectors";
 
 const TODAY = "Today";
 const YESTERDAY = "Yesterday";
@@ -20,7 +21,7 @@ function groupChatSessionsByDate(chatSessions: ChatSession[]) {
   const groups = chatSessions.reduce((groups, chat) => {
     let dateGroup = "";
 
-    const chatDate = new Date(chat.last_question_at || chat.created_at);
+    const chatDate = new Date(chat.updated_at || chat.created_at);
 
     if (chatDate.toDateString() === today.toDateString()) {
       dateGroup = TODAY;
@@ -70,6 +71,8 @@ const ChatList: React.FC<ChatListProps> = ({
     newChatSessionCreated,
   } = useChatSession();
 
+  const {user} = useAuth();
+
   const scrollableContainerRef = useRef(null);
 
   const scrollableSx = {
@@ -96,7 +99,7 @@ const ChatList: React.FC<ChatListProps> = ({
 
   useEffect(() => {
     fetchChatSessions({});
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     // fetchChatSessions({});

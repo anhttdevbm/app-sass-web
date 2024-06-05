@@ -20,7 +20,6 @@ import {
 import {
   ChatSessionData,
   ChatWithAIData,
-  DeleteAllChatSessionQueries,
   GetChatSessionsQueries,
   GetExamplePromptQueries,
   GetOpenAIChatQueries,

@@ -68,13 +68,23 @@ const aiChatSlice = createSlice({
     },
     addChatWithAI: (state, action: PayloadAction<OpenAIChat>) => {
       state.openAIChat.unshift(action.payload);
+      const index = state.chatSessions.findIndex(
+        (chatSession) => chatSession.id === action.payload.chat_session,
+      );
+
+      if (index !== -1) {
+        state.chatSessions[index].updated_at = new Date().toISOString();
+        const [chatSession] = state.chatSessions.splice(index, 1);
+        state.chatSessions.unshift(chatSession);
+      }
     },
     addNewChatSession: (state, action: PayloadAction<ChatSessionData>) => {
       state.chatSessions.unshift({
         ...action.payload,
-        last_question_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       } as ChatSession);
-    }
+    },
+    reset: state => initialState
   },
   extraReducers: (builder) => {
     builder
@@ -271,5 +281,6 @@ const aiChatSlice = createSlice({
   },
 });
 
+export const {reset} = aiChatSlice.actions;
 export const aiChatReducer = aiChatSlice.reducer;
 export default aiChatSlice.reducer;

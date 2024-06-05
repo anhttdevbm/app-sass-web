@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import { Box, useMediaQuery } from "@mui/material";
 import { NewButton } from "components/shared";
@@ -10,7 +10,6 @@ import { HEADER_HEIGHT } from "layouts/Header";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { useChatSession } from "store/aiChat/selectors";
-import { useAuth } from "store/app/selectors";
 import ChatList from "./components/ChatList";
 
 interface SidebarProps {

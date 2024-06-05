@@ -14,6 +14,7 @@ export type ChatSession = {
   status: string;
   last_question_at: string;
   created_at: string;
+  updated_at: string;
 };
 
 export type SelectChatAI = {
