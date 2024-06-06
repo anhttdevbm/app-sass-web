@@ -55,6 +55,7 @@ const Form = (props: FormProps) => {
     height: 400,
     askBeforePasteHTML: false, // allow complex HTML content to be pasted
     askBeforePasteFromWord: false, // specifically allow content from Word
+    fullScreen: true,
   };
 
   useEffect(() => {
