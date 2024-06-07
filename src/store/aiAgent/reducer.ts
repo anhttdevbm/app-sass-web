@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AIAgent, AIAgentState, Command, GetAIAgentsPayload, Knowledge } from "./types";
 import {
   addSource,
-  createAgent, createCommand,
+  createAgent,
+  createCommand,
   deleteAgent,
   deleteSource,
-  getAgents,
   getCommands,
   updateAgent,
 } from "store/aiAgent/actions";
@@ -33,15 +33,16 @@ const aiAgentSlice = createSlice({
   name: "aiAgent",
   initialState,
   reducers: {
-    getAgent: (state, action: PayloadAction<string>) => {
-      state.aiAgent = state.aiAgents.find((aiAgent) => aiAgent.id === action.payload);
-    },
     setAgents: (state, action: PayloadAction<GetAIAgentsPayload>) => {
-      const { data, page, size, total_page } = action.payload;
+      const { data, page, size, total_page, total_agents } = action.payload;
       state.aiAgents = data;
       state.page = page;
       state.limit = size;
       state.totalPages = total_page;
+      state.totalAIAgents = total_agents;
+    },
+    setAgent: (state, action: PayloadAction<AIAgent>) => {
+      state.aiAgent = action.payload;
     }
   },
   extraReducers: (builder) => {

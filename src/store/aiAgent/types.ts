@@ -56,6 +56,7 @@ export interface GetAIAgentsPayload {
   page: number;
   size: number;
   total_page: number;
+  total_agents: number;
 }
 
 export interface CreateAIAgentPayload {
