@@ -195,7 +195,7 @@ const SalesPage = () => {
             </Stack>
           );
         },
-        minWidth: 100,
+        minWidth: 70,
         width: "13%",
       },
       {
@@ -246,15 +246,15 @@ const SalesPage = () => {
             </Text>
           </Stack>
         ),
-        minWidth: 100,
+        minWidth: 70,
         width: "8%",
       },
       {
         name: "probability",
         value: salesT("list.table.probability"),
         align: "right",
-        width: "8%",
-        minWidth: 100,
+        width: "5%",
+        minWidth: 70,
         sort: true,
       },
       {

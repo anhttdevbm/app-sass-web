@@ -130,7 +130,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
       mt: "35px",
       fontSize: "16px!important",
       // height:"38px",
-      ".MuiInputBase-input": { p: "0 10px!important" },
+      ".MuiInputBase-input": { p: "0 10px!important",margin:"0!important" },
       svg: {
         borderRadius: "50px",
         border: "0.2px solid #5C5C5C",
@@ -252,7 +252,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
               onChangeSearch={(_, newValue) =>
                 onSearchMember(field.name, newValue as string)
               }
-              sx={newInput}
+              sx={{...newInput,".MuiInputBase-input":{m:0}}}
               error={error?.message}
               fullWidth
               onEndReached={onEndReachedEmployeeOptions}
