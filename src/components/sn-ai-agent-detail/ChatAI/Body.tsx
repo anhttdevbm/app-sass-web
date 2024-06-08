@@ -5,27 +5,29 @@ import { Textarea } from "../General/components";
 import { useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
 import { CommandButton } from "./components/CommandButton";
-
-const ListCommands = [
-  {
-    id: "1",
-    name: "Hello",
-    description: "Hi there!",
-  },
-  {
-    id: "2",
-    name: "How are you?",
-    description: "I'm good, thank you!",
-  },
-  // {
-  //   id: "3",
-  //   name: "What's your name?",
-  //   description: "I'm AI Agent.",
-  // },
-];
+import { useAIAgent } from "store/aiAgent/selectors";
+import { useEffect, useState } from "react";
+import { Command } from "store/aiAgent/types";
 
 export const Body = () => {
   const t = useTranslations(NS_AI_AGENT);
+
+  const [commands, setCommands] = useState<Command[]>([]);
+  const {listCommand, onGetCommands, aiAgent} = useAIAgent();
+
+  useEffect(() => {
+    if (aiAgent) {
+      onGetCommands(aiAgent.id);
+    }
+  }, [aiAgent]);
+
+  useEffect(() => {
+    if (listCommand.length > 4) {
+      setCommands(listCommand.slice(0, 4));
+    } else {
+      setCommands(listCommand);
+    }
+  }, [listCommand]);
 
   const handleSendMsg = () => {
     console.log("Send Message");
@@ -48,19 +50,19 @@ export const Body = () => {
         gap={2}
         direction="row"
         flexWrap="wrap"
-        width={ListCommands.length === 0 ? "296px" : "100%"}
+        width={commands.length === 0 ? "296px" : "100%"}
       >
-        {ListCommands.map((item) => (
+        {commands.map((item) => (
           <CommandButton
             key={item.id}
             icon={<></>}
             label={item.name}
-            description={item.description}
+            description={item.prompt}
             onClick={handleClickCommand}
           />
         ))}
         <AddCommandButton
-          width={ListCommands.length % 2 === 0 ? "100%" : "calc(50% - 8px)"}
+          width={commands.length % 2 === 0 ? "100%" : "calc(50% - 8px)"}
         />
       </Stack>
       <Textarea

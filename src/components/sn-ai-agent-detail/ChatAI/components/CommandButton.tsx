@@ -50,6 +50,7 @@ export const CommandButton = ({
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            maxWidth: "120px",
           }}
         >
           {label}
@@ -62,6 +63,7 @@ export const CommandButton = ({
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            maxWidth: "120px",
           }}
         >
           {description}

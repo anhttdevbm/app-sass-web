@@ -138,11 +138,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             type="gradient"
             text={t("general.viewPrompts")}
             icon={MagicPenIcon}
-            style={{ padding: "8px 16px" }}
+            style={{ padding: "8px 8px" }}
             onClick={handleViewPrompts}
           />
           {onSend && (
-            <IconButton onClick={onSend} style={{ padding: "8px 16px" }}>
+            <IconButton onClick={onSend} style={{ padding: "8px 8px" }}>
               <SendGradientIcon fill={"#3699FF"} />
             </IconButton>
           )}
