@@ -137,7 +137,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
         "td": { border: "none" },
       }}
     >
-      <BodyCell sx={{ paddingLeft: "34px" }}
+      <BodyCell
                 align="left"
                 href={getPath(SALE_DETAIL_PATH, undefined, { id: item.id })}
                 onClick={() => onSetRevenue(item.revenue)}
@@ -377,7 +377,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
             zIndex: 99,
             pr: 0,
           }}
-          justifyContent={"space-between"}
+          justifyContent={"end"}
           alignItems={"center"}
           gap="3px"
         >
