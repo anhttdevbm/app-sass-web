@@ -33,6 +33,7 @@ import meetingReducer from "./meeting/reducer";
 import { AIAgentState } from "./aiAgent/types";
 import { aiAgentReducer } from "./aiAgent/reducer";
 import { promptTemplateReducer } from "store/promptTemplate/reducer";
+import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
 
 export interface State {
   app: AppState;
@@ -51,6 +52,7 @@ export interface State {
   holidayCalendar: HolidayCalendarState;
   aiChat: AIChatState;
   aiAgent: AIAgentState;
+  chatAIAgent: AIAgentState;
 }
 
 export const store = configureStore({
@@ -84,6 +86,7 @@ export const store = configureStore({
     aiChat: aiChatReducer,
     aiAgent: aiAgentReducer,
     promptTemplate: promptTemplateReducer,
+    chatAIAgent: chatAIAgentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,41 +1,50 @@
-import { Stack } from "@mui/material";
-import { Title } from "./components/Title";
-import { AddCommandButton } from "./components/AddCommandButton";
+import { Stack, useMediaQuery } from "@mui/material";
 import { Textarea } from "../General/components";
 import { useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
-import { CommandButton } from "./components/CommandButton";
-import { useAIAgent } from "store/aiAgent/selectors";
+import { EmptyMessage } from "components/sn-ai-agent-detail/ChatAI/components/EmptyMesage";
 import { useEffect, useState } from "react";
-import { Command } from "store/aiAgent/types";
+import { MessageLayout, MessageList } from "components/sn-ai-chat/components/BoxChat/components/Message";
+import { useChatAIAgent } from "store/chatAIAgent/selectors";
+import { ChatResponse } from "store/chatAIAgent/types";
 
 export const Body = () => {
   const t = useTranslations(NS_AI_AGENT);
 
-  const [commands, setCommands] = useState<Command[]>([]);
-  const {listCommand, onGetCommands, aiAgent} = useAIAgent();
+  const isMobile = useMediaQuery("(max-width:600px)");
 
-  useEffect(() => {
-    if (aiAgent) {
-      onGetCommands(aiAgent.id);
-    }
-  }, [aiAgent]);
+  const {chatData, page, isGetChatFetching, onChat, onGetChat} = useChatAIAgent();
 
-  useEffect(() => {
-    if (listCommand.length > 4) {
-      setCommands(listCommand.slice(0, 4));
-    } else {
-      setCommands(listCommand);
-    }
-  }, [listCommand]);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [data, setData] = useState<ChatResponse[]>([]);
+  const [message, setMessage] = useState<string>("");
 
-  const handleSendMsg = () => {
+  const handleSubmitMessage = () => {
     console.log("Send Message");
+    setMessage("");
   };
 
-  const handleClickCommand = () => {
-    console.log("Click Command");
-  };
+  const onLoadMoreChat = () => {
+    console.log("Load More Chat");
+  }
+
+  const handleMsgChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+  }
+
+  const handleClickCommand = (prompt: string) => {
+    setMessage(prompt);
+  }
+
+  useEffect(() => {
+      setData(chatData);
+  }, [chatData]);
+
+  useEffect(() => {
+    if (!isGetChatFetching) {
+      onGetChat({page: page});
+    }
+  }, [isGetChatFetching, onGetChat, page]);
 
   return (
     <Stack
@@ -45,30 +54,27 @@ export const Body = () => {
       spacing={3}
       width={"100%"}
     >
-      <Title />
-      <Stack
-        gap={2}
-        direction="row"
-        flexWrap="wrap"
-        width={commands.length === 0 ? "296px" : "100%"}
-      >
-        {commands.map((item) => (
-          <CommandButton
-            key={item.id}
-            icon={<></>}
-            label={item.name}
-            description={item.prompt}
-            onClick={handleClickCommand}
-          />
-        ))}
-        <AddCommandButton
-          width={commands.length % 2 === 0 ? "100%" : "calc(50% - 8px)"}
-        />
-      </Stack>
+      {chatData.length > 0 ? (
+          <MessageLayout>
+            <MessageList
+              mobileMode={isMobile}
+              isSubmitting={isSubmitting}
+              regenerateResponse={handleSubmitMessage}
+              onLoadMore={onLoadMoreChat}
+              chatData={chatData}
+              page={page}
+            />
+          </MessageLayout>
+        ) :
+        (
+          <EmptyMessage onClick={handleClickCommand} />
+        )}
       <Textarea
         placeholder={t("chatAIAgent.askMeAnything")}
         isCount={false}
-        onSend={handleSendMsg}
+        onSend={handleSubmitMessage}
+        value={message}
+        onChange={handleMsgChange}
       />
     </Stack>
   );

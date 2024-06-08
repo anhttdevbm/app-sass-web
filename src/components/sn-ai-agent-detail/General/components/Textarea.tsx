@@ -21,6 +21,7 @@ interface TextareaProps extends TextareaElementProps {
   isCount?: boolean;
   onSend?: () => void;
   containerStyle?: React.CSSProperties;
+  value?: string
 }
 
 const StyledTextarea = styled(TextareaAutosize)<TextareaProps>(({ label }) => ({
@@ -76,7 +77,7 @@ const StyledFooter = styled("div")({
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   function InnerTextarea(
-    { label, placeholder, isCount = true, onSend, containerStyle, ...props },
+    { label, placeholder, isCount = true, onSend, containerStyle, value, ...props },
     ref,
   ) {
     const t = useTranslations(NS_AI_AGENT);
@@ -127,6 +128,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           theme={theme}
           onChange={handleInputChange}
           label={label}
+          value={value}
         />
         {label && (
           <StyledLabel htmlFor={id} theme={theme}>
