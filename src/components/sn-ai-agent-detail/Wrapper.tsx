@@ -26,7 +26,7 @@ const WrapperAIAgentDetail = (
       px={{ xs: is1440Larger ? 0 : 2, xl: 0 }}
       pb={{ xs: 1, sm: 3 }}
       // flex={1}
-      height={`calc(100vh - ${HEADER_HEIGHT}px)`}
+      height={`calc(100vh - ${HEADER_HEIGHT}px - 16px)`}
       overflow="auto"
       bgcolor={
         isMdSmaller && !isDarkMode ? "transparent" : "background.default"
