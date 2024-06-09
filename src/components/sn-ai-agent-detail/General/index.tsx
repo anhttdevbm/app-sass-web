@@ -93,7 +93,7 @@ export const General = () => {
         ? toneList.map((item) => {
           return {
             label: item.name[locale],
-            value: item.id,
+            value: item.name["en"],
             icon: item.icon,
           };
         })
@@ -114,7 +114,6 @@ export const General = () => {
         setDescription(aiAgent.description || "");
         setTone(aiAgent.tone || "default");
       }
-
   }, [aiAgent]);
 
   return (

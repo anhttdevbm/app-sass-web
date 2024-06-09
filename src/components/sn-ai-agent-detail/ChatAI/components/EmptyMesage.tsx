@@ -29,7 +29,12 @@ export const EmptyMessage = ({ onClick }: EmptyMessageProps) => {
   }, [listCommand]);
 
   return (
-    <>
+    <Stack
+      spacing={"32px"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      width={"100%"}
+    >
       <Title />
       <Stack
         gap={2}
@@ -50,6 +55,6 @@ export const EmptyMessage = ({ onClick }: EmptyMessageProps) => {
           width={commands.length % 2 === 0 ? "100%" : "calc(50% - 8px)"}
         />
       </Stack>
-    </>
+    </Stack>
   )
 }

@@ -1,31 +1,50 @@
 import { Stack, useMediaQuery } from "@mui/material";
 import { Textarea } from "../General/components";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
 import { EmptyMessage } from "components/sn-ai-agent-detail/ChatAI/components/EmptyMesage";
 import { useEffect, useState } from "react";
 import { MessageLayout, MessageList } from "components/sn-ai-chat/components/BoxChat/components/Message";
 import { useChatAIAgent } from "store/chatAIAgent/selectors";
 import { ChatResponse } from "store/chatAIAgent/types";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { HEADER_HEIGHT } from "../../../layouts/Header";
+import { HEADER_HEIGHT_AGENT_CHAT } from "components/sn-ai-agent-detail/ChatAI/Header";
+import { File } from "store/aiChat/type";
 
 export const Body = () => {
   const t = useTranslations(NS_AI_AGENT);
-
+  const locale = useLocale();
   const isMobile = useMediaQuery("(max-width:600px)");
 
-  const {chatData, page, isGetChatFetching, onChat, onGetChat} = useChatAIAgent();
+  const {aiAgent} = useAIAgent();
+  const {chatData, page, isGetChatFetching, onChat, onGetChat, hasNextPage} = useChatAIAgent();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [data, setData] = useState<ChatResponse[]>([]);
   const [message, setMessage] = useState<string>("");
 
-  const handleSubmitMessage = () => {
-    console.log("Send Message");
+  const handleSubmitMessage = async (regenerateMessage?: string) => {
+    if (!message && !regenerateMessage) {
+      return;
+    }
+    setIsSubmitting(true);
+    if (aiAgent) {
+      await onChat({
+        tone: aiAgent.tone,
+        agentId: aiAgent.id,
+        user_prompt: regenerateMessage || message,
+        lang: locale,
+      });
+    }
     setMessage("");
+    setIsSubmitting(false);
   };
 
   const onLoadMoreChat = () => {
-    console.log("Load More Chat");
+    if (page > 1 && aiAgent) {
+      onGetChat({agentId: aiAgent.id, queries: {page}});
+    }
   }
 
   const handleMsgChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -36,33 +55,50 @@ export const Body = () => {
     setMessage(prompt);
   }
 
+  const handleEditUserMessage = async (editedMessage: string, files: File[]) => {
+    setIsSubmitting(true);
+    if (aiAgent) {
+      await onChat({
+        tone: aiAgent.tone,
+        agentId: aiAgent.id,
+        user_prompt: editedMessage,
+        lang: locale,
+        files,
+      });
+    }
+    setIsSubmitting(false);
+  }
+
   useEffect(() => {
       setData(chatData);
   }, [chatData]);
 
   useEffect(() => {
-    if (!isGetChatFetching) {
-      onGetChat({page: page});
+    if (aiAgent) {
+      onGetChat({agentId: aiAgent.id, queries: {page: 1}});
     }
-  }, [isGetChatFetching, onGetChat, page]);
+  }, [aiAgent]);
 
   return (
     <Stack
       padding={3}
       alignItems={"center"}
-      justifyContent={"space-between"}
+      justifyContent={"flex-end"}
+      direction={"column"}
       spacing={3}
       width={"100%"}
+      height={`calc(100vh - ${HEADER_HEIGHT}px - ${HEADER_HEIGHT_AGENT_CHAT}px)`}
     >
-      {chatData.length > 0 ? (
+      {data?.length > 0 ? (
           <MessageLayout>
             <MessageList
               mobileMode={isMobile}
               isSubmitting={isSubmitting}
               regenerateResponse={handleSubmitMessage}
               onLoadMore={onLoadMoreChat}
-              chatData={chatData}
-              page={page}
+              chatData={data}
+              page={hasNextPage}
+              onEditUserMessage={handleEditUserMessage}
             />
           </MessageLayout>
         ) :

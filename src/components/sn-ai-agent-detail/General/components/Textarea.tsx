@@ -105,6 +105,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       push(path);
     }
 
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        onSend && onSend();
+      }
+    };
+
     return (
       <Box
         sx={{
@@ -127,6 +134,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           placeholder={placeholder}
           theme={theme}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           label={label}
           value={value}
         />

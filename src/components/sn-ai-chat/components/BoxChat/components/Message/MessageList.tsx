@@ -4,14 +4,16 @@ import { Message } from "./Message";
 import { useTranslations } from "next-intl";
 import { NS_AI_CHAT } from "constant/index";
 import { useEffect, useRef } from "react";
+import { File } from "store/aiChat/type";
 
 interface MessageListProps {
   chatData: Partial<OpenAIChat>[];
   onLoadMore: () => void;
-  page?: number;
+  page?: number | boolean;
   regenerateResponse: (message: string) => void;
   mobileMode?: boolean;
   isSubmitting?: boolean;
+  onEditUserMessage: (editedMessage: string, files: File[]) => void;
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -21,12 +23,12 @@ export const MessageList: React.FC<MessageListProps> = ({
   regenerateResponse,
   mobileMode,
   isSubmitting,
+  onEditUserMessage,
 }) => {
   const t = useTranslations(NS_AI_CHAT);
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    console.log("scrolling to end")
     if (endOfMessagesRef.current) {
       setTimeout(() => {
         endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -53,6 +55,7 @@ export const MessageList: React.FC<MessageListProps> = ({
             key={index}
             message={message}
             regenerateResponse={regenerateResponse}
+            onEditUserMessage={onEditUserMessage}
           />
         );
       })}

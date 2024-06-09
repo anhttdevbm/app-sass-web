@@ -10,24 +10,26 @@ import { useLocale } from "next-intl";
 import Image from "next/image";
 import AIIcon from "public/images/ic-ai-chat.svg";
 import { useEffect, useState } from "react";
-import { useChatWithAI } from "store/aiChat/selectors";
 import { OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
 import { FileItem } from "components/sn-ai-chat/components/BoxChat/components/Message/FileItem";
 import parse, { domToReact, HTMLReactParserOptions } from 'html-react-parser';
+import { File } from "store/aiChat/type";
 
 interface MessageProps {
   message: Partial<OpenAIChat>;
   regenerateResponse: (message: string) => void;
   mobileMode?: boolean;
+  onEditUserMessage: (editedMessage: string, files: File[]) => void;
 }
 
 export const Message: React.FC<MessageProps> = ({
   message,
   regenerateResponse,
   mobileMode,
+  onEditUserMessage,
 }) => {
   const { user_prompt, assistant_content, id } = message;
 
@@ -40,7 +42,6 @@ export const Message: React.FC<MessageProps> = ({
   const [editedMessage, setEditedMessage] = useState<string | undefined>(
     user_prompt,
   );
-  const { onChatWithAI } = useChatWithAI();
 
   const isMobile = useMediaQuery("(max-width: 600px)") || mobileMode;
 
@@ -91,24 +92,17 @@ export const Message: React.FC<MessageProps> = ({
     setIsEditing(false);
   }
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       setIsEditing(false);
       if (editedMessage !== user_prompt) {
-        onChatWithAI({
-          user_prompt: editedMessage as string,
-          lang: locale,
-          tone: message.tone as string,
-          persona: message.persona as string,
-          chat_session: message.chat_session,
-          ...(message.files && { files: message.files })
-        });
+        onEditUserMessage(editedMessage as string, message.files || []);
       }
       setEditedMessage("");
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEditedMessage(event.target.value);
   };
 

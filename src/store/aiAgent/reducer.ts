@@ -43,57 +43,59 @@ const aiAgentSlice = createSlice({
     },
     setAgent: (state, action: PayloadAction<AIAgent>) => {
       state.aiAgent = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
-    // Delete ai agent
-    builder.addCase(deleteAgent.pending, (state) => {
-      state.deleteAgentStatus = DataStatus.LOADING;
-    });
-    builder.addCase(deleteAgent.fulfilled, (state) => {
-      state.deleteAgentStatus = DataStatus.SUCCEEDED;
-    });
-    builder.addCase(deleteAgent.rejected, (state) => {
-      state.deleteAgentStatus = DataStatus.FAILED;
-    });
+    builder
 
-    // Create ai agent
-    builder.addCase(createAgent.pending, (state) => {
-      state.createAgentStatus = DataStatus.LOADING;
-    });
-    builder.addCase(createAgent.fulfilled, (state) => {
-      state.createAgentStatus = DataStatus.SUCCEEDED;
-    });
-    builder.addCase(createAgent.rejected, (state) => {
-      state.createAgentStatus = DataStatus.FAILED;
-    });
+      // Delete ai agent
+      .addCase(deleteAgent.pending, (state) => {
+        state.deleteAgentStatus = DataStatus.LOADING;
+      })
+      .addCase(deleteAgent.fulfilled, (state) => {
+        state.deleteAgentStatus = DataStatus.SUCCEEDED;
+      })
+      .addCase(deleteAgent.rejected, (state) => {
+        state.deleteAgentStatus = DataStatus.FAILED;
+      })
 
-    // Update ai agent
-    builder.addCase(updateAgent.pending, (state) => {
-      state.updateAgentStatus = DataStatus.LOADING;
-    });
-    builder.addCase(updateAgent.fulfilled, (state, action: PayloadAction<AIAgent>) => {
-      state.updateAgentStatus = DataStatus.SUCCEEDED;
-    });
-    builder.addCase(updateAgent.rejected, (state) => {
-      state.updateAgentStatus = DataStatus.FAILED;
-    });
+      // Create ai agent
+      .addCase(createAgent.pending, (state) => {
+        state.createAgentStatus = DataStatus.LOADING;
+      })
+      .addCase(createAgent.fulfilled, (state) => {
+        state.createAgentStatus = DataStatus.SUCCEEDED;
+      })
+      .addCase(createAgent.rejected, (state) => {
+        state.createAgentStatus = DataStatus.FAILED;
+      })
 
-    //Manage source
-    builder.addCase(addSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
-      state.listKnowledge.push(payload.payload);
-    });
-    builder.addCase(deleteSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
-      state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== payload.payload.id);
-    });
+      // Update ai agent
+      .addCase(updateAgent.pending, (state) => {
+        state.updateAgentStatus = DataStatus.LOADING;
+      })
+      .addCase(updateAgent.fulfilled, (state, action: PayloadAction<AIAgent>) => {
+        state.updateAgentStatus = DataStatus.SUCCEEDED;
+      })
+      .addCase(updateAgent.rejected, (state) => {
+        state.updateAgentStatus = DataStatus.FAILED;
+      })
 
-    // Manage command
-    builder.addCase(getCommands.fulfilled, (state, action: PayloadAction<Command[]>) => {
-      state.listCommand = action.payload;
-    });
-    builder.addCase(createCommand.fulfilled, (state, action: PayloadAction<Command>) => {
-      state.listCommand.push(action.payload);
-    });
+      //Manage source
+      .addCase(addSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
+        state.listKnowledge.push(payload.payload);
+      })
+      .addCase(deleteSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
+        state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== payload.payload.id);
+      })
+
+      // Manage command
+      .addCase(getCommands.fulfilled, (state, action: PayloadAction<Command[]>) => {
+        state.listCommand = action.payload;
+      })
+      .addCase(createCommand.fulfilled, (state, action: PayloadAction<Command>) => {
+        state.listCommand.push(action.payload);
+      });
   },
 });
 
