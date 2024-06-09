@@ -226,6 +226,17 @@ const CostRateForm = ({
         </Grid>
 
         <Grid item xs={12}>
+          <Stack>
+            <Text
+              fontSize="13px"
+              fontWeight={500}
+              color="#4D4D4D"
+              pl="20px"
+              pb="8px"
+            >
+              {costRateT("form.workingHours")}
+            </Text>
+          </Stack>
           <Stack
             direction="row"
             sx={{
