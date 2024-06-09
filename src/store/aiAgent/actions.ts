@@ -30,6 +30,25 @@ export const getAgents = createAsyncThunk(
   },
 );
 
+export const getAgent = createAsyncThunk(
+  "aiAgent/getAgent",
+  async (id: string) => {
+    try {
+      const response = await client.get(
+        `${Endpoint.AI_AGENT}/${id}/detail`, undefined,{baseURL: AI_AGENT_API_URL}
+      )
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const deleteAgent = createAsyncThunk(
   "aiAgent/deleteAgent",
   async (id: string) => {
@@ -193,6 +212,6 @@ export const getCommands = createAsyncThunk(
   },
 );
 
-export const getAgent = createAction<string>("aiAgent/getAgent");
-
 export const setAgents = createAction<GetAIAgentsPayload>("aiAgent/setAgents");
+
+export const setAgent = createAction<AIAgent>("aiAgent/setAgent");

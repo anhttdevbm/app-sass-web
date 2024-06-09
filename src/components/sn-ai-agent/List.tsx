@@ -163,7 +163,7 @@ const AgentList = () => {
         ))}
       </TableLayout>
       <Pagination
-        totalItems={totalPages}
+        totalItems={totalAIAgents}
         totalPages={totalPages}
         page={page}
         pageSize={limit}

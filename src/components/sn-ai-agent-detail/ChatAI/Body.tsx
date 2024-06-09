@@ -1,72 +1,116 @@
-import { Stack } from "@mui/material";
-import { Title } from "./components/Title";
-import { AddCommandButton } from "./components/AddCommandButton";
+import { Stack, useMediaQuery } from "@mui/material";
 import { Textarea } from "../General/components";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
-import { CommandButton } from "./components/CommandButton";
-
-const ListCommands = [
-  {
-    id: "1",
-    name: "Hello",
-    description: "Hi there!",
-  },
-  {
-    id: "2",
-    name: "How are you?",
-    description: "I'm good, thank you!",
-  },
-  // {
-  //   id: "3",
-  //   name: "What's your name?",
-  //   description: "I'm AI Agent.",
-  // },
-];
+import { EmptyMessage } from "components/sn-ai-agent-detail/ChatAI/components/EmptyMesage";
+import { useEffect, useState } from "react";
+import { MessageLayout, MessageList } from "components/sn-ai-chat/components/BoxChat/components/Message";
+import { useChatAIAgent } from "store/chatAIAgent/selectors";
+import { ChatResponse } from "store/chatAIAgent/types";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { HEADER_HEIGHT } from "../../../layouts/Header";
+import { HEADER_HEIGHT_AGENT_CHAT } from "components/sn-ai-agent-detail/ChatAI/Header";
+import { File } from "store/aiChat/type";
 
 export const Body = () => {
   const t = useTranslations(NS_AI_AGENT);
+  const locale = useLocale();
+  const isMobile = useMediaQuery("(max-width:600px)");
 
-  const handleSendMsg = () => {
-    console.log("Send Message");
+  const {aiAgent} = useAIAgent();
+  const {chatData, page, isGetChatFetching, onChat, onGetChat, hasNextPage} = useChatAIAgent();
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [data, setData] = useState<ChatResponse[]>([]);
+  const [message, setMessage] = useState<string>("");
+
+  const handleSubmitMessage = async (regenerateMessage?: string) => {
+    if (!message && !regenerateMessage) {
+      return;
+    }
+    setIsSubmitting(true);
+    if (aiAgent) {
+      await onChat({
+        tone: aiAgent.tone,
+        agentId: aiAgent.id,
+        user_prompt: regenerateMessage || message,
+        lang: locale,
+      });
+    }
+    setMessage("");
+    setIsSubmitting(false);
   };
 
-  const handleClickCommand = () => {
-    console.log("Click Command");
-  };
+  const onLoadMoreChat = () => {
+    if (page > 1 && aiAgent) {
+      onGetChat({agentId: aiAgent.id, queries: {page}});
+    }
+  }
+
+  const handleMsgChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+  }
+
+  const handleClickCommand = (prompt: string) => {
+    setMessage(prompt);
+  }
+
+  const handleEditUserMessage = async (editedMessage: string, files: File[]) => {
+    setIsSubmitting(true);
+    if (aiAgent) {
+      await onChat({
+        tone: aiAgent.tone,
+        agentId: aiAgent.id,
+        user_prompt: editedMessage,
+        lang: locale,
+        files,
+      });
+    }
+    setIsSubmitting(false);
+  }
+
+  useEffect(() => {
+      setData(chatData);
+  }, [chatData]);
+
+  useEffect(() => {
+    if (aiAgent) {
+      onGetChat({agentId: aiAgent.id, queries: {page: 1}});
+    }
+  }, [aiAgent]);
 
   return (
     <Stack
       padding={3}
       alignItems={"center"}
-      justifyContent={"space-between"}
+      justifyContent={"flex-end"}
+      direction={"column"}
       spacing={3}
       width={"100%"}
+      height={`calc(100vh - ${HEADER_HEIGHT}px - ${HEADER_HEIGHT_AGENT_CHAT}px)`}
     >
-      <Title />
-      <Stack
-        gap={2}
-        direction="row"
-        flexWrap="wrap"
-        width={ListCommands.length === 0 ? "296px" : "100%"}
-      >
-        {ListCommands.map((item) => (
-          <CommandButton
-            key={item.id}
-            icon={<></>}
-            label={item.name}
-            description={item.description}
-            onClick={handleClickCommand}
-          />
-        ))}
-        <AddCommandButton
-          width={ListCommands.length % 2 === 0 ? "100%" : "calc(50% - 8px)"}
-        />
-      </Stack>
+      {data?.length > 0 ? (
+          <MessageLayout>
+            <MessageList
+              mobileMode={isMobile}
+              isSubmitting={isSubmitting}
+              regenerateResponse={handleSubmitMessage}
+              onLoadMore={onLoadMoreChat}
+              chatData={data}
+              page={hasNextPage}
+              onEditUserMessage={handleEditUserMessage}
+            />
+          </MessageLayout>
+        ) :
+        (
+          <EmptyMessage onClick={handleClickCommand} />
+        )}
       <Textarea
         placeholder={t("chatAIAgent.askMeAnything")}
         isCount={false}
-        onSend={handleSendMsg}
+        onSend={handleSubmitMessage}
+        value={message}
+        onChange={handleMsgChange}
       />
     </Stack>
   );

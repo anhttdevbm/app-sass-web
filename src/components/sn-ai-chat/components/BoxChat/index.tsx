@@ -260,6 +260,17 @@ export const BoxChat: React.FC<BoxChatProps> = ({
     sendChat();
   }, [newChatSessionCreated]);
 
+  const handleEditUserMessage = (editedMessage: string, files: File[]) => {
+    onChatWithAI({
+      user_prompt: editedMessage,
+      lang: locale,
+      tone,
+      persona,
+      chat_session: chatSession,
+      files,
+    });
+  }
+
   useEffect(() => {
     setShowPersonaError(false);
   }, [persona]);
@@ -327,6 +338,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
             onLoadMore={onLoadMoreOpenAIChat}
             chatData={chatData}
             page={openAIChatFilters?.page}
+            onEditUserMessage={handleEditUserMessage}
           />
         </MessageLayout>
       ) : (

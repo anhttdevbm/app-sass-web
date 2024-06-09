@@ -200,7 +200,7 @@ export const AddSource = () => {
   );
 };
 
-const isValidUrl = (url: string): boolean => {
+export const isValidUrl = (url: string): boolean => {
   const pattern = new RegExp("^(https?:\\/\\/)?" + // protocol
     "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|"+ // domain name
     '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
@@ -210,7 +210,7 @@ const isValidUrl = (url: string): boolean => {
   return pattern.test(url);
 }
 
-const isValidYoutubeUrl = (url: string): boolean => {
+export const isValidYoutubeUrl = (url: string): boolean => {
   const pattern = new RegExp('^(https?\\:\\/\\/)?(www\\.youtube\\.com|youtu\\.?be)\\/.+$','i');
   return pattern.test(url);
 }

@@ -2,17 +2,24 @@ import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   AddSourceInput,
-  CreateAIAgentPayload, CreateCommandInput,
+  CreateAIAgentPayload,
+  CreateCommandInput,
   DeleteSourceInput,
-  GetAIAgentListQueries, GetAIAgentsPayload,
+  GetAIAgentListQueries,
+  GetAIAgentsPayload,
   UpdateAIAgentPayload,
 } from "./types";
 import {
   addSource,
-  createAgent, createCommand,
-  deleteAgent, deleteSource,
+  createAgent,
+  createCommand,
+  deleteAgent,
+  deleteSource,
   getAgent,
-  getAgents, getAvatarLink, getCommands,
+  getAgents,
+  getAvatarLink,
+  getCommands,
+  setAgent,
   setAgents,
   updateAgent,
   uploadFile,
@@ -45,7 +52,7 @@ export const useAIAgent = () => {
   const onGetAgents = useCallback(async (queries: GetAIAgentListQueries) => {
     const action = await dispatch(getAgents(queries)) as PayloadAction<GetAIAgentsPayload>;
 
-    const { data, page, size, total_page } = action.payload || { data: [], page: 0, size: 0, total_page: 0 };
+    const { data, page, size, total_page , total_agents} = action.payload || { data: [], page: 0, size: 0, total_page: 0 };
 
     const agents = await Promise.all(data.map(async (agent) => {
       if (agent.avatar) {
@@ -57,12 +64,20 @@ export const useAIAgent = () => {
       return agent;
     }));
 
-    dispatch(setAgents({data: agents, page, size, total_page}));
+    dispatch(setAgents({data: agents, page, size, total_page, total_agents}));
   }, [dispatch]);
 
-  const onGetAgent = (id: string) => {
-    dispatch(getAgent(id));
-  };
+  const onGetAgent = useCallback(async (id: string) => {
+    const result = await dispatch(getAgent(id));
+
+    if (result.payload?.avatar) {
+      const avatar = await dispatch(getAvatarLink(result.payload.avatar));
+      if (avatar.payload) {
+        result.payload.avatar = avatar.payload[0].link;
+      }
+    }
+    dispatch(setAgent(result.payload));
+  }, [dispatch]);
 
   const onDeleteAgent = useCallback((id: string) => {
     dispatch(deleteAgent(id));
@@ -129,6 +144,6 @@ export const useAIAgent = () => {
 
     isDeletingAgent,
     isCreatingAgent,
-    isUpdatingAgent,
+    isUpdatingAgent
   };
 };

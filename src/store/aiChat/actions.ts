@@ -1,13 +1,11 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { Endpoint, client } from "api";
+import { client, Endpoint } from "api";
 import { HttpStatusCode } from "constant/enums";
 import { AI_CHAT_API_URL, AN_ERROR_TRY_AGAIN } from "constant/index";
 import { serverQueries } from "utils/index";
-import { serialize } from "v8";
 import {
   ChatSessionData,
   ChatWithAIData,
-  DeleteAllChatSessionQueries,
   GetChatSessionsQueries,
   GetExamplePromptQueries,
   GetOpenAIChatQueries,

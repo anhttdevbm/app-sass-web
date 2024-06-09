@@ -21,6 +21,7 @@ interface TextareaProps extends TextareaElementProps {
   isCount?: boolean;
   onSend?: () => void;
   containerStyle?: React.CSSProperties;
+  value?: string
 }
 
 const StyledTextarea = styled(TextareaAutosize)<TextareaProps>(({ label }) => ({
@@ -76,7 +77,7 @@ const StyledFooter = styled("div")({
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   function InnerTextarea(
-    { label, placeholder, isCount = true, onSend, containerStyle, ...props },
+    { label, placeholder, isCount = true, onSend, containerStyle, value, ...props },
     ref,
   ) {
     const t = useTranslations(NS_AI_AGENT);
@@ -104,6 +105,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       push(path);
     }
 
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        onSend && onSend();
+      }
+    };
+
     return (
       <Box
         sx={{
@@ -126,7 +134,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           placeholder={placeholder}
           theme={theme}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           label={label}
+          value={value}
         />
         {label && (
           <StyledLabel htmlFor={id} theme={theme}>
@@ -138,11 +148,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             type="gradient"
             text={t("general.viewPrompts")}
             icon={MagicPenIcon}
-            style={{ padding: "8px 16px" }}
+            style={{ padding: "8px 8px" }}
             onClick={handleViewPrompts}
           />
           {onSend && (
-            <IconButton onClick={onSend} style={{ padding: "8px 16px" }}>
+            <IconButton onClick={onSend} style={{ padding: "8px 8px" }}>
               <SendGradientIcon fill={"#3699FF"} />
             </IconButton>
           )}

@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { getPath } from "utils/index";
 import { AI_AGENT_GENERAL_PATH } from "constant/paths";
 
+export const HEADER_HEIGHT_AGENT_CHAT = 72;
+
 interface HeaderProps {
   id: string;
   title: string;
@@ -36,6 +38,7 @@ export const Header = ({ id, title, avatar }: HeaderProps) => {
       justifyContent={"space-between"}
       border={"1px solid"}
       borderColor={"grey.100"}
+      height={`${HEADER_HEIGHT_AGENT_CHAT}px`}
     >
       <Stack direction="row" alignItems="center" spacing={1}>
         <Avatar src={avatar || ImgPlaceholderAgent} size={24} />

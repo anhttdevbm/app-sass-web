@@ -2,6 +2,10 @@ import { Button } from "@mui/material";
 import { NS_AI_AGENT } from "constant/index";
 import PlusFillIcon from "icons/PlusFillIcon";
 import { useTranslations } from "next-intl";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { AI_AGENT_COMMANDS_PATH } from "constant/paths";
+import { getPath } from "utils/index";
+import { useRouter } from "next/navigation";
 
 interface AddCommandButtonProps {
   width?: string;
@@ -10,8 +14,13 @@ interface AddCommandButtonProps {
 export const AddCommandButton = ({ width }: AddCommandButtonProps) => {
   const t = useTranslations(NS_AI_AGENT);
 
+  const {aiAgent} = useAIAgent();
+
+  const router = useRouter();
+
   const handleAddCommand = () => {
-    console.log("Add Command");
+    const path = getPath(AI_AGENT_COMMANDS_PATH, undefined, {id: aiAgent?.id as string});
+    router.push(path);
   };
 
   return (

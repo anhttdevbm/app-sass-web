@@ -13,8 +13,9 @@ import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 import { Textarea } from "./components";
 import { Select } from "./components/Select";
 import { useChatWithAI } from "store/aiChat/selectors";
-import { AIAgent, UpdateAIAgentPayload } from "store/aiAgent/types";
+import { UpdateAIAgentPayload } from "store/aiAgent/types";
 import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
+import { isValidUrl } from "components/sn-ai-agent-detail/Knowledge/components";
 
 export const General = () => {
   const theme = useTheme();
@@ -92,7 +93,7 @@ export const General = () => {
         ? toneList.map((item) => {
           return {
             label: item.name[locale],
-            value: item.id,
+            value: item.name["en"],
             icon: item.icon,
           };
         })
@@ -106,7 +107,9 @@ export const General = () => {
 
   useEffect(() => {
       if (aiAgent) {
-        setImage(aiAgent.avatar || null);
+        if (aiAgent.avatar) {
+          setImage(aiAgent.avatar);
+        }
         setName(aiAgent.name);
         setDescription(aiAgent.description || "");
         setTone(aiAgent.tone || "default");

@@ -25,7 +25,7 @@ const AIAgentChatLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
   useEffect(() => {
     if (!id) return;
     onGetAgent(id);
-  }, [id, onGetAgent]);
+  }, [id]);
 
   useEffect(() => {
     dataStringifyRef.current = JSON.stringify({
@@ -60,7 +60,7 @@ const AIAgentChatLayout = ({ children, id }: AIAgentDetailLayoutProps) => {
         key: undefined,
       });
     };
-  }, [commonT, aiAgent?.name, onUpdateHeaderConfig, aiAgentT]);
+  }, [aiAgent]);
 
   return (
     <Stack

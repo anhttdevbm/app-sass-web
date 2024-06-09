@@ -223,4 +223,5 @@ export const Endpoint = {
   AI_AGENT_DELETE_SOURCE: "/agent/:agentID/delete-source-knowledge/:knowledgeId",
   AI_AGENT_CREATE_COMMAND: "/agent/create-command",
   AI_AGENT_GET_COMMAND: "/agent/:agentId/commands",
+  AI_AGENT_CHAT: "/agent/chat",
 };

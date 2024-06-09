@@ -40,7 +40,7 @@ export const Commands = () => {
 
   return (
    <>
-     <Stack flex={1} direction={"column"} spacing={3} padding={4} height={"100%"}>
+     <Stack flex={1} direction={"column"} spacing={3} padding={4} height={"83%"}>
        <TitleTab
          title={t("commands.title")}
          description={t("commands.description")}

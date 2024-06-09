@@ -12,7 +12,7 @@ interface ListCommandProps {
 
 export const ListCommand = ({ list }: ListCommandProps) => {
   return (
-    <>
+    <Box overflow={"auto"} height={"100%"}>
       {list.length > 0 &&
         list.map((command, index) => {
           const listOptions = {
@@ -35,7 +35,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             useKnowledge: {
               icon: (
                 <KnowledgeIcon
-                   style={{color: command.knowledge ? "#43BC6A" : "#3333"}}
+                  style={{color: command.knowledge ? "#43BC6A" : "#3333"}}
                 />
               ),
               name: "Use Knowledge",
@@ -48,6 +48,7 @@ export const ListCommand = ({ list }: ListCommandProps) => {
                 position: "relative",
                 borderRadius: "1em",
                 overflow: "hidden",
+                marginBottom: "16px",
                 "&::before": {
                   content: '""',
                   position: "absolute",
@@ -71,10 +72,23 @@ export const ListCommand = ({ list }: ListCommandProps) => {
                   backgroundColor: "background.default",
                 }}
               >
-                <Text fontSize={"13px"} fontWeight={600}>
+                <Text
+                  fontSize={"13px"}
+                  fontWeight={600}
+                  whiteSpace={"nowrap"}
+                  overflow={"hidden"}
+                  textOverflow={"ellipsis"}
+                >
                   {command.name}
                 </Text>
-                <Text fontSize={"13px"} fontWeight={400} color={"grey.300"}>
+                <Text
+                  fontSize={"13px"}
+                  fontWeight={400}
+                  color={"grey.300"}
+                  whiteSpace={"nowrap"}
+                  overflow={"hidden"}
+                  textOverflow={"ellipsis"}
+                >
                   {command.prompt}
                 </Text>
                 <Stack direction={"row"} spacing={"4px"}>
@@ -105,6 +119,6 @@ export const ListCommand = ({ list }: ListCommandProps) => {
             </Box>
           );
         })}
-    </>
+    </Box>
   );
 };
