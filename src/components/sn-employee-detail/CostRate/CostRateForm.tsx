@@ -163,10 +163,10 @@ const CostRateForm = ({
     <>
       <Grid
         container
-        columnSpacing={3}
+        columnSpacing={2}
         rowSpacing={{
-          xs: 2,
-          sm: 3,
+          xs: 1,
+          sm: 2,
         }}
         pb={3}
         component="form"
@@ -239,7 +239,7 @@ const CostRateForm = ({
             {daysOfWeekKeys.map((day) => (
               <WorkingHoursBlock
                 key={day}
-                title={costRateT(`form.${day}`)}
+                title={costRateT(`form.${day.toLowerCase()}`)}
                 fullWidth
                 name={`working_hours.${day}`}
                 onChange={formik.handleChange}
@@ -438,8 +438,8 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
         py: "7px",
         flexDirection: "column",
         flex: "0 0 129px",
-        width: "129px",
-        height: "146px",
+        // width: "129px",
+        // height: "146px",
         alignItems: "center",
         justifyContent: "space-between",
         borderRadius: "12px",
@@ -455,7 +455,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
       <MuiInputLabel sx={{ display: "none" }}>{title}</MuiInputLabel>
       <Text
         sx={{
-          fontSize: "20px",
+          fontSize: "18px",
           fontWeight: 600,
           color: "#4D4D4D",
           textTransform: "uppercase",
@@ -473,7 +473,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
         error={error}
         sx={{
           backgroundColor: "transparent",
-          fontSize: "39px",
+          fontSize: "36px",
           fontWeight: 600,
           color: value === 0 ? "#4D4D4D" : "#0575E6",
           width: "1ch",
@@ -486,7 +486,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
       />
       <Text
         sx={{
-          fontSize: "20px",
+          fontSize: "18px",
           fontWeight: 600,
           color: "#4D4D4D",
           textAlign: "center",
