@@ -520,24 +520,25 @@ const NoteInput = memo(function NoteInput({
       >
         <MuiInputLabel
           htmlFor={`cost-rate-${name}`}
-          sx={{
-            px: 4,
-            pt: 2,
-            pb: 1,
-            position: "static",
-            maxWidth: "initial",
-            color: "#333333",
-            fontSize: 20,
-            fontWeight: 600,
-            transform: "initial",
-            transition: "initial",
-            "&.Mui-focused": {
+          sx={[
+            {
+              position: "absolute",
+              top: "16px",
+              left: "32px",
+              maxWidth: "initial",
               color: "#333333",
+              fontSize: 20,
+              fontWeight: 600,
+              transform: "initial",
+              transition: "initial",
+              "&.Mui-focused": {
+                color: "#333333",
+              },
+              "&+.MuiInputBase-root": {
+                mt: 0,
+              },
             },
-            "&+.MuiInputBase-root": {
-              mt: 0,
-            },
-          }}
+          ]}
         >
           {title}
         </MuiInputLabel>
@@ -549,17 +550,20 @@ const NoteInput = memo(function NoteInput({
           onBlur={onBlur}
           value={value}
           error={error}
-          sx={{
-            px: 4,
-            pb: 2,
-            mt: 0,
-            "&:before": {
-              display: "none",
+          sx={[
+            {
+              px: 4,
+              pb: 2,
+              pt: 6,
+              mt: 0,
+              "&:before": {
+                display: "none",
+              },
+              "&:after": {
+                display: "none",
+              },
             },
-            "&:after": {
-              display: "none",
-            },
-          }}
+          ]}
         />
       </FormControl>
     </>
