@@ -47,22 +47,19 @@ export type CostRateResponse = {
   total_days: number;
   total_working_days: number;
   current_working_days: number;
+  cost_per_hours: number;
   created_time: string;
   created_by: string;
   is_active: boolean;
   user_id: string;
 };
 
-export type CostRateTransient = {
-  remaining_hours?: number;
-  remaining_days?: number;
-  cost_per_hour?: number;
-};
+// export type CostRateTransient = {
+//   remaining_hours?: number;
+//   remaining_days?: number;
+// };
 
-export type CostRate = BaseCostRate &
-  CostRateOptional &
-  CostRateResponse &
-  CostRateTransient;
+export type CostRate = BaseCostRate & CostRateOptional & CostRateResponse;
 
 export interface Employee extends User {
   created_time: string;

@@ -188,7 +188,7 @@ const CostRateTable = ({
                 )}
               </BodyCell>
               <BodyCell>{item.cost_per_month}</BodyCell>
-              <BodyCell>{item.cost_per_hour ?? "--"}</BodyCell>
+              <BodyCell>{item.cost_per_hours ?? "--"}</BodyCell>
               <BodyCell>{item.total_hours}</BodyCell>
               <BodyCell>{item.note ?? "--"}</BodyCell>
               <ActionsCell

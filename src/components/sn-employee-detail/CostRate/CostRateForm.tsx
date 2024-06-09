@@ -163,10 +163,10 @@ const CostRateForm = ({
     <>
       <Grid
         container
-        columnSpacing={3}
+        columnSpacing={2}
         rowSpacing={{
-          xs: 2,
-          sm: 3,
+          xs: 1,
+          sm: 2,
         }}
         pb={3}
         component="form"
@@ -226,6 +226,17 @@ const CostRateForm = ({
         </Grid>
 
         <Grid item xs={12}>
+          <Stack>
+            <Text
+              fontSize="13px"
+              fontWeight={500}
+              color="#4D4D4D"
+              pl="20px"
+              pb="8px"
+            >
+              {costRateT("form.workingHours")}
+            </Text>
+          </Stack>
           <Stack
             direction="row"
             sx={{
@@ -239,7 +250,7 @@ const CostRateForm = ({
             {daysOfWeekKeys.map((day) => (
               <WorkingHoursBlock
                 key={day}
-                title={costRateT(`form.${day}`)}
+                title={costRateT(`form.${day.toLowerCase()}`)}
                 fullWidth
                 name={`working_hours.${day}`}
                 onChange={formik.handleChange}
@@ -438,8 +449,8 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
         py: "7px",
         flexDirection: "column",
         flex: "0 0 129px",
-        width: "129px",
-        height: "146px",
+        // width: "129px",
+        // height: "146px",
         alignItems: "center",
         justifyContent: "space-between",
         borderRadius: "12px",
@@ -455,7 +466,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
       <MuiInputLabel sx={{ display: "none" }}>{title}</MuiInputLabel>
       <Text
         sx={{
-          fontSize: "20px",
+          fontSize: "18px",
           fontWeight: 600,
           color: "#4D4D4D",
           textTransform: "uppercase",
@@ -473,7 +484,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
         error={error}
         sx={{
           backgroundColor: "transparent",
-          fontSize: "39px",
+          fontSize: "36px",
           fontWeight: 600,
           color: value === 0 ? "#4D4D4D" : "#0575E6",
           width: "1ch",
@@ -486,7 +497,7 @@ const WorkingHoursBlock = memo(function WorkingHoursBlock({
       />
       <Text
         sx={{
-          fontSize: "20px",
+          fontSize: "18px",
           fontWeight: 600,
           color: "#4D4D4D",
           textAlign: "center",
@@ -520,24 +531,25 @@ const NoteInput = memo(function NoteInput({
       >
         <MuiInputLabel
           htmlFor={`cost-rate-${name}`}
-          sx={{
-            px: 4,
-            pt: 2,
-            pb: 1,
-            position: "static",
-            maxWidth: "initial",
-            color: "#333333",
-            fontSize: 20,
-            fontWeight: 600,
-            transform: "initial",
-            transition: "initial",
-            "&.Mui-focused": {
+          sx={[
+            {
+              position: "absolute",
+              top: "16px",
+              left: "32px",
+              maxWidth: "initial",
               color: "#333333",
+              fontSize: 20,
+              fontWeight: 600,
+              transform: "initial",
+              transition: "initial",
+              "&.Mui-focused": {
+                color: "#333333",
+              },
+              "&+.MuiInputBase-root": {
+                mt: 0,
+              },
             },
-            "&+.MuiInputBase-root": {
-              mt: 0,
-            },
-          }}
+          ]}
         >
           {title}
         </MuiInputLabel>
@@ -549,17 +561,20 @@ const NoteInput = memo(function NoteInput({
           onBlur={onBlur}
           value={value}
           error={error}
-          sx={{
-            px: 4,
-            pb: 2,
-            mt: 0,
-            "&:before": {
-              display: "none",
+          sx={[
+            {
+              px: 4,
+              pb: 2,
+              pt: 6,
+              mt: 0,
+              "&:before": {
+                display: "none",
+              },
+              "&:after": {
+                display: "none",
+              },
             },
-            "&:after": {
-              display: "none",
-            },
-          }}
+          ]}
         />
       </FormControl>
     </>

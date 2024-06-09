@@ -20,8 +20,9 @@ import _ from "lodash";
 
 import { Permission } from "constant/enums";
 import { NS_COMMON, NS_COST_RATE } from "constant/index";
-import { Text } from "components/shared";
+import { NewButton as Button, Text } from "components/shared";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
+import AddCircleIcon from "icons/AddCircleIcon";
 import CalendarIcon from "icons/CalendarIcon";
 import ProcessRing from "../components/ProcessRing";
 import useToggle from "hooks/useToggle";
@@ -88,28 +89,23 @@ const CostRateInfo = () => {
     } else {
       const startDate = dayjs(selectCurrentCostRate.start_date).startOf("day");
       const endDate = dayjs(selectCurrentCostRate.end_date).startOf("day");
-      let tmpDate = today.add(-1, "day");
-      while (
-        !tmpDate.isBefore(today.add(-4, "day")) &&
-        !tmpDate.isBefore(startDate)
-      ) {
-        tmpDate = tmpDate.add(-1, "day");
-      }
-      while (
-        !tmpDate.isAfter(today.add(4, "day")) &&
-        !tmpDate.isAfter(endDate)
-      ) {
+      let dateIter = dayjs(startDate);
+      while (!dateIter.isAfter(endDate)) {
+        const weekdays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
         const hours =
-          selectCurrentCostRate.working_hours[(tmpDate.day() + 6) % 7];
+          selectCurrentCostRate.working_hours[
+            weekdays[(dateIter.day() + 6) % 7]
+          ];
         data.push({
-          label: tmpDate.format(dateFormat),
-          data: hours * (selectCurrentCostRate.cost_per_hour ?? 0),
+          label: dateIter.format(dateFormat),
+          data: hours * (selectCurrentCostRate.cost_per_hours ?? 0),
         });
-        tmpDate = tmpDate.add(1, "day");
+        dateIter = dateIter.add(1, "day");
       }
     }
     return data;
   }, [selectCurrentCostRate]);
+
   const chartData = useMemo(
     () => ({
       labels: chartCostData.map((i) => i.label),
@@ -132,6 +128,7 @@ const CostRateInfo = () => {
     }),
     [chartCostData],
   );
+
   const chartOptions = useMemo(
     () => ({
       responsive: true,
@@ -156,6 +153,7 @@ const CostRateInfo = () => {
     }),
     [],
   );
+
   ChartJS.register(
     LineElement,
     PointElement,
@@ -188,17 +186,32 @@ const CostRateInfo = () => {
         },
       }}
     >
-      <Text
-        fontSize={{
-          xs: 20,
-          sm: 22,
-        }}
-        fontWeight={600}
-        variant="h3"
-        color="grey.800"
-      >
-        {costRateT("info.currentCostRate")}
-      </Text>
+      <Stack direction="row" alignItems="center">
+        <Text
+          fontSize={{
+            xs: 20,
+            sm: 22,
+          }}
+          fontWeight={600}
+          variant="h3"
+          color="grey.800"
+        >
+          {costRateT("info.currentCostRate")}
+        </Text>
+        <Button
+          variant="primary"
+          size="medium"
+          sx={{
+            ml: 3,
+          }}
+          startIcon={<AddCircleIcon />}
+          onClick={() => {
+            handleItemEdit("");
+          }}
+        >
+          {costRateT("empty.addCostRate")}
+        </Button>
+      </Stack>
 
       <Grid container mt={5} spacing={3}>
         <Grid item container xs={12} md={8}>
@@ -210,15 +223,18 @@ const CostRateInfo = () => {
           <Stack direction="column" alignItems="center">
             <ProcessRing
               size={240}
-              percentage={Math.round(
-                (((selectCurrentCostRate?.total_days ?? 0) -
-                  (selectCurrentCostRate?.remaining_days ?? 0)) /
-                  (selectCurrentCostRate?.total_days ?? 1)) *
-                  100,
-              )}
+              percentage={
+                selectCurrentCostRate.total_working_days
+                  ? Math.round(
+                      (selectCurrentCostRate.total_working_days /
+                        selectCurrentCostRate.total_days) *
+                        100,
+                    )
+                  : 0
+              }
             >
               <Text fontSize={28}>
-                {selectCurrentCostRate?.remaining_days ?? 0}
+                {selectCurrentCostRate.total_working_days ?? 0}
               </Text>
             </ProcessRing>
             <Text fontSize={20} fontWeight={600} mt={3}>
@@ -241,7 +257,13 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title={costRateT("info.costType")}
-            content={_.capitalize(selectCurrentCostRate?.type) ?? "N/A"}
+            content={
+              _.capitalize(
+                costRateT(
+                  `form.${selectCurrentCostRate.type.toString().toLowerCase()}`,
+                ),
+              ) ?? "N/A"
+            }
           />
         </Grid>
         <Grid
@@ -256,8 +278,8 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title={costRateT("info.costPerMonth")}
             content={
-              selectCurrentCostRate?.cost_per_month
-                ? `${selectCurrentCostRate?.cost_per_month}.$`
+              selectCurrentCostRate.cost_per_month
+                ? `${selectCurrentCostRate.cost_per_month} ${selectCurrentCostRate.currency}`
                 : "N/A"
             }
           />
@@ -274,8 +296,8 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title={costRateT("info.atCurrentCostRate")}
             content={
-              selectCurrentCostRate?.total_days
-                ? `${selectCurrentCostRate?.total_days}h`
+              selectCurrentCostRate.total_working_days
+                ? `${selectCurrentCostRate.total_working_days}h`
                 : "N/A"
             }
           />
@@ -292,8 +314,8 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title={costRateT("info.capacity")}
             content={
-              selectCurrentCostRate?.total_hours
-                ? `${selectCurrentCostRate?.total_hours}h`
+              selectCurrentCostRate.total_hours
+                ? `${selectCurrentCostRate.total_hours}h`
                 : "N/A"
             }
           />
@@ -310,8 +332,8 @@ const CostRateInfo = () => {
             icon={<CalendarIcon />}
             title={costRateT("info.currentHourlyCost")}
             content={
-              selectCurrentCostRate?.cost_per_hour
-                ? `${selectCurrentCostRate?.cost_per_hour}`
+              selectCurrentCostRate.cost_per_hours
+                ? `${selectCurrentCostRate.cost_per_hours} ${selectCurrentCostRate.currency}`
                 : "N/A"
             }
           />
@@ -327,7 +349,11 @@ const CostRateInfo = () => {
           <CurrentRateBlock
             icon={<CalendarIcon />}
             title={costRateT("info.overhead")}
-            content={selectCurrentCostRate?.over_head ? "Yes" : "No"}
+            content={
+              selectCurrentCostRate.over_head
+                ? costRateT("info.overheadOn")
+                : costRateT("info.overheadOff")
+            }
           />
         </Grid>
       </Grid>
@@ -346,7 +372,7 @@ const CostRateInfo = () => {
           Note
         </Text>
         <Text color="grey.700" mt={0.5}>
-          {selectCurrentCostRate?.note}
+          {selectCurrentCostRate.note}
         </Text>
       </Stack>
 
@@ -431,13 +457,7 @@ const CurrentRateBlock = ({
     >
       {icon}
       <Stack direction="column" spacing={{ xs: 0, sm: 0.5 }}>
-        <Text
-          color="grey.800"
-          fontSize={18}
-          fontWeight={600}
-          whiteSpace="nowrap"
-          textOverflow="ellipsis"
-        >
+        <Text color="grey.800" fontSize={18} fontWeight={600}>
           {title}
         </Text>
         <Text color="grey.800">{content}</Text>
