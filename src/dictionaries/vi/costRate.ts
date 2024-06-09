@@ -51,6 +51,8 @@ export const CostRateLang: CostRateDictionary = {
     capacity: "Tổng số giờ",
     currentHourlyCost: "Lương giờ",
     overhead: "Overhead",
+    overheadOn: "Bật",
+    overheadOff: "Tắt",
   },
   confirmDelete: {
     title: "Xác nhận xóa cost rate",

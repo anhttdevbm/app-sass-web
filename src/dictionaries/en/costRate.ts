@@ -56,6 +56,8 @@ export const CostRateLang: CostRateDictionary = {
     capacity: "Capacity",
     currentHourlyCost: "Current Hourly Cost",
     overhead: "Overhead",
+    overheadOn: "Turned on",
+    overheadOff: "Turned off",
   },
   notification: {
     addSuccess: "Add Cost Rate successfully.",

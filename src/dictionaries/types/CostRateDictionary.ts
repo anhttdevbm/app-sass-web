@@ -49,6 +49,8 @@ export type CostRateDictionary = {
     capacity: string;
     currentHourlyCost: string;
     overhead: string;
+    overheadOn: string;
+    overheadOff: string;
   };
   confirmDelete: {
     title: string;
