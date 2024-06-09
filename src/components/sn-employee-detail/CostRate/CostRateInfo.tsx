@@ -20,8 +20,9 @@ import _ from "lodash";
 
 import { Permission } from "constant/enums";
 import { NS_COMMON, NS_COST_RATE } from "constant/index";
-import { Text } from "components/shared";
+import { NewButton as Button, Text } from "components/shared";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
+import AddCircleIcon from "icons/AddCircleIcon";
 import CalendarIcon from "icons/CalendarIcon";
 import ProcessRing from "../components/ProcessRing";
 import useToggle from "hooks/useToggle";
@@ -185,17 +186,32 @@ const CostRateInfo = () => {
         },
       }}
     >
-      <Text
-        fontSize={{
-          xs: 20,
-          sm: 22,
-        }}
-        fontWeight={600}
-        variant="h3"
-        color="grey.800"
-      >
-        {costRateT("info.currentCostRate")}
-      </Text>
+      <Stack direction="row" alignItems="center">
+        <Text
+          fontSize={{
+            xs: 20,
+            sm: 22,
+          }}
+          fontWeight={600}
+          variant="h3"
+          color="grey.800"
+        >
+          {costRateT("info.currentCostRate")}
+        </Text>
+        <Button
+          variant="primary"
+          size="medium"
+          sx={{
+            ml: 3,
+          }}
+          startIcon={<AddCircleIcon />}
+          onClick={() => {
+            handleItemEdit("");
+          }}
+        >
+          {costRateT("empty.addCostRate")}
+        </Button>
+      </Stack>
 
       <Grid container mt={5} spacing={3}>
         <Grid item container xs={12} md={8}>
@@ -441,13 +457,7 @@ const CurrentRateBlock = ({
     >
       {icon}
       <Stack direction="column" spacing={{ xs: 0, sm: 0.5 }}>
-        <Text
-          color="grey.800"
-          fontSize={18}
-          fontWeight={600}
-          whiteSpace="nowrap"
-          textOverflow="ellipsis"
-        >
+        <Text color="grey.800" fontSize={18} fontWeight={600}>
           {title}
         </Text>
         <Text color="grey.800">{content}</Text>
