@@ -7,13 +7,13 @@ import { useEffect, useMemo, useState } from "react";
 import SyncIcon from "icons/SyncIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useAIAgent } from "store/aiAgent/selectors";
-import { Knowledge, StatusKnowledge } from "store/aiAgent/types";
+import { Knowledge, StatusKnowledge, TypeKnowledge } from "store/aiAgent/types";
 import styled from "styled-components";
 
 export const TableKnowledge = () => {
   const t = useTranslations(NS_AI_AGENT);
 
-  const { listKnowledge , onDeleteSource, aiAgent, onAddSource} = useAIAgent();
+  const { listKnowledge , onDeleteSource, aiAgent, onResyncSource} = useAIAgent();
 
   const [data, setData] = useState<Knowledge[]>([]);
 
@@ -27,20 +27,13 @@ export const TableKnowledge = () => {
     [],
   );
 
-  const handleResync = (knowledge: Knowledge) => {
-      onAddSource({
-        agentId: knowledge.agentId,
-        name: knowledge.name,
-        type: knowledge.type,
-      });
+  const handleResync = (knowledgeId: string) => {
+    onResyncSource(knowledgeId);
   }
 
   const handleDelete = (knowledgeId: string) => {
     if (aiAgent) {
-      onDeleteSource({
-        agentId: aiAgent.id,
-        knowledgeId: knowledgeId,
-      })
+      onDeleteSource({ agentId: aiAgent.id, knowledgeId });
     }
   };
 
@@ -83,14 +76,14 @@ export const TableKnowledge = () => {
                    borderRadius={"6px"}
                    padding={"10px"}
                    gap={"10px"}
-                   bgcolor={knowledge.status === StatusKnowledge.ACTIVE ? "#E8F2EF" : "#ECECF3"}
+                   bgcolor={knowledge.status === StatusKnowledge.READY ? "#E8F2EF" : "#ECECF3"}
                    alignItems={"center"}
                    justifyContent={"center"}
                  >
                    <Typography
                      fontSize={"12px"}
                      fontWeight={600}
-                     color={knowledge.status === StatusKnowledge.ACTIVE ? "#0BB783" : "#666666"}
+                     color={knowledge.status === StatusKnowledge.READY ? "#0BB783" : "#666666"}
                    >
                      {knowledge.status.charAt(0).toUpperCase() + knowledge.status.slice(1).toLowerCase()}</Typography>
                  </Stack>
@@ -103,11 +96,13 @@ export const TableKnowledge = () => {
                  textAlign: "right",
                }}
                options={[
-                 {
-                   icon: <SyncIcon fontSize="medium" />,
-                   content: t("knowledge.resync"),
-                   onClick: () => handleResync(knowledge),
-                 },
+                 ...(knowledge.type === TypeKnowledge.LINK || knowledge.type === TypeKnowledge.YOUTUBE ? [
+                    {
+                      icon: <SyncIcon fontSize="medium" />,
+                      content: t("knowledge.resync"),
+                      onClick: () => handleResync(knowledge.id),
+                    },
+                  ] : []),
                  {
                    icon: <TrashIcon color="error" fontSize="medium" />,
                    content: t("knowledge.remove"),

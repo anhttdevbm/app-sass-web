@@ -153,6 +153,42 @@ export const addSource = createAsyncThunk(
   },
 );
 
+export const getSources = createAsyncThunk(
+  "aiAgent/getSources",
+  async (agentId: string) => {
+    try {
+      const response = await client.get(
+        `${Endpoint.AI_AGENT_GET_SOURCE.replace(':agentId', agentId)}`, {},{ baseURL: AI_AGENT_API_URL }
+      )
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const resyncSource = createAsyncThunk(
+  "aiAgent/resyncSource",
+  async (knowledgeId: string) => {
+    try {
+      const response = await client.post( Endpoint.AI_AGENT_RESYNCE_SOURCE+`/${knowledgeId}`, {}, { baseURL: AI_AGENT_API_URL });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data.data;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const deleteSource = createAsyncThunk(
   "aiAgent/deleteSource",
   async ({agentId, knowledgeId}: DeleteSourceInput) => {

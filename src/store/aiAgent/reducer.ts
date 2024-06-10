@@ -6,7 +6,7 @@ import {
   createCommand,
   deleteAgent,
   deleteSource,
-  getCommands,
+  getCommands, getSources, resyncSource,
   updateAgent,
 } from "store/aiAgent/actions";
 import { DataStatus } from "constant/enums";
@@ -82,11 +82,22 @@ const aiAgentSlice = createSlice({
       })
 
       //Manage source
-      .addCase(addSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
-        state.listKnowledge.push(payload.payload);
+      .addCase(addSource.fulfilled, (state, action: PayloadAction<Knowledge>) => {
+        state.listKnowledge.unshift(action.payload);
       })
-      .addCase(deleteSource.fulfilled, (state, payload: PayloadAction<Knowledge>) => {
-        state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== payload.payload.id);
+      .addCase(getSources.fulfilled, (state, action: PayloadAction<Knowledge[]>) => {
+        state.listKnowledge = action.payload;
+      })
+      .addCase(resyncSource.fulfilled, (state, action: PayloadAction<Knowledge>) => {
+        state.listKnowledge = state.listKnowledge.map((knowledge) => {
+          if (knowledge.id === action.payload.id) {
+            return action.payload;
+          }
+          return knowledge;
+        });
+      })
+      .addCase(deleteSource.fulfilled, (state, action: PayloadAction<Knowledge>) => {
+        state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== action.payload.id);
       })
 
       // Manage command

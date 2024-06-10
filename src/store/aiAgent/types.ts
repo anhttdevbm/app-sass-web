@@ -14,7 +14,7 @@ export enum TypeKnowledge {
 }
 
 export enum StatusKnowledge {
-  ACTIVE = "ACTIVE",
+  READY = "READY",
   DEACTIVE = "DEACTIVE"
 }
 
