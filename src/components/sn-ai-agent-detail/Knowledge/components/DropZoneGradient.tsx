@@ -10,6 +10,7 @@ interface DropZoneGradientProps {
   onDragLeave: () => void;
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
   placeholder: string;
+  onClick?: (event: React.DragEvent<HTMLDivElement>) => void;
 }
 
 export const DropZoneGradient = (props: DropZoneGradientProps) => {
@@ -20,6 +21,7 @@ export const DropZoneGradient = (props: DropZoneGradientProps) => {
       onDragOver={props.onDragOver}
       onDragLeave={props.onDragLeave}
       onDrop={props.onDrop}
+      onClick={props.onClick}
       sx={{
         display: "flex",
         alignItems: "center",
