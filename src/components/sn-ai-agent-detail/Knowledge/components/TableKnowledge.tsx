@@ -1,6 +1,6 @@
 import { Box, Stack, TableRow, Typography } from "@mui/material";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
-import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components/ActionCell";
+import ActionsCell from "components/sn-ai-agent/components/ActionCell";
 import { NS_AI_AGENT } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
@@ -8,7 +8,6 @@ import SyncIcon from "icons/SyncIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { Knowledge, StatusKnowledge, TypeKnowledge } from "store/aiAgent/types";
-import styled from "styled-components";
 
 export const TableKnowledge = () => {
   const t = useTranslations(NS_AI_AGENT);

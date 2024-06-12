@@ -1,22 +1,16 @@
-import { Box, IconButton, SelectChangeEvent } from "@mui/material";
+import { Box, IconButton, SelectChangeEvent, useMediaQuery } from "@mui/material";
 import { NS_AI_CHAT } from "constant/index";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  useChatSession,
-  useChatWithAI,
-  useExamplePrompt,
-} from "store/aiChat/selectors";
-import { ChatWithAIData, OpenAIChat } from "store/aiChat/type";
+import { useChatSession, useChatWithAI, useExamplePrompt } from "store/aiChat/selectors";
+import { ChatWithAIData, File, OpenAIChat } from "store/aiChat/type";
 import ChatInput from "./components/Chat/ChatInput";
 import { RenderEmptyChat } from "./components/Chat/EmptyChat";
 import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
 import { AxiosError } from "axios";
-import { useMediaQuery } from "@mui/material";
 import BackTabIcon from "icons/BackTabIcon";
-import { File } from "store/aiChat/type";
 
 interface BoxChatProps {
   popupMode?: boolean;
