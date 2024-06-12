@@ -23,6 +23,7 @@ export const useChatAIAgent = () => {
     }));
     dispatch(chat(data));
   }, [dispatch]);
+  const isChatFetching = useMemo(() => chatAIStatus === DataStatus.LOADING, [chatAIStatus])
 
   const onGetChat = useCallback(async ({agentId, queries}: GetChatRequest) => {
     dispatch(getChat({agentId, queries}));
@@ -38,5 +39,6 @@ export const useChatAIAgent = () => {
     onGetChat,
 
     isGetChatFetching,
+    isChatFetching
   };
 }

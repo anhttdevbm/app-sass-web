@@ -1,6 +1,5 @@
 import { Avatar, Box, Skeleton, Stack, useMediaQuery } from "@mui/material";
 import { IconButton, Text } from "components/shared";
-import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
 import useTheme from "hooks/useTheme";
 import { AddToDocIcon } from "icons/AddToDocIcon";
 import { CopyTextIcon } from "icons/CopyTextIcon";
@@ -10,13 +9,13 @@ import { useLocale } from "next-intl";
 import Image from "next/image";
 import AIIcon from "public/images/ic-ai-chat.svg";
 import { useEffect, useState } from "react";
-import { OpenAIChat } from "store/aiChat/type";
+import { File, OpenAIChat } from "store/aiChat/type";
 import { useAuth } from "store/app/selectors";
 import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
 import { FileItem } from "components/sn-ai-chat/components/BoxChat/components/Message/FileItem";
-import parse, { domToReact, HTMLReactParserOptions } from 'html-react-parser';
-import { File } from "store/aiChat/type";
+import parse, { domToReact, HTMLReactParserOptions } from "html-react-parser";
+import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
 
 interface MessageProps {
   message: Partial<OpenAIChat>;

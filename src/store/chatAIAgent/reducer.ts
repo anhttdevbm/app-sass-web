@@ -27,7 +27,11 @@ const chatAIAgent = createSlice({
       })
       .addCase(chat.fulfilled, (state, action: PayloadAction<ChatResponse>) => {
         state.chatAIStatus = DataStatus.SUCCEEDED;
-        state.chatData[0].assistant_content = action.payload.assistant_content;
+        if(action.payload?.assistant_content) {
+          state.chatData[0] = action.payload;
+        } else {
+          state.chatData.shift();
+        }
       })
       .addCase(chat.rejected, (state) => {
         state.chatAIStatus = DataStatus.FAILED;
@@ -36,9 +40,16 @@ const chatAIAgent = createSlice({
       // getChat
       .addCase(getChat.fulfilled, (state, action: PayloadAction<GetChatPayload>) => {
         const { messages, page, has_next_page } = action.payload;
-        const shouldReplaceChatData = state.chatData.length > 0 && state.chatData[0].agentId !== messages[0].agentId;
+        const shouldReplaceChatData = state.chatData.length > 0 && state.chatData[0].agentId !== messages[0]?.agentId;
 
-        state.chatData = shouldReplaceChatData ? messages : [...state.chatData, ...messages];
+        const newChatData = shouldReplaceChatData ? messages : [...state.chatData, ...messages];
+
+        // Remove duplicate chats
+        state.chatData = newChatData.filter((chat, index, self) =>
+            index === self.findIndex((t) => (
+              t.id === chat.id
+            ))
+        );
         state.page = page;
         state.hasNextPage = has_next_page;
       });

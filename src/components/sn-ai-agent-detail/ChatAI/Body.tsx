@@ -3,7 +3,7 @@ import { Textarea } from "../General/components";
 import { useLocale, useTranslations } from "next-intl";
 import { NS_AI_AGENT } from "constant/index";
 import { EmptyMessage } from "components/sn-ai-agent-detail/ChatAI/components/EmptyMesage";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageLayout, MessageList } from "components/sn-ai-chat/components/BoxChat/components/Message";
 import { useChatAIAgent } from "store/chatAIAgent/selectors";
 import { ChatResponse } from "store/chatAIAgent/types";
@@ -17,8 +17,17 @@ export const Body = () => {
   const locale = useLocale();
   const isMobile = useMediaQuery("(max-width:600px)");
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const {aiAgent} = useAIAgent();
-  const {chatData, page, isGetChatFetching, onChat, onGetChat, hasNextPage} = useChatAIAgent();
+  const {
+    chatData,
+    page,
+    hasNextPage,
+    onChat,
+    onGetChat,
+    isGetChatFetching,
+    isChatFetching} = useChatAIAgent();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [data, setData] = useState<ChatResponse[]>([]);
@@ -28,8 +37,8 @@ export const Body = () => {
     if (!message && !regenerateMessage) {
       return;
     }
-    setIsSubmitting(true);
     if (aiAgent) {
+      setIsSubmitting(true);
       await onChat({
         tone: aiAgent.tone,
         agentId: aiAgent.id,
@@ -38,7 +47,6 @@ export const Body = () => {
       });
     }
     setMessage("");
-    setIsSubmitting(false);
   };
 
   const onLoadMoreChat = () => {
@@ -56,8 +64,8 @@ export const Body = () => {
   }
 
   const handleEditUserMessage = async (editedMessage: string, files: File[]) => {
-    setIsSubmitting(true);
     if (aiAgent) {
+      setIsSubmitting(true)
       await onChat({
         tone: aiAgent.tone,
         agentId: aiAgent.id,
@@ -66,7 +74,6 @@ export const Body = () => {
         files,
       });
     }
-    setIsSubmitting(false);
   }
 
   useEffect(() => {
@@ -78,6 +85,15 @@ export const Body = () => {
       onGetChat({agentId: aiAgent.id, queries: {page: 1}});
     }
   }, [aiAgent]);
+
+  useEffect(() => {
+    if (!isChatFetching) {
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 500);
+      setIsSubmitting(false);
+    }
+  }, [isChatFetching]);
 
   return (
     <Stack
@@ -106,11 +122,13 @@ export const Body = () => {
           <EmptyMessage onClick={handleClickCommand} />
         )}
       <Textarea
+        ref={textareaRef}
         placeholder={t("chatAIAgent.askMeAnything")}
         isCount={false}
         onSend={handleSubmitMessage}
         value={message}
         onChange={handleMsgChange}
+        disabled={isSubmitting}
       />
     </Stack>
   );

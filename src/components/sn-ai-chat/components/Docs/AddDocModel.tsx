@@ -77,8 +77,10 @@ export const AddDocModal: React.FC<AddDocModalProps> = ({
   };
 
   useEffect(() => {
-    onGetDocs({ user_id: user?.id });
-  }, []);
+    if (open) {
+      onGetDocs({ user_id: user?.id, search_key: search });
+    }
+  }, [open]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {

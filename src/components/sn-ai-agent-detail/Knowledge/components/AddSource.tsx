@@ -13,13 +13,24 @@ import { DropZoneGradient } from "./DropZoneGradient";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { TypeKnowledge } from "store/aiAgent/types";
 
+const handleFileUpload = async (file, aiAgent, onUploadFile, onAddSource, type) => {
+  if (file && aiAgent) {
+    const objectId = await onUploadFile(file);
+    onAddSource({
+      name: objectId as string,
+      type: type,
+      agentId: aiAgent.id
+    });
+  }
+}
+
 export const AddSource = () => {
   const t = useTranslations(NS_AI_AGENT);
   const theme = useTheme();
-
   const {onAddSource, aiAgent, onUploadFile} = useAIAgent();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
 
   const [isDragActive, setIsDragActive] = useState(false);
   const [openAddYoutube, setOpenAddYoutube] = useState(false);
@@ -41,31 +52,28 @@ export const AddSource = () => {
     event.preventDefault();
     setIsDragActive(false);
     const file = event.dataTransfer.files[0];
-    if (file && aiAgent) {
-      const objectId = await onUploadFile(file);
-      onAddSource({
-        name: objectId as string,
-        type: TypeKnowledge.FILE,
-        agentId: aiAgent.id
-      });
-    }
+    await handleFileUpload(file, aiAgent, onUploadFile, onAddSource, TypeKnowledge.FILE);
   };
+
+  const handleAddFromFile = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && aiAgent) {
-      const objectId = await onUploadFile(file);
-      onAddSource({
-        name: objectId as string,
-        type: TypeKnowledge.MEDIA,
-        agentId: aiAgent.id
-      });
-    }
+    await handleFileUpload(file, aiAgent, onUploadFile, onAddSource, TypeKnowledge.FILE);
+  }
+
+  const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    await handleFileUpload(file, aiAgent, onUploadFile, onAddSource, TypeKnowledge.MEDIA);
   };
 
   const handleAddFromMedia = async () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+    if (mediaInputRef.current) {
+      mediaInputRef.current.click();
     }
   };
 
@@ -80,6 +88,8 @@ export const AddSource = () => {
   const handleClose = (
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
+    setLink("");
+    setYoutube("");
     setOpen(false);
     setErrorLink(false);
   };
@@ -117,6 +127,8 @@ export const AddSource = () => {
         agentId: aiAgent.id
       });
       setErrorLink(false);
+      setYoutube("");
+      setLink("");
       setOpen(false);
     } else {
       setErrorLink(true);
@@ -148,12 +160,19 @@ export const AddSource = () => {
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         placeholder={t("knowledge.dragOrSelect")}
+        onClick={handleAddFromFile}
       />
       <input
         type="file"
         ref={fileInputRef}
         style={{ display: "none" }}
         onChange={handleFileChange}
+      />
+      <input
+        type="file"
+        ref={mediaInputRef}
+        style={{ display: "none" }}
+        onChange={handleMediaChange}
       />
       <Stack direction={"row"} spacing={1} width={"100%"}>
         <ButtonOutlineGradient
@@ -211,6 +230,6 @@ export const isValidUrl = (url: string): boolean => {
 }
 
 export const isValidYoutubeUrl = (url: string): boolean => {
-  const pattern = new RegExp('^(https?\\:\\/\\/)?(www\\.youtube\\.com|youtu\\.?be)\\/.+$','i');
+  const pattern = new RegExp('^(https?\\:\\/\\/)?(www\\.youtube\\.com|)\\/.+$','i');
   return pattern.test(url);
 }

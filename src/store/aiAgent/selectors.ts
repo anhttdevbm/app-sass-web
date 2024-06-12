@@ -18,7 +18,7 @@ import {
   getAgent,
   getAgents,
   getAvatarLink,
-  getCommands,
+  getCommands, getSources, resyncSource,
   setAgent,
   setAgents,
   updateAgent,
@@ -106,6 +106,14 @@ export const useAIAgent = () => {
     dispatch(addSource(data));
   }, [dispatch]);
 
+  const onGetSources = useCallback((agentId: string) => {
+    dispatch(getSources(agentId));
+  }, [dispatch]);
+
+  const onResyncSource = useCallback((knowledgeId: string) => {
+    dispatch(resyncSource(knowledgeId));
+  }, [dispatch]);
+
   const onDeleteSource = useCallback(({agentId, knowledgeId}: DeleteSourceInput) => {
     dispatch(deleteSource({agentId, knowledgeId}));
   }, [dispatch]);
@@ -138,6 +146,8 @@ export const useAIAgent = () => {
     onUploadFile,
     onUpdateAgent,
     onAddSource,
+    onGetSources,
+    onResyncSource,
     onDeleteSource,
     onGetCommands,
     onCreateCommand,

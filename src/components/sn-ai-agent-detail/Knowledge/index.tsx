@@ -8,12 +8,10 @@ import { Switch } from "./components/Switch";
 import { useEffect, useState } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
 import { AddSource, TableKnowledge } from "components/sn-ai-agent-detail/Knowledge/components";
-import styled from "styled-components";
-import { PRIMARY_GRADIENT_COLOR } from "components/sn-ai-agent/components";
 
 export const Knowledge = () => {
   const t = useTranslations(NS_AI_AGENT);
-  const {aiAgent, onUpdateAgent} = useAIAgent();
+  const {aiAgent, onUpdateAgent, onGetSources, listKnowledge} = useAIAgent();
 
   const [isKnowledgeEnabled, setKnowledgeEnabled] = useState(false);
 
@@ -21,17 +19,17 @@ export const Knowledge = () => {
     setKnowledgeEnabled(!isKnowledgeEnabled);
   };
 
-  const handleUpdate = () => {
-    if (aiAgent) {
-      onUpdateAgent(aiAgent.id, {enableKnowledge: isKnowledgeEnabled});
-    }
-  }
-
   useEffect(() => {
     if (aiAgent) {
-      setKnowledgeEnabled(aiAgent.enableKnowledge);
+      onGetSources(aiAgent.id);
     }
   }, [aiAgent]);
+
+  useEffect(() => {
+    if (listKnowledge.length > 0) {
+      setKnowledgeEnabled(true);
+    }
+  }, [listKnowledge]);
 
   return (
     <Stack direction={"column"} justifyContent={"space-between"} flex={1}>
@@ -52,7 +50,7 @@ export const Knowledge = () => {
           </Stack>
         )}
       </Stack>
-      <FooterDetailAgent onUpdate={handleUpdate} />
+      <FooterDetailAgent />
     </Stack>
   );
 };
