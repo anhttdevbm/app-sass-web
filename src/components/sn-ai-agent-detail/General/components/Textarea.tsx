@@ -93,7 +93,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     ) => {
       const charCount = event.target.value.length;
       if (charCount <= 1000) {
-        setCharCount(charCount);
+        isCount && setCharCount(charCount);
         if (props.onChange) {
           props.onChange(event);
         }

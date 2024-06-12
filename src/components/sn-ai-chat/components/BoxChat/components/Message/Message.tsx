@@ -15,6 +15,7 @@ import { ActionButton } from "./ActionButton";
 import { MessageBox } from "./MessageBox";
 import { FileItem } from "components/sn-ai-chat/components/BoxChat/components/Message/FileItem";
 import parse, { domToReact, HTMLReactParserOptions } from "html-react-parser";
+import { AddDocModal } from "components/sn-ai-chat/components/Docs/AddDocModel";
 
 interface MessageProps {
   message: Partial<OpenAIChat>;

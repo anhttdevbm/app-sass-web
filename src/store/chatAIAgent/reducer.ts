@@ -28,7 +28,7 @@ const chatAIAgent = createSlice({
       .addCase(chat.fulfilled, (state, action: PayloadAction<ChatResponse>) => {
         state.chatAIStatus = DataStatus.SUCCEEDED;
         if(action.payload?.assistant_content) {
-          state.chatData[0].assistant_content = action.payload?.assistant_content;
+          state.chatData[0] = action.payload;
         } else {
           state.chatData.shift();
         }
