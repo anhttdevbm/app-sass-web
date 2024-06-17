@@ -31,6 +31,7 @@ export type LayoutDictionary = {
     sales: string;
     docs: string;
     chat: string;
+    meeting: string;
 
     // taskcover ai
     taskcoverAI: string;
@@ -41,13 +42,13 @@ export type LayoutDictionary = {
     feedback: string;
     feedbackList: string;
     //blog
-    blog :string;
-    blogList:string;
-    blogCategoryList:string;
+    blog: string;
+    blogList: string;
+    blogCategoryList: string;
     //carrer
-    career:string;
-    careerList:string;
-    billing:string;
+    career: string;
+    careerList: string;
+    billing: string;
     //content
     contents: string;
     landingHome: string;

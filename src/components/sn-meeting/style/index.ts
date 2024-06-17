@@ -12,13 +12,22 @@ export const sxBtn = {
 
 export const sxBtnCircleActive = {
   borderRadius: "50%",
-  backgroundColor: "#E1F0FF",
   color: "#3699FF",
 
   "&:hover": {
     bgcolor: "#3699FF",
     color: "#E1F0FF",
   },
+};
+
+export const sxBtnCircleActiveLight = {
+  ...sxBtnCircleActive,
+  backgroundColor: "#E1F0FF",
+};
+
+export const sxBtnCircleActiveDark = {
+  ...sxBtnCircleActive,
+  backgroundColor: "#3a3b3c",
 };
 
 export const sxBtnCircleDanger = {
@@ -71,4 +80,3 @@ export const sxPrimaryBtn = {
     bgcolor: "#3699FF",
   },
 };
-

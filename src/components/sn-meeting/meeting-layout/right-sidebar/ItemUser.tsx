@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import { Stack, Avatar, Box, Grid } from "@mui/material";
 import { IconButton, Text } from "components/shared";
-import { sxBtnIconActive, sxBtnIconDanger} from "components/sn-meeting/style";
+import { sxBtnIconActive, sxBtnIconDanger } from "components/sn-meeting/style";
 import React, { useState } from "react";
 
 interface User {
@@ -41,20 +41,27 @@ const ItemUser: React.FC<ItemUserProps> = (props: ItemUserProps) => {
       key={user.id}
       direction={"row"}
       justifyContent={"space-between"}
+      alignItems={"center"}
       py={1}
     >
-      <Grid item xs={2} alignItems={'center'} alignContent={'center'}>
+      <Grid item xs={2} alignItems={"center"} alignContent={"center"}>
         <Avatar src="public/images/avatar1.png" />
       </Grid>
       <Grid item xs={7}>
-        <Text>{user.name}</Text>
+        <Text fontWeight={600}>{user.name}</Text>
       </Grid>
       <Grid item xs={3}>
         <Stack direction={"row"} gap={1}>
-          <IconButton onClick={toggleMic} sx={isMicOn ? sxBtnIconActive : sxBtnIconDanger}>
+          <IconButton
+            onClick={toggleMic}
+            sx={isMicOn ? sxBtnIconActive : sxBtnIconDanger}
+          >
             {isMicOn ? <Mic /> : <MicOff />}
           </IconButton>
-          <IconButton onClick={toggleCamera} sx={isCameraOn ? sxBtnIconActive : sxBtnIconDanger}>
+          <IconButton
+            onClick={toggleCamera}
+            sx={isCameraOn ? sxBtnIconActive : sxBtnIconDanger}
+          >
             {isCameraOn ? <Videocam /> : <VideocamOff />}
           </IconButton>
         </Stack>

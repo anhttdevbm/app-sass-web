@@ -11,6 +11,7 @@ import {
   BUDGETING_PATH,
   CAREER_PATH,
   CHATTING_ROOM_PATH,
+  MEETING_PATH,
   CLIENT_COMPANIES_PATH,
   COMPANIES_PATH,
   COST_HISTORY_PATH,
@@ -312,6 +313,12 @@ const DATA: MenuItemProps[] = [
   {
     label: "menu.chat",
     href: CHATTING_ROOM_PATH,
+    icon: <MenuChatIcon />,
+    roles: [Permission.AM, Permission.ST],
+  },
+  {
+    label: "menu.meeting",
+    href: MEETING_PATH,
     icon: <MenuChatIcon />,
     roles: [Permission.AM, Permission.ST],
   },
