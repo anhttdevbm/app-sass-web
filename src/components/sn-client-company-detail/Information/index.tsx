@@ -115,7 +115,7 @@ const InformationCompany = () => {
                   variant={{ xs: "h5", sm: "h5", md: "h4" }}
                   lineHeight={{ xs: "24px", sm: "24px" }}
                 >
-                  {item?.created_by?.fullname ?? "--"}
+                  {item?.name ?? "--"}
                 </Text>
                 <Text variant="h6" color="grey.400">{`${companyT(
                   "clientCompany.taxCode",
@@ -157,7 +157,7 @@ const InformationCompany = () => {
                   flex={1}
                   label={companyT("clientCompany.createBy")}
                 >
-                  {item?.contact?.name}
+                  {item?.created_by?.fullname}
                 </InformationItem>
 
                 <InformationItem
