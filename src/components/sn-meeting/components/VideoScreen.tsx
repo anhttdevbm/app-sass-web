@@ -60,6 +60,7 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
   );
 
   const [count, setCount] = useState<number>(1);
+  const [isShow, setShow] = useState(false);
 
   const changeLayout = () => {
     if (count === 2) {
@@ -71,11 +72,18 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
     }
   };
 
+  const handleMouseEnter = () => {
+    setShow(true);
+  };
+  const handleMouseLeave = () => {
+    setShow(false);
+  };
+
   return (
-    <Box className="video-screen" sx={{ ...sx }}>
-      <button
+    <Box className="" sx={{ ...sx }}>
+      {/* <button
         onClick={changeLayout}
-      >{`Change Layout: ${layoutArr[count]}`}</button>
+      >{`Change Layout: ${layoutArr[count]}`}</button> */}
 
       {layout === "galaxy" && (
         <Grid2
@@ -84,14 +92,16 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
           spacing={1}
           justifyContent={"space-around"}
           height={"63vh"}
-          overflow={'hidden'}
+          overflow={"hidden"}
         >
-          <Grid2 key={"11"} xs={6} maxHeight={'25%'} >
+          <Grid2 key={"11"} xs={6} maxHeight={"25%"}>
             <MyVideoScreen sx={{}} />
           </Grid2>
           {users.map((user) => (
             <Grid2 key={user.id} xs={6}>
-              <VideoParticipant sx={{ width: "100%", height: "100%" }} />
+              <VideoParticipant
+              // sx={{ width: "100%", height: "100%" }}
+              />
             </Grid2>
           ))}
         </Grid2>
@@ -100,46 +110,40 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
         <Stack
           component={"div"}
           spacing={1}
-          direction={"column"}
-          flexWrap={"wrap"}
-          height={"70vh"}
+          sx={{ justifyContent: "space-between", height: "100%" }}
         >
           <Box
             style={{
-              maxHeight: "80%",
-              backgroundColor: "red",
-              textAlign: "center",
+              borderRadius: 8,
+              flexGrow: 1,
+              background: "red",
             }}
+            // onMouseEnter={handleMouseEnter}
+            // onMouseLeave={handleMouseLeave}
           >
-            <MyVideoScreen sx={{ height: "100%" }} />
+            {/* {isShow && <MyVideoScreen sx={{}} />} */}
+            <MyVideoScreen sx={{}} />
           </Box>
 
           <Stack
             direction={"row"}
-            maxHeight={"40%"}
-            overflow={"scroll"}
+            maxHeight={"30%"}
+            minHeight={"20%"}
             gap={0.5}
           >
             {users.map((user) => (
-              <Box
-                // width={"35%"}
-                key={user.id}
-                bgcolor={"blue"}
-              >
-                <VideoParticipant sx={{ width: "100%" }} />
-              </Box>
+              <VideoParticipant key={user.id} user={user} />
             ))}
           </Stack>
         </Stack>
       )}
-
       {layout === "content" && (
         <div className="video-content">
           <Box position={"relative"} width={"100%"} height={"70vh"}>
-            <Box 
-              maxHeight={'95%'} 
-              sx={{ 
-                width: "100%", 
+            <Box
+              maxHeight={"95%"}
+              sx={{
+                width: "100%",
                 position: "relative",
                 overflow: "hidden",
               }}
@@ -148,15 +152,15 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
             </Box>
 
             <VideoParticipant
-              sx={{
-                position: "absolute",
-                width: "25%",
-                height: "25%",
-                top: 0,
-                right: 0,
-                bgcolor: "red",
-                zIndex: 1,
-              }}
+            // sx={{
+            //   position: "absolute",
+            //   width: "25%",
+            //   height: "25%",
+            //   top: 0,
+            //   right: 0,
+            //   bgcolor: "red",
+            //   zIndex: 1,
+            // }}
             />
           </Box>
         </div>
