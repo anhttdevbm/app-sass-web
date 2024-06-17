@@ -36,6 +36,7 @@ export const TIME_TRACKING_PATH = "/time-tracking";
 export const RESOURCE_PLANING_PATH = "/resource-planing";
 export const SALES_LIST_PATH = "/sales";
 export const CHATTING_ROOM_PATH = "/chat";
+export const MEETING_PATH = "/meeting";
 export const CHATTING_INFO_PATH = "/chat/{id}";
 
 // TASKCOVER AI

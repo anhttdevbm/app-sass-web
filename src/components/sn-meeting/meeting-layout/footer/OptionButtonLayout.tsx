@@ -10,16 +10,23 @@ import {
   VideocamOutlined,
 } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, IconButton, Stack } from "@mui/material";
-import { sxBtnCircleActive, sxDangerBtn } from "../../style";
+import {
+  sxBtnCircleActive,
+  sxBtnCircleActiveDark,
+  sxBtnCircleActiveLight,
+  sxDangerBtn,
+} from "../../style";
 import React, { useState } from "react";
 import OptionPopup from "./OptionPopup";
 import { random } from "lodash";
+import useTheme from "hooks/useTheme";
 
 interface OptionButtonLayoutProps {
   sx: object;
 }
 
 export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
+  const { isDarkMode } = useTheme();
   const [isMicActive, setIsMicActive] = useState(false);
   const [isVideocamActive, setIsVideocamActive] = useState(false);
   const [isScreenShareActive, setIsScreenShareActive] = useState(false);
@@ -69,73 +76,92 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const idPopup = random().toString();
 
   return (
-    <Stack direction="row" sx={{ ...props.sx }}>
-      <Box textAlign={"center"} width={"80%"} position={"relative"}>
+    <Stack
+      direction="row"
+      p={2.5}
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+        ...props.sx,
+      }}
+    >
+      <Box textAlign={"center"} position={"relative"} sx={{ flexGrow: 1 }}>
         <ButtonGroup
           component="div"
-          variant="contained"
+          // variant="contained"
           aria-label="outlined button group"
           sx={{
-            gap: "20px",
+            gap: 1.5,
             textAlign: "center",
           }}
         >
           <IconButton
-            sx={sxBtnCircleActive}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isMicActive ? "primary" : "default"}
             onClick={handleMicButtonClick}
+            style={{ width: "64px", height: "64px" }}
           >
             <Mic />
           </IconButton>
           <IconButton
-            sx={sxBtnCircleActive}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isVideocamActive ? "primary" : "default"}
             onClick={handleVideocamButtonClick}
+            style={{ width: "64px", height: "64px" }}
           >
             <VideocamOutlined />
           </IconButton>
           <IconButton
-            sx={sxBtnCircleActive}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isScreenShareActive ? "primary" : "default"}
             onClick={handleScreenShareButtonClick}
+            style={{ width: "64px", height: "64px" }}
           >
             <ScreenShare />
           </IconButton>
           <IconButton
-            sx={sxBtnCircleActive}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isRadioButtonActive ? "primary" : "default"}
             onClick={handleRadioButtonButtonClick}
+            style={{ width: "64px", height: "64px" }}
           >
             <RadioButtonChecked />
           </IconButton>
           <IconButton
-            sx={sxBtnCircleActive}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isClosedCaptionActive ? "primary" : "default"}
             onClick={handleClosedCaptionButtonClick}
+            style={{ width: "64px", height: "64px" }}
           >
             <ClosedCaption />
           </IconButton>
           <IconButton
-            sx={sxBtnCircleActive}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isAddReactionActive ? "primary" : "default"}
             onClick={handleAddReactionButtonClick}
+            style={{ width: "64px", height: "64px" }}
           >
             <AddReaction />
           </IconButton>
           <IconButton
-            sx={sxBtnCircleActive}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isBackHandActive ? "primary" : "default"}
             onClick={handleBackHandButtonClick}
+            style={{ width: "64px", height: "64px" }}
           >
             <BackHand />
           </IconButton>
           <Button
-            sx={{
-              ...sxBtnCircleActive,
-            }}
+            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             onClick={handlePendingButtonClick}
             aria-describedby={idPopup}
             variant="contained"
+            style={{
+              borderRadius: "50%",
+              width: "64px",
+              height: "64px",
+              boxShadow: "none",
+            }}
           >
             <Pending />
           </Button>
@@ -151,8 +177,8 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
         )}
       </Box>
 
-      <Box width={"20%"} textAlign={"center"}>
-        <Button sx={sxDangerBtn}>End Call</Button>
+      <Box width={"10%"} textAlign={"center"}>
+        <Button sx={{ padding: "14px", ...sxDangerBtn }}>End Call</Button>
       </Box>
     </Stack>
   );

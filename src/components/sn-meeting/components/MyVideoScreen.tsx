@@ -104,16 +104,16 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         alignItems: "center",
         position: "relative",
         overflow: "hidden",
+        height: "100%",
         ...props.sx,
       }}
     >
-      <Box 
-        height={"100%"}
-        width={"100%"}
-        component={'video'}
+      <Box
+        component={"video"}
         ref={videoRef}
         autoPlay
         playsInline
+        sx={{ width: "calc(100% - 400px)", height: "100%" }}
       />
       <ButtonOnMyScreen
         sx={{
@@ -121,6 +121,10 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
           bottom: "50%",
           right: "50%",
           transform: "translateX(50%) translateY(50%)",
+          bgcolor: "rgba(0,0,0,0.5)",
+          borderRadius: "90px",
+          padding: "8px 16px",
+          backdropFilter: "blur(20px)",
         }}
         togglePinScreen={togglePinScreen}
         toggleMic={toggleMic}
