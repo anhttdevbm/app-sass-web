@@ -4,6 +4,13 @@ import Image from "next/image";
 import { ModalAddRecurring } from "./Modals/ModalAddRecurring";
 import useToggle from "hooks/useToggle";
 
+export type TRecurring = {
+  inteval: string;
+  start_date: string;
+  end_date: string;
+  copy?: boolean;
+};
+
 export const Recurring = () => {
   const [
     isOpenModalAddRecurring,

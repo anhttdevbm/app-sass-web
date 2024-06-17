@@ -211,6 +211,12 @@ export type BudgetingDictionary = {
     nextOccurrence: string;
     stopRecurring: string;
     copy: string;
+    recurringIntervalWeekly: string;
+    recurringIntervalBiweekly: string;
+    recurringIntervalMonthly: string;
+    recurringIntervalQuarterly: string;
+    recurringIntervalSemiannually: string;
+    recurringIntervalAnnually: string;
   };
   delete: {
     titleConfirmDelete: string;
