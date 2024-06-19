@@ -107,6 +107,7 @@ export const Endpoint = {
     "/budgets/expense/export-all-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_UPDATE: "/budgets/expense/update-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_DELETE: "/budgets/expense/delete-expense/{expenseId}",
+  BUDGET_RECURRING_ADD: "budgets/recurring/create-recurring",
 
   POSITIONS_ALL: "/positions/all",
   POSITIONS: "/positions",

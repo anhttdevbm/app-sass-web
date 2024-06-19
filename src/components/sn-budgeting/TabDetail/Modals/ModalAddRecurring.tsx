@@ -1,28 +1,44 @@
 import { Box, MenuList, Stack, Typography } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { Checkbox, DatePicker, Select } from "components/shared";
-import { NS_BUDGETING } from "constant/index";
+import { NS_BUDGETING, NS_COMMON } from "constant/index";
 import { Option } from "constant/types";
 import moment from "moment";
 import { useTranslations } from "next-intl";
 import { TRecurring } from "../Recurring";
 import { Controller, useForm } from "react-hook-form";
+import { TRecurringAdd, useBudgetRecurringAdd } from "queries/budgeting/recurring";
+import { useEffect } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+import { useParams } from "next/navigation";
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  refetch: () => void;
   recurringData?: TRecurring | null;
 };
 
 const defaultValues: TRecurring = {
-  inteval: "",
-  start_date: "",
-  end_date: "",
-  copy: false,
+  recurring: "",
+  from: "",
+  to: "",
+  copyPO: false,
+  budgetId: ""
 };
 
-export const ModalAddRecurring = ({ open, onClose, recurringData }: Props) => {
+export const ModalAddRecurring = ({ 
+  open, 
+  onClose, 
+  recurringData, 
+  refetch = () => {}, 
+}: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
+  const commonT = useTranslations(NS_COMMON);
+  const recurringAdd = useBudgetRecurringAdd();
+  const { onAddSnackbar } = useSnackbar();
+  const { id } = useParams();
 
   const templateSelectData: Option[] = [
     { label: budgetT("dialogRecurring.recurringIntervalWeekly"), value: "weekly" },
@@ -45,6 +61,44 @@ export const ModalAddRecurring = ({ open, onClose, recurringData }: Props) => {
     },
   };
 
+  useEffect(() => {
+    if (!open) {
+      reset(defaultValues);
+      return;
+    }
+
+    if (recurringData) {
+      reset(recurringData);
+    }
+  }, [open, JSON.stringify(recurringData)]);
+
+  const onSubmit = async (formValue: TRecurring) => {
+    try {
+      const data = {
+        recurring: formValue.recurring,
+        from: formValue.from ? moment(formValue.from).format("YYYY-MM-DD") : "",
+        to: formValue.to ? moment(formValue.to).format("YYYY-MM-DD") : "",
+        copyPO: formValue.copyPO,
+        budgetId: id || ""
+      } as TRecurringAdd;
+
+      recurringAdd.mutate(data, {
+        onSuccess() {
+          onAddSnackbar("Create time successful", "success");
+          reset(defaultValues);
+          refetch();
+        },
+        onError(error) {
+          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+        },
+      });
+    } catch (err) {
+      onAddSnackbar(getMessageErrorByAPI(err, commonT), "error");
+    } finally {
+      onClose();
+    }
+  };
+
   return (
     <FormLayout
       label={budgetT("dialogRecurring.titleModalAdd")}
@@ -54,6 +108,7 @@ export const ModalAddRecurring = ({ open, onClose, recurringData }: Props) => {
       onClose={onClose}
       cancelText={budgetT("dialogRecurring.cancelBtnText")}
       submitText={budgetT("dialogRecurring.addBtnText")}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{
         overflow: 'visible !important',
         '& .MuiDialogContent-root': {
@@ -69,21 +124,24 @@ export const ModalAddRecurring = ({ open, onClose, recurringData }: Props) => {
             <Select
               options={templateSelectData}
               title={budgetT("dialogRecurring.recurringInterval")}
-              name="recurringInterval"
+              name="recurring"
               rootSx={sxInput}
               fullWidth
-              value=""
+              onChange={(e) => {
+                setValue("recurring", e.target.value);
+              }}
+              value={watch("recurring")}
             />
             <Stack gap={2} direction="row" sx={{ '& .react-datepicker-popper': { zIndex: 999 }}}>
             <Controller
                   control={control}
-                  name="start_date"
+                  name="from"
                   render={({ field: { onChange, value } }) => (
                     <DatePicker
                       title={budgetT("dialog.date")}
                       rootSx={sxInput}
                       fullWidth
-                      name="start_date"
+                      name="from"
                       value={value}
                       onChange={(_: string, newDate: Date | undefined) => {
                         onChange(newDate ? moment(newDate).format() : "");
@@ -94,13 +152,13 @@ export const ModalAddRecurring = ({ open, onClose, recurringData }: Props) => {
                 />
               <Controller
                   control={control}
-                  name="end_date"
+                  name="to"
                   render={({ field: { onChange, value } }) => (
                     <DatePicker
                       title={budgetT("dialog.date")}
                       rootSx={sxInput}
                       fullWidth
-                      name="end_date"
+                      name="to"
                       value={value}
                       onChange={(_: string, newDate: Date | undefined) => {
                         onChange(newDate ? moment(newDate).format() : "");
@@ -111,10 +169,10 @@ export const ModalAddRecurring = ({ open, onClose, recurringData }: Props) => {
                 />
             </Stack>
             <Stack direction="row">
-              <Checkbox id="copyPoNumber" />
+              <Checkbox id="copyPo" />
               <Typography
                 component="label"
-                htmlFor="copyPoNumber"
+                htmlFor="copyPo"
                 ml={1}
                 sx={{ cursor: "pointer" }}
               >

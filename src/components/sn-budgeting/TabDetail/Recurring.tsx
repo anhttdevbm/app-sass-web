@@ -5,10 +5,11 @@ import { ModalAddRecurring } from "./Modals/ModalAddRecurring";
 import useToggle from "hooks/useToggle";
 
 export type TRecurring = {
-  inteval: string;
-  start_date: string;
-  end_date: string;
-  copy?: boolean;
+  recurring: string;
+  from: string;
+  to: string;
+  copyPO?: boolean;
+  budgetId: string;
 };
 
 export const Recurring = () => {
@@ -64,6 +65,8 @@ export const Recurring = () => {
       <ModalAddRecurring
         open={isOpenModalAddRecurring}
         onClose={hideModalAddRecurring}
+        refetch={() => {       
+        }}
       />
     </>
   );
