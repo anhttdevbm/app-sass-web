@@ -1,4 +1,10 @@
-import { Mic, MicOff, Videocam, VideocamOff, VideocamOutlined } from "@mui/icons-material";
+import {
+  Mic,
+  MicOff,
+  Videocam,
+  VideocamOff,
+  VideocamOutlined,
+} from "@mui/icons-material";
 import { Stack, Avatar, Box, Grid } from "@mui/material";
 import { IconButton, Text } from "components/shared";
 import React, { useState } from "react";
@@ -17,13 +23,16 @@ interface ListUserProps {
 }
 
 const ListUser: React.FC<ListUserProps> = ({ users }) => {
-
   return (
-    <Stack direction={"column"}>
-      {initUsers.map((user) => (
-        <ItemUser user={user} key={user.id} />
-      ))}
-    </Stack>
+    <Box p={2} overflow={"auto"} flexGrow={1}>
+      <Stack direction={"column"}>
+        {[...initUsers, ...initUsers, ...initUsers, ...initUsers].map(
+          (user) => (
+            <ItemUser user={user} key={user.id} />
+          ),
+        )}
+      </Stack>
+    </Box>
   );
 };
 
@@ -31,7 +40,7 @@ export default ListUser;
 
 const initUsers = [
   {
-    id: '1',
+    id: "1",
     name: "John Doe",
     avatar: "https://via.placeholder.com/150",
     isMicOn: true,

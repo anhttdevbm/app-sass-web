@@ -1,14 +1,14 @@
 import { Stack } from "@mui/material";
 import Avatar from "components/Avatar";
+import Link from "components/Link";
 import { BodyCell } from "components/Table";
 import { Text } from "components/shared";
-import Link from "components/Link";
-import { CLIENT_COMPANIES_PATH } from "constant/paths";
-import { DATE_LOCALE_FORMAT } from "constant/index";
-import dayjs from "dayjs";
-import { memo } from "react";
 import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
+import { DATE_LOCALE_FORMAT } from "constant/index";
+import { CLIENT_COMPANIES_PATH } from "constant/paths";
+import dayjs from "dayjs";
 import LogoPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo } from "react";
 
 type DesktopCellsProps = {
   item: ClientCompany;

@@ -1,6 +1,7 @@
 "use client";
 
 import { Divider, IconButton, Stack, StackProps } from "@mui/material";
+import { Endpoint, client } from "api";
 import FixedLayout from "components/FixedLayout";
 import Link from "components/Link";
 import { Button, Text } from "components/shared";
@@ -16,15 +17,14 @@ import {
 } from "constant/paths";
 import dayjs from "dayjs";
 import useToggle from "hooks/useToggle";
+import ChevronIcon from "icons/ChevronIcon";
 import EditUnderlineIcon from "icons/EditUnderlineIcon";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next-intl/client";
 import CompanyPlaceholderImage from "public/images/img-user-placeholder.webp";
 import { memo, useEffect } from "react";
 import { useHeaderConfig } from "store/app/selectors";
 import { useClientCompanies } from "store/company/selectors";
-import { client, Endpoint } from "api";
-import ChevronIcon from "icons/ChevronIcon";
-import { useRouter } from "next-intl/client";
 
 type InformationItemProps = StackProps & {
   label: string;
@@ -157,7 +157,7 @@ const InformationCompany = () => {
                   flex={1}
                   label={companyT("clientCompany.createBy")}
                 >
-                  {item?.contact?.name}
+                  {item?.created_by?.fullname}
                 </InformationItem>
 
                 <InformationItem

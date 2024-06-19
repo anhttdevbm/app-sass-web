@@ -1,18 +1,7 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Card,
-  CardMedia,
-  Chip,
-  Rating,
-  Stack,
-  Switch,
-  Typography,
-} from "@mui/material";
+import { Card, Stack } from "@mui/material";
 
-import AddCircleIcon from "icons/AddCircleIcon";
 import React, { useEffect, useRef, useState } from "react";
 import MeetingHeaderLayout from "./MeetingHeaderLayout";
 import OptionButtonsLayout from "./footer/OptionButtonLayout";
@@ -20,16 +9,17 @@ import RightSidebar from "./right-sidebar/RightSidebar";
 import VideoScreen from "../components/VideoScreen";
 import useBreakpoint from "hooks/useBreakpoint";
 import useWindowSize from "hooks/useWindowSize";
+import useTheme from "hooks/useTheme";
 
 export default function MeetingLayout() {
-  const [active, setActive] = useState(false);
-
+  const { isDarkMode } = useTheme();
   const breack = useBreakpoint();
   const size = useWindowSize();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
+  const [active, setActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
   const startMedia = async () => {
@@ -101,21 +91,33 @@ export default function MeetingLayout() {
   };
 
   return (
-    <Card>
+    <Card sx={{ height: "100%", borderRadius: 0 }}>
       <Stack
         direction="row"
         alignItems="stretch"
-        spacing={3}
         justifyContent={"space-between"}
-        p={2}
+        pb={0}
+        sx={{ height: "100%" }}
       >
         <Stack
           direction={"column"}
-          sx={{ width: "calc(100% - 400px)", backgroundColor: "white" }}
+          gap={3.5}
+          sx={{
+            width: "calc(100% - 400px)",
+            backgroundColor: isDarkMode
+              ? "var(--mui-palette-grey-50)"
+              : "white",
+            justifyContent: "space-between",
+          }}
         >
-          <MeetingHeaderLayout sx={{}} />
-          <VideoScreen sx={{}} users={initUsers} />
-          <OptionButtonsLayout sx={{}} />
+          <MeetingHeaderLayout sx={{ px: 3 }} />
+          <VideoScreen sx={{ flexGrow: 1, px: 3 }} users={initUsers} />
+          <OptionButtonsLayout
+            sx={{
+              width: "100%",
+              boxShadow: "0 -3px 20px 1px #00000026",
+            }}
+          />
         </Stack>
 
         <RightSidebar />

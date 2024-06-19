@@ -33,6 +33,7 @@ export const LayoutLang: LayoutDictionary = {
     sales: "Sales",
     docs: "Documents",
     chat: "Chat",
+    meeting: "Meeting",
 
     // taskcover ai
     taskcoverAI: "Taskcover AI",
