@@ -18,6 +18,9 @@ import { NS_COMMON } from "constant/index";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { STEP } from "store/chat/type";
 import InfoUserIcon from "icons/InfoUserIcon";
+import Link from "next/link";
+import { createNewRoom } from "store/meetingRoom/reducer";
+import { useDispatch } from "react-redux";
 
 interface ProfileHeaderProps {
   textSearch?: string;
@@ -45,6 +48,7 @@ const ProfileHeader = ({
   onSearch,
   onChangeText,
 }: ProfileHeaderProps) => {
+  const dispatch = useDispatch();
   const [openSearch, setOpenSearch] = useState(false);
   const [avatarClone, setAvatarClone] = useState<string | undefined>(
     avatar?.url,
@@ -107,6 +111,10 @@ const ProfileHeader = ({
     }
   };
 
+  const createNewRoomHandler = () => {
+    dispatch(createNewRoom({ isUserRoomCreator: true, isUserInRoom: true }));
+  };
+
   const groupButton = useCallback(() => {
     return (
       <>
@@ -144,20 +152,23 @@ const ProfileHeader = ({
           >
             <ProfileAdd />
           </IconButton>
-          <IconButton
-            onClick={() => {
-              onSetStep(STEP.CONVENTION, {
-                isNew: true,
-                currentSelects: dataTransfer,
-              });
-            }}
-            sx={{
-              color: "white",
-              padding: "6px",
-            }}
-          >
-            <VideoCallIcon />
-          </IconButton>
+          <Link href={`meeting/${crypto.randomUUID()}`}>
+            <IconButton
+              onClick={() => {
+                createNewRoomHandler();
+                // onSetStep(STEP.CONVENTION, {
+                //   isNew: true,
+                //   currentSelects: dataTransfer,
+                // });
+              }}
+              sx={{
+                color: "white",
+                padding: "6px",
+              }}
+            >
+              <VideoCallIcon />
+            </IconButton>
+          </Link>
 
           {onShowProfile && (
             <IconButton
