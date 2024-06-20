@@ -24,6 +24,13 @@ export type TBudgetCreateParam = {
   client:string;
 };
 
+export type RecurringData = {
+  interval: string;
+  start_date: string;
+  end_date: string;
+  copy?: boolean;
+};
+
 export type TBudgetListQueries = BaseQueries & {
   sort?: string;
   group_by?: string;

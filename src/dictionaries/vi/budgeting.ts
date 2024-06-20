@@ -213,6 +213,12 @@ export const BudgetingLang: BudgetingDictionary = {
         nextOccurrence: "Lần kế tiếp",
         stopRecurring: "Dừng định kỳ",
         copy: 'Sao chép số PO trên mỗi lần',
+        recurringIntervalWeekly: 'Hàng tuần',
+        recurringIntervalBiweekly: 'Hai tuần một lần',
+        recurringIntervalMonthly: 'Hàng tháng',
+        recurringIntervalQuarterly: 'Hàng quý',
+        recurringIntervalSemiannually: 'Bán hàng năm',
+        recurringIntervalAnnually: 'Hàng năm',
     },
     delete: {
         titleConfirmDelete: "Xác Nhận Xóa",
