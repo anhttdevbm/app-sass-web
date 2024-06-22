@@ -90,14 +90,14 @@ const aiAgentSlice = createSlice({
       })
       .addCase(resyncSource.fulfilled, (state, action: PayloadAction<Knowledge>) => {
         state.listKnowledge = state.listKnowledge.map((knowledge) => {
-          if (knowledge.id === action.payload.id) {
+          if (knowledge.id === action.payload?.id) {
             return action.payload;
           }
           return knowledge;
         });
       })
       .addCase(deleteSource.fulfilled, (state, action: PayloadAction<Knowledge>) => {
-        state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== action.payload.id);
+        state.listKnowledge = state.listKnowledge.filter((knowledge) => knowledge.id !== action.payload?.id);
       })
 
       // Manage command

@@ -158,7 +158,9 @@ export const getSources = createAsyncThunk(
   async (agentId: string) => {
     try {
       const response = await client.get(
-        `${Endpoint.AI_AGENT_GET_SOURCE.replace(':agentId', agentId)}`, {},{ baseURL: AI_AGENT_API_URL }
+        `${Endpoint.AI_AGENT_GET_SOURCE.replace(':agentId', agentId)}`,
+        {},
+        { baseURL: AI_AGENT_API_URL }
       )
 
       if (response?.status === HttpStatusCode.OK) {
