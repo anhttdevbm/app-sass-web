@@ -27,7 +27,9 @@ export const TableKnowledge = () => {
   );
 
   const handleResync = (knowledgeId: string) => {
-    onResyncSource(knowledgeId);
+    if (aiAgent) {
+      onResyncSource(aiAgent.id, knowledgeId);
+    }
   }
 
   const handleDelete = (knowledgeId: string) => {
