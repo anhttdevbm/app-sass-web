@@ -158,7 +158,9 @@ export const getSources = createAsyncThunk(
   async (agentId: string) => {
     try {
       const response = await client.get(
-        `${Endpoint.AI_AGENT_GET_SOURCE.replace(':agentId', agentId)}`, {},{ baseURL: AI_AGENT_API_URL }
+        `${Endpoint.AI_AGENT_GET_SOURCE.replace(':agentId', agentId)}`,
+        {},
+        { baseURL: AI_AGENT_API_URL }
       )
 
       if (response?.status === HttpStatusCode.OK) {
@@ -174,9 +176,12 @@ export const getSources = createAsyncThunk(
 
 export const resyncSource = createAsyncThunk(
   "aiAgent/resyncSource",
-  async (knowledgeId: string) => {
+  async ({agentId, knowledgeId}: {agentId: string, knowledgeId: string}) => {
     try {
-      const response = await client.post( Endpoint.AI_AGENT_RESYNCE_SOURCE+`/${knowledgeId}`, {}, { baseURL: AI_AGENT_API_URL });
+      const response = await client.post(
+        Endpoint.AI_AGENT_RESYNCE_SOURCE.replace(':agentId', agentId) +`/${knowledgeId}`,
+        {},
+        { baseURL: AI_AGENT_API_URL });
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data.data;

@@ -110,8 +110,11 @@ export const useAIAgent = () => {
     dispatch(getSources(agentId));
   }, [dispatch]);
 
-  const onResyncSource = useCallback((knowledgeId: string) => {
-    dispatch(resyncSource(knowledgeId));
+  const onResyncSource = useCallback((agentId: string, knowledgeId: string) => {
+    dispatch(resyncSource({
+      agentId,
+      knowledgeId
+    }));
   }, [dispatch]);
 
   const onDeleteSource = useCallback(({agentId, knowledgeId}: DeleteSourceInput) => {
