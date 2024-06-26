@@ -13,40 +13,52 @@ import useTheme from "hooks/useTheme";
 import { Socket } from "socket.io-client";
 import Peer from "simple-peer";
 import { useAppSelector } from "store/hooks";
+import { useMeeting } from "store/meeting/selectors";
+import { useChat } from "store/chat/selectors";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "store/app/selectors";
+import { useWSMeetingConnect } from "store/meeting/meetingWs";
+import { useWSMeeting } from "store/meeting/helper";
+import { clientStorage } from "utils/storage";
+import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
 
 export default function MeetingLayout() {
   const { isDarkMode } = useTheme();
   const breack = useBreakpoint();
   const size = useWindowSize();
+  const { user } = useAuth();
+  const pathname = usePathname();
+  const roomId = pathname.split("/")[2];
 
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const userVideoRef = useRef<HTMLVideoElement>(null);
+  const partnerVideoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const socketRef = useRef<Socket>(null);
   const peerRef = useRef<unknown[]>([]);
+  const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
-  const [peers, setPeers] = useState<any>([]);
-  const [active, setActive] = useState(false);
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const { isEndMeeting, onEndMeeting } = useMeeting();
+  const { dataTransfer } = useChat();
+  const router = useRouter();
   const [toggleMinimize, setToggleMinimize] = useState(false);
-  const meetingRoomState = useAppSelector((state) => state.meetingRoom);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteSrteam, setRemoteStream] = useState<MediaStream | null>(null);
+  const [err, setErr] = useState("");
+  const WebSocketRef = useRef<WebSocket>(null);
 
-  const createPeer = (userToSignal, callerID, stream) => {
+  console.log(dataTransfer);
+
+  function createPeer(userToSignal, callerID, stream) {
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream,
     });
 
-    peer.on("signal", (signal) =>
-      socketRef.current?.emit("sending signal", {
-        userToSignal,
-        callerID,
-        signal,
-      }),
-    );
+    peer.on("signal", (signal) => {});
 
     return peer;
-  };
+  }
 
   const addPeer = (incomingSignal, callerID, stream) => {
     const peer = new Peer({
@@ -65,68 +77,45 @@ export default function MeetingLayout() {
   };
 
   const startMedia = async () => {
+    const meetingWs = new WebSocket(
+      `${process.env.NEXT_APP_MEETING_WS_URL}/${dataTransfer.id}?token=${aT}` ||
+        "",
+    );
     try {
-      navigator.mediaDevices
-        .getUserMedia({
-          // audio: window.confirm("Allow access to microphone?"),
-          // video: window.confirm("Allow access to camera?"),
-          audio: true,
-          video: true,
-        })
-        .then((stream) => {
-          setStream(stream);
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-          socketRef.current?.emit("join room");
-          socketRef.current?.on("all user", (users) => {
-            const peers: any[] = [];
-            users.forEach((userID) => {
-              const peer = createPeer(userID, socketRef.current?.id, stream);
-              peerRef.current.push({
-                peerID: userID,
-                peer,
-              });
-              peers.push(peer);
-            });
-            setPeers(peers);
-          });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+      if (userVideoRef.current && stream) {
+        setLocalStream(stream);
+        userVideoRef.current.srcObject = stream;
+      }
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream,
+      });
 
-          socketRef.current?.on("user joined", (payload) => {
-            const peer = addPeer(payload.signal, payload.callerID, stream);
-            peerRef.current.push({
-              peerID: payload.callerID,
-              peer,
-            });
-
-            setPeers((users) => [...users, peer]);
-          });
-
-          socketRef.current?.on("receiving returned signal", (payload) => {
-            const item: any = peerRef.current?.find(
-              (p: any) => p.peerID === payload.id,
-            );
-            item.peer.signal(payload.signal);
-          });
-        });
-    } catch (error) {
+      peer.on("signal", (signal) => {
+        meetingWs.send(
+          JSON.stringify({
+            peer_id: user?.id,
+            sdp: signal,
+          }),
+        );
+      });
+    } catch (error: any) {
+      setErr(error.message.toString());
       console.error("Error accessing media devices:", error);
     }
   };
 
   useEffect(() => {
     startMedia();
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => {
-          track.stop();
-        });
-      }
-    };
   }, []);
 
   const startRecording = () => {
-    const stream = videoRef.current?.srcObject as MediaStream;
+    const stream = userVideoRef.current?.srcObject as MediaStream;
     const chunks: Blob[] = [];
 
     mediaRecorderRef.current = new MediaRecorder(stream);
@@ -166,13 +155,42 @@ export default function MeetingLayout() {
     setToggleMinimize(!toggleMinimize);
   };
 
+  const endMeeting = () => {
+    onEndMeeting(roomId);
+  };
+
+  // if (isEndMeeting) {
+  //   return <p>Meeting has ended</p>;
+  // }
+
   return (
     <div>
-      meeting room
-      <video muted ref={videoRef} autoPlay playsInline />
-      {peers.map((peer, index) => {
-        return <Video key={index} peer={peer} />;
-      })}
+      <h2>meeting room</h2>
+      <button onClick={endMeeting}>end meet</button>
+      <p>
+        localStream: {localStream ? "yes" : "no"} <span>{err && err}</span>
+      </p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+        <video
+          playsInline
+          muted
+          autoPlay
+          ref={userVideoRef}
+          style={{
+            background: "gray",
+            marginRight: "1em",
+            width: "100%",
+            height: "300px",
+          }}
+        />
+        <video
+          playsInline
+          muted
+          autoPlay
+          ref={partnerVideoRef}
+          style={{ background: "gray", width: "100%", height: "300px" }}
+        />
+      </div>
     </div>
 
     // <Card sx={{ height: "100%", borderRadius: 0, bgcolor: "black" }}>
@@ -219,18 +237,6 @@ export default function MeetingLayout() {
     // </Card>
   );
 }
-
-const Video = (props) => {
-  const ref = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    props.peer.on("stream", (stream) => {
-      ref.current!.srcObject = stream;
-    });
-  }, []);
-
-  return <video playsInline autoPlay ref={ref} />;
-};
 
 const initUsers = [
   {

@@ -220,7 +220,6 @@ export const serverQueries = (
   return cleanData;
 };
 
-
 export const serverQueriesOr = (
   {
     pageIndex,
@@ -629,12 +628,12 @@ export const toHoursAndMinutes = (totalMinutes: number) => {
   const minutes = totalMinutes % 60;
 
   return { hours, minutes };
-}
+};
 
 export const clearNullField = (obj: any) => {
   return _(obj)
     .omitBy(_.isUndefined)
     .omitBy(_.isNull)
-    .omitBy((s) => _.isEqual(s, ''))
+    .omitBy((s) => _.isEqual(s, ""))
     .value();
 };

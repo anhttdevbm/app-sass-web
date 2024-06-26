@@ -281,6 +281,8 @@ export interface ChatState {
   unReadMessage: UnReadMessageInfo | null;
   //UnReadMessage
   statusUnReadMessage: DataStatus;
+  //meeting
+  isCalling: boolean;
 
   newGroupData: ChatGroup | {};
   createGroupStatus: DataStatus;
@@ -567,6 +569,8 @@ export const CHAT_EVENT_TYPE = {
   MESSAGE_FORWARD: "message.forward",
   MESSAGE_SEARCH: "message.search",
   MESSAGE_LOCATION: "message.location",
+  // meeting
+  INCOMING_CALL: "start_meet",
 };
 
 export const CHAT_ROOM_TYPE = {

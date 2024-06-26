@@ -26,6 +26,9 @@ import { NS_COMMON } from "constant/index";
 import { useAuth } from "store/app/selectors";
 import { Permission } from "constant/enums";
 import ChatListTemp from "components/sn-chat/ChatListTemp";
+import { useChat } from "store/chat/selectors";
+import { useMeeting } from "store/meeting/selectors";
+import Link from "next/link";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -33,7 +36,11 @@ type MainLayoutProps = {
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH];
 
-const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH, AI_CHAT_PATH, AI_AGENT_CHAT.replace("/{id}", "")];
+const IS_CHATTING_ROOM = [
+  CHATTING_ROOM_PATH,
+  AI_CHAT_PATH,
+  AI_AGENT_CHAT.replace("/{id}", ""),
+];
 
 const MainLayout = (props: MainLayoutProps) => {
   const { children } = props;
@@ -42,6 +49,7 @@ const MainLayout = (props: MainLayoutProps) => {
   const pathname = usePathname();
   const { id } = useParams() as { id: string };
   const commonT = useTranslations(NS_COMMON);
+  const { isCalling } = useChat();
 
   const pathNameWithoutId = id ? pathname.replace(`/${id}`, "") : pathname;
 
@@ -115,8 +123,38 @@ const MainLayout = (props: MainLayoutProps) => {
       </Stack>
       <Snackbar />
       {!isChatting ? <ChatListTemp /> : null}
+      {isCalling && <IncomingCall />}
     </>
   );
 };
 
 export default memo(MainLayout);
+
+const IncomingCall = () => {
+  const { dataTransfer, onAcceptMeeting, onCalling } = useChat();
+  const { onCancelMeeting } = useMeeting();
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: "10rem",
+        right: "2rem",
+        background: "red",
+      }}
+    >
+      Incoming Call
+      <Link href={`/meeting/${dataTransfer.room?.id}`}>
+        <button onClick={onAcceptMeeting}>Accept</button>
+      </Link>
+      <button
+        onClick={() => {
+          onCalling(false);
+          onCancelMeeting(dataTransfer.id);
+        }}
+      >
+        Cancel
+      </button>
+    </div>
+  );
+};

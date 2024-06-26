@@ -76,6 +76,8 @@ export const useWSChat = () => {
     onSetMembers,
     onSetMessageSearch,
     onSetListMessages,
+    onCalling,
+    onEndMeeting,
   } = useChat();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
@@ -198,13 +200,31 @@ export const useWSChat = () => {
     }
   };
 
+  const handleNotiMeeting = (data) => {
+    if (!isRelatedGroup(data.room.members, user?.id)) return;
+    if (data.host.id !== user?.id) {
+      onCalling(true);
+    }
+  };
+
   // Connect message websocket
   const connectMessage = useCallback(
     async (ws: WebSocket | null) => {
       if (ws) {
         ws.onmessage = async (event) => {
           const resp: IWsChatRespMessage = JSON.parse(event.data);
-          console.info(resp);
+          console.info("resp", resp);
+
+          if (resp.data.event === "start_meet") {
+            //incoming call noti
+            handleNotiMeeting(resp.data);
+            onSetDataTransfer(resp.data);
+          } else if (resp.data.event === "cancel_meet") {
+            onCalling(false);
+          } else {
+            // onEndMeeting(true);
+            onCalling(false);
+          }
 
           switch (resp.event) {
             case CHAT_EVENT_TYPE.ROOM_LIST:
