@@ -12,6 +12,10 @@ export const TimeTrackingLang: TimeTrackingDictionary = {
     },
     timeTracking: "Theo dõi thời gian",
     noData: "Không có dữ liệu",
+    common: {
+      startButton: "Bắt đầu",
+      logTimeButton: "Tạo thời gian",
+    }
   },
   myTime: {
     addButton: "Thêm",

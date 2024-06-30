@@ -3,15 +3,19 @@ import { TimeTrackingDictionary } from "dictionaries/types/TimeTrackingDictionar
 export const TimeTrackingLang: TimeTrackingDictionary = {
   header: {
     tab: {
-      myTime: "My time",
-      companyTime: "Company time",
+      myTime: "My time sheet",
+      companyTime: "All time sheet",
       workLog: "Work log",
       workTime: "Work time",
       breakTime: "Break time",
       weekly_total: "Weekly total",
     },
     timeTracking: "Time Tracking",
-    noData: "No data were found"
+    noData: "No data were found",
+    common: {
+      startButton: "Start",
+      logTimeButton: "Log time",
+    }
   },
   myTime: {
     addButton: "Add",
