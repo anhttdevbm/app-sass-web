@@ -44,6 +44,7 @@ import useBreakpoint from "hooks/useBreakpoint";
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
+  isOpenCreatePopup: boolean;
 }
 
 interface IFilter {
@@ -108,7 +109,7 @@ const StyledDay = styled(Box)(() => ({
   },
 }));
 
-const TrackingCalendar: React.FC<IProps> = () => {
+const TrackingCalendar: React.FC<IProps> = (props) => {
   const isGetLoading: any = false;
   const timeT = useTranslations(NS_TIME_TRACKING);
   const { isSmSmaller } = useBreakpoint();
@@ -116,7 +117,9 @@ const TrackingCalendar: React.FC<IProps> = () => {
   const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(false);
+  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(
+    props.isOpenCreatePopup,
+  );
   const [activeTab, setActiveTab] = React.useState<string>("timeSheet");
   const [events, setEvents] = React.useState<any[]>([]);
   const [filters, setFilters] = React.useState<IFilter>(DEFAULT_FILTER);
@@ -132,6 +135,10 @@ const TrackingCalendar: React.FC<IProps> = () => {
     work: 0,
     break: 0,
   });
+
+  React.useEffect(() => {
+    setIsOpenCreatePopup(props.isOpenCreatePopup);
+  }, [props.isOpenCreatePopup]);
 
   React.useEffect(() => {
     if (!_.isEmpty(company)) {
@@ -163,7 +170,8 @@ const TrackingCalendar: React.FC<IProps> = () => {
                   note: data?.note,
                 },
               };
-              if (data.type === "Work time") totalUserWorkTime += data?.duration || 0;
+              if (data.type === "Work time")
+                totalUserWorkTime += data?.duration || 0;
               else totalUserBreakTime += data?.duration || 0;
 
               result.push(newEvent);
@@ -647,8 +655,12 @@ const TrackingCalendar: React.FC<IProps> = () => {
                                   gap: "12px",
                                 }}
                               >
-                                <Avatar sx={{ width: 20, height: 20 }} src={event?.extendedProps?.avatar} />
-                                {event?.extendedProps?.project?.name || "No Project"}
+                                <Avatar
+                                  sx={{ width: 20, height: 20 }}
+                                  src={event?.extendedProps?.avatar}
+                                />
+                                {event?.extendedProps?.project?.name ||
+                                  "No Project"}
                               </Box>
                             </StyledTableCell>
 
