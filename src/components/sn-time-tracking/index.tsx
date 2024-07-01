@@ -1,33 +1,30 @@
 /* eslint-disable no-console */
 "use client";
 
-import React, { FC, useState } from "react";
-import _ from "lodash";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { TabPanel } from "@mui/lab";
 import TabContext from "@mui/lab/TabContext";
 import {
-  Tab,
   Box,
-  Typography,
-  Stack,
-  Grid,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
   Button,
+  Grid,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Typography
 } from "@mui/material";
+import { NS_TIME_TRACKING } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { FC, useState } from "react";
+import PlusIcon from "../../icons/PlusIcon";
 import {
-  TimelogTrackingCalendar,
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
+  TimelogTrackingCalendar,
 } from "./CalendarTracking";
-import { TabPanel } from "@mui/lab";
-import useTheme from "hooks/useTheme";
-import useBreakpoint from "hooks/useBreakpoint";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useTranslations } from "next-intl";
-import { NS_TIME_TRACKING } from "constant/index";
-import PlusIcon from "../../icons/PlusIcon";
-import { ClockIcon } from "@mui/x-date-pickers";
 
 interface ITab {
   label: string;
@@ -121,7 +118,7 @@ const TimeTrackingPage: FC = () => {
               justifyContent: "flex-start",
               alignItems: "center",
               width: "349px",
-              height: "56px",
+              height: "36px",
               margin: "22px 22px 0 22px",
               borderRadius: "100px",
               border: "1px solid #EFEFEF",
@@ -208,7 +205,7 @@ const TimeTrackingPage: FC = () => {
             padding: "16px 22px 0 0",
           }}
         >
-          <Button
+          {/* <Button
             startIcon={<ClockIcon />}
             size="small"
             variant="contained"
@@ -231,7 +228,7 @@ const TimeTrackingPage: FC = () => {
             onClick={showHideLogTimePopup}
           >
             {timeT("header.common.startButton")}
-          </Button>
+          </Button> */}
 
           <Button
             startIcon={<PlusIcon />}
@@ -239,8 +236,8 @@ const TimeTrackingPage: FC = () => {
             variant="contained"
             sx={{
               display: "flex",
-              width: "146px",
-              height: "56px",
+              width: "136px",
+              height: "46px",
               marginLeft: "14px",
               borderRadius: "100px",
               background: "linear-gradient(90deg, #2af598, #009efd)",
