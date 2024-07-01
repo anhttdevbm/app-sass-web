@@ -1,36 +1,33 @@
 /* eslint-disable no-console */
 "use client";
 
-import React, { FC, useState } from "react";
-import _ from "lodash";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { TabPanel } from "@mui/lab";
 import TabContext from "@mui/lab/TabContext";
 import {
-  Tab,
   Box,
-  Typography,
-  Stack,
-  Grid,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
   Button,
   Fab,
+  Grid,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Typography,
 } from "@mui/material";
+import { NS_TIME_TRACKING } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { FC, useState } from "react";
+import PlusIcon from "../../icons/PlusIcon";
 import {
-  TimelogTrackingCalendar,
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
+  TimelogTrackingCalendar,
 } from "./CalendarTracking";
-import { TabPanel } from "@mui/lab";
-import useTheme from "hooks/useTheme";
-import useBreakpoint from "hooks/useBreakpoint";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useTranslations } from "next-intl";
-import { NS_TIME_TRACKING } from "constant/index";
 import TimeSheetIcon from "./icons/TimeSheetIcon";
 import CalendarIcon from "./icons/CalendarIcon";
-import TableIcon from "./icons/TableIcon";
-import PlusIcon from "./icons/PlusIcon";
 import TimeIcon from "./icons/TimeIcon";
 import DayIcon from "../../icons/DayIcon";
 
@@ -317,8 +314,8 @@ const TimeTrackingPage: FC = () => {
             startIcon={<PlusIcon />}
             variant="contained"
             sx={{
-              width: "146px",
-              height: "56px",
+              width: "136px",
+              height: "46px",
               marginLeft: "14px",
               borderRadius: "100px",
               background: "linear-gradient(90deg, #2af598, #009efd)",
