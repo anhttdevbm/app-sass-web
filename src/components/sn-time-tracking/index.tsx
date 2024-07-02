@@ -7,24 +7,28 @@ import TabContext from "@mui/lab/TabContext";
 import {
   Box,
   Button,
+  Fab,
   Grid,
   MenuItem,
   Select,
   SelectChangeEvent,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import { NS_TIME_TRACKING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
 import { FC, useState } from "react";
+import DayIcon from "../../icons/DayIcon";
 import PlusIcon from "../../icons/PlusIcon";
 import {
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
   TimelogTrackingCalendar,
 } from "./CalendarTracking";
+import CalendarIcon from "./icons/CalendarIcon";
+import TimeSheetIcon from "./icons/TimeSheetIcon";
 
 interface ITab {
   label: string;
@@ -69,7 +73,7 @@ const TimeTrackingPage: FC = () => {
     setWorkBorder("");
   };
 
-  const showHideLogTimePopup = () =>
+  const showLogTimePopup = () =>
     setIsOpenCreatePopup((previousState) => !previousState);
 
   return (
@@ -101,118 +105,193 @@ const TimeTrackingPage: FC = () => {
             : isDarkMode
             ? "#565656"
             : "#FFFFFF",
-          display: "flex",
           height: isSmSmaller ? "110px" : "auto",
           justifyContent: "space-between",
         }}
       >
-        <Grid
-          item
-          md={6}
-          sm={12}
-          //sx={{ display: "flex"}}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              width: "349px",
-              height: "36px",
-              margin: "22px 22px 0 22px",
-              borderRadius: "100px",
-              border: "1px solid #EFEFEF",
-              backgroundColor: tab === "timelog" ? "#D9F0FD" : "#FFFFFF",
-            }}
-          >
-            <Select
-              value={
-                tab === timeTabs[0].value
-                  ? timeTabs[0].value
-                  : timeTabs[1].value
-              }
-              defaultValue={timeTabs[0].label}
-              onChange={onSelectTimeSheetChange}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    borderRadius: "12px",
-                    bgcolor: isDarkMode ? "#333333" : "#FFFFFF",
-                    fontFamily: "Inter",
-                    fontSize: "13px",
-                    fontWeight: "Medium",
-                  },
-                },
-              }}
-              sx={{
-                display: "flex",
-                marginLeft: "-1px",
-                fontSize: "16px",
-                fontFamily: "Inter",
-                fontWeight: "Regular",
-                textAlign: "center",
-                width: "179px",
-                height: "54px",
-                borderRadius: "100px",
-                backgroundColor: timeBgColor,
-                color: isDarkMode ? "#FFFFFF" : "#045EB8",
-              }}
-            >
-              <MenuItem value={timeTabs[0].value}>{timeTabs[0].label}</MenuItem>
-              <MenuItem value={timeTabs[1].value}>{timeTabs[1].label}</MenuItem>
-            </Select>
-
-            <Typography
-              sx={{
-                display: "flex",
-                width: "179px",
-                height: "54px",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "16px",
-                fontFamily: "Inter",
-                fontWeight: "Regular",
-                color: isDarkMode ? "#FFFFFF" : "#333333",
-                border: workBorder,
-                borderTopRightRadius: "100px",
-                borderBottomRightRadius: "100px",
-                borderTopLeftRadius: workTopLeftRadius,
-                borderBottomLeftRadius: workBottomLeftRadius,
-                backgroundColor: workBgColor,
-              }}
-              onClick={() => {
-                setTab(timeTabs[2].value);
-                setWorkBgColor("#D9F0FD");
-                setWorkTopLeftRadius("100px");
-                setWorkBottomLeftRadius("100px");
-                setTimeBgColor("#FFFFFF");
-                setWorkBorder("1px solid #EFEFEF");
-              }}
-            >
-              {timeTabs[2].label}
-            </Typography>
-          </Box>
-        </Grid>
-
         <Box
           sx={{
             display: "flex",
-            justifyItems: "flex-end",
-            justifyContent: "flex-end",
+            justifyContent: "flex-start",
             alignItems: "center",
-            width: "396px",
-            height: "56px",
-            padding: "16px 22px 0 0",
+            height: "46px",
+            margin: "22px 22px 0 22px",
+            borderRadius: "100px",
+            border: "1px solid #EFEFEF",
+            backgroundColor: tab === "timelog" ? "#D9F0FD" : "#FFFFFF",
+            "&:hover": {
+              border: "none",
+            },
+            "&:focus": {
+              border: "none",
+            },
           }}
         >
-          {/* <Button
-            startIcon={<ClockIcon />}
-            size="small"
-            variant="contained"
+          <Select
+            value={
+              tab === timeTabs[0].value ? timeTabs[0].value : timeTabs[1].value
+            }
+            defaultValue={timeTabs[0].label}
+            onChange={onSelectTimeSheetChange}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  borderRadius: "12px",
+                  bgcolor: isDarkMode ? "#333333" : "#FFFFFF",
+                  fontFamily: "Inter",
+                  fontSize: "13px",
+                  fontWeight: "Medium",
+                },
+              },
+            }}
             sx={{
               display: "flex",
+              marginLeft: "-1px",
+              fontSize: "16px",
+              fontFamily: "Inter",
+              fontWeight: "Regular",
+              textAlign: "center",
+              width: "179px",
+              height: "54px",
+              borderRadius: "100px",
+              backgroundColor: timeBgColor,
+              color: isDarkMode ? "#FFFFFF" : "#045EB8",
+            }}
+          >
+            <MenuItem value={timeTabs[0].value}>{timeTabs[0].label}</MenuItem>
+            <MenuItem value={timeTabs[1].value}>{timeTabs[1].label}</MenuItem>
+          </Select>
+
+          <Typography
+            sx={{
+              display: "flex",
+              width: "159px",
+              height: "54px",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "16px",
+              fontFamily: "Inter",
+              fontWeight: "Regular",
+              color: isDarkMode ? "#FFFFFF" : "#333333",
+              border: workBorder,
+              borderTopRightRadius: "100px",
+              borderBottomRightRadius: "100px",
+              borderTopLeftRadius: workTopLeftRadius,
+              borderBottomLeftRadius: workBottomLeftRadius,
+              backgroundColor: workBgColor,
+            }}
+            onClick={() => {
+              setTab(timeTabs[2].value);
+              setWorkBgColor("#D9F0FD");
+              setWorkTopLeftRadius("100px");
+              setWorkBottomLeftRadius("100px");
+              setTimeBgColor("#FFFFFF");
+              setWorkBorder("1px solid #EFEFEF");
+            }}
+          >
+            {timeTabs[2].label}
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            height: "56px",
+            margin: "16px 22px 0 0",
+          }}
+        >
+          <Fab
+            sx={{
+              width: "34px",
+              height: "34px",
+              marginRight: "14px",
+              borderRadius: "100px",
+              backgroundColor: "#FFFFFF",
+              "&:hover": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              "&:focus": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              cursor: "pointer",
+            }}
+            // onClick={showLogTimePopup}
+          >
+            {
+              <TimeSheetIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            }
+          </Fab>
+
+          <Fab
+            sx={{
+              width: "34px",
+              height: "34px",
+              marginRight: "2px",
+              borderRadius: "100px",
+              backgroundColor: "#FFFFFF",
+              "&:hover": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              "&:focus": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              cursor: "pointer",
+            }}
+            // onClick={showLogTimePopup}
+          >
+            {
+              <DayIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            }
+          </Fab>
+
+          <Fab
+            sx={{
+              width: "34px",
+              height: "34px",
+              borderRadius: "100px",
+              backgroundColor: "#FFFFFF",
+              "&:hover": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              "&:focus": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              cursor: "pointer",
+            }}
+            // onClick={showLogTimePopup}
+          >
+            {
+              <CalendarIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            }
+          </Fab>
+
+          {/* <Button
+            startIcon={<TimeIcon />}
+            variant="contained"
+            sx={{
               width: "113px",
               height: "56px",
+              marginLeft: "14px",
               borderRadius: "100px",
               background: "linear-gradient(90deg, #2af598, #009efd)",
               "&:hover": {
@@ -225,17 +304,15 @@ const TimeTrackingPage: FC = () => {
               fontWeight: "Bold",
               cursor: "pointer",
             }}
-            onClick={showHideLogTimePopup}
+            // onClick={showLogTimePopup}
           >
             {timeT("header.common.startButton")}
           </Button> */}
 
           <Button
             startIcon={<PlusIcon />}
-            size="small"
             variant="contained"
             sx={{
-              display: "flex",
               width: "136px",
               height: "46px",
               marginLeft: "14px",
@@ -251,13 +328,11 @@ const TimeTrackingPage: FC = () => {
               fontWeight: "Bold",
               cursor: "pointer",
             }}
-            onClick={showHideLogTimePopup}
+            onClick={showLogTimePopup}
           >
             {timeT("header.common.logTimeButton")}
           </Button>
         </Box>
-
-        {/* <Navbar /> */}
       </Grid>
 
       <TabContext value={tab}>
@@ -286,6 +361,7 @@ const TimeTrackingPage: FC = () => {
           <CompanyTimeTrackingCalendar
             events={[]}
             onClick={() => console.log("click")}
+            isOpenCreatePopup={isOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel value="timeLog" sx={{ paddingTop: { sm: 0, md: "auto" } }}>
