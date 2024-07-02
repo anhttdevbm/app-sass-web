@@ -76,7 +76,7 @@ export const BILLING_DUPLICATE_PATH = "/billing/duplicate";
 
 //Budget
 export const BUDGET_EXPENSE_EXPORT_PATH = "/budgeting/expense/export/{id}";
-export const BUDGET_INVOICE_EXPORT_PATH = "/budgeting/invoice/export/{id}";
+export const BUDGET_INVOICE_EXPORT_PATH = "/budgeting/invoices/export/{id}";
 
 // Landing
 export const LANDING_HOME_PATH = "/landing/home";
@@ -88,6 +88,9 @@ export const LANDING_PRICING_PATH = "/landing/pricing";
 
 // Meetings
 export const MEETING_HOME_PATH = "/meeting";
+
+// Invoices
+export const INVOICES_PATH = "/invoices";
 
 const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,
@@ -143,6 +146,9 @@ export const AUTHORIZED_PATHS = {
     BUDGET_DETAIL_PATH,
     BUDGET_EXPENSE_EXPORT_PATH,
     MEETING_HOME_PATH,
+
+    // Invoices
+    INVOICES_PATH,
   ],
   [Permission.SA]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -203,6 +209,9 @@ export const AUTHORIZED_PATHS = {
     BUDGET_EXPENSE_EXPORT_PATH,
 
     MEETING_HOME_PATH,
+
+    // Invoices
+    INVOICES_PATH
   ],
   [Permission.EU]: [...AUTHORIZED_LOGGED_IN_PATHS, UPGRADE_ACCOUNT_PATH],
 };

@@ -36,6 +36,7 @@ import {
   AI_AGENT_PATH,
   STATEMENT_HISTORY_PATH,
   TIME_TRACKING_PATH,
+  INVOICES_PATH
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -420,6 +421,12 @@ const DATA: MenuItemProps[] = [
     ],
     roles: [Permission.SA],
   },
+  {
+    label: "menu.invoices",
+    icon: <BillingIcon />,
+    href: INVOICES_PATH,
+    roles: [Permission.AM, Permission.ST],
+  }
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
