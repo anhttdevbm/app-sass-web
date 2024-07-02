@@ -20,16 +20,15 @@ import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
 import { FC, useState } from "react";
+import DayIcon from "../../icons/DayIcon";
 import PlusIcon from "../../icons/PlusIcon";
 import {
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
   TimelogTrackingCalendar,
 } from "./CalendarTracking";
-import TimeSheetIcon from "./icons/TimeSheetIcon";
 import CalendarIcon from "./icons/CalendarIcon";
-import TimeIcon from "./icons/TimeIcon";
-import DayIcon from "../../icons/DayIcon";
+import TimeSheetIcon from "./icons/TimeSheetIcon";
 
 interface ITab {
   label: string;
@@ -115,7 +114,7 @@ const TimeTrackingPage: FC = () => {
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
-            height: "56px",
+            height: "46px",
             margin: "22px 22px 0 22px",
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
@@ -166,7 +165,7 @@ const TimeTrackingPage: FC = () => {
           <Typography
             sx={{
               display: "flex",
-              width: "179px",
+              width: "159px",
               height: "54px",
               alignItems: "center",
               justifyContent: "center",
@@ -286,7 +285,7 @@ const TimeTrackingPage: FC = () => {
             }
           </Fab>
 
-          <Button
+          {/* <Button
             startIcon={<TimeIcon />}
             variant="contained"
             sx={{
@@ -308,7 +307,7 @@ const TimeTrackingPage: FC = () => {
             // onClick={showLogTimePopup}
           >
             {timeT("header.common.startButton")}
-          </Button>
+          </Button> */}
 
           <Button
             startIcon={<PlusIcon />}
