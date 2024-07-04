@@ -8,11 +8,18 @@ import {
   MESSAGE_TYPE,
   STEP,
 } from "./type";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AN_ERROR_TRY_AGAIN,
+  NS_COMMON,
+} from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
 import { initPagingV2 } from "store/chat/reducer";
+import { useMeeting } from "store/meeting/selectors";
+import { CallStatus } from "store/meeting/types";
+import { clientStorage } from "utils/storage";
 
 const PAGE_INITIAL = 1;
 
@@ -76,12 +83,13 @@ export const useWSChat = () => {
     onSetMembers,
     onSetMessageSearch,
     onSetListMessages,
-    onCalling,
-    onEndMeeting,
   } = useChat();
+  const { onSetRoomInfo, updateCallStatus, onSetMeetingWsClient } =
+    useMeeting();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar, onAddNotification } = useSnackbar();
+  const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
   const resetData = () => {
     onSetStateSearchMessage(null);
@@ -203,7 +211,7 @@ export const useWSChat = () => {
   const handleNotiMeeting = (data) => {
     if (!isRelatedGroup(data.room.members, user?.id)) return;
     if (data.host.id !== user?.id) {
-      onCalling(true);
+      updateCallStatus(CallStatus.ringing);
     }
   };
 
@@ -213,17 +221,15 @@ export const useWSChat = () => {
       if (ws) {
         ws.onmessage = async (event) => {
           const resp: IWsChatRespMessage = JSON.parse(event.data);
-          console.info("resp", resp);
+          // console.info("resp", resp);
 
           if (resp.data.event === "start_meet") {
-            //incoming call noti
             handleNotiMeeting(resp.data);
-            onSetDataTransfer(resp.data);
+            onSetRoomInfo(resp.data);
           } else if (resp.data.event === "cancel_meet") {
-            onCalling(false);
-          } else {
-            // onEndMeeting(true);
-            onCalling(false);
+            updateCallStatus(CallStatus.rejected);
+          } else if (resp.data.event === "end_meet") {
+            updateCallStatus(CallStatus.left);
           }
 
           switch (resp.event) {

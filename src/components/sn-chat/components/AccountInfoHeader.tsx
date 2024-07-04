@@ -38,15 +38,19 @@ const AccountInfoHeader = ({
     dataTransfer?.avatar?.link,
   );
 
-  useEffect(() => {
-    setAvatar(dataTransfer?.avatar?.link);
-  }, [dataTransfer?.avatar]);
+  const handleGroupMeet = () => {
+    console.log("group meet");
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       setTextSearch(event.target.value);
     }
   };
+
+  useEffect(() => {
+    setAvatar(dataTransfer?.avatar?.link);
+  }, [dataTransfer?.avatar]);
 
   const _renderChatGroup = () => {
     if (isGroup) {
@@ -340,6 +344,7 @@ const AccountInfoHeader = ({
                   color: "white",
                   padding: "6px",
                 }}
+                onClick={handleGroupMeet}
               >
                 <VideoCallIcon />
               </IconButton>

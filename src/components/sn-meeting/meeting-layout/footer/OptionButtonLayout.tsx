@@ -20,13 +20,20 @@ import React, { useState } from "react";
 import OptionPopup from "./OptionPopup";
 import { random } from "lodash";
 import useTheme from "hooks/useTheme";
+import { useMeeting } from "store/meeting/selectors";
+import { usePathname, useRouter } from "next/navigation";
 
 interface OptionButtonLayoutProps {
   sx: object;
 }
 
 export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const roomId = pathname.split("/")[2];
   const { isDarkMode } = useTheme();
+  const { onEndMeeting } = useMeeting();
+
   const [isMicActive, setIsMicActive] = useState(false);
   const [isVideocamActive, setIsVideocamActive] = useState(false);
   const [isScreenShareActive, setIsScreenShareActive] = useState(false);
@@ -74,6 +81,11 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   };
 
   const idPopup = random().toString();
+
+  const endMeeting = () => {
+    router.back();
+    onEndMeeting(roomId);
+  };
 
   return (
     <Stack
@@ -178,7 +190,9 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
       </Box>
 
       <Box width={"10%"} textAlign={"center"}>
-        <Button sx={{ padding: "14px", ...sxDangerBtn }}>End Call</Button>
+        <Button sx={{ padding: "14px", ...sxDangerBtn }} onClick={endMeeting}>
+          End Call
+        </Button>
       </Box>
     </Stack>
   );

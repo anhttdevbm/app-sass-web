@@ -88,7 +88,6 @@ import {
   setMessageSearch,
   setWsClient,
   setListMessage,
-  setIsCalling,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
@@ -132,9 +131,6 @@ export const useChat = () => {
     //StateUnReadMessage
     unReadMessage,
     statusUnReadMessage,
-
-    //meeting
-    isCalling,
 
     mediaList,
     mediaListStatus,
@@ -832,25 +828,6 @@ export const useChat = () => {
     [dispatch],
   );
 
-  const onCalling = useCallback(
-    async (data) => {
-      return dispatch(setIsCalling(data));
-    },
-    [dispatch],
-  );
-
-  const onAcceptMeeting = useCallback(async () => {
-    // dispatch(setEndMeeting(false));
-    return dispatch(setIsCalling(false));
-  }, [dispatch]);
-
-  const onCancelMeeting = useCallback(
-    async (data) => {
-      return dispatch(setIsCalling(data));
-    },
-    [dispatch],
-  );
-
   const onEndMeeting = useCallback(
     async (data) => {
       return dispatch(setEndMeeting(data));
@@ -915,11 +892,6 @@ export const useChat = () => {
     stateSearchMessage,
     unReadMessage,
 
-    isCalling,
-    onAcceptMeeting,
-    onCancelMeeting,
-    onEndMeeting,
-
     createGroupStatus,
     newGroupData,
     addMembers2GroupStatus,
@@ -973,6 +945,5 @@ export const useChat = () => {
     selectSearchIndex,
     onSetIndexSearch,
     onResetDataTransfer,
-    onCalling,
   };
 };

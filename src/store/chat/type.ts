@@ -281,9 +281,7 @@ export interface ChatState {
   unReadMessage: UnReadMessageInfo | null;
   //UnReadMessage
   statusUnReadMessage: DataStatus;
-  //meeting
-  isCalling: boolean;
-
+ 
   newGroupData: ChatGroup | {};
   createGroupStatus: DataStatus;
   addMembers2GroupStatus: DataStatus;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, Stack } from "@mui/material";
+import { Box, Card, Stack, Avatar as MuiAvatar } from "@mui/material";
 
 import React, { useEffect, useRef, useState } from "react";
 import MeetingHeaderLayout from "./MeetingHeaderLayout";
@@ -10,233 +10,202 @@ import VideoScreen from "../components/VideoScreen";
 import useBreakpoint from "hooks/useBreakpoint";
 import useWindowSize from "hooks/useWindowSize";
 import useTheme from "hooks/useTheme";
-import { Socket } from "socket.io-client";
-import Peer from "simple-peer";
-import { useAppSelector } from "store/hooks";
-import { useMeeting } from "store/meeting/selectors";
-import { useChat } from "store/chat/selectors";
-import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "store/app/selectors";
-import { useWSMeetingConnect } from "store/meeting/meetingWs";
-import { useWSMeeting } from "store/meeting/helper";
-import { clientStorage } from "utils/storage";
-import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
+import { useAppSelector } from "store/hooks";
+import { useWSMeeting } from "webSocket/wsConnection";
+import Avatar from "components/Avatar";
+import ButtonOnMyScreen from "../components/ButtonOnMyScreen";
 
 export default function MeetingLayout() {
+  useWSMeeting();
   const { isDarkMode } = useTheme();
   const breack = useBreakpoint();
   const size = useWindowSize();
   const { user } = useAuth();
-  const pathname = usePathname();
-  const roomId = pathname.split("/")[2];
-
-  const userVideoRef = useRef<HTMLVideoElement>(null);
-  const partnerVideoRef = useRef<HTMLVideoElement>(null);
+  const { localStream, remoteStream } = useAppSelector(
+    (state) => state.meeting,
+  );
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const socketRef = useRef<Socket>(null);
-  const peerRef = useRef<unknown[]>([]);
-  const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
-  const { isEndMeeting, onEndMeeting } = useMeeting();
-  const { dataTransfer } = useChat();
-  const router = useRouter();
   const [toggleMinimize, setToggleMinimize] = useState(false);
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteSrteam, setRemoteStream] = useState<MediaStream | null>(null);
-  const [err, setErr] = useState("");
-  const WebSocketRef = useRef<WebSocket>(null);
 
-  console.log(dataTransfer);
+  // const startRecording = () => {
+  //   const stream = userVideoRef.current?.srcObject as MediaStream;
+  //   const chunks: Blob[] = [];
 
-  function createPeer(userToSignal, callerID, stream) {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
+  //   mediaRecorderRef.current = new MediaRecorder(stream);
 
-    peer.on("signal", (signal) => {});
+  //   mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
+  //     if (event.data.size > 0) {
+  //       chunks.push(event.data);
+  //     }
+  //   });
 
-    return peer;
-  }
+  //   mediaRecorderRef.current.addEventListener("stop", () => {
+  //     const videoBlob = new Blob(chunks, { type: "video/webm" });
+  //     const videoUrl = URL.createObjectURL(videoBlob);
 
-  const addPeer = (incomingSignal, callerID, stream) => {
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream,
-    });
+  //     // Do something with the video URL, e.g., download or display it
+  //     // For example, you can create a download link:
+  //     const downloadLink = document.createElement("a");
+  //     downloadLink.href = videoUrl;
+  //     downloadLink.download = "my_video.webm";
+  //     downloadLink.click();
 
-    peer.on("signal", (signal) => {
-      socketRef.current?.emit("returning signal", { signal, callerID });
-    });
+  //     // Clean up
+  //     URL.revokeObjectURL(videoUrl);
+  //     chunks.length = 0;
+  //   });
 
-    peer.signal(incomingSignal);
+  //   mediaRecorderRef.current.start();
+  // };
 
-    return peer;
-  };
-
-  const startMedia = async () => {
-    const meetingWs = new WebSocket(
-      `${process.env.NEXT_APP_MEETING_WS_URL}/${dataTransfer.id}?token=${aT}` ||
-        "",
-    );
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
-      if (userVideoRef.current && stream) {
-        setLocalStream(stream);
-        userVideoRef.current.srcObject = stream;
-      }
-      const peer = new Peer({
-        initiator: true,
-        trickle: false,
-        stream,
-      });
-
-      peer.on("signal", (signal) => {
-        meetingWs.send(
-          JSON.stringify({
-            peer_id: user?.id,
-            sdp: signal,
-          }),
-        );
-      });
-    } catch (error: any) {
-      setErr(error.message.toString());
-      console.error("Error accessing media devices:", error);
-    }
-  };
-
-  useEffect(() => {
-    startMedia();
-  }, []);
-
-  const startRecording = () => {
-    const stream = userVideoRef.current?.srcObject as MediaStream;
-    const chunks: Blob[] = [];
-
-    mediaRecorderRef.current = new MediaRecorder(stream);
-
-    mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
-      if (event.data.size > 0) {
-        chunks.push(event.data);
-      }
-    });
-
-    mediaRecorderRef.current.addEventListener("stop", () => {
-      const videoBlob = new Blob(chunks, { type: "video/webm" });
-      const videoUrl = URL.createObjectURL(videoBlob);
-
-      // Do something with the video URL, e.g., download or display it
-      // For example, you can create a download link:
-      const downloadLink = document.createElement("a");
-      downloadLink.href = videoUrl;
-      downloadLink.download = "my_video.webm";
-      downloadLink.click();
-
-      // Clean up
-      URL.revokeObjectURL(videoUrl);
-      chunks.length = 0;
-    });
-
-    mediaRecorderRef.current.start();
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-    }
-  };
+  // const stopRecording = () => {
+  //   if (mediaRecorderRef.current) {
+  //     mediaRecorderRef.current.stop();
+  //   }
+  // };
 
   const toggleMinimizeMeeting = () => {
     setToggleMinimize(!toggleMinimize);
   };
 
-  const endMeeting = () => {
-    onEndMeeting(roomId);
-  };
-
-  // if (isEndMeeting) {
-  //   return <p>Meeting has ended</p>;
-  // }
-
   return (
-    <div>
-      <h2>meeting room</h2>
-      <button onClick={endMeeting}>end meet</button>
-      <p>
-        localStream: {localStream ? "yes" : "no"} <span>{err && err}</span>
-      </p>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
-        <video
-          playsInline
-          muted
-          autoPlay
-          ref={userVideoRef}
-          style={{
-            background: "gray",
-            marginRight: "1em",
-            width: "100%",
-            height: "300px",
+    <Card
+      sx={{
+        height: "100%",
+        width: "100%",
+        minWidth: "1440px",
+        overflow: "auto",
+        borderRadius: 0,
+        bgcolor: "black",
+      }}
+    >
+      <Stack
+        direction="row"
+        alignItems="stretch"
+        justifyContent={"space-between"}
+        pb={0}
+        sx={{ height: "100%" }}
+      >
+        <Stack
+          direction={"column"}
+          gap={3.5}
+          sx={{
+            width: "calc(100% - 400px)",
+            backgroundColor: isDarkMode
+              ? "var(--mui-palette-grey-50)"
+              : "white",
+            justifyContent: "space-between",
           }}
-        />
-        <video
-          playsInline
-          muted
-          autoPlay
-          ref={partnerVideoRef}
-          style={{ background: "gray", width: "100%", height: "300px" }}
-        />
-      </div>
-    </div>
-
-    // <Card sx={{ height: "100%", borderRadius: 0, bgcolor: "black" }}>
-    //   <Stack
-    //     direction="row"
-    //     alignItems="stretch"
-    //     justifyContent={"space-between"}
-    //     pb={0}
-    //     sx={{ height: "100%" }}
-    //   >
-    //     <Stack
-    //       direction={"column"}
-    //       gap={3.5}
-    //       sx={{
-    //         width: "calc(100% - 400px)",
-    //         backgroundColor: isDarkMode
-    //           ? "var(--mui-palette-grey-50)"
-    //           : "white",
-    //         justifyContent: "space-between",
-    //       }}
-    //     >
-    //       <MeetingHeaderLayout
-    //         sx={{ px: 3 }}
-    //         toggleMinimizeMeeting={toggleMinimizeMeeting}
-    //       />
-    //       <video
-    //         muted
-    //         ref={videoRef}
-    //         autoPlay
-    //         playsInline
-    //         style={{ background: "gray" }}
-    //       />
-    //       <VideoScreen sx={{ flexGrow: 1, px: 3 }} users={initUsers} />
-    //       <OptionButtonsLayout
-    //         sx={{
-    //           width: "100%",
-    //           boxShadow: "0 -3px 20px 1px #00000026",
-    //         }}
-    //       />
-    //     </Stack>
-
-    //     <RightSidebar />
-    //   </Stack>
-    // </Card>
+        >
+          <MeetingHeaderLayout
+            sx={{ px: 3 }}
+            toggleMinimizeMeeting={toggleMinimizeMeeting}
+          />
+          {/* <VideoScreen sx={{ flexGrow: 1, px: 3 }} users={initUsers} /> */}
+          <Stack
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 4,
+              placeItems: "center",
+              height: "100%",
+              padding: 2,
+            }}
+          >
+            {localStream ? (
+              <VideoStreaming localStream={localStream} isLocalStream={true} />
+            ) : (
+              <Avatar size={100} src={user?.avatar?.link} />
+            )}
+            {remoteStream ? (
+              <VideoStreaming
+                localStream={remoteStream}
+                isLocalStream={false}
+              />
+            ) : (
+              <MuiAvatar
+                sx={{ width: 100, height: 100 }}
+                src="/static/images/avatar/1.jpg"
+              />
+            )}
+          </Stack>
+          <OptionButtonsLayout
+            sx={{
+              width: "100%",
+              boxShadow: "0 -3px 20px 1px #00000026",
+            }}
+          />
+        </Stack>
+        <RightSidebar />
+      </Stack>
+    </Card>
   );
 }
+
+const VideoStreaming = ({
+  localStream,
+  isLocalStream,
+}: {
+  localStream: MediaStream;
+  isLocalStream: boolean;
+}) => {
+  const [isShow, setShow] = useState(false);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    video!.srcObject = localStream;
+
+    video!.onloadedmetadata = () => {
+      video!.play();
+
+      if (isLocalStream) {
+        video!.muted = true;
+        video!.volume = 0;
+      }
+    };
+  }, [localStream, isLocalStream]);
+
+  return (
+    <Box
+      sx={{
+        bgcolor: "gray",
+        width: "100%",
+        height: "100%",
+        display: "grid",
+        placeItems: "center",
+        position: "relative",
+      }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <video
+        ref={videoRef}
+        autoPlay
+        style={{ background: "gray", width: "100%", height: "100%" }}
+      />
+      {isShow && (
+        <ButtonOnMyScreen
+          sx={{
+            position: "absolute",
+            bottom: "50%",
+            right: "50%",
+            transform: "translateX(50%) translateY(50%)",
+            bgcolor: "rgba(0,0,0,0.5)",
+            borderRadius: "90px",
+            padding: "8px 16px",
+            backdropFilter: "blur(20px)",
+          }}
+          localStream={localStream}
+          isLocalStream={isLocalStream}
+        />
+      )}
+    </Box>
+  );
+};
 
 const initUsers = [
   {

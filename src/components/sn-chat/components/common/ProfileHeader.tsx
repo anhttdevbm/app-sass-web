@@ -18,8 +18,7 @@ import { NS_COMMON } from "constant/index";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { STEP } from "store/chat/type";
 import InfoUserIcon from "icons/InfoUserIcon";
-import Link from "next/link";
-import { useDispatch } from "react-redux";
+
 import DialogLayout from "components/DialogLayout";
 import { useMeeting } from "store/meeting/selectors";
 import { usePathname, useRouter } from "next/navigation";
@@ -68,10 +67,10 @@ const ProfileHeader = ({
     onSetDataTransfer,
     onSetConversationInfo,
   } = useChat();
-  const { onStartMeeting } = useMeeting();
   const commonT = useTranslations(NS_COMMON);
 
   const { user } = useAuth();
+  const { onStartMeeting } = useMeeting();
   const { onAddSnackbar } = useSnackbar();
 
   // const handleCreateGroup = async () => {
@@ -91,13 +90,6 @@ const ProfileHeader = ({
   //   onSetStep(STEP.CHAT_GROUP, result?.payload?.group);
   // };
 
-  useEffect(() => {
-    setOpenSearch(isSearch || false);
-    return () => {
-      setOpenSearch(false);
-    };
-  }, [isSearch]);
-
   const handleKeyDown = useCallback(
     (event) => {
       if (event.key === "Enter") {
@@ -116,12 +108,19 @@ const ProfileHeader = ({
     }
   };
 
-  const startMeet = async () => {
-    onStartMeeting(dataTransfer.id);
-    if (!pathname.includes("meeting")) {
-      router.push(`/meeting/${dataTransfer.id}`);
-    }
+  const startMeeting = async () => {
+    await onStartMeeting(dataTransfer.id).then((res: any) => {
+      if (pathname.includes("/meeting")) return;
+      router.push(`meeting/${res?.payload?.meetInfo.room.id}`);
+    });
   };
+
+  useEffect(() => {
+    setOpenSearch(isSearch || false);
+    return () => {
+      setOpenSearch(false);
+    };
+  }, [isSearch]);
 
   const groupButton = useCallback(() => {
     return (
@@ -161,11 +160,12 @@ const ProfileHeader = ({
             <ProfileAdd />
           </IconButton>
           <IconButton
-            onClick={startMeet}
+            onClick={startMeeting}
             sx={{
               color: "white",
               padding: "6px",
             }}
+            className="call-button"
           >
             <VideoCallIcon />
           </IconButton>

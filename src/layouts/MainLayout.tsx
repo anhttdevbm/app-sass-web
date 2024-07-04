@@ -1,6 +1,6 @@
 "use client";
 
-import { Snackbar, Stack } from "@mui/material";
+import { Box, Snackbar, Stack } from "@mui/material";
 import AppLoading from "components/AppLoading";
 import Header from "./Header";
 import { memo, useEffect, useMemo } from "react";
@@ -11,24 +11,20 @@ import { usePathname, useRouter } from "next-intl/client";
 import {
   AI_AGENT_CHAT,
   AI_CHAT_PATH,
-  AUTHORIZED_PATHS,
   CHATTING_ROOM_PATH,
   FORGOT_PASSWORD_PATH,
-  HOME_PATH,
   JOIN_WORKSPACE_PATH,
   SIGNIN_PATH,
   SIGNUP_PATH,
 } from "constant/paths";
-import { Text } from "components/shared";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
 import { useAuth } from "store/app/selectors";
-import { Permission } from "constant/enums";
 import ChatListTemp from "components/sn-chat/ChatListTemp";
-import { useChat } from "store/chat/selectors";
 import { useMeeting } from "store/meeting/selectors";
-import Link from "next/link";
+import { CallStatus } from "store/meeting/types";
+import { Button } from "components/shared";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -49,7 +45,6 @@ const MainLayout = (props: MainLayoutProps) => {
   const pathname = usePathname();
   const { id } = useParams() as { id: string };
   const commonT = useTranslations(NS_COMMON);
-  const { isCalling } = useChat();
 
   const pathNameWithoutId = id ? pathname.replace(`/${id}`, "") : pathname;
 
@@ -57,6 +52,7 @@ const MainLayout = (props: MainLayoutProps) => {
     (state) => state.app,
     shallowEqual,
   );
+  const { callStatus } = useAppSelector((state) => state.meeting);
 
   const { onGetProfile } = useAuth();
 
@@ -123,7 +119,7 @@ const MainLayout = (props: MainLayoutProps) => {
       </Stack>
       <Snackbar />
       {!isChatting ? <ChatListTemp /> : null}
-      {isCalling && <IncomingCall />}
+      {callStatus === CallStatus.ringing && <IncomingCall />}
     </>
   );
 };
@@ -131,30 +127,48 @@ const MainLayout = (props: MainLayoutProps) => {
 export default memo(MainLayout);
 
 const IncomingCall = () => {
-  const { dataTransfer, onAcceptMeeting, onCalling } = useChat();
-  const { onCancelMeeting } = useMeeting();
+  const router = useRouter();
+  const { roomInfo } = useAppSelector((state) => state.meeting);
+  const { onAcceptCall, onRejectCall } = useMeeting();
+
+  const handleCall = (accepted) => {
+    if (!accepted) {
+      onRejectCall(roomInfo.id);
+      return;
+    }
+    onAcceptCall(roomInfo.id);
+    router.push(`/meeting/${roomInfo?.room.id}`);
+  };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         position: "fixed",
         top: "10rem",
         right: "2rem",
-        background: "red",
+        background: "var(--mui-palette-info-light)",
+        borderRadius: 2,
+        padding: 2,
       }}
     >
-      Incoming Call
-      <Link href={`/meeting/${dataTransfer.room?.id}`}>
-        <button onClick={onAcceptMeeting}>Accept</button>
-      </Link>
-      <button
-        onClick={() => {
-          onCalling(false);
-          onCancelMeeting(dataTransfer.id);
-        }}
+      <p>Incoming Call</p>
+      {/* {!callRequest?.audioOnly && (
+        <button onClick={() => handleCall(true, false)}>Accept</button>
+      )} */}
+      <Button
+        onClick={() => handleCall(true)}
+        variant="outlined"
+        sx={{ bgcolor: "var(--mui-palette-primary-main)", margin: "0 4px" }}
+      >
+        Accept
+      </Button>
+      <Button
+        onClick={() => handleCall(false)}
+        variant="outlined"
+        sx={{ bgcolor: "var(--mui-palette-error-dark)" }}
       >
         Cancel
-      </button>
-    </div>
+      </Button>
+    </Box>
   );
 };

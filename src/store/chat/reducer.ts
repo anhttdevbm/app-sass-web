@@ -87,8 +87,6 @@ const initialState: ChatState = {
   stateSearchMessage: null,
   unReadMessage: null,
   statusUnReadMessage: DataStatus.IDLE,
-  //meeting
-  isCalling: false,
 
   newGroupData: {},
   createGroupStatus: DataStatus.IDLE,
@@ -354,9 +352,6 @@ const chatSlice = createSlice({
     },
     resetSearchChatText: (state) => {
       state.listSearchMessage = [];
-    },
-    setIsCalling: (state, action) => {
-      state.isCalling = action.payload;
     },
   },
   extraReducers: (builder) =>
@@ -668,7 +663,6 @@ export const {
   setSelectSearchIndex,
   resetDataTransfer,
   setWsClient,
-  setIsCalling,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

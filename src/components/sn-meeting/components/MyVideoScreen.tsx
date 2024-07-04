@@ -115,7 +115,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         playsInline
         sx={{ width: "calc(100% - 400px)", height: "100%" }}
       />
-      <ButtonOnMyScreen
+      {/* <ButtonOnMyScreen
         sx={{
           position: "absolute",
           bottom: "50%",
@@ -132,7 +132,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         isScreenPinned={isScreenPinned}
         isMicOn={isMicOn}
         isCameraOn={isCameraOn}
-      />
+      /> */}
       {/* <Box>
         <button onClick={startRecording}>Start Recording</button>
         <button onClick={stopRecording}>Stop Recording</button>
