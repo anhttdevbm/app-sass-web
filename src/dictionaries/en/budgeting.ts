@@ -213,6 +213,12 @@ export const BudgetingLang: BudgetingDictionary = {
     nextOccurrence: "Next Occurrence",
     stopRecurring: "Stop Recurring",
     copy: 'Copy PO number on each occurence',
+    recurringIntervalWeekly: 'Weekly',
+    recurringIntervalBiweekly: 'Biweekly',
+    recurringIntervalMonthly: 'Monthly',
+    recurringIntervalQuarterly: 'Quarterly',
+    recurringIntervalSemiannually: 'Semiannually',
+    recurringIntervalAnnually: 'Annually',
   },
   delete: {
     titleConfirmDelete: "Confirm delete",

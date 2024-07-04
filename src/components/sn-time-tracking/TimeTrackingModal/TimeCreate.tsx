@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, DialogContent, Stack } from "@mui/material";
+import { Box, Button, DialogContent, Stack, Typography } from "@mui/material";
 import TextFieldSelect from "components/shared/TextFieldSelect";
 import { NS_COMMON, NS_TIME_TRACKING } from "constant/index";
 import dayjs from "dayjs";
@@ -260,42 +260,66 @@ const TimeCreate: React.FC<IProps> = ({
             name="type"
             control={control}
             render={({ field }) => (
-              <TextFieldSelect
-                options={[
-                  { label: timeT("header.tab.workTime"), value: "Work time" },
-                  {
-                    label: timeT("header.tab.breakTime"),
-                    value: "Break time",
-                  },
-                ]}
-                label={timeT("modal.Type")}
-                sx={{ flex: 1 }}
-                required
-                error={Boolean(errors?.type?.message)}
-                helperText={errors?.type?.message}
-                renderValue={(selected) => {
-                  return (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 1,
-                        alignItems: "center",
-                      }}
-                    >
+              <>
+                <Typography
+                  sx={{
+                    display: "flex",
+                    height: "20px",
+                    fontSize: "13px",
+                    fontFamily: "Inter",
+                    fontWeight: "Medium",
+                    color: isDarkMode ? "#4D4D4D" : "#4D4D4D",
+                    paddingRight: "5px",
+                  }}
+                >
+                  {timeT("modal.Type")}
+
+                  <Box
+                    display="inline"
+                    sx={{
+                      marginLeft: "2px",
+                      color: "#FF2C56",
+                    }}
+                  >
+                    {"*"}
+                  </Box>
+                </Typography>
+
+                <TextFieldSelect
+                  options={[
+                    { label: timeT("header.tab.workTime"), value: "Work time" },
+                    {
+                      label: timeT("header.tab.breakTime"),
+                      value: "Break time",
+                    },
+                  ]}
+                  sx={{ flex: 1 }}
+                  error={Boolean(errors?.type?.message)}
+                  helperText={errors?.type?.message}
+                  renderValue={(selected) => {
+                    return (
                       <Box
                         sx={{
-                          width: 8,
-                          height: 8,
-                          background:
-                            selected === "Work time" ? "#3699FF" : "#F64E60",
+                          display: "flex",
+                          gap: 1,
+                          alignItems: "center",
                         }}
-                      />
-                      {selected as string}
-                    </Box>
-                  );
-                }}
-                {...(field as any)}
-              />
+                      >
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            background:
+                              selected === "Work time" ? "#3699FF" : "#F64E60",
+                          }}
+                        />
+                        {selected as string}
+                      </Box>
+                    );
+                  }}
+                  {...(field as any)}
+                />
+              </>
             )}
           />
           {watch("type") === "Work time" && (
@@ -391,7 +415,26 @@ const TimeCreate: React.FC<IProps> = ({
         <Stack direction="row" justifyContent="center">
           <Button
             variant="outlined"
-            sx={{ width: "150px", marginRight: "24px" }}
+            sx={{
+              width: "168px",
+              height: "40px",
+              borderRadius: "100px",
+              marginRight: "24px",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              textTransform: "none",
+              fontSize: "13px",
+              fontFamily: "Inter",
+              fontWeight: "Medium",
+              color: "#0575E6",
+              borderColor: "linear-gradient(0deg, #2af598, #009efd)",
+              "&:hover": {
+                borderColor: "linear-gradient(0deg, #2af598, #009efd)",
+              },
+              "&:focus": {
+                borderColor: "linear-gradient(0deg, #2af598, #009efd)",
+              },
+            }}
             onClick={onClose}
           >
             {timeT("modal.Cancel")}
@@ -400,12 +443,21 @@ const TimeCreate: React.FC<IProps> = ({
             // type="submit"
             variant="contained"
             sx={{
-              height: "36px",
-              width: "150px",
-              padding: 0,
-              backgroundColor: "primary.main",
-              color: "common.white",
               textTransform: "none",
+              width: "168px",
+              height: "40px",
+              borderRadius: "100px",
+              marginRight: "24px",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              fontSize: "13px",
+              fontFamily: "Inter",
+              fontWeight: "Bold",
+              color: "common.white",
+              background: "linear-gradient(90deg, #2af598, #009efd)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2af598, #009efd)",
+              },
             }}
             onClick={handleSubmit(onSubmit)}
           >
@@ -462,6 +514,7 @@ const TimeCreate: React.FC<IProps> = ({
         width: "500px",
         maxHeight: "100vh",
         overflow: "hidden",
+        borderRadius: "24px",
       }}
     />
   );

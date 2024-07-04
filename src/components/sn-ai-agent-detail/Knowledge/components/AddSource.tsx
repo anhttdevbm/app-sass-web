@@ -230,6 +230,6 @@ export const isValidUrl = (url: string): boolean => {
 }
 
 export const isValidYoutubeUrl = (url: string): boolean => {
-  const pattern = new RegExp('^(https?\\:\\/\\/)?(www\\.youtube\\.com|)\\/.+$','i');
+  const pattern = new RegExp('youtube\\.com|youtu\\.be', 'i');
   return pattern.test(url);
 }

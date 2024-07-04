@@ -225,6 +225,7 @@ const RequestClient = class {
       throw error;
     }
   }
+
   async getExport(endpoint: string, configs = {} as AxiosRequestConfig) {
     try {
       const response = await this.axios.get(endpoint, {

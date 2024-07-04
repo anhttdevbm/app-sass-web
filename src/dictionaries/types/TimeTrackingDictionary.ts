@@ -10,6 +10,10 @@ export type TimeTrackingDictionary = {
     };
     timeTracking: string;
     noData: string;
+    common: {
+      startButton: string;
+      logTimeButton: string;
+    }
   };
   myTime: {
     addButton: string;

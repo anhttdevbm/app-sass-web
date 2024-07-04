@@ -107,6 +107,7 @@ export const Endpoint = {
     "/budgets/expense/export-all-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_UPDATE: "/budgets/expense/update-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_DELETE: "/budgets/expense/delete-expense/{expenseId}",
+  BUDGET_RECURRING_ADD: "budgets/recurring/create-recurring",
 
   POSITIONS_ALL: "/positions/all",
   POSITIONS: "/positions",
@@ -220,8 +221,8 @@ export const Endpoint = {
   AI_AGENT_PROMPT_TEMPLATE: "/agent/prompt-template",
   AI_AGENT_UPDATE: "/agent/update",
   AI_AGENT_ADD_SOURCE: "/agent/add-source-knowledge",
-  AI_AGENT_GET_SOURCE: "/agent/:agentId/get-source-knowledge",
-  AI_AGENT_RESYNCE_SOURCE: "/agent/resync-source-knowledge",
+  AI_AGENT_GET_SOURCE: "/agent/:agentId/get-knowledge",
+  AI_AGENT_RESYNCE_SOURCE: "/agent/:agentId/resync-knowledge",
   AI_AGENT_DELETE_SOURCE: "/agent/:agentID/delete-source-knowledge/:knowledgeId",
   AI_AGENT_CREATE_COMMAND: "/agent/create-command",
   AI_AGENT_GET_COMMAND: "/agent/:agentId/commands",
