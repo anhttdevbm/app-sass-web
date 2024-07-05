@@ -30,13 +30,17 @@ const TextStatus = (props: TextStatusProps) => {
 
   return (
     <Text
-      color={({ palette }) => isActive ? isDarkMode ? 'white' : 'black' : palette?.[color]?.main}
-      bgcolor={({ palette }) => isActive ? 'transparent' : palette?.[color]?.light}
+      color={({ palette }) =>
+        isActive ? (isDarkMode ? "white" : "black") : palette?.[color]?.main
+      }
+      bgcolor={({ palette }) =>
+        isActive ? "transparent" : palette?.[color]?.light
+      }
       variant="caption"
-      fontWeight={isActive ? 700 :500}
+      fontWeight={isActive ? 700 : 500}
       py={0.5}
       px={{ xs: 0.5, md: 2 }}
-      borderRadius={1.5}
+      borderRadius="1.5rem"
       textAlign="center"
       display="inline-block"
       minWidth={width}

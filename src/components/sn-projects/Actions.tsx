@@ -15,10 +15,10 @@ import Form, { ProjectDataForm } from "./Form";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
-import { log } from "console";
 
 const Actions = () => {
-  const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();
+  const { items, filters, onGetProjects, pageSize, onCreateProject } =
+    useProjects();
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
 
@@ -32,6 +32,20 @@ const Actions = () => {
     () =>
       STATUS_OPTIONS.map((item) => ({ ...item, label: commonT(item.label) })),
     [commonT],
+  );
+
+  const assignerOptions = useMemo(
+    () =>
+      Array.from(
+        items.reduce((map, item) => {
+          if (item.owner && !map.has(item.owner.id)) {
+            map.set(item.owner.fullname, item.owner.id);
+          }
+
+          return map;
+        }, new Map<string, string>()),
+      ).map(([label, value]) => ({ label, value })),
+    [items],
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,38 +110,9 @@ const Actions = () => {
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent="space-between"
-          spacing={{ xs: 2, md: 0 }}
-          width={{ xs: "100%", md: "fit-content" }}
-        >
-          <Text variant={{ xs: "h3", md: "h4" }} display={{ md: "none" }}>
-            {projectT("list.title")}
-          </Text>
-          <Button
-            onClick={onShow}
-            startIcon={<PlusIcon />}
-            size="extraSmall"
-            variant="primary"
-            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
-          >
-            {commonT("createNew")}
-          </Button>
-        </Stack>
-        <Search
-          placeholder={commonT("searchBy", { name: projectT("list.key") })}
-          name="name"
-          onChange={onChangeQueries}
-          value={queries?.["name"]}
-          sx={{ display: { xs: "flex", md: "none" } }}
-          rootSx={{ height: 44, bgcolor: "grey.50" }}
-          fullWidth
-        />
-        <Stack
-          direction="row"
-          alignItems="center"
           spacing={3}
           borderRadius={1}
-          justifyContent={{ xs: "flex-start", md: "flex-end" }}
+          justifyContent={{ xs: "flex-end", md: "flex-start" }}
           overflow="auto"
           width="100%"
         >
@@ -166,8 +151,59 @@ const Actions = () => {
               },
             }}
           />
+
+          <Dropdown
+            placeholder={commonT("assigner")}
+            options={assignerOptions}
+            value={queries?.owner}
+            name="owner"
+            onChange={onChangeQueries}
+            rootSx={{
+              px: "0px!important",
+              [`& .${selectClasses.outlined}`]: {
+                pr: "0!important",
+                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
+                  `${spacing(4)}!important`,
+                "& .sub": {
+                  display: "none",
+                },
+              },
+            }}
+          />
+        </Stack>
+
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={{ xs: 2, md: 0 }}
+          width={{ xs: "100%", md: "fit-content" }}
+        >
+          <Text variant={{ xs: "h3", md: "h4" }} display={{ md: "none" }}>
+            {projectT("list.title")}
+          </Text>
+          <Button
+            onClick={onShow}
+            startIcon={<PlusIcon />}
+            size="extraSmall"
+            variant="primary"
+            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
+          >
+            {commonT("createNew")}
+          </Button>
         </Stack>
       </Stack>
+
+      <Search
+        placeholder={commonT("searchBy", { name: projectT("list.key") })}
+        name="name"
+        onChange={onChangeQueries}
+        value={queries?.["name"]}
+        sx={{ display: { xs: "flex" } }}
+        rootSx={{ height: 44, bgcolor: "grey.50" }}
+        fullWidth
+      />
+
       {isShow && (
         <Form
           open={isShow}

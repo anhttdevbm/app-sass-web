@@ -1,10 +1,25 @@
 "use client";
 
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { Stack, TableRow } from "@mui/material";
+import {
+  memo,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  Button,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  TableRow,
+} from "@mui/material";
 import { TableLayout, BodyCell, CellProps } from "components/Table";
 import { useProjects } from "store/project/selectors";
-import { DEFAULT_PAGING, NS_COMMON } from "constant/index";
+import { DEFAULT_PAGING, NS_COMMON, NS_PROJECT } from "constant/index";
 import useQueryParams from "hooks/useQueryParams";
 import Pagination from "components/Pagination";
 import { usePathname, useRouter } from "next-intl/client";
@@ -25,6 +40,48 @@ import useTheme from "hooks/useTheme";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 import FixedLayout from "components/FixedLayout";
 import { Option } from "constant/types";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+const OverflowMenu = (props: { children: ReactElement[] }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <div>
+      <IconButton
+        id="basic-button"
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+      >
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        {props.children.map((el, index) => (
+          <div onClick={handleClose} key={el.key + "-overflow-menu-" + index}>
+            {el}
+          </div>
+        ))}
+      </Menu>
+    </div>
+  );
+};
 
 const ItemList = () => {
   const {
@@ -40,6 +97,7 @@ const ItemList = () => {
     onUpdateProject: onUpdateProjectAction,
   } = useProjects();
   const commonT = useTranslations(NS_COMMON);
+  const projectT = useTranslations(NS_PROJECT);
 
   const { initQuery, isReady, query } = useQueryParams();
   const pathname = usePathname();
@@ -54,7 +112,7 @@ const ItemList = () => {
     () => [
       { value: "#", width: "5%", align: "center" },
       {
-        value: commonT("name"),
+        value: projectT("list.form.title.name"),
         width: "23%",
         align: "left",
       },
@@ -63,20 +121,10 @@ const ItemList = () => {
         width: "22.5%",
         align: "left",
       },
-      {
-        value: commonT("form.title.startDate"),
-        width: "12.5%",
-        align: "center",
-      },
-      {
-        value: commonT("form.title.endDate"),
-        width: "12.5%",
-        align: "center",
-      },
       { value: commonT("status"), width: "12.5%" },
       { value: "", width: "5%" },
     ],
-    [commonT],
+    [commonT, projectT],
   );
   const mobileHeaderList: CellProps[] = useMemo(
     () => [
@@ -206,22 +254,20 @@ const ItemList = () => {
                   />
                 )}
                 <BodyCell align="left" sx={{ px: { xs: 0.5, md: 2 } }}>
-                  <IconButton
-                    onClick={onActionToItem(DataAction.UPDATE, item)}
-                    tooltip={commonT("edit")}
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-                      color: "text.primary",
-                      p: { xs: "4px!important", md: 1 },
-                      "&:hover svg": {
-                        color: "common.white",
-                      },
-                    }}
-                  >
-                    <PencilUnderlineIcon sx={{ fontSize: 24 }} />
-                  </IconButton>
+                  <OverflowMenu>
+                    <MenuItem onClick={onActionToItem(DataAction.UPDATE, item)}>
+                      <ListItemIcon>
+                        <PencilUnderlineIcon sx={{ fontSize: 24 }} />
+                      </ListItemIcon>
+                      <ListItemText>Edit</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={onActionToItem(DataAction.DELETE, item)}>
+                      <ListItemIcon>
+                        <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
+                      </ListItemIcon>
+                      <ListItemText sx={{ color: "red" }}>Delete</ListItemText>
+                    </MenuItem>
+                  </OverflowMenu>
                 </BodyCell>
               </TableRow>
             );
