@@ -109,10 +109,12 @@ const ProfileHeader = ({
   };
 
   const startMeeting = async () => {
-    await onStartMeeting(dataTransfer.id).then((res: any) => {
-      if (pathname.includes("/meeting")) return;
-      router.push(`meeting/${res?.payload?.meetInfo.room.id}`);
-    });
+    await onStartMeeting(dataTransfer.id)
+      .then(() => {
+        if (pathname.includes("/meeting")) return;
+        router.push(`meeting/${dataTransfer.id}`);
+      })
+      .catch((e) => console.log(e.message));
   };
 
   useEffect(() => {

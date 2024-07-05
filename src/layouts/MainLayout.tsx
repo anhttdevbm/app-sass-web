@@ -151,7 +151,7 @@ const IncomingCall = () => {
         padding: 2,
       }}
     >
-      <p>Incoming Call</p>
+      <p style={{ textAlign: "center" }}>Incoming Call</p>
       {/* {!callRequest?.audioOnly && (
         <button onClick={() => handleCall(true, false)}>Accept</button>
       )} */}

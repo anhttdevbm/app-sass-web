@@ -13,10 +13,12 @@ import ProfileAdd from "icons/ProfileAdd";
 import SearchIcon from "icons/SearchIcon";
 import VideoCallIcon from "icons/VideoCallIcon";
 import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useChat } from "store/chat/selectors";
 import { IChatItemInfo, STEP } from "store/chat/type";
+import { useMeeting } from "store/meeting/selectors";
 
 interface AccountInfoHeaderProp {
   accountInfo: IChatItemInfo;
@@ -28,7 +30,10 @@ const AccountInfoHeader = ({
   onPrevious,
   viewStep,
 }: AccountInfoHeaderProp) => {
+  const pathname = usePathname();
+  const router = useRouter();
   const { dataTransfer, onSetStep, prevStep, currStep } = useChat();
+  const { onStartMeeting } = useMeeting();
   const { usersCount, t, name } = accountInfo;
   const isGroup = useMemo(() => t !== "d", [t]);
 
@@ -38,8 +43,14 @@ const AccountInfoHeader = ({
     dataTransfer?.avatar?.link,
   );
 
-  const handleGroupMeet = () => {
+  const startGroupMeet = async () => {
     console.log("group meet");
+    await onStartMeeting(dataTransfer.id)
+      .then((res: any) => {
+        if (pathname.includes("/meeting")) return;
+        router.push(`meeting/${dataTransfer.id}`);
+      })
+      .catch((e) => console.log(e.message));
   };
 
   const handleKeyDown = (event) => {
@@ -344,7 +355,7 @@ const AccountInfoHeader = ({
                   color: "white",
                   padding: "6px",
                 }}
-                onClick={handleGroupMeet}
+                onClick={startGroupMeet}
               >
                 <VideoCallIcon />
               </IconButton>
