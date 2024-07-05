@@ -1,0 +1,128 @@
+body {
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  overflow-x: hidden;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 100);
+  background-color: transparent !important;
+}
+
+body.not-auth {
+  background-color: var(--mui-palette-background-default) !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s !important;
+  box-shadow: none !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+.row-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.row-center-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-1 {
+  display: flex;
+  flex: 1;
+}
+
+.w-screen {
+  width: 100vw;
+}
+
+.h-screen {
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+.rounded {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.only-mobile {
+  display: none !important;
+}
+
+@media screen and (max-width: 767px) {
+  .only-mobile {
+    display: initial !important;
+  }
+}
+
+@supports (font: -apple-system-body) and (-webkit-appearance: none) {
+  img[loading="lazy"] {
+    clippath: inset(0.6px);
+  }
+}
+
+@media screen and (min-width: 768px) {
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 7px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: var(--mui-palette-primary-light);
+    border-radius: 2px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--mui-palette-primary-main);
+    border-radius: 2px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--mui-palette-primary-main);
+    cursor: pointer;
+  }
+}
+
+.draggable-taskList {
+  display: flex;
+  flex-direction: column;
+}
+
+.draggable {
+  display: flex;
+}
+
+.draggable-category {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.attachment-filter button.active {
+  border: 1px solid #3699ff !important;
+  background: #e1f0ff !important;
+  color: #3699ff !important;
+}
+
+.slider-comment-attachment .react-slideshow-wrapper .images-wrap>div {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}

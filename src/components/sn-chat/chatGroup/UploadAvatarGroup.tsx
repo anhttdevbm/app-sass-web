@@ -1,0 +1,72 @@
+import { BaseSyntheticEvent } from "react";
+import { Box, Fab } from "@mui/material";
+import { NS_CHAT_BOX } from "constant/index";
+import UploadImageIcon from "icons/UploadImageIcon";
+import { useTranslations } from "next-intl";
+import { useSnackbar } from "store/app/selectors";
+import { useChat } from "store/chat/selectors";
+import { uploadFile } from "store/chat/media/actionMedia";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { useAppDispatch } from "store/hooks";
+import { useWSChat } from "store/chat/helpers";
+
+export const UploadAvatarGroup = () => {
+  const dispatch = useAppDispatch();
+  const { dataTransfer } = useChat();
+  const { sendMessage } = useWSChat();
+  const commonChatBox = useTranslations(NS_CHAT_BOX);
+  const { onAddSnackbar } = useSnackbar();
+
+  const handleUpdateAvatarGroup = async (event: BaseSyntheticEvent) => {
+    if (event.currentTarget.files?.length) {
+      const result = await dispatch(
+        uploadFile({ endpoint: "files/upload-link", file: event.currentTarget.files[0] }),
+      );
+      sendMessage({
+        event: CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR,
+        roomId: dataTransfer?.id,
+        avatar: result?.payload?.object
+      });
+    }
+  }
+  return (
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: "14px",
+        right: "-10px",
+        width: "32px",
+        height: "32px",
+        boxShadow: "2px 2px 24px 0px rgba(0, 0, 0, 0.10)",
+        cursor: "pointer",
+        borderRadius: "50%",
+      }}
+    >
+      <label htmlFor="upload-photo">
+        <input
+          style={{ display: "none" }}
+          id="upload-photo"
+          name="upload-photo"
+          type="file"
+          accept="image/*" // only accept file type image
+          onChange={handleUpdateAvatarGroup}
+        />
+        <Fab
+          color="primary"
+          size="small"
+          component="span"
+          aria-label="add"
+          sx={{
+            background: "#fff",
+            padding: "10px",
+            "&:hover": {
+              background: "#fff",
+            },
+          }}
+        >
+          <UploadImageIcon />
+        </Fab>
+      </label>
+    </Box>
+  );
+};

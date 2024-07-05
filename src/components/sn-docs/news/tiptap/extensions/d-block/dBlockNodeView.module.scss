@@ -1,0 +1,206 @@
+@use "../../../styles/abstracts/colors" as *;
+
+.dblock {
+  display: flex;
+  align-items: center;
+  div {
+    width: 100%;
+  }
+
+  p,
+  h1,
+  h2,
+  h3 {
+    text-align: start;
+    margin: 5px 0;
+    width: 100%;
+    transition: width 0.2s ease 0.1s;
+  }
+
+  p {
+    line-height: 22px;
+  }
+
+  a {
+    cursor: pointer;
+    color: $primary;
+  }
+
+  hr {
+    width: 100%;
+    transition: width 0.5s ease-in-out;
+  }
+
+  code {
+    background-color: rgba(#616161, 0.1);
+    border-radius: 0.25em;
+    box-decoration-break: clone;
+    color: $danger;
+    font-size: 0.9rem;
+    padding: 0.25em;
+  }
+
+  .wrapper_section {
+    display: flex;
+    padding-top: 4px;
+    padding-right: 2px;
+    align-items: center;
+    visibility: hidden;
+
+    .icon {
+      display: flex;
+      align-items: center;
+      padding: 0 2px;
+      cursor: pointer;
+      fill: $dark-color-tertiary;
+
+      &:last-child {
+        cursor: grab;
+      }
+    }
+  }
+
+  table {
+    position: relative;
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0;
+    overflow-x: auto;
+    transition: width 0.2s ease-out 0.1s;
+
+    td,
+    th {
+      width: 100%;
+      border: 1px solid $color-tertiary;
+      padding: 3px 5px;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    tr div {
+      width: 100%;
+
+      p {
+        width: 95%;
+      }
+    }
+
+    th {
+      font-weight: bold;
+      text-align: left;
+      background-color: $background-hover;
+    }
+  }
+
+  blockquote {
+    border-left: 3px solid black;
+    padding-left: 1rem;
+  }
+
+  ul[data-type="taskList"] {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul[data-type="taskList"] p {
+    margin: 0;
+  }
+
+  ul[data-type="taskList"] li {
+    display: flex;
+  }
+
+  ul[data-type="taskList"] li > label {
+    flex: 0 0 auto;
+    margin-right: 0.5rem;
+    user-select: none;
+  }
+
+  ul[data-type="taskList"] li > div {
+    flex: 1 1 auto;
+  }
+
+  .ProseMirror {
+    p.is-empty::before {
+      color: #adb5bd;
+      content: attr(data-placeholder);
+      float: left;
+      height: 0;
+      pointer-events: none;
+    }
+  }
+
+  &:hover .wrapper_section {
+    visibility: visible;
+  }
+}
+
+
+.dark {
+  color: $background-secondary ;
+
+  .wrapper_section {
+    .icon {
+      fill: $color-tertiary;
+    }
+  }
+
+  table {
+    td,
+    th {
+      border: 1px solid $color-primary;
+    }
+
+    th {
+      background-color: $dark-background-hover;
+    }
+  }
+
+  blockquote {
+    border-left: 3px solid white;
+  }
+}
+
+.full_width {
+  p,
+  h1,
+  h2,
+  h3 {
+    width: 90%;
+  }
+
+  hr {
+    width: 90%;
+  }
+}
+
+
+
+@media screen and (max-width: 1320px) {
+  .dblock {
+    p,
+    h1,
+    h2,
+    h3 {
+      width: 100%;
+    }
+
+    hr {
+      width: 100%;
+    }
+
+    table {
+      width: 25%;
+
+      tr div {
+        p {
+          width: 75%;
+        }
+      }
+    }
+  }
+
+ 
+}
