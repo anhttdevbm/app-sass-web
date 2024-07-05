@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Add } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import AttachmentIcon from "@mui/icons-material/Attachment";
+import ClearIcon from "@mui/icons-material/Clear";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
   Collapse,
@@ -13,44 +18,39 @@ import {
 } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
+import { ExpenseStatus } from "constant/enums";
 import {
   FILE_ACCEPT, NS_BUDGETING,
   NS_COMMON
 } from "constant/index";
+import { User } from "constant/types";
+import FileCsvIcon from "icons/FileCsvIcon";
+import FileDocIcon from "icons/FileDocIcon";
+import FileExcelIcon from "icons/FileExcelIcon";
+import FileIcon from "icons/FileIcon";
+import FilePdfIcon from "icons/FilePdfIcon";
+import _ from "lodash";
+import moment from "moment";
 import { useTranslations } from "next-intl";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useAuth, useSnackbar } from "store/app/selectors";
-import InputLabelWrapper from "../InputLabelWrapper";
+import { useParams } from "next/navigation";
 import {
   useBudgetExpenseAdd,
   useBudgetExpenseUpdate,
   useBudgetUploadFile,
 } from "queries/budgeting/expense";
-import moment from "moment";
-import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
-import * as yup from "yup";
-import { ExpenseStatus } from "constant/enums";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { TBudgetService, budgetDetailRef } from "../../BudgetDetail";
-import _ from "lodash";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { useCurrencyOptions } from "store/global/selectors";
-import { useParams } from "next/navigation";
-import { User } from "constant/types";
-import { getMessageErrorByAPI } from "utils/index";
-import AttachmentIcon from "@mui/icons-material/Attachment";
-import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
-import ClearIcon from "@mui/icons-material/Clear";
-import { niceBytes } from "utils/extension";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useAuth, useSnackbar } from "store/app/selectors";
 import { TBudgetExpense } from "store/expense/actions";
-import FilePdfIcon from "icons/FilePdfIcon";
-import FileDocIcon from "icons/FileDocIcon";
-import FileExcelIcon from "icons/FileExcelIcon";
-import FileCsvIcon from "icons/FileCsvIcon";
-import FileIcon from "icons/FileIcon";
+import { useCurrencyOptions } from "store/global/selectors";
+import { niceBytes } from "utils/extension";
+import { getMessageErrorByAPI } from "utils/index";
+import * as yup from "yup";
+import { TBudgetService, budgetDetailRef } from "../../BudgetDetail";
+import InputLabelWrapper from "../InputLabelWrapper";
 
 type Props = {
   open: boolean;
@@ -336,6 +336,48 @@ export const ModalExpense = ({
     setValue("uploadFile", null);
   };
 
+  const newInput = {
+    // height: "65px",
+    ".MuiInputBase-root": {
+      ".MuiAutocomplete-endAdornment":{right:"21px"},
+      background:
+        " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
+      padding: "9px!important",
+      paddingRight: "22px !important",
+      borderRadius: "100px!important",
+      border: "none!important",
+      mt: "35px",
+      fontSize: "16px!important",
+      // height:"38px",
+      ".MuiInputBase-input": { p: "0 10px!important" },
+    
+      ".MuiChip-root": {
+        color: "#0575e6",
+        padding: "5px",
+        svg: {
+          border: "0.2px solid transparent",
+          color: "white",
+          background: " #0575e6",
+        },
+      },
+    },
+    "label.MuiInputLabel-root": {
+      left: 0,
+      fontSize: "13px",
+      transform: "translate(0, 16px) scale(1)",
+    },
+  };
+  const newBorderSVG ={
+    ".MuiInputBase-root.MuiOutlinedInput-root":{svg: {
+      borderRadius: "50px",
+      border: "0.2px solid #5C5C5C",
+      fontSize: "16px",
+      color: "black",
+      "&:hover": { color: "black" },
+    },}
+      
+  }
+
   return (
     <FormLayout
       label={
@@ -359,6 +401,35 @@ export const ModalExpense = ({
           : budgetT("dialogExpense.createBtnText")
       }
       onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        borderRadius:"24px",
+        minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
+        maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
+        minHeight: "auto",
+        // overflow: "visible !important",
+        // "& .MuiDialogContent-root": {
+        //   overflow: "visible !important",
+        //   "& .MuiStack-root": { overflow: "visible !important" },
+        // },
+        ".MuiDialogTitle-root": { border: "none" },
+        ".MuiDialogActions-root": {
+          justifyContent: "center",
+          border: "none",
+          ".MuiButtonBase-root": {
+            "&:last-child": {
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+            },
+            "&:first-child": {
+              background: "white",
+              color: "#14B9E5",
+              border: "1px solid #14B9E5",
+              borderRadius: "100px",
+            },
+          },
+        },
+      }}
     >
       <Stack overflow="auto">
         <MenuList component={Stack} spacing={2}>
@@ -484,12 +555,6 @@ export const ModalExpense = ({
                           onChange={onChange}
                           type="number"
                           InputProps={{ inputProps: { min: 0 } }}
-                          sx={{
-                            "& .MuiInputBase-root.MuiOutlinedInput-root": {
-                              backgroundColor: "transparent !important",
-                              borderColor: "#99999970 !important",
-                            },
-                          }}
                         />
                       )}
                     />
