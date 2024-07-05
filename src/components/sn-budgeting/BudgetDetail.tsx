@@ -1,26 +1,40 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import "@sweetalert2/theme-material-ui/material-ui.css";
 import { Box, CircularProgress, Stack } from "@mui/material";
+import "@sweetalert2/theme-material-ui/material-ui.css";
 import Avatar from "components/Avatar";
+import ConfirmDialog from "components/ConfirmDialog";
 import Link from "components/Link";
-import { Button, DatePicker, IconButton, Text } from "components/shared";
+import TextStatus from "components/TextStatus";
+import { Button, IconButton, Text } from "components/shared";
+import { Client } from "components/sn-budgeting/TabDetail/Client";
 import { Expenses } from "components/sn-budgeting/TabDetail/Expenses";
 import { Feed } from "components/sn-budgeting/TabDetail/Feed";
 import { Invoice } from "components/sn-budgeting/TabDetail/Invoice";
 import { ModalAddTime } from "components/sn-budgeting/TabDetail/Modals/ModalAddTime";
 import { ModalExpense } from "components/sn-budgeting/TabDetail/Modals/ModalExpense";
 import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
-import TextStatus from "components/TextStatus";
+import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { NS_BUDGETING, NS_COMMON, NS_PROJECT } from "constant/index";
 import { BILLING_CREATE_PATH, BUDGETING_PATH } from "constant/paths";
 import dayjs from "dayjs";
+import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
+import AddCircleIcon from "icons/AddCircleIcon";
 import EditIcon from "icons/EditIcon";
-import OpenSidebarIcon from "icons/OpenSidebarIcon";
+import _ from "lodash";
+import { DateRange } from "mui-daterange-picker";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next-intl/client";
+import Image from "next/image";
 import { useParams } from "next/navigation";
+import BackIcon from "public/images/ic-back.svg";
+import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
+import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
+import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
+import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
 import {
   createRef,
   useEffect,
@@ -29,33 +43,18 @@ import {
   useRef,
   useState,
 } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { TBudgetExpense } from "store/expense/actions";
+import { ProjectStatus } from "store/project/actions";
 import { TBudget } from "store/project/budget/action";
-import CloseIcon from "../../icons/CloseIcon";
-import BackIcon from "public/images/ic-back.svg";
+import { useProjects } from "store/project/selectors";
+import Swal from "sweetalert2";
+import { formatNumber, getMessageErrorByAPI } from "utils/index";
 import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Recurring } from "./TabDetail/Recurring";
 import { Service } from "./TabDetail/Service";
-import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
-import useTheme from "hooks/useTheme";
-import _ from "lodash";
-import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
-import { useRouter } from "next-intl/client";
-import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
-import { ProjectStatus } from "store/project/actions";
-import { useProjects } from "store/project/selectors";
-import { useSnackbar } from "store/app/selectors";
-import { formatNumber, getMessageErrorByAPI } from "utils/index";
-import { TBudgetExpense } from "store/expense/actions";
-import Swal from "sweetalert2";
-import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
-import { DateRange } from "mui-daterange-picker";
-import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
-import ConfirmDialog from "components/ConfirmDialog";
-import { Client } from "components/sn-budgeting/TabDetail/Client";
-import Image from "next/image";
-import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 
 enum TABS {
   FEED = "Feed",
@@ -195,12 +194,23 @@ export const BudgetDetail = () => {
           <Button
             onClick={openModalTime}
             id="budget_add_new_time"
-            startIcon={<PlusIcon />}
+            startIcon={<AddCircleIcon />}
             variant="primary"
             size="small"
-            sx={{ height: "40px", mx: "2px" }}
-          >
-            {budgetT("toolbar.addTime")}
+            sx={{
+              height: "40px", mx: "2px",
+              fontWeight: "bold",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                color: "white",
+              },
+
+            }}
+            >
+              {budgetT("toolbar.addTime")}
           </Button>
         );
       case TABS.EXPENSES:
@@ -208,10 +218,21 @@ export const BudgetDetail = () => {
           <Button
             onClick={openModalExpense}
             id="budget_add_new_expense"
-            startIcon={<PlusIcon />}
+            startIcon={<AddCircleIcon />}
             variant="primary"
             size="small"
-            sx={{ height: "40px", mx: "2px" }}
+            sx={{
+              height: "40px", mx: "2px",
+              fontWeight: "bold",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                color: "white",
+              },
+
+            }}
           >
             {budgetT("toolbar.addExpense")}
           </Button>
