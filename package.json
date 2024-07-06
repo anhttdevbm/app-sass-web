@@ -30,6 +30,7 @@
     "@mui/lab": "^5.0.0-alpha.135",
     "@mui/material": "5.13.5",
     "@mui/styled-engine-sc": "^6.0.0-alpha.5",
+    "@mui/x-data-grid": "^7.9.0",
     "@mui/x-date-pickers": "^6.9.2",
     "@mui/x-date-pickers-pro": "^6.9.2",
     "@ramonak/react-progress-bar": "^5.2.0",
