@@ -95,6 +95,7 @@ interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
   isOpenCreatePopup: boolean;
+  currentKindOfSheet: string;
 }
 
 interface IFilter {
@@ -183,7 +184,9 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     dayjs().toString(),
   );
   const [isOpen, setIsOpen] = React.useState(false);
-  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(props.isOpenCreatePopup);
+  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(
+    props.isOpenCreatePopup,
+  );
   const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<string>("timeSheet");
@@ -204,7 +207,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   const commonT = useTranslations(NS_COMMON);
 
   useEffect(() => {
-    setIsOpenCreatePopup(props.isOpenCreatePopup)
+    setIsOpenCreatePopup(props.isOpenCreatePopup);
   }, [props.isOpenCreatePopup]);
 
   useEffect(() => {
@@ -245,7 +248,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             note: timesheet?.note,
           },
         };
-        if (timesheet.type === "Work time") totalWorkTime += timesheet?.duration || 0;
+        if (timesheet.type === "Work time")
+          totalWorkTime += timesheet?.duration || 0;
         else totalBreakTime += timesheet?.duration || 0;
 
         result.push(newEvent);
@@ -703,12 +707,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       >
         {/* {_renderCalendarModule()} */}
 
-        {_renderTimeSheetContent()}
-        {true && (
+        {/* {_renderTimeSheetContent()} */}
+        {props.currentKindOfSheet === "timeSheet" && (
+          <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />
+        )}
+        {props.currentKindOfSheet === "timeGridWeek" && (
           <Stack
             sx={{
               ...calendarStyles,
-              display: activeTab === "timeGridWeek" ? "block" : "none",
               flexGrow: 1,
               minHeight: 0,
               minWidth: 0,

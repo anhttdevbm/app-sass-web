@@ -19,7 +19,7 @@ import { NS_TIME_TRACKING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import DayIcon from "../../icons/DayIcon";
 import PlusIcon from "../../icons/PlusIcon";
 import {
@@ -46,6 +46,7 @@ const TimeTrackingPage: FC = () => {
   const [workBottomLeftRadius, setWorkBottomLeftRadius] =
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
+  const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
 
   const timeT = useTranslations(NS_TIME_TRACKING);
 
@@ -75,6 +76,40 @@ const TimeTrackingPage: FC = () => {
 
   const showLogTimePopup = () =>
     setIsOpenCreatePopup((previousState) => !previousState);
+
+  useEffect(() => {
+    console.log(tab);
+    console.log(kindOfSheet);
+  }, [tab, kindOfSheet]);
+
+  const handleListSheet = () => {
+    switch (tab) {
+      case "myTime":
+        setKindOfSheet("timeSheet");
+        break;
+      case "companyTime":
+        setKindOfSheet("timeSheet");
+        break;
+      case "timeLog":
+        break;
+      default:
+        break;
+    }
+  };
+  const handleShowTimeGrid = () => {
+    switch (tab) {
+      case "myTime":
+        setKindOfSheet("timeGridWeek");
+        break;
+      case "companyTime":
+        setKindOfSheet("timeGridWeek");
+        break;
+      case "timeLog":
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <Stack>
@@ -179,6 +214,7 @@ const TimeTrackingPage: FC = () => {
               borderTopLeftRadius: workTopLeftRadius,
               borderBottomLeftRadius: workBottomLeftRadius,
               backgroundColor: workBgColor,
+              cursor: "pointer",
             }}
             onClick={() => {
               setTab(timeTabs[2].value);
@@ -197,13 +233,15 @@ const TimeTrackingPage: FC = () => {
           sx={{
             height: "56px",
             margin: "16px 22px 0 0",
+            display: "flex",
+            alignItems: "center",
+            gap: "1px",
           }}
         >
           <Fab
             sx={{
               width: "34px",
               height: "34px",
-              marginRight: "14px",
               borderRadius: "100px",
               backgroundColor: "#FFFFFF",
               "&:hover": {
@@ -216,7 +254,7 @@ const TimeTrackingPage: FC = () => {
               },
               cursor: "pointer",
             }}
-            // onClick={showLogTimePopup}
+            onClick={handleListSheet}
           >
             {
               <TimeSheetIcon
@@ -232,7 +270,6 @@ const TimeTrackingPage: FC = () => {
             sx={{
               width: "34px",
               height: "34px",
-              marginRight: "2px",
               borderRadius: "100px",
               backgroundColor: "#FFFFFF",
               "&:hover": {
@@ -274,6 +311,7 @@ const TimeTrackingPage: FC = () => {
               cursor: "pointer",
             }}
             // onClick={showLogTimePopup}
+            onClick={handleShowTimeGrid}
           >
             {
               <CalendarIcon
@@ -351,6 +389,7 @@ const TimeTrackingPage: FC = () => {
             events={[]}
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
+            currentKindOfSheet={kindOfSheet}
           />
         </TabPanel>
         <TabPanel
