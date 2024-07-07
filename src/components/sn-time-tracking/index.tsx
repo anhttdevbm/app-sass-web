@@ -111,6 +111,20 @@ const TimeTrackingPage: FC = () => {
         break;
     }
   };
+  const handleShowTable = () => {
+    switch (tab) {
+      case "myTime":
+        setKindOfSheet("table");
+        break;
+      case "companyTime":
+        setKindOfSheet("table");
+        break;
+      case "timeLog":
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <Stack>
@@ -284,6 +298,7 @@ const TimeTrackingPage: FC = () => {
               cursor: "pointer",
             }}
             // onClick={showLogTimePopup}
+            onClick={handleShowTable}
           >
             {
               <DayIcon
@@ -385,7 +400,7 @@ const TimeTrackingPage: FC = () => {
           background: "#F7F7FD",
         }}
       >
-        <p style={{marginRight:"2px"}}>View by: </p>
+        <p style={{ marginRight: "2px" }}>View by: </p>
         <SortByCategory title="Project" />
         <SortByCategory title="Period" />
         <SortByCategory title="Person" />
@@ -419,6 +434,7 @@ const TimeTrackingPage: FC = () => {
             events={[]}
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
+            currentKindOfSheet={kindOfSheet}
           />
         </TabPanel>
         <TabPanel value="timeLog" sx={{ paddingTop: { sm: 0, md: "auto" } }}>

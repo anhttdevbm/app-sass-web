@@ -41,10 +41,12 @@ import useTheme from "hooks/useTheme";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useBreakpoint from "hooks/useBreakpoint";
+import ListSheet from "./ListSheet";
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
   isOpenCreatePopup: boolean;
+  currentKindOfSheet: string;
 }
 
 interface IFilter {
@@ -291,7 +293,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 />
               </Stack>
             </Grid>
-            <Grid
+            {/* <Grid
               item
               md={6}
               sm={12}
@@ -315,7 +317,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   }}
                 />
               )}
-            </Grid>
+            </Grid> */}
           </Grid>
         </Stack>
       </>
@@ -465,11 +467,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             </Button>
           </Stack>
         </Grid>
-        <Grid item xs={12}>
-          {_renderCalendarModule()}
-        </Grid>
 
-        {activeTab === "table" && (
+        {props.currentKindOfSheet === "table" && (
           <Grid item xs={12}>
             <Box
               sx={{
@@ -482,8 +481,16 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               {_.map(dateRange, (date: Date, index) => {
                 const weekday = weekdays[date.getDay()];
                 const dayNumber = date.getDate();
+                const monthName = date.toLocaleString('default', { month: 'long' })
                 return (
                   <StyledDay
+                  sx={{
+                    display:"flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    
+                  }}
                     key={index}
                     className={
                       dayjs(dayjs(date).format("YYYY-MM-DDDD")).isSame(
@@ -494,7 +501,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                     }
                     onClick={() => setSelectedDate(date)}
                   >
-                    <h3>{weekday}</h3>
+                    <h3 style={{}}>{weekday}</h3>
                     <Typography
                       variant="h4"
                       sx={{
@@ -503,7 +510,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                           : "common.black",
                       }}
                     >
-                      {dayNumber}
+                      {dayNumber} {monthName}
                     </Typography>
                   </StyledDay>
                 );
@@ -526,10 +533,10 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     }
   }, [events, selectedDate]);
 
-  const _renderTimeSheetContent = () => {
-    if (activeTab !== "timeSheet") return;
-    return <TimeSheet data={company} filters={filters} dateRange={dateRange} />;
-  };
+  // const _renderTimeSheetContent = () => {
+  //   if (activeTab !== "timeSheet") return;
+  //   return <TimeSheet data={company} filters={filters} dateRange={dateRange} />;
+  // };
 
   const _renderFooter = () => {
     return (
@@ -571,8 +578,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
 
   return (
     <Stack direction="column">
-      {_renderHeader()}
-      {activeTab === "table" ? (
+      {props.currentKindOfSheet !== "timeSheet" && _renderHeader()}
+      {props.currentKindOfSheet === "table" ? (
         <Stack
           //ref={scrollRef}
           sx={{
@@ -740,7 +747,13 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             position: "relative",
           }}
         >
-          {_renderTimeSheetContent()}
+          {/* {_renderTimeSheetContent()} */}
+          {props.currentKindOfSheet === "timeGridWeek" && (
+            <TimeSheet data={company} filters={filters} dateRange={dateRange} />
+          )}
+          {props.currentKindOfSheet === "timeSheet" && (
+            <ListSheet data={company} />
+          )}
         </Stack>
       )}
 
