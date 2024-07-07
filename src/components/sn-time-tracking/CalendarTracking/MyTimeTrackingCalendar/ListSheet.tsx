@@ -3,6 +3,7 @@
 import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { createTheme, styled } from "@mui/material/styles";
+import moment from "moment";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 100,},
@@ -25,101 +26,24 @@ const columns: GridColDef[] = [
     width: 200,
   },
 ];
-const rows = [
-  {
-    id: 1,
-    Date: "2024-07-06",
-    Project_name: "Website Redesign",
-    Task_name: "Create Homepage Layout",
-    Type: "Design",
-    Time: "2 hours",
-    Creation_time: "2024-07-06T08:00:00Z",
-  },
-  {
-    id: 2,
-    Date: "2024-07-06",
-    Project_name: "Website Redesign",
-    Task_name: "Develop Homepage",
-    Type: "Development",
-    Time: "5 hours",
-    Creation_time: "2024-07-06T10:00:00Z",
-  },
-  {
-    id: 3,
-    Date: "2024-07-07",
-    Project_name: "Mobile App",
-    Task_name: "Set up Project Structure",
-    Type: "Setup",
-    Time: "3 hours",
-    Creation_time: "2024-07-07T09:00:00Z",
-  },
-  {
-    id: 4,
-    Date: "2024-07-07",
-    Project_name: "Mobile App",
-    Task_name: "Create Login Screen",
-    Type: "Development",
-    Time: "4 hours",
-    Creation_time: "2024-07-07T11:00:00Z",
-  },
-  {
-    id: 5,
-    Date: "2024-07-08",
-    Project_name: "API Integration",
-    Task_name: "Integrate Payment Gateway",
-    Type: "Development",
-    Time: "6 hours",
-    Creation_time: "2024-07-08T08:00:00Z",
-  },
-  {
-    id: 6,
-    Date: "2024-07-08",
-    Project_name: "API Integration",
-    Task_name: "Test Payment Gateway",
-    Type: "Testing",
-    Time: "3 hours",
-    Creation_time: "2024-07-08T14:00:00Z",
-  },
-  {
-    id: 7,
-    Date: "2024-07-09",
-    Project_name: "E-commerce Platform",
-    Task_name: "Design Product Page",
-    Type: "Design",
-    Time: "4 hours",
-    Creation_time: "2024-07-09T09:00:00Z",
-  },
-  {
-    id: 8,
-    Date: "2024-07-09",
-    Project_name: "E-commerce Platform",
-    Task_name: "Develop Product Page",
-    Type: "Development",
-    Time: "5 hours",
-    Creation_time: "2024-07-09T13:00:00Z",
-  },
-  {
-    id: 9,
-    Date: "2024-07-10",
-    Project_name: "E-commerce Platform",
-    Task_name: "Optimize Product Images",
-    Type: "Optimization",
-    Time: "2 hours",
-    Creation_time: "2024-07-10T08:00:00Z",
-  },
-  {
-    id: 10,
-    Date: "2024-07-10",
-    Project_name: "Marketing Website",
-    Task_name: "Write Blog Post",
-    Type: "Content Creation",
-    Time: "3 hours",
-    Creation_time: "2024-07-10T10:00:00Z",
-  },
-];
 
+interface IProps{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data:any
+}
 
-const ListSheet = () => {
+const ListSheet:React.FC<IProps> = (props) => {
+  const rows = props.data.map(row =>{
+    return {
+      id:row._id,
+      Date:row.day,
+      Project_name: row.project.name,
+      Task_name: row.note,
+      Type: row.type,
+      Time: row.duration +" " + "hours",
+      Creation_time: row.created_time,
+    }
+  })
   return (
     <div style={{ height: 400, width: "100%" }}>
       <DataGrid

@@ -207,6 +207,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   });
   const commonT = useTranslations(NS_COMMON);
 
+
   useEffect(() => {
     setIsOpenCreatePopup(props.isOpenCreatePopup);
   }, [props.isOpenCreatePopup]);
@@ -713,14 +714,15 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         {/* {_renderTimeSheetContent()} */}
         {props.currentKindOfSheet === "timeSheet" && (
           // <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />
-          <ListSheet />
+          <ListSheet data={myTime}/>
         )}
         {props.currentKindOfSheet === "timeGridWeek" && (
           <>
             <div
               style={{
                 marginBottom: "20px",
-                border:"1px solid black"
+                border:"1px solid black",
+
               }}
             >
               {_renderHeader()}
