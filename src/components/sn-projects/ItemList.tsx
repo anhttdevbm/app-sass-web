@@ -14,6 +14,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  paginationItemClasses,
   Stack,
   TableRow,
 } from "@mui/material";
@@ -42,46 +43,7 @@ import FixedLayout from "components/FixedLayout";
 import { Option } from "constant/types";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const OverflowMenu = (props: { children: ReactElement[] }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <div>
-      <IconButton
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
-      >
-        <MoreVertIcon />
-      </IconButton>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-      >
-        {props.children.map((el, index) => (
-          <div onClick={handleClose} key={el.key + "-overflow-menu-" + index}>
-            {el}
-          </div>
-        ))}
-      </Menu>
-    </div>
-  );
-};
+import OverflowMenu from "./components/OverflowMenu";
 
 const ItemList = () => {
   const {
@@ -123,6 +85,7 @@ const ItemList = () => {
       },
       { value: commonT("status"), width: "12.5%" },
       { value: "", width: "5%" },
+      { value: "", width: "5%" },
     ],
     [commonT, projectT],
   );
@@ -151,12 +114,9 @@ const ItemList = () => {
 
   const headerList = useMemo(() => {
     const additionalHeaderList = isMdSmaller
-      ? mobileHeaderList
+      ? [...mobileHeaderList, { value: "", width: "10%" }]
       : desktopHeaderList;
-    return [
-      ...additionalHeaderList,
-      { value: "", width: "10%" },
-    ] as CellProps[];
+    return additionalHeaderList as CellProps[];
   }, [desktopHeaderList, isMdSmaller, mobileHeaderList]);
 
   const initValues = useMemo(
@@ -231,12 +191,16 @@ const ItemList = () => {
 
   return (
     <>
-      <FixedLayout>
+      <Stack>
         <TableLayout
           headerList={headerList}
           pending={isFetching}
           headerProps={{
-            sx: { px: { xs: 0.5, md: 2 } },
+            sx: {
+              px: { xs: 0.5, md: 2 },
+              py: { xs: 0.5, md: 3 },
+              bgcolor: "#D9F0FD",
+            },
           }}
           error={error as string}
           noData={!isIdle && totalItems === 0}
@@ -253,7 +217,7 @@ const ItemList = () => {
                     order={(pageIndex - 1) * pageSize + (index + 1)}
                   />
                 )}
-                <BodyCell align="left" sx={{ px: { xs: 0.5, md: 2 } }}>
+                <BodyCell align="center">
                   <OverflowMenu>
                     <MenuItem onClick={onActionToItem(DataAction.UPDATE, item)}>
                       <ListItemIcon>
@@ -278,11 +242,17 @@ const ItemList = () => {
           totalPages={totalPages}
           page={pageIndex}
           pageSize={pageSize}
-          containerProps={{ px: { md: 3 }, py: 1 }}
+          containerProps={{ px: { md: 3 }, py: 1, gap: 6 }}
           onChangePage={onChangePage}
           onChangeSize={onChangeSize}
+          sx={{
+            [`& .${paginationItemClasses.root}`]: {
+              fontWeight: 600,
+              bgcolor: "#D9F0FD",
+            },
+          }}
         />
-      </FixedLayout>
+      </Stack>
 
       {action === DataAction.UPDATE && (
         <Form

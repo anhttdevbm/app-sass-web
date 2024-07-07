@@ -1,8 +1,15 @@
 "use client";
 
 import { memo, useState, useEffect, useMemo } from "react";
-import { Stack, Theme, selectClasses } from "@mui/material";
-import { Button, Text } from "components/shared";
+import {
+  Box,
+  IconButton,
+  InputLabel,
+  Stack,
+  Theme,
+  selectClasses,
+} from "@mui/material";
+import { Button, Select, Text } from "components/shared";
 import PlusIcon from "icons/PlusIcon";
 import { Dropdown, Search, Switch } from "components/Filters";
 import { INITIAL_VALUES, STATUS_OPTIONS } from "./components/helpers";
@@ -15,6 +22,8 @@ import Form, { ProjectDataForm } from "./Form";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
+import SearchIcon from "icons/SearchIcon";
+import { ExpandMore, AddCircle } from "@mui/icons-material";
 
 const Actions = () => {
   const { items, filters, onGetProjects, pageSize, onCreateProject } =
@@ -96,113 +105,186 @@ const Actions = () => {
 
   return (
     <>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        alignItems="center"
-        justifyContent="space-between"
-        borderBottom="1px solid"
-        borderColor="grey.100"
-        spacing={{ xs: 2, md: 3 }}
-        px={{ md: 3 }}
-        pt={{ md: 1, lg: 1.5 }}
-        pb={{ xs: 1.5, md: 1, lg: 1.5 }}
-      >
+      <>
         <Stack
-          direction="row"
-          alignItems="center"
-          spacing={3}
-          borderRadius={1}
-          justifyContent={{ xs: "flex-end", md: "flex-start" }}
-          overflow="auto"
-          width="100%"
-        >
-          <Switch
-            name="sort"
-            onChange={onChangeQueries}
-            size="small"
-            reverse
-            label={projectT("list.filter.recent")}
-            value={queries?.sort === LATEST_VALUE}
-          />
-          <Switch
-            name="saved"
-            onChange={onChangeQueries}
-            size="small"
-            reverse
-            label={projectT("list.filter.saved")}
-            value={queries?.saved}
-          />
-
-          <Dropdown
-            placeholder={commonT("status")}
-            options={statusOptions}
-            name="status"
-            onChange={onChangeQueries}
-            value={queries?.status}
-            rootSx={{
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(4)}!important`,
-                "& .sub": {
-                  display: "none",
-                },
-              },
-            }}
-          />
-
-          <Dropdown
-            placeholder={commonT("assigner")}
-            options={assignerOptions}
-            value={queries?.owner}
-            name="owner"
-            onChange={onChangeQueries}
-            rootSx={{
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(4)}!important`,
-                "& .sub": {
-                  display: "none",
-                },
-              },
-            }}
-          />
-        </Stack>
-
-        <Stack
-          direction="row"
+          direction={{ xs: "column", md: "row" }}
           alignItems="center"
           justifyContent="space-between"
-          spacing={{ xs: 2, md: 0 }}
-          width={{ xs: "100%", md: "fit-content" }}
+          borderBottom="1px solid"
+          borderColor="grey.100"
+          spacing={{ xs: 2, md: 3 }}
+          px={{ md: 3 }}
+          pt={{ md: 1, lg: 1.5 }}
+          pb={{ xs: 1.5, md: 1, lg: 1.5 }}
         >
-          <Text variant={{ xs: "h3", md: "h4" }} display={{ md: "none" }}>
-            {projectT("list.title")}
-          </Text>
-          <Button
-            onClick={onShow}
-            startIcon={<PlusIcon />}
-            size="extraSmall"
-            variant="primary"
-            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={3}
+            borderRadius={1}
+            justifyContent={{ xs: "flex-end", md: "flex-start" }}
+            overflow="auto"
+            width="100%"
           >
-            {commonT("createNew")}
-          </Button>
-        </Stack>
-      </Stack>
+            <Switch
+              name="sort"
+              onChange={onChangeQueries}
+              size="small"
+              reverse
+              label={projectT("list.filter.recent")}
+              value={queries?.sort === LATEST_VALUE}
+            />
+            <Switch
+              name="saved"
+              onChange={onChangeQueries}
+              size="small"
+              reverse
+              label={projectT("list.filter.saved")}
+              value={queries?.saved}
+            />
 
-      <Search
-        placeholder={commonT("searchBy", { name: projectT("list.key") })}
-        name="name"
-        onChange={onChangeQueries}
-        value={queries?.["name"]}
-        sx={{ display: { xs: "flex" } }}
-        rootSx={{ height: 44, bgcolor: "grey.50" }}
-        fullWidth
-      />
+            <Box
+              sx={{
+                border: "1px solid lightgray",
+                borderRadius: "2rem",
+                display: "flex",
+                alignItems: "baseline",
+                gap: 1,
+                px: 2,
+                py: 1,
+              }}
+            >
+              <Text sx={{ color: "gray", fontSize: 14 }}>
+                {commonT("status")}:
+              </Text>
+              <Dropdown
+                placeholder={commonT("all")}
+                options={statusOptions}
+                name="status"
+                onChange={onChangeQueries}
+                value={queries?.status}
+                rootSx={{
+                  px: "0px!important",
+                  [`& .${selectClasses.outlined}`]: {
+                    pr: "0!important",
+                    mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
+                      `${spacing(4)}!important`,
+                    "& .sub": {
+                      display: "none",
+                    },
+                  },
+                }}
+              />
+            </Box>
+
+            <Box
+              sx={{
+                border: "1px solid lightgray",
+                borderRadius: "1.5rem",
+                display: "flex",
+                alignItems: "baseline",
+                gap: 1,
+                px: 2,
+                py: 1,
+              }}
+            >
+              <Text sx={{ color: "gray", fontSize: 14 }}>
+                {commonT("assigner")}:
+              </Text>
+              <Dropdown
+                placeholder={commonT("all")}
+                options={assignerOptions}
+                value={queries?.owner}
+                name="owner"
+                onChange={onChangeQueries}
+                rootSx={{
+                  px: "0px!important",
+                  [`& .${selectClasses.outlined}`]: {
+                    pr: "0!important",
+                    mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
+                      `${spacing(4)}!important`,
+                    "& .sub": {
+                      display: "none",
+                    },
+                  },
+                }}
+              />
+            </Box>
+          </Stack>
+
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={{ xs: 2, md: 0 }}
+            width={{ xs: "100%", md: "fit-content" }}
+          >
+            <Text variant={{ xs: "h3", md: "h4" }} display={{ md: "none" }}>
+              {projectT("list.title")}
+            </Text>
+
+            <Box
+              sx={{
+                display: "flex",
+                background:
+                  "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+                borderRadius: "2rem",
+              }}
+            >
+              <Button
+                onClick={onShow}
+                startIcon={<AddCircle />}
+                size="small"
+                variant="primary"
+                sx={{
+                  py: 2,
+                  px: 2,
+                  borderRadius: "2rem 0 0 2rem",
+                  bgcolor: "transparent",
+                }}
+              >
+                <Text sx={{ color: "white" }}>{commonT("createNew")}</Text>
+              </Button>
+              <Button
+                size="small"
+                variant="primary"
+                sx={{
+                  paddingLeft: 0,
+                  paddingRight: 1,
+                  py: 2,
+                  borderRadius: "0 2rem 2rem 0",
+                  borderLeft: "solid 1px white",
+                  bgcolor: "transparent",
+                }}
+              >
+                <ExpandMore />
+              </Button>
+            </Box>
+          </Stack>
+        </Stack>
+
+        <Box
+          sx={{
+            display: "flex",
+            py: 2,
+            px: 3,
+            marginBottom: 1.5,
+          }}
+        >
+          <Search
+            placeholder={commonT("searchBy", { name: projectT("list.key") })}
+            name="name"
+            onChange={onChangeQueries}
+            value={queries?.["name"]}
+            startNode={null}
+            endNode={
+              <SearchIcon sx={{ fontSize: 16 }} htmlColor="dodgerblue" />
+            }
+            sx={{ display: { xs: "flex" }, width: "35%" }}
+            rootSx={{ borderRadius: "1.5rem" }}
+          />
+        </Box>
+      </>
 
       {isShow && (
         <Form
