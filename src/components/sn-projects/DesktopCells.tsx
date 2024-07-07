@@ -47,18 +47,15 @@ const DesktopCells = (props: DesktopCellsProps) => {
         </Stack>
       </BodyCell>
       <BodyCell align="left" sx={{ paddingLeft: 0 }}>
-        <Assigner value={item?.owner?.id} id={item.id} rootSx={{ "& > svg": { display: 'none' } }} placeholder={item?.owner ? '' : commonT("form.title.noAssigner")} />
-      </BodyCell>
-      <BodyCell align="left">
-        {/* {item.start_date ? dayjs(item.start_date).format(DATE_LOCALE_FORMAT) : ""} */}
-        <DatePicker id={item.id} value={item?.start_date} labelName={"start_date"}/>
-      </BodyCell>
-      <BodyCell align="left">
-        {/* {item.end_date ? dayjs(item.end_date).format(DATE_LOCALE_FORMAT) : ""} */}
-        <DatePicker id={item.id} value={item?.end_date} labelName={"end_date"}/>
+        <Assigner
+          value={item?.owner?.id}
+          id={item.id}
+          rootSx={{ "& > svg": { display: "none" } }}
+          placeholder={item?.owner ? "" : commonT("form.title.noAssigner")}
+        />
       </BodyCell>
       {item.status ? (
-        <BodyCell sx={{ display: 'flex', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
+        <BodyCell align="center">
           <SelectStatus value={item.status} id={item.id} />
         </BodyCell>
       ) : (
