@@ -22,6 +22,7 @@ import MobileDatePickerComponent from "../Component/MobileDatePicker";
 import NumberInput from "../Component/NumberInput";
 import Textarea from "../Component/Textarea";
 import TimePicker from "../Component/TimePicker";
+import { Label } from "@mui/icons-material";
 
 interface IProps {
   type?: string;
@@ -248,7 +249,7 @@ const TimeCreate: React.FC<IProps> = ({
     return (
       <DialogContent sx={{ padding: "17px 24px" }}>
         <Stack
-          direction="column"
+          // direction="column"
           component="form"
           sx={{
             marginBottom: "24px",
@@ -264,9 +265,7 @@ const TimeCreate: React.FC<IProps> = ({
                 <Typography
                   sx={{
                     display: "flex",
-                    height: "20px",
                     fontSize: "13px",
-                    fontFamily: "Inter",
                     fontWeight: "Medium",
                     color: isDarkMode ? "#4D4D4D" : "#4D4D4D",
                     paddingRight: "5px",
@@ -355,62 +354,141 @@ const TimeCreate: React.FC<IProps> = ({
               />
             )}
           /> */}
+          <Stack
+            direction="row"
+            sx={{
+              display: "flex",
+              gap: "12px",
+            }}
+          >
+            <div>
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: "Medium",
+                }}
+              >
+                {timeT("modal.Date")}{" "}
+                <Box
+                  display="inline"
+                  sx={{
+                    marginLeft: "2px",
+                    color: "#FF2C56",
+                  }}
+                >
+                  {"*"}
+                </Box>
+              </Typography>
+              <Controller
+                name="day"
+                control={control}
+                render={({ field }) => (
+                  <MobileDatePickerComponent
+                    // label={timeT("modal.Date")}
+                    sx={{ flex: 1 }}
+                    // required
+                    error={Boolean(errors?.day?.message)}
+                    helperText={errors?.day?.message}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+            <div>
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: "Medium",
+                }}
+              >
+                {timeT("modal.start_time")}
+                <Box
+                  display="inline"
+                  sx={{
+                    marginLeft: "2px",
+                    color: "#FF2C56",
+                  }}
+                >
+                  {"*"}
+                </Box>
+              </Typography>
 
-          <Controller
-            name="day"
-            control={control}
-            render={({ field }) => (
-              <MobileDatePickerComponent
-                label={timeT("modal.Date")}
-                sx={{ flex: 1 }}
-                required
-                error={Boolean(errors?.day?.message)}
-                helperText={errors?.day?.message}
-                {...field}
+              <Controller
+                name="start_time"
+                control={control}
+                render={({ field }) => (
+                  <TimePicker
+                    sx={{ flex: 1 }}
+                    error={Boolean(errors?.start_time?.message)}
+                    helperText={errors?.start_time?.message}
+                    {...field}
+                  />
+                )}
               />
-            )}
-          />
+            </div>
+          </Stack>
 
-          <Controller
-            name="start_time"
-            control={control}
-            render={({ field }) => (
-              <TimePicker
-                label={timeT("modal.start_time")}
-                sx={{ flex: 1 }}
-                required
-                error={Boolean(errors?.start_time?.message)}
-                helperText={errors?.start_time?.message}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="duration"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <NumberInput
-                label={timeT("modal.timeDuration")}
-                required
-                sx={{ flex: 1 }}
-                error={Boolean(errors?.duration?.message)}
-                helperText={errors?.duration?.message}
-                value={value}
-                onChange={onChange}
-              />
-            )}
-          />
-          <Controller
-            name="note"
-            control={control}
-            render={({ field }) => (
-              <Textarea
-                label={timeT("modal.Note")}
-                sx={{ flex: 1 }}
-                {...field}
-              />
-            )}
-          />
+          <div>
+            <Typography
+              sx={{
+                fontSize: "13px",
+                fontWeight: "Medium",
+              }}
+            >
+              {timeT("modal.timeDuration")}
+              <Box
+                display="inline"
+                sx={{
+                  marginLeft: "2px",
+                  color: "#FF2C56",
+                }}
+              >
+                {"*"}
+              </Box>
+            </Typography>
+            <Controller
+              name="duration"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  sx={{ flex: 1 }}
+                  error={Boolean(errors?.duration?.message)}
+                  helperText={errors?.duration?.message}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </div>
+          <div>
+            <Typography
+              sx={{
+                fontSize: "13px",
+                fontWeight: "Medium",
+              }}
+            >
+              {timeT("modal.Note")}
+              <Box
+                display="inline"
+                sx={{
+                  marginLeft: "2px",
+                  color: "#FF2C56",
+                }}
+              >
+                {"*"}
+              </Box>
+            </Typography>
+            <Controller
+              name="note"
+              control={control}
+              render={({ field }) => (
+                <Textarea
+                  sx={{ flex: 1 }}
+                  {...field}
+                />
+              )}
+            />
+          </div>
         </Stack>
         <Stack direction="row" justifyContent="center">
           <Button

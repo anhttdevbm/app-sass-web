@@ -37,7 +37,7 @@ const ListSheet:React.FC<IProps> = (props) => {
     return {
       id:row._id,
       Date:row.day,
-      Project_name: row.project.name,
+      Project_name: row.project?.name || "BreakTime",
       Task_name: row.note,
       Type: row.type,
       Time: row.duration +" " + "hours",

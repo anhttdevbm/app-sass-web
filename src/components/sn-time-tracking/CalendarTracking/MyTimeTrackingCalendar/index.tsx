@@ -184,6 +184,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   const [currentDate, setCurrentDate] = React.useState<string>(
     dayjs().toString(),
   );
+  const [currentYear, setCurrentYear] = useState<string>("");
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(
     props.isOpenCreatePopup,
@@ -207,6 +208,10 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   });
   const commonT = useTranslations(NS_COMMON);
 
+  useEffect(() => {
+    const year = dayjs(currentDate).year();
+    setCurrentYear(year.toString());
+  }, [selectedDate]);
 
   useEffect(() => {
     setIsOpenCreatePopup(props.isOpenCreatePopup);
@@ -480,19 +485,26 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     return (
       <>
         <Grid
-          container
-          rowSpacing={1}
+          // container
+          // rowSpacing={1}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "11px 20px",
+          }}
         >
+          <p>Year: {currentYear}</p>
           <Grid
             item
             sm={12}
             md={4}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              order: 2,
-            }}
+            // sx={{
+            //   display: "flex",
+            //   alignItems: "center",
+            //   justifyContent: "center",
+            //   order: 2,
+            // }}
           >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <MobileDatePicker
@@ -585,8 +597,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   minWidth: "28px",
                   height: "28px",
                   padding: 0,
-                  borderRadius: "4px 0px 0px 4px",
-                  backgroundColor: "grey.100",
+                  // borderRadius: "4px 0px 0px 4px",
+                  // backgroundColor: "grey.100",
                   color: "grey.400",
                 }}
                 onClick={() => onAction("week", "prev")}
@@ -615,8 +627,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   minWidth: "28px",
                   height: "28px",
                   padding: 0,
-                  borderRadius: "0px 4px 4px 0px",
-                  backgroundColor: "grey.100",
+                  // borderRadius: "0px 4px 4px 0px",
+                  // backgroundColor: "grey.100",
                   color: "grey.400",
                 }}
                 onClick={() => onAction("week", "next")}
@@ -653,19 +665,51 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
           {timeT("header.tab.weekly_total")}
         </Typography>
         <Stack direction="row">
-          <Typography
+          <Stack
+            direction="row"
             sx={{
-              fontSize: "16px",
-              fontWeight: 400,
-
-              marginRight: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
             }}
           >
-            {timeT("header.tab.workTime")}: {totalTime.work}h
-          </Typography>
-          <Typography sx={{ fontSize: "16px", fontWeight: 400 }}>
-            {timeT("header.tab.breakTime")}: {totalTime.break}h
-          </Typography>
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                background: "#14B9E5",
+              }}
+            ></span>
+            <Typography
+              sx={{
+                fontSize: "16px",
+                fontWeight: 400,
+
+                marginRight: "16px",
+              }}
+            >
+              {timeT("header.tab.workTime")}: {totalTime.work}h
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                background: "#FF2C56",
+              }}
+            ></span>
+            <Typography sx={{ fontSize: "16px", fontWeight: 400 }}>
+              {timeT("header.tab.breakTime")}: {totalTime.break}h
+            </Typography>
+          </Stack>
         </Stack>
       </Stack>
     );
@@ -714,15 +758,15 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         {/* {_renderTimeSheetContent()} */}
         {props.currentKindOfSheet === "timeSheet" && (
           // <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />
-          <ListSheet data={myTime}/>
+          <ListSheet data={myTime} />
         )}
         {props.currentKindOfSheet === "timeGridWeek" && (
           <>
             <div
               style={{
                 marginBottom: "20px",
-                border:"1px solid black",
-
+                borderRadius: "100px",
+                background: "#F7F7FD",
               }}
             >
               {_renderHeader()}

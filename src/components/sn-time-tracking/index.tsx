@@ -363,7 +363,6 @@ const TimeTrackingPage: FC = () => {
               color: "common.white",
               textTransform: "none",
               fontSize: "16px",
-              fontFamily: "Inter",
               fontWeight: "Bold",
               cursor: "pointer",
             }}
