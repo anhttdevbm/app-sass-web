@@ -150,7 +150,6 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
               {...provided.droppableProps}
               style={{
                 border: isDragging ? "1px dashed" : undefined,
-                backgroundColor: theme.palette.background.paper,
               }}
             >
               <Stack
@@ -163,26 +162,10 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                 borderTop={index !== 0 ? { md: "1px solid" } : undefined}
                 borderBottom={{ md: "1px solid" }}
                 borderColor={{ md: "grey.100" }}
-                style={{
-                  backgroundColor: checked
-                    ? "rgba(236, 236, 243, 1)"
-                    : "rgba(236, 236, 243, 0.6)",
-                }}
+                bgcolor="#e8f2e8"
+                borderRadius="1rem 1rem 0 0"
               >
-                <Stack
-                  direction="row"
-                  sx={{
-                    "& >.checkbox": {
-                      opacity: isMobile || checked ? 1 : 0,
-                      userSelect: isMobile || checked ? undefined : "none",
-                    },
-                    "&:hover >.checkbox": {
-                      opacity: 1,
-                    },
-                  }}
-                  alignItems="center"
-                  overflow="hidden"
-                >
+                <Stack direction="row" alignItems="center" overflow="hidden">
                   <CheckBoxCustom
                     size="small"
                     className="checkbox"
@@ -244,10 +227,10 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   width="100%"
                   direction="row"
                   spacing={0}
-                  alignItems="center"
+                  alignItems="baseline"
                   sx={{ ml: { xs: 2, md: 7 } }}
                 >
-                  <PlusIcon sx={{ color: "#999999", mt: 0.5 }} />
+                  <PlusIcon sx={{ color: "dodgerblue", mt: 0.5 }} />
                   <TextField
                     label={projectT("detailTasks.addNewTask")}
                     value={taskName}
@@ -261,7 +244,8 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                       "& >div": {
                         bgcolor: "transparent!important",
                         "&:after": {
-                          borderBottomColor: "rgba(11, 183, 175, 0.5) !important",
+                          borderBottomColor:
+                            "rgba(11, 183, 175, 0.5) !important",
                         },
                         "&:before": {
                           borderBottom: "unset !important",
@@ -280,7 +264,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                       "& >label": {
                         fontWeight: "600 !important",
                         fontSize: "14px",
-                        color: "#999999 !important",
+                        color: "dodgerblue !important",
                       },
                       "& >label >span": {
                         display: "none",

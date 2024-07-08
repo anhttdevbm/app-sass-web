@@ -1,4 +1,4 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Paper } from "@mui/material";
 import { IconButton } from "components/shared";
 import useBreakpoint from "hooks/useBreakpoint";
 import CheckBoxCustom from "components/shared/CheckBoxCustom";
@@ -114,12 +114,12 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 top: "40px",
                 "border-bottom": "1px solid",
                 borderColor: {
-                  md: "rgba(11, 183, 175, 0.5)",
                   xs: "background.paper",
                 },
                 content: "''",
                 width: "100%",
                 height: "1px",
+                boxShadow: 1,
               },
               "&:hover": {
                 backgroundColor: "rgba(236, 236, 243, 0.5)",
@@ -134,16 +134,6 @@ const DraggableTask = (props: DraggableTaskProps) => {
               ml={2}
               spacing={{ xs: 0.5, sm: 1 }}
               gap={1}
-              sx={{
-                "& >.checkbox": {
-                  opacity: isMobile || checked ? 1 : 0,
-                  userSelect:
-                    isMobile || checked || isHovered ? undefined : "none",
-                },
-                "&:hover >.checkbox": {
-                  opacity: 1,
-                },
-              }}
             >
               <CheckBoxCustom
                 size="small"
