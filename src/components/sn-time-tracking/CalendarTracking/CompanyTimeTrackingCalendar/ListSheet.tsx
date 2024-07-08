@@ -4,21 +4,25 @@ import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { createTheme, styled } from "@mui/material/styles";
 import moment from "moment";
+import "../CompanyTimeTrackingCalendar/style.css"
+
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 100,},
-  { field: "Date", headerName: "Date", width: 200 },
-  { field: "Project_name", headerName: "Project name", width: 200 },
-  { field: "Task_name", headerName: "Task name", width: 200 },
+  { field: "id", headerName: "ID", width: 100,headerClassName: 'super-app-theme--header',},
+  { field: "Date", headerName: "Date", width: 200 ,headerClassName: 'super-app-theme--header'},
+  { field: "Project_name", headerName: "Project name", width: 300,headerClassName: 'super-app-theme--header' },
+  { field: "Task_name", headerName: "Task name", width: 300,headerClassName: 'super-app-theme--header' },
   {
     field: "Time",
     headerName: "Time",
-    width: 200,
+    width: 300,
+    headerClassName: 'super-app-theme--header'
   },
   {
     field: "Creation_time",
     headerName: "Creation time",
-    width: 200,
+    width: 300,
+    headerClassName: 'super-app-theme--header'
   },
 ];
 
@@ -84,11 +88,11 @@ const ListSheet:React.FC<IProps> = (props) => {
       Project_name: row.project?.name || "BreakTime",
       Task_name: row.note,
       Time: row.duration +" " + "hours",
-      Creation_time: row.created_time,
+      Creation_time: moment(row.created_time).format("L HH:mm")
     }
   })
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ width: "100%" }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -99,6 +103,17 @@ const ListSheet:React.FC<IProps> = (props) => {
         }}
         pageSizeOptions={[5, 10]}
         checkboxSelection
+        sx={{
+          '.MuiDataGrid-columnSeparator': {
+            display: 'none',
+          },
+          '&.MuiDataGrid-root': {
+            border: 'none'
+          },
+          '.MuiDataGrid-columnHeaders': {
+            backgroundColor:"red"
+          }
+        }}
       />
     </div>
   );
