@@ -69,6 +69,10 @@ import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
 import useWindowSize from "hooks/useWindowSize";
 import MoveTagIcon from "icons/MoveTagIcon";
 import { red } from "@mui/material/colors";
+import TaskIcon from "icons/TaskIcon";
+import ProjectTaskIcon from "icons/ProjectTaskIcon";
+import ProjectSubtaskIcon from "icons/ProjectSubtaskIcon";
+import { ExpandMore } from "@mui/icons-material";
 
 const ItemList = () => {
   const {
@@ -1054,7 +1058,7 @@ const ItemList = () => {
   }, [fixedLayoutRef]);
 
   return (
-    <Stack flex={1} py={3} px={2} order={3} gap={2} bgcolor="background.paper">
+    <Stack flex={1} px={2} order={3} gap={1} bgcolor="background.paper">
       {!!selectedList.length && (
         <ActionsSelected
           selectedList={selectedList}
@@ -1069,7 +1073,6 @@ const ItemList = () => {
         overflow="hidden"
         bgcolor="grey.100"
         borderRadius="1rem"
-        py={1}
       >
         <TableLayout
           onLayout={onLayout}
@@ -1188,7 +1191,6 @@ const ItemList = () => {
                                     return (
                                       <Content
                                         color="text.primary"
-                                        fontWeight={600}
                                         textAlign="left"
                                         paddingLeft={3}
                                         noWrap
@@ -1204,19 +1206,21 @@ const ItemList = () => {
                                         {...provided.dragHandleProps}
                                       >
                                         {/* <IconButton
-                                          // className="checkbox"
                                           noPadding
                                           sx={{
                                             zIndex: 10,
-                                            marginRight: "16px",
                                           }}
-                                          // {...provided.dragHandleProps}
                                         >
-                                          <MoveTagIcon
+                                          <ExpandMore
                                             fontSize={
                                               isXlSmaller ? "small" : "medium"
                                             }
-                                            sx={{ color: "grey.A200" }}
+                                            sx={{ color: "text.primary" }}
+                                            onClick={onToggleTask(
+                                              !isChecked,
+                                              taskListItem,
+                                              task,
+                                            )}
                                           />
                                         </IconButton> */}
                                         {task.name}
@@ -1367,9 +1371,6 @@ const ItemList = () => {
                                   >
                                     {task?.description}
                                   </Description>
-                                  {/* <FormDescription description={task?.description}>
-                                {task?.description}
-                              </FormDescription> */}
                                 </Content>
                                 <Content
                                   sx={{
@@ -1392,7 +1393,7 @@ const ItemList = () => {
                                   />
                                 </Content>
                               </Stack>
-                              {!isHide && (
+                              {!isHide ? (
                                 <>
                                   <Droppable droppableId={task.id}>
                                     {(taskDropProvided, snapshot) => (
@@ -1536,7 +1537,7 @@ const ItemList = () => {
                                                           }}
                                                           {...provided.dragHandleProps}
                                                         >
-                                                          <MoveListIcon
+                                                          <ProjectSubtaskIcon
                                                             fontSize={
                                                               isMdSmaller
                                                                 ? "small"
@@ -1796,7 +1797,7 @@ const ItemList = () => {
                                     </Text>
                                   )}
                                 </>
-                              )}
+                              ) : null}
                             </Stack>
                           )}
                         </Droppable>

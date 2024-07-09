@@ -7,6 +7,7 @@ import {
   Dispatch,
   memo,
   SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -15,6 +16,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { Task } from "store/project/reducer";
 import { checkIsMobile } from "utils/index";
 import snResetPassword from "components/sn-reset-password";
+import ProjectTaskIcon from "icons/ProjectTaskIcon";
 type DraggableTaskProps = {
   id: string;
   index: number;
@@ -64,7 +66,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
   //   });
   // };
 
-  const onHandlerHide = () => {
+  const onHandlerHide = useCallback(() => {
     setHideIds((prevIds) => {
       const newIds = [...prevIds];
       const indexSelected = newIds.findIndex((idValue) => idValue === id);
@@ -75,9 +77,9 @@ const DraggableTask = (props: DraggableTaskProps) => {
 
       return newIds;
     });
-  };
+  }, [id, setHideIds]);
 
-  const onHandlerShow = () => {
+  const onHandlerShow = useCallback(() => {
     setHideIds((prevIds) => {
       const newIds = [...prevIds];
       const indexSelected = newIds.findIndex((idValue) => idValue === id);
@@ -86,12 +88,12 @@ const DraggableTask = (props: DraggableTaskProps) => {
       }
       return newIds;
     });
-  };
+  }, [id, setHideIds]);
 
   useEffect(() => {
     if (isToggle) onHandlerShow();
     else onHandlerHide();
-  }, [isToggle]);
+  }, [isToggle, onHandlerHide, onHandlerShow]);
 
   return (
     <Draggable draggableId={id} index={index}>
@@ -142,12 +144,11 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 onChange={onChange}
               />
               <IconButton
-                // className="checkbox"
                 noPadding
                 sx={{ zIndex: 10 }}
                 {...provided.dragHandleProps}
               >
-                <MoveTagIcon
+                <ProjectTaskIcon
                   fontSize={isXlSmaller ? "small" : "medium"}
                   sx={{ color: "grey.A200" }}
                 />

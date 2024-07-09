@@ -1,4 +1,4 @@
-import { Box, selectClasses, Theme } from "@mui/material";
+import { Box, selectClasses, SxProps, Theme } from "@mui/material";
 import { Text } from "components/shared";
 import { Dropdown as SharedDropdown } from "components/Filters";
 
@@ -6,6 +6,7 @@ const Dropdown = ({
   ...props
 }: React.ComponentProps<typeof SharedDropdown> & {
   prefixLabel: string;
+  containerSx?: SxProps;
 }) => {
   return (
     <Box
@@ -16,7 +17,8 @@ const Dropdown = ({
         alignItems: "baseline",
         gap: 1,
         px: 2,
-        py: 1,
+        // py: 1,
+        ...props.containerSx,
       }}
     >
       <Text sx={{ color: "gray", fontSize: 14 }}>{props.prefixLabel}:</Text>
