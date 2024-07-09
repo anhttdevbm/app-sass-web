@@ -7,6 +7,7 @@ import {
   Dispatch,
   memo,
   SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -15,6 +16,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { Task } from "store/project/reducer";
 import { checkIsMobile } from "utils/index";
 import snResetPassword from "components/sn-reset-password";
+import ProjectTaskIcon from "icons/ProjectTaskIcon";
 type DraggableTaskProps = {
   id: string;
   index: number;
@@ -50,6 +52,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
   const isMobile = useMemo(() => checkIsMobile(), []);
 
   const [isToggle, setIsToggle] = useState<boolean>(false);
+  const [isHidden, setIsHidden] = useState(false);
 
   // const onToggle = () => {
   //   setHideIds((prevIds) => {
@@ -64,7 +67,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
   //   });
   // };
 
-  const onHandlerHide = () => {
+  const onHandlerHide = useCallback(() => {
     setHideIds((prevIds) => {
       const newIds = [...prevIds];
       const indexSelected = newIds.findIndex((idValue) => idValue === id);
@@ -75,9 +78,9 @@ const DraggableTask = (props: DraggableTaskProps) => {
 
       return newIds;
     });
-  };
+  }, [id, setHideIds]);
 
-  const onHandlerShow = () => {
+  const onHandlerShow = useCallback(() => {
     setHideIds((prevIds) => {
       const newIds = [...prevIds];
       const indexSelected = newIds.findIndex((idValue) => idValue === id);
@@ -86,17 +89,17 @@ const DraggableTask = (props: DraggableTaskProps) => {
       }
       return newIds;
     });
-  };
+  }, [id, setHideIds]);
 
   useEffect(() => {
     if (isToggle) onHandlerShow();
     else onHandlerHide();
-  }, [isToggle]);
+  }, [isToggle, onHandlerHide, onHandlerShow]);
 
   return (
     <Draggable draggableId={id} index={index}>
       {(provided, snapshot) => {
-        if (snapshot.isDragging) setIsToggle(true);
+        if (snapshot.isDragging || isHidden) setIsToggle(true);
         else setIsToggle(false);
 
         return (
@@ -125,6 +128,9 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 backgroundColor: "rgba(236, 236, 243, 0.5)",
               },
             }}
+            onDoubleClick={() => {
+              setIsHidden((_isHidden) => !_isHidden);
+            }}
             {...rest}
           >
             <Stack
@@ -142,12 +148,11 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 onChange={onChange}
               />
               <IconButton
-                // className="checkbox"
                 noPadding
                 sx={{ zIndex: 10 }}
                 {...provided.dragHandleProps}
               >
-                <MoveTagIcon
+                <ProjectTaskIcon
                   fontSize={isXlSmaller ? "small" : "medium"}
                   sx={{ color: "grey.A200" }}
                 />

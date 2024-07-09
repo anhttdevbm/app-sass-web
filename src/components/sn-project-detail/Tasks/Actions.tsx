@@ -128,8 +128,7 @@ const Actions = () => {
         justifyContent="space-between"
         px={2}
         spacing={{ xs: 1, md: 2 }}
-        py={{ xs: 0.75 }}
-        mt={{ sm: 1.25, md: 2 }}
+        py={{ xs: 0.75, md: 1 }}
         position="relative"
         // top={{ xs: 108, md: 36 }}
         zIndex={12}
@@ -164,28 +163,33 @@ const Actions = () => {
 
         <ButtonWithDropdown
           id="add_new_id"
+          size="small"
           text={projectT("detailTasks.createNewTaskList")}
           onClick={onShow}
         />
 
-        <Search
-          placeholder={commonT("searchBy", {
-            name: projectT("detailTasks.key"),
-          })}
-          name="tasks.name"
-          onChange={onChangeQueries}
-          onEnter={(name, value) => {
-            onChangeQueries(name, value);
-            onSearch();
-          }}
-          value={queries?.["tasks.name"]}
-          startNode={null}
-          endNode={<SearchIcon sx={{ fontSize: 16 }} htmlColor="dodgerblue" />}
-          sx={{
-            minWidth: { xs: is1440Larger ? 220 : 160 },
-          }}
-          rootSx={{ borderRadius: "1.5rem" }}
-        />
+        <Box mb={1} display="flex">
+          <Search
+            placeholder={commonT("searchBy", {
+              name: projectT("detailTasks.key"),
+            })}
+            name="tasks.name"
+            onChange={onChangeQueries}
+            onEnter={(name, value) => {
+              onChangeQueries(name, value);
+              onSearch();
+            }}
+            value={queries?.["tasks.name"]}
+            startNode={null}
+            endNode={
+              <SearchIcon sx={{ fontSize: 16 }} htmlColor="dodgerblue" />
+            }
+            sx={{
+              minWidth: { xs: is1440Larger ? 220 : 160 },
+            }}
+            rootSx={{ height: 32, borderRadius: "1.5rem" }}
+          />
+        </Box>
 
         <Stack
           direction="row"
@@ -212,7 +216,7 @@ const Actions = () => {
             }}
           />
 
-          <Box py={1} px={2} border="solid 1px lightgray" borderRadius="2rem">
+          <Box px={2} border="solid 1px lightgray" borderRadius="2rem">
             <Date
               label={commonT("form.title.startDate")}
               name="tasks.start_date"
@@ -247,9 +251,8 @@ const Actions = () => {
           />
 
           <Button
-            size="medium"
+            size="small"
             sx={{
-              height: 32,
               display: { xs: "none", md: "flex" },
               borderRadius: "2rem",
             }}

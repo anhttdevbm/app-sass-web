@@ -9,6 +9,7 @@ import {
   Stack,
   TextField,
   popoverClasses,
+  InputAdornment,
 } from "@mui/material";
 import ConfirmDialog from "components/ConfirmDialog";
 import DialogLayout from "components/DialogLayout";
@@ -49,6 +50,7 @@ import Form from "../Form";
 import MoveTaskList from "../MoveTaskList";
 import TaskListForm from "../TaskListForm";
 import { Selected, TaskFormData, genName } from "./helpers";
+import { ExpandMore } from "@mui/icons-material";
 
 type DroppableTaskListProps = {
   id: string;
@@ -180,11 +182,11 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     }}
                     onClick={onToggle}
                   >
-                    <CaretIcon sx={{ color: "grey.300" }} />
+                    <ExpandMore sx={{ color: "text.primary" }} />
                   </IconButton>
                   <Text
                     variant={isXlSmaller ? "h6" : "h5"}
-                    color="#666666"
+                    color="text.primary"
                     onClick={onShowPreviewName}
                     noWrap
                     sx={{ cursor: "pointer" }}
@@ -196,7 +198,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     ml={0.5}
                     variant="h5"
                     fontWeight={400}
-                    color="#666666"
+                    color="text.primary"
                   >
                     {`(${count})`}
                   </Text>
@@ -227,8 +229,8 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   width="100%"
                   direction="row"
                   spacing={0}
-                  alignItems="baseline"
-                  sx={{ ml: { xs: 2, md: 7 } }}
+                  alignItems="center"
+                  sx={{ ml: { xs: 2, md: 3.5 } }}
                 >
                   <PlusIcon sx={{ color: "dodgerblue", mt: 0.5 }} />
                   <TextField
@@ -251,8 +253,6 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                           borderBottom: "unset !important",
                         },
                       },
-                      pb: "8px",
-
                       "& input": {
                         fontSize: 14,
                         paddingTop: "17px !important",

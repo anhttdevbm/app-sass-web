@@ -173,7 +173,11 @@ const Actions = () => {
               {projectT("list.title")}
             </Text>
 
-            <ButtonWithDropdown text={commonT("createNew")} onClick={onShow} />
+            <ButtonWithDropdown
+              size="small"
+              text={commonT("createNew")}
+              onClick={onShow}
+            />
           </Stack>
         </Stack>
 

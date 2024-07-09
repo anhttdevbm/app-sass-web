@@ -46,11 +46,9 @@ const TabList = () => {
         borderColor={{ md: "grey.100" }}
         width="100%"
         overflow="auto"
-        // position="sticky"
-        // top={isMembersOfProjectPath ? undefined : { xs: 8, sm: 16 }}
         bgcolor="background.paper"
-        py={2}
-        px={3}
+        py={1}
+        px={2}
       >
         <Stack
           direction="row"
@@ -101,7 +99,7 @@ const TabItem = (props: TabItemProps) => {
         "&:hover": {
           bgcolor: isDarkMode ? "grey.50" : "primary.light",
         },
-        py: { xs: 1, sm: 1, md: 2 },
+        py: { xs: 1, sm: 1 },
         px: { xs: 2, sm: 3.5 },
         borderRadius: "2rem",
         display: "flex",

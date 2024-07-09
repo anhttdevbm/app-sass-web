@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useEffect, useMemo } from "react";
-import { TableRow } from "@mui/material";
+import { paginationItemClasses, TableRow } from "@mui/material";
 import { TableLayout, CellProps } from "components/Table";
 import { useMembersOfProject } from "store/project/selectors";
 import { DEFAULT_PAGING, NS_COMMON, NS_PROJECT } from "constant/index";
@@ -47,12 +47,12 @@ const ItemList = () => {
       { value: "#", width: "5%", align: "center" },
       {
         value: projectT("detailMembers.member"),
-        width: "30%",
+        width: "25%",
         align: "left",
       },
       {
         value: "Email",
-        width: "16%",
+        width: "21%",
         align: "left",
       },
       { value: commonT("position"), width: "15%" },
@@ -103,6 +103,7 @@ const ItemList = () => {
               maxHeight: { xs: 0, md: undefined },
               minHeight: { xs: 0, md: HEADER_HEIGHT },
             },
+            borderRadius: "1rem",
           }}
         >
           {items.map((item, index) => {
@@ -126,9 +127,15 @@ const ItemList = () => {
           totalPages={totalPages}
           page={pageIndex}
           pageSize={pageSize}
-          containerProps={{ px: { md: 3 }, py: 1 }}
+          containerProps={{ px: { md: 3 }, py: 1, gap: 6 }}
           onChangePage={onChangePage}
           onChangeSize={onChangeSize}
+          sx={{
+            [`& .${paginationItemClasses.root}`]: {
+              fontWeight: 600,
+              bgcolor: "#D9F0FD",
+            },
+          }}
         />
       </FixedLayout>
     </>
