@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Button, Select, Text } from "components/shared";
 import PlusIcon from "icons/PlusIcon";
-import { Dropdown, Search, Switch } from "components/Filters";
+import { Search, Switch } from "components/Filters";
 import { INITIAL_VALUES, STATUS_OPTIONS } from "./components/helpers";
 import { useProjects } from "store/project/selectors";
 import { getPath } from "utils/index";
@@ -23,7 +23,8 @@ import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
 import SearchIcon from "icons/SearchIcon";
-import { ExpandMore, AddCircle } from "@mui/icons-material";
+import Dropdown from "./components/Dropdown";
+import ButtonWithDropdown from "./components/ButtonWithDropdown";
 
 const Actions = () => {
   const { items, filters, onGetProjects, pageSize, onCreateProject } =
@@ -83,7 +84,6 @@ const Actions = () => {
   const onSearch = (newQueries: Params) => {
     const path = getPath(pathname, newQueries);
     push(path);
-    console.log(path);
 
     // onGetProjects({ ...newQueries, pageIndex: 1, pageSize });
   };
@@ -143,73 +143,23 @@ const Actions = () => {
               value={queries?.saved}
             />
 
-            <Box
-              sx={{
-                border: "1px solid lightgray",
-                borderRadius: "2rem",
-                display: "flex",
-                alignItems: "baseline",
-                gap: 1,
-                px: 2,
-                py: 1,
-              }}
-            >
-              <Text sx={{ color: "gray", fontSize: 14 }}>
-                {commonT("status")}:
-              </Text>
-              <Dropdown
-                placeholder={commonT("all")}
-                options={statusOptions}
-                name="status"
-                onChange={onChangeQueries}
-                value={queries?.status}
-                rootSx={{
-                  px: "0px!important",
-                  [`& .${selectClasses.outlined}`]: {
-                    pr: "0!important",
-                    mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                      `${spacing(4)}!important`,
-                    "& .sub": {
-                      display: "none",
-                    },
-                  },
-                }}
-              />
-            </Box>
+            <Dropdown
+              prefixLabel={commonT("status")}
+              placeholder={commonT("all")}
+              options={statusOptions}
+              name="status"
+              onChange={onChangeQueries}
+              value={queries?.status}
+            />
 
-            <Box
-              sx={{
-                border: "1px solid lightgray",
-                borderRadius: "1.5rem",
-                display: "flex",
-                alignItems: "baseline",
-                gap: 1,
-                px: 2,
-                py: 1,
-              }}
-            >
-              <Text sx={{ color: "gray", fontSize: 14 }}>
-                {commonT("assigner")}:
-              </Text>
-              <Dropdown
-                placeholder={commonT("all")}
-                options={assignerOptions}
-                value={queries?.owner}
-                name="owner"
-                onChange={onChangeQueries}
-                rootSx={{
-                  px: "0px!important",
-                  [`& .${selectClasses.outlined}`]: {
-                    pr: "0!important",
-                    mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                      `${spacing(4)}!important`,
-                    "& .sub": {
-                      display: "none",
-                    },
-                  },
-                }}
-              />
-            </Box>
+            <Dropdown
+              prefixLabel={commonT("assigner")}
+              placeholder={commonT("all")}
+              options={statusOptions}
+              name="owner"
+              onChange={onChangeQueries}
+              value={queries?.status}
+            />
           </Stack>
 
           <Stack
@@ -223,43 +173,7 @@ const Actions = () => {
               {projectT("list.title")}
             </Text>
 
-            <Box
-              sx={{
-                display: "flex",
-                background:
-                  "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
-                borderRadius: "2rem",
-              }}
-            >
-              <Button
-                onClick={onShow}
-                startIcon={<AddCircle />}
-                size="small"
-                variant="primary"
-                sx={{
-                  py: 2,
-                  px: 2,
-                  borderRadius: "2rem 0 0 2rem",
-                  bgcolor: "transparent",
-                }}
-              >
-                <Text sx={{ color: "white" }}>{commonT("createNew")}</Text>
-              </Button>
-              <Button
-                size="small"
-                variant="primary"
-                sx={{
-                  paddingLeft: 0,
-                  paddingRight: 1,
-                  py: 2,
-                  borderRadius: "0 2rem 2rem 0",
-                  borderLeft: "solid 1px white",
-                  bgcolor: "transparent",
-                }}
-              >
-                <ExpandMore />
-              </Button>
-            </Box>
+            <ButtonWithDropdown text={commonT("createNew")} onClick={onShow} />
           </Stack>
         </Stack>
 

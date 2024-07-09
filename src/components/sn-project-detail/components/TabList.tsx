@@ -49,8 +49,16 @@ const TabList = () => {
         // position="sticky"
         // top={isMembersOfProjectPath ? undefined : { xs: 8, sm: 16 }}
         bgcolor="background.paper"
+        py={2}
+        px={3}
       >
-        <Stack direction="row" alignItems="center">
+        <Stack
+          direction="row"
+          alignItems="center"
+          border="solid 1px"
+          borderColor="grey.100"
+          borderRadius="2rem"
+        >
           {TABS.map((tab) => (
             <TabItem key={tab.label} {...tab} />
           ))}
@@ -93,14 +101,16 @@ const TabItem = (props: TabItemProps) => {
         "&:hover": {
           bgcolor: isDarkMode ? "grey.50" : "primary.light",
         },
-        py: { xs: 1, sm: 1 },
+        py: { xs: 1, sm: 1, md: 2 },
         px: { xs: 2, sm: 3.5 },
-        borderRadius: 1,
+        borderRadius: "2rem",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
       <Text
         variant="body2"
-        color={isActiveLink ? "text.primary" : "grey.300"}
+        color={isActiveLink ? "blue.500" : "grey.300"}
         fontWeight={600}
         whiteSpace="nowrap"
       >

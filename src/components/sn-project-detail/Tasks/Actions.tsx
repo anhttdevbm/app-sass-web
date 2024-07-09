@@ -2,6 +2,7 @@
 
 import { memo, useState, useEffect, useMemo } from "react";
 import {
+  Box,
   Stack,
   Theme,
   selectClasses,
@@ -10,7 +11,7 @@ import {
 } from "@mui/material";
 import { Button, Text } from "components/shared";
 import PlusIcon from "icons/PlusIcon";
-import { Date, Dropdown, Search } from "components/Filters";
+import { Search } from "components/Filters";
 import {
   useMemberOptions,
   useProjects,
@@ -37,6 +38,10 @@ import { useHeaderConfig } from "store/app/selectors";
 import Link from "components/Link";
 import ChevronIcon from "icons/ChevronIcon";
 import useBreakpoint from "hooks/useBreakpoint";
+import ButtonWithDropdown from "components/sn-projects/components/ButtonWithDropdown";
+import SearchIcon from "icons/SearchIcon";
+import Dropdown from "components/sn-projects/components/Dropdown";
+import Date from "components/sn-projects/components/Date";
 
 const Actions = () => {
   const {
@@ -119,101 +124,75 @@ const Actions = () => {
     <>
       <Stack
         direction={{ sm: "row" }}
-        alignItems={{ lg: "center" }}
+        alignItems="center"
         justifyContent="space-between"
-        borderBottom="1px solid"
-        paddingLeft={"10px"}
-        paddingRight={"10px"}
-        borderColor="grey.100"
-        spacing={{ xs: 1, md: 3 }}
+        px={2}
+        spacing={{ xs: 1, md: 2 }}
         py={{ xs: 0.75 }}
-        mt={{ sm: 1.25, md: 0 }}
+        mt={{ sm: 1.25, md: 2 }}
         position="relative"
         // top={{ xs: 108, md: 36 }}
         zIndex={12}
         bgcolor="background.paper"
+        width="100%"
       >
-        {/* <Button
+        {/* <Stack
+          direction="row"
+          alignItems="center"
+          spacing={0.5}
+          flex={1}
+          width="50%"
+        >
+          {!!prevPath && (
+            <Link
+              href={prevPath}
+              sx={{ height: isMdSmaller ? 16 : 24, display: { sm: "none" } }}
+            >
+              <ChevronIcon
+                sx={{
+                  color: "text.primary",
+                  transform: "rotate(90deg)",
+                }}
+                fontSize={isMdSmaller ? "small" : "medium"}
+              />
+            </Link>
+          )}
+          <Text variant={{ xs: "body2", md: "h4" }} display={{ sm: "none" }}>
+            {title ?? ""}
+          </Text>
+        </Stack> */}
+
+        <ButtonWithDropdown
+          id="add_new_id"
+          text={projectT("detailTasks.createNewTaskList")}
           onClick={onShow}
-          startIcon={<PlusIcon />}
-          size="small"
-          variant="primary"
-          sx={{ height: "fit-content", width: "fit-content" }}
-        >
-          {commonT("createNew")}
-        </Button> */}
+        />
+
+        <Search
+          placeholder={commonT("searchBy", {
+            name: projectT("detailTasks.key"),
+          })}
+          name="tasks.name"
+          onChange={onChangeQueries}
+          onEnter={(name, value) => {
+            onChangeQueries(name, value);
+            onSearch();
+          }}
+          value={queries?.["tasks.name"]}
+          startNode={null}
+          endNode={<SearchIcon sx={{ fontSize: 16 }} htmlColor="dodgerblue" />}
+          sx={{
+            minWidth: { xs: is1440Larger ? 220 : 160 },
+          }}
+          rootSx={{ borderRadius: "1.5rem" }}
+        />
 
         <Stack
           direction="row"
-          alignItems="center"
           justifyContent="space-between"
-          spacing={{ xs: 2, sm: 0 }}
-          width={{ xs: "100%", sm: "fit-content" }}
-          display={{ xs: "none", md: "flex" }}
-        >
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={0.5}
-            flex={1}
-            width="50%"
-          >
-            {!!prevPath && (
-              <Link
-                href={prevPath}
-                sx={{ height: isMdSmaller ? 16 : 24, display: { sm: "none" } }}
-              >
-                <ChevronIcon
-                  sx={{
-                    color: "text.primary",
-                    transform: "rotate(90deg)",
-                  }}
-                  fontSize={isMdSmaller ? "small" : "medium"}
-                />
-              </Link>
-            )}
-            <Text variant={{ xs: "body2", md: "h4" }} display={{ sm: "none" }}>
-              {title ?? ""}
-            </Text>
-          </Stack>
-
-          <Button
-            onClick={onShow}
-            id="add_new_id"
-            startIcon={<PlusIcon />}
-            size="extraSmall"
-            variant="primary"
-            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
-          >
-            {projectT("detailTasks.createNewTaskList")}
-          </Button>
-        </Stack>
-
-        <Stack
-          direction="row"
           alignItems="center"
-          spacing={3}
-          justifyContent={{ xs: "flex-start", md: "flex-end" }}
-          // overflow="auto"
-          overflow="hidden"
-          width="100%"
+          gap={1}
         >
-          <Search
-            placeholder={commonT("searchBy", {
-              name: projectT("detailTasks.key"),
-            })}
-            name="tasks.name"
-            onChange={onChangeQueries}
-            value={queries?.["tasks.name"]}
-            onEnter={(name, value) => {
-              onChangeQueries(name, value);
-              onSearch();
-            }}
-            sx={{
-              width: { xs: is1440Larger ? 220 : 160 },
-              minWidth: { xs: is1440Larger ? 220 : 160 },
-            }}
-          />
           <AssignerFilter
             onChange={onChangeQueries}
             value={queries?.["tasks.owner"]}
@@ -233,18 +212,22 @@ const Actions = () => {
             }}
           />
 
-          <Date
-            label={commonT("form.title.startDate")}
-            name="tasks.start_date"
-            onChange={onChangeQueries}
-            value={queries?.["tasks.start_date"]}
-            format={DATE_FORMAT_HYPHEN}
-            iconProps={{
-              sx: { fontSize: 16 },
-            }}
-          />
+          <Box py={1} px={2} border="solid 1px lightgray" borderRadius="2rem">
+            <Date
+              label={commonT("form.title.startDate")}
+              name="tasks.start_date"
+              onChange={onChangeQueries}
+              value={queries?.["tasks.start_date"]}
+              format={DATE_FORMAT_HYPHEN}
+              iconProps={{
+                sx: { fontSize: 24 },
+              }}
+            />
+          </Box>
+
           <Dropdown
-            placeholder={commonT("status")}
+            prefixLabel={commonT("status")}
+            placeholder={commonT("all")}
             options={statusOptions}
             name="tasks.status"
             onChange={onChangeQueries}
@@ -264,25 +247,27 @@ const Actions = () => {
           />
 
           <Button
-            size="extraSmall"
-            sx={{ height: 32, display: { xs: "none", md: "flex" } }}
+            size="medium"
+            sx={{
+              height: 32,
+              display: { xs: "none", md: "flex" },
+              borderRadius: "2rem",
+            }}
             onClick={onSearch}
             variant="secondary"
           >
             {commonT("search")}
           </Button>
-          {/* <Refresh onClick={onRefresh} />
-            {!!Object.keys(queries).length && <Clear onClick={onClear} />} */}
-        </Stack>
 
-        <Button
-          size="small"
-          sx={{ height: 40, display: { md: "none" }, width: "fit-content" }}
-          onClick={onSearch}
-          variant="secondary"
-        >
-          {commonT("search")}
-        </Button>
+          <Button
+            size="small"
+            sx={{ height: 40, display: { md: "none" }, width: "fit-content" }}
+            onClick={onSearch}
+            variant="secondary"
+          >
+            {commonT("search")}
+          </Button>
+        </Stack>
       </Stack>
       {isShow && (
         <TaskListForm

@@ -39,7 +39,7 @@ const TextStatus = (props: TextStatusProps) => {
       variant="caption"
       fontWeight={isActive ? 700 : 500}
       py={0.5}
-      px={{ xs: 0.5, md: 2 }}
+      px={{ xs: 0.5, md: 1 }}
       borderRadius="1.5rem"
       textAlign="center"
       display="inline-block"

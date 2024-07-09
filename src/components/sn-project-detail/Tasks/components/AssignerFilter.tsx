@@ -1,10 +1,11 @@
 import { memo, useEffect } from "react";
-import { Dropdown, DropdownProps } from "components/Filters";
+import { DropdownProps } from "components/Filters";
 import { NS_COMMON, NS_MANAGER } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useEmployeeOptions } from "store/company/selectors";
 import { useMemberOptions } from "store/project/selectors";
 import { useParams } from "next/navigation";
+import Dropdown from "components/sn-projects/components/Dropdown";
 
 const AssignerFilter = (
   props: Omit<DropdownProps, "options" | "name"> & { name?: string },
@@ -38,7 +39,8 @@ const AssignerFilter = (
 
   return (
     <Dropdown
-      placeholder={commonT("form.title.assigner")}
+      prefixLabel={commonT("form.title.assigner")}
+      placeholder={commonT("all")}
       options={options}
       name="tasks.owner"
       onEndReached={onEndReached}

@@ -1,7 +1,13 @@
 /* eslint-disable react/jsx-key */
 "use client";
 
-import { Box, CircularProgress, ClickAwayListener, Stack } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  ClickAwayListener,
+  Paper,
+  Stack,
+} from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Date } from "components/Filters";
 import FixedLayoutTask from "components/FixedLayoutTask";
@@ -280,6 +286,7 @@ const ItemList = () => {
     if (isMdSmaller) return [];
     if (isXlSmaller) return desktopHeaderList;
     if (isXlBigger) return xlHeaderList;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]) as CellProps[];
 
   const onSetTask = (
@@ -1047,7 +1054,7 @@ const ItemList = () => {
   }, [fixedLayoutRef]);
 
   return (
-    <Stack flex={1} pb={3} order={3} gap={2} bgcolor={"background.default"}>
+    <Stack flex={1} py={3} px={2} order={3} gap={2} bgcolor="background.paper">
       {!!selectedList.length && (
         <ActionsSelected
           selectedList={selectedList}
@@ -1059,9 +1066,10 @@ const ItemList = () => {
         // top={baseTop + 18}
         // zIndex={12}
         display={{ xs: "none", md: "flex" }}
-        bgcolor="background.default"
         overflow="hidden"
-        mt="12px"
+        bgcolor="grey.100"
+        borderRadius="1rem"
+        py={1}
       >
         <TableLayout
           onLayout={onLayout}
@@ -1074,10 +1082,10 @@ const ItemList = () => {
           mx="auto"
           width="100%"
           height="55px"
-          bgcolor={noData ? "background.paper" : "background.default"}
+          bgcolor={"background.paper"}
           headerProps={{
             sx: {
-              backgroundColor: "background.paper",
+              bgcolor: "grey.100",
             },
           }}
           sx={{
@@ -1088,7 +1096,7 @@ const ItemList = () => {
               height: "100%",
               position: "absolute",
               right: "0",
-              backgroundColor: "background.paper",
+              bgcolor: "grey.100",
             },
             "* > th:first-child": {
               pl: "37px",
@@ -1108,7 +1116,7 @@ const ItemList = () => {
       <FixedLayoutTask
         ref={fixedLayoutRef}
         flex={1}
-        bgcolor="background.default"
+        bgcolor="background.paper"
         gap="16px"
       >
         <DragDropContext onDragStart={onDraggingTrue} onDragEnd={onDragEnd}>
@@ -1284,7 +1292,7 @@ const ItemList = () => {
                                     }
                                     value={task?.start_date}
                                     iconProps={{
-                                      sx: { fontSize: 16, display: "none" },
+                                      sx: { fontSize: 16 },
                                     }}
                                   />
                                 </Content>
@@ -1315,7 +1323,7 @@ const ItemList = () => {
                                     }
                                     value={task?.end_date}
                                     iconProps={{
-                                      sx: { fontSize: 16, display: "none" },
+                                      sx: { fontSize: 16 },
                                     }}
                                   />
                                 </Content>
@@ -1427,17 +1435,6 @@ const ItemList = () => {
                                                     sx={{
                                                       ...provided.draggableProps
                                                         .style,
-                                                      "& >.checkbox": {
-                                                        opacity: isChecked
-                                                          ? 1
-                                                          : 0,
-                                                        userSelect: isChecked
-                                                          ? undefined
-                                                          : "none",
-                                                      },
-                                                      "&:hover .checkbox": {
-                                                        opacity: 1,
-                                                      },
                                                       "&::before": {
                                                         position: "absolute",
                                                         left: "58px",
@@ -1505,12 +1502,6 @@ const ItemList = () => {
                                                           bottom: `${`${
                                                             i * 40 + 0
                                                           }px`}`,
-                                                          borderBottom:
-                                                            "1px solid",
-                                                          borderColor: {
-                                                            md: "rgba(27, 197, 189, 0.5)",
-                                                            xs: "background.paper",
-                                                          },
                                                           content: "''",
                                                           width: "95%",
                                                           height: `1px`,
@@ -1524,21 +1515,6 @@ const ItemList = () => {
                                                         noWrap
                                                         display="flex"
                                                         alignItems={"center"}
-                                                        sx={{
-                                                          "& >.checkbox": {
-                                                            opacity: isChecked
-                                                              ? 1
-                                                              : 0,
-                                                            userSelect:
-                                                              isChecked
-                                                                ? undefined
-                                                                : "none",
-                                                          },
-                                                          "&:hover >.checkbox":
-                                                            {
-                                                              opacity: 1,
-                                                            },
-                                                        }}
                                                       >
                                                         <CheckBoxCustom
                                                           className="checkbox"
@@ -1550,11 +1526,6 @@ const ItemList = () => {
                                                             task,
                                                             subTask,
                                                           )}
-                                                          sx={{
-                                                            opacity: isChecked
-                                                              ? 1
-                                                              : 0,
-                                                          }}
                                                         />
 
                                                         <IconButton
@@ -1692,7 +1663,6 @@ const ItemList = () => {
                                                           iconProps={{
                                                             sx: {
                                                               fontSize: 16,
-                                                              display: "none",
                                                             },
                                                           }}
                                                         />
@@ -1735,7 +1705,6 @@ const ItemList = () => {
                                                           iconProps={{
                                                             sx: {
                                                               fontSize: 16,
-                                                              display: "none",
                                                             },
                                                           }}
                                                         />
