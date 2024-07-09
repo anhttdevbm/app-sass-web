@@ -57,5 +57,8 @@ export type LayoutDictionary = {
     landingTrustCenter: string;
     landingAI: string;
     landingPricing: string;
+
+    //Invoice
+    invoice: string;
   };
 };

@@ -3,15 +3,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
-  BillPaymentData,
-  BillTagData,
+  addPayment,
+  addUserToBilling,
   BillingData,
   BillingDataExport,
   BillingDataMark,
-  GetBillingListQueries,
-  GetBudgetListQueries,
-  addPayment,
-  addUserToBilling,
+  BillPaymentData,
+  BillTagData,
   createBilling,
   createCommentBilling,
   deleteBilling,
@@ -19,31 +17,28 @@ import {
   downloadPdfBilling,
   exportBilling,
   exportBillingQueries,
+  getBillingClientDetail,
   getBillingDetail,
   getBillingList,
+  GetBillingListQueries,
   getBudgetDetail,
   getBudgetFilterList,
   getBudgetList,
+  GetBudgetListQueries,
   getCommentBilling,
   getPaymentByBillId,
   getServiceBudget,
   getTags,
   markAsSendBilling,
+  setShowEditClient,
   updateBilling,
+  updateClientBill,
   updatePayment,
   updateTagBill,
   viewPdfBilling,
-  updateClientBill,
-  setShowEditClient,
-  getBillingClientDetail,
 } from "./actions";
 import { BillingCommentData, BillingDataUpdate, Service, Tag } from "./reducer";
-import { IOptionStructure } from "components/shared/TextFieldSelect";
 import { usePositions } from "store/company/selectors";
-import { useTranslations } from "next-intl";
-import { NS_COMMON } from "constant/index";
-import _ from "lodash";
-import { da } from "date-fns/locale";
 import { Option } from "constant/types";
 
 export const useBillings = () => {
@@ -196,16 +191,13 @@ export const useBillings = () => {
     },
     [dispatch],
   );
-  //   const onUpdateProject = useCallback(
-  //     async (id: string, data: Partial<ProjectData>) => {
-  //       try {
-  //         return await dispatch(updateProject({ id, ...data })).unwrap();
-  //       } catch (error) {
-  //         throw error;
-  //       }
-  //     },
-  //     [dispatch],
-  //   );
+
+  const onDeleteManyBillings = useCallback(
+    async (ids: string[]) => {
+      return dispatch(deleteBilling({ id: ids.join(",") }));
+    },
+    [dispatch],
+  );
 
   return {
     items,
@@ -253,6 +245,7 @@ export const useBillings = () => {
     onUpdatePayment,
     onDeletePayment,
     onGetBillingDetail,
+    onDeleteManyBillings,
   };
 };
 

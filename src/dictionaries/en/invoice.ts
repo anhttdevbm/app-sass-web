@@ -7,5 +7,16 @@ export const InvoiceLang: InvoiceDictionary = {
   head: {
     title: "Invoice",
     key: "invoice",
-  }
-}
+  },
+  list: {
+    table: {
+      date: "Date",
+      invoice: "Invoice#",
+      budget: "Budget",
+      status: "Status",
+      dueDate: "Due Date",
+      amount: "Amount",
+      balanceDue: "Balance Due",
+    },
+  },
+};

@@ -31,7 +31,7 @@ export const LayoutLang: LayoutDictionary = {
     budgeting: "Ngân sách",
     resourcePlaning: "Kế hoạch tài nguyên",
     sales: "Giao dịch",
-    docs: 'Tài Liệu',
+    docs: "Tài Liệu",
     chat: "Tin nhắn",
     meeting: "Meeting",
 
@@ -43,12 +43,12 @@ export const LayoutLang: LayoutDictionary = {
     //feedback
     feedback: "Đánh giá",
     feedbackList: "Danh sách đánh giá",
-    blog:"Bài viết",
-    blogList:"Danh sách bài viết",
-    blogCategoryList:"Danh sách danh mục",
-    career:"Nghề nghiệp",
+    blog: "Bài viết",
+    blogList: "Danh sách bài viết",
+    blogCategoryList: "Danh sách danh mục",
+    career: "Nghề nghiệp",
     careerList: "Danh sách nghề nghiệp",
-    billing:"Hóa đơn",
+    billing: "Hóa đơn",
     contents: "Nội Dung",
     landingHome: "Trang Chủ",
     landingAboutUs: "Giới Thiệu",
@@ -56,5 +56,7 @@ export const LayoutLang: LayoutDictionary = {
     landingTrustCenter: "Trung tâm Tin tưởng",
     landingAI: "AI",
     landingPricing: "Định giá",
+
+    invoice: "Hóa đơn",
   },
 };
