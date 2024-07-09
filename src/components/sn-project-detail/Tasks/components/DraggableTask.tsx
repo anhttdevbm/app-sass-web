@@ -52,6 +52,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
   const isMobile = useMemo(() => checkIsMobile(), []);
 
   const [isToggle, setIsToggle] = useState<boolean>(false);
+  const [isHidden, setIsHidden] = useState(false);
 
   // const onToggle = () => {
   //   setHideIds((prevIds) => {
@@ -98,7 +99,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
   return (
     <Draggable draggableId={id} index={index}>
       {(provided, snapshot) => {
-        if (snapshot.isDragging) setIsToggle(true);
+        if (snapshot.isDragging || isHidden) setIsToggle(true);
         else setIsToggle(false);
 
         return (
@@ -126,6 +127,9 @@ const DraggableTask = (props: DraggableTaskProps) => {
               "&:hover": {
                 backgroundColor: "rgba(236, 236, 243, 0.5)",
               },
+            }}
+            onDoubleClick={() => {
+              setIsHidden((_isHidden) => !_isHidden);
             }}
             {...rest}
           >

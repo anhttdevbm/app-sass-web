@@ -1053,6 +1053,7 @@ const ItemList = () => {
 
     // Cleanup: remove event listener when component unmounts
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       fixedLayoutRef.current?.removeEventListener("scroll", handleScroll);
     };
   }, [fixedLayoutRef]);
