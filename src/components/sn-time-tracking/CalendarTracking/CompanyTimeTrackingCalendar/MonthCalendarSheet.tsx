@@ -1,6 +1,6 @@
 "use client";
 import FullCalendar from "@fullcalendar/react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Drawer, Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -17,17 +17,27 @@ function renderEventContent(eventInfo) {
     </>
   );
 }
-const formatMonthYear = (monthYearString) => {
-  const date = new Date(monthYearString);
-  const month = date.toLocaleString('en-us', { month: 'short' }); // Get abbreviated month name
-  const year = date.getFullYear();
-  return `${month} ${year}`;
-};
 
 const MonthCalendarSheet = () => {
   const calendarRef = useRef<FullCalendar>(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentMonthYear, setCurrentMonthYear] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+  };
+
+  const formatMonthYear = (monthYearString) => {
+    const date = new Date(monthYearString);
+    const month = date.toLocaleString("en-us", { month: "short" }); // Get abbreviated month name
+    const year = date.getFullYear();
+    return `${month} ${year}`;
+  };
 
   const goNext = () => {
     const calendarApi = calendarRef.current?.getApi();
@@ -45,17 +55,25 @@ const MonthCalendarSheet = () => {
   };
   const customDayHeaderContent = (args) => {
     // Custom styling for day headers
-    const dayName = args.date.toLocaleString('default', { weekday: 'long' }); // Get full weekday name
+    const dayName = args.date.toLocaleString("default", { weekday: "long" }); // Get full weekday name
     return (
-      <div style={{ fontWeight: "600", fontSize: "12px", textAlign: "center", textTransform: "uppercase",color:"#757383" }}>
+      <div
+        style={{
+          fontWeight: "600",
+          fontSize: "12px",
+          textAlign: "center",
+          textTransform: "uppercase",
+          color: "#757383",
+        }}
+      >
         {dayName}
       </div>
     );
   };
 
-
   const handleDateClick = (info) => {
     setSelectedDate(info.dateStr);
+    handleDrawerOpen()
   };
 
   useEffect(() => {
@@ -79,7 +97,9 @@ const MonthCalendarSheet = () => {
         <IconButton onClick={goPrev}>
           <ChevronLeftIcon />
         </IconButton>
-        <Typography sx={{ color: "#0575E6", fontWeight: "700",fontSize:"17px" }}>
+        <Typography
+          sx={{ color: "#0575E6", fontWeight: "700", fontSize: "17px" }}
+        >
           {currentMonthYear}
         </Typography>
         <IconButton onClick={goNext}>
@@ -100,12 +120,20 @@ const MonthCalendarSheet = () => {
           eventContent={renderEventContent}
           headerToolbar={false}
           dayHeaderContent={customDayHeaderContent}
+          editable={true}
         />
-        {selectedDate && (
-          <Box>
-            <Typography variant="h6">Selected Date: {selectedDate}</Typography>
+        <Drawer
+          anchor="right"
+          open={drawerOpen}
+          onClose={handleDrawerClose}
+          style={{width:500}}
+        >
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6">Selected Date Details</Typography>
+            <Typography variant="body1">Date: {selectedDate}</Typography>
+            {/* Add more details or actions related to the selected date */}
           </Box>
-        )}
+        </Drawer>
       </Box>
     </Stack>
   );
