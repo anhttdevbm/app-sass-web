@@ -12,6 +12,7 @@ import {
   changePermDoc,
   getDocDetails,
 } from "./reducer";
+import { TypeViewListDoc } from "constant/types";
 
 const useDocs = () => {
   const [loading, setLoading] = useState(false);
@@ -121,7 +122,7 @@ const useDocs = () => {
     onCreateDoc,
     loading,
     handleUpdateDoc,
-    handleGetDocDetail,
+    handleGetDocDetail
   };
 };
 

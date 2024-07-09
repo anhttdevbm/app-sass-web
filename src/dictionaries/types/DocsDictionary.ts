@@ -27,4 +27,10 @@ export type DocsDictionary = {
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createDoc: any;
+  extendBtn: {
+    rename: string;
+    move: string;
+    duplicate: string;
+    delete: string;
+  }
 };

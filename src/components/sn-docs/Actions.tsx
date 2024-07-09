@@ -17,6 +17,11 @@ import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
 import { useAppSelector } from "store/hooks";
 import { useParams, useSearchParams } from "next/navigation";
+import IconButton from '@mui/material/IconButton';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useDispatch } from "react-redux";
+import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -27,6 +32,43 @@ function convertStringToArray(inputString) {
 
   return resultArray;
 }
+
+const ChangeViewListDoc = () => {
+  const [typeViewListDoc, setTypeViewListDoc] = useState<TypeViewListDoc>('basicViewListDoc');
+  const dispatch = useDispatch();
+  
+  const handleViewKanban = () => {
+    dispatch(changeTypeViewDoc('kanbanViewListDoc'));
+    setTypeViewListDoc('kanbanViewListDoc');
+  }
+
+  const handleViewBasic = () => {
+    dispatch(changeTypeViewDoc('basicViewListDoc'));
+    setTypeViewListDoc('basicViewListDoc');
+  }
+
+  return (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <IconButton 
+        onClick={handleViewKanban} 
+        aria-label="view-kanban" 
+        sx={{ 
+          backgroundColor: typeViewListDoc === 'kanbanViewListDoc' ? 'common.white' : '#E9EBF3',
+          boxShadow: typeViewListDoc === 'kanbanViewListDoc' ? '0px 4px 8px rgba(0, 0, 0, 0.1)' : 'none' 
+        }}>
+          <ViewModuleIcon />
+      </IconButton>
+      <IconButton 
+        onClick={handleViewBasic} 
+        aria-label="view-basic" 
+        sx={{ 
+          backgroundColor: typeViewListDoc !== 'kanbanViewListDoc' ? 'common.white' : '#E9EBF3', 
+          boxShadow: typeViewListDoc !== 'kanbanViewListDoc' ? '0px 4px 8px rgba(0, 0, 0, 0.1)' : 'none' }}>
+        <MenuIcon />
+      </IconButton>
+    </Stack>
+  )
+} 
 
 type ActionProps = {
   isProjectTabMode: boolean;
@@ -129,7 +171,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             </Button>
           </Box>
         </Stack>
-
+        <ChangeViewListDoc />
         <Stack
           direction="row"
           alignItems="center"

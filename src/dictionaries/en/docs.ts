@@ -40,4 +40,10 @@ export const DocsLang: DocsDictionary = {
     restore: "Restore",
     name: "Document Name",
   },
+  extendBtn: {
+    rename: "Rename",
+    move: "Move",
+    duplicate: "Duplicate",
+    delete: "Delete"
+  }
 };
