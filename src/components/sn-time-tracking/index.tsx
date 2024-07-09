@@ -387,24 +387,6 @@ const TimeTrackingPage: FC = () => {
           </Button>
         </Box>
       </Grid>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          minHeight: "56px",
-          margin: "16px 20px",
-          gap: "12px",
-          border: "1px solid #EFEFEF",
-          borderRadius: "100px",
-          padding: "14px 33px",
-          background: "#F7F7FD",
-        }}
-      >
-        <p style={{ marginRight: "2px" }}>View by: </p>
-        <SortByCategory title="Project" />
-        <SortByCategory title="Period" />
-        <SortByCategory title="Person" />
-      </Box>
 
       <TabContext value={tab}>
         {/* <Stack

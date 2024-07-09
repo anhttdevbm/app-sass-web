@@ -54,6 +54,7 @@ import useBreakpoint from "hooks/useBreakpoint";
 import DuplicateIcon from "icons/DuplicateIcon";
 import { getSameWorker } from "store/timeTracking/actions";
 import ListSheet from "./ListSheet";
+import FilterCategory from "components/sn-time-tracking/Component/FilterCategory";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -758,7 +759,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         {/* {_renderTimeSheetContent()} */}
         {props.currentKindOfSheet === "timeSheet" && (
           // <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />
-          <ListSheet data={myTime} />
+          <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap:"20px"
+          }}>
+            <FilterCategory />
+            <ListSheet data={myTime} />
+          </Box>
         )}
         {props.currentKindOfSheet === "timeGridWeek" && (
           <>

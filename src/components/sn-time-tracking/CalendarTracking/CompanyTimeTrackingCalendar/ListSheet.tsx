@@ -80,7 +80,7 @@ interface IProps{
 }
 
 const ListSheet:React.FC<IProps> = (props) => {
-    console.log(props.data)
+    // console.log(props.data)
   const rows = fakeData.map(row =>{
     return {
       id:row._id,

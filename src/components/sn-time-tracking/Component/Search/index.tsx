@@ -4,6 +4,7 @@ import CircleChevronDownIcon from "icons/CircleChevronDownIcon";
 
 interface IProps {
   title: string;
+  isVisible?: boolean;
 }
 
 const SortByCategory: React.FC<IProps> = (props) => {
@@ -15,7 +16,7 @@ const SortByCategory: React.FC<IProps> = (props) => {
         borderRadius: "100px",
         textAlign: "center",
         background: "#FFFFFF",
-        minWidth:"200px",
+        minWidth: "200px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
