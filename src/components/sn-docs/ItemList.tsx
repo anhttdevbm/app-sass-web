@@ -23,6 +23,7 @@ import MobileContentCell from "./MobileContentCell";
 import { useGetDocsQuery } from "store/docs/api";
 import Avatar from "components/Avatar";
 import { MenuButton } from "@mui/base";
+import KanbanViewDocList from "./KanbanViewDocList";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -146,7 +147,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
   return (
     <>
       <FixedLayout>
-        <TableLayout
+        {/* <TableLayout
           headerList={headerList}
           pending={isLoading}
           noData={data?.totalDocs === 0}
@@ -196,7 +197,9 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
                 />
               );
             })}
-        </TableLayout>
+        </TableLayout> */}
+
+        <KanbanViewDocList />
 
         <Pagination
           totalItems={data?.totalDocs}
