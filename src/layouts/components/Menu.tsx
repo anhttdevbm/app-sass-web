@@ -35,7 +35,7 @@ import {
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH,
+  TIME_TRACKING_PATH
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -53,6 +53,7 @@ import MenuDocsIcon from "icons/MenuDocsIcon";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
 import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
+import TaskcoverAIIcon from "icons/TaskcoverIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
 import { memo, MouseEvent, useMemo, useState } from "react";
@@ -60,7 +61,6 @@ import { useAuth, useSidebar } from "store/app/selectors";
 import Collapse from "./Collapse";
 import SubMenu from "./SubMenu";
 import { MenuItemProps } from "./helpers";
-import TaskcoverAIIcon from "icons/TaskcoverIcon";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -310,12 +310,6 @@ const DATA: MenuItemProps[] = [
   {
     label: "menu.chat",
     href: CHATTING_ROOM_PATH,
-    icon: <MenuChatIcon />,
-    roles: [Permission.AM, Permission.ST],
-  },
-  {
-    label: "menu.meeting",
-    href: MEETING_PATH,
     icon: <MenuChatIcon />,
     roles: [Permission.AM, Permission.ST],
   },

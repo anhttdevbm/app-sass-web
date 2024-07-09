@@ -3,10 +3,12 @@
 import { MenuList, Stack } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
+import { DateTimePicker } from "components/shared/DatePicker";
 import { NS_BUDGETING, NS_COMMON } from "constant/index";
+import _ from "lodash";
 import moment from "moment";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import {
   TBudgetTimeAdd,
   TBudgetTimeUpdate,
@@ -14,16 +16,12 @@ import {
   useBudgetTimeUpdate,
 } from "queries/budgeting/time-range";
 import { useEffect } from "react";
+import { ReactDatePickerProps } from "react-datepicker";
 import { Controller, useForm } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI, uuid } from "utils/index";
-import { TTimeRanges } from "../Time";
-import { useParams } from "next/navigation";
+import { getMessageErrorByAPI } from "utils/index";
 import { TBudgetService } from "../../BudgetDetail";
-import { ReactDatePickerProps } from "react-datepicker";
-import { DateTimePicker } from "components/shared/DatePicker";
-import _ from "lodash";
-import InputLabelWrapper from "../InputLabelWrapper";
+import { TTimeRanges } from "../Time";
 
 type Props = {
   services: any[];
@@ -149,6 +147,48 @@ export const ModalAddTime = ({
     }
   };
 
+  const newInput = {
+    // height: "65px",
+    ".MuiInputBase-root": {
+      ".MuiAutocomplete-endAdornment":{right:"21px"},
+      background:
+        " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
+      padding: "9px!important",
+      paddingRight: "22px !important",
+      borderRadius: "100px!important",
+      border: "none!important",
+      mt: "35px",
+      fontSize: "16px!important",
+      // height:"38px",
+      ".MuiInputBase-input": { p: "0 10px!important" },
+    
+      ".MuiChip-root": {
+        color: "#0575e6",
+        padding: "5px",
+        svg: {
+          border: "0.2px solid transparent",
+          color: "white",
+          background: " #0575e6",
+        },
+      },
+    },
+    "label.MuiInputLabel-root": {
+      left: 0,
+      fontSize: "13px",
+      transform: "translate(0, 16px) scale(1)",
+    },
+  };
+  const newBorderSVG ={
+    ".MuiInputBase-root.MuiOutlinedInput-root":{svg: {
+      borderRadius: "50px",
+      border: "0.2px solid #5C5C5C",
+      fontSize: "16px",
+      color: "black",
+      "&:hover": { color: "black" },
+    },}
+      
+  }
+
   return (
     <FormLayout
       label={
@@ -168,21 +208,43 @@ export const ModalAddTime = ({
       }
       onSubmit={handleSubmit(onSubmit)}
       sx={{
-        overflow: 'visible !important',
-        '& .MuiDialogContent-root': {
-          overflow: 'visible !important',
-          maxHeight: '510px',
-          '& .MuiStack-root': { overflow: 'visible !important' }
-        }
+        borderRadius:"24px",
+        minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
+        maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
+        minHeight: "auto",
+        // overflow: "visible !important",
+        // "& .MuiDialogContent-root": {
+        //   overflow: "visible !important",
+        //   "& .MuiStack-root": { overflow: "visible !important" },
+        // },
+        ".MuiDialogTitle-root": { border: "none" },
+        ".MuiDialogActions-root": {
+          justifyContent: "center",
+          border: "none",
+          ".MuiButtonBase-root": {
+            "&:last-child": {
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+            },
+            "&:first-child": {
+              background: "white",
+              color: "#14B9E5",
+              border: "1px solid #14B9E5",
+              borderRadius: "100px",
+            },
+          },
+        },
       }}
     >
-      <Stack overflow="auto">
+      <Stack sx={{ overflow: "visible !important" }}>
         <MenuList component={Stack} spacing={2}>
           <Controller
             control={control}
             name="date"
             render={({ field: { onChange, value } }) => (
               <DatePicker
+                sx={newInput}
                 title={budgetT("dialog.date")}
                 rootSx={sxInput}
                 fullWidth
@@ -201,6 +263,7 @@ export const ModalAddTime = ({
               value: _.get(service, "id", ""),
               label: _.get(service, "name", ""),
             }))}
+            sx={{...newBorderSVG,...newInput}}
             title={budgetT("dialog.service")}
             name="service"
             rootSx={sxInput}
@@ -218,6 +281,7 @@ export const ModalAddTime = ({
             name="timeRanges"
             render={({ field: { onChange, value } }) => (
               <Input
+                sx={{...newBorderSVG,...newInput}}
                 rootSx={sxInput}
                 title={budgetT("dialog.timeRanger")}
                 fullWidth
@@ -233,6 +297,7 @@ export const ModalAddTime = ({
               name="startTime"
               render={({ field: { onChange, value } }) => (
                 <DateTimePicker
+                  sx={newInput}
                   title={budgetT("dialog.startTime")}
                   name="startTime"
                   value={value}
@@ -254,6 +319,7 @@ export const ModalAddTime = ({
               name="endTime"
               render={({ field: { onChange, value } }) => (
                 <DateTimePicker
+                  sx={newInput}
                   title={budgetT("dialog.endTime")}
                   name="endTime"
                   value={value}
@@ -272,16 +338,28 @@ export const ModalAddTime = ({
             />
           </Stack>
 
-          <InputLabelWrapper
-            label=""
-            sx={{ "& label.MuiFormLabel-root": { border: 'unset !important', background: '#f7f7fd' } }}
-          >
-            <Controller
+          <Controller
+            control={control}
+            name="note"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                sx={{...newBorderSVG,...newInput}}
+                rootSx={sxInput}
+                title={budgetT("dialog.note")}
+                fullWidth
+                value={value}
+                onChange={onChange}
+                autoComplete="off"
+              />
+            )}
+          />
+
+          {/* <Controller
               control={control}
               name="note"
               render={({ field: { onChange, value } }) => (
                 <Textarea
-                  label={budgetT("dialog.note")}
+                  label="Note"
                   fullWidth
                   value={value}
                   minRows={4}
@@ -289,6 +367,9 @@ export const ModalAddTime = ({
                   autoComplete="off"
                   sx={{
                     backgroundColor: 'transparent !important',
+                    border: '1px solid #99999970', // Adding a border to the Textarea
+                    borderRadius: '4px', // Adding border radius for smoother edges
+                    padding: '8px', // Adding some padding inside the Textarea
                     "& .MuiFormControl-root.MuiTextField-root": {
                       borderColor: "#99999970 !important",
                     },
@@ -297,9 +378,8 @@ export const ModalAddTime = ({
                     },
                   }}
                 />
-              )}
-            />
-          </InputLabelWrapper>
+              )} 
+            {/* /> */}
         </MenuList>
       </Stack>
     </FormLayout>

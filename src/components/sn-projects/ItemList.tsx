@@ -1,10 +1,26 @@
 "use client";
 
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { Stack, TableRow } from "@mui/material";
+import {
+  memo,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  Button,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  paginationItemClasses,
+  Stack,
+  TableRow,
+} from "@mui/material";
 import { TableLayout, BodyCell, CellProps } from "components/Table";
 import { useProjects } from "store/project/selectors";
-import { DEFAULT_PAGING, NS_COMMON } from "constant/index";
+import { DEFAULT_PAGING, NS_COMMON, NS_PROJECT } from "constant/index";
 import useQueryParams from "hooks/useQueryParams";
 import Pagination from "components/Pagination";
 import { usePathname, useRouter } from "next-intl/client";
@@ -25,6 +41,9 @@ import useTheme from "hooks/useTheme";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 import FixedLayout from "components/FixedLayout";
 import { Option } from "constant/types";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteIcon from "@mui/icons-material/Delete";
+import OverflowMenu from "./components/OverflowMenu";
 
 const ItemList = () => {
   const {
@@ -40,6 +59,7 @@ const ItemList = () => {
     onUpdateProject: onUpdateProjectAction,
   } = useProjects();
   const commonT = useTranslations(NS_COMMON);
+  const projectT = useTranslations(NS_PROJECT);
 
   const { initQuery, isReady, query } = useQueryParams();
   const pathname = usePathname();
@@ -54,7 +74,7 @@ const ItemList = () => {
     () => [
       { value: "#", width: "5%", align: "center" },
       {
-        value: commonT("name"),
+        value: projectT("list.form.title.name"),
         width: "23%",
         align: "left",
       },
@@ -63,20 +83,11 @@ const ItemList = () => {
         width: "22.5%",
         align: "left",
       },
-      {
-        value: commonT("form.title.startDate"),
-        width: "12.5%",
-        align: "center",
-      },
-      {
-        value: commonT("form.title.endDate"),
-        width: "12.5%",
-        align: "center",
-      },
       { value: commonT("status"), width: "12.5%" },
       { value: "", width: "5%" },
+      { value: "", width: "5%" },
     ],
-    [commonT],
+    [commonT, projectT],
   );
   const mobileHeaderList: CellProps[] = useMemo(
     () => [
@@ -103,12 +114,9 @@ const ItemList = () => {
 
   const headerList = useMemo(() => {
     const additionalHeaderList = isMdSmaller
-      ? mobileHeaderList
+      ? [...mobileHeaderList, { value: "", width: "10%" }]
       : desktopHeaderList;
-    return [
-      ...additionalHeaderList,
-      { value: "", width: "10%" },
-    ] as CellProps[];
+    return additionalHeaderList as CellProps[];
   }, [desktopHeaderList, isMdSmaller, mobileHeaderList]);
 
   const initValues = useMemo(
@@ -183,12 +191,16 @@ const ItemList = () => {
 
   return (
     <>
-      <FixedLayout>
+      <Stack>
         <TableLayout
           headerList={headerList}
           pending={isFetching}
           headerProps={{
-            sx: { px: { xs: 0.5, md: 2 } },
+            sx: {
+              px: { xs: 0.5, md: 2 },
+              py: { xs: 0.5, md: 3 },
+              bgcolor: "#D9F0FD",
+            },
           }}
           error={error as string}
           noData={!isIdle && totalItems === 0}
@@ -205,23 +217,21 @@ const ItemList = () => {
                     order={(pageIndex - 1) * pageSize + (index + 1)}
                   />
                 )}
-                <BodyCell align="left" sx={{ px: { xs: 0.5, md: 2 } }}>
-                  <IconButton
-                    onClick={onActionToItem(DataAction.UPDATE, item)}
-                    tooltip={commonT("edit")}
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-                      color: "text.primary",
-                      p: { xs: "4px!important", md: 1 },
-                      "&:hover svg": {
-                        color: "common.white",
-                      },
-                    }}
-                  >
-                    <PencilUnderlineIcon sx={{ fontSize: 24 }} />
-                  </IconButton>
+                <BodyCell align="center">
+                  <OverflowMenu>
+                    <MenuItem onClick={onActionToItem(DataAction.UPDATE, item)}>
+                      <ListItemIcon>
+                        <PencilUnderlineIcon sx={{ fontSize: 24 }} />
+                      </ListItemIcon>
+                      <ListItemText>Edit</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={onActionToItem(DataAction.DELETE, item)}>
+                      <ListItemIcon>
+                        <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
+                      </ListItemIcon>
+                      <ListItemText sx={{ color: "red" }}>Delete</ListItemText>
+                    </MenuItem>
+                  </OverflowMenu>
                 </BodyCell>
               </TableRow>
             );
@@ -232,11 +242,17 @@ const ItemList = () => {
           totalPages={totalPages}
           page={pageIndex}
           pageSize={pageSize}
-          containerProps={{ px: { md: 3 }, py: 1 }}
+          containerProps={{ px: { md: 3 }, py: 1, gap: 6 }}
           onChangePage={onChangePage}
           onChangeSize={onChangeSize}
+          sx={{
+            [`& .${paginationItemClasses.root}`]: {
+              fontWeight: 600,
+              bgcolor: "#D9F0FD",
+            },
+          }}
         />
-      </FixedLayout>
+      </Stack>
 
       {action === DataAction.UPDATE && (
         <Form

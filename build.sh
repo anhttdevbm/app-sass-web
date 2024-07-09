@@ -10,4 +10,4 @@ yarn cache clean
 yarn install
 yarn build
 
-pm2 restart 21
+pm2 restart 17

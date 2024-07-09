@@ -2,10 +2,9 @@
 
 import { memo, useEffect, useState } from "react";
 import FormLayout from "components/FormLayout";
-import { Button, Text } from "components/shared";
+import { Text } from "components/shared";
 import { DialogLayoutProps } from "components/DialogLayout";
 import useToggle from "hooks/useToggle";
-import PlusIcon from "icons/PlusIcon";
 import { Search } from "components/Filters";
 import { MenuList, Stack } from "@mui/material";
 import MemberItem from "components/sn-projects/components/MemberItem";
@@ -16,6 +15,8 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI, getPath } from "utils/index";
 import { usePathname, useRouter } from "next-intl/client";
 import { useTranslations } from "next-intl";
+import Button from "components/sn-projects/components/Button";
+import AddCircleIcon from "icons/AddCircleIcon";
 
 type MemberData = {
   id: string;
@@ -29,15 +30,13 @@ const AddMembers = () => {
   return (
     <>
       <Button
+        text={projectT("detailMembers.addMember")}
         onClick={onShow}
-        startIcon={<PlusIcon />}
-        size="extraSmall"
+        startIcon={<AddCircleIcon />}
+        size="small"
         variant="primary"
         id="add_new_id"
-        sx={{ height: { xs: 32, lg: 40 } }}
-      >
-        {projectT("detailMembers.addMember")}
-      </Button>
+      />
       {isShow && <Form open onClose={onHide} />}
     </>
   );

@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { IconButton } from "components/shared";
-import DeleteUserIcon from "icons/DeleteUserIcon";
 import ConfirmDialog from "components/ConfirmDialog";
 import useToggle from "hooks/useToggle";
 import {
@@ -13,6 +12,7 @@ import { getMessageErrorByAPI } from "utils/index";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_PROJECT } from "constant/index";
 import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
+import DeleteUserCircleIcon from "icons/DeleteUserCircleIcon";
 
 type DeleteUserProps = {
   id: string;
@@ -70,16 +70,16 @@ const DeleteUser = ({ id }: DeleteUserProps) => {
         variant="contained"
         size="small"
         sx={{
-          backgroundColor: 'inherit',
+          backgroundColor: "inherit",
           color: "text.primary",
           p: 1,
           "&:hover": {
             color: "common.white",
-            backgroundColor: 'common.white'
+            backgroundColor: "common.white",
           },
         }}
       >
-        <DeleteUserIcon />
+        <DeleteUserCircleIcon />
       </IconButton>
 
       <ConfirmDialog
