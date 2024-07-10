@@ -32,5 +32,6 @@ export type DocsDictionary = {
     move: string;
     duplicate: string;
     delete: string;
-  }
+  },
+  ownedBy: string;
 };

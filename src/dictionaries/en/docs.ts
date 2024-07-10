@@ -44,6 +44,7 @@ export const DocsLang: DocsDictionary = {
     rename: "Rename",
     move: "Move",
     duplicate: "Duplicate",
-    delete: "Delete"
-  }
+    delete: "Delete",
+  },
+  ownedBy: "Owned by"
 };

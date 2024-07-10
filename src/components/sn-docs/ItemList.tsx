@@ -25,6 +25,7 @@ import Avatar from "components/Avatar";
 import { MenuButton } from "@mui/base";
 import KanbanViewDocList from "./KanbanViewDocList";
 import { useAppSelector } from "store/hooks";
+import { Data } from "emoji-mart";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -200,7 +201,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
               })}
           </TableLayout>
           :
-          <KanbanViewDocList listData={data?.docs[0]?.docs} />
+          <KanbanViewDocList listData={data?.docs} />
         }
         <Pagination
           totalItems={data?.totalDocs}
