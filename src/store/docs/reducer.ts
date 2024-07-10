@@ -68,6 +68,8 @@ interface Paging {
   totalDocs?: number;
 }
 
+export type TypeViewListDoc = 'kanbanViewListDoc' | 'basicViewListDoc'
+
 export interface IDocs {
   docs: any[];
   docsStatus: DataStatus;
@@ -93,7 +95,7 @@ export interface IDocs {
   workspaceInfo: WorkspaceState | null;
   docInfo: any;
   contentRow: string;
-
+  typeViewDoc: TypeViewListDoc;
   getDocCustomStatus: DataStatus;
   docCustom: {
     id: string,
@@ -162,7 +164,7 @@ const initialState: IDocs = {
   description: "",
   pageInfo: storedPageInfo ? JSON.parse(storedPageInfo) : null,
   workspaceInfo: storedWorkspaceInfo ? JSON.parse(storedWorkspaceInfo) : null,
-
+  typeViewDoc: "basicViewListDoc",
   getDocCustomStatus: DataStatus.IDLE,
   docCustom: {
     id: "",
@@ -242,6 +244,9 @@ const docSlice = createSlice({
     changePermDoc: (state, action) => {
       state.perm = action.payload;
     },
+    changeTypeViewDoc: (state, action) => {
+      state.typeViewDoc = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(getDocs.pending, (state, action) => {
@@ -321,6 +326,7 @@ export const {
   changeDescription,
   changePermDoc,
   setContentRow,
+  changeTypeViewDoc
 } = docSlice.actions;
 
 export default docSlice.reducer;

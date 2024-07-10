@@ -40,4 +40,11 @@ export const DocsLang: DocsDictionary = {
     restore: "Khôi phục",
     name: "Tên tài liệu",
   },
+  extendBtn: {
+    rename: "Đổi tên",
+    move: "Di chuyển",
+    duplicate: "Sao chép",
+    delete: "Xóa"
+  },
+  ownedBy: "Sở hữu bởi"
 };

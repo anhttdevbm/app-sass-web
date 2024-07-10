@@ -3,6 +3,7 @@ import { Actions, ItemList } from "components/sn-docs";
 import { NS_DOCS } from "constant/index";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { useState } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations(NS_DOCS);

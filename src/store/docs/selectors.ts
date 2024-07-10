@@ -147,7 +147,6 @@ const useDocs = () => {
     loading,
     handleUpdateDoc,
     handleGetDocDetail,
-
     onGetDocCustom,
     docCustom,
     onUpdateDocCustom
