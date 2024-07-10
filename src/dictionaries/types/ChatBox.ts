@@ -21,28 +21,38 @@ export type ChatBox = {
     sureLeaveGroup: string;
     selectAdminNew: string;
     leaveGroupMsg: {
-      text_1: string,
-      text_2: string,
-    },
+      text_1: string;
+      text_2: string;
+    };
     leaveGroupConfirm: {
       text_1: string;
       text_2: string;
       text_3: string;
-    },
-    accountInformation: string,
-    added: string,
-    removed: string,
+    };
+    accountInformation: string;
+    added: string;
+    removed: string;
     group: {
-      add: string,
-      remove: string,
-      lead_trans: string,
-      lead_remove,
-      edit_avatar: string,
-      rename: string,
-      rename_alert: string,
-      change_avatar_alert: string,
-      adminChange: string,
-      removeMember: string,
-    }
+      add: string;
+      remove: string;
+      lead_trans: string;
+      lead_remove;
+      edit_avatar: string;
+      rename: string;
+      rename_alert: string;
+      change_avatar_alert: string;
+      adminChange: string;
+      removeMember: string;
+      user: {
+        join: string;
+        leave: string;
+      };
+      admin: {
+        add: string;
+        leave: string;
+      };
+      forwardMsg: string;
+      sendFile: string;
+    };
   };
 };

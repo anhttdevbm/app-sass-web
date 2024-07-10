@@ -49,6 +49,8 @@ import {
   ChangeGroupAvatar,
   TypeDrawerChat,
   IChatInfo,
+  IChatItemV2,
+  MessageInfoV2,
 } from "./type";
 import { useAuth } from "store/app/selectors";
 import {
@@ -73,18 +75,29 @@ import {
   resetSearchChatText,
   setSelectSearchIndex,
   resetDataTransfer,
+  setConversation,
+  setConversationPaging,
+  setIsSearchConversation,
+  setMessagePaging,
+  setMessages,
+  setChatLinks,
+  setChatMedias,
+  setChatFiles,
+  setListConversation,
+  setMembers,
+  setMessageSearch,
+  setWsClient,
+  setListMessage,
 } from "./reducer";
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
 import { FILE_ACCEPT, IMAGES_ACCEPT } from "constant/index";
-import { useRouter } from "next/navigation";
-import { r } from "@fullcalendar/resource/internal-common";
-import { CHATTING_ROOM_PATH } from "constant/paths";
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
   const { user } = useAuth();
   const {
+    wsClient,
     convention,
     mediaListConversation,
     messageInfo,
@@ -93,9 +106,13 @@ export const useChat = () => {
     roomId,
     conversationInfo,
     conversationPaging,
+    conversationPagingV2,
+    isSearchConversation,
     messagePaging,
     conversationStatus,
-
+    messages,
+    messagePagingV2,
+    members,
     currStep,
     prevStep,
     partnerInfo,
@@ -103,6 +120,10 @@ export const useChat = () => {
 
     chatLinks,
     chatLinksStatus,
+    chatMedias,
+    chatMediasStatus,
+    chatFiles,
+    chatFilesStatus,
     //ListSearchTextMessage
     listSearchMessage,
     statusListSearchMessage,
@@ -374,7 +395,7 @@ export const useChat = () => {
     dispatch(resetDataTransfer());
   };
   const onSetStateSearchMessage = useCallback(
-    async (message: MessageSearchInfo | null) => {
+    async (message: MessageInfoV2 | null) => {
       const messageSearch = message ? { ...message } : null;
       dispatch(setStateSearchMessage(messageSearch));
     },
@@ -538,7 +559,7 @@ export const useChat = () => {
     dispatch(setMessage(message));
   };
 
-  const onSetConversationInfo = (conversationInfo: IChatItemInfo | null) => {
+  const onSetConversationInfo = (conversationInfo) => {
     dispatch(setConversationInfo(conversationInfo));
   };
 
@@ -715,10 +736,120 @@ export const useChat = () => {
     [dispatch],
   );
 
+  const onSetConvention = useCallback(
+    async (conversations) => {
+      return dispatch(setConversation(conversations));
+    },
+    [dispatch],
+  );
+
+  const onSetConversationPaging = useCallback(
+    async (pagingInfo) => {
+      return dispatch(setConversationPaging(pagingInfo));
+    },
+    [dispatch],
+  );
+
+  const onSetListConvention = useCallback(
+    async (conversations) => {
+      return dispatch(setListConversation(conversations));
+    },
+    [dispatch],
+  );
+
+  const onSetIsSearchConversation = useCallback(
+    async (searchFlg) => {
+      return dispatch(setIsSearchConversation(searchFlg));
+    },
+    [dispatch],
+  );
+
+  const onSetMessages = useCallback(
+    async (messages) => {
+      return dispatch(setMessages(messages));
+    },
+    [dispatch],
+  );
+
+  const onSetListMessages = useCallback(
+    async (messages) => {
+      return dispatch(setListMessage(messages));
+    },
+    [dispatch],
+  );
+
+  const onSetMessageSearch = useCallback(
+    async (messages) => {
+      return dispatch(setMessageSearch(messages));
+    },
+    [dispatch],
+  );
+
+  const onSetMessagePaging = useCallback(
+    async (newPaging) => {
+      return dispatch(setMessagePaging(newPaging));
+    },
+    [dispatch],
+  );
+
+  const onSetChatLinks = useCallback(
+    async (data) => {
+      return dispatch(setChatLinks(data));
+    },
+    [dispatch],
+  );
+
+  const onSetChatMedias = useCallback(
+    async (data) => {
+      return dispatch(setChatMedias(data));
+    },
+    [dispatch],
+  );
+
+  const onSetChatFiles = useCallback(
+    async (data) => {
+      return dispatch(setChatFiles(data));
+    },
+    [dispatch],
+  );
+
+  const onSetMembers = useCallback(
+    async (data) => {
+      return dispatch(setMembers(data));
+    },
+    [dispatch],
+  );
+
+  const onSetWsClient = useCallback(
+    async (ws) => {
+      return dispatch(setWsClient(ws));
+    },
+    [dispatch],
+  );
+
   return {
+    wsClient,
+    onSetWsClient,
     convention,
+    onSetConvention,
     mediaListConversation,
     conversationPaging,
+    conversationPagingV2,
+    onSetConversationPaging,
+    onSetListConvention,
+    isSearchConversation,
+    onSetIsSearchConversation,
+    messages,
+    onSetMessages,
+    onSetMessageSearch,
+    onSetListMessages,
+    messagePagingV2,
+    onSetMessagePaging,
+    onSetChatLinks,
+    onSetChatMedias,
+    onSetChatFiles,
+    members,
+    onSetMembers,
     messagePaging,
     messageInfo,
     messageStatus,
@@ -744,6 +875,10 @@ export const useChat = () => {
 
     mediaList,
     mediaListStatus,
+    chatMedias,
+    chatMediasStatus,
+    chatFiles,
+    chatFilesStatus,
 
     stateSendMessage,
     stateSearchMessage,

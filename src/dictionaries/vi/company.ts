@@ -13,6 +13,14 @@ export const CompanyLang: CompanyDictionary = {
     waiting: "Chờ thanh toán",
     key: "nhân viên",
     isNeedSelect: "Không có bất kỳ nhân viên nào được chọn",
+    employee: "Nhân viên",
+    client: "Nhân viên Khách hàng",
+    contractor: "Cộng tác viên",
+    form: {
+      addNewEmployee: "Thêm Nhân viên",
+      chooseCompanyType: "Chọn kiểu công ty",
+      isInvite: "Gửi lời mời qua email",
+    },
     confirmPayment: {
       title: "Xác nhận thanh toán",
       content:
@@ -24,7 +32,7 @@ export const CompanyLang: CompanyDictionary = {
         "Bạn chắc chắn muốn loại bỏ {count, plural, =1 {nhân viên này} other {những nhân viên dưới}}?",
     },
     notification: {
-      success: "{label} nhân viên thành công!",
+      success: "{label} {typeEmployee} thành công!",
     },
   },
   costHistory: {
@@ -70,6 +78,44 @@ export const CompanyLang: CompanyDictionary = {
     },
     notification: {
       success: "{label} loại dự án thành công!",
+    },
+  },
+  clientCompany: {
+    head: {
+      title: "Công ty khách hàng | Taskcover",
+    },
+    title: "Công ty khách hàng",
+    create: "Thêm",
+    createBy: "Người tạo",
+    createDate: "Ngày tạo",
+    duplicate: "Nhân bản",
+    form: {
+      title: {
+        name: "Tạo một công ty khách hàng mới",
+      },
+      addContact: "Thêm thông tin liên hệ",
+      closedContact: "Đóng thông tin liên hệ",
+    },
+    companyName: "Tên công ty",
+    taxCode: "Mã số thuế",
+    address: "Địa chỉ",
+    zipCode: "Mã bưu chính",
+    duplicateForm: {
+      title: "Nhân bản",
+      newName: "Tên mới",
+    },
+    confirmRemove: {
+      title: "Xác nhận xóa",
+      content: "Bạn có chắc chắn xóa công ty khách hàng này không?",
+    },
+    notification: {
+      success: "{label} công ty khách hàng thành công!",
+    },
+    generalInformation: "Thông tin chung",
+    contact: "Liên hệ",
+    formUpdate: {
+      title: "Thông tin chung",
+      submit: "Lưu thay đổi",
     },
   },
   information: {

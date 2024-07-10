@@ -12,6 +12,7 @@ import { reset as appReset } from "store/app/reducer";
 import { reset as projectReset } from "store/project/reducer";
 import { reset as managerReset } from "store/manager/reducer";
 import { reset as companyReset } from "store/company/reducer";
+import { reset as aiChatReset } from "store/aiChat/reducer";
 import { useTranslations } from "next-intl";
 import { NS_LAYOUT } from "constant/index";
 
@@ -30,6 +31,7 @@ const UserActions = ({ onClose }: UserActionsProps) => {
     dispatch(projectReset());
     dispatch(managerReset());
     dispatch(companyReset());
+    dispatch(aiChatReset())
   };
 
   if (!user) return null;

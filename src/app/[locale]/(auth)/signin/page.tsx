@@ -15,7 +15,7 @@ export default function Page({ params }) {
   return (
     <Wrapper>
       <MainSection />
-      <Banner />
+      {/* <Banner /> */}
     </Wrapper>
   );
 }

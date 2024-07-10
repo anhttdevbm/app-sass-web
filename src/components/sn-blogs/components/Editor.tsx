@@ -10,13 +10,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { ReactQuillProps } from "react-quill";
+import { Quill, ReactQuillProps } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 // import "../../components/Editor/style.css";
-import { IMAGES_ACCEPT } from "constant/index";
-import dynamic from "next/dynamic";
-import hljs from "highlight.js";
 import { Endpoint, client } from "api";
+import { IMAGES_ACCEPT } from "constant/index";
+import hljs from "highlight.js";
+import dynamic from "next/dynamic";
+import QuillBetterTable from "quill-better-table";
 import AttachmentPreview from "./AttachmentPreview";
 
 const ReactQuill = dynamic(
@@ -51,8 +52,8 @@ const ReactQuill = dynamic(
       ],
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).hljs = hljs;
+    Quill.register("modules/better-table", QuillBetterTable);
+    
     return import("react-quill");
   },
   { ssr: false },

@@ -13,7 +13,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Page() {
   return (
-    <Wrapper sx={{ overflowX: "hidden", overflowY: "auto", scrollBehavior: 'smooth' }} id="budget-detail-container">
+    <Wrapper
+      sx={{
+        overflowX: "hidden",
+        overflowY: "auto",
+        scrollBehavior: "smooth",
+        paddingLeft: { lg: "24px!important" },
+        paddingRight: { lg: "24px!important" },
+      }}
+      id="budget-detail-container"
+    >
       <BudgetDetail />
     </Wrapper>
   );

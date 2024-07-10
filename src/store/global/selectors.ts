@@ -38,7 +38,7 @@ export const usePositionOptions = () => {
     pageSize,
     totalItems,
     totalPages,
-    onGetOptions,
+    onGetOptions,   
   };
 };
 

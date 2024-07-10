@@ -65,6 +65,7 @@ export interface Sales {
   estimate: number;
   total: SaleTotal;
   activity: string[];
+  client?: string;
 }
 
 export interface Service {

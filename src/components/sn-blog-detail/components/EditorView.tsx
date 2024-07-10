@@ -65,7 +65,7 @@ export type EditorProps = {
   files?: File[];
   accepts?: string[];
   noCss?: boolean;
-  dataFile : string[]
+  dataFile?: string[];
 } & Omit<ReactQuillProps, "children">;
 
 const Editor = (props: EditorProps) => {
@@ -84,25 +84,28 @@ const Editor = (props: EditorProps) => {
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [loadedFiles, setLoadedFiles] = useState<string[]>([]);
-  const [listDataFile, setListDataFile] = useState<string[]>(dataFile ? dataFile.filter((f) => f) : []);
+  const [listDataFile, setListDataFile] = useState<string[]>(
+    dataFile ? dataFile.filter((f) => f) : [],
+  );
 
   const urlFiles = useMemo(() => {
-    return files.filter(file => file instanceof Blob)
-      .map(file => URL.createObjectURL(file));
+    return files
+      .filter((file) => file instanceof Blob)
+      .map((file) => URL.createObjectURL(file));
   }, [files]);
 
   const onChangeFile = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files?.length) return;
 
-    let newFiles: File[] = Array.from(event.target.files);
-    console.log(newFiles);
+    const newFiles: File[] = Array.from(event.target.files);
+    // console.log(newFiles);
 
     // Upload new files
     const newUploadedFiles = await uploadNewFiles(newFiles);
 
     // Combine the old and new file lists
     const allFiles = [...files, ...newFiles];
-    console.log(allFiles);
+    // console.log(allFiles);
     setLoadedFiles(newUploadedFiles as string[]);
 
     // Update listDataFile
@@ -112,7 +115,7 @@ const Editor = (props: EditorProps) => {
     // Call the onChangeFiles function to update all files
     onChangeFiles && onChangeFiles(allFiles, newListDataFile);
   };
-  
+
   const uploadNewFiles = async (files: File[]) => {
     const data = [];
     if (files.length) {
@@ -129,21 +132,21 @@ const Editor = (props: EditorProps) => {
         }
       });
     }
-    console.log(data);
+    // console.log(data);
     return data;
   };
-  
+
   const onRemove = (index: number) => {
     return () => {
       const newFiles = [...files];
       newFiles.splice(index, 1);
-      console.log(newFiles);
-  
+      // console.log(newFiles);
+
       const newData = [...loadedFiles];
       const removedFile = newData.splice(index, 1)[0];
-      console.log(removedFile);
+      // console.log(removedFile);
       setLoadedFiles(newData);
-  
+
       // Update listDataFile
       let newListDataFile;
       if (index === listDataFile.length - 1) {
@@ -151,17 +154,18 @@ const Editor = (props: EditorProps) => {
         newListDataFile = listDataFile.slice(0, -1);
       } else {
         // If removing any other element, use slice and combine the arrays
-        newListDataFile = [...listDataFile.slice(0, index), ...listDataFile.slice(index + 1)];
+        newListDataFile = [
+          ...listDataFile.slice(0, index),
+          ...listDataFile.slice(index + 1),
+        ];
       }
-  
+
       setListDataFile(newListDataFile);
-  
+
       // Call the onChangeFiles function to update all files
       onChangeFiles && onChangeFiles(newFiles, newListDataFile);
     };
   };
-  
-
 
   const toolbarAttachment = useMemo(
     () => ({
@@ -224,12 +228,12 @@ const Editor = (props: EditorProps) => {
           noCss
             ? {}
             : {
-              border: "1px solid",
-              borderColor: "grey.A200",
-              borderBottomLeftRadius: 4,
-              borderBottomRightRadius: 4,
-              borderTop: "none",
-            }
+                border: "1px solid",
+                borderColor: "grey.A200",
+                borderBottomLeftRadius: 4,
+                borderBottomRightRadius: 4,
+                borderTop: "none",
+              }
         }
       >
         {urlFiles.map((attachment, index) => (

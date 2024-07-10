@@ -3,58 +3,76 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   addMembersToDirectMessageGroup,
   createDirectMessageGroup,
+  deleteConversation,
+  fetchGroupMembers,
   getAllConvention,
+  getChatAttachments,
   getLatestMessages,
+  getUnreadMessages,
   getUserInfoById,
   leftDirectMessageGroup,
-  fetchGroupMembers,
-  getChatAttachments,
-  deleteConversation,
-  sendMessages,
   searchChatText,
-  getUnreadMessages,
+  sendMessages,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import {
   ChatGroup,
   ChatState,
+  MediaPreviewItem,
   MessageInfo,
+  MessageInfoV2,
   MessageSearchInfo,
-  UnReadMessageInfo,
+  SetParamConversationProps,
   STEP,
   TYPE_LIST,
+  UnReadMessageInfo,
   UserInfo,
-  MediaPreviewItem,
-  IChatInfo,
-  SetParamConversationProps,
 } from "./type";
 import { getChatRoomFile, getChatUrls } from "./media/actionMedia";
-import { ChatLinkType, MediaResponse, MediaType } from "./media/typeMedia";
+import { MediaResponse, MediaType } from "./media/typeMedia";
 import dayjs from "dayjs";
+
 const initalPage = {
   pageIndex: 0,
   pageSize: 10,
   isRefetchPage: false,
   pageSizeDefault: 10,
 };
+
+export const initPagingV2 = {
+  current: 1,
+  next: null,
+  prev: null,
+  count: 0,
+};
 const initialState: ChatState = {
+  wsClient: null,
   convention: [],
   mediaListConversation: [],
   conversationStatus: DataStatus.IDLE,
   conversationPaging: { ...initalPage, textSearch: "" },
+  conversationPagingV2: { ...initPagingV2 },
+  isSearchConversation: false,
   roomId: "",
   conversationInfo: null,
   currStep: STEP.CONVENTION,
   prevStep: STEP.CONVENTION,
   messageInfo: [],
+  messages: [],
+  messagePagingV2: { ...initPagingV2 },
   messageStatus: DataStatus.IDLE,
   messagePaging: initalPage,
+  members: [],
   //Partner Infomation
   partnerInfo: null,
   partnerInfoStatus: DataStatus.IDLE,
   //chatLinks
   chatLinks: [],
   chatLinksStatus: DataStatus.IDLE,
+  chatFiles: [],
+  chatFilesStatus: DataStatus.IDLE,
+  chatMedias: [],
+  chatMediasStatus: DataStatus.IDLE,
   //ListSearchConversation
   listSearchMessage: [],
   statusListSearchMessage: DataStatus.IDLE,
@@ -161,6 +179,57 @@ const chatSlice = createSlice({
     setConversationInfo: (state, action) => {
       state.conversationInfo = action.payload;
     },
+    setConversation: (state, action) => {
+      if (state.conversationPagingV2.current === 1) {
+        state.convention = action.payload;
+      } else {
+        state.convention = [...state.convention, ...action.payload];
+      }
+    },
+    setListConversation: (state, action) => {
+      state.convention = action.payload;
+    },
+    setConversationPaging: (state, action) => {
+      state.conversationPagingV2 = action.payload;
+    },
+    setIsSearchConversation: (state, action) => {
+      state.isSearchConversation = action.payload;
+    },
+    setMessages: (state, action) => {
+      if (state.messagePagingV2.current === 1) {
+        state.messages = action.payload;
+      } else {
+        state.messages = [...action.payload, ...state.messages];
+      }
+    },
+    setListMessage: (state, action) => {
+      state.messages = action.payload;
+    },
+    setMessageSearch: (state, action) => {
+      state.listSearchMessage = action.payload;
+      state.statusListSearchMessage = DataStatus.SUCCEEDED;
+    },
+    setMessagePaging: (state, action) => {
+      state.messagePagingV2 = action.payload;
+    },
+    setChatLinks: (state, action) => {
+      state.chatLinks = action.payload;
+      state.chatLinksStatus = DataStatus.SUCCEEDED;
+    },
+    setChatMedias: (state, action) => {
+      state.chatMedias = action.payload;
+      state.chatMediasStatus = DataStatus.SUCCEEDED;
+    },
+    setChatFiles: (state, action) => {
+      state.chatFiles = action.payload;
+      state.chatFilesStatus = DataStatus.SUCCEEDED;
+    },
+    setMembers: (state, action) => {
+      state.members = [...state.members, action.payload];
+    },
+    setWsClient: (state, action) => {
+      state.wsClient = action.payload;
+    },
     setMessage: (state, action: PayloadAction<MessageInfo | null>) => {
       if (action.payload) {
         if (
@@ -172,7 +241,7 @@ const chatSlice = createSlice({
         }
 
         if (action.payload.attachments?.length > 0) {
-          const mediaMessages: MediaPreviewItem[] = action.payload.attachments
+          const mediaMessages: any[] = action.payload.attachments
             .filter(
               (item) =>
                 item.hasOwnProperty("video_url") ||
@@ -257,10 +326,10 @@ const chatSlice = createSlice({
     },
     setStateSearchMessage: (
       state,
-      action: PayloadAction<MessageSearchInfo | null>,
+      action: PayloadAction<MessageInfoV2 | null>,
     ) => {
       state.messagePaging.pageIndex = 0;
-      state.messagePaging.pageSize = (action.payload?.offset || 0) + 10;
+      // state.messagePaging.pageSize = (action.payload?.offset || 0) + 10;
       state.stateSearchMessage = action.payload;
       state.messageInfo = [];
     },
@@ -354,7 +423,7 @@ const chatSlice = createSlice({
               .filter((item) => item?.attachments?.length > 0)
               .map((item) => item.attachments)
               .flat();
-            const mediaMessages: MediaPreviewItem[] = attachments
+            const mediaMessages: any[] = attachments
               .filter(
                 (item) =>
                   item.hasOwnProperty("video_url") ||
@@ -444,13 +513,13 @@ const chatSlice = createSlice({
       .addCase(getChatUrls.pending, (state) => {
         state.chatLinksStatus = DataStatus.LOADING;
       })
-      .addCase(
+      /*.addCase(
         getChatUrls.fulfilled,
         (state, action: PayloadAction<{ links: ChatLinkType[] }>) => {
           state.chatLinks = action.payload.links;
           state.chatLinksStatus = DataStatus.SUCCEEDED;
         },
-      )
+      )*/
       .addCase(getChatUrls.rejected, (state, action) => {
         state.chatLinksStatus = DataStatus.FAILED;
       })
@@ -461,7 +530,7 @@ const chatSlice = createSlice({
       .addCase(
         searchChatText.fulfilled,
         (state, action: PayloadAction<{ matches: MessageSearchInfo[] }>) => {
-          state.listSearchMessage = action.payload.matches;
+          // state.listSearchMessage = action.payload.matches;
           state.statusListSearchMessage = DataStatus.SUCCEEDED;
         },
       )
@@ -565,6 +634,18 @@ export const {
   setRoomId,
   setMessage,
   setConversationInfo,
+  setConversation,
+  setConversationPaging,
+  setListConversation,
+  setIsSearchConversation,
+  setMessages,
+  setMessageSearch,
+  setListMessage,
+  setMessagePaging,
+  setChatLinks,
+  setChatMedias,
+  setChatFiles,
+  setMembers,
   setTypeList,
   setDataTransfer,
   setStateSendMessage,
@@ -581,6 +662,7 @@ export const {
   resetSearchChatText,
   setSelectSearchIndex,
   resetDataTransfer,
+  setWsClient,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

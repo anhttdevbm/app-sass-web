@@ -18,6 +18,7 @@ export const FeedbackLang : FeedbackDictionary={
         phone: "Phone",
         email: "Email",
         mailBcc: "Mail BCC",
+        mailCC: "Mail CC",
         subject: "Subject",
         content: "Content",
         status: "Status",
@@ -25,13 +26,13 @@ export const FeedbackLang : FeedbackDictionary={
         editResponsed: "Responsed",
         delete: "Delete",
         statusList: {
-            responsed: "Responsed",
-            watting_response: "Waitting response",
+            responded: "Responded",
+            watting_responde: "Waitting responde",
         },
     },
     status: "Status",
-    responsed: "Responsed",
-    watting_responsed: "Watting responsed",
+    responded: "Responded",
+    watting_responde: "Watting responde",
 
     form_Feedback : {
         label_form_update: "Respond to reviews",

@@ -7,35 +7,24 @@ import { NS_AUTH } from "constant/index";
 import { useChat } from "store/chat/selectors";
 import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
-import { useCallback, useEffect } from "react";
+import { useAuth } from 'store/app/selectors';
 
 const mapperDataToInfo = (partnerInfo: Partial<UserInfo>) => ({
   fullName: partnerInfo.fullname,
   email: partnerInfo.email,
-  position: partnerInfo.position?.name,
+  position: partnerInfo.position,
   phone: partnerInfo.phone,
 });
 
 const AccountInfo = () => {
   const { extraDesktopMode } = useGetScreenMode();
-  const { partnerInfo, isFetchingDetail } = useChat();
+  const { isFetchingDetail } = useChat();
   const t = useTranslations(NS_AUTH);
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
 
-  const {
-    dataTransfer: currentConversation,
-    onSetDrawerType,
-    onGetUserInfo,
-  } = useChat();
-
-  const callbackOpenAccount = useCallback(() => {
-    if (!currentConversation.username) return;
-    onGetUserInfo(currentConversation?.username);
-  }, [currentConversation?.username, onGetUserInfo]);
-
-  useEffect(() => {
-    callbackOpenAccount();
-  }, [callbackOpenAccount]);
+  const { dataTransfer: currentConversation, onSetDrawerType } = useChat();
+  const partnerInfo = currentConversation?.members?.find(item => item?.id != user?.id);
 
   return (
     <Box
@@ -71,7 +60,10 @@ const AccountInfo = () => {
             }}
           >
             <Avatar
-              src={currentConversation?.avatar}
+              src={
+                currentConversation?.avatar ||
+                currentConversation?.peer_detail?.avatar
+              }
               sx={{
                 height: "80px",
                 width: "80px",

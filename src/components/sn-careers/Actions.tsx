@@ -18,7 +18,7 @@ import Form from "./components/Form";
 import { TEXT_PAY_STATUS_CAREER } from "./helpers/helpers";
 import { FeedbackStatus } from "store/feedback/actions";
 import { useFeedback } from "store/feedback/selectors";
-import { SearchStatus } from "store/career/action";
+import { SearchStatus, UpdateStatusCareer } from "store/career/action";
 import { CareergDataForm } from "store/career/type";
 import { useCareer } from "store/career/selectors";
 import { clientStorage } from "utils/storage";
@@ -41,43 +41,35 @@ const Actions = () => {
   // Đã ngôn ngữ trạng thái
   const paymentOptions = useMemo(
     () =>
-      PAYMENT_OPTIONS.map((item) => ({ ...item, label: careerT(item.label) })),
+      PAYMENT_OPTIONS.map((item) => (
+        { ...item, label: careerT(item.label) }
+      )),
     [careerT],
   );
 
-  //Cập nhật state trạng thái
-  const onChangeQueries = (name, value) => {
+  const onChangeQueries = (name: string, value: unknown) => {
     if (name === "status") {
-      const addQueries = {
-        isOpening: typeof value === "string" ? value : undefined,
-        is_approve: typeof value === "number" ? value : undefined,
-      };
-      // Truyền trạng thái hiện tại (queries) vào hàm setQueries để có thể sử dụng nó trong lambda function
-      // setQueries((prevQueries) => {
-      //   console.log(prevQueries); // In ra trạng thái trước khi cập nhật
-      //   return { ...prevQueries, ...addQueries };
-      // });
-      setQueries((prevQueries) => ({ ...prevQueries, ...addQueries }));
+        const addQueries = {
+            status: typeof value === "string" ? value : undefined,
+        };
+        setQueries((prevQueries) => ({ ...prevQueries, ...addQueries }));
+        
     } else {
-      // Truyền trạng thái hiện tại (queries) vào hàm setQueries để có thể sử dụng nó trong lambda function
-      // setQueries((prevQueries) => {
-      //   console.log(prevQueries); // In ra trạng thái trước khi cập nhật
-      //   return { ...prevQueries, [name]: value };
-      // });
-      setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+        setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
     }
   };
-
+  
   // Tìm kiếm
   const onSearch = () => {
     const path = getPath(pathname, queries);
+    console.log(path);
+    
     push(path);
 
-    onGetCareer({ ...queries, page, size });
+    onGetCareer({ ...queries, page: 1, size });
   };
 
   useEffect(() => {
-    // console.log(filters);
     setQueries(filters);
   }, [filters]);
 
@@ -149,11 +141,7 @@ const Actions = () => {
             options={paymentOptions}
             name="status"
             onChange={onChangeQueries}
-            value={
-              queries?.is_approve
-                ? Number(queries?.is_approve)
-                : queries?.isOpening
-            }
+            value={queries?.status !== undefined ? queries.status : null}
           />
 
           {/* Tìm Kiếm */}
@@ -210,13 +198,13 @@ const Actions = () => {
 export default memo(Actions);
 const PAYMENT_OPTIONS = [
   {
-    label: TEXT_PAY_STATUS_CAREER[SearchStatus.IS_OPENING],
-    value: SearchStatus.IS_OPENING,
+    label: TEXT_PAY_STATUS_CAREER[UpdateStatusCareer.REOPEN],
+    value: UpdateStatusCareer.REOPEN,
   },
 
   {
-    label: TEXT_PAY_STATUS_CAREER[SearchStatus.IS_CLOSED],
-    value: SearchStatus.IS_CLOSED,
+    label: TEXT_PAY_STATUS_CAREER[UpdateStatusCareer.CLOSED],
+    value: UpdateStatusCareer.CLOSED,
   },
 ];
 

@@ -7,7 +7,7 @@ import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import { DataAction } from "constant/enums";
 import Form from "./Form";
 import { NS_CAREER } from "constant/index";
-import { CareerData } from "store/career/action";
+import { CareerData,　UpdateStatusCareer } from "store/career/action";
 
 type MobileContentCellProps = {
   item: CareerData;
@@ -68,7 +68,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
           {props.item.description}
         </InformationItem>
         <InformationItem label={careerT("status")}>
-          {props.item.is_opening === true ? (
+          {props.item?.status === UpdateStatusCareer.REOPEN ? (
             <Chip
               size="small"
               label={careerT("careerTable.statusList.is_opening")}

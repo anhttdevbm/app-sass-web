@@ -13,6 +13,7 @@ export const Endpoint = {
   USER_ITEM: "/users/{id}",
   USERS_INACTIVE: "/users/inactive",
   PROFILE: "/users/me",
+  INVITE_USER_TO_COMPANY: "/users/inviteUserToCompany",
   COMPANIES: "/companies",
   COMPANY_ADD_MEMBER: "/companies/add-member",
   COMPANY_MEMBERS: "/users/members",
@@ -65,13 +66,28 @@ export const Endpoint = {
   TAGS: "/tags",
   TAGS_ALL: "/tags/all",
   TAGS_DETAIL: "/tags/{id}",
+  CLIENT_COMPANIES: "/clients",
+  CLIENT_COMPANIES_MULTI: "/clients/multi-id",
+  CLIENT_COMPANIES_DETAIL: "/clients/detail",
+  CLIENT_COMPANIES_ADD_MEMBER: "/clients/add-member",
+  CLIENT_COMPANIES_EMPLOYEES: "/clients/employees",
+
+  COST_RATE: "/cost-rate/{employeeId}",
+  COST_RATE_DETAIL: "/cost-rate/{employeeId}/{id}",
+  COST_RATE_DELETE_MULTI: "/cost-rate/delete-multi-cost-rate/{employeeId}",
+  COST_RATE_CHART: "/cost-rate/chart/{employeeId}",
 
   COST_HISTORY: "/cost-history",
 
+  HOLIDAY_CALENDAR: "/cost-rate/holiday-calendar",
+  HOLIDAY_CALENDAR_DETAIL: "/cost-rate/holiday-calendar/{id}",
+  HOLIDAY_LIST: "/cost-rate/holiday-list",
+  HOLIDAY_LIST_DETAIL: "/cost-rate/holiday-list/{id}",
+
   BUDGET_ALL: "/budgets/all",
   BUDGET_CREATE: "/budgets",
-  BUDGET_UPDATE: '/budgets/{budgetId}',
-  BUDGET_DELETE_BY_ID: '/budgets/{budgetId}',
+  BUDGET_UPDATE: "/budgets/{budgetId}",
+  BUDGET_DELETE_BY_ID: "/budgets/{budgetId}",
   BUDGET_GET_BY_ID: "/budgets/budget-by-id/{id}",
   BUDGET_GET_FEED: "/budgets/feed/{id}",
   BUDGET_GET_TIME_RANGES: "/budgets/times/{id}",
@@ -87,9 +103,11 @@ export const Endpoint = {
   BUDGET_EXPENSE_CREATE: "/budgets/expense/create-expense",
   BUDGET_EXPENSE_LIST: "/budgets/expense/get-all-expense/{budgetId}",
   BUDGET_EXPENSE_DETAIL: "/budgets/expense/get-detail-expense/{expenseId}",
-  BUDGET_EXPENSE_DETAIL_EXPORT: "/budgets/expense/export-all-expense/{expenseId}",
+  BUDGET_EXPENSE_DETAIL_EXPORT:
+    "/budgets/expense/export-all-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_UPDATE: "/budgets/expense/update-expense/{expenseId}",
   BUDGET_EXPENSE_DETAIL_DELETE: "/budgets/expense/delete-expense/{expenseId}",
+  BUDGET_RECURRING_ADD: "budgets/recurring/create-recurring",
 
   POSITIONS_ALL: "/positions/all",
   POSITIONS: "/positions",
@@ -99,7 +117,7 @@ export const Endpoint = {
   UPLOAD: "/files/upload-avatar",
   SIGNUP_UPLOAD: "/avatar/upload",
   UPLOAD_LINK: "/files/upload-link",
-  DOWNLOAD_LINK: '/in/files/download-links',
+  DOWNLOAD_LINK: "/in/files/download-links",
 
   RESOURCE_PLANNING: "/resources",
   RESOURCE_PLANNING_LIST: "/resources/all",
@@ -131,12 +149,15 @@ export const Endpoint = {
   BLOGS: "/post",
   DETAIL_BLOG: "/post/{id}",
   GET_BLOG_COMMENT: "/post/{id}/comment",
-  GET_BLOG_TAGS : "/post/tags",
+  GET_BLOG_TAGS: "/post/tags",
 
   //carrer
   CAREER: "/job-post",
   UPADATECAREER: "/job-post/{id}",
-  DETAIL_CAREER: "/post/{id}",
+  DETAIL_CAREER: "/job-post/{slug}",
+  UPDATE_STATUS_CAREER: "/job-post/{id}/status/{status}",
+  GET_APPLICANTS_CAREER: "/job-post/{slug}/applicants",
+  RESPONDAPPLICANT: "/job-post/response-applicant",
 
   //Billing
   BILLING: "/bill",
@@ -157,4 +178,53 @@ export const Endpoint = {
   DETAIL_BUDGET: "/budgets/budget-by-id/{id}",
   CREATE_SERVICE_BUDGET: "/budgets/service",
   SERVICE_BY_BUDGET: "/budgets/service/{id}",
+
+  //Content
+  CONTENT_HOME_BANNER: "/content/home/banner",
+  CONTENT_HOME_EXPLORE: "/content/home/explore-how-we",
+  CONTENT_HOME_POWER: "/content/home/powerful-agent",
+
+  CONTENT_ABOUT_US_BANNER: "/content/about-us/banners",
+  CONTENT_ABOUT_US_QUESTIONS: "/content/about-us/questions",
+  CONTENT_ABOUT_US_MISSIONS: "/content/about-us/missions",
+  CONTENT_ABOUT_US_MOST_VIEW_ARTICLES: "/content/about-us/most-viewed-articles",
+  CONTENT_ABOUT_US_ALL_START_TEAM: "/content/about-us/all-star-team",
+  CONTENT_ABOUT_US_ONE_START_TEAM: "/content/about-us/all-star-team/{id}",
+
+  CONTENT_HELP_CENTER_BANNER: "/content/help-center/banner",
+  CONTENT_HELP_CENTER_USAGE_TIPS: "/content/help-center/usage-tips",
+
+  CONTENT_TRUST_CENTER_BANNER: "/content/trust-center/banner",
+  CONTENT_TRUST_CENTER_BUILDING_TRUST: "/content/trust-center/building-trust",
+
+  CONTENT_AI_BANNER: "content/AI/banner",
+  CONTENT_AI_BRANDS: "content/AI/brands",
+  CONTENT_AI_PRODUCTIVITY: "content/AI/productivity",
+  CONTENT_AI_PROMOTE: "content/AI/promote-your-operation",
+
+  CONTENT_PRICING_BANNER: "content/pricing/banner",
+  CONTENT_PRICING_BANNER2: "content/pricing/banner2",
+  CONTENT_PRICING_UNLOCK: "content/pricing/unlock-unbeatable-value",
+  CONTENT_PRICING_PARTNERS: "content/pricing/partners",
+
+  //AI Chat
+  AI_CHAT_EXAMPLE_PROMPT: "ai-chat/example-prompt",
+  AI_CHAT_SESSION: "ai-chat/chat-session",
+  AI_CHAT: "ai-chat/chat",
+  AI_CHAT_PERSONA: "ai-chat/persona",
+  AI_CHAT_TONE: "ai-chat/tone",
+
+  //AI Agent
+  AI_AGENT: "/agent",
+  AI_AGENT_DELETE: "/agent/delete",
+  AI_AGENT_CREATE: "/agent/create",
+  AI_AGENT_PROMPT_TEMPLATE: "/agent/prompt-template",
+  AI_AGENT_UPDATE: "/agent/update",
+  AI_AGENT_ADD_SOURCE: "/agent/add-source-knowledge",
+  AI_AGENT_GET_SOURCE: "/agent/:agentId/get-knowledge",
+  AI_AGENT_RESYNCE_SOURCE: "/agent/:agentId/resync-knowledge",
+  AI_AGENT_DELETE_SOURCE: "/agent/:agentID/delete-source-knowledge/:knowledgeId",
+  AI_AGENT_CREATE_COMMAND: "/agent/create-command",
+  AI_AGENT_GET_COMMAND: "/agent/:agentId/commands",
+  AI_AGENT_CHAT: "/agent/chat",
 };

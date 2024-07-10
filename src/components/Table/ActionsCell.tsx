@@ -87,6 +87,11 @@ const ActionsCell = (props: ActionsCellProps) => {
     onHide();
   };
 
+  const onOptionClick = (event, option) => {
+    option?.onClick();
+    onClose();
+  }
+
   const onDelete = async () => {
     if (!onDeleteProps) return;
     try {
@@ -173,7 +178,7 @@ const ActionsCell = (props: ActionsCellProps) => {
               <MenuItem
                 key={option.content}
                 component={ButtonBase}
-                onClick={option?.onClick}
+                onClick={event => onOptionClick(event, option)}
                 sx={sxConfig.item}
               >
                 {option.icon}

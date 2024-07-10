@@ -4,37 +4,22 @@ import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
 import { SxProps, Typography } from "@mui/material";
 import { STEP_INFO } from "store/chat/type";
-import { useEffect } from "react";
 import { DataStatus } from "constant/enums";
-import { useSnackbar } from "store/app/selectors";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
+import { NS_AUTH } from "constant/index";
+import { useAuth } from "store/app/selectors";
 
 interface UserInfoProps {
   onPrevious: (step) => void;
 }
-const UserInfo = ({ onPrevious }: UserInfoProps) => {
-  const { conversationInfo, partnerInfo, partnerInfoStatus, onGetUserInfo } =
-    useChat();
-  const { onAddSnackbar } = useSnackbar();
-  const { avatar, name, username } = conversationInfo || {};
-  const t = useTranslations(NS_COMMON);
 
-  useEffect(() => {
-    const handleGetUserInfo = async () => {
-      try {
-        if (username) {
-          await onGetUserInfo(username);
-        }
-      } catch (error) {
-        onAddSnackbar(
-          typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),
-          "error",
-        );
-      }
-    };
-    handleGetUserInfo();
-  }, [onAddSnackbar, onGetUserInfo, username, t]);
+const UserInfo = ({ onPrevious }: UserInfoProps) => {
+  const { user } = useAuth();
+  const { conversationInfo, partnerInfoStatus, onGetUserInfo } = useChat();
+  const { name, members } = conversationInfo || {};
+  // @ts-ignore
+  const partnerInfo = members?.find((item) => item?.id != user?.id);
+  const t = useTranslations(NS_AUTH);
 
   const styleFormItem: SxProps = {
     display: "flex",
@@ -83,7 +68,7 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
           <>
             <Avatar
               alt="Avatar"
-              src={avatar || undefined}
+              src={partnerInfo?.avatar || undefined}
               size={120}
               style={{
                 borderRadius: "50%",
@@ -93,19 +78,27 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
             />
             <Box display="flex" flexDirection="column" gap={2} mt={5} p="1rem">
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Họ tên</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.fullName")}
+                </Typography>
                 <Typography>{partnerInfo?.fullname}</Typography>
               </Box>
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Chức vụ</Typography>
-                <Typography>{partnerInfo?.position?.name}</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.position")}
+                </Typography>
+                <Typography>{partnerInfo?.position}</Typography>
               </Box>
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Số điện thoại</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.phone")}
+                </Typography>
                 <Typography>{partnerInfo?.phone}</Typography>
               </Box>
               <Box sx={styleFormItem}>
-                <Typography color="#666666">Email</Typography>
+                <Typography color="#666666">
+                  {t("signup.form.title.email")}
+                </Typography>
                 <Typography>{partnerInfo?.email}</Typography>
               </Box>
             </Box>

@@ -5,14 +5,13 @@ import { useRouter } from "next-intl/client";
 import { useCallback, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { getDocs } from "./actions";
+import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 import {
   changeDocInfo,
   changeId,
   changePermDoc,
   getDocDetails,
 } from "./reducer";
-import { TypeViewListDoc } from "constant/types";
 
 const useDocs = () => {
   const [loading, setLoading] = useState(false);
@@ -25,6 +24,9 @@ const useDocs = () => {
     docsStatus: status,
     docsError: error,
     docsFilters: filters,
+
+    getDocCustomStatus,
+    docCustom
   } = useAppSelector((state) => state.doc, shallowEqual);
   const { pageIndex, pageSize, totalDocs, totalPages } = useAppSelector(
     (state) => state.doc.docsPaging,
@@ -40,7 +42,7 @@ const useDocs = () => {
     [dispatch],
   );
 
-  const onCreateDoc = async (projectId) => {
+  const onCreateDoc = async (projectId?: string, content?: string) => {
     setLoading(true);
     try {
       const response = await client.post(
@@ -49,6 +51,7 @@ const useDocs = () => {
           name: "No Name",
           description: "",
           project_id: projectId,
+          content,
         },
         {
           baseURL: DOCS_API_URL,
@@ -57,8 +60,9 @@ const useDocs = () => {
 
       if (response?.status === HttpStatusCode.CREATED) {
         dispatch(changeId(response.data.id));
-        dispatch(getDocDetails(response.data.id));
         push(`/documents/${response.data.id}`);
+        dispatch(getDocDetails(response.data));
+        return response.data.id;
       }
       setLoading(false);
       throw AN_ERROR_TRY_AGAIN;
@@ -74,7 +78,7 @@ const useDocs = () => {
     });
   };
 
-  const handleGetDocDetail = async (id) => {
+  const handleGetDocDetail = async (id, content?: string) => {
     const resPrem = await client.get(
       Endpoint.PERM_DOCS + id,
       {},
@@ -103,9 +107,29 @@ const useDocs = () => {
 
     if (res.status === HttpStatusCode.OK) {
       console.log({ data: res.data });
+      if (content) {
+        res.data.content = content;
+      }
       dispatch(getDocDetails(res.data));
     }
   };
+
+  const onGetDocCustom = useCallback(
+    async (id: string) => {
+      const actionResult = await dispatch(getDocCustom(id));
+      if (getDocCustom.fulfilled.match(actionResult)) {
+        return actionResult.payload;
+      }
+    },
+    [dispatch],
+  );
+
+  const onUpdateDocCustom = useCallback(
+    async (id: string, data: { content: string }) => {
+      await dispatch(updateDocCustom({id, data}));
+    },
+    [dispatch],
+  );
 
   return {
     items,
@@ -122,7 +146,10 @@ const useDocs = () => {
     onCreateDoc,
     loading,
     handleUpdateDoc,
-    handleGetDocDetail
+    handleGetDocDetail,
+    onGetDocCustom,
+    docCustom,
+    onUpdateDocCustom
   };
 };
 

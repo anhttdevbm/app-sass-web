@@ -11,9 +11,12 @@ export const PROJECTS_PATH = "/projects";
 export const BUDGETING_PATH = "/budgeting";
 export const BUDGET_DETAIL_PATH = "/budgeting/{id}";
 export const EMPLOYEES_PATH = "/employees";
+export const EMPLOYEES_DETAIL_PATH = "/employee-detail/{id}";
+export const HOLIDAY_CALENDAR_PATH = "/holiday-calendar";
 export const COST_HISTORY_PATH = "/cost-history";
 export const POSITIONS_PATH = "/positions";
 export const PROJECT_TYPES_PATH = "/project-types";
+export const CLIENT_COMPANIES_PATH = "/client-companies";
 export const MY_COMPANY_PATH = "/my-company";
 export const COMPANIES_PATH = "/companies";
 export const COMPANY_DETAIL_PATH = "/companies/{id}";
@@ -33,7 +36,18 @@ export const TIME_TRACKING_PATH = "/time-tracking";
 export const RESOURCE_PLANING_PATH = "/resource-planing";
 export const SALES_LIST_PATH = "/sales";
 export const CHATTING_ROOM_PATH = "/chat";
+export const MEETING_PATH = "/meeting";
 export const CHATTING_INFO_PATH = "/chat/{id}";
+
+// TASKCOVER AI
+export const AI_CHAT_PATH = "/ai-chat";
+export const AI_AGENT_PATH = "/ai-agent";
+export const AI_AGENT_CHAT = "/ai-agent-chat/{id}";
+export const AI_AGENT_GENERAL_PATH = "/ai-agent/{id}/general";
+export const AI_AGENT_TOOLS_PATH = "/ai-agent/{id}/tools";
+export const AI_AGENT_KNOWLEDGE_PATH = "/ai-agent/{id}/knowledge";
+export const AI_AGENT_COMMANDS_PATH = "/ai-agent/{id}/commands";
+export const AI_AGENT_PROMPT_TEMPLATES_PATH = "/ai-agent/{id}/prompt-templates";
 
 export const SALE_DETAIL_PATH = "/sales/{id}";
 
@@ -50,8 +64,8 @@ export const BLOGS_DETAIL_PATH = "/blogs/{id}";
 export const BLOGS_RELATED_PATH = "/blogs/{id}/related";
 //Carrer
 export const CAREER_PATH = "/careers";
-export const CAREER_DETAIL_PATH = "/careers/{id}";
-export const APPLICANTS_DETAIL_PATH = "/careers/{id}/applicants";
+export const CAREER_DETAIL_PATH = "/careers/{slug}";
+export const APPLICANTS_DETAIL_PATH = "/careers/{slug}/applicants";
 //Billing
 export const BILLING_PATH = "/billing";
 export const BILLING_CREATE_PATH = "/billing/create";
@@ -65,7 +79,15 @@ export const BUDGET_EXPENSE_EXPORT_PATH = "/budgeting/expense/export/{id}";
 export const BUDGET_INVOICE_EXPORT_PATH = "/budgeting/invoice/export/{id}";
 
 // Landing
-export const LANDING_HOME_PATH = "/landing";
+export const LANDING_HOME_PATH = "/landing/home";
+export const LANDING_ABOUT_US_PATH = "/landing/about-us";
+export const LANDING_HELP_CENTER_PATH = "/landing/help-center";
+export const LANDING_TRUST_CENTER_PATH = "/landing/trust-center";
+export const LANDING_AI_PATH = "/landing/ai";
+export const LANDING_PRICING_PATH = "/landing/pricing";
+
+// Meetings
+export const MEETING_HOME_PATH = "/meeting";
 
 const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,
@@ -102,6 +124,11 @@ export const AUTHORIZED_PATHS = {
     DOCS_DETAIL_PATH,
     DOCS_CREATE_PATH,
     CHATTING_ROOM_PATH,
+
+    // AI
+    AI_CHAT_PATH,
+    AI_AGENT_PATH,
+
     FEEDBACK_PATH,
     // Billing
     BILLING_PATH,
@@ -114,7 +141,8 @@ export const AUTHORIZED_PATHS = {
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
-    BUDGET_EXPENSE_EXPORT_PATH
+    BUDGET_EXPENSE_EXPORT_PATH,
+    MEETING_HOME_PATH,
   ],
   [Permission.SA]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -134,7 +162,7 @@ export const AUTHORIZED_PATHS = {
     CAREER_PATH,
     CAREER_DETAIL_PATH,
     BLOGS_RELATED_PATH,
-    BUDGET_EXPENSE_EXPORT_PATH
+    BUDGET_EXPENSE_EXPORT_PATH,
   ],
   [Permission.ST]: [
     ...AUTHORIZED_LOGGED_IN_PATHS,
@@ -155,6 +183,11 @@ export const AUTHORIZED_PATHS = {
     DOCS_DETAIL_PATH,
     DOCS_CREATE_PATH,
     CHATTING_ROOM_PATH,
+
+    // AI
+    AI_CHAT_PATH,
+    AI_AGENT_PATH,
+
     FEEDBACK_PATH,
     // Billing
     BILLING_PATH,
@@ -167,7 +200,9 @@ export const AUTHORIZED_PATHS = {
     // Budgeting
     BUDGETING_PATH,
     BUDGET_DETAIL_PATH,
-    BUDGET_EXPENSE_EXPORT_PATH
+    BUDGET_EXPENSE_EXPORT_PATH,
+
+    MEETING_HOME_PATH,
   ],
   [Permission.EU]: [...AUTHORIZED_LOGGED_IN_PATHS, UPGRADE_ACCOUNT_PATH],
 };

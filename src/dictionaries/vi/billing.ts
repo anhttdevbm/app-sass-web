@@ -191,6 +191,11 @@ export const BillingLang: BillingDictionary = {
           Feed: "Phản hồi",
         },
       },
+      client: {
+        title: {
+          Client: "Khách hàng",
+        },
+      },
       payment: {
         table: {
           dueDate: "Ngày hết hạn",

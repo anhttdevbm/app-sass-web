@@ -20,12 +20,14 @@ export const salesLang: SalesDictionary = {
       dealMember: "Thành viên giao dịch",
       unit: "Đơn vị",
       owner: "Chủ sở hữu",
+      client: "Khách hàng",
       tags: "Thẻ",
       submit: "Thêm Giao Dịch",
       update: "Cập nhật Giao Dịch",
     },
     table: {
       stage: "Giai đoạn",
+      filter:"Tìm kiếm dự án",
       pjRevenue: "Doanh thu dự án",
       revenue: "Doanh thu",
       time: "Thời gian",
@@ -61,6 +63,7 @@ export const salesLang: SalesDictionary = {
       assign: "Thành Viên",
       feed: "Tin mới",
       service: "Dịch vụ",
+      client: "Khách hàng",
     },
     todoList: {
       assign: "Phân công",

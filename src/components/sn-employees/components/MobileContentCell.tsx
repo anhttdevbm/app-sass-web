@@ -1,14 +1,15 @@
 import { memo } from "react";
 import { Stack } from "@mui/material";
+import { useTranslations } from "next-intl";
+
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
-import { formatDate } from "utils/index";
 import TextStatus from "components/TextStatus";
+import { BodyCell } from "components/NewTable";
+import { formatDate } from "utils/index";
 import { COLOR_STATUS, TEXT_STATUS } from "../helpers";
-import { BodyCell } from "components/Table";
 import { Employee } from "store/company/reducer";
 import { NS_COMPANY, NS_COMMON } from "constant/index";
-import { useTranslations } from "next-intl";
 
 type MobileContentCellProps = {
   item: Employee;

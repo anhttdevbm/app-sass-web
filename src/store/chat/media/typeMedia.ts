@@ -4,6 +4,26 @@ export interface ChatLinkType {
   urls: UrlInfo[];
 }
 
+export interface IChatLinkV2 {
+  created_at: string;
+  id: string;
+  message: string;
+  room: string;
+  url: string;
+}
+
+export interface IChatFile {
+  created_at: string;
+  id: string;
+  message: string;
+  name: string;
+  object: string;
+  room: string;
+  size: number;
+  type: string;
+  url: string;
+}
+
 export interface UrlInfo {
   url: string;
   meta: {
@@ -62,7 +82,15 @@ export interface Attachment {
   name?: string;
   image_url?: string;
   video_url?: string;
-  downloadlink?: string
+  downloadlink?: string;
+}
+
+export interface AttachmentV2 {
+  name: string;
+  object: string;
+  size: number;
+  type: string;
+  url: string;
 }
 
 export interface AttachmentFields {
@@ -85,6 +113,7 @@ export interface MediaTypeCommon {
   user: User;
   name: string;
 }
+
 export interface MediaHistoryType extends MediaTypeCommon {
   url: string;
 }

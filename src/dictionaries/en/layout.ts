@@ -18,9 +18,11 @@ export const LayoutLang: LayoutDictionary = {
     task: "Tasks",
     company: "Company",
     employees: "Employees",
+    holidayCalendar: "Holiday Calendar",
     costHistory: "Cost History",
     listOfPositions: "List Of Positions",
     projectTypeList: "Project Type List",
+    clientCompanies: "Client Company",
     companyInformation: "Company Information",
     manager: "Manager",
     companyList: "Company List",
@@ -31,6 +33,13 @@ export const LayoutLang: LayoutDictionary = {
     sales: "Sales",
     docs: "Documents",
     chat: "Chat",
+    meeting: "Meeting",
+
+    // taskcover ai
+    taskcoverAI: "Taskcover AI",
+    aiChat: "AI Chat",
+    aiAgent: "AI Agent",
+
     //feedback
     feedback: "Feedback",
     feedbackList: "Feedback List",
@@ -41,6 +50,13 @@ export const LayoutLang: LayoutDictionary = {
     //carrer
     career:"Career",
     careerList: "Career List",
-    billing: "Billing"
+    billing: "Billing",
+    contents: "Contents",
+    landingHome: "Home Page",
+    landingAboutUs: "About Us",
+    landingHelpCenter: "Help Center",
+    landingTrustCenter: "Trust Center",
+    landingAI: "AI",
+    landingPricing: "Pricing",
   },
 };

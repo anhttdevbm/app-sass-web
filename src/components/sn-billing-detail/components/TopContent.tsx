@@ -42,6 +42,7 @@ import SelectMembers from "./SelectMembers";
 import { Dropdown } from "components/Filters";
 import DropdownTag from "./DropdownTag";
 import { useBillings } from "store/billing/selectors";
+import useTheme from "hooks/useTheme";
 
 const ITEM_HEIGHT = 48;
 
@@ -74,6 +75,7 @@ const TopContent = (props: TopContentProps) => {
   const [listUser, setListUser] = useState<Member[]>([]);
   const [tagSelected, setTagSelected] = useState<string>("");
   const [markSent, setMarkSent] = useState<string>("");
+  const { isDarkMode } = useTheme();
 
   const open = Boolean(anchorEl);
 
@@ -214,7 +216,13 @@ const TopContent = (props: TopContentProps) => {
   };
 
   return (
-    <Stack gap={1} pt={2} ml={5}>
+    <Stack
+      gap={1}
+      pt={2}
+      px={2}
+      bgcolor={isDarkMode ? "#313130" : "white"}
+      borderRadius={1}
+    >
       <Stack
         direction="row"
         alignItems="center"
@@ -276,7 +284,7 @@ const TopContent = (props: TopContentProps) => {
           <Button
             // startIcon={<PlusIcon />}
             onClick={onMarkAsSend}
-            size="small"
+            size="extraSmall"
             variant="primary"
           >
             {item?.mail_status == "Unsend"

@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Stack } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import Image from "next/image";
 import AppLogo from "public/images/img-app-logo.webp";
 import { Text } from "components/shared";
@@ -10,9 +10,7 @@ import { SIGNUP_PATH } from "constant/paths";
 import Form from "./Form";
 import { NS_AUTH } from "constant/index";
 import { useTranslations } from "next-intl";
-import SwitchLanguage from "components/SwitchLanguage";
 import useTheme from "hooks/useTheme";
-import SwitchTheme from "components/SwitchTheme";
 
 const MainSection = () => {
   const t = useTranslations(NS_AUTH);
@@ -28,7 +26,7 @@ const MainSection = () => {
       justifyContent="center"
       bgcolor={{
         xs: isDarkMode ? "background.paper" : "rgba(255, 255, 255, 0.9)",
-        sm: undefined,
+        sm: "transparent",
       }}
       boxShadow={{ xs: "0px 4px 12px rgba(0, 0, 0, 0.15)", sm: undefined }}
       borderRadius={{ xs: 2, sm: 0 }}
@@ -36,7 +34,7 @@ const MainSection = () => {
       px={2}
       position="relative"
     >
-      <Stack
+      {/* <Stack
         direction="row"
         alignItems="center"
         position="absolute"
@@ -47,17 +45,25 @@ const MainSection = () => {
       >
         <SwitchLanguage />
         <SwitchTheme />
-      </Stack>
-
-      <Image src={AppLogo} alt="App logo" width={152} />
+      </Stack> */}
+      <Box mt={{ xs: 0, sm: "-100px" }}>
+        {" "}
+        <Image src={AppLogo} alt="App logo" width={440} />
+      </Box>
 
       <Stack
         flex={1}
-        mt={{ xs: 3, sm: 6 }}
+        p={{ sm: "22px 92px 46px 92px", lg: "37px 88px" }}
+        mt={{ xs: 3, sm: "-20px" }}
         alignItems="center"
-        maxWidth={340}
+        maxWidth={{ sm: "644px", lg: "744px" }}
+        maxHeight={{ sm: "450px", lg: "500px" }}
         width="100%"
         overflow="hidden"
+        bgcolor={{
+          sm: "common.white",
+        }}
+        borderRadius={"12px"}
       >
         <Text variant="h3">{t("signin.title")}</Text>
         <Stack mt={1} direction="row" alignItems="center" spacing={0.5}>

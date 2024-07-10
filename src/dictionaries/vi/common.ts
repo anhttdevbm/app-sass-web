@@ -24,6 +24,8 @@ export const CommonLang: CommonDictionary = {
       datePast: "{name} không thể là một ngày trong quá khứ.",
       gte: "{name} phải lớn hơn hoặc bằng {name2}",
       renameGroup: "{name} là tên phòng không hợp lệ",
+      typeError: "{name} phải là một {type}",
+      positiveNumber: "{name} phải là một số dương",
     },
     title: {
       upload: "Tải lên",
@@ -44,6 +46,9 @@ export const CommonLang: CommonDictionary = {
     add: "Thêm",
     forward: "Chuyển tiếp",
     admin: "Quản lý",
+    type: {
+      number: "Số",
+    },
   },
   notification: {
     imageTypeInvalid:
@@ -55,9 +60,12 @@ export const CommonLang: CommonDictionary = {
     anErrorTryReload: "Đã xảy ra lỗi. Vui lòng thử tải lại trang.",
   },
   position: "Chức vụ",
+  permissionV: "Phân quyền",
+  permissionN: "Quyền hạn",
   company: "Công ty",
   fullName: "Họ tên",
   phone: "Số điện thoại",
+  address: "Địa chỉ",
   status: "Trạng thái",
   filter: {
     refresh: "Làm mới dữ liệu",
@@ -74,6 +82,7 @@ export const CommonLang: CommonDictionary = {
   update: "Cập nhật",
   edit: "Sửa",
   delete: "Xóa",
+  chat: "Trò chuyện",
   close: "Đóng",
   search: "Tìm kiếm",
   assigner: "Người phụ trách",
@@ -121,4 +130,9 @@ export const CommonLang: CommonDictionary = {
   cancel: "Huỷ",
   success: "Thành công!",
   crop: "Xén",
+  landingPage: {
+    homePage: "Trang chủ",
+    aboutUs: "Về chúng tôi",
+    helpCenter: "Trung tâm trợ giúp",
+  }
 };

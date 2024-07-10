@@ -14,6 +14,7 @@ export type TBudgetUpdateForm = {
   currency?: string;
   budget_number?: number;
   po_number?: number;
+  client?: string;
 };
 
 export const budgetUpdate = (form: TBudgetUpdateForm) => {

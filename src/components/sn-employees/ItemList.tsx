@@ -1,45 +1,44 @@
 "use client";
-
-import {
-  memo,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  ChangeEvent,
-} from "react";
 import { Stack, TableRow } from "@mui/material";
+import { useTranslations } from "next-intl";
+import { usePathname } from "next-intl/client";
 import {
-  TableLayout,
+  ChangeEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import ConfirmDialog from "components/ConfirmDialog";
+import FixedLayout from "components/FixedLayout";
+import Pagination from "components/NewPagination";
+import {
+  ActionsCell,
   BodyCell,
   CellProps,
-  ActionsCell,
-} from "components/Table";
+  TableLayout,
+} from "components/NewTable";
+import { Checkbox, IconButton } from "components/shared";
+import { DataAction, EmployeeType, PayStatus } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
-import useQueryParams from "hooks/useQueryParams";
-import Pagination from "components/Pagination";
-import { usePathname, useRouter } from "next-intl/client";
-import { getDataFromKeys, getPath } from "utils/index";
-import { IconButton, Checkbox } from "components/shared";
-import { useEmployees } from "store/company/selectors";
-import CardSendIcon from "icons/CardSendIcon";
-import ConfirmDialog from "components/ConfirmDialog";
-import { Employee } from "store/company/reducer";
-import { DataAction, PayStatus } from "constant/enums";
-import { EmployeeData } from "store/company/actions";
-import Form from "./Form";
-import TrashIcon from "icons/TrashIcon";
-import { MobileContentCell, DesktopCells } from "./components";
 import useBreakpoint from "hooks/useBreakpoint";
-import DeleteConfirm from "./components/DeleteConfirm";
-import { useTranslations } from "next-intl";
-import useTheme from "hooks/useTheme";
-import FixedLayout from "components/FixedLayout";
+import useQueryParams from "hooks/useQueryParams";
 import { HEADER_HEIGHT } from "layouts/Header";
+// import useTheme from "hooks/useTheme";
+import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
+import TrashIcon from "icons/TrashAltIcon";
+import { Employee } from "store/company/reducer";
+import { useEmployees } from "store/company/selectors";
+import { getPath } from "utils/index";
+import EmployeeCompanyForm from "./EmployeeCompanyForm";
+import { DesktopCells, MobileContentCell } from "./components";
+import DeleteConfirm from "./components/DeleteConfirm";
 
-const ItemList = () => {
+const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
   const {
-    items,
+    items: employees,
     isFetching,
     isIdle,
     error,
@@ -48,7 +47,7 @@ const ItemList = () => {
     pageIndex,
     totalPages,
     onGetEmployees,
-    onUpdateEmployee: onUpdateEmployeeAction,
+    onUpdateEmployee,
     onDeleteEmployees,
   } = useEmployees();
   const companyT = useTranslations(NS_COMPANY);
@@ -56,37 +55,46 @@ const ItemList = () => {
 
   const { initQuery, isReady, query } = useQueryParams();
   const pathname = usePathname();
-  const { push } = useRouter();
   const { isMdSmaller } = useBreakpoint();
-  const { isDarkMode } = useTheme();
+  // const { isDarkMode } = useTheme();
 
   const [item, setItem] = useState<Employee | undefined>();
   const [selectedList, setSelectedList] = useState<Employee[]>([]);
   const [action, setAction] = useState<DataAction | undefined>();
 
+  // const employees = useMemo(
+  //   () => (employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees),
+  //   [employeeType, items, clientEmployees],
+  // );
+
   const isCheckedAll = useMemo(
-    () => Boolean(selectedList.length && selectedList.length === items.length),
-    [selectedList.length, items.length],
+    () =>
+      Boolean(selectedList.length && selectedList.length === employees.length),
+    [selectedList.length, employees.length],
   );
   const onChangeAll = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const isChecked = event.target.checked;
       if (isChecked) {
-        setSelectedList(items);
+        setSelectedList(employees);
       } else {
         setSelectedList([]);
       }
     },
-    [items],
+    [employees],
   );
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
       { value: commonT("fullName"), width: "25%", align: "left" },
       { value: "Email", width: "15.5%", align: "left" },
-      { value: commonT("position"), width: "12.5%" },
-      { value: commonT("creationDate"), width: "12.5%" },
-      { value: companyT("employees.expirationDate"), width: "13.5%" },
+      { value: commonT("position"), width: "12.5%", align: "left" },
+      { value: commonT("creationDate"), width: "12.5%", align: "left" },
+      {
+        value: companyT("employees.expirationDate"),
+        width: "13.5%",
+        align: "left",
+      },
       { value: commonT("status"), width: "12.5%" },
     ],
     [commonT, companyT],
@@ -139,9 +147,17 @@ const ItemList = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChangeQueries = (queries: { [key: string]: any }) => {
-    const newQueries = { ...query, ...queries };
+    const newQueries = {
+      typeEmployee: employeeType.toString(),
+      ...query,
+      ...queries,
+    };
     const path = getPath(pathname, newQueries);
-    push(path);
+    window.history.pushState(
+      { ...window.history.state, as: path, url: path },
+      "",
+      path,
+    );
 
     onGetEmployees({ ...newQueries });
   };
@@ -154,10 +170,10 @@ const ItemList = () => {
     onChangeQueries({ pageIndex: 1, pageSize: newPageSize });
   };
 
-  const onUpdateEmployee = async (data: EmployeeData) => {
-    if (!item) return;
-    return await onUpdateEmployeeAction(item.id, data.position);
-  };
+  // const onUpdateEmployee = async (data: EmployeeData) => {
+  //   if (!item) return;
+  //   return await onUpdateEmployeeAction(item.id, data.position);
+  // };
 
   const onPay = () => {
     setAction(DataAction.OTHER);
@@ -183,8 +199,12 @@ const ItemList = () => {
 
   useEffect(() => {
     if (!isReady) return;
-    onGetEmployees({ ...DEFAULT_PAGING, ...initQuery });
-  }, [initQuery, isReady, onGetEmployees]);
+    onGetEmployees({
+      ...DEFAULT_PAGING,
+      typeEmployee: employeeType.toString(),
+      ...initQuery,
+    });
+  }, [employeeType, initQuery, isReady, onGetEmployees]);
 
   useEffect(() => {
     setSelectedList([]);
@@ -196,12 +216,30 @@ const ItemList = () => {
         <Stack
           direction="row"
           alignItems="center"
-          spacing={2}
           pb={0.25}
-          border="1px solid"
-          borderColor="grey.100"
-          borderBottom="none"
-          sx={{ borderTopLeftRadius: 1, borderTopRightRadius: 1 }}
+          // border="1px solid"
+          // borderColor="grey.100"
+          // borderBottom="none"
+          sx={{
+            "& > *": {
+              "--custom-border": "1px solid hsla(0, 0%, 59%, 70%)",
+              "--custom-border-radius": "8px",
+              px: 1,
+              border: 0,
+              borderTop: "var(--custom-border)",
+              borderRight: "var(--custom-border)",
+              borderBottom: "var(--custom-border)",
+            },
+            "& > *:first-of-type": {
+              borderLeft: "var(--custom-border)",
+              borderTopLeftRadius: "var(--custom-border-radius)",
+              borderBottomLeftRadius: "var(--custom-border-radius)",
+            },
+            "& > *:last-of-type": {
+              borderTopRightRadius: "var(--custom-border-radius)",
+              borderBottomRightRadius: "var(--custom-border-radius)",
+            },
+          }}
           px={{ xs: 0.75, md: 1.125 }}
           py={1.125}
           mx={{ xs: 0, md: 3 }}
@@ -215,40 +253,28 @@ const ItemList = () => {
           )}
           <IconButton
             size="small"
-            onClick={onPay}
+            // onClick={onPay}
+            sx={{
+              color: "#1A1A1A",
+            }}
             tooltip={companyT(
               selectedList.length ? "employees.pay" : "employees.isNeedSelect",
             )}
-            sx={{
-              backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-              color: "text.primary",
-              p: { xs: "4px!important", md: 1 },
-              "&:hover svg": {
-                color: "common.white",
-              },
-            }}
-            variant="contained"
             disabled={!selectedList.length}
           >
-            <CardSendIcon fontSize="small" />
+            <EditUnderlineIcon fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
             onClick={onDelete}
+            sx={{
+              color: "#FF4141",
+            }}
             tooltip={
               selectedList.length
                 ? commonT("delete")
                 : companyT("employees.isNeedSelect")
             }
-            sx={{
-              backgroundColor: isDarkMode ? "grey.50" : "primary.light",
-              color: "text.primary",
-              p: { xs: "4px!important", md: 1 },
-              "&:hover svg": {
-                color: "common.white",
-              },
-            }}
-            variant="contained"
             disabled={!selectedList.length}
           >
             <TrashIcon fontSize="small" />
@@ -268,7 +294,7 @@ const ItemList = () => {
           }}
           sx={{ bgcolor: { xs: "grey.50", md: "transparent" } }}
         >
-          {items.map((item) => {
+          {employees.map((item) => {
             const indexSelected = selectedList.findIndex(
               (selected) => selected.id === item.id,
             );
@@ -307,7 +333,7 @@ const ItemList = () => {
                             content: companyT("employees.pay"),
                             onClick: onActionToItem(DataAction.OTHER, item),
                             icon: (
-                              <CardSendIcon
+                              <EditUnderlineIcon
                                 sx={{ color: "grey.400" }}
                                 fontSize="medium"
                               />
@@ -341,17 +367,19 @@ const ItemList = () => {
           content={companyT("employees.confirmPayment.content", { count: 1 })}
         />
       )}
-      {action === DataAction.UPDATE && (
-        <Form
+      {item && action === DataAction.UPDATE && (
+        <EmployeeCompanyForm
           open
           onClose={onResetAction}
           type={DataAction.UPDATE}
-          initialValues={
-            {
-              email: item?.email,
-              position: item?.position?.id,
-            } as EmployeeData
-          }
+          typeEmployee={employeeType}
+          initialValues={{
+            id: item.id,
+            email: item.email,
+            client: item.client_company,
+            position: item.position?.id ?? "",
+            permission: item.roles[0],
+          }}
           onSubmit={onUpdateEmployee}
         />
       )}

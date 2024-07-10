@@ -28,6 +28,7 @@ export type BudgetingDictionary = {
   };
   tab: {
     feed: string;
+    client: string;
     services: string;
     time: string;
     expenses: string;
@@ -210,6 +211,12 @@ export type BudgetingDictionary = {
     nextOccurrence: string;
     stopRecurring: string;
     copy: string;
+    recurringIntervalWeekly: string;
+    recurringIntervalBiweekly: string;
+    recurringIntervalMonthly: string;
+    recurringIntervalQuarterly: string;
+    recurringIntervalSemiannually: string;
+    recurringIntervalAnnually: string;
   };
   delete: {
     titleConfirmDelete: string;

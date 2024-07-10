@@ -33,6 +33,9 @@ import {
   updatePayment,
   updateTagBill,
   viewPdfBilling,
+  updateClientBill,
+  setShowEditClient,
+  getBillingClientDetail,
 } from "./actions";
 import { BillingCommentData, BillingDataUpdate, Service, Tag } from "./reducer";
 import { IOptionStructure } from "components/shared/TextFieldSelect";
@@ -66,6 +69,7 @@ export const useBillings = () => {
     isAddPayment,
     isUpdatePayment,
     isDeletedPayment,
+    billingClientDetail,
   } = useAppSelector((state) => state.billing, shallowEqual);
   const { page, size, totalItems, total_page } = useAppSelector(
     (state) => state.billing.paging,
@@ -185,6 +189,13 @@ export const useBillings = () => {
     },
     [dispatch],
   );
+
+  const onGetBillingDetail = useCallback(
+    async (id: string) => {
+      return await dispatch(getBillingClientDetail({ id }));
+    },
+    [dispatch],
+  );
   //   const onUpdateProject = useCallback(
   //     async (id: string, data: Partial<ProjectData>) => {
   //       try {
@@ -223,6 +234,7 @@ export const useBillings = () => {
     isAddPayment,
     isUpdatePayment,
     isDeletedPayment,
+    billingClientDetail,
     onGetBillings,
     onCreateBilling,
     onUpdateBilling,
@@ -240,6 +252,7 @@ export const useBillings = () => {
     onAddPayment,
     onUpdatePayment,
     onDeletePayment,
+    onGetBillingDetail,
   };
 };
 
@@ -480,5 +493,34 @@ export const useTags = () => {
     isIdle,
     isFetching,
     onGetTags,
+  };
+};
+
+export const useClientBill = () => {
+  const dispatch = useAppDispatch();
+  const { isShowEditClient } = useAppSelector(
+    (state) => state.billing,
+    shallowEqual,
+  );
+
+  const onUpdateClientId = useCallback(
+    async (id?: string, clientId?: string) => {
+      await dispatch(updateClientBill({ id, clientId }));
+    },
+    [dispatch],
+  );
+
+  const onSetShowEditClient = useCallback(
+    async (value: boolean) => {
+      console.log(value);
+      await dispatch(setShowEditClient(value));
+    },
+    [dispatch],
+  );
+
+  return {
+    onUpdateClientId,
+    isShowEditClient,
+    onSetShowEditClient,
   };
 };

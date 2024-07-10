@@ -16,9 +16,11 @@ export type LayoutDictionary = {
     task: string;
     company: string;
     employees: string;
+    holidayCalendar: string;
     costHistory: string;
     listOfPositions: string;
     projectTypeList: string;
+    clientCompanies: string;
     companyInformation: string;
     manager: string;
     companyList: string;
@@ -29,16 +31,31 @@ export type LayoutDictionary = {
     sales: string;
     docs: string;
     chat: string;
+    meeting: string;
+
+    // taskcover ai
+    taskcoverAI: string;
+    aiChat: string;
+    aiAgent: string;
+
     //feedback
     feedback: string;
     feedbackList: string;
     //blog
-    blog :string;
-    blogList:string;
-    blogCategoryList:string;
+    blog: string;
+    blogList: string;
+    blogCategoryList: string;
     //carrer
-    career:string;
-    careerList:string;
-    billing:string;
+    career: string;
+    careerList: string;
+    billing: string;
+    //content
+    contents: string;
+    landingHome: string;
+    landingAboutUs: string;
+    landingHelpCenter: string;
+    landingTrustCenter: string;
+    landingAI: string;
+    landingPricing: string;
   };
 };

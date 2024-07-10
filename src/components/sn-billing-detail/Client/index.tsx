@@ -1,0 +1,177 @@
+"use client";
+
+import { Button, Divider, Stack } from "@mui/material";
+import { Endpoint, client } from "api";
+import FixedLayout from "components/FixedLayout";
+import { Text } from "components/shared";
+import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
+import EditForm from "components/sn-sales-detail/components/Client/EditForm";
+import SelectClient from "components/sn-sales-detail/components/Client/SelectClient";
+import ViewDetail from "components/sn-sales-detail/components/Client/ViewDetail";
+import { DEFAULT_PAGING, NS_COMPANY, NS_COMMON } from "constant/index";
+import { Option } from "constant/types";
+import EditUnderlineIcon from "icons/EditUnderlineIcon";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
+import { useEffect, useState } from "react";
+import { updateClientBill } from "store/billing/actions";
+import { useBillings, useClientBill } from "store/billing/selectors";
+import { useClientCompanies } from "store/company/selectors";
+import { useSnackbar } from "store/app/selectors";
+
+const TabClient = () => {
+  const { id } = useParams();
+  const {
+    onGetClientCompanyDetails,
+    detailItem,
+    items,
+    onGetClientCompanies,
+    onUpdateClientCompany,
+  } = useClientCompanies();
+
+  const { billingClientDetail, onGetBillingDetail } = useBillings();
+  const { isShowEditClient, onUpdateClientId, onSetShowEditClient } =
+    useClientBill();
+
+  const [options, setOptions] = useState<Option[]>([]);
+  const [optionSelected, setOptionSelected] = useState<
+    string | number | undefined
+  >();
+  const [clientSelected, setClientSelected] = useState<ClientCompany>();
+  const [isUpdated, setUpdated] = useState<boolean>(false);
+  const companyT = useTranslations(NS_COMPANY);
+  const commonT = useTranslations(NS_COMMON);
+  const { onAddSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
+  }, [onGetClientCompanies]);
+
+  useEffect(() => {
+    const opts = (items as ClientCompany[]).map((item) => ({
+      label: item.name,
+      value: item.id || 0,
+      avatar:
+        Array.isArray(item?.avatar) && !!item?.avatar?.length
+          ? (item?.avatar[0] as IAvatar)?.link
+          : "",
+      subText: `${companyT("clientCompany.taxCode")}: ${item.tax_code}`,
+    }));
+    setOptions(opts);
+  }, [items, companyT]);
+
+  useEffect(() => {
+    if (isUpdated) return;
+    if (billingClientDetail?.client) {
+      setOptionSelected(billingClientDetail?.client);
+    } else if (!!options.length) {
+      setOptionSelected(options[0]?.value);
+    }
+  }, [options, setOptionSelected]);
+
+  useEffect(() => {
+    if (optionSelected) {
+      onGetClientCompanyDetails(optionSelected.toString());
+    }
+  }, [optionSelected, onGetClientCompanyDetails]);
+
+  const onChangeClientCompany = async (name, value) => {
+    setClientSelected(items?.find((item) => item?.id === value));
+    setOptionSelected(value);
+    await onUpdateClientId(id.toString(), value ?? "");
+    await onGetBillingDetail(id as string);
+    onAddSnackbar(
+      commonT("notification.success", {
+        label: commonT("update"),
+      }),
+      "success",
+    );
+  };
+
+  const onUpdate = async (data: ClientCompany) => {
+    const payload = { ...data };
+    if (data.files) {
+      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
+      payload.avatar = [logoUrl];
+    } else {
+      delete payload["files"];
+    }
+    onSetShowEditClient(false);
+    setUpdated(true);
+    return await onUpdateClientCompany(payload);
+  };
+
+  return (
+    <FixedLayout
+      flex={1}
+      pb="24px"
+      pt={{ xs: "12px", sm: "12px", md: "24px" }}
+      px={0}
+    >
+      <Stack sx={{ height: 58 }}>
+        <Stack direction="row" spacing={2} justifyContent="space-between">
+          <Stack direction="row" alignItems="center">
+            {isShowEditClient ? (
+              <Stack sx={{ height: "100%" }}>
+                <Text variant="h4">{detailItem?.name}</Text>
+                <Text variant="h6" color="grey.400">
+                  {companyT("clientCompany.taxCode")}: {detailItem?.tax_code}
+                </Text>
+              </Stack>
+            ) : (
+              <SelectClient
+                options={options}
+                name="clientId"
+                hasAll={false}
+                hasAvatar={true}
+                value={optionSelected}
+                onChange={(name, value) => onChangeClientCompany(name, value)}
+              />
+            )}
+          </Stack>
+          {!isShowEditClient && (
+            <Stack>
+              <Button
+                variant="text"
+                size="extraSmall"
+                sx={{
+                  width: 32,
+                  minWidth: 32,
+                  maxWidth: 32,
+                  maxHeight: 32,
+                  paddingX: 0,
+                  paddingY: 1,
+                }}
+                onClick={() => onSetShowEditClient(true)}
+              >
+                <EditUnderlineIcon
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    padding: 0,
+                    margin: "auto",
+                    color: "#666666",
+                  }}
+                />
+              </Button>
+            </Stack>
+          )}
+        </Stack>
+      </Stack>
+      <Divider
+        sx={{
+          borderColor: "grey.100",
+          marginY: { xs: 1.5, sm: 1.5, md: 1.5, lg: 3 },
+        }}
+      />
+      {isShowEditClient ? (
+        <EditForm initialValues={detailItem} onSubmit={onUpdate} />
+      ) : (
+        <ViewDetail item={clientSelected || detailItem} />
+      )}
+    </FixedLayout>
+  );
+};
+
+export default TabClient;

@@ -19,6 +19,21 @@ import { categoryBlogReducer } from "./blog-category/reducer";
 import { CareerReducer } from "./career/reducer";
 import documentApi from "./docs/api";
 import { BillingState, billingReducer } from "./billing/reducer";
+import employeeDetailReducer, {
+  EmployeeDetailState,
+} from "./employeeDetail/reducer";
+import ContentReducer, { ContentState } from "./content/reducer";
+import holidayCalendarReducer, {
+  HolidayCalendarState,
+} from "./holidayCalendar/reducer";
+import { aiChatReducer } from "./aiChat/reducer";
+import { AIChatState } from "./aiChat/type";
+
+import meetingReducer from "./meeting/reducer";
+import { AIAgentState } from "./aiAgent/types";
+import { aiAgentReducer } from "./aiAgent/reducer";
+import { promptTemplateReducer } from "store/promptTemplate/reducer";
+import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
 
 export interface State {
   app: AppState;
@@ -32,6 +47,12 @@ export interface State {
   docs: IDocs;
   blogs: BlogState;
   billing: BillingState;
+  employeeDetail: EmployeeDetailState;
+  content: ContentState;
+  holidayCalendar: HolidayCalendarState;
+  aiChat: AIChatState;
+  aiAgent: AIAgentState;
+  chatAIAgent: AIAgentState;
 }
 
 export const store = configureStore({
@@ -56,6 +77,16 @@ export const store = configureStore({
     [documentApi.reducerPath]: documentApi.reducer,
     billing: billingReducer,
     budgetExpense: budgetExpenseReducer,
+    employeeDetail: employeeDetailReducer,
+    content: ContentReducer,
+    holidayCalendar: holidayCalendarReducer,
+    meeting: meetingReducer,
+
+    //ai
+    aiChat: aiChatReducer,
+    aiAgent: aiAgentReducer,
+    promptTemplate: promptTemplateReducer,
+    chatAIAgent: chatAIAgentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

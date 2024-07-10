@@ -7,7 +7,12 @@ import ProfileCircleIcon from "icons/ProfileCircleIcon";
 import MediaFileIcon from "icons/MediaFileIcon";
 import LinkIcon from "icons/LinkIcon";
 import FileBasicIcon from "icons/FileBasicIcon";
-import { MessageSearchInfo, STEP_INFO } from "store/chat/type";
+import {
+  CHAT_EVENT_TYPE,
+  MessageInfoV2,
+  MessageSearchInfo,
+  STEP_INFO,
+} from "store/chat/type";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import MessageListSearch from "../messages/MessageListSearch";
 import { useSnackbar } from "store/app/selectors";
@@ -17,19 +22,27 @@ import UserInfo from "./UserInfo";
 import GroupMediaProfile from "./GroupMediaProfile";
 import ItemProfile from "../common/ItemProfile";
 import useTheme from "hooks/useTheme";
+import { useChatHelpers, useWSChat } from "store/chat/helpers";
 
 interface UserLandingProps {
   displayUserInfo: boolean;
   onPrevious: () => void;
 }
-const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
-  const { conversationInfo, onSetStateSearchMessage, onSearchChatText } =
-    useChat();
-  const { isDarkMode } = useTheme();
 
+const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
+  const {
+    roomId,
+    conversationInfo,
+    onSetStateSearchMessage,
+    onSearchChatText,
+  } = useChat();
+  const { sendMessage } = useWSChat();
+  const { isDarkMode } = useTheme();
+  const { handleGetChatMedias, handleGetChatLinks, handleGetChatFiles } =
+    useChatHelpers();
   const { onAddSnackbar } = useSnackbar();
   const t = useTranslations(NS_COMMON);
-  const { avatar, name } = conversationInfo || {};
+  const { avatar, name, peer_detail } = conversationInfo || {};
   const [stateSearch, setStateSearch] = useState<{
     isSearch: boolean;
     isToggle?: boolean;
@@ -46,7 +59,12 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   const handleSearchChatText = useCallback(async () => {
     try {
       if (text && isSearch) {
-        await onSearchChatText({ text: stateSearch.text, type: "d" });
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEARCH,
+          roomId: roomId,
+          content: text,
+          page: 1,
+        });
       }
     } catch (error) {
       onAddSnackbar(
@@ -62,7 +80,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   }, [handleSearchChatText]);
 
   const handleSelectMessage = useCallback(
-    (message: MessageSearchInfo) => {
+    (message: MessageInfoV2) => {
       onSetStateSearchMessage(message);
       setStateSearch({ isSearch: false, text: "" });
       onPrevious();
@@ -71,6 +89,13 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
   );
 
   const handleSetStep = (step: STEP_INFO) => {
+    if (step === STEP_INFO.MEDIA) {
+      handleGetChatMedias(1);
+    } else if (step === STEP_INFO.LINK) {
+      handleGetChatLinks(1);
+    } else if (step === STEP_INFO.FILE) {
+      handleGetChatFiles(1);
+    }
     setStepMedia(step);
     setShowMedia(true);
   };
@@ -88,7 +113,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
         <Box overflow="auto" maxHeight="calc(600px - 65px)">
           <MessageListSearch
             text={stateSearch.text}
-            type="d"
+            type="p"
             onSelectMessage={handleSelectMessage}
           />
         </Box>
@@ -98,7 +123,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
         <Box textAlign="center" pt={2} pb={4} overflow="auto">
           <Avatar
             alt="Avatar"
-            src={avatar || undefined}
+            src={avatar?.link || peer_detail?.avatar || undefined}
             size={120}
             style={{
               borderRadius: "50%",
@@ -171,7 +196,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
     >
       <>
         <ProfileHeader
-          name={name || ""}
+          name={name || peer_detail?.fullname || ""}
           onPrevious={onPrevious}
           textSearch={stateSearch.text}
           isSearch={stateSearch.isSearch}

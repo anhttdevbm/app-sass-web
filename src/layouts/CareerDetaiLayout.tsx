@@ -9,26 +9,26 @@ import { TabList } from "components/sn-career-detail/components";
 
 type CareerDetaiLayoutProps = {
     children: React.ReactNode;
-    id: string;
+    slug: string;
 };
 
-const CareerDetaiLayout = ({ children, id }: CareerDetaiLayoutProps) => {
+const CareerDetaiLayout = ({ children, slug }: CareerDetaiLayoutProps) => {
     const { onGetCareerBySlug, items, filters, page, size, item} = useCareer();
     const { onUpdateHeaderConfig } = useHeaderConfig();
 
     const pathname = usePathname();
 
     const isCareerDetailPath = useMemo(
-        () => pathname.replace(id, "{id}") === CAREER_DETAIL_PATH,
-        [id, pathname],
+        () => pathname.replace(slug, "{slug}") === CAREER_DETAIL_PATH,
+        [slug, pathname],
     );
 
     const dataStringifyRef = useRef<string | undefined>();
 
-    useEffect(() => {
-        if (!id) return;
-        onGetCareerBySlug(id)
-    }, [id, onGetCareerBySlug]);
+    useEffect(() => {        
+        if (!slug) return;
+        onGetCareerBySlug(slug)
+    }, [slug, onGetCareerBySlug]);
 
     useEffect(() => {
         dataStringifyRef.current = JSON.stringify({
@@ -61,7 +61,7 @@ const CareerDetaiLayout = ({ children, id }: CareerDetaiLayoutProps) => {
     }, [item?.slug, onUpdateHeaderConfig]);
 
     return (
-        <Wrapper overflow="auto" inFrame={isCareerDetailPath}>
+        <Wrapper overflow="auto">
             <TabList />
             {children}
         </Wrapper>

@@ -22,6 +22,8 @@ export type CommonDictionary = {
       datePast: string;
       gte: string;
       renameGroup: string;
+      typeError: string;
+      positiveNumber: string;
     };
     title: {
       upload: string;
@@ -42,6 +44,9 @@ export type CommonDictionary = {
     add: string;
     forward: string;
     admin: string;
+    type: {
+      number: string;
+    }
   };
   notification: {
     imageTypeInvalid: string;
@@ -52,9 +57,12 @@ export type CommonDictionary = {
     anErrorTryReload: string;
   };
   position: string;
+  permissionV: string;
+  permissionN: string;
   company: string;
   fullName: string;
   phone: string;
+  address: string;
   status: string;
   filter: {
     refresh: string;
@@ -69,6 +77,7 @@ export type CommonDictionary = {
   update: string;
   edit: string;
   delete: string;
+  chat: string;
   close: string;
   search: string;
   assigner: string;
@@ -117,4 +126,9 @@ export type CommonDictionary = {
   cancel: string;
   success: string;
   crop: string;
+  landingPage: {
+    homePage: string,
+    aboutUs: string,
+    helpCenter: string,
+  }
 };

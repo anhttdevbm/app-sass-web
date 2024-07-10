@@ -11,7 +11,7 @@ export const BudgetingLang: BudgetingDictionary = {
         addExpense: 'Tạo chi phí',
         addInvoice: 'Tạo hóa đơn',
         serviceEdit: 'Sửa',
-        search: 'Tìm kiếm'
+        search: 'Tìm kiếm dự án'
     },
     status: {
         open: 'Đang mở',
@@ -30,6 +30,7 @@ export const BudgetingLang: BudgetingDictionary = {
     },
     tab: {
         feed: 'Phản hồi',
+        client: 'Khách hàng',
         time: 'Thời gian',
         expenses: 'Chi phí',
         invoices: 'Hóa đơn',
@@ -212,6 +213,12 @@ export const BudgetingLang: BudgetingDictionary = {
         nextOccurrence: "Lần kế tiếp",
         stopRecurring: "Dừng định kỳ",
         copy: 'Sao chép số PO trên mỗi lần',
+        recurringIntervalWeekly: 'Hàng tuần',
+        recurringIntervalBiweekly: 'Hai tuần một lần',
+        recurringIntervalMonthly: 'Hàng tháng',
+        recurringIntervalQuarterly: 'Hàng quý',
+        recurringIntervalSemiannually: 'Bán hàng năm',
+        recurringIntervalAnnually: 'Hàng năm',
     },
     delete: {
         titleConfirmDelete: "Xác Nhận Xóa",

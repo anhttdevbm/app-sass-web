@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Box from "@mui/material/Box";
-import {
-  MutableRefObject,
+import React, {
   forwardRef,
+  MutableRefObject,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -11,8 +11,9 @@ import {
   useState,
 } from "react";
 import {
+  CHAT_EVENT_TYPE,
   MediaPreviewItem,
-  MessageInfo,
+  MessageInfoV2,
   MessageSearchInfo,
   UnreadUserInfo,
 } from "store/chat/type";
@@ -23,19 +24,18 @@ import MessageContent from "./MessageContent";
 import { formatDate, sleep } from "utils/index";
 import Typography from "@mui/material/Typography";
 import { nameMonthList, NS_CHAT_BOX } from "constant/index";
-import React from "react";
 import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import useGetLastChatting from "components/sn-chatting-room/hooks/useGetLastChatting";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface MessagesProps {
-  sessionId: string;
+  sessionId: string | undefined;
   avatarPartner: string | undefined;
   pageIndex: number;
   pageSize: number;
   isGroup: boolean;
-  initialMessage: MessageInfo[];
+  initialMessage: MessageInfoV2[];
   mediaListPreview: MediaPreviewItem[];
   statusLoadMessage: DataStatus;
   stateMessage?: {
@@ -44,9 +44,8 @@ interface MessagesProps {
     filePreview?: any;
     status: DataStatus;
   };
-  focusMessage: MessageSearchInfo | null;
+  focusMessage: any | null;
   unReadMessage: UnreadUserInfo[];
-  onRefetch: (page: number) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   wrapperMessageSx?: any;
 }
@@ -72,7 +71,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
     stateMessage,
     focusMessage,
     unReadMessage,
-    onRefetch,
     wrapperMessageSx,
   }: MessagesProps,
   ref,
@@ -81,17 +79,21 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
   const [isBottomScrollMessage, setBottomScrollMessage] = useState(false);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
-  const { isChatDesktop, dataTransfer } = useChat();
-
-  const { getLastMessage } = useGetLastChatting();
+  const {
+    isChatDesktop,
+    dataTransfer,
+    messagePagingV2: messagePaging,
+    members,
+  } = useChat();
+  const { loadMoreMessages } = useChatHelpers();
 
   const pageRef = useRef(pageIndex);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const messagesContentRef = useRef<HTMLDivElement>(null);
 
   const scrollHeightRef = useRef(0);
-  const observer = useRef(
-    new IntersectionObserver((entries) => {
+  const observer = useMemo(() => {
+    return new IntersectionObserver((entries) => {
       const first = entries[0];
 
       if (first.isIntersecting) {
@@ -99,16 +101,12 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         scrollHeightRef.current = messagesContentRef.current?.scrollHeight || 0;
         const clientHeight =
           (messagesContentRef.current?.clientHeight || 0) + 50;
-        if (scrollHeightRef.current > clientHeight) {
-          if (isChatDesktop) {
-            getLastMessage(pageRef.current, 10);
-          } else {
-            onRefetch(pageRef.current);
-          }
+        if (scrollHeightRef.current > clientHeight && !!messagePaging.next) {
+          loadMoreMessages(messagePaging.current);
         }
       }
-    }),
-  );
+    });
+  }, [messagesContentRef.current?.scrollHeight]);
 
   const isScrolling = useMemo(() => {
     if (!messagesContentRef?.current) return false;
@@ -209,9 +207,11 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
   useEffect(() => {
     const currentElement = firstElement;
-    const currentObserver = observer.current;
+    const currentObserver = observer;
     if (currentElement) {
       currentObserver.observe(currentElement);
+    } else if (!!messagePaging.next) {
+      loadMoreMessages(messagePaging.current);
     }
 
     return () => {
@@ -219,48 +219,12 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         currentObserver.unobserve(currentElement);
       }
     };
-  }, [firstElement, isChatDesktop, messagesContentRef]);
+  }, [firstElement, isChatDesktop, messagesContentRef, messagePaging]);
 
-  const renderMessage = (message: MessageInfo) => {
-    let msg = "";
-    switch (message?.t) {
-      case "au":
-        msg = commonChatBox("chatBox.group.add", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
-        });
-        break;
-      case "ru":
-        msg = commonChatBox("chatBox.group.remove", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
-        });
-        break;
-      case "subscription-role-added":
-        msg = commonChatBox("chatBox.group.lead_trans", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
-        });
-        break;
-      case "subscription-role-removed":
-        msg = commonChatBox("chatBox.group.lead_remove", {
-          user1: message?.u?.name,
-          user2: message?.msg,
-          time: getTimeStamp(message?.ts ?? ""),
-        });
-        break;
-      case "r":
-        msg = commonChatBox("chatBox.group.rename", {
-          user1: message?.u?.name,
-          name: message?.msg?.replaceAll("_", " "),
-          time: getTimeStamp(message?.ts ?? ""),
-        });
-        break;
-    }
-    return msg;
+  const renderMessage = (message: MessageInfoV2) => {
+    const senderInfo = members?.find((item) => item?.id === message?.sender);
+    const user = { user: senderInfo?.fullname || message?.sender };
+    return commonChatBox(`chatBox.group.${message?.content}`, user);
   };
 
   return (
@@ -294,14 +258,14 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         {messages.length < 15 && <Box height={"400px"} />}
         {messages.map((message, index) => {
           // Need to separate this cluster into a separate component
-          const isCurrentUser = message.u.username === sessionId;
+          const isCurrentUser = message?.sender === sessionId;
           const hasNextMessageFromSameUser =
-            messages[index + 1]?.u?.username === messages[index]?.u?.username;
+            messages[index + 1]?.sender === messages[index]?.sender;
           const currentTimeMessage = new Date(
-            formatDate(messages[index]?.ts, "MM/dd/yyyy"),
+            formatDate(messages[index]?.created_at, "MM/dd/yyyy"),
           );
           const nextTimeMessage = new Date(
-            formatDate(messages[index + 1]?.ts, "MM/dd/yyyy"),
+            formatDate(messages[index + 1]?.created_at, "MM/dd/yyyy"),
           );
           const hasNextDay =
             index !== messages.length - 1
@@ -316,7 +280,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
           return (
             <React.Fragment key={index}>
-              {!message?.t ? (
+              {["text", "file", "media", "link"].includes(message?.type) ? (
                 <MessageLayout
                   sessionId={sessionId}
                   message={message}
@@ -326,7 +290,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                     ...(index === 0 && {
                       ref: setFirstElement,
                     }),
-                    ...(message._id === focusMessage?.messageId && {
+                    ...(message.id === focusMessage?.messageId && {
                       ref: focusMessageRef,
                     }),
                   }}
@@ -335,8 +299,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
                     message={message}
                     mediaListPreview={mediaListPreview}
                     isCurrentUser={isCurrentUser}
-                    isGroup={isGroup}
-                    unReadMessage={unReadMessage}
                   />
                 </MessageLayout>
               ) : (
@@ -371,57 +333,6 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
             </React.Fragment>
           );
         })}
-        {stateMessage?.status === DataStatus.LOADING && (
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              gap: "0.5rem",
-              alignItems: "flex-end",
-              justifyContent: "flex-end",
-              "&:last-child": {
-                paddingBottom: "1rem",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "0.3rem",
-                alignItems: "flex-end",
-                borderRadius: "10px",
-              }}
-              order={2}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  justifyContent: "flex-end",
-                  gap: "0.2rem",
-                  maxWidth: "232px",
-                }}
-              >
-                {Array.from(
-                  { length: stateMessage?.filePreview?.length || 0 },
-                  (_, i) => {
-                    return (
-                      <Skeleton
-                        key={i}
-                        variant="rounded"
-                        width={112}
-                        height={112}
-                      />
-                    );
-                  },
-                )}
-              </Box>
-            </Box>
-          </Box>
-        )}
         <Box ref={messageEndRef} />
       </Box>
     </>

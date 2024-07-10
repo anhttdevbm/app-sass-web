@@ -73,21 +73,25 @@ const DesktopCells = (props: DesktopCellsProps) => {
     <>
       <BodyCell align="left">
         <div
-        style={{cursor: 'pointer'}}
-          onClick={async () => {
-            const result: any = await api(
-              {
-                url: `/docs/detail/${item.id}`,
-                method: "GET",
-                //@ts-ignore
-              }, {}, {});
-            if (result.error) {
-              console.error("Error:", result.error);
-            } else {
-              await dispatch(setContentRow(result?.data?.content));
-              push(`/documents/${item.id}`);
-            }
-          }}
+          style={{ cursor: "pointer" }}
+          // onClick={async () => {
+            // const result: any = await api(
+            //   {
+            //     url: `/docs/detail/${item.id}`,
+            //     method: "GET",
+            //     //@ts-ignore
+            //   },
+            //   {},
+            //   {},
+            // );
+          //   if (result.error) {
+          //     console.error("Error:", result.error);
+          //   } else {
+          //     await dispatch(setContentRow(result?.data?.content));
+
+          //     push(`/documents/${item.id}`);
+          //   }
+          // }}
         >
           <Text fontWeight={600} fontSize={14}>
             {item?.name}

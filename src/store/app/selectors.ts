@@ -1,9 +1,11 @@
 import { useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  addNotification,
   addSnackbar,
   clearAuth,
   HeaderConfig,
+  removeNotification,
   removeSnackbar,
   Snackbar,
   toggleAppReady,
@@ -30,7 +32,9 @@ import { shallowEqual } from "react-redux";
 export const useSnackbar = () => {
   const dispatch = useAppDispatch();
 
-  const snackbarList = useAppSelector((state) => state.app.snackbarList);
+  const { snackbarList, notificationList } = useAppSelector(
+    (state) => state.app,
+  );
 
   const onAddSnackbar = useCallback(
     (
@@ -43,6 +47,13 @@ export const useSnackbar = () => {
     [dispatch],
   );
 
+  const onAddNotification = useCallback(
+    (notification) => {
+      dispatch(addNotification(notification));
+    },
+    [dispatch],
+  );
+
   const onRemoveSnackbar = useCallback(
     (snackbarId: string) => {
       dispatch(removeSnackbar(snackbarId));
@@ -50,10 +61,20 @@ export const useSnackbar = () => {
     [dispatch],
   );
 
+  const onRemoveNotification = useCallback(
+    (notiId: string) => {
+      dispatch(removeNotification(notiId));
+    },
+    [dispatch],
+  );
+
   return {
     snackbarList,
+    notificationList,
     onAddSnackbar,
+    onAddNotification,
     onRemoveSnackbar,
+    onRemoveNotification,
   };
 };
 

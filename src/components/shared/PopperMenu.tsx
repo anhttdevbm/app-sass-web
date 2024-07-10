@@ -53,7 +53,7 @@ export const PopperMenu = ({
           minWidth: 150,
           maxWidth,
         },
-        zIndex: 1000,
+        zIndex: 9999,
         ...(autoWidth && { width }),
       }}
       transition

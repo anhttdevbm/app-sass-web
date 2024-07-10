@@ -11,6 +11,14 @@ export type CompanyDictionary = {
     waiting: string;
     key: string;
     isNeedSelect: string;
+    employee: string;
+    client: string;
+    contractor: string;
+    form: {
+      addNewEmployee: string;
+      chooseCompanyType: string;
+      isInvite: string;
+    };
     confirmPayment: {
       title: string;
       content: string;
@@ -66,6 +74,44 @@ export type CompanyDictionary = {
     };
     notification: {
       success: string;
+    };
+  };
+  clientCompany: {
+    head: {
+      title: string;
+    };
+    title: string;
+    create: string;
+    createBy: string;
+    createDate: string;
+    duplicate: string;
+    form: {
+      title: {
+        name: string;
+      };
+      addContact: string;
+      closedContact: string;
+    };
+    companyName: string;
+    taxCode: string;
+    address: string;
+    zipCode: string;
+    duplicateForm: {
+      title: string;
+      newName: string;
+    };
+    confirmRemove: {
+      title: string;
+      content: string;
+    };
+    notification: {
+      success: string;
+    };
+    generalInformation: string;
+    contact: string;
+    formUpdate: {
+      title: string;
+      submit: string;
     };
   };
   information: {

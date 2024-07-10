@@ -58,9 +58,9 @@ const DefaultPopupLayout: React.FC<IProps> = ({
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            fontSize: "16px",
-            lineHeight: "20px",
-            fontWeight: 600,
+            fontSize: "20px",
+            fontFamily: "Inter",
+            fontWeight: "Semi-Bold",
             padding: 0,
             width: "100%",
             textAlign: isCenterTitle ? "center" : "left",
@@ -71,13 +71,13 @@ const DefaultPopupLayout: React.FC<IProps> = ({
         <IconButton
           onClick={onClose}
           sx={{
-            width: "26px",
-            height: "26px",
+            width: "30px",
+            height: "30px",
             position: "absolute",
             right: 24,
           }}
         >
-          <CloseIcon sx={{ width: "20px", height: "20px" }} />
+          <CloseIcon sx={{ width: "30px", height: "30px" }} />
         </IconButton>
       </Stack>
       {/* {isSearchable ? (

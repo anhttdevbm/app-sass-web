@@ -7,11 +7,10 @@ import ChatList from "./components/ChatList";
 import useGetScreenMode from "hooks/useGetScreenMode";
 import { useFetchingChattingReturns } from "components/sn-chatting-room/hooks/useFetchingChatting";
 import { useWSChat } from "store/chat/helpers";
+import { useWSChatConnect } from "store/chat/ws";
 
-const Sidebar: FC<useFetchingChattingReturns> = ({
- onFilterConversation,
-}) => {
-  useWSChat();
+const Sidebar: FC<useFetchingChattingReturns> = ({ onFilterConversation }) => {
+  useWSChatConnect();
   const { mobileMode } = useGetScreenMode();
   return (
     <Box

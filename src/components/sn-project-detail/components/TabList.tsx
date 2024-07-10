@@ -46,11 +46,17 @@ const TabList = () => {
         borderColor={{ md: "grey.100" }}
         width="100%"
         overflow="auto"
-        // position="sticky"
-        // top={isMembersOfProjectPath ? undefined : { xs: 8, sm: 16 }}
         bgcolor="background.paper"
+        py={1}
+        px={2}
       >
-        <Stack direction="row" alignItems="center">
+        <Stack
+          direction="row"
+          alignItems="center"
+          border="solid 1px"
+          borderColor="grey.100"
+          borderRadius="2rem"
+        >
           {TABS.map((tab) => (
             <TabItem key={tab.label} {...tab} />
           ))}
@@ -95,12 +101,14 @@ const TabItem = (props: TabItemProps) => {
         },
         py: { xs: 1, sm: 1 },
         px: { xs: 2, sm: 3.5 },
-        borderRadius: 1,
+        borderRadius: "2rem",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
       <Text
         variant="body2"
-        color={isActiveLink ? "text.primary" : "grey.300"}
+        color={isActiveLink ? "blue.500" : "grey.300"}
         fontWeight={600}
         whiteSpace="nowrap"
       >

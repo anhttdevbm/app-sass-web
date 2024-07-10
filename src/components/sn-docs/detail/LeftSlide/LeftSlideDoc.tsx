@@ -2,20 +2,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box } from "@mui/material";
 import { Search } from "components/Filters";
-import { NS_DOCS } from "constant/index";
-import { useTranslations } from "next-intl";
-import React, { memo, useState, useEffect } from "react";
-import DocumentList from "./ItemDocs";
 import { Text } from "components/shared";
-import { useAppSelector } from "store/hooks";
+import { NS_DOCS } from "constant/index";
 import ArrowRight from "icons/ArrowRight";
-import { uuid } from "utils/index";
-import useTheme from "hooks/useTheme";
-import { useGetDocDetailQuery, useCreateDocMutation } from "store/docs/api";
+import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
+import { memo, useEffect, useState } from "react";
+import { useCreateDocMutation, useGetDocDetailQuery } from "store/docs/api";
 import { useDocs } from "store/docs/selectors";
-import { useDispatch } from "react-redux";
-import { changeId } from "store/docs/reducer";
+import { useAppSelector } from "store/hooks";
+import { uuid } from "utils/index";
+import DocumentList from "./ItemDocs";
 
 export interface LeftSlideDocProps {
   open: boolean;
@@ -64,8 +61,7 @@ const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
 
   const { handleGetDocDetail } = useDocs();
 
-  const handleChangeDocument = (id) => {
-    // alert("-> " + id);
+  const handleChangeDocument = (id:string) => {
     handleGetDocDetail(id);
   };
 
@@ -76,7 +72,7 @@ const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
       id: id,
       project_id: project_id,
       root_directory: parent,
-      name: "No name",
+      name: "New Document",
       description: "",
     };
 

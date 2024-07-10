@@ -2,9 +2,13 @@ import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   CompanyData,
   EmployeeData,
+  InviteEmployeeData,
+  EmployeeClientData,
   GetEmployeeListQueries,
   PositionData,
   createEmployee,
+  inviteEmployee,
+  createEmployeeClient,
   createPosition,
   createProjectType,
   deleteEmployees,
@@ -16,16 +20,23 @@ import {
   getMyCompany,
   getPositionList,
   getProjectTypeList,
+  getClientCompanies,
   updateEmployee,
   updateMyCompany,
   updatePosition,
   updateProjectType,
+  createClientCompany,
+  getClientCompaniesMemberOptions,
+  deleteClientCompany,
+  getClientCompanyDetails,
+  updateClientCompany,
+  multipleDeleteClientCompany,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
 import { shallowEqual } from "react-redux";
 import { BaseQueries, Option } from "constant/types";
-import Avatar from "components/Avatar";
+import { ClientCompany } from "components/sn-client-companies/type";
 
 export const useEmployees = () => {
   const dispatch = useAppDispatch();
@@ -57,6 +68,22 @@ export const useEmployees = () => {
     [dispatch],
   );
 
+  const onInviteEmployee = useCallback(
+    async (data: InviteEmployeeData) => {
+      const response = await dispatch(inviteEmployee(data)).unwrap();
+      await dispatch(getEmployees(filters));
+      return response;
+    },
+    [dispatch, filters],
+  );
+
+  const onCreateEmployeeClient = useCallback(
+    async (data: EmployeeClientData) => {
+      return await dispatch(createEmployeeClient(data)).unwrap();
+    },
+    [dispatch],
+  );
+
   const onUpdateEmployee = useCallback(
     async (id: string, position: string) => {
       try {
@@ -79,8 +106,14 @@ export const useEmployees = () => {
     [dispatch],
   );
 
+  const clientEmployees = useMemo(
+    () => items.filter((e) => !!e.client_company),
+    [items],
+  );
+
   return {
     items,
+    clientEmployees,
     status,
     error,
     filters,
@@ -92,6 +125,8 @@ export const useEmployees = () => {
     totalPages,
     onGetEmployees,
     onCreateEmployee,
+    onInviteEmployee,
+    onCreateEmployeeClient,
     onUpdateEmployee,
     onDeleteEmployees,
   };
@@ -357,5 +392,105 @@ export const useCostHistory = () => {
     totalItems,
     totalPages,
     onGetCostHistory,
+  };
+};
+
+export const useClientCompanies = () => {
+  const dispatch = useAppDispatch();
+  const {
+    clientCompanies: items,
+    clientCompaniesMemberOptions: options,
+    clientCompaniesStatus: status,
+    clientCompaniesError: error,
+    clientCompaniesFilters: filters,
+    clientCompaniesOptionsFilters: optionsFilters,
+    clientCompanyDetail: detailItem,
+  } = useAppSelector((state) => state.company, shallowEqual);
+  const { pageIndex, pageSize, totalItems, totalPages } = useAppSelector(
+    (state) => state.company.clientCompaniesPaging,
+    shallowEqual,
+  );
+
+  const isIdle = useMemo(() => status === DataStatus.IDLE, [status]);
+  const isFetching = useMemo(() => status === DataStatus.LOADING, [status]);
+
+  const onGetClientCompanies = useCallback(
+    async (queries: BaseQueries) => {
+      await dispatch(getClientCompanies(queries));
+    },
+    [dispatch],
+  );
+
+  const onGetMemberOptions = useCallback(
+    async (queries: BaseQueries) => {
+      await dispatch(getClientCompaniesMemberOptions(queries));
+    },
+    [dispatch],
+  );
+
+  const onCreateClientCompany = useCallback(
+    async (data: ClientCompany) => {
+      return await dispatch(createClientCompany(data)).unwrap();
+    },
+    [dispatch],
+  );
+
+  const onDeleteClientCompany = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(deleteClientCompany(id)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const onMultipleDeleteClientCompany = useCallback(
+    async (ids: string[]) => {
+      try {
+        return await dispatch(multipleDeleteClientCompany(ids)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const onGetClientCompanyDetails = useCallback(
+    async (id: string) => {
+      await dispatch(getClientCompanyDetails(id));
+    },
+    [dispatch],
+  );
+
+  const onUpdateClientCompany = useCallback(
+    async (data: ClientCompany) => {
+      return await dispatch(updateClientCompany(data)).unwrap();
+    },
+    [dispatch],
+  );
+
+  return {
+    items,
+    status,
+    error,
+    filters,
+    optionsFilters,
+    isIdle,
+    isFetching,
+    pageIndex,
+    pageSize,
+    totalItems,
+    totalPages,
+    options,
+    detailItem,
+    onGetClientCompanies,
+    onGetMemberOptions,
+    onCreateClientCompany,
+    onDeleteClientCompany,
+    onMultipleDeleteClientCompany,
+    onGetClientCompanyDetails,
+    onUpdateClientCompany,
   };
 };

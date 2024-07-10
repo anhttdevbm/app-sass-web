@@ -28,31 +28,19 @@ const AccountInfoHeader = ({
   onPrevious,
   viewStep,
 }: AccountInfoHeaderProp) => {
-  const { dataTransfer, onSetStep, prevStep, currStep, onGetAllConvention } =
-    useChat();
+  const { dataTransfer, onSetStep, prevStep, currStep } = useChat();
   const { usersCount, t, name } = accountInfo;
   const isGroup = useMemo(() => t !== "d", [t]);
 
   const [textSearch, setTextSearch] = useState("");
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const [avatar, setAvatar] = useState<string | undefined>(
-    dataTransfer?.avatar,
+    dataTransfer?.avatar?.link,
   );
 
   useEffect(() => {
-    setAvatar(dataTransfer?.avatar);
+    setAvatar(dataTransfer?.avatar?.link);
   }, [dataTransfer?.avatar]);
-
-  useEffect(() => {
-    (async () => {
-      await onGetAllConvention({
-        type: "a",
-        text: textSearch ?? "",
-        offset: 0,
-        count: 30,
-      });
-    })();
-  }, [currStep, textSearch]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -101,30 +89,25 @@ const AccountInfoHeader = ({
                     position: "relative",
                   }}
                 >
-                  <Avatar
-                    alt="Avatar"
-                    size={36}
-                    style={{
-                      border: "4px solid ",
-                      borderColor: "background.default",
-                      borderRadius: "50%",
-                      position: "absolute",
-                      bottom: "10px",
-                      left: "10px",
-                    }}
-                  />
-                  <Avatar
-                    alt="Avatar"
-                    size={36}
-                    style={{
-                      border: "3px solid ",
-                      borderColor: "background.default",
-                      borderRadius: "50%",
-                      position: "absolute",
-                      bottom: 0,
-                      left: 0,
-                    }}
-                  />
+                  {[...dataTransfer?.members]
+                    ?.sort((a, b) => a?.avatar?.localeCompare(b?.avatar))
+                    ?.slice(0, 3)
+                    ?.map((mem, idx) => (
+                      <Avatar
+                        key={mem?.id}
+                        alt="Avatar"
+                        size={36}
+                        style={{
+                          border: "4px solid ",
+                          borderColor: "background.default",
+                          borderRadius: "50%",
+                          position: "absolute",
+                          bottom: `${idx * 7}px`,
+                          left: `${idx * 7}px`,
+                        }}
+                        src={mem?.avatar || undefined}
+                      />
+                    ))}
 
                   {/* Show how many members in group
                 

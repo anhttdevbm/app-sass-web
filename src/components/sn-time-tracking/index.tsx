@@ -1,45 +1,52 @@
 /* eslint-disable no-console */
 "use client";
 
-import React from "react";
-import _ from "lodash";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { TabPanel } from "@mui/lab";
 import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import { Tab, Box, Typography, Stack, Grid } from "@mui/material";
 import {
-  TimelogTrackingCalendar,
+  Box,
+  Button,
+  Fab,
+  Grid,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { NS_TIME_TRACKING } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { FC, useState } from "react";
+import DayIcon from "../../icons/DayIcon";
+import PlusIcon from "../../icons/PlusIcon";
+import {
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
+  TimelogTrackingCalendar,
 } from "./CalendarTracking";
-import { TabPanel } from "@mui/lab";
-import useTheme from "hooks/useTheme";
-import useBreakpoint from "hooks/useBreakpoint";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useTranslations } from "next-intl";
-import { NS_TIME_TRACKING } from "constant/index";
+import CalendarIcon from "./icons/CalendarIcon";
+import TimeSheetIcon from "./icons/TimeSheetIcon";
 
 interface ITab {
   label: string;
   value: string;
 }
 
-const tabStyles = {
-  width: "216px",
-  fontSize: "16px",
-  lineHeight: "20px",
-  fontWeight: 600,
-};
-
-const TimeTrackingPage: React.FC = () => {
+const TimeTrackingPage: FC = () => {
   const { isDarkMode } = useTheme();
-  const { isSmSmaller, isMdSmaller } = useBreakpoint();
-  const tabStyles = {
-    width: 'auto',
-    fontSize: "16px",
-    lineHeight: "20px",
-    fontWeight: 600,
-  };
-  const [tab, setTab] = React.useState<string>("myTime");
+  const { isSmSmaller } = useBreakpoint();
+  const [tab, setTab] = useState<string>("myTime");
+  const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
+  const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
+  const [workBorder, setWorkBorder] = useState<string>("");
+  const [workTopLeftRadius, setWorkTopLeftRadius] = useState<string>("0px");
+  const [workBottomLeftRadius, setWorkBottomLeftRadius] =
+    useState<string>("0px");
+  const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
+
   const timeT = useTranslations(NS_TIME_TRACKING);
 
   const timeTabs: ITab[] = [
@@ -56,6 +63,18 @@ const TimeTrackingPage: React.FC = () => {
       value: "timeLog",
     },
   ];
+
+  const onSelectTimeSheetChange = (event: SelectChangeEvent) => {
+    setTab(event.target.value);
+    setTimeBgColor(isDarkMode ? "#0575E6" : "#D9F0FD");
+    setWorkBgColor("#FFFFFF");
+    setWorkTopLeftRadius("0px");
+    setWorkBottomLeftRadius("0px");
+    setWorkBorder("");
+  };
+
+  const showLogTimePopup = () =>
+    setIsOpenCreatePopup((previousState) => !previousState);
 
   return (
     <Stack>
@@ -76,117 +95,251 @@ const TimeTrackingPage: React.FC = () => {
           </Typography>
         </Grid>
       </Grid>
+
+      <Grid
+        container
+        sx={{
+          borderRadius: "12px",
+          backgroundColor: isSmSmaller
+            ? "inherit"
+            : isDarkMode
+            ? "#565656"
+            : "#FFFFFF",
+          height: isSmSmaller ? "110px" : "auto",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            height: "46px",
+            margin: "22px 22px 0 22px",
+            borderRadius: "100px",
+            border: "1px solid #EFEFEF",
+            backgroundColor: tab === "timelog" ? "#D9F0FD" : "#FFFFFF",
+            "&:hover": {
+              border: "none",
+            },
+            "&:focus": {
+              border: "none",
+            },
+          }}
+        >
+          <Select
+            value={
+              tab === timeTabs[0].value ? timeTabs[0].value : timeTabs[1].value
+            }
+            defaultValue={timeTabs[0].label}
+            onChange={onSelectTimeSheetChange}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  borderRadius: "12px",
+                  bgcolor: isDarkMode ? "#333333" : "#FFFFFF",
+                  fontFamily: "Inter",
+                  fontSize: "13px",
+                  fontWeight: "Medium",
+                },
+              },
+            }}
+            sx={{
+              display: "flex",
+              marginLeft: "-1px",
+              fontSize: "16px",
+              fontFamily: "Inter",
+              fontWeight: "Regular",
+              textAlign: "center",
+              width: "179px",
+              height: "54px",
+              borderRadius: "100px",
+              backgroundColor: timeBgColor,
+              color: isDarkMode ? "#FFFFFF" : "#045EB8",
+            }}
+          >
+            <MenuItem value={timeTabs[0].value}>{timeTabs[0].label}</MenuItem>
+            <MenuItem value={timeTabs[1].value}>{timeTabs[1].label}</MenuItem>
+          </Select>
+
+          <Typography
+            sx={{
+              display: "flex",
+              width: "159px",
+              height: "54px",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "16px",
+              fontFamily: "Inter",
+              fontWeight: "Regular",
+              color: isDarkMode ? "#FFFFFF" : "#333333",
+              border: workBorder,
+              borderTopRightRadius: "100px",
+              borderBottomRightRadius: "100px",
+              borderTopLeftRadius: workTopLeftRadius,
+              borderBottomLeftRadius: workBottomLeftRadius,
+              backgroundColor: workBgColor,
+            }}
+            onClick={() => {
+              setTab(timeTabs[2].value);
+              setWorkBgColor("#D9F0FD");
+              setWorkTopLeftRadius("100px");
+              setWorkBottomLeftRadius("100px");
+              setTimeBgColor("#FFFFFF");
+              setWorkBorder("1px solid #EFEFEF");
+            }}
+          >
+            {timeTabs[2].label}
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            height: "56px",
+            margin: "16px 22px 0 0",
+          }}
+        >
+          <Fab
+            sx={{
+              width: "34px",
+              height: "34px",
+              marginRight: "14px",
+              borderRadius: "100px",
+              backgroundColor: "#FFFFFF",
+              "&:hover": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              "&:focus": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              cursor: "pointer",
+            }}
+            // onClick={showLogTimePopup}
+          >
+            {
+              <TimeSheetIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            }
+          </Fab>
+
+          <Fab
+            sx={{
+              width: "34px",
+              height: "34px",
+              marginRight: "2px",
+              borderRadius: "100px",
+              backgroundColor: "#FFFFFF",
+              "&:hover": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              "&:focus": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              cursor: "pointer",
+            }}
+            // onClick={showLogTimePopup}
+          >
+            {
+              <DayIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            }
+          </Fab>
+
+          <Fab
+            sx={{
+              width: "34px",
+              height: "34px",
+              borderRadius: "100px",
+              backgroundColor: "#FFFFFF",
+              "&:hover": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              "&:focus": {
+                border: "none",
+                backgroundColor: "#F2F5FA",
+              },
+              cursor: "pointer",
+            }}
+            // onClick={showLogTimePopup}
+          >
+            {
+              <CalendarIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            }
+          </Fab>
+
+          {/* <Button
+            startIcon={<TimeIcon />}
+            variant="contained"
+            sx={{
+              width: "113px",
+              height: "56px",
+              marginLeft: "14px",
+              borderRadius: "100px",
+              background: "linear-gradient(90deg, #2af598, #009efd)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2af598, #009efd)",
+              },
+              color: "common.white",
+              textTransform: "none",
+              fontSize: "16px",
+              fontFamily: "Inter",
+              fontWeight: "Bold",
+              cursor: "pointer",
+            }}
+            // onClick={showLogTimePopup}
+          >
+            {timeT("header.common.startButton")}
+          </Button> */}
+
+          <Button
+            startIcon={<PlusIcon />}
+            variant="contained"
+            sx={{
+              width: "136px",
+              height: "46px",
+              marginLeft: "14px",
+              borderRadius: "100px",
+              background: "linear-gradient(90deg, #2af598, #009efd)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2af598, #009efd)",
+              },
+              color: "common.white",
+              textTransform: "none",
+              fontSize: "16px",
+              fontFamily: "Inter",
+              fontWeight: "Bold",
+              cursor: "pointer",
+            }}
+            onClick={showLogTimePopup}
+          >
+            {timeT("header.common.logTimeButton")}
+          </Button>
+        </Box>
+      </Grid>
+
       <TabContext value={tab}>
         {/* <Stack
           direction="row"
           
         > */}
-        <Grid
-          container
-          sx={{
-            backgroundColor: isSmSmaller
-              ? "inherit"
-              : isDarkMode
-              ? "#565656"
-              : "#FFFFFF",
-            // display: "flex",
-            height: isSmSmaller ? "110px" : "auto",
-            alignItems: "center",
-
-            //justifyContent: "space-between",
-          }}
-        >
-          <Grid
-            item
-            md={6}
-            sm={12}
-            //sx={{ display: "flex"}}
-          >
-            <TabList
-              sx={{
-                "& .MuiTabs-flexContainer": {
-                  gap: "16px",
-                  display: 'grid',
-                  gridTemplateColumns: isSmSmaller ? "0.9fr 1.2fr 0.9fr" : 'repeat(3, 1fr)',
-                },
-                "& .MuiTab-root": {
-                  textTransform: "unset",
-                  fontSize: "16px",
-                  lineHeight: "20px",
-                  fontWeight: 600,
-                  color: "rgba(153, 153, 153, 1)",
-                  "&.active": {
-                    color: "#3699FF",
-                  },
-                },
-              }}
-              onChange={(_event: React.SyntheticEvent, newValue: string) =>
-                setTab(newValue)
-              }
-            >
-              {timeTabs.map((tab: ITab) => (
-                <Tab
-                  key={`tab-${tab.value}`}
-                  label={tab.label}
-                  value={tab.value}
-                  sx={tabStyles}
-                />
-              ))}
-            </TabList>
-          </Grid>
-          {tab !== "timeLog" && (
-            <Grid item md={6} sm={12} sx={{ padding: "15px" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  gap: 3,
-                  //mr: 3,
-                }}
-              >
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                  <Box
-                    sx={{
-                      width: "8px",
-                      height: "8px",
-                      background: "#3699FF",
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      lineHeight: "20px",
-                      fontWeight: 600,
-                      color: "#999999",
-                    }}
-                  >
-                    {timeT("header.tab.workTime")}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                  <Box
-                    sx={{
-                      width: "8px",
-                      height: "8px",
-                      background: "#F64E60",
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      lineHeight: "20px",
-                      fontWeight: 600,
-                      color: "#999999",
-                    }}
-                  >
-                  {timeT("header.tab.breakTime")}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-          )}
-        </Grid>
 
         {/* </Stack> */}
         <TabPanel
@@ -197,6 +350,7 @@ const TimeTrackingPage: React.FC = () => {
           <MyTimeTrackingCalendar
             events={[]}
             onClick={() => console.log("click")}
+            isOpenCreatePopup={isOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel
@@ -207,6 +361,7 @@ const TimeTrackingPage: React.FC = () => {
           <CompanyTimeTrackingCalendar
             events={[]}
             onClick={() => console.log("click")}
+            isOpenCreatePopup={isOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel value="timeLog" sx={{ paddingTop: { sm: 0, md: "auto" } }}>

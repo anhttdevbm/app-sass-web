@@ -34,6 +34,7 @@ export interface DealData {
   probability?: number;
   tags?: string[];
   stage?: string;
+  client?: string;
 }
 export interface TodoItemData {
   name: string;

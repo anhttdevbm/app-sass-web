@@ -13,6 +13,7 @@ import { useAuth } from "store/app/selectors";
 import { TYPE_POPUP } from "components/sn-chat/chatGroup/ChatDetailGroup";
 import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
+import { isOwnerGroup, useChatHelpers } from "store/chat/helpers";
 
 const MenuInfo = () => {
   const { isDarkMode } = useTheme();
@@ -25,28 +26,24 @@ const MenuInfo = () => {
   } = useChat();
 
   const { user } = useAuth();
-
+  const { isGroup } = useChatHelpers();
   const { menuItems } = useChatDetailInfo({
     currentConversation,
-    conversationInfo,
   });
 
   const renderColorByType = useMemo(() => {
-    if (currentConversation?.t === "d") {
+    if (!isGroup(currentConversation?.type)) {
       if (isDarkMode) return "#313130";
       return "var(--Gray0, #F7F7FD)";
     }
     if (isDarkMode) return "#313130";
     return "#ffffff";
-  }, [isDarkMode, currentConversation?.t]);
+  }, [isDarkMode, currentConversation?.type]);
 
   const propsActionGroupDetail = useActionGroupDetails();
 
   //check owner
-  const owners = Object.values(groupMembers).filter((item) =>
-    item.roles.includes("owner"),
-  );
-  const owner = owners.some((obj) => obj._id === user?.id_rocket);
+  const owner = isOwnerGroup(currentConversation?.owner, user?.id);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   return (
@@ -75,7 +72,10 @@ const MenuInfo = () => {
           }}
         >
           <Avatar
-            src={currentConversation?.avatar}
+            src={
+              currentConversation?.avatar?.link ||
+              currentConversation?.peer_detail?.avatar
+            }
             sx={{
               height: "80px",
               width: "80px",
@@ -83,7 +83,7 @@ const MenuInfo = () => {
               borderRadius: "10px",
             }}
           />
-          {currentConversation?.t !== "d" && <UploadAvatarGroup />}
+          {isGroup(currentConversation?.type) && <UploadAvatarGroup />}
         </Box>
         <Box>
           <Typography
@@ -91,9 +91,9 @@ const MenuInfo = () => {
             color={isDarkMode ? "white" : "var(--Black, #212121)"}
             sx={{ textAlign: "center" }}
           >
-            {currentConversation?.t !== "d"
-              ? currentConversation?.name?.replaceAll("_", " ")
-              : currentConversation?.name}
+            {isGroup(currentConversation?.type)
+              ? currentConversation?.name
+              : currentConversation?.peer_detail?.fullname}
           </Typography>
         </Box>{" "}
         <Box
@@ -105,7 +105,7 @@ const MenuInfo = () => {
             padding: "0px 12px",
           }}
         >
-          {currentConversation?.t === "d" ? (
+          {!isGroup(currentConversation?.type) ? (
             menuItems.map((item, index) => (
               <ChatDetailInfoMenuItem
                 key={index}
@@ -117,13 +117,13 @@ const MenuInfo = () => {
             ))
           ) : (
             <ChatDetailGroup
-              currentName={currentConversation?.name?.replaceAll("_", " ")}
+              currentName={currentConversation?.name}
               menuItems={menuItems}
               {...propsActionGroupDetail}
             />
           )}
         </Box>
-        {currentConversation?.t !== "d" && (
+        {/*{isGroup(currentConversation?.type) && (
           <Box
             sx={{
               display: "flex",
@@ -162,7 +162,7 @@ const MenuInfo = () => {
                 </Typography>
               </Box>
             )}
-            {groupMembers.length > 1 && (
+            {conversationInfo?.members?.length > 1 && (
               <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="caption"
@@ -226,7 +226,7 @@ const MenuInfo = () => {
               </Box>
             )}
           </Box>
-        )}
+        )}*/}
       </>
     </Box>
   );

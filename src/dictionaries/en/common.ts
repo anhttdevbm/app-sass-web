@@ -25,6 +25,8 @@ export const CommonLang: CommonDictionary = {
       datePast: "{name} cannot be a date in the past.",
       gte: "{name} must be greater than or equal to {name2}",
       renameGroup: "{name} is not a valid room name",
+      typeError: "{name} must be a {type}",
+      positiveNumber: "{name} should be a positive number",
     },
     title: {
       upload: "Upload",
@@ -45,6 +47,9 @@ export const CommonLang: CommonDictionary = {
     add: "Add",
     forward: "Forward",
     admin: "Admin",
+    type: {
+      number: "Number",
+    },
   },
   notification: {
     imageTypeInvalid:
@@ -56,9 +61,12 @@ export const CommonLang: CommonDictionary = {
     anErrorTryReload: "An error occurred. Please try reload page.",
   },
   position: "Position",
+  permissionV: "Permission",
+  permissionN: "Permission",
   company: "Company",
   fullName: "Full name",
   phone: "Phone number",
+  address: "Address",
   status: "Status",
   filter: {
     refresh: "Refresh data",
@@ -73,6 +81,7 @@ export const CommonLang: CommonDictionary = {
   update: "Update",
   edit: "Edit",
   delete: "Delete",
+  chat: "Chat",
   close: "Close",
   search: "Search",
   assigner: "Assigner",
@@ -122,4 +131,9 @@ export const CommonLang: CommonDictionary = {
   cancel: "Cancel",
   success: "Successfully!",
   crop: "Crop",
+  landingPage: {
+    homePage: "Home Page",
+    aboutUs: "About us",
+    helpCenter: "Help Center",
+  },
 };

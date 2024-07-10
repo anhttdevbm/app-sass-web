@@ -18,9 +18,11 @@ export const LayoutLang: LayoutDictionary = {
     task: "Công việc",
     company: "Công ty",
     employees: "Danh sách nhân viên",
+    holidayCalendar: "Holiday Calendar",
     costHistory: "Lịch sử chi phí",
     listOfPositions: "Danh sách chức vụ",
     projectTypeList: "Danh sách loại dự án",
+    clientCompanies: "Công ty khách hàng",
     companyInformation: "Thông tin công ty",
     manager: "Quản lý",
     companyList: "Danh sách công ty",
@@ -31,6 +33,13 @@ export const LayoutLang: LayoutDictionary = {
     sales: "Giao dịch",
     docs: 'Tài Liệu',
     chat: "Tin nhắn",
+    meeting: "Meeting",
+
+    // taskcover ai
+    taskcoverAI: "Taskcover AI",
+    aiChat: "Trò chuyện AI",
+    aiAgent: "Trợ lí AI",
+
     //feedback
     feedback: "Đánh giá",
     feedbackList: "Danh sách đánh giá",
@@ -39,6 +48,13 @@ export const LayoutLang: LayoutDictionary = {
     blogCategoryList:"Danh sách danh mục",
     career:"Nghề nghiệp",
     careerList: "Danh sách nghề nghiệp",
-    billing:"Hóa đơn"
+    billing:"Hóa đơn",
+    contents: "Nội Dung",
+    landingHome: "Trang Chủ",
+    landingAboutUs: "Giới Thiệu",
+    landingHelpCenter: "Trung Tâm Trợ Giúp",
+    landingTrustCenter: "Trung tâm Tin tưởng",
+    landingAI: "AI",
+    landingPricing: "Định giá",
   },
 };

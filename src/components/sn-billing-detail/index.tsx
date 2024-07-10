@@ -19,7 +19,8 @@ import { useTagOptions } from "store/tags/selector";
 import { User } from "constant/types";
 
 const InformationBillingPage = () => {
-  const { item, onGetBilling, updateStatus } = useBillings();
+  const { item, onGetBilling, updateStatus, onGetBillingDetail } =
+    useBillings();
   const { tagsOptions, onGetTags } = useTags();
   const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
   const { budgets, onGetBudgets } = useBudgets();
@@ -79,6 +80,12 @@ const InformationBillingPage = () => {
     onGetBudgets({ ...initQuery });
   }, [isReady, onGetBudgets]);
 
+  useEffect(() => {
+    if (typeof id === "string" && id) {
+      onGetBillingDetail(id);
+    }
+  }, [id]);
+
   return (
     // <FixedLayout
     // maxHeight={920}
@@ -88,7 +95,11 @@ const InformationBillingPage = () => {
     // }}
     // overflow={"auto"}
     // >
-    <Stack>
+    <Stack
+      padding={{ sm: 3 }}
+      sx={{ overflowY: "auto" }}
+      bgcolor={{ md: "background.default" }}
+    >
       <TopContent
         tagsOptions={tagsOptions}
         item={id ? item : duplicateBill}

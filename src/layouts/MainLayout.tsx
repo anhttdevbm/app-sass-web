@@ -9,6 +9,8 @@ import { useAppSelector } from "store/hooks";
 import { shallowEqual } from "react-redux";
 import { usePathname, useRouter } from "next-intl/client";
 import {
+  AI_AGENT_CHAT,
+  AI_CHAT_PATH,
   AUTHORIZED_PATHS,
   CHATTING_ROOM_PATH,
   FORGOT_PASSWORD_PATH,
@@ -31,7 +33,7 @@ type MainLayoutProps = {
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH];
 
-const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH];
+const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH, AI_CHAT_PATH, AI_AGENT_CHAT.replace("/{id}", "")];
 
 const MainLayout = (props: MainLayoutProps) => {
   const { children } = props;
@@ -88,13 +90,13 @@ const MainLayout = (props: MainLayoutProps) => {
         overflow="hidden"
       >
         <Sidebar />
-        <Stack flex={1} width="100%" height="100%" overflow="hidden">
+        <Stack flex={1} width="100%" height="100vh" overflow="hidden">
           <Header />
           <Stack
             flex={1}
             // height="fit-content"
             spacing={{ xs: 1.5, sm: 3 }}
-            sx={{ overflow: 'auto' }}
+            // sx={{ overflow: 'auto' }}
             // justifyContent={isAuthorized ? undefined : "center"}
             // alignItems={isAuthorized ? undefined : "center"}
             // overflow="hidden"

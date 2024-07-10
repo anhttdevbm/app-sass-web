@@ -22,6 +22,8 @@ import useToggle from "hooks/useToggle";
 import Text from "./Text";
 import { SearchProps } from "components/Filters/Search";
 import Image from "next/image";
+import * as React from "react";
+import SearchIcon from "icons/SearchIcon";
 
 export type SelectProps = InputProps & {
   options: Option[];
@@ -42,6 +44,9 @@ export type SelectProps = InputProps & {
   onOpen?: Function;
   isShowSearch?: boolean;
   emitSearchWhenEnter?: boolean;
+  startAdornment?: () => React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  renderValue?: (value: any) => React.ReactNode;
 };
 
 const ID_PLACEHOLDER = uuid();
@@ -65,6 +70,7 @@ const Select = (props: SelectProps) => {
     hasIcon,
     onClose: handleClose,
     emitSearchWhenEnter,
+    renderValue,
     ...rest
   } = props;
 
@@ -133,6 +139,7 @@ const Select = (props: SelectProps) => {
           IconComponent: () => (
             <ChevronIcon onClick={!props.disabled ? onOpen : undefined} />
           ),
+          renderValue,
           open: isShow,
           onOpen: onOpenSelect,
           onClose: onHandleClose,
@@ -143,6 +150,7 @@ const Select = (props: SelectProps) => {
             MenuListProps: {
               sx: {
                 maxHeight: 300,
+                p:"10px"
               },
             },
           },
@@ -159,7 +167,20 @@ const Select = (props: SelectProps) => {
               mt: 1,
               px: 2,
               my: 1,
+              ".MuiInputBase-input":{m:"0px!important"},
+              borderRadius: "100px",
+              background: "#F7F7FD",
+              border: "none",
+              svg: { color: "#0575E6" },
+              ".MuiInputBase-root": {
+                border: "none",
+                px:"2px!important",
+                "&:hover": { border: "none" },
+                "&:forcus-visible": { border: "none" },
+              },
             }}
+            startNode={<></>}
+            endNode={<SearchIcon />}
             name="email"
             onChange={onChangeSearch}
             emitWhenEnter={emitSearchWhenEnter}

@@ -31,6 +31,7 @@ function ServiceAreaSectionRow({
     <>
       <TableRow
         sx={{
+          td:{height:"40px"},
           "& > *": { borderBottom: "none !important" },
           minHeight: 100,
           width: "100%",

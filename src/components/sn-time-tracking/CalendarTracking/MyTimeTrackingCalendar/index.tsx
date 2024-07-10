@@ -94,6 +94,7 @@ const subEventDayStyles = {
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
+  isOpenCreatePopup: boolean;
 }
 
 interface IFilter {
@@ -160,7 +161,7 @@ const StyledDay = styled(Box)(() => ({
   },
 }));
 
-const TrackingCalendar: React.FC<IProps> = () => {
+const TrackingCalendar: React.FC<IProps> = (props) => {
   const {
     items: myTime,
     onGetMyTimeSheet,
@@ -182,7 +183,7 @@ const TrackingCalendar: React.FC<IProps> = () => {
     dayjs().toString(),
   );
   const [isOpen, setIsOpen] = React.useState(false);
-  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(false);
+  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(props.isOpenCreatePopup);
   const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<string>("timeSheet");
@@ -201,6 +202,10 @@ const TrackingCalendar: React.FC<IProps> = () => {
     break: 0,
   });
   const commonT = useTranslations(NS_COMMON);
+
+  useEffect(() => {
+    setIsOpenCreatePopup(props.isOpenCreatePopup)
+  }, [props.isOpenCreatePopup]);
 
   useEffect(() => {
     _.forEach(myTime, (timesheet) => {
@@ -469,29 +474,6 @@ const TrackingCalendar: React.FC<IProps> = () => {
     return (
       <>
         <Grid container rowSpacing={1}>
-          <Grid
-            item
-            sm={12}
-            md={4}
-            sx={{ width: "100%", order: isSmSmaller ? 3 : 1 }}
-          >
-            <Button
-              startIcon={<PlusIcon />}
-              size="small"
-              variant="contained"
-              sx={{
-                height: "36px",
-                width: "113px",
-                padding: 0,
-                backgroundColor: "primary.main",
-                color: "common.white",
-                textTransform: "none",
-              }}
-              onClick={() => setIsOpenCreatePopup(true)}
-            >
-              {timeT("myTime.addButton")}
-            </Button>
-          </Grid>
           <Grid
             item
             sm={12}

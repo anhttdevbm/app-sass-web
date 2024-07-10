@@ -183,7 +183,7 @@ export const getProjectList = createAsyncThunk(
     ) as GetProjectListQueries;
 
     try {
-      console.log("newQueries khi gui--> ", newQueries);
+      // console.log("newQueries khi gui--> ", newQueries);
       const response = await client.get(Endpoint.PROJECTS, newQueries);
 
       if (response?.status === HttpStatusCode.OK) {

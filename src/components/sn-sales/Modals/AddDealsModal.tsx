@@ -1,5 +1,5 @@
 import { Stack, Grid } from "@mui/material";
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import FormLayout from "components/FormLayout";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
@@ -15,6 +15,7 @@ import useGetProjectTypeOptions from "../hooks/useGetProjectTypeOptions";
 import { useTagOptions, useTags } from "store/tags/selector";
 import { Tag } from "store/tags/reducer";
 import { TagData } from "store/tags/actions";
+import { useClientCompanies } from "store/company/selectors";
 
 interface IProps {
   open: boolean;
@@ -40,7 +41,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
     projectTypeOptions,
     onEndReachedProjectTypeOptions,
   } = useGetProjectTypeOptions();
-
+  const { items: clientCompanies, onGetClientCompanies } = useClientCompanies();
   const { onCreateDeal } = useSales();
   const { tagsOptions, isTagLoading, onSearchTags } = useTagOptions();
   const { onCreateTags } = useTags();
@@ -70,6 +71,11 @@ const AddDealModal = ({ open, onClose }: IProps) => {
     owner: yup.string().required(
       commonT("form.error.required", {
         name: salesT(`${salesFormTranslatePrefix}.owner`),
+      }),
+    ),
+    client: yup.string().required(
+      commonT("form.error.required", {
+        name: salesT(`${salesFormTranslatePrefix}.client`),
       }),
     ),
     members: yup
@@ -108,13 +114,71 @@ const AddDealModal = ({ open, onClose }: IProps) => {
       email: (value as string) || "",
     });
   };
-
+  useEffect(() => {
+    onGetClientCompanies({});
+  }, [onGetClientCompanies]);
+  const newInput = {
+    // height: "65px",
+    ".MuiInputBase-root": {
+      ".MuiAutocomplete-endAdornment":{right:"21px"},
+      background:
+        " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
+      padding: "9px!important",
+      paddingRight: "22px !important",
+      borderRadius: "100px!important",
+      border: "none!important",
+      mt: "35px",
+      fontSize: "16px!important",
+      // height:"38px",
+      ".MuiInputBase-input": { p: "0 10px!important",margin:"0!important" },
+      svg: {
+        borderRadius: "50px",
+        border: "0.2px solid #5C5C5C",
+        fontSize: "16px",
+        color: "black",
+        "&:hover": { color: "black" },
+      },
+      ".MuiChip-root": {
+        color: "#0575e6",
+        padding: "5px",
+        svg: {
+          border: "0.2px solid transparent",
+          color: "white",
+          background: " #0575e6",
+        },
+      },
+    },
+    "label.MuiInputLabel-root": {
+      left: 0,
+      fontSize: "13px",
+      transform: "translate(0, 16px) scale(1)",
+    },
+  };
   return (
     <FormLayout
       sx={{
+        borderRadius:"24px",
         minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
+        ".MuiDialogTitle-root": { border: "none" },
+        ".MuiDialogActions-root": {
+          justifyContent: "end",
+          border: "none",
+          ".MuiButtonBase-root": {
+            "&:last-child": {
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+            },
+            "&:first-child": {
+              background: "white",
+              color: "#14B9E5",
+              border: "1px solid #14B9E5",
+              borderRadius: "100px",
+            },
+          },
+        },
       }}
       open={open}
       label={salesT(`${salesFormTranslatePrefix}.title`)}
@@ -129,6 +193,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
           name="dealName"
           render={({ field, fieldState: { error } }) => (
             <Input
+              sx={newInput}
               fullWidth
               error={error?.message}
               {...field}
@@ -146,6 +211,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
                   onChangeSearch={(_, newValue) =>
                     onSearchMember(field.name, newValue as string)
                   }
+                  sx={newInput}
                   error={error?.message}
                   fullWidth
                   options={employeeOptions}
@@ -163,6 +229,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
               name="currency"
               render={({ field, fieldState: { error } }) => (
                 <Select
+                  sx={newInput}
                   error={error?.message}
                   options={UNIT_OPTIONS}
                   fullWidth
@@ -173,6 +240,28 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             />
           </Grid>
         </Grid>
+        <Controller
+          control={control}
+          name="client"
+          render={({ field, fieldState: { error } }) => (
+            <Select
+              options={clientCompanies.map((c) => ({
+                label: c.name,
+                value: c.id!,
+              }))}
+              onChangeSearch={(_, newValue) =>
+                onSearchMember(field.name, newValue as string)
+              }
+              sx={{...newInput,".MuiInputBase-input":{m:0}}}
+              error={error?.message}
+              fullWidth
+              onEndReached={onEndReachedEmployeeOptions}
+              pending={employeeIsFetching}
+              {...field}
+              title={salesT(`${salesFormTranslatePrefix}.client`)}
+            />
+          )}
+        />
         <Controller
           control={control}
           name="members"
@@ -187,6 +276,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             );
             return (
               <SelectMultiple
+                sx={newInput}
                 options={filteredOption}
                 onSelect={onSelect}
                 onOpen={() => onSearchMember(field.name, "")}
@@ -244,6 +334,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
             };
             return (
               <SelectMultiple
+                sx={newInput}
                 options={tagsOptions}
                 onSelect={onSelect}
                 error={error?.message}

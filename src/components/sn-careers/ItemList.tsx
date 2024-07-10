@@ -37,7 +37,7 @@ const ItemList = () => {
   const { isMdSmaller } = useBreakpoint();
   // const { loading, categories } = useSelector((state: RootState) => state.categoryBlogs);
   const { initQuery, isReady, query } = useQueryParams();
-  const { onGetCareer, onUpdateCareer, items, totalItems, total_page, page, size, isIdle,onUpdateCareerStatus : onApproveOrRejectAction, } = useCareer();
+  const { onGetCareer, onUpdateCareer, items, totalItems, total_page, page, size, isIdle,onUpdateCareerStatusNew : onApproveOrRejectAction, } = useCareer();
   const pathname = usePathname();
   const { push } = useRouter();
   const [action, setAction] = useState<DataAction | undefined>();
@@ -187,11 +187,12 @@ const ItemList = () => {
     const ids = id ? [id] : selectedList.map((item) => item.slug);
     const listItem = selectedList;
     try {
-     const listUpdate =  await onApproveOrRejectAction(listItem as CareerData[],status as unknown as boolean);
+     const listUpdate =  await onApproveOrRejectAction(listItem as CareerData[],status as unknown as string);
         setAction(undefined);
         setSelectedList([]);
         setId(undefined);
-        setStatus(undefined);
+        setStatus(undefined);    
+        onGetCareer({ ...initQuery })    
         return listUpdate;
     } catch (error) {
       throw error;

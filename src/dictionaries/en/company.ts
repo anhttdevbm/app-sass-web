@@ -13,6 +13,14 @@ export const CompanyLang: CompanyDictionary = {
     waiting: "Waiting",
     key: "employee",
     isNeedSelect: "No employee selected",
+    employee: "Employee",
+    client: "Client",
+    contractor: "Contractor",
+    form: {
+      addNewEmployee: "Add New Employee",
+      chooseCompanyType: "Choose Company Type",
+      isInvite: "Send invitation to email",
+    },
     confirmPayment: {
       title: "Confirm payment",
       content:
@@ -24,7 +32,7 @@ export const CompanyLang: CompanyDictionary = {
         "Are you sure to remove {count, plural, =1 {this employee} other {these employees}}?",
     },
     notification: {
-      success: "{label} employee successfully!",
+      success: "{label} {typeEmployee} successfully!",
     },
   },
   costHistory: {
@@ -70,6 +78,44 @@ export const CompanyLang: CompanyDictionary = {
     },
     notification: {
       success: "{label} project type successfully!",
+    },
+  },
+  clientCompany: {
+    head: {
+      title: "Client Company | Taskcover",
+    },
+    title: "Client Company",
+    create: "Create",
+    createBy: "Create by",
+    createDate: "Create date",
+    duplicate: "Duplicate",
+    form: {
+      title: {
+        name: "Create a new client company",
+      },
+      addContact: "Add contact",
+      closedContact: "Closed contact",
+    },
+    companyName: "Company Name",
+    taxCode: "Tax code",
+    address: "Address",
+    zipCode: "Zipcode",
+    duplicateForm: {
+      title: "Duplicate",
+      newName: "New name",
+    },
+    confirmRemove: {
+      title: "Confirm to Delete",
+      content: "Are you sure to delete this client company?",
+    },
+    notification: {
+      success: "{label} client company successfully!",
+    },
+    generalInformation: "General Information",
+    contact: "Contact",
+    formUpdate: {
+      title: "General information",
+      submit: "Save change",
     },
   },
   information: {

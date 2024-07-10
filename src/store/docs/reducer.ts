@@ -2,7 +2,7 @@
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DataStatus, DocAccessibility } from "constant/enums";
-import { getDocs } from "./actions";
+import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
 import { ItemDocsProps } from "components/sn-docs/detail/LeftSlide/ItemDocs";
 /* eslint-disable no-var */
@@ -96,6 +96,11 @@ export interface IDocs {
   docInfo: any;
   contentRow: string;
   typeViewDoc: TypeViewListDoc;
+  getDocCustomStatus: DataStatus;
+  docCustom: {
+    id: string,
+    content: string
+  }
 }
 
 const initialState: IDocs = {
@@ -159,7 +164,12 @@ const initialState: IDocs = {
   description: "",
   pageInfo: storedPageInfo ? JSON.parse(storedPageInfo) : null,
   workspaceInfo: storedWorkspaceInfo ? JSON.parse(storedWorkspaceInfo) : null,
-  typeViewDoc: "basicViewListDoc"
+  typeViewDoc: "basicViewListDoc",
+  getDocCustomStatus: DataStatus.IDLE,
+  docCustom: {
+    id: "",
+    content: ""
+  }
 };
 
 const docSlice = createSlice({
@@ -218,7 +228,6 @@ const docSlice = createSlice({
       state.contentRow = action.payload;
     },
     getDocDetails: (state, action: PayloadAction<any>) => {
-      console.log("action.payload", action.payload);
       state.content = action.payload?.content || "";
       state.docInfo = action.payload || {};
       state.title = action.payload?.name || state.title;
@@ -280,6 +289,23 @@ const docSlice = createSlice({
 
       state[`${prefixKey}Status`] = DataStatus.FAILED;
       state[`${prefixKey}Error`] = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+    });
+
+    // Get doc
+    builder.addCase(getDocCustom.pending, (state) => {
+      state.getDocCustomStatus = DataStatus.LOADING;
+    });
+    builder.addCase(getDocCustom.fulfilled, (state, action) => {
+      state.getDocCustomStatus = DataStatus.SUCCEEDED;
+      state.docDetails = action.payload;
+    });
+    builder.addCase(getDocCustom.rejected, (state) => {
+      state.getDocCustomStatus = DataStatus.FAILED;
+    });
+
+    // Update doc
+    builder.addCase(updateDocCustom.fulfilled, (state, action: PayloadAction<IDocs>) => {
+      state.content = action.payload.content;
     });
   },
 });

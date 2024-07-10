@@ -12,7 +12,7 @@ import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import { DataAction } from "constant/enums";
 import Form from "./Form";
 import { clientStorage } from "utils/storage";
-import { CareerData } from "store/career/action";
+import { CareerData, UpdateStatusCareer } from "store/career/action";
 import { useCareer } from "store/career/selectors";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MenuItem from "@mui/material/MenuItem";
@@ -75,7 +75,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
     <>
       <BodyCell
         align="left"
-        href={getPath(CAREER_DETAIL_PATH, undefined, { id: String(props.item.slug)})}
+        href={getPath(CAREER_DETAIL_PATH, undefined, { slug: String(props.item.slug)})}
         linkProps={{
           sx: { color: "text.primary" },
           tooltip: commonT("clickGoDetail", {
@@ -92,10 +92,10 @@ const DesktopCells = (props: DesktopCellsProps) => {
         {chuyen_dinh_dang_ngay(props.item.end_time)}
       </BodyCell>
       <BodyCell align="left">{props.item.numberOfHires}</BodyCell>
-      <BodyCell align="left">{props.item.description}</BodyCell>
+      <BodyCell align="left" noWrap>{props.item.description}</BodyCell>
       {/* <BodyCell align="left">{item.responsed_content}</BodyCell> */}
       <BodyCell align="left">
-        {props.item.is_opening === true ? (
+        {props.item?.status === UpdateStatusCareer.REOPEN ? (
           <Chip
             size="small"
             label={careerT("careerTable.statusList.is_opening")}

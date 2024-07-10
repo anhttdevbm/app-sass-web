@@ -1,26 +1,40 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import "@sweetalert2/theme-material-ui/material-ui.css";
 import { Box, CircularProgress, Stack } from "@mui/material";
+import "@sweetalert2/theme-material-ui/material-ui.css";
 import Avatar from "components/Avatar";
+import ConfirmDialog from "components/ConfirmDialog";
 import Link from "components/Link";
-import { Button, DatePicker, IconButton, Text } from "components/shared";
+import TextStatus from "components/TextStatus";
+import { Button, IconButton, Text } from "components/shared";
+import { Client } from "components/sn-budgeting/TabDetail/Client";
 import { Expenses } from "components/sn-budgeting/TabDetail/Expenses";
 import { Feed } from "components/sn-budgeting/TabDetail/Feed";
 import { Invoice } from "components/sn-budgeting/TabDetail/Invoice";
 import { ModalAddTime } from "components/sn-budgeting/TabDetail/Modals/ModalAddTime";
 import { ModalExpense } from "components/sn-budgeting/TabDetail/Modals/ModalExpense";
 import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
-import TextStatus from "components/TextStatus";
+import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { NS_BUDGETING, NS_COMMON, NS_PROJECT } from "constant/index";
 import { BILLING_CREATE_PATH, BUDGETING_PATH } from "constant/paths";
 import dayjs from "dayjs";
+import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
+import AddCircleIcon from "icons/AddCircleIcon";
 import EditIcon from "icons/EditIcon";
-import OpenSidebarIcon from "icons/OpenSidebarIcon";
+import _ from "lodash";
+import { DateRange } from "mui-daterange-picker";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next-intl/client";
+import Image from "next/image";
 import { useParams } from "next/navigation";
+import BackIcon from "public/images/ic-back.svg";
+import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
+import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
+import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
+import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
 import {
   createRef,
   useEffect,
@@ -29,32 +43,22 @@ import {
   useRef,
   useState,
 } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { TBudgetExpense } from "store/expense/actions";
+import { ProjectStatus } from "store/project/actions";
 import { TBudget } from "store/project/budget/action";
-import CloseIcon from "../../icons/CloseIcon";
+import { useProjects } from "store/project/selectors";
+import Swal from "sweetalert2";
+import { formatNumber, getMessageErrorByAPI } from "utils/index";
 import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Recurring } from "./TabDetail/Recurring";
 import { Service } from "./TabDetail/Service";
-import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
-import useTheme from "hooks/useTheme";
-import _ from "lodash";
-import { useBudgetGetTimeRangeQuery } from "queries/budgeting/time-range";
-import { useRouter } from "next-intl/client";
-import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
-import { ProjectStatus } from "store/project/actions";
-import { useProjects } from "store/project/selectors";
-import { useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI } from "utils/index";
-import { TBudgetExpense } from "store/expense/actions";
-import Swal from "sweetalert2";
-import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
-import { DateRange } from "mui-daterange-picker";
-import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
-import ConfirmDialog from "components/ConfirmDialog";
 
 enum TABS {
   FEED = "Feed",
+  CLIENT = "Client",
   SERVICES = "Services",
   TIME = "Time",
   EXPENSES = "Expenses",
@@ -98,7 +102,7 @@ export const BudgetDetail = () => {
   const { isDarkMode } = useTheme();
   const { push } = useRouter();
   const { onUpdateProject } = useProjects();
-  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE)
+  const tempStatus = useRef<ProjectStatus>(ProjectStatus.ACTIVE);
 
   const [isOpenModalTime, openModalTime, hideModalTime] = useToggle();
   const [isOpenModalExpense, openModalExpense, hideModalExpense] = useToggle();
@@ -128,13 +132,14 @@ export const BudgetDetail = () => {
   const commonT = useTranslations(NS_COMMON);
 
   const TAB_NAME = {
-    [TABS.FEED]: budgetT('tab.feed'),
-    [TABS.TIME]: budgetT('tab.time'),
-    [TABS.EXPENSES]: budgetT('tab.expenses'),
-    [TABS.INVOICES]: budgetT('tab.invoices'),
-    [TABS.SERVICES]: budgetT('tab.services'),
-    [TABS.RECURRING]: budgetT('tab.recurring'),
-  }
+    [TABS.FEED]: budgetT("tab.feed"),
+    [TABS.CLIENT]: budgetT("tab.client"),
+    [TABS.TIME]: budgetT("tab.time"),
+    [TABS.EXPENSES]: budgetT("tab.expenses"),
+    [TABS.INVOICES]: budgetT("tab.invoices"),
+    [TABS.SERVICES]: budgetT("tab.services"),
+    [TABS.RECURRING]: budgetT("tab.recurring"),
+  };
 
   useEffect(() => {
     if (!_.isEmpty(serviceQuery)) {
@@ -155,9 +160,9 @@ export const BudgetDetail = () => {
   }, [JSON.stringify(budgetDetailQuery)]);
 
   const scrollToTop = () => {
-    const wrapper = document.querySelector('#budget-detail-container')
+    const wrapper = document.querySelector("#budget-detail-container");
     if (wrapper) {
-      wrapper.scrollTop = 0
+      wrapper.scrollTop = 0;
     }
   };
 
@@ -166,9 +171,9 @@ export const BudgetDetail = () => {
 
     if (isEditService) {
       Swal.fire({
-        title: budgetT('tabService.alert'),
-        text: '',
-        icon: 'info'
+        title: budgetT("tabService.alert"),
+        text: "",
+        icon: "info",
       });
 
       return;
@@ -189,12 +194,23 @@ export const BudgetDetail = () => {
           <Button
             onClick={openModalTime}
             id="budget_add_new_time"
-            startIcon={<PlusIcon />}
+            startIcon={<AddCircleIcon />}
             variant="primary"
             size="small"
-            sx={{ height: "40px", mx: "2px" }}
-          >
-            {budgetT("toolbar.addTime")}
+            sx={{
+              height: "40px", mx: "2px",
+              fontWeight: "bold",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                color: "white",
+              },
+
+            }}
+            >
+              {budgetT("toolbar.addTime")}
           </Button>
         );
       case TABS.EXPENSES:
@@ -202,10 +218,21 @@ export const BudgetDetail = () => {
           <Button
             onClick={openModalExpense}
             id="budget_add_new_expense"
-            startIcon={<PlusIcon />}
+            startIcon={<AddCircleIcon />}
             variant="primary"
             size="small"
-            sx={{ height: "40px", mx: "2px" }}
+            sx={{
+              height: "40px", mx: "2px",
+              fontWeight: "bold",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                color: "white",
+              },
+
+            }}
           >
             {budgetT("toolbar.addExpense")}
           </Button>
@@ -233,7 +260,18 @@ export const BudgetDetail = () => {
             startIcon={<EditIcon />}
             variant="primary"
             size="small"
-            sx={{ height: "40px", mx: "2px" }}
+            sx={{
+              height: "40px", mx: "2px",
+
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              color: "white",
+              borderRadius: "100px",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                color: "white",
+              },
+
+            }}
           >
             {budgetT("toolbar.serviceEdit")}
           </Button>
@@ -296,8 +334,8 @@ export const BudgetDetail = () => {
 
   const handleUpdateDate = async (date: DateRange) => {
     try {
-      console.log(budget.id);
-      
+      // console.log(budget.id);
+
       budgetUpdate.mutateAsync(
         {
           id: budget.id,
@@ -306,7 +344,7 @@ export const BudgetDetail = () => {
         },
         {
           onSuccess: () => {
-            onAddSnackbar(budgetT('notification.date'), "success");
+            onAddSnackbar(budgetT("notification.date"), "success");
             budgetDetailQuery.refetch();
           },
         },
@@ -319,7 +357,11 @@ export const BudgetDetail = () => {
   const handleOpenChangeStatusDialog = (status: ProjectStatus) => {
     tempStatus.current = status;
     showModalStatus();
-  }
+  };
+
+  const updateBuggeting = (data: TBudget) => {
+    setBudget(data);
+  };
 
   if (!budget) return <></>;
 
@@ -330,119 +372,173 @@ export const BudgetDetail = () => {
           position: "sticky !important",
           top: 0,
           background: isDarkMode ? "#313130" : "white",
-          py: 2,
+          pb: 2,
           zIndex: 11,
+          borderRadius: 1,
         }}
       >
         <Stack
+          sx={{ background: "#F3F3F3" }}
           direction="row"
-          p="15px"
+          p="10px"
           justifyContent="space-between"
           borderBottom="1px solid #ECECF3"
+          gap={2}
         >
-          <Stack direction="row" alignItems="center">
-            <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
-            <Stack pl="7px">
-              <Text fontSize="20px" fontWeight="bold" lineHeight={1.2}>
-                {budget.project?.name}
-              </Text>
-              <Text lineHeight={1.2}>{budget.name}</Text>
-            </Stack>
-          </Stack>
-          <Stack direction="row" alignItems="center">
-            <CustomDateRangePicker
-              value={{
-                startDate: budget.start_date ? dayjs(budget.start_date).toDate() : undefined,
-                endDate: budget.end_date ? dayjs(budget.end_date).toDate() : undefined,
-              }}
-              onChange={handleUpdateDate}
-              iconPosition="left"
-              isDropdown
-              errorMessage=''
-            />
-            <IconButton
-              sx={{ color: "grey.300" }}
-              onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}
-            >
-              <OpenSidebarIcon />
-            </IconButton>
+          <Stack gap={1} direction="row" alignItems="center">
             <Link href={BUDGETING_PATH}>
               <IconButton>
-                <CloseIcon fontSize="medium" sx={{ color: "grey.300" }} />
+                <Image src={BackIcon} alt="App logo" width={20} />
               </IconButton>
             </Link>
+            <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
+            <Stack width={"150px"}>
+              <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
+                {budget.project?.name}
+              </Text>
+              <Text fontSize="16px" lineHeight={1.2}>{budget.name}</Text>
+            </Stack>
+            <Stack direction="row" gap={1} alignItems="center" >
+              <TextStatus
+                text="status.open"
+                color={
+                  _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
+                    ? "success"
+                    : "common"
+                }
+                namespace={NS_BUDGETING}
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  handleOpenChangeStatusDialog(ProjectStatus.ACTIVE);
+                }}
+              />
+              <Box
+                sx={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "2px",
+                  backgroundColor: "#BABCC6",
+                }}
+              />
+              <TextStatus
+                text="status.close"
+                color={
+                  _.get(budget, "project.status", "") === ProjectStatus.CLOSE
+                    ? "error"
+                    : "common"
+                }
+                namespace={NS_BUDGETING}
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  handleOpenChangeStatusDialog(ProjectStatus.CLOSE);
+                }}
+              />
+            </Stack>
+            <Stack direction="row" alignItems="center">
+              <CustomDateRangePicker
+                value={{
+                  startDate: budget.start_date
+                    ? dayjs(budget.start_date).toDate()
+                    : undefined,
+                  endDate: budget.end_date
+                    ? dayjs(budget.end_date).toDate()
+                    : undefined,
+                }}
+                sx={{ background: "white", borderRadius: "100px","label.MuiBox-root":{p:"2px 15px"} }}
+                onChange={handleUpdateDate}
+                iconPosition="left"
+                isDropdown
+                errorMessage=""
+              />
+              {/*<IconButton*/}
+              {/*  sx={{ color: "grey.300" }}*/}
+              {/*  onClick={isOpenRightSidebar ? hideRightSidebar : showRightSidebar}*/}
+              {/*>*/}
+              {/*  <OpenSidebarIcon />*/}
+              {/*</IconButton>*/}
+
+            </Stack>
+          </Stack>
+          <Stack gap={2} direction="row" alignItems="center">
+            <Stack direction="column" alignItems="center">
+              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+                {projectT("budget.table.revenue")}
+              </Text>
+              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+                {formatNumber(109000567, {
+                  prefix: CURRENCY_SYMBOL["USD"],
+                  numberOfFixed: 0,
+                })}
+              </Text>
+            </Stack>
+            <Stack direction="column" alignItems="center">
+              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+                {projectT("budget.table.margin")}
+              </Text>
+              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+                {formatNumber(123, {
+                  prefix: CURRENCY_SYMBOL["USD"],
+                  numberOfFixed: 0,
+                })}
+              </Text>
+            </Stack>
+            <Stack direction="column" alignItems="center">
+              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+                {projectT("budget.table.invoiced") + " %"}
+              </Text>
+              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+                {formatNumber(123, {}) + " %"}
+              </Text>
+            </Stack>
+
           </Stack>
         </Stack>
         <Stack
           direction="row"
           justifyContent="space-between"
           borderBottom="1px solid #ECECF3"
+          sx={{ overflowX: "auto" }}
+          p={"10px"}
         >
-          <Stack direction="row" gap={2} alignItems="center" p="15px" pr={0}>
-            <TextStatus
-              text="status.open"
-              color={
-                _.get(budget, "project.status", "") === ProjectStatus.ACTIVE
-                  ? "success"
-                  : "common"
-              }
-              namespace={NS_BUDGETING}
-              sx={{ cursor: "pointer" }}
-              onClick={() => {
-                handleOpenChangeStatusDialog(ProjectStatus.ACTIVE);
-              }}
-            />
-            <Box
-              sx={{
-                display: "inline-block",
-                width: "20px",
-                height: "2px",
-                backgroundColor: "#BABCC6",
-              }}
-            />
-            <TextStatus
-              text="status.close"
-              color={
-                _.get(budget, "project.status", "") === ProjectStatus.CLOSE
-                  ? "error"
-                  : "common"
-              }
-              namespace={NS_BUDGETING}
-              sx={{ cursor: "pointer" }}
-              onClick={() => {
-                handleOpenChangeStatusDialog(ProjectStatus.CLOSE);
-              }}
-            />
-          </Stack>
-          <Stack direction="row" alignItems="center">
-            {Object.keys(TABS).map((tab, index) => {
-              const currentTab = TABS[tab];
-              return (
-                <Box
-                  key={`budget-detail-tab-${index}`}
-                  p={1}
-                  mx="2px"
-                  borderBottom="2px solid transparent"
-                  sx={{
-                    cursor: "pointer",
-                    transaction: "all .2s",
-                    ...(activeTab === currentTab && {
-                      color: "primary.main",
-                      borderColor: "primary.main",
-                    }),
-                  }}
-                  onClick={() => changeActiveTab(currentTab)}
-                >
-                  {TAB_NAME[currentTab]}
-                </Box>
-              );
-            })}
+
+
+            <Stack
+              sx={{height:"40px", border: "1px solid #EFEFEF", borderRadius: "100px", mr: { xs: "10px", md: "20px", xl: "38px" } }}
+              direction="row"
+              justifyContent="start"
+              alignItems="center">
+              {Object.keys(TABS).map((tab, index) => {
+                const currentTab = TABS[tab];
+                return (
+                  <Box
+                    key={`budget-detail-tab-${index}`}
+                    p={1}
+                    // mx="2px"
+                    borderBottom="2px solid transparent"
+                    sx={{
+                      px: { xs: "20px",md:"30px"},
+                      borderRadius: "100px",
+                      cursor: "pointer",
+                      transaction: "all .2s",
+                      ...(activeTab === currentTab && {
+                        color: "primary.main",
+                        background: "#D9F0FD",
+                      }),
+                    }}
+                    onClick={() => changeActiveTab(currentTab)}
+                  >
+                    {TAB_NAME[currentTab]}
+                  </Box>
+                );
+              })}
+
+            </Stack>
             {ButtonAction}
           </Stack>
-        </Stack>
+
       </Stack>
 
-      <Stack direction="row" mt={2}>
+      <Stack p={"10px"} direction="row" mt={1}>
         <Box
           position="relative"
           sx={{
@@ -463,6 +559,13 @@ export const BudgetDetail = () => {
           </Stack>
           <Box sx={{ opacity: isShowLoadingTab ? 0 : 1 }}>
             {activeTab === TABS.FEED && <Feed budget={budget} />}
+            {activeTab === TABS.CLIENT && (
+              <Client
+                bugetId={budget.id}
+                clientId={budget?.client}
+                update={updateBuggeting}
+              />
+            )}
             {activeTab === TABS.TIME && (
               <Time
                 timeList={_.get(timeQuery, "data.data.docs", [])}

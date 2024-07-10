@@ -1,54 +1,64 @@
-import { memo, useMemo, useState, MouseEvent } from "react";
 import { Stack } from "@mui/material";
 import Link from "components/Link";
 import { Text } from "components/shared";
-import { usePathname } from "next-intl/client";
-import MenuDashboardIcon from "icons/MenuDashboardIcon";
+import { Permission } from "constant/enums";
+import { NS_LAYOUT } from "constant/index";
 import {
+  AI_AGENT_PATH,
+  AI_CHAT_PATH,
+  BILLING_PATH,
+  BLOGS_PATH,
+  BLOG_CATEGORY_PATH,
+  BUDGETING_PATH,
+  CAREER_PATH,
+  CHATTING_ROOM_PATH,
+  CLIENT_COMPANIES_PATH,
   COMPANIES_PATH,
   COST_HISTORY_PATH,
+  DOCS_PATH,
   EMPLOYEES_PATH,
+  FEEDBACK_PATH,
+  HOLIDAY_CALENDAR_PATH,
   HOME_PATH,
+  LANDING_ABOUT_US_PATH,
+  LANDING_AI_PATH,
+  LANDING_HELP_CENTER_PATH,
+  LANDING_HOME_PATH,
+  LANDING_PRICING_PATH,
+  LANDING_TRUST_CENTER_PATH,
   MY_COMPANY_PATH,
   POSITIONS_PATH,
   PROJECTS_PATH,
   PROJECT_TYPES_PATH,
-  STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH,
   RESOURCE_PLANING_PATH,
-  CHATTING_ROOM_PATH,
   SALES_LIST_PATH,
-  DOCS_PATH,
-  FEEDBACK_PATH,
-  BLOG_CATEGORY_PATH,
-  BLOGS_PATH,
-  CAREER_PATH,
-  BUDGETING_PATH,
-  BILLING_PATH,
+  STATEMENT_HISTORY_PATH,
+  TIME_TRACKING_PATH
 } from "constant/paths";
-import MenuProjectIcon from "icons/MenuProjectIcon";
-import MenuCompanyIcon from "icons/MenuCompanyIcon";
-import Collapse from "./Collapse";
-import { useAuth, useSidebar } from "store/app/selectors";
 import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import BillingIcon from "icons/BillingIcon";
+import BudgetIcon from "icons/BudgetIcon";
+import CardReceive from "icons/CardReceive";
+import CareerIcon from "icons/CareerIcon";
+import FeedbackIcon from "icons/FeedbackIcon";
+import HomeOutlinedIcon from "icons/HomeOutlinedIcon";
+import MenuBlogIcon from "icons/MenuBlogIcon";
+import MenuChatIcon from "icons/MenuChatIcon";
+import MenuCompanyIcon from "icons/MenuCompanyIcon";
+import MenuDashboardIcon from "icons/MenuDashboardIcon";
+import MenuDocsIcon from "icons/MenuDocsIcon";
+import MenuProjectIcon from "icons/MenuProjectIcon";
+import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
+import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
+import TaskcoverAIIcon from "icons/TaskcoverIcon";
+import { useTranslations } from "next-intl";
+import { usePathname } from "next-intl/client";
+import { MouseEvent, memo, useMemo, useState } from "react";
+import { useAuth, useSidebar } from "store/app/selectors";
+import Collapse from "./Collapse";
 import SubMenu from "./SubMenu";
 import { MenuItemProps } from "./helpers";
-import { useTranslations } from "next-intl";
-import { NS_LAYOUT } from "constant/index";
-import { Permission } from "constant/enums";
-import useTheme from "hooks/useTheme";
-import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
-import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
-import MenuChatIcon from "icons/MenuChatIcon";
-import CardReceive from "icons/CardReceive";
-import MenuDocsIcon from "icons/MenuDocsIcon";
-import FeedbackIcon from "icons/FeedbackIcon";
-import MenuBlogIcon from "icons/MenuBlogIcon";
-import CareerIcon from "icons/CareerIcon";
-import DocsItem from "icons/DocsItem";
-import BillingIcon from "icons/BillingIcon";
-import WalletMoneyIcon from "icons/WalletMoneyIcon";
-import BudgetIcon from "icons/BudgetIcon";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -235,8 +245,18 @@ const DATA: MenuItemProps[] = [
         roles: [Permission.AM],
       },
       {
+        label: "menu.clientCompanies",
+        href: CLIENT_COMPANIES_PATH,
+        roles: [Permission.AM],
+      },
+      {
         label: "menu.companyInformation",
         href: MY_COMPANY_PATH,
+        roles: [Permission.AM],
+      },
+      {
+        label: "menu.holidayCalendar",
+        href: HOLIDAY_CALENDAR_PATH,
         roles: [Permission.AM],
       },
     ],
@@ -292,6 +312,23 @@ const DATA: MenuItemProps[] = [
     roles: [Permission.AM, Permission.ST],
   },
   {
+    label: "menu.taskcoverAI",
+    icon: <TaskcoverAIIcon />,
+    roles: [Permission.AM, Permission.ST],
+    subs: [
+      {
+        label: "menu.aiChat",
+        roles: [Permission.AM, Permission.ST],
+        href: AI_CHAT_PATH,
+      },
+      {
+        label: "menu.aiAgent",
+        roles: [Permission.AM, Permission.ST],
+        href: AI_AGENT_PATH,
+      },
+    ],
+  },
+  {
     label: "menu.sales",
     href: SALES_LIST_PATH,
     icon: <CardReceive />,
@@ -332,6 +369,44 @@ const DATA: MenuItemProps[] = [
     label: "menu.career",
     icon: <CareerIcon />,
     href: CAREER_PATH,
+    roles: [Permission.SA],
+  },
+  // Contents
+  {
+    label: "menu.contents",
+    icon: <HomeOutlinedIcon />,
+    subs: [
+      {
+        label: "menu.landingHome",
+        roles: [Permission.SA],
+        href: LANDING_HOME_PATH,
+      },
+      {
+        label: "menu.landingAboutUs",
+        roles: [Permission.SA],
+        href: LANDING_ABOUT_US_PATH,
+      },
+      {
+        label: "menu.landingHelpCenter",
+        roles: [Permission.SA],
+        href: LANDING_HELP_CENTER_PATH,
+      },
+      {
+        label: "menu.landingTrustCenter",
+        roles: [Permission.SA],
+        href: LANDING_TRUST_CENTER_PATH,
+      },
+      {
+        label: "menu.landingAI",
+        roles: [Permission.SA],
+        href: LANDING_AI_PATH,
+      },
+      {
+        label: "menu.landingPricing",
+        roles: [Permission.SA],
+        href: LANDING_PRICING_PATH,
+      },
+    ],
     roles: [Permission.SA],
   },
 ];

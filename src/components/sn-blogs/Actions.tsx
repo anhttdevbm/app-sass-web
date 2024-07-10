@@ -1,19 +1,19 @@
 "use client";
-import { Stack } from "@mui/material"
+import { Stack } from "@mui/material";
 import { Dropdown, Search } from "components/Filters";
-import { Button, Text } from "components/shared"
+import { Button, Text } from "components/shared";
+import { DataAction } from "constant/enums";
+import { NS_BLOG } from "constant/index";
 import useToggle from "hooks/useToggle";
 import PlusIcon from "icons/PlusIcon";
-import { memo, useEffect, useMemo, useState } from "react";
-import { BlogData, BlogFormData, BlogStatus } from "store/blog/actions";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import Form from "./components/Form";
-import { DataAction } from "constant/enums";
-import { useBlogs } from "store/blog/selectors";
 import { useTranslations } from "next-intl";
-import { NS_BLOG } from "constant/index";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { usePathname, useRouter } from "next/navigation";
+import { memo, useEffect, useMemo, useState } from "react";
+import { BlogFormData, BlogStatus } from "store/blog/actions";
+import { useBlogs } from "store/blog/selectors";
 import { getPath } from "utils/index";
+import Form from "./components/Form";
 
 const Actions = () => {
     const blogT = useTranslations(NS_BLOG);
@@ -163,4 +163,6 @@ const INITIAL_VALUES = {
     tag: [],
     slug: "",
     short_description:"",
+    meta_title: "",
+    meta_description: "",
 };

@@ -1,6 +1,11 @@
 import Box from "@mui/material/Box";
 import Typography, { TypographyProps } from "@mui/material/Typography";
-import { MediaPreviewItem, MessageInfo, UnreadUserInfo } from "store/chat/type";
+import {
+  MediaPreviewItem,
+  MESSAGE_TYPE,
+  MessageInfoV2,
+  UnreadUserInfo,
+} from "store/chat/type";
 import { formatDate } from "utils/index";
 import Linkify from "linkify-react";
 import linkifyHtml from "linkify-html";
@@ -14,11 +19,13 @@ import { useChat } from "store/chat/selectors";
 export const TimeMessage = ({
   time,
   isRead,
+  isShowTime = true,
   isCurrentUser,
   timeMessageProps,
 }: {
   time: string | Date;
   isRead: boolean;
+  isShowTime?: boolean;
   isCurrentUser: boolean;
   timeMessageProps?: TypographyProps;
 }) => {
@@ -49,7 +56,7 @@ export const TimeMessage = ({
       sx={sx}
       {...props}
     >
-      {getTimeStamp}
+      {isShowTime ? getTimeStamp : ""}
       {isCurrentUser &&
         (isRead ? (
           <ReadedIcon sx={{ fontSize: "14px" }} />
@@ -60,46 +67,29 @@ export const TimeMessage = ({
   );
 };
 interface MessageContentProps {
-  message: MessageInfo;
+  message: MessageInfoV2;
   mediaListPreview: MediaPreviewItem[];
   isCurrentUser: boolean;
-  isGroup: boolean;
-  unReadMessage: UnreadUserInfo[];
 }
 const MessageContent = ({
   message,
   mediaListPreview,
   isCurrentUser,
-  isGroup,
-  unReadMessage,
 }: MessageContentProps) => {
   const textRef = useRef<HTMLDivElement>(null);
   const { listSearchMessage, selectSearchIndex } = useChat();
-
-  const isUnReadCheck = unReadMessage.some((item) => item.unreadCount === 0);
   const { isDarkMode } = useTheme();
-  const isReadMessage = useMemo(() => {
-    const timeMessage = new Date(message.ts);
-    if (isGroup) {
-      return isUnReadCheck;
-    } else {
-      const timeRead = new Date(unReadMessage?.[0]?.unreadsFrom || "");
-      return unReadMessage?.[0]?.unreadsFrom
-        ? timeMessage.getTime() < timeRead.getTime()
-        : false;
-    }
-  }, [isGroup, isUnReadCheck, message.ts, unReadMessage]);
 
   useEffect(() => {
-    if (message.msg && textRef.current) {
-      textRef.current.innerHTML = linkifyHtml(message.msg, {
+    if (message.content && textRef.current) {
+      textRef.current.innerHTML = linkifyHtml(message.content, {
         target: "_blank",
       });
     }
   }, [message]);
 
   const renderBackgroundColor = useMemo(() => {
-    if (listSearchMessage.map((item) => item.messageId).includes(message._id)) {
+    if (listSearchMessage.map((item) => item?.id).includes(message.id)) {
       return isDarkMode ? "#333333" : "#EBF5FF";
     }
     if (isCurrentUser) {
@@ -107,17 +97,17 @@ const MessageContent = ({
       return "#EBF5FF";
     }
     return isDarkMode ? "#3a3b3c" : "#F7F7FD";
-  }, [isCurrentUser, isDarkMode, listSearchMessage, message._id]);
+  }, [isCurrentUser, isDarkMode, listSearchMessage, message.id]);
 
   const renderBorderColor = useMemo(() => {
     const findMessage = listSearchMessage[selectSearchIndex];
     if (!findMessage) return "#F7F7FD";
-    if (findMessage?.messageId.includes(message._id)) {
+    if (findMessage?.id?.includes(message.id)) {
       return isDarkMode ? "#F7F7FD" : "#3699FF";
     }
-  }, [isDarkMode, listSearchMessage, message._id, selectSearchIndex]);
+  }, [isDarkMode, listSearchMessage, message.id, selectSearchIndex]);
 
-  if (message.msg) {
+  if ([MESSAGE_TYPE.LINK, MESSAGE_TYPE.TEXT].includes(message?.type)) {
     return (
       <Box
         sx={{
@@ -167,12 +157,15 @@ const MessageContent = ({
         </Typography>
         <TimeMessage
           isCurrentUser={isCurrentUser}
-          isRead={isReadMessage}
-          time={message.ts}
+          isRead={message?.seen_by?.length > 0}
+          time={message.created_at}
         />
       </Box>
     );
-  } else if (message.attachments?.length > 0) {
+  } else if (
+    message?.type === MESSAGE_TYPE.FILE ||
+    message?.type === MESSAGE_TYPE.MEDIA
+  ) {
     return (
       <Box
         sx={{
@@ -187,7 +180,7 @@ const MessageContent = ({
         <AttachmentContent
           message={message}
           isCurrentUser={isCurrentUser}
-          isRead={isReadMessage}
+          isRead={message?.seen_by?.length > 0}
           mediaListPreview={mediaListPreview}
           attachmentProps={{
             sx: {

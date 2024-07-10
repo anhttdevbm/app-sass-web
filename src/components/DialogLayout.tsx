@@ -33,6 +33,7 @@ export type DialogLayoutProps = Omit<DialogProps, "onSubmit"> & {
   hasDialogClose?: boolean;
   zIndex?: number;
   submitWhenEnter?: boolean;
+  sizeCloseIcon?: "extraSmall" | "small" | "medium" | "large" | "normal";
 };
 
 const DialogLayout = forwardRef(
@@ -51,6 +52,7 @@ const DialogLayout = forwardRef(
       onSubmit,
       zIndex = 50,
       submitWhenEnter,
+      sizeCloseIcon = "normal",
       ...rest
     } = props;
     const t = useTranslations(NS_COMMON);
@@ -110,7 +112,7 @@ const DialogLayout = forwardRef(
           )}
           {hasCloseButton && (
             <IconButton
-              size="normal"
+              size={sizeCloseIcon}
               noPadding
               onClick={onCloseProps}
               sx={{

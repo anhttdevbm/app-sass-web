@@ -1,5 +1,5 @@
-import { memo, useEffect, useState } from "react";
-import { Stack, useMediaQuery, useTheme } from "@mui/material";
+import React, { memo, useEffect, useState } from "react";
+import { IconButton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { Dropdown, Search as SearchInput } from "components/Filters";
 import { Button } from "components/shared";
 import { useTranslations } from "next-intl";
@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "next-intl/client";
 import { useParams, useSearchParams } from "next/navigation";
 import Filter from "components/sn-project-detail/Budget/Actions/Filter";
 import { TBudgetListQueries } from "store/project/budget/action";
+import SearchIcon from "icons/SearchIcon";
 
 const Search = ({ projectId }: { projectId?: string }) => {
   const [queries, setQueries] = useState<any>({});
@@ -178,10 +179,17 @@ export const SearchWithOnlyInput = () => {
         onChangeQueries(name, value ?? "");
         onSearch();
       }}
+      startNode={""}
+      endNode={<IconButton aria-label="search"><SearchIcon onClick={onSearch} style={{ color: "#0575E6",height:"18px",width:"18px" }} /></IconButton>}
       value={queries.search_key ?? ""}
       sx={{
-        width: { xs: is1440Larger ? 250 : 180 },
+        // width: { xs: is1440Larger ? 250 : 180 },
         minWidth: { xs: is1440Larger ? 250 : 180 },
+        height: 40,
+        width: {
+          lg: 332,
+        },
+        ".MuiInputBase-root": { height: 40, borderRadius: "100px" },
       }}
     />
   );

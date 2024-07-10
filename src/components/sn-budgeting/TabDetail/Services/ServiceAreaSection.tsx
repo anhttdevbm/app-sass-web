@@ -25,8 +25,8 @@ import {
 import _ from "lodash";
 
 export const ServiceAreaSection = ({
-  sections = [],
-}: {
+                                     sections = [],
+                                   }: {
   sections: TBudgetSection[];
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -38,22 +38,22 @@ export const ServiceAreaSection = ({
     {
       value: budgetT("tabService.section.serviceName"),
       align: "left",
-      width: "25%"
+      width: "25%",
     },
     {
       value: budgetT("tabService.section.estimate"),
       align: "center",
-      width: "25%"
+      width: "25%",
     },
     {
       value: budgetT("tabService.section.price"),
       align: "center",
-      width: "20%"
+      width: "20%",
     },
     {
       value: budgetT("tabService.section.totalBudget"),
       align: "center",
-      width: '20%'
+      width: "20%",
     },
     { value: "", align: "left", width: "10%" },
   ];
@@ -76,14 +76,20 @@ export const ServiceAreaSection = ({
               {_.get(section, "name", "")}
             </Typography>
             <TableLayout
+              containerHeaderProps={{ borderRadius: "12px" }}
               headerList={headerList}
               noData={false}
-              titleColor="grey.300"
+              titleColor="#0575E6"
               maxHeight={920}
               headerProps={{
                 sx: {
+                  height:"44px",
                   px: 2,
+                  background: "#D9F0FD",
+                  fontWeight:"600",
+                  "h6":{fontSize:"16px"}
                 },
+
               }}
               sx={{
                 minHeight: 100,
@@ -163,7 +169,8 @@ export const ServiceAreaSection = ({
                   </Text>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => { }}
+                  onClick={() => {
+                  }}
                   component={ButtonBase}
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >
@@ -172,7 +179,8 @@ export const ServiceAreaSection = ({
                   </Text>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => { }}
+                  onClick={() => {
+                  }}
                   component={ButtonBase}
                   sx={{ width: "100%", py: 1, px: 2 }}
                 >

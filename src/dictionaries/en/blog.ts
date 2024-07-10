@@ -85,6 +85,10 @@ export const BlogLang: BlogDictionary = {
         notification: {
             success: "{label} blog successfully!"
         },
+        meta: "SEO content",
+        meta_title: "Meta title",
+        meta_description: "Meta description",
+        meta_router: "Meta router",
     },
     status: {
         published: "Published",

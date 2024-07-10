@@ -13,8 +13,8 @@ interface MyDOMRect {
   height: number;
 }
 
-const FixedLayout = (props: StackProps) => {
-  const { children, order, ...rest } = props;
+const FixedLayout = (props: { rounded?: string } & StackProps) => {
+  const { children, order, rounded = "12px", ...rest } = props;
   const { breakpoints } = useTheme();
   const is1440Larger = useMediaQuery(breakpoints.up(1441));
   const [height, setHeight] = useState(0);
@@ -57,6 +57,7 @@ const FixedLayout = (props: StackProps) => {
           overflowY: "hidden",
           overflowX: "hidden",
           paddingBottom: "16px",
+          borderRadius: rounded,
         }}
       >
         <Stack

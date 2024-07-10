@@ -17,15 +17,15 @@ import colorSchemes from "utils/colorSchemes";
 import ChatDetailInfo from "./ChatDetailInfo";
 import CloseIcon from "icons/CloseIcon";
 import useGetScreenMode from "hooks/useGetScreenMode";
-import _ from "lodash";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import { useSnackbar } from "store/app/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
 import { useChat } from "store/chat/selectors";
 import { debounce } from "utils/index";
 import { Text } from "components/shared";
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
-import { RoomType, STEP } from "store/chat/type";
+import { CHAT_EVENT_TYPE, RoomType } from "store/chat/type";
+import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -47,13 +47,15 @@ const RoomHeader = () => {
     onSetIndexSearch,
     selectSearchIndex,
   } = useChat();
+  const { isGroup } = useChatHelpers();
+  const { sendMessage } = useWSChat();
   const [search, setSearchText] = useState({
     text: "",
     isOpen: false,
   });
-
+  const { user } = useAuth();
   const inputRef = useRef<any>(null);
-
+  const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
       ...prev,
@@ -63,13 +65,23 @@ const RoomHeader = () => {
     onSetIndexSearch(0);
   }, []);
 
+  const canAddMember = () => {
+    return (
+      (isGroup(currentConversation?.type) && isOwner) ||
+      currentConversation?.admins?.find((item) => item === user?.id)
+    );
+  };
+
   const handleSearchChatText = useCallback(async () => {
     try {
-      await onSearchChatText({
-        text: search?.text,
-        type: currentConversation?.t as RoomType,
-        roomId: currentConversation?._id,
-      });
+      if (search.isOpen && search.text) {
+        sendMessage({
+          event: CHAT_EVENT_TYPE.MESSAGE_SEARCH,
+          roomId: roomId,
+          content: search?.text,
+          page: 1,
+        });
+      }
     } catch (error) {
       onAddSnackbar(
         typeof error === "string" ? error : t(AN_ERROR_TRY_AGAIN),
@@ -144,7 +156,11 @@ const RoomHeader = () => {
         >
           <Box display="flex" alignItems="center" gap={"10px"} minWidth={200}>
             <Avatar
-              src={currentConversation?.avatar}
+              src={
+                isGroup(currentConversation?.type)
+                  ? currentConversation?.avatar?.link
+                  : currentConversation?.peer_detail?.avatar
+              }
               sx={{ height: "56px", width: "56px", borderRadius: "10px" }}
             />
             <Box display="flex" flexDirection="column" gap="4px">
@@ -154,9 +170,9 @@ const RoomHeader = () => {
                 textOverflow="ellipsis"
                 overflow="hidden"
               >
-                {currentConversation?.t !== "d"
-                  ? currentConversation?.name?.replaceAll("_", " ")
-                  : currentConversation?.name}
+                {isGroup(currentConversation?.type)
+                  ? currentConversation?.name
+                  : currentConversation?.peer_detail?.fullname}
               </Typography>
               <Typography variant="body2" color="var(--Gray3, #999)">
                 {currentConversation?.status}
@@ -263,26 +279,25 @@ const RoomHeader = () => {
           >
             {search?.isOpen ? <CloseIcon /> : <SearchIcon />}
           </IconButton>
+          {canAddMember() && (
+            <IconButton
+              onClick={() => {
+                onSetDrawerType("group");
+                onSetDataTransfer({
+                  ...currentConversation,
+                  isNew: currentConversation?.t === "d",
+                });
+              }}
+            >
+              <ProfileAdd htmlColor={"#1BC5BD"} />
+            </IconButton>
+          )}
           <IconButton
             sx={{
               color: "transparent",
             }}
-            onClick={() => {
-              onSetDrawerType("group");
-              onSetDataTransfer({
-                ...currentConversation,
-                isNew: currentConversation?.t === "d",
-              });
-            }}
           >
-            <ProfileAdd />
-          </IconButton>
-          <IconButton
-            sx={{
-              color: "transparent",
-            }}
-          >
-            <VideoCallIcon />
+            <VideoCallIcon htmlColor={"#1BC5BD"} />
           </IconButton>
           <IconButton
             sx={{

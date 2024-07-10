@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IconButton, InputAdornment, Skeleton, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
-import { ChangeEvent, ElementType, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useChat } from "store/chat/selectors";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import SearchIcon from "icons/SearchIcon";
@@ -14,6 +14,7 @@ import SelectItem from "../components/SelectItem";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { STEP } from "store/chat/type";
 import useGetScreenMode from "hooks/useGetScreenMode";
+import { useChatHelpers } from "store/chat/helpers";
 
 interface AddGroupProps {
   callbackBackIcon?: any;
@@ -51,18 +52,14 @@ const AddGroup: FC<AddGroupProps> = ({
     groupMembers,
     onSetRoomId,
     onSetStep,
-    onCreateDirectMessageGroup,
-    onAddMembers2Group,
     onFetchGroupMembersMember,
     onSetDataTransfer,
     onChangeListConversations,
     convention,
     isChatDesktop,
     onCloseDrawer,
-    onSetConversationInfo,
-    onGetLastMessages,
   } = useChat();
-
+  const { handleCreateGroupWS, handleAddMemberToGroup } = useChatHelpers();
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { onAddSnackbar } = useSnackbar();
@@ -81,7 +78,7 @@ const AddGroup: FC<AddGroupProps> = ({
     if (dataTransfer?.currentSelects?.uids?.length) {
       setEmployeeSelected({
         ...employeeSelected,
-        [dataTransfer?.currentSelects?.username ?? ""]: true,
+        [dataTransfer?.currentSelects?.id ?? ""]: true,
       });
       setEmployeeNameSelected({
         ...employeeNameSelected,
@@ -97,7 +94,7 @@ const AddGroup: FC<AddGroupProps> = ({
   useEffect(() => {
     if (dataTransfer.isNew || isNew || type === "modal") return;
     onFetchGroupMembersMember({
-      roomId: dataTransfer?._id,
+      roomId: dataTransfer?.id,
     });
   }, [dataTransfer, onFetchGroupMembersMember, isNew, type]);
 
@@ -108,7 +105,7 @@ const AddGroup: FC<AddGroupProps> = ({
     }
     onAddSnackbar(commonT("success"), "success");
     onSetRoomId(
-      dataTransfer?.isNew ? result?.payload?.group?._id : dataTransfer?._id,
+      dataTransfer?.isNew ? result?.payload?.group?.id : dataTransfer?.id,
     );
     const dataItem = !dataTransfer?.isNew
       ? dataTransfer
@@ -126,10 +123,7 @@ const AddGroup: FC<AddGroupProps> = ({
           onChangeListConversations([dataItem].concat(convention));
         }
       } else {
-        onGetLastMessages({
-          roomId: dataTransfer?._id,
-          type: dataTransfer?.t,
-        });
+        // TODO:
       }
       onCloseDrawer("account");
       return;
@@ -149,7 +143,7 @@ const AddGroup: FC<AddGroupProps> = ({
   ) => {
     setEmployeeSelected({
       ...employeeSelected,
-      [employee?.username ?? ""]: event.target.checked,
+      [employee?.id ?? ""]: event.target.checked,
     });
     setEmployeeNameSelected({
       ...employeeNameSelected,
@@ -171,43 +165,19 @@ const AddGroup: FC<AddGroupProps> = ({
     }
     if (dataTransfer?.isNew || isNew) {
       if (memberAddGroup.length > 0) {
-        const result = await onCreateDirectMessageGroup({
-          groupName: (() => {
-            return (
-              Object.keys(employeeSelected)
-                .filter((item) => employeeSelected[item] === true)
-                ?.join("-")
-                .slice(0, 10) +
-              `...${Math.floor(Math.random() * (9999 - 1 + 1) + 1)}`
-            );
-          })(),
-          members: [
-            ...Object.keys(employeeSelected).filter(
-              (item) => employeeSelected[item] === true,
-            ),
-            ...(dataTransfer.username ? [dataTransfer?.username] : []),
-          ],
-          type: "d",
-        });
-        onSetRoomId(result.payload.group._id);
-        onSetDataTransfer(result.payload.group);
-        onSetConversationInfo(result.payload.group);
-        handleSuccess(result);
+        const members = Object.keys(employeeSelected).filter(
+          (item) => employeeSelected[item] === true,
+        );
+        handleCreateGroupWS(members);
       }
     } else {
-      const users = Object.keys(employeeIdSelected).filter(
-        (item) => employeeIdSelected[item] === true,
+      const users = Object.keys(employeeSelected).filter(
+        (item) => employeeSelected[item] === true,
       );
-      const tasks = users.map(
-        async (userId_to_add) =>
-          await onAddMembers2Group({
-            roomId: dataTransfer?._id,
-            userId_to_add,
-          }),
-      );
-      const result = await Promise.all(tasks);
-      handleSuccess(result.pop());
+      handleAddMemberToGroup(users);
     }
+
+    onCloseDrawer("account");
   };
 
   return (
@@ -321,7 +291,7 @@ const AddGroup: FC<AddGroupProps> = ({
                       type === "modal" ||
                       (!dataTransfer?.isNew &&
                         !groupMembers
-                          ?.map((m) => m._id)
+                          ?.map((m) => m.id)
                           ?.includes(item.id_rocket)),
                   )
                   ?.filter((m) => m.id_rocket !== user?.id_rocket)
@@ -329,8 +299,7 @@ const AddGroup: FC<AddGroupProps> = ({
                     return (
                       <SelectItem
                         checked={
-                          employeeIdSelected?.hasOwnProperty(item.id_rocket) ||
-                          employeeIdSelected[item.id_rocket as any] === true
+                          employeeIdSelected[item.id_rocket as string] === true
                         }
                         checkbox
                         employee={item}
