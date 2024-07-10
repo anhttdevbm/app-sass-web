@@ -1,11 +1,14 @@
 import { useCallback } from "react";
 import { useAppDispatch } from "store/hooks";
 import {
+  leaveRoom,
+  resetMeet,
   setCallRequest,
   setCallStatus,
+  setMeetInfo,
   setMeetingWsClient,
   setRemoteSignal,
-  setRoomInfo,
+  startConnecting,
 } from "./reducer";
 import {
   cancelMeeting,
@@ -13,13 +16,11 @@ import {
   getParticipants,
   startMeeting,
 } from "./actions";
-import { clientStorage } from "utils/storage";
-import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
 import { CallStatus } from "./types";
+import { store } from "store/configureStore";
 
 export const useMeeting = () => {
   const dispatch = useAppDispatch();
-  const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
   const onSetMeetingWsClient = useCallback(
     async (ws) => {
@@ -28,18 +29,9 @@ export const useMeeting = () => {
     [dispatch],
   );
 
-  const onConnectWebsocket = async (room: string) => {
-    if (room) {
-      const meetingWs = new WebSocket(
-        `${process.env.NEXT_APP_MEETING_WS_URL}/${room}?token=${aT}` || "",
-      );
-      onSetMeetingWsClient(meetingWs);
-    }
-  };
-
-  const onSetRoomInfo = useCallback(
-    async (roomInfo) => {
-      return dispatch(setRoomInfo(roomInfo));
+  const onSetMeetInfo = useCallback(
+    async (meetInfo) => {
+      return dispatch(setMeetInfo(meetInfo));
     },
     [dispatch],
   );
@@ -70,8 +62,9 @@ export const useMeeting = () => {
   );
 
   const onAcceptCall = useCallback(
-    async (room) => {
-      await onConnectWebsocket(room);
+    async (meet) => {
+      dispatch(startConnecting());
+      // await dispatch(getParticipants(meet));
       return updateCallStatus(CallStatus.accepted);
     },
     [dispatch],
@@ -99,16 +92,39 @@ export const useMeeting = () => {
     [dispatch],
   );
 
+  const onLeaveMeeting = useCallback(
+    async (meetInfo) => {
+      const { meetingWsClient: ws } = store.getState().meeting;
+      await dispatch(getParticipants(meetInfo.id))
+        .unwrap()
+        .then((res) => {
+          if (res.participants.length > 1) {
+            ws?.close();
+            onResetMeet();
+          } else {
+            onEndMeeting(meetInfo.room.id);
+          }
+        });
+    },
+    [dispatch],
+  );
+
+  const onResetMeet = useCallback(async () => {
+    dispatch(resetMeet());
+  }, [dispatch]);
+
   return {
     onSetMeetingWsClient,
     onEndMeeting,
     getAllParticipants,
-    onSetRoomInfo,
+    onSetMeetInfo,
     onAcceptCall,
     updateCallStatus,
     onStartMeeting,
     onSetCallRequest,
     onSetRemoteSignal,
     onRejectCall,
+    onLeaveMeeting,
+    onResetMeet,
   };
 };

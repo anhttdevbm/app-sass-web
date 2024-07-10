@@ -20,8 +20,9 @@ import React, { useState } from "react";
 import OptionPopup from "./OptionPopup";
 import { random } from "lodash";
 import useTheme from "hooks/useTheme";
-import { useMeeting } from "store/meeting/selectors";
 import { usePathname, useRouter } from "next/navigation";
+import { store } from "store/configureStore";
+import { useMeeting } from "store/meeting/selectors";
 
 interface OptionButtonLayoutProps {
   sx: object;
@@ -29,10 +30,14 @@ interface OptionButtonLayoutProps {
 
 export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const router = useRouter();
-  const pathname = usePathname();
-  const roomId = pathname.split("/")[2];
   const { isDarkMode } = useTheme();
-  const { onEndMeeting } = useMeeting();
+  const {
+    meetingWsClient: ws,
+    currentParticipants,
+    meetInfo,
+    localStream,
+  } = store.getState().meeting;
+  const { onLeaveMeeting, onEndMeeting, onResetMeet } = useMeeting();
 
   const [isMicActive, setIsMicActive] = useState(false);
   const [isVideocamActive, setIsVideocamActive] = useState(false);
@@ -82,9 +87,10 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
 
   const idPopup = random().toString();
 
-  const endMeeting = () => {
-    router.back();
-    onEndMeeting(roomId);
+  const leaveMeeting = () => {
+    localStream?.getTracks().forEach((track) => track.stop());
+    onLeaveMeeting(meetInfo);
+    // router.back();
   };
 
   return (
@@ -190,7 +196,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
       </Box>
 
       <Box width={"10%"} textAlign={"center"}>
-        <Button sx={{ padding: "14px", ...sxDangerBtn }} onClick={endMeeting}>
+        <Button sx={{ padding: "14px", ...sxDangerBtn }} onClick={leaveMeeting}>
           End Call
         </Button>
       </Box>

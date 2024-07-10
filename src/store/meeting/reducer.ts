@@ -1,14 +1,18 @@
 // usersSlice.ts
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { MeetRoomInfo, MeetUser } from "./types";
 import { cancelMeeting, getParticipants, startMeeting } from "./actions";
-import SimplePeer from "simple-peer";
 
 export interface MeetingState {
+  isEstablishingConnection: boolean;
   localStream: MediaStream | null;
   remoteStream: MediaStream | null;
+  remoteStreams: {
+    participant: string;
+    stream: MediaStream;
+  }[];
   meetingWsClient: WebSocket | null;
-  roomInfo: MeetRoomInfo;
+  meetInfo: MeetRoomInfo;
   audioOnly: boolean;
   otherUserId: string | null;
   participants: MeetUser[];
@@ -22,13 +26,18 @@ export interface MeetingState {
   //   signal: SimplePeer.SignalData;
   // } | null;
   remoteSignal: any;
+  peer: any;
+  isLeaving: boolean;
+  currentParticipants: MeetUser[];
 }
 
 const initialState: MeetingState = {
+  isEstablishingConnection: false,
   localStream: null,
   remoteStream: null,
+  remoteStreams: [],
   meetingWsClient: null,
-  roomInfo: {} as MeetRoomInfo,
+  meetInfo: {} as MeetRoomInfo,
   audioOnly: false,
   otherUserId: null,
   participants: [],
@@ -36,10 +45,13 @@ const initialState: MeetingState = {
   callStatus: null,
   callRequest: null,
   remoteSignal: null,
+  peer: null,
+  isLeaving: false,
+  currentParticipants: [],
 };
 
 const meetingSlice = createSlice({
-  name: "meetings",
+  name: "meeting",
   initialState,
   reducers: {
     // addUser(state, action: PayloadAction<User>) {
@@ -140,11 +152,23 @@ const meetingSlice = createSlice({
     //     //function to handle screenRecord actions
     //   }
     // },
+    startConnecting(state) {
+      state.isEstablishingConnection = true;
+    },
     setLocalStream(state, action) {
       state.localStream = action.payload;
     },
     setRemoteStream(state, action) {
       state.remoteStream = action.payload;
+    },
+    setRemoteStreams(state, action) {
+      state.remoteStreams = [...state.remoteStreams, action.payload];
+    },
+    updateRemoteStream(state, action) {
+      state.remoteStreams = action.payload;
+    },
+    setCurrentParticipants(state, action) {
+      state.currentParticipants = action.payload;
     },
     setCallStatus(state, action) {
       state.callStatus = action.payload;
@@ -158,8 +182,8 @@ const meetingSlice = createSlice({
     setEndMeeting(state, action) {
       state.isEndMeeting = action.payload;
     },
-    setRoomInfo(state, action) {
-      state.roomInfo = action.payload;
+    setMeetInfo(state, action) {
+      state.meetInfo = action.payload;
     },
     setRemoteSignal(state, action) {
       state.remoteSignal = action.payload;
@@ -170,20 +194,27 @@ const meetingSlice = createSlice({
     setOtherUserId(state, action) {
       state.otherUserId = action.payload;
     },
-    resetMeetState() {
+    setPeer(state, action) {
+      state.peer = action.payload;
+    },
+    leaveRoom(state, action) {
+      state.remoteStreams = state.remoteStreams.filter((stream) => {
+        stream.participant !== action.payload.user.id;
+      });
+    },
+    endMeet() {
+      return initialState;
+    },
+    resetMeet() {
       return initialState;
     },
   },
   extraReducers(builder) {
     builder.addCase(getParticipants.fulfilled, (state, action) => {
-      const host = state.roomInfo.host.id;
-
-      state.participants =
-        action.payload.participants === host ? "" : action.payload.participants;
+      state.currentParticipants = action.payload.participants.map((p) => p.id);
     });
     builder.addCase(startMeeting.fulfilled, (state, action) => {
-      state.roomInfo = action.payload.meetInfo;
-      state.meetingWsClient = action.payload.meetWsClient;
+      state.meetInfo = action.payload;
     });
     builder.addCase(cancelMeeting.fulfilled, (state) => {
       state = initialState;
@@ -192,92 +223,24 @@ const meetingSlice = createSlice({
 });
 
 export const {
+  startConnecting,
   setLocalStream,
   setRemoteStream,
+  setRemoteStreams,
+  updateRemoteStream,
+  setCurrentParticipants,
   setCallStatus,
   setCallRequest,
   setMeetingWsClient,
   setEndMeeting,
-  resetMeetState,
-  setRoomInfo,
+  setMeetInfo,
   setRemoteSignal,
   setAudioOnly,
   setOtherUserId,
+  leaveRoom,
+  endMeet,
+  resetMeet,
+  setPeer,
 } = meetingSlice.actions;
 
 export default meetingSlice.reducer;
-
-const templateInit = [
-  {
-    id: "1",
-    name: "Hoang Thanh",
-    avatar: "https://via.placeholder.com/150",
-    //---------------values
-    mic: true,
-    camera: true,
-    screenShare: false,
-    subtitles: false,
-    handRaised: false,
-    screenRecord: false,
-  },
-  {
-    id: "2",
-    name: "Hoang Thanh",
-    avatar: "https://via.placeholder.com/150",
-    //---------------values
-    mic: true,
-    camera: true,
-    screenShare: false,
-    subtitles: false,
-    handRaised: false,
-    screenRecord: false,
-  },
-  {
-    id: "3",
-    name: "Hoang Thanh",
-    avatar: "https://via.placeholder.com/150",
-    //---------------values
-    mic: true,
-    camera: true,
-    screenShare: false,
-    subtitles: false,
-    handRaised: false,
-    screenRecord: false,
-  },
-  {
-    id: "4",
-    name: "Hoang Thanh",
-    avatar: "https://via.placeholder.com/150",
-    //---------------values
-    mic: true,
-    camera: true,
-    screenShare: false,
-    subtitles: false,
-    handRaised: false,
-    screenRecord: false,
-  },
-  {
-    id: "5",
-    name: "Hoang Thanh",
-    avatar: "https://via.placeholder.com/150",
-    //---------------values
-    mic: true,
-    camera: true,
-    screenShare: false,
-    subtitles: false,
-    handRaised: false,
-    screenRecord: false,
-  },
-  {
-    id: "6",
-    name: "Hoang Thanh",
-    avatar: "https://via.placeholder.com/150",
-    //---------------values
-    mic: true,
-    camera: true,
-    screenShare: false,
-    subtitles: false,
-    handRaised: false,
-    screenRecord: false,
-  },
-];

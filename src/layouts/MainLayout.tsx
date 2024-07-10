@@ -128,16 +128,16 @@ export default memo(MainLayout);
 
 const IncomingCall = () => {
   const router = useRouter();
-  const { roomInfo } = useAppSelector((state) => state.meeting);
+  const { meetInfo } = useAppSelector((state) => state.meeting);
   const { onAcceptCall, onRejectCall } = useMeeting();
 
   const handleCall = (accepted) => {
     if (!accepted) {
-      onRejectCall(roomInfo.id);
+      onRejectCall(meetInfo.id);
       return;
     }
-    onAcceptCall(roomInfo.id);
-    router.push(`/meeting/${roomInfo?.room.id}`);
+    onAcceptCall(meetInfo.id);
+    router.push(`/meeting/${meetInfo?.room.id}`);
   };
 
   return (

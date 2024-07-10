@@ -20,6 +20,7 @@ export const MEET_EVENT_TYPE = {
   JOIN: "join",
   SIGNAL: "signal",
   RETURN_SIGNAL: "return_signal",
+  LEAVE: "leave",
   END: "end_meet",
 };
 
@@ -52,4 +53,9 @@ export const CallStatus = {
   accepted: "accepted",
   rejected: "rejected",
   left: "left",
+};
+
+export const CallType = {
+  DIRECT_CALL: "p",
+  GROUP_CALL: "g",
 };

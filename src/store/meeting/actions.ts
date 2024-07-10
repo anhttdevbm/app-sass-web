@@ -13,14 +13,12 @@ export const startMeeting = createAsyncThunk(
       const response = await client.post("meet/start", paramReq, {
         baseURL: MEETING_API_URL,
       });
-      const meetingWs = new WebSocket(
-        `${process.env.NEXT_APP_MEETING_WS_URL}/${response.data.id}?token=${aT}` ||
-          "",
-      );
-      return {
-        meetInfo: response.data,
-        meetWsClient: meetingWs,
-      };
+      // const meetingWs = new WebSocket(
+      //   `${process.env.NEXT_APP_MEETING_WS_URL}/${response.data.id}?token=${aT}` ||
+      //     "",
+      // )
+      return response.data;
+      // meetWsClient: meetingWs,
     } catch (error) {
       if (error instanceof AxiosError) {
         const message = error.response?.data["error"];

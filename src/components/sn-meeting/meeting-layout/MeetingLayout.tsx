@@ -12,17 +12,17 @@ import useWindowSize from "hooks/useWindowSize";
 import useTheme from "hooks/useTheme";
 import { useAuth } from "store/app/selectors";
 import { useAppSelector } from "store/hooks";
-import { useWSMeeting } from "webSocket/wsConnection";
+// import { useWSMeeting } from "webSocket/wsConnection";
 import Avatar from "components/Avatar";
 import ButtonOnMyScreen from "../components/ButtonOnMyScreen";
 
 export default function MeetingLayout() {
-  useWSMeeting();
+  // useWSMeeting();
   const { isDarkMode } = useTheme();
   const breack = useBreakpoint();
   const size = useWindowSize();
   const { user } = useAuth();
-  const { localStream, remoteStream } = useAppSelector(
+  const { localStream, remoteStream, remoteStreams } = useAppSelector(
     (state) => state.meeting,
   );
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -70,6 +70,8 @@ export default function MeetingLayout() {
     setToggleMinimize(!toggleMinimize);
   };
 
+  console.log("remoteStreams", remoteStreams);
+
   return (
     <Card
       sx={{
@@ -114,22 +116,38 @@ export default function MeetingLayout() {
               padding: 2,
             }}
           >
-            {localStream ? (
-              <VideoStreaming localStream={localStream} isLocalStream={true} />
-            ) : (
-              <Avatar size={100} src={user?.avatar?.link} />
-            )}
-            {remoteStream ? (
+            {
+              localStream && (
+                <VideoStreaming
+                  localStream={localStream}
+                  isLocalStream={true}
+                />
+              )
+              //  : (
+              //   <Avatar size={100} src={user?.avatar?.link} />
+              // )
+            }
+            {
+              // remoteStream && (
+              //   <VideoStreaming
+              //     localStream={remoteStream}
+              //     isLocalStream={false}
+              //   />
+              // )
+              // : (
+              //   <MuiAvatar
+              //     sx={{ width: 100, height: 100 }}
+              //     src="/static/images/avatar/1.jpg"
+              //   />
+              // )
+            }
+            {remoteStreams.map((remoteStream, index) => (
               <VideoStreaming
-                localStream={remoteStream}
+                key={index}
+                localStream={remoteStream.stream}
                 isLocalStream={false}
               />
-            ) : (
-              <MuiAvatar
-                sx={{ width: 100, height: 100 }}
-                src="/static/images/avatar/1.jpg"
-              />
-            )}
+            ))}
           </Stack>
           <OptionButtonsLayout
             sx={{

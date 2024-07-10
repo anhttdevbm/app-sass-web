@@ -24,13 +24,7 @@ export const getLocalStream = (
     });
 };
 
-// export const prepareNewPeerConnection = (
-//   connUserSocketId: string,
-//   isInitiator: boolean,
-// ) => {
-//   const localStream = store.getState().room.localStreamRoom;
-// };
-const peerConfiguration = () => {
+export const peerConfiguration = () => {
   const turnIceServers = null;
 
   if (turnIceServers) {
@@ -63,4 +57,40 @@ export const newPeerConnection = (initiator: boolean) => {
   });
 
   return peer;
+};
+
+let peers: any = {};
+
+export const prepareNewConnection = (
+  connUserId: string,
+  isInitiator: boolean,
+  ws: WebSocket,
+) => {
+  const localStream = store.getState().meeting.localStream;
+
+  peers[connUserId] = new Peer({
+    initiator: isInitiator,
+    config: peerConfiguration(),
+    stream: localStream,
+  });
+
+  peers[connUserId].on("signal", (signal: Peer.SignalData) => {
+    ws.send(
+      JSON.stringify({
+        event: "signal",
+        connUserId,
+        signal,
+      }),
+    );
+  });
+};
+
+export const handleSignalingData = (meetData: {
+  connUserId: string;
+  signal: Peer.SignalData;
+}) => {
+  const { connUserId, signal } = meetData;
+  if (peers[connUserId]) {
+    peers[connUserId].signal(signal);
+  }
 };

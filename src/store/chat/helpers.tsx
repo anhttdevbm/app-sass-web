@@ -18,7 +18,7 @@ import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
 import { initPagingV2 } from "store/chat/reducer";
 import { useMeeting } from "store/meeting/selectors";
-import { CallStatus } from "store/meeting/types";
+import { CallStatus, CallType } from "store/meeting/types";
 import { clientStorage } from "utils/storage";
 
 const PAGE_INITIAL = 1;
@@ -84,8 +84,7 @@ export const useWSChat = () => {
     onSetMessageSearch,
     onSetListMessages,
   } = useChat();
-  const { onSetRoomInfo, updateCallStatus, onSetMeetingWsClient } =
-    useMeeting();
+  const { onSetMeetInfo, updateCallStatus, getAllParticipants } = useMeeting();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar, onAddNotification } = useSnackbar();
@@ -223,12 +222,13 @@ export const useWSChat = () => {
           const resp: IWsChatRespMessage = JSON.parse(event.data);
           // console.info("resp", resp);
 
-          if (resp.data.event === "start_meet") {
+          if (resp?.data?.event === "start_meet") {
             handleNotiMeeting(resp.data);
-            onSetRoomInfo(resp.data);
-          } else if (resp.data.event === "cancel_meet") {
+            onSetMeetInfo(resp.data);
+            // getAllParticipants(resp.data.id);
+          } else if (resp?.data?.event === "cancel_meet") {
             updateCallStatus(CallStatus.rejected);
-          } else if (resp.data.event === "end_meet") {
+          } else if (resp?.data?.event === "end_meet") {
             updateCallStatus(CallStatus.left);
           }
 

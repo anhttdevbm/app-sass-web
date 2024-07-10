@@ -34,6 +34,7 @@ import { AIAgentState } from "./aiAgent/types";
 import { aiAgentReducer } from "./aiAgent/reducer";
 import { promptTemplateReducer } from "store/promptTemplate/reducer";
 import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
+import { meetingMiddleware } from "./meeting/meetingMiddleware";
 
 export interface State {
   app: AppState;
@@ -92,7 +93,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat([documentApi.middleware]),
+    }).concat([documentApi.middleware, meetingMiddleware]),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
