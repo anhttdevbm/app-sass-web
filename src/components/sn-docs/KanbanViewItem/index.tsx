@@ -18,13 +18,13 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import MoveArrowIcon from "icons/MoveArrowIcon";
-import { IKanbanViewDocItem } from "../KanbanViewDocList";
+import { IViewDocItem } from "../KanbanViewDocList";
 import dayjs from "dayjs";
 
 export default function KanbanViewItem({
   itemKanban,
 }: {
-  itemKanban: IKanbanViewDocItem;
+  itemKanban: IViewDocItem;
 }) {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
