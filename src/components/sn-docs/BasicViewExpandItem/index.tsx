@@ -15,7 +15,7 @@ export default function BasicViewExpandItem({
   const docsT = useTranslations(NS_DOCS);
 
   return (
-    <Stack direction="row" alignItems="center" padding={2}>
+    <Stack direction="row" alignItems="center" padding={2} borderBottom={0.5} borderColor="#EFEFEF">
       <Box display="flex" sx={{ width: "40%" }} alignItems="center">
         <IconButton color="inherit" aria-label="menu">
           <DescriptionIcon

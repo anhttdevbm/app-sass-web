@@ -58,7 +58,7 @@ export default function BasicViewDocItem({
     };
 
   return (
-    <Box sx={{ marginY: 0.5 }}>
+    <Box sx={{ marginY: 0.2 }}>
       <Accordion
         expanded={expanded === `panel${data.group_by ?? keyExpanded}`}
         onChange={handleChange(`panel${data.group_by ?? keyExpanded}`)}
