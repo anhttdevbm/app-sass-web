@@ -26,7 +26,6 @@ export default function KanbanViewItem({
 }: {
   itemKanban: IKanbanViewDocItem;
 }) {
-  console.log("itemKanban", itemKanban);
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
