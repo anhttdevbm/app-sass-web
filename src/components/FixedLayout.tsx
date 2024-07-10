@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, forwardRef, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Box, Stack, StackProps, useMediaQuery, useTheme } from "@mui/material";
 import useWindowSize from "hooks/useWindowSize";
 
@@ -13,8 +13,10 @@ interface MyDOMRect {
   height: number;
 }
 
-const FixedLayout = (props: { rounded?: string } & StackProps) => {
-  const { children, order, rounded = "12px", ...rest } = props;
+const FixedLayout = (
+  props: { rounded?: string; sxContainer?: any } & StackProps,
+) => {
+  const { children, order, rounded = "12px", sxContainer, ...rest } = props;
   const { breakpoints } = useTheme();
   const is1440Larger = useMediaQuery(breakpoints.up(1441));
   const [height, setHeight] = useState(0);
@@ -48,7 +50,14 @@ const FixedLayout = (props: { rounded?: string } & StackProps) => {
   }, [windowSize]);
 
   return (
-    <Stack width="100%" bgcolor={{ md: "background.default" }} order={order}>
+    <Stack
+      width="100%"
+      bgcolor={{ md: "background.default" }}
+      order={order}
+      sx={{
+        ...sxContainer,
+      }}
+    >
       <Box
         ref={ref}
         sx={{

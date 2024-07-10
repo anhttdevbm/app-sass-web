@@ -7,8 +7,8 @@ import {
   AI_AGENT_PATH,
   AI_CHAT_PATH,
   BILLING_PATH,
-  BLOGS_PATH,
   BLOG_CATEGORY_PATH,
+  BLOGS_PATH,
   BUDGETING_PATH,
   CAREER_PATH,
   CHATTING_ROOM_PATH,
@@ -20,16 +20,18 @@ import {
   FEEDBACK_PATH,
   HOLIDAY_CALENDAR_PATH,
   HOME_PATH,
+  INVOICES_PATH,
   LANDING_ABOUT_US_PATH,
   LANDING_AI_PATH,
   LANDING_HELP_CENTER_PATH,
   LANDING_HOME_PATH,
   LANDING_PRICING_PATH,
   LANDING_TRUST_CENTER_PATH,
+  MEETING_PATH,
   MY_COMPANY_PATH,
   POSITIONS_PATH,
-  PROJECTS_PATH,
   PROJECT_TYPES_PATH,
+  PROJECTS_PATH,
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
@@ -54,7 +56,7 @@ import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
 import TaskcoverAIIcon from "icons/TaskcoverIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
-import { MouseEvent, memo, useMemo, useState } from "react";
+import { memo, MouseEvent, useMemo, useState } from "react";
 import { useAuth, useSidebar } from "store/app/selectors";
 import Collapse from "./Collapse";
 import SubMenu from "./SubMenu";
@@ -408,6 +410,12 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
+  },
+  {
+    label: "menu.invoice",
+    icon: <BillingIcon />,
+    href: INVOICES_PATH,
+    roles: [Permission.AM, Permission.ST],
   },
 ];
 

@@ -171,3 +171,7 @@ export enum BudgetServiceBillable {
   FIXED = "fixed",
   ACTUALS = "actuals",
 }
+
+export enum InvoiceStatus {
+  DRAFT = "DRAFT",
+}
