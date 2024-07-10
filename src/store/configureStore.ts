@@ -34,6 +34,7 @@ import { AIAgentState } from "./aiAgent/types";
 import { aiAgentReducer } from "./aiAgent/reducer";
 import { promptTemplateReducer } from "store/promptTemplate/reducer";
 import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
+import userNavigationDetailReducer from "store/userNavigationDetail/reducer"
 
 export interface State {
   app: AppState;
@@ -87,6 +88,7 @@ export const store = configureStore({
     aiAgent: aiAgentReducer,
     promptTemplate: promptTemplateReducer,
     chatAIAgent: chatAIAgentReducer,
+    userNavigationDetail:userNavigationDetailReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

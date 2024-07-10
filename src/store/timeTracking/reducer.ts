@@ -241,6 +241,27 @@ const timeTrackingSlice = createSlice({
   // ),
 });
 
+const userNavigationDetail = createSlice({
+  name: "user-navigation-detail",
+  initialState: {
+    username: "",
+    avatar: "",
+    isOpen: false,
+  },
+  reducers: {
+    setUserName: (state, action) => {
+      state.username = action.payload;
+    },
+    setAvatar: (state, action) => {
+      state.avatar = action.payload;
+    },
+    setIsOpen: (state, action) => {
+      state.isOpen = action.payload;
+    },
+  },
+});
+
 export const { reset } = timeTrackingSlice.actions;
 
+export const { setUserName, setAvatar, setIsOpen } = userNavigationDetail.actions;
 export default timeTrackingSlice.reducer;

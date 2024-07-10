@@ -18,6 +18,7 @@ import {
   TableRow,
   Typography,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -45,6 +46,9 @@ import ListSheet from "./ListSheet";
 import TableSheet from "./TableSheet";
 import FilterCategory from "components/sn-time-tracking/Component/FilterCategory";
 import MonthCalendarSheet from "./MonthCalendarSheet";
+import { RootState } from "store/configureStore";
+import { useDispatch } from "react-redux";
+import { setIsOpen as setUserNavigationVisible } from "store/userNavigationDetail/reducer";
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
@@ -115,6 +119,12 @@ const StyledDay = styled(Box)(() => ({
 }));
 
 const TrackingCalendar: React.FC<IProps> = (props) => {
+  const dispatch = useDispatch();
+  const {
+    isOpen: userDetailTablevisible,
+    username: userDetailTableName,
+    avatar: userDetailTableAvatar,
+  } = useSelector((state: RootState) => state.userNavigationDetail);
   const [currentYear, setCurrentYear] = useState<string>("");
   const isGetLoading: any = false;
   const timeT = useTranslations(NS_TIME_TRACKING);
@@ -552,15 +562,37 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   return (
     <Stack direction="column">
       {props.currentKindOfSheet === "table" && (
-        <div
-          style={{
-            marginTop: "20px",
-            borderRadius: "100px",
-            background: "#F7F7FD",
-          }}
-        >
-          {_renderHeader()}
-        </div>
+        <>
+          {userDetailTablevisible && (
+            <div
+              style={{
+                marginTop: "20px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <IconButton
+                onClick={() => dispatch(setUserNavigationVisible(false))}
+              >
+                <ChevronLeftIcon />
+              </IconButton>
+              <Avatar sx={{ width: 40, height: 40 }}>
+                {userDetailTableAvatar}
+              </Avatar>
+              <Typography>{userDetailTableName}</Typography>
+            </div>
+          )}
+          <div
+            style={{
+              marginTop: "20px",
+              borderRadius: "100px",
+              background: "#F7F7FD",
+            }}
+          >
+            {_renderHeader()}
+          </div>
+        </>
       )}
       {props.currentKindOfSheet === "table" ? (
         // <Stack

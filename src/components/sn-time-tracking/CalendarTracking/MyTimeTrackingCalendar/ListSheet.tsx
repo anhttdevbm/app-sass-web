@@ -1,79 +1,152 @@
 "use client";
 
 import React from "react";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { createTheme, styled } from "@mui/material/styles";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 import moment from "moment";
-import "../MyTimeTrackingCalendar/style.css"
+import "../CompanyTimeTrackingCalendar/style.css";
+import { boxShadow } from "html2canvas/dist/types/css/property-descriptors/box-shadow";
+import Checkbox from "@mui/material/Checkbox";
 
-const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 150,headerClassName: 'super-app-theme--header',},
-  { field: "Date", headerName: "Date", width: 200 ,headerClassName: 'super-app-theme--header'},
-  { field: "Project_name", headerName: "Project name", width: 250,headerClassName: 'super-app-theme--header' },
-  { field: "Task_name", headerName: "Task name", width: 250,headerClassName: 'super-app-theme--header' },
-  {
-    field: "Type",
-    headerName: "Type",
-    width: 250,
-    headerClassName: 'super-app-theme--header'
-  },
-  {
-    field: "Time",
-    headerName: "Time",
-    width: 200,
-    headerClassName: 'super-app-theme--header'
-  },
-  {
-    field: "Creation_time",
-    headerName: "Creation time",
-    width: 200,
-    headerClassName: 'super-app-theme--header'
-  },
-];
-
-
-interface IProps{
+interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data:any
+  data: any;
 }
 
-const ListSheet:React.FC<IProps> = (props) => {
-  const rows = props.data.map(row =>{
-    return {
-      id:row._id,
-      Date:row.day,
-      Project_name: row.project?.name || "BreakTime",
-      Task_name: row.note,
-      Type: row.type,
-      Time: row.duration +" " + "hours",
-      Creation_time: moment(row.created_time).format("L HH:mm")
-    }
-  })
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  borderBottom: "none",
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:last-child td, &:last-child th": {
+    border: 0,
+    boxShadow: 0,
+  },
+}));
+const formatDuration = (duration) => {
+  const hours = Math.floor(duration);
+  const minutes = (duration - hours) * 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+};
+
+
+const ListSheet: React.FC<IProps> = (props) => {
+  const rows = props.data?.map((row) => ({
+    id: row._id,
+    Date: row.day,
+    Project_name: row.project?.name || "Break time",
+    Task_name: row.note,
+    Type: row.type,
+    Time: formatDuration(row.duration),
+    Creation_time: moment(row.created_time).format("L HH:mm"),
+  }));
+
   return (
-    <div style={{width: "100%" }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{
-          '.MuiDataGrid-columnSeparator': {
-            display: 'none',
-          },
-          '&.MuiDataGrid-root': {
-            border: 'none'
-          },
-          '.MuiDataGrid-columnHeaders': {
-            backgroundColor:"red"
-          }
-        }}
-      />
-    </div>
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }}>
+        <TableHead>
+          <TableRow
+            sx={{
+              background: "#D9F0FD",
+            }}
+          >
+            <StyledTableCell
+              sx={{
+                color: "#0575E6",
+                fontWeight: "600",
+                fontSize: "16px",
+              }}
+            >
+              Date
+            </StyledTableCell>
+            <StyledTableCell
+              sx={{
+                color: "#0575E6",
+                fontWeight: "600",
+                fontSize: "16px",
+              }}
+            >
+              Project name
+            </StyledTableCell>
+            <StyledTableCell
+              sx={{
+                color: "#0575E6",
+                fontWeight: "600",
+                fontSize: "16px",
+              }}
+            >
+              Task name
+            </StyledTableCell>
+            <StyledTableCell
+              sx={{
+                color: "#0575E6",
+                fontWeight: "600",
+                fontSize: "16px",
+              }}
+            >
+              Type
+            </StyledTableCell>
+            <StyledTableCell
+              sx={{
+                color: "#0575E6",
+                fontWeight: "600",
+                fontSize: "16px",
+              }}
+            >
+              Time
+            </StyledTableCell>
+            <StyledTableCell
+              sx={{
+                color: "#0575E6",
+                fontWeight: "600",
+                fontSize: "16px",
+              }}
+            >
+              Creation time
+            </StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <StyledTableRow key={row.id}>
+              <StyledTableCell>
+                <Checkbox />
+                {row.Date}
+              </StyledTableCell>
+              <StyledTableCell
+                sx={{
+                  color: "#0575E6",
+                }}
+              >
+                {row.Project_name}
+              </StyledTableCell>
+              <StyledTableCell>{row.Task_name}</StyledTableCell>
+              {row.Type === "Break time" ? (
+                <StyledTableCell
+                  sx={{
+                    color: "red",
+                  }}
+                >
+                  {row.Type}
+                </StyledTableCell>
+              ) : (
+                <StyledTableCell>{row.Type}</StyledTableCell>
+              )}
+              <StyledTableCell>{row.Time}</StyledTableCell>
+              <StyledTableCell>{row.Creation_time}</StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

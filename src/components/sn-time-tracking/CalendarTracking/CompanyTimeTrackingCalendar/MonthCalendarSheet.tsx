@@ -131,7 +131,6 @@ const MonthCalendarSheet = () => {
           <Box sx={{ p: 2 }}>
             <Typography variant="h6">Selected Date Details</Typography>
             <Typography variant="body1">Date: {selectedDate}</Typography>
-            {/* Add more details or actions related to the selected date */}
           </Box>
         </Drawer>
       </Box>
