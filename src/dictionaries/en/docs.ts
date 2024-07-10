@@ -46,5 +46,6 @@ export const DocsLang: DocsDictionary = {
     duplicate: "Duplicate",
     delete: "Delete",
   },
-  ownedBy: "Owned by"
+  ownedBy: "Owned by",
+  createdBy: "Created by"
 };

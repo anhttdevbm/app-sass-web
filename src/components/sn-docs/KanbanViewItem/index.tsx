@@ -2,57 +2,22 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import MoreHoriz from "@mui/icons-material/MoreHoriz";
-import ContentPasteGoIcon from "@mui/icons-material/ContentPasteGo";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import LockIcon from "@mui/icons-material/Lock";
 import Box from "@mui/material/Box";
 import { NS_DOCS } from "constant/index";
 import { useTranslations } from "next-intl";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
-import MoveArrowIcon from "icons/MoveArrowIcon";
-import { IKanbanViewDocItem } from "../KanbanViewDocList";
+import { IViewDocItem } from "../KanbanViewDocList";
 import dayjs from "dayjs";
+import ActionMoreListDoc from "../ActionMoreListDoc";
 
 export default function KanbanViewItem({
   itemKanban,
 }: {
-  itemKanban: IKanbanViewDocItem;
+  itemKanban: IViewDocItem;
 }) {
   const docsT = useTranslations(NS_DOCS);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleRenameDoc = () => {
-    setAnchorEl(null);
-  };
-
-  const handleMoveDoc = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDuplicateDoc = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDeleteDoc = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <Card
@@ -88,87 +53,7 @@ export default function KanbanViewItem({
             </Box>
           )
         }
-        action={
-          <>
-            <IconButton
-              aria-label="settings"
-              sx={{
-                padding: 0,
-                marginRight: 1,
-                "&:hover": { bgcolor: "transparent" },
-              }}
-              onClick={(event) => {
-                event.stopPropagation();
-                handleClick(event);
-              }}
-            >
-              <MoreHoriz
-                sx={{ color: "common.white", height: 18, width: 18 }}
-              />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-              PaperProps={{
-                sx: {
-                  width: 193,
-                },
-              }}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-            >
-              <MenuItem
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                onClick={handleRenameDoc}
-              >
-                <ContentPasteGoIcon
-                  sx={{ height: 15, width: 15, color: "grey.400" }}
-                />{" "}
-                {docsT("extendBtn.rename")}
-              </MenuItem>
-              <MenuItem
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                onClick={handleMoveDoc}
-              >
-                <MoveArrowIcon
-                  sx={{ height: 15, width: 15, color: "grey.400" }}
-                />{" "}
-                {docsT("extendBtn.move")}
-              </MenuItem>
-              <MenuItem
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                onClick={handleDuplicateDoc}
-              >
-                <ContentCopyIcon
-                  sx={{ height: 15, width: 15, color: "grey.400" }}
-                />{" "}
-                {docsT("extendBtn.duplicate")}
-              </MenuItem>
-              <MenuItem
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  color: "#DE360E",
-                }}
-                onClick={handleDeleteDoc}
-              >
-                <DeleteOutlineIcon sx={{ height: 15, width: 15 }} />{" "}
-                {docsT("extendBtn.delete")}
-              </MenuItem>
-            </Menu>
-          </>
-        }
+        action={<ActionMoreListDoc />}
         title={
           itemKanban.groupInfo
             ? `${itemKanban.groupInfo.name} #${
@@ -232,7 +117,7 @@ export default function KanbanViewItem({
               <AccessTimeIcon sx={{ height: 16, width: 16 }} />
               <Typography variant="body1" paddingLeft={1} fontSize={12}>
                 {dayjs(itemKanban.groupInfo?.updated_time).format(
-                  "MMMM D, YYYY",
+                  "MMMM D, YYYY"
                 )}
               </Typography>
             </Box>

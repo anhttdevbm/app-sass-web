@@ -26,6 +26,7 @@ import { MenuButton } from "@mui/base";
 import KanbanViewDocList from "./KanbanViewDocList";
 import { useAppSelector } from "store/hooks";
 import { Data } from "emoji-mart";
+import BasicViewDocList from "./BasicViewDocList";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -150,56 +151,57 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     <>
       <FixedLayout>
         {typeViewDocStore === "basicViewListDoc" ?
-          <TableLayout
-            headerList={headerList}
-            pending={isLoading}
-            noData={data?.totalDocs === 0}
-            px={{ xs: 0, md: 3 }}
-            headerProps={{
-              sx: { px: { xs: 0.5, md: 2 } },
-            }}
-          >
-            {query?.group_by == DocGroupByEnum.CREATED_BY &&
-              Array.isArray(data?.docs) &&
-              data?.docs.map((item) => {
-                return (
-                  <RowGroup
-                    key={item?._id}
-                    title={item.groupInfo?.fullname || "Unknown"}
-                    items={item.docs}
-                  />
-                );
-              })}
-            {query?.group_by === DocGroupByEnum.PROJECT_ID &&
-              Array.isArray(data?.docs) &&
-              data?.docs.map((item) => {
-                return (
-                  <RowGroup
-                    isGrouped={isGrouped}
-                    key={item?._id}
-                    title={
-                      item.groupInfo ? (
-                        <>
-                          <Stack direction="row" alignItems="center" spacing={1}>
-                            <Avatar
-                              size={32}
-                              alt={item.groupInfo.name}
-                              src={item.groupInfo.avatar.link}
-                              style={{ marginRight: "8px" }}
-                            />
-                            {`${item.groupInfo.name} #${item.groupInfo?.number || 0
-                              }`}
-                          </Stack>
-                        </>
-                      ) : (
-                        "No project"
-                      )
-                    }
-                    items={item.docs}
-                  />
-                );
-              })}
-          </TableLayout>
+          // <TableLayout
+          //   headerList={headerList}
+          //   pending={isLoading}
+          //   noData={data?.totalDocs === 0}
+          //   px={{ xs: 0, md: 3 }}
+          //   headerProps={{
+          //     sx: { px: { xs: 0.5, md: 2 } },
+          //   }}
+          // >
+          //   {query?.group_by == DocGroupByEnum.CREATED_BY &&
+          //     Array.isArray(data?.docs) &&
+          //     data?.docs.map((item) => {
+          //       return (
+          //         <RowGroup
+          //           key={item?._id}
+          //           title={item.groupInfo?.fullname || "Unknown"}
+          //           items={item.docs}
+          //         />
+          //       );
+          //     })}
+          //   {query?.group_by === DocGroupByEnum.PROJECT_ID &&
+          //     Array.isArray(data?.docs) &&
+          //     data?.docs.map((item) => {
+          //       return (
+          //         <RowGroup
+          //           isGrouped={isGrouped}
+          //           key={item?._id}
+          //           title={
+          //             item.groupInfo ? (
+          //               <>
+          //                 <Stack direction="row" alignItems="center" spacing={1}>
+          //                   <Avatar
+          //                     size={32}
+          //                     alt={item.groupInfo.name}
+          //                     src={item.groupInfo.avatar.link}
+          //                     style={{ marginRight: "8px" }}
+          //                   />
+          //                   {`${item.groupInfo.name} #${item.groupInfo?.number || 0
+          //                     }`}
+          //                 </Stack>
+          //               </>
+          //             ) : (
+          //               "No project"
+          //             )
+          //           }
+          //           items={item.docs}
+          //         />
+          //       );
+          //     })}
+          // </TableLayout>
+          <BasicViewDocList data={data?.docs} />
           :
           <KanbanViewDocList listData={data?.docs} />
         }

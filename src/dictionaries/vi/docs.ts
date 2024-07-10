@@ -46,5 +46,6 @@ export const DocsLang: DocsDictionary = {
     duplicate: "Sao chép",
     delete: "Xóa"
   },
-  ownedBy: "Sở hữu bởi"
+  ownedBy: "Sở hữu bởi",
+  createdBy: "Được tạo bởi"
 };
