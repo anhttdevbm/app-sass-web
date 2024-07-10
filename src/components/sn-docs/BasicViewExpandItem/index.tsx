@@ -50,7 +50,7 @@ export default function BasicViewExpandItem({
         <Box display="flex" alignItems="center" gap={1} sx={{ color: "grey.700"}}>
           <AccessTimeIcon sx={{ height: 16, width: 16 }} />
           <Typography variant="body2">
-            {dayjs(expandedItem?.updated_time).format("DD MMM YYYY")}
+            {dayjs(expandedItem?.updated_time).format("MMMM D, YYYY")}
           </Typography>
         </Box>
       </Box>
