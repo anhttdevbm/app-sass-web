@@ -1,32 +1,30 @@
 "use client";
 
-import { memo, useState } from "react";
 import {
   Stack,
-  Theme,
-  selectClasses,
   useMediaQuery,
-  useTheme,
+  useTheme
 } from "@mui/material";
-import { Button, Text } from "components/shared";
-import PlusIcon from "icons/PlusIcon";
-import useToggle from "hooks/useToggle";
+import { Search } from "components/Filters";
+import { Button, IconButton, Text } from "components/shared";
 import { DataAction } from "constant/enums";
-import { usePositions } from "store/company/selectors";
-import Form from "./Form";
-import { Date, Refresh, Search } from "components/Filters";
 import {
-  DATE_FORMAT_HYPHEN,
   NS_COMMON,
   NS_COMPANY,
-  NS_PROJECT,
+  NS_PROJECT
 } from "constant/index";
-import { useTranslations } from "next-intl";
 import useBreakpoint from "hooks/useBreakpoint";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import useToggle from "hooks/useToggle";
+import AddSquareIcon from "icons/AddSquareIcon";
+import PlusIcon from "icons/PlusIcon";
+import SearchIcon from "icons/SearchIcon";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { memo, useState } from "react";
+import { usePositions } from "store/company/selectors";
 import { getPath } from "utils/index";
-import { AssignerFilter } from "components/sn-project-detail/Tasks/components";
+import Form from "./Form";
 
 const Actions = () => {
   const commonT = useTranslations(NS_COMMON);
@@ -75,15 +73,27 @@ const Actions = () => {
         <Text variant="h4" display={{ md: "none" }}>
           {companyT("positions.title")}
         </Text>
-        <Button
-          onClick={onShow}
-          startIcon={<PlusIcon />}
-          size={"extraSmall"}
-          variant="primary"
-          sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
-        >
-          {commonT("createNew")}
-        </Button>
+        <Search
+          name="search_key"
+          placeholder={commonT("searchBy", {
+            name: companyT("position.key"),
+          })}
+          onEnter={(name, value) => {
+            onChangeQueries(name, value);
+            onSearch();
+          }}
+          onChange={onChangeQueries}
+          sx={{
+            height: 40,
+            width: {
+              lg: 332,
+            },
+            ".MuiInputBase-root": { height: 40, borderRadius: "100px" },
+          }}
+          value={queries?.["name"]}
+          startNode={""}
+          endNode={<IconButton aria-label="search"><SearchIcon onClick={onSearch} style={{ color: "#0575E6" ,height:"18px",width:"18px"}} /></IconButton>}
+        />
 
         <Stack
           direction="row"
@@ -93,7 +103,51 @@ const Actions = () => {
           overflow="hidden"
           width="100%"
         >
-          <Search
+
+          <Button
+            onClick={onShow}
+            size="small"
+            variant="contained"
+            sx={{
+              boxShadow: "none",
+
+              fontWeight: "700",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
+              borderRadius: "100px",
+              height: 40,
+              width: 129,
+              "p,svg": { fontWeight: "700" },
+              svg: {
+                border: "1px solid white",
+                borderRadius: "50px",
+                color: "#2AF598",
+                background: "white",
+              },
+            }}
+          >
+            <AddSquareIcon
+              sx={{
+                display: { xs: "block", md: "none" },
+                width: 24,
+                height: 24,
+              }}
+            />
+            <PlusIcon
+              sx={{
+                display: { xs: "none", md: "block" },
+                mr: 1,
+                width: 18,
+                height: 18,
+              }}
+            />
+            <Text sx={{ fontSize:"16px", display: { xs: "none", md: "block" } }} color="inherit">
+              {commonT("createNew")}
+            </Text>
+          </Button>
+          {/* <Search
             placeholder={commonT("searchBy", {
               name: companyT("position.key"),
             })}
@@ -108,8 +162,8 @@ const Actions = () => {
               width: { xs: is1440Larger ? 220 : 160 },
               minWidth: { xs: is1440Larger ? 220 : 160 },
             }}
-          />
-          <AssignerFilter
+          /> */}
+          {/* <AssignerFilter
             onChange={onChangeQueries}
             value={queries?.["position.owner"]}
             hasAvatar
@@ -126,9 +180,9 @@ const Actions = () => {
                 },
               },
             }}
-          />
+          /> */}
 
-          <Date
+          {/* <Date
             label={commonT("form.title.startDate")}
             name="created_time"
             onChange={onChangeQueries}
@@ -137,17 +191,17 @@ const Actions = () => {
             iconProps={{
               sx: { fontSize: 16 },
             }}
-          />
+          /> */}
 
-          <Button
+          {/* <Button
             size="extraSmall"
             sx={{ height: 32, display: { xs: "none", md: "flex" } }}
             onClick={onSearch}
             variant="secondary"
           >
             {commonT("search")}
-          </Button>
-        </Stack>
+          </Button>*/} 
+        </Stack> 
 
         {/* <Refresh onClick={onRefresh} /> */}
       </Stack>
