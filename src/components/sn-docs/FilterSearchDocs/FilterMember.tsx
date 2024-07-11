@@ -104,7 +104,10 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
         sx={sxConfig.item}
       >
         <Text variant="body2" color="grey.400">
-          {docsT("filter.filter.creator")}
+          {docsT("filter.filter.creator")}:
+        </Text>
+        <Text variant="body2" fontWeight={600} color="grey.700">
+          {docsT("filter.all")}
         </Text>
         <ChevronIcon fontSize="small"></ChevronIcon>
       </MenuItem>

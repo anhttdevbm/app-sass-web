@@ -21,6 +21,7 @@ import {
   updateProject,
   updateTask,
   updateTaskList,
+  deleteProject,
   DeleteSubTasksData,
   DeleteTaskListsData,
   deleteSubTasks,
@@ -97,6 +98,17 @@ export const useProjects = () => {
     [dispatch],
   );
 
+  const onDeleteProject = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(deleteProject(id)).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
   return {
     items,
     status,
@@ -111,6 +123,7 @@ export const useProjects = () => {
     onGetProjects,
     onCreateProject,
     onUpdateProject,
+    onDeleteProject,
   };
 };
 

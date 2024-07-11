@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, MenuList, Popover, Stack, popoverClasses } from "@mui/material";
+import {
+  Box,
+  MenuList,
+  Popover,
+  Stack,
+  SxProps,
+  popoverClasses,
+} from "@mui/material";
 import { Text } from "components/shared";
 import { NS_COMMON, NS_DOCS } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
@@ -53,12 +60,17 @@ const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
 
 export default memo(FilterSearchDocs);
 
-export const sxConfig = {
+export const sxConfig: Record<string, SxProps> = {
   item: {
     width: "100%",
     py: 1,
-    px: 1, 
+    pr: 1,
+    pl: 2,
+    gap: 1,
     margin: "8px 0",
-    marginLeft: "auto", 
+    marginLeft: "auto",
+    border: "solid 1px lightgrey",
+    borderRadius: "2rem",
+    bgcolor: "white",
   },
 };

@@ -267,6 +267,24 @@ export const updateProject = createAsyncThunk(
   },
 );
 
+export const deleteProject = createAsyncThunk(
+  "project/deleteProject",
+  async (id: string) => {
+    try {
+      const response = await client.delete(
+        StringFormat(Endpoint.PROJECT_ITEM, { id }),
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const getMembersOfProject = createAsyncThunk(
   "project/getMembersOfProject",
   async ({

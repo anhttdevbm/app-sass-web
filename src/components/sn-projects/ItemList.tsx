@@ -57,6 +57,7 @@ const ItemList = () => {
     totalPages,
     onGetProjects,
     onUpdateProject: onUpdateProjectAction,
+    onDeleteProject,
   } = useProjects();
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
@@ -184,6 +185,11 @@ const ItemList = () => {
     return await onUpdateProjectAction(item.id, data);
   };
 
+  const deleteProject = async (id: string) => {
+    await onDeleteProject(id);
+    await onGetProjects(query);
+  };
+
   useEffect(() => {
     if (!isReady) return;
     onGetProjects({ ...DEFAULT_PAGING, ...initQuery });
@@ -225,7 +231,7 @@ const ItemList = () => {
                       </ListItemIcon>
                       <ListItemText>Edit</ListItemText>
                     </MenuItem>
-                    <MenuItem onClick={onActionToItem(DataAction.DELETE, item)}>
+                    <MenuItem onClick={() => deleteProject(item.id)}>
                       <ListItemIcon>
                         <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
                       </ListItemIcon>

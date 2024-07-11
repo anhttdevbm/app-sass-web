@@ -10,7 +10,7 @@ import { formatDate, formatNumber } from "utils/index";
 import { Position } from "store/company/reducer";
 import { Text } from "components/shared";
 import Avatar from "components/Avatar";
-import { Stack, TableRow } from "@mui/material";
+import { Box, Stack, TableRow } from "@mui/material";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
@@ -18,6 +18,9 @@ import { setContentRow } from "store/docs/reducer";
 import { DOCS_API_URL } from "constant/index";
 import axiosBaseQuery from "store/axiosBaseQuery";
 import { useRouter } from "next-intl/client";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import GroupIcon from "@mui/icons-material/Group";
+import ArticleIcon from "@mui/icons-material/Article";
 
 type DesktopCellsProps = {
   item: any;
@@ -72,35 +75,22 @@ const DesktopCells = (props: DesktopCellsProps) => {
   return (
     <>
       <BodyCell align="left">
-        <div
-          style={{ cursor: "pointer" }}
-          // onClick={async () => {
-            // const result: any = await api(
-            //   {
-            //     url: `/docs/detail/${item.id}`,
-            //     method: "GET",
-            //     //@ts-ignore
-            //   },
-            //   {},
-            //   {},
-            // );
-          //   if (result.error) {
-          //     console.error("Error:", result.error);
-          //   } else {
-          //     await dispatch(setContentRow(result?.data?.content));
-
-          //     push(`/documents/${item.id}`);
-          //   }
-          // }}
+        <Box
+          sx={{
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
         >
-          <Text fontWeight={600} fontSize={14}>
-            {item?.name}
-          </Text>
-        </div>
+          <Box>
+            <GroupIcon sx={{ fontSize: 20 }} htmlColor="grey" />
+            <ArticleIcon sx={{ fontSize: 20 }} htmlColor="dodgerblue" />
+          </Box>
+          <Text fontSize={14}>{item?.name}</Text>
+        </Box>
       </BodyCell>
-      <BodyCell>{dayjs(item.updated_time).format(DATE_LOCALE_FORMAT)}</BodyCell>
-      <BodyCell>{formatTime(item.updated_time)}</BodyCell>
-      <BodyCell sx={{ py: "10px" }} align="center">
+      <BodyCell align="center">
         {item?.created_by?.id ? (
           <Stack
             // justifyContent={"center"}
@@ -108,22 +98,25 @@ const DesktopCells = (props: DesktopCellsProps) => {
             alignItems="center"
             spacing={1}
           >
-            <Avatar size={32} src={item.created_by?.avatar?.link} />
-            <Stack
-              justifyContent={"start"}
-              alignItems={"start"}
-              direction={"column"}
-            >
-              <Text fontWeight={600} fontSize={14}>
-                {item.created_by?.fullname}
-              </Text>
-              <Text fontWeight={400} fontSize={14}>
-                {item?.created_by?.position?.name}
-              </Text>
-            </Stack>
+            <Avatar size={20} src={item.created_by?.avatar?.link} />
+            <Text fontSize={14} color="grey.700" whiteSpace="nowrap">
+              Created by
+            </Text>
+            <Text fontWeight={600} fontSize={14}>
+              {item.created_by?.fullname}
+            </Text>
           </Stack>
         ) : null}
       </BodyCell>
+      <BodyCell>
+        <Box display="flex" gap={1} alignItems="center">
+          <AccessTimeIcon sx={{ fontSize: 20 }} htmlColor="grey" />
+          <Text fontSize={14} whiteSpace="nowrap" color="grey.700">
+            Updated {formatTime(item.updated_time)}
+          </Text>
+        </Box>
+      </BodyCell>
+      <BodyCell>{""}</BodyCell>
     </>
   );
 };

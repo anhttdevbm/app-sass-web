@@ -148,7 +148,7 @@ const TABS = [
 ];
 
 const getSuffixPath = (path: string) => {
-  const arrSplit = path.split("/");
-
+  const url = new URL(path, window.location.origin);
+  const arrSplit = url.pathname.split("/");
   return arrSplit[3];
 };
