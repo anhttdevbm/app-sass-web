@@ -27,6 +27,7 @@ import KanbanViewDocList from "./KanbanViewDocList";
 import { useAppSelector } from "store/hooks";
 import { Data } from "emoji-mart";
 import { Text } from "components/shared";
+import BasicViewDocList from "./BasicViewDocList";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -149,70 +150,76 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     }
   }, [searchParams.get("group_by")]);
 
+  console.log("data =>>>", data);
+
   return (
     <>
       <FixedLayout>
         {typeViewDocStore === "basicViewListDoc" ? (
-          <TableLayout
-            headerList={headerList}
-            pending={isLoading}
-            noData={data?.totalDocs === 0}
-            px={{ xs: 0, md: 3 }}
-            headerProps={{
-              sx: { px: { xs: 0.5, md: 2 } },
-            }}
-            containerHeaderProps={{
-              visibility: "hidden",
-              mt: -4,
-              zIndex: 0,
-            }}
-          >
-            {query?.group_by == DocGroupByEnum.CREATED_BY &&
-              Array.isArray(data?.docs) &&
-              data?.docs.map((item) => {
-                return (
-                  <RowGroup
-                    key={item?._id}
-                    title={item.groupInfo?.fullname || "Unknown"}
-                    items={item.docs}
-                  />
-                );
-              })}
-            {query?.group_by === DocGroupByEnum.PROJECT_ID &&
-              Array.isArray(data?.docs) &&
-              data?.docs.map((item) => {
-                return (
-                  <RowGroup
-                    isGrouped={isGrouped}
-                    key={item?._id}
-                    title={
-                      item.groupInfo ? (
-                        <>
-                          <Stack
-                            direction="row"
-                            alignItems="center"
-                            spacing={1}
-                          >
-                            <Avatar
-                              size={32}
-                              alt={item.groupInfo.name}
-                              src={item.groupInfo.avatar.link}
-                              style={{ marginRight: "8px" }}
-                            />
-                            {`${item.groupInfo.name} #${
-                              item.groupInfo?.number || 0
-                            }`}
-                          </Stack>
-                        </>
-                      ) : (
-                        "No project"
-                      )
-                    }
-                    items={item.docs}
-                  />
-                );
-              })}
-          </TableLayout>
+          !isGrouped ? (
+            <BasicViewDocList data={data?.docs} />
+          ) : (
+            <TableLayout
+              headerList={headerList}
+              pending={isLoading}
+              noData={data?.totalDocs === 0}
+              px={{ xs: 0, md: 3 }}
+              headerProps={{
+                sx: { px: { xs: 0.5, md: 2 } },
+              }}
+              containerHeaderProps={{
+                visibility: "hidden",
+                mt: -4,
+                zIndex: 0,
+              }}
+            >
+              {query?.group_by == DocGroupByEnum.CREATED_BY &&
+                Array.isArray(data?.docs) &&
+                data?.docs.map((item) => {
+                  return (
+                    <RowGroup
+                      key={item?._id}
+                      title={item.groupInfo?.fullname || "Unknown"}
+                      items={item.docs}
+                    />
+                  );
+                })}
+              {query?.group_by === DocGroupByEnum.PROJECT_ID &&
+                Array.isArray(data?.docs) &&
+                data?.docs.map((item) => {
+                  return (
+                    <RowGroup
+                      isGrouped={isGrouped}
+                      key={item?._id}
+                      title={
+                        item.groupInfo ? (
+                          <>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={1}
+                            >
+                              <Avatar
+                                size={32}
+                                alt={item.groupInfo.name}
+                                src={item.groupInfo.avatar.link}
+                                style={{ marginRight: "8px" }}
+                              />
+                              {`${item.groupInfo.name} #${
+                                item.groupInfo?.number || 0
+                              }`}
+                            </Stack>
+                          </>
+                        ) : (
+                          "No project"
+                        )
+                      }
+                      items={item.docs}
+                    />
+                  );
+                })}
+            </TableLayout>
+          )
         ) : (
           <KanbanViewDocList listData={data?.docs} />
         )}

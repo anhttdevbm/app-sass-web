@@ -1,6 +1,5 @@
 import Container from "@mui/material/Container";
 import KanbanViewItem from "../KanbanViewItem";
-import { useState } from "react";
 
 export interface IAvatarViewDoc {
   object: string;
@@ -62,7 +61,7 @@ export interface IDocItem {
   avatar: IAvatarViewDoc;
 }
 
-export interface IKanbanViewDocItem {
+export interface IViewDocItem {
   group_by?: string;
   groupInfo?: IGroupInfoDoc;
   docs: IDocItem[];
@@ -71,7 +70,7 @@ export interface IKanbanViewDocItem {
 export default function KanbanViewDocList({
   listData,
 }: {
-  listData: IKanbanViewDocItem[];
+  listData: IViewDocItem[];
 }) {
   return (
     <Container
@@ -84,7 +83,7 @@ export default function KanbanViewDocList({
         overflow: "auto",
       }}
     >
-      {listData?.map((item: IKanbanViewDocItem ,index) => (
+      {listData?.map((item: IViewDocItem ,index) => (
         <KanbanViewItem itemKanban={item} key={item.group_by ?? index} />
       ))}
     </Container>

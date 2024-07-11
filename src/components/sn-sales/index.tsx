@@ -1,37 +1,31 @@
 "use client";
 
+import { Stack } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
-import { BodyCell, CellProps, TableLayout } from "components/Table";
-import { NS_COMMON, NS_SALES, SHORT_TIME_FORMAT } from "constant/index";
-import { useTranslations } from "next-intl";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import SaleItem from "./SaleItem";
 import Pagination from "components/Pagination";
-import { SALE_STAGE } from "constant/enums";
-import SaleListAction from "./SaleListAction";
-import { Box, Stack, TableCell, TableSortLabel } from "@mui/material";
 import { Text } from "components/shared";
+import { CellProps, TableLayout } from "components/Table";
+import { NS_COMMON, NS_SALES } from "constant/index";
+import useQueryParams from "hooks/useQueryParams";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next-intl/client";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useSales } from "store/sales/selectors";
 import {
   cleanObject,
   formatCurrency,
-  formatDate,
   formatNumber,
   getComparator,
-  getPath,
   sortedRowInformation,
-  stringifyURLSearchParams,
+  stringifyURLSearchParams
 } from "utils/index";
-import { useSales } from "store/sales/selectors";
-import useQueryParams from "hooks/useQueryParams";
-import { usePathname, useRouter } from "next-intl/client";
-import { formatEstimateTime } from "../../utils/index";
-import { useFetchEmployeeOptions } from "./hooks/useGetEmployeeOptions";
-import { getCompany } from "store/manager/actions";
-import HeaderSortCell from "components/Table/HeaderSortCell";
-import SortProvider, {
+import {
   SortContextProps,
   sortContext,
 } from "./context/useSortContext";
+import { useFetchEmployeeOptions } from "./hooks/useGetEmployeeOptions";
+import SaleItem from "./SaleItem";
+import SaleListAction from "./SaleListAction";
 
 const SalesPage = () => {
   const commonT = useTranslations(NS_COMMON);
