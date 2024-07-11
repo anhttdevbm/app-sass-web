@@ -150,8 +150,6 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     }
   }, [searchParams.get("group_by")]);
 
-  console.log("data =>>>", data);
-
   return (
     <>
       <FixedLayout>

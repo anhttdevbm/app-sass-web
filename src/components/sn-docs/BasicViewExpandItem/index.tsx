@@ -16,13 +16,14 @@ export default function BasicViewExpandItem({
 
   return (
     <Stack
-      direction="row"
-      alignItems="center"
-      padding={2}
+      direction={{ xs: "column", md: "row" }}
+      alignItems={{ md: "center" }}
+      padding={{ md: 2 }}
       borderBottom={0.5}
       borderColor="#EFEFEF"
+      paddingBottom={{ xs: 1 }}
     >
-      <Box display="flex" sx={{ width: "40%" }} alignItems="center">
+      <Box display="flex" width={{ xs: "100%", md: "40%" }} alignItems="center" >
         <IconButton color="inherit" aria-label="menu">
           <DescriptionIcon
             sx={{ color: "primary.main", height: 16, width: 16 }}
@@ -32,9 +33,12 @@ export default function BasicViewExpandItem({
       </Box>
       <Box
         display="flex"
-        gap={4}
-        sx={{ width: "50%", color: "grey.900" }}
-        alignItems="center"
+        flexDirection={{ xs: "column" }}
+        gap={{ xs: 0.5 , md: 4 }}
+        width={{ xs: "100%", md: "50%"}}
+        sx={{ color: "grey.900" }}
+        alignItems={{ md: "center" }}
+        paddingLeft={{ xs: 1 }}
       >
         <Box
           display="flex"
@@ -49,8 +53,8 @@ export default function BasicViewExpandItem({
           />
           {expandedItem?.created_by ? (
             <>
-              <Typography variant="body2">{docsT("createdBy")}</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              <Typography whiteSpace={{ xs: "nowrap" }} variant="body2">{docsT("createdBy")}</Typography>
+              <Typography whiteSpace={{ xs: "nowrap" }} variant="body2" sx={{ fontWeight: 600 }}>
                 {expandedItem?.created_by?.fullname}
               </Typography>
             </>
