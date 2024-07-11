@@ -74,14 +74,20 @@ export default function KanbanViewDocList({
 }) {
   return (
     <Container
-      sx={{
-        paddingX: 46,
-        paddingY: 4,
+      sx={(theme) => ({
         display: "flex",
-        flexWrap: "wrap",
-        gap: 4,
         overflow: "auto",
-      }}
+        [theme.breakpoints.up('md')]: {
+          paddingX: 46,
+          paddingY: 4,
+          flexWrap: "wrap",
+          gap: 4,
+        },
+        [theme.breakpoints.up('xs')]: {
+          flexDirection: "column",
+          gap: 2
+        }
+      })}
     >
       {listData?.map((item: IViewDocItem ,index) => (
         <KanbanViewItem itemKanban={item} key={item.group_by ?? index} />

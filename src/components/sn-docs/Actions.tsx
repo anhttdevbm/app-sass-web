@@ -17,12 +17,13 @@ import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
 import { useAppSelector } from "store/hooks";
 import { useParams, useSearchParams } from "next/navigation";
-import IconButton from '@mui/material/IconButton';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import MenuIcon from '@mui/icons-material/Menu';
+import IconButton from "@mui/material/IconButton";
+import ViewModuleIcon from "@mui/icons-material/ViewModule";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useDispatch } from "react-redux";
 import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
 import SearchIcon from "icons/SearchIcon";
+import BtnAdd from "./BtnAdd";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -103,7 +104,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
-    [companyT],
+    [companyT]
   );
 
   const onChangeQueries = (name: string, value: any) => {
@@ -168,29 +169,39 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent="space-between"
+          justifyContent={{ md: "space-between" }}
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Search
-            placeholder={docsT("filter.search", { name: "email" })}
-            name="search_key"
-            onChange={onChangeQueries}
-            value={queries?.search_key}
-            sx={{ minWidth: 200 }}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-              if (e.key === "Enter") {
-                onSearch();
-              }
-            }}
-            startNode={null}
-            endNode={<SearchIcon sx={{ color: "dodgerblue" }} />}
-            rootSx={{ borderRadius: "2rem" }}
-          />
-          <ChangeViewListDoc />
+          <Box display={{ xs: "none" }}>
+            <Search
+              placeholder={docsT("filter.search", { name: "email" })}
+              name="search_key"
+              onChange={onChangeQueries}
+              value={queries?.search_key}
+              sx={{ minWidth: 200 }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  onSearch();
+                }
+              }}
+              startNode={null}
+              endNode={<SearchIcon sx={{ color: "dodgerblue" }} />}
+              rootSx={{ borderRadius: "2rem" }}
+            />
+          </Box>
+          <Stack
+            direction="row"
+            justifyContent={{ xs: "space-between" }}
+            spacing={1}
+            width={{ xs: "100%" }}
+          >
+            <ChangeViewListDoc />
+            <BtnAdd loading={loading} />
+          </Stack>
         </Stack>
-        <Box bgcolor="background.default" borderRadius="2rem">
+        <Box bgcolor="background.default" borderRadius="2rem" overflow={{ xs: "auto" }}>
           <Stack
             direction="row"
             alignItems="center"
@@ -198,7 +209,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             width="fit-content"
             spacing={3}
             py={{ xs: 1.25, md: 1, lg: 1.25 }}
-            px={{ md: 2, lg: 2 }}
+            px={{ xs: 3, md: 2, lg: 2 }}
             overflow="auto"
           >
             <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>

@@ -22,11 +22,16 @@ export default function KanbanViewItem({
 
   return (
     <Card
-      sx={{
-        width: 344,
-        height: 238,
+      sx={(theme) => ({
         borderRadius: 4,
-      }}
+        [theme.breakpoints.up('md')]: {
+          width: 344,
+          height: 238,
+        },
+        [theme.breakpoints.up('xs')]: {
+          minHeight: 238,
+        }
+      })}
     >
       <CardHeader
         sx={{
