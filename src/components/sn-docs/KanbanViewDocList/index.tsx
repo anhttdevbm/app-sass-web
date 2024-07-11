@@ -1,6 +1,5 @@
 import Container from "@mui/material/Container";
 import KanbanViewItem from "../KanbanViewItem";
-import { useState } from "react";
 
 export interface IAvatarViewDoc {
   object: string;
