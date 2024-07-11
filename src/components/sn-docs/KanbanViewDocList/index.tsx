@@ -78,12 +78,12 @@ export default function KanbanViewDocList({
         display: "flex",
         overflow: "auto",
         [theme.breakpoints.up('md')]: {
-          paddingX: 46,
-          paddingY: 4,
+          paddingX: 2,
+          paddingY: 1,
           flexWrap: "wrap",
           gap: 4,
         },
-        [theme.breakpoints.up('xs')]: {
+        [theme.breakpoints.down('md')]: {
           flexDirection: "column",
           gap: 2
         }

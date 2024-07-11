@@ -28,7 +28,7 @@ export default function KanbanViewItem({
           width: 344,
           height: 238,
         },
-        [theme.breakpoints.up('xs')]: {
+        [theme.breakpoints.down('md')]: {
           minHeight: 238,
         }
       })}
