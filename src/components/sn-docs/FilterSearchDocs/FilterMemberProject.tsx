@@ -87,9 +87,10 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
         sx={sxConfig.item}
       >
         <Text variant="body2" color="grey.400">
-          {currentProjectLabel
-            ? currentProjectLabel
-            : docsT("filter.filter.project")}
+          {docsT("filter.filter.project")}:
+        </Text>
+        <Text variant="body2" fontWeight={600} color="grey.700">
+          {currentProjectLabel ? currentProjectLabel : docsT("filter.all")}
         </Text>
         <ChevronIcon fontSize="small"></ChevronIcon>
       </MenuItem>
@@ -173,5 +174,9 @@ const sxConfig = {
     width: "100%",
     py: 1,
     px: 2,
+    gap: 1,
+    border: "solid 1px lightgrey",
+    borderRadius: "2rem",
+    bgcolor: "white",
   },
 };

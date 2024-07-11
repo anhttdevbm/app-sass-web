@@ -26,6 +26,7 @@ import { MenuButton } from "@mui/base";
 import KanbanViewDocList from "./KanbanViewDocList";
 import { useAppSelector } from "store/hooks";
 import { Data } from "emoji-mart";
+import { Text } from "components/shared";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -56,14 +57,16 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
         align: "left",
       },
       {
-        value: "Created at",
-        width: "23.333%",
+        value: "Creator",
+        width: "25%",
+        align: "left",
       },
       {
         value: "Last edited",
-        width: "23.333%",
+        width: "25%",
+        align: "left",
       },
-      { value: "Creator", width: "23.333%" },
+      { value: "", width: "20%" },
     ],
     [],
   );
@@ -75,11 +78,11 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
         align: "left",
       },
       {
-        value: "Created at",
+        value: "Creator",
         width: "23.333%",
       },
       { value: "Last edited", width: "23.333%" },
-      { value: "Creator", width: "30%" },
+      { value: "", width: "30%" },
     ],
     [],
   );
@@ -137,11 +140,11 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     if (!searchParams.get("group_by")) {
       push(
         pathname +
-        "?" +
-        createParamString({
-          group_by: DocGroupByEnum.PROJECT_ID,
-          size: "50",
-        }),
+          "?" +
+          createParamString({
+            group_by: DocGroupByEnum.PROJECT_ID,
+            size: "50",
+          }),
       );
     }
   }, [searchParams.get("group_by")]);
@@ -149,7 +152,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
   return (
     <>
       <FixedLayout>
-        {typeViewDocStore === "basicViewListDoc" ?
+        {typeViewDocStore === "basicViewListDoc" ? (
           <TableLayout
             headerList={headerList}
             pending={isLoading}
@@ -157,6 +160,11 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
             px={{ xs: 0, md: 3 }}
             headerProps={{
               sx: { px: { xs: 0.5, md: 2 } },
+            }}
+            containerHeaderProps={{
+              visibility: "hidden",
+              mt: -4,
+              zIndex: 0,
             }}
           >
             {query?.group_by == DocGroupByEnum.CREATED_BY &&
@@ -180,15 +188,20 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
                     title={
                       item.groupInfo ? (
                         <>
-                          <Stack direction="row" alignItems="center" spacing={1}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={1}
+                          >
                             <Avatar
                               size={32}
                               alt={item.groupInfo.name}
                               src={item.groupInfo.avatar.link}
                               style={{ marginRight: "8px" }}
                             />
-                            {`${item.groupInfo.name} #${item.groupInfo?.number || 0
-                              }`}
+                            {`${item.groupInfo.name} #${
+                              item.groupInfo?.number || 0
+                            }`}
                           </Stack>
                         </>
                       ) : (
@@ -200,9 +213,9 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
                 );
               })}
           </TableLayout>
-          :
+        ) : (
           <KanbanViewDocList listData={data?.docs} />
-        }
+        )}
         <Pagination
           totalItems={data?.totalDocs}
           totalPages={data?.totalPages}

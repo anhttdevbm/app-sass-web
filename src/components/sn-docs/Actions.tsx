@@ -22,6 +22,7 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useDispatch } from "react-redux";
 import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
+import SearchIcon from "icons/SearchIcon";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -34,41 +35,57 @@ function convertStringToArray(inputString) {
 }
 
 const ChangeViewListDoc = () => {
-  const [typeViewListDoc, setTypeViewListDoc] = useState<TypeViewListDoc>('basicViewListDoc');
+  const [typeViewListDoc, setTypeViewListDoc] =
+    useState<TypeViewListDoc>("basicViewListDoc");
   const dispatch = useDispatch();
-  
+
   const handleViewKanban = () => {
-    dispatch(changeTypeViewDoc('kanbanViewListDoc'));
-    setTypeViewListDoc('kanbanViewListDoc');
-  }
+    dispatch(changeTypeViewDoc("kanbanViewListDoc"));
+    setTypeViewListDoc("kanbanViewListDoc");
+  };
 
   const handleViewBasic = () => {
-    dispatch(changeTypeViewDoc('basicViewListDoc'));
-    setTypeViewListDoc('basicViewListDoc');
-  }
+    dispatch(changeTypeViewDoc("basicViewListDoc"));
+    setTypeViewListDoc("basicViewListDoc");
+  };
 
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
-      <IconButton 
-        onClick={handleViewKanban} 
-        aria-label="view-kanban" 
-        sx={{ 
-          backgroundColor: typeViewListDoc === 'kanbanViewListDoc' ? 'common.white' : '#E9EBF3',
-          boxShadow: typeViewListDoc === 'kanbanViewListDoc' ? '0px 4px 8px rgba(0, 0, 0, 0.1)' : 'none' 
-        }}>
-          <ViewModuleIcon />
+      <IconButton
+        onClick={handleViewKanban}
+        aria-label="view-kanban"
+        sx={{
+          backgroundColor:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "common.white"
+              : "#E9EBF3",
+          boxShadow:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
+              : "none",
+        }}
+      >
+        <ViewModuleIcon />
       </IconButton>
-      <IconButton 
-        onClick={handleViewBasic} 
-        aria-label="view-basic" 
-        sx={{ 
-          backgroundColor: typeViewListDoc !== 'kanbanViewListDoc' ? 'common.white' : '#E9EBF3', 
-          boxShadow: typeViewListDoc !== 'kanbanViewListDoc' ? '0px 4px 8px rgba(0, 0, 0, 0.1)' : 'none' }}>
+      <IconButton
+        onClick={handleViewBasic}
+        aria-label="view-basic"
+        sx={{
+          backgroundColor:
+            typeViewListDoc === "kanbanViewListDoc"
+              ? "common.white"
+              : "#E9EBF3",
+          boxShadow:
+            typeViewListDoc === "kanbanViewListDoc"
+              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
+              : "none",
+        }}
+      >
         <MenuIcon />
       </IconButton>
     </Stack>
-  )
-} 
+  );
+};
 
 type ActionProps = {
   isProjectTabMode: boolean;
@@ -91,6 +108,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
 
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+    onSearch();
   };
   const { id } = useParams();
 
@@ -140,11 +158,12 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   return (
     <>
       <Stack
-        direction={{ xs: "column", md: "row" }}
-        alignItems={{ md: "center" }}
+        direction="column"
         justifyContent="space-between"
-        spacing={{ xs: 1, md: 3 }}
+        spacing={{ xs: 1, md: 2 }}
         px={{ xs: 0, md: 3 }}
+        py={1}
+        zIndex={2}
       >
         <Stack
           direction="row"
@@ -153,94 +172,74 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Text variant="h4" display={{ md: "none" }}>
-            {docsT("title")}
-          </Text>
-          <Box onClick={handleCreateDoc}>
-            <Button
-              disabled={loading}
-              startIcon={<PlusIcon />}
-              size="extraSmall"
-              variant="primary"
-              sx={{
-                height: 32,
-                px: ({ spacing }) => `${spacing(2)}!important`,
-              }}
-            >
-              {docsT("button.add")}
-            </Button>
-          </Box>
-        </Stack>
-        <ChangeViewListDoc />
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={3}
-          py={{ xs: 1.25, md: 0.5, lg: 1.25 }}
-          px={{ md: 1, lg: 2 }}
-          borderRadius={1}
-          width={{ xs: "100%", md: "100%" }}
-          justifyContent={{ xs: "flex-start", md: "flex-end" }}
-          maxWidth={{ xs: "100%", md: "fit-content" }}
-          overflow="auto"
-          minWidth={{ md: "fit-content" }}
-        >
           <Search
             placeholder={docsT("filter.search", { name: "email" })}
             name="search_key"
             onChange={onChangeQueries}
             value={queries?.search_key}
-            sx={{ width: 200, minWidth: 200 }}
+            sx={{ minWidth: 200 }}
             onKeyDown={(e) => {
               e.stopPropagation();
               if (e.key === "Enter") {
                 onSearch();
               }
             }}
+            startNode={null}
+            endNode={<SearchIcon sx={{ color: "dodgerblue" }} />}
+            rootSx={{ borderRadius: "2rem" }}
           />
-
-          <Dropdown
-            placeholder={
-              isProjectTabMode
-                ? docsT("filter.all")
-                : docsT("filter.group.none")
-            }
-            options={grOptions}
-            name="group_by"
-            hasAll={false}
-            onChange={onChangeQueries}
-            defaultValue={
-              isProjectTabMode ? docsT("filter.all") : queries?.group_by
-            }
-            value={isProjectTabMode ? docsT("filter.all") : queries?.group_by}
-          />
-          <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
-          <Button
-            size="extraSmall"
-            sx={{
-              display: { xs: "none", md: "flex" },
-              height: 32,
-              px: ({ spacing }) => `${spacing(2)}!important`,
-            }}
-            onClick={onSearch}
-            variant="secondary"
-          >
-            {commonT("search")}
-          </Button>
+          <ChangeViewListDoc />
         </Stack>
-        <Button
-          size="small"
-          sx={{
-            height: 40,
-            display: { md: "none" },
-            width: "fit-content",
-            marginBottom: "20px",
-          }}
-          onClick={onSearch}
-          variant="secondary"
-        >
-          {commonT("search")}
-        </Button>
+        <Box bgcolor="background.default" borderRadius="2rem">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            width="fit-content"
+            spacing={3}
+            py={{ xs: 1.25, md: 1, lg: 1.25 }}
+            px={{ md: 2, lg: 2 }}
+            overflow="auto"
+          >
+            <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
+              View by:
+            </Text>
+            <Box
+              border="solid 1px lightgrey"
+              borderRadius="2rem"
+              bgcolor="background.paper"
+              display="flex"
+              alignItems="center"
+              pl={2}
+            >
+              <Text variant="body2" color="grey.400">
+                {docsT("filter.group.group")}:
+              </Text>
+              <Dropdown
+                placeholder={
+                  isProjectTabMode
+                    ? docsT("filter.all")
+                    : docsT("filter.group.none")
+                }
+                options={grOptions}
+                name="group_by"
+                hasAll={false}
+                onChange={onChangeQueries}
+                defaultValue={
+                  isProjectTabMode ? docsT("filter.all") : queries?.group_by
+                }
+                value={
+                  isProjectTabMode ? docsT("filter.all") : queries?.group_by
+                }
+                sx={{
+                  pr: 1,
+                  ml: -1,
+                }}
+              />
+            </Box>
+            <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
+          </Stack>
+        </Box>
       </Stack>
     </>
   );

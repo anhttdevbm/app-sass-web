@@ -20,6 +20,7 @@ import { useState } from "react";
 import MoveArrowIcon from "icons/MoveArrowIcon";
 import { IKanbanViewDocItem } from "../KanbanViewDocList";
 import dayjs from "dayjs";
+import GroupIcon from "@mui/icons-material/Group";
 
 export default function KanbanViewItem({
   itemKanban,
@@ -170,11 +171,16 @@ export default function KanbanViewItem({
           </>
         }
         title={
-          itemKanban.groupInfo
-            ? `${itemKanban.groupInfo.name} #${
-                itemKanban.groupInfo?.number ?? 0
-              }`
-            : ""
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography>
+              {itemKanban.groupInfo
+                ? `${itemKanban.groupInfo.name} #${
+                    itemKanban.groupInfo?.number ?? 0
+                  }`
+                : ""}
+            </Typography>
+            <GroupIcon />
+          </Box>
         }
       />
       <CardContent sx={{ paddingTop: 0.5, paddingX: 2.5, height: 184 }}>
@@ -231,6 +237,7 @@ export default function KanbanViewItem({
             >
               <AccessTimeIcon sx={{ height: 16, width: 16 }} />
               <Typography variant="body1" paddingLeft={1} fontSize={12}>
+                Updated{" "}
                 {dayjs(itemKanban.groupInfo?.updated_time).format(
                   "MMMM D, YYYY",
                 )}

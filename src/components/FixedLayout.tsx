@@ -1,7 +1,14 @@
 "use client";
 
 import { memo, useEffect, useRef, useState } from "react";
-import { Box, Stack, StackProps, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Stack,
+  StackProps,
+  SxProps,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import useWindowSize from "hooks/useWindowSize";
 
 interface MyDOMRect {
@@ -14,7 +21,7 @@ interface MyDOMRect {
 }
 
 const FixedLayout = (
-  props: { rounded?: string; sxContainer?: any } & StackProps,
+  props: { rounded?: string; sxContainer?: SxProps } & StackProps,
 ) => {
   const { children, order, rounded = "12px", sxContainer, ...rest } = props;
   const { breakpoints } = useTheme();

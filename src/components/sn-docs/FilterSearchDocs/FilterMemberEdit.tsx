@@ -10,6 +10,7 @@ import {
   Button,
   Typography,
   popoverClasses,
+  SxProps,
 } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 import { FilterSearchDocsProps } from "./FilterSearchDocs";
@@ -77,7 +78,10 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
         sx={sxConfig.item}
       >
         <Text variant="body2" color="grey.400">
-          {docsT("filter.filter.lastEdited")}
+          {docsT("filter.filter.lastEdited")}:
+        </Text>
+        <Text variant="body2" fontWeight={600} color="grey.700">
+          {docsT("filter.all")}
         </Text>
         <ChevronIcon fontSize="small"></ChevronIcon>
       </MenuItem>
@@ -238,7 +242,7 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
 };
 
 export default memo(FilterMemberEdit);
-const sxConfig = {
+const sxConfig: Record<string, SxProps> = {
   input: {
     height: 56,
   },
@@ -246,6 +250,10 @@ const sxConfig = {
     width: "100%",
     py: 1,
     px: 2,
+    gap: 1,
+    border: "solid 1px lightgrey",
+    borderRadius: "2rem",
+    bgcolor: "white",
   },
 };
 
