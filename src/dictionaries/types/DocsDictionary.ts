@@ -34,4 +34,5 @@ export type DocsDictionary = {
     delete: string;
   },
   ownedBy: string;
+  createdBy: string;
 };

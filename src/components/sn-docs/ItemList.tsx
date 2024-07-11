@@ -26,6 +26,7 @@ import { MenuButton } from "@mui/base";
 import KanbanViewDocList from "./KanbanViewDocList";
 import { useAppSelector } from "store/hooks";
 import { Data } from "emoji-mart";
+import BasicViewDocList from "./BasicViewDocList";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -137,20 +138,26 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     if (!searchParams.get("group_by")) {
       push(
         pathname +
-        "?" +
-        createParamString({
-          group_by: DocGroupByEnum.PROJECT_ID,
-          size: "50",
-        }),
+          "?" +
+          createParamString({
+            group_by: DocGroupByEnum.PROJECT_ID,
+            size: "50",
+          }),
       );
     }
   }, [searchParams.get("group_by")]);
 
+  console.log("data =>>>", data);
+
   return (
     <>
       <FixedLayout>
-        {typeViewDocStore === "basicViewListDoc" ?
-          <TableLayout
+        {typeViewDocStore === "basicViewListDoc" ? (
+          <BasicViewDocList data={data?.docs} />
+        ) : (
+          <KanbanViewDocList listData={data?.docs} />
+        )}
+        {/* <TableLayout
             headerList={headerList}
             pending={isLoading}
             noData={data?.totalDocs === 0}
@@ -199,10 +206,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
                   />
                 );
               })}
-          </TableLayout>
-          :
-          <KanbanViewDocList listData={data?.docs} />
-        }
+          </TableLayout> */}
         <Pagination
           totalItems={data?.totalDocs}
           totalPages={data?.totalPages}
