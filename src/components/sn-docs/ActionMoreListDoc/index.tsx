@@ -7,8 +7,19 @@ import { NS_DOCS } from "constant/index";
 import useActionMoreListDoc from "./hooks/useActionMoreListDoc";
 import MoveArrowIcon from "icons/MoveArrowIcon";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { IDocItem } from "../KanbanViewDocList";
 
-export default function ActionMoreListDoc() {
+interface IStyleActionMoreListDoc {
+  colorIcon: string;
+}
+
+export default function ActionMoreListDoc({
+  style,
+  docItem,
+}: {
+  style?: IStyleActionMoreListDoc;
+  docItem?: IDocItem
+}) {
   const docsT = useTranslations(NS_DOCS);
   const {
     anchorEl,
@@ -35,7 +46,7 @@ export default function ActionMoreListDoc() {
           handleClick(event);
         }}
       >
-        <MoreHoriz sx={{ color: "common.white", height: 18, width: 18 }} />
+        <MoreHoriz sx={{ color: style?.colorIcon ?? "common.white", height: 18, width: 18 }} />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -60,7 +71,7 @@ export default function ActionMoreListDoc() {
       >
         <MenuItem
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
-          onClick={handleRenameDoc}
+          onClick={() => handleRenameDoc(docItem?._id)}
         >
           <ContentPasteGoIcon
             sx={{ height: 15, width: 15, color: "grey.400" }}

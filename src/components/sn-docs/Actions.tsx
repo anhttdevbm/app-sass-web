@@ -104,7 +104,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
-    [companyT]
+    [companyT],
   );
 
   const onChangeQueries = (name: string, value: any) => {
@@ -198,10 +198,16 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             width={{ xs: "100%" }}
           >
             <ChangeViewListDoc />
-            <BtnAdd loading={loading} />
+            <Box onClick={handleCreateDoc}>
+              <BtnAdd loading={loading} />
+            </Box>
           </Stack>
         </Stack>
-        <Box bgcolor="background.default" borderRadius="2rem" overflow={{ xs: "auto" }}>
+        <Box
+          bgcolor="background.default"
+          borderRadius="2rem"
+          overflow={{ xs: "auto" }}
+        >
           <Stack
             direction="row"
             alignItems="center"

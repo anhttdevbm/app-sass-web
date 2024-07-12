@@ -6,6 +6,8 @@ import { IDocItem } from "../KanbanViewDocList";
 import dayjs from "dayjs";
 import { NS_DOCS } from "constant/index";
 import { useTranslations } from "next-intl";
+import { useDocs } from "store/docs/selectors";
+import ActionMoreListDoc from "../ActionMoreListDoc";
 
 export default function BasicViewExpandItem({
   expandedItem,
@@ -13,7 +15,7 @@ export default function BasicViewExpandItem({
   expandedItem: IDocItem;
 }) {
   const docsT = useTranslations(NS_DOCS);
-
+  const { redirectDetailDoc } = useDocs();
   return (
     <Stack
       direction={{ xs: "column", md: "row" }}
@@ -23,19 +25,42 @@ export default function BasicViewExpandItem({
       borderColor="#EFEFEF"
       paddingBottom={{ xs: 1 }}
     >
-      <Box display="flex" width={{ xs: "100%", md: "40%" }} alignItems="center" >
-        <IconButton color="inherit" aria-label="menu">
-          <DescriptionIcon
-            sx={{ color: "primary.main", height: 16, width: 16 }}
-          />
-        </IconButton>
-        <Typography variant="h6">{expandedItem?.name ?? "--"}</Typography>
+      <Box
+        onClick={() => {
+          redirectDetailDoc(expandedItem.id);
+        }}
+        sx={{ cursor: "pointer" }}
+        display="flex"
+        pr={{ xs: 0.5 }}
+        width={{ xs: "100%", md: "40%" }}
+        alignItems="center"
+        justifyContent={{ xs: "space-between" }}
+      >
+        <Box display="flex" alignItems="center">
+          <IconButton color="inherit" aria-label="menu">
+            <DescriptionIcon
+              sx={{ color: "primary.main", height: 16, width: 16 }}
+            />
+          </IconButton>
+          <Typography variant="h6">{expandedItem?.name ?? "--"}</Typography>
+        </Box>
+        <Box
+          sx={(theme) => ({
+            width: "10%",
+            [theme.breakpoints.up("md")]: {
+              display: "none",
+            },
+            [theme.breakpoints.up("xs")]: {},
+          })}
+        >
+          <ActionMoreListDoc style={{ colorIcon: "text.primary" }} />
+        </Box>
       </Box>
       <Box
         display="flex"
         flexDirection={{ xs: "column", md: "row" }}
-        gap={{ xs: 0.5 , md: 4 }}
-        width={{ xs: "100%", md: "50%"}}
+        gap={{ xs: 0.5, md: 4 }}
+        width={{ xs: "100%", md: "50%" }}
         sx={{ color: "grey.900" }}
         alignItems={{ md: "center" }}
         paddingLeft={{ xs: 1 }}
@@ -53,8 +78,14 @@ export default function BasicViewExpandItem({
           />
           {expandedItem?.created_by ? (
             <>
-              <Typography whiteSpace={{ xs: "nowrap" }} variant="body2">{docsT("createdBy")}</Typography>
-              <Typography whiteSpace={{ xs: "nowrap" }} variant="body2" sx={{ fontWeight: 600 }}>
+              <Typography whiteSpace={{ xs: "nowrap" }} variant="body2">
+                {docsT("createdBy")}
+              </Typography>
+              <Typography
+                whiteSpace={{ xs: "nowrap" }}
+                variant="body2"
+                sx={{ fontWeight: 600 }}
+              >
                 {expandedItem?.created_by?.fullname}
               </Typography>
             </>
@@ -74,7 +105,20 @@ export default function BasicViewExpandItem({
           </Typography>
         </Box>
       </Box>
-      <Box sx={{ width: "10%" }}></Box>
+      <Box
+        sx={(theme) => ({
+          width: "10%",
+          [theme.breakpoints.up("md")]: {
+            display: "flex",
+            justifyContent: "flex-end",
+          },
+          [theme.breakpoints.up("xs")]: {
+            display: "none",
+          },
+        })}
+      >
+        <ActionMoreListDoc style={{ colorIcon: "text.primary" }} />
+      </Box>
     </Stack>
   );
 }

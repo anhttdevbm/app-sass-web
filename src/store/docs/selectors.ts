@@ -26,7 +26,7 @@ const useDocs = () => {
     docsFilters: filters,
 
     getDocCustomStatus,
-    docCustom
+    docCustom,
   } = useAppSelector((state) => state.doc, shallowEqual);
   const { pageIndex, pageSize, totalDocs, totalPages } = useAppSelector(
     (state) => state.doc.docsPaging,
@@ -126,10 +126,14 @@ const useDocs = () => {
 
   const onUpdateDocCustom = useCallback(
     async (id: string, data: { content: string }) => {
-      await dispatch(updateDocCustom({id, data}));
+      await dispatch(updateDocCustom({ id, data }));
     },
     [dispatch],
   );
+
+  const redirectDetailDoc = (idDoc: string) => {
+    if (idDoc) push(`/documents/${idDoc}/detail`);
+  };
 
   return {
     items,
@@ -149,7 +153,8 @@ const useDocs = () => {
     handleGetDocDetail,
     onGetDocCustom,
     docCustom,
-    onUpdateDocCustom
+    onUpdateDocCustom,
+    redirectDetailDoc,
   };
 };
 
