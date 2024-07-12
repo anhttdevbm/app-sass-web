@@ -33,7 +33,7 @@ export default function BasicViewExpandItem({
       </Box>
       <Box
         display="flex"
-        flexDirection={{ xs: "column" }}
+        flexDirection={{ xs: "column", md: "row" }}
         gap={{ xs: 0.5 , md: 4 }}
         width={{ xs: "100%", md: "50%"}}
         sx={{ color: "grey.900" }}
