@@ -8,14 +8,15 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import IconButton from "@mui/material/IconButton";
 
-function renderEventContent(eventInfo) {
-  console.log(eventInfo);
-  return (
-    <>
-      <b>{eventInfo.timeText}</b>
-      <i>{eventInfo.event.title}</i>
-    </>
-  );
+interface Event {
+  title: string;
+  start: string;
+  hours: number;
+}
+
+interface WeekTotal {
+  start: Date;
+  total: number;
 }
 
 const MonthCalendarSheet = () => {
@@ -23,6 +24,8 @@ const MonthCalendarSheet = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentMonthYear, setCurrentMonthYear] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [totals, setTotals] = useState<WeekTotal[]>([]);
 
   const handleDrawerOpen = () => {
     setDrawerOpen(true);
@@ -73,7 +76,7 @@ const MonthCalendarSheet = () => {
 
   const handleDateClick = (info) => {
     setSelectedDate(info.dateStr);
-    handleDrawerOpen()
+    handleDrawerOpen();
   };
 
   useEffect(() => {
@@ -82,6 +85,7 @@ const MonthCalendarSheet = () => {
       setCurrentMonthYear(formatMonthYear(calendarApi.view.title));
     }
   }, []);
+
   return (
     <Stack>
       <Box
@@ -113,11 +117,8 @@ const MonthCalendarSheet = () => {
           initialView="dayGridMonth"
           selectable={true}
           dateClick={handleDateClick}
-          events={[
-            { title: "event 1", date: "2024-07-16" },
-            { title: "event 2", date: "2019-04-02" },
-          ]}
-          eventContent={renderEventContent}
+          events={events}
+          // eventContent={renderEventContent}
           headerToolbar={false}
           dayHeaderContent={customDayHeaderContent}
           editable={true}
@@ -126,7 +127,7 @@ const MonthCalendarSheet = () => {
           anchor="right"
           open={drawerOpen}
           onClose={handleDrawerClose}
-          style={{width:500}}
+          style={{ width: 500 }}
         >
           <Box sx={{ p: 2 }}>
             <Typography variant="h6">Selected Date Details</Typography>
