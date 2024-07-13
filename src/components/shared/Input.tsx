@@ -199,7 +199,7 @@ const getDefaultSx = (
         "&::after": {
           content: '"(*)"',
           color: "#F64E60",
-        }
+        },
       },
       ...titleSx,
     },

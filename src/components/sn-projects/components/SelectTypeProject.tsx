@@ -16,11 +16,11 @@ import { useProjectTypes } from "store/company/selectors";
 
 type SelectTypeProjectProps = {
   onChange: (data: Option) => void;
-  value: { value: string | number, label: string }
+  value: { value: string | number; label: string };
 };
 
 const SelectTypeProject = (props: SelectTypeProjectProps) => {
-  const { onChange, value: selectedValue } = props
+  const { onChange, value: selectedValue } = props;
   const { onCreateProjectType } = useProjectTypes();
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -51,69 +51,74 @@ const SelectTypeProject = (props: SelectTypeProjectProps) => {
   const onClose = () => {
     setAnchorEl(null);
   };
-  const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState("");
 
   const onChangeSearch = (name: string, value?: string) => {
-    if(!value?.trim()) return
-    setSearchValue(value)
+    if (!value?.trim()) return;
+    setSearchValue(value);
   };
 
-  const filterOptions = projectTypeOptions.filter(item => item.label.includes(searchValue))
+  const filterOptions = projectTypeOptions.filter((item) =>
+    item.label.includes(searchValue),
+  );
 
   const onChangeTypeProject = (value: string | number, label: string) => {
     onChange({ value, label });
-    setSearchValue('')
-    onClose()
+    setSearchValue("");
+    onClose();
   };
 
   const handleAddingNewType = async () => {
-    const result = await onCreateProjectType({ name: searchValue })
-    const newType = { value: result.id, label: result.name }
+    const result = await onCreateProjectType({ name: searchValue });
+    const newType = { value: result.id, label: result.name };
     onChange(newType);
 
-    setSearchValue('')
-    onClose()
-  }
+    setSearchValue("");
+    onClose();
+  };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      handleAddingNewType()
+    if (event.key === "Enter") {
+      handleAddingNewType();
     }
   };
 
   return (
     <Stack>
       <Stack
-        direction="row"
-        py={1}
-        px={2.5}
-        bgcolor="grey.50"
+        direction="column"
         justifyContent="space-between"
         onClick={onOpen}
         minHeight={56}
-        borderRadius={1}
         sx={{ cursor: "pointer" }}
-        className='hellsssssso'
+        className="hellsssssso"
       >
-        <Stack flex={1} spacing={0.5} className='hellobbbb'>
-          <Text variant="caption" color="grey.300">
-            {projectT("list.form.title.projectType")}
-          </Text>
+        <Text variant="caption" color="text.primary">
+          {projectT("list.form.title.projectType")}
+        </Text>
+        <Stack
+          flex={1}
+          direction="row"
+          spacing={0.5}
+          className="hellobbbb"
+          bgcolor="grey.50"
+          borderRadius="2rem"
+          p={0.5}
+        >
           <Stack
             direction="row"
             rowGap={1.5}
             columnGap={1.5}
             flex={1}
             flexWrap="wrap"
-            marginTop='0 !important'
+            marginTop="0 !important"
           >
             {selectedValue?.value && <DisplayItem {...selectedValue} />}
           </Stack>
+          <ChevronIcon
+            sx={{ color: "grey.400", fontSize: 16, alignSelf: "center" }}
+          />
         </Stack>
-
-        <ChevronIcon
-          sx={{ color: "grey.400", fontSize: 16, alignSelf: "center" }}
-        />
       </Stack>
       <Popover
         id={popoverId}
@@ -153,13 +158,17 @@ const SelectTypeProject = (props: SelectTypeProjectProps) => {
           <Search
             name="type"
             value={searchValue}
-            placeholder={commonT("searchBy", { name: projectT("list.form.title.projectType") })}
+            placeholder={commonT("searchBy", {
+              name: projectT("list.form.title.projectType"),
+            })}
             onChange={onChangeSearch}
             onKeyDown={handleKeyDown}
           />
           <MenuList component={Stack} spacing={2}>
             {filterOptions.map((item, index) => {
-              const isChecked = filterOptions.some((item) => item.value === selectedValue?.value);
+              const isChecked = filterOptions.some(
+                (item) => item.value === selectedValue?.value,
+              );
               return (
                 <TypeProjectItem
                   key={item.value}
@@ -195,24 +204,20 @@ const SelectTypeProject = (props: SelectTypeProjectProps) => {
 
 export default memo(SelectTypeProject);
 
-const DisplayItem = (
-  props: {
-    value: string | number;
-    label: string
-  },
-) => {
+const DisplayItem = (props: { value: string | number; label: string }) => {
   const { value, label } = props;
 
   const { isDarkMode } = useTheme();
 
   return (
-    <Stack
-      direction="row"
-      px={0.5}
-      marginTop={'0'}
-      className='hello'
-    >
-      <Text className='hello123' variant="body2" maxWidth={150} noWrap tooltip={label}>
+    <Stack direction="row" px={0.5} marginTop={"0"} className="hello">
+      <Text
+        className="hello123"
+        variant="body2"
+        maxWidth={150}
+        noWrap
+        tooltip={label}
+      >
         {label}
       </Text>
     </Stack>

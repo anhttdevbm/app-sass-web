@@ -84,20 +84,23 @@ const SelectMembers = (props: SelectMembersProps) => {
   return (
     <>
       <Stack
-        direction="row"
-        py={1}
-        px={2.5}
-        bgcolor="grey.50"
+        direction="column"
         justifyContent="space-between"
         onClick={onOpen}
         minHeight={56}
-        borderRadius={1}
         sx={{ cursor: "pointer" }}
       >
-        <Stack flex={1} spacing={0.5}>
-          <Text variant="caption" color="grey.300">
-            {projectT("list.form.title.members")}
-          </Text>
+        <Text variant="caption" color="text.primary">
+          {projectT("list.form.title.members")}
+        </Text>
+        <Stack
+          flex={1}
+          direction="row"
+          spacing={0.5}
+          p={1}
+          bgcolor="grey.50"
+          borderRadius="2rem"
+        >
           <Stack
             direction="row"
             rowGap={1.5}
@@ -113,11 +116,10 @@ const SelectMembers = (props: SelectMembersProps) => {
               />
             ))}
           </Stack>
+          <ChevronIcon
+            sx={{ color: "grey.400", fontSize: 16, alignSelf: "center" }}
+          />
         </Stack>
-
-        <ChevronIcon
-          sx={{ color: "grey.400", fontSize: 16, alignSelf: "center" }}
-        />
       </Stack>
       <Popover
         id={popoverId}
