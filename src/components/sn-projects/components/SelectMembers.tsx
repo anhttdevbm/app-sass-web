@@ -11,6 +11,7 @@ import { NS_PROJECT, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import { Search } from "components/Filters";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
 
 type SelectMembersProps = {
   value?: Member[];
@@ -116,9 +117,7 @@ const SelectMembers = (props: SelectMembersProps) => {
               />
             ))}
           </Stack>
-          <ChevronIcon
-            sx={{ color: "grey.400", fontSize: 16, alignSelf: "center" }}
-          />
+          <ChevronCircleIcon sx={{ color: "transparent" }} />
         </Stack>
       </Stack>
       <Popover

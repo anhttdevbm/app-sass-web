@@ -55,6 +55,7 @@ import { useProjects } from "store/project/selectors";
 import ChevronIcon from "icons/ChevronIcon";
 import { Option } from "constant/types";
 import Upload from "components/sn-projects/components/Upload";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
 
 export type ProjectDataForm = Omit<ProjectData, "members" | "avatar"> & {
   members?: Member[];
@@ -369,6 +370,11 @@ const Form = (props: FormProps) => {
             fullWidth
             onEndReached={onEndReached}
             onChangeSearch={onChangeSearch}
+            SelectProps={{
+              IconComponent: () => (
+                <ChevronCircleIcon sx={{ color: "transparent" }} />
+              ),
+            }}
             searchProps={{
               value: filters?.email,
               placeholder: commonT("searchBy", { name: "email" }),
@@ -483,6 +489,11 @@ const Form = (props: FormProps) => {
                 name: projectT("list.form.title.currency"),
               })}
               onEndReached={onCurrencyOptionsEndReached}
+              SelectProps={{
+                IconComponent: () => (
+                  <ChevronCircleIcon sx={{ color: "transparent" }} />
+                ),
+              }}
               sx={{
                 ...sxConfig.input,
                 width: "35%",
@@ -493,7 +504,7 @@ const Form = (props: FormProps) => {
               }}
               rootSx={{
                 px: 0.5,
-                py: 1,
+                py: 0.75,
                 mt: 3,
                 borderRadius: "0 2rem 2rem 0",
               }}

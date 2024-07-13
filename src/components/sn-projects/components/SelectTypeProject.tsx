@@ -13,6 +13,7 @@ import {
 } from "store/global/selectors";
 import { Option } from "constant/types";
 import { useProjectTypes } from "store/company/selectors";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
 
 type SelectTypeProjectProps = {
   onChange: (data: Option) => void;
@@ -115,9 +116,7 @@ const SelectTypeProject = (props: SelectTypeProjectProps) => {
           >
             {selectedValue?.value && <DisplayItem {...selectedValue} />}
           </Stack>
-          <ChevronIcon
-            sx={{ color: "grey.400", fontSize: 16, alignSelf: "center" }}
-          />
+          <ChevronCircleIcon sx={{ color: "transparent" }} />
         </Stack>
       </Stack>
       <Popover
