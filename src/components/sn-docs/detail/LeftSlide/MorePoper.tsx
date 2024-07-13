@@ -52,6 +52,8 @@ const MorePoper = () => {
         onClick={(e) => setAnchorEl(e.currentTarget)}
         sx={{
           cursor: "pointer",
+          display: "flex",
+          alignItems: "center"
         }}
       >
         <MoreDotIcon

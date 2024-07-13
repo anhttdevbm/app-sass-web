@@ -186,9 +186,11 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               {rootDocument && (
                 <Avatar size={32} src={rootDocument?.owner?.avatar?.link} />
               )}
-              <Text color={"success.main"}>
+              <Box borderRadius="6px" bgcolor="#E9FFF8" paddingX={1} paddingY={0.5}>
+              <Text fontSize={12} color={"success.main"} fontWeight={500}>
                 {DocAccessibility[doc.perm as keyof typeof DocAccessibility]}
               </Text>
+              </Box>
               <Box
                 sx={{
                   display: "flex",

@@ -47,5 +47,6 @@ export const DocsLang: DocsDictionary = {
     delete: "Delete",
   },
   ownedBy: "Owned by",
-  createdBy: "Created by"
+  createdBy: "Created by",
+  changeDocAccess: "Change document Access ?"
 };

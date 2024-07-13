@@ -104,7 +104,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
         }
       }
     }
-  }, [content]);
+  }, [content, editor]);
 
   const [editorHeight, setEditorHeight] = useState("100vh");
 

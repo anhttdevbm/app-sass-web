@@ -72,7 +72,7 @@ const Document = ({
         >
           <MorePoper></MorePoper>
           <Box
-            onClick={() => onClick(id, project_id)}
+            onClick={() => {onClick(id, project_id)}}
             sx={{
               cursor: "pointer",
             }}

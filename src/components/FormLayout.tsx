@@ -42,7 +42,7 @@ const FormLayout = (props: FormLayoutProps) => {
         sx: defaultSx.header,
       }}
       bottomProps={{
-        sx: defaultSx.bottom
+        sx: defaultSx.bottom,
       }}
       renderHeader={label ?? renderHeader}
       contentProps={{ sx: { px: 3 } }}
@@ -54,14 +54,28 @@ const FormLayout = (props: FormLayoutProps) => {
             variant="primaryOutlined"
             disabled={submitting}
             size="small"
-            sx={defaultSx.button}
+            sx={{
+              ...defaultSx.button,
+              borderRadius: "100px",
+              borderColor: '#2AF598',
+              "&:hover": {
+                borderColor: "#2AF598",
+              }
+            }}
           >
             {cancelText}
           </Button>
           <Button
             variant="primary"
             disabled={disabled}
-            sx={defaultSx.button}
+            sx={{
+              ...defaultSx.button,
+              borderRadius: "100px",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
+            }}
             type={submitWhenEnter ? "submit" : "button"}
             size="small"
             pending={submitting}

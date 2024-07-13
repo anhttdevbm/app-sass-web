@@ -5,7 +5,7 @@ import { Endpoint, client } from "api";
 import FormLayout from "components/FormLayout";
 import { Select } from "components/shared";
 import { DocAccessibility, HttpStatusCode } from "constant/enums";
-import { DEFAULT_PAGING, NS_COMMON } from "constant/index";
+import { DEFAULT_PAGING, NS_COMMON, NS_DOCS } from "constant/index";
 import { Option } from "constant/types";
 import { useFormik } from "formik";
 import { DOCS_API_URL } from "constant/index";
@@ -45,6 +45,8 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
   const commonT = useTranslations(NS_COMMON);
   const { initQuery, isReady, query } = useQueryParams();
   const id = useAppSelector((data) => data.doc.id);
+
+  const docsT = useTranslations(NS_DOCS);
 
   const { handleGetDocDetail } = useDocs();
 
@@ -128,9 +130,10 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
         minWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
+        textAlign: "center"
       }}
       onSubmit={formik.handleSubmit}
-      label={"Sharing options"}
+      label={docsT("changeDocAccess")}
     >
       <Stack direction={{ sm: "row" }} spacing={2}>
         <Select

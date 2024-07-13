@@ -58,7 +58,10 @@ export interface IDocItem {
   created_by?: ICUViewDocItem;
   updated_by?: ICUViewDocItem;
   owner?: ICUViewDocItem;
-  avatar: IAvatarViewDoc;
+  avatar?: IAvatarViewDoc;
+  project_id?: string;
+  hasPerm: boolean;
+  description: string;
 }
 
 export interface IViewDocItem {
@@ -77,19 +80,19 @@ export default function KanbanViewDocList({
       sx={(theme) => ({
         display: "flex",
         overflow: "auto",
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up("md")]: {
           paddingX: 2,
           paddingY: 1,
           flexWrap: "wrap",
           gap: 4,
         },
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
           flexDirection: "column",
-          gap: 2
-        }
+          gap: 2,
+        },
       })}
     >
-      {listData?.map((item: IViewDocItem ,index) => (
+      {listData?.map((item: IViewDocItem, index) => (
         <KanbanViewItem itemKanban={item} key={item.group_by ?? index} />
       ))}
     </Container>

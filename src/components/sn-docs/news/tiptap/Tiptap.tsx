@@ -11,15 +11,13 @@ export const Tiptap = ({
   editor,
   disabled,
 }: {
-  editor: Editor;
+  editor: Editor | null;
   disabled: boolean;
 }) => {
-  return (
-    editor && (
-      <>
-        <CustomBubbleMenu editor={editor} />
-        <EditorContent editor={editor} disabled={disabled} />
-      </>
-    )
-  );
+  return editor ? (
+    <>
+      <CustomBubbleMenu editor={editor} />
+      <EditorContent editor={editor} disabled={disabled} />
+    </>
+  ) : null;
 };
