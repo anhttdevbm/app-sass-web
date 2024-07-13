@@ -1,13 +1,13 @@
-import { Box, Stack, IconButton, Avatar, Tooltip } from "@mui/material";
-import DescriptionIcon from "@mui/icons-material/Description";
-import Typography from "@mui/material/Typography";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { IDocItem } from "../KanbanViewDocList";
-import dayjs from "dayjs";
+import DescriptionIcon from "@mui/icons-material/Description";
+import { Avatar, Box, IconButton, Stack } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { NS_DOCS } from "constant/index";
+import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import { useDocs } from "store/docs/selectors";
 import ActionMoreListDoc from "../ActionMoreListDoc";
+import { IDocItem } from "../KanbanViewDocList";
 
 export default function BasicViewExpandItem({
   expandedItem,
@@ -73,8 +73,8 @@ export default function BasicViewExpandItem({
         >
           <Avatar
             sx={{ height: 18, width: 18 }}
-            alt={expandedItem?.avatar.name}
-            src={expandedItem?.created_by?.avatar.link}
+            alt={expandedItem?.avatar?.name}
+            src={expandedItem?.created_by?.avatar?.link}
           />
           {expandedItem?.created_by ? (
             <>

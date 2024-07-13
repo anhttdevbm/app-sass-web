@@ -1,17 +1,17 @@
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardContent from "@mui/material/CardContent";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import LockIcon from "@mui/icons-material/Lock";
-import Box from "@mui/material/Box";
-import { NS_DOCS } from "constant/index";
-import { useTranslations } from "next-intl";
-import { IViewDocItem } from "../KanbanViewDocList";
-import dayjs from "dayjs";
 import GroupIcon from "@mui/icons-material/Group";
+import LockIcon from "@mui/icons-material/Lock";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
+import Typography from "@mui/material/Typography";
+import { NS_DOCS } from "constant/index";
+import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
 import ActionMoreListDoc from "../ActionMoreListDoc";
+import { IViewDocItem } from "../KanbanViewDocList";
 
 export default function KanbanViewItem({
   itemKanban,
@@ -82,7 +82,7 @@ export default function KanbanViewItem({
             fontWeight={600}
             sx={{ fontWeight: "bold" }}
           >
-            {itemKanban?.docs[0].avatar.name}
+            {itemKanban?.docs[0].avatar?.name}
           </Typography>
           <Box display="flex" alignItems="center" gap={1}>
             <Avatar
