@@ -158,7 +158,7 @@ const TableSheet: React.FC<IProps> = (props) => {
   return (
     <>
       {isOpen===false && (
-        <TableContainer component={Paper}>
+        <TableContainer>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead
               sx={{

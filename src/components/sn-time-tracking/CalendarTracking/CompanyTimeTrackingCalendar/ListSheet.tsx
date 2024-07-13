@@ -97,8 +97,8 @@ const ListSheet:React.FC<IProps> = (props) => {
   }));
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }}>
+    <TableContainer>
+      <Table sx={{ minWidth: 400 }}>
         <TableHead>
           <TableRow
             sx={{
