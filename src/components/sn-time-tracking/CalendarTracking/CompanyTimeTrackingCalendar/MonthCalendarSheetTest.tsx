@@ -15,7 +15,16 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import IconButton from "@mui/material/IconButton";
 import PlusFillIcon from "icons/PlusFillIcon";
 import Avatar from "@mui/material/Avatar";
-import "./style.css"
+import "./style.css";
+import { AddCircle, CalendarToday, Group } from "@mui/icons-material";
+import CloseIcon from "icons/CloseIcon";
+
+interface Task {
+  avatarUrl: string;
+  duration: number;
+  taskName: string;
+  projectName: string;
+}
 
 interface Avatar {
   name: string;
@@ -28,6 +37,7 @@ interface Event {
   peopleCount: number;
   sheetCount: number;
   avatars: Avatar[];
+  tasks: Task[];
 }
 
 interface SelectedDate {
@@ -56,6 +66,20 @@ const MonthCalendarSheetTest = () => {
         { name: "Dave", src: "https://via.placeholder.com/150" },
         { name: "Eve", src: "https://via.placeholder.com/150" },
       ],
+      tasks: [
+        {
+          avatarUrl: "https://via.placeholder.com/40", // Replace with actual URL
+          duration: 6,
+          taskName: "Task 1",
+          projectName: "Project test 01",
+        },
+        {
+          avatarUrl: "https://via.placeholder.com/40", // Replace with actual URL
+          duration: 5,
+          taskName: "Task 1",
+          projectName: "Project test 01",
+        },
+      ],
       sheetCount: 5,
     },
     {
@@ -68,6 +92,20 @@ const MonthCalendarSheetTest = () => {
         { name: "Charlie", src: "https://via.placeholder.com/150" },
         { name: "Dave", src: "https://via.placeholder.com/150" },
         { name: "Eve", src: "https://via.placeholder.com/150" },
+      ],
+      tasks: [
+        {
+          avatarUrl: "https://via.placeholder.com/40", // Replace with actual URL
+          duration: 6,
+          taskName: "Task 1",
+          projectName: "Project test 01",
+        },
+        {
+          avatarUrl: "https://via.placeholder.com/40", // Replace with actual URL
+          duration: 5,
+          taskName: "Task 1",
+          projectName: "Project test 01",
+        },
       ],
       sheetCount: 5,
     },
@@ -241,8 +279,8 @@ const MonthCalendarSheetTest = () => {
                         alignItems: "center",
                         position: "relative",
                         right: "7px",
-                        justifyContent:"space-between",
-                        width:"100%"
+                        justifyContent: "space-between",
+                        width: "100%",
                       }}
                     >
                       <div
@@ -260,7 +298,9 @@ const MonthCalendarSheetTest = () => {
                         >
                           {dayObj.event.sheetCount} <span>Timesheets</span>
                         </Typography>
-                        <ChevronRightIcon sx={{ width: 20, height: 20,color:"#408DFB" }} />
+                        <ChevronRightIcon
+                          sx={{ width: 20, height: 20, color: "#408DFB" }}
+                        />
                       </div>
                       <div>
                         <AvatarGroup max={4}>
@@ -388,42 +428,186 @@ const MonthCalendarSheetTest = () => {
             >
               {moment(selectedDate.day).format("DD MMM YYYY")}
             </Typography>
-            <div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
               <Button
                 sx={{
+                  backgroundImage: "linear-gradient(to right,#2AF598,#009EFD)",
                   borderRadius: "100px",
+                  color: "white",
+                  textTransform: "none",
                 }}
                 variant="outlined"
-                startIcon={
-                  <PlusFillIcon
-                    sx={{
-                      borderRadius: "100%",
-                    }}
-                  />
-                }
+                startIcon={<AddCircle style={{ color: "white" }} />}
               >
                 Add new
               </Button>
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                <ChevronLeftIcon
+                  style={{
+                    background: "#F5F5F5",
+                    border: "1px solid #DDDDDD",
+                    cursor: "pointer",
+                    borderTopLeftRadius: "6px",
+                    borderBottomLeftRadius: "6px",
+                    width: "30px",
+                    height: "30px",
+                  }}
+                />
+                <ChevronRightIcon
+                  style={{
+                    background: "#F5F5F5",
+                    border: "1px solid #DDDDDD",
+                    cursor: "pointer",
+                    borderTopRightRadius: "6px",
+                    borderBottomRightRadius: "6px",
+                    width: "30px",
+                    height: "30px",
+                  }}
+                />
+              </div>
+              <IconButton
+                onClick={handleDrawerClose}
+                style={{
+                  color: "#FE4242",
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
             </div>
-            <Box>
-              {selectedDate && selectedDate.event && (
-                <Box sx={{ padding: "20px" }}>
-                  <Typography>
-                    Total Time: {selectedDate.event.totalTime} hrs
-                  </Typography>
-                  <Typography>
-                    People: {selectedDate.event.peopleCount}
-                  </Typography>
-                  <Typography>
-                    Sheets: {selectedDate.event.sheetCount}
-                  </Typography>
+          </Box>
+          <Box
+            sx={{
+              marginTop: "15px",
+            }}
+          >
+            {selectedDate && selectedDate.event ? (
+              <>
+                {" "}
+                <Box sx={{ padding: "20px", background: "#F2FAFF" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "10px 0",
+                      gap: "20px",
+                    }}
+                  >
+                    <SummaryBox
+                      variant="square"
+                      icon={<CalendarToday />}
+                      value={selectedDate.event.totalTime}
+                      label="Total Logged Hours"
+                    />
+                    <SummaryBox
+                      variant="square"
+                      icon={<Group />}
+                      value={selectedDate.event.peopleCount}
+                      label="Total Users"
+                    />
+                  </Box>
                 </Box>
-              )}
-            </Box>
+                <Box sx={{ padding: "0 20px" }}>
+                  {selectedDate.event.tasks.map((task, index) => (
+                    <TaskItem
+                      key={index}
+                      avatarUrl={task.avatarUrl}
+                      hours={task.duration}
+                      taskName={task.taskName}
+                      projectName={task.projectName}
+                    />
+                  ))}
+                </Box>
+              </>
+            ) : (
+              <Box sx={{ padding: "20px" }}>
+                <Typography>No events scheduled for this day.</Typography>
+              </Box>
+            )}
           </Box>
         </Stack>
       </Drawer>
     </Stack>
+  );
+};
+
+const TaskItem = ({ avatarUrl, hours, taskName, projectName }) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        borderBottom: "1px solid #E0E0E0",
+        padding: "8px 0",
+      }}
+    >
+      <Avatar
+        src={avatarUrl}
+        sx={{
+          width: 40,
+          height: 40,
+          marginRight: "16px",
+        }}
+      />
+      <Box>
+        <Typography
+          variant="body1"
+          sx={{ fontWeight: "bold", color: "#424242", marginBottom: "4px" }}
+        >
+          {hours} hrs
+        </Typography>
+        <Typography variant="body2" sx={{ color: "#757575" }}>
+          {taskName} • {projectName}
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+const SummaryBox = ({
+  icon: IconComponent,
+  value,
+  label,
+  variant: AvatarVariant,
+}) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <Avatar
+        variant={AvatarVariant}
+        sx={{
+          borderRadius: "10px",
+          backgroundColor: "#fff",
+          color: "#757575",
+          width: 40,
+          height: 40,
+          marginRight: "12px",
+        }}
+      >
+        {IconComponent}
+      </Avatar>
+      <Box>
+        <Typography variant="h6" sx={{ color: "#1976d2", fontWeight: "bold" }}>
+          {value}
+        </Typography>
+        <Typography variant="body2" sx={{ color: "#757575" }}>
+          {label}
+        </Typography>
+      </Box>
+    </Box>
   );
 };
 
