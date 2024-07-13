@@ -1,5 +1,14 @@
-/* eslint-disable react/no-unescaped-entities */
-import { Autocomplete, MenuItem, Stack, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  inputAdornmentClasses,
+  inputBaseClasses,
+  inputLabelClasses,
+  MenuItem,
+  selectClasses,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import {
@@ -18,6 +27,7 @@ import {
   formatDate,
   getMessageErrorByAPI,
   hasValue,
+  uuid,
 } from "utils/index";
 import { ProjectData } from "store/project/actions";
 import { DataAction } from "constant/enums";
@@ -27,10 +37,9 @@ import {
   Input,
   InputNumber,
   Select,
-  Upload,
 } from "components/shared";
 import { useEmployeeOptions } from "store/company/selectors";
-import { SelectMembers, SelectTypeProject } from "./components";
+import { Assigner, SelectMembers, SelectTypeProject } from "./components";
 import { Member } from "./components/helpers";
 import {
   useCurrencyOptions,
@@ -45,6 +54,8 @@ import { useProjectTypes } from "store/company/selectors";
 import { useProjects } from "store/project/selectors";
 import ChevronIcon from "icons/ChevronIcon";
 import { Option } from "constant/types";
+import Upload from "components/sn-projects/components/Upload";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
 
 export type ProjectDataForm = Omit<ProjectData, "members" | "avatar"> & {
   members?: Member[];
@@ -278,6 +289,33 @@ const Form = (props: FormProps) => {
         minWidth: { xs: "calc(100vw -24px)", sm: 700 },
         maxWidth: { xs: "calc(100vw -24px)", sm: 700 },
         maxHeight: "calc(calc(var(--vh, 1vh) * 100) - 24px)",
+        "& .MuiButton-primary": {
+          px: 7,
+          background:
+            "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+          borderRadius: "2rem",
+        },
+        "& .MuiButton-primaryOutlined": {
+          px: 7,
+          bgcolor: "background.paper",
+          position: "relative",
+          border: "solid 1px transparent",
+          backgroundClip: "padding-box",
+          borderRadius: "2rem",
+          "&:before": {
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            margin: "-1px",
+            content: '""',
+            zIndex: -1,
+            borderRadius: "inherit",
+            background:
+              "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+          },
+        },
       }}
       label={`${label} ${projectT("list.key")}`}
       submitting={formik.isSubmitting}
@@ -286,19 +324,39 @@ const Form = (props: FormProps) => {
       {...rest}
     >
       <Stack spacing={2} py={3}>
-        <Input
-          title={projectT("list.form.title.name")}
-          name="name"
-          required
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values?.name}
-          error={commonT(touchedErrors?.name, {
-            name: projectT("list.form.title.name"),
-            max: MAX_NAME_CHARACTERS,
-          })}
-          rootSx={sxConfig.input}
-        />
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Upload
+            name="avatar"
+            value={formik.values?.avatar}
+            onChange={onChangeField}
+          />
+          <Stack flex={1}>
+            <Input
+              title={projectT("list.form.title.name")}
+              name="name"
+              required
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.name}
+              error={commonT(touchedErrors.name, {
+                name: projectT("list.form.title.name"),
+                max: MAX_NAME_CHARACTERS,
+              })}
+              titleSx={{
+                "& .MuiFormLabel-asterisk.MuiInputLabel-asterisk::after": {
+                  content: '"*"',
+                },
+                left: -14,
+                color: "text.primary",
+              }}
+              rootSx={{
+                p: 0.5,
+                mt: 3,
+                borderRadius: "2rem",
+              }}
+            />
+          </Stack>
+        </Stack>
         <Stack direction={{ sm: "row" }} spacing={2}>
           <Select
             options={employeeOptions}
@@ -309,15 +367,29 @@ const Form = (props: FormProps) => {
             onBlur={formik.handleBlur}
             value={formik.values?.owner}
             error={commonT(touchedErrors?.owner, { name: commonT("assigner") })}
-            rootSx={sxConfig.input}
             fullWidth
             onEndReached={onEndReached}
             onChangeSearch={onChangeSearch}
+            SelectProps={{
+              IconComponent: () => (
+                <ChevronCircleIcon sx={{ color: "transparent" }} />
+              ),
+            }}
             searchProps={{
               value: filters?.email,
               placeholder: commonT("searchBy", { name: "email" }),
             }}
             onOpen={onGetEmployeeOptions}
+            sx={sxConfig.input}
+            titleSx={{
+              left: -14,
+              color: "text.primary",
+            }}
+            rootSx={{
+              p: 0.5,
+              mt: 3,
+              borderRadius: "2rem",
+            }}
           />
           <div style={{ width: "100%" }}>
             <SelectTypeProject
@@ -342,8 +414,17 @@ const Form = (props: FormProps) => {
             error={commonT(touchedErrors?.start_date, {
               name: commonT("form.title.startDate"),
             })}
-            rootSx={sxConfig.input}
             fullWidth
+            sx={sxConfig.input}
+            titleSx={{
+              left: -14,
+              color: "text.primary",
+            }}
+            rootSx={{
+              p: 0.5,
+              mt: 3,
+              borderRadius: "2rem",
+            }}
           />
           <DatePicker
             title={commonT("form.title.endDate")}
@@ -355,48 +436,80 @@ const Form = (props: FormProps) => {
               name: commonT("form.title.endDate"),
               name2: commonT("form.title.startDate"),
             })}
-            rootSx={sxConfig.input}
             fullWidth
-            sx={{
-              mt: { xs: 2, sm: 0 },
+            sx={sxConfig.input}
+            titleSx={{
+              left: -14,
+              color: "text.primary",
+            }}
+            rootSx={{
+              p: 0.5,
+              mt: 3,
+              borderRadius: "2rem",
             }}
           />
         </Stack>
-        <Stack direction={{ sm: "row" }} spacing={0}>
-          <InputNumber
-            title={projectT("list.form.title.estimatedCost")}
-            name="expected_cost"
-            onChange={onChangeField}
-            onBlur={formik.handleBlur}
-            value={formik.values?.expected_cost}
-            error={commonT(touchedErrors?.expected_cost, {
-              name: projectT("list.form.title.estimatedCost"),
-            })}
-            rootSx={sxConfig.input}
-            sx={{ width: "65%" }}
-            numberType="integer"
-            negative={false}
-          />
-          <Select
-            options={currencyOptions}
-            title={projectT("list.form.title.currency")}
-            name="currency"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={
-              formik.values?.currency ?? currencyOptions?.[0]?.value ?? "USD"
-            }
-            error={commonT(touchedErrors?.currency, {
-              name: projectT("list.form.title.currency"),
-            })}
-            rootSx={sxConfig.input}
-            onEndReached={onCurrencyOptionsEndReached}
-            sx={{
-              mt: { xs: 2, sm: 0 },
-              width: "35%",
-              ml: 0,
-            }}
-          />
+        <Stack direction={{ sm: "row" }} alignItems="center" spacing={2}>
+          <Box flex={1}>
+            <InputNumber
+              title={projectT("list.form.title.estimatedCost")}
+              name="expected_cost"
+              onChange={onChangeField}
+              onBlur={formik.handleBlur}
+              value={formik.values?.expected_cost}
+              error={commonT(touchedErrors?.expected_cost, {
+                name: projectT("list.form.title.estimatedCost"),
+              })}
+              numberType="integer"
+              negative={false}
+              sx={{
+                ...sxConfig.input,
+                width: "65%",
+              }}
+              titleSx={{
+                left: -14,
+                color: "text.primary",
+              }}
+              rootSx={{
+                p: 0.5,
+                mt: 3,
+                borderRadius: "2rem 0 0 2rem",
+              }}
+            />
+            <Select
+              options={currencyOptions}
+              title={projectT("list.form.title.currency")}
+              name="currency"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={
+                formik.values?.currency ?? currencyOptions?.[0]?.value ?? "USD"
+              }
+              error={commonT(touchedErrors?.currency, {
+                name: projectT("list.form.title.currency"),
+              })}
+              onEndReached={onCurrencyOptionsEndReached}
+              SelectProps={{
+                IconComponent: () => (
+                  <ChevronCircleIcon sx={{ color: "transparent" }} />
+                ),
+              }}
+              sx={{
+                ...sxConfig.input,
+                width: "35%",
+              }}
+              titleSx={{
+                left: -14,
+                color: "text.primary",
+              }}
+              rootSx={{
+                px: 0.5,
+                py: 0.75,
+                mt: 3,
+                borderRadius: "0 2rem 2rem 0",
+              }}
+            />
+          </Box>
           <InputNumber
             title={projectT("list.form.title.estimatedWorkingHours")}
             name="working_hours"
@@ -406,22 +519,24 @@ const Form = (props: FormProps) => {
             error={commonT(touchedErrors?.working_hours, {
               name: projectT("list.form.title.estimatedWorkingHours"),
             })}
-            rootSx={sxConfig.input}
             fullWidth
             numberType="integer"
             sx={{
-              mt: { xs: 2, sm: 0 },
-              ml: 2,
+              ...sxConfig.input,
+              flex: 1,
+            }}
+            titleSx={{
+              left: -14,
+              color: "text.primary",
+            }}
+            rootSx={{
+              p: 0.5,
+              mt: 3,
+              borderRadius: "2rem",
             }}
           />
         </Stack>
         <Stack direction={{ xs: "column-reverse", sm: "row" }} spacing={2}>
-          <Upload
-            title="Logo"
-            name="avatar"
-            value={formik.values?.avatar}
-            onChange={onChangeField}
-          />
           <Input
             title={commonT("form.title.description")}
             name="description"
@@ -434,6 +549,14 @@ const Form = (props: FormProps) => {
             fullWidth
             multiline
             sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
+            titleSx={{
+              left: -14,
+              color: "text.primary",
+            }}
+            rootSx={{
+              mt: 3,
+              borderRadius: "1rem",
+            }}
           />
         </Stack>
       </Stack>
