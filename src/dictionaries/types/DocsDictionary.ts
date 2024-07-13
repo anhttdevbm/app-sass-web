@@ -35,4 +35,5 @@ export type DocsDictionary = {
   },
   ownedBy: string;
   createdBy: string;
+  changeDocAccess: string;
 };

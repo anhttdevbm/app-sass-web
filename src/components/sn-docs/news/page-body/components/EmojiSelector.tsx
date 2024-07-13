@@ -60,7 +60,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
     const savedState = localStorage.getItem("pagesListState");
     const parsedSavedState: PageType[] = JSON.parse(savedState!);
 
-    for (let i = 0; i < parsedSavedState.length; i++) {
+    for (let i = 0; i < parsedSavedState?.length; i++) {
       if (parsedSavedState[i].id === pageInfo?.id) {
         parsedSavedState[i].icon = data.unified;
         break;
