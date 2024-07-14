@@ -1,17 +1,21 @@
 import { AddCircle, ExpandMore } from "@mui/icons-material";
-import { Box } from "@mui/material";
+import { Box, MenuList, Paper, Popover, MenuItem } from "@mui/material";
 import { Button, Text } from "components/shared";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, ReactElement, ReactNode, useState } from "react";
 
 const ButtonWithDropdown = ({
   ...props
-}: React.ComponentProps<typeof Button> & {
-  id?: string;
+}: {
   text: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  onClickDropdown?: MouseEventHandler<HTMLButtonElement>;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+  children: (handleClose: () => void) => JSX.Element;
 }) => {
-  const { onClick, ...dropdownProps } = props;
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const isOpen = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <Box
@@ -23,10 +27,9 @@ const ButtonWithDropdown = ({
       }}
     >
       <Button
-        id={props.id}
-        onClick={props.onClick}
         startIcon={<AddCircle />}
         variant="primary"
+        size="small"
         sx={{
           borderRadius: "2rem 0 0 2rem",
           bgcolor: "transparent",
@@ -44,11 +47,22 @@ const ButtonWithDropdown = ({
           borderLeft: "solid 1px white",
           bgcolor: "transparent",
         }}
-        onClick={props.onClickDropdown}
-        {...dropdownProps}
+        size="small"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
       >
         <ExpandMore />
       </Button>
+      <Popover
+        open={isOpen}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+      >
+        {props.children(handleClose)}
+      </Popover>
     </Box>
   );
 };
