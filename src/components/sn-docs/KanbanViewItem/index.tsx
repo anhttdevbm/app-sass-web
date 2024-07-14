@@ -24,7 +24,7 @@ export default function KanbanViewItem({
 
   return (
     <>
-      {itemKanban.docs.map((item) => (
+      {itemKanban?.docs?.map((item) => (
         <Card
           key={item.id}
           sx={(theme) => ({
