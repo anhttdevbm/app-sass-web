@@ -92,7 +92,7 @@ export default function KanbanViewDocList({
         },
       })}
     >
-      {listData?.map((item: IViewDocItem, index) => (
+      {listData?.map((item, index) => (
         <KanbanViewItem itemKanban={item} key={item.group_by ?? index} />
       ))}
     </Container>
