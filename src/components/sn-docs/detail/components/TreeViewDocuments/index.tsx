@@ -33,10 +33,6 @@ export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
     handleAddChild(idDoc, projectId);
   };
 
-  const handleClickAdd = () => {
-    console.log("addd");
-  };
-
   if (doc)
     return (
       <TreeView
@@ -54,17 +50,24 @@ export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
             <TreeViewLabel
               key={doc.id}
               labelText={doc.name}
-              handleClickTreeLabel={() =>
+              handleClickTreeLabel={(event) => {
                 handleAddNewChildDoc({
                   idDoc: doc.id,
                   projectId: doc.project_id,
                 })
               }
+               
+              }
             />
           }
         >
           {doc?.child.map((item) => (
-            <TreeViewItem key={item.id} childDocItem={item} />
+            <TreeViewItem
+              key={item.id}
+              childDocItem={item}
+              idDocParent={doc.id}
+              projectId={doc.project_id}
+            />
           ))}
         </TreeItem>
       </TreeView>

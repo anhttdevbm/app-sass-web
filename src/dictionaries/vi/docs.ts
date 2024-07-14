@@ -48,5 +48,5 @@ export const DocsLang: DocsDictionary = {
   },
   ownedBy: "Sở hữu bởi",
   createdBy: "Được tạo bởi",
-  changeDocAccess: "Thay đổi quyền truy cập tài liệu?"
+  changeDocAccess: "Thay đổi quyền truy cập tài liệu?",
 };

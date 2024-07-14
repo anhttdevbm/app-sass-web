@@ -14,7 +14,7 @@ import { Text } from "components/shared";
 import MoveTaskList from "components/sn-project-detail/Tasks/MoveTaskList";
 import TaskListForm from "components/sn-project-detail/Tasks/TaskListForm";
 import { DataAction } from "constant/enums";
-import { NS_COMMON } from "constant/index";
+import { NS_COMMON, NS_DOCS } from "constant/index";
 import DuplicateIcon from "icons/DuplicateIcon";
 import MoreDotIcon from "icons/MoreDotIcon";
 import MoreIcon from "icons/MoreIcon";
@@ -22,7 +22,8 @@ import MoveArrowIcon from "icons/MoveArrowIcon";
 import PencilIcon from "icons/PencilIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useTranslations } from "next-intl";
-import React, { useId, useState } from "react";
+import React, { useId, useState, useTransition } from "react";
+import { useUpdateDocMutation } from "store/docs/api";
 enum Action {
   RENAME = 1,
   DUPLICATE,
@@ -35,15 +36,21 @@ const MorePoper = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const docsT = useTranslations(NS_DOCS);
 
   const [type, setType] = useState<Action | undefined>();
-
+  const [updateDoc] = useUpdateDocMutation();
+  
   const onSetTType = (action?: Action) => {
     return () => {
       setAnchorEl(false);
       setType(action);
     };
   };
+
+  const renameDoc = async() => {
+    // updateDoc({ id: currentId as string, payload: { name: value } });
+  }
 
   const fake = async () => {};
   return (

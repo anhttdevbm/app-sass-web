@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import MorePoper from "../../LeftSlide/MorePoper";
 import IconAdd from "icons/IconAdd";
 
-export default function TreeViewLabel({ labelText, handleClickTreeLabel }: { labelText: string, handleClickTreeLabel: () => void }) {
+export default function TreeViewLabel({ labelText, handleClickTreeLabel }: { labelText: string, handleClickTreeLabel: (event: React.MouseEvent) => void }) {
   return (
     <Box
         sx={{
@@ -31,7 +31,7 @@ export default function TreeViewLabel({ labelText, handleClickTreeLabel }: { lab
         >
           <MorePoper></MorePoper>
           <Box
-            onClick={() => handleClickTreeLabel()}
+            onClick={handleClickTreeLabel}
             sx={{
               cursor: "pointer",
               display: "flex",
