@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import moment from "moment";
@@ -34,9 +35,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const formatDuration = (duration) => {
   const hours = Math.floor(duration);
   const minutes = (duration - hours) * 60;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0",
+  )}`;
 };
-
 
 const ListSheet: React.FC<IProps> = (props) => {
   const rows = props.data?.map((row) => ({
@@ -114,37 +117,48 @@ const ListSheet: React.FC<IProps> = (props) => {
             </StyledTableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.id}>
-              <StyledTableCell>
-                <Checkbox />
-                {row.Date}
-              </StyledTableCell>
-              <StyledTableCell
-                sx={{
-                  color: "#0575E6",
-                }}
-              >
-                {row.Project_name}
-              </StyledTableCell>
-              <StyledTableCell>{row.Task_name}</StyledTableCell>
-              {row.Type === "Break time" ? (
+        {rows?.length > 0 ? (
+          <TableBody>
+            {rows.map((row) => (
+              <StyledTableRow key={row.id}>
+                <StyledTableCell>
+                  <Checkbox />
+                  {row.Date}
+                </StyledTableCell>
                 <StyledTableCell
                   sx={{
-                    color: "red",
+                    color: "#0575E6",
                   }}
                 >
-                  {row.Type}
+                  {row.Project_name}
                 </StyledTableCell>
-              ) : (
-                <StyledTableCell>{row.Type}</StyledTableCell>
-              )}
-              <StyledTableCell>{row.Time}</StyledTableCell>
-              <StyledTableCell>{row.Creation_time}</StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
+                <StyledTableCell>{row.Task_name}</StyledTableCell>
+                {row.Type === "Break time" ? (
+                  <StyledTableCell
+                    sx={{
+                      color: "red",
+                    }}
+                  >
+                    {row.Type}
+                  </StyledTableCell>
+                ) : (
+                  <StyledTableCell>{row.Type}</StyledTableCell>
+                )}
+                <StyledTableCell>{row.Time}</StyledTableCell>
+                <StyledTableCell>{row.Creation_time}</StyledTableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
+        ) : (
+          <div style={{
+            display:"flex",
+            justifyContent:"center",
+            alignItems:"center",
+            
+          }}>
+            <Typography>No data found</Typography>
+          </div>
+        )}
       </Table>
     </TableContainer>
   );

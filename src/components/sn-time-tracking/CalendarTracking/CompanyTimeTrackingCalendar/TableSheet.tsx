@@ -20,30 +20,54 @@ import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
 import { styled } from "@mui/material/styles";
-import { setIsOpen,setAvatar,setUserName } from "store/userNavigationDetail/reducer";
+import {
+  setIsOpen,
+  setAvatar,
+  setUserName,
+} from "store/userNavigationDetail/reducer";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "store/configureStore";
+import { Person } from "@mui/icons-material";
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dateRange: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any;
 }
 
-function createData(
+const createData = (
   name: string,
-  avatar:string,
-  sun: string,
-  mon: string,
-  tue: string,
-  wed: string,
-  thu: string,
-  fri: string,
-  sat: string,
-  total: string,
-) {
-  return { name, avatar,sun, mon, tue, wed, thu, fri, sat, total };
-}
+  avatar: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  timesheet: any[],
+) => {
+  const totalHours = timesheet.reduce((acc, curr) => acc + curr.duration, 0);
+  const weeklyHours = {
+    sun: 0,
+    mon: 0,
+    tue: 0,
+    wed: 0,
+    thu: 0,
+    fri: 0,
+    sat: 0,
+  };
+
+  timesheet.forEach((entry) => {
+    const dayOfWeek = moment(entry.day).format("ddd").toLowerCase();
+    if (weeklyHours.hasOwnProperty(dayOfWeek)) {
+      weeklyHours[dayOfWeek] += entry.duration;
+    }
+  });
+
+  return {
+    name,
+    avatar,
+    ...weeklyHours,
+    total: totalHours,
+  };
+};
 function createUserDetailTableData(
   project: string,
   task: string,
@@ -58,32 +82,6 @@ function createUserDetailTableData(
 ) {
   return { project, task, sun, mon, tue, wed, thu, fri, sat, total };
 }
-const rows = [
-  createData(
-    "Thu Nguyen",
-    "ava1",
-    "00:00",
-    "00:00",
-    "08:00",
-    "00:00",
-    "00:00",
-    "00:00",
-    "08:00",
-    "16:00",
-  ),
-  createData(
-    "Thu Nguyen",
-    "ava1",
-    "00:00",
-    "00:00",
-    "08:00",
-    "00:00",
-    "00:00",
-    "00:00",
-    "08:00",
-    "16:00",
-  ),
-];
 const userDetailRowsFakeData = [
   createUserDetailTableData(
     "Project 1",
@@ -113,7 +111,10 @@ const userDetailRowsFakeData = [
 
 const TableSheet: React.FC<IProps> = (props) => {
   const dispatch = useDispatch();
-  const {isOpen} = useSelector((state:RootState)=>state.userNavigationDetail)
+  const { isOpen } = useSelector(
+    (state: RootState) => state.userNavigationDetail,
+  );
+  const [userData, setUserData] = useState(props.data);
   const [dateData, setDateData] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [searchUser, setSearchUser] = useState([
@@ -121,8 +122,8 @@ const TableSheet: React.FC<IProps> = (props) => {
     { name: "Tuan Anh" },
     // Add more users here
   ]);
-  const [allTableDataVisible, setAllTableDataVisible] = useState<boolean>(true);
-  const [detailDataTable, setDetailDataTable] = useState<boolean>(false);
+  // const [allTableDataVisible, setAllTableDataVisible] = useState<boolean>(true);
+  // const [detailDataTable, setDetailDataTable] = useState<boolean>(false);
   const [inputSearchData, setInputSearchData] = useState("");
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -138,10 +139,10 @@ const TableSheet: React.FC<IProps> = (props) => {
     // setSearchUser
   };
 
-  const handleGetUserDetail = (username:string,avatar:string) => {
-    dispatch(setUserName(username))
-    dispatch(setAvatar(avatar))
-    dispatch(setIsOpen(true))
+  const handleGetUserDetail = (username: string, avatar: string) => {
+    dispatch(setUserName(username));
+    dispatch(setAvatar(avatar));
+    dispatch(setIsOpen(true));
     // setAllTableDataVisible(!allTableDataVisible);
     // setDetailDataTable(!detailDataTable);
   };
@@ -150,16 +151,39 @@ const TableSheet: React.FC<IProps> = (props) => {
     setDateData(props.dateRange);
   }, [props.dateRange]);
 
+  useEffect(() => {
+    setUserData(props.data);
+    console.log(userData);
+  }, [props.data]);
+
   const formattedDates = dateData.map((date) => ({
     day: moment(date).format("ddd"),
     date: moment(date).format("DD MMM"),
   }));
 
+  const rows = userData.map((user) =>
+    createData(user.fullname, user.avatar?.link, user.timesheet),
+  );
+
+  const totalHoursPerDay = rows.reduce(
+    (acc, row) => {
+      acc.sun += row.sun;
+      acc.mon += row.mon;
+      acc.tue += row.tue;
+      acc.wed += row.wed;
+      acc.thu += row.thu;
+      acc.fri += row.fri;
+      acc.sat += row.sat;
+      return acc;
+    },
+    { sun: 0, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 },
+  );
+
   return (
     <>
-      {isOpen===false && (
-        <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      {isOpen === false && (
+        <TableContainer sx={{ maxHeight: 500, overflow: "auto" }}>
+          <Table>
             <TableHead
               sx={{
                 fontWeight: "600",
@@ -298,52 +322,59 @@ const TableSheet: React.FC<IProps> = (props) => {
                       borderRight: "1px solid #EBEAF2",
                       cursor: "pointer",
                     }}
-                    onClick={() => handleGetUserDetail(row.name,row.avatar)}
+                    onClick={() => handleGetUserDetail(row.name, row.avatar)}
                   >
-                    <Avatar sx={{ width: 20, height: 20 }}>{row.avatar}</Avatar>
+                    {row.avatar ? (
+                      <Avatar
+                        src={`${row.avatar}`}
+                        sx={{ width: 20, height: 20 }}
+                      />
+                    ) : (
+                      <Avatar sx={{ width: 20, height: 20 }}><Person/></Avatar>
+                    )}
                     <Typography>{row.name}</Typography>
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ borderRight: "1px solid #EBEAF2" }}
                   >
-                    {row.sun}
+                    {row.sun} hrs
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ borderRight: "1px solid #EBEAF2" }}
                   >
-                    {row.mon}
+                    {row.mon} hrs
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ borderRight: "1px solid #EBEAF2" }}
                   >
-                    {row.tue}
+                    {row.tue} hrs
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ borderRight: "1px solid #EBEAF2" }}
                   >
-                    {row.wed}
+                    {row.wed} hrs
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ borderRight: "1px solid #EBEAF2" }}
                   >
-                    {row.thu}
+                    {row.thu} hrs
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ borderRight: "1px solid #EBEAF2" }}
                   >
-                    {row.fri}
+                    {row.fri} hrs
                   </TableCell>
                   <TableCell
                     align="center"
                     sx={{ borderRight: "1px solid #EBEAF2" }}
                   >
-                    {row.sat}
+                    {row.sat} hrs
                   </TableCell>
                   <TableCell
                     align="center"
@@ -353,7 +384,7 @@ const TableSheet: React.FC<IProps> = (props) => {
                       border: "1px solid #EBEAF2",
                     }}
                   >
-                    {row.total}
+                    {row.total} hrs
                   </TableCell>
                 </TableRow>
               ))}
@@ -366,21 +397,23 @@ const TableSheet: React.FC<IProps> = (props) => {
                 }}
               >
                 <TableCell align="right">Total</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
+                <TableCell align="center">{totalHoursPerDay.sun} hrs</TableCell>
+                <TableCell align="center">{totalHoursPerDay.mon} hrs</TableCell>
+                <TableCell align="center">{totalHoursPerDay.tue} hrs</TableCell>
+                <TableCell align="center">{totalHoursPerDay.wed} hrs</TableCell>
+                <TableCell align="center">{totalHoursPerDay.thu} hrs</TableCell>
+                <TableCell align="center">{totalHoursPerDay.fri} hrs</TableCell>
+                <TableCell align="center">{totalHoursPerDay.sat} hrs</TableCell>
+                <TableCell align="center">
+                  {rows.reduce((acc, row) => acc + row.total, 0)} hrs
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
       )}
       {isOpen && (
-        <TableContainer component={Paper}>
+        <TableContainer>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead
               sx={{

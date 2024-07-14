@@ -282,6 +282,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     }
   };
 
+
   const _renderCalendarModule = () => {
     return (
       <>
@@ -762,7 +763,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
           }}
         >
           <FilterCategory personVisibleFilter={false} />
-          <TableSheet dateRange={dateRange} />
+          <TableSheet dateRange={dateRange} data={company}/>
         </Box>
       ) : (
         <Stack
