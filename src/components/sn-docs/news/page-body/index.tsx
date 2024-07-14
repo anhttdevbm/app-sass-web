@@ -20,7 +20,7 @@ import useDebounce from "hooks/useDebounce";
 import useTheme from "hooks/useTheme";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useUpdateDocMutation } from "store/docs/api";
+import { useGetDocDetailQuery, useUpdateDocMutation } from "store/docs/api";
 import { getDocDetails, resetDocDetail } from "store/docs/reducer";
 import { useDocs } from "store/docs/selectors";
 import { useAppSelector } from "store/hooks";
@@ -32,8 +32,10 @@ import { Tiptap } from "../tiptap/Tiptap";
 import EmojiSelector from "./components/EmojiSelector";
 import { MenuBarHeaderEdit } from "./components/MenuBarHeader";
 import styles from "./scss/pageBody.module.scss";
+import { useParams } from "next/navigation";
 
 const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
+  const { idParams } = useParams();
   const pageInfo = useAppSelector((state) => state.doc.pageInfo);
   const page = useAppSelector((state) => state.doc);
   const { perm, content, id, title: name, description, project_id } = page;
@@ -41,6 +43,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const dispatch = useDispatch();
   const { handleGetDocDetail } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
+  
 
   const [openChangeCover, setOpenChangeCover] = useState<boolean>(false);
   const [openEmojiSelector, setOpenEmojiSelector] = useState<boolean>(false);

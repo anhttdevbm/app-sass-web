@@ -28,22 +28,23 @@ export default function TreeViewItem({
   const handleAddNewChildDoc = () => {
     handleAddChild(idDocParent, projectId);
   };
-
-  return (
-    <TreeItem
-      nodeId={childDocItem.id}
-      label={
-        <TreeViewLabel
-          key={childDocItem.id}
-          labelText={childDocItem.name}
-          handleClickTreeLabel={() => handleAddNewChildDoc()}
-        />
-      }
-    >
+  if (childDocItem)
+    return (
       <TreeItem
-        nodeId={`${childDocItem.id}-${childDocItem.name}`}
-        label={renderLabelChildItem({ content: childDocItem.name })}
-      ></TreeItem>
-    </TreeItem>
-  );
+        nodeId={childDocItem?.id}
+        label={
+          <TreeViewLabel
+            key={childDocItem.id}
+            labelText={childDocItem.name}
+            dataRename={{ idDoc: childDocItem.id, isParent: false }}
+            handleClickTreeLabel={() => handleAddNewChildDoc()}
+          />
+        }
+      >
+        <TreeItem
+          nodeId={`expand-${childDocItem?.id}`}
+          label={renderLabelChildItem({ content: childDocItem.name ?? "" })}
+        ></TreeItem>
+      </TreeItem>
+    );
 }

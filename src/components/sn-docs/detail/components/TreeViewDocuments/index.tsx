@@ -6,12 +6,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { IDocItemDetail } from "../../DocDetail";
 import TreeViewItem from "../TreeViewItem";
 import TreeViewLabel from "../TreeViewLabel";
-import "./style.css";
+import "./TreeViewStyle.css";
 import useLeftSlideDoc from "../../LeftSlide/hooks/useLeftSlideDoc";
+import { useDispatch } from "react-redux";
 
 export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
   const [expanded, setExpanded] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
+  const dispatch = useDispatch();
 
   const handleToggle = (event: React.ChangeEvent<{}>, nodeIds: string[]) => {
     setExpanded(nodeIds);
@@ -42,22 +44,20 @@ export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
         selected={selected}
         onNodeToggle={handleToggle}
         onNodeSelect={handleSelect}
-        multiSelect
       >
         <TreeItem
           nodeId={doc?.id}
           label={
             <TreeViewLabel
-              key={doc.id}
-              labelText={doc.name}
-              handleClickTreeLabel={(event) => {
+              dataRename={{ idDoc: doc.id, isParent: true }}
+              key={doc?.id}
+              labelText={doc?.name}
+              handleClickTreeLabel={() => {
                 handleAddNewChildDoc({
                   idDoc: doc.id,
                   projectId: doc.project_id,
-                })
-              }
-               
-              }
+                });
+              }}
             />
           }
         >
@@ -65,8 +65,8 @@ export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
             <TreeViewItem
               key={item.id}
               childDocItem={item}
-              idDocParent={doc.id}
-              projectId={doc.project_id}
+              idDocParent={doc?.id ?? ""}
+              projectId={doc?.project_id ?? ""}
             />
           ))}
         </TreeItem>

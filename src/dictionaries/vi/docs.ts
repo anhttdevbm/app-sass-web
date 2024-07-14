@@ -49,4 +49,6 @@ export const DocsLang: DocsDictionary = {
   ownedBy: "Sở hữu bởi",
   createdBy: "Được tạo bởi",
   changeDocAccess: "Thay đổi quyền truy cập tài liệu?",
+  errorInputRename: "Vui lòng nhập tên của document",
+  deleteConfirmDoc: "Bạn chắc chắn muốn xóa document?",
 };

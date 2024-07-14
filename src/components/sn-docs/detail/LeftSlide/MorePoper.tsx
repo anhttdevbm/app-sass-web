@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import ConfirmDialog from "components/ConfirmDialog";
 import { Text } from "components/shared";
+import UpdateFormDoc, { IFormUpdateDoc } from "components/sn-docs/UpdateFormDoc";
 import MoveTaskList from "components/sn-project-detail/Tasks/MoveTaskList";
 import TaskListForm from "components/sn-project-detail/Tasks/TaskListForm";
 import { DataAction } from "constant/enums";
@@ -23,14 +24,17 @@ import PencilIcon from "icons/PencilIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useTranslations } from "next-intl";
 import React, { useId, useState, useTransition } from "react";
+import { useDispatch } from "react-redux";
 import { useUpdateDocMutation } from "store/docs/api";
+import { changeTitle } from "store/docs/reducer";
+import { useDocs } from "store/docs/selectors";
 enum Action {
   RENAME = 1,
   DUPLICATE,
   MOVE,
   DELETE,
 }
-const MorePoper = () => {
+const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
   const commonT = useTranslations(NS_COMMON);
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
@@ -40,6 +44,7 @@ const MorePoper = () => {
 
   const [type, setType] = useState<Action | undefined>();
   const [updateDoc] = useUpdateDocMutation();
+  const dispatch = useDispatch()
   
   const onSetTType = (action?: Action) => {
     return () => {
@@ -48,11 +53,20 @@ const MorePoper = () => {
     };
   };
 
-  const renameDoc = async() => {
-    // updateDoc({ id: currentId as string, payload: { name: value } });
+  const renameDoc = async(values: IFormUpdateDoc) => {
+    if (values) {
+      updateDoc({ id: id as string, payload: { name: values.name } });
+
+      if(isParentDoc && values.name) {
+        dispatch(changeTitle(values.name))
+      }
+    }
   }
 
-  const fake = async () => {};
+  const deleteDoc = async () => {
+    console.log('delete document')
+  }
+
   return (
     <>
       <Box
@@ -150,13 +164,14 @@ const MorePoper = () => {
       </Popover>
 
       {type === Action.RENAME && (
-        <TaskListForm
+        <UpdateFormDoc
           open
           onClose={onSetTType()}
           type={DataAction.UPDATE}
           initialValues={{ name: "" }}
-          onSubmit={fake}
+          onSubmit={renameDoc}
         />
+       
       )}
       {type === Action.MOVE && (
         <MoveTaskList
@@ -172,9 +187,9 @@ const MorePoper = () => {
         <ConfirmDialog
           open
           onClose={onSetTType()}
-          title={""}
-          content={""}
-          onSubmit={() => {}}
+          title={docsT("expandBtn.delete")}
+          content={docsT("deleteConfirmDoc")}
+          onSubmit={deleteDoc}
         />
       )}
     </>
