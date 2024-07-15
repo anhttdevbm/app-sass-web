@@ -806,20 +806,54 @@ const ProjectTab = ({
       >
         <Stack direction="row" justifyContent="center" gap={3}>
           <Button
-            variant="primaryOutlined"
+            variant="outlined"
             size="medium"
             onClick={onClose}
             sx={{
-              width: 150,
+              width: 200,
               height: 40,
+              borderRadius: "100px",
+              position: "relative",
+              overflow: "hidden",
+              zIndex: 1,
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: "linear-gradient(to right, #2AF598, #009EFD)",
+                zIndex: -1,
+                margin: -2,
+                borderRadius: "inherit",
+              },
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                top: 2,
+                left: 2,
+                right: 2,
+                bottom: 2,
+                backgroundColor: "white",
+                zIndex: -1,
+                borderRadius: "inherit",
+              },
+              color: "#0575E6",
+              "&:hover::after": {
+                backgroundColor: "white",
+              },
             }}
           >
             {commonT("form.cancel")}
           </Button>
           <Button
             sx={{
-              width: 160,
+              width: 200,
               height: 40,
+              borderRadius: "100px",
+              background: "linear-gradient(to right, #2AF598, #009EFD)",
+              color: "#fff",
             }}
             variant="contained"
             onClick={handleSubmitProject(onSubmitProject)}

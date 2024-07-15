@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { IBookingAllFitler } from "store/resourcePlanning/action";
 import { useBookingAll, useMyBooking } from "store/resourcePlanning/selector";
 import useGetOptions from "../hooks/useGetOptions";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { stringifyURLSearchParams } from "utils/index";
 import useQueryParams from "hooks/useQueryParams";
@@ -16,6 +16,8 @@ import {
   TAB_TYPE,
 } from "../helper";
 import { Button } from "components/shared";
+import AddIcon from "@mui/icons-material/Add";
+import CreateBooking from "../modals/CreateBooking";
 
 const FilterHeader = ({ type }: { type: TAB_TYPE }) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
@@ -23,6 +25,7 @@ const FilterHeader = ({ type }: { type: TAB_TYPE }) => {
   const [queries, setQueries] = useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
   );
+  const [isOpenCreate, setIsOpenCreate] = React.useState(false);
   const { getBookingResource } = useBookingAll();
   const { getMyBooking } = useMyBooking();
   const { replace } = useRouter();
@@ -69,47 +72,71 @@ const FilterHeader = ({ type }: { type: TAB_TYPE }) => {
   }, [query]);
 
   return (
-    <Stack
-      direction="row"
-      sx={{
-        alignItems: "center",
-        justifyContent: "flex-start",
-      }}
-    >
+    <>
       <Stack
+        direction="row"
         sx={{
-          border: {
-            xs: "none",
-            md: "1px solid",
-          },
-          borderColor: {
-            xs: "transparent",
-            md: "grey.100",
-          },
-          alignItems: {
-            xs: "flex-start",
-            md: "center",
-          },
-          padding: {
-            xs: "14px 33px",
-            md: "14px 33px",
-          },
           display: "flex",
-          gap: "20px",
-          borderRadius: "100px",
-          backgroundColor: "#F7F7FD",
+          alignItems: "center",
+          justifyContent: "flex-end",
         }}
-        width={{
-          xs: "100%",
-          md: "100%",
-        }}
-        direction={{
-          xs: "column",
-          sm: "row",
-        }}
-        spacing="16px"
       >
-        {/* <Search
+        <Button
+          startIcon={<AddIcon />}
+          onClick={() => setIsOpenCreate(true)}
+          sx={{
+            width: 150,
+            height: 40,
+            borderRadius: "100px",
+            background: "linear-gradient(to right, #2AF598, #009EFD)",
+            color: "#fff",
+          }}
+          variant="contained"
+        >
+          Add
+        </Button>
+      </Stack>
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
+      >
+        <Stack
+          sx={{
+            border: {
+              xs: "none",
+              md: "1px solid",
+            },
+            borderColor: {
+              xs: "transparent",
+              md: "grey.100",
+            },
+            alignItems: {
+              xs: "flex-start",
+              md: "center",
+            },
+            padding: {
+              xs: "14px 33px",
+              md: "14px 33px",
+            },
+            display: "flex",
+            gap: "20px",
+            borderRadius: "100px",
+            backgroundColor: "#F7F7FD",
+          }}
+          width={{
+            xs: "100%",
+            md: "100%",
+          }}
+          direction={{
+            xs: "column",
+            sm: "row",
+          }}
+          spacing="16px"
+        >
+          {/* <Search
           name="search_key"
           value={queries?.search_key || ""}
           onChange={(name, value) => onChangeQueries(name, value)}
@@ -127,38 +154,38 @@ const FilterHeader = ({ type }: { type: TAB_TYPE }) => {
             },
           }}
         /> */}
-        <Typography
-          sx={{ ...textHeadStyle, fontWeight: 600, paddingBottom: "5px" }}
-        >
-          View by:
-        </Typography>
-        <Stack
-          direction="row"
-          spacing="16px"
-          sx={{
-            backgroundColor: "#FFF",
-            width: "200px",
-            height: "50px",
-            display: "flex",
-            alignItems: "center",
-            borderRadius: "100px",
-            border: "1px solid #EFEFEF",
-          }}
-        >
-          <Filter.Select
-            value={queries.position || ""}
-            onChange={(event) =>
-              onChangeQueries("position", event.target.value)
-            }
-            label={commonT("position")}
+          <Typography
+            sx={{ ...textHeadStyle, fontWeight: 600, paddingBottom: "5px" }}
+          >
+            View by:
+          </Typography>
+          <Stack
+            direction="row"
+            spacing="16px"
             sx={{
-              width: "100%",
+              backgroundColor: "#FFF",
+              width: "200px",
+              height: "50px",
+              display: "flex",
+              alignItems: "center",
+              borderRadius: "100px",
+              border: "1px solid #EFEFEF",
             }}
-            options={positions}
-          />
-        </Stack>
+          >
+            <Filter.Select
+              value={queries.position || ""}
+              onChange={(event) =>
+                onChangeQueries("position", event.target.value)
+              }
+              label={commonT("position")}
+              sx={{
+                width: "100%",
+              }}
+              options={positions}
+            />
+          </Stack>
 
-        {/* <Filter.Select
+          {/* <Filter.Select
             value={queries.working_sort || ""}
             onChange={(event) =>
               onChangeQueries("working_sort", event.target.value)
@@ -176,39 +203,39 @@ const FilterHeader = ({ type }: { type: TAB_TYPE }) => {
               },
             ]}
           /> */}
-        <Stack
-          direction="row"
-          spacing="16px"
-          sx={{
-            backgroundColor: "#FFF",
-            width: "200px",
-            height: "50px",
-            display: "flex",
-            alignItems: "center",
-            borderRadius: "100px",
-            border: "1px solid #EFEFEF",
-          }}
-        >
-          <Filter.Select
-            value={queries.working_sort || ""}
-            onChange={(event) =>
-              onChangeQueries("working_sort", event.target.value)
-            }
-            label={resourceT("schedule.filter.workingHours")}
-            sx={{ width: "100%" }}
-            options={[
-              {
-                label: resourceT("schedule.filter.asceding"),
-                value: SORT_RESROUCE_OPTIONS.ASC,
-              },
-              {
-                label: resourceT("schedule.filter.descending"),
-                value: SORT_RESROUCE_OPTIONS.DESC,
-              },
-            ]}
-          />
-        </Stack>
-        {/* <Button
+          <Stack
+            direction="row"
+            spacing="16px"
+            sx={{
+              backgroundColor: "#FFF",
+              width: "200px",
+              height: "50px",
+              display: "flex",
+              alignItems: "center",
+              borderRadius: "100px",
+              border: "1px solid #EFEFEF",
+            }}
+          >
+            <Filter.Select
+              value={queries.working_sort || ""}
+              onChange={(event) =>
+                onChangeQueries("working_sort", event.target.value)
+              }
+              label={resourceT("schedule.filter.workingHours")}
+              sx={{ width: "100%" }}
+              options={[
+                {
+                  label: resourceT("schedule.filter.asceding"),
+                  value: SORT_RESROUCE_OPTIONS.ASC,
+                },
+                {
+                  label: resourceT("schedule.filter.descending"),
+                  value: SORT_RESROUCE_OPTIONS.DESC,
+                },
+              ]}
+            />
+          </Stack>
+          {/* <Button
           variant="secondary"
           size="small"
           sx={{
@@ -222,8 +249,16 @@ const FilterHeader = ({ type }: { type: TAB_TYPE }) => {
         >
           {commonT("search")}
         </Button> */}
+        </Stack>
       </Stack>
-    </Stack>
+      <CreateBooking
+        onClose={() => {
+          setIsOpenCreate(false);
+        }}
+        open={isOpenCreate}
+        resourceId="rresource-planning-v1"
+      />
+    </>
   );
 };
 const textHeadStyle = {
