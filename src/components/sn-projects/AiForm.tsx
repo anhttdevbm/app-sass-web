@@ -57,7 +57,12 @@ const scaffoldProjectSchema = Yup.object().shape({
 });
 
 const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
-  const { tones, onGetTone, personas, onGetPersona } = useChatWithAI();
+  const {
+    tone: tones,
+    onGetTone,
+    persona: personas,
+    onGetPersona,
+  } = useChatWithAI();
   const { onCreateProject, onCreateProjectWithAI } = useProjects();
   const { onCreateTaskList, onCreateTask } = useTasksOfProject();
   const { onCreateDoc } = useDocs();

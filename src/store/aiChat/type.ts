@@ -47,12 +47,12 @@ export type AIChatState = {
   examplePromptsError?: string;
   examplePromptsFilters: GetExamplePromptQueries;
 
-  personas: SelectChatAI[];
+  persona: SelectChatAI[];
   personaStatus: DataStatus;
   personaError?: string;
   personaFilters: GetPersonaQueries;
 
-  tones: SelectChatAI[];
+  tone: SelectChatAI[];
   toneStatus: DataStatus;
   toneError?: string;
   toneFilters: GetToneQueries;

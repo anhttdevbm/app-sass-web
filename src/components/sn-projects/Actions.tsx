@@ -3,21 +3,14 @@
 import { memo, useState, useEffect, useMemo } from "react";
 import {
   Box,
-  FormControl,
-  InputLabel,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
-  Modal,
   Paper,
   Stack,
-  TextField,
-  Typography,
-  selectClasses,
 } from "@mui/material";
-import { Button, Select, Text } from "components/shared";
-import PlusIcon from "icons/PlusIcon";
+import { Text } from "components/shared";
 import { Search, Switch } from "components/Filters";
 import { INITIAL_VALUES, STATUS_OPTIONS } from "./components/helpers";
 import { useProjects } from "store/project/selectors";
@@ -46,7 +39,6 @@ const Actions = () => {
   const { push } = useRouter();
   const [isShow, onShow, onHide] = useToggle();
   const [isAiPopupVisible, setIsAiPopupVisible] = useState(false);
-  const [isCreateDropdownVisible, setIsCreateDropdownVisible] = useState(false);
 
   const [queries, setQueries] = useState<Params>({});
 
