@@ -1,4 +1,3 @@
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import {
   Modal,
   Paper,
@@ -13,21 +12,121 @@ import {
   InputAdornment,
   Box,
   ListItemIcon,
+  IconButton,
+  Typography,
+  CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import { useLocale } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { Locale, Option } from "constant/types";
+import { useProjects, useTasksOfProject } from "store/project/selectors";
+import { useChatWithAI } from "store/aiChat/selectors";
+import { useDocs } from "store/docs/selectors";
+import { CheckBoxOutlineBlank } from "@mui/icons-material";
+import * as Yup from "yup";
 
-const AI_PRESETS = [
-  "Plan a project for...",
-  "Create a sprint for...",
-  "Create a project timeline for...",
-  "Create an editorial calendar for...",
-  "Create a team meeting agenda for...",
-  "Develop project risk management plan for...",
-  "Develop project team roles and responsibilities for...",
+const CREATE_WITH_AI_PRESETS = [
+  "Plan a project for",
+  "Create a sprint for",
+  "Create a project timeline for",
+  "Create an editorial calendar for",
+  "Create a team meeting agenda for",
+  "Develop project risk management plan for",
+  "Develop project team roles and responsibilities for",
 ];
 
+type ScaffoldProjectData = {
+  title: string;
+  expectedCost: string;
+  workingHours: string;
+  description: string;
+  taskList: {
+    title: string;
+    tasks: string[];
+  }[];
+};
+
+const View = ["form", "edit"] as const;
+type View = (typeof View)[number];
+
+const scaffoldProjectSchema = Yup.object().shape({
+  tone: Yup.string().trim().required(),
+  persona: Yup.string().trim().required(),
+  prompt: Yup.string().trim().required(),
+});
+
 const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
+  const { tones, onGetTone, personas, onGetPersona } = useChatWithAI();
+  const { onCreateProject, onCreateProjectWithAI } = useProjects();
+  const { onCreateTaskList, onCreateTask } = useTasksOfProject();
+  const { onCreateDoc } = useDocs();
+  const locale = useLocale() as Locale;
+
   const [prompt, setPrompt] = useState("");
+  const [selectedTone, setSelectedTone] = useState("");
+  const [selectedPersona, setSelectedPersona] = useState("");
+  const [projectData, setProjectData] = useState<ScaffoldProjectData | null>(
+    null,
+  );
+  const [view, setView] = useState<View>("form");
+  const [isScaffoldLoading, setIsScaffoldLoading] = useState(false);
+  const [isFinalLoading, setIsFinalLoading] = useState(false);
+
+  useEffect(() => {
+    Promise.allSettled([onGetTone({}), onGetPersona({})]);
+  }, [onGetTone, onGetPersona]);
+
+  const onScaffoldSubmit = async () => {
+    const validForm = await scaffoldProjectSchema.validate({
+      tone: selectedTone,
+      persona: selectedPersona,
+      prompt,
+    });
+    setIsScaffoldLoading(true);
+    const result = await onCreateProjectWithAI(validForm);
+    setIsScaffoldLoading(false);
+    setPrompt("");
+    setSelectedTone("");
+    setSelectedPersona("");
+    setProjectData(result);
+    setView("edit");
+  };
+
+  const onFinalSubmit = async () => {
+    setIsFinalLoading(true);
+    let docData = "";
+    if (projectData) {
+      const project = await onCreateProject({
+        name: projectData.title,
+        owner: "",
+        start_date: "",
+        end_date: "",
+        type_project: "" as unknown as Option,
+        description: projectData.description,
+      });
+      docData += `# ${projectData.title}\n\n`;
+      docData += "## Project Overview\n\n";
+      docData += `${projectData.description}\n\n`;
+      docData += "## Milestones\n\n";
+      for (const _taskList of projectData.taskList) {
+        const taskList = await onCreateTaskList({
+          name: _taskList.title,
+          project: project.id,
+        });
+        docData += `### ${_taskList.title}\n\n`;
+
+        for (const _task of _taskList.tasks) {
+          await onCreateTask({ name: _task }, taskList.id);
+          docData += `- [ ] ${_task}\n`;
+        }
+      }
+
+      await onCreateDoc(project.id, docData);
+    }
+    setIsFinalLoading(false);
+    props.onClose();
+  };
 
   return (
     <Modal open={props.isOpen} onClose={props.onClose}>
@@ -42,99 +141,211 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
           padding: 3,
         }}
       >
-        <FormControl
-          fullWidth
-          sx={{
-            border: "solid 1px dodgerblue",
-            bgcolor: "background.default",
-            borderRadius: 1,
-          }}
-        >
-          <TextField
-            placeholder="Enter your goal, task, or next big project ..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+        {view === "form" ? (
+          <FormControl
+            fullWidth
             sx={{
-              borderBottom: "solid 1px dodgerblue",
-              "& .MuiOutlinedInput-root": {
-                border: "none",
-                "& .MuiOutlinedInput-notchedOutline": {
+              border: "solid 1px dodgerblue",
+              bgcolor: "background.default",
+              borderRadius: 1,
+            }}
+          >
+            <TextField
+              placeholder="Enter your goal, task, or next big project ..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              disabled={isScaffoldLoading}
+              sx={{
+                borderBottom: "solid 1px dodgerblue",
+                "& .MuiOutlinedInput-root": {
                   border: "none",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
                 },
-              },
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SendIcon sx={{ color: "transparent" }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Box display="flex" flexDirection="column" p={2} gap={1}>
-            <Stack direction="row" gap={1}>
-              <Box
-                display="flex"
-                alignItems="center"
-                border="solid 1px dodgerblue"
-                borderRadius="2rem"
-                px={1}
-              >
-                <ToneIcon sx={{ color: "transparent" }} />
-                <TextField
-                  select
-                  label="Tone"
-                  size="small"
-                  sx={{
-                    minWidth: 100,
-                    "& .MuiOutlinedInput-root": {
-                      border: "none",
-                      "& .MuiOutlinedInput-notchedOutline": {
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {isScaffoldLoading ? (
+                      <CircularProgress />
+                    ) : (
+                      <IconButton onClick={onScaffoldSubmit}>
+                        <SendIcon sx={{ color: "transparent" }} />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  onScaffoldSubmit();
+                }
+              }}
+            />
+            <Box display="flex" flexDirection="column" p={2} gap={1}>
+              <Stack direction="row" gap={1}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  border="solid 1px dodgerblue"
+                  borderRadius="2rem"
+                  px={1}
+                >
+                  <ToneIcon sx={{ color: "transparent" }} />
+                  <TextField
+                    select
+                    label="Tone"
+                    value={selectedTone}
+                    disabled={isScaffoldLoading}
+                    onChange={(e) => setSelectedTone(e.target.value)}
+                    size="small"
+                    sx={{
+                      minWidth: 100,
+                      "& .MuiOutlinedInput-root": {
                         border: "none",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
                       },
-                    },
-                  }}
-                  InputLabelProps={{ sx: { color: "dodgerblue" } }}
-                  SelectProps={{
-                    IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
-                  }}
-                />
-              </Box>
-              <Box
-                display="flex"
-                alignItems="center"
-                border="solid 1px dodgerblue"
-                borderRadius="2rem"
-                px={1}
-              >
-                <PersonaIcon sx={{ color: "transparent" }} />
-                <TextField
-                  select
-                  label="Persona"
-                  size="small"
-                  sx={{
-                    minWidth: 100,
-                    "& .MuiOutlinedInput-root": {
-                      border: "none",
-                      "& .MuiOutlinedInput-notchedOutline": {
+                    }}
+                    InputLabelProps={{ sx: { color: "dodgerblue" } }}
+                    SelectProps={{
+                      IconComponent: () => (
+                        <ExpandMore htmlColor="dodgerblue" />
+                      ),
+                    }}
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    {tones.map((tone) => (
+                      <MenuItem key={tone.id} value={tone.id}>
+                        {tone.name[locale]}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  border="solid 1px dodgerblue"
+                  borderRadius="2rem"
+                  px={1}
+                >
+                  <PersonaIcon sx={{ color: "transparent" }} />
+                  <TextField
+                    select
+                    label="Persona"
+                    disabled={isScaffoldLoading}
+                    value={selectedPersona}
+                    onChange={(e) => setSelectedPersona(e.target.value)}
+                    size="small"
+                    sx={{
+                      minWidth: 100,
+                      "& .MuiOutlinedInput-root": {
                         border: "none",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
                       },
-                    },
-                  }}
-                  InputLabelProps={{ sx: { color: "dodgerblue" } }}
-                  SelectProps={{
-                    IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
-                  }}
-                />
-              </Box>
-            </Stack>
-            <MenuList>
-              {AI_PRESETS.map((preset) => (
-                <PresetMenuItem key={preset} preset={preset} />
+                    }}
+                    InputLabelProps={{ sx: { color: "dodgerblue" } }}
+                    SelectProps={{
+                      IconComponent: () => (
+                        <ExpandMore htmlColor="dodgerblue" />
+                      ),
+                    }}
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    {personas.map((persona) => (
+                      <MenuItem key={persona.id} value={persona.id}>
+                        {persona.name[locale]}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+              </Stack>
+              {prompt.length === 0 && (
+                <MenuList>
+                  {CREATE_WITH_AI_PRESETS.map((preset) => (
+                    <PresetMenuItem
+                      key={preset}
+                      preset={preset}
+                      onClick={() => setPrompt(preset)}
+                    />
+                  ))}
+                </MenuList>
+              )}
+            </Box>
+          </FormControl>
+        ) : view === "edit" ? (
+          <FormControl sx={{ gap: 2 }}>
+            <Box overflow="auto" maxHeight="30vh">
+              <Typography variant="h3">{projectData?.title}</Typography>
+              <Typography variant="h4">Project Overview</Typography>
+              <Typography>{projectData?.description}</Typography>
+              <Typography variant="h4">Milestones</Typography>
+              {projectData?.taskList.map((_taskList, index) => (
+                <Box key={_taskList.title}>
+                  <Typography variant="h5">{_taskList.title}</Typography>
+                  {_taskList.tasks.map((_task) => (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      key={_task}
+                      sx={{ ml: 2 }}
+                    >
+                      <CheckBoxOutlineBlank fontSize="small" />
+                      <Typography>Task {_task}</Typography>
+                    </Box>
+                  ))}
+                </Box>
               ))}
+            </Box>
+            <TextField
+              placeholder="What would you like to do next?"
+              disabled={isFinalLoading}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              sx={{
+                bgcolor: "background.default",
+                "& .MuiOutlinedInput-root": {
+                  border: "none",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {isFinalLoading ? (
+                      <CircularProgress />
+                    ) : (
+                      <IconButton onClick={onFinalSubmit}>
+                        <SendIcon sx={{ color: "transparent" }} />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  //TODO: allow edit
+                }
+              }}
+            />
+            <MenuList>
+              <PresetMenuItem
+                preset="Create document"
+                onClick={onFinalSubmit}
+              />
+              <PresetMenuItem preset="Continue writing" />
+              <PresetMenuItem preset="Make longer" />
             </MenuList>
-          </Box>
-        </FormControl>
+          </FormControl>
+        ) : null}
       </Paper>
     </Modal>
   );
@@ -142,7 +353,7 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
 
 export default AiForm;
 
-const PresetMenuItem = (props: { preset: string }) => {
+const PresetMenuItem = (props: { preset: string; onClick?: () => void }) => {
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -153,6 +364,7 @@ const PresetMenuItem = (props: { preset: string }) => {
         },
         borderRadius: 2,
       }}
+      onClick={props.onClick}
       onMouseOver={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
@@ -163,7 +375,7 @@ const PresetMenuItem = (props: { preset: string }) => {
           <PromptPresetIcon sx={{ color: "transparent" }} />
         )}
       </ListItemIcon>
-      <ListItemText>{props.preset}</ListItemText>
+      <ListItemText>{props.preset}...</ListItemText>
       {isHover && <EnterIcon sx={{ color: "transparent" }} />}
     </MenuItem>
   );

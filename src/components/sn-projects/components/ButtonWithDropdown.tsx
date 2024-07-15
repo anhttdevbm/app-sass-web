@@ -60,6 +60,10 @@ const ButtonWithDropdown = ({
           vertical: "bottom",
           horizontal: "right",
         }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
       >
         {props.children(handleClose)}
       </Popover>

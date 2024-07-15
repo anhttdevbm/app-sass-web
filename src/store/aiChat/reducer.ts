@@ -36,12 +36,12 @@ const initialState: AIChatState = {
   examplePromptsError: undefined,
   examplePromptsFilters: { number_prompt: 6 },
 
-  persona: [],
+  personas: [],
   personaStatus: DataStatus.IDLE,
   personaError: undefined,
   personaFilters: {},
 
-  tone: [],
+  tones: [],
   toneStatus: DataStatus.IDLE,
   toneError: undefined,
   toneFilters: {},
@@ -84,7 +84,7 @@ const aiChatSlice = createSlice({
         updated_at: new Date().toISOString(),
       } as ChatSession);
     },
-    reset: state => initialState
+    reset: (state) => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -202,10 +202,13 @@ const aiChatSlice = createSlice({
         state.personaStatus = DataStatus.SUCCEEDED;
 
         const newPersonas = payload.results.filter(
-          (newPersona) => !state.persona.some((existingPersona) => existingPersona.id === newPersona.id)
+          (newPersona) =>
+            !state.personas.some(
+              (existingPersona) => existingPersona.id === newPersona.id,
+            ),
         );
 
-        state.persona.push(...newPersonas);
+        state.personas.push(...newPersonas);
       })
       .addCase(getPersona.rejected, (state, action) => {
         state.personaStatus = DataStatus.FAILED;
@@ -217,14 +220,15 @@ const aiChatSlice = createSlice({
         state.toneStatus = DataStatus.LOADING;
       })
       .addCase(getTone.fulfilled, (state, { payload }) => {
-      state.toneStatus = DataStatus.SUCCEEDED;
+        state.toneStatus = DataStatus.SUCCEEDED;
 
-      const newTones = payload.results.filter(
-        (newTone) => !state.tone.some((existingTone) => existingTone.id === newTone.id)
-      );
+        const newTones = payload.results.filter(
+          (newTone) =>
+            !state.tones.some((existingTone) => existingTone.id === newTone.id),
+        );
 
-      state.tone.push(...newTones);
-    })
+        state.tones.push(...newTones);
+      })
       .addCase(getTone.rejected, (state, action) => {
         state.toneStatus = DataStatus.FAILED;
         state.toneError = action.error?.message ?? AN_ERROR_TRY_AGAIN;
@@ -281,6 +285,6 @@ const aiChatSlice = createSlice({
   },
 });
 
-export const {reset} = aiChatSlice.actions;
+export const { reset } = aiChatSlice.actions;
 export const aiChatReducer = aiChatSlice.reducer;
 export default aiChatSlice.reducer;
