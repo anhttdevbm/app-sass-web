@@ -33,6 +33,7 @@ import EmojiSelector from "./components/EmojiSelector";
 import { MenuBarHeaderEdit } from "./components/MenuBarHeader";
 import styles from "./scss/pageBody.module.scss";
 import { useParams } from "next/navigation";
+import DraftEditor from "./components/DraftEditor";
 
 const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const { idParams } = useParams();
@@ -162,169 +163,171 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   }, [perm]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      {editor && <MenuBarHeaderEdit editor={editor} />}
-      <Box
-        sx={{
-          paddingBottom: {
-            sm: "0",
-            xs: "160px",
-          },
-          width: {
-            sm: "100%",
-            xs: "100%",
-          },
-        }}
-      >
-        <div className={`${styles.content}} ${styles[theme]}`}>
-          <Box
-            sx={{
-              position: "relative",
-              bgcolor: isDarkMode ? "#191919" : "white",
-              padding: {
-                sm: "32px 40px",
-                xs: "12px",
-              },
-              minHeight: minHeight,
-            }}
-            id="is-edit-text"
-            className={` ${styles.page_content} ${
-              pageInfo?.pageSettings?.fullWidth ? "" : styles.full_width
-            }
-            ${pageInfo?.pageSettings?.smallText ? styles.small_text : ""}
-            ${
-              pageInfo?.pageSettings?.font
-                ? styles[pageInfo.pageSettings.font]
-                : ""
-            }`}
-          >
-            {openComment && (
-              <LayoutSlider heightToolbar={minHeight}>
-                <DrawComment editor={editor} />
-              </LayoutSlider>
-            )}
-            {openSlider && (
-              <LayoutSlider heightToolbar={minHeight}>
-                <DrawSlider
-                  setOpenSlider={setOpenSlider}
-                  editor={editor}
-                ></DrawSlider>
-              </LayoutSlider>
-            )}
+    // <Box
+    //   sx={{
+    //     display: "flex",
+    //     flexDirection: "column",
+    //     gap: "20px",
+    //     width: "100%",
+    //     height: "100%",
+    //   }}
+    // >
+    //   {editor && <MenuBarHeaderEdit editor={editor} />}
+    //   <Box
+    //     sx={{
+    //       paddingBottom: {
+    //         sm: "0",
+    //         xs: "160px",
+    //       },
+    //       width: {
+    //         sm: "100%",
+    //         xs: "100%",
+    //       },
+    //     }}
+    //   >
+    //     <div className={`${styles.content}} ${styles[theme]}`}>
+    //       <Box
+    //         sx={{
+    //           position: "relative",
+    //           bgcolor: isDarkMode ? "#191919" : "white",
+    //           padding: {
+    //             sm: "32px 40px",
+    //             xs: "12px",
+    //           },
+    //           minHeight: minHeight,
+    //         }}
+    //         id="is-edit-text"
+    //         className={` ${styles.page_content} ${
+    //           pageInfo?.pageSettings?.fullWidth ? "" : styles.full_width
+    //         }
+    //         ${pageInfo?.pageSettings?.smallText ? styles.small_text : ""}
+    //         ${
+    //           pageInfo?.pageSettings?.font
+    //             ? styles[pageInfo.pageSettings.font]
+    //             : ""
+    //         }`}
+    //       >
+    //         {openComment && (
+    //           <LayoutSlider heightToolbar={minHeight}>
+    //             <DrawComment editor={editor} />
+    //           </LayoutSlider>
+    //         )}
+    //         {openSlider && (
+    //           <LayoutSlider heightToolbar={minHeight}>
+    //             <DrawSlider
+    //               setOpenSlider={setOpenSlider}
+    //               editor={editor}
+    //             ></DrawSlider>
+    //             abc
+    //           </LayoutSlider>
+    //         )}
 
-            <Box
-              id="document_emoji"
-              sx={{
-                display: "flex",
-                position: "relative",
-                fontWeight: "light!important",
-              }}
-            >
-              <Button
-                sx={{
-                  color: "gray",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  paddingLeft: "0.25em! important",
-                  paddingRight: "0.25em! important",
-                  fontWeight: "light!important",
-                  borderRadius: "1em",
-                }}
-                variant="text"
-                color="primary"
-                onClick={() => setOpenEmojiSelector(true)}
-              >
-                <EmojiEmotions />
-                <span>Emoji</span>
-              </Button>
+    //         <Box
+    //           id="document_emoji"
+    //           sx={{
+    //             display: "flex",
+    //             position: "relative",
+    //             fontWeight: "light!important",
+    //           }}
+    //         >
+    //           <Button
+    //             sx={{
+    //               color: "gray",
+    //               display: "flex",
+    //               alignItems: "center",
+    //               gap: "5px",
+    //               paddingLeft: "0.25em! important",
+    //               paddingRight: "0.25em! important",
+    //               fontWeight: "light!important",
+    //               borderRadius: "1em",
+    //             }}
+    //             variant="text"
+    //             color="primary"
+    //             onClick={() => setOpenEmojiSelector(true)}
+    //           >
+    //             <EmojiEmotions />
+    //             <span>Emoji</span>
+    //           </Button>
 
-              <Button
-                sx={{
-                  color: "gray",
-                  fontWeight: "light!important",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  paddingLeft: "0.25em! important",
-                  paddingRight: "0.25em! important",
-                  borderRadius: "1em",
-                }}
-                variant="text"
-                color="primary"
-                onClick={() => setOpenChangeCover(true)}
-              >
-                Change cover
-              </Button>
-            </Box>
+    //           <Button
+    //             sx={{
+    //               color: "gray",
+    //               fontWeight: "light!important",
+    //               display: "flex",
+    //               alignItems: "center",
+    //               gap: "5px",
+    //               paddingLeft: "0.25em! important",
+    //               paddingRight: "0.25em! important",
+    //               borderRadius: "1em",
+    //             }}
+    //             variant="text"
+    //             color="primary"
+    //             onClick={() => setOpenChangeCover(true)}
+    //           >
+    //             Change cover
+    //           </Button>
+    //         </Box>
 
-            <form id="document_title" className={`${styles.form_title}`}>
-              {textAreaValue && (
-                <Textarea
-                  fontFamily={fontFamily as string}
-                  maxRows={3}
-                  id="title"
-                  disabled={!canEdit}
-                  value={textAreaValue}
-                  // defaultValue={name}
-                  placeholder="Enter document title..."
-                  onChange={(e) => {
-                    setTextAreaValue(e.target.value);
-                    debounceChange(e.target.value);
-                  }}
-                  autoComplete="off"
-                  spellCheck="false"
-                />
-              )}
-            </form>
-            <div
-              className={`${styles.editor}`}
-              style={{
-                width: "100%",
-                pointerEvents: canEdit ? "auto" : "none",
-                height: editorHeight,
-                overflowY: "scroll",
-              }}
-            >
-              <Tiptap editor={editor} disabled={!canEdit} />
-            </div>
-          </Box>
-        </div>
-        <EmojiSelector
-          openPicker={openEmojiSelector}
-          closePicker={() => {
-            setOpenEmojiSelector(false);
-          }}
-          setEmoji={() => {
-            null;
-          }}
-          setEmojiCode={() => {
-            null;
-          }}
-          leftOpen={true}
-          fullWidth={false}
-          cover={true}
+    //         <form id="document_title" className={`${styles.form_title}`}>
+    //           {textAreaValue && (
+    //             <Textarea
+    //               fontFamily={fontFamily as string}
+    //               maxRows={3}
+    //               id="title"
+    //               disabled={!canEdit}
+    //               value={textAreaValue}
+    //               // defaultValue={name}
+    //               placeholder="Enter document title..."
+    //               onChange={(e) => {
+    //                 setTextAreaValue(e.target.value);
+    //                 debounceChange(e.target.value);
+    //               }}
+    //               autoComplete="off"
+    //               spellCheck="false"
+    //             />
+    //           )}
+    //         </form>
+    //         <div
+    //           className={`${styles.editor}`}
+    //           style={{
+    //             width: "100%",
+    //             pointerEvents: canEdit ? "auto" : "none",
+    //             height: editorHeight,
+    //             overflowY: "scroll",
+    //           }}
+    //         >
+    //           <Tiptap editor={editor} disabled={!canEdit} />
+    //         </div>
+    //       </Box>
+    //     </div>
+    //     <EmojiSelector
+    //       openPicker={openEmojiSelector}
+    //       closePicker={() => {
+    //         setOpenEmojiSelector(false);
+    //       }}
+    //       setEmoji={() => {
+    //         null;
+    //       }}
+    //       setEmojiCode={() => {
+    //         null;
+    //       }}
+    //       leftOpen={true}
+    //       fullWidth={false}
+    //       cover={true}
 
-          // setEmoji: (emojiImage: string) => void;
-          // setEmojiCode: (unified: string) => void;
-          // leftOpen: boolean;
-          // fullWidth: boolean;
-          // cover: boolean;
-        />
-        <ChangeCover
-          open={openChangeCover}
-          onClose={() => setOpenChangeCover(false)}
-        />
-      </Box>
-    </Box>
+    //       // setEmoji: (emojiImage: string) => void;
+    //       // setEmojiCode: (unified: string) => void;
+    //       // leftOpen: boolean;
+    //       // fullWidth: boolean;
+    //       // cover: boolean;
+    //     />
+    //     <ChangeCover
+    //       open={openChangeCover}
+    //       onClose={() => setOpenChangeCover(false)}
+    //     />
+    //   </Box>
+    // </Box>
+    <DraftEditor />
   );
 };
 
