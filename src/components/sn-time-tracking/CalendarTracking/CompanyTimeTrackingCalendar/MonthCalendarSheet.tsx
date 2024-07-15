@@ -20,6 +20,26 @@ import { AddCircle, CalendarToday, Group } from "@mui/icons-material";
 import CloseIcon from "icons/CloseIcon";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 
+interface Timesheet {
+  created_time: string;
+  day: string;
+  duration: number;
+  end_time: string;
+  _id: string;
+  is_pin: boolean;
+  note: string;
+  fullname: string; // Assuming fullname is added to each timesheet
+  avatar: string;
+  project: Project;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  company: string;
+  avatar: string | null; // Example assumes avatar is a string URL or null
+}
+
 interface Task {
   avatarUrl: string;
   duration: number;
@@ -48,7 +68,8 @@ interface SelectedDate {
 
 const MonthCalendarSheetTest = () => {
   const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
-  // State to manage current month
+  // State to manage current month\
+  const [timeSheetData, setTimeSheetData] = useState<Timesheet[]>([]);
   const [currentMonth, setCurrentMonth] = useState(moment().startOf("month"));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<SelectedDate>({
@@ -131,29 +152,83 @@ const MonthCalendarSheetTest = () => {
   const handleDrawerClose = () => {
     setDrawerOpen(false);
   };
-  const getFirstDayOfMonth = (currentMonth) => {
-    return currentMonth.clone().startOf("month");
-  };
-
-  const getLastDayOfMonth = (currentMonth) => {
-    return currentMonth.clone().endOf("month");
-  };
 
   // Effect to log monthData whenever currentMonth changes
   useEffect(() => {
-    const monthData = getDaysInMonth(
-      currentMonth.year(),
-      currentMonth.month() + 1,
-    );
-    // console.log(monthData);
-    const firstDayOfMonth = getFirstDayOfMonth(currentMonth);
-    const lastDayOfMonth = getLastDayOfMonth(currentMonth);
-    onGetCompanyTimeSheet({
-      start_date: firstDayOfMonth.format("YYYY-MM-DD"),
-      end_date: lastDayOfMonth.format("YYYY-MM-DD"),
-      search_key:""
+    const getCompanyTimeSheet = async () => {
+      const firstDayOfMonth = currentMonth.clone().startOf("month");
+      const lastDayOfMonth = currentMonth.clone().endOf("month");
+
+      onGetCompanyTimeSheet({
+        start_date: firstDayOfMonth.format("YYYY-MM-DD"),
+        end_date: lastDayOfMonth.format("YYYY-MM-DD"),
+        search_key: "",
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const companyData: any = [...company];
+      if (companyData) {
+        let allTimesheets = [];
+
+        companyData.forEach((data) => {
+          if (data.timesheet && Array.isArray(data.timesheet)) {
+            allTimesheets = allTimesheets.concat(
+              data.timesheet.map((timesheet) => ({
+                ...timesheet,
+                fullname: data.fullname,
+                avatar: data.avatar?.link,
+              })),
+            );
+          }
+        });
+
+        setTimeSheetData(allTimesheets);
+      }
+    };
+    getCompanyTimeSheet();
+  }, [company]);
+
+  useEffect(() => {
+    const aggregatedData = {};
+
+    // Process each timesheet entry
+    timeSheetData.forEach((entry) => {
+      const { day, duration, fullname, avatar, project } = entry;
+
+      if (!aggregatedData[day]) {
+        // Initialize entry if it doesn't exist
+        aggregatedData[day] = {
+          date: day,
+          totalTime: duration,
+          peopleCount: 1,
+          avatars: [{ name: fullname, src: avatar }],
+          tasks: [
+            {
+              avatarUrl: avatar, // Use avatar URL here if available
+              duration: duration,
+              taskName: entry.note,
+              projectName: project ? project.name : "",
+            },
+          ],
+          sheetCount: 1,
+        };
+      } else {
+        // Update existing entry if day already exists
+        aggregatedData[day].totalTime += duration;
+        aggregatedData[day].peopleCount += 1;
+        aggregatedData[day].avatars.push({ name: fullname, src: avatar });
+        aggregatedData[day].tasks.push({
+          avatarUrl: avatar, // Use avatar URL here if available
+          duration: duration,
+          taskName: entry.note,
+          projectName: project ? project.name : "",
+        });
+        aggregatedData[day].sheetCount += 1;
+      }
     });
-  }, [currentMonth]);
+
+    // Convert aggregatedData object into an array of events
+    setEvents(Object.values(aggregatedData));
+  }, [timeSheetData]);
 
   // Function to handle next month navigation
   const handleNextMonth = () => {
@@ -165,7 +240,7 @@ const MonthCalendarSheetTest = () => {
     setCurrentMonth(currentMonth.clone().subtract(1, "month"));
   };
 
-  const calculateTotalHours = (weekStart, days) => {
+  const calculateTotalHours = (days) => {
     let totalHours = 0;
     days.forEach((day) => {
       const dayDate = moment(day).format("YYYY-MM-DD");
@@ -193,7 +268,6 @@ const MonthCalendarSheetTest = () => {
     );
     const firstDayOfMonth = moment(daysInMonth[0]);
 
-    // Determine the starting index based on the weekday of the first day of the month
     const startDayIndex = firstDayOfMonth.day(); // 0 (Sunday) to 6 (Saturday)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const weeks: any = [];
@@ -219,6 +293,11 @@ const MonthCalendarSheetTest = () => {
         currentWeek = [];
       }
     });
+    if (weeks[weeks.length - 1].length < 7) {
+      while (weeks[weeks.length - 1].length < 7) {
+        weeks[weeks.length - 1].push(null);
+      }
+    }
 
     return weeks.map((week, weekIndex) => (
       <tr key={weekIndex}>
@@ -321,17 +400,15 @@ const MonthCalendarSheetTest = () => {
                       <div>
                         <AvatarGroup max={4}>
                           {dayObj.event.avatars.map((avatar, index) => (
-                            <>
-                              <Avatar
-                                sx={{
-                                  width: 15, // Adjust the width to make it smaller
-                                  height: 15, // Adjust the height to make it smaller
-                                  fontSize: 10, // Adjust the font size to make initials smaller
-                                }}
-                              >
-                                {avatar.name}
-                              </Avatar>
-                            </>
+                            <Avatar
+                              key={index}
+                              sx={{
+                                width: 15, // Adjust the width to make it smaller
+                                height: 15, // Adjust the height to make it smaller
+                                fontSize: 10, // Adjust the font size to make initials smaller
+                              }}
+                              src={avatar.avatar}
+                            />
                           ))}
                         </AvatarGroup>
                       </div>
@@ -360,12 +437,7 @@ const MonthCalendarSheetTest = () => {
             background: "#14B9E5",
           }}
         >
-          {weeks[weekIndex][0] && weeks[weekIndex][0].day
-            ? calculateTotalHours(
-                moment(weeks[weekIndex][0].day),
-                week.map((dayObj) => dayObj?.day),
-              )
-            : 0}
+         {calculateTotalHours(week.filter(dayObj => dayObj !== null && dayObj.event).map(dayObj => dayObj.day))}
         </td>
       </tr>
     ));
