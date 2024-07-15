@@ -18,6 +18,7 @@ import Avatar from "@mui/material/Avatar";
 import "./style.css";
 import { AddCircle, CalendarToday, Group } from "@mui/icons-material";
 import CloseIcon from "icons/CloseIcon";
+import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 
 interface Task {
   avatarUrl: string;
@@ -46,6 +47,7 @@ interface SelectedDate {
 }
 
 const MonthCalendarSheetTest = () => {
+  const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
   // State to manage current month
   const [currentMonth, setCurrentMonth] = useState(moment().startOf("month"));
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -129,6 +131,13 @@ const MonthCalendarSheetTest = () => {
   const handleDrawerClose = () => {
     setDrawerOpen(false);
   };
+  const getFirstDayOfMonth = (currentMonth) => {
+    return currentMonth.clone().startOf("month");
+  };
+
+  const getLastDayOfMonth = (currentMonth) => {
+    return currentMonth.clone().endOf("month");
+  };
 
   // Effect to log monthData whenever currentMonth changes
   useEffect(() => {
@@ -136,7 +145,14 @@ const MonthCalendarSheetTest = () => {
       currentMonth.year(),
       currentMonth.month() + 1,
     );
-    console.log(monthData);
+    // console.log(monthData);
+    const firstDayOfMonth = getFirstDayOfMonth(currentMonth);
+    const lastDayOfMonth = getLastDayOfMonth(currentMonth);
+    onGetCompanyTimeSheet({
+      start_date: firstDayOfMonth.format("YYYY-MM-DD"),
+      end_date: lastDayOfMonth.format("YYYY-MM-DD"),
+      search_key:""
+    });
   }, [currentMonth]);
 
   // Function to handle next month navigation

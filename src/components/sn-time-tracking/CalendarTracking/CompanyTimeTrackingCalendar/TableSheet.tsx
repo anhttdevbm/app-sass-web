@@ -115,6 +115,7 @@ const TableSheet: React.FC<IProps> = (props) => {
     (state: RootState) => state.userNavigationDetail,
   );
   const [userData, setUserData] = useState(props.data);
+  const [filterUserData, setFilterUserData] = useState(props.data);
   const [dateData, setDateData] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [searchUser, setSearchUser] = useState([
@@ -134,9 +135,15 @@ const TableSheet: React.FC<IProps> = (props) => {
   };
 
   const handleSearchUser = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputSearchData(event.target.value);
-    // Implement search logic here
-    // setSearchUser
+    const inputValue = event.target.value.toLowerCase(); // Convert input to lowercase for case-insensitive search
+    setInputSearchData(inputValue);
+
+    if (userData) {
+      const searchUser = userData.filter((user) =>
+        user.fullname.toLowerCase().includes(inputValue),
+      );
+      setFilterUserData(searchUser);
+    }
   };
 
   const handleGetUserDetail = (username: string, avatar: string) => {
@@ -153,7 +160,6 @@ const TableSheet: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     setUserData(props.data);
-    console.log(userData);
   }, [props.data]);
 
   const formattedDates = dateData.map((date) => ({
@@ -161,9 +167,14 @@ const TableSheet: React.FC<IProps> = (props) => {
     date: moment(date).format("DD MMM"),
   }));
 
-  const rows = userData.map((user) =>
-    createData(user.fullname, user.avatar?.link, user.timesheet),
-  );
+  const rows =
+    filterUserData.length === 0
+      ? userData.map((user) =>
+          createData(user.fullname, user.avatar?.link, user.timesheet),
+        )
+      : filterUserData.map((user) =>
+          createData(user.fullname, user.avatar?.link, user.timesheet),
+        );
 
   const totalHoursPerDay = rows.reduce(
     (acc, row) => {
@@ -330,7 +341,9 @@ const TableSheet: React.FC<IProps> = (props) => {
                         sx={{ width: 20, height: 20 }}
                       />
                     ) : (
-                      <Avatar sx={{ width: 20, height: 20 }}><Person/></Avatar>
+                      <Avatar sx={{ width: 20, height: 20 }}>
+                        <Person />
+                      </Avatar>
                     )}
                     <Typography>{row.name}</Typography>
                   </TableCell>
