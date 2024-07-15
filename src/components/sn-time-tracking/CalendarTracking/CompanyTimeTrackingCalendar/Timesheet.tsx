@@ -256,7 +256,7 @@ const TimeSheet: React.FC<IProps> = ({ data, filters, dateRange }) => {
                   textAlign: "center",
                 }}
               >
-                 {timeT("header.noData")}
+                {timeT("header.noData")}
               </Typography>
             </StyledTableCell>
           </StyledTableRow>
@@ -291,109 +291,107 @@ const TimeSheet: React.FC<IProps> = ({ data, filters, dateRange }) => {
     );
   };
 
-  const renderMain = () => {
-    return (
-      <TableContainer
-        sx={{
-          height: `calc(100vh - 380px)`,
-        }}
-      >
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>
+  const renderMain = () => (
+    <TableContainer
+      sx={{
+        height: `calc(100vh - 380px)`,
+      }}
+    >
+      <Table stickyHeader>
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 400,
+                  lineHeight: "18px",
+                  textAlign: "center",
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                {timeT("myTime.timesheet_tab.weekly_summary")}
+              </Typography>
+            </StyledTableCell>
+            <StyledTableCell>
+              <Box
+                sx={{
+                  mb: "12px",
+                  py: 1,
+                }}
+              >
                 <Typography
                   sx={{
-                    fontSize: "13px",
+                    fontSize: "10px",
                     fontWeight: 400,
                     lineHeight: "18px",
+                    textTransform: "uppercase",
                     textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
                   }}
                 >
-                  {timeT("myTime.timesheet_tab.weekly_summary")}
+                  {timeT("myTime.timesheet_tab.total")}
                 </Typography>
-              </StyledTableCell>
-              <StyledTableCell>
-                <Box
+                <Typography
                   sx={{
-                    mb: "12px",
-                    py: 1,
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    lineHeight: "20px",
+                    textTransform: "uppercase",
+                    color: "#1BC5BD",
+                    textAlign: "center",
                   }}
                 >
-                  <Typography
+                  {formatDuration(totalWeek || 0)}
+                </Typography>
+              </Box>
+            </StyledTableCell>
+            {dateRange?.map((date, index) => {
+              const weekday = weekdays[date.getDay()];
+              const dayNumber = date.getDate();
+              return (
+                <StyledTableCell key={date}>
+                  <Box
                     sx={{
-                      fontSize: "10px",
-                      fontWeight: 400,
-                      lineHeight: "18px",
-                      textTransform: "uppercase",
-                      textAlign: "center",
+                      mb: "12px",
+                      py: 1,
                     }}
                   >
-                    {timeT("myTime.timesheet_tab.total")}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      lineHeight: "20px",
-                      textTransform: "uppercase",
-                      color: "#1BC5BD",
-                      textAlign: "center",
-                    }}
-                  >
-                    {formatDuration(totalWeek || 0)}
-                  </Typography>
-                </Box>
-              </StyledTableCell>
-              {dateRange?.map((date, index) => {
-                const weekday = weekdays[date.getDay()];
-                const dayNumber = date.getDate();
-                return (
-                  <StyledTableCell key={date}>
-                    <Box
+                    <Typography
                       sx={{
-                        mb: "12px",
-                        py: 1,
+                        fontSize: "10px",
+                        fontWeight: 400,
+                        lineHeight: "18px",
+                        textTransform: "uppercase",
+                        textAlign: "left",
                       }}
                     >
-                      <Typography
-                        sx={{
-                          fontSize: "10px",
-                          fontWeight: 400,
-                          lineHeight: "18px",
-                          textTransform: "uppercase",
-                          textAlign: "left",
-                        }}
-                      >
-                        {`${weekday} ${dayNumber}`}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: "16px",
-                          fontWeight: 600,
-                          lineHeight: "20px",
-                          textTransform: "uppercase",
-                          color: isDarkMode ? "#fff" : "#212121",
-                          textAlign: "left",
-                        }}
-                      >
-                        {formatDuration(weeklyTotals?.get(weekday) || 0)}
-                      </Typography>
-                    </Box>
-                  </StyledTableCell>
-                );
-              })}
-            </TableRow>
-          </TableHead>
-          {_renderTableBody()}
-        </Table>
-      </TableContainer>
-    );
-  };
+                      {`${weekday} ${dayNumber}`}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: 600,
+                        lineHeight: "20px",
+                        textTransform: "uppercase",
+                        color: isDarkMode ? "#fff" : "#212121",
+                        textAlign: "left",
+                      }}
+                    >
+                      {formatDuration(weeklyTotals?.get(weekday) || 0)}
+                    </Typography>
+                  </Box>
+                </StyledTableCell>
+              );
+            })}
+          </TableRow>
+        </TableHead>
+        {_renderTableBody()}
+      </Table>
+    </TableContainer>
+  );
 
   return renderMain();
 };
