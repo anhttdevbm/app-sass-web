@@ -49,6 +49,7 @@ import MonthCalendarSheet from "./MonthCalendarSheet";
 import { RootState } from "store/configureStore";
 import { useDispatch } from "react-redux";
 import { setIsOpen as setUserNavigationVisible } from "store/userNavigationDetail/reducer";
+import { Person } from "@mui/icons-material";
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
@@ -583,9 +584,17 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               >
                 <ChevronLeftIcon />
               </IconButton>
-              <Avatar sx={{ width: 40, height: 40 }}>
-                {userDetailTableAvatar}
-              </Avatar>
+              {userDetailTableAvatar ? (
+                <Avatar
+                  sx={{ width: 40, height: 40 }}
+                  src={userDetailTableAvatar}
+                />
+              ) : (
+                <Avatar sx={{ width: 40, height: 40 }}>
+                  <Person />
+                </Avatar>
+              )}
+
               <Typography>{userDetailTableName}</Typography>
             </div>
           )}

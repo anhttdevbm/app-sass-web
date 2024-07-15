@@ -117,6 +117,18 @@ const TableSheet: React.FC<IProps> = (props) => {
   const [userData, setUserData] = useState(props.data);
   const [filterUserData, setFilterUserData] = useState(props.data);
   const [dateData, setDateData] = useState([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [rows, setRows] = useState<any[]>([]);
+  const [totalHoursPerDay, setTotalHoursPerDay] = useState<{
+    sun: number;
+    mon: number;
+    tue: number;
+    wed: number;
+    thu: number;
+    fri: number;
+    sat: number;
+  }>({ sun: 0, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 });
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [searchUser, setSearchUser] = useState([
     { name: "Thu Nguyen" },
@@ -166,30 +178,37 @@ const TableSheet: React.FC<IProps> = (props) => {
     day: moment(date).format("ddd"),
     date: moment(date).format("DD MMM"),
   }));
+  useEffect(() => {
+    const calculateRowsAndTotals = () => {
+      const rows =
+        filterUserData.length === 0
+          ? userData.map((user) =>
+              createData(user.fullname, user.avatar?.link, user.timesheet),
+            )
+          : filterUserData.map((user) =>
+              createData(user.fullname, user.avatar?.link, user.timesheet),
+            );
 
-  const rows =
-    filterUserData.length === 0
-      ? userData.map((user) =>
-          createData(user.fullname, user.avatar?.link, user.timesheet),
-        )
-      : filterUserData.map((user) =>
-          createData(user.fullname, user.avatar?.link, user.timesheet),
-        );
+      const totalHoursPerDay = rows.reduce(
+        (acc, row) => {
+          acc.sun += row.sun;
+          acc.mon += row.mon;
+          acc.tue += row.tue;
+          acc.wed += row.wed;
+          acc.thu += row.thu;
+          acc.fri += row.fri;
+          acc.sat += row.sat;
+          return acc;
+        },
+        { sun: 0, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 },
+      );
 
-  const totalHoursPerDay = rows.reduce(
-    (acc, row) => {
-      acc.sun += row.sun;
-      acc.mon += row.mon;
-      acc.tue += row.tue;
-      acc.wed += row.wed;
-      acc.thu += row.thu;
-      acc.fri += row.fri;
-      acc.sat += row.sat;
-      return acc;
-    },
-    { sun: 0, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 },
-  );
+      setRows(rows);
+      setTotalHoursPerDay(totalHoursPerDay);
+    };
 
+    calculateRowsAndTotals();
+  }, [props.dateRange,props.data]);
   return (
     <>
       {isOpen === false && (

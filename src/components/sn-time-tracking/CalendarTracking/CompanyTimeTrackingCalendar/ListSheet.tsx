@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import moment from "moment";
@@ -151,7 +152,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                     color: "#0575E6",
                   }}
                 >
-                  {timesheet?.project?.name}
+                  {timesheet?.project?.name ? <Typography>{timesheet?.project?.name}</Typography> : <Typography sx={{color:"red"}}>Break time</Typography>}
                 </StyledTableCell>
                 <StyledTableCell>{timesheet.note}</StyledTableCell>
                 <StyledTableCell>{timesheet.fullname}</StyledTableCell>
