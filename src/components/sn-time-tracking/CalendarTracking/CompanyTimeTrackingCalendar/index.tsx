@@ -153,9 +153,15 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   });
 
   useEffect(() => {
-    const year = dayjs(currentDate).year();
-    setCurrentYear(year.toString());
-  }, [selectedDate]);
+    const getYear = () => {
+      if (dayjs.isDayjs(selectedDate)) {
+        return selectedDate.year();
+      } else {
+        return dayjs(selectedDate).year(); // Convert Date to dayjs and get year
+      }
+    };
+    setCurrentYear(getYear().toString());
+  }, [selectedDate, dateRange]);
 
   React.useEffect(() => {
     setIsOpenCreatePopup(props.isOpenCreatePopup);
@@ -281,7 +287,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       }
     }
   };
-
 
   const _renderCalendarModule = () => {
     return (
@@ -763,7 +768,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
           }}
         >
           <FilterCategory personVisibleFilter={false} />
-          <TableSheet dateRange={dateRange} data={company}/>
+          <TableSheet dateRange={dateRange} data={company} />
         </Box>
       ) : (
         <Stack
@@ -784,24 +789,35 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               }}
             >
               <MonthCalendarSheet />
-              
+
               {/* <MonthCalendarSheetCustom/> */}
             </Box>
 
             // <TableSheet dateRange={dateRange}/>
           )}
           {props.currentKindOfSheet === "timeSheet" && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-                marginTop: "20px",
-              }}
-            >
-              <FilterCategory />
-              <ListSheet data={company} />
-            </Box>
+            <>
+              <div
+                style={{
+                  marginTop: "20px",
+                  borderRadius: "100px",
+                  background: "#F7F7FD",
+                }}
+              >
+                {_renderHeader()}
+              </div>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "20px",
+                  marginTop: "20px",
+                }}
+              >
+                <FilterCategory />
+                <ListSheet data={company} />
+              </Box>
+            </>
           )}
         </Stack>
       )}

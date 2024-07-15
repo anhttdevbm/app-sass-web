@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -16,9 +16,28 @@ import "../CompanyTimeTrackingCalendar/style.css";
 import { boxShadow } from "html2canvas/dist/types/css/property-descriptors/box-shadow";
 import Checkbox from "@mui/material/Checkbox";
 
-interface IProps{
+interface Timesheet {
+  created_time: string;
+  day: string;
+  duration: number;
+  end_time: string;
+  _id: string;
+  is_pin: boolean;
+  note: string;
+  fullname: string; // Assuming fullname is added to each timesheet
+  project: Project;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  company: string;
+  avatar: string | null; // Example assumes avatar is a string URL or null
+}
+
+interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data?:any
+  data?: any;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -32,70 +51,28 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const fakeData = [
-  {
-    _id: "1",
-    day: "2024-07-07",
-    project: { name: "Project Alpha" },
-    note: "Worked on initial setup",
-    type: "Development",
-    username: "Thu Nguyen",
-    duration: "05:00",
-    created_time: "2024-07-07T08:00:00Z",
-  },
-  {
-    _id: "2",
-    day: "2024-07-06",
-    project: { name: "Project Beta" },
-    note: "Debugging issues",
-    type: "Testing",
-    username: "Thu Nguyen",
-    duration: "05:00",
-    created_time: "2024-07-06T09:30:00Z",
-  },
-  {
-    _id: "3",
-    day: "2024-07-05",
-    project: null, // No project assigned, so it should be "BreakTime"
-    note: "Team meeting",
-    type: "Meeting",
-    username: "Thu Nguyen",
-    duration: "05:00",
-    created_time: "2024-07-05T11:00:00Z",
-  },
-  {
-    _id: "4",
-    day: "2024-07-04",
-    project: { name: "Project Gamma" },
-    note: "Implemented feature X",
-    type: "Development",
-    username: "Thu Nguyen",
-    duration: "05:00",
-    created_time: "2024-07-04T10:00:00Z",
-  },
-  {
-    _id: "5",
-    day: "2024-07-03",
-    project: { name: "Project Delta" },
-    note: "Reviewed code",
-    type: "Code Review",
-    username: "Thu Nguyen",
-    duration: "05:00",
-    created_time: "2024-07-03T14:00:00Z",
-  },
-];
+const ListSheet: React.FC<IProps> = (props) => {
+  const [timeSheetData, setTimeSheetData] = useState<Timesheet[]>([]);
 
-const ListSheet:React.FC<IProps> = (props) => {
-  const rows = fakeData.map((row) => ({
-    id: row._id,
-    Date: row.day,
-    Project_name: row.project?.name || "BreakTime",
-    Task_name: row.note,
-    username: row.username,
-    Time: row.duration,
-    Creation_time: moment(row.created_time).format("L HH:mm"),
-  }));
+  useEffect(() => {
+    //get all timesheet from company data api and then apply fullname property to each timesheet of the user 
+    if (props.data) {
+      let allTimesheets = [];
 
+      props.data.forEach((data) => {
+        if (data.timesheet && Array.isArray(data.timesheet)) {
+          allTimesheets = allTimesheets.concat(
+            data.timesheet.map((timesheet) => ({
+              ...timesheet,
+              fullname: data.fullname,
+            })),
+          );
+        }
+      });
+
+      setTimeSheetData(allTimesheets);
+    }
+  }, [props.data]);
   return (
     <TableContainer>
       <Table sx={{ minWidth: 400 }}>
@@ -162,25 +139,33 @@ const ListSheet:React.FC<IProps> = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.id}>
-              <StyledTableCell>
-                <Checkbox />
-                {row.Date}
-              </StyledTableCell>
-              <StyledTableCell
-                sx={{
-                  color: "#0575E6",
-                }}
-              >
-                {row.Project_name}
-              </StyledTableCell>
-              <StyledTableCell>{row.Task_name}</StyledTableCell>
-              <StyledTableCell>{row.username}</StyledTableCell>
-              <StyledTableCell>{row.Time}</StyledTableCell>
-              <StyledTableCell>{row.Creation_time}</StyledTableCell>
-            </StyledTableRow>
-          ))}
+          {timeSheetData.length > 0 ? (
+            timeSheetData.map((timesheet) => (
+              <StyledTableRow key={timesheet?._id}>
+                <StyledTableCell>
+                  <Checkbox />
+                  {timesheet?.day}
+                </StyledTableCell>
+                <StyledTableCell
+                  sx={{
+                    color: "#0575E6",
+                  }}
+                >
+                  {timesheet?.project?.name}
+                </StyledTableCell>
+                <StyledTableCell>{timesheet.note}</StyledTableCell>
+                <StyledTableCell>{timesheet.fullname}</StyledTableCell>
+                <StyledTableCell>{timesheet.duration} hrs</StyledTableCell>
+                <StyledTableCell>
+                  {moment(timesheet.created_time).format("DD/MM/YYYY HH:MM")}
+                </StyledTableCell>
+              </StyledTableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6}>No data found.</TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </TableContainer>

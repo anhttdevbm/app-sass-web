@@ -33,7 +33,7 @@ import { calendarStyles } from "./TrackingCalendar.styles";
 
 import interactionPlugin from "@fullcalendar/interaction";
 import ListIcon from "@mui/icons-material/List";
-import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider, MobileDatePicker, yearCalendarClasses } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ButtonCalendar from "components/shared/ButtonCalendar";
 import CustomizedInputBase from "components/shared/InputSeasrch";
@@ -210,9 +210,15 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   const commonT = useTranslations(NS_COMMON);
 
   useEffect(() => {
-    const year = dayjs(currentDate).year();
-    setCurrentYear(year.toString());
-  }, [selectedDate]);
+    const getYear = () => {
+      if (dayjs.isDayjs(selectedDate)) {
+        return selectedDate.year();
+      } else {
+        return dayjs(selectedDate).year(); // Convert Date to dayjs and get year
+      }
+    }
+     setCurrentYear(getYear().toString());
+  }, [selectedDate,dateRange]);
 
   useEffect(() => {
     setIsOpenCreatePopup(props.isOpenCreatePopup);
@@ -759,14 +765,27 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         {/* {_renderTimeSheetContent()} */}
         {props.currentKindOfSheet === "timeSheet" && (
           // <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />
-          <Box sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap:"20px"
-          }}>
-            <FilterCategory />
-            <ListSheet data={myTime} />
-          </Box>
+          <>
+            <div
+              style={{
+                marginBottom: "20px",
+                borderRadius: "100px",
+                background: "#F7F7FD",
+              }}
+            >
+              {_renderHeader()}
+            </div>{" "}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+              }}
+            >
+              <FilterCategory />
+              <ListSheet data={myTime} />
+            </Box>
+          </>
         )}
         {props.currentKindOfSheet === "timeGridWeek" && (
           <>
