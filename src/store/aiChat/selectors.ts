@@ -18,6 +18,7 @@ import {
   newChat,
   setSelectedChatId,
 } from "./actions";
+import { getPageNumber } from "./helper";
 import {
   ChatSessionData,
   ChatWithAIData,
@@ -27,7 +28,6 @@ import {
   GetPersonaQueries,
   GetToneQueries,
 } from "./type";
-import { getPageNumber } from "./helper";
 
 export const useExamplePrompt = () => {
   const dispatch = useAppDispatch();

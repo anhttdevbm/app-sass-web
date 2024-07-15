@@ -1,21 +1,20 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo } from "react";
 import { SelectChangeEvent, Stack } from "@mui/material";
+import { Text } from "components/shared";
+import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
 import { TextField } from "components/sn-ai-agent/components";
+import { UploadAvatar } from "components/sn-ai-agent/components/CreateModal/UploadAvatar";
 import { NS_AI_AGENT } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { useLocale, useTranslations } from "next-intl";
-import { Text } from "components/shared";
-import { UploadAvatar } from "components/sn-ai-agent/components/CreateModal/UploadAvatar";
-import { useAIAgent } from "store/aiAgent/selectors";
 import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { UpdateAIAgentPayload } from "store/aiAgent/types";
+import { useChatWithAI } from "store/aiChat/selectors";
 import { Textarea } from "./components";
 import { Select } from "./components/Select";
-import { useChatWithAI } from "store/aiChat/selectors";
-import { UpdateAIAgentPayload } from "store/aiAgent/types";
-import { FooterDetailAgent } from "components/sn-ai-agent-detail/components/FooterDetailAgent";
-import { isValidUrl } from "components/sn-ai-agent-detail/Knowledge/components";
 
 export const General = () => {
   const theme = useTheme();
@@ -23,7 +22,7 @@ export const General = () => {
   const locale = useLocale();
 
   const {aiAgent, onUpdateAgent, onUploadFile} = useAIAgent();
-  const {tone: toneList, onGetTone} = useChatWithAI();
+  const {tones: toneList, onGetTone} = useChatWithAI();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [image, setImage] = React.useState<string | null>(null);
@@ -94,7 +93,7 @@ export const General = () => {
           return {
             label: item.name[locale],
             value: item.name["en"],
-            icon: item.icon,
+            icon: item.icon as ReactNode,
           };
         })
         : [],

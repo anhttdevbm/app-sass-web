@@ -18,6 +18,7 @@ export type ChatSession = {
 };
 
 export type SelectChatAI = {
+  [x: string]: unknown;
   id: string;
   name: Record<Locale, string>;
 };
