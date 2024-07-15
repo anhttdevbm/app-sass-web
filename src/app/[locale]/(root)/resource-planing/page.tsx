@@ -1,5 +1,6 @@
 import Wrapper from "components/Wrapper";
 import ResourcePlanning from "components/sn-resource-planing";
+import ResourcePlanningv1 from "components/sn-resource-planing-v1";
 
 export const metadata = {
   title: "Resource Planning | Taskcover",
@@ -19,7 +20,7 @@ export default function ResourcePlanningPage() {
         md: 3,
       }}
     >
-      <ResourcePlanning />
+      <ResourcePlanningv1 />
     </Wrapper>
   );
 }
