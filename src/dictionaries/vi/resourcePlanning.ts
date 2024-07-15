@@ -68,7 +68,7 @@ export const ResourcePlanning: ResourceDictionary = {
     schedule: "Lên lịch",
     budget:'Ngân sách',
     user:'Người dùng',
-    role:'Vị trí',
+    role1:'Vị trí',
     editActions: {
       delete: "Xóa lịch",
       duplicate: "Nhân đôi lịch",

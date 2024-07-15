@@ -98,5 +98,8 @@ export const ResourcePlanningLang: ResourceDictionary = {
     updateFailed: "Update booking failed",
     deleteSuccess: "Delete booking successfully",
     deleteFailed: "Delete booking failed",
+    budget: "Ngân sách",
+    user: "Người dùng",
+    role1: "Vị trí",
   },
 };

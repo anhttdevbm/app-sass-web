@@ -1,39 +1,37 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
-  Typography,
+  CircularProgress,
   Collapse,
   Stack,
+  Typography,
   useTheme,
-  CircularProgress,
 } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { Button, Tooltip } from "components/shared";
+import TextFieldInput from "components/shared/TextFieldInput";
 import TextFieldSelect, {
   IOptionStructure,
 } from "components/shared/TextFieldSelect";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
-import React, { UIEvent, UIEventHandler, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
-import TextFieldInput from "components/shared/TextFieldInput";
-import ArrowDownIcon from "icons/ArrowDownIcon";
-import _ from "lodash";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
-import { Button, Tooltip } from "components/shared";
+import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import Textarea from "components/sn-time-tracking/Component/Textarea";
+import TextStatus from "components/TextStatus";
+import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
+import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import dayjs from "dayjs";
+import ArrowDownIcon from "icons/ArrowDownIcon";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { BookingData } from "store/resourcePlanning/action";
 import {
   useBookingAll,
   useGetServiceBudget,
 } from "store/resourcePlanning/selector";
-import dayjs from "dayjs";
-import { BookingData } from "store/resourcePlanning/action";
-import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
-import { useGetSchemas } from "../Schemas";
-import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
-import { StatusCell } from "components/Table";
-import TextStatus from "components/TextStatus";
 import { debounce, formatNumber } from "utils/index";
+import { useGetSchemas } from "../Schemas";
 
 interface IProps {
   open: boolean;
@@ -123,8 +121,9 @@ const ProjectTab = ({
     }
   }, [watchProject("project_id")]);
 
-  const onScroll = debounce((e: any) => {
-    const { scrollTop, clientHeight, scrollHeight } = e.target;
+  const onScroll = debounce((e: React.UIEvent<HTMLElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+
 
     if (scrollTop + clientHeight >= scrollHeight - 10) {
       setQueries({
