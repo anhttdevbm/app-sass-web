@@ -65,6 +65,8 @@ export default interface ResourceDictionary {
     schedule: string;
     selectTimeOffCategory: string;
     timeOffCategory: string;
+    budget:string,
+    user:string,
     timeOffType: {
       vacation: string;
       sick: string;

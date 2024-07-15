@@ -5,8 +5,8 @@ export const ResourcePlanning: ResourceDictionary = {
     title: "Quản lý lịch trình",
 
     tab: {
-      allPeople: "Mọi người",
-      mySchedule: "Lịch trình của tôi",
+      allPeople: "Schedule",
+      mySchedule: "Timeline",
     },
   },
   schedule: {
@@ -66,6 +66,9 @@ export const ResourcePlanning: ResourceDictionary = {
     estimate: "Ước tính",
     work: "Giờ làm",
     schedule: "Lên lịch",
+    budget:'Ngân sách',
+    user:'Người dùng',
+    role:'Vị trí',
     editActions: {
       delete: "Xóa lịch",
       duplicate: "Nhân đôi lịch",
