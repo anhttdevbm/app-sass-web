@@ -498,7 +498,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "11px 20px",
+            padding: "0 20px",
           }}
         >
           <p>Year: {currentYear}</p>
@@ -750,12 +750,13 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         ".fc-toolbar .fc-timeGridWeek-button": {
           display: "none",
         },
+        position:"relative",
       }}
     >
       <Stack
         //ref={scrollRef}
         sx={{
-          height: `calc(100vh - 365px)`,
+          height: `calc(100dvh - 250px)`,
           overflow: "auto",
           position: "relative",
         }}

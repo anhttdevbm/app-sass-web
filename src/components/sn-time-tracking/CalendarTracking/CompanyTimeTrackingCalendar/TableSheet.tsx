@@ -114,12 +114,13 @@ const TableSheet: React.FC<IProps> = (props) => {
   const { isOpen } = useSelector(
     (state: RootState) => state.userNavigationDetail,
   );
-  const [userData, setUserData] = useState(props.data);
-  const [filterUserData, setFilterUserData] = useState(props.data);
-  const [dateData, setDateData] = useState([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [userData, setUserData] = useState<any>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [filterUserData, setFilterUserData] = useState<any>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [rows, setRows] = useState<any[]>([]);
-  const [totalHoursPerDay, setTotalHoursPerDay] = useState<{
+  const [totalHoursPerDayState, setTotalHoursPerDayState] = useState<{
     sun: number;
     mon: number;
     tue: number;
@@ -167,14 +168,10 @@ const TableSheet: React.FC<IProps> = (props) => {
   };
 
   useEffect(() => {
-    setDateData(props.dateRange);
-  }, [props.dateRange]);
-
-  useEffect(() => {
     setUserData(props.data);
   }, [props.data]);
 
-  const formattedDates = dateData.map((date) => ({
+  const formattedDates = props.dateRange.map((date) => ({
     day: moment(date).format("ddd"),
     date: moment(date).format("DD MMM"),
   }));
@@ -204,11 +201,11 @@ const TableSheet: React.FC<IProps> = (props) => {
       );
 
       setRows(rows);
-      setTotalHoursPerDay(totalHoursPerDay);
+      setTotalHoursPerDayState(totalHoursPerDay);
     };
 
     calculateRowsAndTotals();
-  }, [props.dateRange,props.data]);
+  }, [userData]);
   return (
     <>
       {isOpen === false && (
@@ -429,15 +426,33 @@ const TableSheet: React.FC<IProps> = (props) => {
                 }}
               >
                 <TableCell align="right">Total</TableCell>
-                <TableCell align="center">{totalHoursPerDay.sun} hrs</TableCell>
-                <TableCell align="center">{totalHoursPerDay.mon} hrs</TableCell>
-                <TableCell align="center">{totalHoursPerDay.tue} hrs</TableCell>
-                <TableCell align="center">{totalHoursPerDay.wed} hrs</TableCell>
-                <TableCell align="center">{totalHoursPerDay.thu} hrs</TableCell>
-                <TableCell align="center">{totalHoursPerDay.fri} hrs</TableCell>
-                <TableCell align="center">{totalHoursPerDay.sat} hrs</TableCell>
                 <TableCell align="center">
-                  {rows.reduce((acc, row) => acc + row.total, 0)} hrs
+                  {totalHoursPerDayState.sun} hrs
+                </TableCell>
+                <TableCell align="center">
+                  {totalHoursPerDayState.mon} hrs
+                </TableCell>
+                <TableCell align="center">
+                  {totalHoursPerDayState.tue} hrs
+                </TableCell>
+                <TableCell align="center">
+                  {totalHoursPerDayState.wed} hrs
+                </TableCell>
+                <TableCell align="center">
+                  {totalHoursPerDayState.thu} hrs
+                </TableCell>
+                <TableCell align="center">
+                  {totalHoursPerDayState.fri} hrs
+                </TableCell>
+                <TableCell align="center">
+                  {totalHoursPerDayState.sat} hrs
+                </TableCell>
+                <TableCell align="center">
+                  {Object.values(totalHoursPerDayState).reduce(
+                    (acc, curr) => acc + curr,
+                    0,
+                  )}{" "}
+                  hrs
                 </TableCell>
               </TableRow>
             </TableBody>

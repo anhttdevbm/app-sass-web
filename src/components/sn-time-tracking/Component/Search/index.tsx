@@ -11,15 +11,16 @@ const SortByCategory: React.FC<IProps> = (props) => {
   return (
     <Box
       sx={{
-        padding: "0 30px",
+        padding: "0 10px",
         border: "1px solid #EFEFEF",
         borderRadius: "100px",
         textAlign: "center",
         background: "#FFFFFF",
-        minWidth: "200px",
+        minWidth: "150px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        height:"40px"
       }}
     >
       <p>
