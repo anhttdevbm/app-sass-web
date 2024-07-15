@@ -209,10 +209,10 @@ export const Endpoint = {
 
   //AI Chat
   AI_CHAT_EXAMPLE_PROMPT: "ai-chat/example-prompt",
-  AI_CHAT_SESSION: "ai-chat/chat-session",
+  AI_CHAT_SESSION: "ai-chat/chat-sessions",
   AI_CHAT: "ai-chat/chat",
-  AI_CHAT_PERSONA: "ai-chat/persona",
-  AI_CHAT_TONE: "ai-chat/tone",
+  AI_CHAT_PERSONA: "ai-chat/personas",
+  AI_CHAT_TONE: "ai-chat/tones",
 
   //AI Agent
   AI_AGENT: "/agent",
