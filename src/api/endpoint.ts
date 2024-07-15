@@ -22,6 +22,7 @@ export const Endpoint = {
   MY_COMPANY: "/companies/me",
   COMPANY_ITEM: "/companies/{id}",
   PROJECTS: "/projects",
+  PROJECT_GENERATE: "/project/project-generate/",
   PROJECT_ITEM: "/projects/{id}",
   PROJECT_FILE: "/projects/{id}/files",
   PROJECT_MEMBERS: "/projects/{id}/members",
@@ -223,11 +224,12 @@ export const Endpoint = {
   AI_AGENT_ADD_SOURCE: "/agent/add-source-knowledge",
   AI_AGENT_GET_SOURCE: "/agent/:agentId/get-knowledge",
   AI_AGENT_RESYNCE_SOURCE: "/agent/:agentId/resync-knowledge",
-  AI_AGENT_DELETE_SOURCE: "/agent/:agentID/delete-source-knowledge/:knowledgeId",
+  AI_AGENT_DELETE_SOURCE:
+    "/agent/:agentID/delete-source-knowledge/:knowledgeId",
   AI_AGENT_CREATE_COMMAND: "/agent/create-command",
   AI_AGENT_GET_COMMAND: "/agent/:agentId/commands",
   AI_AGENT_CHAT: "/agent/chat",
 
   //Invoice
-  INVOICE: '/invoice'
+  INVOICE: "/invoice",
 };

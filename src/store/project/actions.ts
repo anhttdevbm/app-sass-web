@@ -2,7 +2,12 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "api/client";
 import { Endpoint } from "api/endpoint";
 import { HttpStatusCode, Status } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, AN_ERROR_TRY_RELOAD_PAGE } from "constant/index";
+import {
+  AI_CHAT_API_URL,
+  AN_ERROR_TRY_AGAIN,
+  AN_ERROR_TRY_RELOAD_PAGE,
+  PROJECT_AI_API_URL,
+} from "constant/index";
 import { BaseQueries, Option } from "constant/types";
 import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import StringFormat from "string-format";
@@ -53,6 +58,12 @@ export type ProjectData = {
   saved?: boolean;
   avatar?: string[];
   currency?: string;
+};
+
+export type ProjectCreatePrompt = {
+  tone: string;
+  persona: string;
+  prompt: string;
 };
 
 export type TaskListData = {
@@ -245,6 +256,19 @@ export const createProject = createAsyncThunk(
     } catch (error) {
       throw error;
     }
+  },
+);
+
+export const createProjectWithAI = createAsyncThunk(
+  "project/createProjectWithAI",
+  async (data: ProjectCreatePrompt) => {
+    const response = await client.post(Endpoint.PROJECT_GENERATE, data, {
+      baseURL: AI_CHAT_API_URL,
+    });
+    if (response?.status === HttpStatusCode.CREATED) {
+      return response.data;
+    }
+    throw AN_ERROR_TRY_AGAIN;
   },
 );
 

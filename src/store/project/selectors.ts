@@ -44,6 +44,8 @@ import {
   orderTodo,
   OrderTodoData,
   getProjectAttachment,
+  createProjectWithAI,
+  ProjectCreatePrompt,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
@@ -87,6 +89,13 @@ export const useProjects = () => {
     [dispatch],
   );
 
+  const onCreateProjectWithAI = useCallback(
+    async (data: ProjectCreatePrompt) => {
+      return await dispatch(createProjectWithAI(data)).unwrap();
+    },
+    [dispatch],
+  );
+
   const onUpdateProject = useCallback(
     async (id: string, data: Partial<ProjectData>) => {
       try {
@@ -122,6 +131,7 @@ export const useProjects = () => {
     totalPages,
     onGetProjects,
     onCreateProject,
+    onCreateProjectWithAI,
     onUpdateProject,
     onDeleteProject,
   };

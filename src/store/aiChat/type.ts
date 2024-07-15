@@ -1,5 +1,5 @@
 import { DataStatus } from "constant/enums";
-import { BaseQueries } from "constant/types";
+import { BaseQueries, Locale } from "constant/types";
 import { Omit } from "lodash";
 
 export type ExamplePrompt = {
@@ -19,9 +19,7 @@ export type ChatSession = {
 
 export type SelectChatAI = {
   id: string;
-  name: string;
-  icon: string;
-  description: string;
+  name: Record<Locale, string>;
 };
 
 export type GetExamplePromptQueries = {
@@ -48,12 +46,12 @@ export type AIChatState = {
   examplePromptsError?: string;
   examplePromptsFilters: GetExamplePromptQueries;
 
-  persona: SelectChatAI[];
+  personas: SelectChatAI[];
   personaStatus: DataStatus;
   personaError?: string;
   personaFilters: GetPersonaQueries;
 
-  tone: SelectChatAI[];
+  tones: SelectChatAI[];
   toneStatus: DataStatus;
   toneError?: string;
   toneFilters: GetToneQueries;
@@ -100,7 +98,7 @@ export type File = Blob & {
   type?: string;
   link?: string;
   size?: number;
-}
+};
 
 export type OpenAIChat = {
   id?: string;
@@ -112,7 +110,7 @@ export type OpenAIChat = {
   model?: string;
   chat_session?: string;
   created_at?: string;
-  files?: File[]
+  files?: File[];
 };
 
 export type GetOpenAIChatQueries = {

@@ -3,10 +3,17 @@
 import { memo, useState, useEffect, useMemo } from "react";
 import {
   Box,
-  IconButton,
+  FormControl,
   InputLabel,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  MenuList,
+  Modal,
+  Paper,
   Stack,
-  Theme,
+  TextField,
+  Typography,
   selectClasses,
 } from "@mui/material";
 import { Button, Select, Text } from "components/shared";
@@ -25,6 +32,9 @@ import { NS_COMMON, NS_PROJECT } from "constant/index";
 import SearchIcon from "icons/SearchIcon";
 import Dropdown from "./components/Dropdown";
 import ButtonWithDropdown from "./components/ButtonWithDropdown";
+import AIGradientIcon from "icons/AIGradientIcon";
+import FolderAddIcon from "icons/FolderAddIcon";
+import AiForm from "./AiForm";
 
 const Actions = () => {
   const { items, filters, onGetProjects, pageSize, onCreateProject } =
@@ -35,6 +45,8 @@ const Actions = () => {
   const pathname = usePathname();
   const { push } = useRouter();
   const [isShow, onShow, onHide] = useToggle();
+  const [isAiPopupVisible, setIsAiPopupVisible] = useState(false);
+  const [isCreateDropdownVisible, setIsCreateDropdownVisible] = useState(false);
 
   const [queries, setQueries] = useState<Params>({});
 
@@ -155,7 +167,7 @@ const Actions = () => {
             <Dropdown
               prefixLabel={commonT("assigner")}
               placeholder={commonT("all")}
-              options={statusOptions}
+              options={assignerOptions}
               name="owner"
               onChange={onChangeQueries}
               value={queries?.status}
@@ -173,11 +185,36 @@ const Actions = () => {
               {projectT("list.title")}
             </Text>
 
-            <ButtonWithDropdown
-              size="small"
-              text={commonT("createNew")}
-              onClick={onShow}
-            />
+            <ButtonWithDropdown text={commonT("createNew")} onClick={onShow}>
+              {(handleClose) => (
+                <Paper>
+                  <MenuList>
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        setIsAiPopupVisible(true);
+                      }}
+                    >
+                      <ListItemIcon>
+                        <AIGradientIcon />
+                      </ListItemIcon>
+                      <ListItemText>Create with AI</ListItemText>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        onShow();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <FolderAddIcon sx={{ color: "transparent" }} />
+                      </ListItemIcon>
+                      <ListItemText>New Project</ListItemText>
+                    </MenuItem>
+                  </MenuList>
+                </Paper>
+              )}
+            </ButtonWithDropdown>
           </Stack>
         </Stack>
 
@@ -204,15 +241,17 @@ const Actions = () => {
         </Box>
       </>
 
-      {isShow && (
-        <Form
-          open={isShow}
-          onClose={onHide}
-          type={DataAction.CREATE}
-          initialValues={INITIAL_VALUES as unknown as ProjectDataForm}
-          onSubmit={onCreateProject}
-        />
-      )}
+      <Form
+        open={isShow}
+        onClose={onHide}
+        type={DataAction.CREATE}
+        initialValues={INITIAL_VALUES as unknown as ProjectDataForm}
+        onSubmit={onCreateProject}
+      />
+      <AiForm
+        isOpen={isAiPopupVisible}
+        onClose={() => setIsAiPopupVisible(false)}
+      />
     </>
   );
 };
