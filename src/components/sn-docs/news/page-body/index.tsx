@@ -327,7 +327,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     //     />
     //   </Box>
     // </Box>
-    <DraftEditor />
+    <DraftEditor page={page} />
   );
 };
 

@@ -92,11 +92,14 @@ export default function ColorFormatText() {
     <Box
       sx={{
         ...borderRightStyle,
+        display: "flex",
+        justifyContent: "center"
       }}
     >
-      <FormControl fullWidth>
+      <FormControl sx={{ height: "100%" }} fullWidth>
         <Select
           sx={{
+            height: "100%",
             display: "flex",
             alignItems: "center",
             fontWeight: "bold",

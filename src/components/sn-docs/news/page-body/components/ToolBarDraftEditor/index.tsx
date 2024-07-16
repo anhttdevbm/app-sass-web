@@ -1,20 +1,7 @@
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import { EditorState, Modifier, RichUtils } from "draft-js";
+import { Box, SelectChangeEvent } from "@mui/material";
+import { Map } from 'immutable';
 
-import SuperscriptIcon from "@mui/icons-material/Superscript";
-import SubscriptIcon from "@mui/icons-material/Subscript";
-import TextRotationNoneIcon from "@mui/icons-material/TextRotationNone";
-import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
-import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-import CodeOffIcon from "@mui/icons-material/CodeOff";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
-import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
-import { EditorState, RichUtils } from "draft-js";
-import { Box } from "@mui/material";
 import React, {
   Dispatch,
   ReactHTML,
@@ -51,18 +38,34 @@ export default function ToolBarDraftEditor({
   setEditorState: Dispatch<SetStateAction<EditorState>>;
 }) {
   const applyStyle = (
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: React.MouseEvent<HTMLButtonElement> | SelectChangeEvent,
     typeClick: IHandleClickFormat,
   ) => {
-    e.preventDefault();
-    typeClick.method === "block"
-      ? setEditorState(RichUtils.toggleBlockType(editorState, typeClick.style))
-      : setEditorState(
-          RichUtils.toggleInlineStyle(editorState, typeClick.style),
-        );
+    if ("currentTarget" in e) {
+      e.preventDefault();
+    }
+  
+    if (typeClick.style.startsWith('text-align-')) {
+      // Xử lý căn lề
+      const alignment = typeClick.style.replace('text-align-', '');
+      const newContentState = Modifier.setBlockData(
+        editorState.getCurrentContent(),
+        editorState.getSelection(),
+        Map({ textAlign: alignment })
+      );
+      const newEditorState = EditorState.push(editorState, newContentState, 'change-block-data');
+      setEditorState(newEditorState);
+    } else if (typeClick.method === "block") {
+      // Xử lý các kiểu block khác (như H1, H2, ...)
+      setEditorState(RichUtils.toggleBlockType(editorState, typeClick.style));
+    } else {
+      // Xử lý các kiểu inline
+      setEditorState(RichUtils.toggleInlineStyle(editorState, typeClick.style));
+    }
   };
 
-  const isActive = (style, method) => {
+  // style active khi được chọn
+  const isActive = ({ style, method }: { style: string; method: string }) => {
     if (method === "block") {
       const selection = editorState.getSelection();
       const blockType = editorState
@@ -86,11 +89,11 @@ export default function ToolBarDraftEditor({
       paddingX={1}
     >
       <UndoRedoText />
-      <TextFormatDropDown />
+      <TextFormatDropDown handleChangeFormatText={applyStyle} editorState={editorState} />
       <BoldItalicUnderlineTextFormat handleClickFormatBIU={applyStyle} />
-      <AlignTextDropDown />
+      <AlignTextDropDown handleChangeAlignFormat={applyStyle} editorState={editorState} />
       <ColorFormatText />
-      <ListFormatText />
+      <ListFormatText handleClickListFormat={applyStyle}/>
       <OtherToolBar />
       {/* {tools.map((item, idx) => (
         <button

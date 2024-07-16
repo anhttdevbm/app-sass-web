@@ -1,4 +1,4 @@
-import { IToolBarDraftActionItem } from "../..";
+import { IHandleClickFormat, IToolBarDraftActionItem } from "../..";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import FormatIndentIncreaseIcon from "@mui/icons-material/FormatIndentIncrease";
@@ -19,7 +19,14 @@ const borderRightStyle = {
   },
 };
 
-export default function ListFormatText() {
+export default function ListFormatText({
+  handleClickListFormat,
+}: {
+  handleClickListFormat: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    typeClick: IHandleClickFormat,
+  ) => void;
+}) {
   const formatListText: IToolBarDraftActionItem[] = [
     {
       label: "Unordered-List",
@@ -56,7 +63,12 @@ export default function ListFormatText() {
           }}
           key={`${item.label}-${idx}`}
           title={item.label}
-          onClick={() => console.log("click")}
+          onClick={(event) =>
+            handleClickListFormat(event, {
+              method: item.method,
+              style: item.style,
+            })
+          }
           onMouseDown={(e) => e.preventDefault()}
         >
           {item.icon || item.label}

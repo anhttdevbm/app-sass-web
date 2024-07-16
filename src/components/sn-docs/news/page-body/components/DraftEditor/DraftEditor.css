@@ -48,15 +48,12 @@
     border-radius: 0.2rem;
   }
   
-  .leftAlign {
+  .text-align-left {
     text-align: left;
   }
-  .rightAlign {
-    text-align: right;
-  }
-  .centerAlign {
+  .text-align-center {
     text-align: center;
   }
-  .justifyAlign {
-    text-align: justify;
+  .text-align-right {
+    text-align: right;
   }
