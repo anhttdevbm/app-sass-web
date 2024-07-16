@@ -22,7 +22,7 @@ export const General = () => {
   const locale = useLocale();
 
   const {aiAgent, onUpdateAgent, onUploadFile} = useAIAgent();
-  const {tones: toneList, onGetTone} = useChatWithAI();
+  const { tone: toneList, onGetTone } = useChatWithAI();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [image, setImage] = React.useState<string | null>(null);
