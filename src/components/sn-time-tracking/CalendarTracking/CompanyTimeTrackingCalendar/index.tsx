@@ -360,7 +360,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "11px 20px",
+            padding: "0 20px",
           }}
         >
           <p>Year: {currentYear}</p>
@@ -783,7 +783,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         <Stack
           //ref={scrollRef}
           sx={{
-            height: `calc(100vh - 200px)`,
             // minHeight:"100dvh",
             overflow: "scroll",
             position: "relative",
