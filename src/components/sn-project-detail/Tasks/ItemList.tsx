@@ -992,7 +992,8 @@ const ItemList = () => {
   }, [isFetching]);
 
   useEffect(() => {
-    setDataList(items.toSorted((a, b) => a.id.localeCompare(b.id)));
+    items.sort((a, b) => a.id.localeCompare(b.id));
+    setDataList(items);
   }, [items]);
 
   useEffect(() => {

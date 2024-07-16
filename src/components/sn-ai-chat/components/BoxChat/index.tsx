@@ -24,13 +24,13 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   const t = useTranslations(NS_AI_CHAT);
 
   const {
-    personas: personaList,
+    persona: personaList,
     onGetPersona,
     isPersonaIdle,
     isPersonaFetching,
     personaFilters,
 
-    tones: toneList,
+    tone: toneList,
     onGetTone,
     isToneIdle,
     isToneFetching,
@@ -46,7 +46,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
 
     onChatWithAI,
     isFetchingChatAI,
-    isIdleChatAI
+    isIdleChatAI,
   } = useChatWithAI();
 
   const {
