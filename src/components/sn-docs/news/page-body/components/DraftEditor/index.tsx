@@ -70,6 +70,7 @@ export default function DraftEditor() {
   };
 
   const handleKeyCommand = (command) => {
+    console.log('commant', command)
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
       setEditorState(newState);

@@ -7,8 +7,9 @@
   
   .editor-container {
     width: 100%;
-    border: 1px solid green;
+    height: 100%;
     padding: 1rem;
+    overflow: auto;
   }
   
   .toolbar-grid {
@@ -18,11 +19,11 @@
   }
   
   button {
-    margin-right: 8px;
-    font-size: 1rem;
-    padding: 10px;
+    margin-right: 0.5rem;
+    font-size: 0.5rem;
+    padding: 0.25rem;
     border: none;
-    background: #fff;
+    /* background: #fff; */
     cursor: pointer;
   }
   
