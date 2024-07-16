@@ -36,12 +36,12 @@ const initialState: AIChatState = {
   examplePromptsError: undefined,
   examplePromptsFilters: { number_prompt: 6 },
 
-  personas: [],
+  persona: [],
   personaStatus: DataStatus.IDLE,
   personaError: undefined,
   personaFilters: {},
 
-  tones: [],
+  tone: [],
   toneStatus: DataStatus.IDLE,
   toneError: undefined,
   toneFilters: {},
@@ -203,12 +203,12 @@ const aiChatSlice = createSlice({
 
         const newPersonas = payload.results.filter(
           (newPersona) =>
-            !state.personas.some(
+            !state.persona.some(
               (existingPersona) => existingPersona.id === newPersona.id,
             ),
         );
 
-        state.personas.push(...newPersonas);
+        state.persona.push(...newPersonas);
       })
       .addCase(getPersona.rejected, (state, action) => {
         state.personaStatus = DataStatus.FAILED;
@@ -224,10 +224,10 @@ const aiChatSlice = createSlice({
 
         const newTones = payload.results.filter(
           (newTone) =>
-            !state.tones.some((existingTone) => existingTone.id === newTone.id),
+            !state.tone.some((existingTone) => existingTone.id === newTone.id),
         );
 
-        state.tones.push(...newTones);
+        state.tone.push(...newTones);
       })
       .addCase(getTone.rejected, (state, action) => {
         state.toneStatus = DataStatus.FAILED;

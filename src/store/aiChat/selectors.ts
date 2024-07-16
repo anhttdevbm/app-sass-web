@@ -165,13 +165,13 @@ export const useChatWithAI = () => {
   const dispatch = useAppDispatch();
   const {
     // persona selector
-    personas,
+    persona,
     personaFilters,
     personaStatus,
     personaError,
 
     // tone selector
-    tones,
+    tone,
     toneFilters,
     toneStatus,
     toneError,
@@ -271,7 +271,7 @@ export const useChatWithAI = () => {
   );
 
   return {
-    personas,
+    persona,
     onGetPersona,
     personaStatus,
     personaError,
@@ -279,7 +279,7 @@ export const useChatWithAI = () => {
     isPersonaFetching,
     personaFilters,
 
-    tones,
+    tone,
     onGetTone,
     toneStatus,
     toneError,

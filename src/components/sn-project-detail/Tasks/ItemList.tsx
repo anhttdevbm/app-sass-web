@@ -1,19 +1,13 @@
 /* eslint-disable react/jsx-key */
 "use client";
 
-import {
-  Box,
-  CircularProgress,
-  ClickAwayListener,
-  Paper,
-  Stack,
-} from "@mui/material";
+import { Box, CircularProgress, Stack } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Date } from "components/Filters";
 import FixedLayoutTask from "components/FixedLayoutTask";
 import Loading from "components/Loading";
 import { CellProps, TableLayout } from "components/Table";
-import { Checkbox, IconButton, Text } from "components/shared";
+import { IconButton, Text } from "components/shared";
 import CheckBoxCustom from "components/shared/CheckBoxCustom";
 import AssignerTask from "components/sn-projects/components/AssignerTask";
 import SelectStatusTask from "components/sn-projects/components/SelectStatusTask";
@@ -29,7 +23,6 @@ import useEventListener from "hooks/useEventListener";
 import useQueryParams from "hooks/useQueryParams";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
-import MoveListIcon from "icons/MoveListIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -67,12 +60,7 @@ import Content from "./components/Content";
 import Description from "./components/Description";
 import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
 import useWindowSize from "hooks/useWindowSize";
-import MoveTagIcon from "icons/MoveTagIcon";
-import { red } from "@mui/material/colors";
-import TaskIcon from "icons/TaskIcon";
-import ProjectTaskIcon from "icons/ProjectTaskIcon";
 import ProjectSubtaskIcon from "icons/ProjectSubtaskIcon";
-import { ExpandMore } from "@mui/icons-material";
 
 const ItemList = () => {
   const {
@@ -170,13 +158,6 @@ const ItemList = () => {
 
     return totalCount;
   }, [dataList]);
-
-  const [
-    isAddDescription,
-    onShowAddDescription,
-    onHideAddDescription,
-    onToggleShowDescription,
-  ] = useToggle(false);
 
   const allItemsChecked = useMemo(() => {
     return selectedList.length === totalItemCount && totalItemCount !== 0;
@@ -1011,7 +992,7 @@ const ItemList = () => {
   }, [isFetching]);
 
   useEffect(() => {
-    setDataList(items);
+    setDataList(items.toSorted((a, b) => a.id.localeCompare(b.id)));
   }, [items]);
 
   useEffect(() => {
