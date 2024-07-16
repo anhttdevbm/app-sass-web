@@ -992,8 +992,12 @@ const ItemList = () => {
   }, [isFetching]);
 
   useEffect(() => {
-    items.sort((a, b) => a.id.localeCompare(b.id));
-    setDataList(items);
+    const _items = structuredClone(items);
+    _items.sort((a, b) => a.id.localeCompare(b.id));
+    for (const _item of _items) {
+      _item.tasks.sort((a, b) => a.id.localeCompare(b.id));
+    }
+    setDataList(_items);
   }, [items]);
 
   useEffect(() => {
