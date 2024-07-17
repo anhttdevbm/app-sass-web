@@ -33,7 +33,11 @@ import { calendarStyles } from "./TrackingCalendar.styles";
 
 import interactionPlugin from "@fullcalendar/interaction";
 import ListIcon from "@mui/icons-material/List";
-import { LocalizationProvider, MobileDatePicker, yearCalendarClasses } from "@mui/x-date-pickers";
+import {
+  LocalizationProvider,
+  MobileDatePicker,
+  yearCalendarClasses,
+} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ButtonCalendar from "components/shared/ButtonCalendar";
 import CustomizedInputBase from "components/shared/InputSeasrch";
@@ -216,9 +220,9 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       } else {
         return dayjs(selectedDate).year(); // Convert Date to dayjs and get year
       }
-    }
-     setCurrentYear(getYear().toString());
-  }, [selectedDate,dateRange]);
+    };
+    setCurrentYear(getYear().toString());
+  }, [selectedDate, dateRange]);
 
   useEffect(() => {
     setIsOpenCreatePopup(props.isOpenCreatePopup);
@@ -750,7 +754,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         ".fc-toolbar .fc-timeGridWeek-button": {
           display: "none",
         },
-        position:"relative",
+        position: "relative",
       }}
     >
       <Stack
@@ -787,6 +791,9 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               <ListSheet data={myTime} />
             </Box>
           </>
+        )}
+        {props.currentKindOfSheet === "table" && (
+          <Typography sx={{textAlign:"center"}}>No data found</Typography>
         )}
         {props.currentKindOfSheet === "timeGridWeek" && (
           <>

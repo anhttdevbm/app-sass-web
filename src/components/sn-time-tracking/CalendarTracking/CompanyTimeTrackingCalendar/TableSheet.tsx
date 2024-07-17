@@ -42,6 +42,7 @@ const createData = (
   avatar: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   timesheet: any[],
+  id: string,
 ) => {
   const totalHours = timesheet.reduce((acc, curr) => acc + curr.duration, 0);
   const weeklyHours = {
@@ -64,6 +65,7 @@ const createData = (
   return {
     name,
     avatar,
+    id,
     ...weeklyHours,
     total: totalHours,
   };
@@ -119,6 +121,8 @@ const TableSheet: React.FC<IProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [filterUserData, setFilterUserData] = useState<any>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [userFilterDataDetail, setUserFilterDataDetail] = useState<any>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [rows, setRows] = useState<any[]>([]);
   const [totalHoursPerDayState, setTotalHoursPerDayState] = useState<{
     sun: number;
@@ -159,13 +163,33 @@ const TableSheet: React.FC<IProps> = (props) => {
     }
   };
 
-  const handleGetUserDetail = (username: string, avatar: string) => {
+  const handleGetUserDetail = (
+    username: string,
+    avatar: string,
+    id: string,
+  ) => {
     dispatch(setUserName(username));
     dispatch(setAvatar(avatar));
     dispatch(setIsOpen(true));
+
+    const filteredUser = props.data.filter((user) => user.id === id);
+    if (filteredUser) {
+      setUserFilterDataDetail(filteredUser[0]);
+    }
     // setAllTableDataVisible(!allTableDataVisible);
     // setDetailDataTable(!detailDataTable);
   };
+  useEffect(() => {
+    if (userFilterDataDetail.id) {
+      const filteredUser = props.data.filter(
+        (user) => user.id === userFilterDataDetail.id,
+      );
+      if (filteredUser) {
+        setUserFilterDataDetail(filteredUser[0]);
+      }
+    }
+  }, [props.data, props.dateRange]);
+  console.log(userFilterDataDetail);
 
   useEffect(() => {
     setUserData(props.data);
@@ -180,10 +204,20 @@ const TableSheet: React.FC<IProps> = (props) => {
       const rows =
         filterUserData.length === 0
           ? userData.map((user) =>
-              createData(user.fullname, user.avatar?.link, user.timesheet),
+              createData(
+                user.fullname,
+                user.avatar?.link,
+                user.timesheet,
+                user.id,
+              ),
             )
           : filterUserData.map((user) =>
-              createData(user.fullname, user.avatar?.link, user.timesheet),
+              createData(
+                user.fullname,
+                user.avatar?.link,
+                user.timesheet,
+                user.id,
+              ),
             );
 
       const totalHoursPerDay = rows.reduce(
@@ -206,10 +240,11 @@ const TableSheet: React.FC<IProps> = (props) => {
 
     calculateRowsAndTotals();
   }, [userData]);
+  // console.log(rows)
   return (
     <>
       {isOpen === false && (
-        <TableContainer sx={{ maxHeight: 500, overflow: "auto" }}>
+        <TableContainer sx={{ maxHeight: "600px", overflow: "auto" }}>
           <Table>
             <TableHead
               sx={{
@@ -349,7 +384,9 @@ const TableSheet: React.FC<IProps> = (props) => {
                       borderRight: "1px solid #EBEAF2",
                       cursor: "pointer",
                     }}
-                    onClick={() => handleGetUserDetail(row.name, row.avatar)}
+                    onClick={() =>
+                      handleGetUserDetail(row.name, row.avatar, row.id)
+                    }
                   >
                     {row.avatar ? (
                       <Avatar
@@ -523,91 +560,48 @@ const TableSheet: React.FC<IProps> = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {userDetailRowsFakeData.map((row) => (
-                <TableRow
-                  key={row.project}
-                  //   sx={{ "&:last-child td, &:last-child th": { border: "1px solid #EBEAF2" } }}
-                >
-                  <TableCell sx={{ borderRight: "1px solid #EBEAF2" }}>
-                    <Typography>{row.project}</Typography>
-                  </TableCell>
-                  <TableCell sx={{ borderRight: "1px solid #EBEAF2" }}>
-                    <Typography>{row.task}</Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.sun}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.mon}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.tue}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.wed}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.thu}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.fri}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.sat}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      background: "#D9F0FD",
-                      color: "#333333",
-                      border: "1px solid #EBEAF2",
-                    }}
-                  >
-                    {row.total}
-                  </TableCell>
-                </TableRow>
+              {userFilterDataDetail?.timesheet?.map((entry, index) => (
+                <tr key={index}>
+                  <td>{entry.project.name}</td>
+                  <td>{entry.note}</td>
+                  {props.dateRange.map(({ date }, i) => {
+                    const timesheetEntry = userFilterDataDetail.timesheet.find(
+                      (sheet) =>
+                        sheet.day === moment(date).format("YYYY-MM-DD"), 
+                    );
+                    return (
+                      <td key={i}>
+                        {timesheetEntry ? timesheetEntry : "00:00"}
+                      </td>
+                    );
+                  })}
+                  <td>
+                    {userFilterDataDetail.timesheet.reduce(
+                      (acc, sheet) => acc + sheet.duration,
+                      0,
+                    )}
+                  </td>
+                </tr>
               ))}
-              <TableRow
-                sx={{
-                  background: "#D9F0FD",
-                  color: "#333333",
-                  border: "1px solid #EBEAF2",
-                  fontWeight: "700",
-                }}
-              >
-                <TableCell align="right" colSpan={2}>
-                  Total
-                </TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">08:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">00:00</TableCell>
-                <TableCell align="center">08:00</TableCell>
-              </TableRow>
+              <tr>
+                <td colSpan={2}>Total</td>
+                {props.dateRange.map(({ date }, i) => (
+                  <td key={i}>
+                    {userFilterDataDetail?.timesheet
+                      ?.filter(
+                        (sheet) =>
+                          sheet.day === moment(date).format("YYYY-MM-DD"),
+                      )
+                      .reduce((acc, sheet) => acc + sheet.duration, 0)}
+                  </td>
+                ))}
+                <td>
+                  {userFilterDataDetail.timesheet.reduce(
+                    (acc, sheet) => acc + sheet.duration,
+                    0,
+                  )}
+                </td>
+              </tr>
             </TableBody>
           </Table>
         </TableContainer>

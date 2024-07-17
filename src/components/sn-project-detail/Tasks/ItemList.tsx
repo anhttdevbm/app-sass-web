@@ -23,6 +23,8 @@ import useEventListener from "hooks/useEventListener";
 import useQueryParams from "hooks/useQueryParams";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
+import useWindowSize from "hooks/useWindowSize";
+import ProjectSubtaskIcon from "icons/ProjectSubtaskIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -59,8 +61,6 @@ import {
 import Content from "./components/Content";
 import Description from "./components/Description";
 import { isSubTaskChecked, isTaskChecked, isTaskListChecked } from "./helpers";
-import useWindowSize from "hooks/useWindowSize";
-import ProjectSubtaskIcon from "icons/ProjectSubtaskIcon";
 
 const ItemList = () => {
   const {
