@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import {
   AvatarGroup,
@@ -152,14 +152,13 @@ const MonthCalendarSheetTest = () => {
   const handleDrawerClose = () => {
     setDrawerOpen(false);
   };
-
   // Effect to log monthData whenever currentMonth changes
   useEffect(() => {
     const getCompanyTimeSheet = async () => {
       const firstDayOfMonth = currentMonth.clone().startOf("month");
       const lastDayOfMonth = currentMonth.clone().endOf("month");
 
-      onGetCompanyTimeSheet({
+      await onGetCompanyTimeSheet({
         start_date: firstDayOfMonth.format("YYYY-MM-DD"),
         end_date: lastDayOfMonth.format("YYYY-MM-DD"),
         search_key: "",
@@ -313,7 +312,7 @@ const MonthCalendarSheetTest = () => {
               <div
                 style={{
                   width: "100%",
-                  height: "100%",
+                  height: "100px",
                   padding: "5px 11px",
                   cursor: "pointer",
                 }}
@@ -437,7 +436,12 @@ const MonthCalendarSheetTest = () => {
             background: "#14B9E5",
           }}
         >
-         {calculateTotalHours(week.filter(dayObj => dayObj !== null && dayObj.event).map(dayObj => dayObj.day))}
+          {calculateTotalHours(
+            week
+              .filter((dayObj) => dayObj !== null && dayObj.event)
+              .map((dayObj) => dayObj.day),
+          )}{" "}
+          hrs
         </td>
       </tr>
     ));
@@ -467,34 +471,43 @@ const MonthCalendarSheetTest = () => {
           <ChevronRightIcon />
         </IconButton>
       </Box>
-      <table style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr>
-            {weekdaysTableHeader.map((day) => (
-              <th
-                key={day}
-                style={{
-                  border: "none",
-                  padding: "8px",
-                  textAlign: "center",
-                  width: "200px",
-                  color: "#757383",
-                  textTransform: "uppercase",
-                }}
-              >
-                {day}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>{renderMonthDays()}</tbody>
-      </table>
+      <Box
+        sx={{
+          // width: "100%",
+          overflowX: "auto",
+          // minWidth: "100dvw", // Set a minimum width to prevent resizing below 1024px
+        }}
+      >
+        <table style={{ width: "100%",minWidth:"1280px" }}>
+          <thead>
+            <tr>
+              {weekdaysTableHeader.map((day) => (
+                <th
+                  key={day}
+                  style={{
+                    border: "none",
+                    padding: "8px",
+                    textAlign: "center",
+                    width: "calc(100%/8)",
+                    color: "#757383",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {day}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{renderMonthDays()}</tbody>
+        </table>
+      </Box>
+
       <Drawer
         anchor="right"
         open={drawerOpen}
         onClose={handleDrawerClose}
         PaperProps={{
-          sx: { width: "25%" },
+          sx: { width: "30%" },
         }}
       >
         <Stack>
