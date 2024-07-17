@@ -4,6 +4,7 @@ import TreeViewLabel from "../TreeViewLabel";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { Box, Typography } from "@mui/material";
 import useLeftSlideDoc from "../../LeftSlide/hooks/useLeftSlideDoc";
+import { useDocs } from "store/docs/selectors";
 
 const renderLabelChildItem = ({ content }: { content: string }) => {
   return (
@@ -24,6 +25,7 @@ export default function TreeViewItem({
   projectId?: string;
 }) {
   const { handleAddChild } = useLeftSlideDoc();
+  const { redirectDetailDoc } = useDocs();
 
   const handleAddNewChildDoc = () => {
     handleAddChild(idDocParent, projectId);
@@ -42,6 +44,7 @@ export default function TreeViewItem({
         }
       >
         <TreeItem
+          onClick={() => redirectDetailDoc(childDocItem.id)}
           nodeId={`expand-${childDocItem?.id}`}
           label={renderLabelChildItem({ content: childDocItem.name ?? "" })}
         ></TreeItem>
