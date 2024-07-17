@@ -1,4 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Editor,
   EditorState,
@@ -6,15 +12,19 @@ import {
   convertFromRaw,
   DraftStyleMap,
   ContentBlock,
+  DraftHandleValue,
+  Modifier,
 } from "draft-js";
 import "./DraftEditor.css";
 import ToolBarDraftEditor from "../ToolBarDraftEditor";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
 import { useUpdateDocMutation } from "store/docs/api";
 import useDebounce from "hooks/useDebounce";
 import { useDocs } from "store/docs/selectors";
+import AddSessionTool from "../AddSessionTool/components";
+import CheckboxBlockDraft from "./CheckboxBlock";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
@@ -28,7 +38,10 @@ export default function DraftEditor() {
 
   const [debounceChange, isDone, cancel] = useDebounce(
     ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
-      updateDoc({ id: id as string, payload: { name: nameDoc, content: content } });
+      updateDoc({
+        id: id as string,
+        payload: { name: nameDoc, content: content },
+      });
     },
     200,
   );
@@ -39,17 +52,26 @@ export default function DraftEditor() {
 
   const editor = useRef<Editor | null>(null);
 
+  const [showAddSession, setShowAddSession] = useState(false);
+
+  // xử lý event open Add Session
+  const handleKeyDown = (e) => {
+    if (e.ctrlKey && e.altKey && e.key === "d") {
+      e.preventDefault();
+      setShowAddSession((prev) => !prev);
+    }
+  };
+
   const handleChangeEditor = (editorState: EditorState) => {
     const contentState = editorState.getCurrentContent();
     const blocksArray = contentState.getBlocksAsArray();
-    
 
     if (blocksArray.length > 0) {
       const firstBlock = blocksArray[0];
       const firstBlockText = firstBlock.getText();
 
       // lấy properties các block khác trừ first block
-      const remainingBlocks = blocksArray.slice(1).map(block => ({
+      const remainingBlocks = blocksArray.slice(1).map((block) => ({
         key: block.getKey(),
         text: block.getText(),
         type: block.getType(),
@@ -60,13 +82,15 @@ export default function DraftEditor() {
         })),
         entityRanges: block.findEntityRanges(
           (character) => character.getEntity() !== null,
-          (start, end) => ({ start, end, entity: block.getEntityAt(start) })
+          (start, end) => ({ start, end, entity: block.getEntityAt(start) }),
         ),
         data: block.getData(),
       }));
-     
 
-      debounceChange({nameDoc: firstBlockText, content: JSON.stringify(remainingBlocks) });
+      debounceChange({
+        nameDoc: firstBlockText,
+        content: JSON.stringify(remainingBlocks),
+      });
     }
 
     setEditorState(editorState);
@@ -133,6 +157,50 @@ export default function DraftEditor() {
     return "";
   };
 
+  const handleAddCheckbox = useCallback(() => {
+    const contentState = editorState.getCurrentContent();
+    const selectionState = editorState.getSelection();
+    const blockKey = selectionState.getStartKey();
+    const block = contentState.getBlockForKey(blockKey);
+    const blockText = block.getText();
+
+
+    // Tạo một ContentState mới với checkbox
+    const newContentState = Modifier.insertText(
+      contentState,
+      selectionState,
+      "[ ] " + blockText,
+    );
+
+    // Tạo EditorState mới
+    const newEditorState = EditorState.push(
+      editorState,
+      newContentState,
+      "insert-characters",
+    );
+
+    setEditorState(newEditorState);
+  }, [editorState]);
+
+  const blockRendererFn = useCallback(
+    (block) => {
+      if (
+        block.getText().startsWith("[ ] ") ||
+        block.getText().startsWith("[x] ")
+      ) {
+        return {
+          component: CheckboxBlockDraft,
+          editable: false,
+          props: {
+            onChange: setEditorState,
+            getEditorState: () => editorState,
+          },
+        };
+      }
+    },
+    [editorState],
+  );
+
   useEffect(() => {
     focusEditor();
   }, []);
@@ -179,20 +247,26 @@ export default function DraftEditor() {
           entityRanges: [],
           data: {},
         },
-        ...(contentArr.length > 0 ? contentArr : [])
+        ...(contentArr.length > 0 ? contentArr : []),
       ];
-  
+
       setEditorState(
         EditorState.createWithContent(
           convertFromRaw({
             blocks,
             entityMap: {},
-          })
-        )
+          }),
+        ),
       );
     }
-     
   }, [content, textAreaValue]);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <Box
@@ -211,7 +285,9 @@ export default function DraftEditor() {
           customStyleMap={styleMap}
           blockStyleFn={myBlockStyleFn}
           onChange={handleChangeEditor}
+          blockRendererFn={blockRendererFn}
         />
+        {showAddSession && <AddSessionTool />}
       </div>
     </Box>
   );

@@ -37,6 +37,7 @@ export default function ToolBarDraftEditor({
   editorState: EditorState;
   setEditorState: Dispatch<SetStateAction<EditorState>>;
 }) {
+
   const applyStyle = (
     e: React.MouseEvent<HTMLButtonElement> | SelectChangeEvent,
     typeClick: IHandleClickFormat,
