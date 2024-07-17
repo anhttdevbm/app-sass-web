@@ -3,67 +3,38 @@ import {
   Editor,
   EditorState,
   RichUtils,
-  convertToRaw,
   convertFromRaw,
   DraftStyleMap,
   ContentBlock,
-  ContentState,
 } from "draft-js";
 import "./DraftEditor.css";
 import ToolBarDraftEditor from "../ToolBarDraftEditor";
 import { Box } from "@mui/material";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
-import { useDispatch } from "react-redux";
-import { useGetDocDetailQuery, useUpdateDocMutation } from "store/docs/api";
+import { useUpdateDocMutation } from "store/docs/api";
 import useDebounce from "hooks/useDebounce";
-import { IDocs } from "store/docs/reducer";
+import { useDocs } from "store/docs/selectors";
 
 export default function DraftEditor() {
-  const dispatch = useDispatch();
+  const { handleUpdateDoc } = useDocs();
+  const currentId = useAppSelector((state) => state.doc.id);
+
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);
   const { perm, content, id, title: name, description, project_id } = page;
-  const currentId = useAppSelector((state) => state.doc.id);
+  const [mounted, setMounted] = useState(false);
+  const [textAreaValue, setTextAreaValue] = useState(name);
 
-  const [debounceChange, isDone, cancel] = useDebounce((value: string) => {
-    updateDoc({ id: currentId as string, payload: { name: value } });
-  }, 200);
-
+  const [debounceChange, isDone, cancel] = useDebounce(
+    ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
+      updateDoc({ id: id as string, payload: { name: nameDoc, content: content } });
+    },
+    200,
+  );
 
   const [editorState, setEditorState] = useState<EditorState>(
-    EditorState.createWithContent(
-      convertFromRaw({
-        blocks: [
-          {
-            key: uuid(),
-            text: name ?? "",
-            type: "header-one",
-            depth: 0,
-            inlineStyleRanges: [
-              {
-                offset: 19,
-                length: 6,
-                style: "BOLD",
-              },
-              {
-                offset: 25,
-                length: 5,
-                style: "ITALIC",
-              },
-              {
-                offset: 30,
-                length: 8,
-                style: "UNDERLINE",
-              },
-            ],
-            entityRanges: [],
-            data: {},
-          },
-        ],
-        entityMap: {},
-      }),
-    ),
+    EditorState.createEmpty(),
   );
 
   const editor = useRef<Editor | null>(null);
@@ -71,14 +42,33 @@ export default function DraftEditor() {
   const handleChangeEditor = (editorState: EditorState) => {
     const contentState = editorState.getCurrentContent();
     const blocksArray = contentState.getBlocksAsArray();
+    
+
     if (blocksArray.length > 0) {
       const firstBlock = blocksArray[0];
       const firstBlockText = firstBlock.getText();
 
-      debounceChange(firstBlockText);
+      // lấy properties các block khác trừ first block
+      const remainingBlocks = blocksArray.slice(1).map(block => ({
+        key: block.getKey(),
+        text: block.getText(),
+        type: block.getType(),
+        depth: block.getDepth(),
+        inlineStyleRanges: block.getCharacterList().map((char, index) => ({
+          offset: index,
+          style: char?.getStyle(),
+        })),
+        entityRanges: block.findEntityRanges(
+          (character) => character.getEntity() !== null,
+          (start, end) => ({ start, end, entity: block.getEntityAt(start) })
+        ),
+        data: block.getData(),
+      }));
+     
+
+      debounceChange({nameDoc: firstBlockText, content: JSON.stringify(remainingBlocks) });
     }
 
-    // debounceChange(contentState.getBlocksAsArray())
     setEditorState(editorState);
   };
 
@@ -147,9 +137,62 @@ export default function DraftEditor() {
     focusEditor();
   }, []);
 
-  // useLayoutEffect(() => {
-  //   console.log('name', name)
-  // },[])
+  useEffect(() => {
+    setTextAreaValue(name);
+    // dispatch(getDocDetails(currentId));
+  }, [name, currentId]);
+
+  useEffect(() => {
+    const data = {
+      //   content: content,
+      name: name || undefined,
+      //   description: description,
+      //   project_id: project_id,
+    };
+    if (mounted) {
+      if (id) {
+        handleUpdateDoc(data, id);
+        // setTextAreaValue(name);
+      } else {
+      }
+    } else {
+      setMounted(true);
+    }
+  }, [description, name, project_id, currentId]);
+
+  // set giá trị cho doc khi mounted
+  useEffect(() => {
+    const contentArr = content ? JSON.parse(content) : [];
+
+    if (textAreaValue) {
+      const blocks = [
+        {
+          key: uuid(),
+          text: textAreaValue,
+          type: "header-one",
+          depth: 0,
+          inlineStyleRanges: [
+            { offset: 19, length: 6, style: "BOLD" },
+            { offset: 25, length: 5, style: "ITALIC" },
+            { offset: 30, length: 8, style: "UNDERLINE" },
+          ],
+          entityRanges: [],
+          data: {},
+        },
+        ...(contentArr.length > 0 ? contentArr : [])
+      ];
+  
+      setEditorState(
+        EditorState.createWithContent(
+          convertFromRaw({
+            blocks,
+            entityMap: {},
+          })
+        )
+      );
+    }
+     
+  }, [content, textAreaValue]);
 
   return (
     <Box
