@@ -2,13 +2,13 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-import FormatIndentIncreaseIcon from "@mui/icons-material/FormatIndentIncrease";
-import FormatIndentDecreaseIcon from "@mui/icons-material/FormatIndentDecrease";
-
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { Dispatch, SetStateAction } from "react";
 import { IToolBarDraftActionItem } from "../../../ToolBarDraftEditor";
 import { Box, Typography } from "@mui/material";
 import { uuid } from "utils/index";
+import { DraftBlockType } from "draft-js";
+import { CHECKABLE_LIST_ITEM } from "components/sn-docs/news/page-body/constants/draft.constants";
 
 const addSessionItems: IToolBarDraftActionItem[] = [
   {
@@ -39,18 +39,54 @@ const addSessionItems: IToolBarDraftActionItem[] = [
     method: "block",
     icon: <FormatListNumberedIcon />,
   },
+  {
+    id: uuid(),
+    label: "Check 1",
+    style: "checked-one-list-item",
+    method: "block",
+    icon: <TaskAltIcon />,
+  },
+  {
+    id: uuid(),
+    label: "Check 2",
+    style: "checked-two-list-item",
+    method: "block",
+    icon: <TaskAltIcon />,
+  },
 ];
 
 export default function AddSessionMenuList({
   anchorEl,
   setAnchorEl,
+  handleClickChecked,
+  focusEditor,
 }: {
   anchorEl: HTMLElement | null;
   setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
+  handleClickChecked?: (
+    type: DraftBlockType,
+  ) => (ev: React.MouseEvent<HTMLElement>) => void;
+  focusEditor?: () => void;
 }) {
   const open = Boolean(anchorEl);
 
   const handleClose = (item: IToolBarDraftActionItem) => {
+    switch (item.label) {
+      case "Check 1":
+        if (handleClickChecked) {
+          const handler = handleClickChecked(CHECKABLE_LIST_ITEM);
+          handler(
+            new MouseEvent(
+              "mousedown",
+            ) as unknown as React.MouseEvent<HTMLElement>,
+          );
+          if (focusEditor) focusEditor();
+        }
+
+        return;
+      default:
+        break;
+    }
     setAnchorEl(null);
   };
 
@@ -65,7 +101,7 @@ export default function AddSessionMenuList({
       }}
       sx={{
         minWidth: "16.75rem",
-        borderRadius: "10px"
+        borderRadius: "10px",
       }}
     >
       {addSessionItems.map((item) => (

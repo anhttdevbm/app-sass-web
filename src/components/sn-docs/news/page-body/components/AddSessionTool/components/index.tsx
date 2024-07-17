@@ -2,11 +2,23 @@ import { Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import AddSessionMenuList from "./AddSessionMenuList";
+import { DraftBlockType } from "draft-js";
 
-export default function AddSessionTool() {
+export interface IPropsAddSessionTool {
+  handleClickChecked?: (
+    type: DraftBlockType,
+  ) => (ev: React.MouseEvent<HTMLElement>) => void;
+  focusEditor?: () => void;
+}
+export default function AddSessionTool({
+  props,
+}: {
+  props: IPropsAddSessionTool;
+}) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClickAddSession = (event: React.MouseEvent<HTMLElement>) => {
+    if (props.focusEditor) props.focusEditor();
     setAnchorEl(event.currentTarget);
   };
 
@@ -65,7 +77,12 @@ export default function AddSessionTool() {
             </Box>
             <Typography>Add session</Typography>
           </Button>
-          <AddSessionMenuList anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
+          <AddSessionMenuList
+            handleClickChecked={props.handleClickChecked}
+            focusEditor={props.focusEditor}
+            anchorEl={anchorEl}
+            setAnchorEl={setAnchorEl}
+          />
         </Box>
       </Box>
     </>
