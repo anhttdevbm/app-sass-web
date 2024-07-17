@@ -233,17 +233,21 @@ const Actions = () => {
         </Box>
       </>
 
-      <Form
-        open={isShow}
-        onClose={onHide}
-        type={DataAction.CREATE}
-        initialValues={INITIAL_VALUES as unknown as ProjectDataForm}
-        onSubmit={onCreateProject}
-      />
-      <AiForm
-        isOpen={isAiPopupVisible}
-        onClose={() => setIsAiPopupVisible(false)}
-      />
+      {isShow && (
+        <Form
+          open={isShow}
+          onClose={onHide}
+          type={DataAction.CREATE}
+          initialValues={INITIAL_VALUES as unknown as ProjectDataForm}
+          onSubmit={onCreateProject}
+        />
+      )}
+      {isAiPopupVisible && (
+        <AiForm
+          isOpen={isAiPopupVisible}
+          onClose={() => setIsAiPopupVisible(false)}
+        />
+      )}
     </>
   );
 };

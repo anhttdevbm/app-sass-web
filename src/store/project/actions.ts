@@ -60,10 +60,21 @@ export type ProjectData = {
   currency?: string;
 };
 
-export type ProjectCreatePrompt = {
+export type CreateProjectPrompt = {
   tone: string;
   persona: string;
   prompt: string;
+};
+
+export type AiProjectData = {
+  title: string;
+  expectedCost: string;
+  workingHours: string;
+  description: string;
+  taskList: {
+    title: string;
+    tasks: string[];
+  }[];
 };
 
 export type TaskListData = {
@@ -101,6 +112,18 @@ export type TaskData = {
     owner?: string;
   }[];
 };
+
+export type CreateTaskPrompt = {
+  tone: string;
+  persona: string;
+  method: string;
+  content: string;
+};
+
+export type AiTaskData = {
+  task: string;
+  subtask: string[];
+} & { content: string };
 
 export type MoveTaskData = {
   task_list_current: string;
@@ -261,12 +284,12 @@ export const createProject = createAsyncThunk(
 
 export const createProjectWithAI = createAsyncThunk(
   "project/createProjectWithAI",
-  async (data: ProjectCreatePrompt) => {
+  async (data: CreateProjectPrompt) => {
     const response = await client.post(Endpoint.PROJECT_GENERATE, data, {
       baseURL: AI_CHAT_API_URL,
     });
     if (response?.status === HttpStatusCode.CREATED) {
-      return response.data;
+      return response.data as AiProjectData;
     }
     throw AN_ERROR_TRY_AGAIN;
   },
@@ -351,7 +374,6 @@ export const getTasksOfProject = createAsyncThunk(
       );
 
       if (response?.status === HttpStatusCode.OK) {
-        console.log(response.data);
         return { ...refactorRawItemListResponse(response.data), prefixKey };
       }
       throw AN_ERROR_TRY_AGAIN;
@@ -415,6 +437,19 @@ export const createTask = createAsyncThunk(
     } catch (error) {
       throw error;
     }
+  },
+);
+
+export const createTaskWithAI = createAsyncThunk(
+  "project/createTaskWithAI",
+  async (data: CreateTaskPrompt) => {
+    const response = await client.post(Endpoint.TASK_GENERATE, data, {
+      baseURL: AI_CHAT_API_URL,
+    });
+    if (response.status === HttpStatusCode.CREATED) {
+      return response.data as AiTaskData;
+    }
+    throw AN_ERROR_TRY_AGAIN;
   },
 );
 

@@ -45,7 +45,9 @@ import {
   OrderTodoData,
   getProjectAttachment,
   createProjectWithAI,
-  ProjectCreatePrompt,
+  CreateProjectPrompt,
+  createTaskWithAI,
+  CreateTaskPrompt,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
@@ -90,7 +92,7 @@ export const useProjects = () => {
   );
 
   const onCreateProjectWithAI = useCallback(
-    async (data: ProjectCreatePrompt) => {
+    async (data: CreateProjectPrompt) => {
       return await dispatch(createProjectWithAI(data)).unwrap();
     },
     [dispatch],
@@ -314,6 +316,13 @@ export const useTasksOfProject = () => {
     [dispatch],
   );
 
+  const onCreateTaskListWithAi = useCallback(
+    async (data: CreateProjectPrompt) => {
+      return await dispatch(createProjectWithAI(data)).unwrap();
+    },
+    [dispatch],
+  );
+
   const onCreateTask = useCallback(
     async (
       data: Omit<TaskData, "task_list" | "task">,
@@ -327,6 +336,13 @@ export const useTasksOfProject = () => {
       } catch (error) {
         throw error;
       }
+    },
+    [dispatch],
+  );
+
+  const onCreateTaskWithAi = useCallback(
+    async (data: CreateTaskPrompt) => {
+      return await dispatch(createTaskWithAI(data)).unwrap();
     },
     [dispatch],
   );
@@ -404,8 +420,10 @@ export const useTasksOfProject = () => {
     id: storeFilters?.project,
     onGetTasksOfProject,
     onCreateTaskList,
+    onCreateTaskListWithAi,
     onUpdateTaskList,
     onCreateTask,
+    onCreateTaskWithAi,
     onMoveTask,
     onDeleteTaskLists,
     onDeleteTasks,
