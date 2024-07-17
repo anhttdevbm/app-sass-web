@@ -1,7 +1,7 @@
-import { IToolBarDraftActionItem } from "../..";
-import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
+import UndoIcon from "@mui/icons-material/Undo";
 import { Box } from "@mui/material";
+import { IToolBarDraftActionItem } from "../..";
 
 const TagNameIcon = () => {
   return <Box>@</Box>;
@@ -13,11 +13,13 @@ export default function UndoRedoText() {
       label: "undo-text",
       method: "block",
       icon: <UndoIcon />,
+      style: "",
     },
     {
       label: "redo-text",
       method: "block",
       icon: <RedoIcon />,
+      style: "",
     },
   ];
 
