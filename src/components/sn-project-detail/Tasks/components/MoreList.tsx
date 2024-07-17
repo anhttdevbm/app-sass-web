@@ -3,6 +3,8 @@ import {
   ButtonBase,
   Fade,
   Grow,
+  ListItemIcon,
+  ListItemText,
   MenuItem,
   MenuList,
   Popover,
@@ -53,6 +55,8 @@ import ConvertIcon from "icons/ConvertIcon";
 import ChangeIcon from "icons/ChangeIcon";
 import MoveOtherTask from "../Detail/components/SubTasksOfTask/MoveOtherTask";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
+import AIGradientIcon from "icons/AIGradientIcon";
+import TaskContentAiForm from "../TaskContentAiForm";
 
 type MoreListProps = {
   selectedList: Selected[];
@@ -68,6 +72,7 @@ enum Action {
   ADD_SUB_TASK,
   CONVERT_SUB_TASK_TO_TASK,
   CHANGE_PARENT_TASK,
+  AI_ASSISTANT,
 }
 
 const MoreList = (props: MoreListProps) => {
@@ -562,6 +567,16 @@ const MoreList = (props: MoreListProps) => {
               }}
             >
               <MenuList component={Box} sx={{ py: 0 }}>
+                <MenuItem
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                  onClick={onSetTType(Action.AI_ASSISTANT)}
+                >
+                  <ListItemIcon>
+                    <AIGradientIcon />
+                  </ListItemIcon>
+                  <ListItemText color="grey.400">AI Assistant</ListItemText>
+                </MenuItem>
                 {taskListIds.length > 0 && (
                   <MenuItem
                     onClick={onSetTType(Action.ADD_SUB_TASK)}
@@ -696,6 +711,14 @@ const MoreList = (props: MoreListProps) => {
             onClose={onSetTType()}
           />
         )}
+      {type === Action.AI_ASSISTANT && (
+        <TaskContentAiForm
+          open
+          onClose={onSetTType()}
+          taskListId={props?.selectedList[0]?.taskListId ?? ""}
+          taskListName={props?.selectedList[0]?.taskListName ?? ""}
+        />
+      )}
     </>
   );
 };

@@ -16,41 +16,28 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Button, Text } from "components/shared";
-import PlusIcon from "icons/PlusIcon";
+import { Button } from "components/shared";
 import { Search } from "components/Filters";
-import {
-  useMemberOptions,
-  useProjects,
-  useTasksOfProject,
-} from "store/project/selectors";
+import { useMemberOptions, useTasksOfProject } from "store/project/selectors";
 import { getPath } from "utils/index";
 import { usePathname, useRouter } from "next-intl/client";
 import useToggle from "hooks/useToggle";
 import { DataAction } from "constant/enums";
-// import Form, { ProjectDataForm } from "./Form";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useTranslations } from "next-intl";
-import {
-  DATE_FORMAT_HYPHEN,
-  NS_COMMON,
-  NS_PROJECT,
-  STATUS_OPTIONS,
-} from "constant/index";
+import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_PROJECT } from "constant/index";
 import { AssignerFilter, TASK_STATUS_OPTIONS } from "./components";
 import TaskListForm from "./TaskListForm";
 import { useParams } from "next/navigation";
 import { TaskListData } from "store/project/actions";
 import { useHeaderConfig } from "store/app/selectors";
-import Link from "components/Link";
-import ChevronIcon from "icons/ChevronIcon";
 import useBreakpoint from "hooks/useBreakpoint";
 import ButtonWithDropdown from "components/sn-projects/components/ButtonWithDropdown";
 import SearchIcon from "icons/SearchIcon";
 import Dropdown from "components/sn-projects/components/Dropdown";
 import Date from "components/sn-projects/components/Date";
 import AIGradientIcon from "icons/AIGradientIcon";
-import TaskIcon from "icons/TaskIcon";
+import TaskListAiForm from "./TaskListAiForm";
 
 const Actions = () => {
   const {
@@ -60,10 +47,9 @@ const Actions = () => {
     onGetTasksOfProject,
   } = useTasksOfProject();
   const { onGetOptions } = useMemberOptions();
-  const { title, prevPath } = useHeaderConfig();
-  const { isMdSmaller } = useBreakpoint();
   const { breakpoints } = useTheme();
   const is1440Larger = useMediaQuery(breakpoints.up(1440));
+  const { title } = useHeaderConfig();
 
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
@@ -71,6 +57,7 @@ const Actions = () => {
   const pathname = usePathname();
   const { push } = useRouter();
   const [isShow, onShow, onHide] = useToggle();
+  const [isShowAiForm, onShowAiForm, onHideAiForm] = useToggle();
 
   const [queries, setQueries] = useState<Params>({});
   const params = useParams();
@@ -139,37 +126,10 @@ const Actions = () => {
         spacing={{ xs: 1, md: 2 }}
         py={{ xs: 0.75, md: 1 }}
         position="relative"
-        // top={{ xs: 108, md: 36 }}
         zIndex={12}
         bgcolor="background.paper"
         width="100%"
       >
-        {/* <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          flex={1}
-          width="50%"
-        >
-          {!!prevPath && (
-            <Link
-              href={prevPath}
-              sx={{ height: isMdSmaller ? 16 : 24, display: { sm: "none" } }}
-            >
-              <ChevronIcon
-                sx={{
-                  color: "text.primary",
-                  transform: "rotate(90deg)",
-                }}
-                fontSize={isMdSmaller ? "small" : "medium"}
-              />
-            </Link>
-          )}
-          <Text variant={{ xs: "body2", md: "h4" }} display={{ sm: "none" }}>
-            {title ?? ""}
-          </Text>
-        </Stack> */}
-
         <ButtonWithDropdown
           text={projectT("detailTasks.createNewTaskList")}
           onClick={onShow}
@@ -180,22 +140,24 @@ const Actions = () => {
                 <MenuItem
                   onClick={() => {
                     handleClose();
+                    onShowAiForm();
                   }}
                 >
                   <ListItemIcon>
                     <AIGradientIcon />
                   </ListItemIcon>
-                  <ListItemText>Create with AI</ListItemText>
+                  <ListItemText>AI Assistant</ListItemText>
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
                     handleClose();
+                    onShow();
                   }}
                 >
                   <ListItemIcon>
                     <DocumentTextIcon sx={{ color: "transparent" }} />
                   </ListItemIcon>
-                  <ListItemText>New Task list</ListItemText>
+                  <ListItemText>New list</ListItemText>
                 </MenuItem>
               </MenuList>
             </Paper>
@@ -313,6 +275,13 @@ const Actions = () => {
           type={DataAction.CREATE}
           initialValues={INITIAL_VALUES}
           onSubmit={onCreateTaskList}
+        />
+      )}
+      {isShowAiForm && (
+        <TaskListAiForm
+          open={isShowAiForm}
+          onClose={onHideAiForm}
+          content={title || ""}
         />
       )}
     </>

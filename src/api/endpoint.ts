@@ -31,6 +31,7 @@ export const Endpoint = {
   PROJECT_TASK_ITEM: "/tasks/{id}",
   CURRENCY: "projects/currency",
   TASKS: "/tasks/add",
+  TASK_GENERATE: "task/task-generate/",
   TASK_LIST: "/tasks/task-list/{id}",
   SUB_TASKS: "/tasks/sub",
   SUB_TASK: "/tasks/sub-task",
