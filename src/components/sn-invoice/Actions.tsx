@@ -36,7 +36,7 @@ const Actions = () => {
   };
 
   return (
-    <Stack spacing={2} padding={"24px 16px 16px 16px"}>
+    <Stack spacing={1} padding={2}>
       <Stack
         direction="row"
         spacing={2}
@@ -51,7 +51,8 @@ const Actions = () => {
         <ButtonGradiant startIcon={<PlusIcon />}>Add</ButtonGradiant>
       </Stack>
       <Stack
-        padding={"16px 32px"}
+        paddingX={4}
+        paddingY={1}
         spacing={2}
         direction="row"
         alignItems="center"

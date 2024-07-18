@@ -1,9 +1,9 @@
-import { memo } from "react";
-import dayjs from "dayjs";
 import { BodyCell, StatusCell } from "components/NewTable";
-import { NS_BILLING } from "constant/index";
-import { Billing } from "store/billing/reducer";
 import { COLOR_STATUS, TEXT_STATUS } from "components/sn-invoice/helpers";
+import { NS_BILLING } from "constant/index";
+import dayjs from "dayjs";
+import { memo } from "react";
+import { Billing } from "store/billing/reducer";
 
 type DesktopCellsProps = {
   item: Billing;
@@ -16,24 +16,53 @@ const DesktopCells = (props: DesktopCellsProps) => {
 
   return (
     <>
-      <BodyCell align="left" tooltip={dayjs(date).format(DATE_FORMAT)}>
+      <BodyCell
+        align="left"
+        textProps={{ color: "neutral.800", fontSize: 16 }}
+        tooltip={dayjs(date).format(DATE_FORMAT)}
+      >
         {dayjs(date).format(DATE_FORMAT)}
       </BodyCell>
-      <BodyCell align="left">{invoiceNumber}</BodyCell>
-      <BodyCell align="left">
+      <BodyCell
+        align="left"
+        textProps={{
+          color: "blue.normal",
+          fontWeight: "500",
+          fontSize: 13,
+        }}
+      >
+        {invoiceNumber}
+      </BodyCell>
+      <BodyCell align="left" textProps={{ color: "neutral.800", fontSize: 16 }}>
         {budget ? budget.map((b) => b.name).join(", ") : "No budget"}
       </BodyCell>
       <StatusCell
         namespace={NS_BILLING}
-        text={status !== undefined ? TEXT_STATUS[status] : "Unknown Status"}
+        text={
+          status !== undefined
+            ? TEXT_STATUS.DRAFT + `.${status}`
+            : "Unknown Status"
+        }
         color={status !== undefined ? COLOR_STATUS[status] : "grey.900"}
         width={93}
+        align="left"
+        textProps={{ px: 0 }}
       />
-      <BodyCell align="left" tooltip={dayjs(dueDate).format(DATE_FORMAT)}>
+      <BodyCell
+        align="left"
+        textProps={{ color: "neutral.800", fontSize: 16 }}
+        tooltip={dayjs(dueDate).format(DATE_FORMAT)}
+      >
         {dayjs(dueDate).format(DATE_FORMAT)}
       </BodyCell>
-      <BodyCell align="left">{amount}</BodyCell>
-      <BodyCell align="left" tooltip={dayjs(dueDate).format(DATE_FORMAT)}>
+      <BodyCell align="left" textProps={{ color: "neutral.800", fontSize: 16 }}>
+        {amount}
+      </BodyCell>
+      <BodyCell
+        align="left"
+        textProps={{ color: "neutral.800", fontSize: 16 }}
+        tooltip={dayjs(dueDate).format(DATE_FORMAT)}
+      >
         {dayjs(dueDate).format(DATE_FORMAT)}
       </BodyCell>
     </>
