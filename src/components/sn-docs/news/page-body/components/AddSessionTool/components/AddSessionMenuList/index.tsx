@@ -4,8 +4,11 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { Dispatch, SetStateAction } from "react";
-import { IToolBarDraftActionItem } from "../../../ToolBarDraftEditor";
-import { Box, Typography } from "@mui/material";
+import {
+  IHandleClickFormat,
+  IToolBarDraftActionItem,
+} from "../../../ToolBarDraftEditor";
+import { Box, SelectChangeEvent, Typography } from "@mui/material";
 import { uuid } from "utils/index";
 import { DraftBlockType } from "draft-js";
 import { CHECKABLE_LIST_ITEM } from "components/sn-docs/news/page-body/constants/draft.constants";
@@ -60,34 +63,81 @@ export default function AddSessionMenuList({
   setAnchorEl,
   handleClickChecked,
   focusEditor,
+  handleClickFormatType,
 }: {
   anchorEl: HTMLElement | null;
   setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
-  handleClickChecked?: (
-    type: DraftBlockType,
-  ) => (ev: React.MouseEvent<HTMLElement>) => void;
+  handleClickChecked?: (type: DraftBlockType) => void;
+  handleClickFormatType?: (
+    e:
+      | React.MouseEvent<HTMLLIElement>
+      | SelectChangeEvent
+      | React.MouseEvent<HTMLButtonElement>,
+    typeClick: IHandleClickFormat,
+  ) => void;
   focusEditor?: () => void;
 }) {
   const open = Boolean(anchorEl);
 
-  const handleClose = (item: IToolBarDraftActionItem) => {
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClickItem = (
+    event: React.MouseEvent<HTMLLIElement> | undefined,
+    item: IToolBarDraftActionItem,
+  ) => {
+    setAnchorEl(null);
     switch (item.label) {
       case "Check 1":
         if (handleClickChecked) {
-          const handler = handleClickChecked(CHECKABLE_LIST_ITEM);
-          handler(
-            new MouseEvent(
-              "mousedown",
-            ) as unknown as React.MouseEvent<HTMLElement>,
-          );
-          if (focusEditor) focusEditor();
+          handleClickChecked(CHECKABLE_LIST_ITEM);
         }
-
+        if (focusEditor) focusEditor();
+        return;
+      case "Large Heading":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
+        return;
+      case "Small Heading":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
+        return;
+      case "Bullet 1":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
+        return;
+      case "Number":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
         return;
       default:
         break;
     }
-    setAnchorEl(null);
   };
 
   return (
@@ -108,7 +158,7 @@ export default function AddSessionMenuList({
         <MenuItem
           sx={{ pl: 2, pr: 6 }}
           key={item.id}
-          onClick={() => handleClose(item)}
+          onClick={(event) => handleClickItem(event, item)}
         >
           <Box display="flex" alignItems="center" gap={0.5}>
             {item.icon}

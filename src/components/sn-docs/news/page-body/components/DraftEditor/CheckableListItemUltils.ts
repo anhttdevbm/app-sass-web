@@ -18,7 +18,7 @@ function toggleChecked(
 }
 
 function onTab(
-  event: React.KeyboardEvent<HTMLElement>,
+  event: React.MouseEvent<HTMLButtonElement>,
   editorState: EditorState,
   maxDepth: number,
 ): EditorState {

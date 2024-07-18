@@ -79,8 +79,6 @@ export default function DraftEditor() {
     const contentState = editorState.getCurrentContent();
     const blocksArray = contentState.getBlocksAsArray();
 
-    console.log('contentState', convertToRaw(contentState));
-
     if (blocksArray.length > 0) {
       const firstBlock = blocksArray[0];
       const firstBlockText = firstBlock.getText();
@@ -172,35 +170,17 @@ export default function DraftEditor() {
     return "";
   };
 
-  const blockRendererFn = (block: ContentBlock): CheckableListItemBlock => {
-    let result: CheckableListItemBlock | null = null;
+  const blockRendererFn = (block: ContentBlock) => {
     if (block.getType() === CHECKABLE_LIST_ITEM) {
-      result = {
+      return {
         component: CheckableListItem,
         props: {
-          onChangeChecked: () =>
-            setEditorState(toggleChecked(editorState, block)),
+          onChangeChecked: () => setEditorState(toggleChecked(editorState, block)),
           checked: !!block.getData().get("checked"),
         },
       };
     }
-    return result as CheckableListItemBlock;
-  };
-
-  const toggleBlockType = (type: DraftBlockType) => {
-    setEditorState(RichUtils.toggleBlockType(editorState, type));
-
-    setTimeout(() => {
-      editor.current?.focus();
-    }, 0);
-  };
-
-  const createMouseDownHandler = (type: DraftBlockType) => {
-    return (ev: React.MouseEvent<HTMLElement>) => {
-      console.log("type", type);
-      ev.preventDefault();
-      toggleBlockType(type);
-    };
+    return null;
   };
 
   useEffect(() => {
@@ -280,8 +260,6 @@ export default function DraftEditor() {
         setEditorState={setEditorState}
       />
 
-      <span onMouseDown={createMouseDownHandler(CHECKABLE_LIST_ITEM)}>✔</span>
-
       <div className="editor-container">
         <Editor
           ref={editor}
@@ -294,10 +272,10 @@ export default function DraftEditor() {
         />
         {showAddSession && (
           <AddSessionTool
-            props={{
-              handleClickChecked: createMouseDownHandler,
-              focusEditor: focusEditor,
-            }}
+            editor={editor}
+            editorState={editorState}
+            setEditorState={setEditorState}
+            focusEditor={focusEditor}
           />
         )}
       </div>
