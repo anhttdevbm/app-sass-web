@@ -21,7 +21,8 @@ const TaskContentAiForm = (props: {
   open: boolean;
   onClose: () => void;
   taskListId: string;
-  taskListName: string;
+  parentTaskId: string;
+  parentTaskName: string;
 }) => {
   const {
     tone: tones,
@@ -33,7 +34,7 @@ const TaskContentAiForm = (props: {
     Promise.allSettled([onGetTone({}), onGetPersona({})]);
   }, [onGetPersona, onGetTone]);
 
-  const { onCreateTaskWithAi, onCreateTask, items, onDeleteTasks } =
+  const { onCreateTaskWithAi, onCreateTask, items, onDeleteSubTasks } =
     useTasksOfProject();
 
   const [view, setView] = useState<View>("form");
@@ -56,6 +57,7 @@ const TaskContentAiForm = (props: {
               name: _subtask,
             },
             props.taskListId,
+            props.parentTaskId,
           ),
         ),
       );
@@ -67,10 +69,13 @@ const TaskContentAiForm = (props: {
 
   const onReplace = async (data: AiTaskData) => {
     if (taskPrompt?.method === "Subtask") {
-      const taskList = items.find((item) => item.id === props.taskListId)!;
-      await onDeleteTasks({
+      const task = items
+        .find((item) => item.id === props.taskListId)!
+        .tasks.find((task) => task.id === props.parentTaskId)!;
+      await onDeleteSubTasks({
         task_list: props.taskListId,
-        tasks: taskList.tasks.map((_task) => _task.id),
+        task: props.parentTaskId,
+        sub_tasks: (task.sub_tasks ?? []).map((_sub_task) => _sub_task.id),
       });
       await onInsert(data);
     }
@@ -97,7 +102,7 @@ const TaskContentAiForm = (props: {
           <TaskAiPrompt
             tones={tones}
             personas={personas}
-            content={props.taskListName}
+            content={props.parentTaskName}
             commands={CREATE_WITH_AI_COMMANDS}
             onSubmit={onFormSubmit}
             onClose={props.onClose}
