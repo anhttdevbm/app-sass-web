@@ -54,7 +54,13 @@ const TaskAiEdit = (props: {
           <Markdown>{taskData.content}</Markdown>
         ) : (
           taskData.subtask.map((_task) => (
-            <Box display="flex" alignItems="center" key={_task} sx={{ ml: 2 }}>
+            <Box
+              display="flex"
+              alignItems="flex-start"
+              key={_task}
+              ml={2}
+              gap={1}
+            >
               <CheckBoxOutlineBlank fontSize="small" />
               <Typography>{_task}</Typography>
             </Box>

@@ -716,7 +716,8 @@ const MoreList = (props: MoreListProps) => {
           open
           onClose={onSetTType()}
           taskListId={props?.selectedList[0]?.taskListId ?? ""}
-          taskListName={props?.selectedList[0]?.taskListName ?? ""}
+          parentTaskId={props?.selectedList[0]?.taskId ?? ""}
+          parentTaskName={props?.selectedList[0]?.taskName ?? ""}
         />
       )}
     </>
