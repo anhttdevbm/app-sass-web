@@ -75,6 +75,11 @@ export const BillingLang: BillingDictionary = {
       amount: "Đã thanh toán",
       amountUnpaid: "Chưa thanh toán",
       dueDate: "Ngày hết hạn",
+      draft: {
+        Open: "Mở",
+        Paid: "Đã thanh toán",
+        Unpaid: "Chưa Thanh toán",
+      },
     },
     exportView: {
       fullNameCompany: "",

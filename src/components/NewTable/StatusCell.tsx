@@ -10,20 +10,22 @@ type StatusCellProps = {
   color: AlertColor | "purple" | "positive";
   width?: TextProps["minWidth"];
   namespace?: string;
+  textAlign?: string;
   textProps?: Omit<TextProps, "color" | "width">;
 } & Omit<TableCellProps, "width">;
 
 const StatusCell = (props: StatusCellProps) => {
-  const { text, color, width, namespace, textProps, ...rest } = props;
+  const { text, color, width, namespace, textProps, align, ...rest } = props;
 
   return (
-    <BodyCell {...rest}>
+    <BodyCell align={align} {...rest}>
       <TextStatus
         text={text}
         color={color}
         width={width}
         namespace={namespace}
-        sx={{borderRadius: 999}}
+        sx={{ borderRadius: 999 }}
+        textAlign={align}
         {...textProps}
       />
     </BodyCell>

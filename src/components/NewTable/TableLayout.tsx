@@ -74,6 +74,8 @@ type TableLayoutProps = {
   ) => void;
   onLayout?: (refs) => void;
   titleColor?: string;
+  titleWeight?: string;
+  titleSize?: string;
 } & StackProps;
 
 const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
@@ -95,6 +97,8 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
     containerHeaderProps = {},
     titleColor = "grey.400",
     onLayout,
+    titleWeight = "",
+    titleSize = "",
     ...rest
   } = props;
   const commonT = useTranslations(NS_COMMON);
@@ -253,7 +257,12 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                       </Box>
                     ) : item.data ? (
                       <>
-                        <Text variant="h6" color={titleColor}>
+                        <Text
+                          variant="h6"
+                          color={titleColor}
+                          fontWeight={titleWeight}
+                          fontSize={titleSize}
+                        >
                           {item.value}
                         </Text>
                         <Text variant="h5" color="grey.400">
@@ -261,7 +270,12 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                         </Text>
                       </>
                     ) : (
-                      <Text variant="h6" color={titleColor}>
+                      <Text
+                        variant="h6"
+                        color={titleColor}
+                        fontWeight={titleWeight}
+                        fontSize={titleSize}
+                      >
                         {item.value}
                       </Text>
                     )}

@@ -13,7 +13,7 @@ const MOBILE_HEADER_LIST = [{ value: "#", width: "70%", align: "left" }];
 type InvoiceTableProps = {
   invoices: Billing[];
   selectedList: Billing[];
-  onToggleSelect: (item: Invoice, indexSelected: number) => void;
+  onToggleSelect: (item: Invoice) => void;
   isCheckedAll: boolean;
   onChangeAll: (event: ChangeEvent<HTMLInputElement>) => void;
   isFetching: boolean;
@@ -39,24 +39,24 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: invoiceT("list.table.date"), width: "14.2%", align: "center" },
+      { value: invoiceT("list.table.date"), width: "14.2%", align: "left" },
       {
         value: invoiceT("list.table.invoice"),
         width: "14.2%",
-        align: "center",
+        align: "left",
       },
-      { value: invoiceT("list.table.budget"), width: "14.2%", align: "center" },
-      { value: invoiceT("list.table.status"), width: "14.2%", align: "center" },
+      { value: invoiceT("list.table.budget"), width: "14.2%", align: "left" },
+      { value: invoiceT("list.table.status"), width: "14.2%", align: "left" },
       {
         value: invoiceT("list.table.dueDate"),
         width: "14.2%",
-        align: "center",
+        align: "left",
       },
-      { value: invoiceT("list.table.amount"), width: "14.2%", align: "center" },
+      { value: invoiceT("list.table.amount"), width: "14.2%", align: "left" },
       {
         value: invoiceT("list.table.balanceDue"),
         width: "14.2%",
-        align: "center",
+        align: "left",
       },
     ],
     [invoiceT],
@@ -89,6 +89,12 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
         },
       }}
       sx={{ bgcolor: { xs: "grey.50", md: "transparent" } }}
+      titleColor="#4D4D4D"
+      titleWeight="400"
+      titleSize="16px"
+      headerProps={{
+        sx: { paddingTop: 0.5, paddingBottom: 0.5 },
+      }}
     >
       {invoices.map((item) => {
         const indexSelected = selectedList.findIndex(
@@ -97,7 +103,10 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
         return (
           <TableRow key={item.id}>
             <BodyCell sx={{ pl: { xs: 0.5, md: 2 } }}>
-              <Checkbox checked={indexSelected !== -1} />
+              <Checkbox
+                checked={indexSelected !== -1}
+                onChange={() => onToggleSelect(item as Invoice)}
+              />
             </BodyCell>
             <DesktopCells item={item} />
           </TableRow>
