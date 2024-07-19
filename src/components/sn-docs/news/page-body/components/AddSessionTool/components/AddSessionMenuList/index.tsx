@@ -2,13 +2,16 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-import FormatIndentIncreaseIcon from "@mui/icons-material/FormatIndentIncrease";
-import FormatIndentDecreaseIcon from "@mui/icons-material/FormatIndentDecrease";
-
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { Dispatch, SetStateAction } from "react";
-import { IToolBarDraftActionItem } from "../../../ToolBarDraftEditor";
-import { Box, Typography } from "@mui/material";
+import {
+  IHandleClickFormat,
+  IToolBarDraftActionItem,
+} from "../../../ToolBarDraftEditor";
+import { Box, SelectChangeEvent, Typography } from "@mui/material";
 import { uuid } from "utils/index";
+import { DraftBlockType } from "draft-js";
+import { CHECKABLE_LIST_ITEM } from "components/sn-docs/news/page-body/constants/draft.constants";
 
 const addSessionItems: IToolBarDraftActionItem[] = [
   {
@@ -39,19 +42,102 @@ const addSessionItems: IToolBarDraftActionItem[] = [
     method: "block",
     icon: <FormatListNumberedIcon />,
   },
+  {
+    id: uuid(),
+    label: "Check 1",
+    style: "checked-one-list-item",
+    method: "block",
+    icon: <TaskAltIcon />,
+  },
+  {
+    id: uuid(),
+    label: "Check 2",
+    style: "checked-two-list-item",
+    method: "block",
+    icon: <TaskAltIcon />,
+  },
 ];
 
 export default function AddSessionMenuList({
   anchorEl,
   setAnchorEl,
+  handleClickChecked,
+  focusEditor,
+  handleClickFormatType,
 }: {
   anchorEl: HTMLElement | null;
   setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
+  handleClickChecked?: (type: DraftBlockType) => void;
+  handleClickFormatType?: (
+    e:
+      | React.MouseEvent<HTMLLIElement>
+      | SelectChangeEvent
+      | React.MouseEvent<HTMLButtonElement>,
+    typeClick: IHandleClickFormat,
+  ) => void;
+  focusEditor?: () => void;
 }) {
   const open = Boolean(anchorEl);
 
-  const handleClose = (item: IToolBarDraftActionItem) => {
+  const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClickItem = (
+    event: React.MouseEvent<HTMLLIElement> | undefined,
+    item: IToolBarDraftActionItem,
+  ) => {
+    setAnchorEl(null);
+    switch (item.label) {
+      case "Check 1":
+        if (handleClickChecked) {
+          handleClickChecked(CHECKABLE_LIST_ITEM);
+        }
+        if (focusEditor) focusEditor();
+        return;
+      case "Large Heading":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
+        return;
+      case "Small Heading":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
+        return;
+      case "Bullet 1":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
+        return;
+      case "Number":
+        if (handleClickFormatType) {
+          setTimeout(() => {
+            handleClickFormatType(event as React.MouseEvent<HTMLLIElement>, {
+              method: item.method,
+              style: item.style,
+            });
+          }, 0);
+        }
+        return;
+      default:
+        break;
+    }
   };
 
   return (
@@ -65,14 +151,14 @@ export default function AddSessionMenuList({
       }}
       sx={{
         minWidth: "16.75rem",
-        borderRadius: "10px"
+        borderRadius: "10px",
       }}
     >
       {addSessionItems.map((item) => (
         <MenuItem
           sx={{ pl: 2, pr: 6 }}
           key={item.id}
-          onClick={() => handleClose(item)}
+          onClick={(event) => handleClickItem(event, item)}
         >
           <Box display="flex" alignItems="center" gap={0.5}>
             {item.icon}

@@ -14,8 +14,11 @@ import {
   ContentBlock,
   DraftHandleValue,
   Modifier,
+  DraftBlockType,
+  convertToRaw,
 } from "draft-js";
 import "./DraftEditor.css";
+import "./CheckableListItem.css";
 import ToolBarDraftEditor from "../ToolBarDraftEditor";
 import { Box, Button } from "@mui/material";
 import { useAppSelector } from "store/hooks";
@@ -24,7 +27,17 @@ import { useUpdateDocMutation } from "store/docs/api";
 import useDebounce from "hooks/useDebounce";
 import { useDocs } from "store/docs/selectors";
 import AddSessionTool from "../AddSessionTool/components";
-import CheckboxBlockDraft from "./CheckboxBlock";
+import {
+  CHECKABLE_LIST_ITEM,
+  ORDERED_LIST_ITEM,
+  UNORDERED_LIST_ITEM,
+} from "../../constants/draft.constants";
+import {
+  CheckableListItemBlock,
+  onTab,
+  toggleChecked,
+} from "./CheckableListItemUltils";
+import CheckableListItem from "./CheckableListItem";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
@@ -157,49 +170,18 @@ export default function DraftEditor() {
     return "";
   };
 
-  const handleAddCheckbox = useCallback(() => {
-    const contentState = editorState.getCurrentContent();
-    const selectionState = editorState.getSelection();
-    const blockKey = selectionState.getStartKey();
-    const block = contentState.getBlockForKey(blockKey);
-    const blockText = block.getText();
-
-
-    // Tạo một ContentState mới với checkbox
-    const newContentState = Modifier.insertText(
-      contentState,
-      selectionState,
-      "[ ] " + blockText,
-    );
-
-    // Tạo EditorState mới
-    const newEditorState = EditorState.push(
-      editorState,
-      newContentState,
-      "insert-characters",
-    );
-
-    setEditorState(newEditorState);
-  }, [editorState]);
-
-  const blockRendererFn = useCallback(
-    (block) => {
-      if (
-        block.getText().startsWith("[ ] ") ||
-        block.getText().startsWith("[x] ")
-      ) {
-        return {
-          component: CheckboxBlockDraft,
-          editable: false,
-          props: {
-            onChange: setEditorState,
-            getEditorState: () => editorState,
-          },
-        };
-      }
-    },
-    [editorState],
-  );
+  const blockRendererFn = (block: ContentBlock) => {
+    if (block.getType() === CHECKABLE_LIST_ITEM) {
+      return {
+        component: CheckableListItem,
+        props: {
+          onChangeChecked: () => setEditorState(toggleChecked(editorState, block)),
+          checked: !!block.getData().get("checked"),
+        },
+      };
+    }
+    return null;
+  };
 
   useEffect(() => {
     focusEditor();
@@ -277,6 +259,7 @@ export default function DraftEditor() {
         editorState={editorState}
         setEditorState={setEditorState}
       />
+
       <div className="editor-container">
         <Editor
           ref={editor}
@@ -287,7 +270,14 @@ export default function DraftEditor() {
           onChange={handleChangeEditor}
           blockRendererFn={blockRendererFn}
         />
-        {showAddSession && <AddSessionTool />}
+        {showAddSession && (
+          <AddSessionTool
+            editor={editor}
+            editorState={editorState}
+            setEditorState={setEditorState}
+            focusEditor={focusEditor}
+          />
+        )}
       </div>
     </Box>
   );
