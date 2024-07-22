@@ -20,6 +20,8 @@ export const ResourcePlanning: ResourceDictionary = {
       },
       descending: "Giảm dần theo giờ làm",
       asceding: "Tăng dần theo giờ làm",
+      position: "Vị trí",
+      viewBy: "Xem bởi",
     },
     time: {
       eventTime: "{allocation}{unit} cho {day} ngày",
@@ -66,9 +68,9 @@ export const ResourcePlanning: ResourceDictionary = {
     estimate: "Ước tính",
     work: "Giờ làm",
     schedule: "Lên lịch",
-    budget:'Ngân sách',
-    user:'Người dùng',
-    role1:'Vị trí',
+    budget: "Ngân sách",
+    user: "Người dùng",
+    role1: "Vị trí",
     editActions: {
       delete: "Xóa lịch",
       duplicate: "Nhân đôi lịch",
@@ -101,5 +103,12 @@ export const ResourcePlanning: ResourceDictionary = {
     updateSuccess: "Cập nhật lịch thành công",
     deleteFailed: "Xóa lịch thất bại",
     deleteSuccess: "Xóa lịch thành công",
+  },
+  popupService: {
+    project: "dự án",
+    chooseProjectPlacehodle: "chọn dự án",
+    chooseBudgetPlacehodle: "chọn ngân sách",
+    budget: "ngân sách",
+    search: "Tìm kiếm",
   },
 };

@@ -20,6 +20,8 @@ export const ResourcePlanningLang: ResourceDictionary = {
       },
       descending: "Descending by working hours",
       asceding: "Ascending by working hours",
+      position: "Position",
+      viewBy: "View by",
     },
     unit: {
       day: "day",
@@ -101,5 +103,12 @@ export const ResourcePlanningLang: ResourceDictionary = {
     budget: "Ngân sách",
     user: "Người dùng",
     role1: "Vị trí",
+  },
+  popupService: {
+    project: "Project",
+    chooseProjectPlacehodle: "Choose-project",
+    chooseBudgetPlacehodle: "Choose-budget",
+    budget: "Budget",
+    search: "Search",
   },
 };
