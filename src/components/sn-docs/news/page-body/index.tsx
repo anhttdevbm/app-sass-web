@@ -44,7 +44,6 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
   const dispatch = useDispatch();
   const { handleGetDocDetail } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
-  
 
   const [openChangeCover, setOpenChangeCover] = useState<boolean>(false);
   const [openEmojiSelector, setOpenEmojiSelector] = useState<boolean>(false);
@@ -327,7 +326,9 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     //     />
     //   </Box>
     // </Box>
-    <DraftEditor />
+    <Box sx={{ height: "100%" }}>
+      <DraftEditor />
+    </Box>
   );
 };
 
