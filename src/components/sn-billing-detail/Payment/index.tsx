@@ -1,22 +1,18 @@
-import { Box, Grid, Menu, MenuItem, Stack, TableRow } from "@mui/material";
-import { BodyCell, CellProps, TableLayout } from "components/Table";
-import { IconButton, Text } from "components/shared";
+import { Box, Stack, Typography } from "@mui/material";
 import { NS_BILLING, NS_COMMON } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import { useTranslations } from "next-intl";
-import { memo, useEffect, useMemo, useState } from "react";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
-import TrashIcon from "icons/TrashIcon";
-import PaymentModal from "../components/PaymentModal";
-import PaymentTableHome from "./PaymentTableHome";
-import PaymentTable from "./PaymentTable";
-import { useBillings } from "store/billing/selectors";
 import { useParams } from "next/navigation";
+import { memo, useEffect, useMemo, useState } from "react";
 import { PaymentData } from "store/billing/actions";
-import ProgressBar from "@ramonak/react-progress-bar";
+import { useBillings } from "store/billing/selectors";
 import "../Payment/PaymentTableHome/style.css";
-import zIndex from "@mui/material/styles/zIndex";
+import PaymentModal from "../components/PaymentModal";
+import PaymentTable from "./PaymentTable";
+import { formatDate, formatNumber } from "utils/index";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { CURRENCY_CODE } from "constant/enums";
+import DoughnutChartPayment from "../components/DoughnutChartPayment";
 
 type TabProps = {
   title: string;
@@ -146,18 +142,38 @@ const TabPayment = (props: TabProps) => {
     return data;
   }, [item, dataPayment]);
 
+  const totalOfWriteOff = useMemo(() => {
+    const res = dataPayment?.reduce(
+      (sum, e: PaymentData) =>
+        e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+      0,
+    );
+
+    return res;
+  }, [item, dataPayment]);
+
+  const totalOfPaid = useMemo(() => {
+    const res = dataPayment?.reduce(
+      (sum, e: PaymentData) =>
+        e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+      0,
+    );
+
+    return res;
+  }, [item, dataPayment]);
+
   return (
     <Stack mt={6}>
-      <Stack gap={2} pb={2} pl={2}>
-        <Grid container spacing={2}>
-          <Grid xs={12} md={8} sx={{ borderRadius: "5px 0px 0px 5px" }}>
+      {/* <Stack gap={2} pb={2} pl={2}> */}
+      {/* <Grid container spacing={2}> */}
+      {/* <Grid xs={12} md={8} sx={{ borderRadius: "5px 0px 0px 5px" }}>
             <PaymentTableHome
               item={item}
               dataPaid={dataPaid ?? {}}
               dataWriteOff={dataWriteOff}
             />
-          </Grid>
-          <Grid
+          </Grid> */}
+      {/* <Grid
             container
             xs={12}
             md={4}
@@ -230,13 +246,182 @@ const TabPayment = (props: TabProps) => {
               </Text>
             </Stack>
           </Grid>
-        </Grid>
-        {/* <Grid container spacing={2.1}>
+        </Grid> */}
+      {/* <Grid container spacing={2.1}>
           <Grid xs={12} md={8}></Grid>
           <Grid xs={12} md={4}></Grid>
         </Grid> */}
+      {/* </Stack> */}
+      <Stack spacing={8} direction="row">
+        <Stack
+          direction="column"
+          width="290px"
+          sx={{
+            padding: "8px 16px 20px",
+            boxShadow:
+              "0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)",
+            borderRadius: "16px",
+            height: "fit-content",
+            gap: "10px",
+          }}
+          spacing={1}
+        >
+          <Typography fontSize={16} fontWeight={600}>
+            General
+          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography fontSize={14} fontWeight={700} color="#212529">
+              Due date
+            </Typography>
+            <Typography fontSize={14} fontWeight={400} color="#212529">
+              {formatDate(item?.dueDate)}
+            </Typography>
+          </Stack>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography fontSize={14} fontWeight={700} color="#212529">
+              Total amount
+            </Typography>
+            <Typography fontSize={14} fontWeight={400} color="#212529">
+              {formatNumber(item?.amount, {
+                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                numberOfFixed: 2,
+              })}
+            </Typography>
+          </Stack>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography fontSize={14} fontWeight={700} color="#212529">
+              Payment made
+            </Typography>
+            <Typography fontSize={14} fontWeight={400} color="#212529">
+              {formatNumber(totalOfPaid ?? 0 + (totalOfWriteOff ?? 0), {
+                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                numberOfFixed: 2,
+              })}
+            </Typography>
+          </Stack>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography fontSize={14} fontWeight={700} color="#212529">
+              Balance due
+            </Typography>
+            <Typography fontSize={14} fontWeight={400} color="#212529">
+              {formatNumber(
+                (item?.amount ?? 0) -
+                  (totalOfPaid ?? 0 + (totalOfWriteOff ?? 0)),
+                {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                },
+              )}
+            </Typography>
+          </Stack>
+        </Stack>
+
+        <Stack>
+          <DoughnutChartPayment />
+        </Stack>
+
+        <Stack direction="column" sx={{ width: "300px", gap: "16px" }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            sx={{
+              borderBottom: "1px solid #D4D4D4",
+              paddingLeft: "36px",
+            }}
+          >
+            <Typography fontSize={14} fontWeight={700} color="#404040">
+              Label
+            </Typography>
+            <Typography>%</Typography>
+          </Stack>
+          <Stack direction="row">
+            <Box
+              sx={{
+                height: "12px",
+                width: "14px",
+
+                borderRadius: "50%",
+                backgroundColor: "#14B8A6",
+                margin: "auto 12px",
+              }}
+            />
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ width: "100%" }}
+            >
+              <Typography fontSize={14} fontWeight={700} color="#404040">
+                Paid
+              </Typography>
+              <Typography fontSize={14} fontWeight={700} color="#404040">
+                44%
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack direction="row">
+            <Box
+              sx={{
+                height: "12px",
+                width: "14px",
+
+                borderRadius: "50%",
+                backgroundColor: "#D32F06",
+                margin: "auto 12px",
+              }}
+            />
+
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ width: "100%" }}
+            >
+              <Typography fontSize={14} fontWeight={700} color="#404040">
+                Write off
+              </Typography>
+              <Typography fontSize={14} fontWeight={700} color="#404040">
+                6%
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack direction="row">
+            <Box
+              sx={{
+                height: "12px",
+                width: "14px",
+
+                borderRadius: "50%",
+                backgroundColor: "#F59E0B",
+                margin: "auto 12px",
+              }}
+            />
+
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ width: "100%" }}
+            >
+              <Typography fontSize={14} fontWeight={700} color="#404040">
+                Balance due
+              </Typography>
+              <Typography fontSize={14} fontWeight={700} color="#404040">
+                50%
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
       </Stack>
-      <Stack gap={2} pb={2}>
+      <Stack pb={2} mt={4}>
+        <Box
+          sx={{
+            backgroundColor: "#D9F0FD",
+            padding: "14px 0 14px 20px",
+            borderRadius: "12px",
+          }}
+        >
+          <Typography color="#0575E6" fontSize={20} fontWeight={600}>
+            Payments detail{" "}
+          </Typography>
+        </Box>
         <PaymentTable
           handleOpen={handleOpen}
           dataPayment={dataPayment}
