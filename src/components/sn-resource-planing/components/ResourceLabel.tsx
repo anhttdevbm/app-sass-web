@@ -54,6 +54,7 @@ const ResourceLabel = ({
     user_id,
     bookings: parentBookings,
   } = resource._resource.extendedProps;
+  console.log(position);
 
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
@@ -215,7 +216,7 @@ const ResourceLabel = ({
                   {company}
                 </Typography>
               </Box>
-              <ArrowDownIcon
+              {/* <ArrowDownIcon
                 color="inherit"
                 fontSize="inherit"
                 sx={{
@@ -229,45 +230,49 @@ const ResourceLabel = ({
                   transform: isActive ? "rotate(-90deg)" : "rotate(-180deg)",
                   transitionDelay: "all ease 0.25s",
                 }}
-              />
+              /> */}
             </Stack>
-          </Grid>
-          <Grid item xs={1} md={2}>
-            <Typography
-              sx={{
-                ...textHeadStyle,
-                textAlign: "center",
-              }}
-            >
-              {formatNumber(totalLeftToSchedule[resource._resource.id], {
-                numberOfFixed: 0,
-              })}{" "}
-              h
-            </Typography>
-          </Grid>
-          <Grid item xs={1} md={2}>
-            <Typography
-              sx={{
-                ...textHeadStyle,
-                textAlign: "center",
-              }}
-            >
-              {formatNumber(totalhour, { numberOfFixed: 0, suffix: "h" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={1} md={2}>
-            <Typography
-              sx={{
-                ...textHeadStyle,
-                textAlign: "center",
-              }}
-            >
-              {formatNumber(schedulePerLeft, { numberOfFixed: 2, suffix: "%" })}
-            </Typography>
           </Grid>
         </Grid>
 
-        {isAddbutton && (
+        <Grid item xs={1} md={2}>
+          <Typography
+            sx={{
+              ...textHeadStyle,
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "80px",
+            }}
+          >
+            <Typography sx={{ fontSize: "13px", marginTop: "5px" }}>
+              Avaiable
+            </Typography>
+            {formatNumber(totalLeftToSchedule[resource._resource.id], {
+              numberOfFixed: 0,
+            })}{" "}
+            h
+          </Typography>
+        </Grid>
+        <Grid item xs={1} md={2}>
+          <Typography
+            sx={{
+              ...textHeadStyle,
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "20px",
+            }}
+          >
+            <Typography sx={{ fontSize: "13px" }}>
+              Schedule{" ("}
+              {formatNumber(schedulePerLeft, { numberOfFixed: 2, suffix: "%" })}
+              {")"}
+            </Typography>
+            {formatNumber(totalhour, { numberOfFixed: 0, suffix: "h" })}
+          </Typography>
+        </Grid>
+        {/* {isAddbutton && (
           <Button
             variant="text"
             sx={{
@@ -282,7 +287,7 @@ const ResourceLabel = ({
           >
             {resourceT("schedule.action.addBooking")}
           </Button>
-        )}
+        )} */}
       </Grid>
     </Grid>
   );

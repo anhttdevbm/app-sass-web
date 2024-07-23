@@ -22,8 +22,15 @@ interface IEventContentsProps {
   setIsOpenEdit: (editState: IEditState) => void;
 }
 const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
-  const { eventType, allocation_type, allocation, eventId } =
-    event.extendedProps;
+  const {
+    eventType,
+    allocation_type,
+    allocation,
+    eventId,
+    time_off_type,
+    project,
+  } = event.extendedProps;
+  console.log(event.extendedProps);
   const { mappedTimeSymbol } = useGetMappingTime();
   const { palette, isDarkMode } = useTheme();
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
@@ -65,6 +72,7 @@ const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
       unit = mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.PERCENTAGE];
       break;
   }
+
   return (
     <Stack
       className="fc-event-title fc-sticky"
@@ -74,9 +82,11 @@ const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
         display: "flex!important",
         width: 1,
         borderRadius: 1,
-        alignItems: "center",
-        justifyContent: "space-between",
+        alignItems: "start",
+        justifyContent: "start",
         background: checkedEventType.background,
+        // height: "80px",
+        flexDirection: "column",
       }}
       onClick={() =>
         setIsOpenEdit({
@@ -86,7 +96,13 @@ const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
         })
       }
     >
-      {checkedEventType.icon}
+      {/* {checkedEventType.icon} */}
+      <Typography sx={{ color: "black", fontSize: "10px" }}>
+        {time_off_type ? resourceT("form.timeOffType.sick") : ""}
+      </Typography>
+      <Typography sx={{ color: "black", fontSize: "10px" }}>
+        {project?.name}
+      </Typography>
       <Tooltip
         title={resourceT("schedule.time.eventTime", {
           day: isNaN(day) ? 1 : day,
@@ -96,14 +112,16 @@ const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
       >
         <Typography
           sx={{
-            fontSize: 16,
             fontWeight: 400,
             color: isDarkMode ? palette.grey[600] : palette.grey[300],
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
             px: 1,
-            mr: "auto",
+            mr: 0,
+            width: "100%",
+            textAlign: "end",
+            fontSize: "13px",
           }}
         >
           {resourceT("schedule.time.eventTime", {
@@ -114,13 +132,13 @@ const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
         </Typography>
       </Tooltip>
 
-      <Stack
+      {/* <Stack
         sx={{
           transform: "rotate(180deg)",
         }}
       >
         {checkedEventType.icon}
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 };

@@ -20,7 +20,7 @@ export default function ResourcePlanningPage() {
         md: 3,
       }}
     >
-      <ResourcePlanningv1 />
+      <ResourcePlanning />
     </Wrapper>
   );
 }

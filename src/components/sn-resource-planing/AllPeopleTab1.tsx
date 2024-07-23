@@ -34,7 +34,6 @@ import useTheme from "hooks/useTheme";
 import EditBooking from "./modals/EditBooking";
 import PlusIcon from "icons/PlusIcon";
 import { Button } from "components/shared";
-import { Search } from "components/Filters";
 
 export interface IEditState {
   isOpen: boolean;
@@ -42,11 +41,7 @@ export interface IEditState {
   isProject: boolean;
 }
 
-interface IAllPeopleTabProp {
-  setisServicePopup: any;
-}
-
-const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
+const AllPeopleTab = () => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
@@ -335,7 +330,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
 
   return (
     <Stack direction="column" rowGap={2}>
-      <FilterHeader type={TAB_TYPE.ALL} setisServicePopup={setisServicePopup} />
+      <FilterHeader type={TAB_TYPE.ALL} />
       {/* <TimeHeader
         filters={filters}
         setFilters={setFilters}
@@ -353,22 +348,18 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
           // },
         }}
       >
-        <FullCalendar
+        {/* <FullCalendar
           ref={calendarRef}
           plugins={[resourceTimelinePlugin, interactionPlugin]}
           initialView="resourceTimeline"
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-          resourceAreaWidth={194}
+          resourceAreaWidth={200}
           resourceOrder="from"
           weekends={true}
           editable={true}
           eventResourceEditable={true}
           eventDurationEditable={true}
-          headerToolbar={{
-            start: "",
-            center: "title",
-            end: "",
-          }}
+          headerToolbar={false}
           selectMirror={true}
           selectable={true}
           eventDragStart={(arg) => {
@@ -380,6 +371,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
           duration={{ weeks: 2 }}
           select={(arg) => {
             const { startStr, endStr, resource, view } = arg;
+a
             if (resource?._resource.extendedProps.type === "end") {
               view.calendar.unselect();
               return;
@@ -411,7 +403,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
               //   resource={resrouce}
               //   totalhour={totalhour}
               // />
-              <Search />
+              <></>
             );
           }}
           resourceLabelContent={({ resource, view }) => {
@@ -423,26 +415,26 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
               return;
             }
 
-            // if (resource._resource.extendedProps.type === "end") {
-            //   return (
-            //     <Button
-            //       variant="text"
-            //       startIcon={<PlusIcon />}
-            //       sx={{
-            //         px: 2,
-            //         py: 1,
-            //         color: "success.main",
-            //       }}
-            //       // startIcon={<AddIcon />}
-            //       onClick={() => {
-            //         setIsOpenCreate(true);
-            //         setParentResource(resource._resource.extendedProps.user_id);
-            //       }}
-            //     >
-            //       {resourceT("schedule.action.addBooking")}
-            //     </Button>
-            //   );
-            // }
+            if (resource._resource.extendedProps.type === "end") {
+              return (
+                <Button
+                  variant="text"
+                  startIcon={<PlusIcon />}
+                  sx={{
+                    px: 2,
+                    py: 1,
+                    color: "success.main",
+                  }}
+                  // startIcon={<AddIcon />}
+                  onClick={() => {
+                    setIsOpenCreate(true);
+                    setParentResource(resource._resource.extendedProps.user_id);
+                  }}
+                >
+                  {resourceT("schedule.action.addBooking")}
+                </Button>
+              );
+            }
             const bookings = parentResource
               ? [...parentResource?.bookings]
               : [];
@@ -480,7 +472,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
           stickyFooterScrollbar={true}
           eventResize={handleEventChange(calendarRef, true)}
           eventDrop={handleEventChange(calendarRef, false)}
-        />
+        /> */}
       </Box>
       <CreateBooking
         onClose={() => {
