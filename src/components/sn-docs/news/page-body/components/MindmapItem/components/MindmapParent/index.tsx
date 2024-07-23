@@ -19,11 +19,11 @@ export default function MindmapParent({
   const { handleAddChildren, handleDeleteChildren } = useMindmap();
   const handleAddChild = () => {
     setIsShowAdd(false);
-    handleAddChildren()
+    handleAddChildren();
   };
   const handleDeleteChild = () => {
     setIsShowAdd(false);
-    handleDeleteChildren()
+    handleDeleteChildren();
   };
 
   return (
@@ -55,9 +55,7 @@ export default function MindmapParent({
       {isShowAdd && mindmapParent?.children?.length && (
         <HoverIconDelete onClickIcon={handleDeleteChild} />
       )}
-      <MindmapChildren
-        childrenMindmap={mindmapParent.children ?? []}
-      />
+      <MindmapChildren />
     </Stack>
   );
 }

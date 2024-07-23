@@ -9,33 +9,25 @@ import MindMapChildOfChild from "../../MindmapChildOfChild";
 import { uuid } from "utils/index";
 
 export default function MindmapChildrenOne() {
- ;
   const [isShowAdd, setIsShowAdd] = useState<boolean>(false);
   const { handleAddChildren, deleteChildToChild, setMindmapItem, mindMapItem } =
     useMindmap();
 
   const handleAddChildToChild = () => {
-    const updatedChildren = mindMapItem.children?.map((child) => {
-      if (child.id === mindMapItem[0]?.id) {
-        const newChildren = Array(3)
-          .fill(null)
-          .map(() => ({
-            id: uuid(),
-            title: "",
-            children: [],
-          }));
-        return {
-          ...child,
-          children: [...(child.children || []), ...newChildren],
-        };
+    if (mindMapItem && mindMapItem.children) {
+      const childFirst = mindMapItem?.children[0];
+      console.log("childFirst");
+      for (let i = 0; i < 3; i++) {
+        const newChildren = { id: uuid(), title: "", children: [] };
+        childFirst.children?.push(newChildren);
       }
-      return child;
-    });
-    setMindmapItem({
-      ...mindMapItem,
-      children: updatedChildren,
-    });
+      setMindmapItem({
+        ...mindMapItem,
+        children: childFirst.children,
+      });
+    }
   };
+  
 
   const handleDeleteChildOfChildren = (idChildren: string) => {
     deleteChildToChild(idChildren);
@@ -96,16 +88,23 @@ export default function MindmapChildrenOne() {
               }}
             />
           </Box>
-          {isShowAdd && !mindMapItem?.children?.length && (
-            <HoverIconAdd onClickIcon={() => handleAddChildToChild()} />
-          )}
-          {/* {isShowAdd && mindMapItem?.children?.length && (
-            <HoverIconDelete
-              onClickIcon={() => deleteChildToChild(mindMapItem.id)}
-            />
-          )} */}
-          {mindMapItem?.children &&
-            mindMapItem?.children?.length > 1 && (
+          {isShowAdd &&
+            mindMapItem.children &&
+            mindMapItem.children[0]?.children &&
+            mindMapItem.children[0]?.children.length === 0 && (
+              <HoverIconAdd onClickIcon={() => handleAddChildToChild()} />
+            )}
+          {isShowAdd &&
+            mindMapItem.children &&
+            mindMapItem.children[0]?.children &&
+            mindMapItem.children[0]?.children.length > 0 && (
+              <HoverIconDelete
+                onClickIcon={() => deleteChildToChild(mindMapItem.id)}
+              />
+            )}
+          {mindMapItem.children &&
+            mindMapItem.children[0]?.children &&
+            mindMapItem.children[0]?.children.length > 0 && (
               <MindMapChildOfChild childrenMindMap={mindMapItem.children} />
             )}
         </Box>

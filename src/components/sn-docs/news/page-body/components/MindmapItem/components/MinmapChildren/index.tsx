@@ -6,15 +6,11 @@ import MindmapChildrenMore from "./components/MindmapChildrenMore";
 import { mimiMap } from '../../../../../../../../store/chat/type';
 import useMindmap from "../../hooks/useMindmap";
 
-export default function MindmapChildren({
-  childrenMindmap
-}: {
-  childrenMindmap: IMindmapItem[];
-}) {
+export default function MindmapChildren() {
   const { mindMapItem } = useMindmap();
   if (mindMapItem.children?.length === 1) {
     return <MindmapChildrenOne  />;
-  } else if (mindMapItem.children.length > 1) {
+  } else if (mindMapItem.children && mindMapItem.children?.length > 1) {
     return <MindmapChildrenMore />;
   } else {
     return null;
