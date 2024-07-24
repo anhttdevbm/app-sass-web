@@ -33,7 +33,7 @@ import useGetOptions from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
 import EditBooking from "./modals/EditBooking";
 
-const MyScheduleTab = () => {
+const MyScheduleTab = ({ setisServicePopup }: any) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
@@ -296,7 +296,7 @@ const MyScheduleTab = () => {
   };
   return (
     <Stack direction="column" rowGap={2}>
-      <FilterHeader type={TAB_TYPE.MY} />
+      <FilterHeader type={TAB_TYPE.MY} setisServicePopup={setisServicePopup} />
       <TimeHeader
         filters={filters}
         setFilters={setFilters}
@@ -322,15 +322,17 @@ const MyScheduleTab = () => {
           select={(arg) => {
             const { startStr, endStr, resource, view } = arg;
 
-            if (resource?._resource.extendedProps.type === 'end') {
+            if (resource?._resource.extendedProps.type === "end") {
               view.calendar.unselect();
               return;
-            };
+            }
 
-            setParentResource(resource?._resource.parentId || resource?._resource.id || "");
+            setParentResource(
+              resource?._resource.parentId || resource?._resource.id || "",
+            );
             const start_date = dayjs(startStr).toDate();
 
-            const end_date = dayjs(endStr).subtract(1, 'day').toDate();
+            const end_date = dayjs(endStr).subtract(1, "day").toDate();
             setSelectedDateRange([start_date, end_date]);
             setIsOpenCreate(true);
           }}

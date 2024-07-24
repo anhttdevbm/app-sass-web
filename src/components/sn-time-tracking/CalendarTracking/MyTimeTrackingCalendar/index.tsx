@@ -522,7 +522,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 open={isOpen}
                 onOpen={() => setIsOpen(true)}
                 onClose={() => setIsOpen(false)}
-                onChange={(date: Date | null) => {
+                onChange={(date: any) => {
                   if (date) {
                     const { startDate, endDate } =
                       getWeekStartAndEndDates(date);
@@ -793,7 +793,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
           </>
         )}
         {props.currentKindOfSheet === "table" && (
-          <Typography sx={{textAlign:"center"}}>No data found</Typography>
+          <Typography sx={{ textAlign: "center" }}>No data found</Typography>
         )}
         {props.currentKindOfSheet === "timeGridWeek" && (
           <>
