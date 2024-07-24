@@ -15,7 +15,7 @@ const PageDocDetail = () => {
   return (
     <ThemeProvider>
       <NewPageContextProvider>
-        <Box>
+        <Box sx={{ height: "100%"}}>
           <HeaderDocDetail
             openComment={openComment}
             setOpenComment={setOpenComment}

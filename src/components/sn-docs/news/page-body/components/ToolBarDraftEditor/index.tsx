@@ -96,6 +96,7 @@ export default function ToolBarDraftEditor({
       <ColorFormatText />
       <ListFormatText handleClickListFormat={applyStyle}/>
       <OtherToolBar />
+      
       {/* {tools.map((item, idx) => (
         <button
           style={{
