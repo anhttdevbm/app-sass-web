@@ -151,7 +151,7 @@ export const getOpenAIChat = createAsyncThunk(
   async (queries: GetOpenAIChatQueries) => {
     try {
       const response = await client.get(
-        `${Endpoint.AI_CHAT}/${queries.id}`,
+        `${Endpoint.AI_CHAT_SESSION}/${queries.id}`,
         {
           page: queries.page,
         },
@@ -211,7 +211,7 @@ export const deleteAllChatSessions = createAsyncThunk(
   "aiChat/deleteAllChatSessions",
   async () => {
     try {
-      const response = await client.delete(Endpoint.AI_CHAT_SESSION, {
+      const response = await client.delete(Endpoint.AI_CHAT_DELETE_ALL_SESSION, {
         baseURL: AI_CHAT_API_URL,
       });
       if (response?.status === 204) {
