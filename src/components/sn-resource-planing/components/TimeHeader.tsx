@@ -170,7 +170,7 @@ const TimeHeader = ({ filters, setFilters, calendarRef }) => {
           open={isOpen}
           onOpen={() => setIsOpen(true)}
           onClose={() => setIsOpen(false)}
-          onChange={(date: Date | null) => {
+          onChange={(date: any) => {
             const calendarApi =
               calendarRef?.current && calendarRef?.current.getApi();
 
