@@ -10,6 +10,7 @@ import {
   Stack,
   SxProps,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Locale } from "constant/types";
 import { useFormik } from "formik";
@@ -95,89 +96,75 @@ const ProjectAiPrompt = (props: {
           }
         }}
       />
-      <Stack direction="row" gap={1}>
-        <Box
-          display="flex"
-          alignItems="center"
-          border="solid 1px dodgerblue"
-          borderRadius="2rem"
-          px={1}
-        >
-          <ToneIcon sx={{ color: "transparent" }} />
-          <TextField
-            select
-            id="project-tone"
-            name="tone"
-            label="Tone"
-            value={formik.values.tone}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.tone && Boolean(formik.errors.tone)}
-            helperText={formik.touched.tone && formik.errors.tone}
-            size="small"
-            sx={{
-              minWidth: 100,
-              "& .MuiOutlinedInput-root": {
-                border: "none",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
+      <Stack direction="row" p={1} gap={1}>
+        <TextField
+          select
+          id="project-tone"
+          name="tone"
+          value={formik.values.tone}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.tone && Boolean(formik.errors.tone)}
+          helperText={formik.touched.tone && formik.errors.tone}
+          size="small"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "2rem",
+                borderColor: "dodgerblue",
               },
-            }}
-            InputLabelProps={{ sx: { color: "dodgerblue" } }}
-            SelectProps={{
-              IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
-            }}
-          >
-            <MenuItem value="">None</MenuItem>
-            {props.tones.map((tone) => (
-              <MenuItem key={tone.id} value={tone.id}>
-                {tone.name[locale]}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          border="solid 1px dodgerblue"
-          borderRadius="2rem"
-          px={1}
+            },
+          }}
+          SelectProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <ToneIcon sx={{ color: "transparent" }} />
+                <Typography sx={{ color: "dodgerblue" }}>Tone</Typography>
+              </InputAdornment>
+            ),
+            IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
+          }}
         >
-          <PersonaIcon sx={{ color: "transparent" }} />
-          <TextField
-            select
-            id="project-persona"
-            name="persona"
-            label="Persona"
-            value={formik.values.persona}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.persona && Boolean(formik.errors.persona)}
-            helperText={formik.touched.persona && formik.errors.persona}
-            size="small"
-            sx={{
-              minWidth: 100,
-              "& .MuiOutlinedInput-root": {
-                border: "none",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
+          {props.tones.map((tone) => (
+            <MenuItem key={tone.id} value={tone.id}>
+              {tone.name[locale]}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          id="project-persona"
+          name="persona"
+          value={formik.values.persona}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.persona && Boolean(formik.errors.persona)}
+          helperText={formik.touched.persona && formik.errors.persona}
+          size="small"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "2rem",
+                borderColor: "dodgerblue",
               },
-            }}
-            InputLabelProps={{ sx: { color: "dodgerblue" } }}
-            SelectProps={{
-              IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
-            }}
-          >
-            <MenuItem value="">None</MenuItem>
-            {props.personas.map((persona) => (
-              <MenuItem key={persona.id} value={persona.id}>
-                {persona.name[locale]}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
+            },
+          }}
+          SelectProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <PersonaIcon sx={{ color: "transparent" }} />
+                <Typography sx={{ color: "dodgerblue" }}>Persona</Typography>
+              </InputAdornment>
+            ),
+            IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
+          }}
+        >
+          {props.personas.map((persona) => (
+            <MenuItem key={persona.id} value={persona.id}>
+              {persona.name[locale]}
+            </MenuItem>
+          ))}
+        </TextField>
       </Stack>
       <Box display="flex" flexDirection="column" p={2} gap={1}>
         {formik.values.prompt.length === 0 && (

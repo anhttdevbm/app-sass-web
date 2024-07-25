@@ -1,37 +1,50 @@
 "use client";
 
-import { memo, useState, useEffect, useMemo } from "react";
 import {
+  Avatar,
   Box,
+  InputAdornment,
+  ListItemAvatar,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
   Paper,
   Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { Text } from "components/shared";
 import { Search, Switch } from "components/Filters";
-import { INITIAL_VALUES, STATUS_OPTIONS } from "./components/helpers";
-import { useProjects } from "store/project/selectors";
-import { getPath } from "utils/index";
-import { usePathname, useRouter } from "next-intl/client";
-import useToggle from "hooks/useToggle";
+import { Text } from "components/shared";
+import TextStatus from "components/TextStatus";
 import { DataAction } from "constant/enums";
-import Form, { ProjectDataForm } from "./Form";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
-import SearchIcon from "icons/SearchIcon";
-import Dropdown from "./components/Dropdown";
-import ButtonWithDropdown from "./components/ButtonWithDropdown";
+import { Option } from "constant/types";
+import useToggle from "hooks/useToggle";
 import AIGradientIcon from "icons/AIGradientIcon";
 import FolderAddIcon from "icons/FolderAddIcon";
+import SearchIcon from "icons/SearchIcon";
+import _ from "lodash";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next-intl/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { memo, useEffect, useState } from "react";
+import { useEmployeeOptions } from "store/company/selectors";
+import { ProjectStatus } from "store/project/actions";
+import { useProjects } from "store/project/selectors";
+import { getPath } from "utils/index";
 import AiForm from "./AiForm";
+import ButtonWithDropdown from "./components/ButtonWithDropdown";
+import {
+  COLOR_STATUS,
+  INITIAL_VALUES,
+  STATUS_OPTIONS,
+} from "./components/helpers";
+import Form, { ProjectDataForm } from "./Form";
 
 const Actions = () => {
-  const { items, filters, onGetProjects, pageSize, onCreateProject } =
-    useProjects();
+  const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();
+  const { options: assignerOptions } = useEmployeeOptions();
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
 
@@ -41,26 +54,6 @@ const Actions = () => {
   const [isAiPopupVisible, setIsAiPopupVisible] = useState(false);
 
   const [queries, setQueries] = useState<Params>({});
-
-  const statusOptions = useMemo(
-    () =>
-      STATUS_OPTIONS.map((item) => ({ ...item, label: commonT(item.label) })),
-    [commonT],
-  );
-
-  const assignerOptions = useMemo(
-    () =>
-      Array.from(
-        items.reduce((map, item) => {
-          if (item.owner && !map.has(item.owner.id)) {
-            map.set(item.owner.fullname, item.owner.id);
-          }
-
-          return map;
-        }, new Map<string, string>()),
-      ).map(([label, value]) => ({ label, value })),
-    [items],
-  );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChangeQueries = (name: string, value: any) => {
@@ -147,22 +140,15 @@ const Actions = () => {
               value={queries?.saved}
             />
 
-            <Dropdown
-              prefixLabel={commonT("status")}
-              placeholder={commonT("all")}
-              options={statusOptions}
-              name="status"
-              onChange={onChangeQueries}
-              value={queries?.status}
+            <StatusDropdown
+              value={queries?.status ?? ""}
+              onChange={(value) => onChangeQueries("status", value)}
             />
 
-            <Dropdown
-              prefixLabel={commonT("assigner")}
-              placeholder={commonT("all")}
+            <AssignerDropdown
+              value={queries?.owner ?? ""}
               options={assignerOptions}
-              name="owner"
-              onChange={onChangeQueries}
-              value={queries?.status}
+              onChange={(value) => onChangeQueries("owner", value)}
             />
           </Stack>
 
@@ -221,7 +207,8 @@ const Actions = () => {
           <Search
             placeholder={commonT("searchBy", { name: projectT("list.key") })}
             name="name"
-            onChange={onChangeQueries}
+            onChange={_.debounce(onChangeQueries, 1000)}
+            autoFocus
             value={queries?.["name"]}
             startNode={null}
             endNode={
@@ -235,7 +222,7 @@ const Actions = () => {
 
       {isShow && (
         <Form
-          open={isShow}
+          open
           onClose={onHide}
           type={DataAction.CREATE}
           initialValues={INITIAL_VALUES as unknown as ProjectDataForm}
@@ -243,10 +230,7 @@ const Actions = () => {
         />
       )}
       {isAiPopupVisible && (
-        <AiForm
-          isOpen={isAiPopupVisible}
-          onClose={() => setIsAiPopupVisible(false)}
-        />
+        <AiForm isOpen onClose={() => setIsAiPopupVisible(false)} />
       )}
     </>
   );
@@ -255,3 +239,94 @@ const Actions = () => {
 export default memo(Actions);
 
 const LATEST_VALUE = "updated_time=-1";
+
+const StatusDropdown = (props: {
+  value: ProjectStatus | "";
+  onChange: (value: ProjectStatus | "") => void;
+}) => {
+  const commonT = useTranslations(NS_COMMON);
+
+  return (
+    <TextField
+      select
+      SelectProps={{
+        displayEmpty: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <Typography sx={{ color: "grey.600" }}>
+              {commonT("status")}:
+            </Typography>
+          </InputAdornment>
+        ),
+      }}
+      value={props.value}
+      onChange={(e) => props.onChange(e.target.value as ProjectStatus | "")}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderRadius: "2rem",
+          },
+        },
+      }}
+    >
+      <MenuItem value="">{commonT("all")}</MenuItem>
+      {STATUS_OPTIONS.map((option) => (
+        <MenuItem key={option.value} value={option.value}>
+          <TextStatus
+            text={commonT(option.label)}
+            color={COLOR_STATUS[option.value]}
+          >
+            {commonT(option.label)}
+          </TextStatus>
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+};
+
+const AssignerDropdown = (props: {
+  value: Option | "";
+  options: Option[];
+  onChange: (value: string | "") => void;
+}) => {
+  const commonT = useTranslations(NS_COMMON);
+
+  return (
+    <TextField
+      select
+      SelectProps={{
+        displayEmpty: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <Typography sx={{ color: "grey.600" }}>
+              {commonT("assigner")}:
+            </Typography>
+          </InputAdornment>
+        ),
+      }}
+      value={props.value}
+      onChange={(e) => props.onChange(e.target.value)}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderRadius: "2rem",
+          },
+        },
+      }}
+    >
+      <MenuItem value="">{commonT("all")}</MenuItem>
+      {props.options.map((option) => (
+        <MenuItem key={option.value} value={option.value}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Avatar
+              alt={option.label}
+              src={option.avatar}
+              sx={{ width: 24, height: 24 }}
+            />
+            <Typography>{option.label}</Typography>
+          </Box>
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+};

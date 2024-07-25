@@ -350,7 +350,8 @@ const Form = (props: FormProps) => {
                 color: "text.primary",
               }}
               rootSx={{
-                p: 0.5,
+                py: 0.5,
+                px: 1,
                 mt: 3,
                 borderRadius: "2rem",
               }}
@@ -421,7 +422,8 @@ const Form = (props: FormProps) => {
               color: "text.primary",
             }}
             rootSx={{
-              p: 0.5,
+              py: 0.5,
+              px: 1,
               mt: 3,
               borderRadius: "2rem",
             }}
@@ -443,7 +445,8 @@ const Form = (props: FormProps) => {
               color: "text.primary",
             }}
             rootSx={{
-              p: 0.5,
+              py: 0.5,
+              px: 1,
               mt: 3,
               borderRadius: "2rem",
             }}
@@ -471,7 +474,8 @@ const Form = (props: FormProps) => {
                 color: "text.primary",
               }}
               rootSx={{
-                p: 0.5,
+                py: 0.5,
+                px: 1,
                 mt: 3,
                 borderRadius: "2rem 0 0 2rem",
               }}
@@ -530,7 +534,8 @@ const Form = (props: FormProps) => {
               color: "text.primary",
             }}
             rootSx={{
-              p: 0.5,
+              py: 0.5,
+              px: 1,
               mt: 3,
               borderRadius: "2rem",
             }}
