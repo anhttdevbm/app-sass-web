@@ -5,32 +5,27 @@ import { useState } from "react";
 import { IMindmapItem } from "../../..";
 import HoverIconAdd from "../../HoverIconAdd";
 import HoverIconDelete from "../../HoverIconDelete";
-import MindMapChildOfChild from "../../MindmapChildOfChild";
 import { uuid } from "utils/index";
+import MindmapChildOfChild from "./MindmapChildOfChild";
 
-export default function MindmapChildrenOne() {
+export default function MindmapChildrenOne({
+  mindMapOne,
+  handleAddSesion,
+  handleAddChildOfChild,
+}: {
+  mindMapOne: IMindmapItem;
+  handleAddSesion?: (newChild: IMindmapItem) => void;
+  handleAddChildOfChild: (newChild: IMindmapItem, id: string) => void;
+}) {
   const [isShowAdd, setIsShowAdd] = useState<boolean>(false);
-  const { handleAddChildren, deleteChildToChild, setMindmapItem, mindMapItem } =
-    useMindmap();
-
-  const handleAddChildToChild = () => {
-    if (mindMapItem && mindMapItem.children) {
-      const childFirst = mindMapItem?.children[0];
-      console.log("childFirst");
-      for (let i = 0; i < 3; i++) {
-        const newChildren = { id: uuid(), title: "", children: [] };
-        childFirst.children?.push(newChildren);
-      }
-      setMindmapItem({
-        ...mindMapItem,
-        children: childFirst.children,
-      });
-    }
+  const { getNewChild } = useMindmap();
+  const handleAddSesionChildOne = () => {
+    const newChild = getNewChild();
+    if (handleAddSesion) handleAddSesion(newChild);
   };
-  
 
-  const handleDeleteChildOfChildren = (idChildren: string) => {
-    deleteChildToChild(idChildren);
+  const handleDeleteChild = () => {
+    console.log("abc");
   };
 
   return (
@@ -61,6 +56,7 @@ export default function MindmapChildrenOne() {
             }}
           >
             <Input
+              value={mindMapOne.title}
               disableUnderline
               onChange={() => {
                 console.log("onchange");
@@ -88,25 +84,35 @@ export default function MindmapChildrenOne() {
               }}
             />
           </Box>
+          {isShowAdd && mindMapOne.children?.length === 0 ? (
+            <HoverIconAdd
+              onClickIcon={() => {
+                handleAddChildOfChild(getNewChild(), mindMapOne.id);
+              }}
+            />
+          ) : null}
           {isShowAdd &&
-            mindMapItem.children &&
-            mindMapItem.children[0]?.children &&
-            mindMapItem.children[0]?.children.length === 0 && (
-              <HoverIconAdd onClickIcon={() => handleAddChildToChild()} />
-            )}
-          {isShowAdd &&
-            mindMapItem.children &&
-            mindMapItem.children[0]?.children &&
-            mindMapItem.children[0]?.children.length > 0 && (
-              <HoverIconDelete
-                onClickIcon={() => deleteChildToChild(mindMapItem.id)}
-              />
-            )}
-          {mindMapItem.children &&
-            mindMapItem.children[0]?.children &&
-            mindMapItem.children[0]?.children.length > 0 && (
-              <MindMapChildOfChild childrenMindMap={mindMapItem.children} />
-            )}
+          mindMapOne?.children &&
+          mindMapOne?.children.length > 0 ? (
+            <HoverIconDelete
+              onClickIcon={() => {
+                console.log("delete");
+              }}
+            />
+          ) : null}
+
+          {mindMapOne?.children && mindMapOne?.children.length > 0 && (
+            <Box paddingLeft="20px">
+              {mindMapOne.children.map((child) => (
+                <MindmapChildOfChild
+                  key={child.id}
+                  item={child}
+                  handleAddChildOfChild={handleAddChildOfChild}
+                  handleDeleteChild={handleDeleteChild}
+                />
+              ))}
+            </Box>
+          )}
         </Box>
 
         <Box
@@ -130,7 +136,9 @@ export default function MindmapChildrenOne() {
               },
               gap: 0.5,
             }}
-            onClick={() => handleAddChildren()}
+            onClick={() => {
+              handleAddSesionChildOne();
+            }}
           >
             <AddIcon width="10px" height="10px" />
             <Typography fontSize="13px">Add version</Typography>

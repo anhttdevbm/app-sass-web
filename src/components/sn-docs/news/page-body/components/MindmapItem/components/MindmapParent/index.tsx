@@ -1,8 +1,7 @@
 import { Box, Input, Stack } from "@mui/material";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { IMindmapItem } from "../..";
 import MindmapChildren from "../MinmapChildren";
-import { uuid } from "utils/index";
 
 import HoverIconAdd from "../HoverIconAdd";
 import HoverIconDelete from "../HoverIconDelete";
@@ -11,19 +10,30 @@ import useMindmap from "../../hooks/useMindmap";
 export default function MindmapParent({
   mindmapParent,
   onChangeTitleParent,
+  addChildNodeOne,
+  deleteRootChildren,
+  handleAddChildOfChild
 }: {
   mindmapParent: IMindmapItem;
   onChangeTitleParent: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  addChildNodeOne: (newChild: IMindmapItem) => void;
+  deleteRootChildren: () => void;
+  handleAddChildOfChild: (newChild: IMindmapItem, id: string) => void;
 }) {
   const [isShowAdd, setIsShowAdd] = useState<boolean>(false);
-  const { handleAddChildren, handleDeleteChildren } = useMindmap();
+  const { getNewChild } = useMindmap();
   const handleAddChild = () => {
+    const newChildren = getNewChild();
+    addChildNodeOne(newChildren);
     setIsShowAdd(false);
-    handleAddChildren();
   };
   const handleDeleteChild = () => {
+    deleteRootChildren();
     setIsShowAdd(false);
-    handleDeleteChildren();
+  };
+
+  const handleAddSession = (newChild: IMindmapItem) => {
+    addChildNodeOne(newChild);
   };
 
   return (
@@ -49,13 +59,19 @@ export default function MindmapParent({
           onChange={onChangeTitleParent}
         />
       </Box>
-      {isShowAdd && !mindmapParent?.children?.length && (
+      {isShowAdd && !mindmapParent.children?.length ? (
         <HoverIconAdd onClickIcon={handleAddChild} />
-      )}
-      {isShowAdd && mindmapParent?.children?.length && (
+      ) : null}
+      {isShowAdd && mindmapParent.children && mindmapParent.children?.length ? (
         <HoverIconDelete onClickIcon={handleDeleteChild} />
-      )}
-      <MindmapChildren />
+      ) : null}
+      {mindmapParent.children?.length ? (
+        <MindmapChildren
+          handleAddChildOfChild={handleAddChildOfChild}
+          handleAddSession={handleAddSession}
+          mindMapParent={mindmapParent}
+        />
+      ) : null}
     </Stack>
   );
 }
