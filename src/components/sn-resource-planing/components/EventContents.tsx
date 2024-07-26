@@ -20,17 +20,23 @@ import useTheme from "hooks/useTheme";
 interface IEventContentsProps {
   event: EventApi;
   setIsOpenEdit: (editState: IEditState) => void;
+  isWorkload: Boolean;
 }
-const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
+const EventContents = ({
+  event,
+  setIsOpenEdit,
+  isWorkload,
+}: IEventContentsProps) => {
   const {
-    eventType,
+    booking_type,
     allocation_type,
     allocation,
-    eventId,
+    bookingID,
     time_off_type,
     project,
+    total_hour,
   } = event.extendedProps;
-  console.log(event.extendedProps);
+
   const { mappedTimeSymbol } = useGetMappingTime();
   const { palette, isDarkMode } = useTheme();
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
@@ -57,7 +63,7 @@ const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
     }
   };
 
-  const checkedEventType = checkEventType(eventType);
+  const checkedEventType = checkEventType(booking_type);
   const day = dayjs(event.end).diff(dayjs(event.start), "days");
 
   let unit;
@@ -74,72 +80,97 @@ const EventContents = ({ event, setIsOpenEdit }: IEventContentsProps) => {
   }
 
   return (
-    <Stack
-      className="fc-event-title fc-sticky"
-      direction="row"
-      sx={{
-        border: `1px solid ${checkedEventType.color}`,
-        display: "flex!important",
-        width: 1,
-        borderRadius: 1,
-        alignItems: "start",
-        justifyContent: "start",
-        background: checkedEventType.background,
-        // height: "80px",
-        flexDirection: "column",
-      }}
-      onClick={() =>
-        setIsOpenEdit({
-          isOpen: true,
-          isProject: eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING,
-          bookingId: eventId,
-        })
-      }
-    >
-      {/* {checkedEventType.icon} */}
-      <Typography sx={{ color: "black", fontSize: "10px" }}>
-        {time_off_type ? resourceT("form.timeOffType.sick") : ""}
-      </Typography>
-      <Typography sx={{ color: "black", fontSize: "10px" }}>
-        {project?.name}
-      </Typography>
-      <Tooltip
-        title={resourceT("schedule.time.eventTime", {
-          day: isNaN(day) ? 1 : day,
-          allocation,
-          unit,
-        })}
-      >
-        <Typography
+    <>
+      {!isWorkload && (
+        <Stack
+          className="fc-event-title fc-sticky"
+          direction="row"
           sx={{
-            fontWeight: 400,
-            color: isDarkMode ? palette.grey[600] : palette.grey[300],
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            px: 1,
-            mr: 0,
-            width: "100%",
-            textAlign: "end",
-            fontSize: "13px",
+            border: `1px solid ${checkedEventType.color}`,
+            display: "flex!important",
+            width: 1,
+            borderRadius: 1,
+            alignItems: "start",
+            justifyContent: "start",
+            background: checkedEventType.background,
+            // height: "80px",
+            flexDirection: "column",
+          }}
+          onClick={() => {
+            setIsOpenEdit({
+              isOpen: true,
+              isProject: booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING,
+              bookingId: bookingID,
+            });
           }}
         >
-          {resourceT("schedule.time.eventTime", {
-            day: isNaN(day) ? 1 : day,
-            allocation,
-            unit,
-          })}
-        </Typography>
-      </Tooltip>
+          {/* {checkedEventType.icon} */}
+          <Typography sx={{ color: "black", fontSize: "10px" }}>
+            {time_off_type ? resourceT("form.timeOffType.sick") : ""}
+          </Typography>
+          <Typography sx={{ color: "black", fontSize: "10px" }}>
+            {project?.name}
+          </Typography>
+          <Tooltip
+            title={resourceT("schedule.time.eventTime", {
+              day: isNaN(day) ? 1 : day,
+              allocation,
+              unit,
+            })}
+          >
+            <Typography
+              sx={{
+                fontWeight: 400,
+                color: isDarkMode ? palette.grey[600] : palette.grey[300],
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                px: 1,
+                mr: 0,
+                width: "100%",
+                textAlign: "end",
+                fontSize: "13px",
+              }}
+            >
+              {resourceT("schedule.time.eventTime", {
+                day: isNaN(day) ? 8 : day,
+                allocation,
+                unit,
+              })}
+            </Typography>
+          </Tooltip>
 
-      {/* <Stack
+          {/* <Stack
         sx={{
           transform: "rotate(180deg)",
         }}
       >
         {checkedEventType.icon}
       </Stack> */}
-    </Stack>
+        </Stack>
+      )}
+      {isWorkload &&
+        (booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING &&
+        total_hour >= 8 ? (
+          <h2
+            style={{
+              color: "black",
+              background: "red",
+              textAlign: "center",
+              margin: 0,
+              height: "100px",
+              display: "flex",
+              alignItems: "center ",
+              justifyContent: "center",
+              backgroundColor: "#33FFFF",
+            }}
+          >
+            8
+          </h2>
+        ) : (
+          ""
+        ))}
+    </>
   );
 };
 

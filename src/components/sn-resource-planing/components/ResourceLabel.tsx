@@ -46,7 +46,7 @@ const ResourceLabel = ({
     name,
     company,
     type,
-    fullname,
+    fullName,
     position,
     eventType,
     note,
@@ -54,7 +54,7 @@ const ResourceLabel = ({
     user_id,
     bookings: parentBookings,
   } = resource._resource.extendedProps;
-  console.log(position);
+  console.log(resource);
 
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
@@ -102,60 +102,60 @@ const ResourceLabel = ({
     return (isActive && parentBookings?.length === 0) || !isActive;
   }, [isActive, parentBookings, isMybooking]);
 
-  if (type === "step") {
-    return (
-      <Grid
-        container
-        direction="column"
-        gap={1}
-        alignItems="flex-start"
-        sx={{
-          width: 1,
-          py: 2,
-          "&:hover": {
-            background: "#E1F0FFB2",
-          },
-        }}
-      >
-        <Grid
-          item
-          xs={2}
-          sx={{
-            px: 1,
-            display: "flex",
-            alignItems: "center",
-            columnGap: 1,
-          }}
-        >
-          <Avatar src={avatarUrl} size={36} />
-          <Stack direction={"column"}>
-            <Typography sx={{ fontSize: 14, lineBreak: "auto", width: 1 }}>
-              {eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING
-                ? name
-                : timeOffType}
-            </Typography>
-            <Typography sx={{ fontSize: 12, lineBreak: "auto", width: 1 }}>
-              {position?.name}
-            </Typography>
-          </Stack>
-        </Grid>
-        {/* {isLastItem && (
-          <Button
-            variant="text"
-            startIcon={<PlusIcon />}
-            sx={{
-              color: "success.main",
-            }}
-            // startIcon={<AddIcon />}
-            onClick={() => handleOpenCreate()}
-          >
-            {resourceT("schedule.action.addBooking")}
-          </Button>
-        )} */}
-        <Grid item xs={5} />
-      </Grid>
-    );
-  }
+  // if (type === "step") {
+  //   return (
+  //     <Grid
+  //       container
+  //       direction="column"
+  //       gap={1}
+  //       alignItems="flex-start"
+  //       sx={{
+  //         width: 1,
+  //         py: 2,
+  //         "&:hover": {
+  //           background: "#E1F0FFB2",
+  //         },
+  //       }}
+  //     >
+  //       <Grid
+  //         item
+  //         xs={2}
+  //         sx={{
+  //           px: 1,
+  //           display: "flex",
+  //           alignItems: "center",
+  //           columnGap: 1,
+  //         }}
+  //       >
+  //         <Avatar src={avatarUrl} size={36} />
+  //         <Stack direction={"column"}>
+  //           <Typography sx={{ fontSize: 14, lineBreak: "auto", width: 1 }}>
+  //             {eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING
+  //               ? name
+  //               : timeOffType}
+  //           </Typography>
+  //           <Typography sx={{ fontSize: 12, lineBreak: "auto", width: 1 }}>
+  //             {position?.name}
+  //           </Typography>
+  //         </Stack>
+  //       </Grid>
+  //       {/* {isLastItem && (
+  //         <Button
+  //           variant="text"
+  //           startIcon={<PlusIcon />}
+  //           sx={{
+  //             color: "success.main",
+  //           }}
+  //           // startIcon={<AddIcon />}
+  //           onClick={() => handleOpenCreate()}
+  //         >
+  //           {resourceT("schedule.action.addBooking")}
+  //         </Button>
+  //       )} */}
+  //       <Grid item xs={5} />
+  //     </Grid>
+  //   );
+  // }
   return (
     <Grid
       container
@@ -210,7 +210,7 @@ const ResourceLabel = ({
               <Avatar size={32} src={avatarUrl} />
               <Box>
                 <Typography sx={{ fontSize: 14 }} fontWeight={600}>
-                  {fullname}
+                  {fullName}
                 </Typography>
                 <Typography sx={{ color: "#666666", fontSize: 14 }}>
                   {company}
