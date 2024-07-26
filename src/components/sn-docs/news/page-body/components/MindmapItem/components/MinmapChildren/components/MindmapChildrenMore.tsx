@@ -5,15 +5,27 @@ import useMindmap from "../../../hooks/useMindmap";
 import HoverIconAdd from "../../HoverIconAdd";
 import HoverIconDelete from "../../HoverIconDelete";
 import { useState } from "react";
+import MindmapChildOfChild from "./MindmapChildOfChild";
 
-export default function MindmapChildrenMore() {
-  const { handleAddChildren, mindMapItem } = useMindmap();
+export default function MindmapChildrenMore({
+  mindMapParent,
+  handleAddSession,
+}: {
+  mindMapParent: IMindmapItem;
+  handleAddSession?: (newChild: IMindmapItem) => void;
+}) {
+  const { getNewChild } = useMindmap();
   const handleAddChildOfChildren = () => {
     console.log("add");
   };
 
   const handleDeleteChildOfChildren = () => {
     console.log("delete");
+  };
+
+  const handleAddSessionChild = () => {
+    const newChild = getNewChild();
+    if (handleAddSession) handleAddSession(newChild);
   };
 
   const [hoveredItems, setHoveredItems] = useState<{ [key: string]: boolean }>(
@@ -30,7 +42,7 @@ export default function MindmapChildrenMore() {
       }}
       gap="10px"
     >
-      {mindMapItem.children?.map((item, index) => (
+      {mindMapParent.children?.map((item, index) => (
         <Box
           key={item.id}
           display="flex"
@@ -89,7 +101,7 @@ export default function MindmapChildrenMore() {
                     position: "absolute",
                     left: "-10px",
                     top: "0",
-                    height: "120%",
+                    height: "125%",
                     width: "2px",
                     backgroundColor: "#14B9E5",
                   }}
@@ -120,11 +132,6 @@ export default function MindmapChildrenMore() {
           {hoveredItems[item.id] && !item.children?.length && (
             <HoverIconAdd onClickIcon={() => handleAddChildOfChildren()} />
           )}
-          {/* {hoveredItems[item.id] && item.children?.length && (
-            <HoverIconDelete
-              onClickIcon={() => handleDeleteChildOfChildren()}
-            />
-          )} */}
         </Box>
       ))}
 
@@ -149,7 +156,7 @@ export default function MindmapChildrenMore() {
             },
             gap: 0.5,
           }}
-          onClick={handleAddChildren}
+          onClick={handleAddSessionChild}
         >
           <AddIcon width="10px" height="10px" />
           <Typography fontSize="13px">Add version</Typography>

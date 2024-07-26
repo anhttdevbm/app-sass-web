@@ -68,7 +68,7 @@ interface Paging {
   totalDocs?: number;
 }
 
-export type TypeViewListDoc = 'kanbanViewListDoc' | 'basicViewListDoc'
+export type TypeViewListDoc = "kanbanViewListDoc" | "basicViewListDoc";
 
 export interface IDocs {
   docs: any[];
@@ -98,9 +98,10 @@ export interface IDocs {
   typeViewDoc: TypeViewListDoc;
   getDocCustomStatus: DataStatus;
   docCustom: {
-    id: string,
-    content: string
-  }
+    id: string;
+    content: string;
+  };
+  mindMapOpen: boolean;
 }
 
 const initialState: IDocs = {
@@ -168,8 +169,9 @@ const initialState: IDocs = {
   getDocCustomStatus: DataStatus.IDLE,
   docCustom: {
     id: "",
-    content: ""
-  }
+    content: "",
+  },
+  mindMapOpen: false,
 };
 
 const docSlice = createSlice({
@@ -246,7 +248,10 @@ const docSlice = createSlice({
     },
     changeTypeViewDoc: (state, action) => {
       state.typeViewDoc = action.payload;
-    }
+    },
+    updateMindMapOpen: (state, action) => {
+      state.mindMapOpen = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getDocs.pending, (state, action) => {
@@ -304,9 +309,12 @@ const docSlice = createSlice({
     });
 
     // Update doc
-    builder.addCase(updateDocCustom.fulfilled, (state, action: PayloadAction<IDocs>) => {
-      state.content = action.payload.content;
-    });
+    builder.addCase(
+      updateDocCustom.fulfilled,
+      (state, action: PayloadAction<IDocs>) => {
+        state.content = action.payload.content;
+      },
+    );
   },
 });
 
@@ -326,7 +334,8 @@ export const {
   changeDescription,
   changePermDoc,
   setContentRow,
-  changeTypeViewDoc
+  changeTypeViewDoc,
+  updateMindMapOpen,
 } = docSlice.actions;
 
 export default docSlice.reducer;
