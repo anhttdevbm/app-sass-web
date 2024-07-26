@@ -169,12 +169,12 @@ const FilterHeader = ({
         display: "flex",
         alignItems: "center",
         backgroundColor: "#f7f7f9", // Màu nền của container
-        padding: "10px 20px",
+        padding: "5px 20px",
         borderRadius: "100px",
         boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.1)", // Đổ bóng nhẹ
       }}
     >
-      <Typography sx={{ mr: 2, fontSize: "16px" }}>
+      <Typography sx={{ mr: 2, fontSize: "16px", color: "black" }}>
         {resourceT("schedule.filter.viewBy")}:
       </Typography>
       <Stack
@@ -193,7 +193,7 @@ const FilterHeader = ({
           justifyContent: "center",
         }}
       >
-        <Typography sx={{ mr: 1 }}>
+        <Typography sx={{ mr: 1, color: "black" }}>
           {resourceT("schedule.filter.position")}:
         </Typography>
         <Filter.Select
@@ -222,7 +222,7 @@ const FilterHeader = ({
           },
         }}
       >
-        <Typography sx={{ mr: 1 }}>
+        <Typography sx={{ mr: 1, color: "black" }}>
           {resourceT("schedule.filter.workingHours")}:
         </Typography>
         <Filter.Select
@@ -231,7 +231,7 @@ const FilterHeader = ({
             onChangeQueries("working_sort", event.target.value)
           }
           label={resourceT("schedule.filter.workingHours")}
-          sx={{ maxWidth: "260px" }}
+          sx={{ maxWidth: "260px", color: "black" }}
           options={[
             {
               label: resourceT("schedule.filter.asceding"),

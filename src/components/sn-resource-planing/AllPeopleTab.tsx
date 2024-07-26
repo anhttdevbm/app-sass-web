@@ -46,9 +46,15 @@ export interface IEditState {
 
 interface IAllPeopleTabProp {
   setisServicePopup: any;
+  setIsWorkload: any;
+  isWorkload: Boolean;
 }
 
-const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
+const AllPeopleTab = ({
+  setisServicePopup,
+  setIsWorkload,
+  isWorkload,
+}: IAllPeopleTabProp) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
@@ -75,7 +81,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
     bookingId: "",
     isProject: true,
   });
-  const [isWorkload, setIsWorkload] = useState<Boolean>(false);
+
   const generateDateRange = () => {
     const start_date = dayjs(filters?.start_date);
     const result: Array<Date> = [];
@@ -404,6 +410,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
             center: "title",
             end: "",
           }}
+          nowIndicator={true}
           selectMirror={true}
           selectable={true}
           eventDragStart={(arg) => {
