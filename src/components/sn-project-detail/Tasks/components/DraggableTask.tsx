@@ -151,7 +151,11 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 sx={{ zIndex: 10 }}
                 onClick={() => setIsHidden((_isHidden) => !_isHidden)}
               >
-                {isHidden ? <ExpandLess /> : <ExpandMore />}
+                {isHidden ? (
+                  <ExpandLess sx={{ color: "text.primary" }} />
+                ) : (
+                  <ExpandMore sx={{ color: "text.primary" }} />
+                )}
               </IconButton>
               <IconButton
                 noPadding

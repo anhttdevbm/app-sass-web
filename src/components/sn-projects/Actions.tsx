@@ -248,6 +248,7 @@ const StatusDropdown = (props: {
   return (
     <TextField
       select
+      size="small"
       SelectProps={{
         displayEmpty: true,
         startAdornment: (
@@ -293,6 +294,7 @@ const AssignerDropdown = (props: {
   return (
     <TextField
       select
+      size="small"
       SelectProps={{
         displayEmpty: true,
         startAdornment: (
