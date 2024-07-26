@@ -2,9 +2,13 @@ import { IToolBarDraftActionItem } from "../..";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import PhotoIcon from "@mui/icons-material/Photo";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
-import GridOnIcon from '@mui/icons-material/GridOn';
-import TagIcon from '@mui/icons-material/Tag';
+import GridOnIcon from "@mui/icons-material/GridOn";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import TagIcon from "@mui/icons-material/Tag";
 import { Box } from "@mui/material";
+import { useAppSelector } from "store/hooks";
+import { useDispatch } from "react-redux";
+import { updateStatusOpenMindMap } from "store/docs/reducer";
 
 const TagNameIcon = () => {
   return <Box>@</Box>;
@@ -42,7 +46,26 @@ export default function OtherToolBar() {
       style: "insert-grid",
       icon: <GridOnIcon />,
     },
+    {
+      label: "insert-mindmap",
+      method: "block",
+      style: "insert-mindmap",
+      icon: <TableChartIcon />,
+    },
   ];
+
+  const isOpenMindMap = useAppSelector((state) => state.doc.isOpenMindMap);
+  const dispatch = useDispatch();
+
+  const handleClickOtherTool = (type: string) => {
+    switch (type) {
+      case "insert-mindmap":
+        dispatch(updateStatusOpenMindMap(!isOpenMindMap));
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <Box display="flex" gap={0.5}>
@@ -54,7 +77,7 @@ export default function OtherToolBar() {
           key={`${item.label}-${idx}`}
           title={item.label}
           onClick={() => console.log("click")}
-          onMouseDown={(e) => e.preventDefault()}
+          onMouseDown={(e) => handleClickOtherTool(item.label)}
         >
           {item.icon ?? item.label}
         </button>

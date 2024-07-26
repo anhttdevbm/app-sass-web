@@ -29,19 +29,17 @@ import { useUpdateDocMutation } from "store/docs/api";
 import useDebounce from "hooks/useDebounce";
 import { useDocs } from "store/docs/selectors";
 import AddSessionTool from "../AddSessionTool/components";
-import {
-  CHECKABLE_LIST_ITEM,
-} from "../../constants/draft.constants";
-import {
-  toggleChecked,
-} from "./CheckableListItemUltils";
+import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
+import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
-import TableChartIcon from '@mui/icons-material/TableChart';
+import TableChartIcon from "@mui/icons-material/TableChart";
 import MindmapItem from "../MindmapItem";
+import ReactFlowMindMap from "../ReactFlowMindMap";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
+  const isOpenMindMap = useAppSelector((state) => state.doc.isOpenMindMap);
 
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);
@@ -170,18 +168,22 @@ export default function DraftEditor() {
     return "";
   };
 
-  const blockRendererFn = useCallback((block: ContentBlock) => {
-    if (block.getType() === CHECKABLE_LIST_ITEM) {
-      return {
-        component: CheckableListItem,
-        props: {
-          onChangeChecked: () => setEditorState(toggleChecked(editorState, block)),
-          checked: !!block.getData().get("checked"),
-        },
-      };
-    }
-    return null;
-  },[editorState]) ;
+  const blockRendererFn = useCallback(
+    (block: ContentBlock) => {
+      if (block.getType() === CHECKABLE_LIST_ITEM) {
+        return {
+          component: CheckableListItem,
+          props: {
+            onChangeChecked: () =>
+              setEditorState(toggleChecked(editorState, block)),
+            checked: !!block.getData().get("checked"),
+          },
+        };
+      }
+      return null;
+    },
+    [editorState],
+  );
 
   useEffect(() => {
     focusEditor();
@@ -259,9 +261,6 @@ export default function DraftEditor() {
         editorState={editorState}
         setEditorState={setEditorState}
       />
-      <Button onMouseDown={()=> console.log('abc')} startIcon={<TableChartIcon />}>
-        Add Mindmap Item
-      </Button>
       <div className="editor-container">
         <Editor
           ref={editor}
@@ -280,7 +279,7 @@ export default function DraftEditor() {
             focusEditor={focusEditor}
           />
         )}
-        <MindmapItem />
+        {isOpenMindMap ? <ReactFlowMindMap /> : null}
       </div>
     </Box>
   );
