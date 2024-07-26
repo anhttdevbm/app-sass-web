@@ -380,7 +380,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 open={isOpen}
                 onOpen={() => setIsOpen(true)}
                 onClose={() => setIsOpen(false)}
-                onChange={(date: Date | null) => {
+                onChange={(date: any) => {
                   if (date) {
                     const { startDate, endDate } =
                       getWeekStartAndEndDates(date);

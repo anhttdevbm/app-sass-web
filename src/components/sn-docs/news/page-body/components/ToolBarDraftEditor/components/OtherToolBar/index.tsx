@@ -2,15 +2,22 @@ import { IToolBarDraftActionItem } from "../..";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import PhotoIcon from "@mui/icons-material/Photo";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
-import GridOnIcon from '@mui/icons-material/GridOn';
-import TagIcon from '@mui/icons-material/Tag';
+import GridOnIcon from "@mui/icons-material/GridOn";
+import TagIcon from "@mui/icons-material/Tag";
 import { Box } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { updateMindMapOpen } from "store/docs/reducer";
+import { useAppSelector } from "store/hooks";
+import TableChartIcon from '@mui/icons-material/TableChart';
 
 const TagNameIcon = () => {
   return <Box>@</Box>;
 };
 
 export default function OtherToolBar() {
+  const dispatch = useDispatch();
+  const mindMapOpen = useAppSelector((state) => state.doc.mindMapOpen);
+
   const formatListText: IToolBarDraftActionItem[] = [
     {
       label: "insert-link",
@@ -42,7 +49,23 @@ export default function OtherToolBar() {
       style: "insert-grid",
       icon: <GridOnIcon />,
     },
+    {
+      label: "mindmap",
+      method: "block",
+      style: "insert-grid",
+      icon: <TableChartIcon />,
+    },
   ];
+
+  const handleClickIcon = (typeIcon: string) => {
+    switch (typeIcon) {
+      case "mindmap":
+        dispatch(updateMindMapOpen(!mindMapOpen));
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <Box display="flex" gap={0.5}>
@@ -53,7 +76,7 @@ export default function OtherToolBar() {
           }}
           key={`${item.label}-${idx}`}
           title={item.label}
-          onClick={() => console.log("click")}
+          onClick={() => handleClickIcon(item.label)}
           onMouseDown={(e) => e.preventDefault()}
         >
           {item.icon ?? item.label}

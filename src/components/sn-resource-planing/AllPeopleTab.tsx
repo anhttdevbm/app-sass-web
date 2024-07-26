@@ -35,6 +35,8 @@ import EditBooking from "./modals/EditBooking";
 import PlusIcon from "icons/PlusIcon";
 import { Button } from "components/shared";
 import { Search } from "components/Filters";
+import { Input } from "components/shared";
+import SearchIcon from "icons/SearchIcon";
 
 export interface IEditState {
   isOpen: boolean;
@@ -411,7 +413,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
               //   resource={resrouce}
               //   totalhour={totalhour}
               // />
-              <Search />
+              <Input endNode={<SearchIcon />} placeholder="USER" />
             );
           }}
           resourceLabelContent={({ resource, view }) => {
