@@ -43,8 +43,8 @@ const TaskAiPrompt = (props: {
       content: Yup.string().required(),
     }),
     initialValues: {
-      tone: "",
-      persona: "",
+      tone: props.tones[0].id,
+      persona: props.personas[0].id,
       content: props.content,
       method: "",
     },
