@@ -36,9 +36,14 @@ import {
 interface FilterHeaderProps {
   type: TAB_TYPE;
   setisServicePopup: any;
+  setIsWorkload: any;
 }
 
-const FilterHeader = ({ type, setisServicePopup }: FilterHeaderProps) => {
+const FilterHeader = ({
+  type,
+  setisServicePopup,
+  setIsWorkload,
+}: FilterHeaderProps) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const commonT = useTranslations<string>(NS_COMMON);
   const [queries, setQueries] = useState<IBookingAllFitler>(
@@ -240,7 +245,16 @@ const FilterHeader = ({ type, setisServicePopup }: FilterHeaderProps) => {
         />
       </Stack>
 
-      <Typography sx={{ display: "flex", alignItems: "center", mr: 2 }}>
+      <Button
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          mr: 2,
+          color: "black",
+          borderRadius: "50px",
+        }}
+        onClick={() => setIsWorkload((prev: Boolean) => !prev)}
+      >
         <span
           style={{
             display: "inline-block",
@@ -251,7 +265,7 @@ const FilterHeader = ({ type, setisServicePopup }: FilterHeaderProps) => {
           ⓘ
         </span>
         Workload
-      </Typography>
+      </Button>
 
       <Button
         sx={{
