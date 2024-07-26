@@ -97,7 +97,6 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
 
   const [isShow, , , onToggle] = useToggle(true);
   const [isShowCreate, onShowCreate, onHideCreate] = useToggle();
-  const [isShowAiCreate, onShowAiCreate, onHideAiCreate] = useToggle();
   const [isPreviewName, onShowPreviewName, onHidePreviewName] = useToggle();
   const [dropdownEl, setDropdownEl] = useState<HTMLButtonElement | null>(null);
 
@@ -228,9 +227,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   sx={{ ml: { xs: 2, md: 3.5 } }}
                 >
                   <Button
-                    onClick={(e) => {
-                      setDropdownEl(e.currentTarget);
-                    }}
+                    onClick={onShowCreate}
                     startIcon={<PlusIcon />}
                     variant="text"
                     size="medium"
@@ -261,18 +258,6 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                       <MenuItem
                         onClick={() => {
                           setDropdownEl(null);
-                          onShowAiCreate();
-                        }}
-                      >
-                        <ListItemIcon>
-                          <AIGradientIcon />
-                        </ListItemIcon>
-                        <ListItemText>AI Assistant</ListItemText>
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          setDropdownEl(null);
-                          onShowCreate();
                         }}
                       >
                         <ListItemIcon>
@@ -297,14 +282,6 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
           onSubmit={onCreateTask}
         />
       )}
-      {isShowAiCreate && (
-        <TaskAiForm
-          open={isShowAiCreate}
-          onClose={onHideAiCreate}
-          taskListId={id}
-          taskListName={name}
-        />
-      )}
       <DialogLayout open={isPreviewName} onClose={onHidePreviewName}>
         <Text variant="body2" fontWeight={600} px={3}>
           {name}
@@ -322,6 +299,7 @@ enum Action {
   MOVE,
   DELETE,
   ADD_NEW_TASK,
+  AI_ADD_NEW_TASK,
 }
 
 export const MoreList = (props: MoreListProps) => {
@@ -356,6 +334,8 @@ export const MoreList = (props: MoreListProps) => {
 
   const [type, setType] = useState<Action | undefined>();
   const [msg, setMsg] = useState<string | undefined>();
+
+  const [isShowAiCreate, onShowAiCreate, onHideAiCreate] = useToggle();
 
   const handleClickOutside = () => {
     onClose();
@@ -523,6 +503,16 @@ export const MoreList = (props: MoreListProps) => {
             >
               <MenuList component={Box} sx={{ py: 0 }}>
                 <MenuItem
+                  onClick={onSetTType(Action.AI_ADD_NEW_TASK)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <AIGradientIcon fontSize="medium" />
+                  <Text ml={2} variant="body2" color="grey.400">
+                    AI Assistant
+                  </Text>
+                </MenuItem>
+                <MenuItem
                   onClick={onSetTType(Action.ADD_NEW_TASK)}
                   component={ButtonBase}
                   sx={sxConfig.item}
@@ -591,7 +581,14 @@ export const MoreList = (props: MoreListProps) => {
         type={DataAction.CREATE}
         onSubmit={onCreateTaskHandle}
       />
-
+      {type === Action.AI_ADD_NEW_TASK && (
+        <TaskAiForm
+          open
+          onClose={onSetTType()}
+          taskListId={id}
+          taskListName={name}
+        />
+      )}
       {type === Action.RENAME && (
         <TaskListForm
           open

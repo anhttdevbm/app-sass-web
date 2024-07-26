@@ -63,7 +63,7 @@ const Upload = (props: UploadProps) => {
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (!files) return;
+    if (!files || !files[0]) return;
     if (IMAGES_ACCEPT.includes(files[0].type)) {
       // onChange(name, files[0]);
       setOpenImageEditor(URL.createObjectURL(files[0]));

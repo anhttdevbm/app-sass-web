@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 "use client";
 
-import { Box, CircularProgress, Stack } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Date } from "components/Filters";
 import FixedLayoutTask from "components/FixedLayoutTask";
@@ -1066,7 +1066,7 @@ const ItemList = () => {
           headerList={headerList}
           flex="unset"
           error={error as string}
-          noData={!isIdle && totalItems === 0}
+          // noData={!isIdle && totalItems === 0}
           hasSelectAll
           // maxWidth={1349}
           mx="auto"
@@ -1103,6 +1103,11 @@ const ItemList = () => {
           />
         </TableLayout>
       </Stack>
+      {!isIdle && totalItems === 0 && (
+        <Typography sx={{ textAlign: "center" }}>
+          {commonT("noData")}
+        </Typography>
+      )}
       <FixedLayoutTask
         ref={fixedLayoutRef}
         flex={1}

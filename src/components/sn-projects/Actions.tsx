@@ -4,7 +4,6 @@ import {
   Avatar,
   Box,
   InputAdornment,
-  ListItemAvatar,
   ListItemIcon,
   ListItemText,
   MenuItem,
