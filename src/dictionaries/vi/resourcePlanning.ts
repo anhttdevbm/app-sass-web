@@ -5,8 +5,8 @@ export const ResourcePlanning: ResourceDictionary = {
     title: "Quản lý lịch trình",
 
     tab: {
-      allPeople: "Schedule",
-      mySchedule: "Timeline",
+      allPeople: "Lịch trình",
+      mySchedule: "Tiến trình",
     },
   },
   schedule: {

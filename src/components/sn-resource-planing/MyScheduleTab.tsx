@@ -33,7 +33,11 @@ import useGetOptions from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
 import EditBooking from "./modals/EditBooking";
 
-const MyScheduleTab = ({ setisServicePopup }: any) => {
+const MyScheduleTab = ({
+  setisServicePopup,
+  isWorkload,
+  setIsWorkload,
+}: any) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
@@ -296,7 +300,11 @@ const MyScheduleTab = ({ setisServicePopup }: any) => {
   };
   return (
     <Stack direction="column" rowGap={2}>
-      <FilterHeader type={TAB_TYPE.MY} setisServicePopup={setisServicePopup} />
+      <FilterHeader
+        type={TAB_TYPE.MY}
+        setisServicePopup={setisServicePopup}
+        setIsWorkload={setIsWorkload}
+      />
       <TimeHeader
         filters={filters}
         setFilters={setFilters}
@@ -386,7 +394,11 @@ const MyScheduleTab = ({ setisServicePopup }: any) => {
           }}
           eventContent={({ event }) => {
             return (
-              <EventContents event={event} setIsOpenEdit={setIsOpenEdit} />
+              <EventContents
+                event={event}
+                setIsOpenEdit={setIsOpenEdit}
+                isWorkload={isWorkload}
+              />
             );
           }}
           eventResize={handleEventChange(calendarRef, true)}

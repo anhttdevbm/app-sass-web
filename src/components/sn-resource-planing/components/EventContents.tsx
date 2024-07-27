@@ -46,13 +46,13 @@ const EventContents = ({
         return {
           icon: <BlueArrowIcon width={16} height={16} />,
           color: "#3699FFCC",
-          background: "#EBF5FF",
+          background: "#408DFB",
         };
       case RESOURCE_EVENT_TYPE.TIME_OF_BOOKING:
         return {
           icon: <RedArrowIcon width={16} height={16} />,
           color: "rgba(246, 78, 96, 0.80);",
-          background: "#FEEDED",
+          background: "#CB4251",
         };
       default:
         return {
@@ -105,10 +105,10 @@ const EventContents = ({
           }}
         >
           {/* {checkedEventType.icon} */}
-          <Typography sx={{ color: "black", fontSize: "10px" }}>
+          <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
             {time_off_type ? resourceT("form.timeOffType.sick") : ""}
           </Typography>
-          <Typography sx={{ color: "black", fontSize: "10px" }}>
+          <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
             {project?.name}
           </Typography>
           <Tooltip
@@ -121,7 +121,7 @@ const EventContents = ({
             <Typography
               sx={{
                 fontWeight: 400,
-                color: isDarkMode ? palette.grey[600] : palette.grey[300],
+                color: "black",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -129,7 +129,10 @@ const EventContents = ({
                 mr: 0,
                 width: "100%",
                 textAlign: "end",
-                fontSize: "13px",
+                fontSize: "11px",
+                background: "#FFFFFF",
+                borderRadius: "5px",
+                marginBottom: "5px",
               }}
             >
               {resourceT("schedule.time.eventTime", {
