@@ -12,7 +12,7 @@ type RootLayoutProps = {
 const RootLayout = (props: RootLayoutProps) => {
   return (
     <main className={inter.className}>
-      <MainLayout>{props.children}</MainLayout>;
+      <MainLayout>{props.children}</MainLayout>
     </main>
   );
 };

@@ -26,7 +26,7 @@ const Button = ({
         startIcon={<AddCircle />}
         variant="primary"
         sx={{
-          borderRadius: "2rem 0 0 2rem",
+          borderRadius: "2rem",
           bgcolor: "transparent",
         }}
         {...props}

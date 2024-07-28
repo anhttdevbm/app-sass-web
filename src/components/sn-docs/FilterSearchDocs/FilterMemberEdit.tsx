@@ -37,8 +37,6 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
     setSelectedOption(value);
   };
 
-  const commonT = useTranslations(NS_COMMON);
-
   const {
     options: employeeOptions,
     onGetOptions,
@@ -230,10 +228,10 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
             sx={{ width: "50%", marginRight: "8px" }}
             color="primary"
           >
-            Hủy
+            {docsT("button.cancel")}
           </Button>
           <Button variant="contained" sx={{ width: "50%" }} color="primary">
-            Tìm kiếm
+            {docsT("button.search")}
           </Button>
         </Box>
       </Popover>

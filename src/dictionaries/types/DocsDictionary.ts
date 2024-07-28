@@ -5,6 +5,7 @@ export type DocsDictionary = {
     add: string;
     comment: string;
     cancel: string;
+    search: string;
   };
   filter: {
     all: string;
@@ -32,7 +33,7 @@ export type DocsDictionary = {
     move: string;
     duplicate: string;
     delete: string;
-  },
+  };
   ownedBy: string;
   createdBy: string;
   changeDocAccess: string;

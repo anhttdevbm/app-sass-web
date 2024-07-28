@@ -221,39 +221,6 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
               View by:
             </Text>
-            <Box
-              border="solid 1px lightgrey"
-              borderRadius="2rem"
-              bgcolor="background.paper"
-              display="flex"
-              alignItems="center"
-              pl={2}
-            >
-              <Text variant="body2" color="grey.400">
-                {docsT("filter.group.group")}:
-              </Text>
-              <Dropdown
-                placeholder={
-                  isProjectTabMode
-                    ? docsT("filter.all")
-                    : docsT("filter.group.none")
-                }
-                options={grOptions}
-                name="group_by"
-                hasAll={false}
-                onChange={onChangeQueries}
-                defaultValue={
-                  isProjectTabMode ? docsT("filter.all") : queries?.group_by
-                }
-                value={
-                  isProjectTabMode ? docsT("filter.all") : queries?.group_by
-                }
-                sx={{
-                  pr: 1,
-                  ml: -1,
-                }}
-              />
-            </Box>
             <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
           </Stack>
         </Box>

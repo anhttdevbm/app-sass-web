@@ -142,8 +142,8 @@ const TABS = [
   { label: "tabList.tasks", href: PROJECT_TASKS_PATH },
   { label: "tabList.activities", href: PROJECT_ACTIVITIES_PATH },
   { label: "tabList.budget", href: PROJECT_BUDGET_PATH },
-  { label: "tabList.members", href: PROJECT_MEMBERS_PATH },
   { label: "tabList.information", href: PROJECT_INFORMATION_PATH },
+  { label: "tabList.members", href: PROJECT_MEMBERS_PATH },
   { label: "tabList.documents", href: PROJECT_DOCUMENT_PATH },
 ];
 

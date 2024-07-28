@@ -17,6 +17,8 @@ import { Task } from "store/project/reducer";
 import { checkIsMobile } from "utils/index";
 import snResetPassword from "components/sn-reset-password";
 import ProjectTaskIcon from "icons/ProjectTaskIcon";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import ExpandLess from "@mui/icons-material/ExpandLess";
 type DraggableTaskProps = {
   id: string;
   index: number;
@@ -128,9 +130,6 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 backgroundColor: "rgba(236, 236, 243, 0.5)",
               },
             }}
-            onDoubleClick={() => {
-              setIsHidden((_isHidden) => !_isHidden);
-            }}
             {...rest}
           >
             <Stack
@@ -147,6 +146,17 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 checked={checked}
                 onChange={onChange}
               />
+              <IconButton
+                noPadding
+                sx={{ zIndex: 10 }}
+                onClick={() => setIsHidden((_isHidden) => !_isHidden)}
+              >
+                {isHidden ? (
+                  <ExpandLess sx={{ color: "text.primary" }} />
+                ) : (
+                  <ExpandMore sx={{ color: "text.primary" }} />
+                )}
+              </IconButton>
               <IconButton
                 noPadding
                 sx={{ zIndex: 10 }}
