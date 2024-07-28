@@ -1,5 +1,5 @@
 import { CheckBox } from "@mui/icons-material";
-import { Grid, Stack, TextField } from "@mui/material";
+import { Grid, Stack, TextField, Typography } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
 import Textarea from "components/sn-time-tracking/Component/Textarea";
@@ -7,11 +7,12 @@ import { NS_BILLING, NS_COMMON } from "constant/index";
 import dayjs from "dayjs";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import { BillPaymentData, PaymentData } from "store/billing/actions";
 import { useBillings } from "store/billing/selectors";
 import * as Yup from "yup";
+import DropdownButton from "./DropdownButton";
 
 type Iprops = {
   open: boolean;
@@ -21,7 +22,7 @@ type Iprops = {
   dataUpdate?: PaymentData;
 };
 const BillModal = (props: Iprops) => {
-  const { handleClose, open, title, action, dataUpdate } = props;
+  const { handleClose, open, title, dataUpdate } = props;
   const {
     item,
     onAddPayment,
@@ -33,7 +34,10 @@ const BillModal = (props: Iprops) => {
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
   const currentDate = dayjs().format("DD/MM/YYYY");
-
+  const [action, setAction] = useState<string>("");
+  const handleOpen = (value) => {
+    setAction(value);
+  };
   const formik = useFormik<BillPaymentData>({
     enableReinitialize: true,
     validateOnBlur: true,
@@ -121,11 +125,7 @@ const BillModal = (props: Iprops) => {
       }}
       open={open}
       label={title}
-      submitText={
-        action == "add" || action == "write"
-          ? commonT("form.save")
-          : billingT("detail.form.payment.button.updatePayment")
-      }
+      submitText="Add payment"
       cancelText={commonT("form.cancel")}
       onClose={handleClose}
       onSubmit={formik.handleSubmit}
@@ -135,56 +135,95 @@ const BillModal = (props: Iprops) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2} pt={2}>
-            <Input
-              title={billingT("detail.form.payment.title.amount")}
-              name="amount"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.amount}
-              error={commonT(touchedErrors?.amount, {
-                name: "amount",
-              })}
-              // error={commonT(touchedErrors?.amount, {
-              //   name: commonT("form.title.amount"),
-              // })}
-              fullWidth
-              rootSx={sxConfig.input}
-              sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
-            />
+            <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
+              <Typography color="#4D4D4D" fontSize="14px" fontWeight={700}>
+                Amount
+              </Typography>
+              <Input
+                // title={billingT("detail.form.payment.title.amount")}
+                name="amount"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values?.amount}
+                error={commonT(touchedErrors?.amount, {
+                  name: "amount",
+                })}
+                // error={commonT(touchedErrors?.amount, {
+                //   name: commonT("form.title.amount"),
+                // })}
+                fullWidth
+                rootSx={sxConfig.input}
+                sx={{
+                  flex: 1,
+                  mt: { xs: 2, sm: 0 },
+                  backgroundColor: "#F9F1F169",
+                  borderRadius: "24px",
+                  border: "1px solid #EFEFEF",
+                }}
+                onlyContent
+              />
+            </Stack>
 
-            <DatePicker
-              title={billingT("detail.form.payment.title.paidOn")}
-              name="date"
-              onChange={onChangeDate}
-              onBlur={formik.handleBlur}
-              value={formik.values?.date}
-              error={commonT(touchedErrors?.date, {
-                name: "date",
-                // name2: commonT("form.title.startDate"),
-              })}
-              rootSx={sxConfig.input}
-              fullWidth
-              sx={{
-                mt: { xs: 2, sm: 0 },
-              }}
-            />
+            <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
+              <Typography color="#4D4D4D" fontSize="14px" fontWeight={700}>
+                Paid on
+              </Typography>
+              <DatePicker
+                name="date"
+                onChange={onChangeDate}
+                onBlur={formik.handleBlur}
+                value={formik.values?.date}
+                error={commonT(touchedErrors?.date, {
+                  name: "date",
+                  // name2: commonT("form.title.startDate"),
+                })}
+                rootSx={sxConfig.input}
+                fullWidth
+                sx={{
+                  mt: { xs: 2, sm: 0 },
+                  backgroundColor: "#F9F1F169",
+                  borderRadius: "24px",
+                  border: "1px solid #EFEFEF",
+                }}
+                onlyContent
+              />
+            </Stack>
+          </Stack>
+        </Grid>
+        <Grid item xs={12}>
+          <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
+            <Typography color="#4D4D4D" fontSize="14px" fontWeight={700}>
+              Payment type
+            </Typography>
+            <DropdownButton handleOpen={handleOpen} />
           </Stack>
         </Grid>
         <Grid item xs={12}>
           <Stack direction={"row"} gap={2} pb={2}>
-            <Input
-              title={billingT("detail.form.payment.title.note")}
-              name="note"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.note}
-              // error={commonT(touchedErrors?.description, {
-              //   name: commonT("form.title.description"),
-              // })}
-              fullWidth
-              rootSx={sxConfig.input}
-              sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
-            />
+            <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
+              <Typography color="#4D4D4D" fontSize="14px" fontWeight={700}>
+                Note
+              </Typography>
+              <Input
+                // title={billingT("detail.form.payment.title.note")}
+                name="note"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values?.note}
+                // error={commonT(touchedErrors?.description, {
+                //   name: commonT("form.title.description"),
+                // })}
+                fullWidth
+                rootSx={sxConfig.input}
+                sx={{
+                  mt: { xs: 2, sm: 0 },
+                  backgroundColor: "#F9F1F169",
+                  borderRadius: "24px",
+                  border: "1px solid #EFEFEF",
+                }}
+                onlyContent
+              />
+            </Stack>
           </Stack>
         </Grid>
       </Grid>
