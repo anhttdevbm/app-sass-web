@@ -48,12 +48,14 @@ interface IAllPeopleTabProp {
   setisServicePopup: any;
   setIsWorkload: any;
   isWorkload: Boolean;
+  tab: String;
 }
 
 const AllPeopleTab = ({
   setisServicePopup,
   setIsWorkload,
   isWorkload,
+  tab,
 }: IAllPeopleTabProp) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
@@ -306,7 +308,6 @@ const AllPeopleTab = ({
   }, [resources]);
 
   const mappedResources = getResources();
-  console.log(mappedResources);
 
   const mappedEvents = getEvents();
 
@@ -353,7 +354,6 @@ const AllPeopleTab = ({
     });
     return items;
   };
-  console.log(mappedResources);
   const mapEvent = () => {
     const items: any = [];
     mappedResources.map((item: any) =>
@@ -367,6 +367,8 @@ const AllPeopleTab = ({
         }),
       ),
     );
+    console.log(items);
+
     return items;
   };
 
@@ -376,12 +378,13 @@ const AllPeopleTab = ({
         type={TAB_TYPE.ALL}
         setisServicePopup={setisServicePopup}
         setIsWorkload={setIsWorkload}
+        tab={tab}
       />
-      {/* <TimeHeader
+      <TimeHeader
         filters={filters}
         setFilters={setFilters}
         calendarRef={calendarRef}
-      /> */}
+      />
       <Box
         sx={{
           ...defaultStyle,
@@ -405,11 +408,7 @@ const AllPeopleTab = ({
           editable={true}
           eventResourceEditable={true}
           eventDurationEditable={true}
-          headerToolbar={{
-            start: "",
-            center: "title",
-            end: "",
-          }}
+          headerToolbar={false}
           nowIndicator={true}
           selectMirror={true}
           selectable={true}
@@ -459,8 +458,6 @@ const AllPeopleTab = ({
             );
           }}
           resourceLabelContent={({ resource, view }) => {
-            console.log(resource);
-
             const parentResource = resources.find(
               (item) => item.id === resource._resource.parentId,
             );
@@ -519,7 +516,6 @@ const AllPeopleTab = ({
           }}
           eventContent={({ event }) => {
             // Content on calendar
-            console.log(event);
 
             return (
               <EventContents
@@ -533,90 +529,6 @@ const AllPeopleTab = ({
           eventResize={handleEventChange(calendarRef, true)}
           eventDrop={handleEventChange(calendarRef, false)}
         />
-        {/* <FullCalendar
-          plugins={[resourceTimelinePlugin, interactionPlugin]}
-          initialView="resourceTimeline"
-          schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-          resourceAreaWidth={194}
-          resourceOrder="from"
-          weekends={true}
-          editable={true}
-          eventResourceEditable={true}
-          eventDurationEditable={true}
-          headerToolbar={{
-            start: "",
-            center: "title",
-            end: "",
-          }}
-          selectMirror={true}
-          selectable={true}
-          eventDragStart={(arg) => {
-            const { event } = arg;
-            if (event.extendedProps.type === "campaign") {
-              return false;
-            }
-          }}
-          duration={{ weeks: 2 }}
-          select={(arg) => {
-            const { startStr, endStr, resource, view } = arg;
-            if (resource?._resource.extendedProps.type === "end") {
-              view.calendar.unselect();
-              return;
-            }
-
-            setParentResource(
-              resource?._resource.parentId || resource?._resource.id || "",
-            );
-            const start_date = dayjs(startStr).toDate();
-
-            const end_date = dayjs(endStr).subtract(1, "day").toDate();
-            // if (!resource) return;
-            setSelectedDateRange([start_date, end_date]);
-            setIsOpenCreate(true);
-          }}
-          slotDuration={{
-            days: 1,
-          }}
-          slotLabelContent={(arg) => {
-            // Content label for each slot on calendar
-            return <SlotLabelContent arg={arg} />;
-          }}
-          resourceAreaHeaderContent={(resrouce) => {
-            return (
-              // <ResourceHeaderContent
-              //   resource={resrouce}
-              //   totalhour={totalhour}
-              // />
-              <Input endNode={<SearchIcon />} placeholder="USER" />
-            );
-          }}
-          resources={mapResours()}
-          events={mapEvent()}
-          resourceLabelContent={(e) => {
-            return (
-              <div
-                onClick={() => {
-                  handleCollapseToggle(e.resource._resource.id);
-                }}
-              >
-                <h4>{e.resource._resource.extendedProps.fullName}</h4>;
-              </div>
-            );
-          }}
-          eventContent={(e) => {
-            return (
-              <h3 style={{ color: "black" }} onClick={()=>{
-                setIsOpenEdit({
-                  isOpen: true,
-                  isProject: eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING,
-                  bookingId: eventId,
-                });
-              }}>
-                {e.event._def.extendedProps.note}
-              </h3>
-            );
-          }}
-        /> */}
       </Box>
       <CreateBooking
         onClose={() => {

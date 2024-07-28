@@ -37,12 +37,14 @@ interface FilterHeaderProps {
   type: TAB_TYPE;
   setisServicePopup: any;
   setIsWorkload: any;
+  tab: String;
 }
 
 const FilterHeader = ({
   type,
   setisServicePopup,
   setIsWorkload,
+  tab,
 }: FilterHeaderProps) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const commonT = useTranslations<string>(NS_COMMON);
@@ -163,6 +165,7 @@ const FilterHeader = ({
   //       </Button> */}
   //   </Stack>
   // );
+
   return (
     <Box
       sx={{
@@ -205,95 +208,99 @@ const FilterHeader = ({
         />
       </Stack>
 
-      <Stack
-        direction="row"
-        sx={{
-          alignItems: "center",
-          mr: 2,
-          background: "#FFFFFF",
-          minWidth: "223px",
-          height: "48px",
-          borderRadius: "100px",
-          fontSize: "16px",
-          justifyContent: "center",
-          "& .MuiTypography-body1": {
-            margin: 0,
-            fontSize: "13px",
-          },
-        }}
-      >
-        <Typography sx={{ mr: 1, color: "black" }}>
-          {resourceT("schedule.filter.workingHours")}:
-        </Typography>
-        <Filter.Select
-          value={queries.working_sort || ""}
-          onChange={(event) =>
-            onChangeQueries("working_sort", event.target.value)
-          }
-          label={resourceT("schedule.filter.workingHours")}
-          sx={{ maxWidth: "260px", color: "black" }}
-          options={[
-            {
-              label: resourceT("schedule.filter.asceding"),
-              value: SORT_RESROUCE_OPTIONS.ASC,
-            },
-            {
-              label: resourceT("schedule.filter.descending"),
-              value: SORT_RESROUCE_OPTIONS.DESC,
-            },
-          ]}
-        />
-      </Stack>
+      {tab === "allPeople" && (
+        <>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              mr: 2,
+              background: "#FFFFFF",
+              minWidth: "223px",
+              height: "48px",
+              borderRadius: "100px",
+              fontSize: "16px",
+              justifyContent: "center",
+              "& .MuiTypography-body1": {
+                margin: 0,
+                fontSize: "13px",
+              },
+            }}
+          >
+            <Typography sx={{ mr: 1, color: "black" }}>
+              {resourceT("schedule.filter.workingHours")}:
+            </Typography>
+            <Filter.Select
+              value={queries.working_sort || ""}
+              onChange={(event) =>
+                onChangeQueries("working_sort", event.target.value)
+              }
+              label={resourceT("schedule.filter.workingHours")}
+              sx={{ maxWidth: "260px", color: "black" }}
+              options={[
+                {
+                  label: resourceT("schedule.filter.asceding"),
+                  value: SORT_RESROUCE_OPTIONS.ASC,
+                },
+                {
+                  label: resourceT("schedule.filter.descending"),
+                  value: SORT_RESROUCE_OPTIONS.DESC,
+                },
+              ]}
+            />
+          </Stack>
 
-      <Button
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          mr: 2,
-          color: "black",
-          borderRadius: "50px",
-        }}
-        onClick={() => setIsWorkload((prev: Boolean) => !prev)}
-      >
-        <span
-          style={{
-            display: "inline-block",
-            verticalAlign: "middle",
-            marginRight: "5px",
-          }}
-        >
-          ⓘ
-        </span>
-        Workload
-      </Button>
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mr: 2,
+              color: "black",
+              borderRadius: "50px",
+            }}
+            onClick={() => setIsWorkload((prev: Boolean) => !prev)}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                verticalAlign: "middle",
+                marginRight: "5px",
+              }}
+            >
+              ⓘ
+            </span>
+            Workload
+          </Button>
 
-      <Button
-        sx={{
-          marginLeft: "auto",
-          backgroundColor: "transparent",
-          color: "primary.main",
-          textTransform: "none",
-          fontWeight: "bold",
-          "&:hover": {
-            backgroundColor: "rgba(0, 123, 255, 0.1)",
-            borderRadius: "100px",
-          },
-        }}
-        onClick={() => {
-          setisServicePopup((prev: Boolean) => !prev);
-        }}
-      >
-        <span
-          style={{
-            display: "inline-block",
-            verticalAlign: "middle",
-            marginRight: "5px",
-          }}
-        >
-          📺
-        </span>
-        Choose Service
-      </Button>
+          <Button
+            sx={{
+              marginLeft: "auto",
+              backgroundColor: "transparent",
+              color: "primary.main",
+              textTransform: "none",
+              fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "rgba(0, 123, 255, 0.1)",
+                borderRadius: "100px",
+              },
+            }}
+            onClick={() => {
+              setisServicePopup((prev: Boolean) => !prev);
+            }}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                verticalAlign: "middle",
+                marginRight: "5px",
+              }}
+            >
+              📺
+            </span>
+            Choose Service
+          </Button>
+        </>
+      )}
     </Box>
   );
 };

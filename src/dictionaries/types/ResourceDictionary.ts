@@ -36,6 +36,9 @@ export default interface ResourceDictionary {
     resourceHeader: {
       available: string;
       schedule: string;
+      service: string;
+      user: string;
+      startDate: string;
     };
     action: {
       addBooking: string;

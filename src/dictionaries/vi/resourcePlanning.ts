@@ -30,6 +30,9 @@ export const ResourcePlanning: ResourceDictionary = {
     resourceHeader: {
       available: "Khả dụng",
       schedule: "Lịch trình",
+      service: "Dịch vụ",
+      user: "người dùng",
+      startDate: "ngày bắt đầu",
     },
     unit: {
       day: "ngày",

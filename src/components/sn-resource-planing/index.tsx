@@ -179,11 +179,17 @@ const ResourcePlanning = () => {
                 setisServicePopup={setisServicePopup}
                 isWorkload={isWorkload}
                 setIsWorkload={setIsWorkload}
+                tab={tab}
               />
             </TabPanel>
           )}
           <TabPanel value="mySchedule">
-            <MyScheduleTab setisServicePopup={setisServicePopup} />
+            <MyScheduleTab
+              setisServicePopup={setisServicePopup}
+              isWorkload={isWorkload}
+              setIsWorkload={setIsWorkload}
+              tab={tab}
+            />
           </TabPanel>
         </LocalizationProvider>
       </TabContext>

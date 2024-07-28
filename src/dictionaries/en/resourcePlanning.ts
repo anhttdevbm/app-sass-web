@@ -38,6 +38,9 @@ export const ResourcePlanningLang: ResourceDictionary = {
     resourceHeader: {
       available: "Available",
       schedule: "Schedule",
+      service: "SERVICE",
+      user: "USER",
+      startDate: "START DATE",
     },
     action: {
       addBooking: "Add booking",

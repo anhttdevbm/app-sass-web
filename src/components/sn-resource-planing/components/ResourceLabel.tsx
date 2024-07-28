@@ -54,7 +54,6 @@ const ResourceLabel = ({
     user_id,
     bookings: parentBookings,
   } = resource._resource.extendedProps;
-  console.log(resource);
 
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
