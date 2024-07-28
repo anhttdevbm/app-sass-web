@@ -12,7 +12,7 @@ import useTheme from "hooks/useTheme";
 import PlusIcon from "icons/PlusIcon";
 import { isEmpty } from "lodash";
 import { useTranslations } from "next-intl";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { IBookingAllFitler } from "store/resourcePlanning/action";
 import { IBookingItem } from "store/resourcePlanning/reducer";
@@ -37,6 +37,7 @@ const MyScheduleTab = ({
   setisServicePopup,
   isWorkload,
   setIsWorkload,
+  tab,
 }: any) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
@@ -57,7 +58,8 @@ const MyScheduleTab = ({
   const [isOpenCreate, setIsOpenCreate] = React.useState(false);
   const { palette } = useTheme();
   const [parentResource, setParentResource] = React.useState<string>("");
-  const { updateBooking } = useBookingAll();
+  const { updateBooking, bookingAll } = useBookingAll();
+
   const [isOpenEdit, setIsOpenEdit] = React.useState({
     isOpen: false,
     bookingId: "",
@@ -298,12 +300,100 @@ const MyScheduleTab = ({
       background: palette.grey[50],
     },
   };
+  function getFirstAndSecondLetters(name) {
+    let parts = name.split(" ");
+    let firstLetter = parts[0][0];
+    let lastLetter = parts[parts.length - 1][0];
+    return firstLetter + lastLetter;
+  }
+  const projectDumy: any = [];
+  const timeOfDumy: any = [];
+  bookingAll.map((item) => {
+    item.bookings.map((ite) => {
+      if (ite.booking_type === "TIME_OF_BOOKING") {
+        timeOfDumy.push({
+          ...item,
+          id: item.id + Math.random(),
+          bookings: ite,
+          service: "service 1",
+        });
+      }
+    });
+  });
+  bookingAll.map((item) => {
+    item.bookings.map((ite) => {
+      if (ite.booking_type === "PROJECT_BOOKING") {
+        projectDumy.push({
+          ...item,
+          id: item.id + Math.random(),
+          bookings: ite,
+          service: "service 2",
+        });
+      }
+    });
+  });
+
+  const arr = [
+    {
+      id: "a",
+      title: "project 1",
+      type: "title",
+      children: [
+        ...timeOfDumy.map((item: any) => {
+          return {
+            ...item,
+            bookings: {
+              ...item.bookings,
+              resourceId: item.id,
+              start: item.bookings.start_date,
+              end: item.bookings.end_date,
+            },
+          };
+        }),
+        ...projectDumy.map((item: any) => {
+          return {
+            ...item,
+            bookings: {
+              ...item.bookings,
+              resourceId: item.id,
+              start: item.bookings.start_date,
+              end: item.bookings.end_date,
+            },
+          };
+        }),
+      ],
+    },
+  ];
+
+  const mapResours = () => {
+    const items: any = [];
+    arr.map((item: any) => {
+      items.push({
+        id: item.id,
+        title: item.title,
+        children: item.children,
+        type: item.type,
+      });
+    });
+    return items;
+  };
+  const mapEvent = () => {
+    const items: any = [];
+    arr.map((item: any) => {
+      item.children.map((ite: any) =>
+        items.push({ ...ite.bookings, id: ite.bookings.id + Math.random() }),
+      );
+    });
+    return items;
+  };
+
   return (
     <Stack direction="column" rowGap={2}>
       <FilterHeader
         type={TAB_TYPE.MY}
         setisServicePopup={setisServicePopup}
         setIsWorkload={setIsWorkload}
+        tab={tab}
       />
       <TimeHeader
         filters={filters}
@@ -316,36 +406,39 @@ const MyScheduleTab = ({
           plugins={[resourceTimelinePlugin, interactionPlugin]}
           initialView="resourceTimeline"
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-          resourceAreaWidth={660}
+          resourceAreaWidth={650}
           resourceOrder="from"
           weekends={true}
           editable={true}
+          nowIndicator={true}
           eventResourceEditable={true}
           headerToolbar={false}
-          duration={{ weeks: 1 }}
+          duration={{ weeks: 2 }}
           slotDuration={{
             days: 1,
           }}
           selectable={true}
-          select={(arg) => {
-            const { startStr, endStr, resource, view } = arg;
+          // select={(arg) => {
+          //   const { startStr, endStr, resource, view } = arg;
 
-            if (resource?._resource.extendedProps.type === "end") {
-              view.calendar.unselect();
-              return;
-            }
+          //   if (resource?._resource.extendedProps.type === "end") {
+          //     view.calendar.unselect();
+          //     return;
+          //   }
 
-            setParentResource(
-              resource?._resource.parentId || resource?._resource.id || "",
-            );
-            const start_date = dayjs(startStr).toDate();
+          //   setParentResource(
+          //     resource?._resource.parentId || resource?._resource.id || "",
+          //   );
+          //   const start_date = dayjs(startStr).toDate();
 
-            const end_date = dayjs(endStr).subtract(1, "day").toDate();
-            setSelectedDateRange([start_date, end_date]);
-            setIsOpenCreate(true);
-          }}
-          resources={mappedResources as ResourceInput}
-          events={mappedEvents as ResourceInput}
+          //   const end_date = dayjs(endStr).subtract(1, "day").toDate();
+          //   setSelectedDateRange([start_date, end_date]);
+          //   setIsOpenCreate(true);
+          // }}
+          // resources={mappedResources as ResourceInput}
+          // events={mappedEvents as ResourceInput}
+          resources={mapResours()}
+          events={mapEvent()}
           slotLabelContent={(arg) => {
             return <SlotLabelContent arg={arg} />;
           }}
@@ -359,47 +452,106 @@ const MyScheduleTab = ({
             );
           }}
           resourceLabelContent={({ resource }) => {
-            // const bookings = parentResource?.bookings || [];
-            const isLastItem =
-              resources[resources.length - 1]?.id === resource._resource.id;
-            if (resource._resource.id === "end") {
-              return (
-                <Button
-                  variant="text"
-                  startIcon={<PlusIcon />}
-                  sx={{
-                    color: "success.main",
-                  }}
-                  // startIcon={<AddIcon />}
-                  onClick={() => setIsOpenCreate(true)}
-                >
-                  {resourceT("schedule.action.addBooking")}
-                </Button>
-              );
+            if (resource._resource.extendedProps.type === "title") {
+              return <h2>{resource.title}</h2>;
             }
-
             return (
-              <ResourceLabel
-                setParentResource={setParentResource}
-                handleCollapseToggle={handleCollapseToggle}
-                isLastItem={isLastItem}
-                resource={resource}
-                resources={resources}
-                isMybooking={true}
-                selectedResource={selectedResource}
-                setIsOpenCreate={setIsOpenCreate}
-                totalhour={totalhour}
-              />
+              <>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <p style={{ width: "20%", color: "black" }}>
+                    {resource._resource.extendedProps.service}
+                  </p>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      alignItems: "center",
+                      gap: "10px",
+                      width: "30%",
+                    }}
+                  >
+                    <p
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "50%",
+                        background: `rgba(${Math.floor(
+                          Math.random() * 256,
+                        )},${Math.floor(Math.random() * 256)},${Math.floor(
+                          Math.random() * 256,
+                        )},${Math.floor(Math.random() * 256)})`,
+                        fontSize: "15px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      {getFirstAndSecondLetters(
+                        resource._resource.extendedProps.fullname,
+                      )}
+                    </p>
+                    <p>{resource._resource.extendedProps.fullname}</p>
+                  </div>
+                  <p
+                    style={{
+                      marginRight: "50px",
+                    }}
+                  >
+                    {resource._resource.extendedProps.bookings.start}
+                  </p>
+                </div>
+              </>
             );
+            // // const bookings = parentResource?.bookings || [];
+            // const isLastItem =
+            //   resources[resources.length - 1]?.id === resource._resource.id;
+            // if (resource._resource.id === "end") {
+            //   return (
+            //     <Button
+            //       variant="text"
+            //       startIcon={<PlusIcon />}
+            //       sx={{
+            //         color: "success.main",
+            //       }}
+            //       // startIcon={<AddIcon />}
+            //       onClick={() => setIsOpenCreate(true)}
+            //     >
+            //       {resourceT("schedule.action.addBooking")}
+            //     </Button>
+            //   );
+            // }
+            // return (
+            //   <ResourceLabel
+            //     setParentResource={setParentResource}
+            //     handleCollapseToggle={handleCollapseToggle}
+            //     isLastItem={isLastItem}
+            //     resource={resource}
+            //     resources={resources}
+            //     isMybooking={true}
+            //     selectedResource={selectedResource}
+            //     setIsOpenCreate={setIsOpenCreate}
+            //     totalhour={totalhour}
+            //   />
+            // );
           }}
           eventContent={({ event }) => {
             return (
-              <EventContents
-                event={event}
-                setIsOpenEdit={setIsOpenEdit}
-                isWorkload={isWorkload}
-              />
+              <div style={{ backgroundColor: "black" }}>
+                <span style={{ color: "white", textAlign: "center" }}>
+                  {event._def.extendedProps.note}
+                </span>
+              </div>
             );
+            // return (
+            //   <EventContents
+            //     event={event}
+            //     setIsOpenEdit={setIsOpenEdit}
+            //     isWorkload={isWorkload}
+            //   />
+            // );
           }}
           eventResize={handleEventChange(calendarRef, true)}
           eventDrop={handleEventChange(calendarRef, false)}

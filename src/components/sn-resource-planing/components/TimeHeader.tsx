@@ -64,7 +64,7 @@ const TimeHeader = ({ filters, setFilters, calendarRef }) => {
       }
       if (value === "prev") {
         const startDate = dayjs(filters?.start_date)
-          .subtract(7, "day")
+          .subtract(14, "day")
           .format("YYYY-MM-DD");
         const endDate = dayjs(filters?.start_date)
           .subtract(1, "day")
@@ -85,7 +85,7 @@ const TimeHeader = ({ filters, setFilters, calendarRef }) => {
           .add(1, "day")
           .format("YYYY-MM-DD");
         const endDate = dayjs(filters?.end_date)
-          .add(7, "day")
+          .add(14, "day")
           .format("YYYY-MM-DD");
 
         setFilters({ ...filters, start_date: startDate, end_date: endDate });
