@@ -1,4 +1,19 @@
-import { Box, Button, Grid, Stack, Theme, selectClasses } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Theme,
+  Typography,
+  selectClasses,
+} from "@mui/material";
 import { Date, Dropdown } from "components/Filters";
 import FixedLayout from "components/FixedLayout";
 import Link from "components/Link";
@@ -11,6 +26,11 @@ import { User } from "constant/types";
 import { FormikProps, useFormik } from "formik";
 import useBreakpoint from "hooks/useBreakpoint";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
+import EditIcon from "icons/EditIcon";
+import MarkAsSendIcon from "icons/MarkAsSendIcon";
+import ChangeTemplateIcon from "icons/ChangeTemplateIcon";
+import FilePdfIcon from "icons/FilePdfIcon";
+import ShareInvoiceIcon from "icons/ShareInvoiceIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo, useState } from "react";
@@ -38,6 +58,15 @@ type TabProps = {
 };
 const billingFormTranslatePrefix = "detail.form";
 
+function createData(
+  desc: string,
+  unit: string,
+  qty: number,
+  rate: number,
+  amount: number,
+) {
+  return { desc, unit, qty, rate, amount };
+}
 const TabInvoice = (props: TabProps) => {
   const {
     title,
@@ -77,6 +106,11 @@ const TabInvoice = (props: TabProps) => {
       return;
     },
   });
+  const rows = [
+    createData("Development", "hour", 20, 150.0, 3000),
+    createData("Design", "hour", 20, 150.0, 3000),
+    createData("Project Management", "hour", 20, 150.0, 3000),
+  ];
 
   const options = [
     {
@@ -228,365 +262,715 @@ const TabInvoice = (props: TabProps) => {
   // }, [fileExport, viewFileStatus]);
 
   return (
-    <FixedLayout px={2} height={"85vh"}>
-      <Stack
-        direction={"row"}
-        gap={2}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        py={1}
-        position={"sticky"}
-        // display={"unset"}
-        top={0}
-        zIndex={3}
-        sx={{ background: "#fff" }}
-      >
-        <Button variant="outlined">
-          {billingT("detail.form.invoice.button.sentToClient")}
-        </Button>
-        <Stack direction={"row"} gap={2}>
-          <Dropdown
-            placeholder={billingT("detail.form.invoice.title.invoicePDF")}
-            options={options}
-            name="Tag"
-            hasIcon
-            hasAll={false}
-            onChange={(name, value) => onchangePdf(value)}
-            value={selected}
-            rootSx={{
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(4)}!important`,
-                "& .sub": {
-                  display: "none",
-                },
-              },
-            }}
-          />
-          {selected === "REPLACE" && (
-            <ReplacePopup
-              fileName={fileName}
-              selected={selected}
-              anchorEl={anchorEl}
-              setAnchorEl={setAnchorEl}
-              setFileName={setFileName}
-            />
-          )}
+    // <FixedLayout px={2} minHeight={"85vh"}>
+    //   <Stack
+    //     direction={"row"}
+    //     gap={2}
+    //     justifyContent={"space-between"}
+    //     alignItems={"center"}
+    //     py={1}
+    //     position={"sticky"}
+    //     // display={"unset"}
+    //     top={0}
+    //     zIndex={3}
+    //     sx={{ background: "#fff" }}
+    //   >
+    //     <Button variant="outlined">
+    //       {billingT("detail.form.invoice.button.sentToClient")}
+    //     </Button>
+    //     <Stack direction={"row"} gap={2}>
+    //       <Dropdown
+    //         placeholder={billingT("detail.form.invoice.title.invoicePDF")}
+    //         options={options}
+    //         name="Tag"
+    //         hasIcon
+    //         hasAll={false}
+    //         onChange={(name, value) => onchangePdf(value)}
+    //         value={selected}
+    //         rootSx={{
+    //           px: "0px!important",
+    //           [`& .${selectClasses.outlined}`]: {
+    //             pr: "0!important",
+    //             mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
+    //               `${spacing(4)}!important`,
+    //             "& .sub": {
+    //               display: "none",
+    //             },
+    //           },
+    //         }}
+    //       />
+    //       {selected === "REPLACE" && (
+    //         <ReplacePopup
+    //           fileName={fileName}
+    //           selected={selected}
+    //           anchorEl={anchorEl}
+    //           setAnchorEl={setAnchorEl}
+    //           setFileName={setFileName}
+    //         />
+    //       )}
 
-          <Date
-            label={billingT("detail.form.invoice.title.dateSent")}
-            onChange={function (
-              name: string,
-              newDate?: string | undefined,
-            ): void {
-              setSelectedDateSent(newDate ?? "");
-              // throw new Error("Function not implemented.");
-            }}
-            name={"dateSent"}
-            value={selectedDateSent}
+    //       <Date
+    //         label={billingT("detail.form.invoice.title.dateSent")}
+    //         onChange={function (
+    //           name: string,
+    //           newDate?: string | undefined,
+    //         ): void {
+    //           setSelectedDateSent(newDate ?? "");
+    //           // throw new Error("Function not implemented.");
+    //         }}
+    //         name={"dateSent"}
+    //         value={selectedDateSent}
+    //       />
+    //     </Stack>
+    //   </Stack>
+    //   <Stack
+    //     direction={"row"}
+    //     gap={2}
+    //     // justifyContent={"space-between"}
+    //     // alignItems={"center"}
+    //   >
+    //     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+    //       <Grid item xs={4} my={1}>
+    //         <Box sx={{ border: "1px solid #ECECF3", p: 2, borderRadius: 4 }}>
+    //           <Stack direction={"row"} gap={2} pb={1}>
+    //             <Input
+    //               title={billingT("detail.form.invoice.title.invoiceNumber")}
+    //               name="invoiceNumber"
+    //               onChange={form.handleChange}
+    //               onBlur={form.handleBlur}
+    //               value={form.values?.invoiceNumber}
+    //               disabled={!editForm}
+    //               // error={commonT(touchedErrors?.description, {
+    //               //   name: commonT("form.title.description"),
+    //               // })}
+    //               fullWidth
+    //               rootSx={sxConfig.input}
+    //               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
+    //             />
+    //             <Input
+    //               title={billingT("detail.form.invoice.title.poNumber")}
+    //               name="poNumber"
+    //               onChange={form.handleChange}
+    //               onBlur={form.handleBlur}
+    //               value={form.values?.poNumber}
+    //               disabled={!editForm}
+    //               // error={commonT(touchedErrors?.description, {
+    //               //   name: commonT("form.title.description"),
+    //               // })}
+    //               fullWidth
+    //               rootSx={sxConfig.input}
+    //               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
+    //             />
+    //           </Stack>
+    //           <Stack direction={"row"} gap={2} pb={1}>
+    //             <DatePicker
+    //               title={billingT("detail.form.invoice.title.invoiceDate")}
+    //               name="date"
+    //               onChange={(name, value) => {
+    //                 form.setFieldValue(name, value);
+    //               }}
+    //               onBlur={form.handleBlur}
+    //               value={form.values?.date}
+    //               disabled={!editForm}
+    //               // error={commonT(touchedErrors?.end_date, {
+    //               //   name: commonT("form.title.endDate"),
+    //               //   name2: commonT("form.title.startDate"),
+    //               // })}
+    //               rootSx={sxConfig.input}
+    //               fullWidth
+    //               // sx={{
+    //               //   mt: { xs: 2, sm: 0 },
+    //               // }}
+    //             />
+    //             <DatePicker
+    //               title={billingT("detail.form.invoice.title.dueDate")}
+    //               name="dueDate"
+    //               onChange={(name, value) => {
+    //                 form.setFieldValue(name, value);
+    //               }}
+    //               onBlur={form.handleBlur}
+    //               value={form.values?.dueDate}
+    //               disabled={!editForm || !form.values?.date}
+    //               // error={commonT(touchedErrors?.end_date, {
+    //               //   name: commonT("form.title.endDate"),
+    //               //   name2: commonT("form.title.startDate"),
+    //               // })}
+    //               rootSx={sxConfig.input}
+    //               fullWidth
+    //               // sx={{
+    //               //   mt: { xs: 2, sm: 0 },
+    //               // }}
+    //             />
+    //           </Stack>
+    //           <Stack direction={"row"} gap={2}>
+    //             <Input
+    //               title={billingT("detail.form.invoice.title.subject")}
+    //               name="subject"
+    //               onChange={form.handleChange}
+    //               onBlur={form.handleBlur}
+    //               value={form.values?.subject}
+    //               disabled={!editForm}
+    //               // error={commonT(touchedErrors?.description, {
+    //               //   name: commonT("form.title.description"),
+    //               // })}
+    //               fullWidth
+    //               rootSx={sxConfig.input}
+    //               sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
+    //             />
+    //           </Stack>
+    //         </Box>
+    //       </Grid>
+    //       <Grid item xs={4} my={1}>
+    //         <Box
+    //           sx={{
+    //             border: "1px solid #ECECF3",
+    //             p: 2,
+    //             borderRadius: 4,
+    //             height: 198,
+    //           }}
+    //         >
+    //           <Stack direction={"row"} gap={2} justifyContent={"space-between"}>
+    //             <Text variant={"body2"}>
+    //               {billingT("detail.form.invoice.title.billTo")}
+    //             </Text>
+    //             {editForm && (
+    //               <Link
+    //                 href={""}
+    //                 sx={{
+    //                   textDecoration: "none",
+    //                   display: "flex",
+    //                 }}
+    //                 onClick={() => {
+    //                   setOpenModal(true);
+    //                   setIsBillTo(true);
+    //                 }}
+    //               >
+    //                 <PencilUnderlineIcon sx={{ color: "#1BC5BD", mr: 1 }} />
+    //                 <Text variant={"body2"} color={"#1BC5BD"}>
+    //                   {billingT("detail.form.invoice.button.edit")}
+    //                 </Text>
+    //               </Link>
+    //             )}
+    //           </Stack>
+    //           <Stack gap={2} justifyContent={"start"} mt={3}>
+    //             <Text variant={"body2"}>{billToInfo.fullNameCompany}</Text>
+    //             <Text variant={"body2"}>{billToInfo.street}</Text>
+    //             <Text variant={"body2"}>
+    //               {billToInfo.city || billToInfo.state || billToInfo.country
+    //                 ? (billToInfo.city ?? "") +
+    //                   ", " +
+    //                   (billToInfo.state ?? "") +
+    //                   ", " +
+    //                   (billToInfo.country ?? "")
+    //                 : ""}
+    //             </Text>
+    //             <Text variant={"body2"}>{billToInfo.tax_id}</Text>
+    //           </Stack>
+    //         </Box>
+    //       </Grid>
+    //       <Grid item xs={4} my={1}>
+    //         <Box
+    //           sx={{
+    //             border: "1px solid #ECECF3",
+    //             p: 2,
+    //             borderRadius: 4,
+    //             height: 198,
+    //           }}
+    //         >
+    //           <Stack direction={"row"} gap={2} justifyContent={"space-between"}>
+    //             <Text variant={"body2"}>
+    //               {billingT("detail.form.invoice.title.billFrom")}
+    //             </Text>
+    //             {editForm && (
+    //               <Link
+    //                 href={""}
+    //                 sx={{ textDecoration: "none", display: "flex" }}
+    //                 onClick={() => {
+    //                   setOpenModal(true);
+    //                   setIsBillTo(false);
+    //                 }}
+    //               >
+    //                 <PencilUnderlineIcon sx={{ color: "#1BC5BD", mr: 1 }} />
+    //                 <Text variant={"body2"} color={"#1BC5BD"}>
+    //                   {billingT("detail.form.invoice.button.edit")}
+    //                 </Text>
+    //               </Link>
+    //             )}
+    //           </Stack>
+    //           <Stack gap={2} justifyContent={"start"} mt={3}>
+    //             <Text variant={"body2"}>
+    //               {billFromInfo.fullNameCompany ?? ""}
+    //             </Text>
+    //             <Text variant={"body2"}>{billFromInfo.street ?? ""}</Text>
+    //             <Text variant={"body2"}>
+    //               {billFromInfo.city ||
+    //               billFromInfo.state ||
+    //               billFromInfo.country
+    //                 ? (billFromInfo.city ?? "") +
+    //                   ", " +
+    //                   (billFromInfo.state ?? "") +
+    //                   ", " +
+    //                   (billFromInfo.country ?? "")
+    //                 : ""}
+    //             </Text>
+    //             <Text variant={"body2"}>{billFromInfo.tax_id ?? ""}</Text>
+    //           </Stack>
+    //         </Box>
+    //       </Grid>
+    //     </Grid>
+    //   </Stack>
+    //   <Stack gap={2}>
+    //     {/* <TableService /> */}
+    //     <ServiceTable
+    //       isEdit={editForm}
+    //       listService={listService}
+    //       setListService={setListService}
+    //       arrBudgets={arrBudgets}
+    //     />
+    //   </Stack>
+    //   <Stack alignItems="start" gap={2} pb={2}>
+    //     <Grid container spacing={2} paddingTop={2} paddingLeft={2}>
+    //       <Grid xs={1} md={1}>
+    //         <Text variant={"body2"}>
+    //           {billingT("detail.form.invoice.title.subtotal")}
+    //         </Text>
+    //       </Grid>
+    //       <Grid xs={2} md={2}>
+    //         <Text variant={"body2"}>
+    //           {formatNumber(totalAmount, {
+    //             prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+    //             numberOfFixed: 2,
+    //           })}
+    //         </Text>
+    //       </Grid>
+    //     </Grid>
+
+    //     <Grid container spacing={2} paddingTop={2} paddingLeft={2}>
+    //       <Grid xs={1} md={1}>
+    //         <Text variant={"body2"}>
+    //           {billingT("detail.form.invoice.title.vat")}
+    //         </Text>
+    //       </Grid>
+    //       <Grid xs={2} md={2}>
+    //         <Text variant={"body2"}>
+    //           {formatNumber(form?.values?.vat, {
+    //             prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+    //             numberOfFixed: 2,
+    //           })}
+    //         </Text>
+    //       </Grid>
+    //       {editForm && <VatPopup form={form} />}
+    //     </Grid>
+
+    //     <Grid container spacing={2} paddingTop={2} paddingLeft={2}>
+    //       <Grid xs={1} md={1}>
+    //         <Text variant={"body2"}>
+    //           {billingT("detail.form.invoice.title.total")}
+    //         </Text>
+    //       </Grid>
+    //       <Grid xs={2} md={2}>
+    //         <Text variant={"body2"} fontWeight={800}>
+    //           {formatNumber(
+    //             form.values.vat && form.values.vat != 0
+    //               ? totalAmount + Number(form?.values?.vat)
+    //               : totalAmount,
+    //             {
+    //               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+    //               numberOfFixed: 2,
+    //             },
+    //           )}
+    //         </Text>
+    //       </Grid>
+    //     </Grid>
+    //   </Stack>
+    //   <Stack gap={2} pb={2}>
+    //     <LinkBudgetTable
+    //       arrBudgets={listBudgets ?? []}
+    //       isEdit={editForm}
+    //       item={item}
+    //       setListBudgets={setListBudgets}
+    //     />
+    //   </Stack>
+    //   <Stack gap={2} pb={2}>
+    //     <Input
+    //       title={billingT("detail.form.invoice.title.message")}
+    //       name="message"
+    //       onChange={form.handleChange}
+    //       onBlur={form.handleBlur}
+    //       value={form.values?.message}
+    //       // error={commonT(touchedErrors?.description, {
+    //       //   name: commonT("form.title.description"),
+    //       // })}
+    //       fullWidth
+    //       rootSx={sxConfig.input}
+    //       sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
+    //     />
+    //   </Stack>
+    //   <BillModal
+    //     open={openModal}
+    //     handleClose={handleClose}
+    //     isBillTo={isBillTo}
+    //     billTo={billToInfo}
+    //     billFrom={billFromInfo}
+    //     setBillToInfo={setBillToInfo}
+    //     setBillFromInfo={setBillFromInfo}
+    //   />
+    //   {/* <ExportView
+    //     open={exportModel}
+    //     onClose={() => onCloseModalExport()}
+    //     item={{ bill: arrBill ?? [] } as BillingDataExport}
+    //   /> */}
+    // </FixedLayout>
+    <Box mt={2}>
+      <Stack
+        gap={1}
+        direction="row"
+        sx={{ borderBottom: "1.5px solid #EBEAF2" }}
+      >
+        <Stack
+          direction="row"
+          sx={{
+            borderRight: "1.5px solid #EBEAF2",
+            display: "flex",
+            gap: "8px",
+            padding: "12px 8px",
+          }}
+        >
+          <EditIcon sx={{ width: "12px", height: "12px", margin: "auto 0" }} />
+          <Typography fontSize={14} fontWeight={400} color="#000000">
+            Edit
+          </Typography>
+        </Stack>
+
+        <Stack
+          direction="row"
+          sx={{
+            borderRight: "1.5px solid #EBEAF2",
+            display: "flex",
+            gap: "8px",
+            padding: "12px 8px",
+          }}
+        >
+          <MarkAsSendIcon
+            sx={{ width: "12px", height: "12px", margin: "auto 0" }}
           />
+          <Typography fontSize={14} fontWeight={400} color="#000000">
+            Mark As Send
+          </Typography>
+        </Stack>
+
+        <Stack
+          direction="row"
+          sx={{
+            borderRight: "1.5px solid #EBEAF2",
+            display: "flex",
+            gap: "8px",
+            padding: "12px 8px",
+          }}
+        >
+          <ShareInvoiceIcon
+            sx={{ width: "12px", height: "12px", margin: "auto 0" }}
+          />
+          <Typography fontSize={14} fontWeight={400} color="#000000">
+            Share
+          </Typography>
+        </Stack>
+
+        <Stack
+          direction="row"
+          sx={{
+            borderRight: "1.5px solid #EBEAF2",
+            display: "flex",
+            gap: "8px",
+            padding: "12px 8px",
+          }}
+        >
+          <ChangeTemplateIcon
+            sx={{ width: "12px", height: "12px", margin: "auto 0" }}
+          />
+          <Typography fontSize={14} fontWeight={400} color="#000000">
+            Change Template
+          </Typography>
+        </Stack>
+
+        <Stack
+          direction="row"
+          sx={{
+            borderRight: "1.5px solid #EBEAF2",
+            display: "flex",
+            gap: "8px",
+            padding: "12px 8px",
+          }}
+        >
+          <FilePdfIcon
+            sx={{ width: "12px", height: "12px", margin: "auto 0" }}
+          />
+          <Typography fontSize={14} fontWeight={400} color="#000000">
+            PDF/Print
+          </Typography>
+        </Stack>
+
+        <Stack
+          direction="row"
+          sx={{
+            borderRight: "1.5px solid #EBEAF2",
+            display: "flex",
+            gap: "8px",
+            padding: "12px 8px",
+          }}
+        >
+          <EditIcon sx={{ width: "12px", height: "12px", margin: "auto 0" }} />
         </Stack>
       </Stack>
+
+      {/* Main */}
       <Stack
-        direction={"row"}
-        gap={2}
-        // justifyContent={"space-between"}
-        // alignItems={"center"}
+        sx={{ border: "1px solid #EFEFEF" }}
+        mt={4}
+        p={6}
+        pr={{ xs: 6, lg: 20, xl: 40 }}
       >
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={4} my={1}>
-            <Box sx={{ border: "1px solid #ECECF3", p: 2, borderRadius: 4 }}>
-              <Stack direction={"row"} gap={2} pb={1}>
-                <Input
-                  title={billingT("detail.form.invoice.title.invoiceNumber")}
-                  name="invoiceNumber"
-                  onChange={form.handleChange}
-                  onBlur={form.handleBlur}
-                  value={form.values?.invoiceNumber}
-                  disabled={!editForm}
-                  // error={commonT(touchedErrors?.description, {
-                  //   name: commonT("form.title.description"),
-                  // })}
-                  fullWidth
-                  rootSx={sxConfig.input}
-                  sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
-                />
-                <Input
-                  title={billingT("detail.form.invoice.title.poNumber")}
-                  name="poNumber"
-                  onChange={form.handleChange}
-                  onBlur={form.handleBlur}
-                  value={form.values?.poNumber}
-                  disabled={!editForm}
-                  // error={commonT(touchedErrors?.description, {
-                  //   name: commonT("form.title.description"),
-                  // })}
-                  fullWidth
-                  rootSx={sxConfig.input}
-                  sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2} pb={1}>
-                <DatePicker
-                  title={billingT("detail.form.invoice.title.invoiceDate")}
-                  name="date"
-                  onChange={(name, value) => {
-                    form.setFieldValue(name, value);
-                  }}
-                  onBlur={form.handleBlur}
-                  value={form.values?.date}
-                  disabled={!editForm}
-                  // error={commonT(touchedErrors?.end_date, {
-                  //   name: commonT("form.title.endDate"),
-                  //   name2: commonT("form.title.startDate"),
-                  // })}
-                  rootSx={sxConfig.input}
-                  fullWidth
-                  // sx={{
-                  //   mt: { xs: 2, sm: 0 },
-                  // }}
-                />
-                <DatePicker
-                  title={billingT("detail.form.invoice.title.dueDate")}
-                  name="dueDate"
-                  onChange={(name, value) => {
-                    form.setFieldValue(name, value);
-                  }}
-                  onBlur={form.handleBlur}
-                  value={form.values?.dueDate}
-                  disabled={!editForm || !form.values?.date}
-                  // error={commonT(touchedErrors?.end_date, {
-                  //   name: commonT("form.title.endDate"),
-                  //   name2: commonT("form.title.startDate"),
-                  // })}
-                  rootSx={sxConfig.input}
-                  fullWidth
-                  // sx={{
-                  //   mt: { xs: 2, sm: 0 },
-                  // }}
-                />
-              </Stack>
-              <Stack direction={"row"} gap={2}>
-                <Input
-                  title={billingT("detail.form.invoice.title.subject")}
-                  name="subject"
-                  onChange={form.handleChange}
-                  onBlur={form.handleBlur}
-                  value={form.values?.subject}
-                  disabled={!editForm}
-                  // error={commonT(touchedErrors?.description, {
-                  //   name: commonT("form.title.description"),
-                  // })}
-                  fullWidth
-                  rootSx={sxConfig.input}
-                  sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
-                />
-              </Stack>
-            </Box>
-          </Grid>
-          <Grid item xs={4} my={1}>
-            <Box
-              sx={{
-                border: "1px solid #ECECF3",
-                p: 2,
-                borderRadius: 4,
-                height: 198,
-              }}
-            >
-              <Stack direction={"row"} gap={2} justifyContent={"space-between"}>
-                <Text variant={"body2"}>
-                  {billingT("detail.form.invoice.title.billTo")}
-                </Text>
-                {editForm && (
-                  <Link
-                    href={""}
-                    sx={{
-                      textDecoration: "none",
-                      display: "flex",
-                    }}
-                    onClick={() => {
-                      setOpenModal(true);
-                      setIsBillTo(true);
-                    }}
-                  >
-                    <PencilUnderlineIcon sx={{ color: "#1BC5BD", mr: 1 }} />
-                    <Text variant={"body2"} color={"#1BC5BD"}>
-                      {billingT("detail.form.invoice.button.edit")}
-                    </Text>
-                  </Link>
-                )}
-              </Stack>
-              <Stack gap={2} justifyContent={"start"} mt={3}>
-                <Text variant={"body2"}>{billToInfo.fullNameCompany}</Text>
-                <Text variant={"body2"}>{billToInfo.street}</Text>
-                <Text variant={"body2"}>
-                  {billToInfo.city || billToInfo.state || billToInfo.country
-                    ? (billToInfo.city ?? "") +
-                      ", " +
-                      (billToInfo.state ?? "") +
-                      ", " +
-                      (billToInfo.country ?? "")
-                    : ""}
-                </Text>
-                <Text variant={"body2"}>{billToInfo.tax_id}</Text>
-              </Stack>
-            </Box>
-          </Grid>
-          <Grid item xs={4} my={1}>
-            <Box
-              sx={{
-                border: "1px solid #ECECF3",
-                p: 2,
-                borderRadius: 4,
-                height: 198,
-              }}
-            >
-              <Stack direction={"row"} gap={2} justifyContent={"space-between"}>
-                <Text variant={"body2"}>
-                  {billingT("detail.form.invoice.title.billFrom")}
-                </Text>
-                {editForm && (
-                  <Link
-                    href={""}
-                    sx={{ textDecoration: "none", display: "flex" }}
-                    onClick={() => {
-                      setOpenModal(true);
-                      setIsBillTo(false);
-                    }}
-                  >
-                    <PencilUnderlineIcon sx={{ color: "#1BC5BD", mr: 1 }} />
-                    <Text variant={"body2"} color={"#1BC5BD"}>
-                      {billingT("detail.form.invoice.button.edit")}
-                    </Text>
-                  </Link>
-                )}
-              </Stack>
-              <Stack gap={2} justifyContent={"start"} mt={3}>
-                <Text variant={"body2"}>
-                  {billFromInfo.fullNameCompany ?? ""}
-                </Text>
-                <Text variant={"body2"}>{billFromInfo.street ?? ""}</Text>
-                <Text variant={"body2"}>
-                  {billFromInfo.city ||
-                  billFromInfo.state ||
-                  billFromInfo.country
-                    ? (billFromInfo.city ?? "") +
-                      ", " +
-                      (billFromInfo.state ?? "") +
-                      ", " +
-                      (billFromInfo.country ?? "")
-                    : ""}
-                </Text>
-                <Text variant={"body2"}>{billFromInfo.tax_id ?? ""}</Text>
-              </Stack>
-            </Box>
-          </Grid>
-        </Grid>
-      </Stack>
-      <Stack gap={2}>
-        {/* <TableService /> */}
-        <ServiceTable
-          isEdit={editForm}
-          listService={listService}
-          setListService={setListService}
-          arrBudgets={arrBudgets}
-        />
-      </Stack>
-      <Stack alignItems="start" gap={2} pb={2}>
-        <Grid container spacing={2} paddingTop={2} paddingLeft={2}>
-          <Grid xs={1} md={1}>
-            <Text variant={"body2"}>
-              {billingT("detail.form.invoice.title.subtotal")}
-            </Text>
-          </Grid>
-          <Grid xs={2} md={2}>
-            <Text variant={"body2"}>
-              {formatNumber(totalAmount, {
-                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                numberOfFixed: 2,
-              })}
-            </Text>
-          </Grid>
-        </Grid>
+        <Typography>VNP</Typography>
+        <Typography>Vietnam</Typography>
+        <Stack
+          mt={3}
+          sx={{ display: "flex", flexWrap: "wrap", gap: "30px" }}
+          direction="row"
+        >
+          <Typography
+            fontSize={24}
+            fontWeight={600}
+            color="#003169"
+            sx={{ width: "fit-content", margin: "auto 0" }}
+          >
+            Invoice INV003
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "8px",
+              padding: "15px 30px",
+              backgroundColor: "#FAFAFA",
+              border: "1px solid #2AF598",
+              width: "fit-content",
+              borderRadius: "4px",
+            }}
+          >
+            <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
+              Payment:{" "}
+            </Typography>
+            <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
+              Stripe |{" "}
+            </Typography>
+            <Typography fontSize={14} fontWeight={500} color="#0575E6">
+              https://stripe.com
+            </Typography>
+          </Box>
+        </Stack>
 
-        <Grid container spacing={2} paddingTop={2} paddingLeft={2}>
-          <Grid xs={1} md={1}>
-            <Text variant={"body2"}>
-              {billingT("detail.form.invoice.title.vat")}
-            </Text>
-          </Grid>
-          <Grid xs={2} md={2}>
-            <Text variant={"body2"}>
-              {formatNumber(form?.values?.vat, {
-                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                numberOfFixed: 2,
-              })}
-            </Text>
-          </Grid>
-          {editForm && <VatPopup form={form} />}
-        </Grid>
+        <Stack direction="column" mt={2}>
+          <Typography color="#878787" fontSize={13} fontWeight={400}>
+            BILL FROM
+          </Typography>
+          <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+            Company X
+          </Typography>
+          <Typography color="#21263C" fontSize={14} fontWeight={400}>
+            Le Chan, Ho Chi Minh
+          </Typography>
+          <Typography color="#21263C" fontSize={14} fontWeight={400}>
+            Tax ID: 00001
+          </Typography>
+        </Stack>
 
-        <Grid container spacing={2} paddingTop={2} paddingLeft={2}>
-          <Grid xs={1} md={1}>
-            <Text variant={"body2"}>
-              {billingT("detail.form.invoice.title.total")}
-            </Text>
-          </Grid>
-          <Grid xs={2} md={2}>
-            <Text variant={"body2"} fontWeight={800}>
-              {formatNumber(
-                form.values.vat && form.values.vat != 0
-                  ? totalAmount + Number(form?.values?.vat)
-                  : totalAmount,
-                {
-                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                  numberOfFixed: 2,
-                },
-              )}
-            </Text>
-          </Grid>
-        </Grid>
+        <Stack
+          direction="row"
+          my={3}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            maxWidth: "80%",
+          }}
+        >
+          <Stack direction="column">
+            <Typography color="#878787" fontSize={13} fontWeight={400}>
+              CLIENT
+            </Typography>
+            <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+              Company A
+            </Typography>
+            <Typography color="#21263C" fontSize={14} fontWeight={400}>
+              Grand Via 34, Spain
+            </Typography>
+            <Typography color="#21263C" fontSize={14} fontWeight={400}>
+              Tax ID: 00001
+            </Typography>
+          </Stack>
+
+          <Stack direction="column">
+            <Typography color="#878787" fontSize={13} fontWeight={400}>
+              DATE
+            </Typography>
+            <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+              04/08/2023
+            </Typography>
+          </Stack>
+
+          <Stack direction="column">
+            <Typography color="#878787" fontSize={13} fontWeight={400}>
+              DUE DATE
+            </Typography>
+            <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+              05/08/2023
+            </Typography>
+          </Stack>
+
+          <Stack direction="column">
+            <Typography color="#878787" fontSize={13} fontWeight={400}>
+              CREATED BY
+            </Typography>
+            <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+              Garry Hunt
+            </Typography>
+          </Stack>
+        </Stack>
+
+        <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+          <Table
+            sx={{ minWidth: 650, border: "none" }}
+            aria-label="simple table"
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                >
+                  DESCRIPTION
+                </TableCell>
+                <TableCell
+                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  align="right"
+                >
+                  UNIT
+                </TableCell>
+                <TableCell
+                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  align="right"
+                >
+                  QTY
+                </TableCell>
+                <TableCell
+                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  align="right"
+                >
+                  RATE
+                </TableCell>
+                <TableCell
+                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  align="right"
+                >
+                  AMOUNT
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow
+                  key={row.desc}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                  >
+                    {row.desc}
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                    align="right"
+                  >
+                    {row.unit}
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                    align="right"
+                  >
+                    {row.qty}
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                    align="right"
+                  >
+                    ${row.rate},00
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                    align="right"
+                  >
+                    ${row.amount},00
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Stack
+          direction="column"
+          mt={2}
+          sx={{ alignItems: "flex-end", gap: "12px" }}
+        >
+          <Stack
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "350px",
+            }}
+            direction="row"
+          >
+            <Typography color="#878787" fontSize={14} fontWeight={400}>
+              SUBTOTAL
+            </Typography>
+            <Typography color="#21263C" fontSize={14} fontWeight={400}>
+              $5000,00
+            </Typography>
+          </Stack>
+
+          <Stack
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "350px",
+            }}
+            direction="row"
+          >
+            <Typography color="#878787" fontSize={14} fontWeight={400}>
+              {`VAT(10%)`}
+            </Typography>
+            <Typography color="#21263C" fontSize={14} fontWeight={400}>
+              $500,00
+            </Typography>
+          </Stack>
+
+          <Stack
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "350px",
+            }}
+            direction="row"
+          >
+            <Typography color="#878787" fontSize={14} fontWeight={400}>
+              GRAND TOTAL
+            </Typography>
+            <Typography color="#386aba" fontSize={16} fontWeight={700}>
+              $5500,00
+            </Typography>
+          </Stack>
+        </Stack>
       </Stack>
-      <Stack gap={2} pb={2}>
-        <LinkBudgetTable
-          arrBudgets={listBudgets ?? []}
-          isEdit={editForm}
-          item={item}
-          setListBudgets={setListBudgets}
-        />
-      </Stack>
-      <Stack gap={2} pb={2}>
-        <Input
-          title={billingT("detail.form.invoice.title.message")}
-          name="message"
-          onChange={form.handleChange}
-          onBlur={form.handleBlur}
-          value={form.values?.message}
-          // error={commonT(touchedErrors?.description, {
-          //   name: commonT("form.title.description"),
-          // })}
-          fullWidth
-          rootSx={sxConfig.input}
-          sx={{ flex: 1, mt: { xs: 2, sm: 0 } }}
-        />
-      </Stack>
-      <BillModal
-        open={openModal}
-        handleClose={handleClose}
-        isBillTo={isBillTo}
-        billTo={billToInfo}
-        billFrom={billFromInfo}
-        setBillToInfo={setBillToInfo}
-        setBillFromInfo={setBillFromInfo}
-      />
-      {/* <ExportView
-        open={exportModel}
-        onClose={() => onCloseModalExport()}
-        item={{ bill: arrBill ?? [] } as BillingDataExport}
-      /> */}
-    </FixedLayout>
+    </Box>
   );
 };
 

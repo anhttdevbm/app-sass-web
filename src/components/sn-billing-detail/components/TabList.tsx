@@ -27,6 +27,8 @@ import PaymentModal from "./PaymentModal";
 import { Select } from "components/shared";
 import DropdownButton from "./DropdownButton";
 import { useSnackbar } from "store/app/selectors";
+import { ButtonGradiant } from "components/sn-invoice/components";
+import PlusIcon from "icons/PlusIcon";
 
 type TabItemProps = {
   label: string;
@@ -268,7 +270,15 @@ const TabInfo = (props: TabListProps) => {
             {value === "Payment" && (
               <Stack gap={2} direction={"row"} mb={1}>
                 {item && item?.mail_status == "Sent" && (
-                  <DropdownButton handleOpen={handleOpen} />
+                  // <DropdownButton handleOpen={handleOpen} />
+                  <Stack direction="row" alignItems="center">
+                    <ButtonGradiant
+                      onClick={() => setIsOpen(true)}
+                      startIcon={<PlusIcon />}
+                    >
+                      Add
+                    </ButtonGradiant>
+                  </Stack>
                   // <Button
                   //   variant="contained"
                   //   onClick={() => {
@@ -303,12 +313,8 @@ const TabInfo = (props: TabListProps) => {
             <PaymentModal
               open={isOpen}
               handleClose={handleClose}
-              title={
-                actionButton == "add"
-                  ? billingT("detail.form.payment.title.addPayment")
-                  : billingT("detail.form.payment.title.addWriteOff")
-              }
-              action={actionButton == "add" ? "add" : "write"}
+              title={"New Payment"}
+              // action={actionButton == "add" ? "add" : "write"}
             />
           </Stack>
           {TABS.map((tab) => (

@@ -10,7 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import { NS_BILLING } from "constant/index";
 import { useTranslations } from "next-intl";
-import { ButtonBase, Menu, Stack } from "@mui/material";
+import { Box, ButtonBase, Menu, Stack } from "@mui/material";
 import { Text } from "components/shared";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 
@@ -26,10 +26,7 @@ export const DropdownButton = (props: Props) => {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const billingT = useTranslations(NS_BILLING);
 
-  const options = [
-    billingT("detail.form.top.button.addPayment"),
-    billingT("detail.form.top.button.addWriteOff"),
-  ];
+  const options = ["Paid", "Write Off"];
 
   // const handleClick = () => {
   //   console.info(`You clicked ${options[selectedIndex]}`);
@@ -68,7 +65,7 @@ export const DropdownButton = (props: Props) => {
   };
 
   return (
-    <React.Fragment>
+    <Stack sx={{ position: "relative" }}>
       {/* <IconButton
         aria-label="more"
         id="long-button"
@@ -79,7 +76,7 @@ export const DropdownButton = (props: Props) => {
       >
         <MoreHoriz />
       </IconButton> */}
-      <Button
+      {/* <Button
         onClick={handleClick}
         aria-label="more"
         id="long-button"
@@ -90,7 +87,34 @@ export const DropdownButton = (props: Props) => {
         size="medium"
       >
         {options[selectedIndex]}
-      </Button>
+      </Button> */}
+      <Box
+        onClick={handleClick}
+        sx={{
+          width: "100%",
+          padding: "10px 16px",
+          backgroundColor: "#F9F1F169",
+          borderRadius: "24px",
+          border: "1px solid #EFEFEF",
+        }}
+        id="long-button"
+        aria-controls={open ? "long-menu" : undefined}
+        aria-expanded={open ? "true" : undefined}
+        aria-haspopup="true"
+      >
+        <Box
+          sx={{
+            padding: "5px 20px",
+            borderRadius: "24px",
+            color: options[selectedIndex] === "Paid" ? "#0BB783" : "#FF2C56",
+            backgroundColor:
+              options[selectedIndex] === "Paid" ? "#E8F2EF" : "#FFD9E1",
+            width: "fit-content",
+          }}
+        >
+          {options[selectedIndex]}
+        </Box>
+      </Box>
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -105,6 +129,7 @@ export const DropdownButton = (props: Props) => {
             width: "12ch",
           },
         }}
+        sx={{ position: "absolute", top: 0 }}
       >
         {options.map((option, index) => (
           <MenuItem
@@ -193,7 +218,7 @@ export const DropdownButton = (props: Props) => {
           </Grow>
         )}
       </Popper> */}
-    </React.Fragment>
+    </Stack>
   );
 };
 
