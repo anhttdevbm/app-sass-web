@@ -3,15 +3,15 @@ import {
   Box,
   Button,
   FormControl,
+  InputAdornment,
   MenuItem,
   MenuList,
   Stack,
   SvgIcon,
   SvgIconProps,
+  SxProps,
   TextField,
   Typography,
-  SxProps,
-  InputAdornment,
 } from "@mui/material";
 import PresetMenuItem from "components/sn-projects/components/PresetMenuItem";
 import { Locale } from "constant/types";
@@ -43,8 +43,8 @@ const TaskAiPrompt = (props: {
       content: Yup.string().required(),
     }),
     initialValues: {
-      tone: props.tones[0].id,
-      persona: props.personas[0].id,
+      tone: props.tones[0]?.id,
+      persona: props.personas[0]?.id,
       content: props.content,
       method: "",
     },
