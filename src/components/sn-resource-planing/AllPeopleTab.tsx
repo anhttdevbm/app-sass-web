@@ -367,7 +367,6 @@ const AllPeopleTab = ({
         }),
       ),
     );
-    console.log(items);
 
     return items;
   };
