@@ -54,6 +54,7 @@ const colorSchemes = {
       },
       blue: {
         light: "#E1F0FF",
+        normal: "#0575E6",
       },
       grey: {
         50: "#F7F7FD", // OK
@@ -80,6 +81,10 @@ const colorSchemes = {
       background: {
         paper: "#FFFFFF",
         default: "#F7F7FD",
+      },
+      neutral: {
+        700: "#4D4D4D",
+        800: "#333333",
       },
     },
   },

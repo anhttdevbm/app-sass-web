@@ -33,6 +33,7 @@ export const CONTENT_API_URL = process.env.CONTENT_API_URL as string;
 // AI
 export const AI_CHAT_API_URL = process.env.AI_CHAT_API_URL as string;
 export const AI_AGENT_API_URL = process.env.AI_AGENT_API_URL as string;
+export const PROJECT_AI_API_URL = process.env.PROJECT_AI_API_URL as string;
 
 export const DARK_THEME_MEDIA_SYSTEM = "(prefers-color-scheme: dark)";
 export const DOCS_API_URL = process.env.DOCS_API_URL as string;
@@ -144,6 +145,9 @@ export const NS_CONTENTS = "contents";
 
 //Meeting
 export const NS_MEETING = "meeting";
+
+// Invoice
+export const NS_INVOICE = "invoice";
 
 export const IMAGES_ACCEPT = ["image/png", "image/jpeg", "image/jpg"];
 export const VIDEO_ACCEPT = ["video/mp4"];

@@ -14,7 +14,7 @@ export default function useDocEditor() {
 
   const doc = useAppSelector((state) => state.doc);
   const dispatch = useAppDispatch();
-  const [handleContentUpdate] = useDebounce((content: any) => {
+  const [handleContentUpdate] = useDebounce((content: string) => {
     dispatch(changeContentDoc(content));
   }, 1000);
 
@@ -30,7 +30,6 @@ export default function useDocEditor() {
         }
       },
     }),
-
     editorProps: {
       attributes: {
         class: `main-editor`,
@@ -53,10 +52,12 @@ export default function useDocEditor() {
   useEffect(() => {
     let from = editor?.view.state.selection.from;
     let to = editor?.view.state.selection.to;
-    editor?.commands?.setContent(content);
+    if (editor && content) {
+      editor.commands.setContent(content);
+    }
     // Set selection editor
     // alert(from + " -> " + to);
-  }, [content]);
-
+  }, [content, editor]);
+  
   return editor;
 }

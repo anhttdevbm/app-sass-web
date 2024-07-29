@@ -7,6 +7,53 @@ import EditDocs from "./EditDocs";
 import PageBody from "../news/page-body";
 import CommentDialog from "../news/page-body/components/CommentDialog";
 import FixedLayout from "components/FixedLayout";
+import { IDocItem } from "../KanbanViewDocList";
+
+export interface IMemberDocDetail {
+  _id: string;
+  created_time: string;
+  doc: string;
+  user: string;
+  perm: string;
+}
+
+export interface ICommentDocDetail {
+  _id: string;
+  created_time: string;
+  updated_time: string;
+  doc: string;
+  created_b: string;
+  position: string;
+  content: string;
+}
+
+export interface IPositionCommentDocDetail {
+  _id: string;
+  created_time: string;
+  updated_time: string;
+  doc: string;
+  position: string;
+  comment: ICommentDocDetail[];
+}
+
+export interface IChildDocDetail {
+  _id: string;
+  id: string;
+  name: string;
+  created_time: string;
+  updated_time: string;
+  created_by: string;
+  updated_by: string;
+  owner: string;
+  root_directory: string;
+  description: string;
+}
+
+export interface IDocItemDetail extends IDocItem {
+  member?: IMemberDocDetail[];
+  positionComment: IPositionCommentDocDetail[];
+  child: IChildDocDetail[];
+}
 
 export interface IDocDetail {
   openComment: boolean;

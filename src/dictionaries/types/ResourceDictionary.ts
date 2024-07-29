@@ -18,6 +18,8 @@ export default interface ResourceDictionary {
       };
       descending: string;
       asceding: string;
+      position: string;
+      viewBy: string;
     };
     time: {
       eventTime: string;
@@ -34,6 +36,9 @@ export default interface ResourceDictionary {
     resourceHeader: {
       available: string;
       schedule: string;
+      service: string;
+      user: string;
+      startDate: string;
     };
     action: {
       addBooking: string;
@@ -65,6 +70,9 @@ export default interface ResourceDictionary {
     schedule: string;
     selectTimeOffCategory: string;
     timeOffCategory: string;
+    budget: string;
+    user: string;
+    role1: string;
     timeOffType: {
       vacation: string;
       sick: string;
@@ -97,5 +105,12 @@ export default interface ResourceDictionary {
     updateFailed: string;
     deleteFailed: string;
     deleteSuccess: string;
+  };
+  popupService: {
+    project: string;
+    chooseProjectPlacehodle: string;
+    chooseBudgetPlacehodle: string;
+    budget: string;
+    search: string;
   };
 }

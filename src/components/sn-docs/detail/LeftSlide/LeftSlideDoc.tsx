@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Search } from "components/Filters";
 import { Text } from "components/shared";
 import { NS_DOCS } from "constant/index";
@@ -13,6 +13,8 @@ import { useDocs } from "store/docs/selectors";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
 import DocumentList from "./ItemDocs";
+import TreeViewDocuments from "../components/TreeViewDocuments";
+import useLeftSlideDoc from "./hooks/useLeftSlideDoc";
 
 export interface LeftSlideDocProps {
   open: boolean;
@@ -21,62 +23,17 @@ export interface LeftSlideDocProps {
 
 const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
   const dataFake = useAppSelector((state) => state.doc.docDetails.data);
-  const { id } = useParams();
-  const { data: document, isLoading } = useGetDocDetailQuery(id as string);
-  const [createDoc, { data: docsData, error }] = useCreateDocMutation();
-
-  const [data, setData] = useState({});
   const docsT = useTranslations(NS_DOCS);
   const [search, setSearch] = useState("");
   const onChangeQueries = (name: string, value: any) => {
     setSearch(value);
   };
 
-  useEffect(() => {
-    setData(document);
-  }, [document]);
-
-  const addChildToData = (parent, child) => {
-    const newData = { ...data };
-    const addChildToParent = async (parentNode) => {
-      const modifiedParentNode = {
-        ...parentNode,
-        child: parentNode.child || [],
-      };
-
-      if (modifiedParentNode.id === parent) {
-        modifiedParentNode.child = Array.isArray(modifiedParentNode.child)
-          ? [...modifiedParentNode.child, child]
-          : [child];
-        const result = await createDoc(child);
-      } else {
-        modifiedParentNode.child.forEach((child) => {
-          addChildToParent(child);
-        });
-      }
-    };
-    addChildToParent(newData);
-    setData(newData);
-  };
-
   const { handleGetDocDetail } = useDocs();
+  const { handleAddChild, document, data } = useLeftSlideDoc();
 
-  const handleChangeDocument = (id:string) => {
+  const handleChangeDocument = (id: string) => {
     handleGetDocDetail(id);
-  };
-
-  // Hàm xử lý khi nhấn nút "Thêm mục con"
-  const handleAddChild = (parent, project_id) => {
-    const id = uuid();
-    const newChild = {
-      id: id,
-      project_id: project_id,
-      root_directory: parent,
-      name: "New Document",
-      description: "",
-    };
-
-    addChildToData(parent, newChild);
   };
 
   return (
@@ -89,7 +46,7 @@ const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
         },
       }}
     >
-      <Box
+      {/* <Box
         sx={{
           position: "relative",
           height: "100%",
@@ -163,7 +120,17 @@ const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
             />
           </Box>
         </Box>
-      </Box>
+      </Box> */}
+      <Text
+        sx={{
+          marginTop: "8px",
+        }}
+        color={"grey"}
+        variant={"h6"}
+      >
+        Page
+      </Text>
+      <TreeViewDocuments doc={document} />
     </Box>
   );
 };

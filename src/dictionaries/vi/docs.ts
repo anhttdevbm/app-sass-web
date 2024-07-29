@@ -7,6 +7,7 @@ export const DocsLang: DocsDictionary = {
     add: "Thêm",
     comment: "Nhận xét",
     cancel: "Hủy",
+    search: "Tìm kiếm",
   },
   filter: {
     all: "Tất cả",
@@ -40,4 +41,15 @@ export const DocsLang: DocsDictionary = {
     restore: "Khôi phục",
     name: "Tên tài liệu",
   },
+  extendBtn: {
+    rename: "Đổi tên",
+    move: "Di chuyển",
+    duplicate: "Sao chép",
+    delete: "Xóa",
+  },
+  ownedBy: "Sở hữu bởi",
+  createdBy: "Được tạo bởi",
+  changeDocAccess: "Thay đổi quyền truy cập tài liệu?",
+  errorInputRename: "Vui lòng nhập tên của document",
+  deleteConfirmDoc: "Bạn chắc chắn muốn xóa document?",
 };

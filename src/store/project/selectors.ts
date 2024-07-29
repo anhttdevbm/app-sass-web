@@ -21,6 +21,7 @@ import {
   updateProject,
   updateTask,
   updateTaskList,
+  deleteProject,
   DeleteSubTasksData,
   DeleteTaskListsData,
   deleteSubTasks,
@@ -43,6 +44,10 @@ import {
   orderTodo,
   OrderTodoData,
   getProjectAttachment,
+  createProjectWithAI,
+  CreateProjectPrompt,
+  createTaskWithAI,
+  CreateTaskPrompt,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
@@ -86,10 +91,28 @@ export const useProjects = () => {
     [dispatch],
   );
 
+  const onCreateProjectWithAI = useCallback(
+    async (data: CreateProjectPrompt) => {
+      return await dispatch(createProjectWithAI(data)).unwrap();
+    },
+    [dispatch],
+  );
+
   const onUpdateProject = useCallback(
     async (id: string, data: Partial<ProjectData>) => {
       try {
         return await dispatch(updateProject({ id, ...data })).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
+  const onDeleteProject = useCallback(
+    async (id: string) => {
+      try {
+        return await dispatch(deleteProject(id)).unwrap();
       } catch (error) {
         throw error;
       }
@@ -110,7 +133,9 @@ export const useProjects = () => {
     totalPages,
     onGetProjects,
     onCreateProject,
+    onCreateProjectWithAI,
     onUpdateProject,
+    onDeleteProject,
   };
 };
 
@@ -291,6 +316,13 @@ export const useTasksOfProject = () => {
     [dispatch],
   );
 
+  const onCreateTaskListWithAi = useCallback(
+    async (data: CreateProjectPrompt) => {
+      return await dispatch(createProjectWithAI(data)).unwrap();
+    },
+    [dispatch],
+  );
+
   const onCreateTask = useCallback(
     async (
       data: Omit<TaskData, "task_list" | "task">,
@@ -304,6 +336,13 @@ export const useTasksOfProject = () => {
       } catch (error) {
         throw error;
       }
+    },
+    [dispatch],
+  );
+
+  const onCreateTaskWithAi = useCallback(
+    async (data: CreateTaskPrompt) => {
+      return await dispatch(createTaskWithAI(data)).unwrap();
     },
     [dispatch],
   );
@@ -381,8 +420,10 @@ export const useTasksOfProject = () => {
     id: storeFilters?.project,
     onGetTasksOfProject,
     onCreateTaskList,
+    onCreateTaskListWithAi,
     onUpdateTaskList,
     onCreateTask,
+    onCreateTaskWithAi,
     onMoveTask,
     onDeleteTaskLists,
     onDeleteTasks,

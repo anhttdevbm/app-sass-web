@@ -1,14 +1,20 @@
+import { ExpandMore } from "@mui/icons-material";
 import {
   Box,
+  Button,
   ButtonBase,
+  Grow,
+  ListItemIcon,
+  ListItemText,
   MenuItem,
   MenuList,
+  Popover,
   Popper,
-  Grow,
-  useTheme,
   Stack,
-  TextField,
+  SvgIcon,
+  SvgIconProps,
   popoverClasses,
+  useTheme,
 } from "@mui/material";
 import ConfirmDialog from "components/ConfirmDialog";
 import DialogLayout from "components/DialogLayout";
@@ -20,7 +26,7 @@ import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_PROJECT } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
 import useToggle from "hooks/useToggle";
-import CaretIcon from "icons/CaretIcon";
+import AIGradientIcon from "icons/AIGradientIcon";
 import DuplicateIcon from "icons/DuplicateIcon";
 import MoreDotIcon from "icons/MoreDotIcon";
 import MoveArrowIcon from "icons/MoveArrowIcon";
@@ -49,6 +55,7 @@ import Form from "../Form";
 import MoveTaskList from "../MoveTaskList";
 import TaskListForm from "../TaskListForm";
 import { Selected, TaskFormData, genName } from "./helpers";
+import TaskAiForm from "../TaskAiForm";
 
 type DroppableTaskListProps = {
   id: string;
@@ -150,7 +157,6 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
               {...provided.droppableProps}
               style={{
                 border: isDragging ? "1px dashed" : undefined,
-                backgroundColor: theme.palette.background.paper,
               }}
             >
               <Stack
@@ -163,26 +169,10 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                 borderTop={index !== 0 ? { md: "1px solid" } : undefined}
                 borderBottom={{ md: "1px solid" }}
                 borderColor={{ md: "grey.100" }}
-                style={{
-                  backgroundColor: checked
-                    ? "rgba(236, 236, 243, 1)"
-                    : "rgba(236, 236, 243, 0.6)",
-                }}
+                bgcolor="#e8f2e8"
+                borderRadius="1rem 1rem 0 0"
               >
-                <Stack
-                  direction="row"
-                  sx={{
-                    "& >.checkbox": {
-                      opacity: isMobile || checked ? 1 : 0,
-                      userSelect: isMobile || checked ? undefined : "none",
-                    },
-                    "&:hover >.checkbox": {
-                      opacity: 1,
-                    },
-                  }}
-                  alignItems="center"
-                  overflow="hidden"
-                >
+                <Stack direction="row" alignItems="center" overflow="hidden">
                   <CheckBoxCustom
                     size="small"
                     className="checkbox"
@@ -197,11 +187,11 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     }}
                     onClick={onToggle}
                   >
-                    <CaretIcon sx={{ color: "grey.300" }} />
+                    <ExpandMore sx={{ color: "text.primary" }} />
                   </IconButton>
                   <Text
                     variant={isXlSmaller ? "h6" : "h5"}
-                    color="#666666"
+                    color="text.primary"
                     onClick={onShowPreviewName}
                     noWrap
                     sx={{ cursor: "pointer" }}
@@ -213,7 +203,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     ml={0.5}
                     variant="h5"
                     fontWeight={400}
-                    color="#666666"
+                    color="text.primary"
                   >
                     {`(${count})`}
                   </Text>
@@ -223,18 +213,6 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     setSelectedList={setSelectedList}
                   />
                 </Stack>
-                {/* <Button
-                  onClick={onShowCreate}
-                  startIcon={<PlusIcon />}
-                  variant="text"
-                  size="extraSmall"
-                  color="secondary"
-                  sx={{
-                    mr: { xs: 1.5, md: 4 },
-                  }}
-                >
-                  {projectT("detailTasks.addNewTask")}
-                </Button> */}
               </Stack>
               {isShow && props.children}
               {provided.placeholder}
@@ -245,48 +223,21 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   direction="row"
                   spacing={0}
                   alignItems="center"
-                  sx={{ ml: { xs: 2, md: 7 } }}
+                  sx={{ ml: { xs: 2, md: 3.5 } }}
                 >
-                  <PlusIcon sx={{ color: "#999999", mt: 0.5 }} />
-                  <TextField
-                    label={projectT("detailTasks.addNewTask")}
-                    value={taskName}
-                    onKeyDown={(e) => onKeyDownTaskName(e, id)}
-                    fullWidth
-                    variant="filled"
-                    size="small"
-                    onChange={changeNameTask}
-                    required
+                  <Button
+                    onClick={onShowCreate}
+                    startIcon={<PlusIcon />}
+                    variant="text"
+                    size="medium"
+                    color="primary"
                     sx={{
-                      "& >div": {
-                        bgcolor: "transparent!important",
-                        "&:after": {
-                          borderBottomColor: "rgba(11, 183, 175, 0.5) !important",
-                        },
-                        "&:before": {
-                          borderBottom: "unset !important",
-                        },
-                      },
-                      pb: "8px",
-
-                      "& input": {
-                        fontSize: 14,
-                        paddingTop: "17px !important",
-                      },
-                      width: "35% !important",
-                      "& label.Mui-focused": {
-                        color: "green",
-                      },
-                      "& >label": {
-                        fontWeight: "600 !important",
-                        fontSize: "14px",
-                        color: "#999999 !important",
-                      },
-                      "& >label >span": {
-                        display: "none",
-                      },
+                      mr: { xs: 1.5, md: 4 },
+                      textTransform: "none",
                     }}
-                  />
+                  >
+                    {projectT("detailTasks.addNewTask")}
+                  </Button>
                 </Stack>
               )}
             </div>
@@ -319,6 +270,7 @@ enum Action {
   MOVE,
   DELETE,
   ADD_NEW_TASK,
+  AI_ADD_NEW_TASK,
 }
 
 export const MoreList = (props: MoreListProps) => {
@@ -353,6 +305,8 @@ export const MoreList = (props: MoreListProps) => {
 
   const [type, setType] = useState<Action | undefined>();
   const [msg, setMsg] = useState<string | undefined>();
+
+  const [isShowAiCreate, onShowAiCreate, onHideAiCreate] = useToggle();
 
   const handleClickOutside = () => {
     onClose();
@@ -520,6 +474,16 @@ export const MoreList = (props: MoreListProps) => {
             >
               <MenuList component={Box} sx={{ py: 0 }}>
                 <MenuItem
+                  onClick={onSetTType(Action.AI_ADD_NEW_TASK)}
+                  component={ButtonBase}
+                  sx={sxConfig.item}
+                >
+                  <AIGradientIcon fontSize="medium" />
+                  <Text ml={2} variant="body2" color="grey.400">
+                    AI Assistant
+                  </Text>
+                </MenuItem>
+                <MenuItem
                   onClick={onSetTType(Action.ADD_NEW_TASK)}
                   component={ButtonBase}
                   sx={sxConfig.item}
@@ -588,7 +552,14 @@ export const MoreList = (props: MoreListProps) => {
         type={DataAction.CREATE}
         onSubmit={onCreateTaskHandle}
       />
-
+      {type === Action.AI_ADD_NEW_TASK && (
+        <TaskAiForm
+          open
+          onClose={onSetTType()}
+          taskListId={id}
+          taskListName={name}
+        />
+      )}
       {type === Action.RENAME && (
         <TaskListForm
           open

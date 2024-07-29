@@ -65,7 +65,6 @@ const TextFieldInput = forwardRef<Ref, TextFieldInputProps>(
             display: "flex",
             flexDirection: "row",
             background: palette.grey[50],
-            borderRadius: "4px",
             padding: "8px 20px",
             height: "58px",
             ":hover": {

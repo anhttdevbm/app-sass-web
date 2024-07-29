@@ -5,6 +5,7 @@ export type DocsDictionary = {
     add: string;
     comment: string;
     cancel: string;
+    search: string;
   };
   filter: {
     all: string;
@@ -27,4 +28,15 @@ export type DocsDictionary = {
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createDoc: any;
+  extendBtn: {
+    rename: string;
+    move: string;
+    duplicate: string;
+    delete: string;
+  };
+  ownedBy: string;
+  createdBy: string;
+  changeDocAccess: string;
+  errorInputRename: string;
+  deleteConfirmDoc: string;
 };

@@ -46,14 +46,28 @@ const ConfirmDialog = (props: ConfirmDialogProps) => {
             type="button"
             variant="primaryOutlined"
             size="small"
-            sx={defaultSx.button}
+            sx={{
+              ...defaultSx.button,
+              borderRadius: "100px",
+              borderColor: "#2AF598",
+              "&:hover": {
+                borderColor: "#2AF598",
+              },
+            }}
             onClick={onClose}
           >
             {cancelText}
           </Button>
           <Button
             variant="primary"
-            sx={defaultSx.button}
+            sx={{
+              ...defaultSx.button,
+              borderRadius: "100px",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
+            }}
             type="button"
             size="small"
             onClick={onSubmit}

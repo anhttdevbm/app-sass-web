@@ -1,0 +1,15 @@
+.super-app-theme--header{
+    background-color: #D9F0FD;
+    color:#0575E6;
+}
+.css-t89xny-MuiDataGrid-columnHeaderTitle{
+    font-weight: 600 !important;
+}
+.css-1eg8v8j-MuiDataGrid-root .MuiDataGrid-columnHeader--alignCenter .MuiDataGrid-columnHeaderTitleContainer {
+    background-color: #D9F0FD;
+}
+.css-ku826d-MuiAvatar-root-MuiAvatarGroup-avatar{
+    width: 15px !important;
+    height: 15px !important;
+    font-size: 10px !important;
+}

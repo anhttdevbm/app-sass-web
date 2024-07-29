@@ -49,11 +49,6 @@ const PaymentTable = (props: IProps) => {
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: `${billingT("detail.form.payment.table2.status")}`,
-        align: "left",
-        width: "15%",
-      },
-      {
         value: `${billingT("detail.form.payment.table2.date")}`,
         align: "left",
         width: "15%",
@@ -64,13 +59,17 @@ const PaymentTable = (props: IProps) => {
         width: "15%",
       },
       {
-        value: `${billingT("detail.form.payment.table2.amount")}`,
+        value: `${billingT("detail.form.payment.table2.note")}`,
         align: "left",
         width: "15%",
       },
-
       {
-        value: `${billingT("detail.form.payment.table2.note")}`,
+        value: `${billingT("detail.form.payment.table2.status")}`,
+        align: "left",
+        width: "15%",
+      },
+      {
+        value: `${billingT("detail.form.payment.table2.amount")}`,
         align: "left",
         width: "15%",
       },
@@ -80,11 +79,6 @@ const PaymentTable = (props: IProps) => {
   const mobileHeaderList: CellProps[] = useMemo(
     () => [
       {
-        value: `${billingT("detail.form.payment.table2.status")}`,
-        align: "left",
-        width: "15%",
-      },
-      {
         value: `${billingT("detail.form.payment.table2.date")}`,
         align: "left",
         width: "15%",
@@ -95,13 +89,17 @@ const PaymentTable = (props: IProps) => {
         width: "15%",
       },
       {
-        value: `${billingT("detail.form.payment.table2.amount")}`,
+        value: `${billingT("detail.form.payment.table2.note")}`,
         align: "left",
         width: "15%",
       },
-
       {
-        value: `${billingT("detail.form.payment.table2.note")}`,
+        value: `${billingT("detail.form.payment.table2.status")}`,
+        align: "left",
+        width: "15%",
+      },
+      {
+        value: `${billingT("detail.form.payment.table2.amount")}`,
         align: "left",
         width: "15%",
       },
@@ -158,73 +156,27 @@ const PaymentTable = (props: IProps) => {
               ) : (
                 <DesktopCells item={item} order={0} />
               )}
-              <BodyCell align="left" sx={{ px: { xs: 0.5, md: 2 } }}>
-                <IconButton
-                  aria-label="more"
-                  id="long-button"
-                  aria-controls={open ? "long-menu" : undefined}
-                  aria-expanded={open ? "true" : undefined}
-                  aria-haspopup="true"
-                  onClick={handleClick}
+              <BodyCell
+                align="left"
+                sx={{ px: { xs: 0.5, md: 2 }, display: "flex", gap: "12px" }}
+              >
+                <Text
+                  fontSize={24}
+                  variant={"body2"}
+                  onClick={() => handleOpen(item)}
+                  sx={{ display: "flex", alignItems: "center" }}
                 >
-                  <MoreHoriz />
-                </IconButton>
-                <Menu
-                  id="long-menu"
-                  MenuListProps={{
-                    "aria-labelledby": "long-button",
-                  }}
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  PaperProps={{
-                    style: {
-                      maxHeight: ITEM_HEIGHT * 4.5,
-                      width: "12ch",
-                    },
-                  }}
+                  <PencilUnderlineIcon />
+                </Text>
+                <Text
+                  variant={"body2"}
+                  color={"red"}
+                  fontSize={24}
+                  onClick={() => handleDeletePayment(item?.id ?? "")}
+                  sx={{ display: "flex", alignItems: "center" }}
                 >
-                  {options.map((option) => (
-                    <MenuItem
-                      key={option}
-                      selected={option === "Pyxis"}
-                      onClick={handleClose}
-                    >
-                      {option ===
-                      billingT("detail.form.payment.button.option.edit") ? (
-                        <Text
-                          variant={"body2"}
-                          onClick={() => handleOpen(item)}
-                        >
-                          <Stack
-                            direction={"row"}
-                            alignItems={"center"}
-                            gap={2}
-                          >
-                            <PencilUnderlineIcon /> {option}
-                          </Stack>
-                        </Text>
-                      ) : option ===
-                        billingT("detail.form.payment.button.option.delete") ? (
-                        <Text
-                          variant={"body2"}
-                          color={"red"}
-                          onClick={() => handleDeletePayment(item?.id ?? "")}
-                        >
-                          <Stack
-                            direction={"row"}
-                            alignItems={"center"}
-                            gap={2}
-                          >
-                            <TrashIcon /> {option}
-                          </Stack>
-                        </Text>
-                      ) : (
-                        ""
-                      )}
-                    </MenuItem>
-                  ))}
-                </Menu>
+                  <TrashIcon />
+                </Text>
               </BodyCell>
             </TableRow>
           );

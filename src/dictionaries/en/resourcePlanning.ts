@@ -5,8 +5,8 @@ export const ResourcePlanningLang: ResourceDictionary = {
     title: "Resource Planning",
 
     tab: {
-      allPeople: "All People",
-      mySchedule: "My schedule",
+      allPeople: "Schedule",
+      mySchedule: "Timeline",
     },
   },
   schedule: {
@@ -20,6 +20,8 @@ export const ResourcePlanningLang: ResourceDictionary = {
       },
       descending: "Descending by working hours",
       asceding: "Ascending by working hours",
+      position: "Position",
+      viewBy: "View by",
     },
     unit: {
       day: "day",
@@ -36,6 +38,9 @@ export const ResourcePlanningLang: ResourceDictionary = {
     resourceHeader: {
       available: "Available",
       schedule: "Schedule",
+      service: "SERVICE",
+      user: "USER",
+      startDate: "START DATE",
     },
     action: {
       addBooking: "Add booking",
@@ -98,5 +103,15 @@ export const ResourcePlanningLang: ResourceDictionary = {
     updateFailed: "Update booking failed",
     deleteSuccess: "Delete booking successfully",
     deleteFailed: "Delete booking failed",
+    budget: "Ngân sách",
+    user: "Người dùng",
+    role1: "Vị trí",
+  },
+  popupService: {
+    project: "Project",
+    chooseProjectPlacehodle: "Choose-project",
+    chooseBudgetPlacehodle: "Choose-budget",
+    budget: "Budget",
+    search: "Search",
   },
 };

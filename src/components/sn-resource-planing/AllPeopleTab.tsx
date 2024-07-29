@@ -1,7 +1,7 @@
 "use client";
 
 import FullCalendar from "@fullcalendar/react";
-import React, { use, useCallback, useEffect, useMemo } from "react";
+import React, { use, useCallback, useEffect, useMemo, useState } from "react";
 import {
   IBookingAllFitler,
   updateBookingResource,
@@ -34,6 +34,9 @@ import useTheme from "hooks/useTheme";
 import EditBooking from "./modals/EditBooking";
 import PlusIcon from "icons/PlusIcon";
 import { Button } from "components/shared";
+import { Search } from "components/Filters";
+import { Input } from "components/shared";
+import SearchIcon from "icons/SearchIcon";
 
 export interface IEditState {
   isOpen: boolean;
@@ -41,7 +44,19 @@ export interface IEditState {
   isProject: boolean;
 }
 
-const AllPeopleTab = () => {
+interface IAllPeopleTabProp {
+  setisServicePopup: any;
+  setIsWorkload: any;
+  isWorkload: Boolean;
+  tab: String;
+}
+
+const AllPeopleTab = ({
+  setisServicePopup,
+  setIsWorkload,
+  isWorkload,
+  tab,
+}: IAllPeopleTabProp) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
@@ -68,6 +83,7 @@ const AllPeopleTab = () => {
     bookingId: "",
     isProject: true,
   });
+
   const generateDateRange = () => {
     const start_date = dayjs(filters?.start_date);
     const result: Array<Date> = [];
@@ -92,7 +108,7 @@ const AllPeopleTab = () => {
 
   useEffect(() => {
     if (filters) {
-      setBookingAllFilter(filters); 
+      setBookingAllFilter(filters);
       setSelectedResource([]);
     }
   }, [filters]);
@@ -327,10 +343,43 @@ const AllPeopleTab = () => {
       background: palette.grey[50],
     },
   };
+  const mapResours = () => {
+    const items: any = [];
+    mappedResources.map((item: any) => {
+      items.push({
+        id: item.id,
+        fullName: item.fullname,
+        total_hour: item.total_hour,
+      });
+    });
+    return items;
+  };
+  const mapEvent = () => {
+    const items: any = [];
+    mappedResources.map((item: any) =>
+      item.bookings.map((ite: any) =>
+        items.push({
+          ...ite,
+          resourceId: ite.user_id,
+          start: ite.start_date,
+          end: ite.end_date,
+          bookingID: ite.id,
+        }),
+      ),
+    );
+    console.log(items);
+
+    return items;
+  };
 
   return (
     <Stack direction="column" rowGap={2}>
-      <FilterHeader type={TAB_TYPE.ALL} />
+      <FilterHeader
+        type={TAB_TYPE.ALL}
+        setisServicePopup={setisServicePopup}
+        setIsWorkload={setIsWorkload}
+        tab={tab}
+      />
       <TimeHeader
         filters={filters}
         setFilters={setFilters}
@@ -353,13 +402,14 @@ const AllPeopleTab = () => {
           plugins={[resourceTimelinePlugin, interactionPlugin]}
           initialView="resourceTimeline"
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-          resourceAreaWidth={660}
+          resourceAreaWidth={194}
           resourceOrder="from"
           weekends={true}
           editable={true}
           eventResourceEditable={true}
           eventDurationEditable={true}
           headerToolbar={false}
+          nowIndicator={true}
           selectMirror={true}
           selectable={true}
           eventDragStart={(arg) => {
@@ -368,19 +418,20 @@ const AllPeopleTab = () => {
               return false;
             }
           }}
-          duration={{ weeks: 1 }}
+          duration={{ weeks: 2 }}
           select={(arg) => {
             const { startStr, endStr, resource, view } = arg;
-
-            if (resource?._resource.extendedProps.type === 'end') {
+            if (resource?._resource.extendedProps.type === "end") {
               view.calendar.unselect();
               return;
-            };
+            }
 
-            setParentResource(resource?._resource.parentId || resource?._resource.id || "");
+            setParentResource(
+              resource?._resource.parentId || resource?._resource.id || "",
+            );
             const start_date = dayjs(startStr).toDate();
 
-            const end_date = dayjs(endStr).subtract(1, 'day').toDate();
+            const end_date = dayjs(endStr).subtract(1, "day").toDate();
             // if (!resource) return;
             setSelectedDateRange([start_date, end_date]);
             setIsOpenCreate(true);
@@ -388,8 +439,10 @@ const AllPeopleTab = () => {
           slotDuration={{
             days: 1,
           }}
-          resources={mappedResources}
-          events={mappedEvents}
+          // resources={mappedResources}
+          // events={mappedEvents}
+          resources={mapResours()}
+          events={mapEvent()}
           slotLabelContent={(arg) => {
             // Content label for each slot on calendar
             return <SlotLabelContent arg={arg} />;
@@ -397,10 +450,11 @@ const AllPeopleTab = () => {
           resourceAreaHeaderClassNames="custom-header"
           resourceAreaHeaderContent={(resrouce) => {
             return (
-              <ResourceHeaderContent
-                resource={resrouce}
-                totalhour={totalhour}
-              />
+              // <ResourceHeaderContent
+              //   resource={resrouce}
+              //   totalhour={totalhour}
+              // />
+              <Input endNode={<SearchIcon />} placeholder="USER" />
             );
           }}
           resourceLabelContent={({ resource, view }) => {
@@ -412,26 +466,26 @@ const AllPeopleTab = () => {
               return;
             }
 
-            if (resource._resource.extendedProps.type === "end") {
-              return (
-                <Button
-                  variant="text"
-                  startIcon={<PlusIcon />}
-                  sx={{
-                    px: 2,
-                    py: 1,
-                    color: "success.main",
-                  }}
-                  // startIcon={<AddIcon />}
-                  onClick={() => {
-                    setIsOpenCreate(true);
-                    setParentResource(resource._resource.extendedProps.user_id);
-                  }}
-                >
-                  {resourceT("schedule.action.addBooking")}
-                </Button>
-              );
-            }
+            // if (resource._resource.extendedProps.type === "end") {
+            //   return (
+            //     <Button
+            //       variant="text"
+            //       startIcon={<PlusIcon />}
+            //       sx={{
+            //         px: 2,
+            //         py: 1,
+            //         color: "success.main",
+            //       }}
+            //       // startIcon={<AddIcon />}
+            //       onClick={() => {
+            //         setIsOpenCreate(true);
+            //         setParentResource(resource._resource.extendedProps.user_id);
+            //       }}
+            //     >
+            //       {resourceT("schedule.action.addBooking")}
+            //     </Button>
+            //   );
+            // }
             const bookings = parentResource
               ? [...parentResource?.bookings]
               : [];
@@ -462,8 +516,13 @@ const AllPeopleTab = () => {
           }}
           eventContent={({ event }) => {
             // Content on calendar
+
             return (
-              <EventContents event={event} setIsOpenEdit={setIsOpenEdit} />
+              <EventContents
+                event={event}
+                setIsOpenEdit={setIsOpenEdit}
+                isWorkload={isWorkload}
+              />
             );
           }}
           stickyFooterScrollbar={true}

@@ -7,6 +7,7 @@ export const DocsLang: DocsDictionary = {
     add: "Add",
     comment: "Comment",
     cancel: "Cancel",
+    search: "Search",
   },
   filter: {
     all: "All",
@@ -40,4 +41,15 @@ export const DocsLang: DocsDictionary = {
     restore: "Restore",
     name: "Document Name",
   },
+  extendBtn: {
+    rename: "Rename",
+    move: "Move",
+    duplicate: "Duplicate",
+    delete: "Delete",
+  },
+  ownedBy: "Owned by",
+  createdBy: "Created by",
+  changeDocAccess: "Change document Access ?",
+  errorInputRename: "Please enter a document name",
+  deleteConfirmDoc: "Do you want to delete document?",
 };

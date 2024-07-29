@@ -1,5 +1,7 @@
 import { Box, IconButton, SelectChangeEvent, useMediaQuery } from "@mui/material";
+import { AxiosError } from "axios";
 import { NS_AI_CHAT } from "constant/index";
+import BackTabIcon from "icons/BackTabIcon";
 import { HEADER_HEIGHT } from "layouts/Header";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -9,8 +11,6 @@ import ChatInput from "./components/Chat/ChatInput";
 import { RenderEmptyChat } from "./components/Chat/EmptyChat";
 import { MessageLayout, MessageList } from "./components/Message";
 import { SelectAIChat } from "./components/Select";
-import { AxiosError } from "axios";
-import BackTabIcon from "icons/BackTabIcon";
 
 interface BoxChatProps {
   popupMode?: boolean;
@@ -46,7 +46,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
 
     onChatWithAI,
     isFetchingChatAI,
-    isIdleChatAI
+    isIdleChatAI,
   } = useChatWithAI();
 
   const {
@@ -180,7 +180,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
             return {
               label: item.name[locale],
               value: item.id,
-              icon: item.icon,
+              icon: item.icon as React.ReactNode, // Ensure icon is ReactNode
             };
           })
         : [],
@@ -194,7 +194,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
             return {
               label: item.name[locale],
               value: item.id,
-              icon: item.icon,
+              icon: item.icon as React.ReactNode, // Ensure icon is ReactNode
             };
           })
         : [],

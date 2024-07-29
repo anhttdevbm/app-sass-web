@@ -1,0 +1,124 @@
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import DescriptionIcon from "@mui/icons-material/Description";
+import { Avatar, Box, IconButton, Stack } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import { NS_DOCS } from "constant/index";
+import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { useDocs } from "store/docs/selectors";
+import ActionMoreListDoc from "../ActionMoreListDoc";
+import { IDocItem } from "../KanbanViewDocList";
+
+export default function BasicViewExpandItem({
+  expandedItem,
+}: {
+  expandedItem: IDocItem;
+}) {
+  const docsT = useTranslations(NS_DOCS);
+  const { redirectDetailDoc } = useDocs();
+  return (
+    <Stack
+      direction={{ xs: "column", md: "row" }}
+      alignItems={{ md: "center" }}
+      padding={{ md: 2 }}
+      borderBottom={0.5}
+      borderColor="#EFEFEF"
+      paddingBottom={{ xs: 1 }}
+    >
+      <Box
+        onClick={() => {
+          redirectDetailDoc(expandedItem.id);
+        }}
+        sx={{ cursor: "pointer" }}
+        display="flex"
+        pr={{ xs: 0.5 }}
+        width={{ xs: "100%", md: "40%" }}
+        alignItems="center"
+        justifyContent={{ xs: "space-between" }}
+      >
+        <Box display="flex" alignItems="center">
+          <IconButton color="inherit" aria-label="menu">
+            <DescriptionIcon
+              sx={{ color: "primary.main", height: 16, width: 16 }}
+            />
+          </IconButton>
+          <Typography variant="h6">{expandedItem?.name ?? "--"}</Typography>
+        </Box>
+        <Box
+          sx={(theme) => ({
+            width: "10%",
+            [theme.breakpoints.up("md")]: {
+              display: "none",
+            },
+            [theme.breakpoints.up("xs")]: {},
+          })}
+        >
+          <ActionMoreListDoc style={{ colorIcon: "text.primary" }} />
+        </Box>
+      </Box>
+      <Box
+        display="flex"
+        flexDirection={{ xs: "column", md: "row" }}
+        gap={{ xs: 0.5, md: 4 }}
+        width={{ xs: "100%", md: "50%" }}
+        sx={{ color: "grey.900" }}
+        alignItems={{ md: "center" }}
+        paddingLeft={{ xs: 1 }}
+      >
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={1}
+          sx={{ width: "50%", color: "grey.700" }}
+        >
+          <Avatar
+            sx={{ height: 18, width: 18 }}
+            alt={expandedItem?.avatar?.name}
+            src={expandedItem?.created_by?.avatar?.link}
+          />
+          {expandedItem?.created_by ? (
+            <>
+              <Typography whiteSpace={{ xs: "nowrap" }} variant="body2">
+                {docsT("createdBy")}
+              </Typography>
+              <Typography
+                whiteSpace={{ xs: "nowrap" }}
+                variant="body2"
+                sx={{ fontWeight: 600 }}
+              >
+                {expandedItem?.created_by?.fullname}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="body2">--</Typography>
+          )}
+        </Box>
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={1}
+          sx={{ color: "grey.700" }}
+        >
+          <AccessTimeIcon sx={{ height: 16, width: 16 }} />
+          <Typography variant="body2">
+            {dayjs(expandedItem?.updated_time).format("MMMM D, YYYY")}
+          </Typography>
+        </Box>
+      </Box>
+      <Box
+        sx={(theme) => ({
+          width: "10%",
+          [theme.breakpoints.up("md")]: {
+            display: "flex",
+            justifyContent: "flex-end",
+          },
+          [theme.breakpoints.up("xs")]: {
+            display: "none",
+          },
+        })}
+      >
+        <ActionMoreListDoc style={{ colorIcon: "text.primary" }} />
+      </Box>
+    </Stack>
+  );
+}
