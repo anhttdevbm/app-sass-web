@@ -244,6 +244,7 @@ const MyScheduleTab = ({
         time_off_type: TIME_OFF_TYPE.OTHER,
         type: "step",
         total_hour: 160,
+        _id: "",
       });
     }
     return [
@@ -307,82 +308,49 @@ const MyScheduleTab = ({
     return firstLetter + lastLetter;
   }
   const projectDumy: any = [];
-  const timeOfDumy: any = [];
-  bookingAll.map((item) => {
-    item.bookings.map((ite) => {
-      if (ite.booking_type === "TIME_OF_BOOKING") {
-        timeOfDumy.push({
-          ...item,
-          id: item.id + Math.random(),
-          bookings: ite,
-          service: "service 1",
-        });
-      }
-    });
-  });
   bookingAll.map((item) => {
     item.bookings.map((ite) => {
       if (ite.booking_type === "PROJECT_BOOKING") {
         projectDumy.push({
-          ...item,
-          id: item.id + Math.random(),
-          bookings: ite,
-          service: "service 2",
+          ...ite,
+          fullname: item.fullname,
+          id: ite._id,
         });
       }
     });
   });
-
-  const arr = [
-    {
-      id: "a",
-      title: "project 1",
-      type: "title",
-      children: [
-        ...timeOfDumy.map((item: any) => {
-          return {
-            ...item,
-            bookings: {
-              ...item.bookings,
-              resourceId: item.id,
-              start: item.bookings.start_date,
-              end: item.bookings.end_date,
-            },
-          };
-        }),
-        ...projectDumy.map((item: any) => {
-          return {
-            ...item,
-            bookings: {
-              ...item.bookings,
-              resourceId: item.id,
-              start: item.bookings.start_date,
-              end: item.bookings.end_date,
-            },
-          };
-        }),
-      ],
-    },
-  ];
+  let grouped = projectDumy.reduce((acc, item) => {
+    let projectId = item.project.id;
+    if (!acc[projectId]) {
+      acc[projectId] = [];
+    }
+    acc[projectId].push(item);
+    return acc;
+  }, {});
+  let result = Object.values(grouped);
 
   const mapResours = () => {
     const items: any = [];
-    arr.map((item: any) => {
+    result.map((item: any) => {
       items.push({
-        id: item.id,
-        title: item.title,
-        children: item.children,
-        type: item.type,
+        id: item[0].project.id,
+        projectName: item[0].project.name,
+        children: [...item],
       });
     });
     return items;
   };
+
   const mapEvent = () => {
     const items: any = [];
-    arr.map((item: any) => {
-      item.children.map((ite: any) =>
-        items.push({ ...ite.bookings, id: ite.bookings.id + Math.random() }),
-      );
+    projectDumy.map((item: any) => {
+      items.push({
+        ...item,
+        id: item._id,
+        start: item.start_date,
+        end: item.end_date,
+        resourceId: item._id,
+      });
     });
     return items;
   };
@@ -452,8 +420,10 @@ const MyScheduleTab = ({
             );
           }}
           resourceLabelContent={({ resource }) => {
-            if (resource._resource.extendedProps.type === "title") {
-              return <h2>{resource.title}</h2>;
+            console.log(resource);
+
+            if (resource._resource.extendedProps.projectName) {
+              return <h2>{resource._resource.extendedProps.projectName}</h2>;
             }
             return (
               <>
@@ -461,7 +431,7 @@ const MyScheduleTab = ({
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <p style={{ width: "20%", color: "black" }}>
-                    {resource._resource.extendedProps.service}
+                    {resource._resource.extendedProps.sale.name}
                   </p>
 
                   <div
@@ -500,7 +470,7 @@ const MyScheduleTab = ({
                       marginRight: "50px",
                     }}
                   >
-                    {resource._resource.extendedProps.bookings.start}
+                    {resource._resource.extendedProps.start_date}
                   </p>
                 </div>
               </>
@@ -538,10 +508,18 @@ const MyScheduleTab = ({
             // );
           }}
           eventContent={({ event }) => {
+            const startDate: any = new Date(
+              event._def.extendedProps.start_date,
+            );
+            const endDate: any = new Date(event._def.extendedProps.end_date);
+            const oneDay = 24 * 60 * 60 * 1000;
+            const numberOfDays = Math.round((endDate - startDate) / oneDay);
+            console.log(`Số ngày: ${numberOfDays}`);
             return (
               <div style={{ backgroundColor: "black" }}>
                 <span style={{ color: "white", textAlign: "center" }}>
-                  {event._def.extendedProps.note}
+                  {event._def.extendedProps.total_hour}/day for {numberOfDays}{" "}
+                  day
                 </span>
               </div>
             );
