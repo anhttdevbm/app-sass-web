@@ -234,5 +234,5 @@ export const Endpoint = {
 
   //Invoice
   INVOICE: "/invoices",
-  DETAIL_INVOICE: "/invoices/{invoice_number}",
+  DETAIL_INVOICE: "/invoices/{id}",
 };

@@ -20,6 +20,7 @@ import { useParams } from "next/navigation";
 import {
   BILLING_DUPLICATE_PATH,
   BILLING_PATH,
+  INVOICES_PATH,
   PROJECT_MEMBERS_PATH,
   PROJECT_TASKS_PATH,
 } from "constant/paths";
@@ -200,13 +201,13 @@ const TopContent = (props: TopContentProps) => {
   //   }
   // }, [isDeleted]);
 
-  const onDuplicate = () => {
-    localStorage.setItem(
-      "duplicateBill",
-      JSON.stringify({ ...item, duplicate: true }),
-    );
-    push(BILLING_DUPLICATE_PATH);
-  };
+  // const onDuplicate = () => {
+  //   localStorage.setItem(
+  //     "duplicateBill",
+  //     JSON.stringify({ ...item, duplicate: true }),
+  //   );
+  //   push(BILLING_DUPLICATE_PATH);
+  // };
 
   const onMarkAsSend = () => {
     const data = {
@@ -238,12 +239,12 @@ const TopContent = (props: TopContentProps) => {
           width="50%"
         >
           <Link
-            href={BILLING_PATH ?? ""}
+            href={INVOICES_PATH ?? ""}
             underline="none"
             display={"flex"}
             alignItems={"center"}
           >
-            <Avatar src={user?.avatar?.link ?? ""} />
+            {/* <Avatar src={user?.avatar?.link ?? ""} /> */}
 
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               {"Invoice " +
@@ -420,7 +421,7 @@ const TopContent = (props: TopContentProps) => {
                     gap={2}
                     direction={"row"}
                     alignItems={"center"}
-                    onClick={() => onDuplicate()}
+                    // onClick={() => onDuplicate()}
                   >
                     <ContentCopyRounded />
                     <Text variant={"body2"}>
