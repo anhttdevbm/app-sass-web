@@ -162,7 +162,7 @@ export const Endpoint = {
   RESPONDAPPLICANT: "/job-post/response-applicant",
 
   //Billing
-  BILLING: "/bill",
+  BILLING: "/billing",
   DETAIL_BILLING: "/bill/export/{id}",
   EXPORT_BILLING: "/billToExport",
   INTERACTION_BILLING: "/bill_interaction",
@@ -233,5 +233,5 @@ export const Endpoint = {
   AI_AGENT_CHAT: "/agent/chat",
 
   //Invoice
-  INVOICE: "/invoice",
+  INVOICE: "/invoices",
 };

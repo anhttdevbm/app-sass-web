@@ -84,9 +84,9 @@ export const getBillingList = createAsyncThunk(
 
     newQueries = { ...queries };
 
-    if (!Object.keys(newQueries).includes("status")) {
-      newQueries = { ...queries, status: "Unpaid" };
-    }
+    // if (!Object.keys(newQueries).includes("status")) {
+    //   newQueries = { ...queries, status: "Unpaid" };
+    // }
     // if (newQueries?.sort !== "updated_time=-1") {
     //   newQueries.sort = "created_time=-1";
     // }
@@ -96,9 +96,13 @@ export const getBillingList = createAsyncThunk(
     // console.log(newQueries);
 
     try {
-      const response = await client.get(Endpoint.BILLING, newQueries, {
-        baseURL: BILLING_API_URL,
-      });
+      const response = await client.get(
+        Endpoint.BILLING + "/?page=0&size=10",
+        newQueries,
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data;

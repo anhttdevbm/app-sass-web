@@ -15,19 +15,19 @@ import { usePagination } from "components/sn-invoice/hooks/usePagination";
 import InvoiceTable from "components/sn-invoice/components/InvoiceTable";
 import { useEffect } from "react";
 import { Stack } from "@mui/system";
-
-export type Invoice = Billing;
+import { useInvoices } from "store/invoice/selectors";
 
 const List = () => {
   const {
     items: invoices,
-    onGetBillings,
+    onGetInvoices,
     totalItems,
     total_page: totalPages,
     error,
     isFetching,
     isIdle,
-  } = useBillings();
+  } = useInvoices();
+
   const {
     selectedList,
     setSelectedList,
@@ -35,11 +35,12 @@ const List = () => {
     toggleSelectAll,
     toggleSelectItem,
   } = useInvoiceSelection(invoices);
+
   const { pageIndex, pageSize, onChangeSize, onChangePage } = usePagination(
     1,
     10,
     (page, size) => {
-      onGetBillings({ page, size });
+      onGetInvoices({ page, size });
     },
   );
 
@@ -62,14 +63,14 @@ const List = () => {
       path,
     );
 
-    onGetBillings({ ...newQueries });
+    onGetInvoices({ ...newQueries });
   };
 
   useEffect(() => {
     if (isReady) {
-      onGetBillings({ ...initQuery });
+      onGetInvoices({ ...initQuery });
     }
-  }, [isReady, onGetBillings, initQuery]);
+  }, [isReady, onGetInvoices, initQuery]);
 
   return (
     <Stack padding={"0px 16px"} overflow={"hidden"}>

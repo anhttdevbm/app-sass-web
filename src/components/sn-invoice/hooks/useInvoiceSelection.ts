@@ -1,10 +1,10 @@
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
-import { Invoice } from "components/sn-invoice/List";
+import { Invoice } from "store/invoice/reducer";
 
 export const useInvoiceSelection = (invoices) => {
   const [selectedList, setSelectedList] = useState<Invoice[]>([]);
   const isCheckedAll = useMemo(
-    () => selectedList.length === invoices.length && invoices.length > 0,
+    () => selectedList.length === invoices?.length && invoices?.length > 0,
     [selectedList, invoices],
   );
 
