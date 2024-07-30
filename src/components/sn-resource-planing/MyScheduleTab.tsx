@@ -354,10 +354,17 @@ const MyScheduleTab = ({
           nameService: result[i][j].sale.name,
         };
       }
-      if (j !== 0) {
+      if (j === result[i].length - 1) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          borderBottom: "1px solid #CCCCCC",
+        };
+      }
+      if (j !== 0 && j !== result[i].length - 1) {
         result[i][j].sale = {
           ...result[i][j].sale,
           border: "none",
+          borderBottom: "none",
         };
       }
       if (j !== index) {
@@ -550,6 +557,8 @@ const MyScheduleTab = ({
                     display: "flex",
                     justifyContent: "space-between",
                     borderTop: resource._resource.extendedProps.sale.border,
+                    borderBottom:
+                      resource._resource.extendedProps.sale.borderBottom,
                   }}
                 >
                   <p
