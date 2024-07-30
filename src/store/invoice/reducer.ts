@@ -6,7 +6,7 @@ import {
   DEFAULT_PAGING_BILLING,
 } from "constant/index";
 import { Paging_Invoice, User } from "constant/types";
-import { getInvoiceList } from "./actions";
+import { getInvoiceDetail, getInvoiceList } from "./actions";
 
 export interface PaymentItem {
   payment_method?: string;
@@ -38,6 +38,7 @@ export type InvoiceState = {
   paging: Paging_Invoice;
   itemStatus: DataStatus;
   error?: string;
+  item?: Invoice;
 };
 
 const initialState: InvoiceState = {
@@ -83,6 +84,20 @@ const invoiceSlice = createSlice({
         // state.totalAmountUnpaid = data.totalAmouint_Unpaid;
       })
       .addCase(getInvoiceList.rejected, (state, action) => {
+        state.status = DataStatus.FAILED;
+        state.error = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(getInvoiceDetail.pending, (state, action) => {
+        state.status = DataStatus.LOADING;
+      })
+      .addCase(getInvoiceDetail.fulfilled, (state, { payload }) => {
+        const data = payload;
+
+        state.item = data as Invoice;
+        state.status = DataStatus.SUCCEEDED;
+        state.error = undefined;
+      })
+      .addCase(getInvoiceDetail.rejected, (state, action) => {
         state.status = DataStatus.FAILED;
         state.error = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       }),

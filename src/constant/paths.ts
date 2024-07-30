@@ -91,6 +91,7 @@ export const MEETING_HOME_PATH = "/meeting";
 
 // Invoices
 export const INVOICES_PATH = "/invoices";
+export const INVOICE_INFO_PATH = "/invoices/{id}";
 
 const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,
