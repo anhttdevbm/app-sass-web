@@ -371,6 +371,57 @@ const AllPeopleTab = ({
     return items;
   };
 
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  function getWeekDates(year, weekNumber) {
+    const simple = new Date(year, 0, 1 + (weekNumber - 1) * 7);
+    const dayOfWeek = simple.getDay();
+    const ISOweekStart = simple;
+    if (dayOfWeek <= 4)
+      ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    else ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    const startOfWeek = new Date(ISOweekStart);
+    const endOfWeek = new Date(ISOweekStart);
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
+    return { startOfWeek, endOfWeek };
+  }
+  function getMonthNamesForWeek(weekDates) {
+    const startMonth = weekDates.startOfWeek.getMonth();
+    const endMonth = weekDates.endOfWeek.getMonth();
+    if (startMonth === endMonth) {
+      return [monthNames[startMonth]];
+    } else {
+      return [monthNames[startMonth], monthNames[endMonth]];
+    }
+  }
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart: any = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+  }
+  const currentWeekNumber = getWeekNumber(currentDate);
+  const nextWeekNumber = currentWeekNumber + 1;
+  const currentWeekDates = getWeekDates(currentYear, currentWeekNumber);
+  const nextWeekDates = getWeekDates(currentYear, nextWeekNumber);
+  const currentWeekMonths = getMonthNamesForWeek(currentWeekDates);
+  const nextWeekMonths = getMonthNamesForWeek(nextWeekDates);
+
   return (
     <Stack direction="column" rowGap={2}>
       <FilterHeader
@@ -379,11 +430,28 @@ const AllPeopleTab = ({
         setIsWorkload={setIsWorkload}
         tab={tab}
       />
-      <TimeHeader
+      {/* <TimeHeader
         filters={filters}
         setFilters={setFilters}
         calendarRef={calendarRef}
-      />
+      /> */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          position: "relative",
+          top: "5px",
+        }}
+      >
+        <div style={{ width: "1294px", display: "flex" }}>
+          <p style={{ width: "50%", textAlign: "center", margin: 0 }}>
+            {currentWeekMonths.join("-")}
+          </p>
+          <p style={{ width: "50%", textAlign: "center", margin: 0 }}>
+            {nextWeekMonths.join("-")}
+          </p>
+        </div>
+      </div>
       <Box
         sx={{
           ...defaultStyle,
