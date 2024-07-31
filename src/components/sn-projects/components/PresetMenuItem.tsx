@@ -5,6 +5,7 @@ import {
   SvgIcon,
   SvgIconProps,
   CircularProgress,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -36,7 +37,7 @@ const PresetMenuItem = (props: {
           <PromptPresetIcon sx={{ color: "transparent" }} />
         )}
       </ListItemIcon>
-      <ListItemText>
+      <ListItemText sx={{ whiteSpace: "normal" }}>
         {props.preset}
         {props.type === "prompt" ? "..." : ""}
       </ListItemText>

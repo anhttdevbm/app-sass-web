@@ -81,7 +81,7 @@ const TaskAiPrompt = (props: {
         >
           <TextField
             select
-            id="project-tone"
+            id="task-tone"
             name="tone"
             value={formik.values.tone}
             onChange={formik.handleChange}
@@ -96,6 +96,7 @@ const TaskAiPrompt = (props: {
                   borderColor: "dodgerblue",
                 },
               },
+              "& .MuiSvgIcon-root": { color: "dodgerblue" },
             }}
             SelectProps={{
               startAdornment: (
@@ -104,7 +105,7 @@ const TaskAiPrompt = (props: {
                   <Typography sx={{ color: "dodgerblue" }}>Tone</Typography>
                 </InputAdornment>
               ),
-              IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
+              IconComponent: (_props) => <ExpandMore {..._props} />,
             }}
           >
             {props.tones.map((tone) => (
@@ -115,7 +116,7 @@ const TaskAiPrompt = (props: {
           </TextField>
           <TextField
             select
-            id="project-persona"
+            id="task-persona"
             name="persona"
             value={formik.values.persona}
             onChange={formik.handleChange}
@@ -130,6 +131,7 @@ const TaskAiPrompt = (props: {
                   borderColor: "dodgerblue",
                 },
               },
+              "& .MuiSvgIcon-root": { color: "dodgerblue" },
             }}
             SelectProps={{
               startAdornment: (
@@ -138,7 +140,7 @@ const TaskAiPrompt = (props: {
                   <Typography sx={{ color: "dodgerblue" }}>Persona</Typography>
                 </InputAdornment>
               ),
-              IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
+              IconComponent: (_props) => <ExpandMore {..._props} />,
             }}
           >
             {props.personas.map((persona) => (
