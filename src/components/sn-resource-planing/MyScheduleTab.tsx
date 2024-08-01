@@ -244,6 +244,7 @@ const MyScheduleTab = ({
         time_off_type: TIME_OFF_TYPE.OTHER,
         type: "step",
         total_hour: 160,
+        _id: "",
       });
     }
     return [
@@ -307,86 +308,123 @@ const MyScheduleTab = ({
     return firstLetter + lastLetter;
   }
   const projectDumy: any = [];
-  const timeOfDumy: any = [];
-  bookingAll.map((item) => {
-    item.bookings.map((ite) => {
-      if (ite.booking_type === "TIME_OF_BOOKING") {
-        timeOfDumy.push({
-          ...item,
-          id: item.id + Math.random(),
-          bookings: ite,
-          service: "service 1",
-        });
-      }
-    });
-  });
   bookingAll.map((item) => {
     item.bookings.map((ite) => {
       if (ite.booking_type === "PROJECT_BOOKING") {
         projectDumy.push({
-          ...item,
-          id: item.id + Math.random(),
-          bookings: ite,
-          service: "service 2",
+          ...ite,
+          fullname: item.fullname,
+          backgroundName: `rgba(${Math.floor(Math.random() * 256)},${Math.floor(
+            Math.random() * 256,
+          )},${Math.floor(Math.random() * 256)},${Math.floor(
+            Math.random() * 256,
+          )})`,
+          id: ite._id,
         });
       }
     });
   });
 
-  const arr = [
-    {
-      id: "a",
-      title: "project 1",
-      type: "title",
-      children: [
-        ...timeOfDumy.map((item: any) => {
-          return {
-            ...item,
-            bookings: {
-              ...item.bookings,
-              resourceId: item.id,
-              start: item.bookings.start_date,
-              end: item.bookings.end_date,
-            },
-          };
-        }),
-        ...projectDumy.map((item: any) => {
-          return {
-            ...item,
-            bookings: {
-              ...item.bookings,
-              resourceId: item.id,
-              start: item.bookings.start_date,
-              end: item.bookings.end_date,
-            },
-          };
-        }),
-      ],
-    },
-  ];
+  let grouped = projectDumy.reduce((acc, item) => {
+    let projectId = item.project.id;
+    if (!acc[projectId]) {
+      acc[projectId] = [];
+    }
+    acc[projectId].push(item);
+    return acc;
+  }, {});
+  let result: any = Object.values(grouped);
+  for (let i = 0; i < result.length; i++) {
+    for (let j = 0; j < result[i].length; j++) {
+      let index;
+      if (result[i].length < 3) {
+        index = 0;
+      } else {
+        index = Math.ceil(result[i].length / 2);
+      }
+      if (j === 0) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          border: "1px solid #CCCCCC",
+        };
+      }
+      if (j === index) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          nameService: result[i][j].sale.name,
+        };
+      }
+      if (j === result[i].length - 1) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          borderBottom: "1px solid #CCCCCC",
+        };
+      }
+      if (j !== 0 && j !== result[i].length - 1) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          border: "none",
+          borderBottom: "none",
+        };
+      }
+      if (j !== index) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          nameService: "",
+        };
+      }
+    }
+  }
 
   const mapResours = () => {
     const items: any = [];
-    arr.map((item: any) => {
+    result.map((item: any) => {
       items.push({
-        id: item.id,
-        title: item.title,
-        children: item.children,
-        type: item.type,
+        id: item[0].project.id,
+        projectName: item[0].project.name,
+        children: [...item],
       });
     });
     return items;
   };
+
   const mapEvent = () => {
     const items: any = [];
-    arr.map((item: any) => {
-      item.children.map((ite: any) =>
-        items.push({ ...ite.bookings, id: ite.bookings.id + Math.random() }),
-      );
+    projectDumy.map((item: any) => {
+      items.push({
+        ...item,
+        id: item._id,
+        start: item.start_date,
+        end: item.end_date,
+        resourceId: item._id,
+      });
     });
     return items;
   };
 
+  const currentDate = new Date();
+  const currentWeekNumber = getWeekNumber(currentDate);
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart: any = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+    return weekNo;
+  }
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   return (
     <Stack direction="column" rowGap={2}>
       <FilterHeader
@@ -395,18 +433,66 @@ const MyScheduleTab = ({
         setIsWorkload={setIsWorkload}
         tab={tab}
       />
-      <TimeHeader
+      {/* <TimeHeader
         filters={filters}
         setFilters={setFilters}
         calendarRef={calendarRef}
-      />
+      /> */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "end",
+          flexDirection: "column",
+          position: "relative",
+          top: "15px",
+        }}
+      >
+        <p
+          style={{
+            width: "60%",
+            textAlign: "center",
+            margin: 0,
+            border: "1px solid #CCCCCC",
+          }}
+        >
+          {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+        </p>
+        <div
+          style={{
+            display: "flex",
+            width: "60%",
+            justifyContent: "space-around",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              width: "50%",
+              textAlign: "center",
+              border: "1px solid #CCCCCC	",
+            }}
+          >
+            week {getWeekNumber(currentDate)}
+          </p>
+          <p
+            style={{
+              margin: 0,
+              width: "50%",
+              textAlign: "center",
+              border: "1px solid #CCCCCC	",
+            }}
+          >
+            week {currentWeekNumber + 1}
+          </p>
+        </div>
+      </div>
       <Box overflow="scroll" sx={{ ...defaultStyle }}>
         <FullCalendar
           ref={calendarRef}
           plugins={[resourceTimelinePlugin, interactionPlugin]}
           initialView="resourceTimeline"
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-          resourceAreaWidth={650}
+          resourceAreaWidth={600}
           resourceOrder="from"
           weekends={true}
           editable={true}
@@ -452,56 +538,88 @@ const MyScheduleTab = ({
             );
           }}
           resourceLabelContent={({ resource }) => {
-            if (resource._resource.extendedProps.type === "title") {
-              return <h2>{resource.title}</h2>;
+            if (resource._resource.extendedProps.projectName) {
+              return (
+                <h2
+                  style={{
+                    borderTop: "1px solid #CCCCCC",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  {resource._resource.extendedProps.projectName}
+                </h2>
+              );
             }
             return (
               <>
                 <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    borderTop: resource._resource.extendedProps.sale.border,
+                    borderBottom:
+                      resource._resource.extendedProps.sale.borderBottom,
+                  }}
                 >
-                  <p style={{ width: "20%", color: "black" }}>
-                    {resource._resource.extendedProps.service}
-                  </p>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "left",
-                      alignItems: "center",
-                      gap: "10px",
-                      width: "30%",
-                    }}
-                  >
-                    <p
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        borderRadius: "50%",
-                        background: `rgba(${Math.floor(
-                          Math.random() * 256,
-                        )},${Math.floor(Math.random() * 256)},${Math.floor(
-                          Math.random() * 256,
-                        )},${Math.floor(Math.random() * 256)})`,
-                        fontSize: "15px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      {getFirstAndSecondLetters(
-                        resource._resource.extendedProps.fullname,
-                      )}
-                    </p>
-                    <p>{resource._resource.extendedProps.fullname}</p>
-                  </div>
                   <p
                     style={{
-                      marginRight: "50px",
+                      width: "20%",
+                      color: "black",
+                      paddingLeft: "10px",
                     }}
                   >
-                    {resource._resource.extendedProps.bookings.start}
+                    {resource._resource.extendedProps.sale.nameService}
                   </p>
+                  <div
+                    style={{
+                      width: "50%",
+                      borderBottom: "1px solid #CCCCCC",
+                      borderLeft: "1px solid #CCCCCC",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "right",
+                        alignItems: "center",
+                        gap: "10px",
+                        paddingLeft: "10px",
+                      }}
+                    >
+                      <p
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          borderRadius: "50%",
+                          background:
+                            resource._resource.extendedProps.backgroundName,
+                          fontSize: "15px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        {getFirstAndSecondLetters(
+                          resource._resource.extendedProps.fullname,
+                        )}
+                      </p>
+                      <p>{resource._resource.extendedProps.fullname}</p>
+                    </div>
+                    <p
+                      style={{
+                        borderLeft: "1px solid #CCCCCC",
+                        margin: "0 10px 0 0",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "0 10px",
+                      }}
+                    >
+                      {resource._resource.extendedProps.start_date}
+                    </p>
+                  </div>
                 </div>
               </>
             );
@@ -538,11 +656,49 @@ const MyScheduleTab = ({
             // );
           }}
           eventContent={({ event }) => {
+            const startDate: any = new Date(
+              event._def.extendedProps.start_date,
+            );
+            const endDate: any = new Date(event._def.extendedProps.end_date);
+            const oneDay = 24 * 60 * 60 * 1000;
+            const numberOfDays = Math.round((endDate - startDate) / oneDay);
             return (
-              <div style={{ backgroundColor: "black" }}>
-                <span style={{ color: "white", textAlign: "center" }}>
-                  {event._def.extendedProps.note}
+              <div
+                style={{
+                  backgroundColor: "black",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 0",
+                  gap: "1px",
+                  borderRadius: "5px",
+                }}
+              >
+                <span
+                  style={{
+                    width: "23px",
+                    height: "23px",
+                    borderRadius: "50%",
+                    background: event._def.extendedProps.backgroundName,
+                    fontSize: "15px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {getFirstAndSecondLetters(event._def.extendedProps.fullname)}
                 </span>
+                {numberOfDays > 1 && (
+                  <span
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontSize: "11px",
+                    }}
+                  >
+                    {event._def.extendedProps.total_hour}h/day for{" "}
+                    {numberOfDays} day
+                  </span>
+                )}
               </div>
             );
             // return (
