@@ -28,6 +28,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import AddBooking from "./modals/addBooking";
 
 const ResourcePlanning = () => {
   const { isDarkMode } = useTheme();
@@ -40,6 +41,8 @@ const ResourcePlanning = () => {
 
   const [isServicePopup, setisServicePopup] = useState<Boolean>(false);
   const [isWorkload, setIsWorkload] = useState<Boolean>(false);
+  const [isModalAdd, setIsModalAdd] = useState<Boolean>(false);
+
   return (
     <Stack
       maxHeight={{ md: "90vh" }}
@@ -162,9 +165,13 @@ const ResourcePlanning = () => {
                   opacity: 0.9, // Giảm độ trong suốt khi hover
                 },
               }}
+              onClick={() => {
+                setIsModalAdd((prev) => !prev);
+              }}
             >
               + Add
             </Button>
+            {isModalAdd && <AddBooking setIsModalAdd={setIsModalAdd} />}
           </Grid>
         </Grid>
         <LocalizationProvider
