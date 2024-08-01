@@ -132,3 +132,9 @@ a {
 .fc .fc-now-indicator {
   background-color: red;
 }
+.fc .fc-timeline-now-indicator-container {
+  inset: 0 35px !important;
+}
+.fc-datagrid-cell {
+  border: none !important;
+}

@@ -38,6 +38,7 @@ export interface IBookingItem {
   user_id: string;
   created_time: string;
   project?: Partial<Project>;
+  _id: String;
 }
 
 export interface IBookingListItem {
