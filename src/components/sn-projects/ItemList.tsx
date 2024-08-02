@@ -2,7 +2,10 @@
 
 import { memo, useEffect, useMemo, useState } from "react";
 import {
+  Box,
   Card,
+  CardActionArea,
+  CardContent,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -18,7 +21,7 @@ import { DEFAULT_PAGING, NS_COMMON, NS_PROJECT } from "constant/index";
 import useQueryParams from "hooks/useQueryParams";
 import Pagination from "components/Pagination";
 import { usePathname, useRouter } from "next-intl/client";
-import { cleanObject, stringifyURLSearchParams } from "utils/index";
+import { cleanObject, getPath, stringifyURLSearchParams } from "utils/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import Form, { ProjectDataForm } from "./Form";
 import { Project } from "store/project/reducer";
@@ -38,6 +41,7 @@ import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
 import { Saved, SelectStatus, Assigner } from "./components";
 import { Text } from "components/shared";
 import CheckBoxCustom from "components/shared/CheckBoxCustom";
+import { PROJECT_TASKS_PATH } from "constant/paths";
 
 const ItemList = () => {
   const {
@@ -195,7 +199,7 @@ const ItemList = () => {
         {isMdSmaller ? (
           <>
             {items.map((_item, index) => (
-              <Paper
+              <Card
                 key={_item.id}
                 sx={{
                   display: "flex",
@@ -205,70 +209,86 @@ const ItemList = () => {
                   bgcolor: "background.default",
                 }}
               >
-                <Stack direction="row" alignItems="center">
-                  <CheckBoxCustom />
-                  <Typography fontWeight={600} sx={{ flexGrow: 1 }}>
-                    STT: {index + 1}
-                  </Typography>
-                  <Saved id={_item.id} value={_item.saved} />
-                  <OverflowMenu icon={<MoreSquareIcon />}>
-                    <MenuItem
-                      onClick={onActionToItem(DataAction.UPDATE, _item)}
+                <CardActionArea
+                  onClick={() => {
+                    push(
+                      getPath(PROJECT_TASKS_PATH, undefined, { id: _item.id }),
+                    );
+                  }}
+                >
+                  <CardContent>
+                    <Stack direction="row" alignItems="center">
+                      <CheckBoxCustom />
+                      <Typography fontWeight={600} sx={{ flexGrow: 1 }}>
+                        STT: {index + 1}
+                      </Typography>
+                      <Saved id={_item.id} value={_item.saved} />
+                      <OverflowMenu icon={<MoreSquareIcon />}>
+                        <MenuItem
+                          onClick={onActionToItem(DataAction.UPDATE, _item)}
+                        >
+                          <ListItemIcon>
+                            <PencilUnderlineIcon sx={{ fontSize: 24 }} />
+                          </ListItemIcon>
+                          <ListItemText>Edit</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={() => deleteProject(_item.id)}>
+                          <ListItemIcon>
+                            <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
+                          </ListItemIcon>
+                          <ListItemText sx={{ color: "red" }}>
+                            Delete
+                          </ListItemText>
+                        </MenuItem>
+                      </OverflowMenu>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
                     >
-                      <ListItemIcon>
-                        <PencilUnderlineIcon sx={{ fontSize: 24 }} />
-                      </ListItemIcon>
-                      <ListItemText>Edit</ListItemText>
-                    </MenuItem>
-                    <MenuItem onClick={() => deleteProject(_item.id)}>
-                      <ListItemIcon>
-                        <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
-                      </ListItemIcon>
-                      <ListItemText sx={{ color: "red" }}>Delete</ListItemText>
-                    </MenuItem>
-                  </OverflowMenu>
-                </Stack>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Typography fontWeight={600}>{commonT("name")}</Typography>
-                  <Stack direction="row" alignItems="center" gap={1}>
-                    <Avatar
-                      size={32}
-                      src={_item.avatar?.link ?? ProjectPlaceholderImage}
-                    />
-                    <Text
-                      variant="body2"
-                      color="text.primary"
-                      fontWeight={600}
-                      lineHeight={1.28}
-                      sx={{ "&:hover": { color: "primary.main" } }}
+                      <Typography fontWeight={600}>
+                        {commonT("name")}
+                      </Typography>
+                      <Stack direction="row" alignItems="center" gap={1}>
+                        <Avatar
+                          size={32}
+                          src={_item.avatar?.link ?? ProjectPlaceholderImage}
+                        />
+                        <Text
+                          variant="body2"
+                          color="text.primary"
+                          fontWeight={600}
+                          lineHeight={1.28}
+                          sx={{ "&:hover": { color: "primary.main" } }}
+                        >
+                          {_item.name}
+                        </Text>
+                      </Stack>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
                     >
-                      {_item.name}
-                    </Text>
-                  </Stack>
-                </Stack>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Typography fontWeight={600}>
-                    {commonT("assigner")}
-                  </Typography>
-                  <Typography>{_item.owner.fullname}</Typography>
-                </Stack>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Typography fontWeight={600}>{commonT("status")}</Typography>
-                  <SelectStatus value={_item.status} id={_item.id} />
-                </Stack>
-              </Paper>
+                      <Typography fontWeight={600}>
+                        {commonT("assigner")}
+                      </Typography>
+                      <Typography>{_item.owner?.fullname}</Typography>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Typography fontWeight={600}>
+                        {commonT("status")}
+                      </Typography>
+                      <SelectStatus value={_item.status} id={_item.id} />
+                    </Stack>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
             ))}
           </>
         ) : (

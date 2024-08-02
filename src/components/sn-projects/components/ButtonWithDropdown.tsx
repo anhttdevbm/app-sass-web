@@ -1,15 +1,16 @@
 import { AddCircle, ExpandMore } from "@mui/icons-material";
-import { Box, MenuList, Paper, Popover, MenuItem } from "@mui/material";
+import { Box, Popover, SxProps } from "@mui/material";
 import { Button, Text } from "components/shared";
-import { MouseEventHandler, ReactElement, ReactNode, useState } from "react";
+import { ComponentProps, MouseEventHandler, useState } from "react";
 
 const ButtonWithDropdown = ({
   ...props
-}: {
+}: Omit<ComponentProps<typeof Button>, "children"> & {
+  containerSx?: SxProps;
   text: string;
-  onClick: MouseEventHandler<HTMLButtonElement>;
   children: (handleClose: () => void) => JSX.Element;
 }) => {
+  const { text, children, ...buttonProps } = props;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const isOpen = Boolean(anchorEl);
 
@@ -24,6 +25,7 @@ const ButtonWithDropdown = ({
         background:
           "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
         borderRadius: "2rem",
+        ...props.containerSx,
       }}
     >
       <Button
@@ -34,9 +36,9 @@ const ButtonWithDropdown = ({
           borderRadius: "2rem 0 0 2rem",
           bgcolor: "transparent",
         }}
-        {...props}
+        {...buttonProps}
       >
-        <Text sx={{ color: "white" }}>{props.text}</Text>
+        <Text sx={{ color: "white" }}>{text}</Text>
       </Button>
       <Button
         variant="primary"
@@ -65,7 +67,7 @@ const ButtonWithDropdown = ({
           horizontal: "right",
         }}
       >
-        {props.children(handleClose)}
+        {children(handleClose)}
       </Popover>
     </Box>
   );

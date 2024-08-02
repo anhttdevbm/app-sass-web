@@ -96,7 +96,6 @@ const TaskAiPrompt = (props: {
                   borderColor: "dodgerblue",
                 },
               },
-              "& .MuiSvgIcon-root": { color: "dodgerblue" },
             }}
             SelectProps={{
               startAdornment: (
@@ -131,7 +130,6 @@ const TaskAiPrompt = (props: {
                   borderColor: "dodgerblue",
                 },
               },
-              "& .MuiSvgIcon-root": { color: "dodgerblue" },
             }}
             SelectProps={{
               startAdornment: (

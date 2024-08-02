@@ -57,11 +57,11 @@ const Search = (props: SearchProps) => {
     }
   };
 
-  const onBlur = () => {
+  const onBlur = (e) => {
     if (prevTextRef.current != text && emitWhenEnter) {
       setText(prevTextRef.current);
     }
-    _onBlur?.apply();
+    _onBlur?.(e);
   };
 
   const onClear = (event) => {
