@@ -20,8 +20,6 @@ import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
 import { FC, useEffect, useState } from "react";
-import DayIcon from "../../icons/DayIcon";
-import PlusIcon from "../../icons/PlusIcon";
 import {
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
@@ -29,7 +27,6 @@ import {
 } from "./CalendarTracking";
 import CalendarIcon from "./icons/CalendarIcon";
 import TimeSheetIcon from "./icons/TimeSheetIcon";
-import SortByCategory from "./Component/Search";
 
 interface ITab {
   label: string;
@@ -298,35 +295,6 @@ const TimeTrackingPage: FC = () => {
               cursor: "pointer",
             }}
             // onClick={showLogTimePopup}
-            onClick={handleShowTable}
-          >
-            {
-              <DayIcon
-                sx={{
-                  width: "18px",
-                  height: "18px",
-                }}
-              />
-            }
-          </Fab>
-
-          <Fab
-            sx={{
-              width: "34px",
-              height: "34px",
-              borderRadius: "100px",
-              backgroundColor: "#FFFFFF",
-              "&:hover": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              "&:focus": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              cursor: "pointer",
-            }}
-            // onClick={showLogTimePopup}
             onClick={handleShowTimeGrid}
           >
             {
@@ -364,7 +332,7 @@ const TimeTrackingPage: FC = () => {
           </Button> */}
 
           <Button
-            startIcon={<PlusIcon />}
+            // startIcon={<PlusIcon />}
             variant="contained"
             sx={{
               width: "136px",
