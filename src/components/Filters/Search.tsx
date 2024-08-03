@@ -27,6 +27,7 @@ const Search = (props: SearchProps) => {
     hasClear = true,
     startNode = <SearchIcon />,
     endNode,
+    onBlur: _onBlur,
     ...rest
   } = props;
 
@@ -56,10 +57,11 @@ const Search = (props: SearchProps) => {
     }
   };
 
-  const onBlur = () => {
+  const onBlur = (e) => {
     if (prevTextRef.current != text && emitWhenEnter) {
       setText(prevTextRef.current);
     }
+    _onBlur?.(e);
   };
 
   const onClear = (event) => {
