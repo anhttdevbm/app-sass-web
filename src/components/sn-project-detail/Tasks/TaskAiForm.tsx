@@ -77,7 +77,7 @@ const TaskAiForm = (props: {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "50%",
+          width: { xs: "80%", md: "50%" },
           bgcolor: "background.paper",
         }}
       >

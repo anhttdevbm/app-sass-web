@@ -1,22 +1,19 @@
 "use client";
 
+import { memo, useEffect, useMemo, useState } from "react";
 import {
-  memo,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  Button,
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
   ListItemIcon,
   ListItemText,
-  Menu,
   MenuItem,
   paginationItemClasses,
+  Paper,
   Stack,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { TableLayout, BodyCell, CellProps } from "components/Table";
 import { useProjects } from "store/project/selectors";
@@ -24,26 +21,27 @@ import { DEFAULT_PAGING, NS_COMMON, NS_PROJECT } from "constant/index";
 import useQueryParams from "hooks/useQueryParams";
 import Pagination from "components/Pagination";
 import { usePathname, useRouter } from "next-intl/client";
-import { cleanObject, stringifyURLSearchParams } from "utils/index";
-import { IconButton } from "components/shared";
-import PencilIcon from "icons/PencilIcon";
+import { cleanObject, getPath, stringifyURLSearchParams } from "utils/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import Form, { ProjectDataForm } from "./Form";
-import { Member, Project } from "store/project/reducer";
-import { ProjectData, getMembersOfProject } from "store/project/actions";
+import { Project } from "store/project/reducer";
+import { ProjectData } from "store/project/actions";
 import { DataAction } from "constant/enums";
 import { INITIAL_VALUES } from "./components/helpers";
-import { useAppDispatch } from "store/hooks";
 import DesktopCells from "./DesktopCells";
-import MobileContentCell from "./MobileContentCell";
 import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
-import FixedLayout from "components/FixedLayout";
 import { Option } from "constant/types";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import OverflowMenu from "./components/OverflowMenu";
+import MoreSquareIcon from "icons/MoreSquareIcon";
+import Avatar from "components/Avatar";
+import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
+import { Saved, SelectStatus, Assigner } from "./components";
+import { Text } from "components/shared";
+import CheckBoxCustom from "components/shared/CheckBoxCustom";
+import { PROJECT_TASKS_PATH } from "constant/paths";
 
 const ItemList = () => {
   const {
@@ -198,51 +196,148 @@ const ItemList = () => {
   return (
     <>
       <Stack>
-        <TableLayout
-          headerList={headerList}
-          pending={isFetching}
-          headerProps={{
-            sx: {
-              px: { xs: 0.5, md: 2 },
-              py: { xs: 0.5, md: 3 },
-              bgcolor: "#D9F0FD",
-            },
-          }}
-          error={error as string}
-          noData={!isIdle && totalItems === 0}
-          px={{ md: 3 }}
-        >
-          {items.map((item, index) => {
-            return (
-              <TableRow key={item.id}>
-                {isMdSmaller ? (
-                  <MobileContentCell item={item} />
-                ) : (
+        {isMdSmaller ? (
+          <>
+            {items.map((_item, index) => (
+              <Card
+                key={_item.id}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                  p: 1,
+                  bgcolor: "background.default",
+                }}
+              >
+                <CardActionArea
+                  onClick={() => {
+                    push(
+                      getPath(PROJECT_TASKS_PATH, undefined, { id: _item.id }),
+                    );
+                  }}
+                >
+                  <CardContent>
+                    <Stack direction="row" alignItems="center">
+                      <CheckBoxCustom />
+                      <Typography fontWeight={600} sx={{ flexGrow: 1 }}>
+                        STT: {index + 1}
+                      </Typography>
+                      <Saved id={_item.id} value={_item.saved} />
+                      <OverflowMenu icon={<MoreSquareIcon />}>
+                        <MenuItem
+                          onClick={onActionToItem(DataAction.UPDATE, _item)}
+                        >
+                          <ListItemIcon>
+                            <PencilUnderlineIcon sx={{ fontSize: 24 }} />
+                          </ListItemIcon>
+                          <ListItemText>Edit</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={() => deleteProject(_item.id)}>
+                          <ListItemIcon>
+                            <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
+                          </ListItemIcon>
+                          <ListItemText sx={{ color: "red" }}>
+                            Delete
+                          </ListItemText>
+                        </MenuItem>
+                      </OverflowMenu>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Typography fontWeight={600}>
+                        {commonT("name")}
+                      </Typography>
+                      <Stack direction="row" alignItems="center" gap={1}>
+                        <Avatar
+                          size={32}
+                          src={_item.avatar?.link ?? ProjectPlaceholderImage}
+                        />
+                        <Text
+                          variant="body2"
+                          color="text.primary"
+                          fontWeight={600}
+                          lineHeight={1.28}
+                          sx={{ "&:hover": { color: "primary.main" } }}
+                        >
+                          {_item.name}
+                        </Text>
+                      </Stack>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Typography fontWeight={600}>
+                        {commonT("assigner")}
+                      </Typography>
+                      <Typography>{_item.owner?.fullname}</Typography>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Typography fontWeight={600}>
+                        {commonT("status")}
+                      </Typography>
+                      <SelectStatus value={_item.status} id={_item.id} />
+                    </Stack>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            ))}
+          </>
+        ) : (
+          <TableLayout
+            headerList={headerList}
+            pending={isFetching}
+            headerProps={{
+              sx: {
+                px: 2,
+                py: 3,
+                bgcolor: "#D9F0FD",
+              },
+            }}
+            error={error as string}
+            noData={!isIdle && totalItems === 0}
+            px={3}
+          >
+            {items.map((item, index) => {
+              return (
+                <TableRow key={item.id}>
                   <DesktopCells
                     item={item}
                     order={(pageIndex - 1) * pageSize + (index + 1)}
                   />
-                )}
-                <BodyCell align="center">
-                  <OverflowMenu>
-                    <MenuItem onClick={onActionToItem(DataAction.UPDATE, item)}>
-                      <ListItemIcon>
-                        <PencilUnderlineIcon sx={{ fontSize: 24 }} />
-                      </ListItemIcon>
-                      <ListItemText>Edit</ListItemText>
-                    </MenuItem>
-                    <MenuItem onClick={() => deleteProject(item.id)}>
-                      <ListItemIcon>
-                        <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
-                      </ListItemIcon>
-                      <ListItemText sx={{ color: "red" }}>Delete</ListItemText>
-                    </MenuItem>
-                  </OverflowMenu>
-                </BodyCell>
-              </TableRow>
-            );
-          })}
-        </TableLayout>
+                  <BodyCell align="center">
+                    <OverflowMenu>
+                      <MenuItem
+                        onClick={onActionToItem(DataAction.UPDATE, item)}
+                      >
+                        <ListItemIcon>
+                          <PencilUnderlineIcon sx={{ fontSize: 24 }} />
+                        </ListItemIcon>
+                        <ListItemText>Edit</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={() => deleteProject(item.id)}>
+                        <ListItemIcon>
+                          <DeleteIcon sx={{ fontSize: 24, color: "red" }} />
+                        </ListItemIcon>
+                        <ListItemText sx={{ color: "red" }}>
+                          Delete
+                        </ListItemText>
+                      </MenuItem>
+                    </OverflowMenu>
+                  </BodyCell>
+                </TableRow>
+              );
+            })}
+          </TableLayout>
+        )}
         <Pagination
           totalItems={totalItems}
           totalPages={totalPages}

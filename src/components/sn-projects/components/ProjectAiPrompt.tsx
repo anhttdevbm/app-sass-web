@@ -122,7 +122,7 @@ const ProjectAiPrompt = (props: {
                 <Typography sx={{ color: "dodgerblue" }}>Tone</Typography>
               </InputAdornment>
             ),
-            IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
+            IconComponent: (_props) => <ExpandMore {..._props} />,
           }}
         >
           {props.tones.map((tone) => (
@@ -156,7 +156,7 @@ const ProjectAiPrompt = (props: {
                 <Typography sx={{ color: "dodgerblue" }}>Persona</Typography>
               </InputAdornment>
             ),
-            IconComponent: () => <ExpandMore htmlColor="dodgerblue" />,
+            IconComponent: (_props) => <ExpandMore {..._props} />,
           }}
         >
           {props.personas.map((persona) => (
