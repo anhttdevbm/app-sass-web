@@ -228,7 +228,7 @@ const TabInvoice = (props: TabProps) => {
   //   }
   // }, [totalAmount, form?.values?.vat]);
 
-  // const arrBill = [{ id: item?.id ?? "" }];
+  const arrBill = [{ id: item?.id ?? "" }];
 
   const onchangePdf = (value) => {
     setSelected(value);
