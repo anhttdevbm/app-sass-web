@@ -25,6 +25,13 @@ export interface Paging_Billing {
   totalItems?: number;
 }
 
+export interface Paging_Invoice {
+  page: number;
+  size: number;
+  total_page?: number;
+  totalItems?: number;
+}
+
 export interface Paging_Career {
   page: number;
   size: number;

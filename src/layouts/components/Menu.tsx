@@ -35,7 +35,7 @@ import {
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH
+  TIME_TRACKING_PATH,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -301,12 +301,12 @@ const DATA: MenuItemProps[] = [
     roles: [Permission.AM, Permission.ST],
   },
   //Billing
-  {
-    label: "menu.billing",
-    icon: <BillingIcon />,
-    href: BILLING_PATH,
-    roles: [Permission.AM, Permission.ST],
-  },
+  // {
+  //   label: "menu.billing",
+  //   icon: <BillingIcon />,
+  //   href: BILLING_PATH,
+  //   roles: [Permission.AM, Permission.ST],
+  // },
   {
     label: "menu.chat",
     href: CHATTING_ROOM_PATH,

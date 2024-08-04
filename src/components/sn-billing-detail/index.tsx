@@ -17,15 +17,15 @@ import {
 import { useEmployeeOptions, useEmployees } from "store/company/selectors";
 import { useTagOptions } from "store/tags/selector";
 import { User } from "constant/types";
+import { useInvoices } from "store/invoice/selectors";
 
 const InformationBillingPage = () => {
-  const { item, onGetBilling, updateStatus, onGetBillingDetail } =
-    useBillings();
+  const { item, onGetInvoiceDetail, onGetInvoices } = useInvoices();
   const { tagsOptions, onGetTags } = useTags();
-  const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
-  const { budgets, onGetBudgets } = useBudgets();
+  // const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
+  // const { budgets, onGetBudgets } = useBudgets();
   const { initQuery, isReady, query } = useQueryParams();
-  const { options, onGetOptions } = useEmployeeOptions();
+  // const { options, onGetOptions } = useEmployeeOptions();
   // const { memberOptions } = useGetMemberOptions();
   const { user } = useAuth();
 
@@ -49,40 +49,40 @@ const InformationBillingPage = () => {
 
   const [newServices, setNewServices] = useState<Service[]>([]);
 
-  const dataDuplicate = localStorage.getItem("duplicateBill");
+  // const dataDuplicate = localStorage.getItem("duplicateBill");
 
-  const duplicateBill = useMemo(() => {
-    if (!dataDuplicate) return;
-    const data = JSON.parse(dataDuplicate);
-    return data;
-  }, [dataDuplicate]);
+  // const duplicateBill = useMemo(() => {
+  //   if (!dataDuplicate) return;
+  //   const data = JSON.parse(dataDuplicate);
+  //   return data;
+  // }, [dataDuplicate]);
 
-  useEffect(() => {
-    if (id && !dataDuplicate) {
-      onGetBilling(id.toString() ?? "");
-    }
-  }, [onGetBilling, updateStatus, dataDuplicate]);
+  // useEffect(() => {
+  //   if (id) {
+  //     onGetInvoiceDetail(id.toString() ?? "");
+  //   }
+  // }, [onGetInvoiceDetail]);
 
-  useEffect(() => {
-    if (id && updateStatus) {
-      onGetBilling(id.toString() ?? "");
-    }
-  }, [onGetBilling, updateStatus, dataDuplicate]);
+  // useEffect(() => {
+  //   if (id) {
+  //     onGetInvoiceDetail(id.toString() ?? "");
+  //   }
+  // }, [onGetInvoiceDetail]);
 
-  useEffect(() => {
-    onGetOptions({ pageIndex: 1, pageSize: 20 });
-    // onGetServiceBudgets();
-    onGetTags();
-  }, []);
+  // useEffect(() => {
+  //   onGetOptions({ pageIndex: 1, pageSize: 20 });
+  //   // onGetServiceBudgets();
+  //   onGetTags();
+  // }, []);
 
-  useEffect(() => {
-    if (!isReady) return;
-    onGetBudgets({ ...initQuery });
-  }, [isReady, onGetBudgets]);
+  // useEffect(() => {
+  //   if (!isReady) return;
+  //   onGetBudgets({ ...initQuery });
+  // }, [isReady, onGetBudgets]);
 
   useEffect(() => {
     if (typeof id === "string" && id) {
-      onGetBillingDetail(id);
+      onGetInvoiceDetail(id);
     }
   }, [id]);
 
@@ -102,15 +102,17 @@ const InformationBillingPage = () => {
     >
       <TopContent
         tagsOptions={tagsOptions}
-        item={id ? item : duplicateBill}
+        // item={id ? item : duplicateBill}
+        item={item}
         user={userInfo}
-        memberOptions={options}
+        // memberOptions={options}
       />
 
       <TabInfo
-        item={id ? item : duplicateBill}
+        // item={id ? item : duplicateBill}
+        item={item}
         user={userInfo}
-        arrBudgets={budgets}
+        // arrBudgets={budgets}
       />
     </Stack>
     // </FixedLayout>

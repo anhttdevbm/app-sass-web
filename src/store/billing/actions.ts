@@ -6,6 +6,7 @@ import {
   AN_ERROR_TRY_AGAIN,
   AN_ERROR_TRY_RELOAD_PAGE,
   BILLING_API_URL,
+  INVOICE_API_URL,
   SALE_API_URL,
 } from "constant/index";
 import { BaseQueries, BaseQueries_Billing } from "constant/types";
@@ -55,11 +56,12 @@ export type BillingDataMark = {
 
 export type BillPaymentData = {
   bill_id?: string;
-  status?: string;
+  status?: boolean;
   amount?: number;
   note?: string;
   id?: string;
   date?: string;
+  paid_on?: string;
 };
 
 export type BillTagData = {
@@ -84,9 +86,9 @@ export const getBillingList = createAsyncThunk(
 
     newQueries = { ...queries };
 
-    if (!Object.keys(newQueries).includes("status")) {
-      newQueries = { ...queries, status: "Unpaid" };
-    }
+    // if (!Object.keys(newQueries).includes("status")) {
+    //   newQueries = { ...queries, status: "Unpaid" };
+    // }
     // if (newQueries?.sort !== "updated_time=-1") {
     //   newQueries.sort = "created_time=-1";
     // }
@@ -96,9 +98,13 @@ export const getBillingList = createAsyncThunk(
     // console.log(newQueries);
 
     try {
-      const response = await client.get(Endpoint.BILLING, newQueries, {
-        baseURL: BILLING_API_URL,
-      });
+      const response = await client.get(
+        Endpoint.BILLING + "/?page=0&size=10",
+        newQueries,
+        {
+          baseURL: BILLING_API_URL,
+        },
+      );
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
@@ -552,7 +558,7 @@ export const getPaymentByBillId = createAsyncThunk(
         StringFormat(Endpoint.CUSTOM_PAYMENT, { id }),
         {},
         {
-          baseURL: BILLING_API_URL,
+          baseURL: INVOICE_API_URL,
         },
       );
 
@@ -568,11 +574,15 @@ export const getPaymentByBillId = createAsyncThunk(
 
 export const addPayment = createAsyncThunk(
   "Billing/addPayment",
-  async ({ data }: { data: BillPaymentData }) => {
+  async ({ id, data }: { id: string; data: BillPaymentData }) => {
     try {
-      const response = await client.post(Endpoint.PAYMENT_BILL, data, {
-        baseURL: BILLING_API_URL,
-      });
+      const response = await client.post(
+        StringFormat(Endpoint.CUSTOM_PAYMENT, { id }),
+        data,
+        {
+          baseURL: INVOICE_API_URL,
+        },
+      );
 
       return response.data;
     } catch (error) {
@@ -589,7 +599,7 @@ export const updatePayment = createAsyncThunk(
         StringFormat(Endpoint.CUSTOM_PAYMENT, { id }),
         data,
         {
-          baseURL: BILLING_API_URL,
+          baseURL: INVOICE_API_URL,
         },
       );
 
