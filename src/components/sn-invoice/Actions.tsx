@@ -1,15 +1,16 @@
 "use client";
 
-import { Stack } from "@mui/system";
+import PlusIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
-import TrashIcon from "icons/TrashIcon";
+import { Stack } from "@mui/system";
 import {
   ButtonGradiant,
   Filter,
   SearchInput,
 } from "components/sn-invoice/components";
+import { INVOICE_CREATE_PATH } from "constant/paths";
+import TrashIcon from "icons/TrashIcon";
 import { useState } from "react";
-import PlusIcon from "@mui/icons-material/Add";
 
 export interface FilterType {
   key: string;
@@ -48,7 +49,9 @@ const Actions = () => {
           placeholder={"Search here"}
           onChange={handleSearchChange}
         />
-        <ButtonGradiant startIcon={<PlusIcon />}>Add</ButtonGradiant>
+        <ButtonGradiant href={INVOICE_CREATE_PATH} startIcon={<PlusIcon />}>
+          Add
+        </ButtonGradiant>
       </Stack>
       <Stack
         paddingX={4}

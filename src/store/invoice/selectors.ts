@@ -3,6 +3,8 @@ import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  createNewInvoice,
+  getAllPaymentByInvoiceId,
   getInvoiceDetail,
   getInvoiceList,
   GetInvoiceListQueries,
@@ -10,7 +12,7 @@ import {
 
 export const useInvoices = () => {
   const dispatch = useAppDispatch();
-  const { items, status, error, item } = useAppSelector(
+  const { items, status, error, item, paymentAll } = useAppSelector(
     (state) => state.invoice,
     shallowEqual,
   );
@@ -33,6 +35,19 @@ export const useInvoices = () => {
     },
     [dispatch],
   );
+  const onGetAllPayments = useCallback(
+    async (id: string) => {
+      return await dispatch(getAllPaymentByInvoiceId(id));
+    },
+    [dispatch],
+  );
+
+  const onCreateNewInvoice = useCallback(
+    async (data: any) => {
+      return await dispatch(createNewInvoice(data));
+    },
+    [dispatch],
+  );
 
   return {
     items,
@@ -45,7 +60,10 @@ export const useInvoices = () => {
     total_page,
     isIdle,
     isFetching,
+    paymentAll,
     onGetInvoices,
     onGetInvoiceDetail,
+    onGetAllPayments,
+    onCreateNewInvoice,
   };
 };

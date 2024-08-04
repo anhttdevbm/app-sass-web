@@ -173,8 +173,8 @@ export const useBillings = () => {
     [dispatch],
   );
   const onAddPayment = useCallback(
-    async (data: BillPaymentData) => {
-      return await dispatch(addPayment({ data }));
+    async (id: string, data: BillPaymentData) => {
+      return await dispatch(addPayment({ id, data }));
     },
     [dispatch],
   );

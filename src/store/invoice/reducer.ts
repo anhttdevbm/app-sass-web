@@ -6,11 +6,19 @@ import {
   DEFAULT_PAGING_BILLING,
 } from "constant/index";
 import { Paging_Invoice, User } from "constant/types";
-import { getInvoiceDetail, getInvoiceList } from "./actions";
+import {
+  getAllPaymentByInvoiceId,
+  getInvoiceDetail,
+  getInvoiceList,
+} from "./actions";
 
 export interface PaymentItem {
   payment_method?: string;
   payment_link?: string;
+}
+
+export interface PaymentDesc {
+  id?: string;
 }
 
 export interface Service {
@@ -39,6 +47,7 @@ export type InvoiceState = {
   itemStatus: DataStatus;
   error?: string;
   item?: Invoice;
+  paymentAll?: PaymentDesc[];
 };
 
 const initialState: InvoiceState = {
@@ -46,6 +55,7 @@ const initialState: InvoiceState = {
   status: DataStatus.IDLE,
   paging: DEFAULT_PAGING_BILLING,
   itemStatus: DataStatus.IDLE,
+  paymentAll: [],
 };
 
 const invoiceSlice = createSlice({
@@ -98,6 +108,14 @@ const invoiceSlice = createSlice({
         state.error = undefined;
       })
       .addCase(getInvoiceDetail.rejected, (state, action) => {
+        state.status = DataStatus.FAILED;
+        state.error = action.error?.message ?? AN_ERROR_TRY_AGAIN;
+      })
+      .addCase(getAllPaymentByInvoiceId.fulfilled, (state, { payload }) => {
+        const data = payload;
+        state.paymentAll = data;
+      })
+      .addCase(getAllPaymentByInvoiceId.rejected, (state, action) => {
         state.status = DataStatus.FAILED;
         state.error = action.error?.message ?? AN_ERROR_TRY_AGAIN;
       }),

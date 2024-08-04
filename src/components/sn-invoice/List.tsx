@@ -73,7 +73,7 @@ const List = () => {
   }, [isReady, onGetInvoices, initQuery]);
 
   return (
-    <Stack padding={"0px 16px"} overflow={"hidden"}>
+    <Stack padding={"0px 16px"} overflow={"auto"}>
       <FixedLayout sxContainer={{ bgcolor: "transparent" }}>
         <InvoiceTable
           invoices={invoices}

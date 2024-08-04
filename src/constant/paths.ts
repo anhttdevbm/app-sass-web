@@ -92,6 +92,7 @@ export const MEETING_HOME_PATH = "/meeting";
 // Invoices
 export const INVOICES_PATH = "/invoices";
 export const INVOICE_INFO_PATH = "/invoices/{id}";
+export const INVOICE_CREATE_PATH = "/invoices/create";
 
 const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,
@@ -212,7 +213,7 @@ export const AUTHORIZED_PATHS = {
     MEETING_HOME_PATH,
 
     // Invoices
-    INVOICES_PATH
+    INVOICES_PATH,
   ],
   [Permission.EU]: [...AUTHORIZED_LOGGED_IN_PATHS, UPGRADE_ACCOUNT_PATH],
 };
