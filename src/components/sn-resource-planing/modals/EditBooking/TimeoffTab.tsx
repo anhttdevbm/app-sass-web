@@ -39,7 +39,7 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
   const { positionOptions, projectOptions } = useGetOptions();
   const { bookingAll } = useBookingAll();
   const { schemaTimeOff } = useGetSchemas();
-
+  console.log(bookingAll);
   const bookingEvent: IBookingItem = useMemo(() => {
     const booking =
       bookingAll
@@ -85,6 +85,8 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
   }, [open]);
 
   const onSubmitTimeOff = async (data) => {
+    console.log(data);
+
     await updateBooking(
       {
         ...data,

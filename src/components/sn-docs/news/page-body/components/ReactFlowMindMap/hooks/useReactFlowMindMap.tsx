@@ -8,7 +8,7 @@ import {
   OnEdgesChange,
   OnConnect,
 } from "@xyflow/react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ReactFlowBoxCustom from "../components/ReactFlowBoxCustom";
 
 const initialNodes: Node[] = [
@@ -18,39 +18,33 @@ const initialNodes: Node[] = [
     position: { x: 0, y: 0 },
     type: "typeReactFlowBoxCustom",
   },
-  {
-    id: "node-2",
-    data: { value: "Hello  Autumn" },
-    position: { x: 350, y: 0 },
-    type: "typeReactFlowBoxCustom",
-  },
 ];
-const initialEdges: Edge[] = [
-  {
-    id: "node-1-to-node-2",
-    source: "node-1",
-    target: "node-2",
-    type: "step",
-  },
-];
+const initialEdges: Edge[] = [];
 
 const useReactFlowMindMap = () => {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
 
-  const updateNodeData = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (nodeId: string, newData: any) => {
-      setNodes((prevNodes) =>
-        prevNodes.map((node) =>
-          node.id === nodeId
-            ? { ...node, data: { ...node.data, ...newData } }
-            : node,
-        ),
-      );
-    },
-    [],
-  );
+  const updateNodeData = useCallback((nodeId: string, newData: string) => {
+    console.log(`Updating node ${nodeId} with value: "${newData}"`);
+    setNodes((prevNodes) =>
+      prevNodes.map((node) => {
+        if (node.id === nodeId) {
+          console.log(`Found node to update:`, node);
+          const updatedNode = {
+            ...node,
+            data: {
+              ...node.data,
+              value: newData,
+            },
+          };
+          console.log(`Updated node:`, updatedNode);
+          return updatedNode;
+        }
+        return node;
+      }),
+    );
+  }, []);
 
   const handleAddNode = useCallback(
     (idParent: string) => {
@@ -89,12 +83,13 @@ const useReactFlowMindMap = () => {
       typeReactFlowBoxCustom: (props) => (
         <ReactFlowBoxCustom
           {...props}
-          updateNodeData={updateNodeData}
+          data={{ value: props.data?.value || "" }} // Ensure there's always a value prop
+          // updateNodeData={updateNodeData}
           handleAddNode={handleAddNode}
         />
       ),
     }),
-    [updateNodeData, handleAddNode],
+    [handleAddNode],
   );
 
   const onNodesChange: OnNodesChange = useCallback(

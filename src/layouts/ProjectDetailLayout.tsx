@@ -60,6 +60,7 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
 
     onUpdateHeaderConfig({
       title: item?.name,
+      imageUrl: item?.avatar?.link,
       searchPlaceholder: commonT("searchBy", { name: projectT("list.key") }),
       prevPath,
       endpoint: Endpoint.PROJECTS,
@@ -68,13 +69,14 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
     return () => {
       onUpdateHeaderConfig({
         title: undefined,
+        imageUrl: undefined,
         searchPlaceholder: undefined,
         prevPath: undefined,
         endpoint: undefined,
         key: undefined,
       });
     };
-  }, [commonT, item?.name, onUpdateHeaderConfig, projectT]);
+  }, [commonT, item?.name, item?.avatar?.link, onUpdateHeaderConfig, projectT]);
 
   return (
     <Wrapper

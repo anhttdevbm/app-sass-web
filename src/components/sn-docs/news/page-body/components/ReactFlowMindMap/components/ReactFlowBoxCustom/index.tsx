@@ -7,7 +7,7 @@ interface ReactFlowBoxCustomProps {
   data: { value: string };
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateNodeData: (nodeId: string, newData: any) => void;
+  updateNodeData?: (nodeId: string, newData: any) => void;
   handleAddNode: (idParent: string) => void;
 }
 
@@ -20,11 +20,13 @@ export default function ReactFlowBoxCustom({
   const [isShowAdd, setIsShowAdd] = useState(false);
 
   const onChange = useCallback(
-    (evt: React.ChangeEvent<HTMLInputElement>) => {
-      updateNodeData(id, { value: evt.target.value });
+    (evt: React.FocusEvent<HTMLInputElement>) => {
+      const newValue = evt.target.value || "Empty"; // Default to "Empty" if value is empty
+      if (updateNodeData) updateNodeData(id, { value: newValue });
     },
     [id, updateNodeData],
   );
+
   return (
     <Box
       onMouseEnter={() => setIsShowAdd(true)}

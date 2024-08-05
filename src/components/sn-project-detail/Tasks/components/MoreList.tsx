@@ -572,10 +572,10 @@ const MoreList = (props: MoreListProps) => {
                   sx={sxConfig.item}
                   onClick={onSetTType(Action.AI_ASSISTANT)}
                 >
-                  <ListItemIcon>
-                    <AIGradientIcon />
-                  </ListItemIcon>
-                  <ListItemText color="grey.400">AI Assistant</ListItemText>
+                  <AIGradientIcon fontSize="medium" />
+                  <Text ml={2} variant="body2" color="grey.400">
+                    AI Assistant
+                  </Text>
                 </MenuItem>
                 {taskListIds.length > 0 && (
                   <MenuItem

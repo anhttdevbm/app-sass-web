@@ -5,8 +5,8 @@ export const ResourcePlanningLang: ResourceDictionary = {
     title: "Resource Planning",
 
     tab: {
-      allPeople: "All People",
-      mySchedule: "My schedule",
+      allPeople: "Schedule",
+      mySchedule: "Timeline",
     },
   },
   schedule: {
@@ -38,6 +38,9 @@ export const ResourcePlanningLang: ResourceDictionary = {
     resourceHeader: {
       available: "Available",
       schedule: "Schedule",
+      service: "SERVICE",
+      user: "USER",
+      startDate: "START DATE",
     },
     action: {
       addBooking: "Add booking",

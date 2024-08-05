@@ -46,10 +46,10 @@ const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
         onChange={onChange}
       ></FilterMemberEdit>
       {/* <FilterName queries={queries} onChange={onChange}></FilterName> */}
-      <FilterMemberProject
+      {/* <FilterMemberProject
         queries={queries}
         onChange={onChange}
-      ></FilterMemberProject>
+      ></FilterMemberProject> */}
       {/* <FilterProjectStatus
         queries={queries}
         onChange={onChange}

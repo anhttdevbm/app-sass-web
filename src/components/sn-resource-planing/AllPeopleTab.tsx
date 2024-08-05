@@ -1,7 +1,7 @@
 "use client";
 
 import FullCalendar from "@fullcalendar/react";
-import React, { use, useCallback, useEffect, useMemo } from "react";
+import React, { use, useCallback, useEffect, useMemo, useState } from "react";
 import {
   IBookingAllFitler,
   updateBookingResource,
@@ -46,9 +46,17 @@ export interface IEditState {
 
 interface IAllPeopleTabProp {
   setisServicePopup: any;
+  setIsWorkload: any;
+  isWorkload: Boolean;
+  tab: String;
 }
 
-const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
+const AllPeopleTab = ({
+  setisServicePopup,
+  setIsWorkload,
+  isWorkload,
+  tab,
+}: IAllPeopleTabProp) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
@@ -75,6 +83,7 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
     bookingId: "",
     isProject: true,
   });
+
   const generateDateRange = () => {
     const start_date = dayjs(filters?.start_date);
     const result: Array<Date> = [];
@@ -334,15 +343,115 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
       background: palette.grey[50],
     },
   };
+  const mapResours = () => {
+    const items: any = [];
+    mappedResources.map((item: any) => {
+      items.push({
+        id: item.id,
+        fullName: item.fullname,
+        total_hour: item.total_hour,
+      });
+    });
+    return items;
+  };
+  const mapEvent = () => {
+    const items: any = [];
+    mappedResources.map((item: any) =>
+      item.bookings.map((ite: any) =>
+        items.push({
+          ...ite,
+          resourceId: ite.user_id,
+          start: ite.start_date,
+          end: ite.end_date,
+          bookingID: ite.id,
+        }),
+      ),
+    );
+
+    return items;
+  };
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  function getWeekDates(year, weekNumber) {
+    const simple = new Date(year, 0, 1 + (weekNumber - 1) * 7);
+    const dayOfWeek = simple.getDay();
+    const ISOweekStart = simple;
+    if (dayOfWeek <= 4)
+      ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    else ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    const startOfWeek = new Date(ISOweekStart);
+    const endOfWeek = new Date(ISOweekStart);
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
+    return { startOfWeek, endOfWeek };
+  }
+  function getMonthNamesForWeek(weekDates) {
+    const startMonth = weekDates.startOfWeek.getMonth();
+    const endMonth = weekDates.endOfWeek.getMonth();
+    if (startMonth === endMonth) {
+      return [monthNames[startMonth]];
+    } else {
+      return [monthNames[startMonth], monthNames[endMonth]];
+    }
+  }
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart: any = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+  }
+  const currentWeekNumber = getWeekNumber(currentDate);
+  const nextWeekNumber = currentWeekNumber + 1;
+  const currentWeekDates = getWeekDates(currentYear, currentWeekNumber);
+  const nextWeekDates = getWeekDates(currentYear, nextWeekNumber);
+  const currentWeekMonths = getMonthNamesForWeek(currentWeekDates);
+  const nextWeekMonths = getMonthNamesForWeek(nextWeekDates);
 
   return (
     <Stack direction="column" rowGap={2}>
-      <FilterHeader type={TAB_TYPE.ALL} setisServicePopup={setisServicePopup} />
+      <FilterHeader
+        type={TAB_TYPE.ALL}
+        setisServicePopup={setisServicePopup}
+        setIsWorkload={setIsWorkload}
+        tab={tab}
+      />
       {/* <TimeHeader
         filters={filters}
         setFilters={setFilters}
         calendarRef={calendarRef}
       /> */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          position: "relative",
+          top: "5px",
+        }}
+      >
+        <div style={{ width: "1294px", display: "flex" }}>
+          <p style={{ width: "50%", textAlign: "center", margin: 0 }}>
+            {currentWeekMonths.join("-")}
+          </p>
+          <p style={{ width: "50%", textAlign: "center", margin: 0 }}>
+            {nextWeekMonths.join("-")}
+          </p>
+        </div>
+      </div>
       <Box
         sx={{
           ...defaultStyle,
@@ -366,11 +475,8 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
           editable={true}
           eventResourceEditable={true}
           eventDurationEditable={true}
-          headerToolbar={{
-            start: "",
-            center: "title",
-            end: "",
-          }}
+          headerToolbar={false}
+          nowIndicator={true}
           selectMirror={true}
           selectable={true}
           eventDragStart={(arg) => {
@@ -400,8 +506,10 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
           slotDuration={{
             days: 1,
           }}
-          resources={mappedResources}
-          events={mappedEvents}
+          // resources={mappedResources}
+          // events={mappedEvents}
+          resources={mapResours()}
+          events={mapEvent()}
           slotLabelContent={(arg) => {
             // Content label for each slot on calendar
             return <SlotLabelContent arg={arg} />;
@@ -475,8 +583,13 @@ const AllPeopleTab = ({ setisServicePopup }: IAllPeopleTabProp) => {
           }}
           eventContent={({ event }) => {
             // Content on calendar
+
             return (
-              <EventContents event={event} setIsOpenEdit={setIsOpenEdit} />
+              <EventContents
+                event={event}
+                setIsOpenEdit={setIsOpenEdit}
+                isWorkload={isWorkload}
+              />
             );
           }}
           stickyFooterScrollbar={true}

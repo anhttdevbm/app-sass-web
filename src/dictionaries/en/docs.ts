@@ -7,6 +7,7 @@ export const DocsLang: DocsDictionary = {
     add: "Add",
     comment: "Comment",
     cancel: "Cancel",
+    search: "Search",
   },
   filter: {
     all: "All",

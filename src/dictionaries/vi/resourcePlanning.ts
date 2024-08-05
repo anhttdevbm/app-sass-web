@@ -5,8 +5,8 @@ export const ResourcePlanning: ResourceDictionary = {
     title: "Quản lý lịch trình",
 
     tab: {
-      allPeople: "Schedule",
-      mySchedule: "Timeline",
+      allPeople: "Lịch trình",
+      mySchedule: "Tiến trình",
     },
   },
   schedule: {
@@ -30,6 +30,9 @@ export const ResourcePlanning: ResourceDictionary = {
     resourceHeader: {
       available: "Khả dụng",
       schedule: "Lịch trình",
+      service: "Dịch vụ",
+      user: "người dùng",
+      startDate: "ngày bắt đầu",
     },
     unit: {
       day: "ngày",

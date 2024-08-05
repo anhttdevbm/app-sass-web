@@ -1,4 +1,4 @@
-import { Box, DialogContent, Slider, Stack } from "@mui/material";
+import { Avatar, Box, DialogContent, Slider, Stack } from "@mui/material";
 import { Button, IconButton, Text } from "components/shared";
 import { IMAGES_ACCEPT, NS_COMMON } from "constant/index";
 import UploadIcon from "icons/UploadIcon";
@@ -63,7 +63,7 @@ const Upload = (props: UploadProps) => {
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (!files) return;
+    if (!files || !files[0]) return;
     if (IMAGES_ACCEPT.includes(files[0].type)) {
       // onChange(name, files[0]);
       setOpenImageEditor(URL.createObjectURL(files[0]));
@@ -76,13 +76,23 @@ const Upload = (props: UploadProps) => {
     <>
       <Stack spacing={1}>
         <IconButton onClick={onChooseFile}>
-          <UploadLogoRoundIcon
-            sx={{
-              width: 56,
-              height: 56,
-              color: "transparent",
-            }}
-          />
+          {value ? (
+            <Image
+              alt="Image"
+              src={previewImage}
+              width={56}
+              height={56}
+              className="rounded"
+            />
+          ) : (
+            <UploadLogoRoundIcon
+              sx={{
+                width: 56,
+                height: 56,
+                color: "transparent",
+              }}
+            />
+          )}
         </IconButton>
 
         <Box

@@ -5,13 +5,6 @@ import { uuid } from "utils/index";
 const mindMapParent: IMindmapItem = {
   title: "Hello Summer",
   id: uuid(),
-  children: [
-    {
-      id: uuid(),
-      title: "children 2",
-      children: [],
-    },
-  ],
 };
 
 const useMindmap = () => {
@@ -22,8 +15,13 @@ const useMindmap = () => {
     const newChildren = { id: uuid(), title: "", children: [] };
     if (newMindMapParent) {
       newMindMapParent.children?.push(newChildren);
-      setMindmapItem(newMindMapParent);
+      return newChildren;
     }
+  };
+
+  const getNewChild = () => {
+    const newChildren = { id: uuid(), title: "", children: [] };
+    return newChildren;
   };
 
   const handleDeleteChildren = () => {
@@ -33,9 +31,9 @@ const useMindmap = () => {
   };
 
   const handleAddChildToChild = (idChild: string) => {
-    console.log('123')
+    console.log("123");
     if (!mindMapItem.children) return;
-    console.log('456')
+    console.log("456");
     const updatedChildren = mindMapItem.children.map((child) => {
       if (child.id === idChild) {
         const newChildren = Array(3)
@@ -59,7 +57,6 @@ const useMindmap = () => {
       children: updatedChildren,
     });
   };
-  console.log('mindMapItem',mindMapItem)
 
   const deleteChildToChild = (idChildToDelete: string) => {
     if (!mindMapItem.children) return;
@@ -93,6 +90,7 @@ const useMindmap = () => {
     handleDeleteChildren,
     handleAddChildToChild,
     deleteChildToChild,
+    getNewChild
   };
 };
 

@@ -13,6 +13,8 @@ import { useTranslations } from "next-intl";
 import ActionMoreListDoc from "../ActionMoreListDoc";
 import { IViewDocItem } from "../KanbanViewDocList";
 import { useDocs } from "store/docs/selectors";
+import { CardActionArea } from "@mui/material";
+import { useProject } from "store/project/selectors";
 
 export default function KanbanViewItem({
   itemKanban,
@@ -38,116 +40,113 @@ export default function KanbanViewItem({
             },
           })}
         >
-          <CardHeader
-            sx={{
-              bgcolor: itemKanban.groupInfo ? "#14B9E5" : "#E6F1FD",
-              height: 54,
-              color: "common.white",
-            }}
-            avatar={
-              itemKanban.groupInfo ? (
-                <Avatar
-                  alt={itemKanban.groupInfo?.avatar.name}
-                  src={itemKanban.groupInfo?.avatar.link}
-                  sx={{ height: 25, width: 25 }}
-                  aria-label="avatar-header"
-                />
-              ) : (
+          <CardActionArea onClick={() => redirectDetailDoc(item.id)}>
+            <CardHeader
+              sx={{
+                bgcolor: itemKanban.groupInfo ? "#14B9E5" : "#E6F1FD",
+                height: 54,
+                color: "common.white",
+              }}
+              avatar={
+                itemKanban.groupInfo ? (
+                  <Avatar
+                    alt={itemKanban.groupInfo.avatar.name}
+                    src={itemKanban.groupInfo.avatar.link}
+                    sx={{ height: 25, width: 25 }}
+                    aria-label="avatar-header"
+                  />
+                ) : (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={0.5}
+                    color="grey.400"
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <Typography>No Project</Typography>
+                    <LockIcon
+                      sx={{
+                        width: 12,
+                        height: 12,
+                      }}
+                    />
+                  </Box>
+                )
+              }
+              // action={<ActionMoreListDoc />}
+              title={
                 <Box
                   display="flex"
                   alignItems="center"
-                  gap={0.5}
-                  color="grey.400"
                   sx={{ cursor: "pointer" }}
+                  gap={1}
                   onClick={() => redirectDetailDoc(item.id)}
                 >
-                  <Typography>No Project</Typography>
-                  <LockIcon
-                    sx={{
-                      width: 12,
-                      height: 12,
-                    }}
-                  />
+                  <Typography>
+                    {itemKanban.groupInfo ? itemKanban.groupInfo.name : ""}
+                  </Typography>
+                  <GroupIcon />
                 </Box>
-              )
-            }
-            action={<ActionMoreListDoc />}
-            title={
-              <Box
-                display="flex"
-                alignItems="center"
-                sx={{ cursor: "pointer" }}
-                gap={1}
-                onClick={() => redirectDetailDoc(item.id)}
-              >
-                <Typography>
-                  {itemKanban.groupInfo
-                    ? `${itemKanban.groupInfo.name} #${
-                        itemKanban.groupInfo?.number ?? 0
-                      }`
-                    : ""}
-                </Typography>
-                <GroupIcon />
-              </Box>
-            }
-          />
-          <CardContent sx={{ paddingTop: 0.5, paddingX: 2.5, height: 184 }}>
-            <Box display="flex" flexDirection="column" gap={0.5}>
-              <Typography
-                color="text.primary"
-                fontSize={20}
-                variant="h3"
-                fontWeight={600}
-                sx={{ fontWeight: "bold" }}
-              >
-                {item.name}
-              </Typography>
-              <Box display="flex" alignItems="center" gap={1}>
-                <Avatar
-                  alt={item.created_by?.avatar.name}
-                  src={item.created_by?.avatar.link}
-                  sx={{ bgcolor: "#ddd5d5", height: 18, width: 18 }}
-                  aria-label="avatar-content"
-                />
-                <Typography variant="body1">
-                  {(item.owner?.fullname || item.created_by?.fullname) &&
-                    docsT("ownedBy")}
-                </Typography>
-                <Typography variant="body1" sx={{ color: "#0575E6" }}>
-                  {item.owner?.fullname ?? item.created_by?.fullname ?? "--"}
-                </Typography>
-              </Box>
-              <Box>
+              }
+            />
+            <CardContent sx={{ paddingTop: 0.5, paddingX: 2.5, height: 184 }}>
+              <Box display="flex" flexDirection="column" gap={0.5}>
                 <Typography
-                  variant="body1"
-                  sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    WebkitLineClamp: 3,
-                    lineHeight: "1.5",
-                  }}
+                  color="text.primary"
+                  fontSize={20}
+                  variant="h3"
+                  fontWeight={600}
+                  sx={{ fontWeight: "bold" }}
                 >
-                  {item.description}
+                  {item.name}
                 </Typography>
-              </Box>
-              {item.updated_time && (
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  paddingTop={1}
-                  gap={0.5}
-                  sx={{ color: "grey.300" }}
-                >
-                  <AccessTimeIcon sx={{ height: 16, width: 16 }} />
-                  <Typography variant="body1" paddingLeft={1} fontSize={12}>
-                    Updated {dayjs(item.updated_time).format("MMMM D, YYYY")}
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Avatar
+                    alt={item.created_by?.avatar.name}
+                    src={item.created_by?.avatar.link}
+                    sx={{ bgcolor: "#ddd5d5", height: 18, width: 18 }}
+                    aria-label="avatar-content"
+                  />
+                  <Typography variant="body1">
+                    {(item.owner?.fullname || item.created_by?.fullname) &&
+                      docsT("ownedBy")}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: "#0575E6" }}>
+                    {item.owner?.fullname ?? item.created_by?.fullname ?? "--"}
                   </Typography>
                 </Box>
-              )}
-            </Box>
-          </CardContent>
+                <Box>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 3,
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    {item.description}
+                  </Typography>
+                </Box>
+                {item.updated_time && (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    paddingTop={1}
+                    gap={0.5}
+                    sx={{ color: "grey.300" }}
+                  >
+                    <AccessTimeIcon sx={{ height: 16, width: 16 }} />
+                    <Typography variant="body1" paddingLeft={1} fontSize={12}>
+                      Updated {dayjs(item.updated_time).format("MMMM D, YYYY")}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </CardContent>
+          </CardActionArea>
         </Card>
       ))}
     </>

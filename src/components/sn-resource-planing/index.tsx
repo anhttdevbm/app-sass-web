@@ -39,7 +39,7 @@ const ResourcePlanning = () => {
   const t = useTranslations(NS_RESOURCE_PLANNING);
 
   const [isServicePopup, setisServicePopup] = useState<Boolean>(false);
-
+  const [isWorkload, setIsWorkload] = useState<Boolean>(false);
   return (
     <Stack
       maxHeight={{ md: "90vh" }}
@@ -147,8 +147,8 @@ const ResourcePlanning = () => {
             </TabList>
             <Button
               sx={{
-                width: "121px",
-                height: "56px",
+                width: "100px",
+                height: "40px",
                 fontSize: "16px",
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 color: "white",
@@ -175,11 +175,21 @@ const ResourcePlanning = () => {
         >
           {user?.roles?.includes(Permission.AM) && (
             <TabPanel value="allPeople">
-              <AllPeopleTab setisServicePopup={setisServicePopup} />
+              <AllPeopleTab
+                setisServicePopup={setisServicePopup}
+                isWorkload={isWorkload}
+                setIsWorkload={setIsWorkload}
+                tab={tab}
+              />
             </TabPanel>
           )}
           <TabPanel value="mySchedule">
-            <MyScheduleTab setisServicePopup={setisServicePopup} />
+            <MyScheduleTab
+              setisServicePopup={setisServicePopup}
+              isWorkload={isWorkload}
+              setIsWorkload={setIsWorkload}
+              tab={tab}
+            />
           </TabPanel>
         </LocalizationProvider>
       </TabContext>
