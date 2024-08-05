@@ -194,9 +194,6 @@ const useReactFlowMindMap = () => {
     setEdges((eds) => addEdge(params, eds));
   }, []);
 
-  console.log("nodes", nodes);
-  console.log("edges", edges);
-
   return {
     handleAddNode,
     nodes,
