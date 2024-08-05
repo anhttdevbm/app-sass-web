@@ -1,16 +1,22 @@
 import { Box, Input } from "@mui/material";
 import { Edge, Handle, Position, Node } from "@xyflow/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import HoverIconAddReactFlow from "../HoverIconAddReactFlow";
 import HoverIconDeleteReactFlow from "../HoverIconDeleteReactFlow";
 import ButtonAddSession from "../ButtonAddSession";
+import { useAppSelector } from "store/hooks";
+import HoverIconAddRightLeftChart from "../HoverIconAddRightLeftChart";
 
 interface ReactFlowBoxCustomProps {
   data: { value: string; isAddSession: boolean };
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateNodeData?: (nodeId: string, newData: any) => void;
-  handleAddNode: (idParent: string, isAddSession?: boolean) => void;
+  handleAddNode: (
+    idParent: string,
+    isAddSession?: boolean,
+    position?: string,
+  ) => void;
   handleDeleteNode: (idParent: string) => void;
   edges: Edge[];
   nodes: Node[];
@@ -29,6 +35,7 @@ export default function ReactFlowBoxCustom({
   const [isShowAdd, setIsShowAdd] = useState(false);
   const [isHasConnect, setIsHasConnect] = useState(false);
   const [isShowDelete, setIsShowDelete] = useState(false);
+  const verMindMap = useAppSelector((state) => state.doc.mindMap.version);
 
   const getParentId = (nodeId: string, edges: Edge[]) => {
     const parentEdge = edges.find((edge) => edge.target === nodeId);
@@ -37,6 +44,11 @@ export default function ReactFlowBoxCustom({
 
   const parentId = getParentId(id, edges);
 
+  const isNodeTwo = useMemo(() => {
+    return !!(nodes && nodes[1] && id === nodes[1].id);
+  }, [nodes, id]);
+
+  /* start get last node of parent */
   const getLastTargetsNode = (nodes: Node[], edges: Edge[]) => {
     const sourceTargets = {};
     edges.forEach((edge) => {
@@ -52,6 +64,7 @@ export default function ReactFlowBoxCustom({
 
   const lastTargets = getLastTargetsNode(nodes, edges);
   const isLastTargets = lastTargets.has(id);
+  /* end get last node of parent */
 
   const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = evt.target.value || "Empty"; // Default to "Empty" if value is empty
@@ -84,7 +97,7 @@ export default function ReactFlowBoxCustom({
       }}
       onMouseLeave={() => {
         if (!isHasConnect) {
-          setIsShowAdd(false);
+          // setIsShowAdd(false);
         } else {
           setIsShowDelete(false);
         }
@@ -92,8 +105,10 @@ export default function ReactFlowBoxCustom({
       sx={{
         display: "flex",
         position: "relative",
-        paddingRight: "22px",
+        paddingRight: verMindMap === "mindmap" ? "22px" : "0px",
+        marginBottom: verMindMap === "mindmap" ? "0px" : "22px",
         alignItems: "center",
+        justifyContent: verMindMap === "chart" ? "center" : undefined,
       }}
     >
       <Box
@@ -111,8 +126,21 @@ export default function ReactFlowBoxCustom({
           },
         }}
       >
-        <Handle type="source" position={Position.Right} id={id + "right"} />
-        <Handle type="target" position={Position.Left} id={id + "left"} />
+        {verMindMap === "mindmap" ? (
+          <>
+            <Handle type="source" position={Position.Right} id={id + "right"} />
+            <Handle type="target" position={Position.Left} id={id + "left"} />
+          </>
+        ) : (
+          <>
+            <Handle
+              type="source"
+              position={Position.Bottom}
+              id={id + "right"}
+            />
+            <Handle type="target" position={Position.Top} id={id + "left"} />
+          </>
+        )}
         <Input
           value={data.value}
           disableUnderline
@@ -127,10 +155,35 @@ export default function ReactFlowBoxCustom({
           }}
         />
       ) : null}
+
+      {isShowAdd && isNodeTwo && verMindMap === "chart" ? (
+        <HoverIconAddRightLeftChart
+          onClickIcon={() => {
+            if (parentId) {
+              handleAddNode(parentId, undefined, "left");
+            } else {
+              console.error("error");
+            }
+          }}
+          positionIcon="left"
+        />
+      ) : null}
+      {isShowAdd && isNodeTwo && verMindMap === "chart" ? (
+        <HoverIconAddRightLeftChart
+          onClickIcon={() => {
+            if (parentId) {
+              handleAddNode(parentId, undefined, "right");
+            } else {
+              console.error("error");
+            }
+          }}
+          positionIcon="right"
+        />
+      ) : null}
       {isShowDelete ? (
         <HoverIconDeleteReactFlow onClickIcon={() => handleDeleteNode(id)} />
       ) : null}
-      {isLastTargets ? (
+      {isLastTargets && verMindMap === "mindmap" ? (
         <ButtonAddSession
           onAddSession={() => {
             if (parentId) {
@@ -140,6 +193,16 @@ export default function ReactFlowBoxCustom({
             }
           }}
         />
+      ) : null}
+      {verMindMap === "chart" ? (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "-45%",
+            height: "20px",
+            width: "100%",
+          }}
+        ></div>
       ) : null}
     </Box>
   );

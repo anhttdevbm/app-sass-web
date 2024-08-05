@@ -1,15 +1,14 @@
 import { Box } from "@mui/material";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
-import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
-import { useAppSelector } from "store/hooks";
+import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 
-export default function HoverIconAddReactFlow({
+export default function HoverIconAddRightLeftChart({
   onClickIcon,
+  positionIcon,
 }: {
   onClickIcon: () => void;
+  positionIcon?: "right" | "left";
 }) {
-  const verMindMap = useAppSelector((state) => state.doc.mindMap.version);
-
   return (
     <Box
       sx={{
@@ -18,17 +17,17 @@ export default function HoverIconAddReactFlow({
         color: "#14B9E5",
         cursor: "pointer",
         position: "absolute",
-        right: verMindMap === "mindmap" ? 0 : undefined,
+        right: positionIcon === "right" ? "-8%" : undefined,
+        left: positionIcon === "left" ? "-8%" : undefined,
         zIndex: 100,
         backgroundColor: "primary.contrastText",
-        bottom: verMindMap === "chart" ? "-45%" : undefined,
       }}
       onClick={onClickIcon}
     >
-      {verMindMap === "mindmap" ? (
+      {positionIcon === "right" ? (
         <ArrowCircleRightIcon sx={{ width: "100%", height: "100%" }} />
       ) : (
-        <ArrowCircleDownIcon sx={{ width: "100%", height: "100%" }} />
+        <ArrowCircleLeftIcon sx={{ width: "100%", height: "100%" }} />
       )}
     </Box>
   );

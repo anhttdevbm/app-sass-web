@@ -38,7 +38,7 @@ import ReactFlowMindMap from "../ReactFlowMindMap";
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
-  const isOpenMindMap = useAppSelector((state) => state.doc.isOpenMindMap);
+  const isOpenMindMap = useAppSelector((state) => state.doc.mindMap.isOpenMindMap);
 
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);

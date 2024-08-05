@@ -4,11 +4,15 @@ import PhotoIcon from "@mui/icons-material/Photo";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import GridOnIcon from "@mui/icons-material/GridOn";
 import TableChartIcon from "@mui/icons-material/TableChart";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import TagIcon from "@mui/icons-material/Tag";
 import { Box } from "@mui/material";
 import { useAppSelector } from "store/hooks";
 
-import { updateStatusOpenMindMap } from "store/docs/reducer";
+import {
+  updateStatusOpenMindMap,
+  updateVersionMindMap,
+} from "store/docs/reducer";
 import { useDispatch } from "react-redux";
 
 const TagNameIcon = () => {
@@ -53,15 +57,28 @@ export default function OtherToolBar() {
       style: "insert-mindmap",
       icon: <TableChartIcon />,
     },
+    {
+      label: "insert-chart",
+      method: "block",
+      style: "insert-chart",
+      icon: <BarChartIcon />,
+    },
   ];
 
-  const isOpenMindMap = useAppSelector((state) => state.doc.isOpenMindMap);
+  const isOpenMindMap = useAppSelector(
+    (state) => state.doc.mindMap.isOpenMindMap,
+  );
+
   const dispatch = useDispatch();
   const handleClickOtherTool = (type: string) => {
     switch (type) {
       case "insert-mindmap":
         dispatch(updateStatusOpenMindMap(!isOpenMindMap));
+        dispatch(updateVersionMindMap("mindmap"));
         break;
+      case "insert-chart":
+        dispatch(updateStatusOpenMindMap(!isOpenMindMap));
+        dispatch(updateVersionMindMap("chart"));
       default:
         break;
     }

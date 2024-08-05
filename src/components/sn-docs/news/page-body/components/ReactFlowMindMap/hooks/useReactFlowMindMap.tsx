@@ -11,6 +11,7 @@ import {
 } from "@xyflow/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactFlowBoxCustom from "../components/ReactFlowBoxCustom";
+import { useAppSelector } from "store/hooks";
 
 const initialNodes: Node[] = [
   {
@@ -27,6 +28,7 @@ const useReactFlowMindMap = () => {
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [oldIdNode, setOldIdNode] = useState<string>();
   const [oldPositionNode, setOldPositionNode] = useState(0);
+  const verMindMap = useAppSelector((state) => state.doc.mindMap.version);
 
   const updateNodeData = useCallback((nodeId: string, newData: string) => {
     setNodes((prevNodes) =>
@@ -47,23 +49,43 @@ const useReactFlowMindMap = () => {
   }, []);
 
   const handleAddNode = useCallback(
-    (idParent: string, isAddSession?: boolean) => {
+    (idParent: string, isAddSession?: boolean, position?: string) => {
       setOldIdNode(idParent);
       const isHasConnect = edges.some((item) => item.source === idParent);
       const parentNode = nodes.find((node) => node.id === idParent);
       if (!parentNode) return;
 
-      /*start  update new position of new node */
+      /*start  update new position y of new node */
       let newY = parentNode.position.y;
-      if (oldIdNode === idParent && isHasConnect) {
+
+      if (oldIdNode === idParent && isHasConnect && verMindMap === "mindmap") {
         // If the parent is the same as the last time, add 80 to the y-position
         newY = oldPositionNode + 80;
-      } else if (isAddSession) {
+      } else if (isAddSession && verMindMap === "mindmap") {
         newY = oldPositionNode + 80;
+      } else if (verMindMap === "chart" && position === "left") {
+        newY = nodes[1].position.y;
+      } else if (verMindMap === "chart" && position === "right") {
+        newY = nodes[1].position.y;
+      } else if (verMindMap === "chart") {
+        newY = oldPositionNode + 120;
       } else {
         newY = parentNode.position.y;
       }
-      /*end  update new position of new node */
+      /*end  update new position y of new node */
+
+      /*start  update new position x of new node */
+      let newX = parentNode.position.x;
+      if (verMindMap === "mindmap") {
+        newX = parentNode.position.x + 350;
+      } else if (verMindMap === "chart" && position === "left") {
+        newX = nodes[1].position.x - 350;
+      } else if (verMindMap === "chart" && position === "right") {
+        newX = nodes[1].position.x + 350;
+      } else {
+        newX = parentNode.position.x;
+      }
+      /*end  update new position x of new node */
 
       const newNodeId = `node-${nodes.length + 1}`;
 
@@ -73,7 +95,7 @@ const useReactFlowMindMap = () => {
           id: newNodeId,
           data: { value: "New Node" },
           position: {
-            x: parentNode.position.x + 350,
+            x: newX,
             y: newY,
           },
           type: "typeReactFlowBoxCustom",
@@ -102,7 +124,7 @@ const useReactFlowMindMap = () => {
       setOldIdNode(undefined);
       setOldPositionNode(newY);
     },
-    [edges, nodes, oldIdNode, oldPositionNode],
+    [edges, nodes, oldIdNode, oldPositionNode, verMindMap],
   );
 
   const handeDeleteNode = useCallback(
