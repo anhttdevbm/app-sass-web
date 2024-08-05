@@ -134,5 +134,7 @@ export const CommonLang: CommonDictionary = {
     homePage: "Trang chủ",
     aboutUs: "Về chúng tôi",
     helpCenter: "Trung tâm trợ giúp",
-  }
+  },
+  actions: "Hành động",
+  learnMore: "Xem thêm",
 };

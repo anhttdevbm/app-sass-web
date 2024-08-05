@@ -39,4 +39,23 @@ export type DocsDictionary = {
   changeDocAccess: string;
   errorInputRename: string;
   deleteConfirmDoc: string;
+  addDropdown: {
+    aiGenerator: string;
+    newDocument: string;
+    import: string;
+  };
+  import: {
+    formTitle: string;
+    formSubTitle: string;
+    formDivider: string;
+    summarizeDoc: string;
+    convertSheet: string;
+    createDoc: string;
+    dialog: {
+      subtitle: string;
+      dragdrop: {
+        caption: string;
+      };
+    };
+  };
 };
