@@ -7,8 +7,9 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import TagIcon from "@mui/icons-material/Tag";
 import { Box } from "@mui/material";
 import { useAppSelector } from "store/hooks";
-import { useDispatch } from "react-redux";
+
 import { updateStatusOpenMindMap } from "store/docs/reducer";
+import { useDispatch } from "react-redux";
 
 const TagNameIcon = () => {
   return <Box>@</Box>;
@@ -55,7 +56,7 @@ export default function OtherToolBar() {
   ];
 
   const isOpenMindMap = useAppSelector((state) => state.doc.isOpenMindMap);
-  const dispatch  =  useDispatch();
+  const dispatch = useDispatch();
   const handleClickOtherTool = (type: string) => {
     switch (type) {
       case "insert-mindmap":
