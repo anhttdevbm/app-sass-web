@@ -26,6 +26,7 @@ export interface Service {
   rate?: number;
   discount?: number;
   amount?: number;
+  quantity?: number;
 }
 export interface Invoice {
   id?: string;
@@ -39,6 +40,9 @@ export interface Invoice {
   service_items?: Service[];
   payment_items?: PaymentItem[];
   created_time: string;
+  total: number;
+  status: boolean;
+  balance_due: string;
 }
 export type InvoiceState = {
   items: Invoice[];

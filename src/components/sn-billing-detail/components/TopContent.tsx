@@ -44,12 +44,13 @@ import { Dropdown } from "components/Filters";
 import DropdownTag from "./DropdownTag";
 import { useBillings } from "store/billing/selectors";
 import useTheme from "hooks/useTheme";
+import { Invoice } from "store/invoice/reducer";
 
 const ITEM_HEIGHT = 48;
 
 type TopContentProps = {
   tagsOptions?: Option[];
-  item?: Billing;
+  item?: Invoice;
   user: User;
   memberOptions?: Option[];
 };
@@ -132,32 +133,30 @@ const TopContent = (props: TopContentProps) => {
   // }, [user, item]);
 
   useEffect(() => {
-    if (item?.user && item.user.length > 0 && listUser?.length === 0) {
-      const filterMember = item.user
-        ?.map((item) => {
-          if (!setMember.has(item.id)) {
-            setMember.add(item.id);
-            const member = {
-              id: item.id,
-              fullname: item.fullname,
-              avatar: {
-                link: item?.avatar?.link,
-              },
-            } as Member;
-            return member;
-          }
-        })
-        .filter((item2) => item2 && typeof item2 !== "undefined");
-
-      setListUser([...filterMember] as Member[]);
-    }
-    if (item?.tag && item?.tag?.length > 0) {
-      setTagSelected(item?.tag[0] ?? "");
-    }
-
-    if (item?.mail_status) {
-      setMarkSent(item?.mail_status ?? "");
-    }
+    // if (item?.user && item.user.length > 0 && listUser?.length === 0) {
+    //   const filterMember = item.user
+    //     ?.map((item) => {
+    //       if (!setMember.has(item.id)) {
+    //         setMember.add(item.id);
+    //         const member = {
+    //           id: item.id,
+    //           fullname: item.fullname,
+    //           avatar: {
+    //             link: item?.avatar?.link,
+    //           },
+    //         } as Member;
+    //         return member;
+    //       }
+    //     })
+    //     .filter((item2) => item2 && typeof item2 !== "undefined");
+    //   setListUser([...filterMember] as Member[]);
+    // }
+    // if (item?.tag && item?.tag?.length > 0) {
+    //   setTagSelected(item?.tag[0] ?? "");
+    // }
+    // if (item?.mail_status) {
+    //   setMarkSent(item?.mail_status ?? "");
+    // }
     // if (item?.user && item.user.length > 0 && listUser?.length > 0) {
     //   const filterMember = item.user
     //     ?.map((item) => {
@@ -172,9 +171,7 @@ const TopContent = (props: TopContentProps) => {
     //       }
     //     })
     //     .filter((item2) => item2 && typeof item2 !== "undefined");
-
     //   console.log(filterMember);
-
     //   // setListUser([...listUser, ...filterMember] as Member[]);
     // }
   }, [item]);
@@ -248,7 +245,7 @@ const TopContent = (props: TopContentProps) => {
 
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               {"Invoice " +
-                (item?.invoiceNumber ? item?.invoiceNumber?.toString() : "")}
+                (item?.invoice_number ? item?.invoice_number?.toString() : "")}
             </Text>
           </Link>
         </Stack>
@@ -288,11 +285,11 @@ const TopContent = (props: TopContentProps) => {
             size="extraSmall"
             variant="primary"
           >
-            {item?.mail_status == "Unsend"
+            {/* {item?.mail_status == "Unsend"
               ? billingT("detail.form.top.button.markAsSent")
               : item?.mail_status == "Sent"
               ? billingT("detail.form.top.button.unSent")
-              : ""}
+              : ""} */}
           </Button>
         </Stack>
         <Stack

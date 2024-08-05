@@ -7,7 +7,7 @@ import BodyCell from "./BodyCell";
 
 type StatusCellProps = {
   text: string;
-  color: AlertColor | "purple" | "positive";
+  color: AlertColor | "purple" | "positive" | "common";
   width?: TextProps["minWidth"];
   namespace?: string;
   textAlign?: string;

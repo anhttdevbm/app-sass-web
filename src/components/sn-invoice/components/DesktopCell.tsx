@@ -52,10 +52,10 @@ const DesktopCells = (props: DesktopCellsProps) => {
       <StatusCell
         namespace={NS_BILLING}
         text={status ? "Sent" : "Draft"}
-        color={status !== undefined ? COLOR_STATUS[status] : "grey.900"}
         width={93}
         align="left"
         textProps={{ px: 0 }}
+        color="common"
       />
       <BodyCell
         align="left"

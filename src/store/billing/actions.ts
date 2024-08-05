@@ -62,6 +62,7 @@ export type BillPaymentData = {
   id?: string;
   date?: string;
   paid_on?: string;
+  payment_number?: string;
 };
 
 export type BillTagData = {
@@ -75,8 +76,20 @@ export type PaymentData = {
   id?: string;
   note?: string;
   overdue?: string;
-  status?: string;
+  status?: boolean;
   _id?: string;
+  created_time?: string;
+  paid_on?: string;
+  payment_number?: string;
+  dueDate?: string;
+  totalAmount?: string;
+  payment_made?: string;
+  balanceDue?: string;
+  percentage?: {
+    per_balance: string;
+    paid: string;
+    writeOff: string;
+  };
 };
 
 export const getBillingList = createAsyncThunk(
