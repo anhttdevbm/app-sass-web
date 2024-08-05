@@ -33,7 +33,6 @@ import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
 import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
 import TableChartIcon from "@mui/icons-material/TableChart";
-import MindmapItem from "../MindmapItem";
 import ReactFlowMindMap from "../ReactFlowMindMap";
 
 export default function DraftEditor() {

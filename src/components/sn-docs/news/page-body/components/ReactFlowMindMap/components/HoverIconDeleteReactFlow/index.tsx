@@ -1,7 +1,7 @@
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { Box } from "@mui/material";
 
-export default function HoverIconDelete({
+export default function HoverIconDeleteReactFlow({
   onClickIcon,
 }: {
   onClickIcon: () => void;
@@ -13,6 +13,10 @@ export default function HoverIconDelete({
         height: "22px",
         color: "#14B9E5",
         cursor: "pointer",
+        position: "absolute",
+        right: 0,
+        zIndex: 100,
+        backgroundColor: "primary.contrastText"
       }}
       onClick={onClickIcon}
     >
