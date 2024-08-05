@@ -29,12 +29,13 @@ import DropdownButton from "./DropdownButton";
 import { useSnackbar } from "store/app/selectors";
 import { ButtonGradiant } from "components/sn-invoice/components";
 import PlusIcon from "icons/PlusIcon";
+import { Invoice } from "store/invoice/reducer";
 
 type TabItemProps = {
   label: string;
   value: string;
   editForm?: boolean;
-  item?: Billing;
+  item?: Invoice;
   arrBudgets?: Budgets[];
   user: User;
   form: FormikProps<Billing>;
@@ -45,7 +46,7 @@ type TabItemProps = {
 };
 
 type TabListProps = {
-  item?: Billing;
+  item?: Invoice;
   arrBudgets?: Budgets[];
   user: User;
 };
@@ -111,46 +112,44 @@ const TabInfo = (props: TabListProps) => {
     initialValues: {},
     onSubmit(values, formikHelpers) {
       // setDataUpdate
-
-      if (item?.duplicate) {
-        const arrUserId = item.user?.map((item) => {
-          return { id: item?.id };
-        });
-        const arrBudgetId = item.budget?.map((item) => {
-          return { id: item?.id };
-        });
-        const arrServiceId = item.budgetService?.map((item) => {
-          return { id: item?.id };
-        });
-
-        const data = {
-          budget: arrBudgetId,
-          user: arrUserId,
-          budgetService: arrServiceId,
-          invoiceMethod: 2,
-          vat: item?.vat,
-          amount: item?.amount,
-          amount_unpaid: item?.amount_unpaid,
-        };
-        handleCreateData(data);
-        setIsSubmit(true);
-      } else {
-        const data = {
-          ...values,
-          // ...billToInfo,
-          id: item?.id,
-          billTo: billToInfo,
-          billFrom: billFromInfo,
-        } as BillingDataUpdate;
-        handleSaveValue(data ?? {});
-        setIsSubmit(true);
-      }
+      // if (item?.duplicate) {
+      //   const arrUserId = item.user?.map((item) => {
+      //     return { id: item?.id };
+      //   });
+      //   const arrBudgetId = item.budget?.map((item) => {
+      //     return { id: item?.id };
+      //   });
+      //   const arrServiceId = item.budgetService?.map((item) => {
+      //     return { id: item?.id };
+      //   });
+      //   const data = {
+      //     budget: arrBudgetId,
+      //     user: arrUserId,
+      //     budgetService: arrServiceId,
+      //     invoiceMethod: 2,
+      //     vat: item?.vat,
+      //     amount: item?.amount,
+      //     amount_unpaid: item?.amount_unpaid,
+      //   };
+      //   handleCreateData(data);
+      //   setIsSubmit(true);
+      // } else {
+      //   const data = {
+      //     ...values,
+      //     // ...billToInfo,
+      //     id: item?.id,
+      //     billTo: billToInfo,
+      //     billFrom: billFromInfo,
+      //   } as BillingDataUpdate;
+      //   handleSaveValue(data ?? {});
+      //   setIsSubmit(true);
+      // }
     },
   });
 
-  useEffect(() => {
-    formik.setValues(item ?? {});
-  }, [item]);
+  // useEffect(() => {
+  //    formik.setValues(item ?? {});
+  // }, [item]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -166,23 +165,23 @@ const TabInfo = (props: TabListProps) => {
     onAddSnackbar("Thành công!", "success");
   };
 
-  useEffect(() => {
-    if (updateStatus && isSubmit && !item?.duplicate) {
-      formik.resetForm();
-      setEditForm(false);
-      setIsSubmit(false);
-    }
-  }, [updateStatus, isSubmit]);
+  // useEffect(() => {
+  //   if (updateStatus && isSubmit && !item?.duplicate) {
+  //     formik.resetForm();
+  //     setEditForm(false);
+  //     setIsSubmit(false);
+  //   }
+  // }, [updateStatus, isSubmit]);
 
-  useEffect(() => {
-    if (createStatus && isSubmit && item?.duplicate) {
-      formik.resetForm();
-      setEditForm(false);
-      setIsSubmit(false);
-      localStorage.removeItem("duplicateBill");
-      push(BILLING_PATH);
-    }
-  }, [createStatus, isSubmit]);
+  // useEffect(() => {
+  //   if (createStatus && isSubmit && item?.duplicate) {
+  //     formik.resetForm();
+  //     setEditForm(false);
+  //     setIsSubmit(false);
+  //     localStorage.removeItem("duplicateBill");
+  //     push(BILLING_PATH);
+  //   }
+  // }, [createStatus, isSubmit]);
 
   return (
     <>
@@ -392,9 +391,7 @@ const TabItem = (props: TabItemProps) => {
           setBillFromInfo={setBillFromInfo}
         />
       )}
-      {value === "Feed" && (
-        <TabFeed title={label} bill={item ?? {}} user={user} />
-      )}
+      {value === "Feed" && <TabFeed title={label} bill={{}} user={user} />}
       {value === "Payment" && <TabPayment title={label} />}
       {value === "Client" && <TabClient />}
     </TabPanel>

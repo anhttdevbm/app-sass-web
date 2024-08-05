@@ -42,7 +42,7 @@ const BillModal = (props: Iprops) => {
   const handleOpen = (value) => {
     setAction((prev) => ({ ...prev, value }));
   };
-  const formik = useFormik<BillPaymentData>({
+  const formik = useFormik<PaymentData>({
     enableReinitialize: true,
     validateOnBlur: true,
     validateOnChange: true,

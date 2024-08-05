@@ -374,7 +374,7 @@ const TabPayment = (props: TabProps) => {
                 Paid
               </Typography>
               <Typography fontSize={14} fontWeight={700} color="#404040">
-                {(dataPayment?.percentage?.paid ?? 0).toFixed(2)} %
+                {Number(dataPayment?.percentage?.paid ?? 0).toFixed(2)} %
               </Typography>
             </Stack>
           </Stack>
@@ -399,7 +399,7 @@ const TabPayment = (props: TabProps) => {
                 Write off
               </Typography>
               <Typography fontSize={14} fontWeight={700} color="#404040">
-                {(dataPayment?.percentage?.writeOff ?? 0).toFixed(2)} %
+                {Number(dataPayment?.percentage?.writeOff ?? 0).toFixed(2)} %
               </Typography>
             </Stack>
           </Stack>
@@ -424,7 +424,7 @@ const TabPayment = (props: TabProps) => {
                 Balance due
               </Typography>
               <Typography fontSize={14} fontWeight={700} color="#404040">
-                {(dataPayment?.percentage?.per_balance ?? 0).toFixed(2)} %
+                {Number(dataPayment?.percentage?.per_balance ?? 0).toFixed(2)} %
               </Typography>
             </Stack>
           </Stack>

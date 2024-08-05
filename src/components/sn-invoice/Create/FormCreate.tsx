@@ -685,8 +685,9 @@ const FormCreate = () => {
             alignItems: "center",
             padding: "12px 24px",
             width: "fit-content",
+            cursor: "pointer",
           }}
-          onClick={formik.handleSubmit}
+          onClick={() => formik.handleSubmit()}
         >
           Save as send
         </Box>

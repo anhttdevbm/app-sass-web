@@ -46,11 +46,12 @@ import ReplacePopup from "../components/ReplacePopup";
 import { useInvoices } from "store/invoice/selectors";
 import { useParams } from "next/navigation";
 import { useAuth } from "store/app/selectors";
+import { Invoice } from "store/invoice/reducer";
 
 type TabProps = {
   title: string;
   editForm?: boolean;
-  item?: Billing;
+  item?: Invoice;
   user?: User;
   arrBudgets?: Budgets[];
   form: FormikProps<Billing>;
@@ -117,7 +118,6 @@ const TabInvoice = (props: TabProps) => {
       onGetInvoiceDetail(id);
     }
   }, [id]);
-  console.log("item", user);
 
   const options = [
     {
@@ -767,11 +767,15 @@ const TabInvoice = (props: TabProps) => {
               Payment:{" "}
             </Typography>
             <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
-              {itemInvoice?.payment_items[0]?.payment_method ?? "Stripe"} |{" "}
+              {itemInvoice?.payment_items
+                ? itemInvoice?.payment_items[0]?.payment_method
+                : "Stripe"}{" "}
+              |{" "}
             </Typography>
             <Typography fontSize={14} fontWeight={500} color="#0575E6">
-              {itemInvoice?.payment_items[0]?.payment_method ??
-                "https://stripe.com"}
+              {itemInvoice?.payment_items
+                ? itemInvoice?.payment_items[0]?.payment_link
+                : "https://stripe.com"}
             </Typography>
           </Box>
         </Stack>
