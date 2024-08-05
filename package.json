@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 2023",
     "lint": "next lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@_ueberdosis/prosemirror-tables": "^1.1.3",

@@ -162,7 +162,7 @@ export const Endpoint = {
   RESPONDAPPLICANT: "/job-post/response-applicant",
 
   //Billing
-  BILLING: "/bill",
+  BILLING: "/billing",
   DETAIL_BILLING: "/bill/export/{id}",
   EXPORT_BILLING: "/billToExport",
   INTERACTION_BILLING: "/bill_interaction",
@@ -170,7 +170,8 @@ export const Endpoint = {
   ADD_USER_BILL: "/addUserToBill",
   CHANGE_BILL: "/bill/{id}",
   PAYMENT_BILL: "/payment",
-  CUSTOM_PAYMENT: "/payment/{id}",
+  CUSTOM_PAYMENT: "/payments/{id}",
+  ALL_CUSTOM_PAYMENT: "/payments/all/{id}",
   TAG: "/tag",
   CUSTOM_TAG: "/tag/{id}",
   UPDATE_BILL_TAG: "/bill/updateTag/{id}",
@@ -233,5 +234,6 @@ export const Endpoint = {
   AI_AGENT_CHAT: "/agent/chat",
 
   //Invoice
-  INVOICE: "/invoice",
+  INVOICE: "/invoices",
+  DETAIL_INVOICE: "/invoices/{id}",
 };

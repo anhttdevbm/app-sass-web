@@ -1,18 +1,18 @@
 import { Checkbox, TableRow } from "@mui/material";
-import { Billing, Invoice } from "store/billing/reducer";
-import { ChangeEvent, useMemo } from "react";
 import { BodyCell, CellProps, TableLayout } from "components/NewTable";
-import { HEADER_HEIGHT } from "../../../layouts/Header";
+import DesktopCells from "components/sn-invoice/components/DesktopCell";
+import { NS_INVOICE } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import { useTranslations } from "next-intl";
-import { NS_INVOICE } from "constant/index";
-import DesktopCells from "components/sn-invoice/components/DesktopCell";
+import { ChangeEvent, useMemo } from "react";
+import { HEADER_HEIGHT } from "../../../layouts/Header";
+import { Invoice } from "store/invoice/reducer";
 
 const MOBILE_HEADER_LIST = [{ value: "#", width: "70%", align: "left" }];
 
 type InvoiceTableProps = {
-  invoices: Billing[];
-  selectedList: Billing[];
+  invoices: Invoice[];
+  selectedList: Invoice[];
   onToggleSelect: (item: Invoice) => void;
   isCheckedAll: boolean;
   onChangeAll: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -96,7 +96,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
         sx: { paddingTop: 0.5, paddingBottom: 0.5 },
       }}
     >
-      {invoices.map((item) => {
+      {invoices?.map((item) => {
         const indexSelected = selectedList.findIndex(
           (selected) => selected.id === item.id,
         );

@@ -13,6 +13,7 @@ import { PROJECT_MEMBERS_PATH, PROJECT_TASKS_PATH } from "constant/paths";
 import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
 import { NS_PROJECT } from "constant/index";
+import CreateNewTaskListButton from "../Tasks/components/CreateNewTaskListButton";
 
 const TopContent = () => {
   const { title, prevPath } = useHeaderConfig();
@@ -74,25 +75,22 @@ const TopContent = () => {
           {title ?? ""}
         </Text>
       </Stack>
-      {(isTasksOfProjectPath || isMembersOfProjectPath) && (
+      {isMembersOfProjectPath && (
         <Button
           startIcon={<PlusIcon />}
           onClick={onAddNew}
           size="small"
           variant="primary"
           sx={{
-            minHeight: isTasksOfProjectPath ? 40 : 32,
-            height: isTasksOfProjectPath ? 40 : 32,
+            minHeight: 32,
+            height: 32,
             px: 1.75,
           }}
         >
-          {projectT(
-            isTasksOfProjectPath
-              ? "detailTasks.createNewTaskList"
-              : "detailMembers.addMember",
-          )}
+          {projectT("detailMembers.addMember")}
         </Button>
       )}
+      {isTasksOfProjectPath && <CreateNewTaskListButton />}
     </Stack>
   );
 };

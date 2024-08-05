@@ -27,6 +27,9 @@ export const BLOG_API_URL = process.env.BLOG_API_URL as string;
 export const CAREER_API_URL = process.env.CAREER_API_URL as string;
 //Billing
 export const BILLING_API_URL = process.env.BILLING_API_URL as string;
+//Invoice
+export const INVOICE_API_URL = process.env.INVOICE_API_URL as string;
+
 //Content
 export const CONTENT_API_URL = process.env.CONTENT_API_URL as string;
 

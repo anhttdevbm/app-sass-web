@@ -269,7 +269,7 @@ const TabInfo = (props: TabListProps) => {
             )}
             {value === "Payment" && (
               <Stack gap={2} direction={"row"} mb={1}>
-                {item && item?.mail_status == "Sent" && (
+                {
                   // <DropdownButton handleOpen={handleOpen} />
                   <Stack direction="row" alignItems="center">
                     <ButtonGradiant
@@ -288,7 +288,7 @@ const TabInfo = (props: TabListProps) => {
                   //   {"Add Payment"}
                   //   {/* {billingT("detail.form.top.button.edit")} */}
                   // </Button>
-                )}
+                }
 
                 {/* {editForm && (
                   <>

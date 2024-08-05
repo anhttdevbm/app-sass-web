@@ -55,8 +55,7 @@ export default function OtherToolBar() {
   ];
 
   const isOpenMindMap = useAppSelector((state) => state.doc.isOpenMindMap);
-  const dispatch = useDispatch();
-
+  const dispatch  =  useDispatch();
   const handleClickOtherTool = (type: string) => {
     switch (type) {
       case "insert-mindmap":

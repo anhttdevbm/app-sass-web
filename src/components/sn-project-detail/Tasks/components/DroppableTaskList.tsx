@@ -4,6 +4,7 @@ import {
   Button,
   ButtonBase,
   Grow,
+  InputAdornment,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -13,6 +14,7 @@ import {
   Stack,
   SvgIcon,
   SvgIconProps,
+  TextField,
   popoverClasses,
   useTheme,
 } from "@mui/material";
@@ -222,22 +224,25 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                   width="100%"
                   direction="row"
                   spacing={0}
-                  alignItems="center"
+                  alignItems="flex-end"
                   sx={{ ml: { xs: 2, md: 3.5 } }}
                 >
-                  <Button
-                    onClick={onShowCreate}
-                    startIcon={<PlusIcon />}
-                    variant="text"
-                    size="medium"
-                    color="primary"
+                  <PlusIcon sx={{ color: "dodgerblue", mr: 1, my: 1 }} />
+                  <TextField
+                    label={projectT("detailTasks.addNewTask")}
+                    variant="standard"
+                    value={taskName}
+                    onChange={changeNameTask}
+                    onKeyDown={(e) => onKeyDownTaskName(e, id)}
+                    InputLabelProps={{ sx: { color: "dodgerblue" } }}
                     sx={{
-                      mr: { xs: 1.5, md: 4 },
-                      textTransform: "none",
+                      "& .MuiInput-underline": {
+                        ":before": {
+                          borderBottomColor: "transparent",
+                        },
+                      },
                     }}
-                  >
-                    {projectT("detailTasks.addNewTask")}
-                  </Button>
+                  />
                 </Stack>
               )}
             </div>

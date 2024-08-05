@@ -1,7 +1,9 @@
-export default function Page(){
-    return(
-        <div>
-            Invoices Page
-        </div>
-    );
+import InformationBillingPage from "components/sn-billing-detail";
+
+export default function Page() {
+  return (
+    <>
+      <InformationBillingPage />
+    </>
+  );
 }
