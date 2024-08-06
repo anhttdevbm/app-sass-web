@@ -52,6 +52,8 @@ export type InvoiceState = {
   error?: string;
   item?: Invoice;
   paymentAll?: PaymentDesc[];
+  total?: number;
+  total_page?: number;
 };
 
 const initialState: InvoiceState = {
@@ -86,8 +88,8 @@ const invoiceSlice = createSlice({
         const { ...paging } = {
           page: data.page,
           size: data.size,
-          total_page: data.totalPage,
-          totalItems: data?.size,
+          total_page: data.total_page,
+          totalItems: data?.total,
         };
 
         state.items = data?.data as Invoice[];
