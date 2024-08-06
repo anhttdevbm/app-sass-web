@@ -35,6 +35,11 @@ const initRow = {
   amount: 0,
 };
 
+const initPaymentItem = {
+  payment_method: "Paypal",
+  payment_link: "https://paypal.com",
+};
+
 const FormCreate = () => {
   const { items, onGetClientCompanies } = useClientCompanies();
   const { initQuery, isReady, query } = useQueryParams();
@@ -42,6 +47,7 @@ const FormCreate = () => {
   const { onCreateNewInvoice } = useInvoices();
   const { user } = useAuth();
   const [total, setTotal] = useState(0);
+  const [paymentSelected, setPaymentSelected] = useState(0);
   const formik = useFormik({
     initialValues: {
       customer_name: "",
@@ -53,9 +59,10 @@ const FormCreate = () => {
       note: "",
       payment_items: [
         {
-          payment_method: "Paypal",
-          payment_link: "https://paypal.com",
+          payment_method: "Stripe",
+          payment_link: "https://https://stripe.com/",
         },
+        initPaymentItem,
       ],
       tags: "CREDIT",
       due_date: "",
@@ -340,15 +347,27 @@ const FormCreate = () => {
               Payment method
             </Typography>
             <TextField
-              disabled
+              select
               sx={{
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                   borderRadius: "100px",
                 },
               }}
-              value={formik.values.payment_items[0].payment_method}
+              value={
+                formik.values.payment_items[paymentSelected]?.payment_method
+              }
               fullWidth
-            ></TextField>
+            >
+              {(formik.values.payment_items ?? []).map((payment, index) => (
+                <MenuItem
+                  key={index}
+                  value={payment?.payment_method}
+                  onClick={() => setPaymentSelected(index)}
+                >
+                  {payment?.payment_method}
+                </MenuItem>
+              ))}
+            </TextField>
           </Box>
 
           <Box
@@ -363,13 +382,18 @@ const FormCreate = () => {
               Link
             </Typography>
             <TextField
-              disabled
               sx={{
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                   borderRadius: "100px",
                 },
               }}
-              value={formik.values.payment_items[0].payment_link}
+              value={formik.values.payment_items[paymentSelected]?.payment_link}
+              onChange={(e) =>
+                handleChange(
+                  `payment_items[${paymentSelected}].payment_link`,
+                  e.target.value,
+                )
+              }
               fullWidth
             ></TextField>
           </Box>
