@@ -12,11 +12,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Button, DatePicker, Input } from "components/shared";
+import { Button, DatePicker } from "components/shared";
 import { DEFAULT_PAGING } from "constant/index";
 import { INVOICES_PATH } from "constant/paths";
 import { useFormik } from "formik";
 import useQueryParams from "hooks/useQueryParams";
+import CloseIcon from "icons/CloseIcon";
+import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { useBudgets } from "store/billing/selectors";
@@ -39,15 +41,7 @@ const FormCreate = () => {
   const { onGetBudgets, budgets } = useBudgets();
   const { onCreateNewInvoice } = useInvoices();
   const { user } = useAuth();
-
-  const clients = [
-    { label: "Client 1", value: "client1" },
-    { label: "Client 2", value: "client2" },
-    { label: "Client 3", value: "client3" },
-  ];
-
   const [total, setTotal] = useState(0);
-
   const formik = useFormik({
     initialValues: {
       customer_name: "",
@@ -155,6 +149,7 @@ const FormCreate = () => {
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
               borderRadius: "100px",
               background: "#ffffff",
+              border: "1px solid #EFEFEF",
             },
             width: "50%",
           }}
@@ -194,6 +189,7 @@ const FormCreate = () => {
               borderRadius: "100px",
               background: "#ffffff",
             },
+            "& .MuiOutlinedInput-root.Mui-focused fieldset": {},
             width: "50%",
           }}
         >
@@ -224,12 +220,15 @@ const FormCreate = () => {
         </Typography>
         <TextField
           disabled
+          multiline
+          minRows={3}
           sx={{
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
-              borderRadius: "100px",
-              background: "#ffffff",
+              borderRadius: "12px",
+              background: "rgba(249, 241, 241, 0.41)",
             },
             width: "50%",
+            color: "rgba(33, 38, 60, 1)",
           }}
           value={`Company ${user?.company}`}
         ></TextField>
@@ -287,11 +286,6 @@ const FormCreate = () => {
               name="due_date"
               value={formik.values.due_date}
               onChange={handleChange}
-              // onBlur={formik.handleBlur}
-              // value={formik.values?.start_date}
-              // error={commonT(touchedErrors?.start_date, {
-              //   name: commonT("form.title.startDate"),
-              // })}
               sx={{
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                   border: "1px solid rgba(0, 0, 0, 0.38)",
@@ -391,6 +385,8 @@ const FormCreate = () => {
             background: "#D9F0FD",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
+            width: "95%",
+            alignItems: "center",
           }}
         >
           <Typography fontSize={20} fontWeight={600} color="#0575E6">
@@ -407,7 +403,10 @@ const FormCreate = () => {
             </Typography>
           </Box>
         </Box>
-        <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+        <TableContainer
+          component={Paper}
+          sx={{ boxShadow: "none", width: "95%" }}
+        >
           <Table
             sx={{ minWidth: 650, border: "none" }}
             aria-label="simple table"
@@ -415,36 +414,66 @@ const FormCreate = () => {
             <TableHead>
               <TableRow>
                 <TableCell
-                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#222222",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: "1px solid #EBEAF2",
+                  }}
                 >
                   ITEM DETAILS
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
-                  align="center"
+                  sx={{
+                    color: "#222222",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: "1px solid #EBEAF2",
+                  }}
+                  align="right"
                 >
                   UNIT
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#222222",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: "1px solid #EBEAF2",
+                  }}
                   align="right"
                 >
                   QUANTITY
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#222222",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: "1px solid #EBEAF2",
+                  }}
                   align="right"
                 >
                   RATE
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#222222",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: "1px solid #EBEAF2",
+                  }}
                   align="right"
                 >
                   DISCOUNT
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#222222",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    border: "1px solid #EBEAF2",
+                  }}
                   align="right"
                 >
                   AMOUNT
@@ -464,10 +493,12 @@ const FormCreate = () => {
                 >
                   <TableCell
                     sx={{
-                      color: "#21263C",
-                      fontSize: "13px",
+                      color: "#495057 !important",
+                      fontSize: "14px",
                       fontWeight: 400,
-                      border: "1px solid #878787",
+                      border: "1px solid #EBEAF2",
+                      position: "relative",
+                      paddingRight: "24px",
                     }}
                     align="left"
                   >
@@ -480,6 +511,7 @@ const FormCreate = () => {
                           e.target.value,
                         )
                       }
+                      placeholder="Type or click to select an item."
                       fullWidth
                       variant="standard"
                       InputProps={{
@@ -489,25 +521,40 @@ const FormCreate = () => {
                         },
                       }}
                     />
+                    <CloseIcon
+                      sx={{
+                        position: "absolute",
+                        right: "4px",
+                        top: "6px",
+                        border: "1px solid #878787",
+                        borderRadius: "16px",
+                        padding: "2px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() =>
+                        handleChange(`service_items[${index}].service_name`, "")
+                      }
+                    />
                   </TableCell>
                   <TableCell
                     component="th"
                     scope="row"
                     sx={{
-                      color: "#21263C",
-                      fontSize: "13px",
+                      color: "#495057 !important",
+                      fontSize: "14px",
                       fontWeight: 400,
-                      border: "1px solid #878787",
+                      border: "1px solid #EBEAF2",
                     }}
+                    align="right"
                   >
                     Hour
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: "#21263C",
-                      fontSize: "13px",
+                      color: "#495057 !important",
+                      fontSize: "14px",
                       fontWeight: 400,
-                      border: "1px solid #878787",
+                      border: "1px solid #EBEAF2",
                     }}
                     align="right"
                   >
@@ -529,14 +576,21 @@ const FormCreate = () => {
                           style: { textAlign: "right" },
                         },
                       }}
+                      sx={{
+                        "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                          {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                          },
+                      }}
                     />
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: "#21263C",
-                      fontSize: "13px",
+                      color: "#495057 !important",
+                      fontSize: "14px",
                       fontWeight: 400,
-                      border: "1px solid #878787",
+                      border: "1px solid #EBEAF2",
                     }}
                     align="right"
                   >
@@ -558,14 +612,21 @@ const FormCreate = () => {
                           style: { textAlign: "right" },
                         },
                       }}
+                      sx={{
+                        "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                          {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                          },
+                      }}
                     />
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: "#21263C",
-                      fontSize: "13px",
+                      color: "#495057 !important",
+                      fontSize: "14px",
                       fontWeight: 400,
-                      border: "1px solid #878787",
+                      border: "1px solid #EBEAF2",
                       position: "relative",
                       paddingRight: "24px",
                     }}
@@ -591,6 +652,13 @@ const FormCreate = () => {
                           min: 0,
                         },
                       }}
+                      sx={{
+                        "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                          {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                          },
+                      }}
                     />
                     <Box
                       sx={{
@@ -604,10 +672,11 @@ const FormCreate = () => {
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: "#21263C",
-                      fontSize: "13px",
+                      color: "#495057 !important",
+                      fontSize: "14px",
                       fontWeight: 400,
-                      border: "1px solid #878787",
+                      border: "1px solid #EBEAF2",
+                      position: "relative",
                     }}
                     align="right"
                   >
@@ -620,8 +689,10 @@ const FormCreate = () => {
         </TableContainer>
       </Box>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button
+      <Box
+        sx={{ display: "flex", justifyContent: "space-between", width: "95%" }}
+      >
+        {/* <Button
           variant="primary"
           type="button"
           onClick={() =>
@@ -632,6 +703,34 @@ const FormCreate = () => {
           }
         >
           Add new row
+        </Button> */}
+        <Button
+          variant="contained"
+          sx={{
+            textDecoration: "none",
+            display: "flex",
+            background: "#D9F0FD",
+            boxShadow: "none",
+            padding: "6px 32px 6px 12px !important",
+          }}
+          onClick={() =>
+            handleChange("service_items", [
+              ...formik.values.service_items,
+              initRow,
+            ])
+          }
+        >
+          <PlusIcon
+            sx={{
+              color: "white",
+              mr: 1,
+              background: "#188DFA",
+              borderRadius: "16px",
+            }}
+          />
+          <Typography fontWeight={700} fontSize={14} color={"#333333"}>
+            Add new row
+          </Typography>
         </Button>
         <Box
           sx={{
@@ -640,14 +739,27 @@ const FormCreate = () => {
             width: "35%",
             display: "flex",
             justifyContent: "space-between",
+            borderRadius: "100px",
+            border: "1px solid #EFEFEF",
+            alignItems: "center",
           }}
         >
-          <Typography>{`Total ( VND )`}</Typography>
-          <Typography>{total}</Typography>
+          <Typography
+            color="#666666"
+            fontSize={16}
+            fontWeight={400}
+          >{`Total ( VND )`}</Typography>
+          <Typography color="#666666" fontSize={16} fontWeight={400}>
+            {total}
+          </Typography>
         </Box>
       </Box>
-      <Box sx={{ display: "flex", flexDirection: "row-reverse" }}>
-        <Typography color="#0575E6" onClick={handleShowTotal}>
+      <Box sx={{ display: "flex", flexDirection: "row-reverse", width: "95%" }}>
+        <Typography
+          color="#0575E6"
+          sx={{ cursor: "pointer" }}
+          onClick={handleShowTotal}
+        >
           Show Total Summary
         </Typography>
       </Box>
@@ -666,9 +778,12 @@ const FormCreate = () => {
           minRows={3}
           sx={{
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
-              borderRadius: "8px",
+              borderRadius: "12px",
               background: "#ffffff",
+              color: "#999999",
+              fontWeight: "700",
             },
+            width: "70%",
             marginTop: "16px",
           }}
           placeholder="The message displayed on the invoice"
@@ -679,6 +794,23 @@ const FormCreate = () => {
         <Box
           borderRadius="9999px"
           sx={{
+            background: "#D9F0FD",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "12px 24px",
+            width: "fit-content",
+            cursor: "pointer",
+            color: "#0575E6",
+            fontWeight: "700",
+            fontSize: "14px",
+          }}
+        >
+          Save as Draft
+        </Box>
+        <Box
+          borderRadius="9999px"
+          sx={{
             backgroundImage: "linear-gradient(to right, #2AF598, #009EFD)",
             display: "flex",
             justifyContent: "center",
@@ -686,6 +818,9 @@ const FormCreate = () => {
             padding: "12px 24px",
             width: "fit-content",
             cursor: "pointer",
+            color: "#FFFFFF",
+            fontWeight: "700",
+            fontSize: "14px",
           }}
           onClick={() => formik.handleSubmit()}
         >
