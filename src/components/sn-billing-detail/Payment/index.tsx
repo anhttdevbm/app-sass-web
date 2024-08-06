@@ -181,25 +181,25 @@ const TabPayment = (props: TabProps) => {
   //   return res;
   // }, [item, dataPayment]);
 
-  const totalOfWriteOff = useMemo(() => {
-    const res = dataPayment?.reduce(
-      (sum, e: PaymentData) =>
-        e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
-      0,
-    );
+  // const totalOfWriteOff = useMemo(() => {
+  //   const res = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+  //     0,
+  //   );
 
-    return res;
-  }, [item, dataPayment]);
+  //   return res;
+  // }, [item, dataPayment]);
 
-  const totalOfPaid = useMemo(() => {
-    const res = dataPayment?.reduce(
-      (sum, e: PaymentData) =>
-        e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
-      0,
-    );
+  // const totalOfPaid = useMemo(() => {
+  //   const res = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+  //     0,
+  //   );
 
-    return res;
-  }, [item, dataPayment]);
+  //   return res;
+  // }, [item, dataPayment]);
 
   return (
     <Stack mt={6} sx={{ overflowY: "auto", height: "60vh" }}>
