@@ -35,6 +35,7 @@ import CheckableListItem from "./CheckableListItem";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import MindmapItem from "../MindmapItem";
 import BoardEditor from "../BoardEditor";
+import ReactFlowMindMap from "../ReactFlowMindMap";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
@@ -279,7 +280,7 @@ export default function DraftEditor() {
             focusEditor={focusEditor}
           />
         )}
-        {isOpenMindMap && <MindmapItem />}
+        {isOpenMindMap ? <ReactFlowMindMap /> : null}
         {isOpenBoard ? <BoardEditor /> : null}
       </div>
     </Box>
