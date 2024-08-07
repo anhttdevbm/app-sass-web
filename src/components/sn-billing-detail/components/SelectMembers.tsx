@@ -11,17 +11,13 @@ import { useTranslations } from "next-intl";
 import useTheme from "hooks/useTheme";
 import { Search } from "components/Filters";
 import PlusIcon from "icons/PlusIcon";
+import { Member } from "store/invoice/reducer";
 
 type SelectMembersProps = {
   value?: Member[];
   name: string;
   onChange: (name: string, data: Member[]) => void;
   ignoreId?: string;
-};
-type Member = {
-  id: string;
-  fullname: string;
-  avatar?: { link: string };
 };
 
 const SelectMembers = (props: SelectMembersProps) => {
@@ -70,16 +66,16 @@ const SelectMembers = (props: SelectMembersProps) => {
     onChange(name, newData);
   };
 
-  const onChangeMembers = (
-    id?: string,
-    fullname?: string,
-    avatar?: { link: string },
-  ) => {
+  const onChangeMembers = (id?: string, fullname?: string, email?: string) => {
     const indexSelected = members.findIndex((item) => item.id === id);
 
     const newData = [...members];
     if (indexSelected === -1) {
-      newData.push({ id: id ?? "", fullname: fullname ?? "", avatar });
+      newData.push({
+        id: id ?? "",
+        fullname: fullname ?? "",
+        email: email ?? "",
+      });
     } else {
       newData.splice(indexSelected, 1);
     }

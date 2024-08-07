@@ -167,7 +167,7 @@ export const Endpoint = {
   EXPORT_BILLING: "/billToExport",
   INTERACTION_BILLING: "/bill_interaction",
   INTERACTION_BILLING_BY_BILL: "/bill_interaction/{id}",
-  ADD_USER_BILL: "/addUserToBill",
+  ADD_USER_BILL: "/invoices/{id}/add-members",
   CHANGE_BILL: "/bill/{id}",
   PAYMENT_BILL: "/payment",
   CUSTOM_PAYMENT: "/payments/{id}",
