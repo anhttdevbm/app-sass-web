@@ -52,4 +52,23 @@ export const DocsLang: DocsDictionary = {
   changeDocAccess: "Thay đổi quyền truy cập tài liệu?",
   errorInputRename: "Vui lòng nhập tên của document",
   deleteConfirmDoc: "Bạn chắc chắn muốn xóa document?",
+  addDropdown: {
+    aiGenerator: "Tạo từ AI",
+    newDocument: "Tài liệu mới",
+    import: "Nhập",
+  },
+  import: {
+    formTitle: "Nhập tài liệu",
+    formSubTitle: "Nhập với AI hoặc từ dịch vụ khác.",
+    formDivider: "Hoặc nhập từ",
+    summarizeDoc: "Tóm tắt Tài liệu với AI",
+    convertSheet: "Chuyển đổi Spreadsheet với AI",
+    createDoc: "Tạo tài liệu",
+    dialog: {
+      subtitle: "Chọn tệp để tạo tài liệu.",
+      dragdrop: {
+        caption: "Thả tệp vào đây hoặc chọn tệp từ máy ",
+      },
+    },
+  },
 };

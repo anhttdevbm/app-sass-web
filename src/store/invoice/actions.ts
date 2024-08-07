@@ -7,6 +7,7 @@ import StringFormat from "string-format";
 export type GetInvoiceListQueries = {
   page?: number;
   size?: number;
+  query?: string;
 };
 
 export const getInvoiceList = createAsyncThunk(

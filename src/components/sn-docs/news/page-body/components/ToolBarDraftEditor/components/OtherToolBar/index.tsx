@@ -11,9 +11,9 @@ import { useAppSelector } from "store/hooks";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 
 import {
-  updateStatusOpenBoardEditor,
   updateStatusOpenMindMap,
   updateVersionMindMap,
+  updateStatusOpenBoardEditor
 } from "store/docs/reducer";
 import { useDispatch } from "react-redux";
 
@@ -78,7 +78,7 @@ export default function OtherToolBar() {
   );
 
   const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
-
+  
   const dispatch = useDispatch();
   const handleClickOtherTool = (type: string) => {
     switch (type) {

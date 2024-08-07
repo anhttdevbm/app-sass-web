@@ -52,4 +52,23 @@ export const DocsLang: DocsDictionary = {
   changeDocAccess: "Change document Access ?",
   errorInputRename: "Please enter a document name",
   deleteConfirmDoc: "Do you want to delete document?",
+  addDropdown: {
+    aiGenerator: "AI Generator",
+    newDocument: "New document",
+    import: "Import",
+  },
+  import: {
+    formTitle: "Import to Document",
+    formSubTitle: "Import with AI or from other services.",
+    formDivider: "Or import from",
+    summarizeDoc: "Summarize Document with AI",
+    convertSheet: "Convert Spreadsheet with AI",
+    createDoc: "Create document",
+    dialog: {
+      subtitle: "Upload files to generate a document.",
+      dragdrop: {
+        caption: "Drag file here or select to upload ",
+      },
+    },
+  },
 };

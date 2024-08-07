@@ -207,6 +207,4 @@ import {
       nodeTypes,
     };
   };
-  
-  export default useReactFlowMindMap;
-  
+ export default useReactFlowMindMap;

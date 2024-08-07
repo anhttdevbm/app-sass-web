@@ -1,6 +1,6 @@
 import { Option } from "constant/types";
 import { Stack } from "@mui/system";
-import { Typography } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 import { FilterType } from "components/sn-invoice/Actions";
 import DropdownCircleIcon from "../../../icons/DropdownCircleIcon";
 
@@ -61,6 +61,7 @@ export const Filter = ({ filters, onFilter }: FilterProps) => {
                 cursor: "pointer",
                 fontSize: "16px",
                 paddingRight: "30px",
+                background: "transparent",
               }}
             >
               {filter.options.map((option) => (
@@ -69,6 +70,7 @@ export const Filter = ({ filters, onFilter }: FilterProps) => {
                 </option>
               ))}
             </select>
+
             <DropdownCircleIcon
               style={{
                 position: "absolute",
