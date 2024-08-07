@@ -34,11 +34,13 @@ import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import ReactFlowMindMap from "../ReactFlowMindMap";
+import BoardEditor from "../BoardEditor";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
   const isOpenMindMap = useAppSelector((state) => state.doc.mindMap.isOpenMindMap);
+  const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
 
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);
@@ -279,6 +281,7 @@ export default function DraftEditor() {
           />
         )}
         {isOpenMindMap ? <ReactFlowMindMap /> : null}
+        {isOpenBoard ? <BoardEditor /> : null}
       </div>
     </Box>
   );
