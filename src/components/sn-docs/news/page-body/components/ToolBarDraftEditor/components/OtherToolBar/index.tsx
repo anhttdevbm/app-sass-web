@@ -8,10 +8,12 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import TagIcon from "@mui/icons-material/Tag";
 import { Box } from "@mui/material";
 import { useAppSelector } from "store/hooks";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 import {
   updateStatusOpenMindMap,
   updateVersionMindMap,
+  updateStatusOpenBoardEditor
 } from "store/docs/reducer";
 import { useDispatch } from "react-redux";
 
@@ -63,12 +65,20 @@ export default function OtherToolBar() {
       style: "insert-chart",
       icon: <BarChartIcon />,
     },
+    {
+      label: "insert-board",
+      method: "block",
+      style: "insert-board",
+      icon: <DashboardIcon />,
+    },
   ];
 
   const isOpenMindMap = useAppSelector(
     (state) => state.doc.mindMap.isOpenMindMap,
   );
 
+  const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
+  
   const dispatch = useDispatch();
   const handleClickOtherTool = (type: string) => {
     switch (type) {
@@ -79,6 +89,9 @@ export default function OtherToolBar() {
       case "insert-chart":
         dispatch(updateStatusOpenMindMap(!isOpenMindMap));
         dispatch(updateVersionMindMap("chart"));
+      case "insert-board":
+        dispatch(updateStatusOpenBoardEditor(!isOpenBoard));
+        break;
       default:
         break;
     }
