@@ -101,7 +101,13 @@ export interface IDocs {
     id: string;
     content: string;
   };
-  mindMapOpen: boolean;
+  mindMap: {
+    isOpenMindMap: boolean;
+    version: "mindmap" | "chart";
+  };
+  board: {
+    isOpenBoard: boolean;
+  };
 }
 
 const initialState: IDocs = {
@@ -171,7 +177,13 @@ const initialState: IDocs = {
     id: "",
     content: "",
   },
-  mindMapOpen: false,
+  mindMap: {
+    isOpenMindMap: false,
+    version: "mindmap",
+  },
+  board: {
+    isOpenBoard: false,
+  },
 };
 
 const docSlice = createSlice({
@@ -249,8 +261,14 @@ const docSlice = createSlice({
     changeTypeViewDoc: (state, action) => {
       state.typeViewDoc = action.payload;
     },
-    updateMindMapOpen: (state, action) => {
-      state.mindMapOpen = action.payload;
+    updateStatusOpenMindMap: (state, action) => {
+      state.mindMap.isOpenMindMap = action.payload;
+    },
+    updateVersionMindMap: (state, action) => {
+      state.mindMap.version = action.payload;
+    },
+    updateStatusOpenBoardEditor: (state, action) => {
+      state.board.isOpenBoard = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -335,7 +353,9 @@ export const {
   changePermDoc,
   setContentRow,
   changeTypeViewDoc,
-  updateMindMapOpen,
+  updateStatusOpenMindMap,
+  updateVersionMindMap,
+  updateStatusOpenBoardEditor
 } = docSlice.actions;
 
 export default docSlice.reducer;
