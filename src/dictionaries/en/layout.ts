@@ -58,8 +58,6 @@ export const LayoutLang: LayoutDictionary = {
     landingTrustCenter: "Trust Center",
     landingAI: "AI",
     landingPricing: "Pricing",
-
-    // Invoice
     invoice: "Invoice",
   },
 };

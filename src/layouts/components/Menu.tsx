@@ -6,7 +6,6 @@ import { NS_LAYOUT } from "constant/index";
 import {
   AI_AGENT_PATH,
   AI_CHAT_PATH,
-  BILLING_PATH,
   BLOG_CATEGORY_PATH,
   BLOGS_PATH,
   BUDGETING_PATH,
@@ -27,7 +26,6 @@ import {
   LANDING_HOME_PATH,
   LANDING_PRICING_PATH,
   LANDING_TRUST_CENTER_PATH,
-  MEETING_PATH,
   MY_COMPANY_PATH,
   POSITIONS_PATH,
   PROJECT_TYPES_PATH,
@@ -35,7 +33,7 @@ import {
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH,
+  TIME_TRACKING_PATH
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -300,13 +298,12 @@ const DATA: MenuItemProps[] = [
     href: BUDGETING_PATH,
     roles: [Permission.AM, Permission.ST],
   },
-  //Billing
-  // {
-  //   label: "menu.billing",
-  //   icon: <BillingIcon />,
-  //   href: BILLING_PATH,
-  //   roles: [Permission.AM, Permission.ST],
-  // },
+  {
+    label: "menu.invoice",
+    icon: <BillingIcon />,
+    href: INVOICES_PATH,
+    roles: [Permission.AM, Permission.ST],
+  },
   {
     label: "menu.chat",
     href: CHATTING_ROOM_PATH,
@@ -410,13 +407,7 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
-  },
-  {
-    label: "menu.invoice",
-    icon: <BillingIcon />,
-    href: INVOICES_PATH,
-    roles: [Permission.AM, Permission.ST],
-  },
+  }
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
