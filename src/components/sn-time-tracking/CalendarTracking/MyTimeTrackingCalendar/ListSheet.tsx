@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Table,
   TableBody,
@@ -8,14 +7,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Typography,
+  Typography
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import moment from "moment";
+import React from "react";
 import "../CompanyTimeTrackingCalendar/style.css";
-import { boxShadow } from "html2canvas/dist/types/css/property-descriptors/box-shadow";
-import Checkbox from "@mui/material/Checkbox";
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,9 +26,14 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:last-child td, &:last-child th": {
     border: 0,
-    boxShadow: 0,
   },
 }));
+
+const StyledTableHeadRow = styled(TableRow)(({ theme }) => ({
+  background: "#D9F0FD",
+  borderRadius: "8px",
+}));
+
 const formatDuration = (duration) => {
   const hours = Math.floor(duration);
   const minutes = (duration - hours) * 60;
@@ -46,7 +48,6 @@ const ListSheet: React.FC<IProps> = (props) => {
     id: row._id,
     Date: row.day,
     Project_name: row.project?.name || "Break time",
-    Task_name: row.note,
     Type: row.type,
     Time: formatDuration(row.duration),
     Creation_time: moment(row.created_time).format("L HH:mm"),
@@ -56,16 +57,13 @@ const ListSheet: React.FC<IProps> = (props) => {
     <TableContainer>
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
-          <TableRow
-            sx={{
-              background: "#D9F0FD",
-            }}
-          >
+          <StyledTableHeadRow>
             <StyledTableCell
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                borderRadius: "8px 0 0 0",
               }}
             >
               Date
@@ -78,15 +76,6 @@ const ListSheet: React.FC<IProps> = (props) => {
               }}
             >
               Project name
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "16px",
-              }}
-            >
-              Task name
             </StyledTableCell>
             <StyledTableCell
               sx={{
@@ -111,20 +100,18 @@ const ListSheet: React.FC<IProps> = (props) => {
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                borderRadius: "0 8px 0 0",
               }}
             >
               Creation time
             </StyledTableCell>
-          </TableRow>
+          </StyledTableHeadRow>
         </TableHead>
         {rows?.length > 0 ? (
           <TableBody>
             {rows.map((row) => (
               <StyledTableRow key={row.id}>
-                <StyledTableCell>
-                  <Checkbox />
-                  {row.Date}
-                </StyledTableCell>
+                <StyledTableCell>{row.Date}</StyledTableCell>
                 <StyledTableCell
                   sx={{
                     color: "#0575E6",
@@ -132,18 +119,13 @@ const ListSheet: React.FC<IProps> = (props) => {
                 >
                   {row.Project_name}
                 </StyledTableCell>
-                <StyledTableCell>{row.Task_name}</StyledTableCell>
-                {row.Type === "Break time" ? (
-                  <StyledTableCell
-                    sx={{
-                      color: "red",
-                    }}
-                  >
-                    {row.Type}
-                  </StyledTableCell>
-                ) : (
-                  <StyledTableCell>{row.Type}</StyledTableCell>
-                )}
+                <StyledTableCell
+                  sx={{
+                    color: row.Type === "Break time" ? "red" : "#0575E6",
+                  }}
+                >
+                  {row.Type}
+                </StyledTableCell>
                 <StyledTableCell>{row.Time}</StyledTableCell>
                 <StyledTableCell>{row.Creation_time}</StyledTableCell>
               </StyledTableRow>
@@ -154,7 +136,7 @@ const ListSheet: React.FC<IProps> = (props) => {
             display:"flex",
             justifyContent:"center",
             alignItems:"center",
-            
+            height: '100px',
           }}>
             <Typography>No data found</Typography>
           </div>
