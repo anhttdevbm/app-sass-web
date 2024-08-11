@@ -15,19 +15,19 @@ import { usePagination } from "components/sn-invoice/hooks/usePagination";
 import InvoiceTable from "components/sn-invoice/components/InvoiceTable";
 import { useEffect } from "react";
 import { Stack } from "@mui/system";
-
-export type Invoice = Billing;
+import { useInvoices } from "store/invoice/selectors";
 
 const List = () => {
   const {
     items: invoices,
-    onGetBillings,
+    onGetInvoices,
     totalItems,
     total_page: totalPages,
     error,
     isFetching,
     isIdle,
-  } = useBillings();
+  } = useInvoices();
+
   const {
     selectedList,
     setSelectedList,
@@ -35,11 +35,12 @@ const List = () => {
     toggleSelectAll,
     toggleSelectItem,
   } = useInvoiceSelection(invoices);
+
   const { pageIndex, pageSize, onChangeSize, onChangePage } = usePagination(
     1,
     10,
     (page, size) => {
-      onGetBillings({ page, size });
+      onGetInvoices({ page, size });
     },
   );
 
@@ -55,6 +56,7 @@ const List = () => {
       ...query,
       ...queries,
     };
+
     const path = getPath(pathname, newQueries);
     window.history.pushState(
       { ...window.history.state, as: path, url: path },
@@ -62,17 +64,38 @@ const List = () => {
       path,
     );
 
-    onGetBillings({ ...newQueries });
+    onGetInvoices({ ...newQueries });
   };
 
   useEffect(() => {
-    if (isReady) {
-      onGetBillings({ ...initQuery });
+    if (query.Creator || query.Budget) {
+      const queryCreator = `like(created_by,"${String(query.Creator)}")`;
+      const queryBudget = `like(budget_name,"${String(query.Budget)}")`;
+      let queryParams = "";
+      if (query.Creator && query.Budget) {
+        queryParams = `or(${queryCreator},${queryBudget})`;
+      } else if (query.Creator) {
+        // queryParams = `or(${queryCreator})`;
+        queryParams = queryCreator;
+      } else {
+        queryParams = queryBudget;
+      }
+      onGetInvoices({
+        query: queryParams,
+      });
+    } else {
+      onGetInvoices({ ...initQuery });
     }
-  }, [isReady, onGetBillings, initQuery]);
+  }, [pathname, query]);
+
+  useEffect(() => {
+    if (isReady) {
+      onGetInvoices({ ...initQuery });
+    }
+  }, [isReady, onGetInvoices, initQuery]);
 
   return (
-    <Stack padding={"0px 16px"} overflow={"hidden"}>
+    <Stack padding={"0px 16px"} overflow={"auto"}>
       <FixedLayout sxContainer={{ bgcolor: "transparent" }}>
         <InvoiceTable
           invoices={invoices}

@@ -29,7 +29,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
   return (
     <>
       <BodyCell align="left">
-        {item?.status == "Paid" ? (
+        {item?.status ? (
           <Text
             variant="body2"
             color="#1BC5BD"
@@ -37,7 +37,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
             lineHeight={1.28}
             // sx={{ "&:hover": { color: "primary.main" } }}
           >
-            {item?.status}
+            Paid
           </Text>
         ) : (
           <Text
@@ -47,7 +47,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
             lineHeight={1.28}
             // sx={{ "&:hover": { color: "primary.main" } }}
           >
-            {item?.status}
+            Write Off
           </Text>
         )}
       </BodyCell>
@@ -60,7 +60,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
         {item?.overdue + " " + billingT("detail.form.payment.table2.date")}
       </BodyCell>
       <BodyCell align="left">
-        {item?.status == "Paid" ? (
+        {item?.status ? (
           <Text
             variant="body2"
             color="#1BC5BD"

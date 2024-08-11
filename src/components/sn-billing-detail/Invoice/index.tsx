@@ -37,17 +37,21 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { BillingDataExport } from "store/billing/actions";
 import { Bill, Billing, Budgets, Service } from "store/billing/reducer";
 import { useBillings } from "store/billing/selectors";
-import { formatNumber, getPath } from "utils/index";
+import { formatDate, formatNumber, getPath } from "utils/index";
 import BillModal from "../components/BillModal";
 import LinkBudgetTable from "../components/LinkBudgetTable";
 import ServiceTable from "../components/ServiceTable";
 import VatPopup from "../components/VatPopup";
 import ReplacePopup from "../components/ReplacePopup";
+import { useInvoices } from "store/invoice/selectors";
+import { useParams } from "next/navigation";
+import { useAuth } from "store/app/selectors";
+import { Invoice } from "store/invoice/reducer";
 
 type TabProps = {
   title: string;
   editForm?: boolean;
-  item?: Billing;
+  item?: Invoice;
   user?: User;
   arrBudgets?: Budgets[];
   form: FormikProps<Billing>;
@@ -82,6 +86,8 @@ const TabInvoice = (props: TabProps) => {
   } = props;
   const { fileExport, onDownloadFileBilling, onViewFileBilling } =
     useBillings();
+  const { item: itemInvoice, onGetInvoiceDetail } = useInvoices();
+  const { id } = useParams();
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
   const { push } = useRouter();
@@ -106,11 +112,12 @@ const TabInvoice = (props: TabProps) => {
       return;
     },
   });
-  const rows = [
-    createData("Development", "hour", 20, 150.0, 3000),
-    createData("Design", "hour", 20, 150.0, 3000),
-    createData("Project Management", "hour", 20, 150.0, 3000),
-  ];
+
+  useEffect(() => {
+    if (typeof id === "string") {
+      onGetInvoiceDetail(id);
+    }
+  }, [id]);
 
   const options = [
     {
@@ -130,55 +137,55 @@ const TabInvoice = (props: TabProps) => {
     },
   ];
 
-  useEffect(() => {
-    if (item && arrBudgets) {
-      formik.setValues(
-        {
-          ...item,
-          vat: item?.vat ? Number(item?.vat) : 0,
-        } ?? {},
-      );
-      if (item?.billFrom && item?.billFrom?.length > 0) {
-        setBillFromInfo({
-          city: item?.billFrom[0]?.city,
-          country: item?.billFrom[0]?.country,
-          fullNameCompany: item?.billFrom[0]?.company,
-          save: item?.billFrom[0]?.save,
-          state: item?.billFrom[0]?.state,
-          street: item?.billFrom[0]?.street,
-          tax_id: item?.billFrom[0]?.tax_id,
-          zipCode: item?.billFrom[0]?.zip ?? 0,
-        });
-      }
-      if (item?.billTo && item?.billTo?.length > 0) {
-        setBillToInfo({
-          city: item?.billTo[0]?.city,
-          country: item?.billTo[0]?.country,
-          fullNameCompany: item?.billTo[0]?.company,
-          save: item?.billTo[0]?.save,
-          state: item?.billTo[0]?.state,
-          street: item?.billTo[0]?.street,
-          tax_id: item?.billTo[0]?.tax_id,
-          zipCode: item?.billTo[0]?.zip ?? 0,
-        });
-      }
+  // useEffect(() => {
+  //   if (item && arrBudgets) {
+  //     formik.setValues(
+  //       {
+  //         ...item,
+  //         vat: item?.vat ? Number(item?.vat) : 0,
+  //       } ?? {},
+  //     );
+  //     if (item?.billFrom && item?.billFrom?.length > 0) {
+  //       setBillFromInfo({
+  //         city: item?.billFrom[0]?.city,
+  //         country: item?.billFrom[0]?.country,
+  //         fullNameCompany: item?.billFrom[0]?.company,
+  //         save: item?.billFrom[0]?.save,
+  //         state: item?.billFrom[0]?.state,
+  //         street: item?.billFrom[0]?.street,
+  //         tax_id: item?.billFrom[0]?.tax_id,
+  //         zipCode: item?.billFrom[0]?.zip ?? 0,
+  //       });
+  //     }
+  //     if (item?.billTo && item?.billTo?.length > 0) {
+  //       setBillToInfo({
+  //         city: item?.billTo[0]?.city,
+  //         country: item?.billTo[0]?.country,
+  //         fullNameCompany: item?.billTo[0]?.company,
+  //         save: item?.billTo[0]?.save,
+  //         state: item?.billTo[0]?.state,
+  //         street: item?.billTo[0]?.street,
+  //         tax_id: item?.billTo[0]?.tax_id,
+  //         zipCode: item?.billTo[0]?.zip ?? 0,
+  //       });
+  //     }
 
-      if (item?.budgetService && item?.budgetService?.length > 0) {
-        setListService([...item?.budgetService]);
-      }
+  //     if (item?.budgetService && item?.budgetService?.length > 0) {
+  //       setListService([...item?.budgetService]);
+  //     }
 
-      if (item?.budget && item?.budget?.length > 0) {
-        const findBudget = arrBudgets?.filter((find) =>
-          item?.budget?.find((el) => el.id === find.id),
-        ) as Budgets[];
-        setListBudgets(findBudget ?? []);
-      }
-    }
-  }, [item, arrBudgets]);
+  //     if (item?.budget && item?.budget?.length > 0) {
+  //       const findBudget = arrBudgets?.filter((find) =>
+  //         item?.budget?.find((el) => el.id === find.id),
+  //       ) as Budgets[];
+  //       setListBudgets(findBudget ?? []);
+  //     }
+  //   }
+  // }, [item, arrBudgets]);
 
-  const handleClose = () => {
-    setOpenModal(false);
-  };
+  // const handleClose = () => {
+  //   setOpenModal(false);
+  // };
 
   // useEffect(() => {
   //   if (arrService && arrService?.length > 0) {
@@ -186,20 +193,20 @@ const TabInvoice = (props: TabProps) => {
   //   }
   // }, [arrService]);
 
-  const totalAmount = useMemo(() => {
-    const result = listService?.reduce((prev, item) => {
-      const amount = (item as Service).price || 0;
-      return prev + amount;
-    }, 0);
-    return result;
-  }, [listService]);
+  // const totalAmount = useMemo(() => {
+  //   const result = listService?.reduce((prev, item) => {
+  //     const amount = (item as Service).price || 0;
+  //     return prev + amount;
+  //   }, 0);
+  //   return result;
+  // }, [listService]);
 
-  const OptionBudget = useMemo(() => {
-    const options = arrBudgets?.map((item) => {
-      return { label: item.name, value: item.id };
-    });
-    return options;
-  }, [arrBudgets]);
+  // const OptionBudget = useMemo(() => {
+  //   const options = arrBudgets?.map((item) => {
+  //     return { label: item.name, value: item.id };
+  //   });
+  //   return options;
+  // }, [arrBudgets]);
 
   // const onChangeVat = () => {};
   // const onChangeBill = () => {};
@@ -209,17 +216,17 @@ const TabInvoice = (props: TabProps) => {
     }
   }, [billToInfo, listService]);
 
-  useEffect(() => {
-    if (totalAmount && totalAmount != 0 && form?.values?.vat) {
-      form.setFieldValue(
-        "amount",
-        form?.values?.vat !== 0
-          ? totalAmount + Number(form?.values?.vat)
-          : totalAmount,
-      );
-      form.setFieldValue("amount_unpaid", totalAmount);
-    }
-  }, [totalAmount, form?.values?.vat]);
+  // useEffect(() => {
+  //   if (totalAmount && totalAmount != 0 && form?.values?.vat) {
+  //     form.setFieldValue(
+  //       "amount",
+  //       form?.values?.vat !== 0
+  //         ? totalAmount + Number(form?.values?.vat)
+  //         : totalAmount,
+  //     );
+  //     form.setFieldValue("amount_unpaid", totalAmount);
+  //   }
+  // }, [totalAmount, form?.values?.vat]);
 
   const arrBill = [{ id: item?.id ?? "" }];
 
@@ -621,7 +628,7 @@ const TabInvoice = (props: TabProps) => {
     //     item={{ bill: arrBill ?? [] } as BillingDataExport}
     //   /> */}
     // </FixedLayout>
-    <Box mt={2}>
+    <Stack mt={2} sx={{ overflowY: "auto", height: "60vh" }}>
       <Stack
         gap={1}
         direction="row"
@@ -731,7 +738,7 @@ const TabInvoice = (props: TabProps) => {
         pr={{ xs: 6, lg: 20, xl: 40 }}
       >
         <Typography>VNP</Typography>
-        <Typography>Vietnam</Typography>
+        <Typography>{user?.country ?? "Vietnam"}</Typography>
         <Stack
           mt={3}
           sx={{ display: "flex", flexWrap: "wrap", gap: "30px" }}
@@ -743,7 +750,7 @@ const TabInvoice = (props: TabProps) => {
             color="#003169"
             sx={{ width: "fit-content", margin: "auto 0" }}
           >
-            Invoice INV003
+            Invoice {itemInvoice?.invoice_number}
           </Typography>
           <Box
             sx={{
@@ -760,10 +767,15 @@ const TabInvoice = (props: TabProps) => {
               Payment:{" "}
             </Typography>
             <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
-              Stripe |{" "}
+              {itemInvoice?.payment_items
+                ? itemInvoice?.payment_items[0]?.payment_method
+                : "Stripe"}{" "}
+              |{" "}
             </Typography>
             <Typography fontSize={14} fontWeight={500} color="#0575E6">
-              https://stripe.com
+              {itemInvoice?.payment_items
+                ? itemInvoice?.payment_items[0]?.payment_link
+                : "https://stripe.com"}
             </Typography>
           </Box>
         </Stack>
@@ -773,10 +785,10 @@ const TabInvoice = (props: TabProps) => {
             BILL FROM
           </Typography>
           <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
-            Company X
+            Company {user?.company}
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
-            Le Chan, Ho Chi Minh
+            {user?.address ?? "Le Chan, Ho Chi Minh"}
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
             Tax ID: 00001
@@ -812,7 +824,7 @@ const TabInvoice = (props: TabProps) => {
               DATE
             </Typography>
             <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
-              04/08/2023
+              {formatDate(itemInvoice?.invoice_date)}
             </Typography>
           </Stack>
 
@@ -821,7 +833,7 @@ const TabInvoice = (props: TabProps) => {
               DUE DATE
             </Typography>
             <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
-              05/08/2023
+              {formatDate(itemInvoice?.due_date)}
             </Typography>
           </Stack>
 
@@ -874,9 +886,9 @@ const TabInvoice = (props: TabProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {itemInvoice?.service_items?.map((row) => (
                 <TableRow
-                  key={row.desc}
+                  key={row.service_name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell
@@ -884,19 +896,19 @@ const TabInvoice = (props: TabProps) => {
                     scope="row"
                     sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
                   >
-                    {row.desc}
+                    {row.service_name}
                   </TableCell>
                   <TableCell
                     sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
                     align="right"
                   >
-                    {row.unit}
+                    Hour
                   </TableCell>
                   <TableCell
                     sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
                     align="right"
                   >
-                    {row.qty}
+                    {row.quantity ?? ""}
                   </TableCell>
                   <TableCell
                     sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
@@ -933,7 +945,7 @@ const TabInvoice = (props: TabProps) => {
               SUBTOTAL
             </Typography>
             <Typography color="#21263C" fontSize={14} fontWeight={400}>
-              $5000,00
+              {itemInvoice?.total ?? 0}
             </Typography>
           </Stack>
 
@@ -949,7 +961,7 @@ const TabInvoice = (props: TabProps) => {
               {`VAT(10%)`}
             </Typography>
             <Typography color="#21263C" fontSize={14} fontWeight={400}>
-              $500,00
+              {(Number(itemInvoice?.total ?? 0) * 10) / 100}
             </Typography>
           </Stack>
 
@@ -965,12 +977,12 @@ const TabInvoice = (props: TabProps) => {
               GRAND TOTAL
             </Typography>
             <Typography color="#386aba" fontSize={16} fontWeight={700}>
-              $5500,00
+              {(Number(itemInvoice?.total ?? 0) * 110) / 100}
             </Typography>
           </Stack>
         </Stack>
       </Stack>
-    </Box>
+    </Stack>
   );
 };
 

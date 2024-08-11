@@ -1,18 +1,19 @@
 import { Box, Stack, Typography } from "@mui/material";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { CURRENCY_CODE } from "constant/enums";
 import { NS_BILLING, NS_COMMON } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { PaymentData } from "store/billing/actions";
 import { useBillings } from "store/billing/selectors";
+import { useInvoices } from "store/invoice/selectors";
+import { formatDate, formatNumber } from "utils/index";
 import "../Payment/PaymentTableHome/style.css";
+import DoughnutChartPayment from "../components/DoughnutChartPayment";
 import PaymentModal from "../components/PaymentModal";
 import PaymentTable from "./PaymentTable";
-import { formatDate, formatNumber } from "utils/index";
-import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
-import { CURRENCY_CODE } from "constant/enums";
-import DoughnutChartPayment from "../components/DoughnutChartPayment";
 
 type TabProps = {
   title: string;
@@ -37,6 +38,13 @@ const TabPayment = (props: TabProps) => {
     onUpdatePayment,
   } = useBillings();
 
+  const {
+    item: itemInvoice,
+    paymentAll,
+    onGetInvoiceDetail,
+    onGetAllPayments,
+  } = useInvoices();
+
   const { id } = useParams() as { id: string };
   const { isMdSmaller } = useBreakpoint();
   const commonT = useTranslations(NS_COMMON);
@@ -54,116 +62,147 @@ const TabPayment = (props: TabProps) => {
   };
 
   useEffect(() => {
-    onGetPayments(id);
+    onGetInvoiceDetail(id);
   }, []);
 
   useEffect(() => {
-    if (isAddPayment || isUpdatePayment || isDeletedPayment) {
-      onGetPayments(id);
+    if (itemInvoice?.id) {
+      onGetPayments(itemInvoice.id);
+      onGetAllPayments(itemInvoice.id);
+    }
+  }, [itemInvoice]);
+
+  useEffect(() => {
+    if (
+      itemInvoice?.id &&
+      (isAddPayment || isUpdatePayment || isDeletedPayment)
+    ) {
+      onGetPayments(itemInvoice.id);
+      onGetAllPayments(itemInvoice.id);
     }
   }, [isAddPayment, isUpdatePayment, isDeletedPayment]);
 
-  const dataPaid = useMemo(() => {
-    let paidFirst = 0 as number;
-    let leftToPayFirst = 0 as number;
-    let leftToPayNew = 0 as number;
-    let paidNew = 0 as number;
+  // const dataPaid = useMemo(() => {
+  //   let paidFirst = 0 as number;
+  //   let leftToPayFirst = 0 as number;
+  //   let leftToPayNew = 0 as number;
+  //   let paidNew = 0 as number;
 
-    if (dataPayment && dataPayment.length > 0 && item) {
-      if (dataPayment?.length == 1) {
-        if (dataPayment[0].status == "Paid") {
-          paidFirst = dataPayment[0]?.amount ?? 0;
-          leftToPayFirst =
-            item.amount ?? 0 - paidFirst - (dataPayment[0]?.amount ?? 0);
-        }
-      }
-      if (dataPayment?.length > 1) {
-        paidNew = dataPayment?.reduce(
-          (sum, e: PaymentData) =>
-            e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
-          0,
-        );
-        leftToPayNew = (item.amount ?? 0) - paidNew;
-      }
+  //   if (dataPayment && dataPayment.length > 0 && item) {
+  //     if (dataPayment?.length == 1) {
+  //       if (dataPayment[0].status == "Paid") {
+  //         paidFirst = dataPayment[0]?.amount ?? 0;
+  //         leftToPayFirst =
+  //           item.amount ?? 0 - paidFirst - (dataPayment[0]?.amount ?? 0);
+  //       }
+  //     }
+  //     if (dataPayment?.length > 1) {
+  //       paidNew = dataPayment?.reduce(
+  //         (sum, e: PaymentData) =>
+  //           e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+  //         0,
+  //       );
+  //       leftToPayNew = (item.amount ?? 0) - paidNew;
+  //     }
 
-      const sumDataPaid = dataPayment?.length == 1 ? paidFirst : paidNew;
-      const sumLeftToPay = leftToPayFirst + leftToPayNew;
+  //     const sumDataPaid = dataPayment?.length == 1 ? paidFirst : paidNew;
+  //     const sumLeftToPay = leftToPayFirst + leftToPayNew;
 
-      return { paid: sumDataPaid, leftToPay: sumLeftToPay };
-    } else {
-      return 0;
-    }
-  }, [dataPayment, item]);
+  //     return { paid: sumDataPaid, leftToPay: sumLeftToPay };
+  //   } else {
+  //     return 0;
+  //   }
+  // }, [dataPayment, item]);
 
-  const dataWriteOff = useMemo(() => {
-    if (dataPayment && dataPayment?.length > 0 && item && dataPaid) {
-      let leftToPay = 0 as number;
-      const sumDataAmountWriteOff = dataPayment?.reduce(
-        (sum, e: PaymentData) =>
-          e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
-        0,
-      );
+  // const dataWriteOff = useMemo(() => {
+  //   if (dataPayment && dataPayment?.length > 0 && item && dataPaid) {
+  //     let leftToPay = 0 as number;
+  //     const sumDataAmountWriteOff = dataPayment?.reduce(
+  //       (sum, e: PaymentData) =>
+  //         e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+  //       0,
+  //     );
 
-      if (sumDataAmountWriteOff == item?.amount ?? 0) {
-        leftToPay = 0;
-      }
+  //     if (sumDataAmountWriteOff == item?.amount ?? 0) {
+  //       leftToPay = 0;
+  //     }
 
-      if (sumDataAmountWriteOff > (item?.amount ?? 0) && dataPaid) {
-        leftToPay = (item?.amount ?? 0) - dataPaid.paid - sumDataAmountWriteOff;
-      }
+  //     if (sumDataAmountWriteOff > (item?.amount ?? 0) && dataPaid) {
+  //       leftToPay = (item?.amount ?? 0) - dataPaid.paid - sumDataAmountWriteOff;
+  //     }
 
-      return leftToPay;
-    }
-  }, [item, dataPaid, dataPayment]);
+  //     return leftToPay;
+  //   }
+  // }, [item, dataPaid, dataPayment]);
 
-  const percentPaid = useMemo(() => {
-    const sumAmountPaid = dataPayment?.reduce(
-      (sum, e: PaymentData) =>
-        e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
-      0,
-    );
-    const data =
-      item?.amount && sumAmountPaid
-        ? Math.round((sumAmountPaid / item?.amount) * 100)
-        : 0;
-    return data;
-  }, [dataPayment, item]);
+  // const percentPaid = useMemo(() => {
+  //   const sumAmountPaid = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+  //     0,
+  //   );
+  //   const data =
+  //     item?.amount && sumAmountPaid
+  //       ? Math.round((sumAmountPaid / item?.amount) * 100)
+  //       : 0;
+  //   return data;
+  // }, [dataPayment, item]);
 
-  const percentLeftToPay = useMemo(() => {
-    const sumAmountWriteOff = dataPayment?.reduce(
-      (sum, e: PaymentData) =>
-        e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
-      0,
-    );
-    const data =
-      item?.amount && sumAmountWriteOff
-        ? Math.round((sumAmountWriteOff / item?.amount) * 100)
-        : 0;
-    return data;
-  }, [item, dataPayment]);
+  // const percentLeftToPay = useMemo(() => {
+  //   const sumAmountWriteOff = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+  //     0,
+  //   );
+  //   const data =
+  //     item?.amount && sumAmountWriteOff
+  //       ? Math.round((sumAmountWriteOff / item?.amount) * 100)
+  //       : 0;
+  //   return data;
+  // }, [item, dataPayment]);
 
-  const totalOfWriteOff = useMemo(() => {
-    const res = dataPayment?.reduce(
-      (sum, e: PaymentData) =>
-        e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
-      0,
-    );
+  // const totalOfWriteOff = useMemo(() => {
+  //   const res = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+  //     0,
+  //   );
 
-    return res;
-  }, [item, dataPayment]);
+  //   return res;
+  // }, [item, dataPayment]);
 
-  const totalOfPaid = useMemo(() => {
-    const res = dataPayment?.reduce(
-      (sum, e: PaymentData) =>
-        e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
-      0,
-    );
+  // const totalOfPaid = useMemo(() => {
+  //   const res = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+  //     0,
+  //   );
 
-    return res;
-  }, [item, dataPayment]);
+  //   return res;
+  // }, [item, dataPayment]);
+
+  // const totalOfWriteOff = useMemo(() => {
+  //   const res = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Writeoff" ? sum + e?.amount : 0,
+  //     0,
+  //   );
+
+  //   return res;
+  // }, [item, dataPayment]);
+
+  // const totalOfPaid = useMemo(() => {
+  //   const res = dataPayment?.reduce(
+  //     (sum, e: PaymentData) =>
+  //       e?.amount && e?.status == "Paid" ? sum + e?.amount : 0,
+  //     0,
+  //   );
+
+  //   return res;
+  // }, [item, dataPayment]);
 
   return (
-    <Stack mt={6}>
+    <Stack mt={6} sx={{ overflowY: "auto", height: "60vh" }}>
       {/* <Stack gap={2} pb={2} pl={2}> */}
       {/* <Grid container spacing={2}> */}
       {/* <Grid xs={12} md={8} sx={{ borderRadius: "5px 0px 0px 5px" }}>
@@ -274,7 +313,7 @@ const TabPayment = (props: TabProps) => {
               Due date
             </Typography>
             <Typography fontSize={14} fontWeight={400} color="#212529">
-              {formatDate(item?.dueDate)}
+              {formatDate(dataPayment?.dueDate)}
             </Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between">
@@ -282,7 +321,7 @@ const TabPayment = (props: TabProps) => {
               Total amount
             </Typography>
             <Typography fontSize={14} fontWeight={400} color="#212529">
-              {formatNumber(item?.amount, {
+              {formatNumber(dataPayment?.totalAmount ?? 0, {
                 prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
                 numberOfFixed: 2,
               })}
@@ -293,7 +332,7 @@ const TabPayment = (props: TabProps) => {
               Payment made
             </Typography>
             <Typography fontSize={14} fontWeight={400} color="#212529">
-              {formatNumber(totalOfPaid ?? 0 + (totalOfWriteOff ?? 0), {
+              {formatNumber(dataPayment?.payment_made ?? 0, {
                 prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
                 numberOfFixed: 2,
               })}
@@ -304,20 +343,21 @@ const TabPayment = (props: TabProps) => {
               Balance due
             </Typography>
             <Typography fontSize={14} fontWeight={400} color="#212529">
-              {formatNumber(
-                (item?.amount ?? 0) -
-                  (totalOfPaid ?? 0 + (totalOfWriteOff ?? 0)),
-                {
-                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                  numberOfFixed: 2,
-                },
-              )}
+              {formatNumber(dataPayment?.balanceDue ?? 0, {
+                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                numberOfFixed: 2,
+              })}
             </Typography>
           </Stack>
         </Stack>
 
         <Stack>
-          <DoughnutChartPayment />
+          <DoughnutChartPayment
+            amount={dataPayment?.totalAmount}
+            balanceDue={dataPayment?.percentage?.per_balance}
+            paid={dataPayment?.percentage?.paid}
+            write={dataPayment?.percentage?.writeOff}
+          />
         </Stack>
 
         <Stack direction="column" sx={{ width: "300px", gap: "16px" }}>
@@ -354,7 +394,7 @@ const TabPayment = (props: TabProps) => {
                 Paid
               </Typography>
               <Typography fontSize={14} fontWeight={700} color="#404040">
-                44%
+                {Number(dataPayment?.percentage?.paid ?? 0).toFixed(2)} %
               </Typography>
             </Stack>
           </Stack>
@@ -379,7 +419,7 @@ const TabPayment = (props: TabProps) => {
                 Write off
               </Typography>
               <Typography fontSize={14} fontWeight={700} color="#404040">
-                6%
+                {Number(dataPayment?.percentage?.writeOff ?? 0).toFixed(2)} %
               </Typography>
             </Stack>
           </Stack>
@@ -404,7 +444,7 @@ const TabPayment = (props: TabProps) => {
                 Balance due
               </Typography>
               <Typography fontSize={14} fontWeight={700} color="#404040">
-                50%
+                {Number(dataPayment?.percentage?.per_balance ?? 0).toFixed(2)} %
               </Typography>
             </Stack>
           </Stack>
@@ -424,7 +464,7 @@ const TabPayment = (props: TabProps) => {
         </Box>
         <PaymentTable
           handleOpen={handleOpen}
-          dataPayment={dataPayment}
+          dataPayment={paymentAll}
           onDeletePayment={onDeletePayment}
         />
       </Stack>

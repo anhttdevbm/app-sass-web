@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
+  addMemberToInvoiceItemBody,
   addPayment,
   addUserToBilling,
   BillingData,
@@ -134,8 +135,8 @@ export const useBillings = () => {
   );
 
   const onAddUserToBilling = useCallback(
-    async (id: string, userId: string) => {
-      return await dispatch(addUserToBilling({ id, userId }));
+    async (id: string, data: addMemberToInvoiceItemBody[]) => {
+      return await dispatch(addUserToBilling({ id, data }));
     },
     [dispatch],
   );
@@ -173,8 +174,8 @@ export const useBillings = () => {
     [dispatch],
   );
   const onAddPayment = useCallback(
-    async (data: BillPaymentData) => {
-      return await dispatch(addPayment({ data }));
+    async (id: string, data: BillPaymentData) => {
+      return await dispatch(addPayment({ id, data }));
     },
     [dispatch],
   );

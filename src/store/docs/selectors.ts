@@ -42,13 +42,17 @@ const useDocs = () => {
     [dispatch],
   );
 
-  const onCreateDoc = async (projectId?: string, content?: string) => {
+  const onCreateDoc = async (
+    projectId?: string,
+    content?: string,
+    name: string = "No Name",
+  ) => {
     setLoading(true);
     try {
       const response = await client.post(
         Endpoint.DOCS,
         {
-          name: "No Name",
+          name,
           description: "",
           project_id: projectId,
           content,

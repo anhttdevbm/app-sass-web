@@ -8,7 +8,15 @@ import { getPath } from "utils/index";
 import { memo, useEffect, useMemo, useState } from "react";
 import { NS_COMMON, NS_COMPANY, NS_DOCS } from "constant/index";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { Box, Stack } from "@mui/material";
+import {
+  Box,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  MenuList,
+  Paper,
+  Stack,
+} from "@mui/material";
 import { usePathname, useRouter } from "next-intl/client";
 import { useTranslations } from "next-intl";
 import { useDocs } from "store/docs/selectors";
@@ -24,6 +32,11 @@ import { useDispatch } from "react-redux";
 import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
 import SearchIcon from "icons/SearchIcon";
 import BtnAdd from "./BtnAdd";
+import ButtonWithDropdown from "./ButtonWithDropdown";
+import AIGradientIcon from "icons/AIGradientIcon";
+import useToggle from "hooks/useToggle";
+import ImportForm from "./ImportForm";
+import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -101,6 +114,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
+  const [isShowImportForm, onShowImportForm, onHideImportForm] = useToggle();
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
@@ -198,9 +212,46 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             width={{ xs: "100%" }}
           >
             <ChangeViewListDoc />
-            <Box onClick={handleCreateDoc}>
-              <BtnAdd loading={loading} />
-            </Box>
+
+            <ButtonWithDropdown
+              text={commonT("form.add")}
+              onClick={handleCreateDoc}
+              disabled={!!loading}
+            >
+              {(handleClose) => (
+                <Paper>
+                  <MenuList>
+                    <MenuItem>
+                      <ListItemIcon>
+                        <AIGradientIcon />
+                      </ListItemIcon>
+                      <ListItemText>
+                        {docsT("addDropdown.aiGenerator")}
+                      </ListItemText>
+                    </MenuItem>
+                    <MenuItem>
+                      <ListItemIcon>
+                        <DescriptionOutlined />
+                      </ListItemIcon>
+                      <ListItemText>
+                        {docsT("addDropdown.newDocument")}
+                      </ListItemText>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        onShowImportForm();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <FileOpenOutlined />
+                      </ListItemIcon>
+                      <ListItemText>{docsT("addDropdown.import")}</ListItemText>
+                    </MenuItem>
+                  </MenuList>
+                </Paper>
+              )}
+            </ButtonWithDropdown>
           </Stack>
         </Stack>
         <Box
@@ -225,6 +276,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Stack>
         </Box>
       </Stack>
+      <ImportForm open={isShowImportForm} onClose={onHideImportForm} />
     </>
   );
 };

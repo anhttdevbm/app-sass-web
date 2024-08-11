@@ -20,6 +20,7 @@ import { useParams } from "next/navigation";
 import {
   BILLING_DUPLICATE_PATH,
   BILLING_PATH,
+  INVOICES_PATH,
   PROJECT_MEMBERS_PATH,
   PROJECT_TASKS_PATH,
 } from "constant/paths";
@@ -27,7 +28,7 @@ import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
 import { NS_BILLING, NS_PROJECT } from "constant/index";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Billing, Member } from "store/billing/reducer";
+import { Billing } from "store/billing/reducer";
 import { Option, User } from "constant/types";
 import TrashIcon from "icons/TrashIcon";
 import {
@@ -43,12 +44,13 @@ import { Dropdown } from "components/Filters";
 import DropdownTag from "./DropdownTag";
 import { useBillings } from "store/billing/selectors";
 import useTheme from "hooks/useTheme";
+import { Invoice, Member } from "store/invoice/reducer";
 
 const ITEM_HEIGHT = 48;
 
 type TopContentProps = {
   tagsOptions?: Option[];
-  item?: Billing;
+  item?: Invoice;
   user: User;
   memberOptions?: Option[];
 };
@@ -98,7 +100,7 @@ const TopContent = (props: TopContentProps) => {
 
     const lastItem = data[data.length - 1];
 
-    onAddUserToBilling(id, lastItem?.id);
+    onAddUserToBilling(id, data);
   };
 
   const onChangeTag = (input) => {
@@ -131,32 +133,28 @@ const TopContent = (props: TopContentProps) => {
   // }, [user, item]);
 
   useEffect(() => {
-    if (item?.user && item.user.length > 0 && listUser?.length === 0) {
-      const filterMember = item.user
+    if (item?.members && item.members.length > 0 && listUser?.length === 0) {
+      const filterMember = item.members
         ?.map((item) => {
           if (!setMember.has(item.id)) {
             setMember.add(item.id);
             const member = {
               id: item.id,
               fullname: item.fullname,
-              avatar: {
-                link: item?.avatar?.link,
-              },
+              email: item.email,
             } as Member;
             return member;
           }
         })
         .filter((item2) => item2 && typeof item2 !== "undefined");
-
       setListUser([...filterMember] as Member[]);
     }
-    if (item?.tag && item?.tag?.length > 0) {
-      setTagSelected(item?.tag[0] ?? "");
-    }
-
-    if (item?.mail_status) {
-      setMarkSent(item?.mail_status ?? "");
-    }
+    // if (item?.tag && item?.tag?.length > 0) {
+    //   setTagSelected(item?.tag[0] ?? "");
+    // }
+    // if (item?.mail_status) {
+    //   setMarkSent(item?.mail_status ?? "");
+    // }
     // if (item?.user && item.user.length > 0 && listUser?.length > 0) {
     //   const filterMember = item.user
     //     ?.map((item) => {
@@ -171,11 +169,8 @@ const TopContent = (props: TopContentProps) => {
     //       }
     //     })
     //     .filter((item2) => item2 && typeof item2 !== "undefined");
-
     //   console.log(filterMember);
-
-    //   // setListUser([...listUser, ...filterMember] as Member[]);
-    // }
+    // setListUser([...listUser, ...filterMember] as Member[]);
   }, [item]);
 
   // console.log(user);
@@ -200,13 +195,13 @@ const TopContent = (props: TopContentProps) => {
   //   }
   // }, [isDeleted]);
 
-  const onDuplicate = () => {
-    localStorage.setItem(
-      "duplicateBill",
-      JSON.stringify({ ...item, duplicate: true }),
-    );
-    push(BILLING_DUPLICATE_PATH);
-  };
+  // const onDuplicate = () => {
+  //   localStorage.setItem(
+  //     "duplicateBill",
+  //     JSON.stringify({ ...item, duplicate: true }),
+  //   );
+  //   push(BILLING_DUPLICATE_PATH);
+  // };
 
   const onMarkAsSend = () => {
     const data = {
@@ -238,7 +233,7 @@ const TopContent = (props: TopContentProps) => {
           width="50%"
         >
           <Link
-            href={BILLING_PATH ?? ""}
+            href={INVOICES_PATH ?? ""}
             underline="none"
             display={"flex"}
             alignItems={"center"}
@@ -247,7 +242,7 @@ const TopContent = (props: TopContentProps) => {
 
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               {"Invoice " +
-                (item?.invoiceNumber ? item?.invoiceNumber?.toString() : "")}
+                (item?.invoice_number ? item?.invoice_number?.toString() : "")}
             </Text>
           </Link>
         </Stack>
@@ -287,11 +282,11 @@ const TopContent = (props: TopContentProps) => {
             size="extraSmall"
             variant="primary"
           >
-            {item?.mail_status == "Unsend"
+            {/* {item?.mail_status == "Unsend"
               ? billingT("detail.form.top.button.markAsSent")
               : item?.mail_status == "Sent"
               ? billingT("detail.form.top.button.unSent")
-              : ""}
+              : ""} */}
           </Button>
         </Stack>
         <Stack
@@ -345,7 +340,7 @@ const TopContent = (props: TopContentProps) => {
                 return (
                   <Avatar
                     key={index}
-                    src={item?.avatar?.link ?? ""}
+                    src={""}
                     alt=""
                     sx={{ width: 24, height: 24 }}
                   />
@@ -420,7 +415,7 @@ const TopContent = (props: TopContentProps) => {
                     gap={2}
                     direction={"row"}
                     alignItems={"center"}
-                    onClick={() => onDuplicate()}
+                    // onClick={() => onDuplicate()}
                   >
                     <ContentCopyRounded />
                     <Text variant={"body2"}>

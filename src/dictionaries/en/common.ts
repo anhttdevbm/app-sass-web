@@ -136,4 +136,6 @@ export const CommonLang: CommonDictionary = {
     aboutUs: "About us",
     helpCenter: "Help Center",
   },
+  actions: "Actions",
+  learnMore: "Learn more",
 };

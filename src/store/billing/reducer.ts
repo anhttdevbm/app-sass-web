@@ -271,7 +271,7 @@ export interface BillingState {
   isAddPayment?: boolean;
   isUpdatePayment?: boolean;
   isDeletedPayment?: boolean;
-  dataPayment?: PaymentData[];
+  dataPayment?: PaymentData;
   dataTag?: Tag[];
   isAddTag?: boolean;
   budgetFilter?: Budgets[];
@@ -758,7 +758,7 @@ const billingSlice = createSlice({
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       })
       .addCase(getPaymentByBillId.pending, (state, action) => {
-        state.dataPayment = [];
+        state.dataPayment = {};
         state.isAddPayment = false;
         state.isUpdatePayment = false;
         state.isDeletedPayment = false;
@@ -767,7 +767,7 @@ const billingSlice = createSlice({
         state.dataPayment = action.payload;
       })
       .addCase(getPaymentByBillId.rejected, (state, action) => {
-        state.dataPayment = [];
+        state.dataPayment = {};
 
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       })

@@ -24,13 +24,13 @@ const DesktopCells = (props: DesktopCellsProps) => {
   return (
     <>
       {/* <BodyCell align="center">{order}</BodyCell> */}
-      <BodyCell align="left">{formatDate(item?.date)}</BodyCell>
+      <BodyCell align="left">{formatDate(item?.created_time)}</BodyCell>
       <BodyCell align="left">
-        {item?.overdue + " " + billingT("detail.form.payment.table2.day")}
+        {item?.overdue ?? 0 + " " + billingT("detail.form.payment.table2.day")}
       </BodyCell>
       <BodyCell align="left">{item?.note}</BodyCell>
       <BodyCell align="left">
-        {item?.status == "Paid" ? (
+        {item?.status ? (
           <Box
             sx={{
               padding: "6px 0",
@@ -47,7 +47,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
               lineHeight={1.28}
               // sx={{ "&:hover": { color: "primary.main" } }}
             >
-              {item?.status}
+              Paid
             </Text>
           </Box>
         ) : (
@@ -67,14 +67,14 @@ const DesktopCells = (props: DesktopCellsProps) => {
               lineHeight={1.28}
               // sx={{ "&:hover": { color: "primary.main" } }}
             >
-              {item?.status}
+              Write Off
             </Text>
           </Box>
         )}
       </BodyCell>
 
       <BodyCell align="left">
-        {item?.status == "Paid" ? (
+        {item?.status ? (
           <Text
             variant="body2"
             color="#4D4D4D"

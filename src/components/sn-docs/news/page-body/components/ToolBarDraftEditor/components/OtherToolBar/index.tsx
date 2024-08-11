@@ -3,21 +3,25 @@ import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import PhotoIcon from "@mui/icons-material/Photo";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import GridOnIcon from "@mui/icons-material/GridOn";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import TagIcon from "@mui/icons-material/Tag";
 import { Box } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { updateMindMapOpen } from "store/docs/reducer";
 import { useAppSelector } from "store/hooks";
-import TableChartIcon from '@mui/icons-material/TableChart';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+
+import {
+  updateStatusOpenMindMap,
+  updateVersionMindMap,
+  updateStatusOpenBoardEditor
+} from "store/docs/reducer";
+import { useDispatch } from "react-redux";
 
 const TagNameIcon = () => {
   return <Box>@</Box>;
 };
 
 export default function OtherToolBar() {
-  const dispatch = useDispatch();
-  const mindMapOpen = useAppSelector((state) => state.doc.mindMapOpen);
-
   const formatListText: IToolBarDraftActionItem[] = [
     {
       label: "insert-link",
@@ -50,17 +54,43 @@ export default function OtherToolBar() {
       icon: <GridOnIcon />,
     },
     {
-      label: "mindmap",
+      label: "insert-mindmap",
       method: "block",
-      style: "insert-grid",
+      style: "insert-mindmap",
       icon: <TableChartIcon />,
+    },
+    {
+      label: "insert-chart",
+      method: "block",
+      style: "insert-chart",
+      icon: <BarChartIcon />,
+    },
+    {
+      label: "insert-board",
+      method: "block",
+      style: "insert-board",
+      icon: <DashboardIcon />,
     },
   ];
 
-  const handleClickIcon = (typeIcon: string) => {
-    switch (typeIcon) {
-      case "mindmap":
-        dispatch(updateMindMapOpen(!mindMapOpen));
+  const isOpenMindMap = useAppSelector(
+    (state) => state.doc.mindMap.isOpenMindMap,
+  );
+
+  const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
+  
+  const dispatch = useDispatch();
+  const handleClickOtherTool = (type: string) => {
+    switch (type) {
+      case "insert-mindmap":
+        dispatch(updateStatusOpenMindMap(!isOpenMindMap));
+        dispatch(updateVersionMindMap("mindmap"));
+        break;
+      case "insert-chart":
+        dispatch(updateStatusOpenMindMap(!isOpenMindMap));
+        dispatch(updateVersionMindMap("chart"));
+      case "insert-board":
+        dispatch(updateStatusOpenBoardEditor(!isOpenBoard));
         break;
       default:
         break;
@@ -76,8 +106,8 @@ export default function OtherToolBar() {
           }}
           key={`${item.label}-${idx}`}
           title={item.label}
-          onClick={() => handleClickIcon(item.label)}
-          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => console.log("click")}
+          onMouseDown={(e) => handleClickOtherTool(item.label)}
         >
           {item.icon ?? item.label}
         </button>

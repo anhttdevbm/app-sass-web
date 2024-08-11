@@ -16,14 +16,16 @@ import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 
 type Props = {
   handleOpen: (value) => void;
+  selectedOps: number;
 };
 const ITEM_HEIGHT = 48;
 
 export const DropdownButton = (props: Props) => {
-  const { handleOpen } = props;
+  const { handleOpen, selectedOps } = props;
   // const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  const [selectedIndex, setSelectedIndex] = React.useState(selectedOps ?? 0);
   const billingT = useTranslations(NS_BILLING);
 
   const options = ["Paid", "Write Off"];
@@ -31,7 +33,9 @@ export const DropdownButton = (props: Props) => {
   // const handleClick = () => {
   //   console.info(`You clicked ${options[selectedIndex]}`);
   // };
-
+  React.useEffect(() => {
+    setSelectedIndex(selectedOps);
+  }, [selectedOps]);
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
     index: number,
@@ -138,12 +142,10 @@ export const DropdownButton = (props: Props) => {
             selected={index === selectedIndex}
             onClick={(event) => {
               handleMenuItemClick(event, index);
-              if (
-                options[index] == billingT("detail.form.top.button.addWriteOff")
-              ) {
-                handleOpen("write");
+              if (options[index] == "Paid") {
+                handleOpen("paid");
               } else {
-                handleOpen("add");
+                handleOpen("write");
               }
             }}
           >

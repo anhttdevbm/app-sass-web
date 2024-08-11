@@ -7,6 +7,7 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
+import { useEffect } from "react";
 import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -22,7 +23,10 @@ const data: ChartData<"doughnut", number[], string> = {
   ],
 };
 
-const DoughnutChartPayment = () => {
+const DoughnutChartPayment = ({ write, paid, balanceDue, amount }) => {
+  useEffect(() => {
+    data.datasets[0].data = [write, paid, balanceDue];
+  }, [write, paid, balanceDue]);
   return (
     <Box sx={{ position: "relative" }}>
       <Stack
@@ -42,7 +46,7 @@ const DoughnutChartPayment = () => {
           Total Amount
         </Typography>
         <Typography color="#0A0A0A" fontSize={28} fontWeight={700}>
-          5000,00
+          {amount}
         </Typography>
       </Stack>
       <Doughnut height={210} width={210} options={options as any} data={data} />

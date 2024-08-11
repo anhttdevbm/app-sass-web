@@ -1,15 +1,21 @@
 "use client";
 
-import { Stack } from "@mui/system";
+import PlusIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
-import TrashIcon from "icons/TrashIcon";
+import { Stack } from "@mui/system";
 import {
   ButtonGradiant,
   Filter,
   SearchInput,
 } from "components/sn-invoice/components";
-import { useState } from "react";
-import PlusIcon from "@mui/icons-material/Add";
+import { INVOICE_CREATE_PATH } from "constant/paths";
+import useQueryParams from "hooks/useQueryParams";
+import TrashIcon from "icons/TrashIcon";
+import { usePathname, useRouter } from "next-intl/client";
+import { useEffect, useState } from "react";
+import { useBudgets } from "store/billing/selectors";
+import { useEmployeeOptions } from "store/company/selectors";
+import { getPath } from "utils/index";
 
 export interface FilterType {
   key: string;
@@ -19,6 +25,11 @@ export interface FilterType {
 const Actions = () => {
   const [searchKey, setSearchKey] = useState<string>("");
   const [filter, setFilter] = useState<FilterType[]>([]);
+  const { items: creatorList, onGetOptions } = useEmployeeOptions();
+  const { query } = useQueryParams();
+  const { budgets, onGetBudgets } = useBudgets();
+  const pathname = usePathname();
+  const { push } = useRouter();
 
   const handleSearchChange = (value: string) => {
     setSearchKey(value);
@@ -33,7 +44,16 @@ const Actions = () => {
       }
       return [...prev, filter];
     });
+
+    const updatedQueries = { ...query, [filter.key]: filter.value };
+    const updatedPath = getPath(pathname, updatedQueries);
+
+    push(updatedPath);
   };
+  useEffect(() => {
+    onGetOptions({ pageIndex: 0, pageSize: 10 });
+    onGetBudgets({ pageIndex: 0, pageSize: 10 });
+  }, []);
 
   return (
     <Stack spacing={1} padding={2}>
@@ -48,7 +68,9 @@ const Actions = () => {
           placeholder={"Search here"}
           onChange={handleSearchChange}
         />
-        <ButtonGradiant startIcon={<PlusIcon />}>Add</ButtonGradiant>
+        <ButtonGradiant href={INVOICE_CREATE_PATH} startIcon={<PlusIcon />}>
+          Add
+        </ButtonGradiant>
       </Stack>
       <Stack
         paddingX={4}
@@ -68,17 +90,21 @@ const Actions = () => {
             {
               name: "Budget",
               options: [
-                { label: "All", value: "all" },
-                { label: "Paid", value: "paid" },
-                { label: "Unpaid", value: "unpaid" },
+                { label: "All", value: "" },
+                ...(budgets ?? []).map((budget) => ({
+                  label: budget?.name,
+                  value: budget?.id,
+                })),
               ],
             },
             {
               name: "Creator",
               options: [
-                { label: "All", value: "all" },
-                { label: "Paid", value: "paid" },
-                { label: "Unpaid", value: "unpaid" },
+                { label: "All", value: "" },
+                ...(creatorList ?? []).map((creator) => ({
+                  label: creator?.fullname,
+                  value: creator?.id,
+                })),
               ],
             },
           ]}

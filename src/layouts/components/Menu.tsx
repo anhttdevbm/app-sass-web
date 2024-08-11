@@ -6,7 +6,6 @@ import { NS_LAYOUT } from "constant/index";
 import {
   AI_AGENT_PATH,
   AI_CHAT_PATH,
-  BILLING_PATH,
   BLOG_CATEGORY_PATH,
   BLOGS_PATH,
   BUDGETING_PATH,
@@ -27,7 +26,6 @@ import {
   LANDING_HOME_PATH,
   LANDING_PRICING_PATH,
   LANDING_TRUST_CENTER_PATH,
-  MEETING_PATH,
   MY_COMPANY_PATH,
   POSITIONS_PATH,
   PROJECT_TYPES_PATH,
@@ -300,11 +298,10 @@ const DATA: MenuItemProps[] = [
     href: BUDGETING_PATH,
     roles: [Permission.AM, Permission.ST],
   },
-  //Billing
   {
-    label: "menu.billing",
+    label: "menu.invoice",
     icon: <BillingIcon />,
-    href: BILLING_PATH,
+    href: INVOICES_PATH,
     roles: [Permission.AM, Permission.ST],
   },
   {
@@ -410,13 +407,7 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
-  },
-  {
-    label: "menu.invoice",
-    icon: <BillingIcon />,
-    href: INVOICES_PATH,
-    roles: [Permission.AM, Permission.ST],
-  },
+  }
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
