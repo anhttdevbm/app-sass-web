@@ -75,5 +75,21 @@ export const DocsLang: DocsDictionary = {
         caption: "Drag file here or select to upload ",
       },
     },
+    thirdparty: {
+      captionStart: "Paste your",
+      captionEnd: "below to create a document or upload a file",
+      optionBtn: "or select file to upload",
+      done: "Done",
+      errorNoti: "No data or file is imported",
+      authBtn: "Authenticate",
+      successMess: "Your document has been successfully imported!",
+      trello: {
+        importFrom: "Import from Trello",
+        caption:
+          "To get started, you'll first have to give Taskover permission to import your Trello boards.",
+        importSuccess: "Import Successful",
+        selectAll: "Select all",
+      },
+    },
   },
 };

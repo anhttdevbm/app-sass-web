@@ -8,10 +8,17 @@ import { Endpoint } from "api";
 import { useLocale, useTranslations } from "next-intl";
 import { NS_COMMON, NS_DOCS } from "constant/index";
 import { Text } from "components/shared";
+import ThirdPartyFileDialog from "./ThirdPartyFileDialog";
+import ImportTrello from "./ImportTrello";
 
 export enum FileType {
   Docs = "docs",
   Spreadsheet = "spreadsheet",
+}
+
+export enum ThirdpartyTyp {
+  File = "file",
+  Direct = "direct",
 }
 
 export interface ITypeFileInfo {
@@ -22,24 +29,71 @@ export interface ITypeFileInfo {
   additionalData?: { [key: string]: string };
 }
 
-interface IThirdPartyItem {
+export interface IThirdPartyItem {
   text: string;
+  typ: ThirdpartyTyp;
+  file?: {
+    name: string;
+    type: string;
+    ext: string;
+  };
+  extList?: string[];
+  endpointURL: string;
   icon: () => JSX.Element;
 }
 
 const thirdPartyList: IThirdPartyItem[] = [
-  { text: "Markdown & Text", icon: () => <SmartToy /> },
-  { text: "Trello", icon: () => <SmartToy /> },
-  { text: "Dynalist", icon: () => <SmartToy /> },
-  { text: "Workflowy", icon: () => <SmartToy /> },
+  {
+    text: "Markdown & Text",
+    typ: ThirdpartyTyp.File,
+    file: {
+      name: "markdown",
+      type: "text/markdown",
+      ext: ".md",
+    },
+    extList: [".txt", ".md"],
+    endpointURL: Endpoint.AI_DOCS_IMPORT_MD,
+    icon: () => <SmartToy />,
+  },
+  {
+    text: "Trello",
+    typ: ThirdpartyTyp.Direct,
+    endpointURL: "",
+    icon: () => <SmartToy />,
+  },
+  {
+    text: "Dynalist",
+    typ: ThirdpartyTyp.File,
+    file: {
+      name: "opml",
+      type: "text/xml",
+      ext: ".opml",
+    },
+    extList: [".opml"],
+    endpointURL: Endpoint.AI_DOCS_IMPORT_OPML,
+    icon: () => <SmartToy />,
+  },
+  {
+    text: "Workflowy",
+    typ: ThirdpartyTyp.File,
+    file: {
+      name: "opml",
+      type: "text/xml",
+      ext: ".opml",
+    },
+    extList: [".opml"],
+    endpointURL: Endpoint.AI_DOCS_IMPORT_OPML,
+    icon: () => <SmartToy />,
+  },
 ];
 
 const ImportForm = (props: { open: boolean; onClose: () => void }) => {
   const commonT = useTranslations(NS_COMMON);
   const docsT = useTranslations(NS_DOCS);
+  const locale = useLocale();
   const [isShowFileDialog, onShowFileDialog, onHideFileDialog] = useToggle();
   const [fileDialogType, setFileDialogType] = useState<FileType>(FileType.Docs);
-  const locale = useLocale();
+  const [thirdparty, setThirdparty] = useState<IThirdPartyItem>();
 
   const handleOpenFileDialog = (fileTyp: FileType) => {
     props.onClose();
@@ -67,6 +121,15 @@ const ImportForm = (props: { open: boolean; onClose: () => void }) => {
     }),
     [],
   );
+
+  const handleThirdpartyClick = (item: IThirdPartyItem) => {
+    setThirdparty(item);
+    props.onClose();
+  };
+
+  const handleThirdpartyClose = () => {
+    setThirdparty(undefined);
+  };
 
   return (
     <>
@@ -134,6 +197,7 @@ const ImportForm = (props: { open: boolean; onClose: () => void }) => {
                     text={item.text}
                     startIcon={item.icon()}
                     sx={{ justifyContent: "flex-start", color: "#212121" }}
+                    onClick={() => handleThirdpartyClick(item)}
                   />
                 </Grid>
               ))}
@@ -146,6 +210,11 @@ const ImportForm = (props: { open: boolean; onClose: () => void }) => {
         typFileInfo={dialogTypeInfo[fileDialogType]}
         onClose={onHideFileDialog}
       />
+      <ThirdPartyFileDialog
+        thirdParty={thirdparty}
+        onClose={handleThirdpartyClose}
+      />
+      <ImportTrello thirdParty={thirdparty} onClose={handleThirdpartyClose} />
     </>
   );
 };

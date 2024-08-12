@@ -62,5 +62,20 @@ export type DocsDictionary = {
         caption: string;
       };
     };
+    thirdparty: {
+      captionStart: string;
+      captionEnd: string;
+      optionBtn: string;
+      done: string;
+      errorNoti: string;
+      authBtn: string;
+      successMess: string;
+      trello: {
+        importFrom: string;
+        caption: string;
+        importSuccess: string;
+        selectAll: string;
+      };
+    };
   };
 };
