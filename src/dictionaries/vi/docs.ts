@@ -8,6 +8,7 @@ export const DocsLang: DocsDictionary = {
     comment: "Nhận xét",
     cancel: "Hủy",
     search: "Tìm kiếm",
+    confirm: "Xác nhận",
   },
   filter: {
     all: "Tất cả",
@@ -52,6 +53,10 @@ export const DocsLang: DocsDictionary = {
   changeDocAccess: "Thay đổi quyền truy cập tài liệu?",
   errorInputRename: "Vui lòng nhập tên của document",
   deleteConfirmDoc: "Bạn chắc chắn muốn xóa document?",
+  treeItemDialogEditTitle: "Sửa các mục trên bảng",
+  newTreeItemDialogLabel: "Thêm mới mục cho bảng",
+  treeName: "Tên danh mục",
+  addNewTreeItemChildTitle: "Thêm danh mục nhỏ cho bảng",
   addDropdown: {
     aiGenerator: "Tạo từ AI",
     newDocument: "Tài liệu mới",

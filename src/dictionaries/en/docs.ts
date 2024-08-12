@@ -8,6 +8,7 @@ export const DocsLang: DocsDictionary = {
     comment: "Comment",
     cancel: "Cancel",
     search: "Search",
+    confirm: "Confirm",
   },
   filter: {
     all: "All",
@@ -52,6 +53,10 @@ export const DocsLang: DocsDictionary = {
   changeDocAccess: "Change document Access ?",
   errorInputRename: "Please enter a document name",
   deleteConfirmDoc: "Do you want to delete document?",
+  treeItemDialogEditTitle: "Edit board items",
+  newTreeItemDialogLabel: "Add a new item to Board",
+  treeName: "Board's Name",
+  addNewTreeItemChildTitle: "Add categories to the Board",
   addDropdown: {
     aiGenerator: "AI Generator",
     newDocument: "New document",
