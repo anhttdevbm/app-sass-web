@@ -32,6 +32,12 @@ export enum DependencyStatus {
   LINKED_TO = "LINK",
 }
 
+export type addMemberToInvoiceItemBody = {
+  id: string;
+  fullname: string;
+  email: string;
+};
+
 export type GetBillingListQueries = BaseQueries_Billing & {
   budgetId?: string;
   status?: BillingStatus;
@@ -464,13 +470,13 @@ export const viewPdfBilling = createAsyncThunk(
 
 export const addUserToBilling = createAsyncThunk(
   "Billing/addUserToBilling",
-  async ({ id, userId }: { id: string; userId: string }) => {
+  async ({ id, data }: { id: string; data: addMemberToInvoiceItemBody[] }) => {
     try {
-      const response = await client.put(
-        Endpoint.ADD_USER_BILL,
-        { id, userId },
+      const response = await client.post(
+        StringFormat(Endpoint.ADD_USER_BILL, { id }),
+        data,
         {
-          baseURL: BILLING_API_URL,
+          baseURL: INVOICE_API_URL,
         },
       );
 

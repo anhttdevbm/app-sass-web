@@ -56,5 +56,24 @@ export const DocsLang: DocsDictionary = {
   treeItemDialogEditTitle: "Edit board items",
   newTreeItemDialogLabel: "Add a new item to Board",
   treeName: "Board's Name",
-  addNewTreeItemChildTitle: "Add categories to the Board"
+  addNewTreeItemChildTitle: "Add categories to the Board",
+  addDropdown: {
+    aiGenerator: "AI Generator",
+    newDocument: "New document",
+    import: "Import",
+  },
+  import: {
+    formTitle: "Import to Document",
+    formSubTitle: "Import with AI or from other services.",
+    formDivider: "Or import from",
+    summarizeDoc: "Summarize Document with AI",
+    convertSheet: "Convert Spreadsheet with AI",
+    createDoc: "Create document",
+    dialog: {
+      subtitle: "Upload files to generate a document.",
+      dragdrop: {
+        caption: "Drag file here or select to upload ",
+      },
+    },
+  },
 };

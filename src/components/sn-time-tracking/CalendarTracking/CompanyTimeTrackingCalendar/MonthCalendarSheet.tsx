@@ -1,24 +1,22 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import moment from "moment";
+import { CalendarToday, Group } from "@mui/icons-material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   AvatarGroup,
   Box,
-  Button,
   Drawer,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import IconButton from "@mui/material/IconButton";
-import PlusFillIcon from "icons/PlusFillIcon";
 import Avatar from "@mui/material/Avatar";
-import "./style.css";
-import { AddCircle, CalendarToday, Group } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
 import CloseIcon from "icons/CloseIcon";
+import moment from "moment";
+import { useEffect, useState } from "react";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
+import "./style.css";
 
 interface Timesheet {
   created_time: string;
@@ -536,7 +534,7 @@ const MonthCalendarSheetTest = () => {
                 gap: "10px",
               }}
             >
-              <Button
+              {/* <Button
                 sx={{
                   backgroundImage: "linear-gradient(to right,#2AF598,#009EFD)",
                   borderRadius: "100px",
@@ -547,8 +545,8 @@ const MonthCalendarSheetTest = () => {
                 startIcon={<AddCircle style={{ color: "white" }} />}
               >
                 Add new
-              </Button>
-              <div
+              </Button> */}
+              {/* <div
                 style={{
                   display: "flex",
                 }}
@@ -575,7 +573,7 @@ const MonthCalendarSheetTest = () => {
                     height: "30px",
                   }}
                 />
-              </div>
+              </div> */}
               <IconButton
                 onClick={handleDrawerClose}
                 style={{

@@ -56,6 +56,7 @@ const List = () => {
       ...query,
       ...queries,
     };
+
     const path = getPath(pathname, newQueries);
     window.history.pushState(
       { ...window.history.state, as: path, url: path },
@@ -65,6 +66,27 @@ const List = () => {
 
     onGetInvoices({ ...newQueries });
   };
+
+  useEffect(() => {
+    if (query.Creator || query.Budget) {
+      const queryCreator = `like(created_by,"${String(query.Creator)}")`;
+      const queryBudget = `like(budget_name,"${String(query.Budget)}")`;
+      let queryParams = "";
+      if (query.Creator && query.Budget) {
+        queryParams = `or(${queryCreator},${queryBudget})`;
+      } else if (query.Creator) {
+        // queryParams = `or(${queryCreator})`;
+        queryParams = queryCreator;
+      } else {
+        queryParams = queryBudget;
+      }
+      onGetInvoices({
+        query: queryParams,
+      });
+    } else {
+      onGetInvoices({ ...initQuery });
+    }
+  }, [pathname, query]);
 
   useEffect(() => {
     if (isReady) {

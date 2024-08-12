@@ -44,4 +44,23 @@ export type DocsDictionary = {
   newTreeItemDialogLabel: string;
   treeName: string;
   addNewTreeItemChildTitle: string;
+  addDropdown: {
+    aiGenerator: string;
+    newDocument: string;
+    import: string;
+  };
+  import: {
+    formTitle: string;
+    formSubTitle: string;
+    formDivider: string;
+    summarizeDoc: string;
+    convertSheet: string;
+    createDoc: string;
+    dialog: {
+      subtitle: string;
+      dragdrop: {
+        caption: string;
+      };
+    };
+  };
 };

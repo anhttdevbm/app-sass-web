@@ -5,15 +5,19 @@ import { Text, Checkbox } from "components/shared";
 import Avatar from "components/Avatar";
 
 type MemberItemProps = Employee & {
-  onChange: (id?: string, fullname?: string, avatar?: { link: string }) => void;
+  onChange: (
+    id?: string,
+    fullname?: string,
+    email?: string,
+  ) => void;
   checked: boolean;
 };
 
 const MemberItem = (props: MemberItemProps) => {
-  const { id, fullname, email, avatar, onChange, checked } = props;
+  const { id, fullname, email, onChange, checked } = props;
 
   const onSelect = () => {
-    onChange(id, fullname, avatar);
+    onChange(id, fullname, email);
   };
 
   return (
