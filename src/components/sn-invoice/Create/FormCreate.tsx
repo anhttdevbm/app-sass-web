@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Endpoint } from "api";
 import { Button, DatePicker } from "components/shared";
 import { DEFAULT_PAGING } from "constant/index";
 import { INVOICES_PATH } from "constant/paths";
@@ -20,11 +21,13 @@ import useQueryParams from "hooks/useQueryParams";
 import CloseIcon from "icons/CloseIcon";
 import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useState } from "react";
-import { useAuth } from "store/app/selectors";
+import { useAuth, useHeaderConfig } from "store/app/selectors";
 import { useBudgets } from "store/billing/selectors";
 import { useClientCompanies } from "store/company/selectors";
 import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
+import NewInvoiceIcon from "public/images/new-invoice.svg";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import * as Yup from "yup";
 import NewPaymentModal from "./NewPaymentModal";
 
@@ -129,6 +132,48 @@ const FormCreate = () => {
   const handleShowTotal = () => {
     setTotal(formik.values.total);
   };
+
+  const { onUpdateHeaderConfig } = useHeaderConfig();
+
+  useEffect(() => {
+    onUpdateHeaderConfig({
+      title: "New Invoice",
+      endpoint: Endpoint.NEW_INVOICE,
+      prevPath: Endpoint.INVOICE,
+      imageUrl: NewInvoiceIcon.src,
+    });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        endpoint: undefined,
+        key: undefined,
+      });
+    };
+  }, [onUpdateHeaderConfig]);
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+    if (source.droppableId !== destination.droppableId) {
+      return;
+    } else {
+      const copiedItems = formik.values.service_items;
+      const [removed] = copiedItems.splice(source.index, 1);
+      console.log(
+        "🚀 ~ onDragEnd ~ copiedItems:",
+        copiedItems.length,
+        copiedItems,
+      );
+
+      copiedItems.splice(destination.index, 0, removed);
+      console.log("🚀 ~ onDragEnd ~ copiedItems:", copiedItems);
+      handleChange("service_items", copiedItems);
+    }
+  };
+  console.log("stfdfsd", formik.values);
+
   return (
     <Box
       sx={{
@@ -164,6 +209,9 @@ const FormCreate = () => {
               borderRadius: "100px",
               background: "#ffffff",
               border: "1px solid #EFEFEF",
+            },
+            "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
+              padding: "10px 30px",
             },
             width: "50%",
           }}
@@ -203,7 +251,9 @@ const FormCreate = () => {
               borderRadius: "100px",
               background: "#ffffff",
             },
-            "& .MuiOutlinedInput-root.Mui-focused fieldset": {},
+            "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
+              padding: "10px 30px",
+            },
             width: "50%",
           }}
         >
@@ -240,6 +290,7 @@ const FormCreate = () => {
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
               borderRadius: "12px",
               background: "rgba(249, 241, 241, 0.41)",
+              padding: "10px 30px",
             },
             width: "50%",
             color: "rgba(33, 38, 60, 1)",
@@ -287,6 +338,7 @@ const FormCreate = () => {
                 border: "1px solid rgba(0, 0, 0, 0.38)",
                 borderRadius: "100px",
                 background: "#ffffff",
+                padding: "8px 30px",
               },
               width: "72%",
             }}
@@ -305,6 +357,7 @@ const FormCreate = () => {
                   border: "1px solid rgba(0, 0, 0, 0.38)",
                   borderRadius: "100px",
                   background: "#ffffff",
+                  padding: "8px 30px",
                 },
                 width: "fit-content",
               }}
@@ -329,6 +382,9 @@ const FormCreate = () => {
             sx={{
               "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                 borderRadius: "100px",
+              },
+              "& .MuiInputBase-input.MuiOutlinedInput-input": {
+                padding: "10px 30px",
               },
               width: "50%",
             }}
@@ -359,6 +415,10 @@ const FormCreate = () => {
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                   borderRadius: "100px",
                 },
+                "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ":
+                  {
+                    padding: "10px 30px",
+                  },
               }}
               value={
                 formik.values.payment_items[paymentSelected]?.payment_method
@@ -417,6 +477,9 @@ const FormCreate = () => {
               sx={{
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                   borderRadius: "100px",
+                },
+                "& .MuiInputBase-input.MuiOutlinedInput-input": {
+                  padding: "10px 30px",
                 },
               }}
               value={formik.values.payment_items[paymentSelected]?.payment_link}
@@ -536,211 +599,233 @@ const FormCreate = () => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {formik.values.service_items.map((row, index) => (
-                <TableRow
-                  key={index}
-                  sx={
-                    {
-                      // "&:last-child td, &:last-child th": { border: 0 },
-                      // border: "1px solid #878787",
-                    }
-                  }
-                >
-                  <TableCell
-                    sx={{
-                      color: "#495057 !important",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      border: "1px solid #EBEAF2",
-                      position: "relative",
-                      paddingRight: "24px",
-                    }}
-                    align="left"
+
+            <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
+              <Droppable key={1} droppableId="1">
+                {(provided, snapshot) => (
+                  <TableBody
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
                   >
-                    <TextField
-                      name={`service_items[${index}].service_name`}
-                      value={row.service_name}
-                      onChange={(e) =>
-                        handleChange(
-                          `service_items[${index}].service_name`,
-                          e.target.value,
-                        )
-                      }
-                      placeholder="Type or click to select an item."
-                      fullWidth
-                      variant="standard"
-                      InputProps={{
-                        disableUnderline: true,
-                        inputProps: {
-                          style: { textAlign: "left" },
-                        },
-                      }}
-                    />
-                    <CloseIcon
-                      sx={{
-                        position: "absolute",
-                        right: "4px",
-                        top: "6px",
-                        border: "1px solid #878787",
-                        borderRadius: "16px",
-                        padding: "2px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        handleChange(`service_items[${index}].service_name`, "")
-                      }
-                    />
-                  </TableCell>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    sx={{
-                      color: "#495057 !important",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      border: "1px solid #EBEAF2",
-                    }}
-                    align="right"
-                  >
-                    Hour
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      color: "#495057 !important",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      border: "1px solid #EBEAF2",
-                    }}
-                    align="right"
-                  >
-                    <TextField
-                      name={`service_items[${index}].quantity`}
-                      value={row.quantity}
-                      type="number"
-                      onChange={(e) =>
-                        handleChange(
-                          `service_items[${index}].quantity`,
-                          e.target.value,
-                        )
-                      }
-                      fullWidth
-                      variant="standard"
-                      InputProps={{
-                        disableUnderline: true,
-                        inputProps: {
-                          style: { textAlign: "right" },
-                        },
-                      }}
-                      sx={{
-                        "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
-                          {
-                            WebkitAppearance: "none",
-                            margin: 0,
-                          },
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      color: "#495057 !important",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      border: "1px solid #EBEAF2",
-                    }}
-                    align="right"
-                  >
-                    <TextField
-                      name={`service_items[${index}].rate`}
-                      value={row.rate}
-                      type="number"
-                      fullWidth
-                      onChange={(e) =>
-                        handleChange(
-                          `service_items[${index}].rate`,
-                          e.target.value,
-                        )
-                      }
-                      variant="standard"
-                      InputProps={{
-                        disableUnderline: true,
-                        inputProps: {
-                          style: { textAlign: "right" },
-                        },
-                      }}
-                      sx={{
-                        "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
-                          {
-                            WebkitAppearance: "none",
-                            margin: 0,
-                          },
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      color: "#495057 !important",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      border: "1px solid #EBEAF2",
-                      position: "relative",
-                      paddingRight: "24px",
-                    }}
-                    align="right"
-                  >
-                    <TextField
-                      name={`service_items[${index}].discount`}
-                      value={row.discount}
-                      type="number"
-                      fullWidth
-                      onChange={(e) =>
-                        handleChange(
-                          `service_items[${index}].discount`,
-                          e.target.value,
-                        )
-                      }
-                      variant="standard"
-                      InputProps={{
-                        disableUnderline: true,
-                        inputProps: {
-                          style: { textAlign: "right" },
-                          max: 100,
-                          min: 0,
-                        },
-                      }}
-                      sx={{
-                        "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
-                          {
-                            WebkitAppearance: "none",
-                            margin: 0,
-                          },
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        right: "4px",
-                        top: "calc(50% - 10px)",
-                      }}
-                    >
-                      %
-                    </Box>
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      color: "#495057 !important",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      border: "1px solid #EBEAF2",
-                      position: "relative",
-                    }}
-                    align="right"
-                  >
-                    {row.amount}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+                    {formik.values.service_items.map((row, index) => (
+                      <Draggable
+                        key={index}
+                        draggableId={String(index)}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <TableRow
+                            key={index}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            sx={{
+                              width: "600px",
+                            }}
+                          >
+                            <TableCell
+                              sx={{
+                                color: "#495057 !important",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                border: "1px solid #EBEAF2",
+                                position: "relative",
+                                paddingRight: "24px",
+                              }}
+                              align="left"
+                            >
+                              <TextField
+                                name={`service_items[${index}].service_name`}
+                                value={row.service_name}
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].service_name`,
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder="Type or click to select an item."
+                                fullWidth
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: { textAlign: "left" },
+                                  },
+                                }}
+                              />
+                              <CloseIcon
+                                sx={{
+                                  position: "absolute",
+                                  right: "4px",
+                                  top: "6px",
+                                  border: "1px solid #878787",
+                                  borderRadius: "16px",
+                                  padding: "2px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() =>
+                                  handleChange(
+                                    `service_items[${index}].service_name`,
+                                    "",
+                                  )
+                                }
+                              />
+                            </TableCell>
+                            <TableCell
+                              component="th"
+                              scope="row"
+                              sx={{
+                                color: "#495057 !important",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                border: "1px solid #EBEAF2",
+                              }}
+                              align="right"
+                            >
+                              Hour
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: "#495057 !important",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                border: "1px solid #EBEAF2",
+                              }}
+                              align="right"
+                            >
+                              <TextField
+                                name={`service_items[${index}].quantity`}
+                                value={row.quantity}
+                                type="number"
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].quantity`,
+                                    e.target.value,
+                                  )
+                                }
+                                fullWidth
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: { textAlign: "right" },
+                                  },
+                                }}
+                                sx={{
+                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                                    {
+                                      WebkitAppearance: "none",
+                                      margin: 0,
+                                    },
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: "#495057 !important",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                border: "1px solid #EBEAF2",
+                              }}
+                              align="right"
+                            >
+                              <TextField
+                                name={`service_items[${index}].rate`}
+                                value={row.rate}
+                                type="number"
+                                fullWidth
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].rate`,
+                                    e.target.value,
+                                  )
+                                }
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: { textAlign: "right" },
+                                  },
+                                }}
+                                sx={{
+                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                                    {
+                                      WebkitAppearance: "none",
+                                      margin: 0,
+                                    },
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: "#495057 !important",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                border: "1px solid #EBEAF2",
+                                position: "relative",
+                                paddingRight: "24px",
+                              }}
+                              align="right"
+                            >
+                              <TextField
+                                name={`service_items[${index}].discount`}
+                                value={row.discount}
+                                type="number"
+                                fullWidth
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].discount`,
+                                    e.target.value,
+                                  )
+                                }
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: { textAlign: "right" },
+                                    max: 100,
+                                    min: 0,
+                                  },
+                                }}
+                                sx={{
+                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                                    {
+                                      WebkitAppearance: "none",
+                                      margin: 0,
+                                    },
+                                }}
+                              />
+                              <Box
+                                sx={{
+                                  position: "absolute",
+                                  right: "4px",
+                                  top: "calc(50% - 10px)",
+                                }}
+                              >
+                                %
+                              </Box>
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: "#495057 !important",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                                border: "1px solid #EBEAF2",
+                                position: "relative",
+                              }}
+                              align="right"
+                            >
+                              {row.amount}
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </TableBody>
+                )}
+              </Droppable>
+            </DragDropContext>
           </Table>
         </TableContainer>
       </Box>
@@ -912,11 +997,17 @@ const FormCreate = () => {
             alignItems: "center",
             padding: "12px 24px",
             width: "fit-content",
-            cursor: "pointer",
+            cursor:
+              formik.dirty && Object.keys(formik.errors).length === 0
+                ? "pointer"
+                : "auto",
             color: "#0575E6",
             fontWeight: "700",
             fontSize: "14px",
+            opacity:
+              formik.dirty && Object.keys(formik.errors).length === 0 ? 1 : 0.5,
           }}
+          onClick={() => formik.handleSubmit()}
         >
           Save as Draft
         </Box>
@@ -929,10 +1020,15 @@ const FormCreate = () => {
             alignItems: "center",
             padding: "12px 24px",
             width: "fit-content",
-            cursor: "pointer",
+            cursor:
+              formik.dirty && Object.keys(formik.errors).length === 0
+                ? "pointer"
+                : "auto",
             color: "#FFFFFF",
             fontWeight: "700",
             fontSize: "14px",
+            opacity:
+              formik.dirty && Object.keys(formik.errors).length === 0 ? 1 : 0.5,
           }}
           onClick={() => formik.handleSubmit()}
         >

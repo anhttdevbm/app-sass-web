@@ -1,24 +1,22 @@
-import { memo, useEffect, useState } from "react";
 import { Stack } from "@mui/material";
-import { AccountInfo, Drawer } from "./components";
 import AppLogo from "components/AppLogo";
-import { Search } from "components/Filters";
-import { Text } from "components/shared";
-import { useHeaderConfig } from "store/app/selectors";
-import useBreakpoint from "hooks/useBreakpoint";
-import useWindowSize from "hooks/useWindowSize";
 import Link from "components/Link";
-import ChevronIcon from "icons/ChevronIcon";
+import { Text } from "components/shared";
 import SwitchLanguage from "components/SwitchLanguage";
-import { useProjects } from "store/project/selectors";
-import { usePathname, useRouter } from "next-intl/client";
-import { getPath } from "utils/index";
-import { HOME_PATH, PROJECTS_PATH } from "constant/paths";
-import { DataStatus } from "constant/enums";
-import useToggle from "hooks/useToggle";
 import SwitchTheme from "components/SwitchTheme";
-import Image from "next/image";
+import { DataStatus } from "constant/enums";
+import { HOME_PATH, PROJECTS_PATH } from "constant/paths";
 import { patternUrlDetailDoc, patternUrlDocAdd } from "constant/regex";
+import useBreakpoint from "hooks/useBreakpoint";
+import useToggle from "hooks/useToggle";
+import ChevronIcon from "icons/ChevronIcon";
+import { usePathname, useRouter } from "next-intl/client";
+import Image from "next/image";
+import { memo } from "react";
+import { useHeaderConfig } from "store/app/selectors";
+import { useProjects } from "store/project/selectors";
+import { getPath } from "utils/index";
+import { AccountInfo, Drawer } from "./components";
 
 const Header = () => {
   const { title, searchPlaceholder, prevPath, key, imageUrl } =
