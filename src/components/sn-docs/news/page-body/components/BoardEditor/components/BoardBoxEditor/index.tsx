@@ -164,7 +164,6 @@ const BoardBoxEditorItem: React.FC<IBoardBoxEditorItemProps> = (props) => {
     }
 
     if (val.newNameChild && addNewItemChild) {
-      console.log("abc123");
       addNewItemChild(id, val.newNameChild);
     }
   };
