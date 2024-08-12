@@ -85,6 +85,7 @@ export default function ToolBarDraftEditor({
       display="flex"
       gap={0.5}
       overflow="auto"
+      flexWrap="wrap"
       bgcolor="#EFEFEF"
       paddingY={0.5}
       paddingX={1}
