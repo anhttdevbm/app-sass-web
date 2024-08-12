@@ -1,6 +1,6 @@
 import { EditorState, Modifier, RichUtils } from "draft-js";
 import { Box, SelectChangeEvent } from "@mui/material";
-import { Map } from 'immutable';
+import { Map } from "immutable";
 
 import React, {
   Dispatch,
@@ -37,7 +37,6 @@ export default function ToolBarDraftEditor({
   editorState: EditorState;
   setEditorState: Dispatch<SetStateAction<EditorState>>;
 }) {
-
   const applyStyle = (
     e: React.MouseEvent<HTMLButtonElement> | SelectChangeEvent,
     typeClick: IHandleClickFormat,
@@ -45,20 +44,40 @@ export default function ToolBarDraftEditor({
     if ("currentTarget" in e) {
       e.preventDefault();
     }
-  
-    if (typeClick.style.startsWith('text-align-')) {
+
+    if (typeClick.style.startsWith("text-align-")) {
       // Xử lý căn lề
-      const alignment = typeClick.style.replace('text-align-', '');
+      const alignment = typeClick.style.replace("text-align-", "");
       const newContentState = Modifier.setBlockData(
         editorState.getCurrentContent(),
         editorState.getSelection(),
-        Map({ textAlign: alignment })
+        Map({ textAlign: alignment }),
       );
-      const newEditorState = EditorState.push(editorState, newContentState, 'change-block-data');
+      const newEditorState = EditorState.push(
+        editorState,
+        newContentState,
+        "change-block-data",
+      );
       setEditorState(newEditorState);
     } else if (typeClick.method === "block") {
       // Xử lý các kiểu block khác (như H1, H2, ...)
       setEditorState(RichUtils.toggleBlockType(editorState, typeClick.style));
+    } else if (typeClick.style === "color") {
+      // Xử lý thay đổi màu chữ
+      const selection = editorState.getSelection();
+      const color = (e as SelectChangeEvent).target.value; // Lấy giá trị màu từ e.target.value
+      const contentState = editorState.getCurrentContent();
+      const nextContentState = Modifier.applyInlineStyle(
+        contentState,
+        selection,
+        `color-${color.replace("#", "")}`,
+      );
+      const newEditorState = EditorState.push(
+        editorState,
+        nextContentState,
+        "change-inline-style",
+      );
+      setEditorState(newEditorState);
     } else {
       // Xử lý các kiểu inline
       setEditorState(RichUtils.toggleInlineStyle(editorState, typeClick.style));
@@ -90,13 +109,19 @@ export default function ToolBarDraftEditor({
       paddingX={1}
     >
       <UndoRedoText />
-      <TextFormatDropDown handleChangeFormatText={applyStyle} editorState={editorState} />
+      <TextFormatDropDown
+        handleChangeFormatText={applyStyle}
+        editorState={editorState}
+      />
       <BoldItalicUnderlineTextFormat handleClickFormatBIU={applyStyle} />
-      <AlignTextDropDown handleChangeAlignFormat={applyStyle} editorState={editorState} />
-      <ColorFormatText />
-      <ListFormatText handleClickListFormat={applyStyle}/>
+      <AlignTextDropDown
+        handleChangeAlignFormat={applyStyle}
+        editorState={editorState}
+      />
+      <ColorFormatText handleChangeColor={applyStyle} />
+      <ListFormatText handleClickListFormat={applyStyle} />
       <OtherToolBar />
-      
+
       {/* {tools.map((item, idx) => (
         <button
           style={{

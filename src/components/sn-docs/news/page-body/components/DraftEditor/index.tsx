@@ -40,7 +40,9 @@ import ReactFlowMindMap from "../ReactFlowMindMap";
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
-  const isOpenMindMap = useAppSelector((state) => state.doc.mindMap.isOpenMindMap);
+  const isOpenMindMap = useAppSelector(
+    (state) => state.doc.mindMap.isOpenMindMap,
+  );
   const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);
@@ -156,6 +158,30 @@ export default function DraftEditor() {
     SUBSCRIPT: {
       verticalAlign: "sub",
       fontSize: "80%",
+    },
+    "color-FF0000": {
+      color: "#FF0000",
+    },
+    "color-00FFFF": {
+      color: "#00FFFF",
+    },
+    "color-0000FFF": {
+      color: "#0000FF",
+    },
+    "color-00008B": {
+      color: "#00008B",
+    },
+    "color-FFFF00": {
+      color: "#FFFF00",
+    },
+    "color-000000": {
+      color: "#000000",
+    },
+    "color-14fa02": {
+      color: "#14fa02",
+    },
+    "color-FFFFFF": {
+      color: "#FFFFFF",
     },
   };
 
