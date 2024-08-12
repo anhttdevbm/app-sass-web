@@ -70,5 +70,21 @@ export const DocsLang: DocsDictionary = {
         caption: "Thả tệp vào đây hoặc chọn tệp từ máy ",
       },
     },
+    thirdparty: {
+      captionStart: "Dán nội dung tệp",
+      captionEnd: "xuống để tạo tài liệu hoặc tải tệp lên",
+      optionBtn: "hoặc chọn tệp để tải lên",
+      done: "Hoàn thành",
+      errorNoti: "Bạn chưa nhập dữ liệu hoặc tải tệp lên!",
+      authBtn: "Xác thực",
+      successMess: "Tài liệu của bạn đã được thêm thành công!",
+      trello: {
+        importFrom: "Nhập từ Trello",
+        caption:
+          "Để bắt đầu, trước tiên bạn phải cấp quyền cho Taskover nhập bảng Trello của bạn.",
+        importSuccess: "Nhập thành công",
+        selectAll: "Chọn tất cả",
+      },
+    },
   },
 };

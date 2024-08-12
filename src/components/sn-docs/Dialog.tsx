@@ -1,12 +1,10 @@
 import { SxProps } from "@mui/material";
 import DialogLayout from "components/DialogLayout";
 import { Text } from "components/shared";
-import { NS_DOCS } from "constant/index";
-import { useTranslations } from "next-intl";
-import React from "react";
 
 interface IDialogProps {
   title: string;
+  subtitle?: string;
   open: boolean;
   children?: React.ReactNode;
   renderBottom?: React.ReactNode;
@@ -15,8 +13,8 @@ interface IDialogProps {
 }
 
 export default function Dialog(props: IDialogProps) {
-  const { title, open, children, renderBottom, bottomSx, onClose } = props;
-  const docsT = useTranslations(NS_DOCS);
+  const { title, subtitle, open, children, renderBottom, bottomSx, onClose } =
+    props;
 
   return (
     <DialogLayout
@@ -26,9 +24,11 @@ export default function Dialog(props: IDialogProps) {
           <Text variant="body1" fontWeight={600}>
             {title}
           </Text>
-          <Text variant="caption" color="#999999">
-            {docsT("import.dialog.subtitle")}
-          </Text>
+          {subtitle && (
+            <Text variant="caption" color="#999999">
+              {subtitle}
+            </Text>
+          )}
         </>
       }
       headerProps={{
