@@ -166,6 +166,7 @@ export default function DragDropFileDialog(props: IDragDropFileDialogProps) {
   return (
     <Dialog
       title={typFileInfo.title}
+      subtitle={docsT("import.dialog.subtitle")}
       open={open}
       onClose={handleClose}
       renderBottom={

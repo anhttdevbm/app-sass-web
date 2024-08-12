@@ -1,34 +1,28 @@
 "use client";
-import React, { ChangeEvent, memo, useEffect, useState } from "react";
-import moment from "moment";
+import { Person } from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
+import { Avatar, Box, Typography } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
+import Chip from "@mui/material/Chip";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Popover from "@mui/material/Popover";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Avatar, Box, FormControl, Input, Typography } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import IconButton from "@mui/material/IconButton";
-import Popover from "@mui/material/Popover";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
-import Chip from "@mui/material/Chip";
-import { styled } from "@mui/material/styles";
+import moment from "moment";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "store/configureStore";
 import {
-  setIsOpen,
   setAvatar,
+  setIsOpen,
   setUserName,
 } from "store/userNavigationDetail/reducer";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { RootState } from "store/configureStore";
-import { Person } from "@mui/icons-material";
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -519,18 +513,7 @@ const TableSheet: React.FC<IProps> = (props) => {
                 >
                   <Typography>Project</Typography>
                 </TableCell>
-                <TableCell
-                  sx={{
-                    background: "#0575E6",
-                    color: "white",
-                    height: "68px",
-                    position: "relative",
-                    border: "1px solid #EBEAF2",
-                  }}
-                  rowSpan={2}
-                >
-                  <Typography>Task</Typography>
-                </TableCell>
+                
                 {formattedDates.map((date, index) => (
                   <TableCell
                     key={index}
@@ -563,7 +546,6 @@ const TableSheet: React.FC<IProps> = (props) => {
               {userFilterDataDetail?.timesheet?.map((entry, index) => (
                 <tr key={index}>
                   <td>{entry.project.name}</td>
-                  <td>{entry.note}</td>
                   {props.dateRange.map(({ date }, i) => {
                     const timesheetEntry = userFilterDataDetail.timesheet.find(
                       (sheet) =>

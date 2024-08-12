@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
-import { NS_PROJECT } from "constant/index";
-import { BodyCell, CellProps } from "components/Table";
-import { TBudgets } from "store/project/budget/action";
-import { Button, Checkbox, Text } from "components/shared";
-import { Stack, TableRow, formLabelClasses } from "@mui/material";
-import { HEADER_HEIGHT } from "layouts/Header";
-import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
-import Link from "components/Link";
-import { formatNumber, getPath } from "utils/index";
-import { BUDGET_DETAIL_PATH } from "constant/paths";
+import { Stack, TableRow } from "@mui/material";
 import Avatar from "components/Avatar";
-import { BugReport } from "@mui/icons-material";
-import FilterWithIds from "./FilterWithIds";
+import Link from "components/Link";
+import { Checkbox, Text } from "components/shared";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { BodyCell, CellProps } from "components/Table";
+import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
+import { NS_PROJECT } from "constant/index";
+import { BUDGET_DETAIL_PATH } from "constant/paths";
+import { HEADER_HEIGHT } from "layouts/Header";
 import _ from "lodash";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
+import { TBudgets } from "store/project/budget/action";
+import { formatNumber, getPath } from "utils/index";
+import FilterWithIds from "./FilterWithIds";
 
 type Props = {
   idSelecteds: string[];
@@ -222,7 +221,7 @@ export const ItemWithoutProject = ({
               </Text>
             </BodyCell>
             <BodyCell sx={getXsCell(4)}>
-              <Text></Text>
+              <Text>0</Text>
             </BodyCell>
             <BodyCell sx={getXsCell(5)}>
               <Text></Text>

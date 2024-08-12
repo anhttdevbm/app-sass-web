@@ -1,21 +1,21 @@
-import { DialogLayoutProps } from "components/DialogLayout";
-import { useSnackbar } from "store/app/selectors";
-import { useTranslations } from "next-intl";
-import { DATE_FORMAT_FORM, NS_COMMON, NS_PROJECT } from "constant/index";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
-import FormLayout from "components/FormLayout";
 import { MenuList, Stack } from "@mui/material";
+import { DialogLayoutProps } from "components/DialogLayout";
+import FormLayout from "components/FormLayout";
 import { Input, Select } from "components/shared";
-import { FormikErrors, useFormik } from "formik";
-import { TBudgetCreateParam } from "store/project/budget/action";
-import * as Yup from "yup";
-import { useClientCompanies, useEmployeeOptions } from "store/company/selectors";
-import { formatDate, getMessageErrorByAPI } from "utils/index";
-import { useBudgets } from "store/project/budget/selector";
 import { DateTimePicker } from "components/shared/DatePicker";
-import { useProjects } from "store/project/selectors";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import { DATE_FORMAT_FORM, NS_COMMON, NS_PROJECT } from "constant/index";
+import { FormikErrors, useFormik } from "formik";
 import moment from "moment";
+import { useTranslations } from "next-intl";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { useClientCompanies, useEmployeeOptions } from "store/company/selectors";
+import { TBudgetCreateParam } from "store/project/budget/action";
+import { useBudgets } from "store/project/budget/selector";
+import { useProjects } from "store/project/selectors";
+import { formatDate, getMessageErrorByAPI } from "utils/index";
+import * as Yup from "yup";
 
 type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
   projectId?: string;
@@ -331,6 +331,7 @@ const ModalAddBudget = (props: Props) => {
               rootSx={sxInput}
               fullWidth
               autoComplete="off"
+              hasAvatar
             />
           <Stack
             direction={{ sm: "row" }}

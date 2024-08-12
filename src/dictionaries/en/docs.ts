@@ -8,6 +8,7 @@ export const DocsLang: DocsDictionary = {
     comment: "Comment",
     cancel: "Cancel",
     search: "Search",
+    confirm: "Confirm",
   },
   filter: {
     all: "All",
@@ -52,6 +53,10 @@ export const DocsLang: DocsDictionary = {
   changeDocAccess: "Change document Access ?",
   errorInputRename: "Please enter a document name",
   deleteConfirmDoc: "Do you want to delete document?",
+  treeItemDialogEditTitle: "Edit board items",
+  newTreeItemDialogLabel: "Add a new item to Board",
+  treeName: "Board's Name",
+  addNewTreeItemChildTitle: "Add categories to the Board",
   addDropdown: {
     aiGenerator: "AI Generator",
     newDocument: "New document",
@@ -68,6 +73,22 @@ export const DocsLang: DocsDictionary = {
       subtitle: "Upload files to generate a document.",
       dragdrop: {
         caption: "Drag file here or select to upload ",
+      },
+    },
+    thirdparty: {
+      captionStart: "Paste your",
+      captionEnd: "below to create a document or upload a file",
+      optionBtn: "or select file to upload",
+      done: "Done",
+      errorNoti: "No data or file is imported",
+      authBtn: "Authenticate",
+      successMess: "Your document has been successfully imported!",
+      trello: {
+        importFrom: "Import from Trello",
+        caption:
+          "To get started, you'll first have to give Taskover permission to import your Trello boards.",
+        importSuccess: "Import Successful",
+        selectAll: "Select all",
       },
     },
   },

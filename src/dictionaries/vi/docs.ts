@@ -8,6 +8,7 @@ export const DocsLang: DocsDictionary = {
     comment: "Nhận xét",
     cancel: "Hủy",
     search: "Tìm kiếm",
+    confirm: "Xác nhận",
   },
   filter: {
     all: "Tất cả",
@@ -52,6 +53,10 @@ export const DocsLang: DocsDictionary = {
   changeDocAccess: "Thay đổi quyền truy cập tài liệu?",
   errorInputRename: "Vui lòng nhập tên của document",
   deleteConfirmDoc: "Bạn chắc chắn muốn xóa document?",
+  treeItemDialogEditTitle: "Sửa các mục trên bảng",
+  newTreeItemDialogLabel: "Thêm mới mục cho bảng",
+  treeName: "Tên danh mục",
+  addNewTreeItemChildTitle: "Thêm danh mục nhỏ cho bảng",
   addDropdown: {
     aiGenerator: "Tạo từ AI",
     newDocument: "Tài liệu mới",
@@ -68,6 +73,22 @@ export const DocsLang: DocsDictionary = {
       subtitle: "Chọn tệp để tạo tài liệu.",
       dragdrop: {
         caption: "Thả tệp vào đây hoặc chọn tệp từ máy ",
+      },
+    },
+    thirdparty: {
+      captionStart: "Dán nội dung tệp",
+      captionEnd: "xuống để tạo tài liệu hoặc tải tệp lên",
+      optionBtn: "hoặc chọn tệp để tải lên",
+      done: "Hoàn thành",
+      errorNoti: "Bạn chưa nhập dữ liệu hoặc tải tệp lên!",
+      authBtn: "Xác thực",
+      successMess: "Tài liệu của bạn đã được thêm thành công!",
+      trello: {
+        importFrom: "Nhập từ Trello",
+        caption:
+          "Để bắt đầu, trước tiên bạn phải cấp quyền cho Taskover nhập bảng Trello của bạn.",
+        importSuccess: "Nhập thành công",
+        selectAll: "Chọn tất cả",
       },
     },
   },

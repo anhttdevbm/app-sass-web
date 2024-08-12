@@ -6,6 +6,7 @@ export type DocsDictionary = {
     comment: string;
     cancel: string;
     search: string;
+    confirm: string;
   };
   filter: {
     all: string;
@@ -39,6 +40,10 @@ export type DocsDictionary = {
   changeDocAccess: string;
   errorInputRename: string;
   deleteConfirmDoc: string;
+  treeItemDialogEditTitle: string;
+  newTreeItemDialogLabel: string;
+  treeName: string;
+  addNewTreeItemChildTitle: string;
   addDropdown: {
     aiGenerator: string;
     newDocument: string;
@@ -55,6 +60,21 @@ export type DocsDictionary = {
       subtitle: string;
       dragdrop: {
         caption: string;
+      };
+    };
+    thirdparty: {
+      captionStart: string;
+      captionEnd: string;
+      optionBtn: string;
+      done: string;
+      errorNoti: string;
+      authBtn: string;
+      successMess: string;
+      trello: {
+        importFrom: string;
+        caption: string;
+        importSuccess: string;
+        selectAll: string;
       };
     };
   };
