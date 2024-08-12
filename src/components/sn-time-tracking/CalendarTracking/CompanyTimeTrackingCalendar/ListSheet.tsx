@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,14 +7,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Typography,
+  Typography
 } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 import { styled } from "@mui/material/styles";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
 import "../CompanyTimeTrackingCalendar/style.css";
-import { boxShadow } from "html2canvas/dist/types/css/property-descriptors/box-shadow";
-import Checkbox from "@mui/material/Checkbox";
 
 interface Timesheet {
   created_time: string;

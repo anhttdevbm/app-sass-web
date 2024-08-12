@@ -28,6 +28,13 @@ export interface Service {
   amount?: number;
   quantity?: number;
 }
+
+export interface Member {
+  id: string;
+  fullname?: string;
+  email?: string;
+  date_in?: string;
+}
 export interface Invoice {
   id?: string;
   invoice_number?: string;
@@ -43,7 +50,9 @@ export interface Invoice {
   total: number;
   status: boolean;
   balance_due: string;
+  members?: Member[];
 }
+
 export type InvoiceState = {
   items: Invoice[];
   status: DataStatus;

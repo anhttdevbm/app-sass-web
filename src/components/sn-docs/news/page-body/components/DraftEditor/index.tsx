@@ -33,15 +33,15 @@ import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
 import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
 import TableChartIcon from "@mui/icons-material/TableChart";
-import ReactFlowMindMap from "../ReactFlowMindMap";
+import MindmapItem from "../MindmapItem";
 import BoardEditor from "../BoardEditor";
+import ReactFlowMindMap from "../ReactFlowMindMap";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
   const isOpenMindMap = useAppSelector((state) => state.doc.mindMap.isOpenMindMap);
   const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
-
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);
   const { perm, content, id, title: name, description, project_id } = page;

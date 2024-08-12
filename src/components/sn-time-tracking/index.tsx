@@ -18,6 +18,7 @@ import {
 import { NS_TIME_TRACKING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
+import DayIcon from "icons/DayIcon";
 import { useTranslations } from "next-intl";
 import { FC, useEffect, useState } from "react";
 import {
@@ -278,6 +279,35 @@ const TimeTrackingPage: FC = () => {
             }
           </Fab>
 
+          {tab === "companyTime" && (
+            <Fab
+              sx={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "100px",
+                backgroundColor: "#FFFFFF",
+                "&:hover": {
+                  border: "none",
+                  backgroundColor: "#F2F5FA",
+                },
+                "&:focus": {
+                  border: "none",
+                  backgroundColor: "#F2F5FA",
+                },
+                cursor: "pointer",
+              }}
+              onClick={handleShowTable}
+            >
+              <DayIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            </Fab>
+          )}
+
+
           <Fab
             sx={{
               width: "34px",
@@ -307,29 +337,7 @@ const TimeTrackingPage: FC = () => {
             }
           </Fab>
 
-          {/* <Button
-            startIcon={<TimeIcon />}
-            variant="contained"
-            sx={{
-              width: "113px",
-              height: "56px",
-              marginLeft: "14px",
-              borderRadius: "100px",
-              background: "linear-gradient(90deg, #2af598, #009efd)",
-              "&:hover": {
-                background: "linear-gradient(90deg, #2af598, #009efd)",
-              },
-              color: "common.white",
-              textTransform: "none",
-              fontSize: "16px",
-              fontFamily: "Inter",
-              fontWeight: "Bold",
-              cursor: "pointer",
-            }}
-            // onClick={showLogTimePopup}
-          >
-            {timeT("header.common.startButton")}
-          </Button> */}
+
 
           <Button
             // startIcon={<PlusIcon />}

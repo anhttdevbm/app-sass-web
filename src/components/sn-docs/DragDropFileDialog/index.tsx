@@ -1,23 +1,23 @@
-import { Add } from "@mui/icons-material";
 import { Box, CircularProgress, Paper, Stack, SxProps } from "@mui/material";
-import { client } from "api";
-import Loading from "components/Loading";
 import { Button, Text } from "components/shared";
+import useTheme from "hooks/useTheme";
+import { UploadFileFillIcon } from "icons/UploadFileFillIcon";
+import { useRef, useState } from "react";
+import Dialog from "../Dialog";
+import { Add } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import { client } from "api";
 import {
   AI_DOCS_API_URL,
   AN_ERROR_TRY_AGAIN,
   NS_COMMON,
   NS_DOCS,
 } from "constant/index";
-import { ContentBlock } from "draft-js";
-import useTheme from "hooks/useTheme";
-import { UploadFileFillIcon } from "icons/UploadFileFillIcon";
-import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
-import { useDocs } from "store/docs/selectors";
-import { uuid } from "utils/index";
-import Dialog from "../Dialog";
+import Loading from "components/Loading";
 import { FileType, ITypeFileInfo } from "../ImportForm";
+import { useDocs } from "store/docs/selectors";
+import { ContentBlock } from "draft-js";
+import { uuid } from "utils/index";
 
 interface IDocumentFile {
   name: string;
@@ -107,6 +107,7 @@ export default function DragDropFileDialog(props: IDragDropFileDialogProps) {
           "Content-Type": "multipart/form-data",
         },
       });
+      console.log({ response });
 
       if (response.status === 200) {
         const fileData: IDocumentFile = {

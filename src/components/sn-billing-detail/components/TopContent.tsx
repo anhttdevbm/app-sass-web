@@ -28,7 +28,7 @@ import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
 import { NS_BILLING, NS_PROJECT } from "constant/index";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Billing, Member } from "store/billing/reducer";
+import { Billing } from "store/billing/reducer";
 import { Option, User } from "constant/types";
 import TrashIcon from "icons/TrashIcon";
 import {
@@ -44,7 +44,7 @@ import { Dropdown } from "components/Filters";
 import DropdownTag from "./DropdownTag";
 import { useBillings } from "store/billing/selectors";
 import useTheme from "hooks/useTheme";
-import { Invoice } from "store/invoice/reducer";
+import { Invoice, Member } from "store/invoice/reducer";
 
 const ITEM_HEIGHT = 48;
 
@@ -100,7 +100,7 @@ const TopContent = (props: TopContentProps) => {
 
     const lastItem = data[data.length - 1];
 
-    onAddUserToBilling(id, lastItem?.id);
+    onAddUserToBilling(id, data);
   };
 
   const onChangeTag = (input) => {
@@ -133,24 +133,22 @@ const TopContent = (props: TopContentProps) => {
   // }, [user, item]);
 
   useEffect(() => {
-    // if (item?.user && item.user.length > 0 && listUser?.length === 0) {
-    //   const filterMember = item.user
-    //     ?.map((item) => {
-    //       if (!setMember.has(item.id)) {
-    //         setMember.add(item.id);
-    //         const member = {
-    //           id: item.id,
-    //           fullname: item.fullname,
-    //           avatar: {
-    //             link: item?.avatar?.link,
-    //           },
-    //         } as Member;
-    //         return member;
-    //       }
-    //     })
-    //     .filter((item2) => item2 && typeof item2 !== "undefined");
-    //   setListUser([...filterMember] as Member[]);
-    // }
+    if (item?.members && item.members.length > 0 && listUser?.length === 0) {
+      const filterMember = item.members
+        ?.map((item) => {
+          if (!setMember.has(item.id)) {
+            setMember.add(item.id);
+            const member = {
+              id: item.id,
+              fullname: item.fullname,
+              email: item.email,
+            } as Member;
+            return member;
+          }
+        })
+        .filter((item2) => item2 && typeof item2 !== "undefined");
+      setListUser([...filterMember] as Member[]);
+    }
     // if (item?.tag && item?.tag?.length > 0) {
     //   setTagSelected(item?.tag[0] ?? "");
     // }
@@ -172,8 +170,7 @@ const TopContent = (props: TopContentProps) => {
     //     })
     //     .filter((item2) => item2 && typeof item2 !== "undefined");
     //   console.log(filterMember);
-    //   // setListUser([...listUser, ...filterMember] as Member[]);
-    // }
+    // setListUser([...listUser, ...filterMember] as Member[]);
   }, [item]);
 
   // console.log(user);
@@ -241,7 +238,7 @@ const TopContent = (props: TopContentProps) => {
             display={"flex"}
             alignItems={"center"}
           >
-            {/* <Avatar src={user?.avatar?.link ?? ""} /> */}
+            <Avatar src={user?.avatar?.link ?? ""} />
 
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               {"Invoice " +
@@ -343,7 +340,7 @@ const TopContent = (props: TopContentProps) => {
                 return (
                   <Avatar
                     key={index}
-                    src={item?.avatar?.link ?? ""}
+                    src={""}
                     alt=""
                     sx={{ width: 24, height: 24 }}
                   />
