@@ -6,7 +6,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { useState } from "react";
-import { IToolBarDraftActionItem } from "../..";
+import { IHandleClickFormat, IToolBarDraftActionItem } from "../..";
 import { uuid } from "utils/index";
 
 const BoxColor = ({ colorCode }: { colorCode: string }) => {
@@ -39,53 +39,84 @@ export interface IColorFormatListItem extends IToolBarDraftActionItem {
   codeColor: string;
 }
 
-export default function ColorFormatText() {
+export default function ColorFormatText({
+  handleChangeColor,
+}: {
+  handleChangeColor: (
+    e: React.MouseEvent<HTMLButtonElement> | SelectChangeEvent,
+    typeClick: IHandleClickFormat,
+  ) => void;
+}) {
   const [colorFormat, setColorFormat] = useState<string>();
   const colorFormatList: IColorFormatListItem[] = [
     {
       id: uuid(),
+      label: "black",
+      icon: <BoxColor colorCode="#000000" />,
+      style: "color",
+      method: "inline",
+      codeColor: "#000000",
+    },
+    {
+      id: uuid(),
+      label: "white",
+      icon: <BoxColor colorCode="#FFFFFF" />,
+      style: "color",
+      method: "inline",
+      codeColor: "#FFFFFF",
+    },
+    {
+      id: uuid(),
       label: "red",
       icon: <BoxColor colorCode="#FF0000" />,
-      style: "color-red",
-      method: "block",
+      style: "color",
+      method: "inline",
       codeColor: "#FF0000",
     },
     {
       id: uuid(),
       label: "cyan",
-      style: "color-cyan",
+      style: "color",
       icon: <BoxColor colorCode="#00FFFF" />,
-      method: "block",
+      method: "inline",
       codeColor: "#00FFFF",
     },
     {
       id: uuid(),
       label: "blue",
-      style: "color-blue",
+      style: "color",
       icon: <BoxColor colorCode="#0000FF" />,
-      method: "block",
+      method: "inline",
       codeColor: "#0000FF",
     },
     {
       id: uuid(),
       label: "darkBlue",
-      style: "color-darkBlue",
+      style: "color",
       icon: <BoxColor colorCode="#00008B" />,
-      method: "block",
+      method: "inline",
       codeColor: "#00008B",
     },
     {
       id: uuid(),
       label: "yellow",
-      style: "color-yellow",
+      style: "color",
       icon: <BoxColor colorCode="#FFFF00" />,
-      method: "block",
+      method: "inline",
       codeColor: "#FFFF00",
+    },
+    {
+      id: uuid(),
+      label: "green",
+      style: "color",
+      icon: <BoxColor colorCode="#14fa02" />,
+      method: "inline",
+      codeColor: "#14fa02",
     },
   ];
 
   const handleChange = (event: SelectChangeEvent) => {
-    setColorFormat(event.target.value as string);
+    handleChangeColor(event, { style: "color", method: "inline" });
   };
 
   return (
@@ -93,7 +124,7 @@ export default function ColorFormatText() {
       sx={{
         ...borderRightStyle,
         display: "flex",
-        justifyContent: "center"
+        justifyContent: "center",
       }}
     >
       <FormControl sx={{ height: "100%" }} fullWidth>
@@ -109,11 +140,17 @@ export default function ColorFormatText() {
           }}
           labelId="dropdown-select-textFormat"
           id="dropdown-select-textFormat"
-          defaultValue={colorFormatList[0].label}
+          defaultValue={colorFormatList[0].codeColor}
           onChange={handleChange}
         >
           {colorFormatList.map((item) => (
-            <MenuItem key={item.id} value={item.label}>
+            <MenuItem
+              sx={{
+                backgroundColor: "background.default",
+              }}
+              key={item.id}
+              value={item.codeColor}
+            >
               {item.icon}
             </MenuItem>
           ))}
