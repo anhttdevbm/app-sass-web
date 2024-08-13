@@ -33,7 +33,7 @@ import { useSalesService } from "store/sales/selectors";
 import AllPeopleTab from "./AllPeopleTab";
 import GuideIcon from "./assets/GuideIcon";
 import VueSaxIcon from "./assets/VueSaxIcon";
-import AddBooking from "./modals/addBooking";
+import CreateBooking from "./modals/CreateBooking";
 import MyScheduleTab from "./MyScheduleTab";
 
 const ResourcePlanning = () => {
@@ -51,7 +51,7 @@ const ResourcePlanning = () => {
 
   const [isServicePopup, setisServicePopup] = useState<Boolean>(false);
   const [isWorkload, setIsWorkload] = useState<Boolean>(false);
-  const [isModalAdd, setIsModalAdd] = useState<Boolean>(false);
+  const [isModalAdd, setIsModalAdd] = useState<boolean>(false);
   const [programSelected, setProgramSelected] = useState<string | null>(null);
   const [budgetSelected, setBudgetSelected] = useState<string | null>(null);
 
@@ -195,7 +195,12 @@ const ResourcePlanning = () => {
             >
               + Add
             </Button>
-            <AddBooking setIsModalAdd={setIsModalAdd} isModalAdd={isModalAdd} />
+            <CreateBooking
+              resourceId={""}
+              onClose={() => setIsModalAdd(false)}
+              open={isModalAdd}
+            />
+            {/* <AddBooking setIsModalAdd={setIsModalAdd} isModalAdd={isModalAdd} /> */}
           </Grid>
         </Grid>
         <LocalizationProvider

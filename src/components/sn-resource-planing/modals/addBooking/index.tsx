@@ -5,7 +5,9 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import SelectController from "components/SelectController";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const style = {
   position: "absolute" as "absolute",
@@ -22,18 +24,39 @@ const style = {
 };
 
 type TAddBookingProps = {
-  isModalAdd: Boolean;
-  setIsModalAdd: (value: Boolean) => void;
+  isModalAdd: boolean;
+  setIsModalAdd: (value: boolean) => void;
+  listProjects: { value: string; label: string }[] | [];
+  listBudgets: { value: string; label: string }[] | [];
 };
+function AddBooking({
+  setIsModalAdd,
+  isModalAdd,
+  listProjects = [],
+  listBudgets = [],
+}: TAddBookingProps) {
+  const { control } = useForm();
 
-function AddBooking({ setIsModalAdd, isModalAdd }: TAddBookingProps) {
   const [typeBooking, setTypeBooking] = useState<"PROJECT" | "TIME_OFF">(
     "PROJECT",
   );
 
+  const mockData = [
+    {
+      name: "project",
+      label: "Project",
+      required: true,
+      options: listProjects,
+    },
+    { name: "budget", label: "Budget", required: true, options: listBudgets },
+    { name: "service", label: "Service", required: true },
+    { name: "user", label: "User", required: true },
+    { name: "role", label: "Role", required: true },
+  ];
+
   return (
     <Modal
-      open={true}
+      open={isModalAdd as boolean}
       onClose={() => setIsModalAdd(false)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -48,7 +71,7 @@ function AddBooking({ setIsModalAdd, isModalAdd }: TAddBookingProps) {
           style={{
             width: "100%",
             overflowY: "scroll",
-            maxHeight: "800px",
+            maxHeight: "90vh",
             margin: "auto",
             paddingRight: 16,
           }}
@@ -57,6 +80,8 @@ function AddBooking({ setIsModalAdd, isModalAdd }: TAddBookingProps) {
             style={{
               display: "flex",
               justifyContent: "space-between",
+              borderBottom: "1px solid #ECECF3",
+              paddingBottom: "20px",
             }}
           >
             <Typography color="#333333" variant="h4">
@@ -70,8 +95,10 @@ function AddBooking({ setIsModalAdd, isModalAdd }: TAddBookingProps) {
               <CloseOutlined sx={{ fontSize: 14, color: "#666666" }} />
             </IconButton>
           </div>
-          <hr style={{ background: "#E0E0E0" }} />
-          <div style={{ display: "flex", justifyContent: "center" }}>
+
+          <div
+            style={{ display: "flex", justifyContent: "center", paddingTop: 5 }}
+          >
             <div
               style={{
                 width: "240px",
@@ -116,268 +143,28 @@ function AddBooking({ setIsModalAdd, isModalAdd }: TAddBookingProps) {
             </div>
           </div>
           {typeBooking === "PROJECT" && (
-            <form>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: 5,
-                    fontWeight: "bold",
+            <form
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
+              {mockData.map((item) => (
+                <SelectController
+                  control={control}
+                  name={item.name}
+                  label={item.label}
+                  required={item?.required}
+                  listOptions={item?.options || []}
+                  sx={{
+                    borderRadius: "100px",
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                    ".MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#EFEFEF",
+                    },
                   }}
-                >
-                  Project <span style={{ color: "red" }}>*</span>
-                </label>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    border: "1px solid #E0E0E0",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderRadius: 100,
-                    alignItems: "center",
-                  }}
-                >
-                  <label style={{ margin: 10, width: "25%", fontWeight: 200 }}>
-                    Contry |
-                  </label>
-                  <select
-                    style={{
-                      width: "90%",
-                      padding: "10px 40px 10px 20px",
-                      border: "none",
-                      borderRadius: 25,
-                      outline: "none",
-                      appearance: "none",
-                      background: "white",
-                      height: 40,
-                    }}
-                  >
-                    <option value=""></option>
-                  </select>
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: 15,
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      fontSize: 13,
-                    }}
-                  >
-                    ▼
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: 5,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Budget <span style={{ color: "red" }}>*</span>
-                </label>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    border: "1px solid #E0E0E0",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderRadius: 100,
-                    alignItems: "center",
-                  }}
-                >
-                  <label style={{ margin: 10, width: "15%", fontWeight: 200 }}>
-                    Month 1 |
-                  </label>
-                  <select
-                    style={{
-                      width: "90%",
-                      padding: "10px 40px 10px 20px",
-                      border: "none",
-                      borderRadius: 25,
-                      outline: "none",
-                      appearance: "none",
-                      background: "white",
-                      height: 40,
-                    }}
-                  >
-                    <option value=""></option>
-                  </select>
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: 15,
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      fontSize: 13,
-                    }}
-                  >
-                    ▼
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: 5,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Service <span style={{ color: "red" }}>*</span>
-                </label>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    border: "1px solid #E0E0E0",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderRadius: 100,
-                    alignItems: "center",
-                  }}
-                >
-                  <label style={{ margin: 10, width: "25%", fontWeight: 200 }}>
-                    Design web |
-                  </label>
-                  <select
-                    style={{
-                      width: "90%",
-                      padding: "10px 40px 10px 20px",
-                      border: "none",
-                      borderRadius: 25,
-                      outline: "none",
-                      appearance: "none",
-                      background: "white",
-                      height: 40,
-                    }}
-                  >
-                    <option value=""></option>
-                  </select>
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: 15,
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      fontSize: 13,
-                    }}
-                  >
-                    ▼
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: 5,
-                    fontWeight: "bold",
-                  }}
-                >
-                  User <span style={{ color: "red" }}>*</span>
-                </label>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    border: "1px solid #E0E0E0",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderRadius: 100,
-                    alignItems: "center",
-                  }}
-                >
-                  <label style={{ margin: 10, width: "25%", fontWeight: 200 }}>
-                    Thu nguyen |
-                  </label>
-                  <select
-                    style={{
-                      width: "90%",
-                      padding: "10px 40px 10px 20px",
-                      border: "none",
-                      borderRadius: 25,
-                      outline: "none",
-                      appearance: "none",
-                      background: "white",
-                      height: 40,
-                    }}
-                  >
-                    <option value=""></option>
-                  </select>
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: 15,
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      fontSize: 13,
-                    }}
-                  >
-                    ▼
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: 5,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Role <span style={{ color: "red" }}>*</span>
-                </label>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    border: "1px solid #E0E0E0",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderRadius: 100,
-                    alignItems: "center",
-                  }}
-                >
-                  <label style={{ margin: 10, width: "25%", fontWeight: 200 }}>
-                    Designer |
-                  </label>
-                  <select
-                    style={{
-                      width: "90%",
-                      padding: "10px 40px 10px 20px",
-                      border: "none",
-                      borderRadius: 25,
-                      outline: "none",
-                      appearance: "none",
-                      background: "white",
-                      height: 40,
-                    }}
-                  >
-                    <option value=""></option>
-                  </select>
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: 15,
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      fontSize: 13,
-                    }}
-                  >
-                    ▼
-                  </span>
-                </div>
-              </div>
-              <div style={{ marginBottom: 20 }}>
+                />
+              ))}
+
+              <div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
@@ -478,7 +265,7 @@ function AddBooking({ setIsModalAdd, isModalAdd }: TAddBookingProps) {
                 </div>
               </div>
 
-              <div style={{ marginBottom: 20 }}>
+              <div>
                 <label
                   style={{
                     display: "block",

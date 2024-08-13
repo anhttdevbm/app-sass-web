@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
-import _ from "lodash";
-import { DialogContent, Tab, Box, Typography } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Box, Button, DialogContent, Typography } from "@mui/material";
+import React, { useState } from "react";
 
-import ProjectTab from "./ProjectTab";
 import DialogLayout from "components/DialogLayout";
-import { useTranslations } from "next-intl";
 import { NS_RESOURCE_PLANNING } from "constant/index";
+import { useTranslations } from "next-intl";
+import ProjectTab from "./ProjectTab";
 import TimeOffTab from "./TimeoffTab";
-import { useBookingAll } from "store/resourcePlanning/selector";
 
 interface IProps {
   open: boolean;
@@ -23,20 +20,26 @@ const CreateBooking: React.FC<IProps> = ({
   resourceId,
   selectedDateRange,
 }) => {
-  const [activeTabs, setActiveTabs] = useState("1");
-  const { bookingAll, isLoading } = useBookingAll();
+  const [typeBooking, setTypeBooking] = useState<"PROJECT" | "TIME_OFF">(
+    "TIME_OFF",
+  );
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
-    setActiveTabs(newValue);
-  };
+
   const handleOnClose = () => {
-    setActiveTabs("1");
     onClose();
   };
   return (
     <DialogLayout
       renderHeader={
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid #ECECF3",
+            height: "60px",
+            verticalAlign: "text-top",
+          }}
+        >
           <Typography
             variant="h6"
             sx={{
@@ -52,78 +55,93 @@ const CreateBooking: React.FC<IProps> = ({
       }
       open={open}
       onClose={handleOnClose}
-      sx={{ width: 600, minHeight: 500 }}
+      sx={{
+        width: 600,
+        minHeight: 500,
+        bgcolor: "white",
+        boxShadow: "-4px 10px 30px 0px #0000001A",
+      }}
+      rootSx={{
+        ".MuiModal-backdrop": {
+          backgroundColor: "#FFFFFFB2",
+        },
+        ".MuiDialog-paper": { paddingTop: 0 },
+      }}
     >
       <DialogContent
         sx={{
           "&.MuiDialogContent-root": {
             pb: "0px!important",
+            overflow: "unset",
           },
           position: "relative",
+
+          paddingTop: 0,
         }}
       >
-        <TabContext value={activeTabs}>
-          <TabList
-            onChange={handleTabChange}
-            sx={{
-              "& .MuiTabs-flexContainer": {
-                gap: "16px",
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-              },
-              "& .MuiTab-root": {
-                textTransform: "unset",
-                fontSize: "16px",
-                lineHeight: "20px",
-                fontWeight: 600,
-                color: "rgba(153, 153, 153, 1)",
-                "&.active": {
-                  color: "#3699FF",
-                },
-              },
+        <div
+          style={{ display: "flex", justifyContent: "center", paddingTop: 5 }}
+        >
+          <div
+            style={{
+              width: "240px",
+              height: "56px",
+              display: "flex",
+              justifyContent: "space-between",
+              border: "1px solid #ECECF3",
+              borderRadius: "100px",
+              cursor: "pointer",
             }}
           >
-            <Tab
-              label={resourceT("form.project")}
-              value="1"
-              sx={{
-                fontSize: "14px",
-                color: "gray.300",
-                lineHeight: "16px",
-                fontWeight: 600,
-                px: "32px",
-                py: "14px",
+            <Button
+              style={{
+                width: "124px",
+                height: "100%",
+                borderRadius: "100px",
+                background: typeBooking === "PROJECT" ? "#D9F0FD" : "white",
+                color: typeBooking === "PROJECT" ? "#045EB8" : "#333333",
+                textTransform: "unset",
               }}
-            />
-            <Tab
-              label={resourceT("form.timeoff")}
-              value="2"
-              sx={{
-                fontSize: "14px",
-                lineHeight: "16px",
-                color: "gray.300",
-                fontWeight: 600,
+              onClick={() => {
+                setTypeBooking("PROJECT");
               }}
-            />
-          </TabList>
-          <TabPanel value="1" sx={{ p: 0 }}>
-            <ProjectTab
-              onClose={handleOnClose}
-              open={open}
-              resourceId={resourceId}
-              userId={resourceId}
-              selectedDateRange={selectedDateRange}
-            />
-          </TabPanel>
-          <TabPanel value="2" sx={{ p: 0 }}>
-            <TimeOffTab
-              onClose={handleOnClose}
-              open={open}
-              selectedDateRange={selectedDateRange}
-              resourceId={resourceId}
-            />
-          </TabPanel>
-        </TabContext>
+            >
+              Project
+            </Button>
+            <Button
+              style={{
+                width: "124px",
+                height: "100%",
+                borderRadius: "100px",
+                background: typeBooking === "TIME_OFF" ? "#D9F0FD" : "none",
+                color: typeBooking === "TIME_OFF" ? "#045EB8" : "#333333",
+                textTransform: "unset",
+              }}
+              onClick={() => {
+                setTypeBooking("TIME_OFF");
+              }}
+            >
+              Time off
+            </Button>
+          </div>
+        </div>
+
+        {typeBooking === "PROJECT" ? (
+          <ProjectTab
+            onClose={handleOnClose}
+            open={open}
+            resourceId={resourceId}
+            userId={resourceId}
+            selectedDateRange={selectedDateRange}
+          />
+        ) : (
+          <TimeOffTab
+            onClose={handleOnClose}
+            open={open}
+            selectedDateRange={selectedDateRange}
+            resourceId={resourceId}
+          />
+        )}
       </DialogContent>
     </DialogLayout>
   );
