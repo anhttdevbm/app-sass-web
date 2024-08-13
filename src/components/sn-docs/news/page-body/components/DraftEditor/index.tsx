@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -67,10 +68,11 @@ export default function DraftEditor() {
   const editor = useRef<Editor | null>(null);
 
   const [showAddSession, setShowAddSession] = useState(false);
+  const [heightToolBar, setHeightToolBar] = useState(0);
 
   // xử lý event open Add Session
   const handleKeyDown = (e) => {
-    if (e.ctrlKey && e.altKey && e.key === "d") {
+    if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "d") {
       e.preventDefault();
       setShowAddSession((prev) => !prev);
     }
@@ -212,6 +214,10 @@ export default function DraftEditor() {
     [editorState],
   );
 
+  const heightToolMemo = useMemo(() => {
+    return heightToolBar;
+  }, [heightToolBar]);
+
   useEffect(() => {
     focusEditor();
   }, []);
@@ -281,14 +287,28 @@ export default function DraftEditor() {
 
   return (
     <Box
-      sx={{ width: "100%", height: "100%", bgcolor: "common.white" }}
+      sx={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        bgcolor: "common.white",
+        paddingTop: `${heightToolMemo}px`,
+      }}
       // onClick={focusEditor}
     >
       <ToolBarDraftEditor
         editorState={editorState}
         setEditorState={setEditorState}
+        setHeightToolBar={setHeightToolBar}
       />
-      <div className="editor-container">
+      <Box
+        sx={{
+          position: "relative",
+          paddingX: "1rem",
+          height: `calc(100% - ${heightToolMemo}px)`,
+          overflowY: "auto",
+        }}
+      >
         <Editor
           ref={editor}
           handleKeyCommand={handleKeyCommand}
@@ -308,7 +328,7 @@ export default function DraftEditor() {
         )}
         {isOpenMindMap ? <ReactFlowMindMap /> : null}
         {isOpenBoard ? <BoardEditor /> : null}
-      </div>
+      </Box>
     </Box>
   );
 }

@@ -11,18 +11,21 @@ import Link from "components/Link";
 import ChevronIcon from "icons/ChevronIcon";
 import SwitchLanguage from "components/SwitchLanguage";
 import { useProjects } from "store/project/selectors";
-import { useRouter } from "next-intl/client";
+import { usePathname, useRouter } from "next-intl/client";
 import { getPath } from "utils/index";
 import { HOME_PATH, PROJECTS_PATH } from "constant/paths";
 import { DataStatus } from "constant/enums";
 import useToggle from "hooks/useToggle";
 import SwitchTheme from "components/SwitchTheme";
 import Image from "next/image";
+import { patternUrlDetailDoc, patternUrlDocAdd } from "constant/regex";
 
 const Header = () => {
-  const { title, searchPlaceholder, prevPath, key, imageUrl } = useHeaderConfig();
+  const { title, searchPlaceholder, prevPath, key, imageUrl } =
+    useHeaderConfig();
   const { breakpoint } = useBreakpoint();
   const { push } = useRouter();
+  const  pathname  = usePathname();
   const { pageSize, filters, status, onGetProjects } = useProjects();
 
   const [isFocused, onFocused, onUnFocused] = useToggle();
@@ -41,6 +44,9 @@ const Header = () => {
     push(path);
   };
 
+  if (patternUrlDetailDoc.test(pathname) || patternUrlDocAdd.test(pathname)) {
+    return null;
+  }
   return (
     <Stack
       height={HEADER_HEIGHT}
@@ -63,24 +69,33 @@ const Header = () => {
         overflow="hidden"
         flex={1}
       >
-        
         {prevPath ? (
           <Link
             href={prevPath}
             sx={{ height: 24, display: { xs: "none", sm: "initial" } }}
             underline="none"
           >
-            <Stack sx={{ height: 28, display: "flex", gap: 1, flexDirection: "row" }}>
+            <Stack
+              sx={{
+                height: 28,
+                display: "flex",
+                gap: 1,
+                flexDirection: "row",
+              }}
+            >
               <ChevronIcon
                 sx={{ color: "text.primary", transform: "rotate(90deg)" }}
                 fontSize="medium"
               />
-              {!!imageUrl &&
+              {!!imageUrl && (
                 <Image
-                  src={imageUrl} width={24}
+                  src={imageUrl}
+                  width={24}
                   height={24}
-                  alt="Image" className="rounded"
-                />}
+                  alt="Image"
+                  className="rounded"
+                />
+              )}
               {!!title && (
                 <Text
                   variant="h5"

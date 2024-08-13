@@ -8,6 +8,7 @@ import PageBody from "../news/page-body";
 import CommentDialog from "../news/page-body/components/CommentDialog";
 import FixedLayout from "components/FixedLayout";
 import { IDocItem } from "../KanbanViewDocList";
+import { useAppSelector } from "store/hooks";
 
 export interface IMemberDocDetail {
   _id: string;
@@ -69,18 +70,20 @@ const DocDetail = ({
   setOpenSlider,
 }: IDocDetail) => {
   const [open, setOpen] = useState(false);
+  const heightDocDetail = useAppSelector(
+    (state) => state.doc.heightHeaderDocDetail,
+  );
 
   return (
     <Box
       position={"relative"}
       sx={{
         overflow: "auto",
-        height: "100%",
+        height: `calc(100% - ${heightDocDetail}px)`,
         display: "flex",
         gap: { xs: open ? 3 : 0, md: 3 },
       }}
       px={{ md: 3 }}
-      pt={{ md: 1, lg: 1.5 }}
       pb={{ xs: 1.5, md: 1, lg: 1.5 }}
     >
       <LeftSlideDoc open={open} setOpen={setOpen} />
