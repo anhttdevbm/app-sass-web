@@ -41,9 +41,13 @@ const LeftSlideDoc = ({ open, setOpen }: LeftSlideDocProps) => {
       sx={{
         position: "relative",
         width: {
-          sm: "30%",
+          sm: "15%",
           xs: open ? "236px" : "0",
         },
+        display: {
+          xs: "none",
+          sm: "block"
+        }
       }}
     >
       {/* <Box
