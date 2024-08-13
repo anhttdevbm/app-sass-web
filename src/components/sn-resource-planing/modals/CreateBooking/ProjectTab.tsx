@@ -1,39 +1,37 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
-  Typography,
+  CircularProgress,
   Collapse,
   Stack,
+  Typography,
   useTheme,
-  CircularProgress,
 } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { Button, Tooltip } from "components/shared";
+import TextFieldInput from "components/shared/TextFieldInput";
 import TextFieldSelect, {
   IOptionStructure,
 } from "components/shared/TextFieldSelect";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
-import React, { UIEvent, UIEventHandler, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
-import TextFieldInput from "components/shared/TextFieldInput";
-import ArrowDownIcon from "icons/ArrowDownIcon";
-import _ from "lodash";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
-import { Button, Tooltip } from "components/shared";
+import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import Textarea from "components/sn-time-tracking/Component/Textarea";
+import TextStatus from "components/TextStatus";
+import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
+import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import dayjs from "dayjs";
+import ArrowDownIcon from "icons/ArrowDownIcon";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { BookingData } from "store/resourcePlanning/action";
 import {
   useBookingAll,
   useGetServiceBudget,
 } from "store/resourcePlanning/selector";
-import dayjs from "dayjs";
-import { BookingData } from "store/resourcePlanning/action";
-import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
-import { useGetSchemas } from "../Schemas";
-import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
-import { StatusCell } from "components/Table";
-import TextStatus from "components/TextStatus";
 import { debounce, formatNumber } from "utils/index";
+import { useGetSchemas } from "../Schemas";
 
 interface IProps {
   open: boolean;
@@ -523,6 +521,11 @@ const ProjectTab = ({
             sx={{
               width: 150,
               height: 40,
+              borderRadius: 100,
+              color: "#0575E6",
+              border: "3px solid",
+              "border-image-source":
+                "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
             }}
           >
             {commonT("form.cancel")}
@@ -531,6 +534,11 @@ const ProjectTab = ({
             sx={{
               width: 160,
               height: 40,
+              color: "white",
+              borderRadius: 100,
+              "&.MuiButton-root": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
             }}
             variant="contained"
             onClick={handleSubmitProject(onSubmitProject)}

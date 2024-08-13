@@ -21,7 +21,7 @@ const CreateBooking: React.FC<IProps> = ({
   selectedDateRange,
 }) => {
   const [typeBooking, setTypeBooking] = useState<"PROJECT" | "TIME_OFF">(
-    "TIME_OFF",
+    "PROJECT",
   );
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
 
@@ -59,13 +59,16 @@ const CreateBooking: React.FC<IProps> = ({
         width: 600,
         minHeight: 500,
         bgcolor: "white",
-        boxShadow: "-4px 10px 30px 0px #0000001A",
       }}
       rootSx={{
         ".MuiModal-backdrop": {
           backgroundColor: "#FFFFFFB2",
         },
-        ".MuiDialog-paper": { paddingTop: 0 },
+        ".MuiDialog-paper": {
+          paddingTop: 0,
+          boxShadow: "-4px 10px 30px 0px #0000001A",
+          borderRadius: "20px",
+        },
       }}
     >
       <DialogContent

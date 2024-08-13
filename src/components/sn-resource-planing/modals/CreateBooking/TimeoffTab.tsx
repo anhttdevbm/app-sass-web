@@ -78,7 +78,7 @@ const TimeOffTab = ({
     }
   }, [open]);
 
-  const onSubmitTimeOff = (data) => {
+  const onSubmitTimeOff = (data) => { 
     createBooking({
       ...data,
       user_id: resourceId,

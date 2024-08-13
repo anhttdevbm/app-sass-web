@@ -196,7 +196,7 @@ const ResourcePlanning = () => {
               + Add
             </Button>
             <CreateBooking
-              resourceId={""}
+              resourceId={user?.id || ""}
               onClose={() => setIsModalAdd(false)}
               open={isModalAdd}
             />
