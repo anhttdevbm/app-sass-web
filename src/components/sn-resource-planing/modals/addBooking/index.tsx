@@ -1,11 +1,9 @@
-import { useState } from "react";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import InputAdornment from "@mui/material/InputAdornment";
+import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro";
-import InputAdornment from "@mui/material/InputAdornment";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { useState } from "react";
 
 function AddBooking({ setIsModalAdd }: any) {
   const [isProject, setIsProject] = useState<Boolean>(true);
@@ -674,33 +672,31 @@ function AddBooking({ setIsModalAdd }: any) {
                 >
                   Date range <span style={{ color: "red" }}>*</span>
                 </label>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={["SingleInputDateRangeField"]}
-                    sx={{ marginBottom: 2 }}
-                  >
-                    <DateRangePicker
-                      slots={{ field: SingleInputDateRangeField }}
-                      name="allowedRange"
-                      slotProps={{
-                        textField: {
-                          InputProps: {
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <CalendarTodayIcon />
-                              </InputAdornment>
-                            ),
-                          },
-                          sx: {
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: "100px", // Bo góc
-                            },
+                <DemoContainer
+                  components={["SingleInputDateRangeField"]}
+                  sx={{ marginBottom: 2 }}
+                >
+                  <DateRangePicker
+                    slots={{ field: SingleInputDateRangeField }}
+                    // name="allowedRange"
+                    slotProps={{
+                      textField: {
+                        InputProps: {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <CalendarTodayIcon />
+                            </InputAdornment>
+                          ),
+                        },
+                        sx: {
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "100px", // Bo góc
                           },
                         },
-                      }}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
+                      },
+                    }}
+                  />
+                </DemoContainer>
               </div>
 
               <div style={{ marginBottom: 20 }}>

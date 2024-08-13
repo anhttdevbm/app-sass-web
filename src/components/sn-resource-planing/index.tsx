@@ -1,39 +1,49 @@
 "use client";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Stack, Typography, Tab, Grid, Input, Box } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { viVN } from "@mui/x-date-pickers/locales";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { NS_RESOURCE_PLANNING } from "constant/index";
-import useBreakpoint from "hooks/useBreakpoint";
-import { useTranslations } from "next-intl";
-import React, { useState } from "react";
-import AllPeopleTab from "./AllPeopleTab";
-import MyScheduleTab from "./MyScheduleTab";
-import useTheme from "hooks/useTheme";
+import { AddOutlined } from "@mui/icons-material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useAuth } from "store/app/selectors";
-import ROLE from "components/sn-time-tracking/Component/Constants/Enums/Roles.enum";
-import { Permission } from "constant/enums";
-import { Button } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import SearchIcon from "icons/SearchIcon";
-import TextField from "@mui/material/TextField";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Tab,
+  Typography,
+} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
-import { IconButton, Paper } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-
+import TextField from "@mui/material/TextField";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Select } from "components/shared";
+import { Permission } from "constant/enums";
+import { NS_RESOURCE_PLANNING } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import SearchIcon from "icons/SearchIcon";
+import { useTranslations } from "next-intl";
+import React, { useMemo, useState } from "react";
+import { useAuth } from "store/app/selectors";
+import { useProjects } from "store/project/selectors";
+import { useGetServiceBudget } from "store/resourcePlanning/selector";
+import { useSalesService } from "store/sales/selectors";
+import AllPeopleTab from "./AllPeopleTab";
+import GuideIcon from "./assets/GuideIcon";
+import VueSaxIcon from "./assets/VuesaxIcon";
 import AddBooking from "./modals/addBooking";
+import MyScheduleTab from "./MyScheduleTab";
 
 const ResourcePlanning = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
   const { user } = useAuth();
+  const { items } = useProjects();
+  const { budgets } = useGetServiceBudget();
+  const { serviceSectionList, onGetService } = useSalesService();
+
   const [tab, setTab] = useState(
     user?.roles?.includes(Permission.ST) ? "mySchedule" : "allPeople",
   );
@@ -42,6 +52,20 @@ const ResourcePlanning = () => {
   const [isServicePopup, setisServicePopup] = useState<Boolean>(false);
   const [isWorkload, setIsWorkload] = useState<Boolean>(false);
   const [isModalAdd, setIsModalAdd] = useState<Boolean>(false);
+  const [programSelected, setProgramSelected] = useState<string | null>(null);
+  const [budgetSelected, setBudgetSelected] = useState<string | null>(null);
+
+  const listProjects =
+    useMemo(
+      () => items.map((item) => ({ value: item?.id, label: item?.name })),
+      [items],
+    ) || [];
+
+  const listBudgets =
+    useMemo(
+      () => budgets?.map((item) => ({ value: item?.id, label: item?.name })),
+      [items],
+    ) || [];
 
   return (
     <Stack
@@ -176,9 +200,9 @@ const ResourcePlanning = () => {
         </Grid>
         <LocalizationProvider
           dateAdapter={AdapterDayjs}
-          localeText={
-            viVN.components.MuiLocalizationProvider.defaultProps.localeText
-          }
+          // localeText={
+          //   viVN.components.MuiLocalizationProvider.defaultProps.localeText
+          // }
         >
           {user?.roles?.includes(Permission.AM) && (
             <TabPanel value="allPeople">
@@ -206,41 +230,48 @@ const ResourcePlanning = () => {
             position: "absolute",
             top: "180px",
             right: "70px",
-            border: "1px solid #DDDDDD",
             width: "316px",
-            height: "406px",
+            height: "fit-content",
             zIndex: "100",
             background: "white",
             borderRadius: "12px",
             color: "black",
-            padding: "8px",
+            padding: "16px",
           }}
+          boxShadow={" -4px 10px 30px 0px #0000001A;"}
         >
           <Stack
             direction="row"
             justifyContent="space-between"
             sx={{
               font: "13px",
-              fontWeight: "700",
-              marginTop: "10px",
             }}
+            display={"flex"}
+            gap={1}
+            alignItems={"center"}
           >
-            <Typography sx={{ fontSize: "13px", fontWeight: "700" }}>
+            <Typography
+              sx={{
+                fontSize: "13px",
+                fontWeight: "700",
+                whiteSpace: "nowrap",
+                color: "#7A869A",
+              }}
+            >
               {t("popupService.project")}{" "}
               <span style={{ color: "red" }}>*</span>
             </Typography>
-            <input
-              placeholder={t("popupService.chooseProjectPlacehodle")}
-              style={{
-                border: "1px solid black",
-                color: "black",
-                borderRadius: "10px",
+            <Select
+              options={listProjects}
+              fullWidth
+              value={programSelected}
+              onChange={(e) => setProgramSelected(e.target.value)}
+              rootSx={{
+                padding: 2,
+                height: 36,
                 background: "white",
-                width: "207px",
-                height: "23px",
-                fontSize: "10px",
-                paddingLeft: "5px",
-                marginRight: "10px",
+                borderRadius: "50px",
+                borderColor: " #EFEFEF",
               }}
             />
           </Stack>
@@ -248,39 +279,51 @@ const ResourcePlanning = () => {
             direction="row"
             justifyContent="space-between"
             sx={{ marginTop: "15px", font: "13px", fontWeight: "700" }}
+            alignItems={"center"}
+            gap={1}
           >
-            <Typography sx={{ fontSize: "13px", fontWeight: "700" }}>
+            <Typography
+              sx={{
+                fontSize: "13px",
+                fontWeight: "700",
+                whiteSpace: "nowrap",
+                color: "#7A869A",
+              }}
+            >
               {t("popupService.budget")} <span style={{ color: "red" }}>*</span>
             </Typography>
-            <input
+            <Select
+              options={listBudgets}
+              fullWidth
               placeholder={t("popupService.chooseBudgetPlacehodle")}
-              style={{
-                border: "1px solid black",
-                color: "black",
-                borderRadius: "10px",
+              rootSx={{
+                padding: 2,
+                height: 36,
                 background: "white",
-                width: "207px",
-                height: "23px",
-                fontSize: "10px",
-                paddingLeft: "5px",
-                marginRight: "10px",
+                borderRadius: "50px",
+                borderColor: " #EFEFEF",
               }}
+              value={budgetSelected}
+              onChange={(e) => setBudgetSelected(e.target.value)}
             />
           </Stack>
           <Button
             sx={{
-              width: "256px",
               height: "32px",
-              background: "#2AF598",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               margin: "15px auto",
-              borderRadius: "10px",
+              borderRadius: "100px",
+              textTransform: "unset",
+              color: "white",
             }}
+            fullWidth
           >
             {t("popupService.search")}
           </Button>
           <TextField
             variant="outlined"
             placeholder="Enter summary or service key"
+            fullWidth
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -290,7 +333,6 @@ const ResourcePlanning = () => {
               style: {
                 borderRadius: "50px",
                 padding: "0 10px 0 10px",
-                width: "265px",
                 height: "32px",
                 margin: "0 auto",
                 fontSize: "10px",
@@ -304,14 +346,20 @@ const ResourcePlanning = () => {
               },
             }}
           />
-          <Box sx={{ p: 2 }}>
-            <Stack direction="row" alignItems="center">
-              <Typography variant="h6" gutterBottom>
+          <Box pt={"14px"}>
+            <Stack direction="row" alignItems="center" gap={2}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                color={"#7A869A"}
+                whiteSpace={"nowrap"}
+              >
                 Date <span style={{ color: "red" }}>*</span>
               </Typography>
               <DateRangePicker
                 slots={{ field: SingleInputDateRangeField }}
-                name="allowedRange"
+                // name="allowedRange"
+
                 sx={{
                   "& .MuiOutlinedInput-input": {
                     padding: "5px",
@@ -322,6 +370,7 @@ const ResourcePlanning = () => {
                     borderRadius: "50px",
                   },
                   marginLeft: "5px",
+                  width: "100%",
                 }}
               />
             </Stack>
@@ -329,20 +378,24 @@ const ResourcePlanning = () => {
             <Typography
               variant="subtitle1"
               gutterBottom
-              fontSize={14}
+              fontSize={13}
               marginTop={2}
               fontWeight="bold"
             >
-              🎵 Drag service to the calendar
+              <GuideIcon /> Drag service to the calendar
             </Typography>
             <Typography
               variant="body1"
-              color="primary"
+              color="#44546F"
               gutterBottom
               fontSize={11}
               marginTop={2}
+              fontWeight={700}
+              display={"flex"}
+              alignItems={"center"}
+              gap={"4px"}
             >
-              📦 02/17 service
+              <VueSaxIcon /> 02/17 service
             </Typography>
             <Paper
               variant="outlined"
@@ -355,11 +408,22 @@ const ResourcePlanning = () => {
                 borderStyle: "dashed",
                 height: "32px",
                 marginTop: "15px",
+                borderColor: "#E1D3D3",
               }}
             >
               <Typography fontSize={11}>Service 1</Typography>
               <IconButton>
-                <AddCircleOutlineIcon color="primary" />
+                <AddOutlined
+                  color="primary"
+                  sx={{
+                    background:
+                      "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                    borderRadius: "100px",
+                    fontSize: "16px",
+                    color: "white",
+                    overflow: "hidden",
+                  }}
+                />
               </IconButton>
             </Paper>
             <Paper
@@ -373,11 +437,22 @@ const ResourcePlanning = () => {
                 borderStyle: "dashed",
                 height: "32px",
                 marginTop: "15px",
+                borderColor: "#E1D3D3",
               }}
             >
               <Typography fontSize={11}>Service 1</Typography>
               <IconButton>
-                <AddCircleOutlineIcon color="primary" />
+                <AddOutlined
+                  color="primary"
+                  sx={{
+                    background:
+                      "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                    borderRadius: "100px",
+                    fontSize: "16px",
+                    color: "white",
+                    overflow: "hidden",
+                  }}
+                />
               </IconButton>
             </Paper>
           </Box>
