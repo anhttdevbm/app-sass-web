@@ -216,7 +216,7 @@ export const Endpoint = {
   AI_CHAT: "ai-chat/chat",
   AI_CHAT_PERSONA: "ai-chat/personas",
   AI_CHAT_TONE: "ai-chat/tones",
-  AI_CHAT_DELETE_ALL_SESSION: "ai-chat/close-all-chat-session",
+  AI_CHAT_DELETE_SESSION: "ai-chat/close-all-chat-session",
 
   //AI Agent
   AI_AGENT: "/agent",
