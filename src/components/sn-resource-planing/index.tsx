@@ -32,7 +32,7 @@ import { useGetServiceBudget } from "store/resourcePlanning/selector";
 import { useSalesService } from "store/sales/selectors";
 import AllPeopleTab from "./AllPeopleTab";
 import GuideIcon from "./assets/GuideIcon";
-import VueSaxIcon from "./assets/VuesaxIcon";
+import VueSaxIcon from "./assets/VueSaxIcon";
 import AddBooking from "./modals/addBooking";
 import MyScheduleTab from "./MyScheduleTab";
 
@@ -195,7 +195,7 @@ const ResourcePlanning = () => {
             >
               + Add
             </Button>
-            {isModalAdd && <AddBooking setIsModalAdd={setIsModalAdd} />}
+            <AddBooking setIsModalAdd={setIsModalAdd} isModalAdd={isModalAdd} />
           </Grid>
         </Grid>
         <LocalizationProvider

@@ -1,39 +1,56 @@
+import { CloseOutlined } from "@mui/icons-material";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { useState } from "react";
 
-function AddBooking({ setIsModalAdd }: any) {
-  const [isProject, setIsProject] = useState<Boolean>(true);
-  const [isTimeline, setIsTimeline] = useState<Boolean>(false);
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "white",
+  boxShadow: "-4px 10px 30px 0px #0000001A",
+  borderRadius: 4,
+  overflow: "hidden",
+  padding: 2,
+  paddingRight: 0,
+  width: 576,
+};
+
+type TAddBookingProps = {
+  isModalAdd: Boolean;
+  setIsModalAdd: (value: Boolean) => void;
+};
+
+function AddBooking({ setIsModalAdd, isModalAdd }: TAddBookingProps) {
+  const [typeBooking, setTypeBooking] = useState<"PROJECT" | "TIME_OFF">(
+    "PROJECT",
+  );
+
   return (
-    <>
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: "50%",
-          width: "576px",
-          height: "1166px",
-          background: "white",
-          zIndex: 100,
-          transform: "translateX(-50%)",
-          padding: "10px",
-        }}
-      >
+    <Modal
+      open={true}
+      onClose={() => setIsModalAdd(false)}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      sx={{
+        ".MuiModal-backdrop": {
+          backgroundColor: "#FFFFFFB2",
+        },
+      }}
+    >
+      <Box sx={style}>
         <div
           style={{
             width: "100%",
-            margin: "auto",
-            border: "1px solid #E0E0E0",
-            borderRadius: 8,
-            padding: 20,
-            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "white",
             overflowY: "scroll",
             maxHeight: "800px",
+            margin: "auto",
+            paddingRight: 16,
           }}
         >
           <div
@@ -42,23 +59,16 @@ function AddBooking({ setIsModalAdd }: any) {
               justifyContent: "space-between",
             }}
           >
-            <h2 style={{ margin: "0" }}>Create Booking</h2>
-            <button
-              style={{
-                marginRight: "20px",
-                height: "100%",
-                marginTop: "10px",
-                background: "white",
-                border: "none",
-                fontSize: "16px",
-                cursor: "pointer",
-              }}
+            <Typography color="#333333" variant="h4">
+              Create Booking
+            </Typography>
+            <IconButton
               onClick={() => {
-                setIsModalAdd((prev) => !prev);
+                setIsModalAdd(false);
               }}
             >
-              X
-            </button>
+              <CloseOutlined sx={{ fontSize: 14, color: "#666666" }} />
+            </IconButton>
           </div>
           <hr style={{ background: "#E0E0E0" }} />
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -73,41 +83,39 @@ function AddBooking({ setIsModalAdd }: any) {
                 cursor: "pointer",
               }}
             >
-              <button
+              <Button
                 style={{
                   width: "124px",
                   height: "100%",
                   borderRadius: "100px",
-                  border: "none",
-                  background: isProject ? "#D9F0FD" : "none",
-                  cursor: "pointer",
+                  background: typeBooking === "PROJECT" ? "#D9F0FD" : "white",
+                  color: typeBooking === "PROJECT" ? "#045EB8" : "#333333",
+                  textTransform: "unset",
                 }}
                 onClick={() => {
-                  setIsProject((prev) => true);
-                  setIsTimeline((prev) => false);
+                  setTypeBooking("PROJECT");
                 }}
               >
                 Project
-              </button>
-              <button
+              </Button>
+              <Button
                 style={{
                   width: "124px",
                   height: "100%",
                   borderRadius: "100px",
-                  border: "none",
-                  background: isTimeline ? "#D9F0FD" : "none",
-                  cursor: "pointer",
+                  background: typeBooking === "TIME_OFF" ? "#D9F0FD" : "none",
+                  color: typeBooking === "TIME_OFF" ? "#045EB8" : "#333333",
+                  textTransform: "unset",
                 }}
                 onClick={() => {
-                  setIsProject((prev) => false);
-                  setIsTimeline((prev) => true);
+                  setTypeBooking("TIME_OFF");
                 }}
               >
                 Time off
-              </button>
+              </Button>
             </div>
           </div>
-          {isProject && (
+          {typeBooking === "PROJECT" && (
             <form>
               <div style={{ marginBottom: 20 }}>
                 <label
@@ -606,7 +614,7 @@ function AddBooking({ setIsModalAdd }: any) {
               </div>
             </form>
           )}
-          {isTimeline && (
+          {typeBooking === "TIME_OFF" && (
             <form>
               <div style={{ marginBottom: 20 }}>
                 <label
@@ -814,8 +822,8 @@ function AddBooking({ setIsModalAdd }: any) {
             </form>
           )}
         </div>
-      </div>
-    </>
+      </Box>
+    </Modal>
   );
 }
 export default AddBooking;
