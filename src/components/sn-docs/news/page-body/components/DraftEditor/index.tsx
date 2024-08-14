@@ -1,7 +1,6 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -13,17 +12,11 @@ import {
   convertFromRaw,
   DraftStyleMap,
   ContentBlock,
-  DraftHandleValue,
-  Modifier,
-  DraftBlockType,
-  convertToRaw,
-  genKey,
-  ContentState,
 } from "draft-js";
 import "./DraftEditor.css";
 import "./CheckableListItem.css";
 import ToolBarDraftEditor from "../ToolBarDraftEditor";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
 import { useUpdateDocMutation } from "store/docs/api";
@@ -33,8 +26,6 @@ import AddSessionTool from "../AddSessionTool/components";
 import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
 import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
-import TableChartIcon from "@mui/icons-material/TableChart";
-import MindmapItem from "../MindmapItem";
 import BoardEditor from "../BoardEditor";
 import ReactFlowMindMap from "../ReactFlowMindMap";
 
