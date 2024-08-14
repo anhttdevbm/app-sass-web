@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LeftSlideDoc from "./LeftSlide/LeftSlideDoc";
 import { Box } from "@mui/material";
 import EditDocs from "./EditDocs";
@@ -73,13 +73,25 @@ const DocDetail = ({
   const heightDocDetail = useAppSelector(
     (state) => state.doc.heightHeaderDocDetail,
   );
+  const [screenHeight, setScreenHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenHeight(window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <Box
       position={"relative"}
       sx={{
         overflow: "auto",
-        height: `calc(100% - ${heightDocDetail}px)`,
+        height: `calc(${screenHeight}px - ${heightDocDetail}px)`,
         display: "flex",
         gap: { xs: open ? 3 : 0, md: 3 },
       }}
