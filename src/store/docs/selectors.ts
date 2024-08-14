@@ -45,7 +45,7 @@ const useDocs = () => {
   const onCreateDoc = async (
     projectId?: string,
     content?: string,
-    name: string = "No Name",
+    name = "No Name",
   ) => {
     setLoading(true);
     try {

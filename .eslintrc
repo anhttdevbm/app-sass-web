@@ -1,5 +1,5 @@
 {
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "svg-jsx"],
   "extends": [
     "next",
     "next/core-web-vitals",
@@ -16,6 +16,7 @@
       {
         "allow": ["error"]
       }
-    ]
+    ],
+    "svg-jsx/camel-case-dash": "error"
   }
 }

@@ -302,9 +302,9 @@ const MyScheduleTab = ({
     },
   };
   function getFirstAndSecondLetters(name) {
-    let parts = name.split(" ");
-    let firstLetter = parts[0][0];
-    let lastLetter = parts[parts.length - 1][0];
+    const parts = name.split(" ");
+    const firstLetter = parts[0][0];
+    const lastLetter = parts[parts.length - 1][0];
     return firstLetter + lastLetter;
   }
   const projectDumy: any = [];
@@ -325,15 +325,15 @@ const MyScheduleTab = ({
     });
   });
 
-  let grouped = projectDumy.reduce((acc, item) => {
-    let projectId = item.project.id;
+  const grouped = projectDumy.reduce((acc, item) => {
+    const projectId = item.project.id;
     if (!acc[projectId]) {
       acc[projectId] = [];
     }
     acc[projectId].push(item);
     return acc;
   }, {});
-  let result: any = Object.values(grouped);
+  const result: any = Object.values(grouped);
   for (let i = 0; i < result.length; i++) {
     for (let j = 0; j < result[i].length; j++) {
       let index;

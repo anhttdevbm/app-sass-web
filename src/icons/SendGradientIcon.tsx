@@ -25,8 +25,8 @@ const SendGradientIcon = (props: SvgIconProps) => {
           y2="16.8952"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0575E6" />
-          <stop offset="1" stop-color={props.fill || "#38E27B"}/>
+          <stop stopColor="#0575E6" />
+          <stop offset="1" stopColor={props.fill || "#38E27B"}/>
         </linearGradient>
         <linearGradient
           id="paint1_linear_1660_12330"
@@ -36,8 +36,8 @@ const SendGradientIcon = (props: SvgIconProps) => {
           y2="16.8952"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0575E6" />
-          <stop offset="1" stop-color={props.fill || "#38E27B"} />
+          <stop stopColor="#0575E6" />
+          <stop offset="1" stopColor={props.fill || "#38E27B"} />
         </linearGradient>
       </defs>
     </SvgIcon>

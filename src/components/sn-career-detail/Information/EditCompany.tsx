@@ -48,7 +48,7 @@ const EditCompany = () => {
       {},
     ) as any;
 
-    let payload = { ...dataOnlyUpdated } as any
+    const payload = { ...dataOnlyUpdated } as any
 
     if (typeof data["avatar"] === "object") {
       const logoUrl = await client.upload(Endpoint.UPLOAD, data["avatar"]);
