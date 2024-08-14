@@ -16,7 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Search, Switch } from "components/Filters";
-import { Text } from "components/shared";
 import TextStatus from "components/TextStatus";
 import { DataAction } from "constant/enums";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
@@ -43,7 +42,7 @@ import {
 } from "./components/helpers";
 import Form, { ProjectDataForm } from "./Form";
 import useBreakpoint from "hooks/useBreakpoint";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 
 const Actions = () => {
   const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();

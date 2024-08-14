@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, Suspense, useEffect, useState } from "react";
 import { useEmployeeOptions } from "store/company/selectors";
 
 import { NS_COMMON, NS_PROJECT } from "constant/index";
@@ -9,6 +9,8 @@ import { getMessageErrorByAPI, getPath } from "utils/index";
 import { useProjects } from "store/project/selectors";
 import useQueryParams from "hooks/useQueryParams";
 import { Dropdown } from "components/Filters";
+import fuzzysort from "fuzzysort";
+import { Typography } from "@mui/material";
 
 type AssignerProps = {
   value?: string;
@@ -18,8 +20,6 @@ type AssignerProps = {
 };
 
 const Assigner = (props: AssignerProps) => {
-  const { value, id } = props;
-
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
   const { initQuery, isReady, query } = useQueryParams();
@@ -41,14 +41,14 @@ const Assigner = (props: AssignerProps) => {
   }, [onGetOptions]);
 
   useEffect(() => {
-    setFilteredOptions(employeeOptions)
-  }, [employeeOptions])
+    setFilteredOptions(employeeOptions);
+  }, [employeeOptions]);
 
   const [filteredOptions, setFilteredOptions] = useState(employeeOptions);
 
   const handleAssigner = async (newAssigner, value) => {
     try {
-      await onUpdateProject(id, { owner: value });
+      await onUpdateProject(props.id, { owner: value });
       onAddSnackbar(
         projectT("taskDetail.notification.assignSuccess"),
         "success",
@@ -59,18 +59,21 @@ const Assigner = (props: AssignerProps) => {
   };
 
   const onChangeSearch = (name: string, newValue?: string | number) => {
-    const searchTerm = newValue?.toString().toLowerCase();
+    const searchTerm = newValue?.toString();
 
     if (searchTerm) {
-      const filtered = employeeOptions.filter((option) =>
-        option?.label?.toLowerCase().includes(searchTerm) ||
-        option?.subText?.toLowerCase()?.includes(searchTerm)
-      );
+      const filtered = fuzzysort
+        .go(searchTerm, employeeOptions, { key: "label" })
+        .map((elem) => elem.obj);
       setFilteredOptions(filtered);
     } else {
       setFilteredOptions(employeeOptions);
     }
   };
+
+  if (filteredOptions.length === 0) {
+    return <Typography>{commonT("form.title.noAssigner")}</Typography>;
+  }
 
   return (
     <Dropdown
