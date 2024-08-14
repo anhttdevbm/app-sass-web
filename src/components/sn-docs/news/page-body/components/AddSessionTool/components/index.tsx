@@ -31,6 +31,7 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import ChangeHistoryIcon from "@mui/icons-material/ChangeHistory";
 import SquareIcon from "@mui/icons-material/Square";
 import { uuid } from "utils/index";
+import EditorPlugins from "@draft-js-plugins/editor";
 
 const addSessionItems: IToolBarDraftActionItem[] = [
   {
@@ -114,7 +115,7 @@ export default function AddSessionTool({
   editorState: EditorState;
   setEditorState: Dispatch<SetStateAction<EditorState>>;
   focusEditor?: () => void;
-  editor: MutableRefObject<Editor | null>;
+  editor: MutableRefObject<EditorPlugins | null>;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
