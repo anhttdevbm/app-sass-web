@@ -15,6 +15,7 @@ import {
   COMPANIES_PATH,
   COST_HISTORY_PATH,
   DOCS_PATH,
+  TICKET_PATH,
   EMPLOYEES_PATH,
   FEEDBACK_PATH,
   HOLIDAY_CALENDAR_PATH,
@@ -52,6 +53,7 @@ import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
 import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
 import TaskcoverAIIcon from "icons/TaskcoverIcon";
+import TicketIcon from "icons/TickIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
 import { memo, MouseEvent, useMemo, useState } from "react";
@@ -337,6 +339,12 @@ const DATA: MenuItemProps[] = [
     label: "menu.docs",
     href: DOCS_PATH,
     icon: <MenuDocsIcon />,
+    roles: [Permission.AM, Permission.ST],
+  },
+  {
+    label: "menu.ticket",
+    href: TICKET_PATH,
+    icon: <TicketIcon />,
     roles: [Permission.AM, Permission.ST],
   },
   // Feedback

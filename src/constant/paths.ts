@@ -55,6 +55,9 @@ export const DOCS_PATH = "/documents";
 export const DOCS_DETAIL_PATH = "/documents/{id}";
 export const DOCS_CREATE_PATH = "/documents/create";
 
+export const TICKET_PATH = "/ticket";
+
+
 // Feedback
 export const FEEDBACK_PATH = "/feedback";
 //blogs
