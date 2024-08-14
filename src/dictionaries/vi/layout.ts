@@ -58,5 +58,7 @@ export const LayoutLang: LayoutDictionary = {
     landingPricing: "Định giá",
 
     invoice: "Hóa đơn",
+
+    ticket: "Vé",
   },
 };

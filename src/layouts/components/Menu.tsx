@@ -34,7 +34,7 @@ import {
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH
+  TIME_TRACKING_PATH,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -53,7 +53,7 @@ import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
 import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
 import TaskcoverAIIcon from "icons/TaskcoverIcon";
-import TicketIcon from "icons/TickIcon";
+import TicketIcon from "icons/TicketIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
 import { memo, MouseEvent, useMemo, useState } from "react";
@@ -415,7 +415,7 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
-  }
+  },
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
