@@ -326,7 +326,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     //     />
     //   </Box>
     // </Box>
-    <Box sx={{ height: "100%" }}>
+    <Box sx={{ height: "100%", width: "100%" }}>
       <DraftEditor />
     </Box>
   );

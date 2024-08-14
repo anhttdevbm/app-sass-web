@@ -26,6 +26,7 @@ import { useClientCompanies } from "store/company/selectors";
 import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
 import * as Yup from "yup";
+import NewPaymentModal from "./NewPaymentModal";
 
 const initRow = {
   service_name: null,
@@ -35,10 +36,20 @@ const initRow = {
   amount: 0,
 };
 
-const initPaymentItem = {
-  payment_method: "Paypal",
-  payment_link: "https://paypal.com",
-};
+const initPaymentItem = [
+  {
+    payment_method: "Stripe",
+    payment_link: "https://stripe.com/",
+  },
+  {
+    payment_method: "Paypal",
+    payment_link: "https://paypal.com",
+  },
+  {
+    payment_method: "Payoneer",
+    payment_link: "https://payoneer.com/",
+  },
+];
 
 const FormCreate = () => {
   const { items, onGetClientCompanies } = useClientCompanies();
@@ -48,6 +59,8 @@ const FormCreate = () => {
   const { user } = useAuth();
   const [total, setTotal] = useState(0);
   const [paymentSelected, setPaymentSelected] = useState(0);
+  const [open, setOpen] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       customer_name: "",
@@ -57,13 +70,7 @@ const FormCreate = () => {
       service_items: [initRow],
       total: 0,
       note: "",
-      payment_items: [
-        {
-          payment_method: "Stripe",
-          payment_link: "https://https://stripe.com/",
-        },
-        initPaymentItem,
-      ],
+      payment_items: initPaymentItem,
       tags: "CREDIT",
       due_date: "",
     },
@@ -364,12 +371,37 @@ const FormCreate = () => {
                   value={payment?.payment_method}
                   onClick={() => setPaymentSelected(index)}
                 >
-                  {payment?.payment_method}
+                  <Typography color="#212121" fontWeight={700} fontSize={14}>
+                    {payment?.payment_method}
+                  </Typography>
                 </MenuItem>
               ))}
+              <MenuItem key={100}>
+                <Typography
+                  onClick={() => setOpen(true)}
+                  color="#408DFB"
+                  fontWeight={700}
+                  fontSize={14}
+                >
+                  New payment method
+                </Typography>
+              </MenuItem>
             </TextField>
           </Box>
-
+          <NewPaymentModal
+            open={open}
+            setOpen={setOpen}
+            handleChange={(value) => {
+              handleChange("payment_items", [
+                ...formik.values.payment_items,
+                {
+                  payment_method: value,
+                  payment_link: "",
+                },
+              ]);
+              setOpen(false);
+            }}
+          />
           <Box
             sx={{
               display: "flex",
@@ -774,10 +806,66 @@ const FormCreate = () => {
             fontWeight={400}
           >{`Total ( VND )`}</Typography>
           <Typography color="#666666" fontSize={16} fontWeight={400}>
-            {total}
+            {Number((total * 105) / 100).toFixed(2)}
           </Typography>
         </Box>
       </Box>
+      {total !== 0 && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row-reverse",
+            width: "95%",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "95%",
+              alignItems: "flex-end",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                borderRadius: "100px",
+                alignItems: "center",
+                width: "150px",
+              }}
+            >
+              <Typography
+                color="#666666"
+                fontSize={16}
+                fontWeight={400}
+              >{`Sub total: `}</Typography>
+              <Typography color="#666666" fontSize={16} fontWeight={700}>
+                {total}
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                borderRadius: "100px",
+                alignItems: "center",
+                width: "150px",
+              }}
+            >
+              <Typography
+                color="#666666"
+                fontSize={16}
+                fontWeight={400}
+              >{`VAT`}</Typography>
+              <Typography color="#666666" fontSize={16} fontWeight={700}>
+                {Number((total * 5) / 100).toFixed(2)}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      )}
+
       <Box sx={{ display: "flex", flexDirection: "row-reverse", width: "95%" }}>
         <Typography
           color="#0575E6"

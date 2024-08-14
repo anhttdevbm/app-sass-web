@@ -54,8 +54,8 @@ const BillModal = (props: Iprops) => {
       payment_number: "A11",
     },
     validationSchema: Yup.object().shape({
-      amount: Yup.string().trim().required("form.error.required"),
-      paid_on: Yup.string().required("form.error.required"),
+      amount: Yup.string().trim().required("Amount is Required"),
+      paid_on: Yup.string().required("Paid on is required"),
     }),
     onSubmit: (value) => {
       const data = { ...value, status: action.value === "paid" ? true : false };
@@ -126,20 +126,19 @@ const BillModal = (props: Iprops) => {
     >
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Stack direction={"row"} gap={2} pt={2}>
+          <Stack direction={"row"} gap={2} pt={2} pb={2}>
             <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
               <Typography color="#4D4D4D" fontSize="14px" fontWeight={700}>
                 Amount
               </Typography>
               <Input
+                isSeparateError={true}
                 // title={billingT("detail.form.payment.title.amount")}
                 name="amount"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values?.amount}
-                error={commonT(touchedErrors?.amount, {
-                  name: "amount",
-                })}
+                error={formik.errors?.amount}
                 // error={commonT(touchedErrors?.amount, {
                 //   name: commonT("form.title.amount"),
                 // })}
@@ -149,7 +148,7 @@ const BillModal = (props: Iprops) => {
                   flex: 1,
                   mt: { xs: 2, sm: 0 },
                   backgroundColor: "#F9F1F169",
-                  borderRadius: "24px",
+                  borderRadius: "100px",
                   border: "1px solid #EFEFEF",
                 }}
                 onlyContent
@@ -161,20 +160,18 @@ const BillModal = (props: Iprops) => {
                 Paid on
               </Typography>
               <DatePicker
+                isSeparateError={true}
                 name="paid_on"
                 onChange={onChangeDate}
                 onBlur={formik.handleBlur}
                 value={formik.values?.paid_on}
-                error={commonT(touchedErrors?.paid_on, {
-                  name: "paid_on",
-                  // name2: commonT("form.title.startDate"),
-                })}
+                error={formik.errors?.paid_on}
                 rootSx={sxConfig.input}
                 fullWidth
                 sx={{
                   mt: { xs: 2, sm: 0 },
                   backgroundColor: "#F9F1F169",
-                  borderRadius: "24px",
+                  borderRadius: "100px",
                   border: "1px solid #EFEFEF",
                 }}
                 onlyContent

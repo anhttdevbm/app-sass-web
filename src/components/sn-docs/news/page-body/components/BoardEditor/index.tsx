@@ -34,37 +34,19 @@ const AddIcon = () => {
   );
 };
 
-const defaultDatta: IDataTreeBoard[] = [
+const defaultData: IDataTreeBoard[] = [
   {
     id: uuid(),
     name: "Main",
-    children: [
-      {
-        id: uuid(),
-        name: "Child 1",
-      },
-      {
-        id: uuid(),
-        name: "Sub-subtree with children",
-        children: [
-          { id: uuid(), name: "Sub Child 1" },
-          { id: uuid(), name: "Sub Child 2" },
-          { id: uuid(), name: "Sub Child 3" },
-        ],
-      },
-      {
-        id: uuid(),
-        name: "Child 2",
-      },
-    ],
+    children: [],
   },
 ];
 
 export default function BoardEditor() {
   const [boardEditorList, setBoardEditorList] =
-    useState<IDataTreeBoard[]>(defaultDatta);
+    useState<IDataTreeBoard[]>(defaultData);
 
-  const addNewTreeChildren = useCallback((id: string) => {
+  const addNewTreeChildren = useCallback((id: string, name?: string) => {
     setBoardEditorList((prevList) => {
       const addNewNode = (nodes: IDataTreeBoard[]): IDataTreeBoard[] => {
         return nodes.map((node) => {
@@ -73,7 +55,7 @@ export default function BoardEditor() {
               ...node,
               children: [
                 ...(node.children || []),
-                { id: uuid(), name: "New Board" },
+                { id: uuid(), name: name ?? "New Board" },
               ],
             };
           }
@@ -117,21 +99,41 @@ export default function BoardEditor() {
     setBoardEditorList((prevData) => updateName(prevData));
   };
 
+  const handleDeleteTree = useCallback((id: string) => {
+    setBoardEditorList((prevList) => {
+      const deleteNode = (nodes: IDataTreeBoard[]): IDataTreeBoard[] => {
+        return nodes.filter((node) => {
+          if (node.id === id) {
+            return false; // Xóa nút này
+          }
+          if (node.children) {
+            node.children = deleteNode(node.children);
+          }
+          return true;
+        });
+      };
+      return deleteNode(prevList);
+    });
+  }, []);
+
   return (
     <Box
       sx={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
+        // width: "100%",
+        // display: "flex",
+        // flexDirection: "column",
         gap: 2,
       }}
     >
       <Box
         display="flex"
         flexWrap="wrap" // Cho phép các items xuống dòng
+        flexDirection={{ xs: "column", sm: "row" }}
         gap={2}
         sx={{
-          width: "100%",
+          width: {
+            xs: "100%",
+          },
         }}
       >
         {boardEditorList.map((item) => (
@@ -140,6 +142,7 @@ export default function BoardEditor() {
             key={item.id}
             boardBoxItem={item}
             addNewTreeChildren={addNewTreeChildren}
+            deleteTree={handleDeleteTree}
           />
         ))}
         <Box

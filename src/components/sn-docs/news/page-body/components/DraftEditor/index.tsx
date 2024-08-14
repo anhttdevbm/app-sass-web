@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -40,7 +41,9 @@ import ReactFlowMindMap from "../ReactFlowMindMap";
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
   const currentId = useAppSelector((state) => state.doc.id);
-  const isOpenMindMap = useAppSelector((state) => state.doc.mindMap.isOpenMindMap);
+  const isOpenMindMap = useAppSelector(
+    (state) => state.doc.mindMap.isOpenMindMap,
+  );
   const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);
@@ -65,10 +68,11 @@ export default function DraftEditor() {
   const editor = useRef<Editor | null>(null);
 
   const [showAddSession, setShowAddSession] = useState(false);
+  const [heightToolBar, setHeightToolBar] = useState(0);
 
   // xử lý event open Add Session
   const handleKeyDown = (e) => {
-    if (e.ctrlKey && e.altKey && e.key === "d") {
+    if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "d") {
       e.preventDefault();
       setShowAddSession((prev) => !prev);
     }
@@ -157,6 +161,30 @@ export default function DraftEditor() {
       verticalAlign: "sub",
       fontSize: "80%",
     },
+    "color-FF0000": {
+      color: "#FF0000",
+    },
+    "color-00FFFF": {
+      color: "#00FFFF",
+    },
+    "color-0000FFF": {
+      color: "#0000FF",
+    },
+    "color-00008B": {
+      color: "#00008B",
+    },
+    "color-FFFF00": {
+      color: "#FFFF00",
+    },
+    "color-000000": {
+      color: "#000000",
+    },
+    "color-14fa02": {
+      color: "#14fa02",
+    },
+    "color-FFFFFF": {
+      color: "#FFFFFF",
+    },
   };
 
   // FOR BLOCK LEVEL STYLES(Returns CSS Class From DraftEditor.css)
@@ -185,6 +213,10 @@ export default function DraftEditor() {
     },
     [editorState],
   );
+
+  const heightToolMemo = useMemo(() => {
+    return heightToolBar;
+  }, [heightToolBar]);
 
   useEffect(() => {
     focusEditor();
@@ -255,14 +287,28 @@ export default function DraftEditor() {
 
   return (
     <Box
-      sx={{ width: "100%", height: "100%", bgcolor: "common.white" }}
+      sx={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        bgcolor: "common.white",
+        paddingTop: `${heightToolMemo}px`,
+      }}
       // onClick={focusEditor}
     >
       <ToolBarDraftEditor
         editorState={editorState}
         setEditorState={setEditorState}
+        setHeightToolBar={setHeightToolBar}
       />
-      <div className="editor-container">
+      <Box
+        sx={{
+          position: "relative",
+          paddingX: "1rem",
+          height: `calc(100% - ${heightToolMemo}px)`,
+          overflowY: "auto",
+        }}
+      >
         <Editor
           ref={editor}
           handleKeyCommand={handleKeyCommand}
@@ -282,7 +328,7 @@ export default function DraftEditor() {
         )}
         {isOpenMindMap ? <ReactFlowMindMap /> : null}
         {isOpenBoard ? <BoardEditor /> : null}
-      </div>
+      </Box>
     </Box>
   );
 }

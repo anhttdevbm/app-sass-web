@@ -250,7 +250,7 @@ export default function AddSessionTool({
         />
         <Box
           alignItems="center"
-          sx={{ backgroundColor: "grey.50" }}
+          sx={{ backgroundColor: "common.white" }}
           px={2}
           zIndex={1}
           aria-haspopup="true"
@@ -284,13 +284,6 @@ export default function AddSessionTool({
             </Box>
             <Typography>Add session</Typography>
           </Button>
-          {/* <AddSessionMenuList
-            handleClickFormatType={applyStyle}
-            handleClickChecked={createMouseDownHandler}
-            focusEditor={focusEditor}
-            anchorEl={anchorEl}
-            setAnchorEl={setAnchorEl}
-          /> */}
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
@@ -300,7 +293,10 @@ export default function AddSessionTool({
               "aria-labelledby": "basic-button",
             }}
             sx={{
-              minWidth: "16.75rem",
+              minWidth: {sm: "16.75rem"},
+              maxWidth: {xs: "13.75rem"},
+              maxHeight: {xs: "20.4375rem"},
+              overFlowY: {xs: "auto"},
               borderRadius: "10px",
             }}
             disableAutoFocusItem
