@@ -77,5 +77,6 @@ export type DocsDictionary = {
         selectAll: string;
       };
     };
+    invalidFileExt: string;
   };
 };

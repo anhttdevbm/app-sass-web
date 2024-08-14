@@ -14,10 +14,12 @@ import {
   NS_DOCS,
 } from "constant/index";
 import Loading from "components/Loading";
-import { FileType, ITypeFileInfo } from "../ImportForm";
+import { FileType, ITypeFileInfo } from "..";
 import { useDocs } from "store/docs/selectors";
 import { ContentBlock } from "draft-js";
 import { uuid } from "utils/index";
+import { useSnackbar } from "store/app/selectors";
+import { HttpStatusCode } from "constant/enums";
 
 interface IDocumentFile {
   name: string;
@@ -41,6 +43,7 @@ export default function DragDropFileDialog(props: IDragDropFileDialogProps) {
   const [file, setFile] = useState<IDocumentFile | null>(null);
   const [pending, setPending] = useState<boolean>(false);
   const { onCreateDoc, loading } = useDocs();
+  const { onAddSnackbar } = useSnackbar();
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -91,7 +94,7 @@ export default function DragDropFileDialog(props: IDragDropFileDialogProps) {
       setPending(true);
       const fileExt = file.name.split(".").pop();
       if (typFileInfo.extList.every((item: string) => "." + fileExt != item)) {
-        throw new Error("Invalid file extension");
+        throw new Error(docsT("import.invalidFileExt"));
       }
 
       const formData = new FormData();
@@ -107,9 +110,8 @@ export default function DragDropFileDialog(props: IDragDropFileDialogProps) {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log({ response });
 
-      if (response.status === 200) {
+      if (response.status === HttpStatusCode.OK) {
         const fileData: IDocumentFile = {
           name: file.name,
           type: file.type,
@@ -123,9 +125,9 @@ export default function DragDropFileDialog(props: IDragDropFileDialogProps) {
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
-    } catch (error) {
+    } catch (error: any) {
       setPending(false);
-      throw error;
+      onAddSnackbar(error.message, "error", 3000);
     }
   };
 
@@ -140,24 +142,27 @@ export default function DragDropFileDialog(props: IDragDropFileDialogProps) {
         }),
       );
     } else {
-      (file?.content as object[]).forEach((row, idx) => {
-        blocks.push(
-          new ContentBlock({
-            key: uuid(),
-            type: "header-five",
-            text: `Row ${idx + 1}`,
-          }),
-        );
-        Object.entries(row).forEach(([key, value]) =>
-          blocks.push(
+      blocks.push(
+        ...(file?.content as object[]).flatMap((row, idx) => {
+          const rowBlocks = [
             new ContentBlock({
               key: uuid(),
-              type: "normaltext",
-              text: `\t${key}: ${value}`,
+              type: "header-five",
+              text: `Row ${idx + 1}`,
             }),
-          ),
-        );
-      });
+            ...Object.entries(row).map(
+              ([key, value]) =>
+                new ContentBlock({
+                  key: uuid(),
+                  type: "normaltext",
+                  text: `\t${key}: ${value}`,
+                }),
+            ),
+          ];
+
+          return rowBlocks;
+        }),
+      );
     }
 
     onCreateDoc(undefined, JSON.stringify(blocks), file?.name);
