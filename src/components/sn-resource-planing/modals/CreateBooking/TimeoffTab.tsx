@@ -78,7 +78,7 @@ const TimeOffTab = ({
     }
   }, [open]);
 
-  const onSubmitTimeOff = (data) => { 
+  const onSubmitTimeOff = (data) => {
     createBooking({
       ...data,
       user_id: resourceId,
@@ -267,10 +267,11 @@ const TimeOffTab = ({
                 {...field}
                 sx={{
                   ".MuiFormControl-root, .MuiFormLabel-root": {
-                    background: "#EFEFEF",
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
                   },
-                  ".MuiInputBase-input ": {
-                    background: "#EFEFEF",
+                  ".MuiInputBase-input, .MuiInputBase-root": {
+                    background: "transparent",
                   },
                 }}
               />

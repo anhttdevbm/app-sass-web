@@ -3,16 +3,16 @@ import {
   Box,
   CircularProgress,
   Collapse,
+  FormHelperText,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import SelectController from "components/SelectController";
 import { Button, Tooltip } from "components/shared";
 import TextFieldInput from "components/shared/TextFieldInput";
-import TextFieldSelect, {
-  IOptionStructure,
-} from "components/shared/TextFieldSelect";
+import TextFieldSelect from "components/shared/TextFieldSelect";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
@@ -24,7 +24,7 @@ import dayjs from "dayjs";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Control, Controller, useForm } from "react-hook-form";
 import { BookingData } from "store/resourcePlanning/action";
 import {
   useBookingAll,
@@ -135,94 +135,51 @@ const ProjectTab = ({
   return (
     <Grid2 container spacing={2} sx={{ mt: 1 }}>
       <Grid2 xs={12}>
-        <Controller
+        <SelectController
           name="project_id"
-          control={controlProject}
-          render={({ field }) => (
-            <TextFieldSelect
-              helperText={errorsProject.project_id?.message}
-              error={!!errorsProject.project_id?.message}
-              required
-              options={projectOptions}
-              label={resourceT("form.project")}
-              {...field}
-              MenuProps={{
-                sx: {
-                  maxHeight: "400px",
-                },
-              }}
-              sx={{
-                overflow: "hidden",
-                "& .Muibox-root .MuiBox-root": {
-                  overflow: "hidden",
-                  justifyContent: "space-between",
-                  maxWidth: "100%",
-                },
-                "& .MuiStack-root": {
-                  width: "100%",
-                },
-                "& .MuiSelect-selet": {
-                  pr: 0,
-                },
-                "& .MuiSelect-select": {
-                  pr: "16px!important",
-                },
-              }}
-            />
-          )}
+          control={controlProject as unknown as Control}
+          listOptions={projectOptions}
+          label={resourceT("form.project")}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
+          MenuProps={{
+            sx: {
+              maxHeight: "400px",
+            },
+          }}
         />
       </Grid2>
       <Grid2 xs={12}>
-        <Controller
+        <SelectController
           name="sale_id"
-          control={controlProject}
-          render={({ field }) => (
-            <TextFieldSelect
-              value={field.value}
-              disabled={!watchProject("project_id")}
-              onChange={(event) => {
-                field.onChange(event.target.value);
-              }}
-              MenuProps={{
-                PaperProps: {
-                  onScroll: onScroll,
-                },
-                sx: {
-                  maxHeight: "400px",
-                },
-              }}
-              helperText={errorsProject.sale_id?.message}
-              error={!!errorsProject.sale_id?.message}
-              required
-              options={serviceBudgetOptions as IOptionStructure[]}
-              label={resourceT("form.services")}
-              sx={{
-                "& .Muibox-root .MuiBox-root": {
-                  overflow: "hidden",
-                  justifyContent: "space-between",
-                  maxWidth: "95%",
-                  gap: 1,
-                },
-                "& .MuiStack-root": {
-                  width: "95%",
-                },
-                "& .MuiSelect-select": {
-                  pr: "16px!important",
-                },
-              }}
-              // MenuProps={{
-              //   sx: {
-              //     "& .MuiMenuItem-root": {
-              //       overflow: "hidden",
-              //       textOverflow: "ellipsis",
-              //       whiteSpace: "nowrap",
-              //       wordBreak: "break-word",
-              //       maxWidth: "98%",
-              //     },
-              //   },
-              // }}
-            />
-          )}
+          control={controlProject as unknown as Control}
+          listOptions={serviceBudgetOptions}
+          disabled={!watchProject("project_id")}
+          label={resourceT("form.services")}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
+          MenuProps={{
+            PaperProps: {
+              onScroll: onScroll,
+            },
+            sx: {
+              maxHeight: "400px",
+            },
+          }}
         />
       </Grid2>
       <Grid2 xs={12} md={6}>
@@ -230,82 +187,152 @@ const ProjectTab = ({
           name="dateRange"
           control={controlProject}
           render={({ field }) => (
-            <CustomDateRangePicker
-              required
-              value={field.value}
-              onChange={(value) => {
-                field.onChange(value);
-              }}
-              label={resourceT("form.dateRange")}
-              placeholder=""
-              errorMessage={
-                errorsProject.dateRange?.startDate?.message ||
-                errorsProject.dateRange?.endDate?.message
-              }
-            />
+            <div>
+              <Typography
+                color={"#4D4D4D"}
+                fontSize={13}
+                pb={2}
+                fontWeight={700}
+              >
+                {resourceT("form.dateRange")}
+                <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+              </Typography>
+              <CustomDateRangePicker
+                value={field.value}
+                onChange={(value) => {
+                  field.onChange(value);
+                }}
+                // label={resourceT("form.dateRange")}
+                placeholder=""
+                errorMessage={
+                  errorsProject.dateRange?.startDate?.message ||
+                  errorsProject.dateRange?.endDate?.message
+                }
+                sx={{
+                  width: "100%",
+                  background:
+                    "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                  borderRadius: "100px",
+                  ".MuiBox-root": {
+                    borderColor: "#EFEFEF",
+                    borderRadius: "100px",
+                    height: 56,
+                    display: "block",
+                    padding: "16px 12px",
+                  },
+                  ".MuiSvgIcon-root": {
+                    color: "#B3B3B3",
+                  },
+                }}
+              />
+            </div>
           )}
         />
       </Grid2>
       <Grid2 xs={12} md={6}>
-        <Stack
-          direction="row"
-          sx={{
-            ".text-field-input-container, .text-field-select-container": {
-              border: `1px solid transparent`,
-              transition: "border-color 0.3s ease",
-            },
-            border: `1px solid ${
-              isFocusAllocation ? palette.primary.main : "transparent"
-            }`,
-            "&:focus-within": {
-              borderColor: palette.primary.main,
-            },
-          }}
-        >
-          <Controller
-            name="allocation"
-            control={controlProject}
-            render={({ field }) => (
-              <TextFieldInput
-                label={resourceT("form.allocation")}
-                placeholder="8h"
-                sx={{
-                  "& > .MuiBox-root": {
-                    borderRadius: 0,
-                    borderRight: "1px solid #BABCC6",
-                  },
-                }}
-                helperText={errorsProject.allocation?.message}
-                error={!!errorsProject.allocation?.message}
-                {...field}
-              />
-            )}
-          />
+        <Grid2 xs={12} md={6}>
+          <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+            {resourceT("form.allocation")}
+            <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+          </Typography>
+          <Stack
+            direction="row"
+            sx={{
+              ".text-field-input-container, .text-field-select-container": {
+                border: `1px solid transparent`,
+                transition: "border-color 0.3s ease",
+              },
+              border: `1px solid ${
+                isFocusAllocation ? palette.primary.main : "#EFEFEF"
+              }`,
+              "&:focus-within": {
+                borderColor: palette.primary.main,
+              },
+              background:
+                "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+              borderRadius: "100px",
+              justifyContent: "space-between",
+            }}
+          >
+            <Controller
+              name="allocation"
+              control={controlProject}
+              render={({ field }) => (
+                <TextFieldInput
+                  placeholder="8h"
+                  sx={{
+                    "& > .MuiBox-root": {
+                      background: "transparent",
+                    },
+                    flex: "1 1 0%",
+                    ".MuiInputBase-input": {
+                      height: 32,
+                    },
+                  }}
+                  type="number"
+                  error={!!errorsProject.allocation?.message}
+                  {...field}
+                />
+              )}
+            />
 
-          <Controller
-            name="allocation_type"
-            control={controlProject}
-            render={({ field }) => (
-              <TextFieldSelect
-                value={field.value}
-                onChange={(event) => {
-                  field.onChange(event.target.value);
-                }}
-                placeholder=""
-                options={timeOptions}
-                onFocus={() => setIsFocusAllocation(true)}
-                onBlur={() => setIsFocusAllocation(false)}
-              />
-            )}
-          />
-        </Stack>
+            <Controller
+              name="allocation_type"
+              control={controlProject}
+              render={({ field }) => (
+                <TextFieldSelect
+                  value={field.value}
+                  onChange={(event) => {
+                    field.onChange(event.target.value);
+                  }}
+                  sx={{
+                    "& > .MuiBox-root": {
+                      background: "transparent",
+                      borderColor: "transparent",
+                    },
+                    "& .MuiInputBase-root": {
+                      background: "transparent",
+                      color: "#00000080",
+                    },
+                  }}
+                  options={timeOptions}
+                  onFocus={() => setIsFocusAllocation(true)}
+                  onBlur={() => setIsFocusAllocation(false)}
+                />
+              )}
+            />
+          </Stack>
+          {errorsProject.allocation?.message && (
+            <FormHelperText
+              sx={{ color: "rgba(246, 78, 96, 1)", marginLeft: "18px" }}
+            >
+              {errorsProject.allocation?.message}
+            </FormHelperText>
+          )}
+        </Grid2>
       </Grid2>
       <Grid2 xs={12}>
+        <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+          {resourceT("form.note")}
+        </Typography>
         <Controller
           name="note"
           control={controlProject}
           render={({ field }) => {
-            return <Textarea {...field} label={resourceT("form.note")} />;
+            return (
+              <Textarea
+                {...field}
+                sx={{
+                  ".MuiFormControl-root, .MuiFormLabel-root": {
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                  },
+                  ".MuiInputBase-input, .MuiInputBase-root": {
+                    background: "transparent",
+                  },
+                }}
+              />
+            );
           }}
         />
       </Grid2>
