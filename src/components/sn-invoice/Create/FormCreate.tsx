@@ -28,6 +28,7 @@ import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
 import NewInvoiceIcon from "public/images/new-invoice.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { uuid } from "utils/index";
 import * as Yup from "yup";
 import NewPaymentModal from "./NewPaymentModal";
 
@@ -37,6 +38,7 @@ const initRow = {
   rate: null,
   discount: null,
   amount: 0,
+  id: uuid(),
 };
 
 const initPaymentItem = [
@@ -601,7 +603,7 @@ const FormCreate = () => {
             </TableHead>
 
             <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-              <Droppable key={1} droppableId="1">
+              <Droppable droppableId="table-droppable">
                 {(provided, snapshot) => (
                   <TableBody
                     ref={provided.innerRef}
@@ -609,8 +611,8 @@ const FormCreate = () => {
                   >
                     {formik.values.service_items.map((row, index) => (
                       <Draggable
-                        key={index}
-                        draggableId={String(index)}
+                        key={row.id}
+                        draggableId={String(row.id)}
                         index={index}
                       >
                         {(provided) => (
@@ -619,9 +621,6 @@ const FormCreate = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            sx={{
-                              width: "600px",
-                            }}
                           >
                             <TableCell
                               sx={{
@@ -857,7 +856,7 @@ const FormCreate = () => {
           onClick={() =>
             handleChange("service_items", [
               ...formik.values.service_items,
-              initRow,
+              { ...initRow, id: uuid() },
             ])
           }
         >
@@ -895,7 +894,7 @@ const FormCreate = () => {
           </Typography>
         </Box>
       </Box>
-      {total !== 0 && (
+      {
         <Box
           sx={{
             display: "flex",
@@ -949,7 +948,7 @@ const FormCreate = () => {
             </Box>
           </Box>
         </Box>
-      )}
+      }
 
       <Box sx={{ display: "flex", flexDirection: "row-reverse", width: "95%" }}>
         <Typography
