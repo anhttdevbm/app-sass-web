@@ -895,7 +895,7 @@ const FormCreate = () => {
           </Typography>
         </Box>
       </Box>
-      {total !== 0 && (
+      {
         <Box
           sx={{
             display: "flex",
@@ -949,7 +949,7 @@ const FormCreate = () => {
             </Box>
           </Box>
         </Box>
-      )}
+      }
 
       <Box sx={{ display: "flex", flexDirection: "row-reverse", width: "95%" }}>
         <Typography
