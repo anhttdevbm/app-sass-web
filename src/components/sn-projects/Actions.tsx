@@ -106,7 +106,12 @@ const Actions = () => {
   const [isShowMobileSearch, setIsShowMobileSearch] = useState(false);
 
   const NewProjectButton = () => (
-    <ButtonWithDropdown text={commonT("createNew")} onClick={onShow}>
+    <ButtonWithDropdown
+      text={commonT("createNew")}
+      primaryButtonProps={{
+        onClick: onShow,
+      }}
+    >
       {(handleClose) => (
         <Paper>
           <MenuList>

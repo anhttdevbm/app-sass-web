@@ -9,7 +9,7 @@ const ButtonWithDropdown = ({
   text: string;
   children: (handleClose: () => void) => JSX.Element;
   primaryButtonProps?: ComponentProps<typeof Button>;
-  secondaryButtonProps?: ComponentProps<typeof Button>;
+  secondaryButtonProps?: Omit<ComponentProps<typeof Button>, "onClick">;
 }) => {
   const { text, children, primaryButtonProps, secondaryButtonProps, ...rest } =
     props;
@@ -53,7 +53,7 @@ const ButtonWithDropdown = ({
         }}
         size="small"
         onClick={(e) => setAnchorEl(e.currentTarget)}
-        {...primaryButtonProps}
+        {...secondaryButtonProps}
       >
         <ExpandMore />
       </Button>

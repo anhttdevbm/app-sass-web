@@ -45,7 +45,9 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
     <>
       <ButtonWithDropdown
         text={projectT("detailTasks.createNewTaskList")}
-        onClick={onShow}
+        primaryButtonProps={{
+          onClick: onShow,
+        }}
         sx={props.sx}
       >
         {(handleClose) => (
