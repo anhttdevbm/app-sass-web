@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Dialog from "../Dialog";
 import { ITrelloTeam } from ".";
 import {
   Checkbox,
@@ -16,8 +15,9 @@ import { Button, Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import { NS_DOCS } from "constant/index";
 import { useDocs } from "store/docs/selectors";
-import SuccessDialog from "../SuccessDialog";
 import useToggle from "hooks/useToggle";
+import Dialog from "../Dialog";
+import SuccessDialog from "../SuccessDialog";
 
 interface ITrelloDialogProps {
   open: boolean;

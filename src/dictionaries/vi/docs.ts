@@ -91,5 +91,6 @@ export const DocsLang: DocsDictionary = {
         selectAll: "Chọn tất cả",
       },
     },
+    invalidFileExt: "Định dạng tệp chưa hợp lệ!",
   },
 };

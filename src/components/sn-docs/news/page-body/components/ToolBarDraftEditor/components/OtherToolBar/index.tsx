@@ -42,12 +42,6 @@ export default function OtherToolBar() {
       icon: <TagIcon />,
     },
     {
-      label: "insert-emotion",
-      method: "block",
-      style: "insert-emotion",
-      icon: <InsertEmoticonIcon />,
-    },
-    {
       label: "insert-grid",
       method: "block",
       style: "insert-grid",

@@ -1,43 +1,31 @@
+import EditorPlugins from "@draft-js-plugins/editor";
+import createEmojiPlugin from "@draft-js-plugins/emoji";
+import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
+import { Box, Typography } from "@mui/material";
 import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  Editor,
-  EditorState,
-  RichUtils,
+  ContentBlock,
   convertFromRaw,
   DraftStyleMap,
-  ContentBlock,
-  DraftHandleValue,
-  Modifier,
-  DraftBlockType,
-  convertToRaw,
-  genKey,
-  ContentState,
+  EditorState,
+  RichUtils,
 } from "draft-js";
 import "./DraftEditor.css";
 import "./CheckableListItem.css";
 import ToolBarDraftEditor from "../ToolBarDraftEditor";
-import { Box, Typography } from "@mui/material";
+import useDebounce from "hooks/useDebounce";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useUpdateDocMutation } from "store/docs/api";
+import { useDocs } from "store/docs/selectors";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
-import { useUpdateDocMutation } from "store/docs/api";
-import useDebounce from "hooks/useDebounce";
-import { useDocs } from "store/docs/selectors";
 import AddSessionTool from "../AddSessionTool/components";
 import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
 import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
 import BoardEditor from "../BoardEditor";
 import ReactFlowMindMap from "../ReactFlowMindMap";
-import EditorPlugins from "@draft-js-plugins/editor";
-import createEmojiPlugin from "@draft-js-plugins/emoji";
-import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
+import "./CheckableListItem.css";
+import "./DraftEditor.css";
 import "./EmojiEditor.css";
 
 export default function DraftEditor() {
@@ -260,7 +248,7 @@ export default function DraftEditor() {
     } else {
       setMounted(true);
     }
-  }, [description, name, project_id, currentId]);
+  }, [description, name, project_id, currentId, mounted, id, handleUpdateDoc]);
 
   // set giá trị cho doc khi mounted
   useEffect(() => {
@@ -327,6 +315,15 @@ export default function DraftEditor() {
         setEditorState={setEditorState}
         setHeightToolBar={setHeightToolBar}
       />
+      <Box
+        paddingX="1rem"
+        paddingY="0.5rem"
+        display="flex"
+        alignItems="center"
+        marginTop={1}
+      >
+        <EmojiSelect />
+      </Box>
       <Box
         sx={{
           position: "relative",

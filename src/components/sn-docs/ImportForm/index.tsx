@@ -1,24 +1,20 @@
 import { SmartToy } from "@mui/icons-material";
 import { Box, Divider, Grid, Link, Modal, Paper, Stack } from "@mui/material";
 import { useMemo, useState } from "react";
-import OutlineBtn from "./OutlineBtn";
 import useToggle from "hooks/useToggle";
-import DragDropFileDialog from "./DragDropFileDialog";
 import { Endpoint } from "api";
 import { useLocale, useTranslations } from "next-intl";
 import { NS_COMMON, NS_DOCS } from "constant/index";
 import { Text } from "components/shared";
+import OutlineBtn from "./OutlineBtn";
+import DragDropFileDialog from "./DragDropFileDialog";
 import ThirdPartyFileDialog from "./ThirdPartyFileDialog";
 import ImportTrello from "./ImportTrello";
+import thirdPartyList, { IThirdPartyItem } from "./thirdPartyList";
 
 export enum FileType {
   Docs = "docs",
   Spreadsheet = "spreadsheet",
-}
-
-export enum ThirdpartyTyp {
-  File = "file",
-  Direct = "direct",
 }
 
 export interface ITypeFileInfo {
@@ -28,64 +24,6 @@ export interface ITypeFileInfo {
   endpointURL: string;
   additionalData?: { [key: string]: string };
 }
-
-export interface IThirdPartyItem {
-  text: string;
-  typ: ThirdpartyTyp;
-  file?: {
-    name: string;
-    type: string;
-    ext: string;
-  };
-  extList?: string[];
-  endpointURL: string;
-  icon: () => JSX.Element;
-}
-
-const thirdPartyList: IThirdPartyItem[] = [
-  {
-    text: "Markdown & Text",
-    typ: ThirdpartyTyp.File,
-    file: {
-      name: "markdown",
-      type: "text/markdown",
-      ext: ".md",
-    },
-    extList: [".txt", ".md"],
-    endpointURL: Endpoint.AI_DOCS_IMPORT_MD,
-    icon: () => <SmartToy />,
-  },
-  {
-    text: "Trello",
-    typ: ThirdpartyTyp.Direct,
-    endpointURL: "",
-    icon: () => <SmartToy />,
-  },
-  {
-    text: "Dynalist",
-    typ: ThirdpartyTyp.File,
-    file: {
-      name: "opml",
-      type: "text/xml",
-      ext: ".opml",
-    },
-    extList: [".opml"],
-    endpointURL: Endpoint.AI_DOCS_IMPORT_OPML,
-    icon: () => <SmartToy />,
-  },
-  {
-    text: "Workflowy",
-    typ: ThirdpartyTyp.File,
-    file: {
-      name: "opml",
-      type: "text/xml",
-      ext: ".opml",
-    },
-    extList: [".opml"],
-    endpointURL: Endpoint.AI_DOCS_IMPORT_OPML,
-    icon: () => <SmartToy />,
-  },
-];
 
 const ImportForm = (props: { open: boolean; onClose: () => void }) => {
   const commonT = useTranslations(NS_COMMON);
