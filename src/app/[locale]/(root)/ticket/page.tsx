@@ -1,12 +1,19 @@
-import Wrapper from "components/Wrapper";
-import { Actions } from "components/sn-ticket";
-import { NS_DOCS } from "constant/index";
+import Skeleton from "components/sn-ticket/layout/Skeleton";
+import { NS_TICKET } from "constant/index";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const TicketTemplate = dynamic(
+  () => import("components/sn-ticket/template/ticket-template"),
+  {
+    ssr: false,
+    loading: () => <Skeleton />,
+  },
+);
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations(NS_DOCS);
+  const t = await getTranslations(NS_TICKET);
 
   return {
     title: t("title"),
@@ -14,9 +21,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Page() {
-  return (
-    <Wrapper overflow="auto" inFrame>
-      <Actions isProjectTabMode={false} />
-    </Wrapper>
-  );
+  return <TicketTemplate />;
 }

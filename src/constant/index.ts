@@ -153,6 +153,9 @@ export const NS_MEETING = "meeting";
 // Invoice
 export const NS_INVOICE = "invoice";
 
+//ticket
+export const NS_TICKET = "ticket";
+
 export const IMAGES_ACCEPT = ["image/png", "image/jpeg", "image/jpg"];
 export const VIDEO_ACCEPT = ["video/mp4"];
 export const ACCEPT_MEDIA = [...IMAGES_ACCEPT, ...VIDEO_ACCEPT];

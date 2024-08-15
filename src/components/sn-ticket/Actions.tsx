@@ -39,7 +39,7 @@ import ImportForm from "./ImportForm";
 import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
 import ArrowExport from "icons/ArrowExport";
 import AddSquareIcon from "icons/AddSquareIcon";
-
+import { TICKET_CREATE_PATH } from "constant/paths";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -216,16 +216,20 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           >
             <ChangeViewListDoc />
             <Button
-              // onClick={() => {
-              //   push(BILLING_CREATE_PATH);
-              // }}
+              onClick={() => {
+                push(TICKET_CREATE_PATH);
+              }}
               size="small"
               variant="primary"
               sx={{
-                height: 40, width: "fit-content", borderRadius: 100, background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                '&:hover': {
-                  background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                }
+                height: 40,
+                width: "fit-content",
+                borderRadius: 100,
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                },
               }}
             >
               <AddSquareIcon
