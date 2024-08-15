@@ -46,7 +46,7 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
       <ButtonWithDropdown
         text={projectT("detailTasks.createNewTaskList")}
         onClick={onShow}
-        containerSx={props.sx}
+        sx={props.sx}
       >
         {(handleClose) => (
           <Paper>

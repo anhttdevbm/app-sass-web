@@ -5,12 +5,14 @@ import { ComponentProps, MouseEventHandler, useState } from "react";
 
 const ButtonWithDropdown = ({
   ...props
-}: Omit<ComponentProps<typeof Button>, "children"> & {
-  containerSx?: SxProps;
+}: Omit<ComponentProps<typeof Box>, "children"> & {
   text: string;
   children: (handleClose: () => void) => JSX.Element;
+  primaryButtonProps?: ComponentProps<typeof Button>;
+  secondaryButtonProps?: ComponentProps<typeof Button>;
 }) => {
-  const { text, children, ...buttonProps } = props;
+  const { text, children, primaryButtonProps, secondaryButtonProps, ...rest } =
+    props;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const isOpen = Boolean(anchorEl);
 
@@ -25,8 +27,8 @@ const ButtonWithDropdown = ({
         background:
           "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
         borderRadius: "2rem",
-        ...props.containerSx,
       }}
+      {...rest}
     >
       <Button
         startIcon={<AddCircle />}
@@ -36,7 +38,7 @@ const ButtonWithDropdown = ({
           borderRadius: "2rem 0 0 2rem",
           bgcolor: "transparent",
         }}
-        {...buttonProps}
+        {...primaryButtonProps}
       >
         <Text sx={{ color: "white" }}>{text}</Text>
       </Button>
@@ -51,6 +53,7 @@ const ButtonWithDropdown = ({
         }}
         size="small"
         onClick={(e) => setAnchorEl(e.currentTarget)}
+        {...primaryButtonProps}
       >
         <ExpandMore />
       </Button>
