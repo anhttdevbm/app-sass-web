@@ -66,6 +66,8 @@ const FormCreate = () => {
   const [paymentSelected, setPaymentSelected] = useState(0);
   const [open, setOpen] = useState(false);
 
+  const [showSummary, setShowSummary] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       customer_name: "",
@@ -132,8 +134,12 @@ const FormCreate = () => {
   };
 
   const handleShowTotal = () => {
-    setTotal(formik.values.total);
+    setShowSummary((prev) => !prev);
   };
+
+  useEffect(() => {
+    setTotal(formik.values.total);
+  }, [formik.values.total]);
 
   const { onUpdateHeaderConfig } = useHeaderConfig();
 
@@ -213,7 +219,7 @@ const FormCreate = () => {
               border: "1px solid #EFEFEF",
             },
             "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
-              padding: "10px 30px",
+              padding: "6px 30px",
             },
             width: "50%",
           }}
@@ -254,7 +260,7 @@ const FormCreate = () => {
               background: "#ffffff",
             },
             "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
-              padding: "10px 30px",
+              padding: "6px 30px",
             },
             width: "50%",
           }}
@@ -292,7 +298,7 @@ const FormCreate = () => {
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
               borderRadius: "12px",
               background: "rgba(249, 241, 241, 0.41)",
-              padding: "10px 30px",
+              padding: "6px 30px",
             },
             width: "50%",
             color: "rgba(33, 38, 60, 1)",
@@ -340,7 +346,7 @@ const FormCreate = () => {
                 border: "1px solid rgba(0, 0, 0, 0.38)",
                 borderRadius: "100px",
                 background: "#ffffff",
-                padding: "8px 30px",
+                padding: "5px 30px",
               },
               width: "72%",
             }}
@@ -359,7 +365,7 @@ const FormCreate = () => {
                   border: "1px solid rgba(0, 0, 0, 0.38)",
                   borderRadius: "100px",
                   background: "#ffffff",
-                  padding: "8px 30px",
+                  padding: "5px 30px",
                 },
                 width: "fit-content",
               }}
@@ -386,7 +392,7 @@ const FormCreate = () => {
                 borderRadius: "100px",
               },
               "& .MuiInputBase-input.MuiOutlinedInput-input": {
-                padding: "10px 30px",
+                padding: "6px 30px",
               },
               width: "50%",
             }}
@@ -419,7 +425,7 @@ const FormCreate = () => {
                 },
                 "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ":
                   {
-                    padding: "10px 30px",
+                    padding: "6px 30px",
                   },
               }}
               value={
@@ -481,7 +487,7 @@ const FormCreate = () => {
                   borderRadius: "100px",
                 },
                 "& .MuiInputBase-input.MuiOutlinedInput-input": {
-                  padding: "10px 30px",
+                  padding: "6px 30px",
                 },
               }}
               value={formik.values.payment_items[paymentSelected]?.payment_link}
@@ -890,11 +896,11 @@ const FormCreate = () => {
             fontWeight={400}
           >{`Total ( VND )`}</Typography>
           <Typography color="#666666" fontSize={16} fontWeight={400}>
-            {Number((total * 105) / 100).toFixed(2)}
+            {Number((total * 110) / 100).toFixed(2)}
           </Typography>
         </Box>
       </Box>
-      {
+      {showSummary && (
         <Box
           sx={{
             display: "flex",
@@ -943,12 +949,12 @@ const FormCreate = () => {
                 fontWeight={400}
               >{`VAT`}</Typography>
               <Typography color="#666666" fontSize={16} fontWeight={700}>
-                {Number((total * 5) / 100).toFixed(2)}
+                {Number((total * 10) / 100).toFixed(2)}
               </Typography>
             </Box>
           </Box>
         </Box>
-      }
+      )}
 
       <Box sx={{ display: "flex", flexDirection: "row-reverse", width: "95%" }}>
         <Typography
