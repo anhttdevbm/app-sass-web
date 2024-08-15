@@ -1,5 +1,5 @@
 import Wrapper from "components/Wrapper";
-import { Actions } from "components/sn-ticket";
+import { Actions , TicketList } from "components/sn-ticket";
 import { NS_DOCS } from "constant/index";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -17,6 +17,7 @@ export default function Page() {
   return (
     <Wrapper overflow="auto" inFrame>
       <Actions isProjectTabMode={false} />
+      <TicketList/>
     </Wrapper>
   );
 }
