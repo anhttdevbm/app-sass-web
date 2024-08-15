@@ -22,12 +22,14 @@ import { useInvoices } from "store/invoice/selectors";
 const InformationBillingPage = () => {
   const { item, onGetInvoiceDetail, onGetInvoices } = useInvoices();
   const { tagsOptions, onGetTags } = useTags();
-  // const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
-  // const { budgets, onGetBudgets } = useBudgets();
   const { initQuery, isReady, query } = useQueryParams();
-  // const { options, onGetOptions } = useEmployeeOptions();
-  // const { memberOptions } = useGetMemberOptions();
   const { user } = useAuth();
+
+  const [openComment, setOpenComment] = useState(false);
+
+  const handleDisplayComment = (value: boolean) => {
+    setOpenComment(value);
+  };
 
   const userInfo = useMemo(() => {
     const dataUser = {
@@ -48,38 +50,6 @@ const InformationBillingPage = () => {
   const { id } = useParams();
 
   const [newServices, setNewServices] = useState<Service[]>([]);
-
-  // const dataDuplicate = localStorage.getItem("duplicateBill");
-
-  // const duplicateBill = useMemo(() => {
-  //   if (!dataDuplicate) return;
-  //   const data = JSON.parse(dataDuplicate);
-  //   return data;
-  // }, [dataDuplicate]);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     onGetInvoiceDetail(id.toString() ?? "");
-  //   }
-  // }, [onGetInvoiceDetail]);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     onGetInvoiceDetail(id.toString() ?? "");
-  //   }
-  // }, [onGetInvoiceDetail]);
-
-  // useEffect(() => {
-  //   onGetOptions({ pageIndex: 1, pageSize: 20 });
-  //   // onGetServiceBudgets();
-  //   onGetTags();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!isReady) return;
-  //   onGetBudgets({ ...initQuery });
-  // }, [isReady, onGetBudgets]);
-
   useEffect(() => {
     if (typeof id === "string" && id) {
       onGetInvoiceDetail(id);
@@ -87,14 +57,6 @@ const InformationBillingPage = () => {
   }, [id]);
 
   return (
-    // <FixedLayout
-    // maxHeight={920}
-    // maxWidth={{
-    //   xs: 1120,
-    //   xl: 1450,
-    // }}
-    // overflow={"auto"}
-    // >
     <Stack
       padding={{ sm: 3 }}
       sx={{ overflowY: "auto" }}
@@ -105,6 +67,7 @@ const InformationBillingPage = () => {
         // item={id ? item : duplicateBill}
         item={item}
         user={userInfo}
+        handleDisplayComment={handleDisplayComment}
         // memberOptions={options}
       />
 
@@ -112,6 +75,9 @@ const InformationBillingPage = () => {
         // item={id ? item : duplicateBill}
         item={item}
         user={userInfo}
+        handleDisplayComment={handleDisplayComment}
+        openComment={openComment}
+
         // arrBudgets={budgets}
       />
     </Stack>

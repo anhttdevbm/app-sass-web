@@ -55,10 +55,12 @@ type TopContentProps = {
   item?: Invoice;
   user: User;
   memberOptions?: Option[];
+  handleDisplayComment: (value: boolean) => void;
 };
 
 const TopContent = (props: TopContentProps) => {
-  const { tagsOptions, item, memberOptions, user } = props;
+  const { tagsOptions, item, memberOptions, user, handleDisplayComment } =
+    props;
   const {
     onAddUserToBilling,
     addUserStatus,
@@ -214,7 +216,8 @@ const TopContent = (props: TopContentProps) => {
           </Link>
         </Stack>
 
-        <Box
+        <Button
+          onClick={() => handleDisplayComment(true)}
           sx={{
             textAlign: "center",
             padding: 1,
@@ -222,13 +225,14 @@ const TopContent = (props: TopContentProps) => {
             display: "flex",
             gap: "12px",
             alignItems: "center",
+            cursor: "pointer",
           }}
         >
           <CommentHistory sx={{ marginTop: "2px", width: "16px" }} />
           <Typography fontSize={14} fontWeight={400} color="#212529">
             Comments & History
           </Typography>
-        </Box>
+        </Button>
         <CloseOutlined
           sx={{ cursor: "pointer" }}
           onClick={() => push(INVOICES_PATH)}

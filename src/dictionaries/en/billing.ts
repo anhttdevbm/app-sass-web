@@ -182,7 +182,7 @@ export const BillingLang: BillingDictionary = {
       feed: {
         table: {},
         button: {
-          sendComment: "Send Comment",
+          sendComment: "Send",
           option: {
             comments: "Comments",
             attachments: "Attachments",
