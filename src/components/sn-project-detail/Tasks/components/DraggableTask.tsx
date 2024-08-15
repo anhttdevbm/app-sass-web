@@ -27,10 +27,7 @@ type DraggableTaskProps = {
   onChange: () => void;
   children: React.ReactNode;
   isHide: boolean;
-  isHovered: boolean;
   setHideIds: Dispatch<SetStateAction<string[]>>;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
   task: Task;
 };
 
@@ -42,7 +39,6 @@ const DraggableTask = (props: DraggableTaskProps) => {
     onChange,
     children,
     isHide,
-    isHovered,
     isSubTask,
     setHideIds,
     task,
@@ -125,9 +121,6 @@ const DraggableTask = (props: DraggableTaskProps) => {
                 width: "100%",
                 height: "1px",
                 boxShadow: 1,
-              },
-              "&:hover": {
-                backgroundColor: "rgba(236, 236, 243, 0.5)",
               },
             }}
             {...rest}

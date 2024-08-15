@@ -1143,11 +1143,8 @@ const ItemList = () => {
                         index={taskIndex}
                         checked={isChecked}
                         isHide={isHide}
-                        isHovered={hoveredId === task.id}
                         onChange={onToggleTask(!isChecked, taskListItem, task)}
                         isSubTask={false}
-                        onMouseEnter={() => setHoveredId(task.id)}
-                        onMouseLeave={() => setHoveredId(undefined)}
                         setHideIds={setHideIds}
                         task={task}
                       >
@@ -1169,7 +1166,13 @@ const ItemList = () => {
                                 minHeight={40}
                                 maxHeight={{ md: 40 }}
                                 width="100%"
-                                sx={{ ...sx.task, ml: 1.5 }}
+                                sx={{
+                                  ...sx.task,
+                                  ml: 1.5,
+                                  "&:hover": {
+                                    bgcolor: "background.default",
+                                  },
+                                }}
                                 overflow="hidden"
                                 display={"flex"}
                               >
@@ -1460,8 +1463,11 @@ const SubTaskList = ({
                     <Box
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      style={{
+                      sx={{
                         minHeight: 1,
+                        "&:hover": {
+                          bgcolor: "background.default",
+                        }
                       }}
                     >
                       <Stack
