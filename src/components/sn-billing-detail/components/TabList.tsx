@@ -47,16 +47,20 @@ type TabItemProps = {
   setBillToInfo: (value: Bill) => void;
   billFromInfo: Bill;
   setBillFromInfo: (value: Bill) => void;
+  handleDisplayComment: (value: boolean) => void;
+  openComment: boolean;
 };
 
 type TabListProps = {
   item?: Invoice;
   arrBudgets?: Budgets[];
   user: User;
+  handleDisplayComment: (value: boolean) => void;
+  openComment: boolean;
 };
 
 const TabInfo = (props: TabListProps) => {
-  const { item, user, arrBudgets } = props;
+  const { item, user, arrBudgets, handleDisplayComment, openComment } = props;
   // const { id } = useParams() as { id: string };
   // const pathname = usePathname();
   const billingT = useTranslations(NS_BILLING);
@@ -82,10 +86,10 @@ const TabInfo = (props: TabListProps) => {
       label: billingT("detail.form.invoice.title.invoice"),
       value: "Invoice",
     },
-    {
-      label: billingT("detail.form.feed.title.Feed"),
-      value: "Feed",
-    },
+    // {
+    //   label: billingT("detail.form.feed.title.Feed"),
+    //   value: "Feed",
+    // },
     {
       label: billingT("detail.form.client.title.Client"),
       value: "Client",
@@ -480,6 +484,8 @@ const TabInfo = (props: TabListProps) => {
               setBillToInfo={setBillToInfo}
               billFromInfo={billFromInfo}
               setBillFromInfo={setBillFromInfo}
+              handleDisplayComment={handleDisplayComment}
+              openComment={openComment}
             />
           ))}
           {/* <TabActions /> */}
@@ -504,6 +510,8 @@ const TabItem = (props: TabItemProps) => {
     setBillToInfo,
     billFromInfo,
     setBillFromInfo,
+    handleDisplayComment,
+    openComment,
   } = props;
 
   const billingT = useTranslations(NS_BILLING);
@@ -541,7 +549,13 @@ const TabItem = (props: TabItemProps) => {
           setBillFromInfo={setBillFromInfo}
         />
       )}
-      {value === "Feed" && <TabFeed title={label} bill={{}} user={user} />}
+      <TabFeed
+        title={label}
+        bill={{}}
+        user={user}
+        handleDisplayComment={handleDisplayComment}
+        openComment={openComment}
+      />
       {value === "Payment" && <TabPayment title={label} />}
       {value === "Client" && <TabClient />}
     </TabPanel>
