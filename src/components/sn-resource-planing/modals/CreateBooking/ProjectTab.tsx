@@ -4,6 +4,7 @@ import {
   CircularProgress,
   Collapse,
   FormHelperText,
+  SelectChangeEvent,
   Stack,
   Typography,
   useTheme,
@@ -13,6 +14,7 @@ import SelectController from "components/SelectController";
 import { Button, Tooltip } from "components/shared";
 import TextFieldInput from "components/shared/TextFieldInput";
 import TextFieldSelect from "components/shared/TextFieldSelect";
+import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
@@ -23,8 +25,11 @@ import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
 import dayjs from "dayjs";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Control, Controller, useForm } from "react-hook-form";
+import { usePositions } from "store/company/selectors";
+import { TBudget } from "store/project/budget/action";
+import { useMembersOfProject } from "store/project/selectors";
 import { BookingData } from "store/resourcePlanning/action";
 import {
   useBookingAll,
@@ -51,9 +56,13 @@ const ProjectTab = ({
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [isFocusAllocation, setIsFocusAllocation] = useState(false);
   const [isShowTooltip, setIsShowTooltip] = useState(false);
+  const [listBudgets, setListBudgets] = useState<TBudget[] | []>([]);
+  const [listServices, setListServices] = useState<
+    { value: string; label: string }[] | []
+  >([]);
+
   const { palette } = useTheme();
-  const { positionOptions, projectOptions, timeOptions, salesOptions } =
-    useGetOptions();
+  const { projectOptions, timeOptions } = useGetOptions();
   const { createBooking, loading } = useBookingAll();
   const { schemaProject } = useGetSchemas();
   const commonT = useTranslations(NS_COMMON);
@@ -61,8 +70,6 @@ const ProjectTab = ({
   const {
     control: controlProject,
     handleSubmit: handleSubmitProject,
-    // setValue: setValueProject,
-    // clearErrors: clearErrorsProject,
     watch: watchProject,
     reset: resetProject,
     formState: { errors: errorsProject },
@@ -70,7 +77,7 @@ const ProjectTab = ({
     resolver: yupResolver(schemaProject),
     defaultValues: {
       project_id: "",
-      sale_id: "",
+      service_id: "",
       dateRange: {
         startDate: selectedDateRange?.[0] || undefined,
         endDate: selectedDateRange?.[1] || undefined,
@@ -78,47 +85,96 @@ const ProjectTab = ({
       allocation: 1,
       allocation_type: RESOURCE_ALLOCATION_TYPE.HOUR,
       note: "",
+      role: "",
     },
     mode: "all",
   });
   const { workedTime, estimate, leftToSchedule, scheduledTime } =
     useCalculateDetail(
-      watchProject("sale_id"),
+      watchProject("service_id"),
       watchProject("project_id"),
       resourceId,
     );
-  const { setProjectId, projectId, queries, setQueries, serviceBudgetOptions } =
-    useGetServiceBudget();
+  const {
+    setProjectId,
+    queries,
+    setQueries,
+    serviceBudgetOptions,
+    getBudgetsByIdProject,
+    getServiceByBudgetQueries,
+  } = useGetServiceBudget();
+
+  const { items } = usePositions();
+
+  const { items: currListMember, onGetMembersOfProject } =
+    useMembersOfProject();
+
+  const listRoles = useMemo(() => {
+    return items?.map((item) => ({ value: item.id, label: item.name }));
+  }, [items]);
+
+  const listMembers = useMemo(() => {
+    return currListMember?.map((item) => ({
+      value: item.id,
+      label: item.fullname,
+    }));
+  }, [currListMember]);
 
   const onSubmitProject = async (data) => {
     const cleanData: BookingData = {
       ...data,
-      user_id: userId,
+      user_id: data?.user_id,
       start_date: dayjs(data.dateRange.startDate).format("YYYY-MM-DD"),
       end_date: dayjs(data.dateRange.endDate).format("YYYY-MM-DD"),
       booking_type: RESOURCE_EVENT_TYPE.PROJECT_BOOKING,
     };
     await createBooking(cleanData).then(() => {
       onClose();
+      resetProject();
     });
   };
 
   useEffect(() => {
-    if (!open) {
-      resetProject();
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (!watchProject("sale_id")) {
+    if (!watchProject("service_id")) {
       setIsShowDetail(false);
     }
-  }, [watchProject("sale_id"), isShowDetail]);
+  }, [watchProject("service_id"), isShowDetail]);
 
-  useEffect(() => {
+  const handleChangeProjectId = async () => {
     if (watchProject("project_id")) {
       setProjectId(watchProject("project_id"));
+      onGetMembersOfProject(watchProject("project_id"), {});
+      const res = await getBudgetsByIdProject(watchProject("project_id"));
+
+      if (res.status === 200) {
+        const convertValue = res.data?.map((item: TBudgetService) => ({
+          value: item.id,
+          label: item.name,
+        }));
+        setListBudgets(convertValue);
+      }
     }
+  };
+
+  const handleChangeBudget = async (
+    event: SelectChangeEvent<string | number>,
+  ) => {
+    if (event.target.value) {
+      const res = await getServiceByBudgetQueries(
+        event.target.value.toString(),
+      );
+      const convertValue = res.data?.map((item: TBudgetService) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      if (res.status === 200) {
+        setListServices(convertValue);
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleChangeProjectId();
   }, [watchProject("project_id")]);
 
   const onScroll = debounce((e: any) => {
@@ -158,9 +214,27 @@ const ProjectTab = ({
       </Grid2>
       <Grid2 xs={12}>
         <SelectController
-          name="sale_id"
           control={controlProject as unknown as Control}
-          listOptions={serviceBudgetOptions}
+          name={"budget_id"}
+          label={resourceT("form.budget")}
+          handleChange={handleChangeBudget}
+          listOptions={listBudgets}
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
+        />
+      </Grid2>
+
+      <Grid2 xs={12}>
+        <SelectController
+          name="service_id"
+          control={controlProject as unknown as Control}
+          listOptions={listServices}
           disabled={!watchProject("project_id")}
           label={resourceT("form.services")}
           required
@@ -178,6 +252,40 @@ const ProjectTab = ({
             },
             sx: {
               maxHeight: "400px",
+            },
+          }}
+        />
+      </Grid2>
+      <Grid2 xs={12}>
+        <SelectController
+          control={controlProject as unknown as Control}
+          name={"user_id"}
+          label={resourceT("form.user")}
+          listOptions={listMembers || []}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
+        />
+      </Grid2>
+      <Grid2 xs={12}>
+        <SelectController
+          control={controlProject as unknown as Control}
+          name={"role"}
+          label={resourceT("form.role")}
+          listOptions={listRoles || []}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
             },
           }}
         />
@@ -210,15 +318,15 @@ const ProjectTab = ({
                 }
                 sx={{
                   width: "100%",
-                  background:
-                    "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
-                  borderRadius: "100px",
+
                   ".MuiBox-root": {
                     borderColor: "#EFEFEF",
                     borderRadius: "100px",
                     height: 56,
                     display: "block",
                     padding: "16px 12px",
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
                   },
                   ".MuiSvgIcon-root": {
                     color: "#B3B3B3",
@@ -358,7 +466,7 @@ const ProjectTab = ({
             text=""
             color={leftToSchedule > 0 ? "success" : "error"}
           >
-            {watchProject("sale_id")
+            {watchProject("service_id")
               ? formatNumber(leftToSchedule, { numberOfFixed: 0 }) || 0
               : 0}
             h {resourceT("form.leftToSchedule").toLowerCase()}
@@ -370,7 +478,7 @@ const ProjectTab = ({
             open={isShowTooltip}
             onClose={() => setIsShowTooltip(false)}
             onOpen={() => {
-              if (!watchProject("sale_id")) {
+              if (!watchProject("service_id")) {
                 setIsShowTooltip(true);
               }
             }}
@@ -388,11 +496,12 @@ const ProjectTab = ({
                 {resourceT("form.detail")}
               </Typography>
               <ArrowDownIcon
-                width={16}
-                height={16}
                 sx={{
                   transform: isShowDetail ? "rotate(-90deg)" : "rotate(0deg)",
                   transition: "transform 0.3s ease",
+                  width: 16,
+                  height: 16,
+                  color: "#666666",
                 }}
               />
             </Box>

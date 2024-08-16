@@ -4,15 +4,13 @@ import { ResourceInput } from "@fullcalendar/resource";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import { Stack } from "@mui/material";
 import { Box } from "@mui/system";
-import { Button } from "components/shared";
 import { TIME_OFF_TYPE } from "components/sn-sales/helpers";
 import { NS_RESOURCE_PLANNING } from "constant/index";
 import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
-import PlusIcon from "icons/PlusIcon";
 import { isEmpty } from "lodash";
 import { useTranslations } from "next-intl";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useAuth } from "store/app/selectors";
 import { IBookingAllFitler } from "store/resourcePlanning/action";
 import { IBookingItem } from "store/resourcePlanning/reducer";
@@ -21,12 +19,9 @@ import {
   useMyBooking,
   useResourceDate,
 } from "store/resourcePlanning/selector";
-import EventContents from "./components/EventContents";
 import FilterHeader from "./components/FilterHeader";
 import ResourceHeaderContent from "./components/ResourceHeaderContent";
-import ResourceLabel from "./components/ResourceLabel";
 import SlotLabelContent from "./components/SlotLabelContent";
-import TimeHeader from "./components/TimeHeader";
 import { DEFAULT_BOOKING_ALL_FILTER, TAB_TYPE } from "./helper";
 import { useFetchMyBooking } from "./hooks/useBookingAll";
 import useGetOptions from "./hooks/useGetOptions";
@@ -114,7 +109,7 @@ const MyScheduleTab = ({
   const handleEventChange =
     (calendarRef: React.RefObject<FullCalendar>, isResize: boolean) =>
     ({ event, revert }) => {
-      const { type, saleId, ...restData } = event.extendedProps;
+      const { type, service_id, ...restData } = event.extendedProps;
       if (isResize && type === "campaign") return revert();
       if (type === "campaign") {
         // Campaign has been moved, compute diff and update each steps
@@ -131,7 +126,7 @@ const MyScheduleTab = ({
             start_date: dayjs(dateRange.start).format("YYYY-MM-DD"),
             booking_type: restData.eventType,
             time_off_type: restData.time_off_type,
-            sale_id: saleId,
+            service_id: service_id,
             user_id: user?.id,
           },
           restData.eventId,
@@ -162,7 +157,7 @@ const MyScheduleTab = ({
           allocation,
           position,
           allocation_type,
-          sale_id,
+          service_id,
           project_id,
           project,
           time_off_type,
@@ -181,7 +176,7 @@ const MyScheduleTab = ({
           total_hour,
           eventType: booking_type,
           name: project?.name,
-          saleId: sale_id,
+          service_id: service_id,
           time_off_type,
           eventId,
         };
@@ -239,7 +234,7 @@ const MyScheduleTab = ({
         user_id: "",
         project: {},
         project_id: "",
-        sale_id: "",
+        service_id: "",
         start_date: "",
         time_off_type: TIME_OFF_TYPE.OTHER,
         type: "step",

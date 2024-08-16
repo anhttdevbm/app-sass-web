@@ -1,28 +1,33 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  CircularProgress,
+  FormHelperText,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
-import TextFieldInput from "components/shared/TextFieldInput";
-import { useEffect, useMemo, useState } from "react";
-import useTheme from "hooks/useTheme";
-import { CircularProgress, Stack } from "@mui/material";
-import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
-import { useTranslations } from "next-intl";
-import { useForm, Controller } from "react-hook-form";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
+import SelectController from "components/SelectController";
 import { Button } from "components/shared";
+import TextFieldInput from "components/shared/TextFieldInput";
+import TextFieldSelect from "components/shared/TextFieldSelect";
+import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
+import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import { useGetTimeOffOptions } from "components/sn-sales/hooks/useGetTimeOffOptions";
-import { useBookingAll } from "store/resourcePlanning/selector";
+import Textarea from "components/sn-time-tracking/Component/Textarea";
 import {
   RESOURCE_ALLOCATION_TYPE,
   RESOURCE_ALLOCATION_UNIT,
   RESOURCE_EVENT_TYPE,
 } from "constant/enums";
+import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
 import dayjs from "dayjs";
-import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { Control, Controller, useForm } from "react-hook-form";
 import { IBookingItem } from "store/resourcePlanning/reducer";
-import TextFieldSelect from "components/shared/TextFieldSelect";
+import { useBookingAll } from "store/resourcePlanning/selector";
 import { useGetSchemas } from "../Schemas";
-import { updateBookingResource } from "store/resourcePlanning/action";
 interface IProps {
   open: boolean;
   onClose(): void;
@@ -34,12 +39,12 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
   const { palette } = useTheme();
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
-  const { createBooking, loading, updateBooking } = useBookingAll();
+  const { loading, updateBooking } = useBookingAll();
   const { timeOffOptions } = useGetTimeOffOptions();
   const { positionOptions, projectOptions } = useGetOptions();
   const { bookingAll } = useBookingAll();
   const { schemaTimeOff } = useGetSchemas();
-  console.log(bookingAll);
+
   const bookingEvent: IBookingItem = useMemo(() => {
     const booking =
       bookingAll
@@ -54,7 +59,6 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
   const {
     control: controlTimeOff,
     handleSubmit: handleSubmitTimeOff,
-    watch: watchTimeOff,
     reset: resetTimeOff,
     formState: { errors: errorsTimeOff },
   } = useForm({
@@ -85,8 +89,6 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
   }, [open]);
 
   const onSubmitTimeOff = async (data) => {
-    console.log(data);
-
     await updateBooking(
       {
         ...data,
@@ -108,44 +110,75 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
   return (
     <Grid2 container spacing={2} sx={{ pt: 1, mb: 0 }}>
       <Grid2 xs={12}>
-        <Controller
+        <SelectController
           name="categoryTimeOff"
-          control={controlTimeOff}
-          render={({ field }) => (
-            <TextFieldSelect
-              {...field}
-              helperText={errorsTimeOff.categoryTimeOff?.message}
-              error={!!errorsTimeOff.categoryTimeOff?.message}
-              required
-              options={timeOffOptions}
-              label={resourceT("form.selectTimeOffCategory")}
-            />
-          )}
+          control={controlTimeOff as unknown as Control}
+          listOptions={timeOffOptions}
+          label={resourceT("form.selectTimeOffCategory")}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
         />
       </Grid2>
       <Grid2 container xs={12}>
-        <Grid2 xs={12} md={6}>
+        <Grid2 xs={12} md={12}>
           <Controller
             name="dateRange"
             control={controlTimeOff}
             render={({ field }) => (
-              <CustomDateRangePicker
-                required
-                value={field.value}
-                onChange={(value) => {
-                  field.onChange(value);
-                }}
-                label={resourceT("form.dateRange")}
-                placeholder=""
-                errorMessage={
-                  errorsTimeOff.dateRange?.startDate?.message ||
-                  errorsTimeOff.dateRange?.endDate?.message
-                }
-              />
+              <div>
+                <Typography
+                  color={"#4D4D4D"}
+                  fontSize={13}
+                  pb={2}
+                  fontWeight={700}
+                >
+                  {resourceT("form.dateRange")}
+                  <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+                </Typography>
+                <CustomDateRangePicker
+                  value={field.value}
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
+                  // label={resourceT("form.dateRange")}
+                  placeholder=""
+                  errorMessage={
+                    errorsTimeOff.dateRange?.startDate?.message ||
+                    errorsTimeOff.dateRange?.endDate?.message
+                  }
+                  sx={{
+                    width: "100%",
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                    borderRadius: "100px",
+                    ".MuiBox-root": {
+                      borderColor: "#EFEFEF",
+                      borderRadius: "100px",
+                      height: 56,
+                      display: "block",
+                      padding: "16px 12px",
+                    },
+                    ".MuiSvgIcon-root": {
+                      color: "#B3B3B3",
+                    },
+                  }}
+                />
+              </div>
             )}
           />
         </Grid2>
-        <Grid2 xs={12} md={6}>
+        <Grid2 xs={12} md={12}>
+          <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+            {resourceT("form.allocation")}
+            <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+          </Typography>
           <Stack
             direction="row"
             sx={{
@@ -154,11 +187,15 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
                 transition: "border-color 0.3s ease",
               },
               border: `1px solid ${
-                isFocusAllocation ? palette.primary.main : "transparent"
+                isFocusAllocation ? palette.primary.main : "#EFEFEF"
               }`,
               "&:focus-within": {
                 borderColor: palette.primary.main,
               },
+              background:
+                "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+              borderRadius: "100px",
+              justifyContent: "space-between",
             }}
           >
             <Controller
@@ -166,16 +203,17 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
               control={controlTimeOff}
               render={({ field }) => (
                 <TextFieldInput
-                  label={resourceT("form.allocation")}
                   placeholder="8h"
                   sx={{
                     "& > .MuiBox-root": {
-                      borderRadius: 0,
-                      borderRight: "1px solid #BABCC6",
+                      background: "transparent",
+                    },
+                    flex: "1 1 0%",
+                    ".MuiInputBase-input": {
+                      height: 32,
                     },
                   }}
                   type="number"
-                  helperText={errorsTimeOff.allocation?.message}
                   error={!!errorsTimeOff.allocation?.message}
                   {...field}
                 />
@@ -190,6 +228,16 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
                   value={field.value}
                   onChange={(event) => {
                     field.onChange(event.target.value);
+                  }}
+                  sx={{
+                    "& > .MuiBox-root": {
+                      background: "transparent",
+                      borderColor: "transparent",
+                    },
+                    "& .MuiInputBase-root": {
+                      background: "transparent",
+                      color: "#00000080",
+                    },
                   }}
                   options={[
                     {
@@ -211,14 +259,37 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
               )}
             />
           </Stack>
+          {errorsTimeOff.allocation?.message && (
+            <FormHelperText
+              sx={{ color: "rgba(246, 78, 96, 1)", marginLeft: "18px" }}
+            >
+              {errorsTimeOff.allocation?.message}
+            </FormHelperText>
+          )}
         </Grid2>
       </Grid2>
       <Grid2 xs={12}>
+        <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+          {resourceT("form.note")}
+        </Typography>
         <Controller
           name="note"
           control={controlTimeOff}
           render={({ field }) => {
-            return <Textarea {...field} label={resourceT("form.note")} />;
+            return (
+              <Textarea
+                {...field}
+                sx={{
+                  ".MuiFormControl-root, .MuiFormLabel-root": {
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                  },
+                  ".MuiInputBase-input, .MuiInputBase-root": {
+                    background: "transparent",
+                  },
+                }}
+              />
+            );
           }}
         />
       </Grid2>

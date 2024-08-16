@@ -1,42 +1,33 @@
 "use client";
 
-import FullCalendar from "@fullcalendar/react";
-import React, { use, useCallback, useEffect, useMemo, useState } from "react";
-import {
-  IBookingAllFitler,
-  updateBookingResource,
-} from "store/resourcePlanning/action";
-import { DEFAULT_BOOKING_ALL_FILTER, TAB_TYPE } from "./helper";
-import dayjs from "dayjs";
-import { isEmpty } from "lodash";
-import { Box } from "@mui/system";
-import { CircularProgress, Grid, Stack, Typography } from "@mui/material";
-import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import interactionPlugin from "@fullcalendar/interaction";
-import TimeHeader from "./components/TimeHeader";
+import FullCalendar from "@fullcalendar/react";
+import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
+import { Stack } from "@mui/material";
+import { Box } from "@mui/system";
+import { Input } from "components/shared";
+import { NS_RESOURCE_PLANNING } from "constant/index";
+import dayjs from "dayjs";
+import useTheme from "hooks/useTheme";
+import SearchIcon from "icons/SearchIcon";
+import { isEmpty } from "lodash";
+import { useTranslations } from "next-intl";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { IBookingAllFitler } from "store/resourcePlanning/action";
+import { IBookingListItem } from "store/resourcePlanning/reducer";
 import {
   useBookingAll,
   useResourceDate,
 } from "store/resourcePlanning/selector";
-import { NS_RESOURCE_PLANNING } from "constant/index";
-import { useTranslations } from "next-intl";
-import CreateBooking from "./modals/CreateBooking";
+import EventContents from "./components/EventContents";
+import FilterHeader from "./components/FilterHeader";
+import ResourceLabel from "./components/ResourceLabel";
+import SlotLabelContent from "./components/SlotLabelContent";
+import { DEFAULT_BOOKING_ALL_FILTER, TAB_TYPE } from "./helper";
 import { useFetchBookingAll } from "./hooks/useBookingAll";
 import useGetOptions, { useFetchOptions } from "./hooks/useGetOptions";
-import useGetMappingTime from "./hooks/useGetMappingTime";
-import ResourceLabel from "./components/ResourceLabel";
-import EventContents from "./components/EventContents";
-import { IBookingListItem } from "store/resourcePlanning/reducer";
-import FilterHeader from "./components/FilterHeader";
-import ResourceHeaderContent from "./components/ResourceHeaderContent";
-import SlotLabelContent from "./components/SlotLabelContent";
-import useTheme from "hooks/useTheme";
+import CreateBooking from "./modals/CreateBooking";
 import EditBooking from "./modals/EditBooking";
-import PlusIcon from "icons/PlusIcon";
-import { Button } from "components/shared";
-import { Search } from "components/Filters";
-import { Input } from "components/shared";
-import SearchIcon from "icons/SearchIcon";
 
 export interface IEditState {
   isOpen: boolean;
@@ -147,7 +138,7 @@ const AllPeopleTab = ({
   const handleEventChange =
     (calendarRef: React.RefObject<FullCalendar>, isResize: boolean) =>
     async ({ event, revert }) => {
-      const { type, campaignId, saleId, ...restData } = event.extendedProps;
+      const { type, campaignId, service_id, ...restData } = event.extendedProps;
       if (isResize && type === "campaign") return revert();
       if (type === "campaign") {
         // Campaign has been moved, compute diff and update each steps
@@ -164,7 +155,7 @@ const AllPeopleTab = ({
             start_date: dayjs(dateRange.start).format("YYYY-MM-DD"),
             booking_type: restData.eventType,
             time_off_type: restData.time_off_type,
-            sale_id: saleId,
+            service_id: service_id,
           },
           restData.eventId,
         ).catch(() => revert());
@@ -209,7 +200,7 @@ const AllPeopleTab = ({
                 time_off_type,
                 user_id,
                 project,
-                sale_id,
+                service_id,
                 project_id,
               } = props;
               return {
@@ -229,7 +220,7 @@ const AllPeopleTab = ({
                 total_hour,
                 avatarUrl: project?.avatar?.link,
                 time_off_type,
-                saleId: sale_id,
+                service_id: service_id,
                 eventType: booking_type,
                 eventId,
               };
@@ -281,7 +272,7 @@ const AllPeopleTab = ({
           time_off_type: booking?.time_off_type,
           user_id: booking?.user_id,
           avatarUrl: booking.project?.owner?.avatar?.link,
-          saleId: booking?.sale_id,
+          service_id: booking?.service_id,
         })),
       };
       if (resourceEvent.children?.length !== 0) {
@@ -295,7 +286,7 @@ const AllPeopleTab = ({
           note: "",
           position: {},
           time_off_type: undefined,
-          saleId: "",
+          service_id: "",
           project: undefined,
           avatarUrl: "",
           user_id: resource.id,

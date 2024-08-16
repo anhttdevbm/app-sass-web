@@ -1,21 +1,20 @@
 import { EventApi } from "@fullcalendar/core";
 import { Stack, Typography } from "@mui/material";
+import { Tooltip } from "components/shared";
 import {
-  RESOURCE_ALLOCATION_UNIT,
   RESOURCE_ALLOCATION_TYPE,
+  RESOURCE_ALLOCATION_UNIT,
   RESOURCE_EVENT_TYPE,
 } from "constant/enums";
-import dayjs from "dayjs";
-import React from "react";
-import useGetMappingTime from "../hooks/useGetMappingTime";
-import { IEditState } from "../AllPeopleTab";
-import BlueArrowIcon from "icons/BlueArrowIcon";
-import RedArrowIcon from "icons/RedArrowIcon";
-import GrayArrowIcon from "icons/GrayArrowIcon";
-import { useTranslations } from "next-intl";
 import { NS_RESOURCE_PLANNING } from "constant/index";
-import { Tooltip } from "components/shared";
+import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
+import BlueArrowIcon from "icons/BlueArrowIcon";
+import GrayArrowIcon from "icons/GrayArrowIcon";
+import RedArrowIcon from "icons/RedArrowIcon";
+import { useTranslations } from "next-intl";
+import { IEditState } from "../AllPeopleTab";
+import useGetMappingTime from "../hooks/useGetMappingTime";
 
 interface IEventContentsProps {
   event: EventApi;
@@ -79,6 +78,17 @@ const EventContents = ({
       break;
   }
 
+  const onDragOver = (event) => {
+    console.log("1", 1);
+    event.preventDefault(); // Necessary to allow a drop
+  };
+
+  const onDrop = (event) => {
+    console.log("2", 2);
+
+    event.preventDefault();
+  };
+
   return (
     <>
       {!isWorkload && (
@@ -103,6 +113,8 @@ const EventContents = ({
               bookingId: bookingID,
             });
           }}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
         >
           {/* {checkedEventType.icon} */}
           <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>

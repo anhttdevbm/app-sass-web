@@ -1,6 +1,18 @@
+import { Endpoint } from "api";
+import { saleClient } from "api/client";
+import { DataStatus } from "constant/enums";
+import { NS_RESOURCE_PLANNING } from "constant/index";
+import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useSnackbar } from "store/app/selectors";
 import { useAppDispatch, useAppSelector } from "store/hooks";
+import {
+  TBudgetListQueries,
+  getProjectBudgetList,
+} from "store/project/budget/action";
+import StringFormat from "string-format";
 import {
   BookingData,
   IBookingAllFitler,
@@ -18,19 +30,6 @@ import {
   setDatePicker,
   setMyBookingFilter,
 } from "./reducer";
-import { useSnackbar } from "store/app/selectors";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { DataStatus } from "constant/enums";
-import dayjs from "dayjs";
-import { useTranslations } from "next-intl";
-import { NS_RESOURCE_PLANNING } from "constant/index";
-import {
-  TBudget,
-  TBudgetListQueries,
-  getProjectBudgetList,
-} from "store/project/budget/action";
-import { getServiceBudget } from "store/billing/actions";
-import { id } from "date-fns/locale";
 
 export const useResourceFilter = () => {
   const { end_date, search_key, start_date, position, working_sort } =
@@ -192,6 +191,7 @@ export const useBookingAll = () => {
         setLoading(false);
       });
   };
+
   // useEffect(() => {
   //   if (bookingAllError) {
   //     onAddSnackbar(bookingAllError, "error");
@@ -272,6 +272,30 @@ export const useGetServiceBudget = () => {
     [dispatch, projectId],
   );
 
+  const getBudgetsByIdProject = async (id: string) => {
+    const url = StringFormat(Endpoint.BUDGETS_BY_PROJECT_ID, { id });
+
+    const res = await saleClient.get(url);
+    return res;
+  };
+
+  const getServiceByBudgetQueries = async (
+    id: string,
+    params?:
+      | string
+      | string[][]
+      | Record<string, string>
+      | URLSearchParams
+      | null,
+  ) => {
+    const queryString = params ? new URLSearchParams(params).toString() : "";
+
+    const url = StringFormat(Endpoint.SERVICE_QUERIES_BY_BUDGET, { id });
+
+    const res = await saleClient.get(`${url}?${queryString}`);
+    return res;
+  };
+
   const serviceBudgetOptions = useMemo(() => {
     if (!serviceBudget) {
       return [];
@@ -317,5 +341,7 @@ export const useGetServiceBudget = () => {
     setProjectId,
     queries,
     setQueries,
+    getBudgetsByIdProject,
+    getServiceByBudgetQueries,
   };
 };
