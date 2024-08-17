@@ -8,13 +8,12 @@ import { CircularProgress, Stack } from "@mui/material";
 import { Button, Text } from "components/shared";
 import { useDocs } from "store/docs/selectors";
 import { client } from "api";
-import { IThirdPartyItem, ThirdpartyTyp } from "../ImportForm";
-import { ContentBlock } from "draft-js";
+import { convertFromHTML } from "draft-js";
 import SuccessDialog from "../SuccessDialog";
 import useToggle from "hooks/useToggle";
 import { HttpStatusCode } from "constant/enums";
-import { uuid } from "utils/index";
 import { useSnackbar } from "store/app/selectors";
+import { IThirdPartyItem, ThirdpartyTyp } from "../thirdPartyList";
 
 interface IThirdPartyFileDialogProps {
   thirdParty?: IThirdPartyItem;
@@ -69,6 +68,12 @@ export default function ThirdPartyFileDialog(
   );
   const { onAddSnackbar } = useSnackbar();
 
+  const handleClose = () => {
+    setTextAreaVal("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    onClose();
+  };
+
   const handleChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextAreaVal(e.target.value);
   };
@@ -92,11 +97,7 @@ export default function ThirdPartyFileDialog(
       }
 
       const blob = new Blob([textAreaVal], { type: thirdParty?.file?.type });
-      const file = new File([blob], fileName, {
-        type: thirdParty?.file?.type,
-      });
-      console.log({ file });
-
+      const file = new File([blob], fileName, { type: thirdParty?.file?.type });
       const formData = new FormData();
       formData.append("file", file || new Blob());
 
@@ -112,21 +113,17 @@ export default function ThirdPartyFileDialog(
       );
 
       if (response.status === HttpStatusCode.OK) {
-        const blocks: ContentBlock[] = [
-          new ContentBlock({
-            key: uuid(),
-            type: "normaltext",
-            text: response.data.content || "",
-          }),
-        ];
+        const blocksFromHTML = convertFromHTML(response.data.content || "");
+
         await onCreateDoc(
           undefined,
-          JSON.stringify(blocks),
+          JSON.stringify(blocksFromHTML.contentBlocks),
           response.data.name,
         );
+
         onShowSuccessDialog();
         setPending(false);
-        onClose();
+        handleClose();
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
@@ -137,12 +134,11 @@ export default function ThirdPartyFileDialog(
     }
   };
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       if (e.target.files && e.target.files.length == 1) {
-        console.log(e.target.files[0]);
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
           if (event.target) {
             setTextAreaVal(event.target.result as string);
             return;
@@ -162,7 +158,7 @@ export default function ThirdPartyFileDialog(
         title={`${docsT("addDropdown.import")} ${thirdParty?.text}`}
         subtitle={caption}
         open={!!thirdParty && thirdParty.typ == ThirdpartyTyp.File}
-        onClose={onClose}
+        onClose={handleClose}
       >
         <Stack alignItems="center" gap={3}>
           <Textarea

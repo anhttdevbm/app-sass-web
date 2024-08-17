@@ -28,6 +28,7 @@ import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
 import NewInvoiceIcon from "public/images/new-invoice.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { uuid } from "utils/index";
 import * as Yup from "yup";
 import NewPaymentModal from "./NewPaymentModal";
 
@@ -37,6 +38,7 @@ const initRow = {
   rate: null,
   discount: null,
   amount: 0,
+  id: uuid(),
 };
 
 const initPaymentItem = [
@@ -63,6 +65,8 @@ const FormCreate = () => {
   const [total, setTotal] = useState(0);
   const [paymentSelected, setPaymentSelected] = useState(0);
   const [open, setOpen] = useState(false);
+
+  const [showSummary, setShowSummary] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -130,8 +134,12 @@ const FormCreate = () => {
   };
 
   const handleShowTotal = () => {
-    setTotal(formik.values.total);
+    setShowSummary((prev) => !prev);
   };
+
+  useEffect(() => {
+    setTotal(formik.values.total);
+  }, [formik.values.total]);
 
   const { onUpdateHeaderConfig } = useHeaderConfig();
 
@@ -211,7 +219,7 @@ const FormCreate = () => {
               border: "1px solid #EFEFEF",
             },
             "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
-              padding: "10px 30px",
+              padding: "6px 30px",
             },
             width: "50%",
           }}
@@ -252,7 +260,7 @@ const FormCreate = () => {
               background: "#ffffff",
             },
             "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
-              padding: "10px 30px",
+              padding: "6px 30px",
             },
             width: "50%",
           }}
@@ -290,7 +298,7 @@ const FormCreate = () => {
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
               borderRadius: "12px",
               background: "rgba(249, 241, 241, 0.41)",
-              padding: "10px 30px",
+              padding: "6px 30px",
             },
             width: "50%",
             color: "rgba(33, 38, 60, 1)",
@@ -338,7 +346,7 @@ const FormCreate = () => {
                 border: "1px solid rgba(0, 0, 0, 0.38)",
                 borderRadius: "100px",
                 background: "#ffffff",
-                padding: "8px 30px",
+                padding: "5px 30px",
               },
               width: "72%",
             }}
@@ -357,7 +365,7 @@ const FormCreate = () => {
                   border: "1px solid rgba(0, 0, 0, 0.38)",
                   borderRadius: "100px",
                   background: "#ffffff",
-                  padding: "8px 30px",
+                  padding: "5px 30px",
                 },
                 width: "fit-content",
               }}
@@ -384,7 +392,7 @@ const FormCreate = () => {
                 borderRadius: "100px",
               },
               "& .MuiInputBase-input.MuiOutlinedInput-input": {
-                padding: "10px 30px",
+                padding: "6px 30px",
               },
               width: "50%",
             }}
@@ -417,7 +425,7 @@ const FormCreate = () => {
                 },
                 "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ":
                   {
-                    padding: "10px 30px",
+                    padding: "6px 30px",
                   },
               }}
               value={
@@ -479,7 +487,7 @@ const FormCreate = () => {
                   borderRadius: "100px",
                 },
                 "& .MuiInputBase-input.MuiOutlinedInput-input": {
-                  padding: "10px 30px",
+                  padding: "6px 30px",
                 },
               }}
               value={formik.values.payment_items[paymentSelected]?.payment_link}
@@ -601,7 +609,7 @@ const FormCreate = () => {
             </TableHead>
 
             <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-              <Droppable key={1} droppableId="1">
+              <Droppable droppableId="table-droppable">
                 {(provided, snapshot) => (
                   <TableBody
                     ref={provided.innerRef}
@@ -609,8 +617,8 @@ const FormCreate = () => {
                   >
                     {formik.values.service_items.map((row, index) => (
                       <Draggable
-                        key={index}
-                        draggableId={String(index)}
+                        key={row.id}
+                        draggableId={String(row.id)}
                         index={index}
                       >
                         {(provided) => (
@@ -619,9 +627,6 @@ const FormCreate = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            sx={{
-                              width: "600px",
-                            }}
                           >
                             <TableCell
                               sx={{
@@ -857,7 +862,7 @@ const FormCreate = () => {
           onClick={() =>
             handleChange("service_items", [
               ...formik.values.service_items,
-              initRow,
+              { ...initRow, id: uuid() },
             ])
           }
         >
@@ -891,11 +896,11 @@ const FormCreate = () => {
             fontWeight={400}
           >{`Total ( VND )`}</Typography>
           <Typography color="#666666" fontSize={16} fontWeight={400}>
-            {Number((total * 105) / 100).toFixed(2)}
+            {Number((total * 110) / 100).toFixed(2)}
           </Typography>
         </Box>
       </Box>
-      {total !== 0 && (
+      {showSummary && (
         <Box
           sx={{
             display: "flex",
@@ -944,7 +949,7 @@ const FormCreate = () => {
                 fontWeight={400}
               >{`VAT`}</Typography>
               <Typography color="#666666" fontSize={16} fontWeight={700}>
-                {Number((total * 5) / 100).toFixed(2)}
+                {Number((total * 10) / 100).toFixed(2)}
               </Typography>
             </Box>
           </Box>

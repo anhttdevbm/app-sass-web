@@ -1,33 +1,32 @@
+import EditorPlugins from "@draft-js-plugins/editor";
+import createEmojiPlugin from "@draft-js-plugins/emoji";
+import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
+import { Box, Typography } from "@mui/material";
 import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  Editor,
-  EditorState,
-  RichUtils,
+  ContentBlock,
   convertFromRaw,
   DraftStyleMap,
-  ContentBlock,
+  EditorState,
+  RichUtils,
 } from "draft-js";
 import "./DraftEditor.css";
 import "./CheckableListItem.css";
 import ToolBarDraftEditor from "../ToolBarDraftEditor";
-import { Box } from "@mui/material";
+import useDebounce from "hooks/useDebounce";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useUpdateDocMutation } from "store/docs/api";
+import { useDocs } from "store/docs/selectors";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
-import { useUpdateDocMutation } from "store/docs/api";
-import useDebounce from "hooks/useDebounce";
-import { useDocs } from "store/docs/selectors";
 import AddSessionTool from "../AddSessionTool/components";
 import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
 import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
 import BoardEditor from "../BoardEditor";
 import ReactFlowMindMap from "../ReactFlowMindMap";
+import "./CheckableListItem.css";
+import "./DraftEditor.css";
+import "./EmojiEditor.css";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
@@ -56,7 +55,22 @@ export default function DraftEditor() {
     EditorState.createEmpty(),
   );
 
-  const editor = useRef<Editor | null>(null);
+  const { plugins, EmojiSelect } = useMemo(() => {
+    const emojiPlugin = createEmojiPlugin({
+      selectButtonContent: (
+        <Box display="flex" width="100%" height="100%">
+          <AddReactionOutlinedIcon sx={{ width: "16px", height: "16px" }} />
+          <Typography fontWeight={800}>Add emoji</Typography>
+        </Box>
+      ),
+    });
+    return {
+      plugins: [emojiPlugin],
+      EmojiSelect: emojiPlugin.EmojiSelect,
+    };
+  }, []);
+
+  const editor = useRef<EditorPlugins | null>(null);
 
   const [showAddSession, setShowAddSession] = useState(false);
   const [heightToolBar, setHeightToolBar] = useState(0);
@@ -234,7 +248,7 @@ export default function DraftEditor() {
     } else {
       setMounted(true);
     }
-  }, [description, name, project_id, currentId]);
+  }, [description, name, project_id, currentId, mounted, id, handleUpdateDoc]);
 
   // set giá trị cho doc khi mounted
   useEffect(() => {
@@ -287,11 +301,29 @@ export default function DraftEditor() {
       }}
       // onClick={focusEditor}
     >
+     <Box
+        paddingX="1rem"
+        paddingY="0.5rem"
+        display="flex"
+        alignItems="center"
+        marginTop={1}
+      >
+        <EmojiSelect />
+      </Box>
       <ToolBarDraftEditor
         editorState={editorState}
         setEditorState={setEditorState}
         setHeightToolBar={setHeightToolBar}
       />
+      <Box
+        paddingX="1rem"
+        paddingY="0.5rem"
+        display="flex"
+        alignItems="center"
+        marginTop={1}
+      >
+        <EmojiSelect />
+      </Box>
       <Box
         sx={{
           position: "relative",
@@ -300,7 +332,7 @@ export default function DraftEditor() {
           overflowY: "auto",
         }}
       >
-        <Editor
+        <EditorPlugins
           ref={editor}
           handleKeyCommand={handleKeyCommand}
           editorState={editorState}
@@ -308,6 +340,7 @@ export default function DraftEditor() {
           blockStyleFn={myBlockStyleFn}
           onChange={handleChangeEditor}
           blockRendererFn={blockRendererFn}
+          plugins={plugins}
         />
         {showAddSession && (
           <AddSessionTool
