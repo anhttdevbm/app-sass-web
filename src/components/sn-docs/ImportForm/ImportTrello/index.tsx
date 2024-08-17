@@ -3,10 +3,10 @@ import { Modal, Paper, Stack } from "@mui/material";
 import AppLogo from "components/AppLogo";
 import { Button, Text } from "components/shared";
 import { NS_DOCS } from "constant/index";
-import { useTranslations } from "next-intl";
-import TrelloDialog from "./TrelloDialog";
 import useToggle from "hooks/useToggle";
+import { useTranslations } from "next-intl";
 import { IThirdPartyItem } from "../thirdPartyList";
+import TrelloDialog from "./TrelloDialog";
 
 interface IImportTrelloProps {
   thirdParty?: IThirdPartyItem;
@@ -48,7 +48,7 @@ export default function ImportTrello(props: IImportTrelloProps) {
   const { thirdParty, onClose } = props;
   const docsT = useTranslations(NS_DOCS);
   const [isShowTrelloDialog, onShowTrelloDialog, onHideTrelloDialog] =
-    useToggle();
+    useToggle(false);
 
   const handleAuthenticate = () => {
     // add auth to Trello: TBC

@@ -1,12 +1,14 @@
-import { Modal, Paper } from "@mui/material";
+import { CircularProgress, Modal, Paper } from "@mui/material";
 import { Option } from "constant/types";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useDocs } from "store/docs/selectors";
 import { useProjects, useTasksOfProject } from "store/project/selectors";
 import { useChatWithAI } from "store/aiChat/selectors";
 import ProjectAiPrompt from "./components/ProjectAiPrompt";
 import ProjectAiEdit from "./components/ProjectAiEdit";
 import { AiProjectData, CreateProjectPrompt } from "store/project/actions";
+import { convertFromHTML, RawDraftContentBlock } from "draft-js";
+import { useRouter } from "next/navigation";
 
 const View = ["form", "edit"] as const;
 type View = (typeof View)[number];
@@ -25,6 +27,7 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
   const { onCreateProject, onCreateProjectWithAI } = useProjects();
   const { onCreateTaskList, onCreateTask } = useTasksOfProject();
   const { onCreateDoc } = useDocs();
+  const { push } = useRouter();
 
   const {
     tone: tones,
@@ -50,7 +53,6 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
   };
 
   const generateProject = async () => {
-    let docData = "";
     if (projectData) {
       const project = await onCreateProject({
         name: projectData.title,
@@ -60,24 +62,30 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
         type_project: "" as unknown as Option,
         description: projectData.description,
       });
-      docData += `# ${projectData.title}\n\n`;
-      docData += "## Project Overview\n\n";
-      docData += `${projectData.description}\n\n`;
-      docData += "## Milestones\n\n";
-      for (const _taskList of projectData.taskList) {
-        const taskList = await onCreateTaskList({
-          name: _taskList.title,
-          project: project.id,
-        });
-        docData += `### ${_taskList.title}\n\n`;
 
+      let docData = "";
+      docData += `<h1>${projectData.title}</h1>`;
+      docData += "<h2>Project Overview</h2>";
+      docData += `<p>${projectData.description}</p>`;
+      docData += "<h2>Milestones</h2>";
+      for (const _taskList of projectData.taskList) {
+        docData += `<h3>${_taskList.title}</h3>`;
+
+        docData += "<ul>";
         for (const _task of _taskList.tasks) {
-          await onCreateTask({ name: _task }, taskList.id);
-          docData += `- [ ] ${_task}\n`;
+          docData += `<li>${_task}</li>`;
         }
+        docData += "</ul>";
       }
 
-      await onCreateDoc(project.id, docData);
+      const docBlocks = convertFromHTML(docData);
+      const doc = await onCreateDoc(
+        project.id,
+        JSON.stringify(docBlocks.contentBlocks),
+        projectData.title,
+        projectData.description,
+      );
+      push(`/documents/${doc.id}`);
     }
     props.onClose();
   };
