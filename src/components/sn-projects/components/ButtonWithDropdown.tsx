@@ -11,8 +11,14 @@ const ButtonWithDropdown = ({
   primaryButtonProps?: ComponentProps<typeof Button>;
   secondaryButtonProps?: Omit<ComponentProps<typeof Button>, "onClick">;
 }) => {
-  const { text, children, primaryButtonProps, secondaryButtonProps, ...rest } =
-    props;
+  const {
+    text,
+    children,
+    primaryButtonProps,
+    secondaryButtonProps,
+    sx,
+    ...rest
+  } = props;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const isOpen = Boolean(anchorEl);
 
@@ -27,6 +33,7 @@ const ButtonWithDropdown = ({
         background:
           "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
         borderRadius: "2rem",
+        ...sx,
       }}
       {...rest}
     >
