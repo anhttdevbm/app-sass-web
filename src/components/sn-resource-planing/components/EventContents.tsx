@@ -53,6 +53,12 @@ const EventContents = ({
           color: "rgba(246, 78, 96, 0.80);",
           background: "#CB4251",
         };
+      case "SERVICE":
+        return {
+          icon: <BlueArrowIcon width={16} height={16} />,
+          color: "#3699FFCC",
+          background: "#408DFB",
+        };
       default:
         return {
           icon: <GrayArrowIcon width={16} height={16} />,
@@ -61,7 +67,6 @@ const EventContents = ({
         };
     }
   };
-
   const checkedEventType = checkEventType(booking_type);
   const day = dayjs(event.end).diff(dayjs(event.start), "days");
 
@@ -77,17 +82,6 @@ const EventContents = ({
       unit = mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.PERCENTAGE];
       break;
   }
-
-  const onDragOver = (event) => {
-    console.log("1", 1);
-    event.preventDefault(); // Necessary to allow a drop
-  };
-
-  const onDrop = (event) => {
-    console.log("2", 2);
-
-    event.preventDefault();
-  };
 
   return (
     <>
@@ -113,22 +107,26 @@ const EventContents = ({
               bookingId: bookingID,
             });
           }}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
         >
           {/* {checkedEventType.icon} */}
           <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
             {time_off_type ? resourceT("form.timeOffType.sick") : ""}
           </Typography>
           <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
-            {project?.name}
+            {booking_type === "SERVICE"
+              ? resourceT("schedule.action.addBooking")
+              : project?.name}
           </Typography>
           <Tooltip
-            title={resourceT("schedule.time.eventTime", {
-              day: isNaN(day) ? 1 : day,
-              allocation,
-              unit,
-            })}
+            title={
+              booking_type === "SERVICE"
+                ? resourceT("schedule.action.addBooking")
+                : resourceT("schedule.time.eventTime", {
+                    day: isNaN(day) ? 1 : day,
+                    allocation,
+                    unit,
+                  })
+            }
           >
             <Typography
               sx={{
@@ -147,11 +145,13 @@ const EventContents = ({
                 marginBottom: "5px",
               }}
             >
-              {resourceT("schedule.time.eventTime", {
-                day: isNaN(day) ? 8 : day,
-                allocation,
-                unit,
-              })}
+              {booking_type === "SERVICE"
+                ? resourceT("schedule.resourceHeader.service")
+                : resourceT("schedule.time.eventTime", {
+                    day: isNaN(day) ? 8 : day,
+                    allocation,
+                    unit,
+                  })}
             </Typography>
           </Tooltip>
 

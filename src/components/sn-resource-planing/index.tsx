@@ -14,8 +14,6 @@ import {
 } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Select } from "components/shared";
 import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import { Permission } from "constant/enums";
@@ -57,7 +55,7 @@ const ResourcePlanning = () => {
   const [isServicePopup, setIsServicePopup] = useState<Boolean>(false);
   const [isWorkload, setIsWorkload] = useState<Boolean>(false);
   const [isModalAdd, setIsModalAdd] = useState<boolean>(false);
-  const [programSelected, setProgramSelected] = useState<string | null>(null);
+  const [projectSelected, setProjectSelected] = useState<string | null>(null);
   const [budgetSelected, setBudgetSelected] = useState<string | null>(null);
 
   const [listBudgets, setListBudgets] = useState<TBudget[] | []>([]);
@@ -76,7 +74,7 @@ const ResourcePlanning = () => {
     ) || [];
 
   const handleChangeProject = async (projectId: string) => {
-    setProgramSelected(projectId);
+    setProjectSelected(projectId);
     setProjectId(projectId);
     const res = await getBudgetsByIdProject(projectId);
 
@@ -105,9 +103,6 @@ const ResourcePlanning = () => {
         setListServices(res.data);
       }
     }
-  };
-  const onDragStart = (item: TBudgetService) => {
-    console.log("item", item);
   };
 
   return (
@@ -246,31 +241,27 @@ const ResourcePlanning = () => {
             {/* <AddBooking setIsModalAdd={setIsModalAdd} isModalAdd={isModalAdd} /> */}
           </Grid>
         </Grid>
-        <LocalizationProvider
-          dateAdapter={AdapterDayjs}
-          // localeText={
-          //   viVN.components.MuiLocalizationProvider.defaultProps.localeText
-          // }
-        >
-          {user?.roles?.includes(Permission.AM) && (
-            <TabPanel value="allPeople">
-              <AllPeopleTab
-                setisServicePopup={setIsServicePopup}
-                isWorkload={isWorkload}
-                setIsWorkload={setIsWorkload}
-                tab={tab}
-              />
-            </TabPanel>
-          )}
-          <TabPanel value="mySchedule" draggable>
-            <MyScheduleTab
+
+        {user?.roles?.includes(Permission.AM) && (
+          <TabPanel value="allPeople">
+            <AllPeopleTab
               setisServicePopup={setIsServicePopup}
               isWorkload={isWorkload}
               setIsWorkload={setIsWorkload}
               tab={tab}
+              projectSelected={projectSelected}
+              budgetSelected={budgetSelected}
             />
           </TabPanel>
-        </LocalizationProvider>
+        )}
+        <TabPanel value="mySchedule">
+          <MyScheduleTab
+            setisServicePopup={setIsServicePopup}
+            isWorkload={isWorkload}
+            setIsWorkload={setIsWorkload}
+            tab={tab}
+          />
+        </TabPanel>
       </TabContext>
       {isServicePopup && (
         <Stack
@@ -314,7 +305,7 @@ const ResourcePlanning = () => {
             <Select
               options={listProjects}
               fullWidth
-              value={programSelected}
+              value={projectSelected}
               onChange={(e) => {
                 handleChangeProject(e.target.value);
               }}
@@ -443,7 +434,6 @@ const ResourcePlanning = () => {
                 }}
               />
             </Stack>
-
             <Typography
               variant="subtitle1"
               gutterBottom
@@ -466,43 +456,45 @@ const ResourcePlanning = () => {
             >
               <VueSaxIcon /> 02/17 service
             </Typography>
-            {listServices.map((item: TBudgetService) => (
-              <div
-                onDragStart={() => onDragStart(item)}
-                key={item.id}
-                draggable
-              >
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    p: 1,
-                    mb: 1,
-                    borderStyle: "dashed",
-                    height: "32px",
-                    marginTop: "15px",
-                    borderColor: "#E1D3D3",
-                  }}
-                >
-                  <Typography fontSize={11}>{item?.name}</Typography>
-                  <IconButton>
-                    <AddOutlined
-                      color="primary"
-                      sx={{
-                        background:
-                          "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                        borderRadius: "100px",
-                        fontSize: "16px",
-                        color: "white",
-                        overflow: "hidden",
-                      }}
-                    />
-                  </IconButton>
-                </Paper>
-              </div>
-            ))}
+
+            <div id="external-events">
+              {listServices.map((item: TBudgetService) => (
+                <div key={item.id} draggable>
+                  <Paper
+                    className="fc-event"
+                    id={item.id}
+                    title={item?.name}
+                    variant="outlined"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      p: 1,
+                      mb: 1,
+                      borderStyle: "dashed",
+                      height: "32px",
+                      marginTop: "15px",
+                      borderColor: "#E1D3D3",
+                    }}
+                  >
+                    <Typography fontSize={11}>{item?.name}</Typography>
+                    <IconButton>
+                      <AddOutlined
+                        color="primary"
+                        sx={{
+                          background:
+                            "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                          borderRadius: "100px",
+                          fontSize: "16px",
+                          color: "white",
+                          overflow: "hidden",
+                        }}
+                      />
+                    </IconButton>
+                  </Paper>
+                </div>
+              ))}
+            </div>
           </Box>
         </Stack>
       )}

@@ -73,6 +73,7 @@ export const useGetSchemas = () => {
         .required(
           commonT("form.error.required", { name: resourceT("form.role") }),
         ),
+      budget_id: yup.string(),
     })
     .required();
 

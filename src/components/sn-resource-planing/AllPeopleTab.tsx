@@ -1,6 +1,6 @@
 "use client";
 
-import interactionPlugin from "@fullcalendar/interaction";
+import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import { Stack } from "@mui/material";
@@ -40,6 +40,8 @@ interface IAllPeopleTabProp {
   setIsWorkload: any;
   isWorkload: Boolean;
   tab: String;
+  budgetSelected?: string | null;
+  projectSelected?: string | null;
 }
 
 const AllPeopleTab = ({
@@ -47,6 +49,8 @@ const AllPeopleTab = ({
   setIsWorkload,
   isWorkload,
   tab,
+  projectSelected,
+  budgetSelected,
 }: IAllPeopleTabProp) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
@@ -65,6 +69,8 @@ const AllPeopleTab = ({
   const calendarRef = React.useRef<FullCalendar>(null);
   const [selectedResource, setSelectedResource] = React.useState<string[]>([]);
   const [isOpenCreate, setIsOpenCreate] = React.useState(false);
+  const [serviceId, setServiceId] = React.useState<string | null>(null);
+
   const { palette, isDarkMode } = useTheme();
   const [parentResource, setParentResource] = React.useState<string>("");
   const { updateBooking, loading } = useBookingAll();
@@ -413,6 +419,43 @@ const AllPeopleTab = ({
   const currentWeekMonths = getMonthNamesForWeek(currentWeekDates);
   const nextWeekMonths = getMonthNamesForWeek(nextWeekDates);
 
+  const handleEventReceive = (eventInfo) => {
+    const dateRange = eventInfo?.event?._instance?.range;
+
+    const user_id = eventInfo?.event?._def?.resourceIds?.[0];
+    const service_id = eventInfo?.draggedEl?.id;
+
+    setParentResource(user_id || "");
+    const start_date = dayjs(dateRange?.start).toDate();
+
+    const end_date = dayjs(dateRange?.end).toDate();
+    // if (!resource) return;
+    setSelectedDateRange([start_date, end_date]);
+    setServiceId(service_id);
+    setIsOpenCreate(true);
+  };
+
+  const draggableEl = document.getElementById("external-events") as any;
+
+  useEffect(() => {
+    if (draggableEl)
+      new Draggable(draggableEl, {
+        itemSelector: ".fc-event",
+        eventData: function (eventEl) {
+          const id = eventEl.dataset.id;
+          const title = eventEl.getAttribute("title");
+          console.log("title", title);
+
+          return {
+            id: id,
+            title: title,
+            booking_type: "SERVICE",
+            create: true,
+          };
+        },
+      });
+  }, [draggableEl]);
+
   return (
     <Stack direction="column" rowGap={2}>
       <FilterHeader
@@ -586,6 +629,8 @@ const AllPeopleTab = ({
           stickyFooterScrollbar={true}
           eventResize={handleEventChange(calendarRef, true)}
           eventDrop={handleEventChange(calendarRef, false)}
+          droppable={true}
+          eventReceive={handleEventReceive}
         />
       </Box>
       <CreateBooking
@@ -596,6 +641,9 @@ const AllPeopleTab = ({
         open={isOpenCreate}
         resourceId={parentResource}
         selectedDateRange={selectedDateRange}
+        budgetSelected={budgetSelected}
+        projectSelected={projectSelected}
+        serviceId={serviceId}
       />
 
       {/* TODO: wait for confirm the edit function */}

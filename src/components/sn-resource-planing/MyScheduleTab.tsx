@@ -346,7 +346,7 @@ const MyScheduleTab = ({
       if (j === index) {
         result[i][j].sale = {
           ...result[i][j].sale,
-          nameService: result[i][j].sale.name,
+          nameService: result[i][j].sale?.name,
         };
       }
       if (j === result[i].length - 1) {

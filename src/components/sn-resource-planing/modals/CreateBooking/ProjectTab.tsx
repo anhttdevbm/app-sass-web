@@ -4,7 +4,6 @@ import {
   CircularProgress,
   Collapse,
   FormHelperText,
-  SelectChangeEvent,
   Stack,
   Typography,
   useTheme,
@@ -44,6 +43,9 @@ interface IProps {
   resourceId: string;
   selectedDateRange?: Date[];
   userId?: string;
+  budgetSelected?: string | null;
+  projectSelected?: string | null;
+  serviceId?: string | null;
 }
 
 const ProjectTab = ({
@@ -52,6 +54,9 @@ const ProjectTab = ({
   resourceId,
   userId,
   selectedDateRange,
+  projectSelected,
+  budgetSelected,
+  serviceId,
 }: IProps) => {
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [isFocusAllocation, setIsFocusAllocation] = useState(false);
@@ -76,8 +81,8 @@ const ProjectTab = ({
   } = useForm({
     resolver: yupResolver(schemaProject),
     defaultValues: {
-      project_id: "",
-      service_id: "",
+      project_id: projectSelected || "",
+      service_id: serviceId || "",
       dateRange: {
         startDate: selectedDateRange?.[0] || undefined,
         endDate: selectedDateRange?.[1] || undefined,
@@ -86,6 +91,7 @@ const ProjectTab = ({
       allocation_type: RESOURCE_ALLOCATION_TYPE.HOUR,
       note: "",
       role: "",
+      budget_id: budgetSelected || "",
     },
     mode: "all",
   });
@@ -156,13 +162,9 @@ const ProjectTab = ({
     }
   };
 
-  const handleChangeBudget = async (
-    event: SelectChangeEvent<string | number>,
-  ) => {
-    if (event.target.value) {
-      const res = await getServiceByBudgetQueries(
-        event.target.value.toString(),
-      );
+  const handleChangeBudget = async (value: string) => {
+    if (value) {
+      const res = await getServiceByBudgetQueries(value);
       const convertValue = res.data?.map((item: TBudgetService) => ({
         value: item.id,
         label: item.name,
@@ -176,6 +178,10 @@ const ProjectTab = ({
   useEffect(() => {
     handleChangeProjectId();
   }, [watchProject("project_id")]);
+
+  useEffect(() => {
+    if (budgetSelected) handleChangeBudget(budgetSelected);
+  }, [budgetSelected]);
 
   const onScroll = debounce((e: any) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target;
@@ -217,7 +223,7 @@ const ProjectTab = ({
           control={controlProject as unknown as Control}
           name={"budget_id"}
           label={resourceT("form.budget")}
-          handleChange={handleChangeBudget}
+          handleChange={(e) => handleChangeBudget(e.target.value?.toString())}
           listOptions={listBudgets}
           sx={{
             borderRadius: "100px",

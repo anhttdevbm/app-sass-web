@@ -12,6 +12,9 @@ interface IProps {
   onClose(): void;
   selectedDateRange?: Date[];
   resourceId: string;
+  budgetSelected?: string | null;
+  projectSelected?: string | null;
+  serviceId?: string | null;
 }
 
 const CreateBooking: React.FC<IProps> = ({
@@ -19,6 +22,9 @@ const CreateBooking: React.FC<IProps> = ({
   onClose,
   resourceId,
   selectedDateRange,
+  budgetSelected,
+  projectSelected,
+  serviceId,
 }) => {
   const [typeBooking, setTypeBooking] = useState<"PROJECT" | "TIME_OFF">(
     "PROJECT",
@@ -136,6 +142,9 @@ const CreateBooking: React.FC<IProps> = ({
             resourceId={resourceId}
             userId={resourceId}
             selectedDateRange={selectedDateRange}
+            budgetSelected={budgetSelected}
+            projectSelected={projectSelected}
+            serviceId={serviceId}
           />
         ) : (
           <TimeOffTab
