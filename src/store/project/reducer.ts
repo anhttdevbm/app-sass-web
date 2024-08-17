@@ -154,6 +154,7 @@ export type TaskList = {
   id: string;
   name: string;
   tasks: Task[];
+  order: number;
 };
 
 export interface Comment {

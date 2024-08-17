@@ -48,6 +48,7 @@ import {
   CreateProjectPrompt,
   createTaskWithAI,
   CreateTaskPrompt,
+  updateTaskListOrder,
 } from "./actions";
 import { DataStatus } from "constant/enums";
 import { useMemo, useCallback } from "react";
@@ -358,6 +359,17 @@ export const useTasksOfProject = () => {
     [dispatch],
   );
 
+  const onUpdateTaskListOrder = useCallback(
+    async (id: string, order: number) => {
+      try {
+        return await dispatch(updateTaskListOrder({ id, order })).unwrap();
+      } catch (error) {
+        throw error;
+      }
+    },
+    [dispatch],
+  );
+
   const onMoveTask = async (
     oldTaskListId: string,
     taskListId: string,
@@ -422,6 +434,7 @@ export const useTasksOfProject = () => {
     onCreateTaskList,
     onCreateTaskListWithAi,
     onUpdateTaskList,
+    onUpdateTaskListOrder,
     onCreateTask,
     onCreateTaskWithAi,
     onMoveTask,
