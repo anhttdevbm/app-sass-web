@@ -46,6 +46,7 @@ const useDocs = () => {
     projectId?: string,
     content?: string,
     name = "No Name",
+    description = "",
   ) => {
     setLoading(true);
     try {
@@ -53,7 +54,7 @@ const useDocs = () => {
         Endpoint.DOCS,
         {
           name,
-          description: "",
+          description,
           project_id: projectId,
           content,
         },

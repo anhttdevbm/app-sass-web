@@ -48,7 +48,7 @@ export default function ImportTrello(props: IImportTrelloProps) {
   const { thirdParty, onClose } = props;
   const docsT = useTranslations(NS_DOCS);
   const [isShowTrelloDialog, onShowTrelloDialog, onHideTrelloDialog] =
-    useToggle(true);
+    useToggle(false);
 
   const handleAuthenticate = () => {
     // add auth to Trello: TBC
