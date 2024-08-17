@@ -47,7 +47,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Droppable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useSnackbar } from "store/app/selectors";
 import { TaskListData } from "store/project/actions";
 import { Task } from "store/project/reducer";
@@ -161,90 +161,104 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                 border: isDragging ? "1px dashed" : undefined,
               }}
             >
-              <Stack
-                direction="row"
-                alignItems="center"
-                height={48}
-                pl={{ xs: 0, md: 2 }}
-                width="100%"
-                spacing={3}
-                borderTop={index !== 0 ? { md: "1px solid" } : undefined}
-                borderBottom={{ md: "1px solid" }}
-                borderColor={{ md: "grey.100" }}
-                bgcolor="#e8f2e8"
-                borderRadius="1rem 1rem 0 0"
-              >
-                <Stack direction="row" alignItems="center" overflow="hidden">
-                  <CheckBoxCustom
-                    size="small"
-                    className="checkbox"
-                    checked={checked}
-                    onChange={onChange}
-                  />
-                  <IconButton
-                    noPadding
-                    sx={{
-                      ml: { md: 1.5 },
-                      transform: isShow ? undefined : "rotate(180deg)",
-                    }}
-                    onClick={onToggle}
+              <Draggable draggableId={id} index={index}>
+                {(dragProvided) => (
+                  <div
+                    ref={dragProvided.innerRef}
+                    {...dragProvided.draggableProps}
                   >
-                    <ExpandMore sx={{ color: "text.primary" }} />
-                  </IconButton>
-                  <Text
-                    variant={isXlSmaller ? "h6" : "h5"}
-                    color="text.primary"
-                    onClick={onShowPreviewName}
-                    noWrap
-                    sx={{ cursor: "pointer" }}
-                  >
-                    {name}
-                  </Text>
-                  <Text
-                    mr={1}
-                    ml={0.5}
-                    variant="h5"
-                    fontWeight={400}
-                    color="text.primary"
-                  >
-                    {`(${count})`}
-                  </Text>
-                  <MoreList
-                    id={id}
-                    name={name}
-                    setSelectedList={setSelectedList}
-                  />
-                </Stack>
-              </Stack>
-              {isShow && props.children}
-              {provided.placeholder}
-              {/* Show form add new task */}
-              {isShow && (
-                <Stack
-                  width="100%"
-                  direction="row"
-                  spacing={0}
-                  alignItems="flex-end"
-                  sx={{ ml: { xs: 2, md: 3.5 } }}
-                >
-                  <PlusIcon sx={{ color: "dodgerblue", mr: 1, my: 1 }} />
-                  <TextField
-                    label={projectT("detailTasks.addNewTask")}
-                    variant="standard"
-                    value={taskName}
-                    onChange={changeNameTask}
-                    onKeyDown={(e) => onKeyDownTaskName(e, id)}
-                    InputLabelProps={{ sx: { color: "dodgerblue" } }}
-                    sx={{
-                      "& .MuiInput-underline": {
-                        ":before": {
-                          borderBottomColor: "transparent",
-                        },
-                      },
-                    }}
-                  />
-                </Stack>
-              )}
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      height={48}
+                      pl={{ xs: 0, md: 2 }}
+                      width="100%"
+                      spacing={3}
+                      borderTop={index !== 0 ? { md: "1px solid" } : undefined}
+                      borderBottom={{ md: "1px solid" }}
+                      borderColor={{ md: "grey.100" }}
+                      bgcolor="#e8f2e8"
+                      borderRadius="1rem 1rem 0 0"
+                    >
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        overflow="hidden"
+                      >
+                        <CheckBoxCustom
+                          size="small"
+                          className="checkbox"
+                          checked={checked}
+                          onChange={onChange}
+                        />
+                        <IconButton
+                          noPadding
+                          sx={{
+                            ml: { md: 1.5 },
+                            transform: isShow ? undefined : "rotate(180deg)",
+                          }}
+                          onClick={onToggle}
+                        >
+                          <ExpandMore sx={{ color: "text.primary" }} />
+                        </IconButton>
+                        <Text
+                          variant={isXlSmaller ? "h6" : "h5"}
+                          color="text.primary"
+                          onClick={onShowPreviewName}
+                          noWrap
+                          sx={{ cursor: "pointer" }}
+                          {...dragProvided.dragHandleProps}
+                        >
+                          {name}
+                        </Text>
+                        <Text
+                          mr={1}
+                          ml={0.5}
+                          variant="h5"
+                          fontWeight={400}
+                          color="text.primary"
+                        >
+                          {`(${count})`}
+                        </Text>
+                        <MoreList
+                          id={id}
+                          name={name}
+                          setSelectedList={setSelectedList}
+                        />
+                      </Stack>
+                    </Stack>
+                    {isShow && props.children}
+                    {provided.placeholder}
+                    {/* Show form add new task */}
+                    {isShow && (
+                      <Stack
+                        width="100%"
+                        direction="row"
+                        spacing={0}
+                        alignItems="flex-end"
+                        sx={{ ml: { xs: 2, md: 3.5 } }}
+                      >
+                        <PlusIcon sx={{ color: "dodgerblue", mr: 1, my: 1 }} />
+                        <TextField
+                          label={projectT("detailTasks.addNewTask")}
+                          variant="standard"
+                          value={taskName}
+                          onChange={changeNameTask}
+                          onKeyDown={(e) => onKeyDownTaskName(e, id)}
+                          InputLabelProps={{ sx: { color: "dodgerblue" } }}
+                          sx={{
+                            "& .MuiInput-underline": {
+                              ":before": {
+                                borderBottomColor: "transparent",
+                              },
+                            },
+                          }}
+                        />
+                      </Stack>
+                    )}
+                  </div>
+                )}
+              </Draggable>
             </div>
           );
         }}

@@ -76,6 +76,7 @@ const ItemList = () => {
     filters,
     totalPages,
     onResetTasks,
+    onUpdateTaskListOrder,
   } = useTasksOfProject();
   const {
     onUpdateTaskDetail,
@@ -645,6 +646,23 @@ const ItemList = () => {
       return;
     }
 
+    if (draggableId === source.droppableId) {
+      // CHANGE ORDER TASKS LIST
+      const from = source.index;
+      const to =
+        source.index > destination.index
+          ? destination.index
+          : destination.index - 1;
+      const newDataList = structuredClone(dataList);
+      newDataList.splice(to, 0, newDataList.splice(from, 1)[0]);
+      Promise.all(
+        newDataList.map((taskList, index) =>
+          onUpdateTaskListOrder(taskList.id, index),
+        ),
+      );
+      return;
+    }
+
     const sourceTaskListIndex = dataList.findIndex(
       (taskListItem) => taskListItem.id === source.droppableId,
     );
@@ -993,10 +1011,7 @@ const ItemList = () => {
 
   useEffect(() => {
     const _items = structuredClone(items);
-    _items.sort((a, b) => a.id.localeCompare(b.id));
-    for (const _item of _items) {
-      _item.tasks.sort((a, b) => a.id.localeCompare(b.id));
-    }
+    _items.sort((a, b) => a.order - b.order);
     setDataList(_items);
   }, [items]);
 
