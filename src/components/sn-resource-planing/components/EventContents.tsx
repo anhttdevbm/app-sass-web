@@ -1,6 +1,5 @@
 import { EventApi } from "@fullcalendar/core";
 import { Stack, Typography } from "@mui/material";
-import { Tooltip } from "components/shared";
 import {
   RESOURCE_ALLOCATION_TYPE,
   RESOURCE_ALLOCATION_UNIT,
@@ -11,7 +10,8 @@ import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
 import BlueArrowIcon from "icons/BlueArrowIcon";
 import GrayArrowIcon from "icons/GrayArrowIcon";
-import RedArrowIcon from "icons/RedArrowIcon";
+import ProjectBookingIcon from "icons/ProjectBookingIcon";
+import SickLeaveIcon from "icons/SickLeaveIcon";
 import { useTranslations } from "next-intl";
 import { IEditState } from "../AllPeopleTab";
 import useGetMappingTime from "../hooks/useGetMappingTime";
@@ -43,19 +43,23 @@ const EventContents = ({
     switch (value) {
       case RESOURCE_EVENT_TYPE.PROJECT_BOOKING:
         return {
-          icon: <BlueArrowIcon width={16} height={16} />,
-          color: "#3699FFCC",
+          icon: <ProjectBookingIcon width={16} height={16} />,
+          color: "#000000",
           background: "#408DFB",
+          backgroundTitle: "#091E420F",
+          backgroundContent: "#FFFFFFCC",
         };
       case RESOURCE_EVENT_TYPE.TIME_OF_BOOKING:
         return {
-          icon: <RedArrowIcon width={16} height={16} />,
-          color: "rgba(246, 78, 96, 0.80);",
+          icon: <SickLeaveIcon sx={{ width: 14, height: 14 }} />,
+          color: "#000000",
           background: "#CB4251",
+          backgroundTitle: "#091E420F",
+          backgroundContent: "#FFFFFFCC",
         };
       case "SERVICE":
         return {
-          icon: <BlueArrowIcon width={16} height={16} />,
+          icon: <BlueArrowIcon sx={{ width: 14, height: 14, fontSize: 14 }} />,
           color: "#3699FFCC",
           background: "#408DFB",
         };
@@ -76,7 +80,8 @@ const EventContents = ({
       unit = mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.HOUR_PER_DAY];
       break;
     case RESOURCE_ALLOCATION_UNIT.HOUR:
-      unit = " " + mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.HOUR];
+      // unit = " " + mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.HOUR];
+      unit = "h";
       break;
     default:
       unit = mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.PERCENTAGE];
@@ -90,8 +95,6 @@ const EventContents = ({
           className="fc-event-title fc-sticky"
           direction="row"
           sx={{
-            border: `1px solid ${checkedEventType.color}`,
-            display: "flex!important",
             width: 1,
             borderRadius: 1,
             alignItems: "start",
@@ -108,52 +111,80 @@ const EventContents = ({
             });
           }}
         >
-          {/* {checkedEventType.icon} */}
-          <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
-            {time_off_type ? resourceT("form.timeOffType.sick") : ""}
-          </Typography>
-          <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
-            {booking_type === "SERVICE"
-              ? resourceT("schedule.action.addBooking")
-              : project?.name}
-          </Typography>
-          <Tooltip
-            title={
-              booking_type === "SERVICE"
+          <Stack
+            display={"flex"}
+            flexDirection={"row"}
+            width={"100%"}
+            gap={"3px"}
+          >
+            <div>{checkedEventType.icon}</div>
+            {time_off_type && (
+              <Typography
+                sx={{
+                  color: "FFFFFF",
+                  fontSize: "10px",
+                  paddingTop: "2px",
+                  paddingRight: "2px",
+                }}
+              >
+                {resourceT("form.timeOffType.sick")}
+              </Typography>
+            )}
+            {booking_type && (
+              <Stack display={"flex"}>
+                <Typography
+                  sx={{
+                    color: "FFFFFF",
+                    fontSize: "10px",
+                    paddingTop: "2px",
+                    paddingRight: "2px",
+                  }}
+                >
+                  {project?.company}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "FFFFFF",
+                    fontSize: "7px",
+                    paddingTop: "2px",
+                    paddingRight: "2px",
+                  }}
+                >
+                  {project?.name}
+                </Typography>
+              </Stack>
+            )}
+          </Stack>
+
+          <Stack
+            sx={{
+              background: checkedEventType.backgroundTitle,
+              padding: "4px 2px 4px 8px",
+              marginTop: time_off_type ? "10px" : 0,
+              float: "right",
+              borderRadius: 1,
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 9,
+                width: "fit-content",
+                background: checkedEventType.backgroundContent,
+                color: checkedEventType.color,
+                paddingLeft: "2px",
+                paddingRight: "2px",
+                borderRadius: 1,
+              }}
+            >
+              {booking_type === "SERVICE"
                 ? resourceT("schedule.action.addBooking")
                 : resourceT("schedule.time.eventTime", {
                     day: isNaN(day) ? 1 : day,
                     allocation,
                     unit,
-                  })
-            }
-          >
-            <Typography
-              sx={{
-                fontWeight: 400,
-                color: "black",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                px: 1,
-                mr: 0,
-                width: "100%",
-                textAlign: "end",
-                fontSize: "11px",
-                background: "#FFFFFF",
-                borderRadius: "5px",
-                marginBottom: "5px",
-              }}
-            >
-              {booking_type === "SERVICE"
-                ? resourceT("schedule.resourceHeader.service")
-                : resourceT("schedule.time.eventTime", {
-                    day: isNaN(day) ? 8 : day,
-                    allocation,
-                    unit,
                   })}
             </Typography>
-          </Tooltip>
+          </Stack>
 
           {/* <Stack
         sx={{

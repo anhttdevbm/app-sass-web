@@ -45,6 +45,7 @@ const ResourceLabel = ({
     project,
     user_id,
     bookings: parentBookings,
+    role,
   } = resource._resource.extendedProps;
 
   const commonT = useTranslations(NS_COMMON);
@@ -147,6 +148,7 @@ const ResourceLabel = ({
   //     </Grid>
   //   );
   // }
+
   return (
     <Grid
       container
@@ -204,24 +206,9 @@ const ResourceLabel = ({
                   {fullName}
                 </Typography>
                 <Typography sx={{ color: "#666666", fontSize: 14 }}>
-                  {company}
+                  {role}
                 </Typography>
               </Box>
-              {/* <ArrowDownIcon
-                color="inherit"
-                fontSize="inherit"
-                sx={{
-                  fontSize: "12px",
-                  mt: "6px",
-                  width: "20px",
-                  ml: {
-                    xs: 1,
-                    md: 0,
-                  },
-                  transform: isActive ? "rotate(-90deg)" : "rotate(-180deg)",
-                  transitionDelay: "all ease 0.25s",
-                }}
-              /> */}
             </Stack>
           </Grid>
         </Grid>

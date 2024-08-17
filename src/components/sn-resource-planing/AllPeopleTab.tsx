@@ -5,11 +5,13 @@ import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import { Stack } from "@mui/material";
 import { Box } from "@mui/system";
-import { Input } from "components/shared";
+import { Button, Input } from "components/shared";
 import { NS_RESOURCE_PLANNING } from "constant/index";
 import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
+import ClockIcon from "icons/ClockIcon";
 import SearchIcon from "icons/SearchIcon";
+import ServiceIcon from "icons/ServiceIcon";
 import { isEmpty } from "lodash";
 import { useTranslations } from "next-intl";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -42,6 +44,7 @@ interface IAllPeopleTabProp {
   tab: String;
   budgetSelected?: string | null;
   projectSelected?: string | null;
+  isSmSmaller?: boolean;
 }
 
 const AllPeopleTab = ({
@@ -51,6 +54,7 @@ const AllPeopleTab = ({
   tab,
   projectSelected,
   budgetSelected,
+  isSmSmaller,
 }: IAllPeopleTabProp) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
@@ -464,11 +468,50 @@ const AllPeopleTab = ({
         setIsWorkload={setIsWorkload}
         tab={tab}
       />
-      {/* <TimeHeader
-        filters={filters}
-        setFilters={setFilters}
-        calendarRef={calendarRef}
-      /> */}
+      {isSmSmaller && (
+        <Stack flexDirection={"row"} padding={"0px 20px"}>
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mr: 2,
+              borderRadius: "50px",
+              background: "#F7F7FD",
+              color: "#0575E6",
+              width: "fit-content",
+              fontSize: 13,
+              gap: 1,
+            }}
+            onClick={() => setIsWorkload((prev: Boolean) => !prev)}
+          >
+            <ClockIcon sx={{ width: 14, height: 14 }} />
+            Workload
+          </Button>
+
+          <Button
+            sx={{
+              marginLeft: "auto",
+              backgroundColor: "transparent",
+              color: "primary.main",
+              textTransform: "none",
+              fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "rgba(0, 123, 255, 0.1)",
+                borderRadius: "100px",
+              },
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+            onClick={() => {
+              setisServicePopup((prev: Boolean) => !prev);
+            }}
+          >
+            <ServiceIcon sx={{ width: 14, height: 14 }} />
+            Choose Service
+          </Button>
+        </Stack>
+      )}
       <div
         style={{
           display: "flex",
@@ -496,6 +539,8 @@ const AllPeopleTab = ({
           // "& .fc-theme-standard td:nth-last-child(2)": {
           //   border: "none!important",
           // },
+          padding: "20px",
+          paddingTop: 0,
         }}
       >
         <FullCalendar

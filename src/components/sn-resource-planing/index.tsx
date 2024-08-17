@@ -37,7 +37,7 @@ import CreateBooking from "./modals/CreateBooking";
 import MyScheduleTab from "./MyScheduleTab";
 const ResourcePlanning = () => {
   const { isDarkMode } = useTheme();
-  const { isSmSmaller } = useBreakpoint();
+  const { isSmSmaller, isMdSmaller } = useBreakpoint();
   const { user } = useAuth();
   const { items } = useProjects();
   const {
@@ -114,10 +114,8 @@ const ResourcePlanning = () => {
       }}
       sx={{
         ["& .MuiTabPanel-root"]: {
-          p: {
-            xs: "10px",
-            md: "20px",
-          },
+          p: 0,
+          marginTop: "16px",
         },
         position: "relative",
       }}
@@ -147,11 +145,12 @@ const ResourcePlanning = () => {
         <Grid
           container
           sx={{
-            height: isSmSmaller ? "110px" : "auto",
+            height: isSmSmaller ? "fit-content" : "auto",
             // "&.MuiGrid-root": {
             //   backgroundColor: "background.default",
             // },
             alignItems: "center",
+            minHeight: "110px",
           }}
         >
           <Grid
@@ -164,6 +163,9 @@ const ResourcePlanning = () => {
               marginTop: "22px",
               marginLeft: "16px",
               marginRight: "16px",
+              flexDirection: isMdSmaller ? "column" : "row",
+              gap: "16px",
+              width: "100%",
             }}
           >
             <TabList
@@ -188,7 +190,7 @@ const ResourcePlanning = () => {
                 },
                 "& .MuiTabs-flexContainer": {
                   borderRadius: "100px",
-                  width: "297px",
+                  width: isSmSmaller ? "100%" : "297px",
                   height: "56px",
                   border: "1px solid rgba(0, 123, 255, 0.1)",
                 },
@@ -212,7 +214,7 @@ const ResourcePlanning = () => {
             </TabList>
             <Button
               sx={{
-                width: "100px",
+                width: isSmSmaller ? "100%" : "fit-content",
                 height: "40px",
                 fontSize: "16px",
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
@@ -231,7 +233,7 @@ const ResourcePlanning = () => {
                 setIsModalAdd((prev) => !prev);
               }}
             >
-              + Add
+              + {t("header.add")}
             </Button>
             <CreateBooking
               resourceId={user?.id || ""}
@@ -251,6 +253,7 @@ const ResourcePlanning = () => {
               tab={tab}
               projectSelected={projectSelected}
               budgetSelected={budgetSelected}
+              isSmSmaller={isSmSmaller}
             />
           </TabPanel>
         )}
