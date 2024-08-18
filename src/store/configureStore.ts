@@ -36,6 +36,7 @@ import { promptTemplateReducer } from "store/promptTemplate/reducer";
 import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
 import userNavigationDetailReducer from "store/userNavigationDetail/reducer";
 import { invoiceReducer, InvoiceState } from "store/invoice/reducer";
+import {ticketDetailReducer} from "store/ticket-detail/reducer"
 
 export interface State {
   app: AppState;
@@ -72,7 +73,6 @@ export const store = configureStore({
     doc: docReducer,
     resourcePlanning: resourcePlanningReducer,
     invoice: invoiceReducer,
-
     //feedback
     feedback: feedbackReducer,
     blogs: blogReducer,
@@ -93,6 +93,10 @@ export const store = configureStore({
     promptTemplate: promptTemplateReducer,
     chatAIAgent: chatAIAgentReducer,
     userNavigationDetail: userNavigationDetailReducer,
+
+    //ticket
+    ticketDetail : ticketDetailReducer,
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

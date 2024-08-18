@@ -54,6 +54,8 @@ const ChangeViewListDoc = () => {
     useState<TypeViewListDoc>("basicViewListDoc");
   const dispatch = useDispatch();
 
+  console.log("check" , typeViewListDoc)
+
   const handleViewKanban = () => {
     dispatch(changeTypeViewDoc("kanbanViewListDoc"));
     setTypeViewListDoc("kanbanViewListDoc");
