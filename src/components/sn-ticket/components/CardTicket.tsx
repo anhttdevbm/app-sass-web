@@ -140,7 +140,7 @@ const CardTicket = (props: any) => {
                             </Text>
                         </Box>
                         <Box onClick={() => handleOpenTicketDetail(data?.id)} display='flex' alignContent='center' justifyContent='center' gap="10px" px={5}>
-                            <Text sx={{ color: "#0575E6", fontSize: 13, textDecoration: "underline" }}>Open Ticket</Text>
+                            <Text sx={{ color: "#0575E6", fontSize: 13, textDecoration: "underline" , cursor :"pointer" }}>Open Ticket</Text>
                             <OpenTicketDetailIcon />
                         </Box>
 
