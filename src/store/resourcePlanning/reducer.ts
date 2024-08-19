@@ -1,4 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { DEFAULT_BOOKING_ALL_FILTER } from "components/sn-resource-planing/helper";
+import { TIME_OFF_TYPE } from "components/sn-sales/helpers";
+import { DataStatus } from "constant/enums";
+import dayjs from "dayjs";
+import { Position } from "store/company/reducer";
+import { Project } from "store/project/reducer";
+import { Service } from "store/sales/reducer";
 import {
   IBookingAllFitler,
   createBookingResource,
@@ -6,16 +13,8 @@ import {
   getBookingAll,
   getBudgetServices,
   getMyBookingResource,
-  resourceActionType,
   updateBookingResource,
 } from "./action";
-import dayjs from "dayjs";
-import { Position } from "store/company/reducer";
-import { Project } from "store/project/reducer";
-import { DEFAULT_BOOKING_ALL_FILTER } from "components/sn-resource-planing/helper";
-import { DataStatus } from "constant/enums";
-import { TIME_OFF_TYPE } from "components/sn-sales/helpers";
-import { Service } from "store/sales/reducer";
 
 export interface IDatePicker {
   dateRange: Date[];
@@ -26,7 +25,7 @@ export interface IBookingItem {
   id: string;
   booking_type: string;
   project_id?: string;
-  sale_id?: string;
+  service_id?: string;
   position?: Partial<Position>;
   time_off_type?: TIME_OFF_TYPE;
   start_date: string;

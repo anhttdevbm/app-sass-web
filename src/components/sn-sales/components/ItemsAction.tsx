@@ -1,37 +1,34 @@
 import {
-  IconButton,
-  MenuList,
   Box,
-  MenuItem,
   ButtonBase,
+  IconButton,
+  MenuItem,
+  MenuList,
   Stack,
 } from "@mui/material";
+import ConfirmDialog from "components/ConfirmDialog";
+import { Text } from "components/shared";
 import PopoverLayout from "components/sn-project-detail/Tasks/Detail/components/SubTasksOfTask/PopoverLayout";
 import { NS_COMMON, NS_SALES } from "constant/index";
-import MoreSquareIcon from "icons/MoreSquareIcon";
-import { useTranslations } from "next-intl";
-import React, { useMemo, useRef } from "react";
-import { Text } from "components/shared";
-import CopyIcon from "icons/CopyIcon";
-import TrashIcon from "icons/TrashIcon";
-import ConfirmDialog from "components/ConfirmDialog";
 import useToggle from "hooks/useToggle";
+import TrashIcon from "icons/TrashIcon";
+import { useTranslations } from "next-intl";
+import { useMemo, useRef } from "react";
 // import { Action } from "../../SubItem";
 import { Action } from "components/sn-sales-detail/components/TodoList/SubItem";
-import MoreDotIcon from "icons/MoreDotIcon";
 import DuplicateIcon from "icons/DuplicateIcon";
+import MoreDotIcon from "icons/MoreDotIcon";
 
 type ActionsProps = {
-  saleId: string;
+  service_id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onChangeAction: (action: Action, data?: any) => void;
   onClose?: () => void;
   index: number;
 };
 
-
 const ServiceItemAction = (props: ActionsProps) => {
-  const { saleId, onChangeAction, index, onClose } = props;
+  const { service_id, onChangeAction, index, onClose } = props;
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const commonT = useTranslations(NS_COMMON);
   const salesT = useTranslations(NS_SALES);
@@ -75,7 +72,7 @@ const ServiceItemAction = (props: ActionsProps) => {
       return openConfirm;
     }
     return () => {
-      onChangeAction(action, saleId);
+      onChangeAction(action, service_id);
       buttonRef?.current?.click();
     };
   };
@@ -106,7 +103,6 @@ const ServiceItemAction = (props: ActionsProps) => {
               onClick={onAction(option.value)}
               sx={defaultSx.item}
               key={option.value}
-              
             >
               <Stack direction="row" spacing={1} alignItems="center">
                 {option.icon}
@@ -130,4 +126,3 @@ const ServiceItemAction = (props: ActionsProps) => {
 };
 
 export default ServiceItemAction;
-

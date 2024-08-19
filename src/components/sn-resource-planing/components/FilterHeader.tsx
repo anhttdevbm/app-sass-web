@@ -1,37 +1,25 @@
-import { SelectChangeEvent, Stack } from "@mui/material";
-import { Search } from "components/Filters";
+import { Stack } from "@mui/material";
+import { Button } from "components/shared";
 import Filter from "components/shared/Filter";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
-import { useTranslations } from "next-intl";
-import {
-  IBookingAllFitler,
-  WorkingStatus,
-} from "store/resourcePlanning/action";
-import { useBookingAll, useMyBooking } from "store/resourcePlanning/selector";
-import useGetOptions from "../hooks/useGetOptions";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { cleanObject, stringifyURLSearchParams } from "utils/index";
 import useQueryParams from "hooks/useQueryParams";
-import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { IBookingAllFitler } from "store/resourcePlanning/action";
+import { useBookingAll, useMyBooking } from "store/resourcePlanning/selector";
+import { stringifyURLSearchParams } from "utils/index";
 import {
-  SORT_RESROUCE_OPTIONS,
   DEFAULT_BOOKING_ALL_FILTER,
+  SORT_RESROUCE_OPTIONS,
   TAB_TYPE,
-  endOfWeek,
-  startOfWeek,
 } from "../helper";
-import { Button } from "components/shared";
+import useGetOptions from "../hooks/useGetOptions";
 // import { Box, Typography } from "@mui/material";
-import {
-  Box,
-  Typography,
-  // Button,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { ClockIcon } from "@mui/x-date-pickers";
+import useBreakpoint from "hooks/useBreakpoint";
+import ServiceIcon from "icons/ServiceIcon";
 
 interface FilterHeaderProps {
   type: TAB_TYPE;
@@ -57,6 +45,7 @@ const FilterHeader = ({
   const { push, replace } = useRouter();
   const { initQuery, query } = useQueryParams();
   const { positionOptions } = useGetOptions();
+  const { isSmSmaller } = useBreakpoint();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSearch = useCallback(() => {
@@ -173,8 +162,12 @@ const FilterHeader = ({
         alignItems: "center",
         backgroundColor: "#f7f7f9", // Màu nền của container
         padding: "5px 20px",
-        borderRadius: "100px",
+        borderRadius: isSmSmaller ? 0 : "100px",
         boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.1)", // Đổ bóng nhẹ
+        whiteSpace: "nowrap",
+        overflow: "auto",
+        margin: isSmSmaller ? 0 : " 0px 20px",
+        width: "100%",
       }}
     >
       <Typography sx={{ mr: 2, fontSize: "16px", color: "black" }}>
@@ -225,6 +218,7 @@ const FilterHeader = ({
                 margin: 0,
                 fontSize: "13px",
               },
+              padding: "0 8px",
             }}
           >
             <Typography sx={{ mr: 1, color: "black" }}>
@@ -250,55 +244,48 @@ const FilterHeader = ({
             />
           </Stack>
 
-          <Button
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              mr: 2,
-              color: "black",
-              borderRadius: "50px",
-            }}
-            onClick={() => setIsWorkload((prev: Boolean) => !prev)}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                verticalAlign: "middle",
-                marginRight: "5px",
-              }}
-            >
-              ⓘ
-            </span>
-            Workload
-          </Button>
+          {!isSmSmaller && (
+            <>
+              <Button
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mr: 2,
+                  borderRadius: "50px",
+                  color: "#00000080",
+                  fontWeight: 700,
+                  gap: 1,
+                }}
+                onClick={() => setIsWorkload((prev: Boolean) => !prev)}
+              >
+                <ClockIcon sx={{ width: 14, height: 14, color: "#00000080" }} />
+                Workload
+              </Button>
 
-          <Button
-            sx={{
-              marginLeft: "auto",
-              backgroundColor: "transparent",
-              color: "primary.main",
-              textTransform: "none",
-              fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "rgba(0, 123, 255, 0.1)",
-                borderRadius: "100px",
-              },
-            }}
-            onClick={() => {
-              setisServicePopup((prev: Boolean) => !prev);
-            }}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                verticalAlign: "middle",
-                marginRight: "5px",
-              }}
-            >
-              📺
-            </span>
-            Choose Service
-          </Button>
+              <Button
+                sx={{
+                  marginLeft: "auto",
+                  backgroundColor: "transparent",
+                  color: "primary.main",
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 123, 255, 0.1)",
+                    borderRadius: "100px",
+                  },
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+                onClick={() => {
+                  setisServicePopup((prev: Boolean) => !prev);
+                }}
+              >
+                <ServiceIcon sx={{ width: 14, height: 14 }} />
+                Choose Service
+              </Button>
+            </>
+          )}
         </>
       )}
     </Box>

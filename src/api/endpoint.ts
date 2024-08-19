@@ -181,6 +181,8 @@ export const Endpoint = {
   DETAIL_BUDGET: "/budgets/budget-by-id/{id}",
   CREATE_SERVICE_BUDGET: "/budgets/service",
   SERVICE_BY_BUDGET: "/budgets/service/{id}",
+  BUDGETS_BY_PROJECT_ID: "/budgets/getBudgetByProject/{id}",
+  SERVICE_QUERIES_BY_BUDGET: "/budgets/getServiceByBudget/{id}",
 
   //Content
   CONTENT_HOME_BANNER: "/content/home/banner",
