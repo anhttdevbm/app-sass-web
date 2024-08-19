@@ -1,8 +1,10 @@
 "use client";
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from "@mui/material";
 import { Button, Text } from "components/shared";
 import Tag from "components/sn-ticket/components/custom-tag";
 import DescriptionDetail from "components/sn-ticket/components/DescriptionDetail";
+import EditorGroup from "components/sn-ticket/components/EditorGroup";
+import ModelReply from "components/sn-ticket/components/ModelReply";
 import Wrapper from "components/Wrapper";
 import { TICKET_PATH } from "constant/paths";
 import AddSquareIcon from "icons/AddSquareIcon";
@@ -119,71 +121,12 @@ const TicketDetail = () => {
         </Stack>
       </Box>
 
+      <ModelReply
+        open={open}
+        handleClose={handleClose}
+        handleClickOpen={handleClickOpen}
+      />
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle display="flex" justifyContent="space-between" alignItems="center" sx={{ backgroundColor: "#F2FAFF" }}>
-          <Text sx={{ color: "#4D4D4D", fontSize: 20, fontWeight: 600 }}>Reply to ticket</Text>
-          <CloseIcon onClick={handleClose} sx={{ width: 25, height: 25, cursor: "pointer" }} />
-        </DialogTitle>
-        <DialogContent sx={{ width: 765, height: 716 }}>
-          <Typography>This is a modal with some content.</Typography>
-          <Typography>You can add more content here as needed.</Typography>
-        </DialogContent>
-        <DialogActions sx={{padding : "36px 24px"}}>
-          <Button
-            onClick={handleClose}
-            size="small"
-            variant="primary"         
-            sx={{
-              height: 45,
-              width: 150,
-              borderRadius: 100,
-              border: "1px solid #14B9E5",
-              gap: 1,
-              background: "#fff",
-              "&:hover": {
-                background:
-                  "#fff",
-              },
-            }}
-          >
-            <Text
-              sx={{ display: { xs: "none", md: "block" } }}
-              color="#045EB8"
-              fontWeight="700"
-            >
-              {/* {billingT("list.button.invoice")} */}
-              Cancel
-            </Text>
-          </Button>
-
-          <Button
-            onClick={handleClickOpen}
-            size="small"
-            variant="primary"
-            sx={{
-              height: 45,
-              width: 150,
-              borderRadius: 100,
-              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-              "&:hover": {
-                background:
-                  "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-              },
-              gap: 1
-            }}
-          >
-            <Text
-              sx={{ display: { xs: "none", md: "block" } }}
-              color="inherit"
-              fontWeight="700"
-            >
-              {/* {billingT("list.button.invoice")} */}
-              Send
-            </Text>
-          </Button>
-        </DialogActions>
-      </Dialog>
 
     </Wrapper>
   );
