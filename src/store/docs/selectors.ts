@@ -7,10 +7,9 @@ import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 import {
-  changeDocInfo,
   changeId,
   changePermDoc,
-  getDocDetails,
+  getDocDetails
 } from "./reducer";
 
 const useDocs = () => {

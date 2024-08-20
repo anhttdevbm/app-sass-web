@@ -101,4 +101,3 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
 };
 
 export default CreateNewTaskListButton;
-

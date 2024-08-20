@@ -1,7 +1,7 @@
 import { AddCircle, ExpandMore } from "@mui/icons-material";
-import { Box, Popover, SxProps } from "@mui/material";
+import { Box, Popover } from "@mui/material";
 import { Button, Text } from "components/shared";
-import { ComponentProps, MouseEventHandler, useState } from "react";
+import { ComponentProps, useState } from "react";
 
 const ButtonWithDropdown = ({
   ...props

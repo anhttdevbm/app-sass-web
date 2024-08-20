@@ -1,7 +1,7 @@
 export default interface ResourceDictionary {
   header: {
     title: string;
-
+    add: string;
     tab: {
       allPeople: string;
       mySchedule: string;

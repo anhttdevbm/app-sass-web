@@ -16,10 +16,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Search, Switch } from "components/Filters";
-import TextStatus from "components/TextStatus";
 import { DataAction } from "constant/enums";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
 import { Option } from "constant/types";
+import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
 import AIGradientIcon from "icons/AIGradientIcon";
 import FolderAddIcon from "icons/FolderAddIcon";
@@ -30,20 +30,13 @@ import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { memo, useEffect, useState } from "react";
 import { useEmployeeOptions } from "store/company/selectors";
-import { ProjectStatus } from "store/project/actions";
 import { useProjects } from "store/project/selectors";
 import { getPath } from "utils/index";
 import AiForm from "./AiForm";
 import ButtonWithDropdown from "./components/ButtonWithDropdown";
-import {
-  COLOR_STATUS,
-  INITIAL_VALUES,
-  STATUS_OPTIONS,
-} from "./components/helpers";
-import Form, { ProjectDataForm } from "./Form";
-import useBreakpoint from "hooks/useBreakpoint";
-import { ExpandMore } from "@mui/icons-material";
+import { INITIAL_VALUES } from "./components/helpers";
 import StatusDropdown from "./components/StatusDropdown";
+import Form, { ProjectDataForm } from "./Form";
 
 const Actions = () => {
   const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();
