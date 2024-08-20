@@ -6,12 +6,14 @@ import DescriptionDetail from "components/sn-ticket/components/DescriptionDetail
 import EditorGroup from "components/sn-ticket/components/EditorGroup";
 import ModelReply from "components/sn-ticket/components/ModelReply";
 import Wrapper from "components/Wrapper";
+import { NS_TICKET } from "constant/index";
 import { TICKET_PATH } from "constant/paths";
 import AddSquareIcon from "icons/AddSquareIcon";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import CloseIcon from "icons/CloseIcon";
 import PlusIcon from "icons/PlusIcon";
 import ReplyIcon from "icons/ReplyIcon";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -19,14 +21,15 @@ import { useSelector } from "react-redux";
 import { selectTicketDetailData } from "store/ticket-detail/selectors";
 
 const TicketDetail = () => {
+  const t = useTranslations(NS_TICKET);
   const tags = [
-    { id: 1, active: false, element: 1, title: 'New', left: 0 },
-    { id: 2, active: false, element: 2, title: 'Open', left: -42 },
-    { id: 3, active: false, element: 2, title: 'In Progress', left: -68 },
-    { id: 4, active: false, element: 2, title: 'On Hold', left: -94 },
-    { id: 5, active: false, element: 2, title: 'Sold', left: -120 },
-    { id: 6, active: false, element: 2, title: 'Closed', left: -146 },
-    { id: 7, active: false, element: 3, title: '...', left: -172 },
+    { id: 1, active: false, element: 1, title: t("ticketDetail.New"), left: 0 },
+    { id: 2, active: false, element: 2, title: t("ticketDetail.Open"), left: -42 },
+    { id: 3, active: false, element: 2, title: t("ticketDetail.inProgress"), left: -68 },
+    { id: 4, active: false, element: 2, title: t("ticketDetail.onHold"), left: -94 },
+    { id: 5, active: false, element: 2, title: t("ticketDetail.Sold"), left: -120 },
+    { id: 6, active: false, element: 2, title: t("ticketDetail.Closed"), left: -146 },
+    { id: 7, active: false, element: 3, title: "...", left: -172 },
   ];
   const { push } = useRouter()
   const data = useSelector(selectTicketDetailData);
@@ -66,12 +69,12 @@ const TicketDetail = () => {
             }}
             sx={{ display: "flex", gap: 1, alignItems: "center", cursor: "pointer" }}>
             <ArrowDownIcon sx={{ width: 13, height: 13 }} />
-            <Text>Ticket# {data?.id}</Text>
-          </Box>
-          <Text sx={{ fontSize: 13, color: "#84818A" }} >created at 12:45AM</Text>
+            <Text>{t("ticketDetail.title")} {data?.id}</Text>
+          </Box>  
+          <Text sx={{ fontSize: 13, color: "#84818A" }} >{t("ticketDetail.created")} 12:45AM</Text>
         </Stack>
 
-        <Text fontWeight="600" sx={{ fontSize: 20, margin: "6px 0 12px 0" }} >How to deposit money to my portal?</Text>
+        <Text fontWeight="600" sx={{ fontSize: 20, margin: "6px 0 12px 0" }} >{t("ticketDetail.question")}</Text>
 
         <Stack direction="row" justifyContent="space-between" alignItems="center">
 
@@ -111,7 +114,7 @@ const TicketDetail = () => {
               fontWeight="700"
             >
               {/* {billingT("list.button.invoice")} */}
-              Reply
+              {t("ticketDetail.reply")}
             </Text>
           </Button>
         </Stack>

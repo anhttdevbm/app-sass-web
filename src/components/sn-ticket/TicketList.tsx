@@ -29,6 +29,8 @@ import CardTicket from "./components/CardTicket";
 import { useAppSelector } from "store/hooks";
 import Pagination from "components/Pagination";
 import TableTicket from "./components/TableTicket";
+import { useTranslations } from "next-intl";
+import { NS_TICKET } from "constant/index";
 
 const TickketList = () => {
   const defaultFilterTicket = [

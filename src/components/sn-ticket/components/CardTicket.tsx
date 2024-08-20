@@ -16,8 +16,10 @@ import {
     Typography,
 } from "@mui/material";
 import { Button, Text } from "components/shared";
+import { NS_TICKET } from "constant/index";
 import { TICKET_INFO_PATH } from "constant/paths";
 import OpenTicketDetailIcon from "icons/OpenTicketDetailIcon";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 
@@ -32,6 +34,7 @@ import { setDataTicketDetail } from "store/ticket-detail/actions";
 
 
 const CardTicket = (props: any) => {
+    const t = useTranslations(NS_TICKET);
     const router = useRouter()
     const { push } = router;
     const dispatch = useDispatch();
@@ -52,7 +55,7 @@ const CardTicket = (props: any) => {
                     title={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Typography sx={{ fontWeight: 700 }} variant="h6">
-                                Ticket# {data?.id}
+                                {t("cardTicket.title")} {data?.id}
                             </Typography>
                             <Box
                                 display="flex"
@@ -107,10 +110,10 @@ const CardTicket = (props: any) => {
                                 {data?.day} {data?.time}
                             </Text>
                             <Text sx={{ fontSize: 13 }}>
-                                Created by: {data?.created}
+                                {t("cardTicket.created")}: {data?.created}
                             </Text>
                             <Text sx={{ fontSize: 13 }}>
-                                Last respond: {data?.lastRespond}
+                                {t("cardTicket.lastRespond")}: {data?.lastRespond}
                             </Text>
                         </Stack>
                     </Stack>
@@ -140,7 +143,7 @@ const CardTicket = (props: any) => {
                             </Text>
                         </Box>
                         <Box onClick={() => handleOpenTicketDetail(data?.id)} display='flex' alignContent='center' justifyContent='center' gap="10px" px={5}>
-                            <Text sx={{ color: "#0575E6", fontSize: 13, textDecoration: "underline" , cursor :"pointer" }}>Open Ticket</Text>
+                            <Text sx={{ color: "#0575E6", fontSize: 13, textDecoration: "underline", cursor: "pointer" }}> {t("cardTicket.openTicket")}</Text>
                             <OpenTicketDetailIcon />
                         </Box>
 
