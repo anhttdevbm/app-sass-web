@@ -325,6 +325,8 @@ export const MoreList = (props: MoreListProps) => {
   const [type, setType] = useState<Action | undefined>();
   const [msg, setMsg] = useState<string | undefined>();
 
+  const [isShowAiCreate, onShowAiCreate, onHideAiCreate] = useToggle();
+
   const handleClickOutside = () => {
     onClose();
   };

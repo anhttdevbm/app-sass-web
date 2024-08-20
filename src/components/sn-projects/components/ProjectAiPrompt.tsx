@@ -37,14 +37,14 @@ const ProjectAiPrompt = (props: {
 
   const formik = useFormik({
     validationSchema: Yup.object().shape({
-      tone: Yup.string().trim().required("Must select a tone"),
-      persona: Yup.string().trim().required("Must select a persona"),
+      tone: Yup.string().trim(),
+      persona: Yup.string().trim(),
       prompt: Yup.string().trim().required("Must have a prompt"),
     }),
     initialValues: {
       prompt: "",
-      tone: "",
-      persona: "",
+      tone: props.tones.at(0)?.id ?? "",
+      persona: props.personas.at(0)?.id ?? "",
     },
     onSubmit: props.onSubmit,
   });

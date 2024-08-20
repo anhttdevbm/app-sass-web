@@ -112,6 +112,11 @@ const TabInvoice = (props: TabProps) => {
       return;
     },
   });
+  const rows = [
+    createData("Development", "hour", 20, 150.0, 3000),
+    createData("Design", "hour", 20, 150.0, 3000),
+    createData("Project Management", "hour", 20, 150.0, 3000),
+  ];
 
   useEffect(() => {
     if (typeof id === "string") {

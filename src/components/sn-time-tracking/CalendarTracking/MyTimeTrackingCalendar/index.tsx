@@ -15,12 +15,14 @@ import {
   Menu,
   MenuItem,
   Stack,
+  SxProps,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Theme,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
@@ -807,12 +809,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               {_renderHeader()}
             </div>
             <Stack
-              sx={{
-                ...calendarStyles,
-                flexGrow: 1,
-                minHeight: 0,
-                minWidth: 0,
-              }}
+              sx={
+                {
+                  ...calendarStyles,
+                  flexGrow: 1,
+                  minHeight: 0,
+                  minWidth: 0,
+                } as SxProps<Theme>
+              }
               className={`view-timeGridWeek`}
             >
               <Box
