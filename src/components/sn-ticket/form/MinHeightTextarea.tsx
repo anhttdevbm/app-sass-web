@@ -3,11 +3,15 @@ import { TextareaAutosizeProps, TextFieldProps } from "@mui/material";
 import { styled } from "@mui/system";
 
 export default function MinHeightTextarea({
-  props,
   placeholder,
+  value,
+  onChange,
+  ...props
 }: {
-  props?: TextareaAutosizeProps;
   placeholder?: string;
+  value: string;
+  onChange: (e) => void;
+  props?: TextareaAutosizeProps;
 }) {
   const blue = {
     100: "#DAECFF",
@@ -74,8 +78,10 @@ export default function MinHeightTextarea({
     <Textarea
       aria-label="minimum height"
       minRows={3}
-      {...props}
       placeholder={placeholder ?? ""}
+      value={value}
+      onChange={onChange}
+      {...props}
     />
   );
 }

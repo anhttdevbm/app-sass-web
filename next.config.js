@@ -53,6 +53,41 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  webpack(config) {
+    // Grab the existing rule that handles SVG imports
+    const fileLoaderRule = config.module.rules.find((rule) =>
+      rule.test?.test?.(".svg"),
+    );
+
+    config.module.rules.push(
+      // Reapply the existing rule, but only for svg imports ending in ?url
+      {
+        ...fileLoaderRule,
+        test: /\.svg$/i,
+        resourceQuery: /url/, // *.svg?url
+      },
+      // Convert all other *.svg imports to React components
+      {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        resourceQuery: { not: /url/ }, // exclude if *.svg?url
+        use: ["@svgr/webpack"],
+      },
+    );
+
+    fileLoaderRule.exclude = /\.svg$/i;
+
+    config.optimization.minimize = true;
+    config.optimization.splitChunks = {
+      chunks: (chunk) => {
+        return chunk && chunk.name && !chunk.name.includes("icon.svg");
+      },
+      minSize: 20000,
+      maxSize: 50000,
+    };
+
+    return config;
+  },
   /**
    * if you need proxy, then try this
    */
