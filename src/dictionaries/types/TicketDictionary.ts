@@ -9,6 +9,11 @@ export interface TicketDictionary {
   PUBLISHED: string;
   DRAFT: string;
   HIDE: string;
+  filterTicket : FilterTicket
+  ticketFields : TicketFields
+  cardTicket : CardTicket
+  ticketDetail : TicketDetail
+  modelReply : ModelReply
 }
 
 interface Error {
@@ -55,4 +60,62 @@ interface Ticket {
 
 interface Head {
   title: string;
+}
+
+interface FilterTicket {
+  sendAll: string;
+  newTicket: string;
+  openTicket: string;
+  inProgressTicket: string;
+  onHoldTicket: string;
+  resolvedTicket: string;
+  closedTicket: string;
+  canceledTicket: string;
+}
+
+interface TicketFields {
+  id: string;
+  stage: string;
+  name: string;
+  ticketType: string;
+  priority: string;
+  assignedTo: string;
+  creator: string;
+  creationTime: string;
+}
+
+interface CardTicket {
+  title: string;
+  created: string;
+  lastRespond: string;
+  openTicket: string;
+}
+
+interface TicketDetail {
+  title: string;
+  created: string;
+  New: string;
+  Open: string;
+  inProgress: string;
+  onHold: string;
+  Sold: string;
+  Closed: string;
+  question: string;
+  reply: string;
+  createRequest: string;
+  requestTicketType: string;
+  priority: string;
+  assignee: string;
+  rootCause: string;
+  description: string;
+  btnShowDetail: string,
+  btnHideDetail: string,
+}
+
+interface ModelReply {
+  title: string;
+  email: string;
+  subject: string;
+  send: string;
+  cancel: string;
 }

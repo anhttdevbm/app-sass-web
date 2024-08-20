@@ -31,70 +31,75 @@ import CardTicket from "./components/CardTicket";
 import { useAppSelector } from "store/hooks";
 import Pagination from "components/Pagination";
 import TableTicket from "./components/TableTicket";
+import { useTranslations } from "next-intl";
+import { NS_TICKET } from "constant/index";
 
 
 
 const TickketList = () => {
 
-    const defaultFilterTicket = [
-        {
-            id: 1,
-            icon: SendAllTicketIcon,
-            title: "All Ticket",
-            count: 3,
-            active: false,
-        },
-        {
-            id: 2,
-            icon: NewTicketIcon,
-            title: "New",
-            count: 1,
+    
+  const t = useTranslations(NS_TICKET);
 
-            active: false,
-        },
-        {
-            id: 3,
-            icon: OpenTicketIcon,
-            title: "Open",
-            count: 1,
-            active: false,
-        },
-        {
-            id: 4,
-            icon: InProgressTicketIcon,
-            title: "In-progress",
-            count: 1,
-            active: false,
-        },
-        {
-            id: 5,
-            icon: OnHoldTicketIcon,
-            title: "On hold",
-            count: 3,
-            active: false,
-        },
-        {
-            id: 6,
-            icon: ResolveTicketIcon,
-            title: "Resolved",
-            count: 3,
-            active: false,
-        },
-        {
-            id: 7,
-            icon: ClosedTicketIcon,
-            title: "Closed",
-            count: 0,
-            active: false,
-        },
-        {
-            id: 8,
-            icon: CanceledTicketIcon,
-            title: "Canceled",
-            count: 0,
-            active: false,
-        },
-    ]
+
+  const defaultFilterTicket = [
+    {
+        id: 1,
+        icon: SendAllTicketIcon,
+        title: t("filterTicket.sendAll"),
+        count: 3,
+        active: false,
+    },
+    {
+        id: 2,
+        icon: NewTicketIcon,
+        title: t("filterTicket.newTicket"),
+        count: 1,
+        active: false,
+    },
+    {
+        id: 3,
+        icon: OpenTicketIcon,
+        title: t("filterTicket.openTicket"),
+        count: 1,
+        active: false,
+    },
+    {
+        id: 4,
+        icon: InProgressTicketIcon,
+        title: t("filterTicket.inProgressTicket"),
+        count: 1,
+        active: false,
+    },
+    {
+        id: 5,
+        icon: OnHoldTicketIcon,
+        title: t("filterTicket.onHoldTicket"),
+        count: 3,
+        active: false,
+    },
+    {
+        id: 6,
+        icon: ResolveTicketIcon,
+        title: t("filterTicket.resolvedTicket"),
+        count: 3,
+        active: false,
+    },
+    {
+        id: 7,
+        icon: ClosedTicketIcon,
+        title: t("filterTicket.closedTicket"),
+        count: 0,
+        active: false,
+    },
+    {
+        id: 8,
+        icon: CanceledTicketIcon,
+        title: t("filterTicket.canceledTicket"),
+        count: 0,
+        active: false,
+    },
+];
 
     const dataTicketLocal = [
         {
@@ -319,7 +324,8 @@ const TickketList = () => {
                                                 gap: "10px",
                                                 // padding: 2,
                                                 backgroundColor: item.active ? "#D9F0FD" : "#fff",
-                                                padding: "10px 10px"
+                                                padding: "10px 10px",
+                                                cursor : "pointer"
 
                                             }}
                                         >
@@ -346,7 +352,7 @@ const TickketList = () => {
                                                         alignItems: 'center',
                                                     }}>
                                                     <Text sx={{ display: { xs: "none", md: "block", fontSize: 13 } }}
-                                                        color="#fff"> {item.count}
+                                                        color="#fff"> {item.count} 
                                                     </Text>
                                                 </Paper>
                                             }

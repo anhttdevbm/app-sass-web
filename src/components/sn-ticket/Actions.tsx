@@ -6,7 +6,7 @@ import { Button, Text } from "components/shared";
 import { Dropdown, Search } from "components/Filters";
 import { getPath } from "utils/index";
 import { memo, useEffect, useMemo, useState } from "react";
-import { NS_COMMON, NS_COMPANY, NS_DOCS } from "constant/index";
+import { NS_COMMON, NS_COMPANY, NS_DOCS, NS_TICKET } from "constant/index";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import {
   Box,
@@ -51,7 +51,7 @@ function convertStringToArray(inputString) {
 
 const ChangeViewListDoc = () => {
   const [typeViewListDoc, setTypeViewListDoc] =
-    useState<TypeViewListDoc>("basicViewListDoc");
+    useState<TypeViewListDoc>("kanbanViewListDoc");
   const dispatch = useDispatch();
 
   console.log("check" , typeViewListDoc)
@@ -110,6 +110,7 @@ type ActionProps = {
 
 const Actions = ({ isProjectTabMode }: ActionProps) => {
   const companyT = useTranslations(NS_COMPANY);
+  const t = useTranslations(NS_TICKET);
   const commonT = useTranslations(NS_COMMON);
   const docsT = useTranslations(NS_DOCS);
   const { filters, onCreateDoc, loading } = useDocs();
@@ -251,8 +252,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
                 sx={{ display: { xs: "none", md: "block" } }}
                 color="inherit"
               >
-                {/* {billingT("list.button.invoice")} */}
-                New ticket
+                {t("actions.createTicket")}
               </Text>
             </Button>
           </Stack>

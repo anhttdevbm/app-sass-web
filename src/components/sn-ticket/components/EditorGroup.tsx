@@ -1,7 +1,7 @@
 "use client";
 
 
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { Editor, EditorState, Modifier, RichUtils } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import { Box, Button, FormControl, InputLabel, MenuItem, Stack, Select } from '@mui/material';
@@ -11,9 +11,18 @@ import RedoIconTicket from 'icons/RedoIconTicket';
 import UppercaseIcon from 'icons/UppercaseIcon';
 import ItalicIcon from 'icons/ItalicIcon';
 import UnderLineIcon from 'icons/UnderLineIcon';
+import AttachmentsIcon from 'icons/AttachmentsIcon';
+import ListFormatText from 'components/sn-docs/news/page-body/components/ToolBarDraftEditor/components/ListFormatText';
 
 
 const EditorGroup = () => {
+    const inputRef = useRef<any>(null)
+
+    useEffect(()=>{
+        if (inputRef.current) {
+            inputRef.current?.focus();
+          }
+    },[])
     // Khởi tạo trạng thái của editor
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     console.log("check edit", editorState)
@@ -146,7 +155,13 @@ const EditorGroup = () => {
         'FONT_VERDANA': { fontFamily: 'Verdana, sans-serif' },
     };
 
+    const handleClickListFormat = (e: React.MouseEvent<HTMLButtonElement>, typeClick: { method: string; style: string }) => {
+        const { method, style } = typeClick;
 
+        if (method === 'block') {
+            onChange(RichUtils.toggleBlockType(editorState, style));
+        }
+    };
 
     return (
         <>
@@ -154,9 +169,11 @@ const EditorGroup = () => {
                 <Editor
                     editorState={editorState}
                     onChange={onChange}
-                    placeholder="Body Text..."
+                    placeholder=""
                     // blockStyleFn={blockStyleFn}
                     customStyleMap={customStyleMap}
+                    ref={inputRef}
+
                 />
             </Box>
 
@@ -167,12 +184,20 @@ const EditorGroup = () => {
                     alignItems: "center",
                     gap: 2,
                     borderBottom: '1px solid #EDEFF1',
-                    padding  :"18px 0"
+                    padding: "18px 0"
                 }
             }>
 
-                <UndoIcon onClick={() => handleUndo()} />
-                <RedoIconTicket onClick={() => handleRedo()} />
+                <Button onClick={() => handleUndo()} sx={{ padding: 0, minWidth: 30, minHeight: 40 }}>
+                    <UndoIcon />
+
+                </Button>
+
+                <Button onClick={() => handleRedo()} sx={{ padding: 0, minWidth: 30, minHeight: 40 }}>
+                    <RedoIconTicket />
+
+                </Button>
+
                 <select
                     style={{ width: 90, borderTop: "none", borderBottom: "none", fontWeight: 700, borderColor: "#EDEFF1" }}
                     onChange={(e) => handleFontChange(e.target.value)}
@@ -187,17 +212,31 @@ const EditorGroup = () => {
                 <select style={{ width: 50, borderTop: "none", borderBottom: "none", borderLeft: "none", fontWeight: 700, borderColor: "#EDEFF1" }}>
                     <option value="Arial">TT</option>
                 </select>
-                <UppercaseIcon onClick={() => handleUppercase()} />
-                <ItalicIcon onClick={() => handleItalic()} />
-                <UnderLineIcon onClick={() => handleUnderline()} />
+                <Button onClick={() => handleUppercase()} sx={{ padding: 0, minWidth: 30, minHeight: 40 }}>
+                    <UppercaseIcon />
+
+                </Button>
+                <Button onClick={() => handleItalic()} sx={{ padding: 0, minWidth: 30, minHeight: 40 }}>
+                    <ItalicIcon />
+
+                </Button>
+                <Button onClick={() => handleUnderline()} sx={{ padding: 0, minWidth: 30, minHeight: 40 }}>
+                    <UnderLineIcon />
+
+                </Button>
+
                 <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0.583008 12.5846V14.418H13.4163V12.5846H0.583008ZM4.70801 8.73464H9.29134L10.1163 10.7513H12.0413L7.68717 0.667969H6.31217L1.95801 10.7513H3.88301L4.70801 8.73464ZM6.99967 2.48297L8.71384 7.08464H5.28551L6.99967 2.48297Z" fill="black" fill-opacity="0.54" />
                 </svg>
 
-                <Button sx={{ padding: "0 5px 0 0" }} onClick={() => handleAlignment('left')}>Căn trái</Button>
-                <Button sx={{ padding: "0 5px 0 0" }} onClick={() => handleAlignment('center')}>Căn giữa</Button>
-                <Button sx={{ padding: "0 5px 0 0" }} onClick={() => handleAlignment('right')}>Căn phải</Button>
+            
 
+                <ListFormatText customStyle={{ border: 'none',backgroundColor : "#fff" }}  handleClickListFormat={handleClickListFormat}/>
+
+
+                <Button sx={{ padding: 0, minWidth: 30, minHeight: 40 }} onClick={() => handleAlignment('right')}>
+                    <AttachmentsIcon/>
+                </Button>
             </Box>
 
         </>

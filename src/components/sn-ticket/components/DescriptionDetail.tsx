@@ -7,6 +7,8 @@ import {
     Typography,
 } from "@mui/material";
 import { Button, Text } from "components/shared";
+import { NS_TICKET } from "constant/index";
+import { useTranslations } from "next-intl";
 
 
 
@@ -20,6 +22,7 @@ import { setDataTicketDetail } from "store/ticket-detail/actions";
 
 
 const DescriptionDetail = (props: any) => {
+    const t = useTranslations(NS_TICKET);
     const { data } = props || null
     const [showDetail, setShowDetail] = useState(false)
     const handleShowDetail = () => {
@@ -48,17 +51,22 @@ const DescriptionDetail = (props: any) => {
                         sx={{ borderRadius: "100%" }}
                     />
                     <Text sx={{ fontSize: 13 }}>
-                        Thu Nguyen created this request
+                        Thu Nguyen {t("ticketDetail.createRequest")}
                     </Text>
                 </Box>
-                <Text onClick={()=>handleShowDetail()} sx={{ fontSize: 13, color: "#0575E6", fontWeight: "700", cursor: "pointer" }} >Show detail</Text>
+                <Text
+                    onClick={() => handleShowDetail()}
+                    sx={{ fontSize: 13, color: "#0575E6", fontWeight: "700", cursor: "pointer" }}
+                >
+                    {!showDetail ? (t("ticketDetail.btnShowDetail")) :(t("ticketDetail.btnHideDetail"))}
+                </Text>
             </Stack>
 
 
             {showDetail &&
                 <Stack direction="row" justifyContent="space-between" sx={{ padding: "24px", gap: 5 }}>
                     <Box sx={{ flex: 6 }}>
-                        <Text fontSize={13} fontWeight={700}>Description</Text>
+                        <Text fontSize={13} fontWeight={700}>{t("ticketDetail.description")}</Text>
                         <Text fontSize={13} py={2} color="#4D4D4D">{data?.description}</Text>
                     </Box>
                     <Box sx={{ flex: 4, backgroundColor: "#F2FAFF", display: "flex", justifyContent: "space-between ", flexDirection: "row", padding: "24px" }}>
@@ -70,10 +78,10 @@ const DescriptionDetail = (props: any) => {
                                 gap: '8px',
                             }}
                         >
-                            <Text fontSize={13}>Request Ticket Type</Text>
-                            <Text fontSize={13}>Priority</Text>
-                            <Text fontSize={13}>Assignee</Text>
-                            <Text fontSize={13}>Root cause</Text>
+                            <Text fontSize={13}>{t("ticketDetail.requestTicketType")}</Text>
+                            <Text fontSize={13}>{t("ticketDetail.priority")}</Text>
+                            <Text fontSize={13}>{t("ticketDetail.assignee")}</Text>
+                            <Text fontSize={13}>{t("ticketDetail.rootCause")}</Text>
 
 
 
@@ -116,7 +124,7 @@ const DescriptionDetail = (props: any) => {
                         </Box>
 
                     </Box>
-                </Stack>    
+                </Stack>
 
             }
 
