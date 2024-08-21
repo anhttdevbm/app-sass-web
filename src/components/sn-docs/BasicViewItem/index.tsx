@@ -91,7 +91,7 @@ export default function BasicViewDocItem({
               <Typography>No Project</Typography>
             )}
 
-            <ActionMoreListDoc />
+            <ActionMoreListDoc isHor={true} />
           </Box>
         </AccordionSummary>
         <AccordionDetails>

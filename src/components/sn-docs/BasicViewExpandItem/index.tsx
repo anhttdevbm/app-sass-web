@@ -53,7 +53,7 @@ export default function BasicViewExpandItem({
             [theme.breakpoints.up("xs")]: {},
           })}
         >
-          <ActionMoreListDoc style={{ colorIcon: "text.primary" }} />
+          <ActionMoreListDoc isHor={true} style={{ colorIcon: "text.primary" }} />
         </Box>
       </Box>
       <Box
@@ -117,7 +117,7 @@ export default function BasicViewExpandItem({
           },
         })}
       >
-        <ActionMoreListDoc style={{ colorIcon: "text.primary" }} />
+        <ActionMoreListDoc isHor={true} style={{ colorIcon: "text.primary" }} />
       </Box>
     </Stack>
   );
