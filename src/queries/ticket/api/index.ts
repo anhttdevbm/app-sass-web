@@ -19,3 +19,9 @@ export const createTicketApi = (data: IFormTicket) => {
     },
   });
 };
+
+export const getListTicketApi = (params) => {
+  return client.get(Endpoint.TICKET, params, {
+    baseURL: TICKET_API_URL,
+  });
+};

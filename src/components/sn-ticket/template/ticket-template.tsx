@@ -3,8 +3,12 @@ import Wrapper from "components/Wrapper";
 import Actions from "../Actions";
 import TicketList from "../TicketList";
 import { Stack } from "@mui/material";
+import useGetListTicket from "queries/ticket/useGetTicket/useGetListTicket";
 
 const TicketTemplate = () => {
+  const { data } = useGetListTicket();
+  console.log("data", data);
+
   return (
     <Wrapper overflow="auto" inFrame>
       <Stack
