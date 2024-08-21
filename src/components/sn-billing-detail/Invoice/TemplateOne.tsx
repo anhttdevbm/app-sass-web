@@ -15,12 +15,7 @@ import { formatDate } from "utils/index";
 
 function TemplateOne({ user, itemInvoice, isEdit }) {
   return (
-    <Stack
-      sx={{ border: "1px solid #EFEFEF" }}
-      mt={4}
-      p={6}
-      pr={{ xs: 6, lg: 20, xl: 40 }}
-    >
+    <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4} p={6}>
       <Typography>VNP</Typography>
       <Typography>{user?.country ?? "Vietnam"}</Typography>
       <Stack

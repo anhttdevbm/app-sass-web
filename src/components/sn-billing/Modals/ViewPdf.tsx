@@ -1,114 +1,34 @@
 "use client";
-import { Textsms } from "@mui/icons-material";
-import {
-  Box,
-  Grid,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import { Button, Text } from "components/shared";
+import { Stack } from "@mui/material";
+import FixedLayout from "components/FixedLayout";
+import { Button } from "components/shared";
+import TemplateOne from "components/sn-billing-detail/Invoice/TemplateOne";
+import { INVOICE_EXPORT_PATH } from "constant/paths";
 import ArrowExport from "icons/ArrowExport";
 import DownloadIcon from "icons/DownloadIcon";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { Billing } from "store/billing/reducer";
-import { Service } from "store/sales/reducer";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
 import { useParams } from "next/navigation";
-import {
-  useBillings,
-  useBudgets,
-  useServiceBudgets,
-} from "store/billing/selectors";
-import useQueryParams from "hooks/useQueryParams";
-import dayjs from "dayjs";
-import FixedLayout from "components/FixedLayout";
-import {
-  BILLING_EXPORT_PATH,
-  BILLING_INFO_PATH,
-  INVOICE_EXPORT_PATH,
-} from "constant/paths";
-import { getPath } from "utils/index";
-import { useRouter } from "next-intl/client";
+import React, { memo, useEffect, useMemo } from "react";
 import { useInvoices } from "store/invoice/selectors";
+import { downloadFile, getPath } from "utils/index";
 
 const ViewPdf = () => {
-  const { push } = useRouter();
-  // const { fileExport, dataExport } = useBillings();
-
-  // const file = localStorage.getItem("file");
-
   const { item, onGetInvoiceDetail } = useInvoices();
-  const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
-  const { budgets, onGetBudgets } = useBudgets();
-  const { initQuery, isReady, query } = useQueryParams();
-  const [isDownload, setIsDownload] = useState<boolean>(false);
   const printRef = React.useRef(null);
-  const param = useParams();
-
-  const id = param?.id.toString();
+  const { id } = useParams();
 
   useEffect(() => {
-    onGetInvoiceDetail(id ?? "");
+    onGetInvoiceDetail(id as string);
   }, [onGetInvoiceDetail]);
-
-  // useEffect(() => {
-  //   if (!isReady) return;
-  //   onGetBudgets({ ...initQuery });
-  // }, [initQuery, isReady, onGetBudgets]);
-
-  // useEffect(() => {
-  //   if (budgets && budgets?.length > 0) {
-  //     budgets?.forEach((item) => {
-  //       onGetServiceBudgets(item.id ?? "");
-  //     });
-  //   }
-  // }, [budgets]);
-
-  const downloadFile = async () => {
-    const element = printRef.current;
-
-    const canvas = await html2canvas(element as unknown as HTMLElement, {
-      scale: 2,
-    });
-    const data = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF({
-      orientation: "p",
-      unit: "pt",
-      format: "a4",
-    });
-
-    const imgProperties = pdf.getImageProperties(data);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
-
-    // pdf.addImage(data, "PNG", 10, 10, pdfWidth, pdfHeight);
-
-    pdf.html(element ?? "", {
-      callback: function (pdf) {
-        pdf.save("print.pdf");
-      },
-      x: 10,
-      y: 10,
-    });
-
-    // pdf.save("print.pdf");
-    setIsDownload(false);
-  };
 
   const openNewTab = () => {
     window.open(
       getPath(INVOICE_EXPORT_PATH, undefined, {
-        id: id ?? "",
+        id: id as string,
       }),
     );
   };
+
+  const handleDownload = () => downloadFile(printRef);
 
   const listService = useMemo(() => {
     if (!item?.service_items) return;
@@ -118,7 +38,6 @@ const ViewPdf = () => {
 
   return (
     <FixedLayout
-      // maxHeight={920}
       maxWidth={{
         xs: 1120,
         xl: 1450,
@@ -142,154 +61,15 @@ const ViewPdf = () => {
           variant="secondary"
           startIcon={<DownloadIcon />}
           onClick={() => {
-            downloadFile();
-            setIsDownload(true);
+            handleDownload();
           }}
         >
           Download
         </Button>
       </Stack>
-      <Stack style={{ background: "#898989" }}>
-        {/* <iframe
-          src={fileExport ?? file ?? ""}
-          width="100%"
-          height="100%"
-        ></iframe> */}
-
-        <Stack gap={2} p={2} padding={8} alignItems={"center"}>
-          <div
-            //TODO: Comment this code to deploy, waiting for QUANGNV to fix the bug
-            ref={printRef}
-            style={{
-              fontSize: 20,
-              fontWeight: 600,
-              width: "68%",
-              background: "#fff",
-              zIndex: 1,
-              padding: 24,
-              marginBottom: "12px",
-              marginTop: "12px",
-            }}
-          >
-            <Grid container spacing={2}>
-              <Grid md={12} p={2}>
-                <Text variant={"body1"}>{item?.customer_name}</Text>
-                <Text variant={"body1"}>VietNam</Text>
-              </Grid>
-              <Grid md={12} p={2}>
-                <Text sx={{ color: "#154276", fontWeight: 600 }}>
-                  Invoice {item?.invoice_number}
-                </Text>
-              </Grid>
-              <Grid md={12} p={2}>
-                <Text sx={{ color: "#92a2be" }}>SUBJECT</Text>
-                <Text>{item?.subject}</Text>
-              </Grid>
-              <Grid container md={12} p={2}>
-                <Grid md={3}>
-                  <Text sx={{ color: "#92a2be" }}>CLIENT</Text>
-                  <Text></Text>
-                </Grid>
-                <Grid md={3}>
-                  <Text sx={{ color: "#92a2be" }}>DATE</Text>
-                  <Text>
-                    {item?.invoice_date
-                      ? dayjs(item?.invoice_date).format("DD/MM/YYYY")
-                      : ""}{" "}
-                  </Text>
-                </Grid>
-                <Grid md={3}>
-                  <Text sx={{ color: "#92a2be" }}>DUE DATE</Text>
-                  <Text>
-                    {item?.due_date
-                      ? dayjs(item?.due_date).format("DD/MM/YYYY")
-                      : ""}
-                  </Text>
-                </Grid>
-
-                <Grid md={3}>
-                  <Text sx={{ color: "#92a2be", fontSize: 13 }}>
-                    CREATED BY
-                  </Text>
-                  {/* <Text>{item?.user ? item?.user[0]?.name ?? "" : []}</Text> */}
-                </Grid>
-              </Grid>
-              <Grid md={12}>
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ color: "#92a2be", fontSize: 13 }}>
-                          DESCRIPTION
-                        </TableCell>
-                        <TableCell sx={{ color: "#92a2be", fontSize: 13 }}>
-                          UNIT
-                        </TableCell>
-                        <TableCell sx={{ color: "#92a2be", fontSize: 13 }}>
-                          QTY
-                        </TableCell>
-                        <TableCell sx={{ color: "#92a2be", fontSize: 13 }}>
-                          RATE
-                        </TableCell>
-                        <TableCell sx={{ color: "#92a2be", fontSize: 13 }}>
-                          AMOUNT
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {listService?.map((item, index) => {
-                        return (
-                          <TableRow key={index}>
-                            <TableCell>{item.service_name}</TableCell>
-                            <TableCell>Hour</TableCell>
-                            <TableCell>{item.quantity}</TableCell>
-                            <TableCell>{item.discount}</TableCell>
-                            <TableCell>{item.amount}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Grid>
-              <Grid md={12} p={2} justifyContent={"end"} display={"flex"}>
-                <Grid>
-                  <Stack direction={"row"} gap={2}>
-                    <Grid container>
-                      <Text sx={{ color: "#92a2be", fontSize: 13 }}>
-                        SUBTOTAL
-                      </Text>
-                    </Grid>
-
-                    <Text>{item?.total}</Text>
-                  </Stack>
-                  <Stack direction={"row"} gap={2}>
-                    <Grid container>
-                      <Text sx={{ color: "#92a2be", fontSize: 13 }}>
-                        VAT (10%)
-                      </Text>
-                    </Grid>
-
-                    <Text>
-                      {Number(((item?.total ?? 0) * 10) / 100).toFixed(2)}
-                    </Text>
-                  </Stack>
-                  <Stack direction={"row"} gap={2}>
-                    <Grid container>
-                      <Text sx={{ color: "#92a2be", fontSize: 13 }}>
-                        GRAND TOTAL
-                      </Text>
-                    </Grid>
-                    <Text sx={{ color: "#154276", fontWeight: 600 }}>
-                      {Number(((item?.total ?? 0) * 110) / 100).toFixed(2)}
-                    </Text>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </Grid>
-          </div>
-        </Stack>
-      </Stack>
+      <div ref={printRef} style={{ width: "fit-content", margin: "auto" }}>
+        <TemplateOne user={{}} isEdit={false} itemInvoice={item} />
+      </div>
     </FixedLayout>
   );
 };

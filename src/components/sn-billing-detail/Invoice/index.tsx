@@ -7,7 +7,7 @@ import EditIcon from "icons/EditIcon";
 import MarkAsSendIcon from "icons/MarkAsSendIcon";
 import ShareInvoiceIcon from "icons/ShareInvoiceIcon";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { Bill, Billing, Budgets } from "store/billing/reducer";
 import { Invoice } from "store/invoice/reducer";
@@ -15,6 +15,7 @@ import { useInvoices } from "store/invoice/selectors";
 import MoreButton from "./MoreButton";
 import PdfButton from "./PdfButton";
 import TemplateOne from "./TemplateOne";
+import { downloadFile } from "utils/index";
 
 type TabProps = {
   title: string;
@@ -28,17 +29,7 @@ type TabProps = {
   billFromInfo: Bill;
   setBillFromInfo: (value: Bill) => void;
 };
-const billingFormTranslatePrefix = "detail.form";
 
-function createData(
-  desc: string,
-  unit: string,
-  qty: number,
-  rate: number,
-  amount: number,
-) {
-  return { desc, unit, qty, rate, amount };
-}
 const TabInvoice = (props: TabProps) => {
   const { user } = props;
   const {
@@ -46,6 +37,7 @@ const TabInvoice = (props: TabProps) => {
     onGetInvoiceDetail,
     onDeleteInvoice,
   } = useInvoices();
+  const printRef = useRef(null);
 
   const { id } = useParams();
   const { push } = useRouter();
@@ -56,8 +48,6 @@ const TabInvoice = (props: TabProps) => {
     enableReinitialize: true,
     initialValues: {},
     onSubmit(values, formikHelpers) {
-      // setDataUpdate
-
       return;
     },
   });
@@ -91,6 +81,8 @@ const TabInvoice = (props: TabProps) => {
       onAddSnackbar("Failed to delete", "error");
     }
   };
+
+  const handleDownloadPdf = () => downloadFile(printRef);
 
   const listChoice = [
     {
@@ -166,12 +158,14 @@ const TabInvoice = (props: TabProps) => {
           </Typography>
         </Stack>
 
-        <PdfButton />
+        <PdfButton handleDownloadPdf={handleDownloadPdf} />
         <MoreButton onDeleteInvoice={handleDeleteInvoice} />
       </Stack>
 
       {/* Main */}
-      <TemplateOne itemInvoice={itemInvoice} user={user} isEdit={isEdit} />
+      <div ref={printRef} style={{ width: "fit-content" }}>
+        <TemplateOne itemInvoice={itemInvoice} user={user} isEdit={isEdit} />
+      </div>
     </Stack>
   );
 };

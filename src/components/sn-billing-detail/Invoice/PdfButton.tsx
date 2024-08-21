@@ -9,7 +9,7 @@ import { useState } from "react";
 import StringFormat from "string-format";
 const ITEM_HEIGHT = 48;
 
-function PdfButton() {
+function PdfButton({ handleDownloadPdf }) {
   const { id } = useParams();
   const { push } = useRouter();
   const options = ["View PDF", "Download PDF"];
@@ -87,6 +87,7 @@ function PdfButton() {
               </Stack>
             ) : (
               <Stack
+                onClick={handleDownloadPdf}
                 gap={2}
                 direction={"row"}
                 alignItems={"center"}
