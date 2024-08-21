@@ -31,7 +31,6 @@ import { useProjects } from "store/project/selectors";
 import { useGetServiceBudget } from "store/resourcePlanning/selector";
 import AllPeopleTab from "./AllPeopleTab";
 import GuideIcon from "./assets/GuideIcon";
-import VueSaxIcon from "./assets/VueSaxIcon";
 import CustomDateRangePicker from "./components/CustomDateRangePicker";
 import CreateBooking from "./modals/CreateBooking";
 import MyScheduleTab from "./MyScheduleTab";
@@ -437,16 +436,18 @@ const ResourcePlanning = () => {
                 }}
               />
             </Stack>
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              fontSize={13}
-              marginTop={2}
-              fontWeight="bold"
-            >
-              <GuideIcon /> Drag service to the calendar
-            </Typography>
-            <Typography
+            {listServices?.length > 0 && (
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                fontSize={13}
+                marginTop={2}
+                fontWeight="bold"
+              >
+                <GuideIcon /> Drag service to the calendar
+              </Typography>
+            )}
+            {/* <Typography
               variant="body1"
               color="#44546F"
               gutterBottom
@@ -458,7 +459,7 @@ const ResourcePlanning = () => {
               gap={"4px"}
             >
               <VueSaxIcon /> 02/17 service
-            </Typography>
+            </Typography> */}
 
             <div id="external-events">
               {listServices.map((item: TBudgetService) => (

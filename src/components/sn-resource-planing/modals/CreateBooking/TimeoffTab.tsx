@@ -282,13 +282,17 @@ const TimeOffTab = ({
       <Grid2 xs={12}>
         <Stack direction="row" justifyContent="center" gap={3}>
           <Button
-            variant="primaryOutlined"
-            size="medium"
-            onClick={onClose}
             sx={{
               width: 150,
               height: 40,
+              borderRadius: 100,
+              color: "#0575E6",
+              border: "3px solid",
+              "border-image-source":
+                "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
             }}
+            variant="primaryOutlined"
+            size="medium"
           >
             {commonT("form.cancel")}
           </Button>
@@ -296,6 +300,11 @@ const TimeOffTab = ({
             sx={{
               width: 160,
               height: 40,
+              color: "white",
+              borderRadius: 100,
+              "&.MuiButton-root": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
             }}
             variant="contained"
             onClick={handleSubmitTimeOff(onSubmitTimeOff)}
