@@ -43,6 +43,7 @@ export default function KanbanViewItem({
           <CardActionArea onClick={() => redirectDetailDoc(item.id)}>
             <CardHeader
               sx={{
+                display: "flex",
                 bgcolor: itemKanban.groupInfo ? "#14B9E5" : "#E6F1FD",
                 height: 54,
                 color: "common.white",

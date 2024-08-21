@@ -80,8 +80,11 @@ export default function KanbanViewDocList({
       sx={(theme) => ({
         display: "flex",
         overflow: "auto",
+        width: "100%",
+        maxWidth: "100%!important",
+        justifyContent: "center",
         [theme.breakpoints.up("md")]: {
-          paddingX: 2,
+          paddingX: 1,
           paddingY: 1,
           flexWrap: "wrap",
           gap: 4,
