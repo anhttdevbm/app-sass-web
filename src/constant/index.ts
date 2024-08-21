@@ -39,6 +39,9 @@ export const AI_AGENT_API_URL = process.env.AI_AGENT_API_URL as string;
 export const PROJECT_AI_API_URL = process.env.PROJECT_AI_API_URL as string;
 export const AI_DOCS_API_URL = process.env.AI_DOCS_API_URL as string;
 
+//Ticket
+export const TICKET_API_URL = process.env.TICKET_API_URL as string;
+
 export const DARK_THEME_MEDIA_SYSTEM = "(prefers-color-scheme: dark)";
 export const DOCS_API_URL = process.env.DOCS_API_URL as string;
 export const DATE_FORMAT_FORM = "yyyy-MM-dd";

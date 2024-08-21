@@ -1,9 +1,10 @@
 import { useMutation } from "react-query";
+import { createTicketApi } from "../api";
 
 const useTicketAction = () => {
   const createTicket = useMutation({
-    // mutationFn:()=> {},
-    onSuccess: (data) => {},
+    mutationFn: createTicketApi,
   });
+  return { createTicket };
 };
 export default useTicketAction;

@@ -8,9 +8,13 @@ import DeleteIcon from "public/images/ticket/deleteIcon.svg";
 
 const fileTypes = ["JPEG", "PNG", "GIF"];
 
-export default function FileUpload() {
-  const [files, setFiles] = useState<any[]>([]);
-
+export default function FileUpload({
+  files,
+  setFiles,
+}: {
+  files: File[];
+  setFiles: (files: File[]) => void;
+}) {
   const handleChange = (fileList) => {
     const tempData = [...files];
     if (tempData.length >= 10) return;
@@ -129,7 +133,7 @@ export default function FileUpload() {
                   {file?.name}
                 </Typography>
                 <Typography sx={{ fontSize: "13px", fontWeight: "700" }}>
-                  {moment(file?.lastModifiedDate).format("DD MMM YYYY, HH:mm")}
+                  {moment(file?.lastModified).format("DD MMM YYYY, HH:mm")}
                 </Typography>
               </Stack>
             </Stack>

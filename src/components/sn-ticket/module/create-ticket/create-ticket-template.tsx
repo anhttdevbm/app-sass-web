@@ -4,27 +4,66 @@ import { Button, Input, Select } from "components/shared";
 import LabelFormCustom from "components/sn-ticket/form/LabelFormCustom";
 import MinHeightTextarea from "components/sn-ticket/form/MinHeightTextarea";
 import Wrapper from "components/Wrapper";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import FileUpload from "./upload/FileUpload";
+import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
+import { useHeaderConfig } from "store/app/selectors";
+import { Endpoint } from "api";
+import { useTranslations } from "next-intl";
+import { NS_COMMON, NS_TICKET } from "constant/index";
 
-interface IFormTicket {
+export interface IFormTicket {
   title: string;
   description: string;
-  requestTicketType: string;
-  status: "low" | "hight" | "medium" | null;
+  requestTicketType?: string;
+  status?: "low" | "hight" | "medium" | null;
+  files: File[];
 }
 
 const CreateTicket = () => {
+  const { onUpdateHeaderConfig } = useHeaderConfig();
+  const ticketT = useTranslations(NS_TICKET);
+  const commonT = useTranslations(NS_COMMON);
+
+  useEffect(() => {
+    onUpdateHeaderConfig({
+      title: "List Ticket",
+      searchPlaceholder: commonT("searchBy", { name: ticketT("header.key") }),
+      endpoint: Endpoint.TICKET,
+      key: "name",
+    });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        endpoint: undefined,
+        key: undefined,
+      });
+    };
+  }, [onUpdateHeaderConfig]);
+
+  const { createTicket } = useTicketAction();
   const [formTicket, setFormTicket] = useState<IFormTicket>({
     title: "",
     description: "",
     requestTicketType: "",
     status: null,
+    files: [],
   });
 
-  const handleChange = (value: string, type: keyof typeof formTicket) => {
+  const handleChange = useCallback((value: string, type: keyof IFormTicket) => {
     setFormTicket((prev) => ({ ...prev, [type]: value }));
+  }, []);
+
+  const handleSubmit = (data: IFormTicket) => {
+    createTicket.mutate(data, {
+      onSuccess: (data) => {
+        console.log("data", data);
+      },
+      onError: (err) => {},
+    });
   };
 
   return (
@@ -65,13 +104,13 @@ const CreateTicket = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <LabelFormCustom title="Request Ticket Type" />
               <Select
                 options={[
                   {
                     label: "Service Request",
-                    value: "Service",
+                    value: "ServiceRequest",
                   },
                   {
                     label: "Problem",
@@ -96,21 +135,21 @@ const CreateTicket = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <LabelFormCustom title="Priority" />
               <Select
                 options={[
                   {
                     label: "High",
-                    value: "high",
+                    value: "High",
                   },
                   {
                     label: "Medium",
-                    value: "medium",
+                    value: "Medium",
                   },
                   {
                     label: "Low",
-                    value: "low",
+                    value: "Low",
                   },
                 ]}
                 fullWidth
@@ -124,7 +163,12 @@ const CreateTicket = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <FileUpload />
+              <FileUpload
+                files={formTicket.files}
+                setFiles={(files) =>
+                  setFormTicket((prev) => ({ ...prev, files }))
+                }
+              />
             </Grid>
           </Grid>
           <Stack
@@ -136,7 +180,7 @@ const CreateTicket = () => {
           >
             <Button
               onClick={() => {
-                // push(TICKET_CREATE_PATH);
+                handleSubmit(formTicket);
               }}
               size="small"
               variant="primary"

@@ -345,7 +345,7 @@ const DATA: MenuItemProps[] = [
     label: "menu.ticket",
     href: TICKET_PATH,
     icon: <TicketIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.ST, Permission.SA],
   },
   // Feedback
   {

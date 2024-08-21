@@ -39,7 +39,10 @@ import ArrowExport from "icons/ArrowExport";
 import AddSquareIcon from "icons/AddSquareIcon";
 import { TICKET_CREATE_PATH } from "constant/paths";
 import { useSelector } from "react-redux";
-import { selectSearchTicket, selectTicketListTicket } from "store/ticket/selectors";
+import {
+  selectSearchTicket,
+  selectTicketListTicket,
+} from "store/ticket/selectors";
 import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
 
 function convertStringToArray(inputString) {
@@ -54,10 +57,8 @@ function convertStringToArray(inputString) {
 
 const ChangeViewListDoc = () => {
   const [typeViewListDoc, setTypeViewListDoc] =
-    useState<TypeViewListDoc>("kanbanViewListDoc");
+    useState<TypeViewListDoc>("basicViewListDoc");
   const dispatch = useDispatch();
-
-  console.log("check", typeViewListDoc)
 
   const handleViewKanban = () => {
     dispatch(changeTypeViewDoc("kanbanViewListDoc"));
@@ -112,7 +113,7 @@ type ActionProps = {
 };
 
 const Actions = ({ isProjectTabMode }: ActionProps) => {
-  const data = useSelector(selectSearchTicket)
+  const data = useSelector(selectSearchTicket);
   const dispatch = useDispatch();
   const companyT = useTranslations(NS_COMPANY);
   const t = useTranslations(NS_TICKET);
@@ -138,17 +139,15 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
     };
 
     const payload = {
-      ...data , 
-      keySearch : newQueries?.search_key,
-      priority : newQueries?.priority?.priority ,
-      assingn :newQueries?.assingn?.fullname ,
-      ticketType : newQueries?.typeTicket?.typeTicket ,
-    }
-    dispatch(setKeySearchTicket(payload))
-    console.log("ckech fiter", data)
-
+      ...data,
+      keySearch: newQueries?.search_key,
+      priority: newQueries?.priority?.priority,
+      assingn: newQueries?.assingn?.fullname,
+      ticketType: newQueries?.typeTicket?.typeTicket,
+    };
+    dispatch(setKeySearchTicket(payload));
+    console.log("ckech fiter", data);
   };
-
 
   useEffect(() => {
     setQueries({ search_key: searchParams.get("search_key") });

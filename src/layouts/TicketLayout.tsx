@@ -1,0 +1,38 @@
+import { Endpoint } from "api";
+import { NS_COMMON, NS_TICKET } from "constant/index";
+import { TICKET_INFO_PATH, TICKET_PATH } from "constant/paths";
+import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { useHeaderConfig } from "store/app/selectors";
+import { getPath } from "utils/index";
+
+const TicketLayout = ({ children, id }) => {
+  const { onUpdateHeaderConfig } = useHeaderConfig();
+  const ticketT = useTranslations(NS_TICKET);
+  const commonT = useTranslations(NS_COMMON);
+  const pathName = usePathname();
+
+  useEffect(() => {
+    const prevPath = getPath(TICKET_PATH, undefined, { id });
+    onUpdateHeaderConfig({
+      title: pathName.includes("/create") ? "Create ticket" : `Ticket ${id}`,
+      searchPlaceholder: commonT("searchBy", { name: ticketT("header.key") }),
+      endpoint: Endpoint.TICKET,
+      key: "name",
+      prevPath,
+    });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        endpoint: undefined,
+        key: undefined,
+      });
+    };
+  }, [onUpdateHeaderConfig, pathName]);
+  return <>{children}</>;
+};
+
+export default TicketLayout;

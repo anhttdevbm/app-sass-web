@@ -9,6 +9,7 @@ import {
   BUDGET_UPLOAD_FILE_API_URL,
   REFRESH_TOKEN_STORAGE_KEY,
   SALE_API_URL,
+  TICKET_API_URL,
   UPLOAD_API_URL,
 } from "constant";
 import { HttpStatusCode } from "constant/enums";
@@ -256,5 +257,8 @@ export const budgetExpenseUploadClient = new RequestClient({
 
 export const saleClientInstance: AxiosInstance =
   createAxiosInstance(SALE_API_URL);
+
+export const ticketInstance: AxiosInstance =
+  createAxiosInstance(TICKET_API_URL);
 
 export { axios };
