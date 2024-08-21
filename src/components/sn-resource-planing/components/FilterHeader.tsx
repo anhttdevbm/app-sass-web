@@ -90,7 +90,7 @@ const FilterHeader = ({
         </Typography>
         <Filter.Select
           value={
-            (bookingAllFilter.position ||
+            (bookingAllFilter?.position ||
               DEFAULT_BOOKING_ALL_FILTER.position) as string
           }
           onChange={(event) =>
@@ -127,7 +127,7 @@ const FilterHeader = ({
             </Typography>
             <Filter.Select
               value={
-                (bookingAllFilter.working_sort ||
+                (bookingAllFilter?.working_sort ||
                   DEFAULT_BOOKING_ALL_FILTER.working_sort) as string
               }
               onChange={(event) => {
