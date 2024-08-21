@@ -67,7 +67,7 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    let selectedMemberIds =
+    const selectedMemberIds =
       searchParams
         .get("user_id")
         ?.split(",")

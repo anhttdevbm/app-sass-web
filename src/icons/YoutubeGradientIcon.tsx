@@ -23,8 +23,8 @@ const YoutubeGradientIcon = (props: SvgIconProps) => {
           y2="13.5822"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#0575E6" />
-          <stop offset="1" stop-color="#38E27B" />
+          <stop stopColor="#0575E6" />
+          <stop offset="1" stopColor="#38E27B" />
         </linearGradient>
       </defs>
     </SvgIcon>

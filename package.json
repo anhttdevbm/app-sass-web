@@ -161,6 +161,7 @@
     "eslint": "^8.42.0",
     "eslint-config-next": "^13.4.5",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-svg-jsx": "^1.2.4",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
     "prettier": "^2.8.8",

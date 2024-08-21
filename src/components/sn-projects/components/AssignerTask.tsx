@@ -12,13 +12,12 @@ type AssignerTaskProps = Omit<
   onHandler: (newValue: string) => void;
 };
 
-const AssignerTask = (props: AssignerTaskProps) => {
+const AssignerTask = ({ onHandler, ...props }: AssignerTaskProps) => {
   const { options: initialOptions } = useMemberOptions();
   const commonT = useTranslations(NS_COMMON);
 
   const [options, setOptions] = useState(initialOptions);
 
-  const { onHandler } = props;
   const handleAssigner = async (owner, newValue) => {
     onHandler(newValue);
   };

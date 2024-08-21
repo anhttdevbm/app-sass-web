@@ -1103,7 +1103,7 @@ const ItemList = () => {
               right: "0",
               bgcolor: "grey.100",
             },
-            "* > th:first-child": {
+            "* > th:first-of-type": {
               pl: "37px",
             },
             "* > th": {
@@ -1151,18 +1151,15 @@ const ItemList = () => {
                   const isHide = hideIds.includes(task.id);
 
                   return (
-                    <div style={{ position: "relative" }}>
+                    <div key={task.id} style={{ position: "relative" }}>
                       <DraggableTask
                         key={task.id}
                         id={task.id}
                         index={taskIndex}
                         checked={isChecked}
                         isHide={isHide}
-                        isHovered={hoveredId === task.id}
                         onChange={onToggleTask(!isChecked, taskListItem, task)}
                         isSubTask={false}
-                        onMouseEnter={() => setHoveredId(task.id)}
-                        onMouseLeave={() => setHoveredId(undefined)}
                         setHideIds={setHideIds}
                         task={task}
                       >
@@ -1184,7 +1181,13 @@ const ItemList = () => {
                                 minHeight={40}
                                 maxHeight={{ md: 40 }}
                                 width="100%"
-                                sx={{ ...sx.task, ml: 1.5 }}
+                                sx={{
+                                  ...sx.task,
+                                  ml: 1.5,
+                                  "&:hover": {
+                                    bgcolor: "background.default",
+                                  },
+                                }}
                                 overflow="hidden"
                                 display={"flex"}
                               >
@@ -1475,8 +1478,11 @@ const SubTaskList = ({
                     <Box
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      style={{
+                      sx={{
                         minHeight: 1,
+                        "&:hover": {
+                          bgcolor: "background.default",
+                        }
                       }}
                     >
                       <Stack
@@ -1492,8 +1498,8 @@ const SubTaskList = ({
                             position: "absolute",
                             left: "58px",
                             top: `${i !== 0 ? `${i * 40 + 20}px` : "40px"}`,
-                            "border-left": "1px solid",
-                            "border-bottom": "1px solid",
+                            borderLeft: "1px solid",
+                            borderBottom: "1px solid",
                             borderColor: {
                               md: "rgba(27, 197, 189, 0.5)",
                               xs: "background.paper",
@@ -1506,8 +1512,8 @@ const SubTaskList = ({
                             position: "absolute",
                             left: "72px",
                             top: `${(i + 1) * 40 + 17}px`,
-                            "border-top": "1px solid",
-                            "border-right": "1px solid",
+                            borderTop: "1px solid",
+                            borderRight: "1px solid",
                             content: "''",
                             width: "5px",
                             height: "5px",

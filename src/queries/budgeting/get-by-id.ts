@@ -3,7 +3,7 @@ import { saleClientInstance } from "../../api/client";
 import { getPath } from "utils/index";
 import { Endpoint } from "../../api";
 
-export const BUDGET_GET_BY_ID_QK: string = "budget_get_by_id_query_key";
+export const BUDGET_GET_BY_ID_QK = "budget_get_by_id_query_key";
 
 export const budgetByIdQuery = (id: string): Promise<any> => {
   const url: string = getPath(Endpoint.BUDGET_GET_BY_ID, undefined, { id: id });

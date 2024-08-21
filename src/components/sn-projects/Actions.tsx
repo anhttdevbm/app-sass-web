@@ -34,9 +34,7 @@ import { useProjects } from "store/project/selectors";
 import { getPath } from "utils/index";
 import AiForm from "./AiForm";
 import ButtonWithDropdown from "./components/ButtonWithDropdown";
-import {
-  INITIAL_VALUES
-} from "./components/helpers";
+import { INITIAL_VALUES } from "./components/helpers";
 import StatusDropdown from "./components/StatusDropdown";
 import Form, { ProjectDataForm } from "./Form";
 
@@ -102,7 +100,12 @@ const Actions = () => {
   const [isShowMobileSearch, setIsShowMobileSearch] = useState(false);
 
   const NewProjectButton = () => (
-    <ButtonWithDropdown text={commonT("createNew")} onClick={onShow}>
+    <ButtonWithDropdown
+      text={commonT("createNew")}
+      primaryButtonProps={{
+        onClick: onShow,
+      }}
+    >
       {(handleClose) => (
         <Paper>
           <MenuList>
