@@ -5,13 +5,11 @@ import LabelFormCustom from "components/sn-ticket/form/LabelFormCustom";
 import MinHeightTextarea from "components/sn-ticket/form/MinHeightTextarea";
 import Wrapper from "components/Wrapper";
 import { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
 import FileUpload from "./upload/FileUpload";
 import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
-import { useHeaderConfig } from "store/app/selectors";
-import { Endpoint } from "api";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_TICKET } from "constant/index";
+import { useSnackbar } from "store/app/selectors";
+import { useRouter } from "next/navigation";
+import { TICKET_PATH } from "constant/paths";
 
 export interface IFormTicket {
   title: string;
@@ -22,29 +20,9 @@ export interface IFormTicket {
 }
 
 const CreateTicket = () => {
-  const { onUpdateHeaderConfig } = useHeaderConfig();
-  const ticketT = useTranslations(NS_TICKET);
-  const commonT = useTranslations(NS_COMMON);
-
-  useEffect(() => {
-    onUpdateHeaderConfig({
-      title: "List Ticket",
-      searchPlaceholder: commonT("searchBy", { name: ticketT("header.key") }),
-      endpoint: Endpoint.TICKET,
-      key: "name",
-    });
-    return () => {
-      onUpdateHeaderConfig({
-        title: undefined,
-        searchPlaceholder: undefined,
-        prevPath: undefined,
-        endpoint: undefined,
-        key: undefined,
-      });
-    };
-  }, [onUpdateHeaderConfig]);
-
   const { createTicket } = useTicketAction();
+  const { onAddSnackbar } = useSnackbar();
+  const { push, back } = useRouter();
   const [formTicket, setFormTicket] = useState<IFormTicket>({
     title: "",
     description: "",
@@ -60,9 +38,12 @@ const CreateTicket = () => {
   const handleSubmit = (data: IFormTicket) => {
     createTicket.mutate(data, {
       onSuccess: (data) => {
-        console.log("data", data);
+        push(TICKET_PATH);
+        onAddSnackbar("Create ticket success!", "success");
       },
-      onError: (err) => {},
+      onError: (err) => {
+        onAddSnackbar("Create ticket error!", "error");
+      },
     });
   };
 
