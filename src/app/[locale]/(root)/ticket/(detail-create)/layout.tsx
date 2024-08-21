@@ -10,7 +10,7 @@ type RootLayoutProps = {
 };
 
 const RootLayout = ({ children, params }: RootLayoutProps) => {
-  return <TicketLayout id={params.id}>{children}</TicketLayout>;
+  return <TicketLayout>{children}</TicketLayout>;
 };
 
 export default RootLayout;
