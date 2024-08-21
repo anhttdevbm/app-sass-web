@@ -15,7 +15,6 @@ import { useTranslations } from "next-intl";
 
 import { memo, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { setDataTicketDetail } from "store/ticket-detail/actions";
 
 
 

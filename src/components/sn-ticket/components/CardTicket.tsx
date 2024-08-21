@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 
 import { memo, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { setDataTicketDetail } from "store/ticket-detail/actions";
+import { setDataTicketDetail } from "store/ticket/actions";
 
 
 

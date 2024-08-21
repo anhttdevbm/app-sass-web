@@ -15,7 +15,7 @@ import React, { memo, useEffect, useMemo, useState } from "react";
 import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";
-import { NS_DOCS } from "constant/index";
+import { NS_DOCS, NS_TICKET } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
 import { Search } from "components/Filters";
 import MemberItem from "components/sn-projects/components/MemberItem";
@@ -23,7 +23,8 @@ import { useEmployeeOptions } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
 import { useSearchParams } from "next/navigation";
 
-const FilterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
+const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
+  const t = useTranslations(NS_TICKET);
   const docsT = useTranslations(NS_DOCS);
   const {
     items,
@@ -46,7 +47,7 @@ const FilterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
   const onChangeMembers = (id: string, fullname: string) => {
     // const indexSelected = members.findIndex((item) => item.id === id);
 
-    const newData = [{ id, fullname }];
+    const newData = { id, fullname };
 
     setSelectedMember({ id, fullname });
 
@@ -56,7 +57,7 @@ const FilterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
     //   newData.splice(indexSelected, 1);
     // }
     // setMembers(newData);
-    onChange("user_id", newData);
+    onChange("assingn", newData);
   };
   const onChangeSearch = (name: string, newValue?: string | number) => {
     onGetEmployeeOptions({ pageIndex: 1, pageSize: 10, [name]: newValue });
@@ -104,8 +105,7 @@ const FilterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
         sx={sxConfig.item}
       >
         <Text variant="body2" color="grey.400">
-          {/* {docsT("filter.filter.creator")}: */}
-          Priority
+          {t("ticketFields.assignedTo")}: 
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">
           {docsT("filter.all")}
@@ -175,4 +175,4 @@ const FilterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
   );
 };
 
-export default memo(FilterPriority);
+export default memo(FilterAssign);

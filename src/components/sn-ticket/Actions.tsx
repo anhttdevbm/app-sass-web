@@ -38,6 +38,9 @@ import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
 import ArrowExport from "icons/ArrowExport";
 import AddSquareIcon from "icons/AddSquareIcon";
 import { TICKET_CREATE_PATH } from "constant/paths";
+import { useSelector } from "react-redux";
+import { selectSearchTicket, selectTicketListTicket } from "store/ticket/selectors";
+import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -54,7 +57,7 @@ const ChangeViewListDoc = () => {
     useState<TypeViewListDoc>("kanbanViewListDoc");
   const dispatch = useDispatch();
 
-  console.log("check" , typeViewListDoc)
+  console.log("check", typeViewListDoc)
 
   const handleViewKanban = () => {
     dispatch(changeTypeViewDoc("kanbanViewListDoc"));
@@ -109,69 +112,46 @@ type ActionProps = {
 };
 
 const Actions = ({ isProjectTabMode }: ActionProps) => {
+  const data = useSelector(selectSearchTicket)
+  const dispatch = useDispatch();
   const companyT = useTranslations(NS_COMPANY);
   const t = useTranslations(NS_TICKET);
   const commonT = useTranslations(NS_COMMON);
   const docsT = useTranslations(NS_DOCS);
-  const { filters, onCreateDoc, loading } = useDocs();
-  const { perm } = useAppSelector((state) => state.doc);
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
   const [isShowImportForm, onShowImportForm, onHideImportForm] = useToggle();
   const [queries, setQueries] = useState<any>({});
-  const grOptions = useMemo(
-    () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
-    [companyT],
-  );
 
   const onChangeQueries = (name: string, value: any) => {
-    // setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
-    onSearch();
+    setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+    // onSearch();
   };
   const { id } = useParams();
-
-  const handleCreateDoc = () => {
-    onCreateDoc(id as string);
-    // if (id && id !== undefined && isProjectTabMode) {
-    // }
-  };
 
   const onSearch = () => {
     let newQueries = {
       ...queries,
       page: 1,
-      group_by: DocGroupByEnum.PROJECT_ID,
+      // group_by: DocGroupByEnum.PROJECT_ID,
     };
 
-    if (queries?.user_id?.length > 0) {
-      const newListId = queries?.user_id?.map((person) => `${person.id}`);
-
-      newQueries = {
-        ...queries,
-        user_id: newListId.join(","),
-      };
+    const payload = {
+      ...data , 
+      keySearch : newQueries?.search_key,
+      priority : newQueries?.priority?.priority ,
+      assingn :newQueries?.assingn?.fullname ,
+      ticketType : newQueries?.typeTicket?.typeTicket ,
     }
-    const path = getPath(pathname, newQueries);
-    console.log("New path", { path });
-    push(path);
+    dispatch(setKeySearchTicket(payload))
+    console.log("ckech fiter", data)
+
   };
 
-  useEffect(() => {
-    let newFilter = filters;
-
-    if (filters?.user_id) {
-      newFilter = {
-        ...filters,
-        user_id: convertStringToArray(filters?.user_id),
-      };
-    }
-
-    // setQueries(newFilter);
-  }, [filters]);
 
   useEffect(() => {
-    // setQueries({ search_key: searchParams.get("search_key") });
+    setQueries({ search_key: searchParams.get("search_key") });
   }, [searchParams.get("search_key")]);
 
   return (
@@ -193,7 +173,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         >
           <Box display={{ xs: "block" }}>
             <Search
-              placeholder={docsT("filter.search", { name: "email" })}
+              placeholder={"Tìm kiếm theo id"}
               name="search_key"
               onChange={onChangeQueries}
               value={queries?.search_key}
@@ -279,7 +259,6 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Stack>
         </Box>
       </Stack>
-      {/* <ImportForm open={isShowImportForm} onClose={onHideImportForm} /> */}
     </>
   );
 };

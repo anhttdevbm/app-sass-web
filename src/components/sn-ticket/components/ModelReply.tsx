@@ -17,7 +17,6 @@ import { useRouter } from "next-intl/client";
 import { memo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { selectTicketDetailData } from "store/ticket-detail/selectors";
 
 type PropsModelReply = {
   open: boolean

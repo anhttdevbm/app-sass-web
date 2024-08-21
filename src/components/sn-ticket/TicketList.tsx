@@ -31,8 +31,20 @@ import Pagination from "components/Pagination";
 import TableTicket from "./components/TableTicket";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
+import { useDispatch } from "react-redux";
+import { setDataListTicket } from "store/ticket/actions";
+import { useSelector } from "react-redux";
+import { selectSearchTicket } from "store/ticket/selectors";
 
 const TickketList = () => {
+  const dispatch = useDispatch();
+
+
+  //Store của các key tìm kiếm gói ở đây ///
+  const keySearch = useSelector(selectSearchTicket)
+  console.log("key serach sorte" , keySearch)
+  ///////////////////////////////////////////
+
   const defaultFilterTicket = [
     {
       id: 1,
@@ -222,6 +234,29 @@ const TickketList = () => {
     },
   ];
 
+  const [list , setList] = useState<any>(null)
+
+  const getData = () => {
+    if (keySearch?.keySearch?.length > 0) {
+      const filter = dataTicketLocal.filter((item) => {
+        const id = item?.id?.toString().toLowerCase();
+        const searchKey = keySearch?.keySearch?.toLowerCase() ?? '';
+        return id?.includes(searchKey);
+      })
+      setList(filter)
+    } else {
+      setList(dataTicketLocal)
+    }
+  }
+
+
+  useEffect(() => {
+    getData()
+  }, [keySearch])
+
+
+
+
   const [listFilterTicket, setListFilterTicket] = useState(defaultFilterTicket);
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
   console.log("check", typeViewDocStore);
@@ -255,7 +290,7 @@ const TickketList = () => {
         px={{ xs: 0, md: 3 }}
         py={1}
         zIndex={2}
-        // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
+      // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
       >
         {typeViewDocStore == "basicViewListDoc" && (
           <Stack>
@@ -357,7 +392,7 @@ const TickketList = () => {
         )}
         {typeViewDocStore == "basicViewListDoc" ? (
           <>
-            {dataTicketLocal.map((item, index) => (
+            {list?.map((item, index) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <CardTicket data={item} />
               </Box>
@@ -365,7 +400,7 @@ const TickketList = () => {
           </>
         ) : (
           <>
-            <TableTicket data={dataTicketLocal} />
+            <TableTicket data={list} />
           </>
         )}
         <Pagination

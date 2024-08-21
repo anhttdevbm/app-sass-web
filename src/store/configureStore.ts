@@ -36,7 +36,7 @@ import { promptTemplateReducer } from "store/promptTemplate/reducer";
 import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
 import userNavigationDetailReducer from "store/userNavigationDetail/reducer";
 import { invoiceReducer, InvoiceState } from "store/invoice/reducer";
-import {ticketDetailReducer} from "store/ticket-detail/reducer"
+import {ticketReducer} from "store/ticket/reducer"
 
 export interface State {
   app: AppState;
@@ -95,7 +95,7 @@ export const store = configureStore({
     userNavigationDetail: userNavigationDetailReducer,
 
     //ticket
-    ticketDetail : ticketDetailReducer,
+    ticket : ticketReducer,
 
   },
   middleware: (getDefaultMiddleware) =>

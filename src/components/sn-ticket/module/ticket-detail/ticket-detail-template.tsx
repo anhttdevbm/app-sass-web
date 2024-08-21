@@ -18,7 +18,7 @@ import { useRouter } from "next-intl/client";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { selectTicketDetailData } from "store/ticket-detail/selectors";
+import { selectTicketDetailData } from "store/ticket/selectors";
 
 const TicketDetail = () => {
   const t = useTranslations(NS_TICKET);
