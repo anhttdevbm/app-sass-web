@@ -2,12 +2,14 @@ import { Endpoint } from "api";
 import { NS_COMMON, NS_TICKET } from "constant/index";
 import { TICKET_INFO_PATH, TICKET_PATH } from "constant/paths";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { useHeaderConfig } from "store/app/selectors";
 import { getPath } from "utils/index";
 
-const TicketLayout = ({ children, id }) => {
+const TicketLayout = ({ children }) => {
+  const params = useParams();
+  const id = params?.id as string;
   const { onUpdateHeaderConfig } = useHeaderConfig();
   const ticketT = useTranslations(NS_TICKET);
   const commonT = useTranslations(NS_COMMON);
