@@ -28,9 +28,14 @@ import {
 import useQueryParams from "hooks/useQueryParams";
 import dayjs from "dayjs";
 import FixedLayout from "components/FixedLayout";
-import { BILLING_EXPORT_PATH, BILLING_INFO_PATH } from "constant/paths";
+import {
+  BILLING_EXPORT_PATH,
+  BILLING_INFO_PATH,
+  INVOICE_EXPORT_PATH,
+} from "constant/paths";
 import { getPath } from "utils/index";
 import { useRouter } from "next-intl/client";
+import { useInvoices } from "store/invoice/selectors";
 
 const ViewPdf = () => {
   const { push } = useRouter();
@@ -38,7 +43,7 @@ const ViewPdf = () => {
 
   // const file = localStorage.getItem("file");
 
-  const { item, onGetBilling, updateStatus } = useBillings();
+  const { item, onGetInvoiceDetail } = useInvoices();
   const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
   const { budgets, onGetBudgets } = useBudgets();
   const { initQuery, isReady, query } = useQueryParams();
@@ -49,8 +54,8 @@ const ViewPdf = () => {
   const id = param?.id.toString();
 
   useEffect(() => {
-    onGetBilling(id ?? "");
-  }, [onGetBilling, updateStatus]);
+    onGetInvoiceDetail(id ?? "");
+  }, [onGetInvoiceDetail]);
 
   // useEffect(() => {
   //   if (!isReady) return;
@@ -97,42 +102,17 @@ const ViewPdf = () => {
     setIsDownload(false);
   };
 
-  // const downloadFile = useCallback(() => {
-  //   if (fileExport || file) {
-  //     const link = document.createElement("a");
-  //     link.href = fileExport ?? file ?? "";
-  //     link.setAttribute("download", `${Date.now()}.pdf`);
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     localStorage.removeItem("file");
-  //   }
-  // }, [fileExport, file]);
-
   const openNewTab = () => {
     window.open(
-      getPath(BILLING_EXPORT_PATH, undefined, {
+      getPath(INVOICE_EXPORT_PATH, undefined, {
         id: id ?? "",
       }),
     );
   };
 
-  const onInsertComment = () => {
-    push(
-      getPath(BILLING_INFO_PATH, undefined, {
-        id: id ?? "",
-      }),
-    );
-
-    // window.open(getPath(BILLING_EXPORT_PATH, undefined, { id: id ?? "" }), "");
-  };
-
-  // useEffect(() => {
-  //   const iframe = document.querySelector("iframe");
-  //   if (iframe?.src) iframe.src = fileExport ?? "";
-  // }, [fileExport]);
   const listService = useMemo(() => {
-    if (!item?.budgetService) return;
-    const dataService = [...item?.budgetService];
+    if (!item?.service_items) return;
+    const dataService = [...item?.service_items];
     return dataService;
   }, [item]);
 
@@ -151,14 +131,6 @@ const ViewPdf = () => {
         p={2}
         borderBottom={"1px solid #ECECF3"}
       >
-        <Button
-          variant="secondary"
-          startIcon={<Textsms />}
-          onClick={() => onInsertComment()}
-        >
-          Insert comment
-        </Button>
-
         <Button
           variant="secondary"
           startIcon={<ArrowExport />}
@@ -187,7 +159,7 @@ const ViewPdf = () => {
         <Stack gap={2} p={2} padding={8} alignItems={"center"}>
           <div
             //TODO: Comment this code to deploy, waiting for QUANGNV to fix the bug
-            // ref={printRef}
+            ref={printRef}
             style={{
               fontSize: 20,
               fontWeight: 600,
@@ -201,12 +173,12 @@ const ViewPdf = () => {
           >
             <Grid container spacing={2}>
               <Grid md={12} p={2}>
-                <Text variant={"body1"}>{item?.company}</Text>
+                <Text variant={"body1"}>{item?.customer_name}</Text>
                 <Text variant={"body1"}>VietNam</Text>
               </Grid>
               <Grid md={12} p={2}>
                 <Text sx={{ color: "#154276", fontWeight: 600 }}>
-                  Invoice {item?.invoiceNumber?.toString()}
+                  Invoice {item?.invoice_number}
                 </Text>
               </Grid>
               <Grid md={12} p={2}>
@@ -221,14 +193,16 @@ const ViewPdf = () => {
                 <Grid md={3}>
                   <Text sx={{ color: "#92a2be" }}>DATE</Text>
                   <Text>
-                    {item?.date ? dayjs(item?.date).format("DD/MM/YYYY") : ""}{" "}
+                    {item?.invoice_date
+                      ? dayjs(item?.invoice_date).format("DD/MM/YYYY")
+                      : ""}{" "}
                   </Text>
                 </Grid>
                 <Grid md={3}>
                   <Text sx={{ color: "#92a2be" }}>DUE DATE</Text>
                   <Text>
-                    {item?.dueDate
-                      ? dayjs(item?.dueDate).format("DD/MM/YYYY")
+                    {item?.due_date
+                      ? dayjs(item?.due_date).format("DD/MM/YYYY")
                       : ""}
                   </Text>
                 </Grid>
@@ -237,7 +211,7 @@ const ViewPdf = () => {
                   <Text sx={{ color: "#92a2be", fontSize: 13 }}>
                     CREATED BY
                   </Text>
-                  <Text>{item?.user ? item?.user[0]?.name ?? "" : []}</Text>
+                  {/* <Text>{item?.user ? item?.user[0]?.name ?? "" : []}</Text> */}
                 </Grid>
               </Grid>
               <Grid md={12}>
@@ -266,11 +240,11 @@ const ViewPdf = () => {
                       {listService?.map((item, index) => {
                         return (
                           <TableRow key={index}>
-                            <TableCell>{item.desc}</TableCell>
-                            <TableCell>{item.unit}</TableCell>
-                            <TableCell>{item.qty}</TableCell>
+                            <TableCell>{item.service_name}</TableCell>
+                            <TableCell>Hour</TableCell>
+                            <TableCell>{item.quantity}</TableCell>
                             <TableCell>{item.discount}</TableCell>
-                            <TableCell>{item.price}</TableCell>
+                            <TableCell>{item.amount}</TableCell>
                           </TableRow>
                         );
                       })}
@@ -287,7 +261,7 @@ const ViewPdf = () => {
                       </Text>
                     </Grid>
 
-                    <Text>{item?.amount_unpaid}</Text>
+                    <Text>{item?.total}</Text>
                   </Stack>
                   <Stack direction={"row"} gap={2}>
                     <Grid container>
@@ -296,7 +270,9 @@ const ViewPdf = () => {
                       </Text>
                     </Grid>
 
-                    <Text>{item?.vat}</Text>
+                    <Text>
+                      {Number(((item?.total ?? 0) * 10) / 100).toFixed(2)}
+                    </Text>
                   </Stack>
                   <Stack direction={"row"} gap={2}>
                     <Grid container>
@@ -305,7 +281,7 @@ const ViewPdf = () => {
                       </Text>
                     </Grid>
                     <Text sx={{ color: "#154276", fontWeight: 600 }}>
-                      {item?.amount}
+                      {Number(((item?.total ?? 0) * 110) / 100).toFixed(2)}
                     </Text>
                   </Stack>
                 </Grid>

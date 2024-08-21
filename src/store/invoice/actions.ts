@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client, Endpoint } from "api";
-import { HttpStatusCode, Status } from "constant/enums";
+import { HttpStatusCode } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, INVOICE_API_URL } from "constant/index";
 import StringFormat from "string-format";
 
@@ -86,6 +86,27 @@ export const createNewInvoice = createAsyncThunk(
       return response.data;
       // }
       // throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteInvoice = createAsyncThunk(
+  "Invoice/deleteInvoice",
+  async ({ id }: { id: string }) => {
+    try {
+      const response = await client.delete(
+        StringFormat(Endpoint.DETAIL_INVOICE, { id }),
+        {
+          baseURL: INVOICE_API_URL,
+        },
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
     } catch (error) {
       throw error;
     }

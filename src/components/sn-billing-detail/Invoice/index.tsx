@@ -1,41 +1,20 @@
-import { ContentCopyRounded } from "@mui/icons-material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import {
-  Box,
-  Menu,
-  MenuItem,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
-import { IconButton, Text } from "components/shared";
-import { NS_BILLING, NS_COMMON } from "constant/index";
+import { Stack, Typography } from "@mui/material";
+import { INVOICES_PATH } from "constant/paths";
 import { User } from "constant/types";
 import { FormikProps, useFormik } from "formik";
 import ChangeTemplateIcon from "icons/ChangeTemplateIcon";
 import EditIcon from "icons/EditIcon";
-import FilePdfIcon from "icons/FilePdfIcon";
 import MarkAsSendIcon from "icons/MarkAsSendIcon";
-import PdfIcon from "icons/PdfIcon";
 import ShareInvoiceIcon from "icons/ShareInvoiceIcon";
-import TrashIcon from "icons/TrashIcon";
-import { useTranslations } from "next-intl";
-import { useRouter } from "next-intl/client";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { memo, useEffect, useState } from "react";
+import { useSnackbar } from "store/app/selectors";
 import { Bill, Billing, Budgets } from "store/billing/reducer";
-import { useBillings } from "store/billing/selectors";
 import { Invoice } from "store/invoice/reducer";
 import { useInvoices } from "store/invoice/selectors";
-import { formatDate } from "utils/index";
+import MoreButton from "./MoreButton";
+import PdfButton from "./PdfButton";
 import TemplateOne from "./TemplateOne";
-const ITEM_HEIGHT = 48;
 
 type TabProps = {
   title: string;
@@ -62,26 +41,17 @@ function createData(
 }
 const TabInvoice = (props: TabProps) => {
   const { user } = props;
-  const { item: itemInvoice, onGetInvoiceDetail } = useInvoices();
+  const {
+    item: itemInvoice,
+    onGetInvoiceDetail,
+    onDeleteInvoice,
+  } = useInvoices();
+
   const { id } = useParams();
-  const commonT = useTranslations(NS_COMMON);
-  const billingT = useTranslations(NS_BILLING);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
+  const { push } = useRouter();
   const [isEdit, setIsEdit] = useState(false);
-
-  const options = [
-    billingT("detail.form.top.button.option.deleteInvoice"),
-    billingT("detail.form.top.button.option.duplicateInvoice"),
-  ];
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
+  const pathname = usePathname();
+  const { onAddSnackbar } = useSnackbar();
   const formik = useFormik<Billing>({
     enableReinitialize: true,
     initialValues: {},
@@ -91,17 +61,36 @@ const TabInvoice = (props: TabProps) => {
       return;
     },
   });
-  const rows = [
-    createData("Development", "hour", 20, 150.0, 3000),
-    createData("Design", "hour", 20, 150.0, 3000),
-    createData("Project Management", "hour", 20, 150.0, 3000),
-  ];
 
   useEffect(() => {
     if (typeof id === "string") {
       onGetInvoiceDetail(id);
     }
   }, [id]);
+
+  const handleClickShare = async () => {
+    const origin =
+      typeof window !== "undefined" && window.location.origin
+        ? window.location.origin
+        : "";
+    const URL = `${origin}${pathname}`;
+    try {
+      await navigator.clipboard.writeText(URL);
+      onAddSnackbar("Copied!", "success");
+    } catch (er) {
+      onAddSnackbar("Failed to copy", "error");
+    }
+  };
+
+  const handleDeleteInvoice = async () => {
+    try {
+      await onDeleteInvoice(id as string);
+      push(INVOICES_PATH);
+      onAddSnackbar("Deleted", "success");
+    } catch (error) {
+      onAddSnackbar("Failed to delete", "error");
+    }
+  };
 
   const listChoice = [
     {
@@ -118,7 +107,7 @@ const TabInvoice = (props: TabProps) => {
         />
       ),
       title: "Mark As Send",
-      action: () => {},
+      action: () => onAddSnackbar("Mark as sent!", "success"),
     },
     {
       icon: (
@@ -127,7 +116,7 @@ const TabInvoice = (props: TabProps) => {
         />
       ),
       title: "Share",
-      action: () => {},
+      action: () => handleClickShare(),
     },
   ];
 
@@ -177,90 +166,8 @@ const TabInvoice = (props: TabProps) => {
           </Typography>
         </Stack>
 
-        <Stack
-          direction="row"
-          sx={{
-            borderRight: "1.5px solid #EBEAF2",
-            display: "flex",
-            gap: "8px",
-            padding: "12px 8px",
-            alignItems: "center",
-          }}
-        >
-          <PdfIcon sx={{ width: "12px", height: "12px", margin: "auto 0" }} />
-          <Typography fontSize={14} fontWeight={400} color="#000000">
-            PDF/Print
-          </Typography>
-        </Stack>
-
-        <Stack
-          direction="row"
-          sx={{
-            borderRight: "1.5px solid #EBEAF2",
-            display: "flex",
-            gap: "8px",
-            padding: "12px 8px",
-            alignItems: "center",
-          }}
-        >
-          <IconButton
-            aria-label="more"
-            id="long-button"
-            aria-controls={open ? "long-menu" : undefined}
-            aria-expanded={open ? "true" : undefined}
-            aria-haspopup="true"
-            onClick={handleClick}
-          >
-            <MoreVertIcon sx={{ height: "24px" }} />
-          </IconButton>
-          <Menu
-            id="long-menu"
-            MenuListProps={{
-              "aria-labelledby": "long-button",
-            }}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
-              style: {
-                maxHeight: ITEM_HEIGHT * 4.5,
-                width: "25ch",
-              },
-            }}
-          >
-            {options.map((option) => (
-              <MenuItem
-                key={option}
-                selected={option === "Pyxis"}
-                onClick={handleClose}
-              >
-                {option ===
-                billingT("detail.form.top.button.option.duplicateInvoice") ? (
-                  <Stack gap={2} direction={"row"} alignItems={"center"}>
-                    <ContentCopyRounded />
-                    <Text variant={"body2"}>
-                      {billingT(
-                        "detail.form.top.button.option.duplicateInvoice",
-                      )}
-                    </Text>
-                  </Stack>
-                ) : (
-                  <Stack
-                    gap={2}
-                    direction={"row"}
-                    alignItems={"center"}
-                    color={"red"}
-                  >
-                    <TrashIcon />
-                    <Text variant={"body2"} color={"red"}>
-                      {billingT("detail.form.top.button.option.deleteInvoice")}
-                    </Text>
-                  </Stack>
-                )}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Stack>
+        <PdfButton />
+        <MoreButton onDeleteInvoice={handleDeleteInvoice} />
       </Stack>
 
       {/* Main */}
