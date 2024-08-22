@@ -497,25 +497,6 @@ const MyScheduleTab = ({
             days: 1,
           }}
           selectable={true}
-          // select={(arg) => {
-          //   const { startStr, endStr, resource, view } = arg;
-
-          //   if (resource?._resource.extendedProps.type === "end") {
-          //     view.calendar.unselect();
-          //     return;
-          //   }
-
-          //   setParentResource(
-          //     resource?._resource.parentId || resource?._resource.id || "",
-          //   );
-          //   const start_date = dayjs(startStr).toDate();
-
-          //   const end_date = dayjs(endStr).subtract(1, "day").toDate();
-          //   setSelectedDateRange([start_date, end_date]);
-          //   setIsOpenCreate(true);
-          // }}
-          // resources={mappedResources as ResourceInput}
-          // events={mappedEvents as ResourceInput}
           resources={mapResours()}
           events={mapEvent()}
           slotLabelContent={(arg) => {
@@ -535,8 +516,13 @@ const MyScheduleTab = ({
               return (
                 <h2
                   style={{
-                    borderTop: "1px solid #CCCCCC",
                     paddingLeft: "10px",
+                    margin: 0,
+                    background: "#E1F0FFB2",
+                    lineHeight: "35px",
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: "#212529",
                   }}
                 >
                   {resource._resource.extendedProps.projectName}
@@ -547,29 +533,31 @@ const MyScheduleTab = ({
               <>
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
+                    display: "grid",
                     borderTop: resource._resource.extendedProps.sale.border,
                     borderBottom:
                       resource._resource.extendedProps.sale.borderBottom,
+                    gridTemplateColumns: "repeat(10, minmax(0, 1fr))",
                   }}
                 >
                   <p
                     style={{
-                      width: "20%",
                       color: "black",
                       paddingLeft: "10px",
+                      gridColumn: "span 5 / span 5",
                     }}
                   >
                     {resource._resource.extendedProps.sale.nameService}
                   </p>
                   <div
                     style={{
-                      width: "50%",
+                      gridColumn: "span 3 / span 3",
                       borderBottom: "1px solid #CCCCCC",
                       borderLeft: "1px solid #CCCCCC",
                       display: "flex",
                       justifyContent: "space-between",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     <div
@@ -588,10 +576,13 @@ const MyScheduleTab = ({
                           borderRadius: "50%",
                           background:
                             resource._resource.extendedProps.backgroundName,
-                          fontSize: "15px",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
+                          border: "2px solid #091E4224",
+                          color: "white",
+                          fontWeight: 500,
+                          fontSize: 14,
                         }}
                       >
                         {getFirstAndSecondLetters(
@@ -600,19 +591,20 @@ const MyScheduleTab = ({
                       </p>
                       <p>{resource._resource.extendedProps.fullname}</p>
                     </div>
-                    <p
-                      style={{
-                        borderLeft: "1px solid #CCCCCC",
-                        margin: "0 10px 0 0",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        padding: "0 10px",
-                      }}
-                    >
-                      {resource._resource.extendedProps.start_date}
-                    </p>
                   </div>
+                  <p
+                    style={{
+                      borderLeft: "1px solid #CCCCCC",
+                      margin: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "0 10px",
+                      gridColumn: "span 2 / span 2",
+                      borderBottom: "1px solid #CCCCCC",
+                    }}
+                  >
+                    {resource._resource.extendedProps.start_date}
+                  </p>
                 </div>
               </>
             );

@@ -140,26 +140,28 @@ const AllPeopleTab = ({
   const handleEventChange =
     (calendarRef: React.RefObject<FullCalendar>, isResize: boolean) =>
     async ({ event, revert }) => {
-      const { type, campaignId, service_id, ...restData } = event.extendedProps;
+      const { type, service_id, bookingID, user_id, ...restData } =
+        event.extendedProps;
+
       if (isResize && type === "campaign") return revert();
       if (type === "campaign") {
         // Campaign has been moved, compute diff and update each steps
         if (!calendarRef.current) return null;
-      } else if (type === "step") {
+      } else {
         // Step has been resized or move, update the campaign date
         if (!calendarRef.current) return null;
         const dateRange = event._instance.range;
         await updateBooking(
           {
             ...restData,
-            user_id: campaignId,
+            user_id: user_id,
             end_date: dayjs(dateRange.end).format("YYYY-MM-DD"),
             start_date: dayjs(dateRange.start).format("YYYY-MM-DD"),
-            booking_type: restData.eventType,
+            booking_type: restData.eventType || restData.booking_type,
             time_off_type: restData.time_off_type,
             service_id: service_id,
           },
-          restData.eventId,
+          bookingID,
         ).catch(() => revert());
         return null;
       }
@@ -347,6 +349,7 @@ const AllPeopleTab = ({
     });
     return items;
   };
+
   const mapEvent = () => {
     const items: any = [];
     mappedResources.map((item: any) =>
