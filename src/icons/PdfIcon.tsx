@@ -1,12 +1,13 @@
-import { memo } from "react";
 import { SvgIcon, SvgIconProps } from "@mui/material";
+import { memo } from "react";
 
-const FilePdfIcon = (props: SvgIconProps) => {
+const PdfIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon
-      viewBox="0 0 19 22"
       fill="none"
-      fontSize="inherit"
+      width="13"
+      height="14"
+      viewBox="0 0 13 14"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
@@ -34,4 +35,4 @@ const FilePdfIcon = (props: SvgIconProps) => {
   );
 };
 
-export default memo(FilePdfIcon);
+export default memo(PdfIcon);

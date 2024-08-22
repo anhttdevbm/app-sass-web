@@ -12,7 +12,7 @@ export const ButtonGradiant = ({
     <Button
       {...buttonProps}
       sx={{
-        background: "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)",
+        backgroundImage: "linear-gradient(to right, #2AF598, #009EFD)",
         color: "white",
         padding: "10px 20px",
         borderRadius: "100px",
