@@ -62,16 +62,13 @@ interface Ticket {
   updateTime: string | null;
 }
 
-
-
 const TickketList = () => {
   const dispatch = useDispatch();
   const { data } = useGetListTicket();
 
-
   //Store của các key tìm kiếm gói ở đây ///
-  const keySearch = useSelector(selectSearchTicket)
-  console.log("key serach sorte" , keySearch)
+  const keySearch = useSelector(selectSearchTicket);
+  console.log("key serach sorte", keySearch);
   ///////////////////////////////////////////
 
   const defaultFilterTicket = [
@@ -133,42 +130,36 @@ const TickketList = () => {
     },
   ];
 
-
-  const [list , setList] = useState<any>(null)
-  const [page , setPage] = useState(1)
-  const [totalItems , setTotalItems] = useState(2)
+  const [list, setList] = useState<any>(null);
+  const [page, setPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(2);
 
   const getData = (response: any) => {
-    console.log("check data api", response);
-    const data = response?.data?.data
+    const data = response?.data?.data;
 
     if (keySearch?.keySearch?.length > 0) {
       const filter = data?.filter((item: Ticket) => {
         const id = item?.code?.toString().toLowerCase();
-        const searchKey = keySearch?.keySearch?.toLowerCase() ?? '';
+        const searchKey = keySearch?.keySearch?.toLowerCase() ?? "";
         return id?.includes(searchKey);
-      })
-      setList(filter)
+      });
+      setList(filter);
     } else {
-      setList(data)
+      setList(data);
     }
-  }
-
+  };
 
   useEffect(() => {
     if (data !== null) {
-      getData(data)
+      getData(data);
     }
-  }, [keySearch])
+  }, [keySearch]);
 
   useEffect(() => {
     if (data !== null) {
-      getData(data)
+      getData(data);
     }
-  }, [data , page])
-
-
-
+  }, [data, page]);
 
   const [listFilterTicket, setListFilterTicket] = useState(defaultFilterTicket);
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
@@ -177,23 +168,19 @@ const TickketList = () => {
   const handleFilterTicket = (item) => {
     const _listFilterTicket = [...defaultFilterTicket];
     const idx = _listFilterTicket.findIndex((product) => product.id == item.id);
-    console.log("check idx", idx);
     _listFilterTicket[idx]["active"] = true;
     setListFilterTicket(_listFilterTicket);
   };
 
   const handlePageChange = (newPage: number) => {
     // handleQueryChange({ page: newPage, limit });
-    setPage(newPage)
-    console.log("check page" , newPage - 1)
-
+    setPage(newPage);
     const payload = {
       page: newPage - 1,
-      totalItems : 2
-    }
-    dispatch(setCurrentPage(payload))
-  };  
-
+      totalItems: 2,
+    };
+    dispatch(setCurrentPage(payload));
+  };
 
   const handleSizeChange = (newPageSize: number) => {
     // handleQueryChange({ page: 1, size: newPageSize });
@@ -212,7 +199,7 @@ const TickketList = () => {
         px={{ xs: 0, md: 3 }}
         py={1}
         zIndex={2}
-      // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
+        // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
       >
         {typeViewDocStore == "basicViewListDoc" && (
           <Stack>
