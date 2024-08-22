@@ -41,7 +41,7 @@ export default function DraftEditor() {
   const [mounted, setMounted] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState(name);
 
-  const [debounceChange, isDone, cancel] = useDebounce(
+  const [debounceChange] = useDebounce(
     ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
       updateDoc({
         id: id as string,
@@ -232,23 +232,6 @@ export default function DraftEditor() {
     // dispatch(getDocDetails(currentId));
   }, [name, currentId]);
 
-  useEffect(() => {
-    const data = {
-      //   content: content,
-      name: name || undefined,
-      //   description: description,
-      //   project_id: project_id,
-    };
-    if (mounted) {
-      if (id) {
-        handleUpdateDoc(data, id);
-        // setTextAreaValue(name);
-      } else {
-      }
-    } else {
-      setMounted(true);
-    }
-  }, [description, name, project_id, currentId, mounted, id, handleUpdateDoc]);
 
   // set giá trị cho doc khi mounted
   useEffect(() => {
@@ -322,7 +305,6 @@ export default function DraftEditor() {
         alignItems="center"
         marginTop={1}
       >
-        <EmojiSelect />
       </Box>
       <Box
         sx={{

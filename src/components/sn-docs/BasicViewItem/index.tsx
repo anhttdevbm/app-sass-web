@@ -8,8 +8,8 @@ import Typography from "@mui/material/Typography";
 import { IViewDocItem } from "../KanbanViewDocList";
 import { Avatar, Box } from "@mui/material";
 import { useState } from "react";
-import ActionMoreListDoc from "../ActionMoreListDoc";
 import BasicViewExpandItem from "../BasicViewExpandItem";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -28,10 +28,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 ))(({ theme }) => ({
   height: "57px",
   borderRadius: "12px",
-  flexDirection: "row-reverse",
-  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-    transform: "rotate(90deg)",
-  },
   "& .MuiAccordionSummary-content": {
     marginLeft: theme.spacing(1),
   },
@@ -49,7 +45,7 @@ export default function BasicViewDocItem({
   keyExpanded: number | string;
 }) {
   const [expanded, setExpanded] = useState<string | false>(
-    `panel${data.group_by ?? keyExpanded}`
+    `panel${data.group_by ?? keyExpanded}`,
   );
 
   const handleChange =
@@ -64,6 +60,7 @@ export default function BasicViewDocItem({
         onChange={handleChange(`panel${data.group_by ?? keyExpanded}`)}
       >
         <AccordionSummary
+          expandIcon={<ArrowDropDownIcon />}
           sx={{
             bgcolor: data.groupInfo ? "#14B9E5" : "#D9F0FD",
             color: data.groupInfo ? "common.white" : "grey.400",
@@ -85,13 +82,14 @@ export default function BasicViewDocItem({
                   alt={data?.groupInfo.avatar.name}
                   src={data?.groupInfo.avatar.link}
                 />
-                <Typography>{data.groupInfo.name} #{data.groupInfo.number ?? 0}</Typography>
+                <Typography>
+                  {data.groupInfo.name}
+                   {/* #{data.groupInfo.number ?? 0} */}
+                </Typography>
               </Box>
             ) : (
               <Typography>No Project</Typography>
             )}
-
-            <ActionMoreListDoc isHor={true} />
           </Box>
         </AccordionSummary>
         <AccordionDetails>

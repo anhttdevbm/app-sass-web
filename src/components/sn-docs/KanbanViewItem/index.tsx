@@ -23,7 +23,7 @@ export default function KanbanViewItem({
 }) {
   const docsT = useTranslations(NS_DOCS);
   const { redirectDetailDoc } = useDocs();
-  console.log("itemKanban", itemKanban);
+
   return (
     <>
       {itemKanban?.docs?.map((item) => (
