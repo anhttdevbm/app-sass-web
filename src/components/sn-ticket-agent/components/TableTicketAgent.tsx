@@ -7,14 +7,13 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { Text } from 'components/shared';
 import { useTranslations } from 'next-intl';
 import { NS_TICKET } from 'constant/index';
-import AssignGroup from './AssignGroup';
 
 
 
 const upperCaseText = (string: string) => {
     return string.toUpperCase()
 }
-const TableTicket = (props: any) => {
+const TableTicketAgent = (props: any) => {
     const t = useTranslations(NS_TICKET);
 
     const { data } = props
@@ -27,22 +26,22 @@ const TableTicket = (props: any) => {
                             <Typography fontWeight="500">{t("ticketFields.id")}</Typography>
                         </TableCell>
                         <TableCell sx={{ border: "none" }}>
-                            <Typography fontWeight="500">{t("ticketFields.stage")}</Typography>
-                        </TableCell>
-                        <TableCell sx={{ border: "none" }}>
                             <Typography fontWeight="500">{t("ticketFields.name")}</Typography>
                         </TableCell>
                         <TableCell sx={{ border: "none" }}>
-                            <Typography fontWeight="500">{t("ticketFields.ticketType")}</Typography>
+                            <Typography fontWeight="500">EMAIL</Typography>
                         </TableCell>
                         <TableCell sx={{ border: "none" }}>
-                            <Typography fontWeight="500">{t("ticketFields.priority")}</Typography>
+                            <Typography fontWeight="500">PHONE</Typography>
                         </TableCell>
                         <TableCell sx={{ border: "none" }}>
-                            <Typography fontWeight="500">{t("ticketFields.assignedTo")}</Typography>
+                            <Typography fontWeight="500">POSITION</Typography>
                         </TableCell>
                         <TableCell sx={{ border: "none" }}>
-                            <Typography fontWeight="500">{t("ticketFields.creator")}</Typography>
+                            <Typography fontWeight="500">STATUS</Typography>
+                        </TableCell>
+                        <TableCell sx={{ border: "none" }}>
+                            <Typography fontWeight="500">Ticket in-progress</Typography>
                         </TableCell>
                         <TableCell sx={{ border: "none" }}>
                             <Typography fontWeight="500">{t("ticketFields.creationTime")}</Typography>
@@ -87,7 +86,7 @@ const TableTicket = (props: any) => {
 
                                 </TableCell>
                                 <TableCell sx={{ border: "none" }}>
-                                    <AssignGroup item={row} />
+                  
                                 </TableCell>
                                 <TableCell sx={{ border: "none" }}>{row?.creatorUser?.fullname}</TableCell>
                                 <TableCell sx={{ border: "none" }}>{row?.createTime?.slice(0, 10)} {row?.createTime?.slice(11, 16)} </TableCell>
@@ -100,4 +99,4 @@ const TableTicket = (props: any) => {
     );
 };
 
-export default memo(TableTicket);
+export default memo(TableTicketAgent);

@@ -128,10 +128,10 @@ const CardTicket = (props: any) => {
                                 {data?.createTime?.slice(0, 10)} {data?.createTime?.slice(11, 16)} 
                             </Text>
                             <Text sx={{ fontSize: 13 }}>
-                                {t("cardTicket.created")}: {data?.created}
+                                {t("cardTicket.created")}: {data?.creatorUser?.fullname}
                             </Text>
                             <Text sx={{ fontSize: 13 }}>
-                                {t("cardTicket.lastRespond")}: {data?.updateTime}
+                                {t("cardTicket.lastRespond")}: {data?.creatorUser?.fullname}
                             </Text>
                         </Stack>
                     </Stack>
