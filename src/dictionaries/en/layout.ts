@@ -60,5 +60,6 @@ export const LayoutLang: LayoutDictionary = {
     landingPricing: "Pricing",
     invoice: "Invoice",
     ticket: "Ticket",
+    agent : "Agent"
   },
 };

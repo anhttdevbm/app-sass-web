@@ -314,7 +314,7 @@ const TickketList = () => {
         )}
         <Pagination
           totalItems={totalItems}
-          totalPages={data?.data?.maxPage + 1}
+          totalPages={data?.data?.maxPage}
           page={page}
           pageSize={data?.data?.maxPage}
           onChangePage={handlePageChange}

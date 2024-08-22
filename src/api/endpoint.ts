@@ -246,4 +246,7 @@ export const Endpoint = {
   //Ticket
   TICKET: "/ticket",
   DETAIL_TICKET: "/ticket/{id}",
+
+  //Ticket-agent
+  TICKET_AGENT :"/ticket"
 };

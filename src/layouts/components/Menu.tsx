@@ -35,6 +35,7 @@ import {
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
   TIME_TRACKING_PATH,
+  TICKET_AGENT,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -345,7 +346,7 @@ const DATA: MenuItemProps[] = [
     label: "menu.ticket",
     href: TICKET_PATH,
     icon: <TicketIcon />,
-    roles: [Permission.AM, Permission.ST, Permission.SA],
+    roles: [Permission.AM, Permission.ST],
   },
   // Feedback
   {
@@ -416,13 +417,39 @@ const DATA: MenuItemProps[] = [
     ],
     roles: [Permission.SA],
   },
+
+  // Ticket manager 
+  {
+    label: "menu.ticket",
+    icon: <TicketIcon />,
+    subs: [
+      {
+        label: "menu.dashboard",
+        // href: STATEMENT_HISTORY_PATH,
+        roles: [Permission.SA],
+      },
+      {
+        label: "menu.ticket",
+        href: TICKET_PATH,
+        roles: [Permission.SA],
+      },
+      {
+        label: "menu.agent",
+        href: TICKET_AGENT,
+        roles: [Permission.SA],
+      },
+
+    ],
+    roles: [Permission.SA],
+  },
+
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
   return Boolean(
     pathname &&
-      href &&
-      (pathname === href ||
-        (href.length && href !== "/" && pathname.startsWith(href))),
+    href &&
+    (pathname === href ||
+      (href.length && href !== "/" && pathname.startsWith(href))),
   );
 };
