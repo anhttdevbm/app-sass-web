@@ -189,7 +189,14 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               /> */}
               <Box display="flex" alignItems="center">
                 <MuiTooltip title={rootDocument?.owner?.fullname}>
-                  <IconButton>
+                  <IconButton
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                        pointerEvents: "none"
+                      },
+                    }}
+                  >
                     <Avatar size={32} src={rootDocument?.owner?.avatar?.link} />
                   </IconButton>
                 </MuiTooltip>
