@@ -206,11 +206,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     //             : ""
     //         }`}
     //       >
-    //         {openComment && (
-    //           <LayoutSlider heightToolbar={minHeight}>
-    //             <DrawComment editor={editor} />
-    //           </LayoutSlider>
-    //         )}
+
     //         {openSlider && (
     //           <LayoutSlider heightToolbar={minHeight}>
     //             <DrawSlider
@@ -327,6 +323,11 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     //   </Box>
     // </Box>
     <Box sx={{ height: "100%", width: "100%" }}>
+      {openComment && (
+        <LayoutSlider heightToolbar={minHeight}>
+          <DrawComment editor={editor} />
+        </LayoutSlider>
+      )}
       <DraftEditor />
     </Box>
   );

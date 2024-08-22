@@ -2,7 +2,14 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Box, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Stack,
+  TextField,
+  Typography,
+  IconButton,
+  Tooltip as MuiTooltip,
+} from "@mui/material";
 import { Text, Tooltip } from "components/shared";
 import { DocAccessibility } from "constant/enums";
 import { NS_DOCS } from "constant/index";
@@ -61,6 +68,9 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
     dispatch(updateHeightHeaderDetail(refHeader.current?.offsetHeight));
   }, []);
 
+  console.log("doc", doc);
+  console.log("rootDocument", rootDocument);
+
   return (
     <>
       <ModalShare setOpenShare={setOpenShare} openShare={openShare} />
@@ -99,7 +109,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               <Text pr={"2px"} sx={{ color: { xs: "common.white" } }}>
                 /
               </Text>
-              <TextField
+              {/* <TextField
                 placeholder="Nhập Tên Doc"
                 variant="outlined"
                 sx={{
@@ -118,7 +128,10 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 disabled={true}
                 value={rootDocument?.name}
                 // onChange={(e) => debounceChange(e.target.value)}
-              />
+              /> */}
+              <Typography sx={{ color: { xs: "common.white" } }}>
+                {rootDocument?.name}
+              </Typography>
             </Box>
           )}
 
@@ -151,7 +164,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               <Text pl={"3px"} pr={"6px"}>
                 /
               </Text>
-              <TextField
+              {/* <TextField
                 placeholder="Nhập Tên Doc"
                 variant="outlined"
                 sx={{
@@ -173,7 +186,26 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 value={rootDocument?.name}
                 title={rootDocument?.name}
                 // onChange={(e) => debounceChange(e.target.value)}
-              />
+              /> */}
+              <Box display="flex" alignItems="center">
+                <MuiTooltip title={rootDocument?.owner?.fullname}>
+                  <IconButton>
+                    <Avatar size={32} src={rootDocument?.owner?.avatar?.link} />
+                  </IconButton>
+                </MuiTooltip>
+                <Typography
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: 1,
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {rootDocument?.name}
+                </Typography>
+              </Box>
             </Box>
             <Box
               sx={{
@@ -247,7 +279,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                     <CommentIcon />
                   </Box>
                 </Tooltip>
-                <Tooltip title={docsT("createDoc.slider")}>
+                {/* <Tooltip title={docsT("createDoc.slider")}>
                   <Box
                     onClick={() => {
                       setOpenSlider((value) => !value);
@@ -260,7 +292,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   >
                     <OpenSidebarIcon />
                   </Box>
-                </Tooltip>
+                </Tooltip> */}
                 {currentId && id && currentId !== id && (
                   <Tooltip title={docsT("createDoc.more")}>
                     <Box sx={styleButton}>
