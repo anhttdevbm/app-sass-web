@@ -674,6 +674,7 @@ const AllPeopleTab = ({
                 totalhour={totalBookingHours}
                 setParentResource={setParentResource}
                 setIsOpenCreate={setIsOpenCreate}
+                isWorkload={isWorkload}
               />
             );
           }}
