@@ -5,7 +5,6 @@ import TicketList from "../TicketList";
 import { Stack } from "@mui/material";
 
 const TicketTemplate = () => {
-
   return (
     <Wrapper overflow="auto" inFrame>
       <Stack

@@ -7,9 +7,7 @@ export const LIST_TICKET = "LIST_TICKET";
 
 const useGetListTicket = () => {
   const data = useSelector(selectSearchTicket);
-  const page = useSelector(selectCurrentPage)
-
-  console.log("check page" , data)
+  const page = useSelector(selectCurrentPage);
 
   const params = {
     assign: data?.assingn || "",
@@ -21,13 +19,11 @@ const useGetListTicket = () => {
     createTime: "",
     toDate: "",
     priority: data?.priority || "",
-    page: page?.page,  
+    page: page?.page,
     size: page?.totalItems,
-    // page: 1,  
+    // page: 3,
     // size: 2,
-  }
-
-
+  };
 
   return useQuery({
     queryKey: [LIST_TICKET, params],

@@ -15,7 +15,7 @@ import TableView from "./table-view/TableView";
 const AttachmentTemplate = () => {
   const data = useSelector(selectTicketDetailData);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [isListView, setIsListView] = useState<boolean>(false);
+  const [isListView, setIsListView] = useState<boolean>(true);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -54,7 +54,7 @@ const AttachmentTemplate = () => {
   }, []);
 
   return (
-    <Stack justifyContent={"center"} alignItems={"flex-start"}>
+    <Stack justifyContent={"center"} alignItems={"flex-start"} gap={"20px"}>
       <Stack
         flexDirection={"row"}
         justifyContent={"flex-start"}
@@ -131,7 +131,7 @@ const AttachmentTemplate = () => {
       {isListView ? (
         <ListView downloadAllImages={downloadAllImages} />
       ) : (
-        <TableView />
+        <TableView downloadAllImages={downloadAllImages} />
       )}
     </Stack>
   );

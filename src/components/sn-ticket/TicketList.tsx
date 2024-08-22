@@ -1,18 +1,5 @@
 "use client";
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  CardMedia,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import { Button, Text } from "components/shared";
 import CanceledTicketIcon from "icons/CanceledTicketIcon";
 import ClosedTicketIcon from "icons/ClosedTicketIcon";
@@ -44,7 +31,7 @@ interface File {
 
 interface Ticket {
   assign: string | null;
-  assignUser: string | null;
+  assignUser: any | null;
   code: string;
   company: string;
   createTime: string;
@@ -64,12 +51,14 @@ interface Ticket {
 
 const TickketList = () => {
   const dispatch = useDispatch();
-  const { data } = useGetListTicket();
+  const { data: listTicket } = useGetListTicket();
 
   //Store của các key tìm kiếm gói ở đây ///
   const keySearch = useSelector(selectSearchTicket);
-  console.log("key serach sorte", keySearch);
-  ///////////////////////////////////////////
+
+  const [list, setList] = useState<any>(null);
+  const [page, setPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(2);
 
   const defaultFilterTicket = [
     {
@@ -130,40 +119,35 @@ const TickketList = () => {
     },
   ];
 
-  const [list, setList] = useState<any>(null);
-  const [page, setPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(2);
+  // const getData = (response: any) => {
+  //   const data = response?.data?.data;
 
-  const getData = (response: any) => {
-    const data = response?.data?.data;
+  //   if (keySearch?.keySearch?.length > 0) {
+  //     const filter = data?.filter((item: Ticket) => {
+  //       const id = item?.code?.toString().toLowerCase();
+  //       const searchKey = keySearch?.keySearch?.toLowerCase() ?? "";
+  //       return id?.includes(searchKey);
+  //     });
+  //     setList(filter);
+  //   } else {
+  //     setList(data);
+  //   }
+  // };
 
-    if (keySearch?.keySearch?.length > 0) {
-      const filter = data?.filter((item: Ticket) => {
-        const id = item?.code?.toString().toLowerCase();
-        const searchKey = keySearch?.keySearch?.toLowerCase() ?? "";
-        return id?.includes(searchKey);
-      });
-      setList(filter);
-    } else {
-      setList(data);
-    }
-  };
+  // useEffect(() => {
+  //   if (data !== null) {
+  //     getData(data);
+  //   }
+  // }, [keySearch]);
 
-  useEffect(() => {
-    if (data !== null) {
-      getData(data);
-    }
-  }, [keySearch]);
-
-  useEffect(() => {
-    if (data !== null) {
-      getData(data);
-    }
-  }, [data, page]);
+  // useEffect(() => {
+  //   if (data !== null) {
+  //     getData(data);
+  //   }
+  // }, [data, page]);
 
   const [listFilterTicket, setListFilterTicket] = useState(defaultFilterTicket);
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
-  console.log("check", typeViewDocStore);
 
   const handleFilterTicket = (item) => {
     const _listFilterTicket = [...defaultFilterTicket];
@@ -301,22 +285,24 @@ const TickketList = () => {
         )}
         {typeViewDocStore == "basicViewListDoc" ? (
           <>
-            {list?.map((item: Ticket, index: number) => (
-              <Box key={index} sx={{ mb: 2 }}>
-                <CardTicket data={item} />
-              </Box>
-            ))}
+            {(listTicket?.data?.data || [])?.map(
+              (item: Ticket, index: number) => (
+                <Box key={index} sx={{ mb: 2 }}>
+                  <CardTicket data={item} />
+                </Box>
+              ),
+            )}
           </>
         ) : (
           <>
-            <TableTicket data={list} />
+            <TableTicket data={listTicket?.data?.data ?? []} />
           </>
         )}
         <Pagination
           totalItems={totalItems}
-          totalPages={data?.data?.maxPage}
+          totalPages={listTicket?.data?.maxPage}
           page={page}
-          pageSize={data?.data?.maxPage}
+          pageSize={listTicket?.data?.maxPage}
           onChangePage={handlePageChange}
           onChangeSize={handleSizeChange}
           containerProps={{
