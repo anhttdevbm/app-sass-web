@@ -43,9 +43,14 @@ export default function KanbanViewItem({
           <CardActionArea onClick={() => redirectDetailDoc(item.id)}>
             <CardHeader
               sx={{
+                display: "flex",
+                alignItems: "center",
                 bgcolor: itemKanban.groupInfo ? "#14B9E5" : "#E6F1FD",
                 height: 54,
                 color: "common.white",
+                "&.MuiCardHeader-action": {
+                  height: "100% !important",
+                },
               }}
               avatar={
                 itemKanban.groupInfo ? (
@@ -73,7 +78,11 @@ export default function KanbanViewItem({
                   </Box>
                 )
               }
-              // action={<ActionMoreListDoc />}
+              action={
+                <Box display="flex" sx={{ height: "100%" }}>
+                  <ActionMoreListDoc />
+                </Box>
+              }
               title={
                 <Box
                   display="flex"
@@ -82,7 +91,16 @@ export default function KanbanViewItem({
                   gap={1}
                   onClick={() => redirectDetailDoc(item.id)}
                 >
-                  <Typography>
+                  <Typography
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 1,
+                      lineHeight: "1.5",
+                    }}
+                  >
                     {itemKanban.groupInfo ? itemKanban.groupInfo.name : ""}
                   </Typography>
                   <GroupIcon />
@@ -96,7 +114,15 @@ export default function KanbanViewItem({
                   fontSize={20}
                   variant="h3"
                   fontWeight={600}
-                  sx={{ fontWeight: "bold" }}
+                  sx={{
+                    fontWeight: "bold",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: 1,
+                    lineHeight: "1.5",
+                  }}
                 >
                   {item.name}
                 </Typography>
@@ -127,7 +153,7 @@ export default function KanbanViewItem({
                       lineHeight: "1.5",
                     }}
                   >
-                    {item.description}
+                    {item.description ?? itemKanban?.groupInfo?.description}
                   </Typography>
                 </Box>
                 {item.updated_time && (
