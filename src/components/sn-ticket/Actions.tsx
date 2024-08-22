@@ -141,12 +141,11 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
     const payload = {
       ...data,
       keySearch: newQueries?.search_key,
-      priority: newQueries?.priority?.priority,
-      assingn: newQueries?.assingn?.fullname,
-      ticketType: newQueries?.typeTicket?.typeTicket,
+      priority: newQueries?.priority?.id == 0 ? "" : newQueries?.priority?.priority,
+      assingn: newQueries?.assingn?.id,
+      ticketType: newQueries?.typeTicket?.id == 0 ? "" : newQueries?.typeTicket?.typeTicket,
     };
     dispatch(setKeySearchTicket(payload));
-    console.log("ckech fiter", data);
   };
 
   useEffect(() => {

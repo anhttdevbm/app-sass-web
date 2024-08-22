@@ -32,12 +32,41 @@ import TableTicket from "./components/TableTicket";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
 import { useDispatch } from "react-redux";
-import { setDataListTicket } from "store/ticket/actions";
+import { setCurrentPage, setDataListTicket } from "store/ticket/actions";
 import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";
+import useGetListTicket from "queries/ticket/useGetTicket/useGetListTicket";
+
+interface File {
+  name: string;
+  url: string;
+}
+
+interface Ticket {
+  assign: string | null;
+  assignUser: string | null;
+  code: string;
+  company: string;
+  createTime: string;
+  creator: string;
+  description: string;
+  id: string;
+  idUpdateUser: string | null;
+  lstFile: File[];
+  priority: "Low" | "Medium" | "High";
+  rate: number | null;
+  rootCause: string | null;
+  stage: "New" | "InProgress" | "Resolved" | "Closed";
+  title: string;
+  type: string | null;
+  updateTime: string | null;
+}
+
+
 
 const TickketList = () => {
   const dispatch = useDispatch();
+  const { data } = useGetListTicket();
 
 
   //Store của các key tìm kiếm gói ở đây ///
@@ -58,7 +87,6 @@ const TickketList = () => {
       icon: NewTicketIcon,
       title: "New",
       count: 1,
-
       active: false,
     },
     {
@@ -105,154 +133,39 @@ const TickketList = () => {
     },
   ];
 
-  const dataTicketLocal = [
-    {
-      id: "2024-CS123",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS345",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS567",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS567",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS567",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS567",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS567",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS567",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-    {
-      id: "2024-CS567",
-      status: "In-progcess",
-      title: "Login error",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      prority: "Hight prority",
-      username: "Thu Nguyen",
-      avatar: "",
-      created: "Hoang Phan",
-      lastRespond: "hoang phan",
-      day: "04/05/2024",
-      time: "12:45",
-    },
-  ];
 
   const [list , setList] = useState<any>(null)
+  const [page , setPage] = useState(1)
+  const [totalItems , setTotalItems] = useState(2)
 
-  const getData = () => {
+  const getData = (response: any) => {
+    console.log("check data api", response);
+    const data = response?.data?.data
+
     if (keySearch?.keySearch?.length > 0) {
-      const filter = dataTicketLocal.filter((item) => {
-        const id = item?.id?.toString().toLowerCase();
+      const filter = data?.filter((item: Ticket) => {
+        const id = item?.code?.toString().toLowerCase();
         const searchKey = keySearch?.keySearch?.toLowerCase() ?? '';
         return id?.includes(searchKey);
       })
       setList(filter)
     } else {
-      setList(dataTicketLocal)
+      setList(data)
     }
   }
 
 
   useEffect(() => {
-    getData()
+    if (data !== null) {
+      getData(data)
+    }
   }, [keySearch])
+
+  useEffect(() => {
+    if (data !== null) {
+      getData(data)
+    }
+  }, [data , page])
 
 
 
@@ -271,7 +184,16 @@ const TickketList = () => {
 
   const handlePageChange = (newPage: number) => {
     // handleQueryChange({ page: newPage, limit });
-  };
+    setPage(newPage)
+    console.log("check page" , newPage - 1)
+
+    const payload = {
+      page: newPage - 1,
+      totalItems : 2
+    }
+    dispatch(setCurrentPage(payload))
+  };  
+
 
   const handleSizeChange = (newPageSize: number) => {
     // handleQueryChange({ page: 1, size: newPageSize });
@@ -392,7 +314,7 @@ const TickketList = () => {
         )}
         {typeViewDocStore == "basicViewListDoc" ? (
           <>
-            {list?.map((item, index) => (
+            {list?.map((item: Ticket, index: number) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <CardTicket data={item} />
               </Box>
@@ -404,10 +326,10 @@ const TickketList = () => {
           </>
         )}
         <Pagination
-          totalItems={2}
-          totalPages={10}
-          page={1}
-          pageSize={5}
+          totalItems={totalItems}
+          totalPages={data?.data?.maxPage + 1}
+          page={page}
+          pageSize={data?.data?.maxPage}
           onChangePage={handlePageChange}
           onChangeSize={handleSizeChange}
           containerProps={{

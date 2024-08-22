@@ -50,31 +50,50 @@ const TableTicket = (props: any) => {
                     </TableRow>
                 </TableHead>
                 <TableBody >
-                    {data?.map((row) => (
-                        <TableRow key={row.id}>
-                            <TableCell sx={{ border: "none", color: "#0575E6" }}>{row?.id}</TableCell>
-                            <TableCell sx={{ border: "none", color: "#03AE00" }}>{row?.status}</TableCell>
-                            <TableCell sx={{ border: "none" }}>{row?.title}</TableCell>
-                            <TableCell sx={{ border: "none" }}>{row?.ticketType}</TableCell>
-                            <TableCell sx={{ border: "none" }}>
-                                <Box
-                                    display="flex"
-                                    justifyContent='center'
-                                    alignItems='center'
-                                    sx={{ borderRadius: "100px", backgroundColor: "#EEFFE0", height: 30 }}>
-                                    <Text sx={{ fontSize: 12, color: "#03AE00", fontWeight: 700 }}>
-                                        {row?.prority}
-                                    </Text>
-                                </Box>
+                    {data?.map((row) => {
+                        const bgStage = (check : String) => {
+                            if(check == "New") return "#FF2C56"
+                            if(check == "In-progress") return "#03AE00"
+                            if(check == "Resolved") return "#E605DD"
+                            if(check == "Closed") return "#697469"                         
+                        }
+                        const colorPriority = (check : String) => {
+                            if(check == "Medium") return "#03AE00"
+                            if(check == "Low") return "#0575E6"
+                            if(check == "High") return "#FF2C56"                      
+                        }
+                        const bgPriority = (check : String) => {
+                            if(check == "Medium") return "#DDFFDC"
+                            if(check == "Low") return "#D9F0FD"
+                            if(check == "High") return "#FFEEF1"                      
+                        }
+                        
+                        return (
+                            <TableRow key={row.id}>
+                                <TableCell sx={{ border: "none", color: "#0575E6" }}>{row?.code}</TableCell>
+                                <TableCell  sx={{ border: "none", color: bgStage(row?.stage) , fontWeight :"700"}}>{row?.stage}</TableCell>
+                                <TableCell sx={{ border: "none" }}>{row?.title}</TableCell>
+                                <TableCell sx={{ border: "none" }}>{row?.type}</TableCell>
+                                <TableCell sx={{ border: "none" }}>
+                                    <Box
+                                        display="flex"
+                                        justifyContent='center'
+                                        alignItems='center'
+                                        sx={{ borderRadius: "100px", backgroundColor: bgPriority(row?.priority), height: 30 }}>
+                                        <Text sx={{ fontSize: 12, color: colorPriority(row?.priority), fontWeight: 700 }}>
+                                            {row?.priority}
+                                        </Text>
+                                    </Box>
 
-                            </TableCell>
-                            <TableCell sx={{ border: "none"}}>
-                                <AssignGroup item={row} />
-                            </TableCell>
-                            <TableCell sx={{ border: "none" }}>{row?.created}</TableCell>
-                            <TableCell sx={{ border: "none" }}>{row?.day} {row?.time}</TableCell>
-                        </TableRow>
-                    ))}
+                                </TableCell>
+                                <TableCell sx={{ border: "none" }}>
+                                    <AssignGroup item={row} />
+                                </TableCell>
+                                <TableCell sx={{ border: "none" }}>{row?.creator}</TableCell>
+                                <TableCell sx={{ border: "none" }}>{row?.createTime?.slice(0, 10)} {row?.createTime?.slice(11, 16)} </TableCell>
+                            </TableRow>
+                        )
+                    })}
                 </TableBody>
             </Table>
         </TableContainer>

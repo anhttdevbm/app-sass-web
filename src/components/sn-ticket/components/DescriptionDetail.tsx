@@ -18,7 +18,11 @@ import { useDispatch } from "react-redux";
 
 
 
-
+const colorPriority = (check: String) => {
+    if (check == "Medium") return "#03AE00"
+    if (check == "Low") return "#0575E6"
+    if (check == "High") return "#FF2C56"
+}
 
 const DescriptionDetail = (props: any) => {
     const t = useTranslations(NS_TICKET);
@@ -50,7 +54,7 @@ const DescriptionDetail = (props: any) => {
                         sx={{ borderRadius: "100%" }}
                     />
                     <Text sx={{ fontSize: 13 }}>
-                        Thu Nguyen {t("ticketDetail.createRequest")}
+                        {data?.assignUser || "Nothing"} {t("ticketDetail.createRequest")}
                     </Text>
                 </Box>
                 <Text
@@ -94,26 +98,25 @@ const DescriptionDetail = (props: any) => {
                                 textAlign: "end"
                             }}
                         >
-                            <Text fontSize={13}>None</Text>
-                            <Text color="red" fontSize={13}>{data?.prority}</Text>
+                            <Text fontSize={13}>{data?.type || "None"}</Text>
+                            <Text color={colorPriority(data?.priority)} fontSize={13}>{data?.priority}</Text>
                             <Box
                                 display='flex'
                                 gap="10px"
                                 alignItems='center'
-                                py={2}
                                 justifyContent="flex-end"
 
                             >
                                 <Box
                                     component="img"
-                                    height="30px"
-                                    width='30px'
+                                    height="20px"
+                                    width='20px'
                                     src="https://via.placeholder.com/150"
                                     alt="Image description"
                                     sx={{ borderRadius: "100%" }}
                                 />
                                 <Text sx={{ fontSize: 13 }}>
-                                    Thu Nguyen
+                                    {data?.assignUser || "Nothing"}
                                 </Text>
                             </Box>
                             <Text fontSize={13}>None</Text>

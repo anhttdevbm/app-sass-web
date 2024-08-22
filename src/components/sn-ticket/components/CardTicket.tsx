@@ -47,6 +47,24 @@ const CardTicket = (props: any) => {
         push(path)
         dispatch(setDataTicketDetail(data))
     };
+
+
+    const bgStage = (check : String) => {
+        if(check == "New") return "#FF2C56"
+        if(check == "In-progress") return "#03AE00"
+        if(check == "Resolved") return "#E605DD"
+        if(check == "Closed") return "#697469"                         
+    }
+    const colorPriority = (check : String) => {
+        if(check == "Medium") return "#03AE00"
+        if(check == "Low") return "#0575E6"
+        if(check == "High") return "#FF2C56"                      
+    }
+    const bgPriority = (check : String) => {
+        if(check == "Medium" || check == "In-progress") return "#DDFFDC"
+        if(check == "Low" || check == "") return "#D9F0FD"
+        if(check == "High" || check == "New") return "#FFEEF1"                      
+    }
     return (
         <>
             <Card sx={{ width: "100%", boxShadow: 'none', border: "1px solid #EFEFEF", mb: 1 }}>
@@ -55,16 +73,16 @@ const CardTicket = (props: any) => {
                     title={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Typography sx={{ fontWeight: 700 }} variant="h6">
-                                {t("cardTicket.title")} {data?.id}
+                                {t("cardTicket.title")} {data?.code}
                             </Typography>
                             <Box
                                 display="flex"
                                 justifyContent='center'
                                 alignItems='center'
                                 px={2}
-                                sx={{ borderRadius: "100px", backgroundColor: "#EEFFE0", height: 30 }}>
-                                <Text sx={{ fontSize: 13, color: "#03AE00", fontWeight: 700 }}>
-                                    {data?.status}
+                                sx={{ borderRadius: "100px", backgroundColor: bgPriority(data?.stage), height: 30 }}>
+                                <Text sx={{ fontSize: 13, color: bgStage(data?.stage), fontWeight: 700 }}>
+                                    {data?.stage}
                                 </Text>
                             </Box>
                         </Box>
@@ -94,9 +112,9 @@ const CardTicket = (props: any) => {
                                 justifyContent='center'
                                 alignItems='center'
                                 px={2}
-                                sx={{ borderRadius: "100px", backgroundColor: "#EEFFE0", height: 30 }}>
-                                <Text sx={{ fontSize: 13, color: "#03AE00", fontWeight: 700 }}>
-                                    {data?.prority}
+                                sx={{ borderRadius: "100px", backgroundColor: bgPriority(data?.priority), height: 30 }}>
+                                <Text sx={{ fontSize: 13, color: colorPriority(data?.priority), fontWeight: 700 }}>
+                                    {data?.priority}
                                 </Text>
                             </Box>
                         </Stack>
@@ -107,13 +125,13 @@ const CardTicket = (props: any) => {
                             width='20%'
                         >
                             <Text sx={{ fontSize: 13 }}>
-                                {data?.day} {data?.time}
+                                {data?.createTime?.slice(0, 10)} {data?.createTime?.slice(11, 16)} 
                             </Text>
                             <Text sx={{ fontSize: 13 }}>
                                 {t("cardTicket.created")}: {data?.created}
                             </Text>
                             <Text sx={{ fontSize: 13 }}>
-                                {t("cardTicket.lastRespond")}: {data?.lastRespond}
+                                {t("cardTicket.lastRespond")}: {data?.updateTime}
                             </Text>
                         </Stack>
                     </Stack>
@@ -121,7 +139,7 @@ const CardTicket = (props: any) => {
                         flexDirection='row'
                         alignItems='center'
                         justifyContent='space-between'
-                        width='100%'
+                        width="96%"
                     >
                         <Box
                             width='150px'
@@ -132,17 +150,17 @@ const CardTicket = (props: any) => {
                         >
                             <Box
                                 component="img"
-                                height="50px"
-                                width='50px'
+                                height="30px"
+                                width='30px'
                                 src="https://via.placeholder.com/150"
                                 alt="Image description"
                                 sx={{ borderRadius: "100%" }}
                             />
                             <Text sx={{ fontSize: 13 }}>
-                                Thu Nguyen
+                                {data?.assignUser || "nothing"}
                             </Text>
                         </Box>
-                        <Box onClick={() => handleOpenTicketDetail(data?.id)} display='flex' alignContent='center' justifyContent='center' gap="10px" px={5}>
+                        <Box onClick={() => handleOpenTicketDetail(data?.code)} display='flex' alignContent='center' justifyContent='center' gap="10px" px={5}>
                             <Text sx={{ color: "#0575E6", fontSize: 13, textDecoration: "underline", cursor: "pointer" }}> {t("cardTicket.openTicket")}</Text>
                             <OpenTicketDetailIcon />
                         </Box>

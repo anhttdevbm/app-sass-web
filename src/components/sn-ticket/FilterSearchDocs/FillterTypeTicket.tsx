@@ -15,7 +15,7 @@ import React, { memo, useEffect, useMemo, useState } from "react";
 import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";
-import {NS_TICKET } from "constant/index";
+import { NS_TICKET } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
 
 
@@ -27,12 +27,16 @@ const FillterTypeTicket = ({ onChange, queries }: FilterSearchDocsProps) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    const removeAllWhitespace = (str) => {
+        return str.replace(/\s+/g, '');
+    };
     const onChangeMembers = (id: string, typeTicket: string) => {
         setName(typeTicket)
-        const newData = { id, typeTicket };
+        const newData = { id, typeTicket: removeAllWhitespace(typeTicket) };
         onChange("typeTicket", newData);
     };
+
+
 
     return (
         <>

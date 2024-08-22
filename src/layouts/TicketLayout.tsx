@@ -18,7 +18,7 @@ const TicketLayout = ({ children }) => {
   useEffect(() => {
     const prevPath = getPath(TICKET_PATH, undefined, { id });
     onUpdateHeaderConfig({
-      title: pathName.includes("/create") ? "Create ticket" : `Ticket ${id}`,
+      title: pathName.includes("/create") ? "Create ticket" : `Ticket# ${id}`,
       searchPlaceholder: commonT("searchBy", { name: ticketT("header.key") }),
       endpoint: Endpoint.TICKET,
       key: "name",

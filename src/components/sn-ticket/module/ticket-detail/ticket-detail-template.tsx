@@ -15,7 +15,7 @@ import PlusIcon from "icons/PlusIcon";
 import ReplyIcon from "icons/ReplyIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { selectTicketDetailData } from "store/ticket/selectors";
@@ -34,13 +34,27 @@ const TicketDetail = () => {
   const { push } = useRouter()
   const data = useSelector(selectTicketDetailData);
   console.log("check store detail", data)
+
   const [activeTag, setActiveTag] = useState<any>(tags);
+
   const handleTagClick = (id: number) => {
     const _tags = [...tags]
     const idx = activeTag.findIndex((item) => item.id == id)
     _tags[idx]["active"] = true
     setActiveTag(_tags)
   };
+
+  useEffect(() => {
+    if (data?.stage == "New") {
+      handleTagClick(1)
+    }
+    if (data?.stage == "Open") {
+      handleTagClick(2)
+    }
+    if (data?.stage == "Closed") {
+      handleTagClick(6)
+    }
+  }, [])
 
   const [open, setOpen] = useState(false);
 
@@ -68,13 +82,12 @@ const TicketDetail = () => {
               push(TICKET_PATH);
             }}
             sx={{ display: "flex", gap: 1, alignItems: "center", cursor: "pointer" }}>
-            <ArrowDownIcon sx={{ width: 13, height: 13 }} />
-            <Text>{t("ticketDetail.title")} {data?.id}</Text>
-          </Box>  
-          <Text sx={{ fontSize: 13, color: "#84818A" }} >{t("ticketDetail.created")} 12:45AM</Text>
+            {/* <ArrowDownIcon sx={{ width: 13, height: 13 }} />
+            <Text>{t("ticketDetail.title")} {data?.id}</Text> */}
+            <Text fontWeight="600" sx={{ fontSize: 20, margin: "6px 0 12px 0" }} >{t("ticketDetail.question")}</Text>
+          </Box>
+          <Text sx={{ fontSize: 13, color: "#84818A" }} >{t("ticketDetail.created")} {data?.createTime?.slice(11, 16)}</Text>
         </Stack>
-
-        <Text fontWeight="600" sx={{ fontSize: 20, margin: "6px 0 12px 0" }} >{t("ticketDetail.question")}</Text>
 
         <Stack direction="row" justifyContent="space-between" alignItems="center">
 
