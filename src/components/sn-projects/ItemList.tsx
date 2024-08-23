@@ -197,9 +197,9 @@ const ItemList = () => {
     <>
       <Stack>
         {isMdSmaller ? (
-          <>
+          <Stack gap={1} overflow="auto" maxHeight="60vh">
             {items.map((_item, index) => (
-              <Card
+              <Paper
                 key={_item.id}
                 sx={{
                   display: "flex",
@@ -288,9 +288,9 @@ const ItemList = () => {
                     </Stack>
                   </CardContent>
                 </CardActionArea>
-              </Card>
+              </Paper>
             ))}
-          </>
+          </Stack>
         ) : (
           <TableLayout
             headerList={headerList}
