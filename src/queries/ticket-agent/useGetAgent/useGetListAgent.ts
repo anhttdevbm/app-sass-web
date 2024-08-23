@@ -1,13 +1,12 @@
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
-import { selectCurrentPage, selectSearchTicket } from "store/ticket/selectors";
+import { selectSearchTicket } from "store/ticket/selectors";
 import { getListTicketApi } from "../api";
 
 export const LIST_TICKET = "LIST_TICKET";
 
 const useGetListAgent = () => {
   const data = useSelector(selectSearchTicket);
-  const page = useSelector(selectCurrentPage);
 
   // console.log("check page", data);
 
@@ -21,8 +20,8 @@ const useGetListAgent = () => {
     createTime: "",
     toDate: "",
     priority: data?.priority || "",
-    page: page?.page,
-    size: page?.totalItems,
+    // page: page?.page,
+    // size: page?.totalItems,
     // page: 1,
     // size: 2,
   };

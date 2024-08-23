@@ -6,5 +6,4 @@ export const selectTicketListTicket = (state: any) => state.ticket.dataListTicke
 
 export const selectSearchTicket = (state: any) => state.ticket.keySearch;
 
-export const selectCurrentPage = (state: any) => state.ticket.pagination;
 
