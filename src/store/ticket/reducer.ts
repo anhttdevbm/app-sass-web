@@ -4,28 +4,24 @@ import {
   setDataTicketDetail,
   setDataListTicket,
   setKeySearchTicket,
-  setCurrentPage,
 } from "./actions";
 
 interface TicketDetailState {
   keySearch: any;
   dataListTicket: any;
   dataTicketDetail: any;
-  pagination: any;
 }
 
 // Initial state
 const initialState: TicketDetailState = {
-  pagination: {
-    page: 1,
-    totalItems : 4
-  },
   keySearch: {
     keySearch: "",
     priority: "",
     assingn: "",
     ticketType: "",
     createTime: "",
+    page: 1,
+    totalItems : 4
   },
   dataListTicket: null,
   dataTicketDetail: {},
@@ -45,9 +41,6 @@ const ticketSlice = createSlice({
       })
       .addCase(setKeySearchTicket, (state, action: PayloadAction<any>) => {
         state.keySearch = action.payload;
-      })
-      .addCase(setCurrentPage, (state, action: PayloadAction<any>) => {
-        state.pagination = action.payload;
       })
   },
 });

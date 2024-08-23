@@ -19,7 +19,7 @@ import TableTicket from "./components/TableTicket";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
 import { useDispatch } from "react-redux";
-import { setCurrentPage, setDataListTicket } from "store/ticket/actions";
+import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
 import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";
 import useGetListTicket from "queries/ticket/useGetTicket/useGetListTicket";
@@ -52,8 +52,9 @@ interface Ticket {
 const TickketList = () => {
   const dispatch = useDispatch();
   const { data: listTicket } = useGetListTicket();
+  const dataFilter = useSelector(selectSearchTicket)
 
-  console.log("check data api" , listTicket)
+  console.log("check data api", listTicket)
 
   //Store của các key tìm kiếm gói ở đây ///
   const keySearch = useSelector(selectSearchTicket);
@@ -67,60 +68,52 @@ const TickketList = () => {
       id: 1,
       icon: SendAllTicketIcon,
       title: "All Ticket",
-      count: 3,
       active: false,
     },
     {
       id: 2,
       icon: NewTicketIcon,
       title: "New",
-      count: 1,
       active: false,
     },
     {
       id: 3,
       icon: OpenTicketIcon,
       title: "Open",
-      count: 1,
       active: false,
     },
     {
       id: 4,
       icon: InProgressTicketIcon,
-      title: "In-progress",
-      count: 1,
+      title: "In progress",
       active: false,
     },
     {
       id: 5,
       icon: OnHoldTicketIcon,
       title: "On hold",
-      count: 3,
       active: false,
     },
     {
       id: 6,
       icon: ResolveTicketIcon,
       title: "Resolved",
-      count: 3,
       active: false,
     },
     {
       id: 7,
       icon: ClosedTicketIcon,
       title: "Closed",
-      count: 0,
       active: false,
     },
     {
       id: 8,
       icon: CanceledTicketIcon,
       title: "Canceled",
-      count: 0,
       active: false,
     },
   ];
-  
+
   useEffect(() => {
     setTotalItems(listTicket?.data?.count)
   }, [listTicket]);
@@ -134,16 +127,25 @@ const TickketList = () => {
     const idx = _listFilterTicket.findIndex((product) => product.id == item.id);
     _listFilterTicket[idx]["active"] = true;
     setListFilterTicket(_listFilterTicket);
+
+    if (typeViewDocStore == "kanbanViewListDoc") {
+      const payload = {
+        ...dataFilter,
+        stage: item.title
+      };
+      dispatch(setKeySearchTicket(payload));
+    }
   };
 
   const handlePageChange = (newPage: number) => {
     // handleQueryChange({ page: newPage, limit });
     setPage(newPage);
     const payload = {
-      page: newPage ,
+      ...dataFilter,
+      page: newPage,
       totalItems: 4,
     };
-    dispatch(setCurrentPage(payload));
+    dispatch(setKeySearchTicket(payload));
   };
 
   const handleSizeChange = (newPageSize: number) => {
@@ -154,6 +156,7 @@ const TickketList = () => {
     handleFilterTicket(listFilterTicket[0]);
   }, []);
 
+
   return (
     <>
       <Stack
@@ -163,7 +166,7 @@ const TickketList = () => {
         px={{ xs: 0, md: 3 }}
         py={1}
         zIndex={2}
-        // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
+      // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
       >
         {typeViewDocStore == "kanbanViewListDoc" && (
           <Stack>
@@ -209,6 +212,7 @@ const TickketList = () => {
                         // padding: 2,
                         backgroundColor: item.active ? "#D9F0FD" : "#fff",
                         padding: "10px 10px",
+                        cursor: "pointer"
                       }}
                     >
                       {item.active ? (
@@ -225,7 +229,7 @@ const TickketList = () => {
                       >
                         {item.title}
                       </Text>
-                      {item.count !== 0 && (
+                      {item.active && (
                         <Paper
                           elevation={3}
                           sx={{
@@ -252,7 +256,7 @@ const TickketList = () => {
                             color="#fff"
                           >
                             {" "}
-                            {item.count}
+                            {listTicket?.data?.count}
                           </Text>
                         </Paper>
                       )}

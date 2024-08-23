@@ -6,6 +6,5 @@ export const setDataListTicket = createAction<any>('ticket/setDataListTicket');
 
 export const setKeySearchTicket = createAction<any>('ticket/setKeySearchTicket');
 
-export const setCurrentPage = createAction<any>('ticket/setCurrentPage');
 
 

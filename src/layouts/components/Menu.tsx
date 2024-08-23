@@ -417,6 +417,7 @@ const DATA: MenuItemProps[] = [
     ],
     roles: [Permission.SA],
   },
+  
 
   // Ticket manager 
   {
@@ -425,7 +426,7 @@ const DATA: MenuItemProps[] = [
     subs: [
       {
         label: "menu.dashboard",
-        // href: STATEMENT_HISTORY_PATH,
+        href: STATEMENT_HISTORY_PATH,
         roles: [Permission.SA],
       },
       {

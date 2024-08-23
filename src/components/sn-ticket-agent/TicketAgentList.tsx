@@ -21,7 +21,7 @@ import Pagination from "components/Pagination";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
 import { useDispatch } from "react-redux";
-import { setCurrentPage, setDataListTicket } from "store/ticket/actions";
+import { setDataListTicket } from "store/ticket/actions";
 import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";
 import TableTicketAgent from "./components/TableTicketAgent";
@@ -101,7 +101,6 @@ const TicketAgentList = () => {
       page: newPage,
       totalItems: 4,
     };
-    dispatch(setCurrentPage(payload));
   };
 
   const handleSizeChange = (newPageSize: number) => {
