@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Button, Text } from "components/shared";
+import ActivityTemplate from "components/sn-ticket/components/activity/activity-template";
 import AttachmentTemplate from "components/sn-ticket/components/Attachment/attachment-template";
 import Tag from "components/sn-ticket/components/custom-tag";
 import DescriptionDetail from "components/sn-ticket/components/DescriptionDetail";
@@ -25,6 +26,7 @@ import PlusIcon from "icons/PlusIcon";
 import ReplyIcon from "icons/ReplyIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
+import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -72,7 +74,10 @@ const TicketDetail = () => {
     { id: 7, active: false, element: 3, title: "...", left: -172 },
   ];
   const { push } = useRouter();
-  const data = useSelector(selectTicketDetailData);
+  // const data = useSelector(selectTicketDetailData);
+
+  const { data: dataTicket } = useGetTicketDetail();
+  console.log("dataTicket", dataTicket);
 
   const [activeTag, setActiveTag] = useState<any>(tags);
 
@@ -84,16 +89,22 @@ const TicketDetail = () => {
   };
 
   useEffect(() => {
-    if (data?.stage == "New") {
-      handleTagClick(1);
+    const stageTicket = dataTicket?.stage ?? "";
+    switch (stageTicket) {
+      case "New":
+        handleTagClick(1);
+        break;
+      case "Open":
+        handleTagClick(2);
+        break;
+      case "Closed":
+        handleTagClick(6);
+        break;
+      default:
+        handleTagClick(1);
+        break;
     }
-    if (data?.stage == "Open") {
-      handleTagClick(2);
-    }
-    if (data?.stage == "Closed") {
-      handleTagClick(6);
-    }
-  }, []);
+  }, [dataTicket]);
 
   const [open, setOpen] = useState(false);
 
@@ -113,6 +124,9 @@ const TicketDetail = () => {
           gap: 1,
           display: "flex",
           flexDirection: "column",
+          overflowY: "scroll",
+          scrollbarWidth: "none",
+          height: "calc(100vh - 100px)",
         }}
       >
         <Stack
@@ -141,7 +155,7 @@ const TicketDetail = () => {
             </Text>
           </Box>
           <Text sx={{ fontSize: 13, color: "#84818A" }}>
-            {t("ticketDetail.created")} {data?.createTime?.slice(11, 16)}
+            {t("ticketDetail.created")} {dataTicket?.createTime?.slice(11, 16)}
           </Text>
         </Stack>
 
@@ -191,9 +205,10 @@ const TicketDetail = () => {
         </Stack>
 
         <Stack>
-          <DescriptionDetail data={data} />
+          <DescriptionDetail data={dataTicket} />
         </Stack>
         <AttachmentTemplate />
+        <ActivityTemplate />
       </Box>
 
       <ModelReply

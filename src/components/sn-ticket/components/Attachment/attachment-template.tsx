@@ -1,19 +1,13 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import moment from "moment";
-import Image from "next/image";
-import { useSelector } from "react-redux";
-import { selectTicketDetailData } from "store/ticket/selectors";
-import DownloadIcon from "public/images/ticket/downloadIcon.svg";
-import Link from "next/link";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Popper from "@mui/material/Popper";
-import { ClickAwayListener } from "@mui/base/ClickAwayListener";
 import React, { useCallback, useState } from "react";
 import ListView from "./list-view/ListView";
 import TableView from "./table-view/TableView";
+import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
+import CustomDropdown from "../drop-down/CustomDropdown";
 
 const AttachmentTemplate = () => {
-  const data = useSelector(selectTicketDetailData);
+  const { data: dataTicket } = useGetTicketDetail();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isListView, setIsListView] = useState<boolean>(true);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,10 +18,8 @@ const AttachmentTemplate = () => {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popper" : undefined;
-
   const downloadAllImages = useCallback(async (imageUrls) => {
+    if (!imageUrls || !imageUrls.length) return;
     try {
       for (let i = 0; i < imageUrls.length; i++) {
         const response = await fetch(imageUrls[i]?.link);
@@ -84,49 +76,42 @@ const AttachmentTemplate = () => {
             alignItems={"center"}
           >
             <Typography sx={{ fontWeight: 400, fontSize: 10, color: "#fff" }}>
-              {data?.lstFile?.length ?? 0}
+              {dataTicket?.lstFile?.length ?? 0}
             </Typography>
           </Stack>
         </Stack>
-        <ClickAwayListener onClickAway={handleClose}>
-          <div onClick={handleClick} style={{ cursor: "pointer" }}>
-            <MoreVertIcon />
-            <Popper id={id} open={open} anchorEl={anchorEl}>
-              <Stack
-                justifyContent={"center"}
-                alignItems={"center"}
-                gap={"10px"}
-                sx={{ border: 1, p: 1, bgcolor: "background.paper" }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Button
-                  fullWidth
-                  onClick={() => {
-                    downloadAllImages(data?.lstFile);
-                    setAnchorEl(null);
-                  }}
-                >
-                  <Typography style={{ color: "#000", fontSize: "12px" }}>
-                    Download all
-                  </Typography>
-                </Button>
-                <Button
-                  fullWidth
-                  onClick={() => {
-                    setIsListView((prev) => !prev);
-                    setAnchorEl(null);
-                  }}
-                >
-                  <Typography style={{ color: "#000", fontSize: "12px" }}>
-                    {isListView
-                      ? "Switch to list view"
-                      : "Switch to strip view"}
-                  </Typography>
-                </Button>
-              </Stack>
-            </Popper>
-          </div>
-        </ClickAwayListener>
+
+        <CustomDropdown
+          handleClick={handleClick}
+          handleClose={handleClose}
+          anchorEl={anchorEl}
+          icon={<MoreVertIcon />}
+        >
+          <>
+            <Button
+              fullWidth
+              onClick={() => {
+                downloadAllImages(dataTicket?.lstFile);
+                setAnchorEl(null);
+              }}
+            >
+              <Typography style={{ color: "#000", fontSize: "12px" }}>
+                Download all
+              </Typography>
+            </Button>
+            <Button
+              fullWidth
+              onClick={() => {
+                setIsListView((prev) => !prev);
+                setAnchorEl(null);
+              }}
+            >
+              <Typography style={{ color: "#000", fontSize: "12px" }}>
+                {isListView ? "Switch to list view" : "Switch to strip view"}
+              </Typography>
+            </Button>
+          </>
+        </CustomDropdown>
       </Stack>
       {isListView ? (
         <ListView downloadAllImages={downloadAllImages} />

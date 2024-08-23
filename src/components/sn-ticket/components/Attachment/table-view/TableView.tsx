@@ -11,14 +11,18 @@ import ImageIcon from "public/images/ticket/ImageIcon.svg";
 import moment from "moment";
 import DownloadIcon from "public/images/ticket/downloadIcon.svg";
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
 
 const TableView = React.memo(
   ({ downloadAllImages }: { downloadAllImages: (file) => void }) => {
-    const data = useSelector(selectTicketDetailData);
+    const { data: dataTicket } = useGetTicketDetail();
     return (
       <TableContainer>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table
+          sx={{ minWidth: 650, maxHeight: "600px", overflowY: "scroll" }}
+          aria-label="simple table"
+        >
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -28,13 +32,30 @@ const TableView = React.memo(
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.lstFile?.map((row) => (
+            {dataTicket?.lstFile?.map((row) => (
               <TableRow
                 key={row.nameFile}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  <ImageIcon /> {row.nameFile}
+                  <Stack
+                    flexDirection={"row"}
+                    gap={"10px"}
+                    justifyContent={"start"}
+                    alignItems={"center"}
+                  >
+                    <ImageIcon />{" "}
+                    <Typography
+                      style={{
+                        maxWidth: "250px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {row.nameFile}
+                    </Typography>{" "}
+                  </Stack>
                 </TableCell>
                 <TableCell>{row.size}KB</TableCell>
                 <TableCell>

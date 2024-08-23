@@ -25,3 +25,10 @@ export const getListTicketApi = (params) => {
     baseURL: TICKET_API_URL,
   });
 };
+
+export const getTicketDetailApi = async (id) => {
+  const response = await client.get(`${Endpoint.TICKET}/${id}`, undefined, {
+    baseURL: TICKET_API_URL,
+  });
+  return response?.data?.data;
+};

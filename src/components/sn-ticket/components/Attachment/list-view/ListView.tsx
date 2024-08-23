@@ -5,10 +5,11 @@ import { useSelector } from "react-redux";
 import { selectTicketDetailData } from "store/ticket/selectors";
 import DownloadIcon from "public/images/ticket/downloadIcon.svg";
 import React, { useState } from "react";
+import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
 
 const ListView = React.memo(
   ({ downloadAllImages }: { downloadAllImages: (file) => void }) => {
-    const data = useSelector(selectTicketDetailData);
+    const { data: dataTicket } = useGetTicketDetail();
     return (
       <Stack
         justifyContent={"flex-start"}
@@ -18,7 +19,7 @@ const ListView = React.memo(
         marginTop={"25px"}
         flexWrap={"wrap"}
       >
-        {data?.lstFile?.map((file, index: number) => (
+        {dataTicket?.lstFile?.map((file, index: number) => (
           <Button
             key={index}
             style={{ position: "relative" }}
@@ -47,7 +48,7 @@ const ListView = React.memo(
               <Button
                 className="delete_icon"
                 style={{
-                  display: "block",
+                  display: "none",
                   position: "absolute",
                   width: "36px",
                   height: "36px",

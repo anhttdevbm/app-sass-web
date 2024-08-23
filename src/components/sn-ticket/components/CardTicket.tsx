@@ -5,12 +5,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardMedia,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -21,7 +15,7 @@ import OpenTicketDetailIcon from "icons/OpenTicketDetailIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo } from "react";
 import { useDispatch } from "react-redux";
 import { setDataTicketDetail } from "store/ticket/actions";
 
@@ -39,13 +33,11 @@ const CardTicket = (props: any) => {
     dispatch(setDataTicketDetail(data));
   };
 
-
   const bgStage = (check: String) => {
     if (check == "New") return "#FF2C56";
     if (check == "In-progress") return "#03AE00";
     if (check == "Resolved") return "#E605DD";
     if (check == "Closed") return "#697469";
-
   };
   const colorPriority = (check: String) => {
     if (check == "Medium") return "#03AE00";
@@ -189,7 +181,7 @@ const CardTicket = (props: any) => {
               </Text>
             </Box>
             <Box
-              onClick={() => handleOpenTicketDetail(data?.code)}
+              onClick={() => handleOpenTicketDetail(data?.id)}
               display="flex"
               alignContent="center"
               justifyContent="center"

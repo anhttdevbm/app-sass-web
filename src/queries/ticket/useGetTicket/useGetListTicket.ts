@@ -2,8 +2,7 @@ import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { selectCurrentPage, selectSearchTicket } from "store/ticket/selectors";
 import { getListTicketApi } from "../api";
-
-export const LIST_TICKET = "LIST_TICKET";
+import { QUERY_TICKET_KEY } from "../keys";
 
 const useGetListTicket = () => {
   const data = useSelector(selectSearchTicket);
@@ -24,7 +23,7 @@ const useGetListTicket = () => {
   };
 
   return useQuery({
-    queryKey: [LIST_TICKET, params],
+    queryKey: [QUERY_TICKET_KEY.LIST_TICKET, params],
     queryFn: () => getListTicketApi(params),
     staleTime: 60,
     enabled: true,
