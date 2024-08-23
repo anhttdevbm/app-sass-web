@@ -1170,7 +1170,10 @@ const ItemList = () => {
                               {...provided.droppableProps}
                               width="100%"
                               overflow="hidden"
-                              ml={-6}
+                              ml={{
+                                xs: 0,
+                                md: -6,
+                              }}
                             >
                               <Stack
                                 direction={{ md: "row" }}
@@ -1200,7 +1203,18 @@ const ItemList = () => {
                                       <Content
                                         color="text.primary"
                                         textAlign="left"
-                                        pl={6}
+                                        pl={{
+                                          xs: 2,
+                                          md: 6,
+                                        }}
+                                        fontSize={{
+                                          xs: 16,
+                                          md: "initial",
+                                        }}
+                                        fontWeight={{
+                                          xs: 600,
+                                          md: "initial",
+                                        }}
                                         noWrap
                                         tooltip={task.name}
                                         onClick={onSetTask(
@@ -1262,7 +1276,10 @@ const ItemList = () => {
                                 <Content
                                   sx={{
                                     display: "flex",
-                                    justifyContent: "center",
+                                    justifyContent: {
+                                      xs: "space-between",
+                                      md: "center",
+                                    },
                                     width: "100%",
                                     "* > p ": {
                                       color: "unset",
@@ -1271,6 +1288,13 @@ const ItemList = () => {
                                   }}
                                   // flexGrow={1}
                                 >
+                                  <Typography
+                                    sx={{
+                                      display: { xs: "initial", md: "none" },
+                                    }}
+                                  >
+                                    {commonT("form.title.startDate")}
+                                  </Typography>
                                   <Date
                                     label={commonT("form.title.selectTime")}
                                     name="start_date"
@@ -1294,7 +1318,10 @@ const ItemList = () => {
                                   // flexGrow={1}
                                   sx={{
                                     display: "flex",
-                                    justifyContent: "center",
+                                    justifyContent: {
+                                      xs: "space-between",
+                                      md: "center",
+                                    },
                                     width: "100%",
                                     "* > p ": {
                                       color: "unset",
@@ -1302,6 +1329,13 @@ const ItemList = () => {
                                     },
                                   }}
                                 >
+                                  <Typography
+                                    sx={{
+                                      display: { xs: "initial", md: "none" },
+                                    }}
+                                  >
+                                    {commonT("form.title.endDate")}
+                                  </Typography>
                                   <Date
                                     label={commonT("form.title.selectTime")}
                                     name="end_date"
@@ -1326,11 +1360,24 @@ const ItemList = () => {
                                   whiteSpace="nowrap"
                                   sx={{
                                     display: "flex",
-                                    justifyContent: "center",
+                                    justifyContent: {
+                                      xs: "space-between",
+                                      md: "center",
+                                    },
                                     width: "100%",
-                                    paddingX: "0",
+                                    paddingX: {
+                                      xs: 2,
+                                      md: 0,
+                                    },
                                   }}
                                 >
+                                  <Typography
+                                    sx={{
+                                      display: { xs: "initial", md: "none" },
+                                    }}
+                                  >
+                                    {commonT("status")}
+                                  </Typography>
                                   <SelectStatusTask
                                     value={task.status}
                                     onHandler={(newValue) =>
@@ -1347,6 +1394,10 @@ const ItemList = () => {
                                 <Content
                                   sx={{
                                     display: "flex",
+                                    flexDirection: {
+                                      xs: "column",
+                                      md: "row",
+                                    },
                                     justifyContent: "center",
                                     width: "100%",
                                     alignItem: "center",
@@ -1354,6 +1405,13 @@ const ItemList = () => {
                                     "& > p": { lineHeight: "30px" },
                                   }}
                                 >
+                                  <Typography
+                                    sx={{
+                                      display: { xs: "initial", md: "none" },
+                                    }}
+                                  >
+                                    {commonT("form.title.description")}
+                                  </Typography>
                                   <Description
                                     taskId={task.id}
                                     taskListId={taskListItem.id}
@@ -1468,6 +1526,10 @@ const SubTaskList = ({
             style={{
               minHeight: 1,
             }}
+            display={{
+              xs: "none",
+              md: "intial",
+            }}
           >
             {task?.sub_tasks?.map((subTask, i) => {
               const isChecked = isSubTaskChecked(selectedList, subTask.id);
@@ -1482,7 +1544,7 @@ const SubTaskList = ({
                         minHeight: 1,
                         "&:hover": {
                           bgcolor: "background.default",
-                        }
+                        },
                       }}
                     >
                       <Stack

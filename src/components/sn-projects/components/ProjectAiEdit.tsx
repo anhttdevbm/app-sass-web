@@ -47,7 +47,7 @@ const ProjectAiEdit = (props: {
   });
 
   return (
-    <FormControl sx={{ gap: 2, ...props.sx }}>
+    <FormControl sx={{ gap: 2, bgcolor: "background.paper", ...props.sx }}>
       <Box overflow="auto" maxHeight="50vh" p={2}>
         <Markdown>{projectDataMarkdown}</Markdown>
       </Box>
@@ -109,7 +109,11 @@ const ProjectAiEdit = (props: {
 
 export default ProjectAiEdit;
 
-function projectDataJsonToMarkdown(projectData: AiProjectData) {
+function projectDataJsonToMarkdown(projectData: AiProjectData | null) {
+  if (!projectData) {
+    return "";
+  }
+
   let text = `# ${projectData.title}\n\n`;
 
   text += "## Project Overview\n\n";
