@@ -37,8 +37,6 @@ const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
 
-  console.log("check queries ", queries)
-
   return (
     <>
       <FilterPosition queries={queries} onChange={onChange}></FilterPosition>

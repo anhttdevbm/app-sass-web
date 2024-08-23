@@ -1,17 +1,27 @@
 import { Endpoint } from "api";
 import { client, ticketInstance } from "api/client";
-import { IFormTicket } from "components/sn-ticket/module/create-ticket/create-ticket-template";
+
 import { BILLING_API_URL as TICKET_AGENT_API_URL } from "constant/index";
 
-export const createTicketApi = (data: IFormTicket) => {
-  const { description, title, requestTicketType, status } = data;
+type PayloadCreate = {
+  nameUser: string;
+  username: string;
+  email: string;
+  phone: number;
+  password: string;
+
+}
+export const createAgentApi = (data : PayloadCreate) => {
+  const { nameUser, username, email, phone ,  password} = data;
+
   const formData = {
-    description,
-    title,
-    requestTicketType,
-    status,
-    ...data.files,
+    nameUser,
+    username,
+    email,
+    phone,
+    password,
   };
+  console.log("check formData" , formData)
   return client.post(Endpoint.TICKET_AGENT, formData, {
     baseURL: TICKET_AGENT_API_URL,
     headers: {

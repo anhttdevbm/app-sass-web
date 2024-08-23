@@ -53,12 +53,14 @@ const TickketList = () => {
   const dispatch = useDispatch();
   const { data: listTicket } = useGetListTicket();
 
+  console.log("check data api" , listTicket)
+
   //Store của các key tìm kiếm gói ở đây ///
   const keySearch = useSelector(selectSearchTicket);
 
   const [list, setList] = useState<any>(null);
   const [page, setPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(2);
+  const [totalItems, setTotalItems] = useState(0);
 
   const defaultFilterTicket = [
     {
@@ -118,33 +120,11 @@ const TickketList = () => {
       active: false,
     },
   ];
+  
+  useEffect(() => {
+    setTotalItems(listTicket?.data?.count)
+  }, [listTicket]);
 
-  // const getData = (response: any) => {
-  //   const data = response?.data?.data;
-
-  //   if (keySearch?.keySearch?.length > 0) {
-  //     const filter = data?.filter((item: Ticket) => {
-  //       const id = item?.code?.toString().toLowerCase();
-  //       const searchKey = keySearch?.keySearch?.toLowerCase() ?? "";
-  //       return id?.includes(searchKey);
-  //     });
-  //     setList(filter);
-  //   } else {
-  //     setList(data);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (data !== null) {
-  //     getData(data);
-  //   }
-  // }, [keySearch]);
-
-  // useEffect(() => {
-  //   if (data !== null) {
-  //     getData(data);
-  //   }
-  // }, [data, page]);
 
   const [listFilterTicket, setListFilterTicket] = useState(defaultFilterTicket);
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
@@ -160,8 +140,8 @@ const TickketList = () => {
     // handleQueryChange({ page: newPage, limit });
     setPage(newPage);
     const payload = {
-      page: newPage - 1,
-      totalItems: 2,
+      page: newPage ,
+      totalItems: 4,
     };
     dispatch(setCurrentPage(payload));
   };
@@ -185,7 +165,7 @@ const TickketList = () => {
         zIndex={2}
         // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
       >
-        {typeViewDocStore == "basicViewListDoc" && (
+        {typeViewDocStore == "kanbanViewListDoc" && (
           <Stack>
             <Box
               bgcolor="background.default"
@@ -283,7 +263,7 @@ const TickketList = () => {
             </Box>
           </Stack>
         )}
-        {typeViewDocStore == "basicViewListDoc" ? (
+        {typeViewDocStore == "kanbanViewListDoc" ? (
           <>
             {(listTicket?.data?.data || [])?.map(
               (item: Ticket, index: number) => (
@@ -302,7 +282,7 @@ const TickketList = () => {
           totalItems={totalItems}
           totalPages={listTicket?.data?.maxPage}
           page={page}
-          pageSize={listTicket?.data?.maxPage}
+          pageSize={5}
           onChangePage={handlePageChange}
           onChangeSize={handleSizeChange}
           containerProps={{

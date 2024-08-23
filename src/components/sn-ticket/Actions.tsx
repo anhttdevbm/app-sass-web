@@ -73,22 +73,6 @@ const ChangeViewListDoc = () => {
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
       <IconButton
-        onClick={handleViewKanban}
-        aria-label="view-kanban"
-        sx={{
-          backgroundColor:
-            typeViewListDoc !== "kanbanViewListDoc"
-              ? "common.white"
-              : "#E9EBF3",
-          boxShadow:
-            typeViewListDoc !== "kanbanViewListDoc"
-              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
-              : "none",
-        }}
-      >
-        <ViewModuleIcon />
-      </IconButton>
-      <IconButton
         onClick={handleViewBasic}
         aria-label="view-basic"
         sx={{
@@ -104,6 +88,23 @@ const ChangeViewListDoc = () => {
       >
         <MenuIcon />
       </IconButton>
+      <IconButton
+        onClick={handleViewKanban}
+        aria-label="view-kanban"
+        sx={{
+          backgroundColor:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "common.white"
+              : "#E9EBF3",
+          boxShadow:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
+              : "none",
+        }}
+      >
+        <ViewModuleIcon />
+      </IconButton>
+
     </Stack>
   );
 };

@@ -17,8 +17,8 @@ interface TicketDetailState {
 // Initial state
 const initialState: TicketDetailState = {
   pagination: {
-    page: 0,
-    totalItems : 2
+    page: 1,
+    totalItems : 4
   },
   keySearch: {
     keySearch: "",

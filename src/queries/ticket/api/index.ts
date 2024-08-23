@@ -4,12 +4,12 @@ import { IFormTicket } from "components/sn-ticket/module/create-ticket/create-ti
 import { BILLING_API_URL as TICKET_API_URL } from "constant/index";
 
 export const createTicketApi = (data: IFormTicket) => {
-  const { description, title, requestTicketType, status } = data;
+  const { description, title, type, priority } = data;
   const formData = {
     description,
     title,
-    requestTicketType,
-    status,
+    type,
+    priority,
     ...data.files,
   };
   return client.post(Endpoint.TICKET, formData, {

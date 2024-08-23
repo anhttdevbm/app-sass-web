@@ -21,8 +21,6 @@ const useGetListTicket = () => {
     priority: data?.priority || "",
     page: page?.page,
     size: page?.totalItems,
-    // page: 3,
-    // size: 2,
   };
 
   return useQuery({

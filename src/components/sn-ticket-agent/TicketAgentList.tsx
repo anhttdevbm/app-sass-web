@@ -14,15 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Button, Text } from "components/shared";
-import CanceledTicketIcon from "icons/CanceledTicketIcon";
-import ClosedTicketIcon from "icons/ClosedTicketIcon";
-import InProgressTicketIcon from "icons/InProgressTicketIcon";
-import NewTicketIcon from "icons/NewTicketIcon";
-import OnHoldTicketIcon from "icons/OnHoldTicketIcon";
-import OpenTicketDetailIcon from "icons/OpenTicketDetailIcon";
-import OpenTicketIcon from "icons/OpenTicketIcon";
-import ResolveTicketIcon from "icons/ResolveTicketIcon";
-import SendAllTicketIcon from "icons/SendAllTicketIcon";
 import { usePathname, useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "store/hooks";
@@ -34,7 +25,8 @@ import { setCurrentPage, setDataListTicket } from "store/ticket/actions";
 import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";
 import TableTicketAgent from "./components/TableTicketAgent";
-import useGetListTicket from "queries/ticket-agent/useGetTicket/useGetListTicket";
+import useGetListTicket from "queries/ticket/useGetTicket/useGetListTicket";
+// import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
 
 interface File {
   name: string;
@@ -100,16 +92,14 @@ const TicketAgentList = () => {
   }, [data, page]);
 
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
-  console.log("check", typeViewDocStore);
 
   const handlePageChange = (newPage: number) => {
     // handleQueryChange({ page: newPage, limit });
     setPage(newPage);
-    console.log("check page", newPage - 1);
 
     const payload = {
-      page: newPage - 1,
-      totalItems: 2,
+      page: newPage,
+      totalItems: 4,
     };
     dispatch(setCurrentPage(payload));
   };
@@ -127,7 +117,6 @@ const TicketAgentList = () => {
         px={{ xs: 0, md: 3 }}
         py={1}
         zIndex={2}
-        // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
       >
         <TableTicketAgent data={list} />
         <Pagination

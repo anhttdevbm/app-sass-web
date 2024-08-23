@@ -33,8 +33,6 @@ const Search = (props: SearchProps) => {
 
   const commonT = useTranslations(NS_COMMON);
 
-  console.log("check name" , name)
-
   const inputRef = useRef<HTMLInputElement | null>(null);
   const prevTextRef = useRef<string | number | null>(value);
 

@@ -5,11 +5,11 @@ import { getListTicketApi } from "../api";
 
 export const LIST_TICKET = "LIST_TICKET";
 
-const useGetListTicket = () => {
+const useGetListAgent = () => {
   const data = useSelector(selectSearchTicket);
   const page = useSelector(selectCurrentPage);
 
-  console.log("check page", data);
+  // console.log("check page", data);
 
   const params = {
     assign: data?.assingn || "",
@@ -35,4 +35,4 @@ const useGetListTicket = () => {
   });
 };
 
-export default useGetListTicket;
+export default useGetListAgent;

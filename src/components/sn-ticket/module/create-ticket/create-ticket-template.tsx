@@ -14,8 +14,8 @@ import { TICKET_PATH } from "constant/paths";
 export interface IFormTicket {
   title: string;
   description: string;
-  requestTicketType?: string;
-  status?: "low" | "hight" | "medium" | null;
+  type?: string;
+  priority?: "low" | "hight" | "medium" | null;
   files: File[];
 }
 
@@ -26,8 +26,8 @@ const CreateTicket = () => {
   const [formTicket, setFormTicket] = useState<IFormTicket>({
     title: "",
     description: "",
-    requestTicketType: "",
-    status: null,
+    type: "",
+    priority: null,
     files: [],
   });
 
@@ -36,6 +36,7 @@ const CreateTicket = () => {
   }, []);
 
   const handleSubmit = (data: IFormTicket) => {
+    console.log("check data  res" , data)
     createTicket.mutate(data, {
       onSuccess: (data) => {
         push(TICKET_PATH);
@@ -109,10 +110,10 @@ const CreateTicket = () => {
                 fullWidth
                 size="medium"
                 placeholder="Choose Type"
-                value={formTicket.requestTicketType}
+                value={formTicket.type}
                 showPlaceholder={true}
                 onChange={(e) => {
-                  handleChange(e.target.value, "requestTicketType");
+                  handleChange(e.target.value, "type");
                 }}
               />
             </Grid>
@@ -136,10 +137,10 @@ const CreateTicket = () => {
                 fullWidth
                 size="medium"
                 placeholder="Select Status"
-                value={formTicket.status}
+                value={formTicket.priority}
                 showPlaceholder={true}
                 onChange={(e) => {
-                  handleChange(e.target.value, "status");
+                  handleChange(e.target.value, "priority");
                 }}
               />
             </Grid>

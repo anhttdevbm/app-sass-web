@@ -43,6 +43,7 @@ import {
   selectTicketListTicket,
 } from "store/ticket/selectors";
 import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
+import Model from "./module/pop-up-model/Model";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -114,15 +115,12 @@ type ActionProps = {
 const Actions = ({ isProjectTabMode }: ActionProps) => {
   const data = useSelector(selectSearchTicket);
   const dispatch = useDispatch();
-  const companyT = useTranslations(NS_COMPANY);
   const t = useTranslations(NS_TICKET);
-  const commonT = useTranslations(NS_COMMON);
-  const docsT = useTranslations(NS_DOCS);
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
-  const [isShowImportForm, onShowImportForm, onHideImportForm] = useToggle();
   const [queries, setQueries] = useState<any>({});
+  const [openModel, setOpenModel] = useState(false)
 
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
@@ -151,6 +149,14 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
     setQueries({ search_key: searchParams.get("search_key") });
   }, [searchParams.get("search_key")]);
 
+
+  const handleClickOpenModel = () => {
+    setOpenModel(true);
+  };
+
+  const handleCloseModel = () => {
+    setOpenModel(false);
+  };
   return (
     <>
       <Stack
@@ -195,7 +201,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             <ChangeViewListDoc />
             <Button
               onClick={() => {
-                push(TICKET_CREATE_PATH);
+                setOpenModel(true)
               }}
               size="small"
               variant="primary"
@@ -257,28 +263,15 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Stack>
         </Box>
       </Stack>
+
+      <Model
+        type="create"
+        open={openModel}
+        handleClickOpen={handleClickOpenModel}
+        handleClose={handleCloseModel}
+      />
     </>
   );
 };
 
 export default memo(Actions);
-
-const Group_OPTIONS = [
-  {
-    label: "filter.filter.creator",
-    value: DocGroupByEnum.CREATED_BY,
-    icon: <NoneIcon></NoneIcon>,
-  },
-  {
-    label: "filter.filter.project",
-    value: DocGroupByEnum.PROJECT_ID,
-    icon: <NoneIcon></NoneIcon>,
-  },
-];
-const Filter_Options = [
-  { label: "filter.filter.creator", value: 1 },
-  { label: "filter.filter.lastEdited", value: 2 },
-  { label: "filter.filter.name", value: 3 },
-  { label: "filter.filter.project", value: 4 },
-  { label: "filter.filter.projectStatus", value: 5 },
-];

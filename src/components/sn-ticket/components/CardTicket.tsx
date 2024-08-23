@@ -39,13 +39,13 @@ const CardTicket = (props: any) => {
     dispatch(setDataTicketDetail(data));
   };
 
-  console.log("creatorUser", data);
 
   const bgStage = (check: String) => {
     if (check == "New") return "#FF2C56";
     if (check == "In-progress") return "#03AE00";
     if (check == "Resolved") return "#E605DD";
     if (check == "Closed") return "#697469";
+
   };
   const colorPriority = (check: String) => {
     if (check == "Medium") return "#03AE00";
