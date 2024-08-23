@@ -272,14 +272,6 @@ const Form = (props: FormProps) => {
   }, [onGetOptions]);
   const { onCreateProjectType } = useProjectTypes();
 
-  const handleOnChangeTypeProject = (option: Option) => {
-    if (option) {
-      formik.setFieldValue("type_project", option.value);
-    } else {
-      formik.setFieldValue("type_project", "");
-    }
-  };
-
   return (
     <FormLayout
       sx={{
@@ -391,8 +383,10 @@ const Form = (props: FormProps) => {
           />
           <div style={{ width: "100%" }}>
             <SelectTypeProject
-              onChange={handleOnChangeTypeProject}
-              value={formik.values.type_project}
+              onChange={(option) =>
+                formik.setFieldValue("type_project", option)
+              }
+              value={formik.values?.type_project}
             />
           </div>
         </Stack>

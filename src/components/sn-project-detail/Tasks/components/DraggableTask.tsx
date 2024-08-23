@@ -143,7 +143,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
               ml={2}
               spacing={{ xs: 0.5, sm: 1 }}
               gap={1}
-              display={{ xs: "none", sm: "initial" }}
+              display={{ xs: "none", sm: "flex" }}
             >
               <CheckBoxCustom
                 size="small"

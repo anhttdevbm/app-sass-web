@@ -1526,10 +1526,6 @@ const SubTaskList = ({
             style={{
               minHeight: 1,
             }}
-            display={{
-              xs: "none",
-              md: "intial",
-            }}
           >
             {task?.sub_tasks?.map((subTask, i) => {
               const isChecked = isSubTaskChecked(selectedList, subTask.id);
@@ -1541,7 +1537,6 @@ const SubTaskList = ({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       sx={{
-                        minHeight: 1,
                         "&:hover": {
                           bgcolor: "background.default",
                         },
