@@ -71,10 +71,15 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
       docData += `<p>${projectData.description}</p>`;
       docData += "<h2>Milestones</h2>";
       for (const _taskList of projectData.taskList) {
+        const taskList = await onCreateTaskList({
+          name: _taskList.title,
+          project: project.id,
+        });
         docData += `<h3>${_taskList.title}</h3>`;
 
         docData += "<ul>";
         for (const _task of _taskList.tasks) {
+          await onCreateTask({ name: _task }, taskList.id);
           docData += `<li>${_task}</li>`;
         }
         docData += "</ul>";
