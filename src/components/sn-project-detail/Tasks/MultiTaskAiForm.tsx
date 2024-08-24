@@ -36,7 +36,7 @@ const MultiTaskAiForm = (props: { open: boolean; onClose: () => void }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "50%",
+          width: "80%",
           bgcolor: "background.paper",
         }}
       >

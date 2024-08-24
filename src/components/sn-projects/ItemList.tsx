@@ -74,15 +74,15 @@ const ItemList = () => {
       { value: "#", width: "5%", align: "center" },
       {
         value: projectT("list.form.title.name"),
-        width: "23%",
+        width: "30%",
         align: "left",
       },
       {
         value: commonT("assigner"),
-        width: "22.5%",
+        width: "16%",
         align: "left",
       },
-      { value: commonT("status"), width: "12.5%" },
+      { value: commonT("status"), width: "12%" },
       { value: "", width: "5%" },
       { value: "", width: "5%" },
     ],
@@ -197,9 +197,9 @@ const ItemList = () => {
     <>
       <Stack>
         {isMdSmaller ? (
-          <>
+          <Stack gap={1} overflow="auto" maxHeight="60vh">
             {items.map((_item, index) => (
-              <Card
+              <Paper
                 key={_item.id}
                 sx={{
                   display: "flex",
@@ -288,9 +288,9 @@ const ItemList = () => {
                     </Stack>
                   </CardContent>
                 </CardActionArea>
-              </Card>
+              </Paper>
             ))}
-          </>
+          </Stack>
         ) : (
           <TableLayout
             headerList={headerList}
