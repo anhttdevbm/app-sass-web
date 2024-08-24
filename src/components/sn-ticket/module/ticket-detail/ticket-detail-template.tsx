@@ -126,7 +126,9 @@ const TicketDetail = () => {
           flexDirection: "column",
           overflowY: "scroll",
           scrollbarWidth: "none",
-          height: "calc(100vh - 100px)",
+          height: "calc(98vh - 100px)",
+          p: 4,
+          boxSizing: "border-box",
         }}
       >
         <Stack
