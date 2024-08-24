@@ -18,7 +18,7 @@ import {
 import { NS_TIME_TRACKING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
-import DayIcon from "components/sn-time-tracking/icons/DayIcon";
+import DayIcon from "icons/DayIcon";
 import { useTranslations } from "next-intl";
 import { FC, useEffect, useState } from "react";
 import {
@@ -26,10 +26,10 @@ import {
   MyTimeTrackingCalendar,
   TimelogTrackingCalendar,
 } from "./CalendarTracking";
-import CalendarIcon from "./icons/CalendarIcon";
-import TimeSheetIcon from "./icons/TimeSheetIcon";
-import PlusIcon from "./icons/PlusIcon";
-import TimeIcon from "./icons/TimeIcon";
+
+import CalendarIcon from "icons/CalendarIcon";
+import PlusIcon from "icons/PlusIcon";
+import TimeSheetIcon from "icons/TimeSheetIcon";
 
 interface ITab {
   label: string;
@@ -349,6 +349,7 @@ const TimeTrackingPage: FC = () => {
               sx={{
                 width: "18px",
                 height: "18px",
+                color: "#4C526C",
               }}
             />
           </Fab>
@@ -357,8 +358,8 @@ const TimeTrackingPage: FC = () => {
             startIcon={
               <PlusIcon
                 sx={{
-                  width: "20px",
-                  height: "20px",
+                  width: "32px",
+                  height: "32px",
                 }}
               />
             }

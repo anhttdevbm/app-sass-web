@@ -1,55 +1,44 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import _ from "lodash";
-import moment from "moment";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   Avatar,
   Box,
   Button,
   Grid,
+  IconButton,
   Stack,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
   TableCell,
   TableRow,
   Typography,
-  CircularProgress,
-  IconButton,
 } from "@mui/material";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import dayjs from "dayjs";
+import _ from "lodash";
+import moment from "moment";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 //import ButtonComponent from "../../Component/Button";
-import AddIcon from "@mui/icons-material/Add";
-import Filter from "../../../shared/Filter";
 //import { MobileDatePicker } from "@mui/x-date-pickers";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TimeSheet from "./TimeSheet";
-import { styled } from "@mui/system";
-import PlusIcon from "icons/PlusIcon";
-import { useTranslations } from "next-intl";
-import { NS_TIME_TRACKING } from "constant/index";
-import ButtonCalendar from "components/shared/ButtonCalendar";
+import { Person } from "@mui/icons-material";
 import ListIcon from "@mui/icons-material/List";
-import TimeCreate from "../../TimeTrackingModal/TimeCreate";
-import { useGetMyTimeSheet } from "store/timeTracking/selectors";
-import CustomizedInputBase from "components/shared/InputSeasrch";
-import useTheme from "hooks/useTheme";
+import { styled } from "@mui/system";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import useBreakpoint from "hooks/useBreakpoint";
-import ListSheet from "./ListSheet";
-import TableSheet from "./TableSheet";
+import ButtonCalendar from "components/shared/ButtonCalendar";
 import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
-import MonthCalendarSheet from "./MonthCalendarSheet";
-import { RootState } from "store/configureStore";
+import { NS_TIME_TRACKING } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
 import { useDispatch } from "react-redux";
+import { RootState } from "store/configureStore";
+import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import { setIsOpen as setUserNavigationVisible } from "store/userNavigationDetail/reducer";
-import { Person } from "@mui/icons-material";
+import TimeCreate from "../../TimeTrackingModal/TimeCreate";
+import ListSheet from "./ListSheet";
+import MonthCalendarSheet from "./MonthCalendarSheet";
+import TableSheet from "./TableSheet";
 
 interface IProps {
   events: any[];
