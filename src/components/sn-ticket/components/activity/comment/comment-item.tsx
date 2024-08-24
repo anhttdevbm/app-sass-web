@@ -66,3 +66,4 @@ const CommentItem = (props) => {
     );
   };
   
+  export default CommentItem

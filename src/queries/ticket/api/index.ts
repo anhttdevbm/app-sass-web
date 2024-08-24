@@ -27,8 +27,39 @@ export const getListTicketApi = (params) => {
 };
 
 export const getTicketDetailApi = async (id) => {
-  const response = await client.get(`${Endpoint.TICKET}/${id}`, undefined, {
+  const response = await client.get(`${Endpoint.TICKET}/detail/${id}`, undefined, {
     baseURL: TICKET_API_URL,
   });
   return response?.data?.data;
 };
+
+export const getListCommentApi = async (id) => {
+  const response = await client.get(`${Endpoint.TICKET}/comment/${id}?page=0&size=10`, undefined, {
+    baseURL: TICKET_API_URL,
+  });
+  return response?.data;
+};
+
+export const createCommentApi = (data) => {
+  return client.post(`${Endpoint.TICKET}/${data?.ticketId}/comment`, data, {
+    baseURL: TICKET_API_URL,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+export const editCommentApi = (data) => {
+  return client.post(`${Endpoint.TICKET}/${data?.ticketId}/comment/${data?.commentId}`, data, {
+    baseURL: TICKET_API_URL,
+    // headers: {
+    //   "Content-Type": "multipart/form-data",
+    // },
+  });
+}
+
+export const deleteCommentApi = (data) => {
+  return client.delete(`${Endpoint.TICKET}/comment/${data?.ticketId}/${data?.commentId}`, {
+    baseURL: TICKET_API_URL,
+  });
+}

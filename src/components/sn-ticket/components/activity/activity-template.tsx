@@ -22,7 +22,6 @@ const ActivityTemplate = () => {
     setAnchorEl(null);
   };
 
-  console.log("activityIdx", activityIdx);
   const RenderActivity = ({ activityIdx }: { activityIdx: string }) => {
     switch (activityIdx) {
       case "All":
