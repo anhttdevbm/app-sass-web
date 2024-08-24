@@ -53,7 +53,6 @@ import { formatNumber, getMessageErrorByAPI } from "utils/index";
 import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
-import { Recurring } from "./TabDetail/Recurring";
 import { Service } from "./TabDetail/Service";
 
 enum TABS {
@@ -63,7 +62,7 @@ enum TABS {
   TIME = "Time",
   EXPENSES = "Expenses",
   INVOICES = "Invoices",
-  RECURRING = "Recurring",
+  // RECURRING = "Recurring",
 }
 
 export type TBudgetSection = {
@@ -138,7 +137,7 @@ export const BudgetDetail = () => {
     [TABS.EXPENSES]: budgetT("tab.expenses"),
     [TABS.INVOICES]: budgetT("tab.invoices"),
     [TABS.SERVICES]: budgetT("tab.services"),
-    [TABS.RECURRING]: budgetT("tab.recurring"),
+    // [TABS.RECURRING]: budgetT("tab.recurring"),
   };
 
   useEffect(() => {
@@ -581,7 +580,7 @@ export const BudgetDetail = () => {
               />
             )}
             {activeTab === TABS.INVOICES && <Invoice />}
-            {activeTab === TABS.RECURRING && <Recurring />}
+            {/* {activeTab === TABS.RECURRING && <Recurring />} */}
             {activeTab === TABS.SERVICES && (
               <Service
                 sections={_.get(serviceQuery, "data.data.sections", [])}
