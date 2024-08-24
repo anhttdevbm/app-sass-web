@@ -88,7 +88,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
     () => [
       { value: commonT("fullName"), width: "25%", align: "left" },
       { value: "Email", width: "15%", align: "left" },
-      { value: commonT("roles"), width: "7%", align: "left" },
+      { value: commonT("roles"), width: "9%", align: "left" },
       { value: commonT("position"), width: "12%", align: "left" },
       { value: commonT("creationDate"), width: "12%", align: "left" },
       {
