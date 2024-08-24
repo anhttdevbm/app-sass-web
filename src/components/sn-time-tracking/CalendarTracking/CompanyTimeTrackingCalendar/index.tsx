@@ -28,7 +28,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Filter from "../../../shared/Filter";
 //import { MobileDatePicker } from "@mui/x-date-pickers";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TimeSheet from "./Timesheet";
+import TimeSheet from "./TimeSheet";
 import { styled } from "@mui/system";
 import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
@@ -44,12 +44,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useBreakpoint from "hooks/useBreakpoint";
 import ListSheet from "./ListSheet";
 import TableSheet from "./TableSheet";
-import FilterCategory from "components/sn-time-tracking/Component/FilterCategory";
+import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
 import MonthCalendarSheet from "./MonthCalendarSheet";
 import { RootState } from "store/configureStore";
 import { useDispatch } from "react-redux";
 import { setIsOpen as setUserNavigationVisible } from "store/userNavigationDetail/reducer";
 import { Person } from "@mui/icons-material";
+
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
@@ -436,22 +437,48 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   cursor: "pointer",
                 },
               }}
-              onClick={() => setIsOpen(true)}
             >
-              <Typography
+              <Button
                 sx={{
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  lineHeight: "18px",
-                  color: "#666666",
-                  marginRight: "10px",
+                  minWidth: "28px",
+                  height: "28px",
+                  padding: 0,
+                  // borderRadius: "4px 0px 0px 4px",
+                  // backgroundColor: "grey.100",
+                  color: "#212529",
                 }}
+                onClick={() => onAction("week", "prev")}
               >
-                {`${dayjs(filters?.start_date).format("DD MMM YYYY")} - ${dayjs(
-                  filters?.end_date,
-                ).format("DD MMM YYYY")}`}
-              </Typography>
-              <ExpandMoreIcon sx={{ color: "rgba(102, 102, 102, 1)" }} />
+                <ChevronLeftIcon />
+              </Button>
+              <div onClick={() => setIsOpen(true)}>
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    color: "neutral.800",
+                    margin: "0 10px",
+                    fontFamily: "unset",
+                    padding: "0 10px",
+                  }}
+                >
+                  {`${dayjs(filters?.start_date).format(
+                    "DD MMM YYYY",
+                  )} - ${dayjs(filters?.end_date).format("DD MMM YYYY")}`}
+                </Typography>
+              </div>
+              <Button
+                sx={{
+                  minWidth: "28px",
+                  height: "28px",
+                  padding: 0,
+                  // borderRadius: "0px 4px 4px 0px",
+                  // backgroundColor: "grey.100",
+                  color: "#212529",
+                }}
+                onClick={() => onAction("week", "next")}
+              >
+                <ChevronRightIcon />
+              </Button>
             </Stack>
           </Grid>
           <Grid item sm={12} md={4} sx={{ order: isSmSmaller ? 1 : 3 }}>
@@ -468,7 +495,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   padding: 0,
                   // borderRadius: "4px 0px 0px 4px",
                   // backgroundColor: "grey.100",
-                  color: "grey.400",
+                  color: "#212529",
                 }}
                 onClick={() => onAction("week", "prev")}
               >
@@ -478,10 +505,13 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 sx={{
                   width: "97px",
                   height: "30px",
-                  backgroundColor: "grey.100",
                   padding: "4px",
-                  color: "grey.400",
+                  color: "neutral.800",
                   textAlign: "center",
+                  textTransform: "capitalize",
+                  "&:hover": {
+                    backgroundColor: "#D9F0FD",
+                  },
                 }}
                 onClick={() => onAction("week", "today")}
                 disabled={
@@ -498,7 +528,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   padding: 0,
                   // borderRadius: "0px 4px 4px 0px",
                   // backgroundColor: "grey.100",
-                  color: "grey.400",
+                  color: "#212529",
                 }}
                 onClick={() => onAction("week", "next")}
               >
@@ -567,13 +597,13 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   );
 
   return (
-    <Stack direction="column">
+    <Stack direction="column" height="100%" paddingTop="20px">
       {props.currentKindOfSheet === "table" && (
         <>
           {userDetailTablevisible && (
             <div
               style={{
-                marginTop: "20px",
+                margin: "20px 0",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
@@ -586,7 +616,10 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               </IconButton>
               {userDetailTableAvatar ? (
                 <Avatar
-                  sx={{ width: 40, height: 40 }}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                  }}
                   src={userDetailTableAvatar}
                 />
               ) : (
@@ -595,18 +628,17 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 </Avatar>
               )}
 
-              <Typography>{userDetailTableName}</Typography>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  fontSize: "20px",
+                  fontFamily: "unset",
+                }}
+              >
+                {userDetailTableName}
+              </Typography>
             </div>
           )}
-          <div
-            style={{
-              marginTop: "20px",
-              borderRadius: "100px",
-              background: "#F7F7FD",
-            }}
-          >
-            {_renderHeader()}
-          </div>
         </>
       )}
       {props.currentKindOfSheet === "table" ? (
@@ -770,23 +802,30 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         // </Stack>
         <Box
           sx={{
-            marginTop: "20px",
             display: "flex",
             flexDirection: "column",
-            gap: "30px",
+            gap: "20px",
+            height: "100%",
           }}
         >
+          <div
+            style={{
+              borderRadius: "100px",
+              background: "#F7F7FD",
+              border: "1px solid #EFEFEF",
+            }}
+          >
+            {_renderHeader()}
+          </div>
           <FilterCategory personVisibleFilter={false} />
           <TableSheet dateRange={dateRange} data={company} />
         </Box>
       ) : (
-        <Stack
-          //ref={scrollRef}
+        <Box
           sx={{
-            // minHeight:"100dvh",
-            overflow: "scroll",
-            position: "relative",
+            height: "100%",
           }}
+          //ref={scrollRef}
         >
           {/* {_renderTimeSheetContent()} */}
           {props.currentKindOfSheet === "timeGridWeek" && (
@@ -794,32 +833,34 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             <Box
               sx={{
                 marginTop: "20px",
+                height: "100%",
               }}
             >
               <MonthCalendarSheet />
 
-              {/* <MonthCalendarSheetCustom/> */}
+              {/* <MonthCalendarSheetCustom /> */}
             </Box>
 
             // <TableSheet dateRange={dateRange}/>
           )}
           {props.currentKindOfSheet === "timeSheet" && (
             <>
-              <div
+              {/* <div
                 style={{
                   marginTop: "20px",
                   borderRadius: "100px",
                   background: "#F7F7FD",
+                  border: "1px solid #EFEFEF",
                 }}
               >
                 {_renderHeader()}
-              </div>
+              </div> */}
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
                   gap: "20px",
-                  marginTop: "20px",
+                  height: "100%",
                 }}
               >
                 <FilterCategory />
@@ -827,7 +868,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               </Box>
             </>
           )}
-        </Stack>
+        </Box>
       )}
 
       {/* {_renderFooter()} */}

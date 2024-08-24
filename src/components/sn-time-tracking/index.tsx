@@ -18,7 +18,7 @@ import {
 import { NS_TIME_TRACKING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
-import DayIcon from "icons/DayIcon";
+import DayIcon from "components/sn-time-tracking/icons/DayIcon";
 import { useTranslations } from "next-intl";
 import { FC, useEffect, useState } from "react";
 import {
@@ -28,6 +28,8 @@ import {
 } from "./CalendarTracking";
 import CalendarIcon from "./icons/CalendarIcon";
 import TimeSheetIcon from "./icons/TimeSheetIcon";
+import PlusIcon from "./icons/PlusIcon";
+import TimeIcon from "./icons/TimeIcon";
 
 interface ITab {
   label: string;
@@ -37,7 +39,7 @@ interface ITab {
 const TimeTrackingPage: FC = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<string>("myTime");
+  const [tab, setTab] = useState<string>("companyTime");
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -125,7 +127,7 @@ const TimeTrackingPage: FC = () => {
   };
 
   return (
-    <Stack>
+    <Stack height="100%">
       <Grid
         container
         sx={{ display: isSmSmaller ? "block" : "none", padding: "10px" }}
@@ -166,13 +168,8 @@ const TimeTrackingPage: FC = () => {
             margin: "22px 22px 0 22px",
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
+            overflow: "hidden",
             backgroundColor: tab === "timelog" ? "#D9F0FD" : "#FFFFFF",
-            "&:hover": {
-              border: "none",
-            },
-            "&:focus": {
-              border: "none",
-            },
           }}
         >
           <Select
@@ -196,7 +193,7 @@ const TimeTrackingPage: FC = () => {
               display: "flex",
               marginLeft: "-1px",
               fontSize: "16px",
-              fontFamily: "Inter",
+              fontFamily: "unset",
               fontWeight: "Regular",
               textAlign: "center",
               width: "179px",
@@ -204,10 +201,31 @@ const TimeTrackingPage: FC = () => {
               borderRadius: "100px",
               backgroundColor: timeBgColor,
               color: isDarkMode ? "#FFFFFF" : "#045EB8",
+              "& fieldset": {
+                border: "none",
+              },
             }}
           >
-            <MenuItem value={timeTabs[0].value}>{timeTabs[0].label}</MenuItem>
-            <MenuItem value={timeTabs[1].value}>{timeTabs[1].label}</MenuItem>
+            <MenuItem
+              sx={{
+                fontSize: "13px",
+                fontWeight: "Bold",
+                color: "neutral.700",
+              }}
+              value={timeTabs[0].value}
+            >
+              {timeTabs[0].label}
+            </MenuItem>
+            <MenuItem
+              sx={{
+                fontSize: "13px",
+                fontWeight: "Bold",
+                color: "neutral.700",
+              }}
+              value={timeTabs[1].value}
+            >
+              {timeTabs[1].label}
+            </MenuItem>
           </Select>
 
           <Typography
@@ -218,7 +236,7 @@ const TimeTrackingPage: FC = () => {
               alignItems: "center",
               justifyContent: "center",
               fontSize: "16px",
-              fontFamily: "Inter",
+              fontFamily: "unset",
               fontWeight: "Regular",
               color: isDarkMode ? "#FFFFFF" : "#333333",
               border: workBorder,
@@ -256,7 +274,8 @@ const TimeTrackingPage: FC = () => {
               width: "34px",
               height: "34px",
               borderRadius: "100px",
-              backgroundColor: "#FFFFFF",
+              backgroundColor: "transparent",
+              boxShadow: "none",
               "&:hover": {
                 border: "none",
                 backgroundColor: "#F2F5FA",
@@ -269,14 +288,12 @@ const TimeTrackingPage: FC = () => {
             }}
             onClick={handleListSheet}
           >
-            {
-              <TimeSheetIcon
-                sx={{
-                  width: "18px",
-                  height: "18px",
-                }}
-              />
-            }
+            <TimeSheetIcon
+              sx={{
+                width: "18px",
+                height: "18px",
+              }}
+            />
           </Fab>
 
           {tab === "companyTime" && (
@@ -285,7 +302,8 @@ const TimeTrackingPage: FC = () => {
                 width: "34px",
                 height: "34px",
                 borderRadius: "100px",
-                backgroundColor: "#FFFFFF",
+                backgroundColor: "#E9EBF3",
+                boxShadow: "none",
                 "&:hover": {
                   border: "none",
                   backgroundColor: "#F2F5FA",
@@ -300,20 +318,21 @@ const TimeTrackingPage: FC = () => {
             >
               <DayIcon
                 sx={{
-                  width: "18px",
-                  height: "18px",
+                  width: "16px",
+                  height: "16px",
+                  fill: "none",
                 }}
               />
             </Fab>
           )}
-
 
           <Fab
             sx={{
               width: "34px",
               height: "34px",
               borderRadius: "100px",
-              backgroundColor: "#FFFFFF",
+              backgroundColor: "#E9EBF3",
+              boxShadow: "none",
               "&:hover": {
                 border: "none",
                 backgroundColor: "#F2F5FA",
@@ -324,38 +343,42 @@ const TimeTrackingPage: FC = () => {
               },
               cursor: "pointer",
             }}
-            // onClick={showLogTimePopup}
             onClick={handleShowTimeGrid}
           >
-            {
-              <CalendarIcon
+            <CalendarIcon
+              sx={{
+                width: "18px",
+                height: "18px",
+              }}
+            />
+          </Fab>
+
+          <Button
+            startIcon={
+              <PlusIcon
                 sx={{
-                  width: "18px",
-                  height: "18px",
+                  width: "20px",
+                  height: "20px",
                 }}
               />
             }
-          </Fab>
-
-
-
-          <Button
-            // startIcon={<PlusIcon />}
             variant="contained"
             sx={{
-              width: "136px",
-              height: "46px",
+              width: "146px",
+              height: "48px",
               marginLeft: "14px",
               borderRadius: "100px",
               background: "linear-gradient(90deg, #2af598, #009efd)",
               "&:hover": {
                 background: "linear-gradient(90deg, #2af598, #009efd)",
               },
+              boxShadow: "none",
               color: "common.white",
               textTransform: "none",
               fontSize: "16px",
               fontWeight: "Bold",
               cursor: "pointer",
+              fontFamily: "unset",
             }}
             onClick={showLogTimePopup}
           >
@@ -373,7 +396,9 @@ const TimeTrackingPage: FC = () => {
         {/* </Stack> */}
         <TabPanel
           value="myTime"
-          sx={{ "& .MuiTabPanel-root": { paddingTop: "0px!important" } }}
+          sx={{
+            "& .MuiTabPanel-root": { paddingTop: "0px!important" },
+          }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
         >
           <MyTimeTrackingCalendar
@@ -385,7 +410,10 @@ const TimeTrackingPage: FC = () => {
         </TabPanel>
         <TabPanel
           value="companyTime"
-          sx={{ paddingTop: { sm: 0, md: "auto" } }}
+          sx={{
+            paddingTop: { sm: 0, md: "auto" },
+            height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
+          }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
         >
           <CompanyTimeTrackingCalendar
@@ -407,3 +435,5 @@ const TimeTrackingPage: FC = () => {
 };
 
 export default TimeTrackingPage;
+
+export const TIME_TRACKING_HEADER_HEIGHT = 72;

@@ -1,13 +1,14 @@
 "use client";
 
 import {
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography
+  Typography,
 } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { styled } from "@mui/material/styles";
@@ -50,11 +51,175 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+// Mock data TimeSheet
+const timeSheetMockData: Timesheet[] = [
+  {
+    _id: "1",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "2",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "3",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "4",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "5",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "6",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "7",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "8",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "9",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+  {
+    _id: "10",
+    created_time: "2022-01-01T00:00:00",
+    day: "2022-01-01",
+    duration: 8,
+    end_time: "2022-01-01T08:00:00",
+    fullname: "John Doe",
+    is_pin: false,
+    note: "Note 1",
+    project: {
+      avatar: "https://example.com/avatar1.jpg",
+      company: "1",
+      id: "1",
+      name: "Project 1",
+    },
+  },
+];
+
 const ListSheet: React.FC<IProps> = (props) => {
   const [timeSheetData, setTimeSheetData] = useState<Timesheet[]>([]);
 
   useEffect(() => {
-    //get all timesheet from company data api and then apply fullname property to each timesheet of the user 
+    //get all timesheet from company data api and then apply fullname property to each timesheet of the user
     if (props.data) {
       let allTimesheets = [];
 
@@ -73,19 +238,30 @@ const ListSheet: React.FC<IProps> = (props) => {
     }
   }, [props.data]);
   return (
-    <TableContainer>
-      <Table sx={{ minWidth: 400 }}>
-        <TableHead>
-          <TableRow
-            sx={{
+    <TableContainer sx={{ maxHeight: "100%" }}>
+      <Table stickyHeader aria-label="sticky table">
+        <TableHead
+          sx={{
+            "& th:first-of-type": {
+              borderTopLeftRadius: "12px",
+              borderBottomLeftRadius: "12px",
+            },
+            "& th:last-child": {
+              borderTopRightRadius: "12px",
+              borderBottomRightRadius: "12px",
+            },
+            "& > tr > th": {
               background: "#D9F0FD",
-            }}
-          >
+            },
+          }}
+        >
+          <TableRow>
             <StyledTableCell
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                fontFamily: "unset",
               }}
             >
               Date
@@ -95,6 +271,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                fontFamily: "unset",
               }}
             >
               Project name
@@ -104,6 +281,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                fontFamily: "unset",
               }}
             >
               Task name
@@ -113,6 +291,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                fontFamily: "unset",
               }}
             >
               User
@@ -122,6 +301,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                fontFamily: "unset",
               }}
             >
               Time
@@ -131,6 +311,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                 color: "#0575E6",
                 fontWeight: "600",
                 fontSize: "16px",
+                fontFamily: "unset",
               }}
             >
               Creation time
@@ -138,10 +319,22 @@ const ListSheet: React.FC<IProps> = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {timeSheetData.length > 0 ? (
-            timeSheetData.map((timesheet) => (
-              <StyledTableRow key={timesheet?._id}>
-                <StyledTableCell>
+          {timeSheetMockData.length > 0 ? (
+            timeSheetMockData.map((timesheet) => (
+              <StyledTableRow
+                sx={{
+                  "& td": {
+                    fontFamily: "unset",
+                  },
+                }}
+                key={timesheet?._id}
+              >
+                <StyledTableCell
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <Checkbox />
                   {timesheet?.day}
                 </StyledTableCell>
@@ -150,19 +343,52 @@ const ListSheet: React.FC<IProps> = (props) => {
                     color: "#0575E6",
                   }}
                 >
-                  {timesheet?.project?.name ? <Typography>{timesheet?.project?.name}</Typography> : <Typography sx={{color:"red"}}>Break time</Typography>}
+                  {timesheet?.project?.name ? (
+                    <Typography>{timesheet?.project?.name}</Typography>
+                  ) : (
+                    <Typography sx={{ color: "red" }}>Break time</Typography>
+                  )}
                 </StyledTableCell>
-                <StyledTableCell>{timesheet.note}</StyledTableCell>
-                <StyledTableCell>{timesheet.fullname}</StyledTableCell>
-                <StyledTableCell>{timesheet.duration} hrs</StyledTableCell>
-                <StyledTableCell>
+                <StyledTableCell
+                  sx={{
+                    fontSize: "16px",
+                  }}
+                >
+                  {timesheet.note}
+                </StyledTableCell>
+                <StyledTableCell
+                  sx={{
+                    fontSize: "16px",
+                  }}
+                >
+                  {timesheet.fullname}
+                </StyledTableCell>
+                <StyledTableCell
+                  sx={{
+                    fontSize: "16px",
+                  }}
+                >
+                  {timesheet.duration} hrs
+                </StyledTableCell>
+                <StyledTableCell
+                  sx={{
+                    fontSize: "16px",
+                  }}
+                >
                   {moment(timesheet.created_time).format("DD/MM/YYYY HH:MM")}
                 </StyledTableCell>
               </StyledTableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6}>No data found.</TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                }}
+                colSpan={6}
+              >
+                No data found.
+              </TableCell>
             </TableRow>
           )}
         </TableBody>
