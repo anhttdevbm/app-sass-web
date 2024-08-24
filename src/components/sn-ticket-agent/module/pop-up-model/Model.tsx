@@ -12,6 +12,9 @@ import { useSelector } from "react-redux";
 import CreateAgent from "../create-ticket-agent/create-agent";
 import useAgentAction from "queries/ticket-agent/useAgentAction/useTicketAction";
 import { useSnackbar } from "store/app/selectors";
+import { useQueryClient } from "react-query";
+import { selectSearchTicket } from "store/ticket/selectors";
+import { QUERY_AGENT_KEY } from "queries/ticket-agent/keys";
 
 type PropsModel = {
   open: boolean
@@ -30,8 +33,10 @@ export interface IFromAgent {
 
 const Model = (props: PropsModel) => {
   const t = useTranslations(NS_TICKET);
+  const queryClient = useQueryClient()
   const { handleClose, open, handleClickOpen, type } = props || null;
   const { createAgent } = useAgentAction()
+  const dataFilter = useSelector(selectSearchTicket);
   const { onAddSnackbar } = useSnackbar();
 
 
@@ -64,15 +69,32 @@ const Model = (props: PropsModel) => {
   }, []);
 
   const handleSubmit = (data: IFromAgent) => {
-    console.log("check data  res", { ...data, phone: Number(data?.phone) })
-    const payload = { ...data, phone: Number(data?.phone) }
+    const payload = { ...data, }
     createAgent.mutate(payload, {
       onSuccess: (data) => {
+        const params = {
+          assign: dataFilter?.assingn || "",
+          creator: "",
+          code: dataFilter?.keySearch || "",
+          stage: "",
+          type: dataFilter?.ticketType || "",
+          fromDate: "",
+          createTime: "",
+          toDate: "",
+          priority: dataFilter?.priority || "",
+          // page: page?.page,
+          // size: page?.totalItems,
+          // page: 1,
+          // size: 2,
+        };
+      
         // push(TICKET_PATH);
         onAddSnackbar("Create ticket success!", "success");
+        queryClient.invalidateQueries({queryKey:[QUERY_AGENT_KEY.LIST_AGENT, params]})
+        handleClose()
       },
-      onError: (err) => {
-        onAddSnackbar("Create ticket error!", "error");
+      onError: (err:any) => {
+        onAddSnackbar(err?.errorMessage ??  "Create ticket error!", "error");
       },
     });
   };

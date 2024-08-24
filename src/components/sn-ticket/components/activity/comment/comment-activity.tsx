@@ -1,6 +1,11 @@
 import styled from "@emotion/styled";
+import { Stack } from "@mui/material";
 import { client, Endpoint } from "api";
-import { IMAGES_ACCEPT } from "constant/index";
+import { Button } from "components/shared";
+import Editor from "components/sn-billing-detail/components/Comment/Editor";
+import { ACCEPT_MEDIA, IMAGES_ACCEPT, NS_COMMON } from "constant/index";
+import useToggle from "hooks/useToggle";
+import { useTranslations } from "next-intl";
 import React, {
   ChangeEvent,
   useCallback,
@@ -8,82 +13,97 @@ import React, {
   useRef,
   useState,
 } from "react";
-import ReactQuill, { ReactQuillProps } from "react-quill";
+import ReactQuill, { ReactQuillProps, UnprivilegedEditor } from "react-quill";
+import { useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI } from "utils/index";
 
-const TextEditor = styled(ReactQuill)<ReactQuillProps>(({}) => ({
-  width: "100%",
-  borderRadius: "12px",
-  border: "solid 1px #EFEFEF",
-  "& .ql-toolbar": {
-    borderTopLeftRadius: "12px",
-    borderTopRightRadius: "12px",
-  },
-  "& .ql-container": {
-    borderBottomLeftRadius: "12px",
-    borderBottomRightRadius: "12px",
-  },
-}));
-
+const VALUE_AS_EMPTY = "<p><br></p>";
 const CommentActivity = () => {
-  const [textData, setTextData] = useState("");
-  const quillRef = React.useRef<ReactQuill>(null);
-  const modules = {
-    toolbar: {
-      container: [
-        ["bold", "italic", "underline"],
-        [
-          { align: "" },
-          { align: "center" },
-          { align: "right" },
-          { align: "justify" },
-        ],
-        [{ list: "bullet" }, { list: "ordered" }],
-        [{ background: [] }, { color: [] }],
-        ["image", "link"], // Ensure 'image' is included here
-      ],
-      handlers: {
-        image: imageHandler,
-      },
-    },
+  const commonT = useTranslations(NS_COMMON);
+  // const billingT = useTranslations(NS_BILLING);
+  const { onAddSnackbar } = useSnackbar();
+  const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
+  const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
+  const editorRef = useRef<UnprivilegedEditor | undefined>();
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+
+  const [content, setContent] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileLoaded, setFileLoaded] = useState<string[]>([]);
+
+  const onChange = (value: string, delta, _, editor: UnprivilegedEditor) => {
+    const isEmpty = value === VALUE_AS_EMPTY;
+    setContent(isEmpty ? "" : value);
+    editorRef.current = editor;
   };
 
-  function imageHandler() {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    input.click();
+  const onChangeFiles = (files: File[], data: string[]) => {
+    setFiles(files);
+    setFileLoaded((files) => files.concat(data));
+  };
 
-    input.onchange = async () => {
-      const file = input.files ? input.files[0] : null;
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const quillEditor = quillRef.current?.getEditor(); // Access the Quill editor
-          const range = quillEditor?.getSelection(true);
-          quillEditor?.insertEmbed(
-            range?.index ?? 0,
-            "image",
-            e.target?.result,
-          );
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-  }
+  const disabled = useMemo(
+    () =>
+      isLoadingFile ||
+      ((!content?.trim()?.length ||
+        !editorRef.current?.getText()?.trim()?.length) &&
+        !files.length),
+    [content, files.length, isLoadingFile],
+  );
+
+  const onSubmit = async () => {
+    //   if (!taskListId || !taskId) return;
+
+    try {
+      onProcessingTrue();
+      
+      
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    } finally {
+      onProcessingFalse();
+    }
+  };
 
   return (
     <>
-      <TextEditor
-        ref={quillRef}
-        id={""}
-        theme="snow"
-        modules={modules}
-        placeholder="Add comment"
-        value={textData}
-        onChange={(value: string, delta: any, source: string) => {
-          setTextData(value);
-        }}
-      />
+      <Editor
+          hasAttachment
+          placeholder={""}
+          onChange={onChange}
+          onChangeNewsfiles={(localFiles) => {
+            if (localFiles) {
+              setNewFiles(localFiles);
+              return;
+            }
+            setNewFiles((files) => {
+              files.pop();
+              return files;
+            });
+          }}
+          newFiles={newFiles}
+          onChangeFiles={onChangeFiles}
+          value={content}
+          setIsProcessing={setIsLoadingFile}
+          accepts={ACCEPT_MEDIA}
+          files={files}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mt={2}
+          >
+            <Button
+              disabled={disabled}
+              onClick={onSubmit}
+              variant="primary"
+              size="small"
+            >
+              Save
+            </Button>
+          </Stack>
+        </Editor>
     </>
   );
 };
