@@ -450,9 +450,9 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                     padding: "0 10px",
                   }}
                 >
-                  {`${dayjs(filters?.start_date).format(
-                    "DD MMM YYYY",
-                  )} - ${dayjs(filters?.end_date).format("DD MMM YYYY")}`}
+                  {`${moment(filters?.start_date).format("MMMM D")} - ${dayjs(
+                    filters?.end_date,
+                  ).format("MMMM D")}`}
                 </Typography>
               </div>
               <Button
