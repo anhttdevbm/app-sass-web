@@ -24,9 +24,6 @@ export const createAgentApi = (data : PayloadCreate) => {
   console.log("check formData" , formData)
   return client.post(Endpoint.TICKET_AGENT, formData, {
     baseURL: TICKET_AGENT_API_URL,
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
   });
 };
 

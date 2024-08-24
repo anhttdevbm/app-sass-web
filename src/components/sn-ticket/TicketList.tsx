@@ -85,13 +85,13 @@ const TickketList = () => {
     {
       id: 4,
       icon: InProgressTicketIcon,
-      title: "In progress",
+      title: "InProgress",
       active: false,
     },
     {
       id: 5,
       icon: OnHoldTicketIcon,
-      title: "On hold",
+      title: "OnHold",
       active: false,
     },
     {
@@ -109,7 +109,7 @@ const TickketList = () => {
     {
       id: 8,
       icon: CanceledTicketIcon,
-      title: "Canceled",
+      title: "Cancelled",
       active: false,
     },
   ];

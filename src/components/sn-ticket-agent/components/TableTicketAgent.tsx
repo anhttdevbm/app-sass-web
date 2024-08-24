@@ -19,6 +19,7 @@ import { NS_TICKET } from "constant/index";
 import Model from "../module/pop-up-model/Model";
 import EssentialIcon from "icons/EssentialIcon";
 import Tooltip from './ToolTip';
+import ModelRemove from "../module/pop-up-model/ModelRemove";
 
 const upperCaseText = (string: string) => {
   return string.toUpperCase();
@@ -26,6 +27,8 @@ const upperCaseText = (string: string) => {
 const TableTicketAgent = (props: any) => {
   const t = useTranslations(NS_TICKET);
   const [openModel, setOpenModel] = useState(false);
+  const [openModelRemove, setOpenModelRemove] = useState(false);
+
   const [tooltipOpen, setTooltipOpen] = useState<number | null>(null);
   const [statusActions, setStatusActions] = useState(false)
 
@@ -42,6 +45,14 @@ const TableTicketAgent = (props: any) => {
 
   const handleCloseModel = () => {
     setOpenModel(false);
+  };
+
+  const handleClickOpenModelRemove = () => {
+    setOpenModelRemove(true);
+  };
+
+  const handleCloseModelRemove = () => {
+    setOpenModelRemove(false);
   };
   return (
 
@@ -152,7 +163,12 @@ const TableTicketAgent = (props: any) => {
                     <EssentialIcon onClick={() => { handleClickActions(index) }} />
                     {/* Hiển thị Tooltip nếu tooltipOpen là index hiện tại */}
                     {tooltipOpen == index &&
-                      <Tooltip openModelEdit={handleClickOpenModel} setStatusActions={()=>setStatusActions(prev => !prev)}  open={statusActions} />
+                      <Tooltip
+                        openModelEdit={handleClickOpenModel}
+                        openModelRemove = {handleClickOpenModelRemove}
+                        setStatusActions={() => setStatusActions(prev => !prev)}
+                        open={statusActions}
+                      />
                     }
                   </TableCell>
                 </TableRow>
@@ -167,6 +183,12 @@ const TableTicketAgent = (props: any) => {
         open={openModel}
         handleClickOpen={handleClickOpenModel}
         handleClose={handleCloseModel}
+      />
+
+      <ModelRemove
+        open={openModelRemove}
+        handleClickOpen={handleClickOpenModelRemove}
+        handleClose={handleCloseModelRemove}
       />
 
     </>
