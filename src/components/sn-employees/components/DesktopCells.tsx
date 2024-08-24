@@ -31,6 +31,8 @@ const DesktopCells = (props: DesktopCellsProps) => {
     MN: 'Manager',
     LE: 'Leader',
     ST: 'Staff',
+    CL: 'Client',
+    CT: 'Contractor',
   };
 
   const transformedRoles = item.roles.map((role: string) => roleMapping[role] || role);
