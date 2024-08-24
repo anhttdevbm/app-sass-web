@@ -15,12 +15,14 @@ import { useSnackbar } from "store/app/selectors";
 import { useQueryClient } from "react-query";
 import { selectSearchTicket } from "store/ticket/selectors";
 import { QUERY_AGENT_KEY } from "queries/ticket-agent/keys";
+import useAgentUpdate from "queries/ticket-agent/useUpdateAgent/useUpdateAgent";
 
 type PropsModel = {
   open: boolean
   handleClose: () => void;
-  handleClickOpen: () => void;
+  handleClickOpen: any;
   type: "edit" | "create";
+  data?: any
 }
 
 export interface IFromAgent {
@@ -29,13 +31,16 @@ export interface IFromAgent {
   email: string;
   phone: string;
   password: string;
+  id?: string
 }
 
 const Model = (props: PropsModel) => {
   const t = useTranslations(NS_TICKET);
   const queryClient = useQueryClient()
-  const { handleClose, open, handleClickOpen, type } = props || null;
-  const { createAgent } = useAgentAction()
+  const { handleClose, open, handleClickOpen, type, data } = props || null;
+  console.log("check data model", data)
+  const { createAgent } = useAgentAction();
+  const { updateAgent } = useAgentUpdate();
   const dataFilter = useSelector(selectSearchTicket);
   const { onAddSnackbar } = useSnackbar();
 
@@ -52,51 +57,56 @@ const Model = (props: PropsModel) => {
   useEffect(() => {
     if (type == "edit") {
       const dataDetail: IFromAgent = {
-        nameUser: "123",
-        username: "456",
-        email: "789",
-        phone: "03949349",
-        password: "aaaa",
+        id: data?.id,
+        nameUser: data?.fullname,
+        username: data?.username,
+        email: data?.email,
+        phone: data?.phone,
+        password: "",
       }
       console.log("check type", type)
       setFormAgent(dataDetail)
     }
 
-  }, [])
+  }, [data])
 
   const handleChange = useCallback((value: string, type: keyof IFromAgent) => {
     setFormAgent((prev) => ({ ...prev, [type]: value }));
   }, []);
 
   const handleSubmit = (data: IFromAgent) => {
-    const payload = { ...data, }
+    const payload = { ...data }
+    console.log("check payload update", payload)
+
+    if (type == "edit") {
+      updateAgent.mutate(payload, {
+        onSuccess: (data) => {
+
+          // push(TICKET_PATH);
+          onAddSnackbar("update ticket success!", "success");
+          queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, payload] })
+          handleClose()
+        },
+        onError: (err: any) => {
+          onAddSnackbar(err?.errorMessage ?? "update ticket error!", "error");
+        },
+      });
+      return
+    }
     createAgent.mutate(payload, {
       onSuccess: (data) => {
-        const params = {
-          assign: dataFilter?.assingn || "",
-          creator: "",
-          code: dataFilter?.keySearch || "",
-          stage: "",
-          type: dataFilter?.ticketType || "",
-          fromDate: "",
-          createTime: "",
-          toDate: "",
-          priority: dataFilter?.priority || "",
-          // page: page?.page,
-          // size: page?.totalItems,
-          // page: 1,
-          // size: 2,
-        };
-      
+
         // push(TICKET_PATH);
         onAddSnackbar("Create ticket success!", "success");
-        queryClient.invalidateQueries({queryKey:[QUERY_AGENT_KEY.LIST_AGENT, params]})
+        queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, payload] })
         handleClose()
       },
-      onError: (err:any) => {
-        onAddSnackbar(err?.errorMessage ??  "Create ticket error!", "error");
+      onError: (err: any) => {
+        onAddSnackbar(err?.errorMessage ?? "Create ticket error!", "error");
       },
     });
+
+ 
   };
 
 

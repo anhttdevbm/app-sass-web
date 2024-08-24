@@ -6,7 +6,6 @@ import { NS_TICKET } from "constant/index";
 import { useTranslations } from "next-intl";
 
 import { memo, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
 
 const colorPriority = (check: String) => {
   if (check == "Medium") return "#03AE00";

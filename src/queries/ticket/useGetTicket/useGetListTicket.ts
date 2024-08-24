@@ -1,11 +1,11 @@
 import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";
 import { getListTicketApi } from "../api";
 import { QUERY_TICKET_KEY } from "../keys";
+import { useAppSelector } from "store/hooks";
 
 const useGetListTicket = () => {
-  const data = useSelector(selectSearchTicket);
+  const data = useAppSelector(selectSearchTicket);
 
   console.log("check data stroe" , data)
 

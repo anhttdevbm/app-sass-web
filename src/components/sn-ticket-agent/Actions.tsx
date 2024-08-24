@@ -23,7 +23,7 @@ import { useDocs } from "store/docs/selectors";
 import NoneIcon from "icons/NoneIcon";
 import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
-import { useAppSelector } from "store/hooks";
+import { useAppDispatch, useAppSelector } from "store/hooks";
 import { useParams, useSearchParams } from "next/navigation";
 import IconButton from "@mui/material/IconButton";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
@@ -44,6 +44,8 @@ import {
 } from "store/ticket/selectors";
 import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
 import Model from "./module/pop-up-model/Model";
+import { setKeySearchTicketAgent } from "store/ticket-agent/actions";
+import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -58,7 +60,7 @@ function convertStringToArray(inputString) {
 const ChangeViewListDoc = () => {
   const [typeViewListDoc, setTypeViewListDoc] =
     useState<TypeViewListDoc>("basicViewListDoc");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleViewKanban = () => {
     dispatch(changeTypeViewDoc("kanbanViewListDoc"));
@@ -113,8 +115,8 @@ type ActionProps = {
 };
 
 const Actions = ({ isProjectTabMode }: ActionProps) => {
-  const data = useSelector(selectSearchTicket);
-  const dispatch = useDispatch();
+  const data = useSelector(selectSearchTicketAgent);
+  const dispatch = useAppDispatch();
   const t = useTranslations(NS_TICKET);
   const pathname = usePathname();
   const { push } = useRouter();
@@ -126,6 +128,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
     // onSearch();
   };
+
   const { id } = useParams();
 
   const onSearch = () => {
@@ -137,12 +140,11 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
 
     const payload = {
       ...data,
-      keySearch: newQueries?.search_key,
-      priority: newQueries?.priority?.id == 0 ? "" : newQueries?.priority?.priority,
-      assingn: newQueries?.assingn?.id,
-      ticketType: newQueries?.typeTicket?.id == 0 ? "" : newQueries?.typeTicket?.typeTicket,
+      keyword: newQueries?.search_key,
+      status: newQueries?.status?.id == 0 ? "" : newQueries?.status?.status,
+      position: newQueries?.position?.id == 0 ? "" : newQueries?.position?.position,
     };
-    dispatch(setKeySearchTicket(payload));
+    dispatch(setKeySearchTicketAgent(payload));
   };
 
   useEffect(() => {

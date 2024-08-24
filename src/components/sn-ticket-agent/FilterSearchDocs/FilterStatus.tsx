@@ -21,7 +21,7 @@ import ChevronIcon from "icons/ChevronIcon";
 
 const FilterStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
     const t = useTranslations(NS_TICKET);
-    const ignoreItems = ["All", "Service Request", "Problem", "Question", "Others"];
+    const ignoreItems = ["All", "Online", "Problem", "OnLeave", "Break"];
     const [name, setName] = useState("All")
     const [anchorEl, setAnchorEl] = useState<any>(null);
     const handleClose = () => {
@@ -30,10 +30,10 @@ const FilterStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
     const removeAllWhitespace = (str) => {
         return str.replace(/\s+/g, '');
     };
-    const onChangeMembers = (id: string, typeTicket: string) => {
-        setName(typeTicket)
-        const newData = { id, typeTicket: removeAllWhitespace(typeTicket) };
-        onChange("typeTicket", newData);
+    const onChangeMembers = (id: string, status: string) => {
+        setName(status)
+        const newData = { id, status: removeAllWhitespace(status) };
+        onChange("status", newData);
     };
 
 

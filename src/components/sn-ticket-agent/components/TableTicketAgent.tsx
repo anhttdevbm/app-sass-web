@@ -31,6 +31,7 @@ const TableTicketAgent = (props: any) => {
 
   const [tooltipOpen, setTooltipOpen] = useState<number | null>(null);
   const [statusActions, setStatusActions] = useState(false)
+  const [dataDetail , setDataDeatil] = useState(null)
 
   const handleClickActions = (index) => {
     setTooltipOpen(index);
@@ -39,7 +40,9 @@ const TableTicketAgent = (props: any) => {
 
   const { data } = props;
 
-  const handleClickOpenModel = () => {
+  const handleClickOpenModel = (data) => {
+    console.log("check data click" , data)
+    setDataDeatil(data)
     setOpenModel(true);
   };
 
@@ -47,13 +50,33 @@ const TableTicketAgent = (props: any) => {
     setOpenModel(false);
   };
 
-  const handleClickOpenModelRemove = () => {
+  const handleClickOpenModelRemove = (data) => {
+    setDataDeatil(data)
     setOpenModelRemove(true);
   };
 
   const handleCloseModelRemove = () => {
     setOpenModelRemove(false);
   };
+
+  const bgStage = (check: String) => {
+    if (check == "New") return "#FF2C56";
+    if (check == "In-progress") return "#03AE00";
+    if (check == "Resolved") return "#E605DD";
+    if (check == "Closed") return "#697469";
+  };
+  const colorPriority = (check: String) => {
+    if (check == "Medium") return "#03AE00";
+    if (check == "Low") return "#0575E6";
+    if (check == "High") return "#FF2C56";
+  };
+  const bgPriority = (check: String) => {
+    if (check == "Medium") return "#DDFFDC";
+    if (check == "Low") return "#D9F0FD";
+    if (check == "High") return "#FFEEF1";
+  };
+
+  console.log("check data truyen" , dataDetail)
   return (
 
     <>
@@ -95,77 +118,44 @@ const TableTicketAgent = (props: any) => {
           </TableHead>
           <TableBody>
             {data?.map((row, index) => {
-              const bgStage = (check: String) => {
-                if (check == "New") return "#FF2C56";
-                if (check == "In-progress") return "#03AE00";
-                if (check == "Resolved") return "#E605DD";
-                if (check == "Closed") return "#697469";
-              };
-              const colorPriority = (check: String) => {
-                if (check == "Medium") return "#03AE00";
-                if (check == "Low") return "#0575E6";
-                if (check == "High") return "#FF2C56";
-              };
-              const bgPriority = (check: String) => {
-                if (check == "Medium") return "#DDFFDC";
-                if (check == "Low") return "#D9F0FD";
-                if (check == "High") return "#FFEEF1";
-              };
+
 
               return (
                 <TableRow key={row.id}>
                   <TableCell sx={{ border: "none", color: "#0575E6" }}>
                     {row?.code}
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      border: "none",
-                      color: bgStage(row?.stage),
-                      fontWeight: "700",
-                    }}
-                  >
-                    {row?.stage}
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>{row?.title}</TableCell>
-                  <TableCell sx={{ border: "none" }}>{row?.type}</TableCell>
                   <TableCell sx={{ border: "none" }}>
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
-                      sx={{
-                        borderRadius: "100px",
-                        backgroundColor: bgPriority(row?.priority),
-                        height: 30,
-                      }}
-                    >
-                      <Text
-                        sx={{
-                          fontSize: 12,
-                          color: colorPriority(row?.priority),
-                          fontWeight: 700,
-                        }}
-                      >
-                        {row?.priority}
-                      </Text>
-                    </Box>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}></TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    {row?.creatorUser?.fullname}
+                    {row?.detail?.fullname}
                   </TableCell>
                   <TableCell sx={{ border: "none" }}>
-                    {row?.createTime?.slice(0, 10)}{" "}
-                    {row?.createTime?.slice(11, 16)}{" "}
+                    {row?.detail?.email}
                   </TableCell>
+                  <TableCell sx={{ border: "none" }}>
+                    {row?.detail?.phone}
+                  </TableCell>
+                  <TableCell sx={{ border: "none" }}>
+                    {row?.roleTicket[0]}
+                  </TableCell>
+                  <TableCell sx={{ border: "none" }}>
+                    {row?.detail?.status}
+                  </TableCell>
+                  <TableCell sx={{ border: "none" }}>
+                    {row?.numTicketAssign}
+                  </TableCell>
+                  <TableCell sx={{ border: "none" }}>
+                  {row?.createDate?.slice(0, 10)}{" "}
+                  {row?.createDate?.slice(11, 16)}{" "}
+                </TableCell>
+
                   <TableCell sx={{ position: 'relative', border: 'none' }}>
 
                     <EssentialIcon onClick={() => { handleClickActions(index) }} />
                     {/* Hiển thị Tooltip nếu tooltipOpen là index hiện tại */}
                     {tooltipOpen == index &&
                       <Tooltip
-                        openModelEdit={handleClickOpenModel}
-                        openModelRemove = {handleClickOpenModelRemove}
+                        openModelEdit={() => handleClickOpenModel(row?.detail)}
+                        openModelRemove = {() => handleClickOpenModelRemove(row?.detail)}
                         setStatusActions={() => setStatusActions(prev => !prev)}
                         open={statusActions}
                       />
@@ -183,12 +173,14 @@ const TableTicketAgent = (props: any) => {
         open={openModel}
         handleClickOpen={handleClickOpenModel}
         handleClose={handleCloseModel}
+        data = {dataDetail}
       />
 
       <ModelRemove
         open={openModelRemove}
         handleClickOpen={handleClickOpenModelRemove}
         handleClose={handleCloseModelRemove}
+        data = {dataDetail}
       />
 
     </>

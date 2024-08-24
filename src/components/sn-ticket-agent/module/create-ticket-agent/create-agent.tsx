@@ -12,18 +12,18 @@ import { TICKET_PATH } from "constant/paths";
 import { IFromAgent } from "../pop-up-model/Model";
 
 interface PropsFormAgent {
-  formAgent : IFromAgent
+  formAgent: IFromAgent
   handleChange?: any
-  type : "edit" | "create";
+  type: "edit" | "create";
 
 }
 
 
-const CreateAgent = (props : PropsFormAgent) => {
+const CreateAgent = (props: PropsFormAgent) => {
   const { createTicket } = useTicketAction();
   const { onAddSnackbar } = useSnackbar();
   const { push, back } = useRouter();
-  const {formAgent , handleChange , type} = props || null
+  const { formAgent, handleChange, type } = props || null
 
 
 
@@ -39,7 +39,7 @@ const CreateAgent = (props : PropsFormAgent) => {
             sx={{ fontSize: "20px", fontWeight: "600", paddingBottom: "20px" }}
           >
             {type == "create" ? "Create New Agent" : "Edit Agent"}
-            
+
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={6}>
@@ -59,6 +59,7 @@ const CreateAgent = (props : PropsFormAgent) => {
               <LabelFormCustom title="User name" required />
               <Input
                 fullWidth
+                disabled={type == "edit" ? true : false}
                 rootSx={{ borderRadius: "30px" }}
                 size="medium"
                 placeholder="Type user name"
@@ -99,6 +100,7 @@ const CreateAgent = (props : PropsFormAgent) => {
               <LabelFormCustom title="Password" required />
               <Input
                 fullWidth
+                disabled={type == "edit" ? true : false}
                 rootSx={{ borderRadius: "30px" }}
                 size="medium"
                 type="password"
@@ -109,43 +111,7 @@ const CreateAgent = (props : PropsFormAgent) => {
                 }}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <FileUpload
-                files={formTicket.files}
-                setFiles={(files) =>
-                  setFormTicket((prev) => ({ ...prev, files }))
-                }
-              />
-            </Grid> */}
           </Grid>
-          {/* <Stack
-            width={"100%"}
-            justifyContent={"flex-end"}
-            alignItems={"center"}
-            flexDirection={"row"}
-            marginTop={"20px"}
-          >
-            <Button
-              onClick={() => {
-                handleSubmit(formTicket);
-              }}
-              size="small"
-              variant="primary"
-              sx={{
-                height: 40,
-                width: "fit-content",
-                borderRadius: 100,
-                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                marginRight: "100px",
-                "&:hover": {
-                  background:
-                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                },
-              }}
-            >
-              Create
-            </Button>
-          </Stack> */}
         </Box>
       </Stack>
     </>

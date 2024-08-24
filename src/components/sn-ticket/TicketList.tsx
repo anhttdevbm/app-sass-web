@@ -13,12 +13,11 @@ import SendAllTicketIcon from "icons/SendAllTicketIcon";
 import { usePathname, useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo, useState } from "react";
 import CardTicket from "./components/CardTicket";
-import { useAppSelector } from "store/hooks";
+import { useAppDispatch, useAppSelector } from "store/hooks";
 import Pagination from "components/Pagination";
 import TableTicket from "./components/TableTicket";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
-import { useDispatch } from "react-redux";
 import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
 import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";
@@ -50,7 +49,7 @@ interface Ticket {
 }
 
 const TickketList = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { data: listTicket } = useGetListTicket();
   const dataFilter = useSelector(selectSearchTicket)
 
@@ -143,7 +142,6 @@ const TickketList = () => {
     const payload = {
       ...dataFilter,
       page: newPage,
-      totalItems: 4,
     };
     dispatch(setKeySearchTicket(payload));
   };

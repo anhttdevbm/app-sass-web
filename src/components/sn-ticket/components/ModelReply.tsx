@@ -1,22 +1,11 @@
 "use client";
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from "@mui/material";
 import { Button, Text } from "components/shared";
-import Tag from "components/sn-ticket/components/custom-tag";
-import DescriptionDetail from "components/sn-ticket/components/DescriptionDetail";
 import EditorGroup from "components/sn-ticket/components/EditorGroup";
-import Wrapper from "components/Wrapper";
 import { NS_TICKET } from "constant/index";
-import { TICKET_PATH } from "constant/paths";
-import AddSquareIcon from "icons/AddSquareIcon";
-import ArrowDownIcon from "icons/ArrowDownIcon";
 import CloseIcon from "icons/CloseIcon";
-import PlusIcon from "icons/PlusIcon";
-import ReplyIcon from "icons/ReplyIcon";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next-intl/client";
 import { memo, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 
 type PropsModelReply = {
   open: boolean
