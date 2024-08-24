@@ -18,10 +18,10 @@ import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as yup from "yup";
 import DefaultPopupLayout from "./DefaultPopupLayout";
-import MobileDatePickerComponent from "../Component/MobileDatePicker";
-import NumberInput from "../Component/NumberInput";
-import Textarea from "../Component/Textarea";
-import TimePicker from "../Component/TimePicker";
+import MobileDatePickerComponent from "../components/MobileDatePicker";
+import NumberInput from "../components/NumberInput";
+import Textarea from "../components/Textarea";
+import TimePicker from "../components/TimePicker";
 import { Label } from "@mui/icons-material";
 
 interface IProps {
@@ -481,12 +481,7 @@ const TimeCreate: React.FC<IProps> = ({
             <Controller
               name="note"
               control={control}
-              render={({ field }) => (
-                <Textarea
-                  sx={{ flex: 1 }}
-                  {...field}
-                />
-              )}
+              render={({ field }) => <Textarea sx={{ flex: 1 }} {...field} />}
             />
           </div>
         </Stack>

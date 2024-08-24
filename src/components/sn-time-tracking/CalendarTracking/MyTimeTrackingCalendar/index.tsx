@@ -46,7 +46,6 @@ import CustomizedInputBase from "components/shared/InputSeasrch";
 import { NS_COMMON, NS_TIME_TRACKING } from "constant/index";
 import useTheme from "hooks/useTheme";
 import CalendarIcon from "icons/CalendarIcon";
-import DayIcon from "icons/DayIcon";
 import PlusIcon from "icons/PlusIcon";
 import moment from "moment";
 import { useTranslations } from "next-intl";
@@ -60,7 +59,8 @@ import useBreakpoint from "hooks/useBreakpoint";
 import DuplicateIcon from "icons/DuplicateIcon";
 import { getSameWorker } from "store/timeTracking/actions";
 import ListSheet from "./ListSheet";
-import FilterCategory from "components/sn-time-tracking/Component/FilterCategory";
+import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
+import DayIcon from "icons/DayIcon";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />

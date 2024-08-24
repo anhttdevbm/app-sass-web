@@ -18,7 +18,7 @@ import TextFieldSelect, {
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
+import Textarea from "components/sn-time-tracking/components/Textarea";
 import TextStatus from "components/TextStatus";
 import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";

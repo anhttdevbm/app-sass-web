@@ -7,7 +7,14 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <Wrapper overflow="auto">
+    <Wrapper
+      overflow="hidden"
+      sx={{
+        "& > div:nth-child(2)": {
+          height: "calc(100% - 16px)",
+        },
+      }}
+    >
       <TimeTrackingPage />
     </Wrapper>
   );

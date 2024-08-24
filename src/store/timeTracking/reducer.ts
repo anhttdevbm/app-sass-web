@@ -31,8 +31,15 @@ import { Position } from "store/company/reducer";
 import { subDays } from "date-fns";
 import dayjs from "dayjs";
 
+export interface Project {
+  id: string;
+  name: string;
+  company: string;
+  avatar: string | null; // Example assumes avatar is a string URL or null
+}
+
 export interface MyTimeSheet {
-  project?: any;
+  project?: Project;
   created_time?: string;
   day?: string;
   duration?: number;
@@ -77,6 +84,7 @@ export interface CompanyTimeSheet {
   email: string;
   position: string;
   timesheet: MyTimeSheet[];
+  is_pin?: string;
 }
 export interface ISameWorker {
   id?: string;
@@ -263,5 +271,6 @@ const userNavigationDetail = createSlice({
 
 export const { reset } = timeTrackingSlice.actions;
 
-export const { setUserName, setAvatar, setIsOpen } = userNavigationDetail.actions;
+export const { setUserName, setAvatar, setIsOpen } =
+  userNavigationDetail.actions;
 export default timeTrackingSlice.reducer;
