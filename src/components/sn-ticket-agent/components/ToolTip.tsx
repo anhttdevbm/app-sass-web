@@ -7,6 +7,7 @@ type PopsToptip = {
     open: boolean
     openModelEdit: () => void
     setStatusActions: () => void
+    openModelRemove: () => void
 }
 
 
@@ -23,9 +24,14 @@ const TooltipPaper = styled(Paper)(({ theme }) => ({
 
 
 const Tooltip = (props: PopsToptip) => {
-    const { open, openModelEdit, setStatusActions } = props || null
+    const { open, openModelEdit, setStatusActions, openModelRemove } = props || null
     const handleClickEdit = () => {
         openModelEdit()
+        setStatusActions()
+
+    }
+    const handleClickRemove = () => {
+        openModelRemove()
         setStatusActions()
 
     }
@@ -54,6 +60,7 @@ const Tooltip = (props: PopsToptip) => {
                 Edit
             </Typography>
             <Typography
+                onClick={handleClickRemove}
                 sx={{
                     cursor: 'pointer',
                     display: "flex",
