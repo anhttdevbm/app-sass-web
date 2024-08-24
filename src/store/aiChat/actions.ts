@@ -59,7 +59,7 @@ export const editChatSession = createAsyncThunk(
   async ({ id, ...data }: Partial<ChatSessionData> & { id: string }) => {
     try {
       const response = await client.put(
-        `${Endpoint.AI_CHAT_SESSION}/${id}/`,
+        `${Endpoint.AI_CHAT}/${id}`,
         data,
         {
           baseURL: AI_CHAT_API_URL,
@@ -80,7 +80,7 @@ export const deleteChatSession = createAsyncThunk(
   async (id: string) => {
     try {
       const response = await client.delete(
-        `${Endpoint.AI_CHAT_SESSION}/${id}/`,
+        `${Endpoint.AI_CHAT}/${id}`,
         {
           baseURL: AI_CHAT_API_URL,
         },
@@ -136,7 +136,7 @@ export const chatWithAI = createAsyncThunk(
         },
       });
 
-      if (response?.status === HttpStatusCode.CREATED) {
+      if (response?.status === HttpStatusCode.CREATED) {        
         return response.data;
       }
       throw AN_ERROR_TRY_AGAIN;
@@ -211,7 +211,7 @@ export const deleteAllChatSessions = createAsyncThunk(
   "aiChat/deleteAllChatSessions",
   async () => {
     try {
-      const response = await client.delete(Endpoint.AI_CHAT_DELETE_SESSION, {
+      const response = await client.delete(Endpoint.AI_CHAT_DELETE_ALL_SESSION, {
         baseURL: AI_CHAT_API_URL,
       });
       if (response?.status === 204) {
