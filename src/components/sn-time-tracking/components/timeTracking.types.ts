@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+export const TIME_TRACKING_HEADER_HEIGHT = 72;
+
 export interface IFormattedDate {
   day: string;
   date: string;

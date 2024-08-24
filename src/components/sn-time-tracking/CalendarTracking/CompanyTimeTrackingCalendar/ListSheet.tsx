@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -15,6 +14,7 @@ import { styled } from "@mui/material/styles";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import "../CompanyTimeTrackingCalendar/style.css";
+import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
 
 interface Timesheet {
   created_time: string;
@@ -171,8 +171,15 @@ const ListSheet: React.FC<IProps> = (props) => {
                     alignItems: "center",
                   }}
                 >
-                  <Checkbox />
-                  {timesheet?.day}
+                  <Checkbox
+                    sx={{
+                      color: "#DFE1E6",
+                      "& > svg > path": {
+                        clipPath: "inset(0 round 4px)", // Apply border radius to the SVG
+                      },
+                    }}
+                  />
+                  {moment(timesheet?.day).format("DD/MM/YYYY")}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
@@ -204,7 +211,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                     fontSize: "16px",
                   }}
                 >
-                  {timesheet.duration} hrs
+                  {formatHoursToHHMM(timesheet.duration)}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
@@ -217,12 +224,7 @@ const ListSheet: React.FC<IProps> = (props) => {
             ))
           ) : (
             <TableRow>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                }}
-                colSpan={6}
-              >
+              <TableCell align="center" colSpan={6}>
                 No data found.
               </TableCell>
             </TableRow>
