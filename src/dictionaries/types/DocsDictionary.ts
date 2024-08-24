@@ -5,6 +5,8 @@ export type DocsDictionary = {
     add: string;
     comment: string;
     cancel: string;
+    search: string;
+    confirm: string;
   };
   filter: {
     all: string;
@@ -27,4 +29,54 @@ export type DocsDictionary = {
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createDoc: any;
+  extendBtn: {
+    rename: string;
+    move: string;
+    duplicate: string;
+    delete: string;
+  };
+  ownedBy: string;
+  createdBy: string;
+  changeDocAccess: string;
+  errorInputRename: string;
+  deleteConfirmDoc: string;
+  treeItemDialogEditTitle: string;
+  newTreeItemDialogLabel: string;
+  treeName: string;
+  addNewTreeItemChildTitle: string;
+  addDropdown: {
+    aiGenerator: string;
+    newDocument: string;
+    import: string;
+  };
+  import: {
+    formTitle: string;
+    formSubTitle: string;
+    formDivider: string;
+    summarizeDoc: string;
+    convertSheet: string;
+    createDoc: string;
+    dialog: {
+      subtitle: string;
+      dragdrop: {
+        caption: string;
+      };
+    };
+    thirdparty: {
+      captionStart: string;
+      captionEnd: string;
+      optionBtn: string;
+      done: string;
+      errorNoti: string;
+      authBtn: string;
+      successMess: string;
+      trello: {
+        importFrom: string;
+        caption: string;
+        importSuccess: string;
+        selectAll: string;
+      };
+    };
+    invalidFileExt: string;
+  };
 };

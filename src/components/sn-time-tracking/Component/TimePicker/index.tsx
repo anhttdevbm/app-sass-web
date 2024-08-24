@@ -173,7 +173,7 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                 "& button": {
                   position: 'absolute',
                   right: '2px',
-                  bottom: '-1px',
+                  // bottom: '-1px',
                 }
               }}
               value={selectedDate}

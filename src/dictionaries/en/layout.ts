@@ -44,11 +44,11 @@ export const LayoutLang: LayoutDictionary = {
     feedback: "Feedback",
     feedbackList: "Feedback List",
     //blog,category
-    blog:"Blogs",
-    blogList:"Blog List",
-    blogCategoryList :"Category List",
+    blog: "Blogs",
+    blogList: "Blog List",
+    blogCategoryList: "Category List",
     //carrer
-    career:"Career",
+    career: "Career",
     careerList: "Career List",
     billing: "Billing",
     contents: "Contents",
@@ -58,5 +58,6 @@ export const LayoutLang: LayoutDictionary = {
     landingTrustCenter: "Trust Center",
     landingAI: "AI",
     landingPricing: "Pricing",
+    invoice: "Invoice",
   },
 };

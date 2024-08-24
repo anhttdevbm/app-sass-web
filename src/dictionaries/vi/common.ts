@@ -66,6 +66,7 @@ export const CommonLang: CommonDictionary = {
   fullName: "Họ tên",
   phone: "Số điện thoại",
   address: "Địa chỉ",
+  roles: "Quyền hạn",
   status: "Trạng thái",
   filter: {
     refresh: "Làm mới dữ liệu",
@@ -134,5 +135,7 @@ export const CommonLang: CommonDictionary = {
     homePage: "Trang chủ",
     aboutUs: "Về chúng tôi",
     helpCenter: "Trung tâm trợ giúp",
-  }
+  },
+  actions: "Hành động",
+  learnMore: "Xem thêm",
 };

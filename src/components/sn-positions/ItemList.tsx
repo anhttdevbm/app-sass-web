@@ -1,24 +1,24 @@
 "use client";
 
-import { memo, useEffect, useMemo, useState } from "react";
 import { TableRow } from "@mui/material";
-import { TableLayout, CellProps, ActionsCell } from "components/Table";
-import useQueryParams from "hooks/useQueryParams";
-import { usePathname, useRouter } from "next-intl/client";
-import useBreakpoint from "hooks/useBreakpoint";
+import FixedLayout from "components/FixedLayout";
+import Pagination from "components/Pagination";
+import { ActionsCell, CellProps, TableLayout } from "components/Table";
 import { DataAction } from "constant/enums";
-import MobileContentCell from "./MobileContentCell";
-import DesktopCells from "./DesktopCells";
+import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useQueryParams from "hooks/useQueryParams";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next-intl/client";
+import { memo, useEffect, useMemo, useState } from "react";
+import { useAuth } from "store/app/selectors";
+import { PositionData } from "store/company/actions";
 import { Position } from "store/company/reducer";
 import { usePositions } from "store/company/selectors";
-import { PositionData } from "store/company/actions";
-import Form from "./Form";
 import { getDataFromKeys, getPath } from "utils/index";
-import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
-import Pagination from "components/Pagination";
-import { useTranslations } from "next-intl";
-import { useAuth } from "store/app/selectors";
-import FixedLayout from "components/FixedLayout";
+import DesktopCells from "./DesktopCells";
+import Form from "./Form";
+import MobileContentCell from "./MobileContentCell";
 
 const ItemList = () => {
   const {
@@ -155,8 +155,20 @@ const ItemList = () => {
           error={error as string}
           noData={!isIdle && items.length === 0}
           px={{ xs: 0, md: 3 }}
+          // headerProps={{
+          //   sx: { px: { xs: 0.5, md: 2 }, wordBreak: "break-all" },
+          // }}
           headerProps={{
-            sx: { px: { xs: 0.5, md: 2 }, wordBreak: "break-all" },
+            sx: {
+              // px: { xs: 2, md: 2 },
+              overflow: "auto",
+              py: "2px",
+              height:"50px",
+              verticalAlign: "middle",
+              background: "#D9F0FD",
+              color: "#999999",
+              h6:{fontSize:"13px"}
+            },
           }}
         >
           {items.map((item, index) => {
@@ -186,6 +198,27 @@ const ItemList = () => {
         </TableLayout>
 
         <Pagination
+          sx={{
+            ".MuiPaginationItem-page.Mui-selected": {
+              background: "#14B9E5!important",
+              borderColor: "transparent",
+              color: "white",
+              borderRadius: "12px",
+            },
+            ".MuiPaginationItem-previousNext": {
+              background: "#D9F0FD!important",
+              borderColor: "transparent",
+              color: "black",
+              borderRadius: "12px",
+            },
+            ".MuiPaginationItem-page": {
+              background: "#D9F0FD!important",
+              borderColor: "transparent",
+              color: "black",
+              borderRadius: "12px",
+            },
+            
+          }}
           totalItems={totalItems}
           totalPages={totalPages}
           page={pageIndex}

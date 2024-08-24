@@ -23,6 +23,11 @@ import MobileContentCell from "./MobileContentCell";
 import { useGetDocsQuery } from "store/docs/api";
 import Avatar from "components/Avatar";
 import { MenuButton } from "@mui/base";
+import KanbanViewDocList from "./KanbanViewDocList";
+import { useAppSelector } from "store/hooks";
+import { Data } from "emoji-mart";
+import { Text } from "components/shared";
+import BasicViewDocList from "./BasicViewDocList";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -36,7 +41,7 @@ export declare type TItemListParams = {
 
 const ItemList = ({ isGrouped }: TItemListParams) => {
   const { push } = useRouter();
-
+  const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
   const { isMdSmaller } = useBreakpoint();
   const pathname = usePathname();
   const { query } = useQueryParams();
@@ -53,14 +58,16 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
         align: "left",
       },
       {
-        value: "Created at",
-        width: "23.333%",
+        value: "Creator",
+        width: "25%",
+        align: "left",
       },
       {
         value: "Last edited",
-        width: "23.333%",
+        width: "25%",
+        align: "left",
       },
-      { value: "Creator", width: "23.333%" },
+      { value: "", width: "20%" },
     ],
     [],
   );
@@ -72,11 +79,11 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
         align: "left",
       },
       {
-        value: "Created at",
+        value: "Creator",
         width: "23.333%",
       },
       { value: "Last edited", width: "23.333%" },
-      { value: "Creator", width: "30%" },
+      { value: "", width: "30%" },
     ],
     [],
   );
@@ -146,57 +153,83 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
   return (
     <>
       <FixedLayout>
-        <TableLayout
-          headerList={headerList}
-          pending={isLoading}
-          noData={data?.totalDocs === 0}
-          px={{ xs: 0, md: 3 }}
-          headerProps={{
-            sx: { px: { xs: 0.5, md: 2 } },
-          }}
-        >
-          {query?.group_by == DocGroupByEnum.CREATED_BY &&
-            Array.isArray(data?.docs) &&
-            data?.docs.map((item) => {
-              return (
-                <RowGroup
-                  key={item?._id}
-                  title={item.groupInfo?.fullname || "Unknown"}
-                  items={item.docs}
-                />
-              );
-            })}
-          {query?.group_by === DocGroupByEnum.PROJECT_ID &&
-            Array.isArray(data?.docs) &&
-            data?.docs.map((item) => {
-              return (
-                <RowGroup
-                  isGrouped={isGrouped}
-                  key={item?._id}
-                  title={
-                    item.groupInfo ? (
-                      <>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Avatar
-                            size={32}
-                            alt={item.groupInfo.name}
-                            src={item.groupInfo.avatar.link}
-                            style={{ marginRight: "8px" }}
-                          />
-                          {`${item.groupInfo.name} #${
-                            item.groupInfo?.number || 0
-                          }`}
-                        </Stack>
-                      </>
-                    ) : (
-                      "No project"
-                    )
-                  }
-                  items={item.docs}
-                />
-              );
-            })}
-        </TableLayout>
+        {typeViewDocStore === "basicViewListDoc" ? (
+          !isGrouped ? (
+            <BasicViewDocList data={data?.docs} />
+          ) : (
+            <TableLayout
+              headerList={headerList}
+              pending={isLoading}
+              noData={data?.totalDocs === 0}
+              px={{ xs: 0, md: 3 }}
+              headerProps={{
+                sx: { px: { xs: 0.5, md: 2 } },
+              }}
+              containerHeaderProps={{
+                visibility: "hidden",
+                mt: -4,
+                zIndex: 0,
+              }}
+            >
+              {query?.group_by == DocGroupByEnum.CREATED_BY &&
+                Array.isArray(data?.docs) &&
+                data?.docs.map((item) => {
+                  return (
+                    <RowGroup
+                      key={item?._id}
+                      title={item.groupInfo?.fullname || "Unknown"}
+                      items={item.docs}
+                    />
+                  );
+                })}
+              {query?.group_by === DocGroupByEnum.PROJECT_ID &&
+                Array.isArray(data?.docs) &&
+                data?.docs.map((item) => {
+                  return (
+                    <RowGroup
+                      isGrouped={isGrouped}
+                      key={item?._id}
+                      title={
+                        item.groupInfo ? (
+                          <>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={1}
+                            >
+                              <Avatar
+                                size={32}
+                                alt={item.groupInfo.name}
+                                src={item.groupInfo.avatar.link}
+                                style={{ marginRight: "8px" }}
+                              />
+                              {`${item.groupInfo.name} #${
+                                item.groupInfo?.number || 0
+                              }`}
+                            </Stack>
+                          </>
+                        ) : (
+                          "No project"
+                        )
+                      }
+                      items={item.docs}
+                    />
+                  );
+                })}
+            </TableLayout>
+          )
+        ) : (
+          <KanbanViewDocList listData={data?.docs} />
+        )}
+        <Pagination
+          totalItems={data?.totalDocs}
+          totalPages={data?.totalPages}
+          page={data?.page}
+          pageSize={+query.size}
+          containerProps={{ px: { md: 3 }, py: 1 }}
+          onChangePage={onChangePage}
+          onChangeSize={onChangeSize}
+        />
       </FixedLayout>
     </>
   );

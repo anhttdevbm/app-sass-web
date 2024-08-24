@@ -103,6 +103,8 @@ export interface Project {
   number?: string;
   avatar?: {
     link?: string;
+    name?: string;
+    object?: string;
   };
 }
 
@@ -152,6 +154,7 @@ export type TaskList = {
   id: string;
   name: string;
   tasks: Task[];
+  order: number;
 };
 
 export interface Comment {

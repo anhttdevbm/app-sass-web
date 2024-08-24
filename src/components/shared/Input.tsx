@@ -30,6 +30,7 @@ type CoreInputProps = Omit<TextFieldProps, "error" | "title"> & {
   onChangeValue?: (newValue?: string | number) => void;
   titleSx?: SxProps;
   onlyContent?: boolean;
+  isSeparateError?: boolean;
 };
 export type InputProps = Omit<CoreInputProps, "label"> & {
   tooltip?: string;
@@ -76,6 +77,7 @@ const CoreInput = forwardRef(
       titleSx,
       onlyContent,
       value,
+      isSeparateError = false,
       ...rest
     } = props;
 
@@ -124,8 +126,9 @@ const CoreInput = forwardRef(
           rootSx,
           titleSx,
           onlyContent,
+          isSeparateError,
         ),
-      [isDarkMode, title, size, rootSx, titleSx, onlyContent],
+      [isDarkMode, title, size, rootSx, titleSx, onlyContent, isSeparateError],
     );
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -182,6 +185,7 @@ const getDefaultSx = (
   rootSx?: SxProps,
   titleSx?: SxProps,
   onlyContent?: boolean,
+  isSeparateError?: boolean,
 ) => {
   return {
     [`& .${inputLabelClasses.root}`]: {
@@ -199,7 +203,7 @@ const getDefaultSx = (
         "&::after": {
           content: '"(*)"',
           color: "#F64E60",
-        }
+        },
       },
       ...titleSx,
     },
@@ -256,6 +260,7 @@ const getDefaultSx = (
       [`&.${matchClass(PREFIX_BUTTON_CLASS, "colorError")}`]: {
         borderColor: "rgba(246, 78, 96, 0.3)",
         backgroundColor: isDarkMode ? "grey.50" : "#FEEDED",
+        borderRadius: isSeparateError ? "100px" : "4px",
       },
 
       [`&+.${formHelperTextClasses.root}`]: {
@@ -267,6 +272,8 @@ const getDefaultSx = (
         flexDirection: "row",
         alignItems: "center",
         verticalAlign: "middle",
+        position: isSeparateError ? "absolute" : "relative",
+        bottom: isSeparateError ? "-24px" : "0",
 
         "& svg": {
           fontSize: 16,

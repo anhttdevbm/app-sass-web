@@ -3,7 +3,8 @@ import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
-  addChatWithAI, addNewChatSession,
+  addChatWithAI,
+  addNewChatSession,
   chatWithAI,
   createChatSession,
   deleteAllChatSessions,
@@ -17,6 +18,7 @@ import {
   newChat,
   setSelectedChatId,
 } from "./actions";
+import { getPageNumber } from "./helper";
 import {
   ChatSessionData,
   ChatWithAIData,
@@ -26,7 +28,6 @@ import {
   GetPersonaQueries,
   GetToneQueries,
 } from "./type";
-import { getPageNumber } from "./helper";
 
 export const useExamplePrompt = () => {
   const dispatch = useAppDispatch();
@@ -112,13 +113,10 @@ export const useChatSession = () => {
     [dispatch],
   );
 
-  const onDeleteAllChatSessions = useCallback(
-    () => {
-      dispatch(newChat());
-      dispatch(deleteAllChatSessions());
-    },
-    [dispatch],
-  );
+  const onDeleteAllChatSessions = useCallback(() => {
+    dispatch(newChat());
+    dispatch(deleteAllChatSessions());
+  }, [dispatch]);
 
   const onCreateChatSession = useCallback(
     (data: ChatSessionData) => {
@@ -183,7 +181,7 @@ export const useChatWithAI = () => {
     openAIChatError,
     openAIChatFilters,
 
-    chatAIStatus
+    chatAIStatus,
   } = useAppSelector((state) => state.aiChat, shallowEqual);
 
   const isPersonaIdle = useMemo(
@@ -207,7 +205,7 @@ export const useChatWithAI = () => {
   const onGetPersona = useCallback(
     async (queries: GetPersonaQueries) => {
       const response = await dispatch(getPersona(queries));
-      const nextPage = getPageNumber(response.payload.next);
+      const nextPage = getPageNumber(response.payload?.next);
 
       if (nextPage) {
         await onGetPersona({
@@ -263,8 +261,14 @@ export const useChatWithAI = () => {
     [dispatch],
   );
 
-  const isFetchingChatAI = useMemo(() => chatAIStatus === DataStatus.LOADING, [chatAIStatus]);
-  const isIdleChatAI = useMemo(() => chatAIStatus === DataStatus.IDLE, [chatAIStatus]);
+  const isFetchingChatAI = useMemo(
+    () => chatAIStatus === DataStatus.LOADING,
+    [chatAIStatus],
+  );
+  const isIdleChatAI = useMemo(
+    () => chatAIStatus === DataStatus.IDLE,
+    [chatAIStatus],
+  );
 
   return {
     persona,
@@ -293,6 +297,6 @@ export const useChatWithAI = () => {
 
     onChatWithAI,
     isFetchingChatAI,
-    isIdleChatAI
+    isIdleChatAI,
   };
 };

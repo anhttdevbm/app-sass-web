@@ -151,7 +151,7 @@ export const getOpenAIChat = createAsyncThunk(
   async (queries: GetOpenAIChatQueries) => {
     try {
       const response = await client.get(
-        `${Endpoint.AI_CHAT}/${queries.id}`,
+        `${Endpoint.AI_CHAT}/?chat_session_id=${queries.chat_session_id}`,
         {
           page: queries.page,
         },

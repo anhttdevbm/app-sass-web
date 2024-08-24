@@ -38,6 +38,7 @@ export type CellProps = TableCellProps & {
   width?: string | number;
   minWidth?: number;
   minwidth?: number | string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handler?: any;
 };
 
@@ -175,7 +176,8 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                     handleRequestSort={handleRequestSort}
                     width={item.width ?? `${100 / nOfColumnsNotWidthFixed}%`}
                     sx={
-                      {height:"40px",
+                      {
+                        height: "40px",
                         maxWidth:
                           item.width ?? `${100 / nOfColumnsNotWidthFixed}%`,
                         minWidth: item?.minWidth,
@@ -199,7 +201,9 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                           <Grid item xs={2}>
                             {children}
                           </Grid>
-                          <Grid xs={10}>{item.value}</Grid>
+                          <Grid item xs={10}>
+                            {item.value}
+                          </Grid>
                         </Grid>
                       </Box>
                     ) : (
@@ -213,7 +217,8 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                     {...item}
                     width={item.width ?? `${100 / nOfColumnsNotWidthFixed}%`}
                     sx={
-                      {height:"40px",
+                      {
+                        height: "40px",
                         maxWidth:
                           item.width ?? `${100 / nOfColumnsNotWidthFixed}%`,
                         minWidth: item?.minWidth,
@@ -237,7 +242,9 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                           <Grid item xs={2}>
                             {children}
                           </Grid>
-                          <Grid xs={10}>{item.value}</Grid>
+                          <Grid item xs={10}>
+                            {item.value}
+                          </Grid>
                         </Grid>
                       </Box>
                     ) : item.data ? (
@@ -289,7 +296,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                 </CellBody>
               </TableRow>
             ) : hasSelectAll ? (
-              ""
+              <></>
             ) : (
               children
             )}

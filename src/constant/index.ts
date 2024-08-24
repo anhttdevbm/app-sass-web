@@ -27,12 +27,17 @@ export const BLOG_API_URL = process.env.BLOG_API_URL as string;
 export const CAREER_API_URL = process.env.CAREER_API_URL as string;
 //Billing
 export const BILLING_API_URL = process.env.BILLING_API_URL as string;
+//Invoice
+export const INVOICE_API_URL = process.env.INVOICE_API_URL as string;
+
 //Content
 export const CONTENT_API_URL = process.env.CONTENT_API_URL as string;
 
 // AI
 export const AI_CHAT_API_URL = process.env.AI_CHAT_API_URL as string;
 export const AI_AGENT_API_URL = process.env.AI_AGENT_API_URL as string;
+export const PROJECT_AI_API_URL = process.env.PROJECT_AI_API_URL as string;
+export const AI_DOCS_API_URL = process.env.AI_DOCS_API_URL as string;
 
 export const DARK_THEME_MEDIA_SYSTEM = "(prefers-color-scheme: dark)";
 export const DOCS_API_URL = process.env.DOCS_API_URL as string;

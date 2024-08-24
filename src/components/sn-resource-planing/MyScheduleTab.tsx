@@ -4,12 +4,10 @@ import { ResourceInput } from "@fullcalendar/resource";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import { Stack } from "@mui/material";
 import { Box } from "@mui/system";
-import { Button } from "components/shared";
 import { TIME_OFF_TYPE } from "components/sn-sales/helpers";
 import { NS_RESOURCE_PLANNING } from "constant/index";
 import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
-import PlusIcon from "icons/PlusIcon";
 import { isEmpty } from "lodash";
 import { useTranslations } from "next-intl";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -21,19 +19,21 @@ import {
   useMyBooking,
   useResourceDate,
 } from "store/resourcePlanning/selector";
-import EventContents from "./components/EventContents";
 import FilterHeader from "./components/FilterHeader";
 import ResourceHeaderContent from "./components/ResourceHeaderContent";
-import ResourceLabel from "./components/ResourceLabel";
 import SlotLabelContent from "./components/SlotLabelContent";
-import TimeHeader from "./components/TimeHeader";
 import { DEFAULT_BOOKING_ALL_FILTER, TAB_TYPE } from "./helper";
 import { useFetchMyBooking } from "./hooks/useBookingAll";
 import useGetOptions from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
 import EditBooking from "./modals/EditBooking";
 
-const MyScheduleTab = () => {
+const MyScheduleTab = ({
+  setisServicePopup,
+  isWorkload,
+  setIsWorkload,
+  tab,
+}: any) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const [filters, setFilters] = React.useState<IBookingAllFitler>(
     DEFAULT_BOOKING_ALL_FILTER,
@@ -53,7 +53,8 @@ const MyScheduleTab = () => {
   const [isOpenCreate, setIsOpenCreate] = React.useState(false);
   const { palette } = useTheme();
   const [parentResource, setParentResource] = React.useState<string>("");
-  const { updateBooking } = useBookingAll();
+  const { updateBooking, bookingAll } = useBookingAll();
+
   const [isOpenEdit, setIsOpenEdit] = React.useState({
     isOpen: false,
     bookingId: "",
@@ -108,7 +109,7 @@ const MyScheduleTab = () => {
   const handleEventChange =
     (calendarRef: React.RefObject<FullCalendar>, isResize: boolean) =>
     ({ event, revert }) => {
-      const { type, saleId, ...restData } = event.extendedProps;
+      const { type, service_id, ...restData } = event.extendedProps;
       if (isResize && type === "campaign") return revert();
       if (type === "campaign") {
         // Campaign has been moved, compute diff and update each steps
@@ -125,7 +126,7 @@ const MyScheduleTab = () => {
             start_date: dayjs(dateRange.start).format("YYYY-MM-DD"),
             booking_type: restData.eventType,
             time_off_type: restData.time_off_type,
-            sale_id: saleId,
+            service_id: service_id,
             user_id: user?.id,
           },
           restData.eventId,
@@ -156,7 +157,7 @@ const MyScheduleTab = () => {
           allocation,
           position,
           allocation_type,
-          sale_id,
+          service_id,
           project_id,
           project,
           time_off_type,
@@ -175,7 +176,7 @@ const MyScheduleTab = () => {
           total_hour,
           eventType: booking_type,
           name: project?.name,
-          saleId: sale_id,
+          service_id: service_id,
           time_off_type,
           eventId,
         };
@@ -233,11 +234,12 @@ const MyScheduleTab = () => {
         user_id: "",
         project: {},
         project_id: "",
-        sale_id: "",
+        service_id: "",
         start_date: "",
         time_off_type: TIME_OFF_TYPE.OTHER,
         type: "step",
         total_hour: 160,
+        _id: "",
       });
     }
     return [
@@ -294,48 +296,230 @@ const MyScheduleTab = () => {
       background: palette.grey[50],
     },
   };
+  function getFirstAndSecondLetters(name) {
+    const parts = name.split(" ");
+    const firstLetter = parts[0][0];
+    const lastLetter = parts[parts.length - 1][0];
+    return firstLetter + lastLetter;
+  }
+  const projectDumy: any = [];
+  bookingAll.map((item) => {
+    item.bookings.map((ite) => {
+      if (ite.booking_type === "PROJECT_BOOKING") {
+        projectDumy.push({
+          ...ite,
+          fullname: item.fullname,
+          backgroundName: `rgba(${Math.floor(Math.random() * 256)},${Math.floor(
+            Math.random() * 256,
+          )},${Math.floor(Math.random() * 256)},${Math.floor(
+            Math.random() * 256,
+          )})`,
+          id: ite._id,
+        });
+      }
+    });
+  });
+
+  const grouped = projectDumy.reduce((acc, item) => {
+    const projectId = item.project.id;
+    if (!acc[projectId]) {
+      acc[projectId] = [];
+    }
+    acc[projectId].push(item);
+    return acc;
+  }, {});
+  const result: any = Object.values(grouped);
+  for (let i = 0; i < result.length; i++) {
+    for (let j = 0; j < result[i].length; j++) {
+      let index;
+      if (result[i].length < 3) {
+        index = 0;
+      } else {
+        index = Math.ceil(result[i].length / 2);
+      }
+      if (j === 0) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          border: "1px solid #CCCCCC",
+        };
+      }
+      if (j === index) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          nameService: result[i][j].sale?.name,
+        };
+      }
+      if (j === result[i].length - 1) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          borderBottom: "1px solid #CCCCCC",
+        };
+      }
+      if (j !== 0 && j !== result[i].length - 1) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          border: "none",
+          borderBottom: "none",
+        };
+      }
+      if (j !== index) {
+        result[i][j].sale = {
+          ...result[i][j].sale,
+          nameService: "",
+        };
+      }
+    }
+  }
+
+  const mapResours = () => {
+    const items: any = [];
+    result.map((item: any) => {
+      items.push({
+        id: item[0].project.id,
+        projectName: item[0].project.name,
+        children: [...item],
+      });
+    });
+    return items;
+  };
+
+  const mapEvent = () => {
+    const items: any = [];
+    projectDumy.map((item: any) => {
+      items.push({
+        ...item,
+        id: item._id,
+        start: item.start_date,
+        end: item.end_date,
+        resourceId: item._id,
+      });
+    });
+    return items;
+  };
+
+  const currentDate = new Date();
+  const currentWeekNumber = getWeekNumber(currentDate);
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart: any = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+    return weekNo;
+  }
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   return (
     <Stack direction="column" rowGap={2}>
-      <FilterHeader type={TAB_TYPE.MY} />
-      <TimeHeader
+      <FilterHeader
+        type={TAB_TYPE.MY}
+        setisServicePopup={setisServicePopup}
+        setIsWorkload={setIsWorkload}
+        tab={tab}
+      />
+      {/* <TimeHeader
         filters={filters}
         setFilters={setFilters}
         calendarRef={calendarRef}
-      />
+      /> */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "end",
+          flexDirection: "column",
+          position: "relative",
+          top: "15px",
+        }}
+      >
+        <p
+          style={{
+            width: "60%",
+            textAlign: "center",
+            margin: 0,
+            border: "1px solid #CCCCCC",
+          }}
+        >
+          {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+        </p>
+        <div
+          style={{
+            display: "flex",
+            width: "60%",
+            justifyContent: "space-around",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              width: "50%",
+              textAlign: "center",
+              border: "1px solid #CCCCCC	",
+            }}
+          >
+            week {getWeekNumber(currentDate)}
+          </p>
+          <p
+            style={{
+              margin: 0,
+              width: "50%",
+              textAlign: "center",
+              border: "1px solid #CCCCCC	",
+            }}
+          >
+            week {currentWeekNumber + 1}
+          </p>
+        </div>
+      </div>
       <Box overflow="scroll" sx={{ ...defaultStyle }}>
         <FullCalendar
           ref={calendarRef}
           plugins={[resourceTimelinePlugin, interactionPlugin]}
           initialView="resourceTimeline"
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
-          resourceAreaWidth={660}
+          resourceAreaWidth={600}
           resourceOrder="from"
           weekends={true}
           editable={true}
+          nowIndicator={true}
           eventResourceEditable={true}
           headerToolbar={false}
-          duration={{ weeks: 1 }}
+          duration={{ weeks: 2 }}
           slotDuration={{
             days: 1,
           }}
           selectable={true}
-          select={(arg) => {
-            const { startStr, endStr, resource, view } = arg;
+          // select={(arg) => {
+          //   const { startStr, endStr, resource, view } = arg;
 
-            if (resource?._resource.extendedProps.type === 'end') {
-              view.calendar.unselect();
-              return;
-            };
+          //   if (resource?._resource.extendedProps.type === "end") {
+          //     view.calendar.unselect();
+          //     return;
+          //   }
 
-            setParentResource(resource?._resource.parentId || resource?._resource.id || "");
-            const start_date = dayjs(startStr).toDate();
+          //   setParentResource(
+          //     resource?._resource.parentId || resource?._resource.id || "",
+          //   );
+          //   const start_date = dayjs(startStr).toDate();
 
-            const end_date = dayjs(endStr).subtract(1, 'day').toDate();
-            setSelectedDateRange([start_date, end_date]);
-            setIsOpenCreate(true);
-          }}
-          resources={mappedResources as ResourceInput}
-          events={mappedEvents as ResourceInput}
+          //   const end_date = dayjs(endStr).subtract(1, "day").toDate();
+          //   setSelectedDateRange([start_date, end_date]);
+          //   setIsOpenCreate(true);
+          // }}
+          // resources={mappedResources as ResourceInput}
+          // events={mappedEvents as ResourceInput}
+          resources={mapResours()}
+          events={mapEvent()}
           slotLabelContent={(arg) => {
             return <SlotLabelContent arg={arg} />;
           }}
@@ -349,43 +533,176 @@ const MyScheduleTab = () => {
             );
           }}
           resourceLabelContent={({ resource }) => {
-            // const bookings = parentResource?.bookings || [];
-            const isLastItem =
-              resources[resources.length - 1]?.id === resource._resource.id;
-            if (resource._resource.id === "end") {
+            if (resource._resource.extendedProps.projectName) {
               return (
-                <Button
-                  variant="text"
-                  startIcon={<PlusIcon />}
-                  sx={{
-                    color: "success.main",
+                <h2
+                  style={{
+                    borderTop: "1px solid #CCCCCC",
+                    paddingLeft: "10px",
                   }}
-                  // startIcon={<AddIcon />}
-                  onClick={() => setIsOpenCreate(true)}
                 >
-                  {resourceT("schedule.action.addBooking")}
-                </Button>
+                  {resource._resource.extendedProps.projectName}
+                </h2>
               );
             }
-
             return (
-              <ResourceLabel
-                setParentResource={setParentResource}
-                handleCollapseToggle={handleCollapseToggle}
-                isLastItem={isLastItem}
-                resource={resource}
-                resources={resources}
-                isMybooking={true}
-                selectedResource={selectedResource}
-                setIsOpenCreate={setIsOpenCreate}
-                totalhour={totalhour}
-              />
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    borderTop: resource._resource.extendedProps.sale.border,
+                    borderBottom:
+                      resource._resource.extendedProps.sale.borderBottom,
+                  }}
+                >
+                  <p
+                    style={{
+                      width: "20%",
+                      color: "black",
+                      paddingLeft: "10px",
+                    }}
+                  >
+                    {resource._resource.extendedProps.sale.nameService}
+                  </p>
+                  <div
+                    style={{
+                      width: "50%",
+                      borderBottom: "1px solid #CCCCCC",
+                      borderLeft: "1px solid #CCCCCC",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "right",
+                        alignItems: "center",
+                        gap: "10px",
+                        paddingLeft: "10px",
+                      }}
+                    >
+                      <p
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          borderRadius: "50%",
+                          background:
+                            resource._resource.extendedProps.backgroundName,
+                          fontSize: "15px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        {getFirstAndSecondLetters(
+                          resource._resource.extendedProps.fullname,
+                        )}
+                      </p>
+                      <p>{resource._resource.extendedProps.fullname}</p>
+                    </div>
+                    <p
+                      style={{
+                        borderLeft: "1px solid #CCCCCC",
+                        margin: "0 10px 0 0",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "0 10px",
+                      }}
+                    >
+                      {resource._resource.extendedProps.start_date}
+                    </p>
+                  </div>
+                </div>
+              </>
             );
+            // // const bookings = parentResource?.bookings || [];
+            // const isLastItem =
+            //   resources[resources.length - 1]?.id === resource._resource.id;
+            // if (resource._resource.id === "end") {
+            //   return (
+            //     <Button
+            //       variant="text"
+            //       startIcon={<PlusIcon />}
+            //       sx={{
+            //         color: "success.main",
+            //       }}
+            //       // startIcon={<AddIcon />}
+            //       onClick={() => setIsOpenCreate(true)}
+            //     >
+            //       {resourceT("schedule.action.addBooking")}
+            //     </Button>
+            //   );
+            // }
+            // return (
+            //   <ResourceLabel
+            //     setParentResource={setParentResource}
+            //     handleCollapseToggle={handleCollapseToggle}
+            //     isLastItem={isLastItem}
+            //     resource={resource}
+            //     resources={resources}
+            //     isMybooking={true}
+            //     selectedResource={selectedResource}
+            //     setIsOpenCreate={setIsOpenCreate}
+            //     totalhour={totalhour}
+            //   />
+            // );
           }}
           eventContent={({ event }) => {
-            return (
-              <EventContents event={event} setIsOpenEdit={setIsOpenEdit} />
+            const startDate: any = new Date(
+              event._def.extendedProps.start_date,
             );
+            const endDate: any = new Date(event._def.extendedProps.end_date);
+            const oneDay = 24 * 60 * 60 * 1000;
+            const numberOfDays = Math.round((endDate - startDate) / oneDay);
+            return (
+              <div
+                style={{
+                  backgroundColor: "black",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 0",
+                  gap: "1px",
+                  borderRadius: "5px",
+                }}
+              >
+                <span
+                  style={{
+                    width: "23px",
+                    height: "23px",
+                    borderRadius: "50%",
+                    background: event._def.extendedProps.backgroundName,
+                    fontSize: "15px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {getFirstAndSecondLetters(event._def.extendedProps.fullname)}
+                </span>
+                {numberOfDays > 1 && (
+                  <span
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontSize: "11px",
+                    }}
+                  >
+                    {event._def.extendedProps.total_hour}h/day for{" "}
+                    {numberOfDays} day
+                  </span>
+                )}
+              </div>
+            );
+            // return (
+            //   <EventContents
+            //     event={event}
+            //     setIsOpenEdit={setIsOpenEdit}
+            //     isWorkload={isWorkload}
+            //   />
+            // );
           }}
           eventResize={handleEventChange(calendarRef, true)}
           eventDrop={handleEventChange(calendarRef, false)}

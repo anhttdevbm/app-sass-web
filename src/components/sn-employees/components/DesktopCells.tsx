@@ -1,38 +1,58 @@
-import { memo, useMemo } from "react";
 import { Stack } from "@mui/material";
 import dayjs from "dayjs";
+import { memo, useMemo } from "react";
 import StringFormat from "string-format";
 
+import Avatar from "components/Avatar";
 import Link from "components/Link";
 import { BodyCell, StatusCell } from "components/NewTable";
 import { Text } from "components/shared";
-import Avatar from "components/Avatar";
-import { NS_COMPANY, DATE_LOCALE_FORMAT } from "constant/index";
+import { NS_COMPANY } from "constant/index";
 import { EMPLOYEES_DETAIL_PATH } from "constant/paths";
 import { Employee } from "store/company/reducer";
-import { TEXT_STATUS, COLOR_STATUS } from "../helpers";
-
+import { COLOR_STATUS, TEXT_STATUS } from "../helpers";
 
 type DesktopCellsProps = {
   item: Employee;
 };
 
 // const DATE_FORMAT = DATE_LOCALE_FORMAT;
-const DATE_FORMAT = 'DD/MM/YYYY';
+const DATE_FORMAT = "DD/MM/YYYY";
 
 const DesktopCells = (props: DesktopCellsProps) => {
   const { item } = props;
-  const href = useMemo(() => StringFormat(EMPLOYEES_DETAIL_PATH, { id: item.id }), [item.id])
+  const href = useMemo(
+    () => StringFormat(EMPLOYEES_DETAIL_PATH, { id: item.id }),
+    [item.id],
+  );
+
+  const roleMapping: { [key: string]: string } = {
+    AM: 'Admin',
+    MN: 'Manager',
+    LE: 'Leader',
+    ST: 'Staff',
+    CL: 'Client',
+    CT: 'Contractor',
+  };
+
+  const transformedRoles = item.roles.map((role: string) => roleMapping[role] || role);
+
+
   return (
     <>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
           <Avatar size={32} src={item?.avatar?.link} />
-          <Link href={href}><Text variant="h6">{item.fullname}</Text></Link>
+          <Link href={href}>
+            <Text variant="h6">{item.fullname}</Text>
+          </Link>
         </Stack>
       </BodyCell>
       <BodyCell align="left" noWrap>
         {item.email}
+      </BodyCell>
+      <BodyCell align="left" noWrap>
+      {transformedRoles.join(', ')}
       </BodyCell>
       <BodyCell align="left">{item.position?.name}</BodyCell>
       <BodyCell

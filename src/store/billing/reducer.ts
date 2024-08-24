@@ -271,7 +271,7 @@ export interface BillingState {
   isAddPayment?: boolean;
   isUpdatePayment?: boolean;
   isDeletedPayment?: boolean;
-  dataPayment?: PaymentData[];
+  dataPayment?: PaymentData;
   dataTag?: Tag[];
   isAddTag?: boolean;
   budgetFilter?: Budgets[];
@@ -304,12 +304,14 @@ export interface BillingDataUpdate {
 }
 
 export interface BillingCommentData {
-  bill_id?: string;
+  invoice_id?: string;
   user_id?: User;
   file?: [];
   status?: string;
   comment?: string;
   created_at?: string;
+  creator?: string;
+  attachments?: [];
 }
 
 export interface BillingComment extends Omit<Comment, "creator"> {
@@ -586,7 +588,7 @@ const billingSlice = createSlice({
       .addCase(getCommentBilling.fulfilled, (state, { payload }) => {
         // const { items, ...paging } = action.payload;
 
-        state.dataComment = payload;
+        state.dataComment = payload.comments;
 
         state.status = DataStatus.SUCCEEDED;
         state.error = undefined;
@@ -758,7 +760,7 @@ const billingSlice = createSlice({
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       })
       .addCase(getPaymentByBillId.pending, (state, action) => {
-        state.dataPayment = [];
+        state.dataPayment = {};
         state.isAddPayment = false;
         state.isUpdatePayment = false;
         state.isDeletedPayment = false;
@@ -767,7 +769,7 @@ const billingSlice = createSlice({
         state.dataPayment = action.payload;
       })
       .addCase(getPaymentByBillId.rejected, (state, action) => {
-        state.dataPayment = [];
+        state.dataPayment = {};
 
         // state.salesTodoError = action.error.message ?? AN_ERROR_TRY_AGAIN;
       })

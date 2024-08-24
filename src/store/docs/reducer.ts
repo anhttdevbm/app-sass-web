@@ -68,6 +68,8 @@ interface Paging {
   totalDocs?: number;
 }
 
+export type TypeViewListDoc = "kanbanViewListDoc" | "basicViewListDoc";
+
 export interface IDocs {
   docs: any[];
   docsStatus: DataStatus;
@@ -93,12 +95,20 @@ export interface IDocs {
   workspaceInfo: WorkspaceState | null;
   docInfo: any;
   contentRow: string;
-
+  typeViewDoc: TypeViewListDoc;
   getDocCustomStatus: DataStatus;
   docCustom: {
-    id: string,
-    content: string
-  }
+    id: string;
+    content: string;
+  };
+  mindMap: {
+    isOpenMindMap: boolean;
+    version: "mindmap" | "chart";
+  };
+  board: {
+    isOpenBoard: boolean;
+  };
+  heightHeaderDocDetail: number;
 }
 
 const initialState: IDocs = {
@@ -162,12 +172,20 @@ const initialState: IDocs = {
   description: "",
   pageInfo: storedPageInfo ? JSON.parse(storedPageInfo) : null,
   workspaceInfo: storedWorkspaceInfo ? JSON.parse(storedWorkspaceInfo) : null,
-
+  typeViewDoc: "basicViewListDoc",
   getDocCustomStatus: DataStatus.IDLE,
   docCustom: {
     id: "",
-    content: ""
-  }
+    content: "",
+  },
+  mindMap: {
+    isOpenMindMap: false,
+    version: "mindmap",
+  },
+  board: {
+    isOpenBoard: false,
+  },
+  heightHeaderDocDetail: 0
 };
 
 const docSlice = createSlice({
@@ -228,7 +246,7 @@ const docSlice = createSlice({
     getDocDetails: (state, action: PayloadAction<any>) => {
       state.content = action.payload?.content || "";
       state.docInfo = action.payload || {};
-      state.title = action.payload?.name || state.title;
+      state.title = action.payload?.name ?? state.title;
       state.description = action.payload?.description || "";
       state.project_id = action.payload?.project_id || "";
     },
@@ -242,6 +260,21 @@ const docSlice = createSlice({
     changePermDoc: (state, action) => {
       state.perm = action.payload;
     },
+    changeTypeViewDoc: (state, action) => {
+      state.typeViewDoc = action.payload;
+    },
+    updateStatusOpenMindMap: (state, action) => {
+      state.mindMap.isOpenMindMap = action.payload;
+    },
+    updateVersionMindMap: (state, action) => {
+      state.mindMap.version = action.payload;
+    },
+    updateStatusOpenBoardEditor: (state, action) => {
+      state.board.isOpenBoard = action.payload;
+    },
+    updateHeightHeaderDetail: (state,action) => {
+      state.heightHeaderDocDetail = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(getDocs.pending, (state, action) => {
@@ -299,9 +332,12 @@ const docSlice = createSlice({
     });
 
     // Update doc
-    builder.addCase(updateDocCustom.fulfilled, (state, action: PayloadAction<IDocs>) => {
-      state.content = action.payload.content;
-    });
+    builder.addCase(
+      updateDocCustom.fulfilled,
+      (state, action: PayloadAction<IDocs>) => {
+        state.content = action.payload.content;
+      },
+    );
   },
 });
 
@@ -321,6 +357,11 @@ export const {
   changeDescription,
   changePermDoc,
   setContentRow,
+  changeTypeViewDoc,
+  updateStatusOpenMindMap,
+  updateVersionMindMap,
+  updateStatusOpenBoardEditor,
+  updateHeightHeaderDetail
 } = docSlice.actions;
 
 export default docSlice.reducer;

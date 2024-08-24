@@ -19,45 +19,56 @@ const ResourceHeaderContent = ({ totalhour }: IProps) => {
   return (
     <Grid
       container
-      gap={{
-        xs: 2,
-        md: 1,
+      sx={{
+        width: "600px",
+        justifyContent: "space-between",
       }}
-      sx={{ width: 1, backgroundColor: "grey.50", minWidth: 550 }}
     >
-      <Grid item xs={4} md={5} />
-      <Grid item xs={1} md={2}>
-        <Typography sx={{ ...textHeadStyle, color: "#666" }}>
-          {resourceT("schedule.resourceHeader.available")}
+      <Grid item xs={1} md={2} width={"20%"}>
+        <Typography
+          sx={{
+            ...textHeadStyle,
+            color: "#666",
+            textAlign: "left",
+            paddingLeft: "10px",
+          }}
+        >
+          {resourceT("schedule.resourceHeader.service")}
         </Typography>
-        <Typography sx={{ ...textHeadStyle, fontWeight: 600 }}>
+        {/* <Typography sx={{ ...textHeadStyle, fontWeight: 600 }}>
           {formatNumber(totalScheduleAll, {
             numberOfFixed: 0,
           })}{" "}
           h
-        </Typography>
+        </Typography> */}
       </Grid>
       <Grid item xs={1} md={2}>
-        <Typography sx={{ ...textHeadStyle, color: "#666" }}>
-          {resourceT("schedule.resourceHeader.schedule")}
+        <Typography
+          sx={{ ...textHeadStyle, color: "#666", textAlign: "right" }}
+        >
+          {resourceT("schedule.resourceHeader.user")}
         </Typography>
-        <Typography sx={{ ...textHeadStyle, fontWeight: 600 }}>
-          {formatNumber(totalhour, { numberOfFixed: 0 })}h
-          {/* {formatNumber(totalhour, { numberOfFixed: 2 })}h */}
-        </Typography>
+        {/* <Typography sx={{ ...textHeadStyle, fontWeight: 600 }}> */}
+        {/* {formatNumber(totalhour, { numberOfFixed: 0 })}h */}
+        {/* {formatNumber(totalhour, { numberOfFixed: 2 })}h */}
+        {/* </Typography> */}
       </Grid>
-      <Grid item xs={1} md={2}>
-        <Typography sx={{ ...textHeadStyle, color: "#666" }}>
-          {`${resourceT("schedule.resourceHeader.schedule")}/${resourceT(
-            "schedule.resourceHeader.available",
-          )}`}
+      <Grid item xs={1} md={2} marginRight={4}>
+        <Typography
+          sx={{
+            ...textHeadStyle,
+            color: "#666",
+            textAlign: "left",
+          }}
+        >
+          {resourceT("schedule.resourceHeader.startDate")}
         </Typography>
-        <Typography sx={{ ...textHeadStyle, fontWeight: 600 }}>
+        {/* <Typography sx={{ ...textHeadStyle, fontWeight: 600 }}>
           {formatNumber(totalSchedulePerLeft, {
             numberOfFixed: 2,
             suffix: "%",
           })}
-        </Typography>
+        </Typography> */}
       </Grid>
     </Grid>
   );

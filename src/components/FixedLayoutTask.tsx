@@ -56,7 +56,7 @@ const FixedLayoutTask = forwardRef(
     }, [windowSize]);
 
     return (
-      <Stack width="100%" bgcolor={{ md: "background.default" }}>
+      <Stack width="100%" bgcolor={{ md: "background.paper" }}>
         <Box
           ref={ref}
           sx={{

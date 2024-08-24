@@ -2,7 +2,14 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Box, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Stack,
+  TextField,
+  Typography,
+  IconButton,
+  Tooltip as MuiTooltip,
+} from "@mui/material";
 import { Text, Tooltip } from "components/shared";
 import { DocAccessibility } from "constant/enums";
 import { NS_DOCS } from "constant/index";
@@ -16,7 +23,7 @@ import OpenSidebarIcon from "icons/OpenSidebarIcon";
 import ShareIcon from "icons/ShareIcon";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useGetDocDetailQuery, useUpdateDocMutation } from "store/docs/api";
 import { useAppSelector } from "store/hooks";
 import { NewPageContext } from "../news/context/NewPageContext";
@@ -25,7 +32,7 @@ import ModalShare from "./LeftSlide/modal/ModalShare";
 import SelectProjectInDoc from "./SelectProjectInDoc";
 import useTheme from "hooks/useTheme";
 import { useDispatch } from "react-redux";
-import { changeId } from "store/docs/reducer";
+import { changeId, updateHeightHeaderDetail } from "store/docs/reducer";
 import Avatar from "components/Avatar";
 
 const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
@@ -55,19 +62,28 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
     updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
+  const refHeader = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    dispatch(updateHeightHeaderDetail(refHeader.current?.offsetHeight));
+  }, []);
+
+  console.log("doc", doc);
+  console.log("rootDocument", rootDocument);
+
   return (
     <>
       <ModalShare setOpenShare={setOpenShare} openShare={openShare} />
-      <Box px={{ md: 3 }}>
+      <Box ref={refHeader}>
         <Stack
           justifyContent="space-between"
           borderBottom="1px solid"
           borderColor="grey.100"
           spacing={{ xs: 2, md: 3 }}
           px={1}
-          mb={{ xs: 1.5, md: 1, lg: 1.5 }}
+          mb={{ md: 1, lg: 1.5 }}
           py={"16px"}
-          bgcolor={"background.paper"}
+          bgcolor={{ xs: "#14B9E5", sm: "background.paper" }}
         >
           {isSmSmaller && (
             <Box
@@ -85,12 +101,15 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               <BackIcon
                 sx={{
                   cursor: "pointer",
+                  color: "common.white",
                 }}
                 onClick={() => router.back()}
               />
               <SelectProjectInDoc></SelectProjectInDoc>
-              <Text pr={"2px"}>/</Text>
-              <TextField
+              <Text pr={"2px"} sx={{ color: { xs: "common.white" } }}>
+                /
+              </Text>
+              {/* <TextField
                 placeholder="Nhập Tên Doc"
                 variant="outlined"
                 sx={{
@@ -104,11 +123,15 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   outline: "none",
                   border: "none",
                   backgroundColor: "transparent",
+                  color: { xs: "common.white" },
                 }}
                 disabled={true}
                 value={rootDocument?.name}
                 // onChange={(e) => debounceChange(e.target.value)}
-              />
+              /> */}
+              <Typography sx={{ color: { xs: "common.white" } }}>
+                {rootDocument?.name}
+              </Typography>
             </Box>
           )}
 
@@ -141,7 +164,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               <Text pl={"3px"} pr={"6px"}>
                 /
               </Text>
-              <TextField
+              {/* <TextField
                 placeholder="Nhập Tên Doc"
                 variant="outlined"
                 sx={{
@@ -163,7 +186,33 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 value={rootDocument?.name}
                 title={rootDocument?.name}
                 // onChange={(e) => debounceChange(e.target.value)}
-              />
+              /> */}
+              <Box display="flex" alignItems="center">
+                <MuiTooltip title={rootDocument?.owner?.fullname}>
+                  <IconButton
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                        pointerEvents: "none"
+                      },
+                    }}
+                  >
+                    <Avatar size={32} src={rootDocument?.owner?.avatar?.link} />
+                  </IconButton>
+                </MuiTooltip>
+                <Typography
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: 1,
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {rootDocument?.name}
+                </Typography>
+              </Box>
             </Box>
             <Box
               sx={{
@@ -186,9 +235,16 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               {rootDocument && (
                 <Avatar size={32} src={rootDocument?.owner?.avatar?.link} />
               )}
-              <Text color={"success.main"}>
-                {DocAccessibility[doc.perm as keyof typeof DocAccessibility]}
-              </Text>
+              <Box
+                borderRadius="6px"
+                bgcolor="#E9FFF8"
+                paddingX={1}
+                paddingY={0.5}
+              >
+                <Text fontSize={12} color={"success.main"} fontWeight={500}>
+                  {DocAccessibility[doc.perm as keyof typeof DocAccessibility]}
+                </Text>
+              </Box>
               <Box
                 sx={{
                   display: "flex",
@@ -230,7 +286,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                     <CommentIcon />
                   </Box>
                 </Tooltip>
-                <Tooltip title={docsT("createDoc.slider")}>
+                {/* <Tooltip title={docsT("createDoc.slider")}>
                   <Box
                     onClick={() => {
                       setOpenSlider((value) => !value);
@@ -243,7 +299,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   >
                     <OpenSidebarIcon />
                   </Box>
-                </Tooltip>
+                </Tooltip> */}
                 {currentId && id && currentId !== id && (
                   <Tooltip title={docsT("createDoc.more")}>
                     <Box sx={styleButton}>

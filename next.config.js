@@ -27,6 +27,8 @@ const nextConfig = {
     CONTENT_API_URL: process.env.CONTENT_API_URL,
     AI_CHAT_API_URL: process.env.AI_CHAT_API_URL,
     AI_AGENT_API_URL: process.env.AI_AGENT_API_URL,
+    INVOICE_API_URL: process.env.INVOICE_API_URL,
+    AI_DOCS_API_URL: process.env.AI_DOCS_API_URL,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
@@ -45,7 +47,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "img.freepik.com",
-      }
+      },
     ],
   },
   eslint: {

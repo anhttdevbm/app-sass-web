@@ -46,7 +46,7 @@ export type CommonDictionary = {
     admin: string;
     type: {
       number: string;
-    }
+    };
   };
   notification: {
     imageTypeInvalid: string;
@@ -63,6 +63,7 @@ export type CommonDictionary = {
   fullName: string;
   phone: string;
   address: string;
+  roles: string;
   status: string;
   filter: {
     refresh: string;
@@ -127,8 +128,10 @@ export type CommonDictionary = {
   success: string;
   crop: string;
   landingPage: {
-    homePage: string,
-    aboutUs: string,
-    helpCenter: string,
-  }
+    homePage: string;
+    aboutUs: string;
+    helpCenter: string;
+  };
+  actions: string;
+  learnMore: string;
 };

@@ -22,6 +22,7 @@ export const Endpoint = {
   MY_COMPANY: "/companies/me",
   COMPANY_ITEM: "/companies/{id}",
   PROJECTS: "/projects",
+  PROJECT_GENERATE: "/project/project-generate/",
   PROJECT_ITEM: "/projects/{id}",
   PROJECT_FILE: "/projects/{id}/files",
   PROJECT_MEMBERS: "/projects/{id}/members",
@@ -30,6 +31,7 @@ export const Endpoint = {
   PROJECT_TASK_ITEM: "/tasks/{id}",
   CURRENCY: "projects/currency",
   TASKS: "/tasks/add",
+  TASK_GENERATE: "task/task-generate/",
   TASK_LIST: "/tasks/task-list/{id}",
   SUB_TASKS: "/tasks/sub",
   SUB_TASK: "/tasks/sub-task",
@@ -160,15 +162,16 @@ export const Endpoint = {
   RESPONDAPPLICANT: "/job-post/response-applicant",
 
   //Billing
-  BILLING: "/bill",
+  BILLING: "/billing",
   DETAIL_BILLING: "/bill/export/{id}",
   EXPORT_BILLING: "/billToExport",
-  INTERACTION_BILLING: "/bill_interaction",
-  INTERACTION_BILLING_BY_BILL: "/bill_interaction/{id}",
-  ADD_USER_BILL: "/addUserToBill",
+  INTERACTION_BILLING: "/invoices/{id}/add-comment",
+  INTERACTION_BILLING_BY_BILL: "/invoices/{id}/comments",
+  ADD_USER_BILL: "/invoices/{id}/add-members",
   CHANGE_BILL: "/bill/{id}",
   PAYMENT_BILL: "/payment",
-  CUSTOM_PAYMENT: "/payment/{id}",
+  CUSTOM_PAYMENT: "/payments/{id}",
+  ALL_CUSTOM_PAYMENT: "/payments/all/{id}",
   TAG: "/tag",
   CUSTOM_TAG: "/tag/{id}",
   UPDATE_BILL_TAG: "/bill/updateTag/{id}",
@@ -178,6 +181,8 @@ export const Endpoint = {
   DETAIL_BUDGET: "/budgets/budget-by-id/{id}",
   CREATE_SERVICE_BUDGET: "/budgets/service",
   SERVICE_BY_BUDGET: "/budgets/service/{id}",
+  BUDGETS_BY_PROJECT_ID: "/budgets/getBudgetByProject/{id}",
+  SERVICE_QUERIES_BY_BUDGET: "/budgets/getServiceByBudget/{id}",
 
   //Content
   CONTENT_HOME_BANNER: "/content/home/banner",
@@ -224,11 +229,20 @@ export const Endpoint = {
   AI_AGENT_ADD_SOURCE: "/agent/add-source-knowledge",
   AI_AGENT_GET_SOURCE: "/agent/:agentId/get-knowledge",
   AI_AGENT_RESYNCE_SOURCE: "/agent/:agentId/resync-knowledge",
-  AI_AGENT_DELETE_SOURCE: "/agent/:agentID/delete-source-knowledge/:knowledgeId",
+  AI_AGENT_DELETE_SOURCE:
+    "/agent/:agentID/delete-source-knowledge/:knowledgeId",
   AI_AGENT_CREATE_COMMAND: "/agent/create-command",
   AI_AGENT_GET_COMMAND: "/agent/:agentId/commands",
   AI_AGENT_CHAT: "/agent/chat",
 
   //Invoice
-  INVOICE: '/invoice'
+  INVOICE: "/invoices",
+  DETAIL_INVOICE: "/invoices/{id}",
+  NEW_INVOICE: "/invoices/create",
+
+  // AI Assistants Docs
+  AI_DOCS_SUMMARIZE: "/docs/summerization/document",
+  AI_DOCS_COVERT_SHEET: "/docs/convert/sheet",
+  AI_DOCS_IMPORT_MD: "/docs/import/md",
+  AI_DOCS_IMPORT_OPML: "/docs/import/opml",
 };

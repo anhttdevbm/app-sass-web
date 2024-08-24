@@ -8,7 +8,15 @@ import { getPath } from "utils/index";
 import { memo, useEffect, useMemo, useState } from "react";
 import { NS_COMMON, NS_COMPANY, NS_DOCS } from "constant/index";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { Box, Stack } from "@mui/material";
+import {
+  Box,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  MenuList,
+  Paper,
+  Stack,
+} from "@mui/material";
 import { usePathname, useRouter } from "next-intl/client";
 import { useTranslations } from "next-intl";
 import { useDocs } from "store/docs/selectors";
@@ -17,6 +25,18 @@ import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
 import { useAppSelector } from "store/hooks";
 import { useParams, useSearchParams } from "next/navigation";
+import IconButton from "@mui/material/IconButton";
+import ViewModuleIcon from "@mui/icons-material/ViewModule";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useDispatch } from "react-redux";
+import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
+import SearchIcon from "icons/SearchIcon";
+import BtnAdd from "./BtnAdd";
+import ButtonWithDropdown from "./ButtonWithDropdown";
+import AIGradientIcon from "icons/AIGradientIcon";
+import useToggle from "hooks/useToggle";
+import ImportForm from "./ImportForm";
+import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -27,6 +47,59 @@ function convertStringToArray(inputString) {
 
   return resultArray;
 }
+
+const ChangeViewListDoc = () => {
+  const [typeViewListDoc, setTypeViewListDoc] =
+    useState<TypeViewListDoc>("basicViewListDoc");
+  const dispatch = useDispatch();
+
+  const handleViewKanban = () => {
+    dispatch(changeTypeViewDoc("kanbanViewListDoc"));
+    setTypeViewListDoc("kanbanViewListDoc");
+  };
+
+  const handleViewBasic = () => {
+    dispatch(changeTypeViewDoc("basicViewListDoc"));
+    setTypeViewListDoc("basicViewListDoc");
+  };
+
+  return (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <IconButton
+        onClick={handleViewKanban}
+        aria-label="view-kanban"
+        sx={{
+          backgroundColor:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "common.white"
+              : "#E9EBF3",
+          boxShadow:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
+              : "none",
+        }}
+      >
+        <ViewModuleIcon />
+      </IconButton>
+      <IconButton
+        onClick={handleViewBasic}
+        aria-label="view-basic"
+        sx={{
+          backgroundColor:
+            typeViewListDoc === "kanbanViewListDoc"
+              ? "common.white"
+              : "#E9EBF3",
+          boxShadow:
+            typeViewListDoc === "kanbanViewListDoc"
+              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
+              : "none",
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+    </Stack>
+  );
+};
 
 type ActionProps = {
   isProjectTabMode: boolean;
@@ -41,6 +114,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
+  const [isShowImportForm, onShowImportForm, onHideImportForm] = useToggle();
   const [queries, setQueries] = useState<any>({});
   const grOptions = useMemo(
     () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
@@ -49,6 +123,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
 
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+    onSearch();
   };
   const { id } = useParams();
 
@@ -98,108 +173,110 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   return (
     <>
       <Stack
-        direction={{ xs: "column", md: "row" }}
-        alignItems={{ md: "center" }}
+        direction="column"
         justifyContent="space-between"
-        spacing={{ xs: 1, md: 3 }}
+        spacing={{ xs: 1, md: 2 }}
         px={{ xs: 0, md: 3 }}
+        py={1}
+        zIndex={2}
       >
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent="space-between"
+          justifyContent={{ md: "space-between" }}
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Text variant="h4" display={{ md: "none" }}>
-            {docsT("title")}
-          </Text>
-          <Box onClick={handleCreateDoc}>
-            <Button
-              disabled={loading}
-              startIcon={<PlusIcon />}
-              size="extraSmall"
-              variant="primary"
-              sx={{
-                height: 32,
-                px: ({ spacing }) => `${spacing(2)}!important`,
+          <Box display={{ xs: "none" }}>
+            <Search
+              placeholder={docsT("filter.search", { name: "email" })}
+              name="search_key"
+              onChange={onChangeQueries}
+              value={queries?.search_key}
+              sx={{ minWidth: 200 }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  onSearch();
+                }
               }}
-            >
-              {docsT("button.add")}
-            </Button>
+              startNode={null}
+              endNode={<SearchIcon sx={{ color: "dodgerblue" }} />}
+              rootSx={{ borderRadius: "2rem" }}
+            />
           </Box>
-        </Stack>
-
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={3}
-          py={{ xs: 1.25, md: 0.5, lg: 1.25 }}
-          px={{ md: 1, lg: 2 }}
-          borderRadius={1}
-          width={{ xs: "100%", md: "100%" }}
-          justifyContent={{ xs: "flex-start", md: "flex-end" }}
-          maxWidth={{ xs: "100%", md: "fit-content" }}
-          overflow="auto"
-          minWidth={{ md: "fit-content" }}
-        >
-          <Search
-            placeholder={docsT("filter.search", { name: "email" })}
-            name="search_key"
-            onChange={onChangeQueries}
-            value={queries?.search_key}
-            sx={{ width: 200, minWidth: 200 }}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-              if (e.key === "Enter") {
-                onSearch();
-              }
-            }}
-          />
-
-          <Dropdown
-            placeholder={
-              isProjectTabMode
-                ? docsT("filter.all")
-                : docsT("filter.group.none")
-            }
-            options={grOptions}
-            name="group_by"
-            hasAll={false}
-            onChange={onChangeQueries}
-            defaultValue={
-              isProjectTabMode ? docsT("filter.all") : queries?.group_by
-            }
-            value={isProjectTabMode ? docsT("filter.all") : queries?.group_by}
-          />
-          <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
-          <Button
-            size="extraSmall"
-            sx={{
-              display: { xs: "none", md: "flex" },
-              height: 32,
-              px: ({ spacing }) => `${spacing(2)}!important`,
-            }}
-            onClick={onSearch}
-            variant="secondary"
+          <Stack
+            direction="row"
+            justifyContent={{ xs: "space-between" }}
+            spacing={1}
+            width={{ xs: "100%" }}
           >
-            {commonT("search")}
-          </Button>
+            <ChangeViewListDoc />
+
+            <ButtonWithDropdown
+              text={commonT("form.add")}
+              onClick={handleCreateDoc}
+              disabled={!!loading}
+            >
+              {(handleClose) => (
+                <Paper>
+                  <MenuList>
+                    <MenuItem>
+                      <ListItemIcon>
+                        <AIGradientIcon />
+                      </ListItemIcon>
+                      <ListItemText>
+                        {docsT("addDropdown.aiGenerator")}
+                      </ListItemText>
+                    </MenuItem>
+                    <MenuItem>
+                      <ListItemIcon>
+                        <DescriptionOutlined />
+                      </ListItemIcon>
+                      <ListItemText>
+                        {docsT("addDropdown.newDocument")}
+                      </ListItemText>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleClose();
+                        onShowImportForm();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <FileOpenOutlined />
+                      </ListItemIcon>
+                      <ListItemText>{docsT("addDropdown.import")}</ListItemText>
+                    </MenuItem>
+                  </MenuList>
+                </Paper>
+              )}
+            </ButtonWithDropdown>
+          </Stack>
         </Stack>
-        <Button
-          size="small"
-          sx={{
-            height: 40,
-            display: { md: "none" },
-            width: "fit-content",
-            marginBottom: "20px",
-          }}
-          onClick={onSearch}
-          variant="secondary"
+        <Box
+          bgcolor="background.default"
+          borderRadius="2rem"
+          overflow={{ xs: "auto" }}
         >
-          {commonT("search")}
-        </Button>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            width="fit-content"
+            spacing={3}
+            py={{ xs: 1.25, md: 1, lg: 1.25 }}
+            px={{ xs: 3, md: 2, lg: 2 }}
+            overflow="auto"
+          >
+            <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
+              View by:
+            </Text>
+            <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
+          </Stack>
+        </Box>
       </Stack>
+      <ImportForm open={isShowImportForm} onClose={onHideImportForm} />
     </>
   );
 };

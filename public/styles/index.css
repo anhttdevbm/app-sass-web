@@ -74,7 +74,6 @@ a {
 }
 
 @media screen and (min-width: 768px) {
-
   /* width */
   ::-webkit-scrollbar {
     width: 6px;
@@ -121,8 +120,21 @@ a {
   color: #3699ff !important;
 }
 
-.slider-comment-attachment .react-slideshow-wrapper .images-wrap>div {
+.slider-comment-attachment .react-slideshow-wrapper .images-wrap > div {
   display: flex !important;
   align-items: center;
   justify-content: center;
+}
+.fc-toolbar-title {
+  font-size: 24px !important;
+  font-weight: 500 !important;
+}
+.fc .fc-now-indicator {
+  background-color: red;
+}
+.fc .fc-timeline-now-indicator-container {
+  inset: 0 35px !important;
+}
+.fc-datagrid-cell {
+  border: none !important;
 }

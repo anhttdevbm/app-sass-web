@@ -1,4 +1,4 @@
-import { Link, Stack } from "@mui/material";
+import { Box, Link, Stack } from "@mui/material";
 import { BodyCell } from "components/Table";
 import { Text } from "components/shared";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
@@ -24,67 +24,84 @@ const DesktopCells = (props: DesktopCellsProps) => {
   return (
     <>
       {/* <BodyCell align="center">{order}</BodyCell> */}
+      <BodyCell align="left">{formatDate(item?.created_time)}</BodyCell>
       <BodyCell align="left">
-        {item?.status == "Paid" ? (
-          <Text
-            variant="body2"
-            color="#1BC5BD"
-            fontWeight={600}
-            lineHeight={1.28}
-            // sx={{ "&:hover": { color: "primary.main" } }}
-          >
-            {item?.status}
-          </Text>
-        ) : (
-          <Text
-            variant="body2"
-            color="#f78080"
-            fontWeight={600}
-            lineHeight={1.28}
-            // sx={{ "&:hover": { color: "primary.main" } }}
-          >
-            {item?.status}
-          </Text>
-        )}
-      </BodyCell>
-
-      <BodyCell align="left" sx={{ paddingLeft: 0 }}>
-        {formatDate(item?.date)}
-      </BodyCell>
-
-      <BodyCell align="left">
-        {item?.overdue + " " + billingT("detail.form.payment.table2.day")}
-      </BodyCell>
-      <BodyCell align="left">
-        {item?.status == "Paid" ? (
-          <Text
-            variant="body2"
-            color="#1BC5BD"
-            // fontWeight={600}
-            lineHeight={1.28}
-            // sx={{ "&:hover": { color: "primary.main" } }}
-          >
-            {formatNumber(item?.amount, {
-              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-              numberOfFixed: 2,
-            })}
-          </Text>
-        ) : (
-          <Text
-            variant="body2"
-            color="#f78080"
-            // fontWeight={600}
-            lineHeight={1.28}
-            // sx={{ "&:hover": { color: "primary.main" } }}
-          >
-            {formatNumber(item?.amount, {
-              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-              numberOfFixed: 2,
-            })}
-          </Text>
-        )}
+        {item?.overdue ?? 0 + " " + billingT("detail.form.payment.table2.day")}
       </BodyCell>
       <BodyCell align="left">{item?.note}</BodyCell>
+      <BodyCell align="left">
+        {item?.status ? (
+          <Box
+            sx={{
+              padding: "6px 0",
+              backgroundColor: "#E8F2EF",
+              borderRadius: "16px",
+              width: "100px",
+              textAlign: "center",
+            }}
+          >
+            <Text
+              variant="body2"
+              color="#1BC5BD"
+              fontWeight={600}
+              lineHeight={1.28}
+              // sx={{ "&:hover": { color: "primary.main" } }}
+            >
+              Paid
+            </Text>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              padding: "6px 0",
+              backgroundColor: "#FFD9E1",
+              borderRadius: "16px",
+              width: "100px",
+              textAlign: "center",
+            }}
+          >
+            <Text
+              variant="body2"
+              color="#f78080"
+              fontWeight={600}
+              lineHeight={1.28}
+              // sx={{ "&:hover": { color: "primary.main" } }}
+            >
+              Write Off
+            </Text>
+          </Box>
+        )}
+      </BodyCell>
+
+      <BodyCell align="left">
+        {item?.status ? (
+          <Text
+            variant="body2"
+            color="#4D4D4D"
+            // fontWeight={600}
+            lineHeight={1.28}
+            // sx={{ "&:hover": { color: "primary.main" } }}
+          >
+            {formatNumber(item?.amount, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
+          </Text>
+        ) : (
+          <Text
+            variant="body2"
+            color="#f78080"
+            // fontWeight={600}
+            lineHeight={1.28}
+            // sx={{ "&:hover": { color: "primary.main" } }}
+          >
+            {formatNumber(item?.amount, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
+          </Text>
+        )}
+      </BodyCell>
     </>
   );
 };

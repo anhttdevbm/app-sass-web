@@ -38,6 +38,7 @@ export const RowGroup = (props) => {
             <AccordionSummaryWrapper
               sx={{
                 bgcolor: isDarkMode ? "grey.50" : "primary.light",
+                borderRadius: '4px'
               }}
               aria-controls="panel1a-content"
               id="panel1a-header"

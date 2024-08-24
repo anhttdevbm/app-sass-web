@@ -1,0 +1,86 @@
+import { AddCircle, ExpandMore } from "@mui/icons-material";
+import { Box, Popover } from "@mui/material";
+import { Button, Text } from "components/shared";
+import { ComponentProps, useState } from "react";
+
+const ButtonWithDropdown = ({
+  ...props
+}: Omit<ComponentProps<typeof Box>, "children"> & {
+  text: string;
+  children: (handleClose: () => void) => JSX.Element;
+  primaryButtonProps?: ComponentProps<typeof Button>;
+  secondaryButtonProps?: Omit<ComponentProps<typeof Button>, "onClick">;
+}) => {
+  const {
+    text,
+    children,
+    primaryButtonProps,
+    secondaryButtonProps,
+    sx,
+    ...rest
+  } = props;
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const isOpen = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        background:
+          "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+        borderRadius: "2rem",
+        ...sx,
+      }}
+      {...rest}
+    >
+      <Button
+        startIcon={<AddCircle />}
+        variant="primary"
+        size="small"
+        sx={{
+          borderRadius: "2rem 0 0 2rem",
+          bgcolor: "transparent",
+        }}
+        {...primaryButtonProps}
+      >
+        <Text sx={{ color: "white" }}>{text}</Text>
+      </Button>
+      <Button
+        variant="primary"
+        sx={{
+          paddingLeft: 0,
+          paddingRight: 1,
+          borderRadius: "0 2rem 2rem 0",
+          borderLeft: "solid 1px white",
+          bgcolor: "transparent",
+        }}
+        size="small"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        {...secondaryButtonProps}
+      >
+        <ExpandMore />
+      </Button>
+      <Popover
+        open={isOpen}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        {children(handleClose)}
+      </Popover>
+    </Box>
+  );
+};
+
+export default ButtonWithDropdown;

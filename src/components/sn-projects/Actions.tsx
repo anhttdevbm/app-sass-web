@@ -1,38 +1,56 @@
 "use client";
 
-import { memo, useState, useEffect, useMemo } from "react";
-import { Stack, Theme, selectClasses } from "@mui/material";
-import { Button, Text } from "components/shared";
-import PlusIcon from "icons/PlusIcon";
-import { Dropdown, Search, Switch } from "components/Filters";
-import { INITIAL_VALUES, STATUS_OPTIONS } from "./components/helpers";
+import {
+  Avatar,
+  Box,
+  IconButton,
+  InputAdornment,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  MenuList,
+  Paper,
+  Stack,
+  SxProps,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Search, Switch } from "components/Filters";
+import { DataAction } from "constant/enums";
+import { NS_COMMON, NS_PROJECT } from "constant/index";
+import { Option } from "constant/types";
+import useBreakpoint from "hooks/useBreakpoint";
+import useToggle from "hooks/useToggle";
+import AIGradientIcon from "icons/AIGradientIcon";
+import FolderAddIcon from "icons/FolderAddIcon";
+import SearchIcon from "icons/SearchIcon";
+import _ from "lodash";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next-intl/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { memo, useEffect, useState } from "react";
+import { useEmployeeOptions } from "store/company/selectors";
 import { useProjects } from "store/project/selectors";
 import { getPath } from "utils/index";
-import { usePathname, useRouter } from "next-intl/client";
-import useToggle from "hooks/useToggle";
-import { DataAction } from "constant/enums";
+import AiForm from "./AiForm";
+import ButtonWithDropdown from "./components/ButtonWithDropdown";
+import { INITIAL_VALUES } from "./components/helpers";
+import StatusDropdown from "./components/StatusDropdown";
 import Form, { ProjectDataForm } from "./Form";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_PROJECT } from "constant/index";
-import { log } from "console";
 
 const Actions = () => {
   const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();
+  const { options: assignerOptions } = useEmployeeOptions();
   const commonT = useTranslations(NS_COMMON);
   const projectT = useTranslations(NS_PROJECT);
+  const { isMdSmaller: isMobile } = useBreakpoint();
 
   const pathname = usePathname();
   const { push } = useRouter();
   const [isShow, onShow, onHide] = useToggle();
+  const [isAiPopupVisible, setIsAiPopupVisible] = useState(false);
 
   const [queries, setQueries] = useState<Params>({});
-
-  const statusOptions = useMemo(
-    () =>
-      STATUS_OPTIONS.map((item) => ({ ...item, label: commonT(item.label) })),
-    [commonT],
-  );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChangeQueries = (name: string, value: any) => {
@@ -60,7 +78,6 @@ const Actions = () => {
   const onSearch = (newQueries: Params) => {
     const path = getPath(pathname, newQueries);
     push(path);
-    console.log(path);
 
     // onGetProjects({ ...newQueries, pageIndex: 1, pageSize });
   };
@@ -80,102 +97,215 @@ const Actions = () => {
     setQueries(filters);
   }, [filters]);
 
+  const [isShowMobileSearch, setIsShowMobileSearch] = useState(false);
+
+  const NewProjectButton = () => (
+    <ButtonWithDropdown
+      text={commonT("createNew")}
+      primaryButtonProps={{
+        onClick: onShow,
+      }}
+    >
+      {(handleClose) => (
+        <Paper>
+          <MenuList>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                setIsAiPopupVisible(true);
+              }}
+            >
+              <ListItemIcon>
+                <AIGradientIcon />
+              </ListItemIcon>
+              <ListItemText
+                sx={{
+                  background:
+                    "linear-gradient(270deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+                  backgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
+                Create with AI
+              </ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                onShow();
+              }}
+            >
+              <ListItemIcon>
+                <FolderAddIcon sx={{ color: "transparent" }} />
+              </ListItemIcon>
+              <ListItemText>New Project</ListItemText>
+            </MenuItem>
+          </MenuList>
+        </Paper>
+      )}
+    </ButtonWithDropdown>
+  );
+
   return (
     <>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        alignItems="center"
-        justifyContent="space-between"
-        borderBottom="1px solid"
-        borderColor="grey.100"
-        spacing={{ xs: 2, md: 3 }}
-        px={{ md: 3 }}
-        pt={{ md: 1, lg: 1.5 }}
-        pb={{ xs: 1.5, md: 1, lg: 1.5 }}
-      >
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          spacing={{ xs: 2, md: 0 }}
-          width={{ xs: "100%", md: "fit-content" }}
-        >
-          <Text variant={{ xs: "h3", md: "h4" }} display={{ md: "none" }}>
-            {projectT("list.title")}
-          </Text>
-          <Button
-            onClick={onShow}
-            startIcon={<PlusIcon />}
-            size="extraSmall"
-            variant="primary"
-            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
+      {isMobile ? (
+        <>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            {commonT("createNew")}
-          </Button>
-        </Stack>
-        <Search
-          placeholder={commonT("searchBy", { name: projectT("list.key") })}
-          name="name"
-          onChange={onChangeQueries}
-          value={queries?.["name"]}
-          sx={{ display: { xs: "flex", md: "none" } }}
-          rootSx={{ height: 44, bgcolor: "grey.50" }}
-          fullWidth
-        />
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={3}
-          borderRadius={1}
-          justifyContent={{ xs: "flex-start", md: "flex-end" }}
-          overflow="auto"
-          width="100%"
-        >
-          <Switch
-            name="sort"
-            onChange={onChangeQueries}
-            size="small"
-            reverse
-            label={projectT("list.filter.recent")}
-            value={queries?.sort === LATEST_VALUE}
-          />
-          <Switch
-            name="saved"
-            onChange={onChangeQueries}
-            size="small"
-            reverse
-            label={projectT("list.filter.saved")}
-            value={queries?.saved}
-          />
+            <Typography>{projectT("list.title")}</Typography>
+            {isShowMobileSearch ? (
+              <Search
+                placeholder={commonT("searchBy", {
+                  name: projectT("list.key"),
+                })}
+                name="name"
+                onChange={_.debounce(onChangeQueries, 400)}
+                autoFocus
+                onBlur={() => setIsShowMobileSearch(false)}
+                value={queries?.["name"]}
+                startNode={null}
+                endNode={
+                  <SearchIcon sx={{ fontSize: 16 }} htmlColor="dodgerblue" />
+                }
+                sx={{ display: "flex", pb: 2, marginBottom: 1.5 }}
+                rootSx={{ borderRadius: "1.5rem" }}
+              />
+            ) : (
+              <IconButton onClick={() => setIsShowMobileSearch(true)}>
+                <SearchIcon sx={{ fontSize: 24 }} htmlColor="grey" />
+              </IconButton>
+            )}
+          </Stack>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            py={1}
+          >
+            <StatusDropdown
+              value={queries?.status ?? ""}
+              onChange={(value) => onChangeQueries("status", value)}
+            />
 
-          <Dropdown
-            placeholder={commonT("status")}
-            options={statusOptions}
-            name="status"
-            onChange={onChangeQueries}
-            value={queries?.status}
-            rootSx={{
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(4)}!important`,
-                "& .sub": {
-                  display: "none",
-                },
-              },
+            <NewProjectButton />
+          </Stack>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            py={2}
+          >
+            <Switch
+              name="sort"
+              onChange={onChangeQueries}
+              size="small"
+              reverse
+              label={projectT("list.filter.recent")}
+              value={queries?.sort === LATEST_VALUE}
+            />
+            <Switch
+              name="saved"
+              onChange={onChangeQueries}
+              size="small"
+              reverse
+              label={projectT("list.filter.saved")}
+              value={queries?.saved}
+            />
+          </Stack>
+        </>
+      ) : (
+        <>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            borderBottom="1px solid"
+            borderColor="grey.100"
+            spacing={3}
+            px={3}
+            pt={1}
+            pb={1}
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={3}
+              borderRadius={1}
+              justifyContent="flex-start"
+              overflow="auto"
+              width="100%"
+            >
+              <Switch
+                name="sort"
+                onChange={onChangeQueries}
+                size="small"
+                reverse
+                label={projectT("list.filter.recent")}
+                value={queries?.sort === LATEST_VALUE}
+              />
+              <Switch
+                name="saved"
+                onChange={onChangeQueries}
+                size="small"
+                reverse
+                label={projectT("list.filter.saved")}
+                value={queries?.saved}
+              />
+
+              <StatusDropdown
+                value={queries?.status ?? ""}
+                onChange={(value) => onChangeQueries("status", value)}
+              />
+
+              <AssignerDropdown
+                value={queries?.owner ?? ""}
+                options={assignerOptions}
+                onChange={(value) => onChangeQueries("owner", value)}
+              />
+            </Stack>
+
+            <NewProjectButton />
+          </Stack>
+
+          <Box
+            sx={{
+              py: 2,
+              px: 3,
+              marginBottom: 1.5,
             }}
-          />
-        </Stack>
-      </Stack>
+            display="flex"
+          >
+            <Search
+              placeholder={commonT("searchBy", { name: projectT("list.key") })}
+              name="name"
+              onChange={_.debounce(onChangeQueries, 400)}
+              autoFocus
+              value={queries?.["name"]}
+              startNode={null}
+              endNode={
+                <SearchIcon sx={{ fontSize: 16 }} htmlColor="dodgerblue" />
+              }
+              sx={{ width: "35%" }}
+              rootSx={{ borderRadius: "1.5rem" }}
+            />
+          </Box>
+        </>
+      )}
+
       {isShow && (
         <Form
-          open={isShow}
+          open
           onClose={onHide}
           type={DataAction.CREATE}
           initialValues={INITIAL_VALUES as unknown as ProjectDataForm}
           onSubmit={onCreateProject}
         />
+      )}
+      {isAiPopupVisible && (
+        <AiForm isOpen onClose={() => setIsAiPopupVisible(false)} />
       )}
     </>
   );
@@ -184,3 +314,53 @@ const Actions = () => {
 export default memo(Actions);
 
 const LATEST_VALUE = "updated_time=-1";
+
+const AssignerDropdown = (props: {
+  value: Option | "";
+  options: Option[];
+  onChange: (value: string | "") => void;
+  sx?: SxProps;
+}) => {
+  const commonT = useTranslations(NS_COMMON);
+
+  return (
+    <TextField
+      select
+      size="small"
+      SelectProps={{
+        displayEmpty: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <Typography sx={{ color: "grey.600" }}>
+              {commonT("assigner")}:
+            </Typography>
+          </InputAdornment>
+        ),
+      }}
+      value={props.value}
+      onChange={(e) => props.onChange(e.target.value)}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderRadius: "2rem",
+          },
+        },
+        ...props.sx,
+      }}
+    >
+      <MenuItem value="">{commonT("all")}</MenuItem>
+      {props.options.map((option) => (
+        <MenuItem key={option.value} value={option.value}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Avatar
+              alt={option.label}
+              src={option.avatar}
+              sx={{ width: 24, height: 24 }}
+            />
+            <Typography>{option.label}</Typography>
+          </Box>
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+};

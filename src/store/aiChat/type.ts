@@ -117,5 +117,5 @@ export type OpenAIChat = {
 
 export type GetOpenAIChatQueries = {
   page?: number;
-  id?: string;
+  chat_session_id?: string;
 };

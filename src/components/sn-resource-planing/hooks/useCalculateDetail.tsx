@@ -1,10 +1,9 @@
+import { find } from "lodash";
 import { useEffect, useMemo } from "react";
+import { useBookingAll } from "store/resourcePlanning/selector";
 import { Sales } from "store/sales/reducer";
 import { useSales } from "store/sales/selectors";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
-import { find } from "lodash";
-import { useBookingAll } from "store/resourcePlanning/selector";
-import { access } from "fs";
 
 interface IScheduleTime {
   id: string;
@@ -12,7 +11,7 @@ interface IScheduleTime {
 }
 
 export const useCalculateDetail = (
-  saleId?: string,
+  service_id?: string,
   project_id?: string,
   resourceId?: string,
   userId?: string,
@@ -28,9 +27,9 @@ export const useCalculateDetail = (
   } = useGetMyTimeSheet();
 
   const estimate = useMemo(() => {
-    const result = find(sales, { id: saleId })?.estimate;
+    const result = find(sales, { id: service_id })?.estimate;
     return result || 0;
-  }, [sales, saleId]);
+  }, [sales, service_id]);
 
   const workedTime = useMemo(() => {
     return timesheets.reduce((acc, cur) => {
@@ -74,10 +73,10 @@ export const useGetTotalScheduleTime = () => {
   const totalLeftToSchedule = useMemo(() => {
     return bookingAll.reduce((acc, cur) => {
       const services = cur.bookings.reduce((acc, cur) => {
-        if (!cur.sale_id) return acc;
-        const isExist = acc.find((item) => item?.id === cur.sale_id);
+        if (!cur.service_id) return acc;
+        const isExist = acc.find((item) => item?.id === cur.service_id);
         if (isExist) return acc;
-        const sale = find(sales, { id: cur.sale_id });
+        const sale = find(sales, { id: cur.service_id });
         if (sale) {
           acc.push(sale);
         }

@@ -4,14 +4,13 @@ import { Text } from "components/shared";
 import { Permission } from "constant/enums";
 import { NS_LAYOUT } from "constant/index";
 import {
+  AI_AGENT_PATH,
   AI_CHAT_PATH,
-  BILLING_PATH,
-  BLOGS_PATH,
   BLOG_CATEGORY_PATH,
+  BLOGS_PATH,
   BUDGETING_PATH,
   CAREER_PATH,
   CHATTING_ROOM_PATH,
-  MEETING_PATH,
   CLIENT_COMPANIES_PATH,
   COMPANIES_PATH,
   COST_HISTORY_PATH,
@@ -20,6 +19,7 @@ import {
   FEEDBACK_PATH,
   HOLIDAY_CALENDAR_PATH,
   HOME_PATH,
+  INVOICES_PATH,
   LANDING_ABOUT_US_PATH,
   LANDING_AI_PATH,
   LANDING_HELP_CENTER_PATH,
@@ -28,19 +28,15 @@ import {
   LANDING_TRUST_CENTER_PATH,
   MY_COMPANY_PATH,
   POSITIONS_PATH,
-  PROJECTS_PATH,
   PROJECT_TYPES_PATH,
+  PROJECTS_PATH,
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
-  MEETING_HOME_PATH,
-  AI_AGENT_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH,
-  INVOICES_PATH
+  TIME_TRACKING_PATH
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
-import AIChatIcon from "icons/AIChatIcon";
 import BillingIcon from "icons/BillingIcon";
 import BudgetIcon from "icons/BudgetIcon";
 import CardReceive from "icons/CardReceive";
@@ -55,16 +51,14 @@ import MenuDocsIcon from "icons/MenuDocsIcon";
 import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
 import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
+import TaskcoverAIIcon from "icons/TaskcoverIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
-import { MouseEvent, memo, useMemo, useState } from "react";
+import { memo, MouseEvent, useMemo, useState } from "react";
 import { useAuth, useSidebar } from "store/app/selectors";
 import Collapse from "./Collapse";
 import SubMenu from "./SubMenu";
 import { MenuItemProps } from "./helpers";
-import DocsItem from "icons/DocsItem";
-import WalletMoneyIcon from "icons/WalletMoneyIcon";
-import TaskcoverAIIcon from "icons/TaskcoverIcon";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -304,22 +298,15 @@ const DATA: MenuItemProps[] = [
     href: BUDGETING_PATH,
     roles: [Permission.AM, Permission.ST],
   },
-  //Billing
   {
-    label: "menu.billing",
+    label: "menu.invoice",
     icon: <BillingIcon />,
-    href: BILLING_PATH,
+    href: INVOICES_PATH,
     roles: [Permission.AM, Permission.ST],
   },
   {
     label: "menu.chat",
     href: CHATTING_ROOM_PATH,
-    icon: <MenuChatIcon />,
-    roles: [Permission.AM, Permission.ST],
-  },
-  {
-    label: "menu.meeting",
-    href: MEETING_PATH,
     icon: <MenuChatIcon />,
     roles: [Permission.AM, Permission.ST],
   },
@@ -420,12 +407,6 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
-  },
-  {
-    label: "menu.invoices",
-    icon: <BillingIcon />,
-    href: INVOICES_PATH,
-    roles: [Permission.AM, Permission.ST],
   }
 ];
 

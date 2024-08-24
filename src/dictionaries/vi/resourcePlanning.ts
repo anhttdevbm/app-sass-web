@@ -3,10 +3,10 @@ import ResourceDictionary from "dictionaries/types/ResourceDictionary";
 export const ResourcePlanning: ResourceDictionary = {
   header: {
     title: "Quản lý lịch trình",
-
+    add:"Tạo mới",
     tab: {
-      allPeople: "Mọi người",
-      mySchedule: "Lịch trình của tôi",
+      allPeople: "Lịch trình",
+      mySchedule: "Tiến trình",
     },
   },
   schedule: {
@@ -20,6 +20,8 @@ export const ResourcePlanning: ResourceDictionary = {
       },
       descending: "Giảm dần theo giờ làm",
       asceding: "Tăng dần theo giờ làm",
+      position: "Vị trí",
+      viewBy: "Xem bởi",
     },
     time: {
       eventTime: "{allocation}{unit} cho {day} ngày",
@@ -28,6 +30,9 @@ export const ResourcePlanning: ResourceDictionary = {
     resourceHeader: {
       available: "Khả dụng",
       schedule: "Lịch trình",
+      service: "Dịch vụ",
+      user: "người dùng",
+      startDate: "ngày bắt đầu",
     },
     unit: {
       day: "ngày",
@@ -66,6 +71,9 @@ export const ResourcePlanning: ResourceDictionary = {
     estimate: "Ước tính",
     work: "Giờ làm",
     schedule: "Lên lịch",
+    budget: "Ngân sách",
+    user: "Người dùng",
+    role1: "Vị trí",
     editActions: {
       delete: "Xóa lịch",
       duplicate: "Nhân đôi lịch",
@@ -98,5 +106,12 @@ export const ResourcePlanning: ResourceDictionary = {
     updateSuccess: "Cập nhật lịch thành công",
     deleteFailed: "Xóa lịch thất bại",
     deleteSuccess: "Xóa lịch thành công",
+  },
+  popupService: {
+    project: "dự án",
+    chooseProjectPlacehodle: "chọn dự án",
+    chooseBudgetPlacehodle: "chọn ngân sách",
+    budget: "ngân sách",
+    search: "Tìm kiếm",
   },
 };

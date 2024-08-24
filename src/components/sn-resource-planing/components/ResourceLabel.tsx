@@ -1,25 +1,17 @@
 import { ResourceApi } from "@fullcalendar/resource";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
-import { RESOURCE_EVENT_TYPE } from "constant/enums";
-import ArrowDownIcon from "icons/ArrowDownIcon";
-import PlusIcon from "icons/PlusIcon";
-import React, { memo, useEffect, useMemo } from "react";
-import { formatNumber } from "utils/index";
-import { isEmpty, includes } from "lodash";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
-import { IBookingItem, IBookingListItem } from "store/resourcePlanning/reducer";
-import {
-  useCalculateDetail,
-  useGetTotalScheduleTime,
-} from "../hooks/useCalculateDetail";
 import { useGetTimeOffOptions } from "components/sn-sales/hooks/useGetTimeOffOptions";
-import { useProject, useProjects } from "store/project/selectors";
+import { RESOURCE_EVENT_TYPE } from "constant/enums";
+import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import { includes } from "lodash";
+import { useTranslations } from "next-intl";
+import { memo, useMemo } from "react";
 import { useAuth } from "store/app/selectors";
-import { useEmployees } from "store/company/selectors";
+import { IBookingItem, IBookingListItem } from "store/resourcePlanning/reducer";
+import { formatNumber } from "utils/index";
+import { useGetTotalScheduleTime } from "../hooks/useCalculateDetail";
 import { useFetchDetail } from "../hooks/useFetchDetail";
-import { Button } from "components/shared";
 interface IResourceLabelProps {
   resource: ResourceApi;
   resources: IBookingListItem[] | IBookingItem[];
@@ -46,13 +38,14 @@ const ResourceLabel = ({
     name,
     company,
     type,
-    fullname,
+    fullName,
     position,
     eventType,
     note,
     project,
     user_id,
     bookings: parentBookings,
+    role,
   } = resource._resource.extendedProps;
 
   const commonT = useTranslations(NS_COMMON);
@@ -101,60 +94,61 @@ const ResourceLabel = ({
     return (isActive && parentBookings?.length === 0) || !isActive;
   }, [isActive, parentBookings, isMybooking]);
 
-  if (type === "step") {
-    return (
-      <Grid
-        container
-        direction="column"
-        gap={1}
-        alignItems="flex-start"
-        sx={{
-          width: 1,
-          py: 2,
-          "&:hover": {
-            background: "#E1F0FFB2",
-          },
-        }}
-      >
-        <Grid
-          item
-          xs={2}
-          sx={{
-            px: 1,
-            display: "flex",
-            alignItems: "center",
-            columnGap: 1,
-          }}
-        >
-          <Avatar src={avatarUrl} size={36} />
-          <Stack direction={"column"}>
-            <Typography sx={{ fontSize: 14, lineBreak: "auto", width: 1 }}>
-              {eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING
-                ? name
-                : timeOffType}
-            </Typography>
-            <Typography sx={{ fontSize: 12, lineBreak: "auto", width: 1 }}>
-              {position?.name}
-            </Typography>
-          </Stack>
-        </Grid>
-        {/* {isLastItem && (
-          <Button
-            variant="text"
-            startIcon={<PlusIcon />}
-            sx={{
-              color: "success.main",
-            }}
-            // startIcon={<AddIcon />}
-            onClick={() => handleOpenCreate()}
-          >
-            {resourceT("schedule.action.addBooking")}
-          </Button>
-        )} */}
-        <Grid item xs={5} />
-      </Grid>
-    );
-  }
+  // if (type === "step") {
+  //   return (
+  //     <Grid
+  //       container
+  //       direction="column"
+  //       gap={1}
+  //       alignItems="flex-start"
+  //       sx={{
+  //         width: 1,
+  //         py: 2,
+  //         "&:hover": {
+  //           background: "#E1F0FFB2",
+  //         },
+  //       }}
+  //     >
+  //       <Grid
+  //         item
+  //         xs={2}
+  //         sx={{
+  //           px: 1,
+  //           display: "flex",
+  //           alignItems: "center",
+  //           columnGap: 1,
+  //         }}
+  //       >
+  //         <Avatar src={avatarUrl} size={36} />
+  //         <Stack direction={"column"}>
+  //           <Typography sx={{ fontSize: 14, lineBreak: "auto", width: 1 }}>
+  //             {eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING
+  //               ? name
+  //               : timeOffType}
+  //           </Typography>
+  //           <Typography sx={{ fontSize: 12, lineBreak: "auto", width: 1 }}>
+  //             {position?.name}
+  //           </Typography>
+  //         </Stack>
+  //       </Grid>
+  //       {/* {isLastItem && (
+  //         <Button
+  //           variant="text"
+  //           startIcon={<PlusIcon />}
+  //           sx={{
+  //             color: "success.main",
+  //           }}
+  //           // startIcon={<AddIcon />}
+  //           onClick={() => handleOpenCreate()}
+  //         >
+  //           {resourceT("schedule.action.addBooking")}
+  //         </Button>
+  //       )} */}
+  //       <Grid item xs={5} />
+  //     </Grid>
+  //   );
+  // }
+
   return (
     <Grid
       container
@@ -163,7 +157,7 @@ const ResourceLabel = ({
           background: "#E1F0FFB2",
         },
         overflowX: "auto",
-        minWidth: 550,
+        // minWidth: 550,
       }}
     >
       <Grid
@@ -209,65 +203,63 @@ const ResourceLabel = ({
               <Avatar size={32} src={avatarUrl} />
               <Box>
                 <Typography sx={{ fontSize: 14 }} fontWeight={600}>
-                  {fullname}
+                  {fullName}
                 </Typography>
                 <Typography sx={{ color: "#666666", fontSize: 14 }}>
-                  {company}
+                  {role}
                 </Typography>
               </Box>
-              <ArrowDownIcon
-                color="inherit"
-                fontSize="inherit"
-                sx={{
-                  fontSize: "12px",
-                  mt: "6px",
-                  width: "20px",
-                  ml: {
-                    xs: 1,
-                    md: 0,
-                  },
-                  transform: isActive ? "rotate(-90deg)" : "rotate(-180deg)",
-                  transitionDelay: "all ease 0.25s",
-                }}
-              />
             </Stack>
           </Grid>
-          <Grid item xs={1} md={2}>
-            <Typography
-              sx={{
-                ...textHeadStyle,
-                textAlign: "center",
-              }}
-            >
+        </Grid>
+
+        <Grid item maxWidth={"100%"} pl={1} paddingRight={2}>
+          <Stack
+            sx={{
+              ...textHeadStyle,
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              color: "#666666",
+              flexDirection: "row",
+            }}
+          >
+            <Typography sx={{ fontSize: "13px", marginTop: "5px" }}>
+              Available
+            </Typography>
+            <Typography color={"#212121"} fontSize={13}>
               {formatNumber(totalLeftToSchedule[resource._resource.id], {
                 numberOfFixed: 0,
               })}{" "}
               h
             </Typography>
-          </Grid>
-          <Grid item xs={1} md={2}>
-            <Typography
-              sx={{
-                ...textHeadStyle,
-                textAlign: "center",
-              }}
-            >
+          </Stack>
+        </Grid>
+        <Grid item maxWidth={"100%"} pl={1} paddingRight={2}>
+          <Stack
+            sx={{
+              ...textHeadStyle,
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "20px",
+              color: "#666666",
+              flexDirection: "row",
+              fontSize: "13px",
+            }}
+          >
+            <Typography fontSize={13}>
+              Schedule{" ("}
+              {formatNumber(schedulePerLeft, { numberOfFixed: 2, suffix: "%" })}
+              {")"}
+            </Typography>
+            <Typography color={"#212121"} fontSize={13}>
               {formatNumber(totalhour, { numberOfFixed: 0, suffix: "h" })}
             </Typography>
-          </Grid>
-          <Grid item xs={1} md={2}>
-            <Typography
-              sx={{
-                ...textHeadStyle,
-                textAlign: "center",
-              }}
-            >
-              {formatNumber(schedulePerLeft, { numberOfFixed: 2, suffix: "%" })}
-            </Typography>
-          </Grid>
+          </Stack>
         </Grid>
-
-        {isAddbutton && (
+        {/* {isAddbutton && (
           <Button
             variant="text"
             sx={{
@@ -282,7 +274,7 @@ const ResourceLabel = ({
           >
             {resourceT("schedule.action.addBooking")}
           </Button>
-        )}
+        )} */}
       </Grid>
     </Grid>
   );

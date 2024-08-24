@@ -1,0 +1,22 @@
+.MuiTreeItem-root .MuiTreeItem-content.Mui-selected {
+    background-color: transparent !important;
+  }
+  
+  .MuiTreeItem-root .MuiTreeItem-content.Mui-focused {
+    background-color: transparent !important;
+  }
+  
+  .MuiTreeItem-root .MuiTreeItem-content:hover {
+    background-color: transparent !important;
+  }
+  
+  .MuiTreeItem-root .MuiTreeItem-content.Mui-selected.Mui-focused {
+    background-color: transparent !important;
+  }
+
+  /* Style cho hover */
+  .MuiTreeView-root .MuiTreeItem-root .MuiTreeItem-content:hover .MuiTreeItem-iconContainer .MuiSvgIcon-root {
+    border: 2px solid #DDDFE9;
+    padding: 2px;
+    box-sizing: content-box;
+  }

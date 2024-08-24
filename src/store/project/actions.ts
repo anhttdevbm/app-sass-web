@@ -2,7 +2,12 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "api/client";
 import { Endpoint } from "api/endpoint";
 import { HttpStatusCode, Status } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, AN_ERROR_TRY_RELOAD_PAGE } from "constant/index";
+import {
+  AI_CHAT_API_URL,
+  AN_ERROR_TRY_AGAIN,
+  AN_ERROR_TRY_RELOAD_PAGE,
+  PROJECT_AI_API_URL,
+} from "constant/index";
 import { BaseQueries, Option } from "constant/types";
 import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import StringFormat from "string-format";
@@ -55,6 +60,23 @@ export type ProjectData = {
   currency?: string;
 };
 
+export type CreateProjectPrompt = {
+  tone: string;
+  persona: string;
+  prompt: string;
+};
+
+export type AiProjectData = {
+  title: string;
+  expectedCost: string;
+  workingHours: string;
+  description: string;
+  taskList: {
+    title: string;
+    tasks: string[];
+  }[];
+};
+
 export type TaskListData = {
   name: string;
   project: string;
@@ -90,6 +112,18 @@ export type TaskData = {
     owner?: string;
   }[];
 };
+
+export type CreateTaskPrompt = {
+  tone: string;
+  persona: string;
+  method: string;
+  content: string;
+};
+
+export type AiTaskData = {
+  task: string;
+  subtask: string[];
+} & { content: string };
 
 export type MoveTaskData = {
   task_list_current: string;
@@ -248,6 +282,19 @@ export const createProject = createAsyncThunk(
   },
 );
 
+export const createProjectWithAI = createAsyncThunk(
+  "project/createProjectWithAI",
+  async (data: CreateProjectPrompt) => {
+    const response = await client.post(Endpoint.PROJECT_GENERATE, data, {
+      baseURL: AI_CHAT_API_URL,
+    });
+    if (response?.status === HttpStatusCode.CREATED) {
+      return response.data as AiProjectData;
+    }
+    throw AN_ERROR_TRY_AGAIN;
+  },
+);
+
 export const updateProject = createAsyncThunk(
   "project/updateProject",
   async ({ id, ...data }: Partial<ProjectData> & { id: string }) => {
@@ -258,6 +305,24 @@ export const updateProject = createAsyncThunk(
       );
 
       if (response?.status === HttpStatusCode.CREATED) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const deleteProject = createAsyncThunk(
+  "project/deleteProject",
+  async (id: string) => {
+    try {
+      const response = await client.delete(
+        StringFormat(Endpoint.PROJECT_ITEM, { id }),
+      );
+
+      if (response?.status === HttpStatusCode.OK) {
         return response.data;
       }
       throw AN_ERROR_TRY_AGAIN;
@@ -309,7 +374,6 @@ export const getTasksOfProject = createAsyncThunk(
       );
 
       if (response?.status === HttpStatusCode.OK) {
-        console.log(response.data);
         return { ...refactorRawItemListResponse(response.data), prefixKey };
       }
       throw AN_ERROR_TRY_AGAIN;
@@ -354,6 +418,25 @@ export const updateTaskList = createAsyncThunk(
   },
 );
 
+export const updateTaskListOrder = createAsyncThunk(
+  "project/updateTaskList",
+  async ({ id, order }: { id: string; order: number }) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.PROJECT_TASK_ITEM, { id }),
+        { order },
+      );
+
+      if (response?.status === HttpStatusCode.CREATED) {
+        return response.data.task;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
 export const createTask = createAsyncThunk(
   "project/createTask",
   async (data: TaskData) => {
@@ -373,6 +456,19 @@ export const createTask = createAsyncThunk(
     } catch (error) {
       throw error;
     }
+  },
+);
+
+export const createTaskWithAI = createAsyncThunk(
+  "project/createTaskWithAI",
+  async (data: CreateTaskPrompt) => {
+    const response = await client.post(Endpoint.TASK_GENERATE, data, {
+      baseURL: AI_CHAT_API_URL,
+    });
+    if (response.status === HttpStatusCode.CREATED) {
+      return response.data as AiTaskData;
+    }
+    throw AN_ERROR_TRY_AGAIN;
   },
 );
 

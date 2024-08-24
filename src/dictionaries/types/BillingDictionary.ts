@@ -73,6 +73,11 @@ export type BillingDictionary = {
       amount: string;
       amountUnpaid: string;
       dueDate: string;
+      draft: {
+        Unpaid: string;
+        Paid: string;
+        Open: string;
+      };
     };
     exportView: {
       fullNameCompany: string;
@@ -135,8 +140,8 @@ export type BillingDictionary = {
         title: {};
       };
       client: {
-        title: {}
-      }
+        title: {};
+      };
       payment: {
         table: {};
         table2: {};

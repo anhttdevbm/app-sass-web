@@ -1,38 +1,45 @@
-import { Box, Button, Stack, StackProps, Tab } from "@mui/material";
+import { Stack, Tab } from "@mui/material";
 import { NS_BILLING } from "constant/index";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
-import { TabContext, TabPanel, TabList } from "@mui/lab";
-import TabInvoice from "../Invoice";
-import TabFeed from "../Feed";
-import TabPayment from "../Payment";
-import TabClient from "../Client";
+import { ContentCopyRounded, SubtitlesOutlined } from "@mui/icons-material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Avatar, AvatarGroup, Menu, MenuItem } from "@mui/material";
+import { IconButton, Text } from "components/shared";
+import { ButtonGradiant } from "components/sn-invoice/components";
+import { User } from "constant/types";
+import { FormikProps, useFormik } from "formik";
+import useBreakpoint from "hooks/useBreakpoint";
+import PlusIcon from "icons/PlusIcon";
+import TrashIcon from "icons/TrashIcon";
+import { useRouter } from "next-intl/client";
+import { useParams } from "next/navigation";
+import { useSnackbar } from "store/app/selectors";
+import { BillingData } from "store/billing/actions";
 import {
   Bill,
   Billing,
   BillingDataUpdate,
   Budgets,
-  Service,
 } from "store/billing/reducer";
-import { User } from "constant/types";
 import { useBillings, useClientBill } from "store/billing/selectors";
-import { FormikProps, useFormik } from "formik";
-import { Padding } from "@mui/icons-material";
-import { BillingData } from "store/billing/actions";
-import { BILLING_PATH } from "constant/paths";
-import { useRouter } from "next-intl/client";
+import { Invoice, Member } from "store/invoice/reducer";
+import TabClient from "../Client";
+import TabFeed from "../Feed";
+import TabInvoice from "../Invoice";
+import TabPayment from "../Payment";
 import PaymentModal from "./PaymentModal";
-import { Select } from "components/shared";
-import DropdownButton from "./DropdownButton";
-import { useSnackbar } from "store/app/selectors";
+import SelectMembers from "./SelectMembers";
+const ITEM_HEIGHT = 48;
 
 type TabItemProps = {
   label: string;
   value: string;
   editForm?: boolean;
-  item?: Billing;
+  item?: Invoice;
   arrBudgets?: Budgets[];
   user: User;
   form: FormikProps<Billing>;
@@ -40,26 +47,23 @@ type TabItemProps = {
   setBillToInfo: (value: Bill) => void;
   billFromInfo: Bill;
   setBillFromInfo: (value: Bill) => void;
+  handleDisplayComment: (value: boolean) => void;
+  openComment: boolean;
 };
 
 type TabListProps = {
-  item?: Billing;
+  item?: Invoice;
   arrBudgets?: Budgets[];
   user: User;
+  handleDisplayComment: (value: boolean) => void;
+  openComment: boolean;
 };
 
 const TabInfo = (props: TabListProps) => {
-  const { item, user, arrBudgets } = props;
+  const { item, user, arrBudgets, handleDisplayComment, openComment } = props;
   // const { id } = useParams() as { id: string };
   // const pathname = usePathname();
   const billingT = useTranslations(NS_BILLING);
-  const {
-    onUpdateBilling,
-    updateStatus,
-    onCreateBilling,
-    createStatus,
-    markAsSend,
-  } = useBillings();
   const { push } = useRouter();
   const { onAddSnackbar } = useSnackbar();
   const [value, setValue] = useState("Invoice");
@@ -77,23 +81,15 @@ const TabInfo = (props: TabListProps) => {
     console.log(isShowEditClient);
   }, [isShowEditClient]);
 
-  const handleOpen = (value) => {
-    setActionButton(value);
-    setIsOpen(true);
-  };
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
   const TABS = [
     {
       label: billingT("detail.form.invoice.title.invoice"),
       value: "Invoice",
     },
-    {
-      label: billingT("detail.form.feed.title.Feed"),
-      value: "Feed",
-    },
+    // {
+    //   label: billingT("detail.form.feed.title.Feed"),
+    //   value: "Feed",
+    // },
     {
       label: billingT("detail.form.client.title.Client"),
       value: "Client",
@@ -104,51 +100,124 @@ const TabInfo = (props: TabListProps) => {
     },
   ];
 
+  const {
+    onAddUserToBilling,
+    addUserStatus,
+    onGetBilling,
+    onMarkAsSentBilling,
+    isUpdateTagBill,
+    onUpdateTagBilling,
+    onDeleteBilling,
+    isDeleted,
+    onUpdateBilling,
+    updateStatus,
+    onCreateBilling,
+    createStatus,
+    markAsSend,
+  } = useBillings();
+
+  const options = [
+    billingT("detail.form.top.button.option.duplicateInvoice"),
+    billingT("detail.form.top.button.option.createCreditNote"),
+    billingT("detail.form.top.button.option.deleteInvoice"),
+  ];
+  const { isMdSmaller } = useBreakpoint();
+  const { id } = useParams() as { id: string };
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [listUser, setListUser] = useState<Member[]>([]);
+  const [tagSelected, setTagSelected] = useState<string>("");
+  const [markSent, setMarkSent] = useState<string>("");
+  const { isDarkMode } = useTheme();
+  const open = Boolean(anchorEl);
+
+  const setMember = new Set<String>();
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCloseAddPayment = () => {
+    setIsOpen(false);
+  };
+
+  const onChangeMember = (name, data) => {
+    setListUser(data);
+
+    const lastItem = data[data.length - 1];
+
+    onAddUserToBilling(id, data);
+  };
+
+  const onChangeTag = (input) => {
+    const data = {
+      tag: input,
+    };
+    onUpdateTagBilling(id, data);
+  };
+
+  const onDelete = () => {};
+
+  useEffect(() => {
+    if (item?.members && item.members.length > 0 && listUser?.length === 0) {
+      const filterMember = item.members
+        ?.map((item) => {
+          if (!setMember.has(item.id)) {
+            setMember.add(item.id);
+            const member = {
+              id: item.id,
+              fullname: item.fullname,
+              email: item.email,
+            } as Member;
+            return member;
+          }
+        })
+        .filter((item2) => item2 && typeof item2 !== "undefined");
+      setListUser([...filterMember] as Member[]);
+    }
+    // if (item?.tag && item?.tag?.length > 0) {
+    //   setTagSelected(item?.tag[0] ?? "");
+    // }
+    // if (item?.mail_status) {
+    //   setMarkSent(item?.mail_status ?? "");
+    // }
+    // if (item?.user && item.user.length > 0 && listUser?.length > 0) {
+    //   const filterMember = item.user
+    //     ?.map((item) => {
+    //       if (!setMember.has(item.id)) {
+    //         setMember.add(item.id);
+    //         const member = {
+    //           id: item.id,
+    //           fullname: item.fullname,
+    //           avatar: item?.avatar,
+    //         } as Member;
+    //         return member;
+    //       }
+    //     })
+    //     .filter((item2) => item2 && typeof item2 !== "undefined");
+    //   console.log(filterMember);
+    // setListUser([...listUser, ...filterMember] as Member[]);
+  }, [item]);
+
+  useEffect(() => {
+    if ((addUserStatus || isUpdateTagBill) && id) {
+      onGetBilling(id);
+    }
+  }, [addUserStatus, isUpdateTagBill]);
+
+  useEffect(() => {
+    if (id) {
+      onGetBilling(id);
+      setMarkSent("");
+    }
+  }, [markAsSend]);
+
   const formik = useFormik<Billing>({
     enableReinitialize: true,
     initialValues: {},
-    onSubmit(values, formikHelpers) {
-      // setDataUpdate
-
-      if (item?.duplicate) {
-        const arrUserId = item.user?.map((item) => {
-          return { id: item?.id };
-        });
-        const arrBudgetId = item.budget?.map((item) => {
-          return { id: item?.id };
-        });
-        const arrServiceId = item.budgetService?.map((item) => {
-          return { id: item?.id };
-        });
-
-        const data = {
-          budget: arrBudgetId,
-          user: arrUserId,
-          budgetService: arrServiceId,
-          invoiceMethod: 2,
-          vat: item?.vat,
-          amount: item?.amount,
-          amount_unpaid: item?.amount_unpaid,
-        };
-        handleCreateData(data);
-        setIsSubmit(true);
-      } else {
-        const data = {
-          ...values,
-          // ...billToInfo,
-          id: item?.id,
-          billTo: billToInfo,
-          billFrom: billFromInfo,
-        } as BillingDataUpdate;
-        handleSaveValue(data ?? {});
-        setIsSubmit(true);
-      }
-    },
+    onSubmit(values, formikHelpers) {},
   });
-
-  useEffect(() => {
-    formik.setValues(item ?? {});
-  }, [item]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -164,24 +233,6 @@ const TabInfo = (props: TabListProps) => {
     onAddSnackbar("Thành công!", "success");
   };
 
-  useEffect(() => {
-    if (updateStatus && isSubmit && !item?.duplicate) {
-      formik.resetForm();
-      setEditForm(false);
-      setIsSubmit(false);
-    }
-  }, [updateStatus, isSubmit]);
-
-  useEffect(() => {
-    if (createStatus && isSubmit && item?.duplicate) {
-      formik.resetForm();
-      setEditForm(false);
-      setIsSubmit(false);
-      localStorage.removeItem("duplicateBill");
-      push(BILLING_PATH);
-    }
-  }, [createStatus, isSubmit]);
-
   return (
     <>
       <Stack
@@ -196,19 +247,21 @@ const TabInfo = (props: TabListProps) => {
             direction={"row"}
             justifyContent={"space-between"}
             gap={1}
-            borderBottom={isShowEditClient ? "" : "1px solid #ECECF3"}
-            height={40}
+            height={56}
+            mt={2}
           >
             {!isShowEditClient && (
               <TabList
                 key={value}
                 onChange={handleChange}
                 sx={{
-                  height: 40,
-                  minHeight: "40px !important",
+                  height: 56,
+                  minHeight: "56px !important",
                   ["& span"]: {
                     display: "none !important",
                   },
+                  border: "1px solid #EBEAF2",
+                  borderRadius: "100px",
                 }}
                 variant="scrollable"
               >
@@ -217,99 +270,205 @@ const TabInfo = (props: TabListProps) => {
                     key={tab.label}
                     {...tab}
                     label={tab.label}
-                    disabled={tab.value != "Invoice" && editForm}
                     sx={{
-                      color: value === tab.value ? "#212121" : "grey.300",
+                      color: value === tab.value ? "#045EB8" : "#333333",
                       textTransform: "none",
-                      background: value === tab.value ? "#E1F0FF" : "none",
-                      paddingTop: "3px",
+                      background: value === tab.value ? "#D9F0FD" : "none",
                       width: 150,
                       ["&.MuiTab-root.Mui-selected"]: {
-                        color: "#212121",
+                        color: "#045EB8",
                       },
+                      height: 56,
+                      borderRadius: "100px",
                     }}
                   />
                 ))}
               </TabList>
             )}
-            {value === "Invoice" && (
-              <Stack gap={2} direction={"row"} mb={1}>
-                {!editForm && (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      setEditForm(true);
-                    }}
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              spacing={2}
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent={"end"}
+                spacing={1}
+                flex={1}
+                width="50%"
+              >
+                <Stack
+                  direction={"row"}
+                  gap={2}
+                  alignItems={"center"}
+                  sx={{
+                    ["& .MuiAvatar-root"]: {
+                      // marginLeft: "-20px",
+                      position: "initial",
+                      background: "#E1F0FF",
+                      color: "#666",
+                      width: 24,
+                      height: 24,
+                    },
+                    ["& .MuiAvatarGroup-root .MuiAvatar-root"]: {
+                      marginLeft: "-15px",
+                    },
+                  }}
+                >
+                  <AvatarGroup
+                    total={listUser?.length}
+                    max={5}
+                    spacing={"medium"}
                   >
-                    {billingT("detail.form.top.button.edit")}
-                  </Button>
-                )}
+                    {listUser?.map((item, index) => {
+                      // eslint-disable-next-line react/jsx-key
+                      return (
+                        <Avatar
+                          key={index}
+                          src={""}
+                          alt=""
+                          sx={{ width: 24, height: 24 }}
+                        />
+                      );
+                    })}
+                  </AvatarGroup>
+                </Stack>
 
-                {editForm && (
-                  <>
-                    <Button
-                      variant="outlined"
-                      onClick={() => {
-                        setEditForm(false);
-                      }}
-                    >
-                      {billingT("detail.form.top.button.cancel")}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={() => formik.handleSubmit()}
-                    >
-                      {billingT("detail.form.top.button.saveChange")}
-                    </Button>
-                  </>
-                )}
-              </Stack>
-            )}
-            {value === "Payment" && (
-              <Stack gap={2} direction={"row"} mb={1}>
-                {item && item?.mail_status == "Sent" && (
-                  <DropdownButton handleOpen={handleOpen} />
-                  // <Button
-                  //   variant="contained"
-                  //   onClick={() => {
-                  //     handleOpen();
-                  //   }}
-                  // >
-                  //   {"Add Payment"}
-                  //   {/* {billingT("detail.form.top.button.edit")} */}
-                  // </Button>
-                )}
+                <Stack direction={"row"} gap={2}>
+                  <SelectMembers
+                    onChange={(name, data) => onChangeMember(name, data)}
+                    name=""
+                    value={listUser}
+                  />
+                </Stack>
 
-                {/* {editForm && (
-                  <>
-                    <Button
-                      variant="outlined"
-                      onClick={() => {
-                        setEditForm(false);
-                      }}
+                <Stack gap={2} direction={"row"} mb={1}>
+                  <Stack direction="row" alignItems="center">
+                    <ButtonGradiant
+                      onClick={() => setIsOpen(true)}
+                      startIcon={<PlusIcon />}
                     >
-                      {billingT("detail.form.top.button.cancel")}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={() => formik.handleSubmit()}
+                      Payment
+                    </ButtonGradiant>
+                  </Stack>
+                </Stack>
+                <PaymentModal
+                  open={isOpen}
+                  handleClose={handleCloseAddPayment}
+                  title={"New Payment"}
+                  // action={actionButton == "add" ? "add" : "write"}
+                />
+
+                {/* <DropdownTag
+            placeholder={""}
+            options={tagsOptions ?? []}
+            name="Tag"
+            onChange={(name, value) => {
+              onChangeTag(value);
+              setTagSelected(value);
+            }}
+            value={tagSelected}
+            rootSx={{
+              px: "0px!important",
+              [`& .${selectClasses.outlined}`]: {
+                pr: "0!important",
+                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
+                  `${spacing(4)}!important`,
+                "& .sub": {
+                  display: "none",
+                },
+              },
+            }}
+          /> */}
+
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-controls={open ? "long-menu" : undefined}
+                  aria-expanded={open ? "true" : undefined}
+                  aria-haspopup="true"
+                  onClick={handleClick}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  id="long-menu"
+                  MenuListProps={{
+                    "aria-labelledby": "long-button",
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  PaperProps={{
+                    style: {
+                      maxHeight: ITEM_HEIGHT * 4.5,
+                      width: "25ch",
+                    },
+                  }}
+                >
+                  {options.map((option) => (
+                    <MenuItem
+                      key={option}
+                      selected={option === "Pyxis"}
+                      onClick={handleClose}
                     >
-                      {billingT("detail.form.top.button.saveChange")}
-                    </Button>
-                  </>
-                )} */}
+                      {option ===
+                      billingT(
+                        "detail.form.top.button.option.duplicateInvoice",
+                      ) ? (
+                        <Stack
+                          gap={2}
+                          direction={"row"}
+                          alignItems={"center"}
+                          // onClick={() => onDuplicate()}
+                        >
+                          <ContentCopyRounded />
+                          <Text variant={"body2"}>
+                            {billingT(
+                              "detail.form.top.button.option.duplicateInvoice",
+                            )}
+                          </Text>
+                        </Stack>
+                      ) : option ===
+                        billingT(
+                          "detail.form.top.button.option.createCreditNote",
+                        ) ? (
+                        <Stack gap={2} direction={"row"} alignItems={"center"}>
+                          <SubtitlesOutlined />
+                          <Text variant={"body2"}>
+                            {billingT(
+                              "detail.form.top.button.option.createCreditNote",
+                            )}
+                          </Text>
+                        </Stack>
+                      ) : option ===
+                        billingT(
+                          "detail.form.top.button.option.deleteInvoice",
+                        ) ? (
+                        <Stack
+                          gap={2}
+                          direction={"row"}
+                          alignItems={"center"}
+                          color={"red"}
+                          onClick={() => onDelete()}
+                        >
+                          <TrashIcon sx={{ fontSize: 25 }} />
+                          <Text variant={"body2"} color={"red"}>
+                            {billingT(
+                              "detail.form.top.button.option.deleteInvoice",
+                            )}
+                          </Text>
+                        </Stack>
+                      ) : (
+                        ""
+                      )}
+                    </MenuItem>
+                  ))}
+                </Menu>
               </Stack>
-            )}
-            <PaymentModal
-              open={isOpen}
-              handleClose={handleClose}
-              title={
-                actionButton == "add"
-                  ? billingT("detail.form.payment.title.addPayment")
-                  : billingT("detail.form.payment.title.addWriteOff")
-              }
-              action={actionButton == "add" ? "add" : "write"}
-            />
+            </Stack>
           </Stack>
           {TABS.map((tab) => (
             <TabItem
@@ -325,6 +484,8 @@ const TabInfo = (props: TabListProps) => {
               setBillToInfo={setBillToInfo}
               billFromInfo={billFromInfo}
               setBillFromInfo={setBillFromInfo}
+              handleDisplayComment={handleDisplayComment}
+              openComment={openComment}
             />
           ))}
           {/* <TabActions /> */}
@@ -349,6 +510,8 @@ const TabItem = (props: TabItemProps) => {
     setBillToInfo,
     billFromInfo,
     setBillFromInfo,
+    handleDisplayComment,
+    openComment,
   } = props;
 
   const billingT = useTranslations(NS_BILLING);
@@ -386,9 +549,13 @@ const TabItem = (props: TabItemProps) => {
           setBillFromInfo={setBillFromInfo}
         />
       )}
-      {value === "Feed" && (
-        <TabFeed title={label} bill={item ?? {}} user={user} />
-      )}
+      <TabFeed
+        title={label}
+        bill={{}}
+        user={user}
+        handleDisplayComment={handleDisplayComment}
+        openComment={openComment}
+      />
       {value === "Payment" && <TabPayment title={label} />}
       {value === "Client" && <TabClient />}
     </TabPanel>

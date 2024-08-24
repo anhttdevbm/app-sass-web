@@ -7,10 +7,9 @@ import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 import {
-  changeDocInfo,
   changeId,
   changePermDoc,
-  getDocDetails,
+  getDocDetails
 } from "./reducer";
 
 const useDocs = () => {
@@ -26,7 +25,7 @@ const useDocs = () => {
     docsFilters: filters,
 
     getDocCustomStatus,
-    docCustom
+    docCustom,
   } = useAppSelector((state) => state.doc, shallowEqual);
   const { pageIndex, pageSize, totalDocs, totalPages } = useAppSelector(
     (state) => state.doc.docsPaging,
@@ -42,14 +41,19 @@ const useDocs = () => {
     [dispatch],
   );
 
-  const onCreateDoc = async (projectId?: string, content?: string) => {
+  const onCreateDoc = async (
+    projectId?: string,
+    content?: string,
+    name = "No Name",
+    description = "",
+  ) => {
     setLoading(true);
     try {
       const response = await client.post(
         Endpoint.DOCS,
         {
-          name: "No Name",
-          description: "",
+          name,
+          description,
           project_id: projectId,
           content,
         },
@@ -126,10 +130,14 @@ const useDocs = () => {
 
   const onUpdateDocCustom = useCallback(
     async (id: string, data: { content: string }) => {
-      await dispatch(updateDocCustom({id, data}));
+      await dispatch(updateDocCustom({ id, data }));
     },
     [dispatch],
   );
+
+  const redirectDetailDoc = (idDoc: string) => {
+    if (idDoc) push(`/documents/${idDoc}/detail`);
+  };
 
   return {
     items,
@@ -147,10 +155,10 @@ const useDocs = () => {
     loading,
     handleUpdateDoc,
     handleGetDocDetail,
-
     onGetDocCustom,
     docCustom,
-    onUpdateDocCustom
+    onUpdateDocCustom,
+    redirectDetailDoc,
   };
 };
 

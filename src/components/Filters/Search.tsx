@@ -27,6 +27,7 @@ const Search = (props: SearchProps) => {
     hasClear = true,
     startNode = <SearchIcon />,
     endNode,
+    onBlur: _onBlur,
     ...rest
   } = props;
 
@@ -56,10 +57,11 @@ const Search = (props: SearchProps) => {
     }
   };
 
-  const onBlur = () => {
+  const onBlur = (e) => {
     if (prevTextRef.current != text && emitWhenEnter) {
       setText(prevTextRef.current);
     }
+    _onBlur?.(e);
   };
 
   const onClear = (event) => {
@@ -79,7 +81,7 @@ const Search = (props: SearchProps) => {
     <Input
       size="small"
       name={name}
-      rootSx={{ height: 32, borderRadius: 1 }}
+      rootSx={{ height: 32, borderRadius: 1, background: "#ffffff" }}
       sx={{
         height: 32,
         ...sx,
@@ -87,15 +89,18 @@ const Search = (props: SearchProps) => {
       InputProps={{
         onBlur,
       }}
-      startNode={startNode}
-      endNode={ endNode ? endNode :
-        (!!value &&
-        emitWhenEnter &&
-        hasClear && (
-          <IconButton onClick={onClear} noPadding size="small">
-            <CircleCloseIcon />
-          </IconButton>
-        ))
+      // startNode={startNode}
+      endNode={
+        // endNode
+        //   ? endNode
+        //   : !!value &&
+        //     emitWhenEnter &&
+        //     hasClear && (
+        //       <IconButton onClick={onClear} noPadding size="small">
+        //         <CircleCloseIcon />
+        //       </IconButton>
+        //     )
+        startNode
       }
       onKeyDown={(e) => {
         e.stopPropagation();
@@ -103,8 +108,8 @@ const Search = (props: SearchProps) => {
           onEnter && onEnter(name, text as string);
         }
       }}
-      
-      placeholder={commonT("search")}
+      // placeholder={commonT("search")}
+      placeholder={"USER"}
       onChangeValue={onChangeValue}
       value={text}
       {...rest}

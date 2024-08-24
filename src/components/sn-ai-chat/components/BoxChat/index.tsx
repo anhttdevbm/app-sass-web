@@ -46,7 +46,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
 
     onChatWithAI,
     isFetchingChatAI,
-    isIdleChatAI
+    isIdleChatAI,
   } = useChatWithAI();
 
   const {
@@ -167,7 +167,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   const onLoadMoreOpenAIChat = useCallback(() => {
     if (openAIChatFilters?.page && openAIChatFilters.page > 0) {
       onGetOpenAIChat({
-        id: chatSession,
+        chat_session_id: chatSession,
         page: openAIChatFilters.page,
       });
     }
@@ -180,7 +180,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
             return {
               label: item.name[locale],
               value: item.id,
-              icon: item.icon,
+              icon: item.icon as React.ReactNode, // Ensure icon is ReactNode
             };
           })
         : [],
@@ -194,7 +194,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
             return {
               label: item.name[locale],
               value: item.id,
-              icon: item.icon,
+              icon: item.icon as React.ReactNode, // Ensure icon is ReactNode
             };
           })
         : [],
@@ -289,7 +289,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
 
   useEffect(() => {
     if (chatSession) {
-      onGetOpenAIChat({ id: chatSession });
+      onGetOpenAIChat({ chat_session_id: chatSession });
     } else {
       setChatData([]);
       setPersona("");

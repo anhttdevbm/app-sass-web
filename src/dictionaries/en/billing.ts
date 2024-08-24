@@ -75,6 +75,11 @@ export const BillingLang: BillingDictionary = {
       amount: "Amount (no tax)",
       amountUnpaid: "Amount unpaid",
       dueDate: "Due date",
+      draft: {
+        Open: "Open",
+        Paid: "Paid",
+        Unpaid: "Unpaid",
+      },
     },
     exportView: {
       fullNameCompany: "",
@@ -177,7 +182,7 @@ export const BillingLang: BillingDictionary = {
       feed: {
         table: {},
         button: {
-          sendComment: "Send Comment",
+          sendComment: "Send",
           option: {
             comments: "Comments",
             attachments: "Attachments",

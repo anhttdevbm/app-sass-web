@@ -56,7 +56,13 @@ const SelectStatus = (props: SelectStatusProps) => {
   const open = Boolean(anchorEl);
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <div
         onClick={handleStatusCellClick}
         style={{
@@ -112,7 +118,7 @@ const SelectStatus = (props: SelectStatusProps) => {
           );
         })}
       </Popover>
-    </>
+    </div>
   );
 };
 

@@ -67,6 +67,7 @@ export const CommonLang: CommonDictionary = {
   fullName: "Full name",
   phone: "Phone number",
   address: "Address",
+  roles: "Role",
   status: "Status",
   filter: {
     refresh: "Refresh data",
@@ -135,5 +136,7 @@ export const CommonLang: CommonDictionary = {
     homePage: "Home Page",
     aboutUs: "About us",
     helpCenter: "Help Center",
-  }
+  },
+  actions: "Actions",
+  learnMore: "Learn more",
 };
