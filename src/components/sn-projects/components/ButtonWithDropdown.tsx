@@ -38,7 +38,7 @@ const ButtonWithDropdown = ({
       {...rest}
     >
       <Button
-        startIcon={<AddCircle />}
+        startIcon={<AddCircle sx={{ width: 24, height: 24 }} />}
         variant="primary"
         size="small"
         sx={{
