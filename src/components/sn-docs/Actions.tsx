@@ -258,6 +258,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           bgcolor="background.default"
           borderRadius="2rem"
           overflow={{ xs: "auto" }}
+          border="1px solid lightgrey"
         >
           <Stack
             direction="row"
@@ -269,7 +270,9 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             px={{ xs: 3, md: 2, lg: 2 }}
             overflow="auto"
           >
-            <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
+            <Text
+              sx={{ whiteSpace: "nowrap", color: "grey.700", fontWeight: 600 }}
+            >
               View by:
             </Text>
             <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
