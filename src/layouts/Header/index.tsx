@@ -141,4 +141,4 @@ const Header = () => {
 
 export default memo(Header);
 
-export const HEADER_HEIGHT = 50;
+export const HEADER_HEIGHT = 60;
