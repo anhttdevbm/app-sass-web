@@ -315,7 +315,7 @@ const AllPeopleTab = ({
       },
     },
     "& .fc-media-screen": {
-      maxHeight: "65vh!important",
+      maxHeight: "calc(100vh - 360px) !important",
     },
     "& .fc-datagrid-cell-cushion": { padding: "0!important" },
     "& .fc-datagrid-cell": {},
@@ -479,6 +479,7 @@ const AllPeopleTab = ({
         handleChangePosition={handleChangePosition}
         handleChangeWorkingHour={handleChangeWorkingHour}
         bookingAllFilter={bookingAllFilter}
+        isWorkload={isWorkload}
       />
       {isSmSmaller && (
         <Stack flexDirection={"row"} padding={"0px 20px"}>

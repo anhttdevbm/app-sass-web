@@ -147,9 +147,9 @@ const TimeOffTab = ({
                     ".MuiBox-root": {
                       borderColor: "#EFEFEF",
                       borderRadius: "100px",
-                      height: 56,
+                      height: 36,
                       display: "block",
-                      padding: "16px 12px",
+                      padding: "4 12px",
                     },
                     ".MuiSvgIcon-root": {
                       color: "#B3B3B3",
@@ -193,10 +193,11 @@ const TimeOffTab = ({
                   sx={{
                     "& > .MuiBox-root": {
                       background: "transparent",
+                      height: 36,
                     },
                     flex: "1 1 0%",
                     ".MuiInputBase-input": {
-                      height: 32,
+                      height: 36,
                     },
                   }}
                   type="number"
@@ -219,6 +220,7 @@ const TimeOffTab = ({
                     "& > .MuiBox-root": {
                       background: "transparent",
                       borderColor: "transparent",
+                      height: 36,
                     },
                     "& .MuiInputBase-root": {
                       background: "transparent",

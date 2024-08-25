@@ -25,6 +25,7 @@ interface FilterHeaderProps {
   handleChangePosition: (value: string) => void;
   handleChangeWorkingHour: (value: "asc" | "desc") => void;
   bookingAllFilter: IBookingAllFitler;
+  isWorkload?: Boolean;
 }
 
 const FilterHeader = ({
@@ -35,6 +36,7 @@ const FilterHeader = ({
   handleChangePosition,
   handleChangeWorkingHour,
   bookingAllFilter,
+  isWorkload,
 }: FilterHeaderProps) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const commonT = useTranslations<string>(NS_COMMON);
@@ -63,10 +65,12 @@ const FilterHeader = ({
         whiteSpace: "nowrap",
         overflow: "auto",
         margin: isSmSmaller ? 0 : " 0px 20px",
-        width: "100%",
+        maxWidth: "100%",
       }}
     >
-      <Typography sx={{ mr: 2, fontSize: "16px", color: "black" }}>
+      <Typography
+        sx={{ mr: 2, fontSize: "13px", color: "#4D4D4D", fontWeight: 700 }}
+      >
         {resourceT("schedule.filter.viewBy")}:
       </Typography>
       <Stack
@@ -85,7 +89,7 @@ const FilterHeader = ({
           justifyContent: "center",
         }}
       >
-        <Typography sx={{ mr: 1, color: "black" }}>
+        <Typography sx={{ mr: 1, color: "#00000080", fontWeight: 700 }}>
           {resourceT("schedule.filter.position")}:
         </Typography>
         <Filter.Select
@@ -97,7 +101,12 @@ const FilterHeader = ({
             handleChangePosition(event.target.value as string)
           }
           label={commonT("position")}
-          sx={{ maxWidth: "200px" }}
+          sx={{
+            maxWidth: "200px",
+            ".MuiSelect-select": {
+              color: "black",
+            },
+          }}
           options={positions}
         />
       </Stack>
@@ -119,10 +128,11 @@ const FilterHeader = ({
                 margin: 0,
                 fontSize: "13px",
               },
+
               padding: "0 8px",
             }}
           >
-            <Typography sx={{ mr: 1, color: "black" }}>
+            <Typography sx={{ mr: 1, color: "#00000080", fontWeight: 700 }}>
               {resourceT("schedule.filter.workingHours")}:
             </Typography>
             <Filter.Select
@@ -136,7 +146,17 @@ const FilterHeader = ({
                 handleChangeWorkingHour(value);
               }}
               label={resourceT("schedule.filter.workingHours")}
-              sx={{ maxWidth: "260px", color: "black" }}
+              sx={{
+                maxWidth: "260px",
+                ".MuiSelect-select": {
+                  color: "black",
+                },
+                ".MuiTypography-root": {
+                  overflow: "hidden",
+                  color: "black",
+                  textOverflow: "ellipsis",
+                },
+              }}
               options={[
                 {
                   label: resourceT("schedule.filter.asceding"),
@@ -158,13 +178,18 @@ const FilterHeader = ({
                   alignItems: "center",
                   mr: 2,
                   borderRadius: "50px",
-                  color: "#00000080",
+                  color: isWorkload ? "#0575E6" : "#00000080",
                   fontWeight: 700,
                   gap: 1,
+                  background: isWorkload ? "#D9F0FD" : "",
+                  "&.MuiButtonBase-root": {
+                    paddingLeft: 2,
+                    paddingRight: 2,
+                  },
                 }}
                 onClick={() => setIsWorkload((prev: Boolean) => !prev)}
               >
-                <ClockIcon sx={{ width: 14, height: 14, color: "#00000080" }} />
+                <ClockIcon sx={{ width: 14, height: 14 }} />
                 Workload
               </Button>
 
