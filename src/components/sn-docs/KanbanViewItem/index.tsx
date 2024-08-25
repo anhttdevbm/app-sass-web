@@ -100,7 +100,7 @@ export default function KanbanViewItem({
                       lineHeight: "1.5",
                     }}
                   >
-                    {itemKanban.groupInfo?.name}
+                    {itemKanban.groupInfo?.name} #{itemKanban.groupInfo?.number}
                   </Typography>
                   <GroupIcon />
                 </Box>
