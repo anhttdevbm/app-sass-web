@@ -260,7 +260,7 @@ const MyScheduleTab = ({
       },
     },
     "& .fc-media-screen": {
-      maxHeight: "70vh!important",
+      maxHeight: "calc(100vh - 360px) !important",
     },
     "& .fc-datagrid-cell-cushion": { padding: "0!important" },
     "& .fc-datagrid-cell": {},
