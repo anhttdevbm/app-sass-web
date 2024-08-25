@@ -75,7 +75,7 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
         component={ButtonBase}
         sx={sxConfig.item}
       >
-        <Text variant="body2" color="grey.400">
+        <Text variant="body2" fontWeight={600} color="grey.400">
           {docsT("filter.filter.lastEdited")}:
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">

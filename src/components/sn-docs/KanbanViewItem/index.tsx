@@ -38,6 +38,7 @@ export default function KanbanViewItem({
             [theme.breakpoints.down("md")]: {
               minHeight: 238,
             },
+            boxShadow: 0,
           })}
         >
           <CardActionArea onClick={() => redirectDetailDoc(item.id)}>
@@ -48,8 +49,9 @@ export default function KanbanViewItem({
                 bgcolor: itemKanban.groupInfo ? "#14B9E5" : "#E6F1FD",
                 height: 54,
                 color: "common.white",
-                "&.MuiCardHeader-action": {
+                "& .MuiCardHeader-action": {
                   height: "100% !important",
+                  m: 0,
                 },
               }}
               avatar={
@@ -78,11 +80,7 @@ export default function KanbanViewItem({
                   </Box>
                 )
               }
-              action={
-                <Box display="flex" sx={{ height: "100%" }}>
-                  <ActionMoreListDoc />
-                </Box>
-              }
+              action={<ActionMoreListDoc />}
               title={
                 <Box
                   display="flex"
@@ -92,6 +90,7 @@ export default function KanbanViewItem({
                   onClick={() => redirectDetailDoc(item.id)}
                 >
                   <Typography
+                    fontWeight="bold"
                     sx={{
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -101,7 +100,7 @@ export default function KanbanViewItem({
                       lineHeight: "1.5",
                     }}
                   >
-                    {itemKanban.groupInfo ? itemKanban.groupInfo.name : ""}
+                    {itemKanban.groupInfo?.name}
                   </Typography>
                   <GroupIcon />
                 </Box>
@@ -133,11 +132,11 @@ export default function KanbanViewItem({
                     sx={{ bgcolor: "#ddd5d5", height: 18, width: 18 }}
                     aria-label="avatar-content"
                   />
-                  <Typography variant="body1">
+                  <Typography variant="body2">
                     {(item.owner?.fullname || item.created_by?.fullname) &&
                       docsT("ownedBy")}
                   </Typography>
-                  <Typography variant="body1" sx={{ color: "#0575E6" }}>
+                  <Typography variant="body2" sx={{ color: "#0575E6" }}>
                     {item.owner?.fullname ?? item.created_by?.fullname ?? "--"}
                   </Typography>
                 </Box>
