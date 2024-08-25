@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Stack } from "@mui/material";
+import { Avatar, Box, Stack } from "@mui/material";
 import {
   ChangeEvent,
   memo,
@@ -18,7 +18,8 @@ import AttachmentPreview from "components/AttachmentPreview";
 import dynamic from "next/dynamic";
 import hljs from "highlight.js";
 import { replaceDescriptionBr } from "components/sn-project-detail/Tasks/helpers";
-
+import styled from "styled-components";
+import { useAuth } from "store/app/selectors";
 const ReactQuill = dynamic(
   () => {
     hljs.configure({
@@ -58,6 +59,18 @@ const ReactQuill = dynamic(
   { ssr: false },
 );
 
+const TextEditor = styled(ReactQuill)(({ theme }) => ({
+  width: "100%",
+  "& .ql-toolbar": {
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  // "& .ql-container": {
+  //   borderBottomLeftRadius: 12,
+  //   borderBottomRightRadius: 12,
+  // },
+}));
+
 export type EditorProps = {
   hasAttachment?: boolean;
   onChangeFiles?: (files: File[]) => void;
@@ -76,7 +89,7 @@ const EditorCustom = (props: EditorProps) => {
     ...rest
   } = props;
   const [value, setValue] = useState("");
-
+  const { user } = useAuth();
   const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   const urlFiles = useMemo(
@@ -85,7 +98,7 @@ const EditorCustom = (props: EditorProps) => {
   );
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("zzzzzzzzzzzzzzzzzzzzzzzz")
+    console.log("zzzzzzzzzzzzzzzzzzzzzzzz");
     if (!event.target.files?.length) return;
     let newFiles = Array.from(event.target.files);
     newFiles = newFiles.reduce(
@@ -97,7 +110,7 @@ const EditorCustom = (props: EditorProps) => {
       },
       [...files],
     );
-    console.log("newFiles",newFiles)
+    console.log("newFiles", newFiles);
     onChangeFiles && onChangeFiles(newFiles);
   };
 
@@ -125,7 +138,7 @@ const EditorCustom = (props: EditorProps) => {
         attachment: () => {
           inputFileRef?.current?.click();
         },
-        image:  () => {
+        image: () => {
           inputFileRef?.current?.click();
         },
       },
@@ -156,61 +169,75 @@ const EditorCustom = (props: EditorProps) => {
     }
   }, [props.value]);
 
-  console.log("files",files)
-
   return (
-    <Stack className="editor">
-      <ReactQuill
-        theme="snow"
-        placeholder="Write something..."
-        modules={{
-          toolbar,
-          // syntax: true,
-        }}
-        className={noCss ? "nocss" : ""}
-        onChange={setValue}
-        value={value}
-        {...rest}
-      />
+    <Stack className="" style={{ width: "100%" }}>
       <Stack
-        direction="row"
-        flex={1}
-        flexWrap="wrap"
-        p={noCss ? 0 : 1}
-        sx={
-          noCss
-            ? {}
-            : {
-                border: "1px solid",
-                borderColor: "grey.A200",
-                borderBottomLeftRadius: 4,
-                borderBottomRightRadius: 4,
-                borderTop: "none",
-              }
-        }
+        flexDirection={"row"}
+        justifyContent={"start"}
+        alignItems={"start"}
+        gap={"7px"}
       >
-        {urlFiles.map((attachment, index) => (
-          <AttachmentPreview
-            key={index}
-            src={attachment}
-            name={files[index].name}
-            onRemove={onRemove(index)}
+        <Avatar
+          alt={user?.name || "User"}
+          src={user?.avatar?.link}
+          variant="rounded"
+          sx={{ borderRadius: "10px", marginBottom: "0px" }}
+        />
+        <Stack style={{ width: "100%", flex: 1 }}>
+          <TextEditor
+            theme="snow"
+            placeholder="Write something..."
+            modules={{
+              toolbar,
+              // syntax: true,
+            }}
+            // className={noCss ? "nocss" : ""}
+            onChange={setValue}
+            value={value}
+            {...rest}
           />
-        ))}
+          <Stack
+            direction="row"
+            flex={1}
+            flexWrap="wrap"
+            p={noCss ? 0 : 1}
+            sx={
+              noCss
+                ? {}
+                : {
+                    border: "1px solid",
+                    borderColor: "grey.A200",
+                    borderBottomLeftRadius: "12px",
+                    borderBottomRightRadius: "12px",
+                    borderTop: "none",
+                    marginBottom: "20px",
+                  }
+            }
+          >
+            {urlFiles.map((attachment, index) => (
+              <AttachmentPreview
+                key={index}
+                src={attachment}
+                name={files[index].name}
+                onRemove={onRemove(index)}
+              />
+            ))}
+            <Box
+              multiple
+              component="input"
+              type="file"
+              // accept={"png,jpg"}
+              accept="*"
+              sx={{ display: "none" }}
+              ref={inputFileRef}
+              onChange={(e) => {
+                console.log("asfkadfhsklasjfhkl");
+                onChangeFile(e);
+              }}
+            />
+          </Stack>
+        </Stack>
       </Stack>
-      <input
-        // multiple
-        // component="input"
-        type="file"
-        // accept={"png,jpg"}
-        accept="*"
-        // sx={{ display: 'none' }} 
-        // ref={inputFileRef}
-        onChange={(e) => {
-          console.log("asfkadfhsklasjfhkl")
-          onChangeFile(e)
-        }}
-      />
       {children}
     </Stack>
   );
