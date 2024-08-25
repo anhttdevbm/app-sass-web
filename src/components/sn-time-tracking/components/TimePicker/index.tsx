@@ -11,7 +11,7 @@ import { Stack } from "@mui/system";
 import { MobileTimePicker, TimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import dayjs, { Dayjs } from "dayjs";
 import useTheme from "hooks/useTheme";
 import OutLineExpandIcon from "icons/OutLineExpandIcon";
@@ -171,14 +171,13 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                   display: "none",
                 },
                 "& button": {
-                  position: 'absolute',
-                  right: '2px',
+                  position: "absolute",
+                  right: "2px",
                   // bottom: '-1px',
-                }
+                },
               }}
               value={selectedDate}
-              onChange={(value: any) => {
-                // onChange && onChange(dayjs(value).format('YYYY/MM/DD'));
+              onChange={(value) => {
                 onChange && onChange(dayjs(value));
               }}
               onOpen={() => setIsFocus(true)}

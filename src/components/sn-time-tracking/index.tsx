@@ -40,7 +40,7 @@ interface ITab {
 const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<string>("companyTime");
+  const [tab, setTab] = useState<string>("myTime");
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -48,6 +48,7 @@ const TimeTrackingPage = () => {
   const [workBottomLeftRadius, setWorkBottomLeftRadius] =
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
+
   const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
 
   const timeT = useTranslations(NS_TIME_TRACKING);
@@ -76,8 +77,7 @@ const TimeTrackingPage = () => {
     setWorkBorder("");
   };
 
-  const showLogTimePopup = () =>
-    setIsOpenCreatePopup((previousState) => !previousState);
+  const showLogTimePopup = () => setIsOpenCreatePopup(true);
 
   useEffect(() => {
     console.log(tab);
@@ -391,6 +391,7 @@ const TimeTrackingPage = () => {
           value="myTime"
           sx={{
             "& .MuiTabPanel-root": { paddingTop: "0px!important" },
+            height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
           }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
         >
@@ -399,6 +400,7 @@ const TimeTrackingPage = () => {
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
             currentKindOfSheet={kindOfSheet}
+            setIsOpenCreatePopup={setIsOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel
@@ -414,6 +416,7 @@ const TimeTrackingPage = () => {
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
             currentKindOfSheet={kindOfSheet}
+            setIsOpenCreatePopup={setIsOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel value="timeLog" sx={{ paddingTop: { sm: 0, md: "auto" } }}>

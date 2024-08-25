@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -45,6 +46,7 @@ interface IProps {
   onClick(action: "create" | "edit", item?: any): void;
   isOpenCreatePopup: boolean;
   currentKindOfSheet: string;
+  setIsOpenCreatePopup: (isOpen: boolean) => void;
 }
 
 interface IFilter {
@@ -116,6 +118,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     username: userDetailTableName,
     avatar: userDetailTableAvatar,
   } = useSelector((state: RootState) => state.userNavigationDetail);
+  const { currentKindOfSheet, isOpenCreatePopup, setIsOpenCreatePopup } = props;
   const [currentYear, setCurrentYear] = useState<string>("");
   const isGetLoading: any = false;
   const timeT = useTranslations(NS_TIME_TRACKING);
@@ -124,9 +127,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(
-    props.isOpenCreatePopup,
-  );
   const [activeTab, setActiveTab] = React.useState<string>("timeSheet");
   const [events, setEvents] = React.useState<any[]>([]);
   const [filters, setFilters] = React.useState<IFilter>(DEFAULT_FILTER);
@@ -155,8 +155,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   }, [selectedDate, dateRange]);
 
   React.useEffect(() => {
-    setIsOpenCreatePopup(props.isOpenCreatePopup);
-  }, [props.isOpenCreatePopup]);
+    setIsOpenCreatePopup(isOpenCreatePopup);
+  }, [isOpenCreatePopup]);
 
   React.useEffect(() => {
     if (!_.isEmpty(company)) {
@@ -576,7 +576,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     );
   };
 
-  const _redderCreatePopup = () => (
+  const _renderCreatePopup = () => (
     <TimeCreate
       open={isOpenCreatePopup}
       onClose={() => setIsOpenCreatePopup(false)}
@@ -587,7 +587,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
 
   return (
     <Stack direction="column" height="100%" paddingTop="20px">
-      {props.currentKindOfSheet === "table" && (
+      {currentKindOfSheet === "table" && (
         <>
           {userDetailTablevisible && (
             <div
@@ -630,7 +630,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
           )}
         </>
       )}
-      {props.currentKindOfSheet === "table" ? (
+      {currentKindOfSheet === "table" ? (
         // <Stack
         //   //ref={scrollRef}
         //   sx={{
@@ -817,7 +817,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
           //ref={scrollRef}
         >
           {/* {_renderTimeSheetContent()} */}
-          {props.currentKindOfSheet === "timeGridWeek" && (
+          {currentKindOfSheet === "timeGridWeek" && (
             // <TimeSheet data={company} filters={filters} dateRange={dateRange} />
             <Box
               sx={{
@@ -832,7 +832,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
 
             // <TableSheet dateRange={dateRange}/>
           )}
-          {props.currentKindOfSheet === "timeSheet" && (
+          {currentKindOfSheet === "timeSheet" && (
             <>
               {/* <div
                 style={{
@@ -861,7 +861,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       )}
 
       {/* {_renderFooter()} */}
-      {_redderCreatePopup()}
+      {_renderCreatePopup()}
     </Stack>
   );
 };

@@ -42,15 +42,12 @@ import {
   tableCellDataStyles,
   trackingTableCellStyles,
 } from "./TrackingTable.styles";
+import { inter } from "../CalendarTracking.styles";
 
 interface IProps {
   dateRange: Date[];
   data: CompanyTimeSheet[];
 }
-
-const inter = Inter({
-  subsets: ["latin"],
-});
 
 const createRowData = (
   fullname: string,

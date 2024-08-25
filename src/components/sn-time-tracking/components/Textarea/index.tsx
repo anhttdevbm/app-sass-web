@@ -1,15 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, TextField, TextFieldProps } from "@mui/material";
 import React from "react";
-import {
-  Box,
-  FormHelperText,
-  InputLabel,
-  TextField,
-  TextFieldProps,
-  Typography,
-} from "@mui/material";
 
 import { Stack } from "@mui/system";
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import useTheme from "hooks/useTheme";
 interface ISectionProps {
   value?: string | null;
@@ -55,6 +49,19 @@ const Textarea: React.FC<TextFieldInputProps> = React.forwardRef(
     return (
       <Box
         sx={{
+          borderRadius: "12px",
+          borderWidth: "1px",
+          borderStyle: "solid",
+          transition: "all ease 0.25s",
+          borderColor: error
+            ? "rgba(246, 78, 96, 1)"
+            : isFocus
+            ? "rgba(54, 153, 255, 0.5)"
+            : isDarkMode
+            ? "#393939"
+            : "#EFEFEF",
+          background:
+            "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
           display: "flex",
           flexDirection: "column",
           width: fullWidth ? "100%" : "auto",
@@ -67,71 +74,39 @@ const Textarea: React.FC<TextFieldInputProps> = React.forwardRef(
           sx={{
             display: "flex",
             flexDirection: "row",
-            backgroundColor: isDarkMode ? "#393939" : "grey.50",
             borderRadius: "4px",
             ":hover": {
               cursor: disabled ? "not-allowed" : "text",
             },
-            transition: "all ease 0.25s",
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: error
-              ? "rgba(246, 78, 96, 1)"
-              : isFocus
-              ? "rgba(54, 153, 255, 0.5)"
-              : isDarkMode
-              ? "#393939"
-              : "#F7F7FD",
             width: "100%",
             height: "100%",
           }}
         >
           <Stack direction="column" flex={1}>
-            <InputLabel
-              sx={{
-                fontSize: "12px",
-                fontWeight: 400,
-                lineHeight: "18px",
-                userSelect: "none",
-                padding: "8px 20px 0px 20px",
-                color: !!isDarkMode ? "common.white" : "grey.300",
-              }}
-              htmlFor={`input-field-${randomId}`}
-            >
-              {label}{" "}
-              {required && (
-                <Typography
-                  component="span"
-                  sx={{
-                    color: "rgba(246, 78, 96, 1)",
-                    fontSize: "inherit",
-                    lineHeight: "16px",
-                  }}
-                >
-                  (*)
-                </Typography>
-              )}
-            </InputLabel>
             <TextField
               sx={{
                 overflow: "auto",
-                padding: "0 20px 20px 20px",
-                resize: "vertical",
-                backgroundColor: isDarkMode ? "#393939" : "grey.50",
+                padding: "8px 20px",
+                resize: "none",
+                backgroundColor: "transparent",
                 minHeight: "52px",
                 maxHeight: "250px",
                 " .MuiInputBase-root": {
-                  // background: CommonColors.bgInput,
-                  // height: '100%',
+                  backgroundColor: "transparent",
+                  height: "100%",
                   padding: "0",
+                  ":hover": {
+                    backgroundColor: "transparent",
+                  },
                 },
                 textarea: {
+                  fontFamily: inter.style.fontFamily,
                   fontSize: "14px",
                   lineHeight: "22px",
                   fontWeight: 400,
                   color: isDarkMode ? "#fff" : "common.black",
                   padding: 0,
-                  backgroundColor: isDarkMode ? "#393939" : "grey.50",
+                  backgroundColor: "transparent",
                   height: "calc(100% - 20px)",
                 },
                 "> :before, :after": {
@@ -155,7 +130,7 @@ const Textarea: React.FC<TextFieldInputProps> = React.forwardRef(
           </Stack>
           {endAdornment}
         </Box>
-        <Stack direction="row" justifyContent="space-between">
+        {/* <Stack direction="row" justifyContent="space-between">
           <FormHelperText
             sx={{ color: "rgba(246, 78, 96, 1)", marginLeft: "18px" }}
           >
@@ -174,7 +149,7 @@ const Textarea: React.FC<TextFieldInputProps> = React.forwardRef(
           >
             {totalWords}/2000
           </FormHelperText>
-        </Stack>
+        </Stack> */}
       </Box>
     );
   },

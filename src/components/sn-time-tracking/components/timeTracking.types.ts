@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Project } from "store/timeTracking/reducer";
+
 export const TIME_TRACKING_HEADER_HEIGHT = 72;
 
 export interface IFormattedDate {
@@ -24,4 +26,26 @@ export interface EmployeeTimeSheetRowData {
   weeklyHours: WeeklyHours;
   totalHours: number;
   is_pin: string;
+}
+
+export interface FullCalendarExtendedProps {
+  id: string;
+  date: string;
+  start_time: string;
+  project: Project;
+  avatar: string;
+  day: string;
+  name: string;
+  position: { id: string; name: string };
+  hour: number;
+  typeDefault: string;
+  type: string;
+  note: string;
+}
+
+export interface FullCalendarEventProps {
+  title?: string;
+  start?: string;
+  end?: string;
+  extendedProps: Partial<FullCalendarExtendedProps>;
 }

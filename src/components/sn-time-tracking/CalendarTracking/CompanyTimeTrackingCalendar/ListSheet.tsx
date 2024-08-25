@@ -42,6 +42,7 @@ interface IProps {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottom: "none",
+  fontFamily: "unset",
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -96,8 +97,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Date
@@ -106,8 +109,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Project name
@@ -116,18 +121,22 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
-              Task name
+              Type
             </StyledTableCell>
             <StyledTableCell
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               User
@@ -136,8 +145,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Time
@@ -146,8 +157,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Creation time
@@ -175,7 +188,7 @@ const ListSheet: React.FC<IProps> = (props) => {
                     sx={{
                       color: "#DFE1E6",
                       "& > svg > path": {
-                        clipPath: "inset(0 round 4px)", // Apply border radius to the SVG
+                        clipPath: "inset(0 round 4px)",
                       },
                     }}
                   />
@@ -187,37 +200,38 @@ const ListSheet: React.FC<IProps> = (props) => {
                   }}
                 >
                   {timesheet?.project?.name ? (
-                    <Typography>{timesheet?.project?.name}</Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      {timesheet?.project?.name}
+                    </Typography>
                   ) : (
-                    <Typography sx={{ color: "red" }}>Break time</Typography>
+                    <Typography
+                      sx={{
+                        color: "red",
+                        fontSize: "14px",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      Break time
+                    </Typography>
                   )}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
-                    fontSize: "16px",
+                    color: timesheet?.project?.name ? "#0575E6" : "red",
                   }}
                 >
-                  {timesheet.note}
+                  {timesheet?.project?.name ? "Work time" : "Break time"}
                 </StyledTableCell>
-                <StyledTableCell
-                  sx={{
-                    fontSize: "16px",
-                  }}
-                >
-                  {timesheet.fullname}
-                </StyledTableCell>
-                <StyledTableCell
-                  sx={{
-                    fontSize: "16px",
-                  }}
-                >
+                <StyledTableCell>{timesheet.fullname}</StyledTableCell>
+                <StyledTableCell>
                   {formatHoursToHHMM(timesheet.duration)}
                 </StyledTableCell>
-                <StyledTableCell
-                  sx={{
-                    fontSize: "16px",
-                  }}
-                >
+                <StyledTableCell>
                   {moment(timesheet.created_time).format("DD/MM/YYYY HH:MM")}
                 </StyledTableCell>
               </StyledTableRow>
