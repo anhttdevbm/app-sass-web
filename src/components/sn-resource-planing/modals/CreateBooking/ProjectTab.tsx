@@ -232,6 +232,7 @@ const ProjectTab = ({
             ".MuiOutlinedInput-notchedOutline": {
               borderColor: "#EFEFEF",
             },
+            pointerEvents: !watchProject("project_id") ? "none" : "auto",
           }}
         />
       </Grid2>
@@ -241,7 +242,6 @@ const ProjectTab = ({
           name="service_id"
           control={controlProject as unknown as Control}
           listOptions={listServices}
-          disabled={!watchProject("project_id")}
           label={resourceT("form.services")}
           required
           sx={{
@@ -251,6 +251,7 @@ const ProjectTab = ({
             ".MuiOutlinedInput-notchedOutline": {
               borderColor: "#EFEFEF",
             },
+            pointerEvents: !watchProject("project_id") ? "none" : "auto",
           }}
           MenuProps={{
             PaperProps: {

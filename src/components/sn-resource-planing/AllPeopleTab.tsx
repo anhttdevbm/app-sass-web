@@ -400,7 +400,7 @@ const AllPeopleTab = ({
     if (startMonth === endMonth) {
       return [monthNames[startMonth]];
     } else {
-      return [monthNames[startMonth], monthNames[endMonth]];
+      return [monthNames[endMonth]];
     }
   }
   const currentDate = new Date();
