@@ -103,7 +103,7 @@ const DatePickerInput = forwardRef((props: InputProps, ref) => {
       endNode={
         <CalendarIcon
           onClick={onClickEndNode}
-          sx={{ color: "grey.400", fontSize: 24 }}
+          sx={{ color: "grey.400", fontSize: 20 }}
         />
       }
     />
