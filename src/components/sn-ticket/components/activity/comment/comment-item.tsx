@@ -10,48 +10,54 @@ import { useTranslations } from "next-intl";
 import { NS_PROJECT } from "constant/index";
 import { Attachment } from "constant/types";
 
-
 const CommentItem = (props) => {
-    const {
-      creator,
-      content,
-      attachments_down = [],
-      created_time,
-      listAttachmentsDown,
-    } = props;
-  
-    return (
-      <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
-        <Stack direction="row" justifyContent="space-between" spacing={1}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar size={32} src={creator?.avatar?.link} />
-            <Stack>
-              <Text variant="body2">{creator?.fullname ?? "--"}</Text>
-              <Text variant="caption" color="grey.400">
-                {creator?.email ?? "--"}
-              </Text>
-            </Stack>
+  const {
+    creatorUser,
+    comment,
+    attachments_down = [],
+    createTime,
+    listAttachmentsDown,
+  } = props;
+
+  return (
+    <Stack
+      flex={1}
+      spacing={1}
+      bgcolor="grey.50"
+      p={2}
+      borderRadius={1}
+      width={"100%"}
+    >
+      <Stack direction="row" justifyContent="space-between" spacing={1}>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Avatar size={32} src={creatorUser?.avatar?.link} />
+          <Stack>
+            <Text variant="body2">{creatorUser?.fullname ?? "--"}</Text>
+            {/* <Text variant="caption" color="grey.400">
+              {creatorUser?.email ?? "--"}
+            </Text> */}
           </Stack>
-          <Text variant="body2" color="grey.400">
-            {formatDate(created_time, "HH:mm - dd/MM/yyyy")}
-          </Text>
         </Stack>
-  
-        {!!content && (
-          <Box
-            sx={{
-              fontSize: 14,
-              "& *": {
-                marginBlockStart: 0,
-                marginBlockEnd: 0,
-                wordBreak: "break-all",
-              },
-            }}
-            className="html"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
-        )}
-        {/* <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
+        <Text variant="body2" color="grey.400">
+          {formatDate(createTime, "HH:mm - dd/MM/yyyy")}
+        </Text>
+      </Stack>
+      {!!comment && (
+        <Box
+          sx={{
+            fontSize: 14,
+            "& *": {
+              marginBlockStart: 0,
+              marginBlockEnd: 0,
+              wordBreak: "break-all",
+            },
+          }}
+          className="html"
+          dangerouslySetInnerHTML={{ __html: comment }}
+        />
+      )}
+
+      {/* <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
           {attachments_down.map((attachment) => (
             <AttachmentPreview
               key={attachment.link}
@@ -62,8 +68,8 @@ const CommentItem = (props) => {
             />
           ))}
         </Stack> */}
-      </Stack>
-    );
-  };
-  
-  export default CommentItem
+    </Stack>
+  );
+};
+
+export default CommentItem;

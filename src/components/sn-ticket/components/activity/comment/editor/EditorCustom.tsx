@@ -222,16 +222,14 @@ const EditorCustom = (props: EditorProps) => {
                 onRemove={onRemove(index)}
               />
             ))}
-            <Box
+            <input
               multiple
-              component="input"
               type="file"
-              // accept={"png,jpg"}
               accept="*"
-              sx={{ display: "none" }}
+              style={{ display: "none" }}
               ref={inputFileRef}
               onChange={(e) => {
-                console.log("asfkadfhsklasjfhkl");
+                console.log("File selected");
                 onChangeFile(e);
               }}
             />
