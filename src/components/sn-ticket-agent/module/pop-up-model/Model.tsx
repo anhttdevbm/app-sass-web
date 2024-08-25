@@ -99,6 +99,13 @@ const Model = (props: PropsModel) => {
         // push(TICKET_PATH);
         onAddSnackbar("Create ticket success!", "success");
         queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, payload] })
+        setFormAgent({
+          nameUser: "",
+          username: "",
+          email: "",
+          phone: "",
+          password: "",
+        })
         handleClose()
       },
       onError: (err: any) => {
