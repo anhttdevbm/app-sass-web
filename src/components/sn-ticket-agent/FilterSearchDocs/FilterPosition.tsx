@@ -21,18 +21,18 @@ import ChevronIcon from "icons/ChevronIcon";
 const FilterPosition = ({ onChange, queries }: FilterSearchDocsProps) => {
   const t = useTranslations(NS_TICKET);
 
-const ignoreItems = ["All" , "High" , "Medium" , "Low"];
+const ignoreItems = ["All" , "Admin" , "Agent"];
 const [name , setName] = useState("All")
 const [anchorEl, setAnchorEl] = useState<any>(null);
 const handleClose = () => {
   setAnchorEl(null);
 };
 
-const onChangeMembers = (id: string, priority: string) => {
-  setName(priority)
-  const newData = { id, priority };
+const onChangeMembers = (id: string, position: string) => {
+  setName(position)
+  const newData = { id, position };
 
-  onChange("priority", newData);
+  onChange("position", newData);
 
 };
 

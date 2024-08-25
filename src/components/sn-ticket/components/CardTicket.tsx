@@ -16,14 +16,14 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 import { memo } from "react";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "store/hooks";
 import { setDataTicketDetail } from "store/ticket/actions";
 
 const CardTicket = (props: any) => {
   const t = useTranslations(NS_TICKET);
   const router = useRouter();
   const { push } = router;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { data } = props;
 

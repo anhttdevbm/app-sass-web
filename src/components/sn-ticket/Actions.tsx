@@ -23,12 +23,11 @@ import { useDocs } from "store/docs/selectors";
 import NoneIcon from "icons/NoneIcon";
 import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
-import { useAppSelector } from "store/hooks";
+import { useAppDispatch, useAppSelector } from "store/hooks";
 import { useParams, useSearchParams } from "next/navigation";
 import IconButton from "@mui/material/IconButton";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useDispatch } from "react-redux";
 import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
 import SearchIcon from "icons/SearchIcon";
 import BtnAdd from "./BtnAdd";
@@ -58,7 +57,7 @@ function convertStringToArray(inputString) {
 const ChangeViewListDoc = () => {
   const [typeViewListDoc, setTypeViewListDoc] =
     useState<TypeViewListDoc>("basicViewListDoc");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleViewKanban = () => {
     dispatch(changeTypeViewDoc("kanbanViewListDoc"));
@@ -115,7 +114,7 @@ type ActionProps = {
 
 const Actions = ({ isProjectTabMode }: ActionProps) => {
   const data = useSelector(selectSearchTicket);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const companyT = useTranslations(NS_COMPANY);
   const t = useTranslations(NS_TICKET);
   const commonT = useTranslations(NS_COMMON);

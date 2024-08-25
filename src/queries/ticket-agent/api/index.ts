@@ -27,8 +27,27 @@ export const createAgentApi = (data : PayloadCreate) => {
   });
 };
 
-export const getListTicketApi = (params) => {
+export const getListAgent = (params) => {
   return client.get(Endpoint.TICKET_AGENT, params, {
+    baseURL: TICKET_AGENT_API_URL,
+  });
+};
+
+export const updateAgentApi = async (payload) => {
+  const mapData = {
+    nameUser : payload?.nameUser ,
+    email : payload?.email ,
+    phone : payload?.phone
+  }
+  console.log("check mapData", mapData)
+
+  return await client.put(`${Endpoint.TICKET_AGENT}/${payload.id}`, mapData , {
+    baseURL: TICKET_AGENT_API_URL,
+  });
+};
+
+export const removeAgentApi = async (id) => {
+  return await client.delete(`${Endpoint.TICKET_AGENT}/${id}` , {
     baseURL: TICKET_AGENT_API_URL,
   });
 };

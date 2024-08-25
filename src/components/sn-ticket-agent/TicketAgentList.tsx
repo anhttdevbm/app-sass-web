@@ -16,16 +16,16 @@ import {
 import { Button, Text } from "components/shared";
 import { usePathname, useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo, useState } from "react";
-import { useAppSelector } from "store/hooks";
+import { useAppDispatch, useAppSelector } from "store/hooks";
 import Pagination from "components/Pagination";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
-import { useDispatch } from "react-redux";
 import { setDataListTicket } from "store/ticket/actions";
-import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";
 import TableTicketAgent from "./components/TableTicketAgent";
-import useGetListTicket from "queries/ticket/useGetTicket/useGetListTicket";
+import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
+import { setKeySearchTicketAgent } from "store/ticket-agent/actions";
+import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
 // import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
 
 interface File {
@@ -54,42 +54,20 @@ interface Ticket {
 }
 
 const TicketAgentList = () => {
-  const dispatch = useDispatch();
-  const { data } = useGetListTicket();
+  const dispatch = useAppDispatch();
+  const { data: listAgent } = useGetListAgent();
+  const dataFilter = useAppSelector(selectSearchTicketAgent)
+
+
+  console.log("check data agent list", listAgent)
 
   //Store của các key tìm kiếm gói ở đây ///
-  const keySearch = useSelector(selectSearchTicket);
+  const keySearch = useAppSelector(selectSearchTicket);
 
   const [list, setList] = useState<any>([]);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(2);
 
-  const getData = (response: any) => {
-    const data = response?.data?.data;
-
-    if (keySearch?.keySearch?.length > 0) {
-      const filter = data?.filter((item: Ticket) => {
-        const id = item?.code?.toString().toLowerCase();
-        const searchKey = keySearch?.keySearch?.toLowerCase() ?? "";
-        return id?.includes(searchKey);
-      });
-      setList(filter);
-    } else {
-      setList(data);
-    }
-  };
-
-  useEffect(() => {
-    if (data !== null) {
-      getData(data);
-    }
-  }, [keySearch]);
-
-  useEffect(() => {
-    if (data !== null) {
-      getData(data);
-    }
-  }, [data, page]);
 
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
 
@@ -98,9 +76,11 @@ const TicketAgentList = () => {
     setPage(newPage);
 
     const payload = {
+      ...dataFilter,
       page: newPage,
-      totalItems: 4,
     };
+    dispatch(setKeySearchTicketAgent(payload));
+
   };
 
   const handleSizeChange = (newPageSize: number) => {
@@ -117,12 +97,12 @@ const TicketAgentList = () => {
         py={1}
         zIndex={2}
       >
-        <TableTicketAgent data={list} />
+        <TableTicketAgent data={listAgent?.data?.data} />
         <Pagination
           totalItems={totalItems}
-          totalPages={data?.data?.maxPage}
+          totalPages={listAgent?.data?.maxPage}
           page={page}
-          pageSize={data?.data?.maxPage}
+          pageSize={listAgent?.data?.maxPage}
           onChangePage={handlePageChange}
           onChangeSize={handleSizeChange}
           containerProps={{

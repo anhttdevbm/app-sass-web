@@ -28,7 +28,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { selectTicketDetailData } from "store/ticket/selectors";
 

@@ -9,18 +9,47 @@ import { useRouter } from "next-intl/client";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import CreateAgent from "../create-ticket-agent/create-agent";
-import useAgentAction from "queries/ticket-agent/useAgentAction/useTicketAction";
 import { useSnackbar } from "store/app/selectors";
+import useRemoveAgent from "queries/ticket-agent/useRemoveAgent/useRemoveAgent";
+import { useQueryClient } from "react-query";
+import { QUERY_AGENT_KEY } from "queries/ticket-agent/keys";
 
 type PropsModel = {
     open: boolean
     handleClose: () => void;
-    handleClickOpen: () => void;
+    handleClickOpen: any;
+    data?: any
 }
 const ModelRemove = (props: PropsModel) => {
     const t = useTranslations(NS_TICKET);
-    const { handleClose, open, handleClickOpen } = props || null;
+    const { handleClose, open, handleClickOpen, data } = props || null;
+    const { onAddSnackbar } = useSnackbar();
+    const queryClient = useQueryClient();
+    const [id , setId] = useState("")
+
+
+
+
+    useEffect(() => {
+        setId(data?.id)
+    }, [data])
+
+    const { removeAgent } = useRemoveAgent()
+
+    const handleSubmit = (payload) => {
+        removeAgent.mutate(payload, {
+            onSuccess: (data) => {
+
+                // push(TICKET_PATH);
+                onAddSnackbar("Remove success!", "success");
+                queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, payload] })
+                handleClose()
+            },
+            onError: (err: any) => {
+                onAddSnackbar(err?.errorMessage ?? "Remove error!", "error");
+            },
+        });
+    }
 
 
 
@@ -86,7 +115,7 @@ const ModelRemove = (props: PropsModel) => {
                 </Button>
 
                 <Button
-                    //   onClick={() => handleSubmit(formAgent)}
+                      onClick={() => handleSubmit(id)}
                     size="small"
                     variant="primary"
                     sx={{
