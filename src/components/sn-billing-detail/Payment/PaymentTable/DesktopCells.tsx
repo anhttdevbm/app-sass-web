@@ -21,6 +21,14 @@ const DesktopCells = (props: DesktopCellsProps) => {
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
 
+  console.log(
+    "formatNumber",
+    formatNumber(1244644, {
+      prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+      numberOfFixed: 2,
+    }),
+  );
+
   return (
     <>
       {/* <BodyCell align="center">{order}</BodyCell> */}
@@ -82,8 +90,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
             lineHeight={1.28}
             // sx={{ "&:hover": { color: "primary.main" } }}
           >
-            $
-            {formatNumber(item?.amount, {
+            {formatNumber(Number(item?.amount), {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
             })}
@@ -96,8 +103,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
             lineHeight={1.28}
             // sx={{ "&:hover": { color: "primary.main" } }}
           >
-            $
-            {formatNumber(item?.amount, {
+            {formatNumber(Number(item?.amount), {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
             })}
