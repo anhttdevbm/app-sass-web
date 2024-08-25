@@ -24,7 +24,7 @@ const ResourcePlanning = () => {
   );
   const t = useTranslations(NS_RESOURCE_PLANNING);
 
-  const [isServicePopup, setIsServicePopup] = useState<Boolean>(false);
+  const [isServicePopup, setIsServicePopup] = useState<boolean>(false);
   const [isWorkload, setIsWorkload] = useState<Boolean>(false);
   const [isModalAdd, setIsModalAdd] = useState<boolean>(false);
   const [projectSelected, setProjectSelected] = useState<string | null>(null);
@@ -192,15 +192,15 @@ const ResourcePlanning = () => {
           />
         </TabPanel>
       </TabContext>
-      {isServicePopup && (
-        <ModalDrop
-          setBudgetSelected={setBudgetSelected}
-          setProjectSelected={setProjectSelected}
-          setIsServicePopup={setIsServicePopup}
-          budgetSelected={budgetSelected}
-          projectSelected={projectSelected}
-        />
-      )}
+
+      <ModalDrop
+        setBudgetSelected={setBudgetSelected}
+        setProjectSelected={setProjectSelected}
+        setIsServicePopup={setIsServicePopup}
+        budgetSelected={budgetSelected}
+        projectSelected={projectSelected}
+        isServicePopup={isServicePopup}
+      />
     </Stack>
   );
 };
