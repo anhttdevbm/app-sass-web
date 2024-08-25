@@ -194,6 +194,7 @@ const TopContent = (props: TopContentProps) => {
         justifyContent="space-between"
         spacing={2}
         pr={3}
+        sx={{ borderBottom: "1px solid #EEEEEE" }}
       >
         <Stack
           direction="row"
@@ -213,6 +214,19 @@ const TopContent = (props: TopContentProps) => {
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               {item?.invoice_number ? item?.invoice_number?.toString() : ""}
             </Text>
+
+            <Box
+              sx={{
+                border: "1px solid rgba(131, 129, 149, 0.2)",
+                color: "#838195",
+                padding: "3px",
+                marginLeft: "16px",
+                borderRadius: "3px",
+                fontSize: "14px",
+              }}
+            >
+              DRAFT
+            </Box>
           </Link>
         </Stack>
 
