@@ -67,6 +67,16 @@ const EditBooking: React.FC<IProps> = ({
           alignItems: "flex-start",
         },
       }}
+      rootSx={{
+        ".MuiModal-backdrop": {
+          backgroundColor: "#FFFFFFB2",
+        },
+        ".MuiDialog-paper": {
+          paddingTop: 0,
+          boxShadow: "-4px 10px 30px 0px #0000001A",
+          borderRadius: "20px",
+        },
+      }}
     />
   );
 };

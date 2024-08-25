@@ -2,13 +2,8 @@ import { Stack } from "@mui/material";
 import { Button } from "components/shared";
 import Filter from "components/shared/Filter";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
-import useQueryParams from "hooks/useQueryParams";
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { IBookingAllFitler } from "store/resourcePlanning/action";
-import { useBookingAll, useMyBooking } from "store/resourcePlanning/selector";
-import { stringifyURLSearchParams } from "utils/index";
+import { useMemo } from "react";
 import {
   DEFAULT_BOOKING_ALL_FILTER,
   SORT_RESROUCE_OPTIONS,
@@ -20,12 +15,17 @@ import { Box, Typography } from "@mui/material";
 import { ClockIcon } from "@mui/x-date-pickers";
 import useBreakpoint from "hooks/useBreakpoint";
 import ServiceIcon from "icons/ServiceIcon";
+import { IBookingAllFitler } from "store/resourcePlanning/action";
 
 interface FilterHeaderProps {
   type: TAB_TYPE;
   setisServicePopup: any;
   setIsWorkload: any;
   tab: String;
+  handleChangePosition: (value: string) => void;
+  handleChangeWorkingHour: (value: "asc" | "desc") => void;
+  bookingAllFilter: IBookingAllFitler;
+  isWorkload?: Boolean;
 }
 
 const FilterHeader = ({
@@ -33,33 +33,16 @@ const FilterHeader = ({
   setisServicePopup,
   setIsWorkload,
   tab,
+  handleChangePosition,
+  handleChangeWorkingHour,
+  bookingAllFilter,
+  isWorkload,
 }: FilterHeaderProps) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
   const commonT = useTranslations<string>(NS_COMMON);
-  const [queries, setQueries] = useState<IBookingAllFitler>(
-    DEFAULT_BOOKING_ALL_FILTER,
-  );
-  const { bookingAllFilter, getBookingResource } = useBookingAll();
-  const { getMyBooking, myBookingFilter } = useMyBooking();
-  const pathname = usePathname();
-  const { push, replace } = useRouter();
-  const { initQuery, query } = useQueryParams();
+
   const { positionOptions } = useGetOptions();
   const { isSmSmaller } = useBreakpoint();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSearch = useCallback(() => {
-    const newQueries = { ...queries };
-    const queryString = stringifyURLSearchParams(newQueries);
-    switch (type) {
-      case TAB_TYPE.ALL:
-        getBookingResource(newQueries);
-        break;
-      case TAB_TYPE.MY:
-        getMyBooking(newQueries);
-        break;
-    }
-  }, [queries, type]);
 
   const positions = useMemo(() => {
     const result = [...positionOptions];
@@ -69,91 +52,6 @@ const FilterHeader = ({
     });
     return result;
   }, [positionOptions]);
-
-  const onChangeQueries = (name, value) => {
-    setQueries((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  useEffect(() => {
-    if (query) {
-      setQueries((prev) => ({
-        ...prev,
-        ...query,
-      }));
-    }
-  }, [query]);
-
-  // return (
-  //   <Stack direction="row" sx={{ alignItems: "center" }}>
-  //     {/* <Search
-  //         name="search_key"
-  //         value={queries?.search_key || ""}
-  //         onChange={(name, value) => onChangeQueries(name, value)}
-  //         onEnter={(name, value) => {
-  //           onChangeQueries(name, value);
-  //           onSearch();
-  //         }}
-  //         placeholder={resourceT("schedule.filter.search")}
-  //         sx={{
-  //           maxWidth: "432px",
-  //           height: "32px",
-  //           " .MuiInputBase-root": {
-  //             maxWidth: "295px",
-  //             height: "30px",
-  //           },
-  //         }}
-  //       /> */}
-  //     <Typography sx={{ marginRight: "5px" }}>View by:</Typography>
-  //     <Stack direction="row" sx={{ alignItems: "center" }}>
-  //       <Typography>position:</Typography>
-  //       <Filter.Select
-  //         value={queries.position || ""}
-  //         onChange={(event) => onChangeQueries("position", event.target.value)}
-  //         label={commonT("position")}
-  //         sx={{ maxWidth: "200px" }}
-  //         options={positions}
-  //       />
-  //     </Stack>
-  //     <Stack direction="row" sx={{ alignItems: "center" }}>
-  //       <Typography>position</Typography>
-  //       <Filter.Select
-  //         value={queries.working_sort || ""}
-  //         onChange={(event) =>
-  //           onChangeQueries("working_sort", event.target.value)
-  //         }
-  //         label={resourceT("schedule.filter.workingHours")}
-  //         sx={{ maxWidth: "260px" }}
-  //         options={[
-  //           {
-  //             label: resourceT("schedule.filter.asceding"),
-  //             value: SORT_RESROUCE_OPTIONS.ASC,
-  //           },
-  //           {
-  //             label: resourceT("schedule.filter.descending"),
-  //             value: SORT_RESROUCE_OPTIONS.DESC,
-  //           },
-  //         ]}
-  //       />
-  //     </Stack>
-  //     {/* <Button
-  //         variant="secondary"
-  //         size="small"
-  //         sx={{
-  //           "&.MuiButtonBase-root": {
-  //             maxWidth: "295px",
-  //             minHeight: "32px!important",
-  //             padding: "0 16px!important",
-  //           },
-  //         }}
-  //         onClick={() => onSearch()}
-  //       >
-  //         {commonT("search")}
-  //       </Button> */}
-  //   </Stack>
-  // );
 
   return (
     <Box
@@ -167,10 +65,12 @@ const FilterHeader = ({
         whiteSpace: "nowrap",
         overflow: "auto",
         margin: isSmSmaller ? 0 : " 0px 20px",
-        width: "100%",
+        maxWidth: "100%",
       }}
     >
-      <Typography sx={{ mr: 2, fontSize: "16px", color: "black" }}>
+      <Typography
+        sx={{ mr: 2, fontSize: "13px", color: "#4D4D4D", fontWeight: 700 }}
+      >
         {resourceT("schedule.filter.viewBy")}:
       </Typography>
       <Stack
@@ -189,14 +89,24 @@ const FilterHeader = ({
           justifyContent: "center",
         }}
       >
-        <Typography sx={{ mr: 1, color: "black" }}>
+        <Typography sx={{ mr: 1, color: "#00000080", fontWeight: 700 }}>
           {resourceT("schedule.filter.position")}:
         </Typography>
         <Filter.Select
-          value={queries.position || ""}
-          onChange={(event) => onChangeQueries("position", event.target.value)}
+          value={
+            (bookingAllFilter?.position ||
+              DEFAULT_BOOKING_ALL_FILTER.position) as string
+          }
+          onChange={(event) =>
+            handleChangePosition(event.target.value as string)
+          }
           label={commonT("position")}
-          sx={{ maxWidth: "200px" }}
+          sx={{
+            maxWidth: "200px",
+            ".MuiSelect-select": {
+              color: "black",
+            },
+          }}
           options={positions}
         />
       </Stack>
@@ -218,19 +128,35 @@ const FilterHeader = ({
                 margin: 0,
                 fontSize: "13px",
               },
+
               padding: "0 8px",
             }}
           >
-            <Typography sx={{ mr: 1, color: "black" }}>
+            <Typography sx={{ mr: 1, color: "#00000080", fontWeight: 700 }}>
               {resourceT("schedule.filter.workingHours")}:
             </Typography>
             <Filter.Select
-              value={queries.working_sort || ""}
-              onChange={(event) =>
-                onChangeQueries("working_sort", event.target.value)
+              value={
+                (bookingAllFilter?.working_sort ||
+                  DEFAULT_BOOKING_ALL_FILTER.working_sort) as string
               }
+              onChange={(event) => {
+                const value = event.target.value as "asc" | "desc";
+
+                handleChangeWorkingHour(value);
+              }}
               label={resourceT("schedule.filter.workingHours")}
-              sx={{ maxWidth: "260px", color: "black" }}
+              sx={{
+                maxWidth: "260px",
+                ".MuiSelect-select": {
+                  color: "black",
+                },
+                ".MuiTypography-root": {
+                  overflow: "hidden",
+                  color: "black",
+                  textOverflow: "ellipsis",
+                },
+              }}
               options={[
                 {
                   label: resourceT("schedule.filter.asceding"),
@@ -252,13 +178,18 @@ const FilterHeader = ({
                   alignItems: "center",
                   mr: 2,
                   borderRadius: "50px",
-                  color: "#00000080",
+                  color: isWorkload ? "#0575E6" : "#00000080",
                   fontWeight: 700,
                   gap: 1,
+                  background: isWorkload ? "#D9F0FD" : "",
+                  "&.MuiButtonBase-root": {
+                    paddingLeft: 2,
+                    paddingRight: 2,
+                  },
                 }}
                 onClick={() => setIsWorkload((prev: Boolean) => !prev)}
               >
-                <ClockIcon sx={{ width: 14, height: 14, color: "#00000080" }} />
+                <ClockIcon sx={{ width: 14, height: 14 }} />
                 Workload
               </Button>
 

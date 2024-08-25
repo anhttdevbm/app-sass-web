@@ -14,8 +14,13 @@ import SearchIcon from "icons/SearchIcon";
 import ServiceIcon from "icons/ServiceIcon";
 import { isEmpty } from "lodash";
 import { useTranslations } from "next-intl";
-import React, { useCallback, useEffect, useMemo } from "react";
-import { IBookingAllFitler } from "store/resourcePlanning/action";
+import React, {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { IBookingListItem } from "store/resourcePlanning/reducer";
 import {
   useBookingAll,
@@ -25,7 +30,7 @@ import EventContents from "./components/EventContents";
 import FilterHeader from "./components/FilterHeader";
 import ResourceLabel from "./components/ResourceLabel";
 import SlotLabelContent from "./components/SlotLabelContent";
-import { DEFAULT_BOOKING_ALL_FILTER, TAB_TYPE } from "./helper";
+import { TAB_TYPE } from "./helper";
 import { useFetchBookingAll } from "./hooks/useBookingAll";
 import useGetOptions, { useFetchOptions } from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
@@ -57,23 +62,17 @@ const AllPeopleTab = ({
   isSmSmaller,
 }: IAllPeopleTabProp) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
-  const [filters, setFilters] = React.useState<IBookingAllFitler>(
-    DEFAULT_BOOKING_ALL_FILTER,
-  );
-  const prevFilters = React.useRef<IBookingAllFitler>(
-    DEFAULT_BOOKING_ALL_FILTER,
-  );
-  prevFilters.current = filters;
+  const calendarRef = React.useRef<FullCalendar>(null);
 
   const { bookingAll, bookingAllFilter, setBookingAllFilter, isLoading } =
     useBookingAll();
   const { selectedDate, updateDate } = useResourceDate();
   const [resources, setResources] = React.useState<IBookingListItem[]>([]);
   const [selectedDateRange, setSelectedDateRange] = React.useState<Date[]>([]);
-  const calendarRef = React.useRef<FullCalendar>(null);
   const [selectedResource, setSelectedResource] = React.useState<string[]>([]);
   const [isOpenCreate, setIsOpenCreate] = React.useState(false);
   const [serviceId, setServiceId] = React.useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const { palette, isDarkMode } = useTheme();
   const [parentResource, setParentResource] = React.useState<string>("");
@@ -86,7 +85,7 @@ const AllPeopleTab = ({
   });
 
   const generateDateRange = () => {
-    const start_date = dayjs(filters?.start_date);
+    const start_date = dayjs(bookingAllFilter?.start_date);
     const result: Array<Date> = [];
     let currentDate = start_date?.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
     const endOfWeek = start_date?.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
@@ -107,13 +106,6 @@ const AllPeopleTab = ({
   useFetchOptions();
   useFetchBookingAll();
 
-  useEffect(() => {
-    if (filters) {
-      setBookingAllFilter(filters);
-      setSelectedResource([]);
-    }
-  }, [filters]);
-
   React.useEffect(() => {
     let delay;
     if (bookingAll) {
@@ -131,13 +123,13 @@ const AllPeopleTab = ({
 
   React.useEffect(() => {
     if (
-      !isEmpty(filters) &&
-      dayjs(filters?.start_date).isValid() &&
-      dayjs(filters?.end_date).isValid()
+      !isEmpty(bookingAllFilter) &&
+      dayjs(bookingAllFilter?.start_date).isValid() &&
+      dayjs(bookingAllFilter?.end_date).isValid()
     ) {
       generateDateRange();
     }
-  }, [filters?.start_date, filters?.end_date]);
+  }, [bookingAllFilter?.start_date, bookingAllFilter?.end_date]);
 
   const totalhour = useMemo(() => {
     return resources.reduce((total, item) => {
@@ -148,26 +140,28 @@ const AllPeopleTab = ({
   const handleEventChange =
     (calendarRef: React.RefObject<FullCalendar>, isResize: boolean) =>
     async ({ event, revert }) => {
-      const { type, campaignId, service_id, ...restData } = event.extendedProps;
+      const { type, service_id, bookingID, user_id, ...restData } =
+        event.extendedProps;
+
       if (isResize && type === "campaign") return revert();
       if (type === "campaign") {
         // Campaign has been moved, compute diff and update each steps
         if (!calendarRef.current) return null;
-      } else if (type === "step") {
+      } else {
         // Step has been resized or move, update the campaign date
         if (!calendarRef.current) return null;
         const dateRange = event._instance.range;
         await updateBooking(
           {
             ...restData,
-            user_id: campaignId,
+            user_id: user_id,
             end_date: dayjs(dateRange.end).format("YYYY-MM-DD"),
             start_date: dayjs(dateRange.start).format("YYYY-MM-DD"),
-            booking_type: restData.eventType,
+            booking_type: restData.eventType || restData.booking_type,
             time_off_type: restData.time_off_type,
             service_id: service_id,
           },
-          restData.eventId,
+          bookingID,
         ).catch(() => revert());
         return null;
       }
@@ -240,8 +234,8 @@ const AllPeopleTab = ({
           // .concat([
           //   {
           //     resourceId: id,
-          //     start: dayjs(filters?.start_date).toDate(),
-          //     end: dayjs(filters?.end_date).toDate(),
+          //     start: dayjs(bookingAllFilter?.start_date).toDate(),
+          //     end: dayjs(bookingAllFilter?.end_date).toDate(),
           //     allDay: true,
           //     type: "campaign",
           //     campaignId: id,
@@ -321,7 +315,7 @@ const AllPeopleTab = ({
       },
     },
     "& .fc-media-screen": {
-      maxHeight: "65vh!important",
+      maxHeight: "calc(100vh - 360px) !important",
     },
     "& .fc-datagrid-cell-cushion": { padding: "0!important" },
     "& .fc-datagrid-cell": {},
@@ -355,6 +349,7 @@ const AllPeopleTab = ({
     });
     return items;
   };
+
   const mapEvent = () => {
     const items: any = [];
     mappedResources.map((item: any) =>
@@ -439,6 +434,20 @@ const AllPeopleTab = ({
     setIsOpenCreate(true);
   };
 
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") {
+      setBookingAllFilter({ ...bookingAllFilter, search_key: searchValue });
+    }
+  };
+
+  const handleChangePosition = (position: string) => {
+    setBookingAllFilter({ ...bookingAllFilter, position: position });
+  };
+
+  const handleChangeWorkingHour = (working_sort: "asc" | "desc") => {
+    setBookingAllFilter({ ...bookingAllFilter, working_sort: working_sort });
+  };
+
   const draggableEl = document.getElementById("external-events") as any;
 
   useEffect(() => {
@@ -467,6 +476,10 @@ const AllPeopleTab = ({
         setisServicePopup={setisServicePopup}
         setIsWorkload={setIsWorkload}
         tab={tab}
+        handleChangePosition={handleChangePosition}
+        handleChangeWorkingHour={handleChangeWorkingHour}
+        bookingAllFilter={bookingAllFilter}
+        isWorkload={isWorkload}
       />
       {isSmSmaller && (
         <Stack flexDirection={"row"} padding={"0px 20px"}>
@@ -600,7 +613,15 @@ const AllPeopleTab = ({
               //   resource={resrouce}
               //   totalhour={totalhour}
               // />
-              <Input endNode={<SearchIcon />} placeholder="USER" />
+              <Input
+                endNode={<SearchIcon />}
+                placeholder="USER"
+                onKeyDown={onKeyDown}
+                value={searchValue}
+                onChange={(e) => {
+                  setSearchValue(e.target.value);
+                }}
+              />
             );
           }}
           resourceLabelContent={({ resource, view }) => {
@@ -657,6 +678,7 @@ const AllPeopleTab = ({
                 totalhour={totalBookingHours}
                 setParentResource={setParentResource}
                 setIsOpenCreate={setIsOpenCreate}
+                isWorkload={isWorkload}
               />
             );
           }}
