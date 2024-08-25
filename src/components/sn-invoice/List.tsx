@@ -40,7 +40,7 @@ const List = () => {
     1,
     10,
     (page, size) => {
-      onGetInvoices({ page, size });
+      onGetInvoices({ page: page - 1, size });
     },
   );
 
@@ -95,7 +95,7 @@ const List = () => {
   }, [isReady, onGetInvoices, initQuery]);
 
   return (
-    <Stack padding={"0px 16px"} overflow={"auto"}>
+    <Stack padding={"0px 16px"}>
       <FixedLayout sxContainer={{ bgcolor: "transparent" }}>
         <InvoiceTable
           invoices={invoices}
