@@ -1,6 +1,6 @@
 import { ResourceApi } from "@fullcalendar/resource";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import Avatar from "components/Avatar";
+import Avatar from "@mui/material/Avatar";
 import { useGetTimeOffOptions } from "components/sn-sales/hooks/useGetTimeOffOptions";
 import { RESOURCE_EVENT_TYPE } from "constant/enums";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
@@ -22,6 +22,7 @@ interface IResourceLabelProps {
   isMybooking?: boolean;
   setParentResource: (value: string) => void;
   handleCollapseToggle: (id: string) => void;
+  isWorkload?: Boolean;
 }
 const ResourceLabel = ({
   resource,
@@ -33,6 +34,7 @@ const ResourceLabel = ({
   handleCollapseToggle,
   totalhour,
   selectedResource,
+  isWorkload,
 }: IResourceLabelProps) => {
   const {
     name,
@@ -93,6 +95,13 @@ const ResourceLabel = ({
   const isAddbutton = useMemo(() => {
     return (isActive && parentBookings?.length === 0) || !isActive;
   }, [isActive, parentBookings, isMybooking]);
+
+  function getFirstAndSecondLetters(name) {
+    let parts = name.split(" ");
+    let firstLetter = parts[0][0];
+    let lastLetter = parts[parts.length - 1][0];
+    return firstLetter + lastLetter;
+  }
 
   // if (type === "step") {
   //   return (
@@ -200,9 +209,24 @@ const ResourceLabel = ({
                 zIndex: "10",
               }}
             >
-              <Avatar size={32} src={avatarUrl} />
+              <Avatar
+                sx={{
+                  width: 32,
+                  height: 32,
+                  maxHeight: 32,
+                  fontSize: 14,
+                  fontWeight: 600,
+                }}
+                src={avatarUrl}
+              >
+                {getFirstAndSecondLetters(fullName)}
+              </Avatar>
+
               <Box>
-                <Typography sx={{ fontSize: 14 }} fontWeight={600}>
+                <Typography
+                  sx={{ fontSize: 14 }}
+                  fontWeight={isWorkload ? 400 : 600}
+                >
                   {fullName}
                 </Typography>
                 <Typography sx={{ color: "#666666", fontSize: 14 }}>
@@ -213,52 +237,60 @@ const ResourceLabel = ({
           </Grid>
         </Grid>
 
-        <Grid item maxWidth={"100%"} pl={1} paddingRight={2}>
-          <Stack
-            sx={{
-              ...textHeadStyle,
-              textAlign: "center",
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-              color: "#666666",
-              flexDirection: "row",
-            }}
-          >
-            <Typography sx={{ fontSize: "13px", marginTop: "5px" }}>
-              Available
-            </Typography>
-            <Typography color={"#212121"} fontSize={13}>
-              {formatNumber(totalLeftToSchedule[resource._resource.id], {
-                numberOfFixed: 0,
-              })}{" "}
-              h
-            </Typography>
-          </Stack>
-        </Grid>
-        <Grid item maxWidth={"100%"} pl={1} paddingRight={2}>
-          <Stack
-            sx={{
-              ...textHeadStyle,
-              textAlign: "center",
-              display: "flex",
-              justifyContent: "space-between",
-              gap: "20px",
-              color: "#666666",
-              flexDirection: "row",
-              fontSize: "13px",
-            }}
-          >
-            <Typography fontSize={13}>
-              Schedule{" ("}
-              {formatNumber(schedulePerLeft, { numberOfFixed: 2, suffix: "%" })}
-              {")"}
-            </Typography>
-            <Typography color={"#212121"} fontSize={13}>
-              {formatNumber(totalhour, { numberOfFixed: 0, suffix: "h" })}
-            </Typography>
-          </Stack>
-        </Grid>
+        {!isWorkload && (
+          <>
+            <Grid item maxWidth={"100%"} pl={1} paddingRight={2}>
+              <Stack
+                sx={{
+                  ...textHeadStyle,
+                  textAlign: "center",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  color: "#666666",
+                  flexDirection: "row",
+                }}
+              >
+                <Typography sx={{ fontSize: "13px", marginTop: "5px" }}>
+                  Available
+                </Typography>
+                <Typography color={"#212121"} fontSize={13}>
+                  {formatNumber(totalLeftToSchedule[resource._resource.id], {
+                    numberOfFixed: 0,
+                  })}{" "}
+                  h
+                </Typography>
+              </Stack>
+            </Grid>
+            <Grid item maxWidth={"100%"} pl={1} paddingRight={2}>
+              <Stack
+                sx={{
+                  ...textHeadStyle,
+                  textAlign: "center",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "20px",
+                  color: "#666666",
+                  flexDirection: "row",
+                  fontSize: "13px",
+                }}
+              >
+                <Typography fontSize={13}>
+                  Schedule{" ("}
+                  {formatNumber(schedulePerLeft, {
+                    numberOfFixed: 2,
+                    suffix: "%",
+                  })}
+                  {")"}
+                </Typography>
+                <Typography color={"#212121"} fontSize={13}>
+                  {formatNumber(totalhour, { numberOfFixed: 0, suffix: "h" })}
+                </Typography>
+              </Stack>
+            </Grid>
+          </>
+        )}
+
         {/* {isAddbutton && (
           <Button
             variant="text"

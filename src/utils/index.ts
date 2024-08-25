@@ -647,7 +647,7 @@ export const downloadFile = async (printRef) => {
   const data = canvas.toDataURL("image/png");
 
   const pdf = new jsPDF({
-    orientation: "landscape",
+    orientation: "p",
     unit: "pt",
     format: "a4",
   });

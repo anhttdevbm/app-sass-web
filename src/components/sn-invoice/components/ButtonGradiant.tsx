@@ -21,6 +21,7 @@ export const ButtonGradiant = ({
         boxShadow: "none",
         transition: "all 0.3s",
         textTransform: "capitalize",
+        fontWeight: 700,
         "&:hover": {
           opacity: 0.9,
           transition: "all 0.3s",

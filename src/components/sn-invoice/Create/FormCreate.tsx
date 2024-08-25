@@ -888,6 +888,7 @@ const FormCreate = () => {
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
             alignItems: "center",
+            height: "35px",
           }}
         >
           <Typography
@@ -906,6 +907,7 @@ const FormCreate = () => {
             display: "flex",
             flexDirection: "row-reverse",
             width: "95%",
+            marginTop: "-32px",
           }}
         >
           <Box
@@ -956,11 +958,19 @@ const FormCreate = () => {
         </Box>
       )}
 
-      <Box sx={{ display: "flex", flexDirection: "row-reverse", width: "95%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          width: "95%",
+          marginTop: "-32px",
+        }}
+      >
         <Typography
           color="#0575E6"
           sx={{ cursor: "pointer" }}
           onClick={handleShowTotal}
+          fontSize={14}
         >
           Show Total Summary
         </Typography>

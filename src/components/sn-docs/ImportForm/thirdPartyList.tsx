@@ -1,20 +1,20 @@
 import { Endpoint } from "api";
-import Image from "next/image";
-import MarkdownLogo from "public/images/thirdparty/Markdown.png";
-import TrelloLogo from "public/images/thirdparty/Trello.png";
-import TodoistLogo from "public/images/thirdparty/Todoist.png";
-import DynalistLogo from "public/images/thirdparty/Dynalist.png";
-import WorkflowyLogo from "public/images/thirdparty/Workflowy.png";
-import NotionLogo from "public/images/thirdparty/Notion.png";
-import GoogleDocsLogo from "public/images/thirdparty/GoogleDocs.png";
-import ObsidianLogo from "public/images/thirdparty/Obsidian.png";
-import LogseqLogo from "public/images/thirdparty/Logseq.png";
-import BearLogo from "public/images/thirdparty/Bear.png";
-import EvernoteLogo from "public/images/thirdparty/Evernote.png";
+import BearIcon from "icons/BearIcon";
+import DynalistIcon from "icons/DynalistIcon";
+import EvernoteIcon from "icons/EvernoteIcon";
+import GoogleDocsIcon from "icons/GoogleDocsIcon";
+import LogseqIcon from "icons/LogseqIcon";
+import MarkdownIcon from "icons/MarkdownIcon";
+import NotionIcon from "icons/NotionIcon";
+import ObsidianIcon from "icons/ObsidianIcon";
+import TodoistIcon from "icons/TodoistIcon";
+import TrelloIcon from "icons/TrelloIcon";
+import WorkflowyIcon from "icons/WorkflowyIcon";
 
 export enum ThirdpartyTyp {
   File = "file",
   Direct = "direct",
+  Others = "others",
 }
 
 export interface IThirdPartyItem {
@@ -41,13 +41,19 @@ const thirdPartyList: IThirdPartyItem[] = [
     },
     extList: [".txt", ".md"],
     endpointURL: Endpoint.AI_DOCS_IMPORT_MD,
-    icon: () => <Image src={MarkdownLogo} alt="Markdown Logo" />,
+    icon: () => <MarkdownIcon />,
   },
   {
     text: "Trello",
     typ: ThirdpartyTyp.Direct,
     endpointURL: "",
-    icon: () => <Image src={TrelloLogo} alt="Trello Logo" />,
+    icon: () => <TrelloIcon />,
+  },
+  {
+    text: "Todoist",
+    typ: ThirdpartyTyp.Others,
+    endpointURL: "",
+    icon: () => <TodoistIcon />,
   },
   {
     text: "Dynalist",
@@ -59,7 +65,7 @@ const thirdPartyList: IThirdPartyItem[] = [
     },
     extList: [".opml"],
     endpointURL: Endpoint.AI_DOCS_IMPORT_OPML,
-    icon: () => <Image src={DynalistLogo} alt="Dynalist Logo" />,
+    icon: () => <DynalistIcon />,
   },
   {
     text: "Workflowy",
@@ -71,7 +77,43 @@ const thirdPartyList: IThirdPartyItem[] = [
     },
     extList: [".opml"],
     endpointURL: Endpoint.AI_DOCS_IMPORT_OPML,
-    icon: () => <Image src={WorkflowyLogo} alt="Workflowy Logo" />,
+    icon: () => <WorkflowyIcon />,
+  },
+  {
+    text: "Notion",
+    typ: ThirdpartyTyp.Others,
+    endpointURL: "",
+    icon: () => <NotionIcon />,
+  },
+  {
+    text: "Google Docs",
+    typ: ThirdpartyTyp.Others,
+    endpointURL: "",
+    icon: () => <GoogleDocsIcon />,
+  },
+  {
+    text: "Obsidian",
+    typ: ThirdpartyTyp.Others,
+    endpointURL: "",
+    icon: () => <ObsidianIcon />,
+  },
+  {
+    text: "Logseq",
+    typ: ThirdpartyTyp.Others,
+    endpointURL: "",
+    icon: () => <LogseqIcon />,
+  },
+  {
+    text: "Bear",
+    typ: ThirdpartyTyp.Others,
+    endpointURL: "",
+    icon: () => <BearIcon />,
+  },
+  {
+    text: "Evernote",
+    typ: ThirdpartyTyp.Others,
+    endpointURL: "",
+    icon: () => <EvernoteIcon />,
   },
 ];
 

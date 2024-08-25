@@ -25,12 +25,13 @@ const SelectController: React.FC<TSelectProps> = ({
   handleChange,
   placeholder,
   required,
+  sx,
   ...props
 }) => {
   return (
     <FormControl fullWidth>
       {label && (
-        <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+        <Typography color={"#4D4D4D"} fontSize={13} pb={0.5} fontWeight={700}>
           {label}
           {required && (
             <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
@@ -51,15 +52,15 @@ const SelectController: React.FC<TSelectProps> = ({
               fullWidth
               sx={{
                 ".MuiSelect-select ": {
-                  padding: "12px 16px 12px 16px",
+                  padding: "6px 16px 6px 16px",
                   height: 24,
+                  fontSize: 14,
                 },
                 padding: 0,
                 color: "#241F5C",
                 borderRadius: "8px",
-                height: 48,
                 ".MuiSelect-icon": {
-                  top: "20px",
+                  top: "8px",
                 },
                 "& .MuiSelect-select .notranslate::after": placeholder
                   ? {
@@ -68,6 +69,7 @@ const SelectController: React.FC<TSelectProps> = ({
                       color: "#B8B8BE",
                     }
                   : {},
+                ...sx,
               }}
               error={!!fieldState.error}
               {...props}
