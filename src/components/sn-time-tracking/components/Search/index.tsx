@@ -22,7 +22,7 @@ const SortByCategory: React.FC<IProps> = (props) => {
         alignItems: "center",
         justifyContent: "center",
         gap: "12px",
-        height: "48px",
+        height: "40px",
       }}
     >
       <p style={{ fontWeight: "bold", fontSize: "13px" }}>

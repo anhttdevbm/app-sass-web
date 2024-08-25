@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -15,6 +14,7 @@ import { styled } from "@mui/material/styles";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import "../CompanyTimeTrackingCalendar/style.css";
+import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
 
 interface Timesheet {
   created_time: string;
@@ -42,6 +42,7 @@ interface IProps {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottom: "none",
+  fontFamily: "unset",
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -96,8 +97,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Date
@@ -106,8 +109,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Project name
@@ -116,18 +121,22 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
-              Task name
+              Type
             </StyledTableCell>
             <StyledTableCell
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               User
@@ -136,8 +145,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Time
@@ -146,8 +157,10 @@ const ListSheet: React.FC<IProps> = (props) => {
               sx={{
                 color: "#0575E6",
                 fontWeight: "600",
-                fontSize: "16px",
+                fontSize: "14px",
                 fontFamily: "unset",
+                height: "40px",
+                padding: "0px 16px",
               }}
             >
               Creation time
@@ -171,8 +184,15 @@ const ListSheet: React.FC<IProps> = (props) => {
                     alignItems: "center",
                   }}
                 >
-                  <Checkbox />
-                  {timesheet?.day}
+                  <Checkbox
+                    sx={{
+                      color: "#DFE1E6",
+                      "& > svg > path": {
+                        clipPath: "inset(0 round 4px)",
+                      },
+                    }}
+                  />
+                  {moment(timesheet?.day).format("DD/MM/YYYY")}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
@@ -180,49 +200,45 @@ const ListSheet: React.FC<IProps> = (props) => {
                   }}
                 >
                   {timesheet?.project?.name ? (
-                    <Typography>{timesheet?.project?.name}</Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      {timesheet?.project?.name}
+                    </Typography>
                   ) : (
-                    <Typography sx={{ color: "red" }}>Break time</Typography>
+                    <Typography
+                      sx={{
+                        color: "red",
+                        fontSize: "14px",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      Break time
+                    </Typography>
                   )}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
-                    fontSize: "16px",
+                    color: timesheet?.project?.name ? "#0575E6" : "red",
                   }}
                 >
-                  {timesheet.note}
+                  {timesheet?.project?.name ? "Work time" : "Break time"}
                 </StyledTableCell>
-                <StyledTableCell
-                  sx={{
-                    fontSize: "16px",
-                  }}
-                >
-                  {timesheet.fullname}
+                <StyledTableCell>{timesheet.fullname}</StyledTableCell>
+                <StyledTableCell>
+                  {formatHoursToHHMM(timesheet.duration)}
                 </StyledTableCell>
-                <StyledTableCell
-                  sx={{
-                    fontSize: "16px",
-                  }}
-                >
-                  {timesheet.duration} hrs
-                </StyledTableCell>
-                <StyledTableCell
-                  sx={{
-                    fontSize: "16px",
-                  }}
-                >
+                <StyledTableCell>
                   {moment(timesheet.created_time).format("DD/MM/YYYY HH:MM")}
                 </StyledTableCell>
               </StyledTableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                }}
-                colSpan={6}
-              >
+              <TableCell align="center" colSpan={6}>
                 No data found.
               </TableCell>
             </TableRow>

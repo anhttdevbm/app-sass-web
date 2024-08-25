@@ -1,7 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, DialogContent, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  DialogContent,
+  Stack,
+  SxProps,
+  Theme,
+  Typography,
+} from "@mui/material";
 import TextFieldSelect from "components/shared/TextFieldSelect";
 import { NS_COMMON, NS_TIME_TRACKING } from "constant/index";
 import dayjs from "dayjs";
@@ -9,30 +17,42 @@ import useTheme from "hooks/useTheme";
 import _ from "lodash";
 import moment from "moment";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useState } from "react";
-import { Controller, Form, useForm } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { usePositions } from "store/company/selectors";
 import { useProjects } from "store/project/selectors";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as yup from "yup";
-import DefaultPopupLayout from "./DefaultPopupLayout";
+import { inter } from "../CalendarTracking/CalendarTracking.styles";
 import MobileDatePickerComponent from "../components/MobileDatePicker";
 import NumberInput from "../components/NumberInput";
 import Textarea from "../components/Textarea";
 import TimePicker from "../components/TimePicker";
-import { Label } from "@mui/icons-material";
+import DefaultPopupLayout from "./DefaultPopupLayout";
+import { timeCreateInputStyles } from "./timeTrackingModal.styles";
 
 interface IProps {
   type?: string;
   open: boolean;
   isEdit?: boolean;
-  selectedEvent?: any;
+  defaultValue?: TimeCreateValue;
   onClose(): void;
   filters?: any;
   currentScreen: "myTime" | "companyTime";
   dateClick?: string;
+}
+
+export interface TimeCreateValue {
+  id?: string;
+  project_id?: string;
+  position?: string;
+  start_time?: string;
+  type?: string;
+  day?: string;
+  duration?: number;
+  note?: string;
 }
 
 interface IOptionStructure {
@@ -40,15 +60,25 @@ interface IOptionStructure {
   value: string;
 }
 
-const TimeCreate: React.FC<IProps> = ({
+const formLabelStyles: SxProps = {
+  display: "flex",
+  fontSize: "13px",
+  fontWeight: "700",
+  paddingRight: "5px",
+  color: "neutral.700",
+  fontFamily: "unset",
+  marginBottom: "12px",
+};
+
+const TimeCreate = ({
   open,
   onClose,
   filters,
   currentScreen,
   isEdit,
-  selectedEvent,
+  defaultValue,
   dateClick,
-}) => {
+}: IProps) => {
   const { items: projects, onGetProjects } = useProjects();
   const { items: positions, onGetPositions } = usePositions();
   const {
@@ -114,57 +144,26 @@ const TimeCreate: React.FC<IProps> = ({
     onGetPositions({ pageSize: -1, pageIndex: 0 });
   }, []);
 
-  // useEffect(() => {
-  //   if (dateClick) {
-
-  //     console.log(date, time)
-  //    setValue('day', date);
-  //    setValue('start_time', time);
-  //   }
-  // }, [dateClick]);
-
   useEffect(() => {
     if (isEdit) {
-      const validResetData = {
-        project_id: selectedEvent?.extendedProps?.project?.id || "",
-        type: selectedEvent?.extendedProps?.typeDefault || "",
-        position: userData?.position?.id,
-        day: dayjs(selectedEvent?.start).format("YYYY-MM-DD"),
-        start_time: selectedEvent?.start,
-        duration: selectedEvent?.extendedProps?.hour,
-        note: selectedEvent?.extendedProps?.note,
-      };
-      if (
-        selectedEvent?.extendedProps?.id == null &&
-        selectedEvent?.extendedProps?.project?.id
-      ) {
-        validResetData.day = selectedEvent?.extendedProps?.day;
-        validResetData.start_time = moment(
-          [
-            selectedEvent.extendedProps.date,
-            selectedEvent.extendedProps.start_time,
-          ].join(" "),
-        ).add(selectedEvent.extendedProps?.hour, "hours");
-      }
+      if (!defaultValue) return;
+      const { project_id, day, duration, note, position, start_time, type } =
+        defaultValue;
 
+      const validResetData = {
+        project_id: project_id || "",
+        position: position || "",
+        start_time: start_time || "",
+        type: type || "",
+        day: day || "",
+        duration: duration || undefined,
+        note,
+      };
       reset(validResetData);
     } else {
-      if (dateClick) {
-        const date = dayjs(dateClick).format("YYYY/MM/DD") || "";
-        const time = dateClick;
-
-        reset({
-          day: date,
-          start_time: time,
-          position: userData?.position?.id,
-        });
-      } else {
-        reset({
-          position: userData?.position?.id,
-        });
-      }
+      setValue("position", userData?.position?.id || "");
     }
-  }, [isEdit, open, dateClick]);
+  }, [open]);
 
   useEffect(() => {
     if (!_.isEmpty(projects)) {
@@ -203,12 +202,12 @@ const TimeCreate: React.FC<IProps> = ({
         .format("YYYY-MM-DD HH:mm"),
     };
 
-    console.log("Submit", resolveData);
+    console.log("resolveData", resolveData);
 
-    if (selectedEvent?.extendedProps?.id) {
+    if (defaultValue?.id) {
       onUpdateTimeSheet({
         ...resolveData,
-        id: selectedEvent?.extendedProps?.id,
+        id: defaultValue.id,
         project_id: resolveData.project_id as string,
       })
         .then((res) => {
@@ -247,12 +246,17 @@ const TimeCreate: React.FC<IProps> = ({
 
   const _renderMain = () => {
     return (
-      <DialogContent sx={{ padding: "17px 24px" }}>
+      <DialogContent
+        sx={{
+          padding: "32px",
+          fontFamily: `${inter.style.fontFamily}`,
+        }}
+      >
         <Stack
           // direction="column"
           component="form"
           sx={{
-            marginBottom: "24px",
+            marginBottom: "40px",
             backgroundColor: isDarkMode ? "inherit" : "common.white",
           }}
           spacing="20px"
@@ -261,27 +265,21 @@ const TimeCreate: React.FC<IProps> = ({
             name="type"
             control={control}
             render={({ field }) => (
-              <>
+              <div>
                 <Typography
                   sx={{
-                    display: "flex",
-                    fontSize: "13px",
-                    fontWeight: "Medium",
-                    color: isDarkMode ? "#4D4D4D" : "#4D4D4D",
-                    paddingRight: "5px",
+                    ...formLabelStyles,
                   }}
                 >
                   {timeT("modal.Type")}
-
-                  <Box
-                    display="inline"
-                    sx={{
+                  <span
+                    style={{
                       marginLeft: "2px",
                       color: "#FF2C56",
                     }}
                   >
                     {"*"}
-                  </Box>
+                  </span>
                 </Typography>
 
                 <TextFieldSelect
@@ -292,7 +290,18 @@ const TimeCreate: React.FC<IProps> = ({
                       value: "Break time",
                     },
                   ]}
-                  sx={{ flex: 1 }}
+                  sx={{
+                    "& > .MuiBox-root": {
+                      ...timeCreateInputStyles,
+                      "& > div, & > div > .MuiInputBase-root": {
+                        height: "100%",
+                        background: "transparent",
+                      },
+                    },
+                    "& .MuiSelect-select": {
+                      height: "100%",
+                    },
+                  }}
                   error={Boolean(errors?.type?.message)}
                   helperText={errors?.type?.message}
                   renderValue={(selected) => {
@@ -302,6 +311,7 @@ const TimeCreate: React.FC<IProps> = ({
                           display: "flex",
                           gap: 1,
                           alignItems: "center",
+                          height: "100%",
                         }}
                       >
                         <Box
@@ -318,7 +328,7 @@ const TimeCreate: React.FC<IProps> = ({
                   }}
                   {...(field as any)}
                 />
-              </>
+              </div>
             )}
           />
           {watch("type") === "Work time" && (
@@ -364,20 +374,18 @@ const TimeCreate: React.FC<IProps> = ({
             <div>
               <Typography
                 sx={{
-                  fontSize: "13px",
-                  fontWeight: "Medium",
+                  ...formLabelStyles,
                 }}
               >
                 {timeT("modal.Date")}{" "}
-                <Box
-                  display="inline"
-                  sx={{
+                <span
+                  style={{
                     marginLeft: "2px",
                     color: "#FF2C56",
                   }}
                 >
                   {"*"}
-                </Box>
+                </span>
               </Typography>
               <Controller
                 name="day"
@@ -385,7 +393,29 @@ const TimeCreate: React.FC<IProps> = ({
                 render={({ field }) => (
                   <MobileDatePickerComponent
                     // label={timeT("modal.Date")}
-                    sx={{ flex: 1 }}
+                    sx={
+                      {
+                        "& > .MuiBox-root": {
+                          ...timeCreateInputStyles,
+                          padding: 0,
+                          position: "relative",
+                          "& > svg": {
+                            position: "absolute",
+                            top: "50%",
+                            right: "20px",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                          },
+                        },
+                        "& div": {
+                          height: "100%",
+                          cursor: "pointer",
+                          "& input": {
+                            padding: "0 20px",
+                          },
+                        },
+                      } as SxProps<Theme>
+                    }
                     // required
                     error={Boolean(errors?.day?.message)}
                     helperText={errors?.day?.message}
@@ -397,20 +427,18 @@ const TimeCreate: React.FC<IProps> = ({
             <div>
               <Typography
                 sx={{
-                  fontSize: "13px",
-                  fontWeight: "Medium",
+                  ...formLabelStyles,
                 }}
               >
                 {timeT("modal.start_time")}
-                <Box
-                  display="inline"
-                  sx={{
+                <span
+                  style={{
                     marginLeft: "2px",
                     color: "#FF2C56",
                   }}
                 >
                   {"*"}
-                </Box>
+                </span>
               </Typography>
 
               <Controller
@@ -418,7 +446,16 @@ const TimeCreate: React.FC<IProps> = ({
                 control={control}
                 render={({ field }) => (
                   <TimePicker
-                    sx={{ flex: 1 }}
+                    sx={
+                      {
+                        "& > .MuiBox-root": {
+                          ...timeCreateInputStyles,
+                        },
+                        "& .MuiFormControl-root": {
+                          cursor: "pointer",
+                        },
+                      } as SxProps<Theme>
+                    }
                     error={Boolean(errors?.start_time?.message)}
                     helperText={errors?.start_time?.message}
                     {...field}
@@ -431,57 +468,78 @@ const TimeCreate: React.FC<IProps> = ({
           <div>
             <Typography
               sx={{
-                fontSize: "13px",
-                fontWeight: "Medium",
+                ...formLabelStyles,
               }}
             >
               {timeT("modal.timeDuration")}
-              <Box
-                display="inline"
-                sx={{
+              <span
+                style={{
                   marginLeft: "2px",
                   color: "#FF2C56",
                 }}
               >
                 {"*"}
-              </Box>
+              </span>
             </Typography>
             <Controller
               name="duration"
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  sx={{ flex: 1 }}
-                  error={Boolean(errors?.duration?.message)}
-                  helperText={errors?.duration?.message}
-                  value={value}
-                  onChange={onChange}
-                />
-              )}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <NumberInput
+                    sx={
+                      {
+                        "& > .MuiBox-root": {
+                          ...timeCreateInputStyles,
+                          "& div": {
+                            backgroundColor: "transparent",
+                            height: "100%",
+                          },
+                        },
+                        "& .MuiFormControl-root": {
+                          padding: "4px 20px 4px 0",
+                          width: "100%",
+                        },
+                        "& input": {
+                          cursor: "text !important",
+                          appearance: "textfield",
+                          "&::-webkit-outer-spin-button": {
+                            appearance: "none",
+                          },
+                          "&::-webkit-inner-spin-button": {
+                            appearance: "none",
+                          },
+                        },
+                      } as SxProps<Theme>
+                    }
+                    error={Boolean(errors?.duration?.message)}
+                    helperText={errors?.duration?.message}
+                    value={value}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           </div>
           <div>
             <Typography
               sx={{
-                fontSize: "13px",
-                fontWeight: "Medium",
+                ...formLabelStyles,
               }}
             >
               {timeT("modal.Note")}
-              <Box
-                display="inline"
-                sx={{
-                  marginLeft: "2px",
-                  color: "#FF2C56",
-                }}
-              >
-                {"*"}
-              </Box>
             </Typography>
             <Controller
               name="note"
               control={control}
-              render={({ field }) => <Textarea sx={{ flex: 1 }} {...field} />}
+              render={({ field }) => (
+                <Textarea
+                  sx={{
+                    flex: 1,
+                  }}
+                  {...field}
+                />
+              )}
             />
           </div>
         </Stack>
@@ -496,16 +554,29 @@ const TimeCreate: React.FC<IProps> = ({
               paddingLeft: "10px",
               paddingRight: "10px",
               textTransform: "none",
-              fontSize: "13px",
-              fontFamily: "Inter",
-              fontWeight: "Medium",
+              fontSize: "14px",
+              fontFamily: "unset",
+              fontWeight: "700",
               color: "#0575E6",
-              borderColor: "linear-gradient(0deg, #2af598, #009efd)",
+              border: "none",
+              background: "transparent",
               "&:hover": {
-                borderColor: "linear-gradient(0deg, #2af598, #009efd)",
+                border: "none",
               },
-              "&:focus": {
-                borderColor: "linear-gradient(0deg, #2af598, #009efd)",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                borderRadius: "100px",
+                padding: "1px",
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                WebkitMask:
+                  "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
               },
             }}
             onClick={onClose}
@@ -513,7 +584,7 @@ const TimeCreate: React.FC<IProps> = ({
             {timeT("modal.Cancel")}
           </Button>
           <Button
-            // type="submit"
+            type="submit"
             variant="contained"
             sx={{
               textTransform: "none",
@@ -523,13 +594,13 @@ const TimeCreate: React.FC<IProps> = ({
               marginRight: "24px",
               paddingLeft: "10px",
               paddingRight: "10px",
-              fontSize: "13px",
-              fontFamily: "Inter",
-              fontWeight: "Bold",
-              color: "common.white",
+              fontSize: "14px",
+              fontFamily: "unset",
+              fontWeight: "700",
               background: "linear-gradient(90deg, #2af598, #009efd)",
+              boxShadow: "none",
               "&:hover": {
-                background: "linear-gradient(90deg, #2af598, #009efd)",
+                boxShadow: "var(--mui-shadows-2)",
               },
             }}
             onClick={handleSubmit(onSubmit)}
@@ -538,7 +609,7 @@ const TimeCreate: React.FC<IProps> = ({
           </Button>
         </Stack>
 
-        {isEdit && selectedEvent?.extendedProps?.id && (
+        {isEdit && defaultValue?.id && (
           <Stack direction="row" justifyContent="center" sx={{ mt: 1 }}>
             <Button
               variant="outlined"
@@ -553,16 +624,17 @@ const TimeCreate: React.FC<IProps> = ({
                 },
               }}
               onClick={() => {
-                onDeleteTimeSheet({ id: selectedEvent?.extendedProps?.id })
-                  .then(() => {
-                    onAddSnackbar("Delete timesheet success", "success");
-                    onClose();
-                    onGetMyTimeSheet({ ...params });
-                  })
-                  .catch((err) => {
-                    onAddSnackbar("Delete timesheet failed", "error");
-                    onClose();
-                  });
+                defaultValue.id &&
+                  onDeleteTimeSheet({ id: defaultValue.id })
+                    .then(() => {
+                      onAddSnackbar("Delete timesheet success", "success");
+                      onClose();
+                      onGetMyTimeSheet({ ...params });
+                    })
+                    .catch((err) => {
+                      onAddSnackbar("Delete timesheet failed", "error");
+                      onClose();
+                    });
               }}
             >
               {timeT("modal.Delete")}
@@ -572,13 +644,10 @@ const TimeCreate: React.FC<IProps> = ({
       </DialogContent>
     );
   };
-
   return (
     <DefaultPopupLayout
       title={
-        selectedEvent?.extendedProps?.id
-          ? timeT("modal.edit_time")
-          : timeT("modal.add_time")
+        defaultValue?.id ? timeT("modal.edit_time") : timeT("modal.add_time")
       }
       content={_renderMain()}
       open={open}

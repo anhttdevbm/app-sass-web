@@ -12,7 +12,6 @@ const FilterCategory: React.FC<IProps> = ({ personVisibleFilter = true }) => {
       sx={{
         display: "flex",
         alignItems: "center",
-        // minHeight: "50px",
         gap: "12px",
         border: "1px solid #EFEFEF",
         borderRadius: "100px",

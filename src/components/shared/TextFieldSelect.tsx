@@ -209,7 +209,8 @@ const TextFieldSelect: React.FC<IProps> = React.forwardRef(
           {!hiddenIcon && (
             <OutLineExpandIcon
               sx={{
-                width: "16px",
+                width: "20px",
+                height: "20px",
                 transition: "all ease 0.25s",
                 transform: isFocus ? "rotate(180deg)" : "rotate(0deg)",
               }}

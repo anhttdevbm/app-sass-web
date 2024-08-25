@@ -10,7 +10,7 @@ export default function Page() {
     <Wrapper
       overflow="hidden"
       sx={{
-        "& > div:nth-child(2)": {
+        "& > div:nth-of-type(2)": {
           height: "calc(100% - 16px)",
         },
       }}

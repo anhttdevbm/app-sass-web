@@ -20,7 +20,7 @@ import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import DayIcon from "icons/DayIcon";
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
@@ -30,16 +30,17 @@ import {
 import CalendarIcon from "icons/CalendarIcon";
 import PlusIcon from "icons/PlusIcon";
 import TimeSheetIcon from "icons/TimeSheetIcon";
+import { TIME_TRACKING_HEADER_HEIGHT } from "./components/timeTracking.types";
 
 interface ITab {
   label: string;
   value: string;
 }
 
-const TimeTrackingPage: FC = () => {
+const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<string>("companyTime");
+  const [tab, setTab] = useState<string>("myTime");
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -47,6 +48,7 @@ const TimeTrackingPage: FC = () => {
   const [workBottomLeftRadius, setWorkBottomLeftRadius] =
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
+
   const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
 
   const timeT = useTranslations(NS_TIME_TRACKING);
@@ -75,8 +77,7 @@ const TimeTrackingPage: FC = () => {
     setWorkBorder("");
   };
 
-  const showLogTimePopup = () =>
-    setIsOpenCreatePopup((previousState) => !previousState);
+  const showLogTimePopup = () => setIsOpenCreatePopup(true);
 
   useEffect(() => {
     console.log(tab);
@@ -266,7 +267,7 @@ const TimeTrackingPage: FC = () => {
             margin: "16px 22px 0 0",
             display: "flex",
             alignItems: "center",
-            gap: "1px",
+            gap: "8px",
           }}
         >
           <Fab
@@ -274,13 +275,10 @@ const TimeTrackingPage: FC = () => {
               width: "34px",
               height: "34px",
               borderRadius: "100px",
-              backgroundColor: "transparent",
-              boxShadow: "none",
+              backgroundColor:
+                kindOfSheet === "timeSheet" ? "#E9EBF3" : "transparent",
+              boxShadow: kindOfSheet === "timeSheet" ? "none" : undefined,
               "&:hover": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              "&:focus": {
                 border: "none",
                 backgroundColor: "#F2F5FA",
               },
@@ -302,13 +300,10 @@ const TimeTrackingPage: FC = () => {
                 width: "34px",
                 height: "34px",
                 borderRadius: "100px",
-                backgroundColor: "#E9EBF3",
-                boxShadow: "none",
+                backgroundColor:
+                  kindOfSheet === "table" ? "#E9EBF3" : "transparent",
+                boxShadow: kindOfSheet === "table" ? "none" : undefined,
                 "&:hover": {
-                  border: "none",
-                  backgroundColor: "#F2F5FA",
-                },
-                "&:focus": {
                   border: "none",
                   backgroundColor: "#F2F5FA",
                 },
@@ -331,13 +326,10 @@ const TimeTrackingPage: FC = () => {
               width: "34px",
               height: "34px",
               borderRadius: "100px",
-              backgroundColor: "#E9EBF3",
-              boxShadow: "none",
+              backgroundColor:
+                kindOfSheet === "timeGridWeek" ? "#E9EBF3" : "transparent",
+              boxShadow: kindOfSheet === "timeGridWeek" ? "none" : undefined,
               "&:hover": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              "&:focus": {
                 border: "none",
                 backgroundColor: "#F2F5FA",
               },
@@ -399,6 +391,7 @@ const TimeTrackingPage: FC = () => {
           value="myTime"
           sx={{
             "& .MuiTabPanel-root": { paddingTop: "0px!important" },
+            height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
           }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
         >
@@ -407,6 +400,7 @@ const TimeTrackingPage: FC = () => {
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
             currentKindOfSheet={kindOfSheet}
+            setIsOpenCreatePopup={setIsOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel
@@ -422,6 +416,7 @@ const TimeTrackingPage: FC = () => {
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
             currentKindOfSheet={kindOfSheet}
+            setIsOpenCreatePopup={setIsOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel value="timeLog" sx={{ paddingTop: { sm: 0, md: "auto" } }}>
@@ -436,5 +431,3 @@ const TimeTrackingPage: FC = () => {
 };
 
 export default TimeTrackingPage;
-
-export const TIME_TRACKING_HEADER_HEIGHT = 72;

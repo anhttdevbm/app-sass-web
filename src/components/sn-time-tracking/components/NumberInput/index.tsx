@@ -11,7 +11,10 @@ import {
 import CurrencyInput from "react-currency-input-field";
 import { Stack } from "@mui/system";
 import useTheme from "hooks/useTheme";
-import { InputNumber } from "components/shared";
+import { Button, InputNumber } from "components/shared";
+import ChevronIcon from "icons/ChevronIcon";
+import OutLineExpandIcon from "icons/OutLineExpandIcon";
+import { IsValidConnection } from "@xyflow/react";
 
 interface ISectionProps {
   value?: number;
@@ -21,6 +24,7 @@ interface ISectionProps {
   disabled?: boolean;
   placeholder?: string;
   endAdornment?: React.ReactNode;
+  onChangeValueByClick?: (isIncrease?: boolean) => void;
 }
 
 type TextFieldInputProps = ISectionProps & TextFieldProps;
@@ -40,6 +44,7 @@ const NumberInput: React.FC<TextFieldInputProps> = (
     helperText,
     sx,
     endAdornment,
+    onChangeValueByClick,
     ...rest
   } = props;
 
@@ -151,33 +156,98 @@ const NumberInput: React.FC<TextFieldInputProps> = (
               },
             }}
           /> */}
-          <TextField
+          <Box
             sx={{
-              input: {
-                fontSize: "14px",
-                lineHeight: "22px",
-                fontWeight: 400,
-                color: isDarkMode ? "#fff" : "common.black",
-                padding: 0,
-                backgroundColor: isDarkMode ? "#393939" : "#F7F7FD",
-              },
-              "> :before, :after": {
-                display: "none",
-              },
+              position: "relative",
             }}
-            {...rest}
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            InputLabelProps={{ shrink: true }}
-            variant="filled"
-            required={required}
-            placeholder={placeholder}
-            id={`input-field-${randomId}`}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            type="number"
-          />
+          >
+            <TextField
+              sx={{
+                input: {
+                  fontSize: "14px",
+                  lineHeight: "22px",
+                  fontWeight: 400,
+                  color: isDarkMode ? "#fff" : "common.black",
+                  padding: 0,
+                  backgroundColor: isDarkMode ? "#393939" : "#F7F7FD",
+                },
+                "> :before, :after": {
+                  display: "none",
+                },
+              }}
+              {...rest}
+              value={value}
+              onChange={(e) => onChange?.(+e.target.value)}
+              disabled={disabled}
+              InputLabelProps={{ shrink: true }}
+              variant="filled"
+              required={required}
+              placeholder={placeholder}
+              id={`input-field-${randomId}`}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              type="number"
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {/* Increase button */}
+              <Button
+                sx={{
+                  padding: "0px !important",
+                  minHeight: "unset !important",
+                }}
+                onClick={() =>
+                  value !== undefined ? onChange?.(value + 1) : onChange?.(1)
+                }
+              >
+                <OutLineExpandIcon
+                  sx={{
+                    width: "20px",
+                    height: "20px",
+                    rotate: "180deg",
+                    position: "relative",
+                    top: "3px",
+                    ":hover": {
+                      cursor: "pointer",
+                    },
+                    "& path": {
+                      fill: "neutral.300",
+                    },
+                  }}
+                />
+              </Button>
+              {/* Decrease button */}
+              <Button
+                sx={{
+                  padding: "0px !important",
+                  minHeight: "unset !important",
+                }}
+                onClick={() => value && onChange?.(value - 1)}
+              >
+                <OutLineExpandIcon
+                  sx={{
+                    width: "20px",
+                    height: "20px",
+                    position: "relative",
+                    top: "-3px",
+                    ":hover": {
+                      cursor: "pointer",
+                    },
+                    "& path": {
+                      fill: "neutral.300",
+                    },
+                  }}
+                />
+              </Button>
+            </Box>
+          </Box>
         </Stack>
         {endAdornment}
       </Box>
