@@ -10,13 +10,15 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { CURRENCY_CODE } from "constant/enums";
 import { memo } from "react";
-import { formatDate } from "utils/index";
+import { formatDate, formatNumber } from "utils/index";
 
 function TemplateOne({ user, itemInvoice, isEdit }) {
   return (
     <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4} p={6}>
-      <Typography>VNP</Typography>
+      <Typography fontWeight={700}>VNP</Typography>
       <Typography>{user?.country ?? "Vietnam"}</Typography>
       <Stack
         mt={3}
@@ -131,30 +133,55 @@ function TemplateOne({ user, itemInvoice, isEdit }) {
           <TableHead>
             <TableRow>
               <TableCell
-                sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                sx={{
+                  color: "#878787",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                  padding: "10px",
+                }}
               >
                 DESCRIPTION
               </TableCell>
               <TableCell
-                sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                sx={{
+                  color: "#878787",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                  padding: "10px",
+                }}
                 align="right"
               >
                 UNIT
               </TableCell>
               <TableCell
-                sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                sx={{
+                  color: "#878787",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                  padding: "10px",
+                }}
                 align="right"
               >
                 QTY
               </TableCell>
               <TableCell
-                sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                sx={{
+                  color: "#878787",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                  padding: "10px",
+                }}
                 align="right"
               >
                 RATE
               </TableCell>
               <TableCell
-                sx={{ color: "#878787", fontSize: "13px", fontWeight: 400 }}
+                sx={{
+                  color: "#878787",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                  padding: "10px",
+                }}
                 align="right"
               >
                 AMOUNT
@@ -170,33 +197,64 @@ function TemplateOne({ user, itemInvoice, isEdit }) {
                 <TableCell
                   component="th"
                   scope="row"
-                  sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#21263C",
+                    fontSize: "13px",
+                    fontWeight: 400,
+                    padding: "10px",
+                  }}
                 >
                   {row.service_name}
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#21263C",
+                    fontSize: "13px",
+                    fontWeight: 400,
+                    padding: "10px",
+                  }}
                   align="right"
                 >
                   Hour
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#21263C",
+                    fontSize: "13px",
+                    fontWeight: 400,
+                    padding: "10px",
+                  }}
                   align="right"
                 >
                   {row.quantity ?? ""}
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#21263C",
+                    fontSize: "13px",
+                    fontWeight: 400,
+                    padding: "10px",
+                  }}
                   align="right"
                 >
-                  ${row.rate},00
+                  {formatNumber(Number(row?.rate), {
+                    prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                    numberOfFixed: 2,
+                  })}
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#21263C", fontSize: "13px", fontWeight: 400 }}
+                  sx={{
+                    color: "#21263C",
+                    fontSize: "13px",
+                    fontWeight: 400,
+                    padding: "10px",
+                  }}
                   align="right"
                 >
-                  ${row.amount},00
+                  {formatNumber(Number(row?.amount), {
+                    prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                    numberOfFixed: 2,
+                  })}
                 </TableCell>
               </TableRow>
             ))}
@@ -221,7 +279,10 @@ function TemplateOne({ user, itemInvoice, isEdit }) {
             SUBTOTAL
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
-            {itemInvoice?.total ?? 0}
+            {formatNumber(Number(itemInvoice?.total ?? 0), {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
           </Typography>
         </Stack>
 
@@ -237,7 +298,10 @@ function TemplateOne({ user, itemInvoice, isEdit }) {
             {`VAT(10%)`}
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
-            {(Number(itemInvoice?.total ?? 0) * 10) / 100}
+            {formatNumber((Number(itemInvoice?.total ?? 0) * 10) / 100, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
           </Typography>
         </Stack>
 
@@ -253,7 +317,10 @@ function TemplateOne({ user, itemInvoice, isEdit }) {
             GRAND TOTAL
           </Typography>
           <Typography color="#386aba" fontSize={16} fontWeight={700}>
-            {(Number(itemInvoice?.total ?? 0) * 110) / 100}
+            {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
           </Typography>
         </Stack>
 
