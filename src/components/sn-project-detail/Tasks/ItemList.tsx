@@ -1060,7 +1060,14 @@ const ItemList = () => {
   }, [fixedLayoutRef]);
 
   return (
-    <Stack flex={1} px={2} order={3} gap={1} bgcolor="background.paper">
+    <Stack
+      flex={1}
+      px={2}
+      order={3}
+      gap={1}
+      bgcolor="background.paper"
+      borderRadius="0 0 1rem 1rem"
+    >
       {!!selectedList.length && (
         <ActionsSelected
           selectedList={selectedList}
@@ -1128,6 +1135,7 @@ const ItemList = () => {
         flex={1}
         bgcolor="background.paper"
         gap="16px"
+        mb={1}
       >
         <DragDropContext onDragStart={onDraggingTrue} onDragEnd={onDragEnd}>
           {dataList.map((taskListItem, indexTaskList) => {

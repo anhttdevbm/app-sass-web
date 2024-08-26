@@ -93,6 +93,7 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
         position="relative"
         zIndex={12}
         bgcolor={isDarkMode ? "background.default" : "background.paper"}
+        borderRadius="1rem 1rem 0 0"
       >
         <TopContent />
         <TabList />
