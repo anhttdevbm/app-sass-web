@@ -65,6 +65,7 @@ import { MenuItemProps } from "./helpers";
 
 const Menu = () => {
   const { user } = useAuth();
+  console.log("check user" , user)
 
   return (
     <Stack

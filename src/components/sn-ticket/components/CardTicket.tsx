@@ -15,7 +15,7 @@ import OpenTicketDetailIcon from "icons/OpenTicketDetailIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useAppDispatch } from "store/hooks";
 import { setDataTicketDetail } from "store/ticket/actions";
 

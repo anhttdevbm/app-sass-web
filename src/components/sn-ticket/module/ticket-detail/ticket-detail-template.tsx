@@ -94,8 +94,20 @@ const TicketDetail = () => {
       case "Open":
         handleTagClick(2);
         break;
+      case "InProgress":
+        handleTagClick(3);
+        break;
+      case "OnHold":
+        handleTagClick(4);
+        break;
+      case "Solved":
+        handleTagClick(5);
+        break;
       case "Closed":
         handleTagClick(6);
+        break;
+      case "Cancelled":
+        handleTagClick(7);
         break;
       default:
         handleTagClick(1);

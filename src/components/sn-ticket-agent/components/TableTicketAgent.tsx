@@ -41,7 +41,7 @@ const TableTicketAgent = (props: any) => {
   const { data } = props;
 
   const handleClickOpenModel = (data) => {
-    console.log("check data click" , data)
+    // console.log("check data click" , data)
     setDataDeatil(data)
     setOpenModel(true);
   };
@@ -76,42 +76,41 @@ const TableTicketAgent = (props: any) => {
     if (check == "High") return "#FFEEF1";
   };
 
-  console.log("check data truyen" , dataDetail)
   return (
 
     <>
       <TableContainer sx={{ boxShadow: "none" }} component={Paper}>
         <Table>
-          <TableHead>
+          <TableHead sx={{padding : 0}}>
             <TableRow sx={{ backgroundColor: "#D9F0FD" }}>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">{t("ticketFields.id")}</Typography>
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{t("ticketFields.id")}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">{t("ticketFields.name")}</Typography>
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{t("ticketFields.name")}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">EMAIL</Typography>
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">EMAIL</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">PHONE</Typography>
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">PHONE</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">POSITION</Typography>
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">POSITION</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">STATUS</Typography>
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">STATUS</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">Ticket in-progress</Typography>
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">Ticket in-progress</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">
+              <TableCell sx={{ border: "none", padding : "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">
                   {t("ticketFields.creationTime")}
                 </Typography>
               </TableCell>
               <TableCell sx={{ border: "none" }}>
-                <Typography fontWeight="500">
+                <Typography fontWeight="500" fontSize="13px">
                 </Typography>
               </TableCell>
             </TableRow>

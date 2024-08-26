@@ -91,3 +91,21 @@ export const getListActivity = async ({ id, page, size, isAll }) => {
   );
   return response?.data;
 };
+
+export const updateTicketApi = async (payload) => {
+  const mapData = {
+    type: payload?.type,
+    priority: payload?.priority,
+    assign: payload?.assign,
+    rootCause: payload?.rootCause,
+  };
+  console.log("check mapData", mapData);
+  const response = await client.put(
+    `${Endpoint.TICKET}/detail/${payload.id}`,
+    mapData,
+    {
+      baseURL: TICKET_API_URL,
+    },
+  );
+  return response;
+};
