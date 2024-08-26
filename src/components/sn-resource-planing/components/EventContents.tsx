@@ -90,7 +90,7 @@ const EventContents = ({
 
   return (
     <>
-      {!isWorkload && (
+      {!isWorkload ? (
         <Stack
           className="fc-event-title fc-sticky"
           direction="row"
@@ -194,28 +194,36 @@ const EventContents = ({
         {checkedEventType.icon}
       </Stack> */}
         </Stack>
-      )}
-      {isWorkload &&
-        (booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING &&
-        total_hour >= 8 ? (
+      ) : (
+        booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING && (
           <h2
             style={{
-              color: "black",
-              background: "red",
+              color: "white",
               textAlign: "center",
               margin: 0,
-              height: "100px",
+              height: "60px",
               display: "flex",
               alignItems: "center ",
               justifyContent: "center",
-              backgroundColor: "#33FFFF",
+              background:
+                "linear-gradient(180deg, rgba(255, 192, 203, 0) 0%, #57D9A3 0%)",
             }}
           >
-            8
+            <div
+              style={{
+                background: "#00875A",
+                fontSize: 11,
+                minWidth: 20,
+                height: 20,
+                padding: 2,
+                borderRadius: 3,
+              }}
+            >
+              {total_hour}
+            </div>
           </h2>
-        ) : (
-          ""
-        ))}
+        )
+      )}
     </>
   );
 };

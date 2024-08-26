@@ -60,5 +60,9 @@ export type LayoutDictionary = {
 
     //Invoice
     invoice: string;
+
+    ticket: string;
+    agent : string;
+
   };
 };

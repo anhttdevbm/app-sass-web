@@ -67,12 +67,10 @@ export const useGetSchemas = () => {
           commonT("form.error.required", { name: resourceT("form.user") }),
         ),
       note: yup.string().trim().notRequired(),
-      role: yup
-        .string()
-        .trim()
-        .required(
-          commonT("form.error.required", { name: resourceT("form.role") }),
-        ),
+      role: yup.string().trim(),
+      // .required(
+      //   commonT("form.error.required", { name: resourceT("form.role") }),
+      // ),
       budget_id: yup.string(),
     })
     .required();

@@ -245,4 +245,11 @@ export const Endpoint = {
   AI_DOCS_COVERT_SHEET: "/docs/convert/sheet",
   AI_DOCS_IMPORT_MD: "/docs/import/md",
   AI_DOCS_IMPORT_OPML: "/docs/import/opml",
+
+  //Ticket
+  TICKET: "/ticket",
+  DETAIL_TICKET: "/ticket/{id}",
+
+  //Ticket-agent
+  TICKET_AGENT :"/ticket/user"
 };

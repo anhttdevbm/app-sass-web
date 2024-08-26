@@ -67,7 +67,15 @@ const ViewPdf = () => {
           Download
         </Button>
       </Stack>
-      <div ref={printRef} style={{ width: "fit-content", margin: "auto" }}>
+      <div
+        ref={printRef}
+        style={{
+          width: "fit-content",
+          margin: "auto",
+          height: "70vh",
+          overflowY: "auto",
+        }}
+      >
         <TemplateOne user={{}} isEdit={false} itemInvoice={item} />
       </div>
     </FixedLayout>

@@ -7,17 +7,23 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
 import moment from "moment";
-import React from "react";
+import { MyTimeSheet } from "store/timeTracking/reducer";
+import { tableCellHeadingStyles } from "../CalendarTracking.styles";
 import "../CompanyTimeTrackingCalendar/style.css";
+import { TimeCreateValue } from "components/sn-time-tracking/TimeTrackingModal/TimeCreate";
+import dayjs from "dayjs";
+import { useMemo } from "react";
 
 interface IProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any;
+  data: MyTimeSheet[];
+  handleSelectListSheetRow?: (selectedRowData: TimeCreateValue) => void;
 }
+
+const tableCellHeader = ["Date", "Project name", "Type", "Time", "Start time"];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottom: "none",
@@ -27,119 +33,120 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:last-child td, &:last-child th": {
     border: 0,
   },
+  cursor: "default",
+  ":hover": {
+    backgroundColor: "rgba(0, 0, 0, 0.04)",
+  },
 }));
 
 const StyledTableHeadRow = styled(TableRow)(({ theme }) => ({
   background: "#D9F0FD",
   borderRadius: "8px",
+  "& th:first-of-type": {
+    borderTopLeftRadius: "12px",
+    borderBottomLeftRadius: "12px",
+  },
+  "& th:last-child": {
+    borderTopRightRadius: "12px",
+    borderBottomRightRadius: "12px",
+  },
+  "& > th": {
+    background: "#D9F0FD",
+  },
 }));
+const TODAY = dayjs().format("YYYY-MM-DD");
 
-const formatDuration = (duration) => {
-  const hours = Math.floor(duration);
-  const minutes = (duration - hours) * 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0",
-  )}`;
-};
-
-const ListSheet: React.FC<IProps> = (props) => {
-  const rows = props.data?.map((row) => ({
-    id: row._id,
-    Date: row.day,
-    Project_name: row.project?.name || "Break time",
-    Type: row.type,
-    Time: formatDuration(row.duration),
-    Creation_time: moment(row.created_time).format("L HH:mm"),
-  }));
+const ListSheet = ({ data, handleSelectListSheetRow }: IProps) => {
+  const rowsData = useMemo(() => {
+    return data.filter((item) => item.day === TODAY);
+  }, [data]);
+  const onRowSelected = (row: MyTimeSheet) => {
+    const rowData: TimeCreateValue = {
+      day: row.day,
+      duration: row.duration,
+      start_time: row.start_time,
+      id: row.id,
+      note: row.note,
+      position: row.position?.id,
+      project_id: row.project_id,
+      type: row.type,
+    };
+    handleSelectListSheetRow?.(rowData);
+  };
 
   return (
-    <TableContainer>
-      <Table sx={{ minWidth: 650 }}>
+    <TableContainer sx={{ maxHeight: "100%" }}>
+      <Table
+        stickyHeader
+        aria-label="sticky table"
+        sx={{ minWidth: 650, tableLayout: "fixed" }}
+      >
         <TableHead>
           <StyledTableHeadRow>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "16px",
-                borderRadius: "8px 0 0 0",
-              }}
-            >
-              Date
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "16px",
-              }}
-            >
-              Project name
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "16px",
-              }}
-            >
-              Type
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "16px",
-              }}
-            >
-              Time
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "16px",
-                borderRadius: "0 8px 0 0",
-              }}
-            >
-              Creation time
-            </StyledTableCell>
+            {tableCellHeader.map((cellTitle) => (
+              <StyledTableCell
+                key={cellTitle}
+                sx={{
+                  ...tableCellHeadingStyles,
+                }}
+              >
+                {cellTitle}
+              </StyledTableCell>
+            ))}
           </StyledTableHeadRow>
         </TableHead>
-        {rows?.length > 0 ? (
+        {rowsData?.length > 0 ? (
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.id}>
-                <StyledTableCell>{row.Date}</StyledTableCell>
+            {rowsData.map((row, index) => (
+              <StyledTableRow
+                sx={{
+                  "& td": {
+                    fontFamily: "unset",
+                  },
+                }}
+                key={index}
+                onClick={() => onRowSelected(row)}
+              >
+                <StyledTableCell>{row.day}</StyledTableCell>
                 <StyledTableCell
                   sx={{
-                    color: "#0575E6",
+                    color: row.project?.name ? "#0575E6" : "red",
                   }}
                 >
-                  {row.Project_name}
+                  {row.project?.name || "Break time"}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
-                    color: row.Type === "Break time" ? "red" : "#0575E6",
+                    color: row.project?.name ? "#0575E6" : "red",
                   }}
                 >
-                  {row.Type}
+                  {row.type}
                 </StyledTableCell>
-                <StyledTableCell>{row.Time}</StyledTableCell>
-                <StyledTableCell>{row.Creation_time}</StyledTableCell>
+                <StyledTableCell
+                  sx={{ color: row.project?.name ? "#0575E6" : "red" }}
+                >
+                  {formatHoursToHHMM(row.duration || 0)}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {moment(row.start_time).format("L HH:mm")}
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         ) : (
-          <div style={{
-            display:"flex",
-            justifyContent:"center",
-            alignItems:"center",
-            height: '100px',
-          }}>
-            <Typography>No data found</Typography>
-          </div>
+          <TableBody>
+            <StyledTableRow>
+              <StyledTableCell
+                align="center"
+                colSpan={5}
+                sx={{
+                  fontFamily: "unset",
+                }}
+              >
+                No data found
+              </StyledTableCell>
+            </StyledTableRow>
+          </TableBody>
         )}
       </Table>
     </TableContainer>

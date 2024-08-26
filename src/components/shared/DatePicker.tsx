@@ -30,8 +30,6 @@ const DatePicker = (props: DatePickerProps) => {
     ...rest
   } = props;
 
-
-
   const locale = useLocale();
 
   const onChangeDate = (date: Date | null) => {
@@ -99,13 +97,13 @@ const DatePickerInput = forwardRef((props: InputProps, ref) => {
   return (
     <Input
       ref={ref}
-      {...rest}
       endNode={
         <CalendarIcon
           onClick={onClickEndNode}
           sx={{ color: "grey.400", fontSize: 20 }}
         />
       }
+      {...rest}
     />
   );
 });

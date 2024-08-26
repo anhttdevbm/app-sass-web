@@ -6,7 +6,7 @@ import { getServiceBudget } from "./../billing/actions";
 
 export interface IBookingAllFitler {
   search_key?: string;
-  working_sort?: WorkingStatus;
+  working_sort?: WorkingStatus | "asc" | "desc";
   sort?: SORT_OPTIONS | "";
   start_date?: string;
   end_date?: string;

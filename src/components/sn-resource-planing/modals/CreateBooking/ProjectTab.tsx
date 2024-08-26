@@ -17,7 +17,7 @@ import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
+import Textarea from "components/Textarea";
 import TextStatus from "components/TextStatus";
 import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
@@ -232,6 +232,7 @@ const ProjectTab = ({
             ".MuiOutlinedInput-notchedOutline": {
               borderColor: "#EFEFEF",
             },
+            pointerEvents: !watchProject("project_id") ? "none" : "auto",
           }}
         />
       </Grid2>
@@ -241,7 +242,6 @@ const ProjectTab = ({
           name="service_id"
           control={controlProject as unknown as Control}
           listOptions={listServices}
-          disabled={!watchProject("project_id")}
           label={resourceT("form.services")}
           required
           sx={{
@@ -251,6 +251,7 @@ const ProjectTab = ({
             ".MuiOutlinedInput-notchedOutline": {
               borderColor: "#EFEFEF",
             },
+            pointerEvents: !watchProject("project_id") ? "none" : "auto",
           }}
           MenuProps={{
             PaperProps: {
@@ -328,9 +329,9 @@ const ProjectTab = ({
                   ".MuiBox-root": {
                     borderColor: "#EFEFEF",
                     borderRadius: "100px",
-                    height: 56,
+                    height: 36,
                     display: "block",
-                    padding: "16px 12px",
+                    padding: "4px 12px",
                     background:
                       "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
                   },
@@ -377,10 +378,11 @@ const ProjectTab = ({
                   sx={{
                     "& > .MuiBox-root": {
                       background: "transparent",
+                      height: 36,
                     },
                     flex: "1 1 0%",
                     ".MuiInputBase-input": {
-                      height: 32,
+                      height: 36,
                     },
                   }}
                   type="number"
@@ -403,11 +405,13 @@ const ProjectTab = ({
                     "& > .MuiBox-root": {
                       background: "transparent",
                       borderColor: "transparent",
+                      height: 36,
                     },
                     "& .MuiInputBase-root": {
                       background: "transparent",
                       color: "#00000080",
                     },
+                    height: 36,
                   }}
                   options={timeOptions}
                   onFocus={() => setIsFocusAllocation(true)}

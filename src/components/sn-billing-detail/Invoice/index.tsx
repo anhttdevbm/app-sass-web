@@ -127,7 +127,7 @@ const TabInvoice = (props: TabProps) => {
               borderRight: "1.5px solid #EBEAF2",
               display: "flex",
               gap: "8px",
-              padding: "12px 8px",
+              padding: "0px 8px",
               alignItems: "center",
               cursor: "pointer",
             }}

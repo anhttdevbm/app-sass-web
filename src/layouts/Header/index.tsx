@@ -23,7 +23,7 @@ const Header = () => {
     useHeaderConfig();
   const { breakpoint } = useBreakpoint();
   const { push } = useRouter();
-  const  pathname  = usePathname();
+  const pathname = usePathname();
   const { pageSize, filters, status, onGetProjects } = useProjects();
 
   const [isFocused, onFocused, onUnFocused] = useToggle();
@@ -48,6 +48,7 @@ const Header = () => {
   return (
     <Stack
       height={HEADER_HEIGHT}
+      flexShrink={0}
       borderBottom="1px solid"
       borderColor="grey.100"
       bgcolor="background.paper"
