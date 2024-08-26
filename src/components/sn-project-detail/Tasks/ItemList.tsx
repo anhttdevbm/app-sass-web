@@ -1098,6 +1098,8 @@ const ItemList = () => {
           headerProps={{
             sx: {
               bgcolor: "grey.100",
+              fontWeight: 600,
+              color: "grey.700",
             },
           }}
           sx={{
