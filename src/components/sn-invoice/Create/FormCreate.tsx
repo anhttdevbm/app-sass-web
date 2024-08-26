@@ -1,6 +1,7 @@
 "use client";
 import {
   Box,
+  Menu,
   MenuItem,
   Paper,
   Stack,
@@ -23,7 +24,7 @@ import CloseIcon from "icons/CloseIcon";
 import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useState } from "react";
 import { useAuth, useHeaderConfig } from "store/app/selectors";
-import { useBudgets } from "store/billing/selectors";
+import { useBudgets, useServiceBudgets } from "store/billing/selectors";
 import { useClientCompanies, useMyCompany } from "store/company/selectors";
 import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
@@ -37,6 +38,11 @@ import Image from "next/image";
 import EditBillFromIcon from "icons/EditBillFromIcon";
 import { useRouter } from "next/navigation";
 import RateIcon from "icons/RateIcon";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers";
+import DragRowTableIcon from "icons/DragRowTableIcon";
+import DropDownIcon from "icons/DropDownIcon";
+
+const ITEM_HEIGHT = 48;
 
 const initRow = {
   service_name: null,
@@ -46,6 +52,7 @@ const initRow = {
   amount: 0,
   _id: uuid(),
   description: null,
+  typeRowTwo: false,
 };
 
 const initPaymentItem = [
@@ -72,13 +79,22 @@ const FormCreate = () => {
   const { onGetCompany, item: itemCompany } = useMyCompany();
   const { initQuery, isReady, query } = useQueryParams();
   const { onGetBudgets, budgets } = useBudgets();
+  const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
   const { onCreateNewInvoice } = useInvoices();
   const { user } = useAuth();
   const [total, setTotal] = useState(0);
   const [paymentSelected, setPaymentSelected] = useState(0);
   const [open, setOpen] = useState(false);
-
+  const [rowTwo, setRowTwo] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openNewRow = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -122,6 +138,12 @@ const FormCreate = () => {
     onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
     onGetBudgets({ ...initQuery });
   }, []);
+
+  useEffect(() => {
+    onGetServiceBudgets(formik.values.budget_name ?? "");
+  }, [onGetServiceBudgets, formik.values.budget_name]);
+
+  console.log("test", arrService);
 
   useEffect(() => {
     let prev = 0;
@@ -863,54 +885,173 @@ const FormCreate = () => {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
-                            <TableCell
-                              sx={{
-                                color: "#495057 !important",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                border: "1px solid #EBEAF2",
-                                position: "relative",
-                                paddingRight: "24px",
-                              }}
-                              align="left"
-                            >
-                              <TextField
-                                name={`service_items[${index}].service_name`}
-                                value={row.service_name}
-                                onChange={(e) =>
-                                  handleChange(
-                                    `service_items[${index}].service_name`,
-                                    e.target.value,
-                                  )
-                                }
-                                placeholder="Type or click to select an item."
-                                fullWidth
-                                variant="standard"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  inputProps: {
-                                    style: { textAlign: "left" },
-                                  },
-                                }}
-                              />
-                              <CloseIcon
+                            {!row.typeRowTwo ? (
+                              <TableCell
                                 sx={{
-                                  position: "absolute",
-                                  right: "4px",
-                                  top: "6px",
-                                  border: "1px solid #878787",
-                                  borderRadius: "16px",
-                                  padding: "2px",
-                                  cursor: "pointer",
+                                  color: "#495057 !important",
+                                  fontSize: "14px",
+                                  fontWeight: 400,
+                                  border: "1px solid #EBEAF2",
+                                  position: "relative",
                                 }}
-                                onClick={() =>
-                                  handleChange(
-                                    `service_items[${index}].service_name`,
-                                    "",
-                                  )
-                                }
-                              />
-                            </TableCell>
+                                align="left"
+                              >
+                                <TextField
+                                  name={`service_items[${index}].service_name`}
+                                  value={row.service_name}
+                                  onChange={(e) =>
+                                    handleChange(
+                                      `service_items[${index}].service_name`,
+                                      e.target.value,
+                                    )
+                                  }
+                                  placeholder="Add a service name"
+                                  fullWidth
+                                  variant="standard"
+                                  InputProps={{
+                                    disableUnderline: true,
+                                    inputProps: {
+                                      style: { textAlign: "left" },
+                                    },
+                                  }}
+                                  sx={{
+                                    "& .MuiInputBase-input.MuiInput-input": {
+                                      padding: "8px",
+                                    },
+                                  }}
+                                />
+                                <TextField
+                                  name={`service_items[${index}].description`}
+                                  value={row.description}
+                                  onChange={(e) =>
+                                    handleChange(
+                                      `service_items[${index}].description`,
+                                      e.target.value,
+                                    )
+                                  }
+                                  multiline
+                                  minRows={2}
+                                  placeholder="Add a description to your item"
+                                  fullWidth
+                                  variant="standard"
+                                  InputProps={{
+                                    disableUnderline: true,
+                                    inputProps: {
+                                      style: { textAlign: "left" },
+                                    },
+                                  }}
+                                  sx={{
+                                    "& .MuiInputBase-input.MuiInput-input": {
+                                      borderRadius: "6px",
+                                      background: "#FBFAFA",
+                                      padding: "8px",
+                                    },
+                                    "& .MuiInputBase-input.MuiOutlinedInput-input ":
+                                      {
+                                        "-webkit-text-fill-color":
+                                          "#838195 !important",
+                                        fontWeight: 400,
+                                        fontSize: "14px",
+                                      },
+                                  }}
+                                />
+                                <CloseIcon
+                                  sx={{
+                                    position: "absolute",
+                                    right: "16px",
+                                    top: "30px",
+                                    border: "1px solid #878787",
+                                    borderRadius: "16px",
+                                    padding: "2px",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => {
+                                    handleChange(
+                                      `service_items[${index}].service_name`,
+                                      "",
+                                    );
+                                    handleChange(
+                                      `service_items[${index}].description`,
+                                      "",
+                                    );
+                                  }}
+                                />
+                              </TableCell>
+                            ) : (
+                              <TableCell
+                                sx={{
+                                  color: "#495057 !important",
+                                  fontSize: "14px",
+                                  fontWeight: 400,
+                                  border: "1px solid #EBEAF2",
+                                  position: "relative",
+                                }}
+                                align="left"
+                              >
+                                <TextField
+                                  select
+                                  value="Type or click to select an item."
+                                  fullWidth
+                                  variant="standard"
+                                  InputProps={{
+                                    disableUnderline: true,
+                                    inputProps: {
+                                      style: {
+                                        textAlign: "left",
+                                        opacity: 1,
+                                        border: "none",
+                                        outline: "none",
+                                        top: 0,
+                                        fontSize: "14px",
+                                        color: "#838195",
+                                      },
+                                    },
+                                  }}
+                                  SelectProps={{ IconComponent: () => null }}
+                                  sx={{
+                                    "& .MuiInputBase-input.MuiInput-input": {
+                                      padding: "8px",
+                                      color: "#838195",
+                                    },
+                                  }}
+                                >
+                                  {arrService.map((service) => (
+                                    <MenuItem
+                                      key={service?.id}
+                                      value={service?.id}
+                                      onClick={() => {
+                                        handleChange(
+                                          `service_items[${index}].service_name`,
+                                          service.name,
+                                        );
+                                        handleChange(
+                                          `service_items[${index}].quantity`,
+                                          service.qty,
+                                        );
+                                        handleChange(
+                                          `service_items[${index}].discount`,
+                                          service.discount,
+                                        );
+                                        handleChange(
+                                          `service_items[${index}].typeRowTwo`,
+                                          false,
+                                        );
+                                        handleChange(
+                                          `service_items[${index}].description`,
+                                          service.desc,
+                                        );
+                                        handleChange(
+                                          `service_items[${index}]._id`,
+                                          service.id,
+                                        );
+                                      }}
+                                    >
+                                      {service.name}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
+                              </TableCell>
+                            )}
                             <TableCell
                               component="th"
                               scope="row"
@@ -1092,12 +1233,12 @@ const FormCreate = () => {
             display: "flex",
             background: "#D9F0FD",
             boxShadow: "none",
-            padding: "6px 32px 6px 12px !important",
+            padding: "6px 12px !important",
           }}
           onClick={() =>
             handleChange("service_items", [
               ...formik.values.service_items,
-              { ...initRow, id: uuid() },
+              { ...initRow, _id: uuid() },
             ])
           }
         >
@@ -1113,6 +1254,50 @@ const FormCreate = () => {
             Add new row
           </Typography>
         </Button>
+        <Box
+          onClick={handleClick}
+          sx={{
+            backgroundColor: "#D9F0FD",
+            borderLeft: "1px solid #BDE4FB",
+            width: "fit-content",
+            marginRight: "auto",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 4px",
+            cursor: "pointer",
+          }}
+          id="long-button"
+          aria-controls={openNewRow ? "long-menu" : undefined}
+          aria-expanded={openNewRow ? "true" : undefined}
+          aria-haspopup="true"
+        >
+          <ArrowDropDownIcon sx={{ color: "#212529" }} />
+        </Box>
+        <Menu
+          id="long-menu"
+          MenuListProps={{
+            "aria-labelledby": "long-button",
+          }}
+          anchorEl={anchorEl}
+          open={openNewRow}
+          onClose={handleClose}
+          PaperProps={{
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+            },
+          }}
+        >
+          <MenuItem
+            onClick={() =>
+              handleChange("service_items", [
+                ...formik.values.service_items,
+                { ...initRow, _id: uuid(), typeRowTwo: true },
+              ])
+            }
+          >
+            Add a select service row
+          </MenuItem>
+        </Menu>
         <Box
           sx={{
             background: "#ffffff",
