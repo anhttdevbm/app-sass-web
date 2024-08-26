@@ -499,8 +499,13 @@ const FormCreate = () => {
               marginLeft: "-16px",
             }}
           />
-          <Box sx={{ display: "flex", alignItems: "center", gap: "32px" }}>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              color="#212529"
+              fontSize={14}
+              fontWeight={400}
+              sx={{ minWidth: "130px" }}
+            >
               Due Date
             </Typography>
 
@@ -583,13 +588,17 @@ const FormCreate = () => {
           ></TextField>
         </Box>
         <Box
-          sx={{ display: "flex", gap: "32px", justifyContent: "space-between" }}
+          sx={{
+            display: "flex",
+            gap: "16px",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+          }}
         >
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              width: "50%",
             }}
           >
             <Typography
@@ -709,10 +718,13 @@ const FormCreate = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: "32px",
             }}
           >
-            <Typography color="#212529" fontSize={14} sx={{ minWidth: "61px" }}>
+            <Typography
+              color="#212529"
+              fontSize={14}
+              sx={{ minWidth: "130px" }}
+            >
               Link
             </Typography>
             <TextField

@@ -239,6 +239,7 @@ export const Endpoint = {
   INVOICE: "/invoices",
   DETAIL_INVOICE: "/invoices/{id}",
   NEW_INVOICE: "/invoices/create",
+  DELETE_MULTIPLE_INVOICES: "/invoices/delete-multiple",
 
   // AI Assistants Docs
   AI_DOCS_SUMMARIZE: "/docs/summerization/document",
@@ -251,5 +252,5 @@ export const Endpoint = {
   DETAIL_TICKET: "/ticket/{id}",
 
   //Ticket-agent
-  TICKET_AGENT :"/ticket/user"
+  TICKET_AGENT: "/ticket/user",
 };
