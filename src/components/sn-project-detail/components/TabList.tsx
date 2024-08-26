@@ -49,6 +49,7 @@ const TabList = () => {
         bgcolor="background.paper"
         py={1}
         px={2}
+        borderRadius="1rem 1rem 0 0"
       >
         <Stack
           direction="row"

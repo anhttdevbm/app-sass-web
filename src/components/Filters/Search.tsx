@@ -81,7 +81,7 @@ const Search = (props: SearchProps) => {
     <Input
       size="small"
       name={name}
-      rootSx={{ height: 32, borderRadius: 1, background: "#ffffff" }}
+      rootSx={{ height: 32, borderRadius: 1, backgroundColor: "transparent" }}
       sx={{
         height: 32,
         ...sx,
