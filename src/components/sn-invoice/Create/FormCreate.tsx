@@ -1,15 +1,12 @@
 "use client";
 import {
   Box,
+  Menu,
   MenuItem,
   Paper,
   Stack,
   Table,
-  TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -19,24 +16,25 @@ import { DEFAULT_PAGING } from "constant/index";
 import { INVOICES_PATH } from "constant/paths";
 import { useFormik } from "formik";
 import useQueryParams from "hooks/useQueryParams";
-import CloseIcon from "icons/CloseIcon";
 import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useState } from "react";
 import { useAuth, useHeaderConfig } from "store/app/selectors";
-import { useBudgets } from "store/billing/selectors";
+import { useBudgets, useServiceBudgets } from "store/billing/selectors";
 import { useClientCompanies, useMyCompany } from "store/company/selectors";
 import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import NewPaymentMethodIcon from "icons/NewPaymentMethodIcon";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import NewInvoiceIcon from "public/images/new-invoice.svg";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { uuid } from "utils/index";
 import * as Yup from "yup";
+import BodyTable from "./BodyTable";
 import NewPaymentModal from "./NewPaymentModal";
-import Image from "next/image";
-import EditBillFromIcon from "icons/EditBillFromIcon";
-import { useRouter } from "next/navigation";
-import RateIcon from "icons/RateIcon";
+import TopTable from "./TopTable";
+
+const ITEM_HEIGHT = 48;
 
 const initRow = {
   service_name: null,
@@ -46,6 +44,7 @@ const initRow = {
   amount: 0,
   _id: uuid(),
   description: null,
+  typeRowTwo: false,
 };
 
 const initPaymentItem = [
@@ -72,13 +71,22 @@ const FormCreate = () => {
   const { onGetCompany, item: itemCompany } = useMyCompany();
   const { initQuery, isReady, query } = useQueryParams();
   const { onGetBudgets, budgets } = useBudgets();
+  const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
   const { onCreateNewInvoice } = useInvoices();
   const { user } = useAuth();
   const [total, setTotal] = useState(0);
   const [paymentSelected, setPaymentSelected] = useState(0);
   const [open, setOpen] = useState(false);
-
+  const [rowTwo, setRowTwo] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openNewRow = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -122,6 +130,12 @@ const FormCreate = () => {
     onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
     onGetBudgets({ ...initQuery });
   }, []);
+
+  useEffect(() => {
+    onGetServiceBudgets(formik.values.budget_name ?? "");
+  }, [onGetServiceBudgets, formik.values.budget_name]);
+
+  console.log("test", arrService);
 
   useEffect(() => {
     let prev = 0;
@@ -746,7 +760,7 @@ const FormCreate = () => {
             background: "#D9F0FD",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
-            width: "95%",
+            width: "calc(100% - 70px)",
             alignItems: "center",
           }}
         >
@@ -756,335 +770,31 @@ const FormCreate = () => {
         </Box>
         <TableContainer
           component={Paper}
-          sx={{ boxShadow: "none", width: "95%" }}
+          sx={{ boxShadow: "none", width: "100%", marginLeft: "-20px" }}
         >
           <Table
             sx={{ minWidth: 650, border: "none" }}
             aria-label="simple table"
           >
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    color: "#222222",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    border: "1px solid #EBEAF2",
-                  }}
-                >
-                  ITEM DETAILS
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#222222",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    border: "1px solid #EBEAF2",
-                  }}
-                  align="right"
-                >
-                  UNIT
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#222222",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    border: "1px solid #EBEAF2",
-                  }}
-                  align="right"
-                >
-                  QUANTITY
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#222222",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    border: "1px solid #EBEAF2",
-                    position: "relative",
-                    paddingRight: "40px",
-                  }}
-                  align="right"
-                >
-                  RATE{" "}
-                  <RateIcon
-                    sx={{
-                      height: "18px",
-                      width: "18px",
-                      position: "absolute",
-                      top: "18px",
-                      right: "16px",
-                    }}
-                  />
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#222222",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    border: "1px solid #EBEAF2",
-                  }}
-                  align="right"
-                >
-                  DISCOUNT
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#222222",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    border: "1px solid #EBEAF2",
-                  }}
-                  align="right"
-                >
-                  AMOUNT
-                </TableCell>
-              </TableRow>
-            </TableHead>
+            <TopTable />
 
-            <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-              <Droppable droppableId="table-droppable">
-                {(provided, snapshot) => (
-                  <TableBody
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {formik.values.service_items.map((row, index) => (
-                      <Draggable
-                        key={row._id}
-                        draggableId={String(row._id)}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <TableRow
-                            key={index}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <TableCell
-                              sx={{
-                                color: "#495057 !important",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                border: "1px solid #EBEAF2",
-                                position: "relative",
-                                paddingRight: "24px",
-                              }}
-                              align="left"
-                            >
-                              <TextField
-                                name={`service_items[${index}].service_name`}
-                                value={row.service_name}
-                                onChange={(e) =>
-                                  handleChange(
-                                    `service_items[${index}].service_name`,
-                                    e.target.value,
-                                  )
-                                }
-                                placeholder="Type or click to select an item."
-                                fullWidth
-                                variant="standard"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  inputProps: {
-                                    style: { textAlign: "left" },
-                                  },
-                                }}
-                              />
-                              <CloseIcon
-                                sx={{
-                                  position: "absolute",
-                                  right: "4px",
-                                  top: "6px",
-                                  border: "1px solid #878787",
-                                  borderRadius: "16px",
-                                  padding: "2px",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() =>
-                                  handleChange(
-                                    `service_items[${index}].service_name`,
-                                    "",
-                                  )
-                                }
-                              />
-                            </TableCell>
-                            <TableCell
-                              component="th"
-                              scope="row"
-                              sx={{
-                                color: "#495057 !important",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                border: "1px solid #EBEAF2",
-                              }}
-                              align="right"
-                            >
-                              Hour
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                color: "#495057 !important",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                border: "1px solid #EBEAF2",
-                              }}
-                              align="right"
-                            >
-                              <TextField
-                                name={`service_items[${index}].quantity`}
-                                value={row.quantity}
-                                type="number"
-                                onChange={(e) =>
-                                  handleChange(
-                                    `service_items[${index}].quantity`,
-                                    e.target.value,
-                                  )
-                                }
-                                fullWidth
-                                variant="standard"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  inputProps: {
-                                    style: { textAlign: "right" },
-                                  },
-                                }}
-                                sx={{
-                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
-                                    {
-                                      WebkitAppearance: "none",
-                                      margin: 0,
-                                    },
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                color: "#495057 !important",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                border: "1px solid #EBEAF2",
-                              }}
-                              align="right"
-                            >
-                              <TextField
-                                name={`service_items[${index}].rate`}
-                                value={row.rate}
-                                type="number"
-                                fullWidth
-                                onChange={(e) =>
-                                  handleChange(
-                                    `service_items[${index}].rate`,
-                                    e.target.value,
-                                  )
-                                }
-                                variant="standard"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  inputProps: {
-                                    style: { textAlign: "right" },
-                                  },
-                                }}
-                                sx={{
-                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
-                                    {
-                                      WebkitAppearance: "none",
-                                      margin: 0,
-                                    },
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                color: "#495057 !important",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                border: "1px solid #EBEAF2",
-                                position: "relative",
-                                paddingRight: "24px",
-                              }}
-                              align="right"
-                            >
-                              <TextField
-                                name={`service_items[${index}].discount`}
-                                value={row.discount}
-                                type="number"
-                                fullWidth
-                                onChange={(e) =>
-                                  handleChange(
-                                    `service_items[${index}].discount`,
-                                    e.target.value,
-                                  )
-                                }
-                                variant="standard"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  inputProps: {
-                                    style: { textAlign: "right" },
-                                    max: 100,
-                                    min: 0,
-                                  },
-                                }}
-                                sx={{
-                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
-                                    {
-                                      WebkitAppearance: "none",
-                                      margin: 0,
-                                    },
-                                }}
-                              />
-                              <Box
-                                sx={{
-                                  position: "absolute",
-                                  right: "4px",
-                                  top: "calc(50% - 10px)",
-                                }}
-                              >
-                                %
-                              </Box>
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                color: "#495057 !important",
-                                fontSize: "14px",
-                                fontWeight: 400,
-                                border: "1px solid #EBEAF2",
-                                position: "relative",
-                              }}
-                              align="right"
-                            >
-                              {row.amount}
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </TableBody>
-                )}
-              </Droppable>
-            </DragDropContext>
+            <BodyTable
+              onDragEnd={onDragEnd}
+              formik={formik}
+              handleChange={handleChange}
+              arrService={arrService}
+            />
           </Table>
         </TableContainer>
       </Box>
 
       <Box
-        sx={{ display: "flex", justifyContent: "space-between", width: "95%" }}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "calc(100% - 70px)",
+        }}
       >
-        {/* <Button
-          variant="primary"
-          type="button"
-          onClick={() =>
-            handleChange("service_items", [
-              ...formik.values.service_items,
-              initRow,
-            ])
-          }
-        >
-          Add new row
-        </Button> */}
         <Button
           variant="contained"
           sx={{
@@ -1092,12 +802,12 @@ const FormCreate = () => {
             display: "flex",
             background: "#D9F0FD",
             boxShadow: "none",
-            padding: "6px 32px 6px 12px !important",
+            padding: "6px 12px !important",
           }}
           onClick={() =>
             handleChange("service_items", [
               ...formik.values.service_items,
-              { ...initRow, id: uuid() },
+              { ...initRow, _id: uuid() },
             ])
           }
         >
@@ -1113,6 +823,50 @@ const FormCreate = () => {
             Add new row
           </Typography>
         </Button>
+        <Box
+          onClick={handleClick}
+          sx={{
+            backgroundColor: "#D9F0FD",
+            borderLeft: "1px solid #BDE4FB",
+            width: "fit-content",
+            marginRight: "auto",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 4px",
+            cursor: "pointer",
+          }}
+          id="long-button"
+          aria-controls={openNewRow ? "long-menu" : undefined}
+          aria-expanded={openNewRow ? "true" : undefined}
+          aria-haspopup="true"
+        >
+          <ArrowDropDownIcon sx={{ color: "#212529" }} />
+        </Box>
+        <Menu
+          id="long-menu"
+          MenuListProps={{
+            "aria-labelledby": "long-button",
+          }}
+          anchorEl={anchorEl}
+          open={openNewRow}
+          onClose={handleClose}
+          PaperProps={{
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+            },
+          }}
+        >
+          <MenuItem
+            onClick={() =>
+              handleChange("service_items", [
+                ...formik.values.service_items,
+                { ...initRow, _id: uuid(), typeRowTwo: true },
+              ])
+            }
+          >
+            Add a select service row
+          </MenuItem>
+        </Menu>
         <Box
           sx={{
             background: "#ffffff",
@@ -1141,7 +895,7 @@ const FormCreate = () => {
           sx={{
             display: "flex",
             flexDirection: "row-reverse",
-            width: "95%",
+            width: "calc(100% - 70px)",
             marginTop: "-32px",
           }}
         >
@@ -1149,7 +903,7 @@ const FormCreate = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              width: "95%",
+              width: "100%",
               alignItems: "flex-end",
             }}
           >
@@ -1197,7 +951,7 @@ const FormCreate = () => {
         sx={{
           display: "flex",
           flexDirection: "row-reverse",
-          width: "95%",
+          width: "calc(100% - 70px)",
           marginTop: "-32px",
         }}
       >
