@@ -792,7 +792,7 @@ const FormCreate = () => {
                   sx={{
                     background: "#F7F7FD",
                     padding: 0,
-                    border: "none",
+                    border: "1px solid #F7F7FD",
                     width: "20px",
                   }}
                 ></TableCell>
@@ -876,7 +876,7 @@ const FormCreate = () => {
                   sx={{
                     background: "#F7F7FD",
                     padding: 0,
-                    border: "none",
+                    border: "1px solid #F7F7FD",
                     width: "50px",
                   }}
                 ></TableCell>
