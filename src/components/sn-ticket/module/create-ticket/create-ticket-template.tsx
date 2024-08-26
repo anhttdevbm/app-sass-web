@@ -36,7 +36,7 @@ const CreateTicket = () => {
   }, []);
 
   const handleSubmit = (data: IFormTicket) => {
-    console.log("check data  res" , data)
+    // console.log("check data  res" , data)
     createTicket.mutate(data, {
       onSuccess: (data) => {
         push(TICKET_PATH);

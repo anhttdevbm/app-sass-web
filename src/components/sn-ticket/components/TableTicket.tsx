@@ -27,6 +27,7 @@ const TableTicket = (props: any) => {
   const t = useTranslations(NS_TICKET);
   const { push } = useRouter();
 
+
   const bgStage = (check: String) => {
     if (check == "New") return "#FF2C56";
     if (check == "In-progress") return "#03AE00";
@@ -50,39 +51,39 @@ const TableTicket = (props: any) => {
       <Table>
         <TableHead>
           <TableRow sx={{ backgroundColor: "#D9F0FD" }}>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">{t("ticketFields.id")}</Typography>
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">{t("ticketFields.id")}</Typography>
             </TableCell>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">
                 {t("ticketFields.stage")}
               </Typography>
             </TableCell>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">{t("ticketFields.name")}</Typography>
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">{t("ticketFields.name")}</Typography>
             </TableCell>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">
                 {t("ticketFields.ticketType")}
               </Typography>
             </TableCell>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">
                 {t("ticketFields.priority")}
               </Typography>
             </TableCell>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">
                 {t("ticketFields.assignedTo")}
               </Typography>
             </TableCell>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">
                 {t("ticketFields.creator")}
               </Typography>
             </TableCell>
-            <TableCell sx={{ border: "none" }}>
-              <Typography fontWeight="500">
+            <TableCell sx={{ border: "none" , padding : "10px" }}>
+              <Typography fontSize="13px" fontWeight="500">
                 {t("ticketFields.creationTime")}
               </Typography>
             </TableCell>
@@ -132,7 +133,7 @@ const TableTicket = (props: any) => {
                   </Box>
                 </TableCell>
                 <TableCell sx={{ border: "none" }}>
-                  <AssignGroup item={row} />
+                <AssignGroup style={{width: "164px"}} item={row}/>
                 </TableCell>
                 <TableCell sx={{ border: "none" }}>
                   {row?.creatorUser?.fullname}

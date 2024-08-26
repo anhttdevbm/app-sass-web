@@ -34,6 +34,7 @@ const FillterTypeTicket = ({ onChange, queries }: FilterSearchDocsProps) => {
         setName(typeTicket)
         const newData = { id, typeTicket: removeAllWhitespace(typeTicket) };
         onChange("typeTicket", newData);
+        handleClose()
     };
 
 

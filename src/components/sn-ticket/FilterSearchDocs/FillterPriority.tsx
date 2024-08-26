@@ -33,6 +33,7 @@ const onChangeMembers = (id: string, priority: string) => {
   const newData = { id, priority };
 
   onChange("priority", newData);
+  handleClose()
 
 };
 

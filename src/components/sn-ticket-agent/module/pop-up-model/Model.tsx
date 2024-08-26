@@ -38,7 +38,6 @@ const Model = (props: PropsModel) => {
   const t = useTranslations(NS_TICKET);
   const queryClient = useQueryClient()
   const { handleClose, open, handleClickOpen, type, data } = props || null;
-  console.log("check data model", data)
   const { createAgent } = useAgentAction();
   const { updateAgent } = useAgentUpdate();
   const dataFilter = useSelector(selectSearchTicket);
