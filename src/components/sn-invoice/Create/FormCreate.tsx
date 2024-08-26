@@ -3,6 +3,7 @@ import {
   Box,
   MenuItem,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -23,14 +24,19 @@ import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useState } from "react";
 import { useAuth, useHeaderConfig } from "store/app/selectors";
 import { useBudgets } from "store/billing/selectors";
-import { useClientCompanies } from "store/company/selectors";
+import { useClientCompanies, useMyCompany } from "store/company/selectors";
 import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
+import NewPaymentMethodIcon from "icons/NewPaymentMethodIcon";
 import NewInvoiceIcon from "public/images/new-invoice.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { uuid } from "utils/index";
 import * as Yup from "yup";
 import NewPaymentModal from "./NewPaymentModal";
+import Image from "next/image";
+import EditBillFromIcon from "icons/EditBillFromIcon";
+import { useRouter } from "next/navigation";
+import RateIcon from "icons/RateIcon";
 
 const initRow = {
   service_name: null,
@@ -38,26 +44,32 @@ const initRow = {
   rate: null,
   discount: null,
   amount: 0,
-  id: uuid(),
+  _id: uuid(),
+  description: null,
 };
 
 const initPaymentItem = [
   {
     payment_method: "Stripe",
     payment_link: "https://stripe.com/",
+    icon: "/images/stripe-icon.png",
   },
   {
     payment_method: "Paypal",
     payment_link: "https://paypal.com",
+    icon: "/images/paypal-icon.png",
   },
   {
     payment_method: "Payoneer",
     payment_link: "https://payoneer.com/",
+    icon: "/images/payoneer-icon.png",
   },
 ];
 
 const FormCreate = () => {
+  const { push } = useRouter();
   const { items, onGetClientCompanies } = useClientCompanies();
+  const { onGetCompany, item: itemCompany } = useMyCompany();
   const { initQuery, isReady, query } = useQueryParams();
   const { onGetBudgets, budgets } = useBudgets();
   const { onCreateNewInvoice } = useInvoices();
@@ -80,19 +92,19 @@ const FormCreate = () => {
       payment_items: initPaymentItem,
       tags: "CREDIT",
       due_date: "",
+      invoice_number: "",
     },
     validationSchema: Yup.object().shape({
       customer_name: Yup.string().trim().required("Required"),
       budget_name: Yup.string().required("Required"),
       invoice_date: Yup.string().required("Required"),
+      invoice_number: Yup.string().required("Required"),
     }),
     onSubmit: async (formData) => {
       try {
-        await onCreateNewInvoice({
-          ...formData,
-          invoice_number: formData.customer_name,
-        });
-        window.location.href = "/invoices";
+        await onCreateNewInvoice(formData);
+
+        push(INVOICES_PATH);
       } catch (er) {
         console.log(er);
       }
@@ -106,6 +118,7 @@ const FormCreate = () => {
   }, [formik]);
 
   useEffect(() => {
+    onGetCompany();
     onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
     onGetBudgets({ ...initQuery });
   }, []);
@@ -180,7 +193,6 @@ const FormCreate = () => {
       handleChange("service_items", copiedItems);
     }
   };
-  console.log("stfdfsd", formik.values);
 
   return (
     <Box
@@ -204,7 +216,7 @@ const FormCreate = () => {
           color="#FF2C56"
           fontSize={14}
           fontWeight={700}
-          sx={{ minWidth: "120px" }}
+          sx={{ minWidth: "154px", paddingLeft: "24px" }}
         >
           Client*
         </Typography>
@@ -216,12 +228,33 @@ const FormCreate = () => {
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
               borderRadius: "100px",
               background: "#ffffff",
-              border: "1px solid #EFEFEF",
             },
             "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
               padding: "6px 30px",
             },
-            width: "50%",
+            boxShadow: "none",
+            ".MuiOutlinedInput-notchedOutline": {
+              border: "1px solid #EFEFEF !important",
+            },
+            "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+              border: "1px solid #EFEFEF !important",
+            },
+            "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+              {
+                border: "1px solid #EFEFEF !important",
+              },
+            width: "600px",
+          }}
+          SelectProps={{
+            IconComponent: () => (
+              <Image
+                src="/images/dropdown-select-icon.svg"
+                alt=""
+                width={18}
+                height={18}
+                style={{ marginRight: "30px", cursor: "pointer" }}
+              />
+            ),
           }}
         >
           {items.map((client) => (
@@ -246,7 +279,7 @@ const FormCreate = () => {
           color="#FF2C56"
           fontSize={14}
           fontWeight={700}
-          sx={{ minWidth: "120px" }}
+          sx={{ minWidth: "154px", paddingLeft: "24px" }}
         >
           Budget*
         </Typography>
@@ -262,7 +295,29 @@ const FormCreate = () => {
             "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ": {
               padding: "6px 30px",
             },
-            width: "50%",
+            width: "600px",
+            boxShadow: "none",
+            ".MuiOutlinedInput-notchedOutline": {
+              border: "1px solid #EFEFEF !important",
+            },
+            "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+              border: "1px solid #EFEFEF !important",
+            },
+            "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+              {
+                border: "1px solid #EFEFEF !important",
+              },
+          }}
+          SelectProps={{
+            IconComponent: () => (
+              <Image
+                src="/images/dropdown-select-icon.svg"
+                alt=""
+                width={18}
+                height={18}
+                style={{ marginRight: "30px", cursor: "pointer" }}
+              />
+            ),
           }}
         >
           {(budgets ?? []).map((budget) => (
@@ -276,6 +331,7 @@ const FormCreate = () => {
           ))}
         </TextField>
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -286,26 +342,41 @@ const FormCreate = () => {
           color="#FF2C56"
           fontSize={14}
           fontWeight={700}
-          sx={{ minWidth: "120px" }}
+          sx={{ minWidth: "154px", paddingLeft: "24px" }}
         >
           Bill from*
         </Typography>
         <TextField
           disabled
           multiline
-          minRows={3}
+          minRows={4}
           sx={{
             "& .MuiInputBase-root.MuiOutlinedInput-root ": {
               borderRadius: "12px",
               background: "rgba(249, 241, 241, 0.41)",
-              padding: "6px 30px",
+              padding: "8px",
             },
-            width: "50%",
+            "& .MuiInputBase-input.MuiOutlinedInput-input ": {
+              "-webkit-text-fill-color": "#21263C !important",
+              fontWeight: 700,
+              fontSize: "14px",
+            },
+            width: "600px",
             color: "rgba(33, 38, 60, 1)",
           }}
-          value={`Company ${user?.company}`}
+          value={`Company ${itemCompany?.name}\n\nTax ID: ${itemCompany?.tax_code}`}
         ></TextField>
+        {/* <EditBillFromIcon
+          sx={{
+            position: "absolute",
+            bottom: 12,
+            right: 32,
+            height: "15px",
+            cursor: "pointer",
+          }}
+        /> */}
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -320,14 +391,58 @@ const FormCreate = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            width: "100%",
           }}
         >
           <Typography
             color="#FF2C56"
             fontSize={14}
             fontWeight={700}
-            sx={{ minWidth: "120px" }}
+            sx={{ minWidth: "130px" }}
+          >
+            Invoice#*
+          </Typography>
+          <TextField
+            required
+            error={Boolean(formik.errors?.invoice_number)}
+            value={formik.values.invoice_number}
+            onChange={(e) => handleChange("invoice_number", e.target.value)}
+            sx={{
+              "& .MuiInputBase-root.MuiOutlinedInput-root ": {
+                borderRadius: "100px",
+              },
+              "& .MuiInputBase-input.MuiOutlinedInput-input": {
+                padding: "6px 30px",
+              },
+              width: "600px",
+              boxShadow: "none",
+              ".MuiOutlinedInput-notchedOutline": {
+                border: "1px solid #EFEFEF !important",
+              },
+              "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                {
+                  border: "1px solid #EFEFEF !important",
+                },
+              "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                {
+                  border: "1px solid #EFEFEF !important",
+                },
+            }}
+          ></TextField>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            flexWrap: "wrap",
+            gap: "16px",
+          }}
+        >
+          <Typography
+            color="#FF2C56"
+            fontSize={14}
+            fontWeight={700}
+            sx={{ minWidth: "130px" }}
           >
             Invoice Date*
           </Typography>
@@ -338,17 +453,36 @@ const FormCreate = () => {
             value={formik.values?.invoice_date}
             error={formik.errors?.invoice_date}
             onChange={handleChange}
-            // error={commonT(touchedErrors?.start_date, {
-            //   name: commonT("form.title.startDate"),
-            // })}
+            endNode={
+              <Image
+                src="/images/date-icon.svg"
+                alt=""
+                width={18}
+                height={18}
+                style={{ cursor: "pointer" }}
+              />
+            }
             sx={{
               "& .MuiInputBase-root.MuiOutlinedInput-root ": {
-                border: "1px solid rgba(0, 0, 0, 0.38)",
+                border: "1px solid #EFEFEF !important",
                 borderRadius: "100px",
                 background: "#ffffff",
                 padding: "5px 30px",
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": {
+                  border: "1px solid #EFEFEF !important",
+                },
+                "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
+                "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
               },
-              width: "72%",
+              width: "600px",
+              marginLeft: "-16px",
             }}
           />
           <Box sx={{ display: "flex", alignItems: "center", gap: "32px" }}>
@@ -360,14 +494,35 @@ const FormCreate = () => {
               name="due_date"
               value={formik.values.due_date}
               onChange={handleChange}
+              endNode={
+                <Image
+                  src="/images/date-icon.svg"
+                  alt=""
+                  width={18}
+                  height={18}
+                  style={{ cursor: "pointer" }}
+                />
+              }
               sx={{
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
-                  border: "1px solid rgba(0, 0, 0, 0.38)",
+                  border: "1px solid #EFEFEF !important",
                   borderRadius: "100px",
                   background: "#ffffff",
                   padding: "5px 30px",
                 },
-                width: "fit-content",
+                width: "400px",
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": {
+                  border: "1px solid #EFEFEF !important",
+                },
+                "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
+                "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
               }}
             />
           </Box>
@@ -394,14 +549,28 @@ const FormCreate = () => {
               "& .MuiInputBase-input.MuiOutlinedInput-input": {
                 padding: "6px 30px",
               },
-              width: "50%",
+              width: "600px",
+              boxShadow: "none",
+              ".MuiOutlinedInput-notchedOutline": {
+                border: "1px solid #EFEFEF !important",
+              },
+              "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                {
+                  border: "1px solid #EFEFEF !important",
+                },
+              "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                {
+                  border: "1px solid #EFEFEF !important",
+                },
             }}
             name="subject"
             onChange={(e) => handleChange("subject", e.target.value)}
             value={formik.values.subject}
           ></TextField>
         </Box>
-        <Box sx={{ display: "flex", gap: "32px" }}>
+        <Box
+          sx={{ display: "flex", gap: "32px", justifyContent: "space-between" }}
+        >
           <Box
             sx={{
               display: "flex",
@@ -422,11 +591,43 @@ const FormCreate = () => {
               sx={{
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                   borderRadius: "100px",
+                  width: "600px",
                 },
                 "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input ":
                   {
                     padding: "6px 30px",
                   },
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": {
+                  border: "1px solid #EFEFEF !important",
+                },
+                "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
+                "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
+              }}
+              SelectProps={{
+                renderValue: (selected) => (
+                  <Typography color="#212121" fontWeight={700} fontSize={14}>
+                    {
+                      formik.values.payment_items[paymentSelected]
+                        ?.payment_method
+                    }
+                  </Typography>
+                ),
+                IconComponent: () => (
+                  <Image
+                    src="/images/dropdown-select-icon.svg"
+                    alt=""
+                    width={18}
+                    height={18}
+                    style={{ marginRight: "30px", cursor: "pointer" }}
+                  />
+                ),
               }}
               value={
                 formik.values.payment_items[paymentSelected]?.payment_method
@@ -439,12 +640,32 @@ const FormCreate = () => {
                   value={payment?.payment_method}
                   onClick={() => setPaymentSelected(index)}
                 >
+                  <Stack
+                    display="flex"
+                    alignItems="center"
+                    marginRight={1}
+                    width={40}
+                  >
+                    {payment.icon && (
+                      <Image
+                        src={payment.icon}
+                        alt={payment?.payment_method}
+                        width={40}
+                        height={20}
+                      />
+                    )}
+                  </Stack>
                   <Typography color="#212121" fontWeight={700} fontSize={14}>
                     {payment?.payment_method}
                   </Typography>
                 </MenuItem>
               ))}
               <MenuItem key={100}>
+                <Stack display="flex" alignItems="center">
+                  <NewPaymentMethodIcon
+                    sx={{ margin: "auto", height: "12px" }}
+                  />
+                </Stack>
                 <Typography
                   onClick={() => setOpen(true)}
                   color="#408DFB"
@@ -474,11 +695,10 @@ const FormCreate = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              width: "50%",
               gap: "32px",
             }}
           >
-            <Typography color="#212529" fontSize={14} fontWeight={700}>
+            <Typography color="#212529" fontSize={14} sx={{ minWidth: "61px" }}>
               Link
             </Typography>
             <TextField
@@ -489,6 +709,19 @@ const FormCreate = () => {
                 "& .MuiInputBase-input.MuiOutlinedInput-input": {
                   padding: "6px 30px",
                 },
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": {
+                  border: "1px solid #EFEFEF !important",
+                },
+                "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
+                "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: "1px solid #EFEFEF !important",
+                  },
+                width: "400px",
               }}
               value={formik.values.payment_items[paymentSelected]?.payment_link}
               onChange={(e) =>
@@ -502,6 +735,7 @@ const FormCreate = () => {
           </Box>
         </Box>
       </Box>
+
       {/* table */}
       <Box>
         <Box
@@ -519,16 +753,6 @@ const FormCreate = () => {
           <Typography fontSize={20} fontWeight={600} color="#0575E6">
             Item Table
           </Typography>
-          <Box>
-            <Typography
-              fontSize={12}
-              fontWeight={500}
-              color="#0575E6"
-              sx={{ margin: "auto 0" }}
-            >
-              Enhance Your Invoices
-            </Typography>
-          </Box>
         </Box>
         <TableContainer
           component={Paper}
@@ -578,10 +802,21 @@ const FormCreate = () => {
                     fontSize: "14px",
                     fontWeight: 600,
                     border: "1px solid #EBEAF2",
+                    position: "relative",
+                    paddingRight: "40px",
                   }}
                   align="right"
                 >
-                  RATE
+                  RATE{" "}
+                  <RateIcon
+                    sx={{
+                      height: "18px",
+                      width: "18px",
+                      position: "absolute",
+                      top: "18px",
+                      right: "16px",
+                    }}
+                  />
                 </TableCell>
                 <TableCell
                   sx={{
@@ -617,8 +852,8 @@ const FormCreate = () => {
                   >
                     {formik.values.service_items.map((row, index) => (
                       <Draggable
-                        key={row.id}
-                        draggableId={String(row.id)}
+                        key={row._id}
+                        draggableId={String(row._id)}
                         index={index}
                       >
                         {(provided) => (

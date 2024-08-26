@@ -55,6 +55,11 @@ const Actions = () => {
     onGetBudgets({ pageIndex: 0, pageSize: 10 });
   }, []);
 
+  const handleClickAdd = (e) => {
+    e.preventDefault();
+    push(INVOICE_CREATE_PATH);
+  };
+
   return (
     <Stack spacing={1} padding={2}>
       <Stack
@@ -68,7 +73,7 @@ const Actions = () => {
           placeholder={"Search here"}
           onChange={handleSearchChange}
         />
-        <ButtonGradiant href={INVOICE_CREATE_PATH} startIcon={<PlusIcon />}>
+        <ButtonGradiant onClick={handleClickAdd} startIcon={<PlusIcon />}>
           Add
         </ButtonGradiant>
       </Stack>
