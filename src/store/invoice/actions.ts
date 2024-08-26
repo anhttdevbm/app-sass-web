@@ -112,3 +112,22 @@ export const deleteInvoice = createAsyncThunk(
     }
   },
 );
+
+export const deleteMultipleInvoice = createAsyncThunk(
+  "Invoice/deleteMultipleInvoice",
+  async ({ invoice_number }: { invoice_number: string[] }) => {
+    try {
+      const response = await client.delete(Endpoint.DELETE_MULTIPLE_INVOICES, {
+        baseURL: INVOICE_API_URL,
+        data: invoice_number,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
