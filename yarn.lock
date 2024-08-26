@@ -4320,16 +4320,16 @@
   integrity sha512-guJZIFwR7GYU0Wn08bay91rzCg1l5yhmkH0VfV17nqI2Ikug7Me1fJK58h5uhF0tpc9j0D9QL2c7ccU5WFqkNA==
 
 "@tanstack/react-table@^8.19.2":
-  version "8.20.1"
-  resolved "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.20.1.tgz"
-  integrity sha512-PJK+07qbengObe5l7c8vCdtefXm8cyR4i078acWrHbdm8JKw1ES7YpmOtVt9ALUVEEFAHscdVpGRhRgikgFMbQ==
+  version "8.20.5"
+  resolved "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.20.5.tgz"
+  integrity sha512-WEHopKw3znbUZ61s9i0+i9g8drmDo6asTWbrQh8Us63DAk/M0FkmIqERew6P71HI75ksZ2Pxyuf4vvKh9rAkiA==
   dependencies:
-    "@tanstack/table-core" "8.20.1"
+    "@tanstack/table-core" "8.20.5"
 
-"@tanstack/table-core@8.20.1":
-  version "8.20.1"
-  resolved "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.20.1.tgz"
-  integrity sha512-5Ly5TIRHnWH7vSDell9B/OVyV380qqIJVg7H7R7jU4fPEmOD4smqAX7VRflpYI09srWR8aj5OLD2Ccs1pI5mTg==
+"@tanstack/table-core@8.20.5":
+  version "8.20.5"
+  resolved "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.20.5.tgz"
+  integrity sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==
 
 "@tippyjs/react@^4.2.6":
   version "4.2.6"
@@ -4388,9 +4388,7 @@
     tippy.js "^6.3.7"
 
 "@tiptap/extension-font-family@^2.1.16":
-  version "2.6.6"
-  resolved "https://registry.npmjs.org/@tiptap/extension-font-family/-/extension-font-family-2.6.6.tgz"
-  integrity sha512-bb1S6oSFDQe49W2Skqxrx1EQuoaXeYOm4PGMdt7sDIq/u4M4EkLhLxCx/EsDWNWTW0FpbVJRjgyP1yzkVJ4wnQ==
+  version "2.6.5"
 
 "@tiptap/extension-gapcursor@^2.0.3":
   version "2.1.12"
@@ -4458,14 +4456,10 @@
   integrity sha512-BUpYlEWK+Q3kw9KIiOqvhd0tUPhMcOf1+fJmCkluJok+okAxMbP1umAtCEQ3QkoCwLr+vpHJov7h3yi9+dwgeQ==
 
 "@tiptap/extension-text-align@^2.2.3":
-  version "2.6.6"
-  resolved "https://registry.npmjs.org/@tiptap/extension-text-align/-/extension-text-align-2.6.6.tgz"
-  integrity sha512-WdyxULEEHfI3hRDHAFOUoeP84h9myabadfjtZrub7/zO2PKKPAZLBN2vWat5PowH8E8GYX8vqKr9vaX+slfh5g==
+  version "2.6.5"
 
 "@tiptap/extension-text-style@^2.1.16":
-  version "2.6.6"
-  resolved "https://registry.npmjs.org/@tiptap/extension-text-style/-/extension-text-style-2.6.6.tgz"
-  integrity sha512-8fO8m0/QI+rFKgZLP28GG2Nz0zhYsYd76O2Y+HsDTmMypJl/cdiNcVOWWffAwXAfMN43BNX7b1VI1XwGAMgYlg==
+  version "2.6.5"
 
 "@tiptap/extension-text@^2.0.3":
   version "2.1.12"

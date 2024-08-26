@@ -17,7 +17,7 @@ export default function FileUpload({
 }) {
   const handleChange = (fileList) => {
     const tempData = [...files];
-    if (tempData.length >= 10) return;
+    if (tempData.length >= 5) return;
     for (let i = 0; i < fileList.length; i++) {
       tempData.push(fileList[i]);
     }

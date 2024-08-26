@@ -21,6 +21,8 @@ import CommentItem from "./comment-item";
 import { FileUploader } from "react-drag-drop-files";
 import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useParams } from "next/navigation";
+import { useQueryClient } from "react-query";
+import { QUERY_TICKET_KEY } from "queries/ticket/keys";
 const tabComment = [
   {
     label: "Add internal note",
@@ -34,8 +36,9 @@ const tabComment = [
 const VALUE_AS_EMPTY = "<p><br></p>";
 const CommentActivity = () => {
   const params = useParams();
+  const queryClient = useQueryClient();
   const { data: listComment } = useGetListComment();
-  const { createComment } = useTicketAction();
+  const { createComment, deleteComment, editComment } = useTicketAction();
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar } = useSnackbar();
   const [isIternal, setIsIternal] = useState(true);
@@ -74,6 +77,10 @@ const CommentActivity = () => {
       {
         onSuccess: (data) => {
           onAddSnackbar("Create comment success", "success");
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
+          });
+          setContent("");
         },
         onError: (error) => {
           onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
@@ -81,6 +88,61 @@ const CommentActivity = () => {
       },
     );
   };
+
+  const handleUpdateComment = useCallback(
+    (id) => {
+      editComment.mutate(
+        {
+          comment: content,
+          isIternal,
+          ticketId: params?.id as string,
+          commentId: id,
+        },
+        {
+          onSuccess: (data) => {
+            onAddSnackbar("Update comment success", "success");
+            queryClient.invalidateQueries({
+              queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
+            });
+            setContent("");
+          },
+          onError: (error) => {
+            onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+          },
+        },
+      );
+    },
+    [
+      commonT,
+      content,
+      editComment,
+      isIternal,
+      onAddSnackbar,
+      params?.id,
+      queryClient,
+    ],
+  );
+
+  const handleDeleteComment = useCallback(
+    (id) => {
+      deleteComment.mutate(
+        { ticketId: params?.id, commentId: id },
+        {
+          onSuccess: (data) => {
+            onAddSnackbar("Delete comment success", "success");
+            queryClient.invalidateQueries({
+              queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
+            });
+            setContent("");
+          },
+          onError: (error) => {
+            onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+          },
+        },
+      );
+    },
+    [commonT, deleteComment, onAddSnackbar, params?.id, queryClient],
+  );
 
   const handleCancel = () => {
     setContent("");
@@ -130,6 +192,7 @@ const CommentActivity = () => {
             onClick={onSubmit}
             variant="primary"
             size="small"
+            type="button"
           >
             Save
           </Button>
@@ -138,9 +201,11 @@ const CommentActivity = () => {
           </Button>
         </Stack>
       </EditorCustom>
-      {listComment?.data.map((comment) => (
+      {listComment?.data.map((comment, idx) => (
         <CommentItem
-          key={comment.id}
+          key={`${comment.id}-${idx}`}
+          handleDeleteComment={handleDeleteComment}
+          handleUpdateComment={handleUpdateComment}
           {...comment}
           // listAttachmentsDown={listAttachmentsDown}
         />

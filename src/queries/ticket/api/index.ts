@@ -58,7 +58,7 @@ export const createCommentApi = (data) => {
 };
 
 export const editCommentApi = (data) => {
-  return client.post(
+  return client.put(
     `${Endpoint.TICKET}/${data?.ticketId}/comment/${data?.commentId}`,
     data,
     {

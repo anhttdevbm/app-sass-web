@@ -98,7 +98,6 @@ const EditorCustom = (props: EditorProps) => {
   );
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("zzzzzzzzzzzzzzzzzzzzzzzz");
     if (!event.target.files?.length) return;
     let newFiles = Array.from(event.target.files);
     newFiles = newFiles.reduce(
@@ -110,7 +109,6 @@ const EditorCustom = (props: EditorProps) => {
       },
       [...files],
     );
-    console.log("newFiles", newFiles);
     onChangeFiles && onChangeFiles(newFiles);
   };
 
@@ -167,7 +165,7 @@ const EditorCustom = (props: EditorProps) => {
     if (props.value && value.length === 0) {
       setValue(replaceDescriptionBr(props.value as string, ""));
     }
-  }, [props.value]);
+  }, [props.value, value.length]);
 
   return (
     <Stack className="" style={{ width: "100%" }}>
@@ -229,7 +227,6 @@ const EditorCustom = (props: EditorProps) => {
               style={{ display: "none" }}
               ref={inputFileRef}
               onChange={(e) => {
-                console.log("File selected");
                 onChangeFile(e);
               }}
             />

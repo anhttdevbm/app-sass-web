@@ -1,7 +1,7 @@
-import { memo, useState, useEffect } from "react";
-import { Stack, Box } from "@mui/material";
+import { memo, useState, useEffect, useMemo } from "react";
+import { Stack, Box, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
-import { Text } from "components/shared";
+import { Button, Text } from "components/shared";
 import { Comment } from "store/project/reducer";
 import Image from "next/image";
 import { formatDate } from "utils/index";
@@ -9,7 +9,11 @@ import AttachmentPreview from "components/AttachmentPreview";
 import { useTranslations } from "next-intl";
 import { NS_PROJECT } from "constant/index";
 import { Attachment } from "constant/types";
+import { useAuth } from "store/app/selectors";
+import EditorCustom from "./editor/EditorCustom";
+import { UnprivilegedEditor } from "react-quill";
 
+const VALUE_AS_EMPTY = "<p><br></p>";
 const CommentItem = (props) => {
   const {
     creatorUser,
@@ -17,7 +21,24 @@ const CommentItem = (props) => {
     attachments_down = [],
     createTime,
     listAttachmentsDown,
+    id,
+    handleDeleteComment,
+    handleUpdateComment,
   } = props;
+  const { user } = useAuth();
+  const [isEdit, setIsEdit] = useState(false);
+  const [valueContent, setValueContent] = useState("");
+  const [files, setFiles] = useState([]);
+
+  const canEdit = useMemo(() => {
+    if (!creatorUser || !user) return false;
+    return creatorUser?.id === user?.id;
+  }, [creatorUser, user]);
+
+  const onChange = (value: string, delta, _, editor: UnprivilegedEditor) => {
+    const isEmpty = value === VALUE_AS_EMPTY;
+    setValueContent(isEmpty ? "" : value);
+  };
 
   return (
     <Stack
@@ -42,7 +63,33 @@ const CommentItem = (props) => {
           {formatDate(createTime, "HH:mm - dd/MM/yyyy")}
         </Text>
       </Stack>
-      {!!comment && (
+      {isEdit ? (
+        <EditorCustom value={valueContent} files={files} onChange={onChange}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-start"
+            mt={2}
+            gap={"10px"}
+          >
+            <Button
+              onClick={() => handleUpdateComment(id)}
+              variant="primary"
+              size="small"
+              type="button"
+            >
+              Save
+            </Button>
+            <Button
+              onClick={() => setIsEdit(false)}
+              variant="outlined"
+              size="small"
+            >
+              <Typography sx={{ color: "#333333" }}>Cancel</Typography>
+            </Button>
+          </Stack>
+        </EditorCustom>
+      ) : (
         <Box
           sx={{
             fontSize: 14,
@@ -68,8 +115,50 @@ const CommentItem = (props) => {
             />
           ))}
         </Stack> */}
+      {canEdit && !isEdit && (
+        <Stack
+          flexDirection={"row"}
+          justifyContent={"flex-start"}
+          alignItems={"center"}
+          gap={"10px"}
+        >
+          <Typography
+            style={{
+              color: "#999999",
+              font: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setIsEdit((prev) => !prev);
+              setValueContent(comment);
+            }}
+          >
+            Edit
+          </Typography>
+          <Typography
+            style={{
+              width: 4,
+              height: 4,
+              borderRadius: "100%",
+              background: "#999999",
+            }}
+          ></Typography>
+          <Typography
+            style={{
+              color: "#999999",
+              font: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+            onClick={() => handleDeleteComment(id)}
+          >
+            Delete
+          </Typography>
+        </Stack>
+      )}
     </Stack>
   );
 };
 
-export default CommentItem;
+export default memo(CommentItem);

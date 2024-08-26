@@ -220,7 +220,6 @@ export const serverQueries = (
   return cleanData;
 };
 
-
 export const serverQueriesOr = (
   {
     pageIndex,
@@ -287,7 +286,6 @@ export const formatDate = (
   if (!date) return fallback ?? "";
   if (!format) format = DATE_FORMAT_SLASH;
   const dateObj = new Date(date);
-
   const year = dateObj.getFullYear();
 
   if (year === 1 || year === 1970) return fallback ?? "";
@@ -629,12 +627,12 @@ export const toHoursAndMinutes = (totalMinutes: number) => {
   const minutes = totalMinutes % 60;
 
   return { hours, minutes };
-}
+};
 
 export const clearNullField = (obj: any) => {
   return _(obj)
     .omitBy(_.isUndefined)
     .omitBy(_.isNull)
-    .omitBy((s) => _.isEqual(s, ''))
+    .omitBy((s) => _.isEqual(s, ""))
     .value();
 };

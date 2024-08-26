@@ -14,78 +14,76 @@ import ActivityTemplate from "components/sn-ticket/components/activity/activity-
 import AttachmentTemplate from "components/sn-ticket/components/Attachment/attachment-template";
 import Tag from "components/sn-ticket/components/custom-tag";
 import DescriptionDetail from "components/sn-ticket/components/DescriptionDetail";
-import EditorGroup from "components/sn-ticket/components/EditorGroup";
 import ModelReply from "components/sn-ticket/components/ModelReply";
 import Wrapper from "components/Wrapper";
 import { NS_TICKET } from "constant/index";
 import { TICKET_PATH } from "constant/paths";
-import AddSquareIcon from "icons/AddSquareIcon";
-import ArrowDownIcon from "icons/ArrowDownIcon";
-import CloseIcon from "icons/CloseIcon";
-import PlusIcon from "icons/PlusIcon";
 import ReplyIcon from "icons/ReplyIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { selectTicketDetailData } from "store/ticket/selectors";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const TicketDetail = () => {
   const t = useTranslations(NS_TICKET);
-  const tags = [
-    { id: 1, active: false, element: 1, title: t("ticketDetail.New"), left: 0 },
-    {
-      id: 2,
-      active: false,
-      element: 2,
-      title: t("ticketDetail.Open"),
-      left: -42,
-    },
-    {
-      id: 3,
-      active: false,
-      element: 2,
-      title: t("ticketDetail.inProgress"),
-      left: -68,
-    },
-    {
-      id: 4,
-      active: false,
-      element: 2,
-      title: t("ticketDetail.onHold"),
-      left: -94,
-    },
-    {
-      id: 5,
-      active: false,
-      element: 2,
-      title: t("ticketDetail.Sold"),
-      left: -120,
-    },
-    {
-      id: 6,
-      active: false,
-      element: 2,
-      title: t("ticketDetail.Closed"),
-      left: -146,
-    },
-    { id: 7, active: false, element: 3, title: "...", left: -172 },
-  ];
+  const tags = useMemo(
+    () => [
+      {
+        id: 1,
+        active: false,
+        element: 1,
+        title: t("ticketDetail.New"),
+        left: 0,
+      },
+      {
+        id: 2,
+        active: false,
+        element: 2,
+        title: t("ticketDetail.Open"),
+        left: -42,
+      },
+      {
+        id: 3,
+        active: false,
+        element: 2,
+        title: t("ticketDetail.inProgress"),
+        left: -68,
+      },
+      {
+        id: 4,
+        active: false,
+        element: 2,
+        title: t("ticketDetail.onHold"),
+        left: -94,
+      },
+      {
+        id: 5,
+        active: false,
+        element: 2,
+        title: t("ticketDetail.Sold"),
+        left: -120,
+      },
+      {
+        id: 6,
+        active: false,
+        element: 2,
+        title: t("ticketDetail.Closed"),
+        left: -146,
+      },
+      { id: 7, active: false, element: 3, title: "...", left: -172 },
+    ],
+    [t],
+  );
   const { push } = useRouter();
   // const data = useSelector(selectTicketDetailData);
 
   const { data: dataTicket } = useGetTicketDetail();
-  console.log("dataTicket", dataTicket);
 
-  const [activeTag, setActiveTag] = useState<any>(tags);
+  const [activeTag, setActiveTag] = useState<number>(1);
 
-  const handleTagClick = (id: number) => {
-    const _tags = [...tags];
-    const idx = activeTag.findIndex((item) => item.id == id);
-    _tags[idx]["active"] = true;
-    setActiveTag(_tags);
-  };
+  const handleTagClick = useCallback((id: number) => {
+    setActiveTag(id);
+  }, []);
 
   useEffect(() => {
     const stageTicket = dataTicket?.stage ?? "";
@@ -103,7 +101,7 @@ const TicketDetail = () => {
         handleTagClick(1);
         break;
     }
-  }, [dataTicket]);
+  }, [dataTicket, handleTagClick]);
 
   const [open, setOpen] = useState(false);
 
@@ -166,11 +164,11 @@ const TicketDetail = () => {
           alignItems="center"
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {activeTag.map((tag) => (
+            {tags.map((tag, idx) => (
               <Tag
-                key={tag.element}
+                key={`${tag.id}-${idx}`}
                 element={tag.element}
-                active={tag.active}
+                active={tag.id === activeTag}
                 left={tag.left}
                 title={tag.title}
                 onClick={() => handleTagClick(tag.id)}
