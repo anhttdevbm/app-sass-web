@@ -89,18 +89,18 @@ const Search = (props: SearchProps) => {
       InputProps={{
         onBlur,
       }}
-      // startNode={startNode}
+      startNode={startNode}
       endNode={
-        // endNode
-        //   ? endNode
-        //   : !!value &&
-        //     emitWhenEnter &&
-        //     hasClear && (
-        //       <IconButton onClick={onClear} noPadding size="small">
-        //         <CircleCloseIcon />
-        //       </IconButton>
-        //     )
-        startNode
+        endNode
+          ? endNode
+          : !!value &&
+            emitWhenEnter &&
+            hasClear && (
+              <IconButton onClick={onClear} noPadding size="small">
+                <CircleCloseIcon />
+              </IconButton>
+            )
+        // startNode
       }
       onKeyDown={(e) => {
         e.stopPropagation();

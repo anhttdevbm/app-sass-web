@@ -20,13 +20,15 @@ const borderRightStyle = {
 };
 
 export default function ListFormatText({
-  handleClickListFormat,
+  handleClickListFormat ,
+  customStyle = {}
 }: {
   handleClickListFormat: (
     e: React.MouseEvent<HTMLButtonElement>,
     typeClick: IHandleClickFormat,
   ) => void;
-}) {
+  customStyle?: React.CSSProperties;
+}  ) {
   const formatListText: IToolBarDraftActionItem[] = [
     {
       label: "Unordered-List",
@@ -60,6 +62,7 @@ export default function ListFormatText({
         <button
           style={{
             color: "#222222",
+            ...customStyle, 
           }}
           key={`${item.label}-${idx}`}
           title={item.label}

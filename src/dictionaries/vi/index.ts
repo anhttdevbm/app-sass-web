@@ -23,7 +23,8 @@ import {
   NS_CONTENTS,
   NS_AI_CHAT,
   NS_AI_AGENT,
-  NS_INVOICE
+  NS_INVOICE,
+  NS_TICKET,
 } from "constant/index";
 
 import { AccountLang } from "./account";
@@ -47,10 +48,11 @@ import { BudgetingLang } from "./budgeting";
 import { BillingLang } from "./billing";
 import { CostRateLang } from "./costRate";
 import { HolidayCalendarLang } from "./holidayCalendar";
-import { ContentsLang } from "./contents"
+import { ContentsLang } from "./contents";
 import { AIChatLang } from "./aiChat";
 import { AIAgentLang } from "./aiAgent";
-import {InvoiceLang} from "./invoice";
+import { InvoiceLang } from "./invoice";
+import { TicketLang } from "./ticket";
 
 export default {
   [NS_COMMON]: CommonLang,
@@ -78,4 +80,5 @@ export default {
   [NS_HOLIDAY_CALENDAR]: HolidayCalendarLang,
   [NS_CONTENTS]: ContentsLang,
   [NS_INVOICE]: InvoiceLang,
+  [NS_TICKET]: TicketLang,
 };

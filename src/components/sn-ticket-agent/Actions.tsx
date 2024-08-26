@@ -1,0 +1,279 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+import PlusIcon from "icons/PlusIcon";
+import { Button, Text } from "components/shared";
+import { Dropdown, Search } from "components/Filters";
+import { getPath } from "utils/index";
+import { memo, useEffect, useMemo, useState } from "react";
+import { NS_COMMON, NS_COMPANY, NS_DOCS, NS_TICKET } from "constant/index";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import {
+  Box,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  MenuList,
+  Paper,
+  Stack,
+} from "@mui/material";
+import { usePathname, useRouter } from "next-intl/client";
+import { useTranslations } from "next-intl";
+import { useDocs } from "store/docs/selectors";
+import NoneIcon from "icons/NoneIcon";
+import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
+import { DocGroupByEnum } from "constant/enums";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { useParams, useSearchParams } from "next/navigation";
+import IconButton from "@mui/material/IconButton";
+import ViewModuleIcon from "@mui/icons-material/ViewModule";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useDispatch } from "react-redux";
+import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
+import SearchIcon from "icons/SearchIcon";
+import AIGradientIcon from "icons/AIGradientIcon";
+import useToggle from "hooks/useToggle";
+import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
+import ArrowExport from "icons/ArrowExport";
+import AddSquareIcon from "icons/AddSquareIcon";
+import { TICKET_CREATE_PATH } from "constant/paths";
+import { useSelector } from "react-redux";
+import {
+  selectSearchTicket,
+  selectTicketListTicket,
+} from "store/ticket/selectors";
+import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
+import Model from "./module/pop-up-model/Model";
+import { setKeySearchTicketAgent } from "store/ticket-agent/actions";
+import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
+
+function convertStringToArray(inputString) {
+  let idArray = inputString.split(",");
+
+  let resultArray = idArray.map((id) => {
+    return { id: id, name: "" };
+  });
+
+  return resultArray;
+}
+
+const ChangeViewListDoc = () => {
+  const [typeViewListDoc, setTypeViewListDoc] =
+    useState<TypeViewListDoc>("basicViewListDoc");
+  const dispatch = useAppDispatch();
+
+  const handleViewKanban = () => {
+    dispatch(changeTypeViewDoc("kanbanViewListDoc"));
+    setTypeViewListDoc("kanbanViewListDoc");
+  };
+
+  const handleViewBasic = () => {
+    dispatch(changeTypeViewDoc("basicViewListDoc"));
+    setTypeViewListDoc("basicViewListDoc");
+  };
+
+  return (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <IconButton
+        onClick={handleViewKanban}
+        aria-label="view-kanban"
+        sx={{
+          backgroundColor:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "common.white"
+              : "#E9EBF3",
+          boxShadow:
+            typeViewListDoc !== "kanbanViewListDoc"
+              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
+              : "none",
+        }}
+      >
+        <ViewModuleIcon />
+      </IconButton>
+      <IconButton
+        onClick={handleViewBasic}
+        aria-label="view-basic"
+        sx={{
+          backgroundColor:
+            typeViewListDoc === "kanbanViewListDoc"
+              ? "common.white"
+              : "#E9EBF3",
+          boxShadow:
+            typeViewListDoc === "kanbanViewListDoc"
+              ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
+              : "none",
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+    </Stack>
+  );
+};
+
+type ActionProps = {
+  isProjectTabMode: boolean;
+};
+
+const Actions = ({ isProjectTabMode }: ActionProps) => {
+  const data = useSelector(selectSearchTicketAgent);
+  const dispatch = useAppDispatch();
+  const t = useTranslations(NS_TICKET);
+  const pathname = usePathname();
+  const { push } = useRouter();
+  const searchParams = useSearchParams();
+  const [queries, setQueries] = useState<any>({});
+  const [openModel, setOpenModel] = useState(false)
+
+  const onChangeQueries = (name: string, value: any) => {
+    setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+    // onSearch();
+  };
+
+  const { id } = useParams();
+
+  const onSearch = () => {
+    let newQueries = {
+      ...queries,
+      page: 1,
+      // group_by: DocGroupByEnum.PROJECT_ID,
+    };
+
+    const payload = {
+      ...data,
+      keyword: newQueries?.search_key,
+      status: newQueries?.status?.id == 0 ? "" : newQueries?.status?.status,
+      position: newQueries?.position?.id == 0 ? "" : newQueries?.position?.position,
+    };
+    dispatch(setKeySearchTicketAgent(payload));
+  };
+
+  useEffect(() => {
+    setQueries({ search_key: searchParams.get("search_key") });
+  }, [searchParams.get("search_key")]);
+
+
+  const handleClickOpenModel = () => {
+    setOpenModel(true);
+  };
+
+  const handleCloseModel = () => {
+    setOpenModel(false);
+  };
+  return (
+    <>
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        spacing={{ xs: 1, md: 2 }}
+        px={{ xs: 0, md: 3 }}
+        py={1}
+        zIndex={2}
+      >
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent={{ md: "space-between" }}
+          width="100%"
+          spacing={{ xs: 2, md: 0 }}
+        >
+          <Box display={{ xs: "block" }}>
+            <Search
+              placeholder={"Tìm kiếm theo id"}
+              name="search_key"
+              onChange={onChangeQueries}
+              value={queries?.search_key}
+              sx={{ minWidth: 200 }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  onSearch();
+                }
+              }}
+              startNode={null}
+              endNode={<SearchIcon sx={{ color: "dodgerblue" }} />}
+              rootSx={{ borderRadius: "2rem" }}
+            />
+          </Box>
+          <Stack
+            direction="row"
+            justifyContent={{ xs: "flex-end" }}
+            spacing={1}
+            width={{ xs: "100%" }}
+          >
+            <ChangeViewListDoc />
+            <Button
+              onClick={() => {
+                setOpenModel(true)
+              }}
+              size="small"
+              variant="primary"
+              sx={{
+                height: 40,
+                width: "fit-content",
+                borderRadius: 100,
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                },
+              }}
+            >
+              <AddSquareIcon
+                sx={{
+                  display: { xs: "block", md: "none" },
+                  width: 24,
+                  height: 24,
+                }}
+              />
+              <PlusIcon
+                sx={{
+                  display: { xs: "none", md: "block" },
+                  mr: 1,
+                  width: 18,
+                  height: 18,
+                }}
+              />
+              <Text
+                sx={{ display: { xs: "none", md: "block" } }}
+                color="inherit"
+              >
+                {/* {t("actions.createTicket")} */}
+                New Agent
+              </Text>
+            </Button>
+          </Stack>
+        </Stack>
+        <Box
+          bgcolor="background.default"
+          borderRadius="2rem"
+          overflow={{ xs: "auto" }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            width="fit-content"
+            spacing={3}
+            py={{ xs: 1.25, md: 1, lg: 1.25 }}
+            px={{ xs: 3, md: 2, lg: 2 }}
+            overflow="auto"
+          >
+            <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
+              View by:
+            </Text>
+            <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
+          </Stack>
+        </Box>
+      </Stack>
+
+      <Model
+        type="create"
+        open={openModel}
+        handleClickOpen={handleClickOpenModel}
+        handleClose={handleCloseModel}
+      />
+    </>
+  );
+};
+
+export default memo(Actions);
