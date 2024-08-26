@@ -45,8 +45,10 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
     <>
       <ButtonWithDropdown
         text={projectT("detailTasks.createNewTaskList")}
-        onClick={onShow}
-        containerSx={props.sx}
+        primaryButtonProps={{
+          onClick: onShow,
+        }}
+        sx={props.sx}
       >
         {(handleClose) => (
           <Paper>
@@ -80,7 +82,7 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
 
       {isShow && (
         <TaskListForm
-          open={isShow}
+          open
           onClose={onHide}
           type={DataAction.CREATE}
           initialValues={INITIAL_VALUES}
@@ -88,15 +90,10 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
         />
       )}
       {isShowAiForm && (
-        <TaskListAiForm
-          open={isShowAiForm}
-          onClose={onHideAiForm}
-          content={title || ""}
-        />
+        <TaskListAiForm open onClose={onHideAiForm} content={title || ""} />
       )}
     </>
   );
 };
 
 export default CreateNewTaskListButton;
-

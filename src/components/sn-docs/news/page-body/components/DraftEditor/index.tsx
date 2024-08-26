@@ -1,41 +1,32 @@
+import EditorPlugins from "@draft-js-plugins/editor";
+import createEmojiPlugin from "@draft-js-plugins/emoji";
+import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
+import { Box, Typography } from "@mui/material";
 import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
-import {
-  Editor,
-  EditorState,
-  RichUtils,
+  ContentBlock,
   convertFromRaw,
   DraftStyleMap,
-  ContentBlock,
-  DraftHandleValue,
-  Modifier,
-  DraftBlockType,
-  convertToRaw,
-  genKey,
-  ContentState,
+  EditorState,
+  RichUtils,
 } from "draft-js";
 import "./DraftEditor.css";
 import "./CheckableListItem.css";
 import ToolBarDraftEditor from "../ToolBarDraftEditor";
-import { Box, Button } from "@mui/material";
+import useDebounce from "hooks/useDebounce";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useUpdateDocMutation } from "store/docs/api";
+import { useDocs } from "store/docs/selectors";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
-import { useUpdateDocMutation } from "store/docs/api";
-import useDebounce from "hooks/useDebounce";
-import { useDocs } from "store/docs/selectors";
 import AddSessionTool from "../AddSessionTool/components";
 import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
 import { toggleChecked } from "./CheckableListItemUltils";
 import CheckableListItem from "./CheckableListItem";
-import TableChartIcon from "@mui/icons-material/TableChart";
-import MindmapItem from "../MindmapItem";
 import BoardEditor from "../BoardEditor";
 import ReactFlowMindMap from "../ReactFlowMindMap";
+import "./CheckableListItem.css";
+import "./DraftEditor.css";
+import "./EmojiEditor.css";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
@@ -50,7 +41,7 @@ export default function DraftEditor() {
   const [mounted, setMounted] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState(name);
 
-  const [debounceChange, isDone, cancel] = useDebounce(
+  const [debounceChange] = useDebounce(
     ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
       updateDoc({
         id: id as string,
@@ -64,13 +55,29 @@ export default function DraftEditor() {
     EditorState.createEmpty(),
   );
 
-  const editor = useRef<Editor | null>(null);
+  const { plugins, EmojiSelect } = useMemo(() => {
+    const emojiPlugin = createEmojiPlugin({
+      selectButtonContent: (
+        <Box display="flex" width="100%" height="100%">
+          <AddReactionOutlinedIcon sx={{ width: "16px", height: "16px" }} />
+          <Typography fontWeight={800}>Add emoji</Typography>
+        </Box>
+      ),
+    });
+    return {
+      plugins: [emojiPlugin],
+      EmojiSelect: emojiPlugin.EmojiSelect,
+    };
+  }, []);
+
+  const editor = useRef<EditorPlugins | null>(null);
 
   const [showAddSession, setShowAddSession] = useState(false);
+  const [heightToolBar, setHeightToolBar] = useState(0);
 
   // xử lý event open Add Session
   const handleKeyDown = (e) => {
-    if (e.ctrlKey && e.altKey && e.key === "d") {
+    if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "d") {
       e.preventDefault();
       setShowAddSession((prev) => !prev);
     }
@@ -212,6 +219,10 @@ export default function DraftEditor() {
     [editorState],
   );
 
+  const heightToolMemo = useMemo(() => {
+    return heightToolBar;
+  }, [heightToolBar]);
+
   useEffect(() => {
     focusEditor();
   }, []);
@@ -221,23 +232,6 @@ export default function DraftEditor() {
     // dispatch(getDocDetails(currentId));
   }, [name, currentId]);
 
-  useEffect(() => {
-    const data = {
-      //   content: content,
-      name: name || undefined,
-      //   description: description,
-      //   project_id: project_id,
-    };
-    if (mounted) {
-      if (id) {
-        handleUpdateDoc(data, id);
-        // setTextAreaValue(name);
-      } else {
-      }
-    } else {
-      setMounted(true);
-    }
-  }, [description, name, project_id, currentId]);
 
   // set giá trị cho doc khi mounted
   useEffect(() => {
@@ -281,15 +275,46 @@ export default function DraftEditor() {
 
   return (
     <Box
-      sx={{ width: "100%", height: "100%", bgcolor: "common.white" }}
+      sx={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        bgcolor: "common.white",
+        paddingTop: `${heightToolMemo}px`,
+      }}
       // onClick={focusEditor}
     >
+     <Box
+        paddingX="1rem"
+        paddingY="0.5rem"
+        display="flex"
+        alignItems="center"
+        marginTop={1}
+      >
+        <EmojiSelect />
+      </Box>
       <ToolBarDraftEditor
         editorState={editorState}
         setEditorState={setEditorState}
+        setHeightToolBar={setHeightToolBar}
       />
-      <div className="editor-container">
-        <Editor
+      <Box
+        paddingX="1rem"
+        paddingY="0.5rem"
+        display="flex"
+        alignItems="center"
+        marginTop={1}
+      >
+      </Box>
+      <Box
+        sx={{
+          position: "relative",
+          paddingX: "1rem",
+          height: `calc(100% - ${heightToolMemo}px)`,
+          overflowY: "auto",
+        }}
+      >
+        <EditorPlugins
           ref={editor}
           handleKeyCommand={handleKeyCommand}
           editorState={editorState}
@@ -297,6 +322,7 @@ export default function DraftEditor() {
           blockStyleFn={myBlockStyleFn}
           onChange={handleChangeEditor}
           blockRendererFn={blockRendererFn}
+          plugins={plugins}
         />
         {showAddSession && (
           <AddSessionTool
@@ -308,7 +334,7 @@ export default function DraftEditor() {
         )}
         {isOpenMindMap ? <ReactFlowMindMap /> : null}
         {isOpenBoard ? <BoardEditor /> : null}
-      </div>
+      </Box>
     </Box>
   );
 }

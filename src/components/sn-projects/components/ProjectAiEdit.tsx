@@ -14,8 +14,9 @@ import { useFormik } from "formik";
 import SendIcon from "icons/SendIcon";
 import PresetMenuItem from "./PresetMenuItem";
 import * as Yup from "yup";
-import { AiProjectData } from "store/project/actions";
-import { useState } from "react";
+import { AiProjectData, ProjectData } from "store/project/actions";
+import { useMemo, useState } from "react";
+import Markdown from "react-markdown";
 
 const ProjectAiEdit = (props: {
   tone: string;
@@ -26,6 +27,10 @@ const ProjectAiEdit = (props: {
 }) => {
   const [projectData, setProjectData] = useState(props.projectData);
   const [isGenerating, setIsGenerating] = useState(false);
+  const projectDataMarkdown = useMemo(
+    () => projectDataJsonToMarkdown(projectData),
+    [projectData],
+  );
 
   const formik = useFormik({
     validationSchema: Yup.object().shape({
@@ -42,28 +47,9 @@ const ProjectAiEdit = (props: {
   });
 
   return (
-    <FormControl sx={{ gap: 2, ...props.sx }}>
-      <Box overflow="auto" maxHeight="30vh" p={2}>
-        <Typography variant="h3">{projectData.title}</Typography>
-        <Typography variant="h4">Project Overview</Typography>
-        <Typography>{projectData.description}</Typography>
-        <Typography variant="h4">Milestones</Typography>
-        {projectData.taskList.map((_taskList, index) => (
-          <Box key={_taskList.title}>
-            <Typography variant="h5">{_taskList.title}</Typography>
-            {_taskList.tasks.map((_task) => (
-              <Box
-                display="flex"
-                alignItems="center"
-                key={_task}
-                sx={{ ml: 2 }}
-              >
-                <CheckBoxOutlineBlank fontSize="small" />
-                <Typography>{_task}</Typography>
-              </Box>
-            ))}
-          </Box>
-        ))}
+    <FormControl sx={{ gap: 2, bgcolor: "background.paper", ...props.sx }}>
+      <Box overflow="auto" maxHeight="50vh" p={2}>
+        <Markdown>{projectDataMarkdown}</Markdown>
       </Box>
       <TextField
         placeholder="What would you like to do next?"
@@ -122,3 +108,24 @@ const ProjectAiEdit = (props: {
 };
 
 export default ProjectAiEdit;
+
+function projectDataJsonToMarkdown(projectData: AiProjectData | null) {
+  if (!projectData) {
+    return "";
+  }
+
+  let text = `# ${projectData.title}\n\n`;
+
+  text += "## Project Overview\n\n";
+  text += `${projectData.description}\n\n`;
+
+  text += `## Milestones\n\n`;
+  for (const taskList of projectData.taskList) {
+    text += `### ${taskList.title}\n\n`;
+    for (const task of taskList.tasks) {
+      text += `- [ ] ${task}\n`;
+    }
+  }
+
+  return text;
+}

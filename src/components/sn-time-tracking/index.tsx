@@ -20,24 +20,33 @@ import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import DayIcon from "icons/DayIcon";
 import { useTranslations } from "next-intl";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CompanyTimeTrackingCalendar,
   MyTimeTrackingCalendar,
   TimelogTrackingCalendar,
 } from "./CalendarTracking";
-import CalendarIcon from "./icons/CalendarIcon";
-import TimeSheetIcon from "./icons/TimeSheetIcon";
+
+import CalendarIcon from "icons/CalendarIcon";
+import PlusIcon from "icons/PlusIcon";
+import TimeSheetIcon from "icons/TimeSheetIcon";
+import { TIME_TRACKING_HEADER_HEIGHT } from "./components/timeTracking.types";
 
 interface ITab {
   label: string;
   value: string;
 }
 
-const TimeTrackingPage: FC = () => {
+enum TabEnum {
+  MY_TIME = "myTime",
+  COMPANY_TIME = "companyTime",
+  TIME_LOG = "timeLog",
+}
+
+const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<string>("myTime");
+  const [tab, setTab] = useState<TabEnum>(TabEnum.MY_TIME);
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -45,6 +54,7 @@ const TimeTrackingPage: FC = () => {
   const [workBottomLeftRadius, setWorkBottomLeftRadius] =
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
+
   const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
 
   const timeT = useTranslations(NS_TIME_TRACKING);
@@ -65,7 +75,7 @@ const TimeTrackingPage: FC = () => {
   ];
 
   const onSelectTimeSheetChange = (event: SelectChangeEvent) => {
-    setTab(event.target.value);
+    setTab(event.target.value as TabEnum);
     setTimeBgColor(isDarkMode ? "#0575E6" : "#D9F0FD");
     setWorkBgColor("#FFFFFF");
     setWorkTopLeftRadius("0px");
@@ -73,8 +83,7 @@ const TimeTrackingPage: FC = () => {
     setWorkBorder("");
   };
 
-  const showLogTimePopup = () =>
-    setIsOpenCreatePopup((previousState) => !previousState);
+  const showLogTimePopup = () => setIsOpenCreatePopup(true);
 
   useEffect(() => {
     console.log(tab);
@@ -125,7 +134,7 @@ const TimeTrackingPage: FC = () => {
   };
 
   return (
-    <Stack>
+    <Stack height="100%">
       <Grid
         container
         sx={{ display: isSmSmaller ? "block" : "none", padding: "10px" }}
@@ -166,13 +175,8 @@ const TimeTrackingPage: FC = () => {
             margin: "22px 22px 0 22px",
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
-            backgroundColor: tab === "timelog" ? "#D9F0FD" : "#FFFFFF",
-            "&:hover": {
-              border: "none",
-            },
-            "&:focus": {
-              border: "none",
-            },
+            overflow: "hidden",
+            backgroundColor: tab === TabEnum.TIME_LOG ? "#D9F0FD" : "#FFFFFF",
           }}
         >
           <Select
@@ -196,7 +200,7 @@ const TimeTrackingPage: FC = () => {
               display: "flex",
               marginLeft: "-1px",
               fontSize: "16px",
-              fontFamily: "Inter",
+              fontFamily: "unset",
               fontWeight: "Regular",
               textAlign: "center",
               width: "179px",
@@ -204,10 +208,31 @@ const TimeTrackingPage: FC = () => {
               borderRadius: "100px",
               backgroundColor: timeBgColor,
               color: isDarkMode ? "#FFFFFF" : "#045EB8",
+              "& fieldset": {
+                border: "none",
+              },
             }}
           >
-            <MenuItem value={timeTabs[0].value}>{timeTabs[0].label}</MenuItem>
-            <MenuItem value={timeTabs[1].value}>{timeTabs[1].label}</MenuItem>
+            <MenuItem
+              sx={{
+                fontSize: "13px",
+                fontWeight: "Bold",
+                color: "neutral.700",
+              }}
+              value={timeTabs[0].value}
+            >
+              {timeTabs[0].label}
+            </MenuItem>
+            <MenuItem
+              sx={{
+                fontSize: "13px",
+                fontWeight: "Bold",
+                color: "neutral.700",
+              }}
+              value={timeTabs[1].value}
+            >
+              {timeTabs[1].label}
+            </MenuItem>
           </Select>
 
           <Typography
@@ -218,7 +243,7 @@ const TimeTrackingPage: FC = () => {
               alignItems: "center",
               justifyContent: "center",
               fontSize: "16px",
-              fontFamily: "Inter",
+              fontFamily: "unset",
               fontWeight: "Regular",
               color: isDarkMode ? "#FFFFFF" : "#333333",
               border: workBorder,
@@ -230,7 +255,7 @@ const TimeTrackingPage: FC = () => {
               cursor: "pointer",
             }}
             onClick={() => {
-              setTab(timeTabs[2].value);
+              setTab(timeTabs[2].value as TabEnum);
               setWorkBgColor("#D9F0FD");
               setWorkTopLeftRadius("100px");
               setWorkBottomLeftRadius("100px");
@@ -248,7 +273,7 @@ const TimeTrackingPage: FC = () => {
             margin: "16px 22px 0 0",
             display: "flex",
             alignItems: "center",
-            gap: "1px",
+            gap: "8px",
           }}
         >
           <Fab
@@ -256,12 +281,10 @@ const TimeTrackingPage: FC = () => {
               width: "34px",
               height: "34px",
               borderRadius: "100px",
-              backgroundColor: "#FFFFFF",
+              backgroundColor:
+                kindOfSheet === "timeSheet" ? "#E9EBF3" : "transparent",
+              boxShadow: kindOfSheet === "timeSheet" ? "none" : undefined,
               "&:hover": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              "&:focus": {
                 border: "none",
                 backgroundColor: "#F2F5FA",
               },
@@ -269,14 +292,12 @@ const TimeTrackingPage: FC = () => {
             }}
             onClick={handleListSheet}
           >
-            {
-              <TimeSheetIcon
-                sx={{
-                  width: "18px",
-                  height: "18px",
-                }}
-              />
-            }
+            <TimeSheetIcon
+              sx={{
+                width: "18px",
+                height: "18px",
+              }}
+            />
           </Fab>
 
           {tab === "companyTime" && (
@@ -285,12 +306,10 @@ const TimeTrackingPage: FC = () => {
                 width: "34px",
                 height: "34px",
                 borderRadius: "100px",
-                backgroundColor: "#FFFFFF",
+                backgroundColor:
+                  kindOfSheet === "table" ? "#E9EBF3" : "transparent",
+                boxShadow: kindOfSheet === "table" ? "none" : undefined,
                 "&:hover": {
-                  border: "none",
-                  backgroundColor: "#F2F5FA",
-                },
-                "&:focus": {
                   border: "none",
                   backgroundColor: "#F2F5FA",
                 },
@@ -300,67 +319,72 @@ const TimeTrackingPage: FC = () => {
             >
               <DayIcon
                 sx={{
-                  width: "18px",
-                  height: "18px",
+                  width: "16px",
+                  height: "16px",
+                  fill: "none",
                 }}
               />
             </Fab>
           )}
-
 
           <Fab
             sx={{
               width: "34px",
               height: "34px",
               borderRadius: "100px",
-              backgroundColor: "#FFFFFF",
+              backgroundColor:
+                kindOfSheet === "timeGridWeek" ? "#E9EBF3" : "transparent",
+              boxShadow: kindOfSheet === "timeGridWeek" ? "none" : undefined,
               "&:hover": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              "&:focus": {
                 border: "none",
                 backgroundColor: "#F2F5FA",
               },
               cursor: "pointer",
             }}
-            // onClick={showLogTimePopup}
             onClick={handleShowTimeGrid}
           >
-            {
-              <CalendarIcon
-                sx={{
-                  width: "18px",
-                  height: "18px",
-                }}
-              />
-            }
+            <CalendarIcon
+              sx={{
+                width: "18px",
+                height: "18px",
+                color: "#4C526C",
+              }}
+            />
           </Fab>
 
-
-
-          <Button
-            // startIcon={<PlusIcon />}
-            variant="contained"
-            sx={{
-              width: "136px",
-              height: "46px",
-              marginLeft: "14px",
-              borderRadius: "100px",
-              background: "linear-gradient(90deg, #2af598, #009efd)",
-              "&:hover": {
+          {tab === "myTime" && (
+            <Button
+              startIcon={
+                <PlusIcon
+                  sx={{
+                    width: "32px",
+                    height: "32px",
+                  }}
+                />
+              }
+              variant="contained"
+              sx={{
+                width: "146px",
+                height: "48px",
+                marginLeft: "14px",
+                borderRadius: "100px",
                 background: "linear-gradient(90deg, #2af598, #009efd)",
-              },
-              color: "common.white",
-              textTransform: "none",
-              fontSize: "16px",
-              fontWeight: "Bold",
-              cursor: "pointer",
-            }}
-            onClick={showLogTimePopup}
-          >
-            {timeT("header.common.logTimeButton")}
-          </Button>
+                "&:hover": {
+                  background: "linear-gradient(90deg, #2af598, #009efd)",
+                },
+                boxShadow: "none",
+                color: "common.white",
+                textTransform: "none",
+                fontSize: "16px",
+                fontWeight: "Bold",
+                cursor: "pointer",
+                fontFamily: "unset",
+              }}
+              onClick={showLogTimePopup}
+            >
+              {timeT("header.common.logTimeButton")}
+            </Button>
+          )}
         </Box>
       </Grid>
 
@@ -373,7 +397,10 @@ const TimeTrackingPage: FC = () => {
         {/* </Stack> */}
         <TabPanel
           value="myTime"
-          sx={{ "& .MuiTabPanel-root": { paddingTop: "0px!important" } }}
+          sx={{
+            "& .MuiTabPanel-root": { paddingTop: "0px!important" },
+            height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
+          }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
         >
           <MyTimeTrackingCalendar
@@ -381,11 +408,15 @@ const TimeTrackingPage: FC = () => {
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
             currentKindOfSheet={kindOfSheet}
+            setIsOpenCreatePopup={setIsOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel
           value="companyTime"
-          sx={{ paddingTop: { sm: 0, md: "auto" } }}
+          sx={{
+            paddingTop: { sm: 0, md: "auto" },
+            height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
+          }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
         >
           <CompanyTimeTrackingCalendar
@@ -393,6 +424,7 @@ const TimeTrackingPage: FC = () => {
             onClick={() => console.log("click")}
             isOpenCreatePopup={isOpenCreatePopup}
             currentKindOfSheet={kindOfSheet}
+            setIsOpenCreatePopup={setIsOpenCreatePopup}
           />
         </TabPanel>
         <TabPanel value="timeLog" sx={{ paddingTop: { sm: 0, md: "auto" } }}>

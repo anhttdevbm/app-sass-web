@@ -91,5 +91,6 @@ export const DocsLang: DocsDictionary = {
         selectAll: "Select all",
       },
     },
+    invalidFileExt: "Invalid file extension!",
   },
 };

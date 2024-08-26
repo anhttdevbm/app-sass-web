@@ -1,14 +1,12 @@
-import { getServiceBudget } from "./../billing/actions";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Endpoint, client } from "api";
 import { SORT_OPTIONS } from "constant/enums";
 import { RESOURCE_API_URL } from "constant/index";
-import { Dispatch } from "react";
-import { Service } from "store/sales/reducer";
+import { getServiceBudget } from "./../billing/actions";
 
 export interface IBookingAllFitler {
   search_key?: string;
-  working_sort?: WorkingStatus;
+  working_sort?: WorkingStatus | "asc" | "desc";
   sort?: SORT_OPTIONS | "";
   start_date?: string;
   end_date?: string;
@@ -37,7 +35,7 @@ export interface BookingData {
   allocation: number;
   allocation_type: string;
   note: string;
-  sale_id: string;
+  service_id: string;
   user_id: string;
 }
 

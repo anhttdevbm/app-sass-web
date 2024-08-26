@@ -38,25 +38,7 @@ const defaultData: IDataTreeBoard[] = [
   {
     id: uuid(),
     name: "Main",
-    children: [
-      {
-        id: uuid(),
-        name: "Child 1",
-      },
-      {
-        id: uuid(),
-        name: "Sub-subtree with children",
-        children: [
-          { id: uuid(), name: "Sub Child 1" },
-          { id: uuid(), name: "Sub Child 2" },
-          { id: uuid(), name: "Sub Child 3" },
-        ],
-      },
-      {
-        id: uuid(),
-        name: "Child 2",
-      },
-    ],
+    children: [],
   },
 ];
 
@@ -137,18 +119,21 @@ export default function BoardEditor() {
   return (
     <Box
       sx={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
+        // width: "100%",
+        // display: "flex",
+        // flexDirection: "column",
         gap: 2,
       }}
     >
       <Box
         display="flex"
         flexWrap="wrap" // Cho phép các items xuống dòng
+        flexDirection={{ xs: "column", sm: "row" }}
         gap={2}
         sx={{
-          width: "100%",
+          width: {
+            xs: "100%",
+          },
         }}
       >
         {boardEditorList.map((item) => (

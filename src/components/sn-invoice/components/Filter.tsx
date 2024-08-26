@@ -27,7 +27,7 @@ export const Filter = ({ filters, onFilter }: FilterProps) => {
 
   return (
     <Stack direction={"row"} spacing={2} alignItems={"center"}>
-      <Typography fontSize={"14px"} fontWeight={500} color={"#4D4D4D"}>
+      <Typography fontSize={"14px"} fontWeight={700} color={"#4D4D4D"}>
         View by:
       </Typography>
       {filters.map((filter) => (
@@ -44,7 +44,7 @@ export const Filter = ({ filters, onFilter }: FilterProps) => {
               <Typography
                 marginRight={1}
                 fontSize={"16px"}
-                fontWeight={400}
+                fontWeight={700}
                 color={"#00000080"}
               >
                 {filter.name}:
@@ -57,11 +57,12 @@ export const Filter = ({ filters, onFilter }: FilterProps) => {
                 border: "none",
                 outline: "none",
                 borderRadius: "4px",
-                width: "100%",
                 cursor: "pointer",
                 fontSize: "16px",
                 paddingRight: "30px",
                 background: "transparent",
+                width: "55px",
+                fontWeight: 700,
               }}
             >
               {filter.options.map((option) => (

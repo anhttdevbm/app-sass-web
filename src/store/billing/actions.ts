@@ -333,9 +333,13 @@ export const createCommentBilling = createAsyncThunk(
   "Billing/createCommentBilling",
   async (data: BillingCommentData) => {
     try {
-      const response = await client.post(Endpoint.INTERACTION_BILLING, data, {
-        baseURL: BILLING_API_URL,
-      });
+      const response = await client.post(
+        StringFormat(Endpoint.INTERACTION_BILLING, { id: data.invoice_id }),
+        data,
+        {
+          baseURL: INVOICE_API_URL,
+        },
+      );
 
       if (response?.status === HttpStatusCode.CREATED) {
         return response.data;
@@ -354,12 +358,12 @@ export const getCommentBilling = createAsyncThunk(
       const response = await client.get(
         `${
           StringFormat(Endpoint.INTERACTION_BILLING_BY_BILL, { id }) +
-          "/" +
+          "?" +
           param
         }`,
         {},
         {
-          baseURL: BILLING_API_URL,
+          baseURL: INVOICE_API_URL,
         },
       );
       if (response?.status === HttpStatusCode.OK) {

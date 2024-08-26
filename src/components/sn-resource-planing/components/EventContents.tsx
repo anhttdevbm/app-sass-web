@@ -1,21 +1,20 @@
 import { EventApi } from "@fullcalendar/core";
 import { Stack, Typography } from "@mui/material";
 import {
-  RESOURCE_ALLOCATION_UNIT,
   RESOURCE_ALLOCATION_TYPE,
+  RESOURCE_ALLOCATION_UNIT,
   RESOURCE_EVENT_TYPE,
 } from "constant/enums";
-import dayjs from "dayjs";
-import React from "react";
-import useGetMappingTime from "../hooks/useGetMappingTime";
-import { IEditState } from "../AllPeopleTab";
-import BlueArrowIcon from "icons/BlueArrowIcon";
-import RedArrowIcon from "icons/RedArrowIcon";
-import GrayArrowIcon from "icons/GrayArrowIcon";
-import { useTranslations } from "next-intl";
 import { NS_RESOURCE_PLANNING } from "constant/index";
-import { Tooltip } from "components/shared";
+import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
+import BlueArrowIcon from "icons/BlueArrowIcon";
+import GrayArrowIcon from "icons/GrayArrowIcon";
+import ProjectBookingIcon from "icons/ProjectBookingIcon";
+import SickLeaveIcon from "icons/SickLeaveIcon";
+import { useTranslations } from "next-intl";
+import { IEditState } from "../AllPeopleTab";
+import useGetMappingTime from "../hooks/useGetMappingTime";
 
 interface IEventContentsProps {
   event: EventApi;
@@ -44,15 +43,25 @@ const EventContents = ({
     switch (value) {
       case RESOURCE_EVENT_TYPE.PROJECT_BOOKING:
         return {
-          icon: <BlueArrowIcon width={16} height={16} />,
-          color: "#3699FFCC",
+          icon: <ProjectBookingIcon width={16} height={16} />,
+          color: "#000000",
           background: "#408DFB",
+          backgroundTitle: "#091E420F",
+          backgroundContent: "#FFFFFFCC",
         };
       case RESOURCE_EVENT_TYPE.TIME_OF_BOOKING:
         return {
-          icon: <RedArrowIcon width={16} height={16} />,
-          color: "rgba(246, 78, 96, 0.80);",
+          icon: <SickLeaveIcon sx={{ width: 14, height: 14 }} />,
+          color: "#000000",
           background: "#CB4251",
+          backgroundTitle: "#091E420F",
+          backgroundContent: "#FFFFFFCC",
+        };
+      case "SERVICE":
+        return {
+          icon: <BlueArrowIcon sx={{ width: 14, height: 14, fontSize: 14 }} />,
+          color: "#3699FFCC",
+          background: "#408DFB",
         };
       default:
         return {
@@ -62,7 +71,6 @@ const EventContents = ({
         };
     }
   };
-
   const checkedEventType = checkEventType(booking_type);
   const day = dayjs(event.end).diff(dayjs(event.start), "days");
 
@@ -72,7 +80,8 @@ const EventContents = ({
       unit = mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.HOUR_PER_DAY];
       break;
     case RESOURCE_ALLOCATION_UNIT.HOUR:
-      unit = " " + mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.HOUR];
+      // unit = " " + mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.HOUR];
+      unit = "h";
       break;
     default:
       unit = mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.PERCENTAGE];
@@ -81,13 +90,11 @@ const EventContents = ({
 
   return (
     <>
-      {!isWorkload && (
+      {!isWorkload ? (
         <Stack
           className="fc-event-title fc-sticky"
           direction="row"
           sx={{
-            border: `1px solid ${checkedEventType.color}`,
-            display: "flex!important",
             width: 1,
             borderRadius: 1,
             alignItems: "start",
@@ -104,44 +111,80 @@ const EventContents = ({
             });
           }}
         >
-          {/* {checkedEventType.icon} */}
-          <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
-            {time_off_type ? resourceT("form.timeOffType.sick") : ""}
-          </Typography>
-          <Typography sx={{ color: "FFFFFF", fontSize: "10px" }}>
-            {project?.name}
-          </Typography>
-          <Tooltip
-            title={resourceT("schedule.time.eventTime", {
-              day: isNaN(day) ? 1 : day,
-              allocation,
-              unit,
-            })}
+          <Stack
+            display={"flex"}
+            flexDirection={"row"}
+            width={"100%"}
+            gap={"3px"}
+          >
+            <div>{checkedEventType.icon}</div>
+            {time_off_type && (
+              <Typography
+                sx={{
+                  color: "FFFFFF",
+                  fontSize: "10px",
+                  paddingTop: "2px",
+                  paddingRight: "2px",
+                }}
+              >
+                {resourceT("form.timeOffType.sick")}
+              </Typography>
+            )}
+            {booking_type && (
+              <Stack display={"flex"}>
+                <Typography
+                  sx={{
+                    color: "FFFFFF",
+                    fontSize: "10px",
+                    paddingTop: "2px",
+                    paddingRight: "2px",
+                  }}
+                >
+                  {project?.company}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "FFFFFF",
+                    fontSize: "7px",
+                    paddingTop: "2px",
+                    paddingRight: "2px",
+                  }}
+                >
+                  {project?.name}
+                </Typography>
+              </Stack>
+            )}
+          </Stack>
+
+          <Stack
+            sx={{
+              background: checkedEventType.backgroundTitle,
+              padding: "4px 2px 4px 8px",
+              marginTop: time_off_type ? "10px" : 0,
+              float: "right",
+              borderRadius: 1,
+            }}
           >
             <Typography
               sx={{
-                fontWeight: 400,
-                color: "black",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                px: 1,
-                mr: 0,
-                width: "100%",
-                textAlign: "end",
-                fontSize: "11px",
-                background: "#FFFFFF",
-                borderRadius: "5px",
-                marginBottom: "5px",
+                fontSize: 9,
+                width: "fit-content",
+                background: checkedEventType.backgroundContent,
+                color: checkedEventType.color,
+                paddingLeft: "2px",
+                paddingRight: "2px",
+                borderRadius: 1,
               }}
             >
-              {resourceT("schedule.time.eventTime", {
-                day: isNaN(day) ? 8 : day,
-                allocation,
-                unit,
-              })}
+              {booking_type === "SERVICE"
+                ? resourceT("schedule.action.addBooking")
+                : resourceT("schedule.time.eventTime", {
+                    day: isNaN(day) ? 1 : day,
+                    allocation,
+                    unit,
+                  })}
             </Typography>
-          </Tooltip>
+          </Stack>
 
           {/* <Stack
         sx={{
@@ -151,28 +194,36 @@ const EventContents = ({
         {checkedEventType.icon}
       </Stack> */}
         </Stack>
-      )}
-      {isWorkload &&
-        (booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING &&
-        total_hour >= 8 ? (
+      ) : (
+        booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING && (
           <h2
             style={{
-              color: "black",
-              background: "red",
+              color: "white",
               textAlign: "center",
               margin: 0,
-              height: "100px",
+              height: "60px",
               display: "flex",
               alignItems: "center ",
               justifyContent: "center",
-              backgroundColor: "#33FFFF",
+              background:
+                "linear-gradient(180deg, rgba(255, 192, 203, 0) 0%, #57D9A3 0%)",
             }}
           >
-            8
+            <div
+              style={{
+                background: "#00875A",
+                fontSize: 11,
+                minWidth: 20,
+                height: 20,
+                padding: 2,
+                borderRadius: 3,
+              }}
+            >
+              {total_hour}
+            </div>
           </h2>
-        ) : (
-          ""
-        ))}
+        )
+      )}
     </>
   );
 };

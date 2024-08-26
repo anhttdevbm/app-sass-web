@@ -1,4 +1,4 @@
-import { Modal, Paper } from "@mui/material";
+import { CircularProgress, Modal, Paper } from "@mui/material";
 import ProjectAiEdit from "components/sn-projects/components/ProjectAiEdit";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -9,7 +9,7 @@ import TaskAiPrompt from "./components/TaskAiPrompt";
 
 const CREATE_WITH_AI_COMMANDS = ["Subtask"];
 
-const View = ["form", "edit"] as const;
+const View = ["form", "edit", "loading"] as const;
 type View = (typeof View)[number];
 
 const TaskListAiForm = (props: {
@@ -29,7 +29,9 @@ const TaskListAiForm = (props: {
   const projectId = useMemo(() => params.id, [params.id]) as string;
 
   useEffect(() => {
-    Promise.allSettled([onGetTone({}), onGetPersona({})]);
+    Promise.allSettled([onGetTone({}), onGetPersona({})]).then(() =>
+      setView("form"),
+    );
   }, [onGetTone, onGetPersona]);
 
   const [view, setView] = useState<View>("form");
@@ -71,7 +73,7 @@ const TaskListAiForm = (props: {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: { xs: "80%", md: "50%" },
+          width: "80%",
           maxHeight: "50%",
           display: "flex",
           flexDirection: "column",
@@ -93,6 +95,8 @@ const TaskListAiForm = (props: {
             projectData={taskListData!}
             onSubmit={generateTaskList}
           />
+        ) : view === "loading" ? (
+          <CircularProgress />
         ) : null}
       </Paper>
     </Modal>

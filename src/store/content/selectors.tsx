@@ -285,7 +285,7 @@ export const useContentAboutUs = () => {
         async (member: StartMemberData) => {
             
             try {
-                let avatarUrl: string =  ""
+                let avatarUrl =  ""
                 if (member.avatarUpload) {
                     const avatarUploadResponse = await dispatch(
                         uploadFile({
@@ -318,7 +318,7 @@ export const useContentAboutUs = () => {
     const onUpdateAboutUsMember = useCallback(
         async (id: number | undefined, member: StartMemberData) => {
             try {
-                let avatarUrl: string =  ""
+                let avatarUrl =  ""
                 if (member.avatarUpload) {
                     const avatarUploadResponse = await dispatch(
                         uploadFile({
@@ -438,7 +438,7 @@ export const useContentCenter = () => {
 
     const onUpdateHelpCenterBanner = useCallback(
         async (data: BannerCenterData) => {
-            let bannerUpload: string = ""
+            let bannerUpload = ""
             if (data?.bannerUpload) {
                 const bannerUploadResponse = await dispatch(
                     uploadFile({
@@ -503,7 +503,7 @@ export const useContentCenter = () => {
 
     const onUpdateTrustCenterBanner = useCallback(
         async (data: BannerCenterData) => {
-            let bannerUpload: string = ""
+            let bannerUpload = ""
             if (data?.bannerUpload) {
                 const bannerUploadResponse = await dispatch(
                     uploadFile({
@@ -601,8 +601,8 @@ export const useContentAI = () => {
 
     const onUpdateAIBanner = useCallback(
         async (item: ContentData) => {
-            let imageUpload: string = ""
-            let imageUpload2: string = ""
+            let imageUpload = ""
+            let imageUpload2 = ""
             if (item?.imageUpload) {
                 const imageUploadResponse = await dispatch(
                     uploadFile({
@@ -719,7 +719,7 @@ export const useContentAI = () => {
     const onUpdateAIPromote = useCallback(
         async (data: PromoteData) => {
             try {
-                let imageUpload: string = ""
+                let imageUpload = ""
                 if (data?.imageUpload) {
                     const imageUploadResponse = await dispatch(
                         uploadFile({
@@ -805,8 +805,8 @@ export const useContentPricing = () => {
 
     const onUpdatePricingBanner = useCallback(
         async (item: ContentData) => {
-            let imageUpload: string = ""
-            let imageUpload2: string = ""
+            let imageUpload = ""
+            const imageUpload2 = ""
             if (item?.imageUpload) {
                 const imageUploadResponse = await dispatch(
                     uploadFile({
@@ -838,8 +838,8 @@ export const useContentPricing = () => {
 
     const onUpdatePricingBannerTwo = useCallback(
         async (item: ContentData) => {
-            let imageUpload: string = ""
-            let imageUpload2: string = ""
+            let imageUpload = ""
+            const imageUpload2 = ""
             if (item?.imageUpload) {
                 const imageUploadResponse = await dispatch(
                     uploadFile({

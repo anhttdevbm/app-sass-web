@@ -1,47 +1,34 @@
 "use client";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Stack, Typography, Tab, Grid, Input, Box } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { viVN } from "@mui/x-date-pickers/locales";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Button, Grid, Stack, Tab, Typography } from "@mui/material";
+import { Permission } from "constant/enums";
 import { NS_RESOURCE_PLANNING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
+
+import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
-import AllPeopleTab from "./AllPeopleTab";
-import MyScheduleTab from "./MyScheduleTab";
-import useTheme from "hooks/useTheme";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useAuth } from "store/app/selectors";
-import ROLE from "components/sn-time-tracking/Component/Constants/Enums/Roles.enum";
-import { Permission } from "constant/enums";
-import { Button } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import SearchIcon from "icons/SearchIcon";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import { IconButton, Paper } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-
-import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
-import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import AddBooking from "./modals/addBooking";
-
+import AllPeopleTab from "./AllPeopleTab";
+import CreateBooking from "./modals/CreateBooking";
+import ModalDrop from "./modals/ModalDrop";
+import MyScheduleTab from "./MyScheduleTab";
 const ResourcePlanning = () => {
   const { isDarkMode } = useTheme();
-  const { isSmSmaller } = useBreakpoint();
+  const { isSmSmaller, isMdSmaller } = useBreakpoint();
   const { user } = useAuth();
+
   const [tab, setTab] = useState(
     user?.roles?.includes(Permission.ST) ? "mySchedule" : "allPeople",
   );
   const t = useTranslations(NS_RESOURCE_PLANNING);
 
-  const [isServicePopup, setisServicePopup] = useState<Boolean>(false);
+  const [isServicePopup, setIsServicePopup] = useState<boolean>(false);
   const [isWorkload, setIsWorkload] = useState<Boolean>(false);
-  const [isModalAdd, setIsModalAdd] = useState<Boolean>(false);
+  const [isModalAdd, setIsModalAdd] = useState<boolean>(false);
+  const [projectSelected, setProjectSelected] = useState<string | null>(null);
+  const [budgetSelected, setBudgetSelected] = useState<string | null>(null);
 
   return (
     <Stack
@@ -52,10 +39,8 @@ const ResourcePlanning = () => {
       }}
       sx={{
         ["& .MuiTabPanel-root"]: {
-          p: {
-            xs: "10px",
-            md: "20px",
-          },
+          p: 0,
+          marginTop: "16px",
         },
         position: "relative",
       }}
@@ -85,11 +70,12 @@ const ResourcePlanning = () => {
         <Grid
           container
           sx={{
-            height: isSmSmaller ? "110px" : "auto",
+            height: isSmSmaller ? "fit-content" : "auto",
             // "&.MuiGrid-root": {
             //   backgroundColor: "background.default",
             // },
             alignItems: "center",
+            minHeight: "110px",
           }}
         >
           <Grid
@@ -102,6 +88,9 @@ const ResourcePlanning = () => {
               marginTop: "22px",
               marginLeft: "16px",
               marginRight: "16px",
+              flexDirection: isMdSmaller ? "column" : "row",
+              gap: "16px",
+              width: "100%",
             }}
           >
             <TabList
@@ -118,7 +107,8 @@ const ResourcePlanning = () => {
                   },
                   "&:not(.Mui-selected)": {
                     backgroundColor: "transparent", // Màu nền cho tab không được chọn
-                    color: "text.secondary",
+                    color: "#333333",
+                    fontWeight: 400,
                   },
                 },
                 "& .MuiTabs-indicator": {
@@ -126,7 +116,7 @@ const ResourcePlanning = () => {
                 },
                 "& .MuiTabs-flexContainer": {
                   borderRadius: "100px",
-                  width: "297px",
+                  width: isSmSmaller ? "100%" : "297px",
                   height: "56px",
                   border: "1px solid rgba(0, 123, 255, 0.1)",
                 },
@@ -150,7 +140,7 @@ const ResourcePlanning = () => {
             </TabList>
             <Button
               sx={{
-                width: "100px",
+                width: isSmSmaller ? "100%" : "fit-content",
                 height: "40px",
                 fontSize: "16px",
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
@@ -169,220 +159,48 @@ const ResourcePlanning = () => {
                 setIsModalAdd((prev) => !prev);
               }}
             >
-              + Add
+              + {t("header.add")}
             </Button>
-            {isModalAdd && <AddBooking setIsModalAdd={setIsModalAdd} />}
+            <CreateBooking
+              resourceId={user?.id || ""}
+              onClose={() => setIsModalAdd(false)}
+              open={isModalAdd}
+            />
+            {/* <AddBooking setIsModalAdd={setIsModalAdd} isModalAdd={isModalAdd} /> */}
           </Grid>
         </Grid>
-        <LocalizationProvider
-          dateAdapter={AdapterDayjs}
-          localeText={
-            viVN.components.MuiLocalizationProvider.defaultProps.localeText
-          }
-        >
-          {user?.roles?.includes(Permission.AM) && (
-            <TabPanel value="allPeople">
-              <AllPeopleTab
-                setisServicePopup={setisServicePopup}
-                isWorkload={isWorkload}
-                setIsWorkload={setIsWorkload}
-                tab={tab}
-              />
-            </TabPanel>
-          )}
-          <TabPanel value="mySchedule">
-            <MyScheduleTab
-              setisServicePopup={setisServicePopup}
+
+        {user?.roles?.includes(Permission.AM) && (
+          <TabPanel value="allPeople">
+            <AllPeopleTab
+              setisServicePopup={setIsServicePopup}
               isWorkload={isWorkload}
               setIsWorkload={setIsWorkload}
               tab={tab}
+              projectSelected={projectSelected}
+              budgetSelected={budgetSelected}
+              isSmSmaller={isSmSmaller}
             />
           </TabPanel>
-        </LocalizationProvider>
-      </TabContext>
-      {isServicePopup && (
-        <Stack
-          sx={{
-            position: "absolute",
-            top: "180px",
-            right: "70px",
-            border: "1px solid #DDDDDD",
-            width: "316px",
-            height: "406px",
-            zIndex: "100",
-            background: "white",
-            borderRadius: "12px",
-            color: "black",
-            padding: "8px",
-          }}
-        >
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            sx={{
-              font: "13px",
-              fontWeight: "700",
-              marginTop: "10px",
-            }}
-          >
-            <Typography sx={{ fontSize: "13px", fontWeight: "700" }}>
-              {t("popupService.project")}{" "}
-              <span style={{ color: "red" }}>*</span>
-            </Typography>
-            <input
-              placeholder={t("popupService.chooseProjectPlacehodle")}
-              style={{
-                border: "1px solid black",
-                color: "black",
-                borderRadius: "10px",
-                background: "white",
-                width: "207px",
-                height: "23px",
-                fontSize: "10px",
-                paddingLeft: "5px",
-                marginRight: "10px",
-              }}
-            />
-          </Stack>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            sx={{ marginTop: "15px", font: "13px", fontWeight: "700" }}
-          >
-            <Typography sx={{ fontSize: "13px", fontWeight: "700" }}>
-              {t("popupService.budget")} <span style={{ color: "red" }}>*</span>
-            </Typography>
-            <input
-              placeholder={t("popupService.chooseBudgetPlacehodle")}
-              style={{
-                border: "1px solid black",
-                color: "black",
-                borderRadius: "10px",
-                background: "white",
-                width: "207px",
-                height: "23px",
-                fontSize: "10px",
-                paddingLeft: "5px",
-                marginRight: "10px",
-              }}
-            />
-          </Stack>
-          <Button
-            sx={{
-              width: "256px",
-              height: "32px",
-              background: "#2AF598",
-              margin: "15px auto",
-              borderRadius: "10px",
-            }}
-          >
-            {t("popupService.search")}
-          </Button>
-          <TextField
-            variant="outlined"
-            placeholder="Enter summary or service key"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: "black", fontWeight: "bold" }} />
-                </InputAdornment>
-              ),
-              style: {
-                borderRadius: "50px",
-                padding: "0 10px 0 10px",
-                width: "265px",
-                height: "32px",
-                margin: "0 auto",
-                fontSize: "10px",
-                border: "1px solid blue",
-              },
-              inputProps: {
-                style: {
-                  color: "black",
-                  fontWeight: "bold",
-                },
-              },
-            }}
+        )}
+        <TabPanel value="mySchedule">
+          <MyScheduleTab
+            setisServicePopup={setIsServicePopup}
+            isWorkload={isWorkload}
+            setIsWorkload={setIsWorkload}
+            tab={tab}
           />
-          <Box sx={{ p: 2 }}>
-            <Stack direction="row" alignItems="center">
-              <Typography variant="h6" gutterBottom>
-                Date <span style={{ color: "red" }}>*</span>
-              </Typography>
-              <DateRangePicker
-                slots={{ field: SingleInputDateRangeField }}
-                name="allowedRange"
-                sx={{
-                  "& .MuiOutlinedInput-input": {
-                    padding: "5px",
-                    fontSize: "14px",
-                    width: "190px",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "50px",
-                  },
-                  marginLeft: "5px",
-                }}
-              />
-            </Stack>
+        </TabPanel>
+      </TabContext>
 
-            <Typography
-              variant="subtitle1"
-              gutterBottom
-              fontSize={14}
-              marginTop={2}
-              fontWeight="bold"
-            >
-              🎵 Drag service to the calendar
-            </Typography>
-            <Typography
-              variant="body1"
-              color="primary"
-              gutterBottom
-              fontSize={11}
-              marginTop={2}
-            >
-              📦 02/17 service
-            </Typography>
-            <Paper
-              variant="outlined"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                p: 1,
-                mb: 1,
-                borderStyle: "dashed",
-                height: "32px",
-                marginTop: "15px",
-              }}
-            >
-              <Typography fontSize={11}>Service 1</Typography>
-              <IconButton>
-                <AddCircleOutlineIcon color="primary" />
-              </IconButton>
-            </Paper>
-            <Paper
-              variant="outlined"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                p: 1,
-                mb: 1,
-                borderStyle: "dashed",
-                height: "32px",
-                marginTop: "15px",
-              }}
-            >
-              <Typography fontSize={11}>Service 1</Typography>
-              <IconButton>
-                <AddCircleOutlineIcon color="primary" />
-              </IconButton>
-            </Paper>
-          </Box>
-        </Stack>
-      )}
+      <ModalDrop
+        setBudgetSelected={setBudgetSelected}
+        setProjectSelected={setProjectSelected}
+        setIsServicePopup={setIsServicePopup}
+        budgetSelected={budgetSelected}
+        projectSelected={projectSelected}
+        isServicePopup={isServicePopup}
+      />
     </Stack>
   );
 };

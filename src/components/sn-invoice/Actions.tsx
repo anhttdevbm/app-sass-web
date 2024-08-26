@@ -10,7 +10,7 @@ import {
 } from "components/sn-invoice/components";
 import { INVOICE_CREATE_PATH } from "constant/paths";
 import useQueryParams from "hooks/useQueryParams";
-import TrashIcon from "icons/TrashIcon";
+import DeleteInvoiceIcon from "icons/DeleteInvoiceIcon";
 import { usePathname, useRouter } from "next-intl/client";
 import { useEffect, useState } from "react";
 import { useBudgets } from "store/billing/selectors";
@@ -55,6 +55,11 @@ const Actions = () => {
     onGetBudgets({ pageIndex: 0, pageSize: 10 });
   }, []);
 
+  const handleClickAdd = (e) => {
+    e.preventDefault();
+    push(INVOICE_CREATE_PATH);
+  };
+
   return (
     <Stack spacing={1} padding={2}>
       <Stack
@@ -68,7 +73,7 @@ const Actions = () => {
           placeholder={"Search here"}
           onChange={handleSearchChange}
         />
-        <ButtonGradiant href={INVOICE_CREATE_PATH} startIcon={<PlusIcon />}>
+        <ButtonGradiant onClick={handleClickAdd} startIcon={<PlusIcon />}>
           Add
         </ButtonGradiant>
       </Stack>
@@ -119,8 +124,9 @@ const Actions = () => {
             borderRadius: "8px",
             border: "0.6px solid #D5D5D5",
             textTransform: "capitalize",
+            fontWeight: "700",
           }}
-          startIcon={<TrashIcon />}
+          startIcon={<DeleteInvoiceIcon />}
         >
           Delete
         </Button>

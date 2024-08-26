@@ -201,7 +201,9 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                           <Grid item xs={2}>
                             {children}
                           </Grid>
-                          <Grid xs={10}>{item.value}</Grid>
+                          <Grid item xs={10}>
+                            {item.value}
+                          </Grid>
                         </Grid>
                       </Box>
                     ) : (
@@ -240,7 +242,9 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                           <Grid item xs={2}>
                             {children}
                           </Grid>
-                          <Grid xs={10}>{item.value}</Grid>
+                          <Grid item xs={10}>
+                            {item.value}
+                          </Grid>
                         </Grid>
                       </Box>
                     ) : item.data ? (
@@ -292,7 +296,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
                 </CellBody>
               </TableRow>
             ) : hasSelectAll ? (
-              ""
+              <></>
             ) : (
               children
             )}

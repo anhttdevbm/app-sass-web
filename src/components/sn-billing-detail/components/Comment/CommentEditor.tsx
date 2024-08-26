@@ -5,6 +5,7 @@ import {
   forwardRef,
   memo,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -43,15 +44,20 @@ import {
   BillingCommentData,
 } from "store/billing/reducer";
 import { User } from "constant/types";
+import { useInvoices } from "store/invoice/selectors";
+import { useParams } from "next/navigation";
+import { Invoice } from "store/invoice/reducer";
 
 type IProps = {
   billing: Billing;
   user: User;
+  invoiceDetail?: Invoice;
+  callGetComment: () => void;
 };
 
 const CommentEditor = forwardRef(
   (props: IProps, ref: ForwardedRef<HTMLDivElement | null>) => {
-    const { billing, user } = props;
+    const { billing, user, invoiceDetail, callGetComment } = props;
     const commonT = useTranslations(NS_COMMON);
     const billingT = useTranslations(NS_BILLING);
     const { onAddSnackbar } = useSnackbar();
@@ -94,11 +100,11 @@ const CommentEditor = forwardRef(
       try {
         onProcessingTrue();
         const data = {
-          bill_id: billing.id,
+          invoice_id: invoiceDetail?.invoice_number,
           status: "1",
-          user_id: user.id,
+          creator: user.id,
           comment: editorRef.current?.getHTML() ?? content,
-          file: fileLoaded,
+          attachments: fileLoaded,
         } as unknown as BillingCommentData;
         // if (files.length) {
         //   data.attachments = [];
@@ -119,7 +125,7 @@ const CommentEditor = forwardRef(
           // newComments.sort((a, b) =>
           //   moment(b.created_time).isAfter(a.created_time) ? 1 : -1,
           // );
-          onGetCommentBilling(billing?.id ?? "", "all");
+          callGetComment();
           // setValue("comments", newComments);
           setContent("");
           setFiles([]);
@@ -161,13 +167,20 @@ const CommentEditor = forwardRef(
             direction="row"
             alignItems="center"
             justifyContent="space-between"
+            flexDirection="row-reverse"
             mt={2}
           >
             <Button
               disabled={disabled}
               onClick={onSubmit}
-              variant="primary"
+              variant="contained"
               size="small"
+              sx={{
+                background: "#14B9E5",
+                color: "#ffffff",
+                borderRadius: "100px",
+                fontWeight: 700,
+              }}
             >
               {billingT("detail.form.feed.button.sendComment")}
             </Button>

@@ -63,6 +63,7 @@ export type CommonDictionary = {
   fullName: string;
   phone: string;
   address: string;
+  roles: string;
   status: string;
   filter: {
     refresh: string;

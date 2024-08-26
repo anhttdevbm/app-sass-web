@@ -9,33 +9,64 @@ import { Billing } from "store/billing/reducer";
 import { User } from "constant/types";
 import { useBillings } from "store/billing/selectors";
 import FixedLayout from "components/FixedLayout";
+import DialogLayout from "components/DialogLayout";
+import { useParams } from "next/navigation";
+import { useInvoices } from "store/invoice/selectors";
 
 type IProps = {
   billing: Billing;
   user: User;
+  handleDisplayComment: (value: boolean) => void;
+  openComment: boolean;
 };
 const CommentSection = (props: IProps) => {
-  const { billing, user } = props;
+  const { billing, user, handleDisplayComment, openComment } = props;
   const billingT = useTranslations(NS_BILLING);
   const { onGetCommentBilling, dataComment } = useBillings();
-
+  const { item: invoiceDetail, onGetInvoiceDetail } = useInvoices();
+  const { id } = useParams();
   useEffect(() => {
-    onGetCommentBilling(billing?.id ?? "", "all");
+    if (typeof id === "string") {
+      onGetInvoiceDetail(id);
+    }
+  }, [id]);
+  const callGetComment = () => {
+    onGetCommentBilling(invoiceDetail?.invoice_number ?? "", "filter=Comment");
+  };
+  useEffect(() => {
+    callGetComment();
   }, [onGetCommentBilling]);
 
   return (
-    <FixedLayout px={2} pb={2}>
-      <Stack
-        sx={{ position: "sticky", zIndex: 1, top: 0, background: "#fff" }}
-        py={2}
-      >
-        <Text color="text.main" mb={3} variant="h5" textTransform="uppercase">
-          {billingT("detail.form.feed.title.writeYourComment")}
-        </Text>
-        <CommentEditor billing={billing} user={user} />
-      </Stack>
-      <Comments comments={dataComment} billing={billing} />
-    </FixedLayout>
+    <DialogLayout
+      open={openComment}
+      onClose={() => handleDisplayComment(false)}
+      sx={{ width: "70%" }}
+    >
+      <FixedLayout px={2} pb={0} sx={{ paddingBottom: 0, overflowY: "auto" }}>
+        <Stack
+          sx={{
+            zIndex: 1,
+            background: "#fff",
+          }}
+        >
+          <Text color="text.main" mb={3} variant="h5" textTransform="uppercase">
+            {billingT("detail.form.feed.title.writeYourComment")}
+          </Text>
+          <CommentEditor
+            invoiceDetail={invoiceDetail}
+            billing={billing}
+            user={user}
+            callGetComment={callGetComment}
+          />
+        </Stack>
+        <Comments
+          invoiceDetail={invoiceDetail}
+          comments={dataComment}
+          billing={billing}
+        />
+      </FixedLayout>
+    </DialogLayout>
   );
 };
 

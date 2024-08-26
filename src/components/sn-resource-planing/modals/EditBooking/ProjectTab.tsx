@@ -1,36 +1,40 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
-  Typography,
-  Collapse,
-  Stack,
-  useTheme,
   CircularProgress,
+  Collapse,
+  FormHelperText,
+  Stack,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
-import React, { useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
-import TextFieldInput from "components/shared/TextFieldInput";
-import ArrowDownIcon from "icons/ArrowDownIcon";
-import _ from "lodash";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import SelectController from "components/SelectController";
 import { Button } from "components/shared";
-import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
-import { useBookingAll } from "store/resourcePlanning/selector";
-import dayjs from "dayjs";
-import { BookingData } from "store/resourcePlanning/action";
-import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
-import { IBookingItem } from "store/resourcePlanning/reducer";
+import TextFieldInput from "components/shared/TextFieldInput";
 import TextFieldSelect, {
   IOptionStructure,
 } from "components/shared/TextFieldSelect";
-import { useGetSchemas } from "../Schemas";
+import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
+import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import Textarea from "components/Textarea";
 import TextStatus from "components/TextStatus";
+import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
+import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import dayjs from "dayjs";
+import ArrowDownIcon from "icons/ArrowDownIcon";
+import { useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
+import { Control, Controller, useForm } from "react-hook-form";
+import { BookingData } from "store/resourcePlanning/action";
+import { IBookingItem } from "store/resourcePlanning/reducer";
+import {
+  useBookingAll,
+  useGetServiceBudget,
+} from "store/resourcePlanning/selector";
 import { formatNumber } from "utils/index";
+import { useGetSchemas } from "../Schemas";
 
 interface IProps {
   open: boolean;
@@ -43,9 +47,10 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
   const [isFocusAllocation, setIsFocusAllocation] = useState(false);
 
   const { palette } = useTheme();
-  const { projectOptions, timeOptions, salesOptions } = useGetOptions();
+  const { timeOptions } = useGetOptions();
   const { bookingAll, updateBooking, loading } = useBookingAll();
   const { schemaProject } = useGetSchemas();
+  const { serviceBudgetOptions } = useGetServiceBudget();
 
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
@@ -68,13 +73,12 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
     // clearErrors: clearErrorsProject,
     watch: watchProject,
     reset: resetProject,
-
     formState: { errors: errorsProject },
   } = useForm({
     resolver: yupResolver(schemaProject),
     defaultValues: {
       project_id: bookingEvent?.project_id || "",
-      sale_id: bookingEvent?.sale_id || "",
+      service_id: bookingEvent?.service_id || "",
       dateRange: {
         startDate: bookingEvent?.start_date
           ? dayjs(bookingEvent?.start_date).toDate()
@@ -94,7 +98,7 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
 
   const { workedTime, estimate, leftToSchedule, scheduledTime } =
     useCalculateDetail(
-      watchProject("sale_id"),
+      watchProject("service_id"),
       watchProject("project_id"),
       bookingEvent.user_id,
       bookingEvent.user_id,
@@ -110,63 +114,34 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
     };
     await updateBooking(cleanData, bookingId).then(() => {
       onClose();
+      resetProject();
     });
   };
-  useEffect(() => {
-    if (!open) {
-      resetProject();
-    }
-  }, [open]);
 
   return (
     <>
       <Grid2 container spacing={2} sx={{ pt: 1, mb: 0 }}>
-        {/* <Grid2 xs={12}>
-        <Controller
-          name="project_id"
-          defaultValue={bookingEvent?.project_id}
-          control={controlProject}
-          render={({ field }) => (
-            <TextFieldSelect
-              helperText={errorsProject.project_id?.message}
-              error={!!errorsProject.project_id?.message}
-              required
-              options={projectOptions}
-              label={resourceT("form.project")}
-              {...field}
-            />
-          )}
-        />
-      </Grid2> */}
         <Grid2 xs={12}>
-          <Controller
-            name="sale_id"
-            control={controlProject}
-            render={({ field }) => (
-              <TextFieldSelect
-                value={field.value}
-                onChange={(event) => field.onChange(event.target.value)}
-                helperText={errorsProject.sale_id?.message}
-                error={!!errorsProject.sale_id?.message}
-                required
-                options={salesOptions as IOptionStructure[]}
-                label={resourceT("form.services")}
-                sx={{
-                  overflow: "hidden",
-                  "& .Muibox-root .MuiBox-root": {
-                    overflow: "hidden",
-                    justifyContent: "space-between",
-                    maxWidth: "90%",
-                  },
-                  "& .MuiStack-root": {
-                    width: "90%",
-                  },
-                  "& .MuiSelect-select": {
-                    pr: "16px!important",
-                  },
-                }}
-              />
-            )}
+          <SelectController
+            name="service_id"
+            control={controlProject as unknown as Control}
+            listOptions={serviceBudgetOptions as IOptionStructure[]}
+            disabled={!watchProject("project_id")}
+            label={resourceT("form.services")}
+            required
+            sx={{
+              borderRadius: "100px",
+              background:
+                "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+              ".MuiOutlinedInput-notchedOutline": {
+                borderColor: "#EFEFEF",
+              },
+            }}
+            MenuProps={{
+              sx: {
+                maxHeight: "400px",
+              },
+            }}
           />
         </Grid2>
         <Grid2 xs={12} md={6}>
@@ -174,23 +149,53 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
             name="dateRange"
             control={controlProject}
             render={({ field }) => (
-              <CustomDateRangePicker
-                required
-                value={field.value}
-                onChange={(value) => {
-                  field.onChange(value);
-                }}
-                label={resourceT("form.dateRange")}
-                placeholder=""
-                errorMessage={
-                  errorsProject.dateRange?.startDate?.message ||
-                  errorsProject.dateRange?.endDate?.message
-                }
-              />
+              <div>
+                <Typography
+                  color={"#4D4D4D"}
+                  fontSize={13}
+                  pb={2}
+                  fontWeight={700}
+                >
+                  {resourceT("form.dateRange")}
+                  <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+                </Typography>
+                <CustomDateRangePicker
+                  value={field.value}
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
+                  // label={resourceT("form.dateRange")}
+                  placeholder=""
+                  errorMessage={
+                    errorsProject.dateRange?.startDate?.message ||
+                    errorsProject.dateRange?.endDate?.message
+                  }
+                  sx={{
+                    width: "100%",
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                    borderRadius: "100px",
+                    ".MuiBox-root": {
+                      borderColor: "#EFEFEF",
+                      borderRadius: "100px",
+                      height: 36,
+                      display: "block",
+                      padding: "4px 12px",
+                    },
+                    ".MuiSvgIcon-root": {
+                      color: "#B3B3B3",
+                    },
+                  }}
+                />
+              </div>
             )}
           />
         </Grid2>
         <Grid2 xs={12} md={6}>
+          <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+            {resourceT("form.allocation")}
+            <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+          </Typography>
           <Stack
             direction="row"
             sx={{
@@ -199,11 +204,15 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
                 transition: "border-color 0.3s ease",
               },
               border: `1px solid ${
-                isFocusAllocation ? palette.primary.main : "transparent"
+                isFocusAllocation ? palette.primary.main : "#EFEFEF"
               }`,
               "&:focus-within": {
                 borderColor: palette.primary.main,
               },
+              background:
+                "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+              borderRadius: "100px",
+              justifyContent: "space-between",
             }}
           >
             <Controller
@@ -211,16 +220,18 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
               control={controlProject}
               render={({ field }) => (
                 <TextFieldInput
-                  label={resourceT("form.allocation")}
                   placeholder="8h"
                   sx={{
                     "& > .MuiBox-root": {
-                      borderRadius: 0,
-                      borderRight: "1px solid #BABCC6",
+                      background: "transparent",
+                      height: 36,
+                    },
+                    flex: "1 1 0%",
+                    ".MuiInputBase-input": {
+                      height: 36,
                     },
                   }}
                   type="number"
-                  helperText={errorsProject.allocation?.message}
                   error={!!errorsProject.allocation?.message}
                   {...field}
                 />
@@ -236,7 +247,17 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
                   onChange={(event) => {
                     field.onChange(event.target.value);
                   }}
-                  placeholder=""
+                  sx={{
+                    "& > .MuiBox-root": {
+                      background: "transparent",
+                      borderColor: "transparent",
+                      height: 36,
+                    },
+                    "& .MuiInputBase-root": {
+                      background: "transparent",
+                      color: "#00000080",
+                    },
+                  }}
                   options={timeOptions}
                   onFocus={() => setIsFocusAllocation(true)}
                   onBlur={() => setIsFocusAllocation(false)}
@@ -244,13 +265,36 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
               )}
             />
           </Stack>
+          {errorsProject.allocation?.message && (
+            <FormHelperText
+              sx={{ color: "rgba(246, 78, 96, 1)", marginLeft: "18px" }}
+            >
+              {errorsProject.allocation?.message}
+            </FormHelperText>
+          )}
         </Grid2>
         <Grid2 xs={12}>
+          <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+            {resourceT("form.note")}
+          </Typography>
           <Controller
             name="note"
             control={controlProject}
             render={({ field }) => {
-              return <Textarea {...field} label={resourceT("form.note")} />;
+              return (
+                <Textarea
+                  {...field}
+                  sx={{
+                    ".MuiFormControl-root, .MuiFormLabel-root": {
+                      background:
+                        "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                    },
+                    ".MuiInputBase-input, .MuiInputBase-root": {
+                      background: "transparent",
+                    },
+                  }}
+                />
+              );
             }}
           />
         </Grid2>
@@ -452,6 +496,11 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
               sx={{
                 width: 150,
                 height: 40,
+                borderRadius: 100,
+                color: "#0575E6",
+                border: "3px solid",
+                "border-image-source":
+                  "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               }}
             >
               {commonT("form.cancel")}
@@ -460,6 +509,12 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
               sx={{
                 width: 160,
                 height: 40,
+                color: "white",
+                borderRadius: 100,
+                "&.MuiButton-root": {
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                },
               }}
               variant="contained"
               onClick={handleSubmitProject(onSubmitProject)}

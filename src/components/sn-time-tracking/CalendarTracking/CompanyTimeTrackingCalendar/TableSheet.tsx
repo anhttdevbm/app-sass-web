@@ -1,7 +1,7 @@
 "use client";
 import { Person } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, FormControlLabel, Typography } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
@@ -14,32 +14,53 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
+import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
+import {
+  EmployeeTimeSheetRowData,
+  IFormattedDate,
+  WeeklyHours,
+} from "components/sn-time-tracking/components/timeTracking.types";
+import PinActiveIcon from "icons/PinActiveIcon";
+import PinIcon from "icons/PinIcon";
+import _ from "lodash";
 import moment from "moment";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { Inter } from "next/font/google";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "store/app/selectors";
 import { RootState } from "store/configureStore";
+import { GetMyTimeSheetQueries } from "store/timeTracking/actions";
+import { CompanyTimeSheet, MyTimeSheet } from "store/timeTracking/reducer";
+import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import {
   setAvatar,
   setIsOpen,
   setUserName,
 } from "store/userNavigationDetail/reducer";
+import EmployeesTableSheet from "./EmployeesTableSheet";
+import {
+  tableCellDataStyles,
+  trackingTableCellStyles,
+} from "./TrackingTable.styles";
+import { inter } from "../CalendarTracking.styles";
 
 interface IProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dateRange: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any;
+  dateRange: Date[];
+  data: CompanyTimeSheet[];
 }
 
-const createData = (
-  name: string,
+const createRowData = (
+  fullname: string,
   avatar: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  timesheet: any[],
+  timesheet: MyTimeSheet[],
   id: string,
-) => {
-  const totalHours = timesheet.reduce((acc, curr) => acc + curr.duration, 0);
-  const weeklyHours = {
+  is_pin: string,
+): EmployeeTimeSheetRowData => {
+  const totalHours = timesheet.reduce(
+    (acc, curr) => acc + (curr.duration || 0),
+    0,
+  );
+  const weeklyHours: WeeklyHours = {
     sun: 0,
     mon: 0,
     tue: 0,
@@ -57,11 +78,12 @@ const createData = (
   });
 
   return {
-    name,
+    fullname,
     avatar,
     id,
-    ...weeklyHours,
-    total: totalHours,
+    weeklyHours,
+    totalHours,
+    is_pin,
   };
 };
 function createUserDetailTableData(
@@ -110,14 +132,12 @@ const TableSheet: React.FC<IProps> = (props) => {
   const { isOpen } = useSelector(
     (state: RootState) => state.userNavigationDetail,
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [userData, setUserData] = useState<any>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [filterUserData, setFilterUserData] = useState<any>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [userFilterDataDetail, setUserFilterDataDetail] = useState<any>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [rows, setRows] = useState<any[]>([]);
+
+  const [userData, setUserData] = useState<CompanyTimeSheet[]>([]);
+  const [filterUserData, setFilterUserData] = useState<CompanyTimeSheet[]>([]);
+  const [userFilterDataDetail, setUserFilterDataDetail] =
+    useState<CompanyTimeSheet | null>(null);
+  const [rows, setRows] = useState<EmployeeTimeSheetRowData[]>([]);
   const [totalHoursPerDayState, setTotalHoursPerDayState] = useState<{
     sun: number;
     mon: number;
@@ -136,8 +156,18 @@ const TableSheet: React.FC<IProps> = (props) => {
   ]);
   // const [allTableDataVisible, setAllTableDataVisible] = useState<boolean>(true);
   // const [detailDataTable, setDetailDataTable] = useState<boolean>(false);
+  const { onPinTimeSheet, onGetCompanyTimeSheet, params } = useGetMyTimeSheet();
+  const { onAddSnackbar } = useSnackbar();
   const [inputSearchData, setInputSearchData] = useState("");
   const open = Boolean(anchorEl);
+
+  const formattedDates: IFormattedDate[] = useMemo(() => {
+    return props.dateRange.map((date) => ({
+      day: moment(date).format("ddd"),
+      date: moment(date).format("DD MMM"),
+    }));
+  }, [props.dateRange]);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -173,7 +203,227 @@ const TableSheet: React.FC<IProps> = (props) => {
     // setAllTableDataVisible(!allTableDataVisible);
     // setDetailDataTable(!detailDataTable);
   };
+
+  const handlePinEmployee = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    user: EmployeeTimeSheetRowData,
+  ) => {
+    event.stopPropagation();
+
+    const queries: GetMyTimeSheetQueries = {
+      start_date: moment(props.dateRange[0]).format("YYYY-MM-DD"),
+      end_date: moment(props.dateRange[props.dateRange.length - 1]).format(
+        "YYYY-MM-DD",
+      ),
+      search_key: "",
+    };
+
+    onPinTimeSheet({
+      id: user.id,
+      is_pin: !user.is_pin,
+      type: "USER",
+    })
+      .then(() => {
+        onGetCompanyTimeSheet(queries);
+        onAddSnackbar(
+          `${user?.is_pin ? "Unpin" : "Pin"} timesheet success`,
+          "success",
+        );
+      })
+      .catch(() => {
+        onAddSnackbar(
+          `${user?.is_pin ? "Unpin" : "Pin"} timesheet fail`,
+          "error",
+        );
+      });
+  };
+
+  const _renderTableBody = () => {
+    const convertObjectToArray = !_.isEmpty(rows) ? Object.values(rows) : rows;
+
+    const sortedByDate = convertObjectToArray.sort((a, b) => {
+      const dateA = new Date(a.is_pin ?? 0);
+      const dateB = b ? new Date(b.is_pin ?? 0) : null;
+      if (dateB)
+        return (dateB as unknown as number) - (dateA as unknown as number);
+      return -1;
+    });
+
+    const sortedByPin = sortedByDate.sort((_a, b) => (b && b.is_pin ? 1 : -1));
+    return (
+      <TableBody>
+        {_.map(sortedByPin, (row) => (
+          <TableRow key={row.id}>
+            <TableCell
+              sx={{
+                ...tableCellDataStyles,
+                fontFamily: "unset",
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+                borderRight: "1px solid #EBEAF2",
+                cursor: "pointer",
+                "&:hover": {
+                  ".pin_project": {
+                    visibility: "visible",
+                  },
+                },
+              }}
+              onClick={() =>
+                handleGetUserDetail(row.fullname, row.avatar, row.id)
+              }
+            >
+              {row.avatar ? (
+                <Avatar src={`${row.avatar}`} sx={{ width: 20, height: 20 }} />
+              ) : (
+                <Avatar sx={{ width: 20, height: 20 }}>
+                  <Person />
+                </Avatar>
+              )}
+              <Typography
+                sx={{
+                  color: "blue.normal",
+                  fontWeight: 500,
+                  fontSize: "14px",
+                  fontFamily: "inherit",
+                }}
+              >
+                {row.fullname}
+              </Typography>
+
+              <IconButton
+                className="pin_project"
+                sx={{
+                  width: 24,
+                  height: 24,
+                  visibility: row.is_pin ? "visible" : "hidden",
+                }}
+                onClick={(e) => handlePinEmployee(e, row)}
+              >
+                {row.is_pin ? <PinActiveIcon /> : <PinIcon />}
+              </IconButton>
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+              }}
+            >
+              {formatHoursToHHMM(row.weeklyHours.sun)}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+              }}
+            >
+              {formatHoursToHHMM(row.weeklyHours.sun)}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+              }}
+            >
+              {formatHoursToHHMM(row.weeklyHours.tue)}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+              }}
+            >
+              {formatHoursToHHMM(row.weeklyHours.wed)}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+              }}
+            >
+              {formatHoursToHHMM(row.weeklyHours.thu)}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+              }}
+            >
+              {formatHoursToHHMM(row.weeklyHours.fri)}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+              }}
+            >
+              {formatHoursToHHMM(row.weeklyHours.sat)}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                ...tableCellDataStyles,
+                background: "#D9F0FD",
+                color: "neutral.800",
+                border: "1px solid #EBEAF2",
+                fontWeight: "600",
+              }}
+            >
+              {formatHoursToHHMM(row.totalHours)}
+            </TableCell>
+          </TableRow>
+        ))}
+        <TableRow
+          sx={{
+            background: "#D9F0FD",
+            border: "1px solid #EBEAF2",
+            "& > td": {
+              fontFamily: "unset",
+              fontSize: "14px",
+              color: "neutral.800",
+              fontWeight: "600",
+              borderRight: "1px solid #EBEAF2",
+            },
+          }}
+        >
+          <TableCell align="right">Total</TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(totalHoursPerDayState.sun)}
+          </TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(totalHoursPerDayState.mon)}
+          </TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(totalHoursPerDayState.tue)}
+          </TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(totalHoursPerDayState.wed)}
+          </TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(totalHoursPerDayState.thu)}
+          </TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(totalHoursPerDayState.fri)}
+          </TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(totalHoursPerDayState.sat)}
+          </TableCell>
+          <TableCell align="center">
+            {formatHoursToHHMM(
+              Object.values(totalHoursPerDayState).reduce(
+                (acc, curr) => acc + curr,
+                0,
+              ),
+            )}
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    );
+  };
+
   useEffect(() => {
+    if (!userFilterDataDetail) return;
+
     if (userFilterDataDetail.id) {
       const filteredUser = props.data.filter(
         (user) => user.id === userFilterDataDetail.id,
@@ -182,47 +432,44 @@ const TableSheet: React.FC<IProps> = (props) => {
         setUserFilterDataDetail(filteredUser[0]);
       }
     }
-  }, [props.data, props.dateRange]);
-  console.log(userFilterDataDetail);
+  }, [props.data, props.dateRange, userFilterDataDetail]);
 
   useEffect(() => {
     setUserData(props.data);
   }, [props.data]);
 
-  const formattedDates = props.dateRange.map((date) => ({
-    day: moment(date).format("ddd"),
-    date: moment(date).format("DD MMM"),
-  }));
   useEffect(() => {
     const calculateRowsAndTotals = () => {
       const rows =
         filterUserData.length === 0
           ? userData.map((user) =>
-              createData(
+              createRowData(
                 user.fullname,
                 user.avatar?.link,
                 user.timesheet,
                 user.id,
+                user.is_pin as string,
               ),
             )
           : filterUserData.map((user) =>
-              createData(
+              createRowData(
                 user.fullname,
                 user.avatar?.link,
                 user.timesheet,
                 user.id,
+                user.is_pin as string,
               ),
             );
 
       const totalHoursPerDay = rows.reduce(
         (acc, row) => {
-          acc.sun += row.sun;
-          acc.mon += row.mon;
-          acc.tue += row.tue;
-          acc.wed += row.wed;
-          acc.thu += row.thu;
-          acc.fri += row.fri;
-          acc.sat += row.sat;
+          acc.sun += row.weeklyHours.sun;
+          acc.mon += row.weeklyHours.mon;
+          acc.tue += row.weeklyHours.tue;
+          acc.wed += row.weeklyHours.wed;
+          acc.thu += row.weeklyHours.thu;
+          acc.fri += row.weeklyHours.fri;
+          acc.sat += row.weeklyHours.sat;
           return acc;
         },
         { sun: 0, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 },
@@ -233,61 +480,81 @@ const TableSheet: React.FC<IProps> = (props) => {
     };
 
     calculateRowsAndTotals();
-  }, [userData]);
-  // console.log(rows)
+  }, [filterUserData, userData]);
+
   return (
     <>
       {isOpen === false && (
-        <TableContainer sx={{ maxHeight: "600px", overflow: "auto" }}>
-          <Table>
-            <TableHead
-              sx={{
-                fontWeight: "600",
-              }}
-            >
+        <TableContainer
+          sx={{
+            maxHeight: "100%",
+            overflow: "auto",
+            borderRadius: "12px",
+            border: "1px solid #EBEAF2",
+          }}
+        >
+          <Table
+            stickyHeader
+            style={{
+              tableLayout: "fixed",
+            }}
+            aria-label="sticky table"
+          >
+            <TableHead>
               <TableRow>
                 <TableCell
                   sx={{
-                    // display: "flex",
-                    // justifyContent: "space-between",
-                    // alignItems: "center",
+                    ...trackingTableCellStyles,
                     background: "#0575E6",
-                    color: "white",
-                    height: "68px",
-                    position: "relative",
+                    maxWidth: "356px",
+                    width: "356px",
                   }}
                 >
-                  <Typography>User</Typography>
-                  <IconButton
+                  <Box
                     sx={{
-                      display: "inline-block",
-                      verticalAlign: "middle", // Vertically centers SearchIcon
-                      position: "absolute",
-                      right: "16px", // Positions SearchIcon to the right
-                      top: "50%",
-                      transform: "translateY(-50%)", // Centers vertically
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                     }}
-                    aria-controls={open ? "basic-menu" : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? "true" : undefined}
-                    onClick={handleClick}
                   >
-                    <SearchIcon
+                    <Typography
                       sx={{
-                        color: "white",
+                        fontFamily: "inherit",
+                        fontWeight: "600",
                       }}
-                    />
-                    {inputSearchData.length >= 1 && (
-                      <Chip
-                        label={inputSearchData.length}
-                        sx={{
-                          background: "white",
-                          color: "#0575E6",
-                          height: "18px",
-                        }}
-                      />
-                    )}
-                  </IconButton>
+                    >
+                      User
+                    </Typography>
+                    <Box>
+                      <IconButton
+                        sx={
+                          {
+                            // padding: "16px",
+                          }
+                        }
+                        aria-controls={open ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={handleClick}
+                      >
+                        <SearchIcon
+                          sx={{
+                            color: "white",
+                          }}
+                        />
+                      </IconButton>
+                      {inputSearchData.length >= 1 && (
+                        <Chip
+                          label={inputSearchData.length}
+                          sx={{
+                            background: "white",
+                            color: "#0575E6",
+                            height: "18px",
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
                   <Popover
                     open={open}
                     anchorEl={anchorEl}
@@ -296,13 +563,26 @@ const TableSheet: React.FC<IProps> = (props) => {
                       vertical: "bottom",
                       horizontal: "left",
                     }}
+                    sx={{
+                      "& > .MuiPaper-root": {
+                        borderRadius: "3px 3px 12px 12px",
+                      },
+                    }}
                   >
-                    <Box sx={{ p: 1 }}>
+                    <Box
+                      sx={{
+                        p: 1,
+                        width: "320px",
+                        maxWidth: "320px",
+                        padding: "10px 12px",
+                      }}
+                    >
                       <TextField
                         defaultValue={inputSearchData}
                         onChange={handleSearchUser}
                         placeholder="Search"
                         id="search-input"
+                        sx={{ width: "100%" }}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -315,24 +595,65 @@ const TableSheet: React.FC<IProps> = (props) => {
                               borderColor: "#EFEFEF",
                               borderRadius: "100px",
                             },
+                            height: 40,
+                            fontFamily: "unset",
                           },
                         }}
                       />
                     </Box>
-                    {searchUser.map((user, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        <Checkbox />
-                        <Avatar sx={{ width: 20, height: 20 }}>H</Avatar>
-                        <Typography>{user.name}</Typography>
-                      </div>
-                    ))}
+                    <Box sx={{ paddingBottom: "10px" }}>
+                      {searchUser.map((user, index) => (
+                        <Box
+                          key={index}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            padding: "4px 12px",
+                            "&:hover": {
+                              backgroundColor: "#D9F0FD",
+                            },
+                          }}
+                        >
+                          <FormControlLabel
+                            sx={{
+                              margin: 0,
+                              width: "100%",
+                            }}
+                            control={
+                              <Checkbox
+                                sx={{
+                                  color: "#DFE1EF",
+                                }}
+                              />
+                            }
+                            label={
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  gap: "8px",
+                                  alignItems: "center",
+                                  width: "100%",
+                                }}
+                              >
+                                <Avatar sx={{ width: 22, height: 22 }}>
+                                  A
+                                </Avatar>
+                                <Typography
+                                  sx={{
+                                    fontFamily: inter.style.fontFamily,
+                                    fontWeight: "600",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {user.name}
+                                </Typography>
+                              </Box>
+                            }
+                          />
+                        </Box>
+                      ))}
+                    </Box>
                   </Popover>
                 </TableCell>
                 {formattedDates.map((date, index) => (
@@ -340,253 +661,58 @@ const TableSheet: React.FC<IProps> = (props) => {
                     key={index}
                     align="center"
                     sx={{
-                      height: "68px",
+                      ...trackingTableCellStyles,
                       background: "#14B9E5",
                       border: "1px solid #EBEAF2",
                       color: "white",
                     }}
                   >
-                    <Typography>{date.day}</Typography>
-                    <Typography>{date.date}</Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "inherit",
+                        fontWeight: "600",
+                        fontSize: "inherit",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {date.day}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "inherit",
+                        fontWeight: "600",
+                        fontSize: "inherit",
+                      }}
+                    >
+                      {date.date}
+                    </Typography>
                   </TableCell>
                 ))}
                 <TableCell
                   align="center"
                   sx={{
+                    ...trackingTableCellStyles,
                     background: "#D9F0FD",
-                    color: "#333333",
+                    color: "neutral.800",
                     border: "1px solid #EBEAF2",
                     fontWeight: "700",
+                    fontFamily: "unset",
                   }}
                 >
                   Total
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  //   sx={{ "&:last-child td, &:last-child th": { border: "1px solid #EBEAF2" } }}
-                >
-                  <TableCell
-                    sx={{
-                      display: "flex",
-                      height: "100%",
-                      gap: "8px",
-                      alignItems: "center",
-                      borderRight: "1px solid #EBEAF2",
-                      cursor: "pointer",
-                    }}
-                    onClick={() =>
-                      handleGetUserDetail(row.name, row.avatar, row.id)
-                    }
-                  >
-                    {row.avatar ? (
-                      <Avatar
-                        src={`${row.avatar}`}
-                        sx={{ width: 20, height: 20 }}
-                      />
-                    ) : (
-                      <Avatar sx={{ width: 20, height: 20 }}>
-                        <Person />
-                      </Avatar>
-                    )}
-                    <Typography>{row.name}</Typography>
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.sun} hrs
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.mon} hrs
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.tue} hrs
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.wed} hrs
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.thu} hrs
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.fri} hrs
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ borderRight: "1px solid #EBEAF2" }}
-                  >
-                    {row.sat} hrs
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      background: "#D9F0FD",
-                      color: "#333333",
-                      border: "1px solid #EBEAF2",
-                    }}
-                  >
-                    {row.total} hrs
-                  </TableCell>
-                </TableRow>
-              ))}
-              <TableRow
-                sx={{
-                  background: "#D9F0FD",
-                  color: "#333333",
-                  border: "1px solid #EBEAF2",
-                  fontWeight: "700",
-                }}
-              >
-                <TableCell align="right">Total</TableCell>
-                <TableCell align="center">
-                  {totalHoursPerDayState.sun} hrs
-                </TableCell>
-                <TableCell align="center">
-                  {totalHoursPerDayState.mon} hrs
-                </TableCell>
-                <TableCell align="center">
-                  {totalHoursPerDayState.tue} hrs
-                </TableCell>
-                <TableCell align="center">
-                  {totalHoursPerDayState.wed} hrs
-                </TableCell>
-                <TableCell align="center">
-                  {totalHoursPerDayState.thu} hrs
-                </TableCell>
-                <TableCell align="center">
-                  {totalHoursPerDayState.fri} hrs
-                </TableCell>
-                <TableCell align="center">
-                  {totalHoursPerDayState.sat} hrs
-                </TableCell>
-                <TableCell align="center">
-                  {Object.values(totalHoursPerDayState).reduce(
-                    (acc, curr) => acc + curr,
-                    0,
-                  )}{" "}
-                  hrs
-                </TableCell>
-              </TableRow>
-            </TableBody>
+            {_renderTableBody()}
           </Table>
         </TableContainer>
       )}
+      {/* TimeSheet detail of user */}
       {isOpen && (
-        <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead
-              sx={{
-                fontWeight: "600",
-              }}
-            >
-              <TableRow>
-                <TableCell
-                  sx={{
-                    // display: "flex",
-                    // justifyContent: "space-between",
-                    // alignItems: "center",
-                    background: "#0575E6",
-                    color: "white",
-                    height: "68px",
-                    position: "relative",
-                  }}
-                  rowSpan={2}
-                >
-                  <Typography>Project</Typography>
-                </TableCell>
-                
-                {formattedDates.map((date, index) => (
-                  <TableCell
-                    key={index}
-                    align="center"
-                    sx={{
-                      height: "68px",
-                      background: "#14B9E5",
-                      border: "1px solid #EBEAF2",
-                      color: "white",
-                    }}
-                  >
-                    <Typography>{date.day}</Typography>
-                    <Typography>{date.date}</Typography>
-                  </TableCell>
-                ))}
-                <TableCell
-                  align="center"
-                  sx={{
-                    background: "#D9F0FD",
-                    color: "#333333",
-                    border: "1px solid #EBEAF2",
-                    fontWeight: "700",
-                  }}
-                >
-                  Total
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {userFilterDataDetail?.timesheet?.map((entry, index) => (
-                <tr key={index}>
-                  <td>{entry.project.name}</td>
-                  {props.dateRange.map(({ date }, i) => {
-                    const timesheetEntry = userFilterDataDetail.timesheet.find(
-                      (sheet) =>
-                        sheet.day === moment(date).format("YYYY-MM-DD"), 
-                    );
-                    return (
-                      <td key={i}>
-                        {timesheetEntry ? timesheetEntry : "00:00"}
-                      </td>
-                    );
-                  })}
-                  <td>
-                    {userFilterDataDetail.timesheet.reduce(
-                      (acc, sheet) => acc + sheet.duration,
-                      0,
-                    )}
-                  </td>
-                </tr>
-              ))}
-              <tr>
-                <td colSpan={2}>Total</td>
-                {props.dateRange.map(({ date }, i) => (
-                  <td key={i}>
-                    {userFilterDataDetail?.timesheet
-                      ?.filter(
-                        (sheet) =>
-                          sheet.day === moment(date).format("YYYY-MM-DD"),
-                      )
-                      .reduce((acc, sheet) => acc + sheet.duration, 0)}
-                  </td>
-                ))}
-                <td>
-                  {userFilterDataDetail.timesheet.reduce(
-                    (acc, sheet) => acc + sheet.duration,
-                    0,
-                  )}
-                </td>
-              </tr>
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <EmployeesTableSheet
+          employeeDataDetail={userFilterDataDetail}
+          formattedDates={formattedDates}
+        />
       )}
     </>
   );

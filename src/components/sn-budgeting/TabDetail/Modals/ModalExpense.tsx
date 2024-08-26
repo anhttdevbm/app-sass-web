@@ -20,12 +20,9 @@ import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
+import Textarea from "components/Textarea";
 import { ExpenseStatus } from "constant/enums";
-import {
-  FILE_ACCEPT, NS_BUDGETING,
-  NS_COMMON
-} from "constant/index";
+import { FILE_ACCEPT, NS_BUDGETING, NS_COMMON } from "constant/index";
 import { User } from "constant/types";
 import FileCsvIcon from "icons/FileCsvIcon";
 import FileDocIcon from "icons/FileDocIcon";
@@ -95,7 +92,7 @@ const defaultValues: TExpenseAddForm = {
   attachment: "",
   dueDate: new Date(),
   paymentDate: new Date(),
-  vendor: ''
+  vendor: "",
 };
 
 const sxInput = {
@@ -150,14 +147,26 @@ export const ModalExpense = ({
         date: yup.string().required("Date is required"),
         owner: yup.string().required("Owner is required"),
         service: yup.string().required("Service is required"),
-        qty: yup.number().required('Quantity is required').positive('Quantity must be positive'),
-        cost: yup.number().required('Cost is required').positive('Cost must be positive'),
+        qty: yup
+          .number()
+          .required("Quantity is required")
+          .positive("Quantity must be positive"),
+        cost: yup
+          .number()
+          .required("Cost is required")
+          .positive("Cost must be positive"),
         currency: yup.string().required("Please select a currency"),
-        totalCost: yup.number().required('Total cost is required').positive('Total cost must be positive'),
-        billable: yup.number().required('Total cost is required').positive('Billable cost must be positive'),
-        dueDate: yup.date().required('Due date is required'),
-        paymentDate: yup.date().required('Payment date is required'),
-        vendor: yup.string().required('Please select a vendor'),
+        totalCost: yup
+          .number()
+          .required("Total cost is required")
+          .positive("Total cost must be positive"),
+        billable: yup
+          .number()
+          .required("Total cost is required")
+          .positive("Billable cost must be positive"),
+        dueDate: yup.date().required("Due date is required"),
+        paymentDate: yup.date().required("Payment date is required"),
+        vendor: yup.string().required("Please select a vendor"),
       }),
     ),
   });
@@ -339,7 +348,7 @@ export const ModalExpense = ({
   const newInput = {
     // height: "65px",
     ".MuiInputBase-root": {
-      ".MuiAutocomplete-endAdornment":{right:"21px"},
+      ".MuiAutocomplete-endAdornment": { right: "21px" },
       background:
         " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
       padding: "9px!important",
@@ -350,7 +359,7 @@ export const ModalExpense = ({
       fontSize: "16px!important",
       // height:"38px",
       ".MuiInputBase-input": { p: "0 10px!important" },
-    
+
       ".MuiChip-root": {
         color: "#0575e6",
         padding: "5px",
@@ -367,16 +376,17 @@ export const ModalExpense = ({
       transform: "translate(0, 16px) scale(1)",
     },
   };
-  const newBorderSVG ={
-    ".MuiInputBase-root.MuiOutlinedInput-root":{svg: {
-      borderRadius: "50px",
-      border: "0.2px solid #5C5C5C",
-      fontSize: "16px",
-      color: "black",
-      "&:hover": { color: "black" },
-    },}
-      
-  }
+  const newBorderSVG = {
+    ".MuiInputBase-root.MuiOutlinedInput-root": {
+      svg: {
+        borderRadius: "50px",
+        border: "0.2px solid #5C5C5C",
+        fontSize: "16px",
+        color: "black",
+        "&:hover": { color: "black" },
+      },
+    },
+  };
 
   return (
     <FormLayout
@@ -402,7 +412,7 @@ export const ModalExpense = ({
       }
       onSubmit={handleSubmit(onSubmit)}
       sx={{
-        borderRadius:"24px",
+        borderRadius: "24px",
         minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
@@ -450,7 +460,10 @@ export const ModalExpense = ({
                     <Controller
                       control={control}
                       name="date"
-                      render={({ field: { onChange, value }, fieldState: { error } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <DatePicker
                           rootSx={sxInput}
                           name="date"
@@ -545,7 +558,10 @@ export const ModalExpense = ({
                     <Controller
                       control={control}
                       name="qty"
-                      render={({ field: { onChange, value }, fieldState: { error } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <Input
                           rootSx={sxInput}
                           fullWidth
@@ -567,7 +583,10 @@ export const ModalExpense = ({
                     <Controller
                       control={control}
                       name="cost"
-                      render={({ field: { onChange, value }, fieldState: { error } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <Input
                           rootSx={sxInput}
                           fullWidth
@@ -643,7 +662,10 @@ export const ModalExpense = ({
                       <Controller
                         control={control}
                         name="totalCost"
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <Input
                             rootSx={sxInput}
                             fullWidth
@@ -681,7 +703,10 @@ export const ModalExpense = ({
                       <Controller
                         control={control}
                         name="billable"
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <Input
                             rootSx={sxInput}
                             fullWidth
@@ -692,7 +717,7 @@ export const ModalExpense = ({
                             type="number"
                             InputProps={{
                               endAdornment: watch("currency"),
-                              inputProps: { min: 0 }
+                              inputProps: { min: 0 },
                             }}
                             sx={{
                               "& .MuiInputBase-root.MuiOutlinedInput-root": {
@@ -721,7 +746,10 @@ export const ModalExpense = ({
                       <Controller
                         control={control}
                         name="totalCost"
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <Input
                             rootSx={sxInput}
                             fullWidth
@@ -748,7 +776,10 @@ export const ModalExpense = ({
                       <Controller
                         control={control}
                         name="markup"
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <Input
                             rootSx={sxInput}
                             fullWidth
@@ -788,7 +819,10 @@ export const ModalExpense = ({
                       <Controller
                         control={control}
                         name="billable"
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <Input
                             rootSx={sxInput}
                             fullWidth
@@ -822,7 +856,10 @@ export const ModalExpense = ({
                 <Controller
                   control={control}
                   name="description"
-                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <>
                       <Textarea
                         fullWidth
@@ -854,7 +891,7 @@ export const ModalExpense = ({
                     borderRadius: "4px !important",
                     backgroundColor: "#f5f5f5",
                     p: "4px !important",
-                    border: '1px solid #99999970 !important',
+                    border: "1px solid #99999970 !important",
                     "&:hover": {
                       backgroundColor: "#f4f4f4",
                     },
@@ -1044,7 +1081,10 @@ export const ModalExpense = ({
                       <Controller
                         control={control}
                         name="dueDate"
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <DatePicker
                             rootSx={sxInput}
                             name="dueDate"
@@ -1080,7 +1120,10 @@ export const ModalExpense = ({
                       <Controller
                         control={control}
                         name="paymentDate"
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => (
                           <DatePicker
                             rootSx={sxInput}
                             name="paymentDate"

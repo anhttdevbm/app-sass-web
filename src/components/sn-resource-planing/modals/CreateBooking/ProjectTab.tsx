@@ -1,39 +1,41 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
-  Typography,
-  Collapse,
-  Stack,
-  useTheme,
   CircularProgress,
+  Collapse,
+  FormHelperText,
+  Stack,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import TextFieldSelect, {
-  IOptionStructure,
-} from "components/shared/TextFieldSelect";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
-import React, { UIEvent, UIEventHandler, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
-import TextFieldInput from "components/shared/TextFieldInput";
-import ArrowDownIcon from "icons/ArrowDownIcon";
-import _ from "lodash";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import SelectController from "components/SelectController";
 import { Button, Tooltip } from "components/shared";
+import TextFieldInput from "components/shared/TextFieldInput";
+import TextFieldSelect from "components/shared/TextFieldSelect";
+import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
+import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
+import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import Textarea from "components/Textarea";
+import TextStatus from "components/TextStatus";
+import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
+import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import dayjs from "dayjs";
+import ArrowDownIcon from "icons/ArrowDownIcon";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { Control, Controller, useForm } from "react-hook-form";
+import { usePositions } from "store/company/selectors";
+import { TBudget } from "store/project/budget/action";
+import { useMembersOfProject } from "store/project/selectors";
+import { BookingData } from "store/resourcePlanning/action";
 import {
   useBookingAll,
   useGetServiceBudget,
 } from "store/resourcePlanning/selector";
-import dayjs from "dayjs";
-import { BookingData } from "store/resourcePlanning/action";
-import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
-import { useGetSchemas } from "../Schemas";
-import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
-import { StatusCell } from "components/Table";
-import TextStatus from "components/TextStatus";
 import { debounce, formatNumber } from "utils/index";
+import { useGetSchemas } from "../Schemas";
 
 interface IProps {
   open: boolean;
@@ -41,6 +43,9 @@ interface IProps {
   resourceId: string;
   selectedDateRange?: Date[];
   userId?: string;
+  budgetSelected?: string | null;
+  projectSelected?: string | null;
+  serviceId?: string | null;
 }
 
 const ProjectTab = ({
@@ -49,13 +54,20 @@ const ProjectTab = ({
   resourceId,
   userId,
   selectedDateRange,
+  projectSelected,
+  budgetSelected,
+  serviceId,
 }: IProps) => {
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [isFocusAllocation, setIsFocusAllocation] = useState(false);
   const [isShowTooltip, setIsShowTooltip] = useState(false);
+  const [listBudgets, setListBudgets] = useState<TBudget[] | []>([]);
+  const [listServices, setListServices] = useState<
+    { value: string; label: string }[] | []
+  >([]);
+
   const { palette } = useTheme();
-  const { positionOptions, projectOptions, timeOptions, salesOptions } =
-    useGetOptions();
+  const { projectOptions, timeOptions } = useGetOptions();
   const { createBooking, loading } = useBookingAll();
   const { schemaProject } = useGetSchemas();
   const commonT = useTranslations(NS_COMMON);
@@ -63,16 +75,14 @@ const ProjectTab = ({
   const {
     control: controlProject,
     handleSubmit: handleSubmitProject,
-    // setValue: setValueProject,
-    // clearErrors: clearErrorsProject,
     watch: watchProject,
     reset: resetProject,
     formState: { errors: errorsProject },
   } = useForm({
     resolver: yupResolver(schemaProject),
     defaultValues: {
-      project_id: "",
-      sale_id: "",
+      project_id: projectSelected || "",
+      service_id: serviceId || "",
       dateRange: {
         startDate: selectedDateRange?.[0] || undefined,
         endDate: selectedDateRange?.[1] || undefined,
@@ -80,48 +90,98 @@ const ProjectTab = ({
       allocation: 1,
       allocation_type: RESOURCE_ALLOCATION_TYPE.HOUR,
       note: "",
+      role: "",
+      budget_id: budgetSelected || "",
     },
     mode: "all",
   });
   const { workedTime, estimate, leftToSchedule, scheduledTime } =
     useCalculateDetail(
-      watchProject("sale_id"),
+      watchProject("service_id"),
       watchProject("project_id"),
       resourceId,
     );
-  const { setProjectId, projectId, queries, setQueries, serviceBudgetOptions } =
-    useGetServiceBudget();
+  const {
+    setProjectId,
+    queries,
+    setQueries,
+    serviceBudgetOptions,
+    getBudgetsByIdProject,
+    getServiceByBudgetQueries,
+  } = useGetServiceBudget();
+
+  const { items } = usePositions();
+
+  const { items: currListMember, onGetMembersOfProject } =
+    useMembersOfProject();
+
+  const listRoles = useMemo(() => {
+    return items?.map((item) => ({ value: item.id, label: item.name }));
+  }, [items]);
+
+  const listMembers = useMemo(() => {
+    return currListMember?.map((item) => ({
+      value: item.id,
+      label: item.fullname,
+    }));
+  }, [currListMember]);
 
   const onSubmitProject = async (data) => {
     const cleanData: BookingData = {
       ...data,
-      user_id: userId,
+      user_id: data?.user_id,
       start_date: dayjs(data.dateRange.startDate).format("YYYY-MM-DD"),
       end_date: dayjs(data.dateRange.endDate).format("YYYY-MM-DD"),
       booking_type: RESOURCE_EVENT_TYPE.PROJECT_BOOKING,
     };
     await createBooking(cleanData).then(() => {
       onClose();
+      resetProject();
     });
   };
 
   useEffect(() => {
-    if (!open) {
-      resetProject();
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (!watchProject("sale_id")) {
+    if (!watchProject("service_id")) {
       setIsShowDetail(false);
     }
-  }, [watchProject("sale_id"), isShowDetail]);
+  }, [watchProject("service_id"), isShowDetail]);
 
-  useEffect(() => {
+  const handleChangeProjectId = async () => {
     if (watchProject("project_id")) {
       setProjectId(watchProject("project_id"));
+      onGetMembersOfProject(watchProject("project_id"), {});
+      const res = await getBudgetsByIdProject(watchProject("project_id"));
+
+      if (res.status === 200) {
+        const convertValue = res.data?.map((item: TBudgetService) => ({
+          value: item.id,
+          label: item.name,
+        }));
+        setListBudgets(convertValue);
+      }
     }
+  };
+
+  const handleChangeBudget = async (value: string) => {
+    if (value) {
+      const res = await getServiceByBudgetQueries(value);
+      const convertValue = res.data?.map((item: TBudgetService) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      if (res.status === 200) {
+        setListServices(convertValue);
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleChangeProjectId();
   }, [watchProject("project_id")]);
+
+  useEffect(() => {
+    if (budgetSelected) handleChangeBudget(budgetSelected);
+  }, [budgetSelected]);
 
   const onScroll = debounce((e: any) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target;
@@ -137,94 +197,104 @@ const ProjectTab = ({
   return (
     <Grid2 container spacing={2} sx={{ mt: 1 }}>
       <Grid2 xs={12}>
-        <Controller
+        <SelectController
           name="project_id"
-          control={controlProject}
-          render={({ field }) => (
-            <TextFieldSelect
-              helperText={errorsProject.project_id?.message}
-              error={!!errorsProject.project_id?.message}
-              required
-              options={projectOptions}
-              label={resourceT("form.project")}
-              {...field}
-              MenuProps={{
-                sx: {
-                  maxHeight: "400px",
-                },
-              }}
-              sx={{
-                overflow: "hidden",
-                "& .Muibox-root .MuiBox-root": {
-                  overflow: "hidden",
-                  justifyContent: "space-between",
-                  maxWidth: "100%",
-                },
-                "& .MuiStack-root": {
-                  width: "100%",
-                },
-                "& .MuiSelect-selet": {
-                  pr: 0,
-                },
-                "& .MuiSelect-select": {
-                  pr: "16px!important",
-                },
-              }}
-            />
-          )}
+          control={controlProject as unknown as Control}
+          listOptions={projectOptions}
+          label={resourceT("form.project")}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
+          MenuProps={{
+            sx: {
+              maxHeight: "400px",
+            },
+          }}
         />
       </Grid2>
       <Grid2 xs={12}>
-        <Controller
-          name="sale_id"
-          control={controlProject}
-          render={({ field }) => (
-            <TextFieldSelect
-              value={field.value}
-              disabled={!watchProject("project_id")}
-              onChange={(event) => {
-                field.onChange(event.target.value);
-              }}
-              MenuProps={{
-                PaperProps: {
-                  onScroll: onScroll,
-                },
-                sx: {
-                  maxHeight: "400px",
-                },
-              }}
-              helperText={errorsProject.sale_id?.message}
-              error={!!errorsProject.sale_id?.message}
-              required
-              options={serviceBudgetOptions as IOptionStructure[]}
-              label={resourceT("form.services")}
-              sx={{
-                "& .Muibox-root .MuiBox-root": {
-                  overflow: "hidden",
-                  justifyContent: "space-between",
-                  maxWidth: "95%",
-                  gap: 1,
-                },
-                "& .MuiStack-root": {
-                  width: "95%",
-                },
-                "& .MuiSelect-select": {
-                  pr: "16px!important",
-                },
-              }}
-              // MenuProps={{
-              //   sx: {
-              //     "& .MuiMenuItem-root": {
-              //       overflow: "hidden",
-              //       textOverflow: "ellipsis",
-              //       whiteSpace: "nowrap",
-              //       wordBreak: "break-word",
-              //       maxWidth: "98%",
-              //     },
-              //   },
-              // }}
-            />
-          )}
+        <SelectController
+          control={controlProject as unknown as Control}
+          name={"budget_id"}
+          label={resourceT("form.budget")}
+          handleChange={(e) => handleChangeBudget(e.target.value?.toString())}
+          listOptions={listBudgets}
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+            pointerEvents: !watchProject("project_id") ? "none" : "auto",
+          }}
+        />
+      </Grid2>
+
+      <Grid2 xs={12}>
+        <SelectController
+          name="service_id"
+          control={controlProject as unknown as Control}
+          listOptions={listServices}
+          label={resourceT("form.services")}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+            pointerEvents: !watchProject("project_id") ? "none" : "auto",
+          }}
+          MenuProps={{
+            PaperProps: {
+              onScroll: onScroll,
+            },
+            sx: {
+              maxHeight: "400px",
+            },
+          }}
+        />
+      </Grid2>
+      <Grid2 xs={12}>
+        <SelectController
+          control={controlProject as unknown as Control}
+          name={"user_id"}
+          label={resourceT("form.user")}
+          listOptions={listMembers || []}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
+        />
+      </Grid2>
+      <Grid2 xs={12}>
+        <SelectController
+          control={controlProject as unknown as Control}
+          name={"role"}
+          label={resourceT("form.role")}
+          listOptions={listRoles || []}
+          required
+          sx={{
+            borderRadius: "100px",
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#EFEFEF",
+            },
+          }}
         />
       </Grid2>
       <Grid2 xs={12} md={6}>
@@ -232,82 +302,155 @@ const ProjectTab = ({
           name="dateRange"
           control={controlProject}
           render={({ field }) => (
-            <CustomDateRangePicker
-              required
-              value={field.value}
-              onChange={(value) => {
-                field.onChange(value);
-              }}
-              label={resourceT("form.dateRange")}
-              placeholder=""
-              errorMessage={
-                errorsProject.dateRange?.startDate?.message ||
-                errorsProject.dateRange?.endDate?.message
-              }
-            />
+            <div>
+              <Typography
+                color={"#4D4D4D"}
+                fontSize={13}
+                pb={2}
+                fontWeight={700}
+              >
+                {resourceT("form.dateRange")}
+                <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+              </Typography>
+              <CustomDateRangePicker
+                value={field.value}
+                onChange={(value) => {
+                  field.onChange(value);
+                }}
+                // label={resourceT("form.dateRange")}
+                placeholder=""
+                errorMessage={
+                  errorsProject.dateRange?.startDate?.message ||
+                  errorsProject.dateRange?.endDate?.message
+                }
+                sx={{
+                  width: "100%",
+
+                  ".MuiBox-root": {
+                    borderColor: "#EFEFEF",
+                    borderRadius: "100px",
+                    height: 36,
+                    display: "block",
+                    padding: "4px 12px",
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                  },
+                  ".MuiSvgIcon-root": {
+                    color: "#B3B3B3",
+                  },
+                }}
+              />
+            </div>
           )}
         />
       </Grid2>
       <Grid2 xs={12} md={6}>
-        <Stack
-          direction="row"
-          sx={{
-            ".text-field-input-container, .text-field-select-container": {
-              border: `1px solid transparent`,
-              transition: "border-color 0.3s ease",
-            },
-            border: `1px solid ${
-              isFocusAllocation ? palette.primary.main : "transparent"
-            }`,
-            "&:focus-within": {
-              borderColor: palette.primary.main,
-            },
-          }}
-        >
-          <Controller
-            name="allocation"
-            control={controlProject}
-            render={({ field }) => (
-              <TextFieldInput
-                label={resourceT("form.allocation")}
-                placeholder="8h"
-                sx={{
-                  "& > .MuiBox-root": {
-                    borderRadius: 0,
-                    borderRight: "1px solid #BABCC6",
-                  },
-                }}
-                helperText={errorsProject.allocation?.message}
-                error={!!errorsProject.allocation?.message}
-                {...field}
-              />
-            )}
-          />
+        <Grid2 xs={12} md={6}>
+          <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+            {resourceT("form.allocation")}
+            <span style={{ color: "#FF2C56", paddingLeft: 4 }}>*</span>
+          </Typography>
+          <Stack
+            direction="row"
+            sx={{
+              ".text-field-input-container, .text-field-select-container": {
+                border: `1px solid transparent`,
+                transition: "border-color 0.3s ease",
+              },
+              border: `1px solid ${
+                isFocusAllocation ? palette.primary.main : "#EFEFEF"
+              }`,
+              "&:focus-within": {
+                borderColor: palette.primary.main,
+              },
+              background:
+                "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+              borderRadius: "100px",
+              justifyContent: "space-between",
+            }}
+          >
+            <Controller
+              name="allocation"
+              control={controlProject}
+              render={({ field }) => (
+                <TextFieldInput
+                  placeholder="8h"
+                  sx={{
+                    "& > .MuiBox-root": {
+                      background: "transparent",
+                      height: 36,
+                    },
+                    flex: "1 1 0%",
+                    ".MuiInputBase-input": {
+                      height: 36,
+                    },
+                  }}
+                  type="number"
+                  error={!!errorsProject.allocation?.message}
+                  {...field}
+                />
+              )}
+            />
 
-          <Controller
-            name="allocation_type"
-            control={controlProject}
-            render={({ field }) => (
-              <TextFieldSelect
-                value={field.value}
-                onChange={(event) => {
-                  field.onChange(event.target.value);
-                }}
-                placeholder=""
-                options={timeOptions}
-                onFocus={() => setIsFocusAllocation(true)}
-                onBlur={() => setIsFocusAllocation(false)}
-              />
-            )}
-          />
-        </Stack>
+            <Controller
+              name="allocation_type"
+              control={controlProject}
+              render={({ field }) => (
+                <TextFieldSelect
+                  value={field.value}
+                  onChange={(event) => {
+                    field.onChange(event.target.value);
+                  }}
+                  sx={{
+                    "& > .MuiBox-root": {
+                      background: "transparent",
+                      borderColor: "transparent",
+                      height: 36,
+                    },
+                    "& .MuiInputBase-root": {
+                      background: "transparent",
+                      color: "#00000080",
+                    },
+                    height: 36,
+                  }}
+                  options={timeOptions}
+                  onFocus={() => setIsFocusAllocation(true)}
+                  onBlur={() => setIsFocusAllocation(false)}
+                />
+              )}
+            />
+          </Stack>
+          {errorsProject.allocation?.message && (
+            <FormHelperText
+              sx={{ color: "rgba(246, 78, 96, 1)", marginLeft: "18px" }}
+            >
+              {errorsProject.allocation?.message}
+            </FormHelperText>
+          )}
+        </Grid2>
       </Grid2>
       <Grid2 xs={12}>
+        <Typography color={"#4D4D4D"} fontSize={13} pb={2} fontWeight={700}>
+          {resourceT("form.note")}
+        </Typography>
         <Controller
           name="note"
           control={controlProject}
           render={({ field }) => {
-            return <Textarea {...field} label={resourceT("form.note")} />;
+            return (
+              <Textarea
+                {...field}
+                sx={{
+                  ".MuiFormControl-root, .MuiFormLabel-root": {
+                    background:
+                      "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                  },
+                  ".MuiInputBase-input, .MuiInputBase-root": {
+                    background: "transparent",
+                  },
+                }}
+              />
+            );
           }}
         />
       </Grid2>
@@ -333,7 +476,7 @@ const ProjectTab = ({
             text=""
             color={leftToSchedule > 0 ? "success" : "error"}
           >
-            {watchProject("sale_id")
+            {watchProject("service_id")
               ? formatNumber(leftToSchedule, { numberOfFixed: 0 }) || 0
               : 0}
             h {resourceT("form.leftToSchedule").toLowerCase()}
@@ -345,7 +488,7 @@ const ProjectTab = ({
             open={isShowTooltip}
             onClose={() => setIsShowTooltip(false)}
             onOpen={() => {
-              if (!watchProject("sale_id")) {
+              if (!watchProject("service_id")) {
                 setIsShowTooltip(true);
               }
             }}
@@ -363,11 +506,12 @@ const ProjectTab = ({
                 {resourceT("form.detail")}
               </Typography>
               <ArrowDownIcon
-                width={16}
-                height={16}
                 sx={{
                   transform: isShowDetail ? "rotate(-90deg)" : "rotate(0deg)",
                   transition: "transform 0.3s ease",
+                  width: 16,
+                  height: 16,
+                  color: "#666666",
                 }}
               />
             </Box>
@@ -523,6 +667,11 @@ const ProjectTab = ({
             sx={{
               width: 150,
               height: 40,
+              borderRadius: 100,
+              color: "#0575E6",
+              border: "3px solid",
+              "border-image-source":
+                "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
             }}
           >
             {commonT("form.cancel")}
@@ -531,6 +680,11 @@ const ProjectTab = ({
             sx={{
               width: 160,
               height: 40,
+              color: "white",
+              borderRadius: 100,
+              "&.MuiButton-root": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
             }}
             variant="contained"
             onClick={handleSubmitProject(onSubmitProject)}

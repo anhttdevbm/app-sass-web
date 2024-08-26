@@ -61,28 +61,28 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     updateDoc({ id: currentId as string, payload: { name: value } });
   }, 200);
 
-  useEffect(() => {
-    setTextAreaValue(name);
-    // dispatch(getDocDetails(currentId));
-  }, [name, currentId]);
+  // useEffect(() => {
+  //   setTextAreaValue(name);
+  //   // dispatch(getDocDetails(currentId));
+  // }, [name, currentId]);
 
-  useEffect(() => {
-    const data = {
-      //   content: content,
-      name: name || undefined,
-      //   description: description,
-      //   project_id: project_id,
-    };
-    if (mounted) {
-      if (id) {
-        handleUpdateDoc(data, id);
-        // setTextAreaValue(name);
-      } else {
-      }
-    } else {
-      setMounted(true);
-    }
-  }, [description, name, project_id, currentId]);
+  // useEffect(() => {
+  //   const data = {
+  //     //   content: content,
+  //     name: name || undefined,
+  //     //   description: description,
+  //     //   project_id: project_id,
+  //   };
+  //   if (mounted) {
+  //     if (id) {
+  //       handleUpdateDoc(data, id);
+  //       // setTextAreaValue(name);
+  //     } else {
+  //     }
+  //   } else {
+  //     setMounted(true);
+  //   }
+  // }, [description, name, project_id, currentId]);
 
   const editor = useDocEditor() as Editor;
   const [fontFamily, setFontFamily] = useState<unknown>(
@@ -206,11 +206,7 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     //             : ""
     //         }`}
     //       >
-    //         {openComment && (
-    //           <LayoutSlider heightToolbar={minHeight}>
-    //             <DrawComment editor={editor} />
-    //           </LayoutSlider>
-    //         )}
+
     //         {openSlider && (
     //           <LayoutSlider heightToolbar={minHeight}>
     //             <DrawSlider
@@ -326,7 +322,12 @@ const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
     //     />
     //   </Box>
     // </Box>
-    <Box sx={{ height: "100%" }}>
+    <Box sx={{ height: "100%", width: "100%" }}>
+      {openComment && (
+        <LayoutSlider heightToolbar={minHeight}>
+          <DrawComment editor={editor} />
+        </LayoutSlider>
+      )}
       <DraftEditor />
     </Box>
   );

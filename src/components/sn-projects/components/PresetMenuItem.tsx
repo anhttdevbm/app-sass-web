@@ -137,17 +137,17 @@ const EnterIcon = (props: SvgIconProps) => (
     <path
       d="M5.94141 15.5599H12.6081C14.9081 15.5599 16.7747 13.6932 16.7747 11.3932C16.7747 9.09323 14.9081 7.22656 12.6081 7.22656H3.44141"
       stroke="#666666"
-      stroke-width="1.5"
-      stroke-miterlimit="10"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeMiterlimit="10"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M5.35794 9.30964L3.22461 7.1763L5.35794 5.04297"
       stroke="#666666"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </SvgIcon>
 );

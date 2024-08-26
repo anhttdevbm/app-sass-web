@@ -1,16 +1,24 @@
 import { AddCircle, ExpandMore } from "@mui/icons-material";
-import { Box, Popover, SxProps } from "@mui/material";
+import { Box, Popover } from "@mui/material";
 import { Button, Text } from "components/shared";
-import { ComponentProps, MouseEventHandler, useState } from "react";
+import { ComponentProps, useState } from "react";
 
 const ButtonWithDropdown = ({
   ...props
-}: Omit<ComponentProps<typeof Button>, "children"> & {
-  containerSx?: SxProps;
+}: Omit<ComponentProps<typeof Box>, "children"> & {
   text: string;
   children: (handleClose: () => void) => JSX.Element;
+  primaryButtonProps?: ComponentProps<typeof Button>;
+  secondaryButtonProps?: Omit<ComponentProps<typeof Button>, "onClick">;
 }) => {
-  const { text, children, ...buttonProps } = props;
+  const {
+    text,
+    children,
+    primaryButtonProps,
+    secondaryButtonProps,
+    sx,
+    ...rest
+  } = props;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const isOpen = Boolean(anchorEl);
 
@@ -25,8 +33,9 @@ const ButtonWithDropdown = ({
         background:
           "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
         borderRadius: "2rem",
-        ...props.containerSx,
+        ...sx,
       }}
+      {...rest}
     >
       <Button
         startIcon={<AddCircle />}
@@ -36,7 +45,7 @@ const ButtonWithDropdown = ({
           borderRadius: "2rem 0 0 2rem",
           bgcolor: "transparent",
         }}
-        {...buttonProps}
+        {...primaryButtonProps}
       >
         <Text sx={{ color: "white" }}>{text}</Text>
       </Button>
@@ -51,6 +60,7 @@ const ButtonWithDropdown = ({
         }}
         size="small"
         onClick={(e) => setAnchorEl(e.currentTarget)}
+        {...secondaryButtonProps}
       >
         <ExpandMore />
       </Button>

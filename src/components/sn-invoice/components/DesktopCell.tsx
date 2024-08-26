@@ -37,7 +37,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
         align="left"
         textProps={{
           color: "blue.normal",
-          fontWeight: "500",
+          fontWeight: "700",
           fontSize: 13,
         }}
         href={getPath(INVOICE_INFO_PATH, undefined, {

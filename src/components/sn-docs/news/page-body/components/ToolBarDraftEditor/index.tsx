@@ -7,6 +7,8 @@ import React, {
   ReactHTML,
   ReactNode,
   SetStateAction,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import TextFormatDropDown from "./components/TextFormatDropDown";
@@ -33,10 +35,14 @@ export interface IHandleClickFormat {
 export default function ToolBarDraftEditor({
   editorState,
   setEditorState,
+  setHeightToolBar,
 }: {
   editorState: EditorState;
   setEditorState: Dispatch<SetStateAction<EditorState>>;
+  setHeightToolBar: Dispatch<SetStateAction<number>>;
 }) {
+  const refToolBar = useRef<HTMLDivElement | null>(null);
+
   const applyStyle = (
     e: React.MouseEvent<HTMLButtonElement> | SelectChangeEvent,
     typeClick: IHandleClickFormat,
@@ -99,15 +105,26 @@ export default function ToolBarDraftEditor({
     }
   };
 
+  useEffect(() => {
+    if (refToolBar.current) {
+      setHeightToolBar(refToolBar.current.offsetHeight);
+    }
+  }, []);
+
   return (
     <Box
       display="flex"
+      width="100%"
       gap={0.5}
       overflow="auto"
-      flexWrap="wrap"
+      flexWrap={{ sm: "wrap", xs: "nowrap" }}
       bgcolor="#EFEFEF"
       paddingY={0.5}
       paddingX={1}
+      ref={refToolBar}
+      position="absolute"
+      top={0}
+      zIndex={1}
     >
       <UndoRedoText />
       <TextFormatDropDown

@@ -57,10 +57,10 @@ const FormLayout = (props: FormLayoutProps) => {
             sx={{
               ...defaultSx.button,
               borderRadius: "100px",
-              borderColor: '#2AF598',
+              borderColor: "#3699FF",
               "&:hover": {
-                borderColor: "#2AF598",
-              }
+                borderColor: "#3699FF",
+              },
             }}
           >
             {cancelText}

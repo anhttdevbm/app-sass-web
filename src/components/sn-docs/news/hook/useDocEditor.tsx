@@ -50,8 +50,8 @@ export default function useDocEditor() {
   });
 
   useEffect(() => {
-    let from = editor?.view.state.selection.from;
-    let to = editor?.view.state.selection.to;
+    const from = editor?.view.state.selection.from;
+    const to = editor?.view.state.selection.to;
     if (editor && content) {
       editor.commands.setContent(content);
     }
