@@ -3,3 +3,6 @@ export const EMAIL_REGEX =
 export const SUFFIX_EMAIL_REGEX = /^@[a-zA-Z0-9-]+\.+[a-zA-Z]*$/;
 
 export const VN_PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+
+export const patternUrlDetailDoc = /^\/documents\/[0-9a-zA-Z-]+\/detail$/;
+export const patternUrlDocAdd = /^\/documents\/[0-9a-zA-Z-]+$/;

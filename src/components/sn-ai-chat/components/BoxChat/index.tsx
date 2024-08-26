@@ -167,7 +167,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
   const onLoadMoreOpenAIChat = useCallback(() => {
     if (openAIChatFilters?.page && openAIChatFilters.page > 0) {
       onGetOpenAIChat({
-        id: chatSession,
+        chat_session_id: chatSession,
         page: openAIChatFilters.page,
       });
     }
@@ -289,7 +289,7 @@ export const BoxChat: React.FC<BoxChatProps> = ({
 
   useEffect(() => {
     if (chatSession) {
-      onGetOpenAIChat({ id: chatSession });
+      onGetOpenAIChat({ chat_session_id: chatSession });
     } else {
       setChatData([]);
       setPersona("");

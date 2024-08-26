@@ -39,6 +39,7 @@ import Date from "components/sn-projects/components/Date";
 import AIGradientIcon from "icons/AIGradientIcon";
 import TaskListAiForm from "./TaskListAiForm";
 import CreateNewTaskListButton from "./components/CreateNewTaskListButton";
+import StatusDropdown from "components/sn-projects/components/StatusDropdown";
 
 const Actions = () => {
   const {
@@ -196,25 +197,9 @@ const Actions = () => {
             />
           </Box>
 
-          <Dropdown
-            prefixLabel={commonT("status")}
-            placeholder={commonT("all")}
-            options={statusOptions}
-            name="tasks.status"
-            onChange={onChangeQueries}
-            value={queries?.["tasks.status"]}
-            rootSx={{
-              "& >svg": { fontSize: 16 },
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(4)}!important`,
-                "& .sub": {
-                  display: "none",
-                },
-              },
-            }}
+          <StatusDropdown
+            value={queries?.["tasks.status"] ?? ""}
+            onChange={(value) => onChangeQueries("tasks.status", value)}
           />
 
           <Button

@@ -1,23 +1,22 @@
-import { ForwardedRef, forwardRef, memo } from "react";
 import {
   backdropClasses,
   Dialog,
-  dialogClasses,
-  DialogProps,
-  DialogContent,
-  DialogTitle,
   DialogActions,
-  DialogTitleProps,
   DialogActionsProps,
+  dialogClasses,
+  DialogContent,
   DialogContentProps,
+  DialogProps,
+  DialogTitle,
+  DialogTitleProps,
   SxProps,
+  Theme,
 } from "@mui/material";
-import { IconButton, Text } from "./shared";
-import CloseIcon from "icons/CloseIcon";
-import { SlotComponentProps } from "@mui/base";
-import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
-import { ThemeMode } from "constant/enums";
+import CloseIcon from "icons/CloseIcon";
+import { useTranslations } from "next-intl";
+import { ForwardedRef, forwardRef, memo } from "react";
+import { IconButton, Text } from "./shared";
 
 export type DialogLayoutProps = Omit<DialogProps, "onSubmit"> & {
   children: React.ReactNode;
@@ -34,6 +33,7 @@ export type DialogLayoutProps = Omit<DialogProps, "onSubmit"> & {
   zIndex?: number;
   submitWhenEnter?: boolean;
   sizeCloseIcon?: "extraSmall" | "small" | "medium" | "large" | "normal";
+  rootSx?: SxProps<Theme>;
 };
 
 const DialogLayout = forwardRef(
@@ -53,6 +53,7 @@ const DialogLayout = forwardRef(
       zIndex = 50,
       submitWhenEnter,
       sizeCloseIcon = "normal",
+      rootSx,
       ...rest
     } = props;
     const t = useTranslations(NS_COMMON);
@@ -87,6 +88,7 @@ const DialogLayout = forwardRef(
             ...defaultSx.paper,
             ...sx,
           },
+          ...rootSx,
         }}
         onClose={hasDialogClose ? onClose : undefined}
         {...rest}

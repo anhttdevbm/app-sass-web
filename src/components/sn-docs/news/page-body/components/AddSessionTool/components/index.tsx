@@ -31,6 +31,7 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import ChangeHistoryIcon from "@mui/icons-material/ChangeHistory";
 import SquareIcon from "@mui/icons-material/Square";
 import { uuid } from "utils/index";
+import EditorPlugins from "@draft-js-plugins/editor";
 
 const addSessionItems: IToolBarDraftActionItem[] = [
   {
@@ -114,7 +115,7 @@ export default function AddSessionTool({
   editorState: EditorState;
   setEditorState: Dispatch<SetStateAction<EditorState>>;
   focusEditor?: () => void;
-  editor: MutableRefObject<Editor | null>;
+  editor: MutableRefObject<EditorPlugins | null>;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -250,7 +251,7 @@ export default function AddSessionTool({
         />
         <Box
           alignItems="center"
-          sx={{ backgroundColor: "grey.50" }}
+          sx={{ backgroundColor: "common.white" }}
           px={2}
           zIndex={1}
           aria-haspopup="true"
@@ -284,13 +285,6 @@ export default function AddSessionTool({
             </Box>
             <Typography>Add session</Typography>
           </Button>
-          {/* <AddSessionMenuList
-            handleClickFormatType={applyStyle}
-            handleClickChecked={createMouseDownHandler}
-            focusEditor={focusEditor}
-            anchorEl={anchorEl}
-            setAnchorEl={setAnchorEl}
-          /> */}
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
@@ -300,7 +294,10 @@ export default function AddSessionTool({
               "aria-labelledby": "basic-button",
             }}
             sx={{
-              minWidth: "16.75rem",
+              minWidth: {sm: "16.75rem"},
+              maxWidth: {xs: "13.75rem"},
+              maxHeight: {xs: "20.4375rem"},
+              overFlowY: {xs: "auto"},
               borderRadius: "10px",
             }}
             disableAutoFocusItem

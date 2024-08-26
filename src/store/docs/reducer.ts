@@ -108,6 +108,7 @@ export interface IDocs {
   board: {
     isOpenBoard: boolean;
   };
+  heightHeaderDocDetail: number;
 }
 
 const initialState: IDocs = {
@@ -184,6 +185,7 @@ const initialState: IDocs = {
   board: {
     isOpenBoard: false,
   },
+  heightHeaderDocDetail: 0
 };
 
 const docSlice = createSlice({
@@ -270,6 +272,9 @@ const docSlice = createSlice({
     updateStatusOpenBoardEditor: (state, action) => {
       state.board.isOpenBoard = action.payload;
     },
+    updateHeightHeaderDetail: (state,action) => {
+      state.heightHeaderDocDetail = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(getDocs.pending, (state, action) => {
@@ -355,7 +360,8 @@ export const {
   changeTypeViewDoc,
   updateStatusOpenMindMap,
   updateVersionMindMap,
-  updateStatusOpenBoardEditor
+  updateStatusOpenBoardEditor,
+  updateHeightHeaderDetail
 } = docSlice.actions;
 
 export default docSlice.reducer;

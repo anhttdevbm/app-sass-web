@@ -166,7 +166,7 @@ const Form = (props: FormProps) => {
       }
 
       // format type project
-      dataParsed["type_project"] = typeProject.value ?? null;
+      dataParsed["type_project"] = formik.values.type_project?.value ?? null;
 
       const newItem = await onSubmitProps(dataParsed);
 
@@ -271,17 +271,6 @@ const Form = (props: FormProps) => {
     onGetOptions({ pageIndex: 1, pageSize: 20 });
   }, [onGetOptions]);
   const { onCreateProjectType } = useProjectTypes();
-
-  const [typeProject, setTypeProject] = useState(formik.values?.type_project);
-
-  const handleOnChangeTypeProject = (option: Option) => {
-    if (option) {
-      formik.setFieldValue("type_project", option.value);
-      setTypeProject(option);
-    } else {
-      formik.setFieldValue("type_project", "");
-    }
-  };
 
   return (
     <FormLayout
@@ -394,8 +383,10 @@ const Form = (props: FormProps) => {
           />
           <div style={{ width: "100%" }}>
             <SelectTypeProject
-              onChange={handleOnChangeTypeProject}
-              value={typeProject}
+              onChange={(option) =>
+                formik.setFieldValue("type_project", option)
+              }
+              value={formik.values?.type_project}
             />
           </div>
         </Stack>

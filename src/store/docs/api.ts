@@ -38,11 +38,13 @@ const documentApi = createApi({
               }: {
         id: string;
         payload: Partial<IDocument>;
-      }) => ({
-        url: "/docs/" + id,
-        data: payload,
-        method: "PUT",
-      }),
+      }) => {
+        return {
+          url: "/docs/" + id,
+          data: payload,
+          method: "PUT",
+        };
+      },
       invalidatesTags: (_result, error) => (error ? [] : TagTypes),
     }),
     getDocDetail: build.query({

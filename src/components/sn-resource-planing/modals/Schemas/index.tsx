@@ -14,7 +14,7 @@ export const useGetSchemas = () => {
         .required(
           commonT("form.error.required", { name: resourceT("form.project") }),
         ),
-      sale_id: yup
+      service_id: yup
         .string()
         .trim()
         .required(
@@ -61,8 +61,17 @@ export const useGetSchemas = () => {
         )
         .notRequired(),
       allocation_type: yup.string().notRequired(),
-      user_id: yup.string(),
+      user_id: yup
+        .string()
+        .required(
+          commonT("form.error.required", { name: resourceT("form.user") }),
+        ),
       note: yup.string().trim().notRequired(),
+      role: yup.string().trim(),
+      // .required(
+      //   commonT("form.error.required", { name: resourceT("form.role") }),
+      // ),
+      budget_id: yup.string(),
     })
     .required();
 

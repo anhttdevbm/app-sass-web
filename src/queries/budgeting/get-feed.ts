@@ -3,7 +3,7 @@ import { saleClientInstance } from "../../api/client";
 import { getPath } from "utils/index";
 import { Endpoint } from "../../api";
 
-export const BUDGET_GET_FEED_QK: string = "budget_get_feed_query_key";
+export const BUDGET_GET_FEED_QK = "budget_get_feed_query_key";
 
 export type TBudgetFeed = any;
 export type TBudgetFeeds = TBudgetFeed[];

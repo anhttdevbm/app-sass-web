@@ -15,7 +15,7 @@ export const TimeTrackingLang: TimeTrackingDictionary = {
     common: {
       startButton: "Start",
       logTimeButton: "Log time",
-    }
+    },
   },
   myTime: {
     addButton: "Add",
@@ -64,17 +64,17 @@ export const TimeTrackingLang: TimeTrackingDictionary = {
   },
   timeLog: {
     createTL: "Create task list",
-     moveT: "Move task",
-     upITL: "Update inactive task list",
-     upTL: "Update task list",
-     upT: "Update task",
-     upST: "Update sub task",
-     upIT: "Update inactive task",
-     upIST: "Update inactive sub task",
-     creT: "Create task",
-     creST: "Create sub task",
-   },
-   modal: {
+    moveT: "Move task",
+    upITL: "Update inactive task list",
+    upTL: "Update task list",
+    upT: "Update task",
+    upST: "Update sub task",
+    upIT: "Update inactive task",
+    upIST: "Update inactive sub task",
+    creT: "Create task",
+    creST: "Create sub task",
+  },
+  modal: {
     Project: "Project",
     Position: "Position",
     Date: "Date",
@@ -87,5 +87,5 @@ export const TimeTrackingLang: TimeTrackingDictionary = {
     Delete: "Delete",
     edit_time: "Edit time",
     add_time: "Add time",
-   }
+  },
 };

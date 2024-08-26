@@ -4,6 +4,7 @@ import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   createNewInvoice,
+  deleteInvoice,
   getAllPaymentByInvoiceId,
   getInvoiceDetail,
   getInvoiceList,
@@ -49,6 +50,13 @@ export const useInvoices = () => {
     [dispatch],
   );
 
+  const onDeleteInvoice = useCallback(
+    async (id: string) => {
+      return await dispatch(deleteInvoice({ id }));
+    },
+    [dispatch],
+  );
+
   return {
     items,
     item,
@@ -65,5 +73,6 @@ export const useInvoices = () => {
     onGetInvoiceDetail,
     onGetAllPayments,
     onCreateNewInvoice,
+    onDeleteInvoice,
   };
 };

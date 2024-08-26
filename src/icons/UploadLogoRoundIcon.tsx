@@ -17,9 +17,9 @@ export default function UploadLogoRoundIcon(props: SvgIconProps) {
         height="87"
         rx="43.5"
         stroke="url(#paint0_linear_4550_28126)"
-        stroke-dasharray="2 2"
+        strokeDasharray="2 2"
       />
-      <g clip-path="url(#clip0_4550_28126)">
+      <g clipPath="url(#clip0_4550_28126)">
         <path
           d="M41.9974 33.1667C40.9841 33.1667 40.1641 32.3467 40.1641 31.3333C40.1641 30.32 40.9841 29.5 41.9974 29.5C43.0107 29.5 43.8307 30.32 43.8307 31.3333C43.8307 32.3467 43.0107 33.1667 41.9974 33.1667ZM41.9974 30.5C41.5374 30.5 41.1641 30.8733 41.1641 31.3333C41.1641 31.7933 41.5374 32.1667 41.9974 32.1667C42.4574 32.1667 42.8307 31.7933 42.8307 31.3333C42.8307 30.8733 42.4574 30.5 41.9974 30.5Z"
           fill="#0575E6"
@@ -54,8 +54,8 @@ export default function UploadLogoRoundIcon(props: SvgIconProps) {
           y2="44"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#2AF598" />
-          <stop offset="1" stop-color="#009EFD" />
+          <stop stopColor="#2AF598" />
+          <stop offset="1" stopColor="#009EFD" />
         </linearGradient>
         <clipPath id="clip0_4550_28126">
           <rect

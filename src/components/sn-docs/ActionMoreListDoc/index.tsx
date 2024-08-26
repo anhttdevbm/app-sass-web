@@ -8,6 +8,7 @@ import useActionMoreListDoc from "./hooks/useActionMoreListDoc";
 import MoveArrowIcon from "icons/MoveArrowIcon";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { IDocItem } from "../KanbanViewDocList";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 interface IStyleActionMoreListDoc {
   colorIcon: string;
@@ -16,9 +17,11 @@ interface IStyleActionMoreListDoc {
 export default function ActionMoreListDoc({
   style,
   docItem,
+  isHor,
 }: {
   style?: IStyleActionMoreListDoc;
-  docItem?: IDocItem
+  docItem?: IDocItem;
+  isHor?: boolean;
 }) {
   const docsT = useTranslations(NS_DOCS);
   const {
@@ -46,7 +49,23 @@ export default function ActionMoreListDoc({
           handleClick(event);
         }}
       >
-        <MoreHoriz sx={{ color: style?.colorIcon ?? "common.white", height: 18, width: 18 }} />
+        {isHor ? (
+          <MoreVertIcon
+            sx={{
+              color: style?.colorIcon ?? "common.white",
+              height: 18,
+              width: 18,
+            }}
+          />
+        ) : (
+          <MoreHoriz
+            sx={{
+              color: style?.colorIcon ?? "common.white",
+              height: 18,
+              width: 18,
+            }}
+          />
+        )}
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -69,7 +88,7 @@ export default function ActionMoreListDoc({
           horizontal: "right",
         }}
       >
-        <MenuItem
+        {/* <MenuItem
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
           onClick={() => handleRenameDoc(docItem?._id)}
         >
@@ -77,7 +96,7 @@ export default function ActionMoreListDoc({
             sx={{ height: 15, width: 15, color: "grey.400" }}
           />{" "}
           {docsT("extendBtn.rename")}
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
           onClick={handleMoveDoc}

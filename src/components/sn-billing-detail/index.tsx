@@ -1,33 +1,25 @@
 "use client";
 import { Stack } from "@mui/material";
-import { memo, use, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TabInfo, TopContent } from "./components";
 
-import FixedLayout from "components/FixedLayout";
-import useQueryParams from "hooks/useQueryParams";
+import { User } from "constant/types";
 import { useParams } from "next/navigation";
 import { useAuth } from "store/app/selectors";
 import { Service } from "store/billing/reducer";
-import {
-  useBillings,
-  useBudgets,
-  useServiceBudgets,
-  useTags,
-} from "store/billing/selectors";
-import { useEmployeeOptions, useEmployees } from "store/company/selectors";
-import { useTagOptions } from "store/tags/selector";
-import { User } from "constant/types";
+import { useTags } from "store/billing/selectors";
 import { useInvoices } from "store/invoice/selectors";
 
 const InformationBillingPage = () => {
   const { item, onGetInvoiceDetail, onGetInvoices } = useInvoices();
   const { tagsOptions, onGetTags } = useTags();
-  // const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
-  // const { budgets, onGetBudgets } = useBudgets();
-  const { initQuery, isReady, query } = useQueryParams();
-  // const { options, onGetOptions } = useEmployeeOptions();
-  // const { memberOptions } = useGetMemberOptions();
   const { user } = useAuth();
+
+  const [openComment, setOpenComment] = useState(false);
+
+  const handleDisplayComment = (value: boolean) => {
+    setOpenComment(value);
+  };
 
   const userInfo = useMemo(() => {
     const dataUser = {
@@ -47,39 +39,6 @@ const InformationBillingPage = () => {
 
   const { id } = useParams();
 
-  const [newServices, setNewServices] = useState<Service[]>([]);
-
-  // const dataDuplicate = localStorage.getItem("duplicateBill");
-
-  // const duplicateBill = useMemo(() => {
-  //   if (!dataDuplicate) return;
-  //   const data = JSON.parse(dataDuplicate);
-  //   return data;
-  // }, [dataDuplicate]);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     onGetInvoiceDetail(id.toString() ?? "");
-  //   }
-  // }, [onGetInvoiceDetail]);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     onGetInvoiceDetail(id.toString() ?? "");
-  //   }
-  // }, [onGetInvoiceDetail]);
-
-  // useEffect(() => {
-  //   onGetOptions({ pageIndex: 1, pageSize: 20 });
-  //   // onGetServiceBudgets();
-  //   onGetTags();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!isReady) return;
-  //   onGetBudgets({ ...initQuery });
-  // }, [isReady, onGetBudgets]);
-
   useEffect(() => {
     if (typeof id === "string" && id) {
       onGetInvoiceDetail(id);
@@ -87,14 +46,6 @@ const InformationBillingPage = () => {
   }, [id]);
 
   return (
-    // <FixedLayout
-    // maxHeight={920}
-    // maxWidth={{
-    //   xs: 1120,
-    //   xl: 1450,
-    // }}
-    // overflow={"auto"}
-    // >
     <Stack
       padding={{ sm: 3 }}
       sx={{ overflowY: "auto" }}
@@ -102,20 +53,18 @@ const InformationBillingPage = () => {
     >
       <TopContent
         tagsOptions={tagsOptions}
-        // item={id ? item : duplicateBill}
         item={item}
         user={userInfo}
-        // memberOptions={options}
+        handleDisplayComment={handleDisplayComment}
       />
 
       <TabInfo
-        // item={id ? item : duplicateBill}
         item={item}
         user={userInfo}
-        // arrBudgets={budgets}
+        handleDisplayComment={handleDisplayComment}
+        openComment={openComment}
       />
     </Stack>
-    // </FixedLayout>
   );
 };
 export default InformationBillingPage;

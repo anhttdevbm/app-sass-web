@@ -165,8 +165,8 @@ export const Endpoint = {
   BILLING: "/billing",
   DETAIL_BILLING: "/bill/export/{id}",
   EXPORT_BILLING: "/billToExport",
-  INTERACTION_BILLING: "/bill_interaction",
-  INTERACTION_BILLING_BY_BILL: "/bill_interaction/{id}",
+  INTERACTION_BILLING: "/invoices/{id}/add-comment",
+  INTERACTION_BILLING_BY_BILL: "/invoices/{id}/comments",
   ADD_USER_BILL: "/invoices/{id}/add-members",
   CHANGE_BILL: "/bill/{id}",
   PAYMENT_BILL: "/payment",
@@ -181,6 +181,8 @@ export const Endpoint = {
   DETAIL_BUDGET: "/budgets/budget-by-id/{id}",
   CREATE_SERVICE_BUDGET: "/budgets/service",
   SERVICE_BY_BUDGET: "/budgets/service/{id}",
+  BUDGETS_BY_PROJECT_ID: "/budgets/getBudgetByProject/{id}",
+  SERVICE_QUERIES_BY_BUDGET: "/budgets/getServiceByBudget/{id}",
 
   //Content
   CONTENT_HOME_BANNER: "/content/home/banner",
@@ -236,6 +238,7 @@ export const Endpoint = {
   //Invoice
   INVOICE: "/invoices",
   DETAIL_INVOICE: "/invoices/{id}",
+  NEW_INVOICE: "/invoices/create",
 
   // AI Assistants Docs
   AI_DOCS_SUMMARIZE: "/docs/summerization/document",

@@ -10,7 +10,7 @@ import { formatDate, formatNumber } from "utils/index";
 import { Position } from "store/company/reducer";
 import { Text } from "components/shared";
 import Avatar from "components/Avatar";
-import { Box, Stack, TableRow } from "@mui/material";
+import { Box, Button, Stack, TableRow } from "@mui/material";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
@@ -21,6 +21,8 @@ import { useRouter } from "next-intl/client";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import GroupIcon from "@mui/icons-material/Group";
 import ArticleIcon from "@mui/icons-material/Article";
+import { useDocs } from "store/docs/selectors";
+import { BaseQueryApi } from "@reduxjs/toolkit/dist/query";
 
 type DesktopCellsProps = {
   item: any;
@@ -87,7 +89,30 @@ const DesktopCells = (props: DesktopCellsProps) => {
             <GroupIcon sx={{ fontSize: 20 }} htmlColor="grey" />
             <ArticleIcon sx={{ fontSize: 20 }} htmlColor="dodgerblue" />
           </Box>
-          <Text fontSize={14}>{item?.name}</Text>
+          <Button
+            sx={{
+              textTransform: "none",
+              color: "text.primary",
+            }}
+            onClick={async () => {
+              const result: any = await api(
+                {
+                  url: `/docs/detail/${item.id}`,
+                  method: "GET",
+                },
+                {} as BaseQueryApi,
+                {},
+              );
+              if (result.error) {
+                console.error("Error:", result.error);
+              } else {
+                await dispatch(setContentRow(result?.data?.content));
+                push(`/documents/${item.id}`);
+              }
+            }}
+          >
+            <Text fontSize={14}>{item?.name}</Text>
+          </Button>
         </Box>
       </BodyCell>
       <BodyCell align="center">

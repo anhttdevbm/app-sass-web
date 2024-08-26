@@ -31,8 +31,8 @@ const PenUnderlineIcon = (props: SvgIconProps) => {
           y2="16.8437"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color={props.fill || "#0575E6"} />
-          <stop offset="1" stop-color={props.fill || "#38E27B"} />
+          <stop stopColor={props.fill || "#0575E6"} />
+          <stop offset="1" stopColor={props.fill || "#38E27B"} />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1642_461"
@@ -42,8 +42,8 @@ const PenUnderlineIcon = (props: SvgIconProps) => {
           y2="7.22643"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color={props.fill || "#0575E6"} />
-          <stop offset="1" stop-color={props.fill || "#38E27B"} />
+          <stop stopColor={props.fill || "#0575E6"} />
+          <stop offset="1" stopColor={props.fill || "#38E27B"} />
         </linearGradient>
         <linearGradient
           id="paint2_linear_1642_461"
@@ -53,8 +53,8 @@ const PenUnderlineIcon = (props: SvgIconProps) => {
           y2="13.3741"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color={props.fill || "#38E27B"} />
-          <stop offset="1" stop-color={props.fill || "#38E27B"} />
+          <stop stopColor={props.fill || "#38E27B"} />
+          <stop offset="1" stopColor={props.fill || "#38E27B"} />
         </linearGradient>
       </defs>
     </SvgIcon>
