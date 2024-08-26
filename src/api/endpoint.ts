@@ -239,6 +239,7 @@ export const Endpoint = {
   INVOICE: "/invoices",
   DETAIL_INVOICE: "/invoices/{id}",
   NEW_INVOICE: "/invoices/create",
+  DELETE_MULTIPLE_INVOICES: "/invoices/delete-multiple",
 
   // AI Assistants Docs
   AI_DOCS_SUMMARIZE: "/docs/summerization/document",

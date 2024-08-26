@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   createNewInvoice,
   deleteInvoice,
+  deleteMultipleInvoice,
   getAllPaymentByInvoiceId,
   getInvoiceDetail,
   getInvoiceList,
@@ -56,6 +57,14 @@ export const useInvoices = () => {
     },
     [dispatch],
   );
+  const onDeleteMultipleInvoice = useCallback(
+    async (invoice_numbers: string[]) => {
+      return await dispatch(
+        deleteMultipleInvoice({ invoice_number: invoice_numbers }),
+      );
+    },
+    [dispatch],
+  );
 
   return {
     items,
@@ -74,5 +83,6 @@ export const useInvoices = () => {
     onGetAllPayments,
     onCreateNewInvoice,
     onDeleteInvoice,
+    onDeleteMultipleInvoice,
   };
 };
