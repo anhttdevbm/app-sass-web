@@ -24,7 +24,7 @@ import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useState } from "react";
 import { useAuth, useHeaderConfig } from "store/app/selectors";
 import { useBudgets } from "store/billing/selectors";
-import { useClientCompanies } from "store/company/selectors";
+import { useClientCompanies, useMyCompany } from "store/company/selectors";
 import { useInvoices } from "store/invoice/selectors";
 // import useExportDeal from "../hooks/useExportDeal";
 import NewPaymentMethodIcon from "icons/NewPaymentMethodIcon";
@@ -44,7 +44,8 @@ const initRow = {
   rate: null,
   discount: null,
   amount: 0,
-  id: uuid(),
+  _id: uuid(),
+  description: null,
 };
 
 const initPaymentItem = [
@@ -68,6 +69,7 @@ const initPaymentItem = [
 const FormCreate = () => {
   const { push } = useRouter();
   const { items, onGetClientCompanies } = useClientCompanies();
+  const { onGetCompany, item: itemCompany } = useMyCompany();
   const { initQuery, isReady, query } = useQueryParams();
   const { onGetBudgets, budgets } = useBudgets();
   const { onCreateNewInvoice } = useInvoices();
@@ -116,6 +118,7 @@ const FormCreate = () => {
   }, [formik]);
 
   useEffect(() => {
+    onGetCompany();
     onGetClientCompanies({ ...DEFAULT_PAGING, pageSize: 50 });
     onGetBudgets({ ...initQuery });
   }, []);
@@ -190,7 +193,6 @@ const FormCreate = () => {
       handleChange("service_items", copiedItems);
     }
   };
-  console.log("stfdfsd", formik.values);
 
   return (
     <Box
@@ -242,6 +244,17 @@ const FormCreate = () => {
                 border: "1px solid #EFEFEF !important",
               },
             width: "600px",
+          }}
+          SelectProps={{
+            IconComponent: () => (
+              <Image
+                src="/images/dropdown-select-icon.svg"
+                alt=""
+                width={18}
+                height={18}
+                style={{ marginRight: "30px", cursor: "pointer" }}
+              />
+            ),
           }}
         >
           {items.map((client) => (
@@ -295,6 +308,17 @@ const FormCreate = () => {
                 border: "1px solid #EFEFEF !important",
               },
           }}
+          SelectProps={{
+            IconComponent: () => (
+              <Image
+                src="/images/dropdown-select-icon.svg"
+                alt=""
+                width={18}
+                height={18}
+                style={{ marginRight: "30px", cursor: "pointer" }}
+              />
+            ),
+          }}
         >
           {(budgets ?? []).map((budget) => (
             <MenuItem
@@ -307,6 +331,7 @@ const FormCreate = () => {
           ))}
         </TextField>
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -339,7 +364,7 @@ const FormCreate = () => {
             width: "600px",
             color: "rgba(33, 38, 60, 1)",
           }}
-          value={`Company ${user?.company}\n\nTax ID: 00001`}
+          value={`Company ${itemCompany?.name}\n\nTax ID: ${itemCompany?.tax_code}`}
         ></TextField>
         {/* <EditBillFromIcon
           sx={{
@@ -428,9 +453,15 @@ const FormCreate = () => {
             value={formik.values?.invoice_date}
             error={formik.errors?.invoice_date}
             onChange={handleChange}
-            // error={commonT(touchedErrors?.start_date, {
-            //   name: commonT("form.title.startDate"),
-            // })}
+            endNode={
+              <Image
+                src="/images/date-icon.svg"
+                alt=""
+                width={18}
+                height={18}
+                style={{ cursor: "pointer" }}
+              />
+            }
             sx={{
               "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                 border: "1px solid #EFEFEF !important",
@@ -463,6 +494,15 @@ const FormCreate = () => {
               name="due_date"
               value={formik.values.due_date}
               onChange={handleChange}
+              endNode={
+                <Image
+                  src="/images/date-icon.svg"
+                  alt=""
+                  width={18}
+                  height={18}
+                  style={{ cursor: "pointer" }}
+                />
+              }
               sx={{
                 "& .MuiInputBase-root.MuiOutlinedInput-root ": {
                   border: "1px solid #EFEFEF !important",
@@ -579,6 +619,15 @@ const FormCreate = () => {
                     }
                   </Typography>
                 ),
+                IconComponent: () => (
+                  <Image
+                    src="/images/dropdown-select-icon.svg"
+                    alt=""
+                    width={18}
+                    height={18}
+                    style={{ marginRight: "30px", cursor: "pointer" }}
+                  />
+                ),
               }}
               value={
                 formik.values.payment_items[paymentSelected]?.payment_method
@@ -591,13 +640,20 @@ const FormCreate = () => {
                   value={payment?.payment_method}
                   onClick={() => setPaymentSelected(index)}
                 >
-                  <Stack display="flex" alignItems="center" marginRight={1}>
-                    <Image
-                      src={payment.icon ?? "/images/stripe-icon.png"}
-                      alt={payment?.payment_method}
-                      width={40}
-                      height={20}
-                    />
+                  <Stack
+                    display="flex"
+                    alignItems="center"
+                    marginRight={1}
+                    width={40}
+                  >
+                    {payment.icon && (
+                      <Image
+                        src={payment.icon}
+                        alt={payment?.payment_method}
+                        width={40}
+                        height={20}
+                      />
+                    )}
                   </Stack>
                   <Typography color="#212121" fontWeight={700} fontSize={14}>
                     {payment?.payment_method}
@@ -630,7 +686,6 @@ const FormCreate = () => {
                 {
                   payment_method: value,
                   payment_link: "",
-                  icon: "",
                 },
               ]);
               setOpen(false);
@@ -680,6 +735,7 @@ const FormCreate = () => {
           </Box>
         </Box>
       </Box>
+
       {/* table */}
       <Box>
         <Box
@@ -796,8 +852,8 @@ const FormCreate = () => {
                   >
                     {formik.values.service_items.map((row, index) => (
                       <Draggable
-                        key={row.id}
-                        draggableId={String(row.id)}
+                        key={row._id}
+                        draggableId={String(row._id)}
                         index={index}
                       >
                         {(provided) => (
