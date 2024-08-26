@@ -12,6 +12,7 @@ import { Attachment } from "constant/types";
 import { useAuth } from "store/app/selectors";
 import EditorCustom from "./editor/EditorCustom";
 import { UnprivilegedEditor } from "react-quill";
+import LockCommentIcon from "public/images/ticket/lock-comment.svg";
 
 const VALUE_AS_EMPTY = "<p><br></p>";
 const CommentItem = (props) => {
@@ -24,6 +25,7 @@ const CommentItem = (props) => {
     id,
     handleDeleteComment,
     handleUpdateComment,
+    isIternal,
   } = props;
   const { user } = useAuth();
   const [isEdit, setIsEdit] = useState(false);
@@ -48,20 +50,46 @@ const CommentItem = (props) => {
       p={2}
       borderRadius={1}
       width={"100%"}
+      sx={{
+        borderRadius: "12px",
+        "&:hover": {
+          background: "#FFF7D6",
+        },
+      }}
     >
-      <Stack direction="row" justifyContent="space-between" spacing={1}>
+      <Stack
+        direction="row"
+        justifyContent="flex-start"
+        alignItems={"center"}
+        spacing={1}
+      >
         <Stack direction="row" alignItems="center" spacing={1}>
           <Avatar size={32} src={creatorUser?.avatar?.link} />
           <Stack>
-            <Text variant="body2">{creatorUser?.fullname ?? "--"}</Text>
+            <Text variant="body2" style={{ fontSize: "13px", fontWeight: 600 }}>
+              {creatorUser?.fullname ?? "--"}
+            </Text>
             {/* <Text variant="caption" color="grey.400">
               {creatorUser?.email ?? "--"}
             </Text> */}
           </Stack>
         </Stack>
-        <Text variant="body2" color="grey.400">
+        <Text variant="body2" color="grey.400" style={{ fontSize: "10px" }}>
           {formatDate(createTime, "HH:mm - dd/MM/yyyy")}
         </Text>
+        {isIternal && (
+          <Stack
+            direction="row"
+            justifyContent="flex-start"
+            alignItems={"center"}
+            gap={"5px"}
+          >
+            <LockCommentIcon />{" "}
+            <Typography style={{ color: "#626F86", fontSize: "10px" }}>
+              Internal Note
+            </Typography>
+          </Stack>
+        )}
       </Stack>
       {isEdit ? (
         <EditorCustom value={valueContent} files={files} onChange={onChange}>
