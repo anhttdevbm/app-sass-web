@@ -4,9 +4,13 @@ import SortByCategory from "../Search";
 
 interface IProps {
   personVisibleFilter?: boolean;
+  periodVisibleFilter?: boolean;
 }
 
-const FilterCategory: React.FC<IProps> = ({ personVisibleFilter = true }) => {
+const FilterCategory: React.FC<IProps> = ({
+  personVisibleFilter = true,
+  periodVisibleFilter = true,
+}) => {
   return (
     <Box
       sx={{
@@ -31,14 +35,8 @@ const FilterCategory: React.FC<IProps> = ({ personVisibleFilter = true }) => {
         View by:{" "}
       </p>
       <SortByCategory title="Project" />
-      <SortByCategory title="Period" />
-      <div
-        style={{
-          display: personVisibleFilter ? "block" : "none",
-        }}
-      >
-        <SortByCategory title="Person" />
-      </div>
+      {periodVisibleFilter && <SortByCategory title="Period" />}
+      {personVisibleFilter && <SortByCategory title="Person" />}
     </Box>
   );
 };

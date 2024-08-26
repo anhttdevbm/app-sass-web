@@ -13,7 +13,7 @@ import TextFieldSelect from "components/shared/TextFieldSelect";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import { useGetTimeOffOptions } from "components/sn-sales/hooks/useGetTimeOffOptions";
-import Textarea from "components/sn-time-tracking/components/Textarea";
+import Textarea from "components/Textarea";
 import {
   RESOURCE_ALLOCATION_TYPE,
   RESOURCE_ALLOCATION_UNIT,

@@ -37,10 +37,16 @@ interface ITab {
   value: string;
 }
 
+enum TabEnum {
+  MY_TIME = "myTime",
+  COMPANY_TIME = "companyTime",
+  TIME_LOG = "timeLog",
+}
+
 const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<string>("myTime");
+  const [tab, setTab] = useState<TabEnum>(TabEnum.MY_TIME);
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -69,7 +75,7 @@ const TimeTrackingPage = () => {
   ];
 
   const onSelectTimeSheetChange = (event: SelectChangeEvent) => {
-    setTab(event.target.value);
+    setTab(event.target.value as TabEnum);
     setTimeBgColor(isDarkMode ? "#0575E6" : "#D9F0FD");
     setWorkBgColor("#FFFFFF");
     setWorkTopLeftRadius("0px");
@@ -170,7 +176,7 @@ const TimeTrackingPage = () => {
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
             overflow: "hidden",
-            backgroundColor: tab === "timelog" ? "#D9F0FD" : "#FFFFFF",
+            backgroundColor: tab === TabEnum.TIME_LOG ? "#D9F0FD" : "#FFFFFF",
           }}
         >
           <Select
@@ -249,7 +255,7 @@ const TimeTrackingPage = () => {
               cursor: "pointer",
             }}
             onClick={() => {
-              setTab(timeTabs[2].value);
+              setTab(timeTabs[2].value as TabEnum);
               setWorkBgColor("#D9F0FD");
               setWorkTopLeftRadius("100px");
               setWorkBottomLeftRadius("100px");
@@ -346,37 +352,39 @@ const TimeTrackingPage = () => {
             />
           </Fab>
 
-          <Button
-            startIcon={
-              <PlusIcon
-                sx={{
-                  width: "32px",
-                  height: "32px",
-                }}
-              />
-            }
-            variant="contained"
-            sx={{
-              width: "146px",
-              height: "48px",
-              marginLeft: "14px",
-              borderRadius: "100px",
-              background: "linear-gradient(90deg, #2af598, #009efd)",
-              "&:hover": {
+          {tab === "myTime" && (
+            <Button
+              startIcon={
+                <PlusIcon
+                  sx={{
+                    width: "32px",
+                    height: "32px",
+                  }}
+                />
+              }
+              variant="contained"
+              sx={{
+                width: "146px",
+                height: "48px",
+                marginLeft: "14px",
+                borderRadius: "100px",
                 background: "linear-gradient(90deg, #2af598, #009efd)",
-              },
-              boxShadow: "none",
-              color: "common.white",
-              textTransform: "none",
-              fontSize: "16px",
-              fontWeight: "Bold",
-              cursor: "pointer",
-              fontFamily: "unset",
-            }}
-            onClick={showLogTimePopup}
-          >
-            {timeT("header.common.logTimeButton")}
-          </Button>
+                "&:hover": {
+                  background: "linear-gradient(90deg, #2af598, #009efd)",
+                },
+                boxShadow: "none",
+                color: "common.white",
+                textTransform: "none",
+                fontSize: "16px",
+                fontWeight: "Bold",
+                cursor: "pointer",
+                fontFamily: "unset",
+              }}
+              onClick={showLogTimePopup}
+            >
+              {timeT("header.common.logTimeButton")}
+            </Button>
+          )}
         </Box>
       </Grid>
 

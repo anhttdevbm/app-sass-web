@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  Avatar,
+  Box,
   Table,
   TableBody,
   TableCell,
@@ -15,29 +17,17 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import "../CompanyTimeTrackingCalendar/style.css";
 import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
+import { Person } from "@mui/icons-material";
+import { CompanyTimeSheet, MyTimeSheet } from "store/timeTracking/reducer";
+import dayjs from "dayjs";
 
-interface Timesheet {
-  created_time: string;
-  day: string;
-  duration: number;
-  end_time: string;
-  _id: string;
-  is_pin: boolean;
-  note: string;
-  fullname: string; // Assuming fullname is added to each timesheet
-  project: Project;
-}
-
-interface Project {
-  id: string;
-  name: string;
-  company: string;
-  avatar: string | null; // Example assumes avatar is a string URL or null
+interface TimeSheetRowData extends MyTimeSheet {
+  avatar: string;
+  fullname: string;
 }
 
 interface IProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data?: any;
+  data: CompanyTimeSheet[];
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -52,28 +42,41 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const ListSheet: React.FC<IProps> = (props) => {
-  const [timeSheetData, setTimeSheetData] = useState<Timesheet[]>([]);
+const tableCellHeader = [
+  "Date",
+  "Project name",
+  "Type",
+  "User",
+  "Time",
+  "Start time",
+];
 
+const ListSheet = ({ data }: IProps) => {
+  const [timeSheetData, setTimeSheetData] = useState<TimeSheetRowData[]>([]);
   useEffect(() => {
-    //get all timesheet from company data api and then apply fullname property to each timesheet of the user
-    if (props.data) {
-      let allTimesheets = [];
-
-      props.data.forEach((data) => {
+    // Add additional field (fullname, avatar)
+    if (data) {
+      const allTimesheets: TimeSheetRowData[] = [];
+      const today = dayjs().format("YYYY-MM-DD");
+      data.forEach((data) => {
         if (data.timesheet && Array.isArray(data.timesheet)) {
-          allTimesheets = allTimesheets.concat(
-            data.timesheet.map((timesheet) => ({
-              ...timesheet,
-              fullname: data.fullname,
-            })),
-          );
+          const pushedTimeSheet: TimeSheetRowData[] = [];
+          data.timesheet.forEach((item) => {
+            if (item.day === today) {
+              pushedTimeSheet.push({
+                ...item,
+                fullname: data.fullname,
+                avatar: data.avatar?.link,
+              });
+            }
+          });
+          allTimesheets.push(...pushedTimeSheet);
         }
       });
 
       setTimeSheetData(allTimesheets);
     }
-  }, [props.data]);
+  }, [data]);
   return (
     <TableContainer sx={{ maxHeight: "100%" }}>
       <Table stickyHeader aria-label="sticky table">
@@ -93,78 +96,21 @@ const ListSheet: React.FC<IProps> = (props) => {
           }}
         >
           <TableRow>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "14px",
-                fontFamily: "unset",
-                height: "40px",
-                padding: "0px 16px",
-              }}
-            >
-              Date
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "14px",
-                fontFamily: "unset",
-                height: "40px",
-                padding: "0px 16px",
-              }}
-            >
-              Project name
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "14px",
-                fontFamily: "unset",
-                height: "40px",
-                padding: "0px 16px",
-              }}
-            >
-              Type
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "14px",
-                fontFamily: "unset",
-                height: "40px",
-                padding: "0px 16px",
-              }}
-            >
-              User
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "14px",
-                fontFamily: "unset",
-                height: "40px",
-                padding: "0px 16px",
-              }}
-            >
-              Time
-            </StyledTableCell>
-            <StyledTableCell
-              sx={{
-                color: "#0575E6",
-                fontWeight: "600",
-                fontSize: "14px",
-                fontFamily: "unset",
-                height: "40px",
-                padding: "0px 16px",
-              }}
-            >
-              Creation time
-            </StyledTableCell>
+            {tableCellHeader.map((title) => (
+              <StyledTableCell
+                key={title}
+                sx={{
+                  color: "#0575E6",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  fontFamily: "unset",
+                  height: "40px",
+                  padding: "0px 16px",
+                }}
+              >
+                {title}
+              </StyledTableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -178,21 +124,32 @@ const ListSheet: React.FC<IProps> = (props) => {
                 }}
                 key={timesheet?._id}
               >
-                <StyledTableCell
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <Checkbox
+                <StyledTableCell>
+                  <Box
                     sx={{
-                      color: "#DFE1E6",
-                      "& > svg > path": {
-                        clipPath: "inset(0 round 4px)",
-                      },
+                      display: "flex",
+                      alignItems: "center",
                     }}
-                  />
-                  {moment(timesheet?.day).format("DD/MM/YYYY")}
+                  >
+                    <Checkbox
+                      sx={{
+                        color: "#DFE1E6",
+                        "& > svg > path": {
+                          clipPath: "inset(0 round 4px)",
+                        },
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontFamily: "inherit",
+                        position: "relative",
+                        top: "1px",
+                      }}
+                    >
+                      {moment(timesheet?.day).format("DD/MM/YYYY")}
+                    </Typography>
+                  </Box>
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
@@ -227,9 +184,38 @@ const ListSheet: React.FC<IProps> = (props) => {
                 >
                   {timesheet?.project?.name ? "Work time" : "Break time"}
                 </StyledTableCell>
-                <StyledTableCell>{timesheet.fullname}</StyledTableCell>
                 <StyledTableCell>
-                  {formatHoursToHHMM(timesheet.duration)}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    {timesheet.avatar ? (
+                      <Avatar
+                        src={`${timesheet.avatar}`}
+                        sx={{ width: 20, height: 20 }}
+                      />
+                    ) : (
+                      <Avatar sx={{ width: 20, height: 20 }}>
+                        <Person />
+                      </Avatar>
+                    )}
+                    <Typography
+                      sx={{
+                        color: "blue.normal",
+                        fontWeight: 500,
+                        fontSize: "14px",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      {timesheet.fullname}
+                    </Typography>
+                  </Box>
+                </StyledTableCell>
+                <StyledTableCell>
+                  {formatHoursToHHMM(timesheet.duration || 0)}
                 </StyledTableCell>
                 <StyledTableCell>
                   {moment(timesheet.created_time).format("DD/MM/YYYY HH:MM")}

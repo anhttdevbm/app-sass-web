@@ -15,6 +15,8 @@ import { MyTimeSheet } from "store/timeTracking/reducer";
 import { tableCellHeadingStyles } from "../CalendarTracking.styles";
 import "../CompanyTimeTrackingCalendar/style.css";
 import { TimeCreateValue } from "components/sn-time-tracking/TimeTrackingModal/TimeCreate";
+import dayjs from "dayjs";
+import { useMemo } from "react";
 
 interface IProps {
   data: MyTimeSheet[];
@@ -52,8 +54,12 @@ const StyledTableHeadRow = styled(TableRow)(({ theme }) => ({
     background: "#D9F0FD",
   },
 }));
+const TODAY = dayjs().format("YYYY-MM-DD");
 
 const ListSheet = ({ data, handleSelectListSheetRow }: IProps) => {
+  const rowsData = useMemo(() => {
+    return data.filter((item) => item.day === TODAY);
+  }, [data]);
   const onRowSelected = (row: MyTimeSheet) => {
     const rowData: TimeCreateValue = {
       day: row.day,
@@ -70,7 +76,11 @@ const ListSheet = ({ data, handleSelectListSheetRow }: IProps) => {
 
   return (
     <TableContainer sx={{ maxHeight: "100%" }}>
-      <Table stickyHeader aria-label="sticky table" sx={{ minWidth: 650 }}>
+      <Table
+        stickyHeader
+        aria-label="sticky table"
+        sx={{ minWidth: 650, tableLayout: "fixed" }}
+      >
         <TableHead>
           <StyledTableHeadRow>
             {tableCellHeader.map((cellTitle) => (
@@ -85,9 +95,9 @@ const ListSheet = ({ data, handleSelectListSheetRow }: IProps) => {
             ))}
           </StyledTableHeadRow>
         </TableHead>
-        {data?.length > 0 ? (
+        {rowsData?.length > 0 ? (
           <TableBody>
-            {data.map((row, index) => (
+            {rowsData.map((row, index) => (
               <StyledTableRow
                 sx={{
                   "& td": {

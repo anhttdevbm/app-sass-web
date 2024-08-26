@@ -28,10 +28,11 @@ import * as yup from "yup";
 import { inter } from "../CalendarTracking/CalendarTracking.styles";
 import MobileDatePickerComponent from "../components/MobileDatePicker";
 import NumberInput from "../components/NumberInput";
-import Textarea from "../components/Textarea";
 import TimePicker from "../components/TimePicker";
 import DefaultPopupLayout from "./DefaultPopupLayout";
 import { timeCreateInputStyles } from "./timeTrackingModal.styles";
+import { WorkType } from "store/timeTracking/reducer";
+import Textarea from "components/Textarea";
 
 interface IProps {
   type?: string;
@@ -49,7 +50,7 @@ export interface TimeCreateValue {
   project_id?: string;
   position?: string;
   start_time?: string;
-  type?: string;
+  type?: WorkType;
   day?: string;
   duration?: number;
   note?: string;
@@ -201,8 +202,6 @@ const TimeCreate = ({
         .set("date", dayjs(data?.day).date())
         .format("YYYY-MM-DD HH:mm"),
     };
-
-    console.log("resolveData", resolveData);
 
     if (defaultValue?.id) {
       onUpdateTimeSheet({
