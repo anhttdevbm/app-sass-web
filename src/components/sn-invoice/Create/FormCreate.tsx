@@ -41,6 +41,8 @@ import RateIcon from "icons/RateIcon";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 import DragRowTableIcon from "icons/DragRowTableIcon";
 import DropDownIcon from "icons/DropDownIcon";
+import DuplicateRowTableIcon from "icons/DuplicateRowTableIcon";
+import DeleteRowIcon from "icons/DeleteRowIcon";
 
 const ITEM_HEIGHT = 48;
 
@@ -768,7 +770,7 @@ const FormCreate = () => {
             background: "#D9F0FD",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
-            width: "95%",
+            width: "calc(100% - 70px)",
             alignItems: "center",
           }}
         >
@@ -778,7 +780,7 @@ const FormCreate = () => {
         </Box>
         <TableContainer
           component={Paper}
-          sx={{ boxShadow: "none", width: "95%" }}
+          sx={{ boxShadow: "none", width: "100%", marginLeft: "-20px" }}
         >
           <Table
             sx={{ minWidth: 650, border: "none" }}
@@ -786,6 +788,14 @@ const FormCreate = () => {
           >
             <TableHead>
               <TableRow>
+                <TableCell
+                  sx={{
+                    background: "#F7F7FD",
+                    padding: 0,
+                    border: "none",
+                    width: "20px",
+                  }}
+                ></TableCell>
                 <TableCell
                   sx={{
                     color: "#222222",
@@ -862,6 +872,14 @@ const FormCreate = () => {
                 >
                   AMOUNT
                 </TableCell>
+                <TableCell
+                  sx={{
+                    background: "#F7F7FD",
+                    padding: 0,
+                    border: "none",
+                    width: "50px",
+                  }}
+                ></TableCell>
               </TableRow>
             </TableHead>
 
@@ -885,6 +903,18 @@ const FormCreate = () => {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
+                            <TableCell
+                              sx={{
+                                background: "#F7F7FD",
+                                padding: 0,
+                                border: "none",
+                                width: "20px",
+                              }}
+                            >
+                              <DragRowTableIcon
+                                sx={{ height: "16px", width: "16px" }}
+                              />
+                            </TableCell>
                             {!row.typeRowTwo ? (
                               <TableCell
                                 sx={{
@@ -937,7 +967,10 @@ const FormCreate = () => {
                                   InputProps={{
                                     disableUnderline: true,
                                     inputProps: {
-                                      style: { textAlign: "left" },
+                                      style: {
+                                        textAlign: "left",
+                                        color: "#838195",
+                                      },
                                     },
                                   }}
                                   sx={{
@@ -1198,6 +1231,53 @@ const FormCreate = () => {
                             >
                               {row.amount}
                             </TableCell>
+                            <TableCell
+                              sx={{
+                                background: "#F7F7FD",
+                                padding: 0,
+                                border: "none",
+                                width: "50px",
+                              }}
+                            >
+                              <Stack
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  height: "100%",
+                                  alignItems: "center",
+                                  flexDirection: "row",
+                                }}
+                              >
+                                <DuplicateRowTableIcon
+                                  sx={{
+                                    height: "20px",
+                                    width: "20px",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    handleChange("service_items", [
+                                      ...formik.values.service_items,
+                                      {
+                                        ...formik.values.service_items[index],
+                                        _id: uuid(),
+                                      },
+                                    ])
+                                  }
+                                />
+                                <DeleteRowIcon
+                                  onClick={() => {
+                                    const listNow = formik.values.service_items;
+                                    listNow.splice(index, 1);
+                                    handleChange("service_items", listNow);
+                                  }}
+                                  sx={{
+                                    height: "20px",
+                                    width: "20px",
+                                    cursor: "pointer",
+                                  }}
+                                />
+                              </Stack>
+                            </TableCell>
                           </TableRow>
                         )}
                       </Draggable>
@@ -1212,7 +1292,11 @@ const FormCreate = () => {
       </Box>
 
       <Box
-        sx={{ display: "flex", justifyContent: "space-between", width: "95%" }}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "calc(100% - 70px)",
+        }}
       >
         {/* <Button
           variant="primary"
@@ -1326,7 +1410,7 @@ const FormCreate = () => {
           sx={{
             display: "flex",
             flexDirection: "row-reverse",
-            width: "95%",
+            width: "calc(100% - 70px)",
             marginTop: "-32px",
           }}
         >
@@ -1334,7 +1418,7 @@ const FormCreate = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              width: "95%",
+              width: "100%",
               alignItems: "flex-end",
             }}
           >
@@ -1382,7 +1466,7 @@ const FormCreate = () => {
         sx={{
           display: "flex",
           flexDirection: "row-reverse",
-          width: "95%",
+          width: "calc(100% - 70px)",
           marginTop: "-32px",
         }}
       >
