@@ -2,7 +2,7 @@ import { CheckBox } from "@mui/icons-material";
 import { Grid, Stack, TextField, Typography } from "@mui/material";
 import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
-import Textarea from "components/sn-time-tracking/components/Textarea";
+import Textarea from "components/Textarea";
 import { NS_BILLING, NS_COMMON } from "constant/index";
 import dayjs from "dayjs";
 import { FormikErrors, useFormik } from "formik";

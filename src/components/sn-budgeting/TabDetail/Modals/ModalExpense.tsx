@@ -20,7 +20,7 @@ import FormLayout from "components/FormLayout";
 import { DatePicker, Input, Select } from "components/shared";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
-import Textarea from "components/sn-time-tracking/components/Textarea";
+import Textarea from "components/Textarea";
 import { ExpenseStatus } from "constant/enums";
 import { FILE_ACCEPT, NS_BUDGETING, NS_COMMON } from "constant/index";
 import { User } from "constant/types";

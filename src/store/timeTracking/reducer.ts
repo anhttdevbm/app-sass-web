@@ -1,41 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { DataStatus } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
+import { Paging } from "constant/types";
+import dayjs from "dayjs";
 import {
-  getMyTimeSheet,
-  createTimeSheet,
   BodyCreateTimeSheet,
-  getCompanyTimeSheet,
-  updateTimeSheet,
+  createTimeSheet,
   deleteTimeSheet,
+  getCompanyTimeSheet,
+  getMyTimeSheet,
+  GetMyTimeSheetQueries,
   getWorkLog,
   pinTimeSheet,
-  GetMyTimeSheetQueries,
-  getSameWorker,
+  updateTimeSheet,
 } from "./actions";
-import {
-  Attachment,
-  BaseQueries,
-  ItemListResponse,
-  Option,
-  Paging,
-  User,
-} from "constant/types";
-import { DataStatus, Permission, Status } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
-import {
-  formatDate,
-  getFiltersFromQueries,
-  removeDuplicateItem,
-} from "utils/index";
-import { Position } from "store/company/reducer";
-import { subDays } from "date-fns";
-import dayjs from "dayjs";
 
 export interface Project {
   id: string;
   name: string;
   company: string;
-  avatar: string | null; // Example assumes avatar is a string URL or null
+  avatar: string | null;
+}
+
+export enum WorkType {
+  WORK_TIME = "Work time",
+  BREAK_TIME = "Break time",
 }
 
 export interface MyTimeSheet {
@@ -49,7 +39,7 @@ export interface MyTimeSheet {
   position?: { id: string; name: string };
   project_id?: string;
   start_time?: string;
-  type?: string;
+  type?: WorkType;
   user_id?: string;
   _id?: string;
 }

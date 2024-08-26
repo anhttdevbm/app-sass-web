@@ -68,8 +68,14 @@ import { DateSelectArg } from "@fullcalendar/core";
 import {
   FullCalendarEventProps,
   FullCalendarExtendedProps,
+  IFilter,
+  ITimeRangeAction,
 } from "components/sn-time-tracking/components/timeTracking.types";
 import { inter } from "../CalendarTracking.styles";
+import TimeRangeNavigator, {
+  TypeNavigator,
+} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
+import { WorkType } from "store/timeTracking/reducer";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -114,12 +120,6 @@ interface IProps {
   isOpenCreatePopup: boolean;
   setIsOpenCreatePopup: (isOpen: boolean) => void;
   currentKindOfSheet: string;
-}
-
-interface IFilter {
-  start_date: string;
-  end_date: string;
-  search_key: string;
 }
 
 const today = dayjs(); // Ngày hiện tại + 1 ngày (ngày mai)
@@ -196,8 +196,6 @@ const TrackingCalendar = (props: IProps) => {
 
   const calendarRef = useRef<FullCalendar>(null);
   const [filters, setFilters] = useState<IFilter>(DEFAULT_FILTER);
-  const prevFilters = useRef<IFilter>(DEFAULT_FILTER);
-  prevFilters.current = filters;
 
   const [currentDate, setCurrentDate] = useState<string>(dayjs().toString());
   const [currentYear, setCurrentYear] = useState<string>("");
@@ -216,11 +214,30 @@ const TrackingCalendar = (props: IProps) => {
 
   const [dateRange, setDateRange] = useState<any[]>([]);
   const [totalTime, setTotalTime] = useState({
-    work: 0,
-    break: 0,
+    todayWorkTime: 0,
+    todayBreakTime: 0,
+    totalWorkTime: 0,
+    totalBreakTime: 0,
   });
 
   const commonT = useTranslations(NS_COMMON);
+
+  useEffect(() => {
+    if (currentKindOfSheet === "timeSheet") {
+      const today = dayjs().format("YYYY-MM-DD");
+      // If current my time sheet not include today -> get week data that include today data
+      if (!(filters.start_date <= today && filters.end_date >= today)) {
+        onGetMyTimeSheet({
+          start_date: dayjs(today).startOf("week").format("YYYY-MM-DD"),
+          end_date: dayjs(today).endOf("week").format("YYYY-MM-DD"),
+          search_key: "",
+        });
+      }
+    } else {
+      onGetMyTimeSheet(filters);
+    }
+  }, [currentKindOfSheet]);
+
   useEffect(() => {
     const getYear = () => {
       if (dayjs.isDayjs(selectedDate)) {
@@ -253,6 +270,8 @@ const TrackingCalendar = (props: IProps) => {
       const result: FullCalendarEventProps[] = [];
       let totalWorkTime = 0;
       let totalBreakTime = 0;
+      let todayWorkTime = 0;
+      let todayBreakTime = 0;
       _.forEach(myTime, (timesheet) => {
         const newEvent: FullCalendarEventProps = {
           title: timesheet?.project?.name,
@@ -270,20 +289,33 @@ const TrackingCalendar = (props: IProps) => {
             hour: timesheet?.duration,
             typeDefault: timesheet?.type,
             type:
-              timesheet?.type === "Work time" ? "working_time" : "break_time",
+              timesheet?.type === WorkType.WORK_TIME
+                ? "working_time"
+                : "break_time",
             note: timesheet?.note,
           },
         };
-        if (timesheet.type === "Work time")
+
+        if (timesheet.type === "Work time") {
           totalWorkTime += timesheet?.duration || 0;
-        else totalBreakTime += timesheet?.duration || 0;
+          if (timesheet.day === dayjs(today).format("YYYY-MM-DD")) {
+            todayWorkTime += timesheet?.duration || 0;
+          }
+        } else {
+          totalBreakTime += timesheet?.duration || 0;
+          if (timesheet.day === dayjs(today).format("YYYY-MM-DD")) {
+            todayBreakTime += timesheet?.duration || 0;
+          }
+        }
 
         result.push(newEvent);
       });
 
       setTotalTime({
-        work: totalWorkTime,
-        break: totalBreakTime,
+        todayWorkTime,
+        todayBreakTime,
+        totalWorkTime,
+        totalBreakTime,
       });
       setEvents(result);
     }
@@ -301,6 +333,15 @@ const TrackingCalendar = (props: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters?.start_date, filters?.end_date]);
 
+  // useEffect(() => {
+
+  //   if (currentKindOfSheet === "timeSheet") {
+  //     onGetMyTimeSheet({
+  //       start_date
+  //     });
+  //   }
+  // }, [currentKindOfSheet])
+
   const generateDateRange = () => {
     const start_date = dayjs(filters?.start_date);
     const result: Date[] = [];
@@ -314,7 +355,6 @@ const TrackingCalendar = (props: IProps) => {
       result.push(currentDate.toDate());
       currentDate = currentDate.add(1, "day");
     }
-
     setDateRange(result);
   };
 
@@ -361,7 +401,7 @@ const TrackingCalendar = (props: IProps) => {
         note: "",
         position: userData?.position?.id,
         project_id: "",
-        type: "",
+        type: undefined,
       };
 
       setIsEdit(true);
@@ -376,14 +416,6 @@ const TrackingCalendar = (props: IProps) => {
     setIsOpenCreatePopup(true);
   };
 
-  const getWeekStartAndEndDates = (date: any) => {
-    const startOfWeek = date?.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
-    const endOfWeek = date?.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
-    const startDate = startOfWeek?.format("YYYY-MM-DD");
-    const endDate = endOfWeek?.format("YYYY-MM-DD");
-    return { startDate, endDate };
-  };
-
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
@@ -392,9 +424,10 @@ const TrackingCalendar = (props: IProps) => {
     const calendarApi = calendarRef?.current && calendarRef?.current.getApi();
     calendarApi?.gotoDate(dayjs(value).format("YYYY-MM-DD"));
   };
-  const onAction = (action: "view" | "week", value: string) => {
-    const calendarApi = calendarRef?.current && calendarRef?.current.getApi();
 
+  const onAction = (params: ITimeRangeAction) => {
+    const { action, value } = params;
+    const calendarApi = calendarRef?.current && calendarRef?.current.getApi();
     if (action === "week") {
       if (value === "today") {
         const currentDate = new Date();
@@ -408,15 +441,14 @@ const TrackingCalendar = (props: IProps) => {
         }
       }
       if (value === "prev") {
-        const startDate = dayjs(filters?.start_date)
-          .subtract(7, "day")
-          .format("YYYY-MM-DD");
-        const endDate = dayjs(filters?.start_date)
-          .subtract(1, "day")
-          .format("YYYY-MM-DD");
+        const previousWeek = dayjs(selectedDate).subtract(1, "week");
+
+        const startDate = previousWeek.startOf("week").format("YYYY-MM-DD");
+        const endDate = previousWeek.endOf("week").format("YYYY-MM-DD");
+
         setFilters({ ...filters, start_date: startDate, end_date: endDate });
-        setCurrentDate("");
-        setSelectedDate(dayjs(filters?.start_date).subtract(6, "day"));
+        setCurrentDate(previousWeek.startOf("week").toString());
+        setSelectedDate(previousWeek.startOf("week"));
 
         if (calendarApi) {
           calendarApi.prev();
@@ -424,16 +456,14 @@ const TrackingCalendar = (props: IProps) => {
         }
       }
       if (value === "next") {
-        const startDate = dayjs(filters?.end_date)
-          .add(1, "day")
-          .format("YYYY-MM-DD");
-        const endDate = dayjs(filters?.end_date)
-          .add(7, "day")
-          .format("YYYY-MM-DD");
+        const nextWeek = dayjs(selectedDate).add(1, "week");
+
+        const startDate = nextWeek.startOf("week").format("YYYY-MM-DD");
+        const endDate = nextWeek.endOf("week").format("YYYY-MM-DD");
 
         setFilters({ ...filters, start_date: startDate, end_date: endDate });
-        setCurrentDate("");
-        setSelectedDate(dayjs(filters?.end_date).add(2, "day"));
+        setCurrentDate(nextWeek.startOf("week").toString());
+        setSelectedDate(nextWeek.startOf("week"));
         if (calendarApi) {
           calendarApi.next();
           calendarApi.refetchEvents();
@@ -441,8 +471,6 @@ const TrackingCalendar = (props: IProps) => {
       }
     }
   };
-
-  console.log("re render");
 
   const _renderCalendarModule = () => {
     return (
@@ -475,7 +503,10 @@ const TrackingCalendar = (props: IProps) => {
               isActive={activeTab === "timeGridWeek"}
               title={timeT("myTime.calender")}
               onClick={() => {
-                onAction("view", "timeGridWeek");
+                // onAction({
+                //   action:"view",
+                //   value:"timeGridWeek"
+                // });
                 handleTabChange("timeGridWeek");
               }}
             />
@@ -512,197 +543,6 @@ const TrackingCalendar = (props: IProps) => {
     );
   };
 
-  const _renderHeader = () => {
-    return (
-      <>
-        <Grid
-          // container
-          // rowSpacing={1}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 20px",
-          }}
-        >
-          <p>Year: {currentYear}</p>
-          <Grid
-            item
-            sm={12}
-            md={4}
-            // sx={{
-            //   display: "flex",
-            //   alignItems: "center",
-            //   justifyContent: "center",
-            //   order: 2,
-            // }}
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <MobileDatePicker
-                open={isOpen}
-                onOpen={() => setIsOpen(true)}
-                onClose={() => setIsOpen(false)}
-                onChange={(date: any) => {
-                  if (date) {
-                    const { startDate, endDate } =
-                      getWeekStartAndEndDates(date);
-                    setSelectedDate(date);
-                    // onGoDay(date);
-                    setFilters({
-                      ...filters,
-                      start_date: startDate,
-                      end_date: endDate,
-                    });
-                  }
-                }}
-                closeOnSelect
-                sx={{ display: "none" }}
-                slotProps={{
-                  actionBar: {
-                    actions: [],
-                  },
-                  toolbar: {
-                    hidden: true,
-                  },
-                  day: {
-                    sx: {
-                      transition: "all ease 0.25s",
-                      borderRadius: "4px",
-                      fontWeight: 600,
-                      "&.Mui-selected": {
-                        color: "#ffffff",
-                        backgroundColor: `rgba(54, 153, 255, 1) !important`,
-                        "&.MuiPickersDay-today": {
-                          color: "#ffffff",
-                          borderColor: "rgba(54, 153, 255, 1)",
-                        },
-                      },
-                      "&.MuiPickersDay-today": {
-                        color: "rgba(54, 153, 255, 1)",
-                        borderColor: "rgba(54, 153, 255, 1)",
-                      },
-                      ":hover": {
-                        background: "rgba(54, 153, 255, 1)",
-                      },
-                    },
-                  },
-                }}
-              />
-            </LocalizationProvider>
-
-            <Stack
-              direction="row"
-              alignItems="center"
-              sx={{
-                ":hover": {
-                  cursor: "pointer",
-                },
-              }}
-            >
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "4px 0px 0px 4px",
-                  // backgroundColor: "grey.100",
-                  color: "#212529",
-                }}
-                onClick={() => onAction("week", "prev")}
-              >
-                <ChevronLeftIcon />
-              </Button>
-              <div onClick={() => setIsOpen(true)}>
-                <Typography
-                  sx={{
-                    fontSize: "16px",
-                    color: "neutral.800",
-                    margin: "0 10px",
-                    fontFamily: "unset",
-                    padding: "0 10px",
-                  }}
-                >
-                  {`${moment(filters?.start_date).format("MMMM D")} - ${dayjs(
-                    filters?.end_date,
-                  ).format("MMMM D")}`}
-                </Typography>
-              </div>
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "0px 4px 4px 0px",
-                  // backgroundColor: "grey.100",
-                  color: "#212529",
-                }}
-                onClick={() => onAction("week", "next")}
-              >
-                <ChevronRightIcon />
-              </Button>
-            </Stack>
-          </Grid>
-          <Grid item sm={12} md={4} sx={{ order: isSmSmaller ? 1 : 3 }}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-end"
-              sx={{ gap: "3px" }}
-            >
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "4px 0px 0px 4px",
-                  // backgroundColor: "grey.100",
-                  color: "#212529",
-                }}
-                onClick={() => onAction("week", "prev")}
-              >
-                <ChevronLeftIcon />
-              </Button>
-              <Button
-                sx={{
-                  width: "97px",
-                  height: "30px",
-                  padding: "4px",
-                  color: "neutral.800",
-                  textAlign: "center",
-                  textTransform: "capitalize",
-                  "&:hover": {
-                    backgroundColor: "#D9F0FD",
-                  },
-                }}
-                onClick={() => onAction("week", "today")}
-                disabled={
-                  dayjs(currentDate).format("YYYY-MM-DD") ===
-                  dayjs().format("YYYY-MM-DD")
-                }
-              >
-                {timeT("company_time.this_week")}
-              </Button>
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "0px 4px 4px 0px",
-                  // backgroundColor: "grey.100",
-                  color: "#212529",
-                }}
-                onClick={() => onAction("week", "next")}
-              >
-                <ChevronRightIcon />
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-        {/* {_renderCalendarModule()} */}
-      </>
-    );
-  };
-
   const dataDayTable = useMemo(() => {
     if (!_.isEmpty(events)) {
       return events?.filter((item) => {
@@ -714,7 +554,7 @@ const TrackingCalendar = (props: IProps) => {
     }
   }, [events, selectedDate]);
 
-  const _renderFooter = () => {
+  const _renderFooter = (type: TypeNavigator) => {
     return (
       <Stack
         direction="column"
@@ -722,7 +562,9 @@ const TrackingCalendar = (props: IProps) => {
         sx={{ marginTop: "15px", color: isDarkMode ? "#fff" : "#212121" }}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
-          {timeT("header.tab.weekly_total")}
+          {type === TypeNavigator.WEEKLY
+            ? timeT("header.tab.weekly_total")
+            : "Daily total"}
         </Typography>
         <Stack direction="row">
           <Stack
@@ -744,11 +586,14 @@ const TrackingCalendar = (props: IProps) => {
               sx={{
                 fontSize: "16px",
                 fontWeight: 400,
-
                 marginRight: "16px",
               }}
             >
-              {timeT("header.tab.workTime")}: {totalTime.work}h
+              {timeT("header.tab.workTime")}:{" "}
+              {type === TypeNavigator.WEEKLY
+                ? totalTime.totalWorkTime
+                : totalTime.todayWorkTime}
+              h
             </Typography>
           </Stack>
           <Stack
@@ -767,7 +612,11 @@ const TrackingCalendar = (props: IProps) => {
               }}
             ></span>
             <Typography sx={{ fontSize: "16px", fontWeight: 400 }}>
-              {timeT("header.tab.breakTime")}: {totalTime.break}h
+              {timeT("header.tab.breakTime")}:{" "}
+              {type === TypeNavigator.WEEKLY
+                ? totalTime.totalBreakTime
+                : totalTime.todayBreakTime}
+              h
             </Typography>
           </Stack>
         </Stack>
@@ -820,6 +669,24 @@ const TrackingCalendar = (props: IProps) => {
         {currentKindOfSheet === "timeSheet" && (
           // <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />
           <>
+            <div
+              style={{
+                marginBottom: "20px",
+                borderRadius: "100px",
+                background: "#F7F7FD",
+              }}
+            >
+              <TimeRangeNavigator
+                currentDate={currentDate}
+                currentYear={currentYear}
+                filters={filters}
+                setFilters={setFilters}
+                onAction={onAction}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                type={TypeNavigator.DAILY}
+              />
+            </div>
             <Box
               sx={{
                 display: "flex",
@@ -834,6 +701,7 @@ const TrackingCalendar = (props: IProps) => {
                 handleSelectListSheetRow={handleSelectListSheetRow}
               />
             </Box>
+            {_renderFooter(TypeNavigator.DAILY)}
           </>
         )}
         {currentKindOfSheet === "table" && (
@@ -848,7 +716,16 @@ const TrackingCalendar = (props: IProps) => {
                 background: "#F7F7FD",
               }}
             >
-              {_renderHeader()}
+              <TimeRangeNavigator
+                currentDate={currentDate}
+                currentYear={currentYear}
+                filters={filters}
+                setFilters={setFilters}
+                onAction={onAction}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                type={TypeNavigator.WEEKLY}
+              />
             </div>
             <Stack
               sx={
@@ -916,8 +793,8 @@ const TrackingCalendar = (props: IProps) => {
                       start_time: time,
                       type:
                         event?._def?.extendedProps?.type === "working_time"
-                          ? "Work time"
-                          : "Break time",
+                          ? WorkType.WORK_TIME
+                          : WorkType.BREAK_TIME,
                     };
                     onUpdateTimeSheet({
                       ...dataUpdate,
@@ -935,14 +812,14 @@ const TrackingCalendar = (props: IProps) => {
                   eventClick={(eventInfo) => {
                     const { extendedProps } = eventInfo.event;
                     const timeCreateValue: TimeCreateValue = {
-                      day: eventInfo.event.extendedProps.day,
-                      duration: eventInfo.event.extendedProps.hour,
+                      day: extendedProps.day,
+                      duration: extendedProps.hour,
                       start_time: eventInfo.event.start?.toString(),
-                      id: eventInfo.event.extendedProps.id,
-                      note: eventInfo.event.extendedProps.note,
-                      position: eventInfo.event.extendedProps.position?.id,
-                      project_id: eventInfo.event.extendedProps.project?.id,
-                      type: eventInfo.event.extendedProps.type,
+                      id: extendedProps.id,
+                      note: extendedProps.note,
+                      position: extendedProps.position?.id,
+                      project_id: extendedProps.project?.id,
+                      type: extendedProps.typeDefault,
                     };
 
                     setIsEdit(true);
@@ -950,7 +827,8 @@ const TrackingCalendar = (props: IProps) => {
                     setIsOpenCreatePopup(true);
                   }}
                   initialView={"timeGridWeek"}
-                  //weekends={true}
+                  initialDate={dayjs(selectedDate).format("YYYY-MM-DD")}
+                  weekends={true}
                   editable={true}
                   droppable={true}
                   eventDrop={({ event }) => {
@@ -988,11 +866,8 @@ const TrackingCalendar = (props: IProps) => {
                     text: string;
                     isToday: boolean;
                   }) => {
-                    // const date = dayjs(eventInfo.date);
                     const dayOfWeek = eventInfo.text.split(" ").shift();
-                    // const isSelected = dayjs(dayjs(date).format('YYYY-MM-DDDD')).isSame(
-                    //   dayjs(selectedDate).format('YYYY-MM-DDDD')
-                    // );
+
                     return (
                       <Stack
                         direction="column"
@@ -1544,10 +1419,10 @@ const TrackingCalendar = (props: IProps) => {
                 </Menu>
               </Box>
             </Stack>
-            {_renderFooter()}
+            {_renderFooter(TypeNavigator.WEEKLY)}
           </>
         )}
-        {activeTab === "dayGridWeek" && (
+        {/* {activeTab === "dayGridWeek" && (
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <Box
@@ -1559,6 +1434,7 @@ const TrackingCalendar = (props: IProps) => {
                 }}
               >
                 {_.map(dateRange, (date: Date, index) => {
+
                   const weekday = weekdays[date.getDay()];
                   const dayNumber = date.getDate();
                   return (
@@ -1750,7 +1626,7 @@ const TrackingCalendar = (props: IProps) => {
               </TableContainer>
             </Grid>
           </Grid>
-        )}
+        )} */}
       </Stack>
       {_renderCreatePopup()}
       {/* {_redderUpdatePopup()} */}

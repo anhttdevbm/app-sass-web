@@ -19,14 +19,9 @@ import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper
 interface IProps {
   formattedDates: IFormattedDate[];
   employeeDataDetail: CompanyTimeSheet | null;
-  dateRange: Date[];
 }
 
-function EmployeesTableSheet({
-  formattedDates,
-  employeeDataDetail,
-  dateRange,
-}: IProps) {
+function EmployeesTableSheet({ formattedDates, employeeDataDetail }: IProps) {
   const isDateEqual = (day: string, date: string) => {
     const year = day.split("-")[0] || 0;
     return day === moment(`${date} ${year}`).format("YYYY-MM-DD");

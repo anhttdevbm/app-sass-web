@@ -256,9 +256,9 @@ const TableSheet: React.FC<IProps> = (props) => {
           <TableRow key={row.id}>
             <TableCell
               sx={{
+                ...tableCellDataStyles,
                 fontFamily: "unset",
                 display: "flex",
-                height: "100%",
                 gap: "8px",
                 alignItems: "center",
                 borderRight: "1px solid #EBEAF2",
@@ -691,6 +691,7 @@ const TableSheet: React.FC<IProps> = (props) => {
                 <TableCell
                   align="center"
                   sx={{
+                    ...trackingTableCellStyles,
                     background: "#D9F0FD",
                     color: "neutral.800",
                     border: "1px solid #EBEAF2",
@@ -711,7 +712,6 @@ const TableSheet: React.FC<IProps> = (props) => {
         <EmployeesTableSheet
           employeeDataDetail={userFilterDataDetail}
           formattedDates={formattedDates}
-          dateRange={props.dateRange}
         />
       )}
     </>
