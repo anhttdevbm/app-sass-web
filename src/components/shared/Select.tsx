@@ -150,7 +150,7 @@ const Select = (props: SelectProps) => {
             MenuListProps: {
               sx: {
                 maxHeight: 300,
-                p:"10px"
+                p: "10px",
               },
             },
           },
@@ -167,14 +167,14 @@ const Select = (props: SelectProps) => {
               mt: 1,
               px: 2,
               my: 1,
-              ".MuiInputBase-input":{m:"0px!important"},
+              ".MuiInputBase-input": { m: "0px!important" },
               borderRadius: "100px",
               background: "#F7F7FD",
               border: "none",
               svg: { color: "#0575E6" },
               ".MuiInputBase-root": {
                 border: "none",
-                px:"2px!important",
+                px: "2px!important",
                 "&:hover": { border: "none" },
                 "&:forcus-visible": { border: "none" },
               },

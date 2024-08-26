@@ -170,7 +170,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                     <Stack
                       direction="row"
                       alignItems="center"
-                      height={48}
+                      height={36}
                       pl={{ xs: 0, md: 2 }}
                       width="100%"
                       spacing={3}
@@ -215,7 +215,7 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                           mr={1}
                           ml={0.5}
                           variant="h5"
-                          fontWeight={400}
+                          fontWeight={600}
                           color="text.primary"
                         >
                           {`(${count})`}
@@ -238,14 +238,22 @@ const DroppableTaskList = (props: DroppableTaskListProps) => {
                         alignItems="flex-end"
                         sx={{ ml: { xs: 2, md: 3.5 } }}
                       >
-                        <PlusIcon sx={{ color: "dodgerblue", mr: 1, my: 1 }} />
+                        <PlusIcon
+                          sx={{ color: "dodgerblue", mr: 1, my: 1.25 }}
+                        />
                         <TextField
                           label={projectT("detailTasks.addNewTask")}
                           variant="standard"
                           value={taskName}
                           onChange={changeNameTask}
                           onKeyDown={(e) => onKeyDownTaskName(e, id)}
-                          InputLabelProps={{ sx: { color: "dodgerblue" } }}
+                          InputLabelProps={{
+                            sx: {
+                              color: "dodgerblue",
+                              fontSize: 14,
+                              fontWeight: 600,
+                            },
+                          }}
                           sx={{
                             "& .MuiInput-underline": {
                               ":before": {
