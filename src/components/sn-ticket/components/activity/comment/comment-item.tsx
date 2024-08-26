@@ -1,18 +1,22 @@
-import { memo, useState, useEffect, useMemo } from "react";
+import { memo, useState, useEffect, useMemo, useCallback } from "react";
 import { Stack, Box, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Button, Text } from "components/shared";
 import { Comment } from "store/project/reducer";
 import Image from "next/image";
-import { formatDate } from "utils/index";
+import { formatDate, getMessageErrorByAPI } from "utils/index";
 import AttachmentPreview from "components/AttachmentPreview";
 import { useTranslations } from "next-intl";
-import { NS_PROJECT } from "constant/index";
+import { NS_COMMON, NS_PROJECT } from "constant/index";
 import { Attachment } from "constant/types";
-import { useAuth } from "store/app/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
 import EditorCustom from "./editor/EditorCustom";
 import { UnprivilegedEditor } from "react-quill";
 import LockCommentIcon from "public/images/ticket/lock-comment.svg";
+import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
+import { useQueryClient } from "react-query";
+import { useParams } from "next/navigation";
+import { QUERY_TICKET_KEY } from "queries/ticket/keys";
 
 const VALUE_AS_EMPTY = "<p><br></p>";
 const CommentItem = (props) => {
@@ -24,13 +28,43 @@ const CommentItem = (props) => {
     listAttachmentsDown,
     id,
     handleDeleteComment,
-    handleUpdateComment,
     isIternal,
   } = props;
   const { user } = useAuth();
   const [isEdit, setIsEdit] = useState(false);
   const [valueContent, setValueContent] = useState("");
   const [files, setFiles] = useState([]);
+  const { editComment } = useTicketAction();
+  const commonT = useTranslations(NS_COMMON);
+  const params = useParams();
+  const { onAddSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+
+  const handleUpdateComment = useCallback(
+    (data) => {
+      editComment.mutate(
+        {
+          comment: data?.comment,
+          isIternal,
+          ticketId: params?.id as string,
+          commentId: data?.id,
+        },
+        {
+          onSuccess: (data) => {
+            onAddSnackbar("Update comment success", "success");
+            queryClient.invalidateQueries({
+              queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
+            });
+            setIsEdit(false);
+          },
+          onError: (error) => {
+            onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+          },
+        },
+      );
+    },
+    [commonT, editComment, isIternal, onAddSnackbar, params?.id, queryClient],
+  );
 
   const canEdit = useMemo(() => {
     if (!creatorUser || !user) return false;
@@ -101,7 +135,7 @@ const CommentItem = (props) => {
             gap={"10px"}
           >
             <Button
-              onClick={() => handleUpdateComment(id)}
+              onClick={() => handleUpdateComment({ id, comment: valueContent })}
               variant="primary"
               size="small"
               type="button"

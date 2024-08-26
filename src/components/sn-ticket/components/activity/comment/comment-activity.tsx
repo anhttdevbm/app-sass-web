@@ -89,40 +89,6 @@ const CommentActivity = () => {
     );
   };
 
-  const handleUpdateComment = useCallback(
-    (id) => {
-      editComment.mutate(
-        {
-          comment: content,
-          isIternal,
-          ticketId: params?.id as string,
-          commentId: id,
-        },
-        {
-          onSuccess: (data) => {
-            onAddSnackbar("Update comment success", "success");
-            queryClient.invalidateQueries({
-              queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
-            });
-            setContent("");
-          },
-          onError: (error) => {
-            onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-          },
-        },
-      );
-    },
-    [
-      commonT,
-      content,
-      editComment,
-      isIternal,
-      onAddSnackbar,
-      params?.id,
-      queryClient,
-    ],
-  );
-
   const handleDeleteComment = useCallback(
     (id) => {
       deleteComment.mutate(
@@ -205,7 +171,6 @@ const CommentActivity = () => {
         <CommentItem
           key={`${comment.id}-${idx}`}
           handleDeleteComment={handleDeleteComment}
-          handleUpdateComment={handleUpdateComment}
           {...comment}
           // listAttachmentsDown={listAttachmentsDown}
         />
