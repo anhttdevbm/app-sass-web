@@ -14,12 +14,13 @@ type PropsAssgiGroup = {
   type?: "detail";
   style?: React.CSSProperties;
   styledDropdown?: React.CSSProperties
+  setAssign?: any
 };
 
 const AssignGroup = (props: PropsAssgiGroup) => {
   const { updateTicket } = useUpdateTicket()
   const { data: listAgent } = useGetListAgent();
-  const { item, style, type , styledDropdown } = props || null;
+  const { item, style, type, styledDropdown, setAssign } = props || null;
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(item?.assignUser?.fullname || "nothing");
   const [urlAvatar, setUrlAvatar] = useState(item?.assignUser?.urlAvatar);
@@ -32,22 +33,30 @@ const AssignGroup = (props: PropsAssgiGroup) => {
     setValue(value?.fullname);
     setUrlAvatar(value?.urlAvatar);
     setOpen(false);
-    const payload = {
-      id: item?.id,
-      type: item?.type,
-      priority: item?.priority,
-      assign: value?.id,
-      rootCause: item?.rootCause
+    
+    if (type == "detail") {
+      setAssign(value?.id)
+
     }
-    updateTicket.mutate(payload, {
-      onSuccess: (data) => {
-        console.log("Success:", data);
-        onAddSnackbar(`${data?.data?.errorMessage ? data?.data?.errorMessage : "Update Success"}`);
-      },
-      onError: (err) => {
-        onAddSnackbar("Create ticket error!", "error");
-      },
-    });
+    if (type !== "detail") {
+      const payload = {
+        id: item?.id,
+        type: item?.type,
+        priority: item?.priority,
+        assign: value?.id,
+        rootCause: item?.rootCause
+      }
+      updateTicket.mutate(payload, {
+        onSuccess: (data) => {
+          console.log("Success:", data);
+          onAddSnackbar(`${data?.data?.errorMessage ? data?.data?.errorMessage : "Update Success"}`);
+        },
+        onError: (err) => {
+          onAddSnackbar("Create ticket error!", "error");
+        },
+      });
+    }
+
 
   };
   return (
@@ -144,7 +153,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
             onChange={(event) => setKeyword(event.target.value)}
             sx={{
               fontSize: 3,
-              width:"100%",
+              width: "100%",
               height: "auto",
               outline: "none",
               padding: "0 3px",

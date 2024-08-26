@@ -64,11 +64,13 @@ const TextEditor = styled(ReactQuill)(({ theme }) => ({
   "& .ql-toolbar": {
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
+    borderBottom: "none",
   },
-  // "& .ql-container": {
-  //   borderBottomLeftRadius: 12,
-  //   borderBottomRightRadius: 12,
-  // },
+  "& .ql-container": {
+    // borderBottomLeftRadius: 12,
+    // borderBottomRightRadius: 12,
+    borderBottom: "none"
+  },
 }));
 
 export type EditorProps = {
@@ -203,13 +205,13 @@ const EditorCustom = (props: EditorProps) => {
               noCss
                 ? {}
                 : {
-                    border: "1px solid",
-                    borderColor: "grey.A200",
-                    borderBottomLeftRadius: "12px",
-                    borderBottomRightRadius: "12px",
-                    borderTop: "none",
-                    marginBottom: "20px",
-                  }
+                  border: "1px solid",
+                  borderColor: "grey.A200",
+                  borderBottomLeftRadius: "12px",
+                  borderBottomRightRadius: "12px",
+                  borderTop: "none",
+                  marginBottom: "20px",
+                }
             }
           >
             {urlFiles.map((attachment, index) => (
