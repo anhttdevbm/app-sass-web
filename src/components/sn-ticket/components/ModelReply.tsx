@@ -5,7 +5,12 @@ import EditorGroup from "components/sn-ticket/components/EditorGroup";
 import { NS_TICKET } from "constant/index";
 import CloseIcon from "icons/CloseIcon";
 import { useTranslations } from "next-intl";
-import { memo, useState } from "react";
+import { memo, useCallback, useState } from "react";
+import FileUpload from "../module/create-ticket/upload/FileUpload";
+import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
+import { useSnackbar } from "store/app/selectors";
+import { useParams } from "next/navigation";
+import { useQueryClient } from "react-query";
 
 type PropsModelReply = {
   open: boolean
@@ -13,11 +18,62 @@ type PropsModelReply = {
   handleClickOpen: () => void;
 }
 
+export interface IFormSendReply {
+  email: string;
+  title: string;
+  content: string;
+  files: File[];
+}
+
 
 const ModelReply = (props: PropsModelReply) => {
   const t = useTranslations(NS_TICKET);
-
+  const params = useParams();
+  const id = params?.id as string;
+  const queryClient = useQueryClient()
+  const { sendReply } = useTicketAction()
   const { handleClose, open, handleClickOpen } = props || null
+  const { onAddSnackbar } = useSnackbar();
+  const [formSendReply, setFormSendReply] = useState<IFormSendReply>({
+    email: "",
+    title: "",
+    content: "",
+    files: [],
+  });
+
+  const clearForm = () => {
+    const form = {
+      email: "",
+      title: "",
+      content: "",
+      files: [],
+    }
+    setFormSendReply(form)
+  }
+
+  const handleSubmit = () => {
+    const payload = {
+      ...formSendReply, id : id
+    }
+    console.log("check reply", formSendReply)
+    sendReply.mutate(payload, {
+      onSuccess: (data) => {
+        onAddSnackbar(" Reply success!", "success");
+        // queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, id] })
+        clearForm()
+        handleClose()
+      },
+      onError: (err) => {
+        onAddSnackbar(" Reply error!", "error");
+      },
+    });
+  }
+
+  const handleChange = useCallback((value: string, type: keyof IFormSendReply) => {
+    setFormSendReply((prev) => ({ ...prev, [type]: value }));
+  }, []);
+
+
   return (
 
     <Dialog open={open} onClose={handleClose}>
@@ -32,8 +88,11 @@ const ModelReply = (props: PropsModelReply) => {
             <textarea
               id="tour-chatmb-textarea"
               placeholder={t("modelReply.email")}
+              value={formSendReply.email}
+              onChange={(e) => {
+                handleChange(e.target.value, "email");
+              }}
               style={{
-                // background: isDarkMode ? "#3a3b3c" : "#fff",
                 height: "100%",
                 resize: "none",
                 appearance: "none",
@@ -45,17 +104,17 @@ const ModelReply = (props: PropsModelReply) => {
                 fontSize: 14
               }}
               rows={1}
-              // onKeyDown={handleInputText}
-              // value={inputValue}
-              // onChange={handleChange}
               autoFocus
             />
           </Box>
           <textarea
             id="tour-chatmb-textarea"
             placeholder={t("modelReply.subject")}
+            value={formSendReply.title}
+            onChange={(e) => {
+              handleChange(e.target.value, "title");
+            }}
             style={{
-              // background: isDarkMode ? "#3a3b3c" : "#fff",
               height: "35px",
               resize: "none",
               appearance: "none",
@@ -67,16 +126,14 @@ const ModelReply = (props: PropsModelReply) => {
               fontSize: 15
             }}
             rows={1}
-            // onKeyDown={handleInputText}
-            // value={inputValue}
-            // onChange={handleChange}
             autoFocus
           />
 
         </Stack>
 
 
-        <EditorGroup />
+        <EditorGroup setFormSendReply={setFormSendReply} formSendReply={formSendReply} />
+
       </DialogContent>
       <DialogActions sx={{ padding: "36px 24px" }}>
         <Button
@@ -107,7 +164,7 @@ const ModelReply = (props: PropsModelReply) => {
         </Button>
 
         <Button
-          onClick={handleClickOpen}
+          onClick={() => handleSubmit()}
           size="small"
           variant="primary"
           sx={{

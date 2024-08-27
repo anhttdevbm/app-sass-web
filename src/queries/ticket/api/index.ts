@@ -80,11 +80,10 @@ export const deleteCommentApi = (data) => {
 };
 
 export const getListActivity = async ({ id, page, size, isAll }) => {
+  const params = { page, size, isAll };
   const response = await client.get(
     `${Endpoint.TICKET}/activity/${id}`,
-    {
-      params: { page, size, isAll },
-    },
+    params,
     {
       baseURL: TICKET_API_URL,
     },
@@ -103,6 +102,35 @@ export const updateTicketApi = async (payload) => {
   const response = await client.put(
     `${Endpoint.TICKET}/detail/${payload.id}`,
     mapData,
+    {
+      baseURL: TICKET_API_URL,
+    },
+  );
+  return response;
+};
+
+export const sendReplyApi = (data) => {
+  const formData = {
+    email: data?.email,
+    title: data?.title,
+    content: data?.content,
+    files: data?.files,
+  };
+  return client.post(`${Endpoint.TICKET}/reply/${data.id}`, formData, {
+    baseURL: TICKET_API_URL,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const getListReplyApi = async (id) => {
+  const response = await client.get(
+    `${Endpoint.TICKET}/reply/${id}`,
+    {
+      page: 1,
+      size: 25,
+    },
     {
       baseURL: TICKET_API_URL,
     },
