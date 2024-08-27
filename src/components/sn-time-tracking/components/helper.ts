@@ -1,7 +1,6 @@
-import moment from "moment";
+export const formatHoursToHHMM = (totalHours: number): string => {
+  const hours = Math.floor(totalHours);
+  const minutes = Math.round((totalHours - hours) * 60);
 
-export const formatHoursToHHMM = (hours: number): string => {
-  const duration = moment.duration(hours, "hours");
-  const formatted = moment.utc(duration.asMilliseconds()).format("HH:mm");
-  return formatted;
+  return `${hours}:${minutes.toString().padStart(2, "0")}`;
 };

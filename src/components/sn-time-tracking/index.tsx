@@ -46,7 +46,7 @@ enum TabEnum {
 const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<TabEnum>(TabEnum.MY_TIME);
+  const [tab, setTab] = useState<TabEnum>(TabEnum.COMPANY_TIME);
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -55,7 +55,7 @@ const TimeTrackingPage = () => {
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
 
-  const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
+  const [kindOfSheet, setKindOfSheet] = useState<string>("timeGridWeek");
 
   const timeT = useTranslations(NS_TIME_TRACKING);
 
