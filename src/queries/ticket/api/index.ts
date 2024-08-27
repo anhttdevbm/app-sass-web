@@ -59,8 +59,8 @@ export const createCommentApi = (data) => {
 
 export const editCommentApi = (data) => {
   return client.put(
-    `${Endpoint.TICKET}/${data?.ticketId}/comment/${data?.commentId}`,
-    data,
+    `${Endpoint.TICKET}/comment/${data?.ticketId}/${data?.commentId}`,
+    { comment: data?.comment ?? "", isIternal: data?.isIternal },
     {
       baseURL: TICKET_API_URL,
       // headers: {
