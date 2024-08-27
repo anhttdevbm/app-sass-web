@@ -8,7 +8,7 @@ export const useGetListActivity = (isAll) => {
   const id = params?.id as string;
   return useQuery({
     queryKey: [QUERY_TICKET_KEY.LIST_ACTIVITY, id],
-    queryFn: () => getListActivity({ id, page: 1, size: 10, isAll }),
+    queryFn: () => getListActivity({ id, page: 1, size: 25, isAll }),
     enabled: !!id,
   });
 };

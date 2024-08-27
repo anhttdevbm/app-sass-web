@@ -33,7 +33,6 @@ const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
   const { data: listAgent } = useGetListAgent();
-  console.log("check log" ,listAgent )
   const [keyword, setKeyword] = useState('');
   const [name, setName] = useState("All")
 

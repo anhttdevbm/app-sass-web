@@ -64,11 +64,13 @@ const TextEditor = styled(ReactQuill)(({ theme }) => ({
   "& .ql-toolbar": {
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
+    borderBottom: "none",
   },
-  // "& .ql-container": {
-  //   borderBottomLeftRadius: 12,
-  //   borderBottomRightRadius: 12,
-  // },
+  "& .ql-container": {
+    // borderBottomLeftRadius: 12,
+    // borderBottomRightRadius: 12,
+    borderBottom: "none"
+  },
 }));
 
 export type EditorProps = {
@@ -98,7 +100,6 @@ const EditorCustom = (props: EditorProps) => {
   );
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("zzzzzzzzzzzzzzzzzzzzzzzz");
     if (!event.target.files?.length) return;
     let newFiles = Array.from(event.target.files);
     newFiles = newFiles.reduce(
@@ -110,7 +111,6 @@ const EditorCustom = (props: EditorProps) => {
       },
       [...files],
     );
-    console.log("newFiles", newFiles);
     onChangeFiles && onChangeFiles(newFiles);
   };
 
@@ -167,7 +167,7 @@ const EditorCustom = (props: EditorProps) => {
     if (props.value && value.length === 0) {
       setValue(replaceDescriptionBr(props.value as string, ""));
     }
-  }, [props.value]);
+  }, [props.value, value.length]);
 
   return (
     <Stack className="" style={{ width: "100%" }}>
@@ -205,13 +205,13 @@ const EditorCustom = (props: EditorProps) => {
               noCss
                 ? {}
                 : {
-                    border: "1px solid",
-                    borderColor: "grey.A200",
-                    borderBottomLeftRadius: "12px",
-                    borderBottomRightRadius: "12px",
-                    borderTop: "none",
-                    marginBottom: "20px",
-                  }
+                  border: "1px solid",
+                  borderColor: "grey.A200",
+                  borderBottomLeftRadius: "12px",
+                  borderBottomRightRadius: "12px",
+                  borderTop: "none",
+                  marginBottom: "20px",
+                }
             }
           >
             {urlFiles.map((attachment, index) => (
@@ -229,7 +229,6 @@ const EditorCustom = (props: EditorProps) => {
               style={{ display: "none" }}
               ref={inputFileRef}
               onChange={(e) => {
-                console.log("File selected");
                 onChangeFile(e);
               }}
             />

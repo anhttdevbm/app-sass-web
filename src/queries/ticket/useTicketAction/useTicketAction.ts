@@ -1,5 +1,5 @@
 import { useMutation } from "react-query";
-import { createCommentApi, createTicketApi, deleteCommentApi, editCommentApi } from "../api";
+import { createCommentApi, createTicketApi, deleteCommentApi, editCommentApi , sendReplyApi } from "../api";
 
 const useTicketAction = () => {
   const createTicket = useMutation({
@@ -17,6 +17,10 @@ const useTicketAction = () => {
     mutationFn: deleteCommentApi,
   });
 
-  return { createTicket, createComment, editComment, deleteComment };
+  const sendReply = useMutation({
+    mutationFn : sendReplyApi
+  })
+
+  return { createTicket, createComment, editComment, deleteComment , sendReply };
 };
 export default useTicketAction;

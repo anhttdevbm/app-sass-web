@@ -53,8 +53,6 @@ const TickketList = () => {
   const { data: listTicket } = useGetListTicket();
   const dataFilter = useSelector(selectSearchTicket)
 
-  console.log("check data api", listTicket)
-
   //Store của các key tìm kiếm gói ở đây ///
   const keySearch = useSelector(selectSearchTicket);
 

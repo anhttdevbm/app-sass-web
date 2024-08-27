@@ -6,8 +6,6 @@ import MinHeightTextarea from "components/sn-ticket-agent/form/MinHeightTextarea
 import Wrapper from "components/Wrapper";
 import { useCallback, useEffect, useState } from "react";
 import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
-import { useSnackbar } from "store/app/selectors";
-import { useRouter } from "next/navigation";
 import { TICKET_PATH } from "constant/paths";
 import { IFromAgent } from "../pop-up-model/Model";
 
@@ -20,12 +18,7 @@ interface PropsFormAgent {
 
 
 const CreateAgent = (props: PropsFormAgent) => {
-  const { createTicket } = useTicketAction();
-  const { onAddSnackbar } = useSnackbar();
-  const { push, back } = useRouter();
   const { formAgent, handleChange, type } = props || null
-
-
 
   return (
     <>

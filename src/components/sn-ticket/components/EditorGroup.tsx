@@ -2,7 +2,7 @@
 
 
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { Editor, EditorState, Modifier, RichUtils } from 'draft-js';
+import { convertToRaw, Editor, EditorState, Modifier, RichUtils } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import { Box, Button, FormControl, InputLabel, MenuItem, Stack, Select } from '@mui/material';
 import UndoIcon from 'icons/undoIcon';
@@ -13,44 +13,32 @@ import ItalicIcon from 'icons/ItalicIcon';
 import UnderLineIcon from 'icons/UnderLineIcon';
 import AttachmentsIcon from 'icons/AttachmentsIcon';
 import ListFormatText from 'components/sn-docs/news/page-body/components/ToolBarDraftEditor/components/ListFormatText';
+import FileUpload from '../module/create-ticket/upload/FileUpload';
 
 
-const EditorGroup = () => {
+const EditorGroup = (props: any) => {
+    const { setFormSendReply, formSendReply } = props || null
+    const [openAttachment, setOpenAttachment] = useState(false)
     const inputRef = useRef<any>(null)
 
-    useEffect(()=>{
+    useEffect(() => {
         if (inputRef.current) {
             inputRef.current?.focus();
-          }
-    },[])
+        }
+    }, [])
     // Khởi tạo trạng thái của editor
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
-    console.log("check edit", editorState)
+    // console.log("check edit", editorState)
 
     // Hàm xử lý khi nội dung editor thay đổi
     const onChange = (newState: EditorState) => {
         setEditorState(newState);
+        setFormSendReply((prev) => ({ ...prev, content : getPlainTextContent(newState) }))
     };
 
-    // Hàm căn chỉnh lề
-    const handleAlignment = (alignment: 'left' | 'center' | 'right' | 'justify') => {
-        let blockType = 'left-aligned-block'; // Mặc định là lề trái
-
-        switch (alignment) {
-            case 'center':
-                blockType = 'center-aligned-block';
-                break;
-            case 'right':
-                blockType = 'right-aligned-block';
-                break;
-            case 'justify':
-                blockType = 'justify-aligned-block';
-                break;
-            default:
-                blockType = 'left-aligned-block';
-        }
-
-        onChange(RichUtils.toggleBlockType(editorState, blockType));
+    const getPlainTextContent = (newState : EditorState) => {
+        const contentState = newState.getCurrentContent();
+        return contentState.getPlainText();
     };
 
     // Hàm chuyển đổi chữ thành in hoa
@@ -89,39 +77,12 @@ const EditorGroup = () => {
     // Hàm undo
     const handleUndo = () => {
         onChange(EditorState.undo(editorState));
-        console.log("check")
     };
 
     // Hàm redo
     const handleRedo = () => {
         onChange(EditorState.redo(editorState));
     };
-
-    // Hàm blockStyleFn dùng để áp dụng các class CSS tương ứng cho block
-    const blockStyleFn = (contentBlock) => {
-        const type = contentBlock.getType();
-        const styles = {
-            leftAligned: { textAlign: 'left' },
-            centerAligned: { textAlign: 'center' },
-            rightAligned: { textAlign: 'right' },
-            justifyAligned: { textAlign: 'justify' },
-        };
-
-        if (type === 'left-aligned-block') {
-            return styles.leftAligned;
-        }
-        if (type === 'center-aligned-block') {
-            return styles.centerAligned;
-        }
-        if (type === 'right-aligned-block') {
-            return styles.rightAligned;
-        }
-        if (type === 'justify-aligned-block') {
-            return styles.justifyAligned;
-        }
-        return null;
-    };
-
 
     // Hàm để áp dụng kiểu phông chữ
     const handleFontChange = (font) => {
@@ -175,6 +136,18 @@ const EditorGroup = () => {
                     ref={inputRef}
 
                 />
+                {openAttachment &&
+                    <>
+                        <FileUpload
+                            files={formSendReply.files}
+                            setFiles={(files) =>
+                                setFormSendReply((prev) => ({ ...prev, files }))
+                            }
+                        />
+
+                    </>
+
+                }
             </Box>
 
 
@@ -229,13 +202,13 @@ const EditorGroup = () => {
                     <path d="M0.583008 12.5846V14.418H13.4163V12.5846H0.583008ZM4.70801 8.73464H9.29134L10.1163 10.7513H12.0413L7.68717 0.667969H6.31217L1.95801 10.7513H3.88301L4.70801 8.73464ZM6.99967 2.48297L8.71384 7.08464H5.28551L6.99967 2.48297Z" fill="black" fill-opacity="0.54" />
                 </svg>
 
-            
-
-                <ListFormatText customStyle={{ border: 'none',backgroundColor : "#fff" }}  handleClickListFormat={handleClickListFormat}/>
 
 
-                <Button sx={{ padding: 0, minWidth: 30, minHeight: 40 }} onClick={() => handleAlignment('right')}>
-                    <AttachmentsIcon/>
+                <ListFormatText customStyle={{ border: 'none', backgroundColor: "#fff" }} handleClickListFormat={handleClickListFormat} />
+
+
+                <Button onClick={() => setOpenAttachment(prev => !prev)} sx={{ padding: 0, minWidth: 30, minHeight: 40 }}>
+                    <AttachmentsIcon />
                 </Button>
             </Box>
 

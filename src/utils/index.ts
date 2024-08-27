@@ -288,7 +288,6 @@ export const formatDate = (
   if (!date) return fallback ?? "";
   if (!format) format = DATE_FORMAT_SLASH;
   const dateObj = new Date(date);
-
   const year = dateObj.getFullYear();
 
   if (year === 1 || year === 1970) return fallback ?? "";

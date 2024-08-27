@@ -13,6 +13,8 @@ import { useSnackbar } from "store/app/selectors";
 import useRemoveAgent from "queries/ticket-agent/useRemoveAgent/useRemoveAgent";
 import { useQueryClient } from "react-query";
 import { QUERY_AGENT_KEY } from "queries/ticket-agent/keys";
+import { useAppSelector } from "store/hooks";
+import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
 
 type PropsModel = {
     open: boolean
@@ -21,13 +23,12 @@ type PropsModel = {
     data?: any
 }
 const ModelRemove = (props: PropsModel) => {
+    const params = useAppSelector(selectSearchTicketAgent)
     const t = useTranslations(NS_TICKET);
     const { handleClose, open, handleClickOpen, data } = props || null;
     const { onAddSnackbar } = useSnackbar();
     const queryClient = useQueryClient();
-    const [id , setId] = useState("")
-
-
+    const [id, setId] = useState("")
 
 
     useEffect(() => {
@@ -42,7 +43,7 @@ const ModelRemove = (props: PropsModel) => {
 
                 // push(TICKET_PATH);
                 onAddSnackbar("Remove success!", "success");
-                queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, payload] })
+                queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, params] })
                 handleClose()
             },
             onError: (err: any) => {
@@ -115,7 +116,7 @@ const ModelRemove = (props: PropsModel) => {
                 </Button>
 
                 <Button
-                      onClick={() => handleSubmit(id)}
+                    onClick={() => handleSubmit(id)}
                     size="small"
                     variant="primary"
                     sx={{

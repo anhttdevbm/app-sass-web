@@ -16,6 +16,8 @@ import { useQueryClient } from "react-query";
 import { selectSearchTicket } from "store/ticket/selectors";
 import { QUERY_AGENT_KEY } from "queries/ticket-agent/keys";
 import useAgentUpdate from "queries/ticket-agent/useUpdateAgent/useUpdateAgent";
+import { useAppSelector } from "store/hooks";
+import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
 
 type PropsModel = {
   open: boolean
@@ -36,6 +38,7 @@ export interface IFromAgent {
 
 const Model = (props: PropsModel) => {
   const t = useTranslations(NS_TICKET);
+  const params = useAppSelector(selectSearchTicketAgent)
   const queryClient = useQueryClient()
   const { handleClose, open, handleClickOpen, type, data } = props || null;
   const { createAgent } = useAgentAction();
@@ -63,7 +66,6 @@ const Model = (props: PropsModel) => {
         phone: data?.phone,
         password: "",
       }
-      console.log("check type", type)
       setFormAgent(dataDetail)
     }
 
@@ -80,10 +82,8 @@ const Model = (props: PropsModel) => {
     if (type == "edit") {
       updateAgent.mutate(payload, {
         onSuccess: (data) => {
-
-          // push(TICKET_PATH);
           onAddSnackbar("update ticket success!", "success");
-          queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, payload] })
+          queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, params] })
           handleClose()
         },
         onError: (err: any) => {
@@ -97,7 +97,7 @@ const Model = (props: PropsModel) => {
 
         // push(TICKET_PATH);
         onAddSnackbar("Create ticket success!", "success");
-        queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, payload] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, params] })
         setFormAgent({
           nameUser: "",
           username: "",
@@ -112,7 +112,7 @@ const Model = (props: PropsModel) => {
       },
     });
 
- 
+
   };
 
 
