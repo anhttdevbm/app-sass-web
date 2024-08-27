@@ -55,6 +55,15 @@ export const DOCS_PATH = "/documents";
 export const DOCS_DETAIL_PATH = "/documents/{id}";
 export const DOCS_CREATE_PATH = "/documents/create";
 
+// ticket
+export const TICKET_PATH = "/ticket";
+export const TICKET_INFO_PATH = "/ticket/{id}";
+export const TICKET_CREATE_PATH = "/ticket/create";
+
+// ticket manager
+export const TICKET_AGENT = "/agent";
+
+
 // Feedback
 export const FEEDBACK_PATH = "/feedback";
 //blogs

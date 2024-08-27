@@ -1,0 +1,4 @@
+export const QUERY_AGENT_KEY = {
+  LIST_AGENT: "LIST_AGENT",
+  DETAIL_AGENT: "DETAIL_AGENT",
+};
