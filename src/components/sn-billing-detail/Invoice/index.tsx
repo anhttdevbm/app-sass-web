@@ -51,7 +51,7 @@ const TabInvoice = (props: TabProps) => {
 
   const formik = useFormik<Form>({
     initialValues: {
-      service_items: itemInvoice?.service_items as Service[],
+      service_items: itemInvoice?.service_items ?? [],
     },
     onSubmit: async (formData) => {
       try {
@@ -74,6 +74,16 @@ const TabInvoice = (props: TabProps) => {
   useEffect(() => {
     handleChange("service_items", itemInvoice?.service_items);
   }, [itemInvoice]);
+
+  useEffect(() => {
+    formik.values.service_items.forEach((service, index) => {
+      const amount =
+        (Number(service.rate) ?? 0) * (Number(service.quantity) ?? 0);
+      if (amount != Number(formik.values.service_items[index].amount)) {
+        handleChange(`service_items[${index}].amount`, amount);
+      }
+    });
+  }, [formik.values]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
