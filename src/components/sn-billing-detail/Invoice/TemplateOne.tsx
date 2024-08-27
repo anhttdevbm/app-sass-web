@@ -8,14 +8,35 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { CURRENCY_CODE } from "constant/enums";
-import { memo } from "react";
+import { User } from "constant/types";
+import { useFormik } from "formik";
+import { memo, PropsWithChildren, useEffect } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Invoice } from "store/invoice/reducer";
 import { formatDate, formatNumber } from "utils/index";
 
-function TemplateOne({ user, itemInvoice, isEdit }) {
+type Props = {
+  user?: User;
+  itemInvoice?: Invoice;
+  isEdit?: Boolean;
+  handleChange: (field, value) => void;
+  onDragEnd: (result) => void;
+  formik?: any;
+};
+
+function TemplateOne({
+  user,
+  itemInvoice,
+  isEdit,
+  formik,
+  handleChange,
+  onDragEnd,
+}: PropsWithChildren<Props>) {
   return (
     <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4} p={6}>
       <Typography fontWeight={700}>VNP</Typography>
@@ -188,77 +209,229 @@ function TemplateOne({ user, itemInvoice, isEdit }) {
               </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {itemInvoice?.service_items?.map((row) => (
-              <TableRow
-                key={row.service_name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  component="th"
-                  scope="row"
-                  sx={{
-                    color: "#21263C",
-                    fontSize: "13px",
-                    fontWeight: 400,
-                    padding: "10px",
-                  }}
-                >
-                  {row.service_name}
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#21263C",
-                    fontSize: "13px",
-                    fontWeight: 400,
-                    padding: "10px",
-                  }}
-                  align="right"
-                >
-                  Hour
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#21263C",
-                    fontSize: "13px",
-                    fontWeight: 400,
-                    padding: "10px",
-                  }}
-                  align="right"
-                >
-                  {row.quantity ?? ""}
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#21263C",
-                    fontSize: "13px",
-                    fontWeight: 400,
-                    padding: "10px",
-                  }}
-                  align="right"
-                >
-                  {formatNumber(Number(row?.rate), {
-                    prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                    numberOfFixed: 2,
-                  })}
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#21263C",
-                    fontSize: "13px",
-                    fontWeight: 400,
-                    padding: "10px",
-                  }}
-                  align="right"
-                >
-                  {formatNumber(Number(row?.amount), {
-                    prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                    numberOfFixed: 2,
-                  })}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
+            <Droppable
+              isDropDisabled={true}
+              droppableId="template-one-droppable"
+            >
+              {(provided, snapshot) => (
+                <TableBody ref={provided.innerRef} {...provided.droppableProps}>
+                  {(formik
+                    ? formik.values.service_items
+                    : itemInvoice?.service_items
+                  )?.map((row, index) => (
+                    <Draggable
+                      isDragDisabled={true}
+                      key={String(row._id)}
+                      draggableId={String(row._id)}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <TableRow
+                          key={index}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableCell
+                            component="th"
+                            scope="row"
+                            sx={{
+                              color: "#21263C",
+                              fontSize: "13px",
+                              fontWeight: 400,
+                              padding: "10px",
+                            }}
+                          >
+                            {isEdit ? (
+                              <TextField
+                                name={`service_items[${index}].service_name`}
+                                value={row.service_name}
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].service_name`,
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder="Add a service name"
+                                fullWidth
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: {
+                                      textAlign: "left",
+                                      fontSize: "13px",
+                                    },
+                                  },
+                                }}
+                                sx={{
+                                  "& .MuiInputBase-input.MuiInput-input": {
+                                    padding: "8px",
+                                  },
+                                }}
+                              />
+                            ) : (
+                              row.service_name
+                            )}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "#21263C",
+                              fontSize: "13px",
+                              fontWeight: 400,
+                              padding: "10px",
+                            }}
+                            align="right"
+                          >
+                            Hour
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "#21263C",
+                              fontSize: "13px",
+                              fontWeight: 400,
+                              padding: "10px",
+                            }}
+                            align="right"
+                          >
+                            {isEdit ? (
+                              <TextField
+                                name={`service_items[${index}].quantity`}
+                                value={row.quantity}
+                                type="number"
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].quantity`,
+                                    e.target.value,
+                                  )
+                                }
+                                fullWidth
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: {
+                                      textAlign: "right",
+                                      fontSize: "13px",
+                                    },
+                                  },
+                                }}
+                                sx={{
+                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                                    {
+                                      WebkitAppearance: "none",
+                                      margin: 0,
+                                    },
+                                }}
+                              />
+                            ) : (
+                              String(row.quantity)
+                            )}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "#21263C",
+                              fontSize: "13px",
+                              fontWeight: 400,
+                              padding: "10px",
+                            }}
+                            align="right"
+                          >
+                            {isEdit ? (
+                              <TextField
+                                name={`service_items[${index}].rate`}
+                                value={row.rate}
+                                type="number"
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].rate`,
+                                    e.target.value,
+                                  )
+                                }
+                                fullWidth
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: {
+                                      textAlign: "right",
+                                      fontSize: "13px",
+                                    },
+                                  },
+                                }}
+                                sx={{
+                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                                    {
+                                      WebkitAppearance: "none",
+                                      margin: 0,
+                                    },
+                                }}
+                              />
+                            ) : (
+                              formatNumber(Number(row?.rate), {
+                                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                                numberOfFixed: 2,
+                              })
+                            )}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "#21263C",
+                              fontSize: "13px",
+                              fontWeight: 400,
+                              padding: "10px",
+                            }}
+                            align="right"
+                          >
+                            {isEdit ? (
+                              <TextField
+                                name={`service_items[${index}].amount`}
+                                value={row.amount}
+                                type="number"
+                                onChange={(e) =>
+                                  handleChange(
+                                    `service_items[${index}].amount`,
+                                    e.target.value,
+                                  )
+                                }
+                                fullWidth
+                                variant="standard"
+                                InputProps={{
+                                  disableUnderline: true,
+                                  inputProps: {
+                                    style: {
+                                      textAlign: "right",
+                                      fontSize: "13px",
+                                    },
+                                  },
+                                }}
+                                sx={{
+                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                                    {
+                                      WebkitAppearance: "none",
+                                      margin: 0,
+                                    },
+                                }}
+                              />
+                            ) : (
+                              formatNumber(Number(row?.amount), {
+                                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                                numberOfFixed: 2,
+                              })
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Draggable>
+                  ))}
+                </TableBody>
+              )}
+            </Droppable>
+          </DragDropContext>
         </Table>
       </TableContainer>
 
@@ -348,6 +521,7 @@ function TemplateOne({ user, itemInvoice, isEdit }) {
                 fontWeight: "700",
                 fontSize: "14px",
               }}
+              onClick={formik.handleSubmit}
             >
               Save
             </Box>

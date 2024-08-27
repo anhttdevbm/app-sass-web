@@ -648,8 +648,8 @@ export const downloadFile = async (printRef) => {
 
   const pdf = new jsPDF({
     orientation: "p",
-    unit: "pt",
-    format: "a4",
+    unit: "px",
+    format: [1000, 1200],
   });
 
   const imgProperties = pdf.getImageProperties(data);
@@ -658,10 +658,5 @@ export const downloadFile = async (printRef) => {
 
   pdf.addImage(data, "PNG", 10, 10, pdfWidth, pdfHeight);
 
-  pdf.html(element ?? "", {
-    callback: function (pdf) {
-      pdf.save("print.pdf");
-    },
-    margin: 20,
-  });
+  pdf.save("print.pdf");
 };
