@@ -387,42 +387,10 @@ function TemplateOne({
                             }}
                             align="right"
                           >
-                            {isEdit ? (
-                              <TextField
-                                name={`service_items[${index}].amount`}
-                                value={row.amount}
-                                type="number"
-                                onChange={(e) =>
-                                  handleChange(
-                                    `service_items[${index}].amount`,
-                                    e.target.value,
-                                  )
-                                }
-                                fullWidth
-                                variant="standard"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  inputProps: {
-                                    style: {
-                                      textAlign: "right",
-                                      fontSize: "13px",
-                                    },
-                                  },
-                                }}
-                                sx={{
-                                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
-                                    {
-                                      WebkitAppearance: "none",
-                                      margin: 0,
-                                    },
-                                }}
-                              />
-                            ) : (
-                              formatNumber(Number(row?.amount), {
-                                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                                numberOfFixed: 2,
-                              })
-                            )}
+                            {formatNumber(Number(row?.amount), {
+                              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                              numberOfFixed: 2,
+                            })}
                           </TableCell>
                         </TableRow>
                       )}

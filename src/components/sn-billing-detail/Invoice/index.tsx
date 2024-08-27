@@ -57,6 +57,9 @@ const TabInvoice = (props: TabProps) => {
       try {
         await onUpdateInvoice(formData.service_items, id as string);
         onAddSnackbar("Updated!", "success");
+        if (typeof id === "string") {
+          onGetInvoiceDetail(id);
+        }
         setIsEdit(false);
       } catch (er) {
         onAddSnackbar("Failed to update", "error");
@@ -67,6 +70,10 @@ const TabInvoice = (props: TabProps) => {
   const handleChange = (name, value) => {
     formik.setFieldValue(name, value);
   };
+
+  useEffect(() => {
+    handleChange("service_items", itemInvoice?.service_items);
+  }, [itemInvoice]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
