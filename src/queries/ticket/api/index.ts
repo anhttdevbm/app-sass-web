@@ -99,7 +99,7 @@ export const updateTicketApi = async (payload) => {
     assign: payload?.assign,
     rootCause: payload?.rootCause,
   };
-  console.log("check mapData", mapData);
+
   const response = await client.put(
     `${Endpoint.TICKET}/detail/${payload.id}`,
     mapData,
