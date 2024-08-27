@@ -76,13 +76,15 @@ const TabInvoice = (props: TabProps) => {
   }, [itemInvoice]);
 
   useEffect(() => {
-    formik.values.service_items.forEach((service, index) => {
-      const amount =
-        (Number(service.rate) ?? 0) * (Number(service.quantity) ?? 0);
-      if (amount != Number(formik.values.service_items[index].amount)) {
-        handleChange(`service_items[${index}].amount`, amount);
-      }
-    });
+    if (formik.values.service_items) {
+      formik.values.service_items.forEach((service, index) => {
+        const amount =
+          (Number(service.rate) ?? 0) * (Number(service.quantity) ?? 0);
+        if (amount != Number(formik.values.service_items[index].amount)) {
+          handleChange(`service_items[${index}].amount`, amount);
+        }
+      });
+    }
   }, [formik.values]);
 
   const onDragEnd = (result) => {
