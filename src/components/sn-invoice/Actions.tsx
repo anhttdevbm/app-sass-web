@@ -8,11 +8,12 @@ import {
   Filter,
   SearchInput,
 } from "components/sn-invoice/components";
-import { INVOICE_CREATE_PATH } from "constant/paths";
+import { INVOICE_CREATE_PATH, INVOICES_PATH } from "constant/paths";
 import useQueryParams from "hooks/useQueryParams";
 import DeleteInvoiceIcon from "icons/DeleteInvoiceIcon";
 import { usePathname, useRouter } from "next-intl/client";
 import { useEffect, useState } from "react";
+import { useSnackbar } from "store/app/selectors";
 import { useBudgets } from "store/billing/selectors";
 import { useEmployeeOptions } from "store/company/selectors";
 import { getPath } from "utils/index";
@@ -22,7 +23,7 @@ export interface FilterType {
   value: string;
 }
 
-const Actions = () => {
+const Actions = ({ onDeleteMultipleInvoice, selectedList, onGetInvoices }) => {
   const [searchKey, setSearchKey] = useState<string>("");
   const [filter, setFilter] = useState<FilterType[]>([]);
   const { items: creatorList, onGetOptions } = useEmployeeOptions();
@@ -30,6 +31,7 @@ const Actions = () => {
   const { budgets, onGetBudgets } = useBudgets();
   const pathname = usePathname();
   const { push } = useRouter();
+  const { onAddSnackbar } = useSnackbar();
 
   const handleSearchChange = (value: string) => {
     setSearchKey(value);
@@ -58,6 +60,17 @@ const Actions = () => {
   const handleClickAdd = (e) => {
     e.preventDefault();
     push(INVOICE_CREATE_PATH);
+  };
+
+  const handleDeleteMultiple = async () => {
+    try {
+      const listReq = selectedList.map((invoice) => invoice.invoice_number);
+      await onDeleteMultipleInvoice(listReq);
+      onAddSnackbar("Deleted!", "success");
+      onGetInvoices({ page: 0, size: 10 });
+    } catch (er) {
+      onAddSnackbar("Failed to delete", "error");
+    }
   };
 
   return (
@@ -116,21 +129,24 @@ const Actions = () => {
           onFilter={handleFilterChange}
         />
       </Stack>
-      <Stack maxWidth={"100px"}>
-        <Button
-          variant="outlined"
-          color="error"
-          sx={{
-            borderRadius: "8px",
-            border: "0.6px solid #D5D5D5",
-            textTransform: "capitalize",
-            fontWeight: "700",
-          }}
-          startIcon={<DeleteInvoiceIcon />}
-        >
-          Delete
-        </Button>
-      </Stack>
+      {selectedList.length > 0 && (
+        <Stack maxWidth={"100px"}>
+          <Button
+            variant="outlined"
+            color="error"
+            sx={{
+              borderRadius: "8px",
+              border: "0.6px solid #D5D5D5",
+              textTransform: "capitalize",
+              fontWeight: "700",
+            }}
+            onClick={handleDeleteMultiple}
+            startIcon={<DeleteInvoiceIcon />}
+          >
+            Delete
+          </Button>
+        </Stack>
+      )}
     </Stack>
   );
 };

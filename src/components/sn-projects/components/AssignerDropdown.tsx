@@ -5,15 +5,17 @@ import {
   InputAdornment,
   Typography,
   MenuItem,
+  Box,
+  Avatar,
 } from "@mui/material";
-import TextStatus from "components/TextStatus";
-import { NS_COMMON, STATUS_OPTIONS, COLOR_STATUS } from "constant/index";
+import { NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import { ProjectStatus } from "store/project/actions";
+import { Option } from "constant/types";
 
-const StatusDropdown = (props: {
-  value: ProjectStatus | "";
-  onChange: (value: ProjectStatus | "") => void;
+const AssignerDropdown = (props: {
+  value: Option | "";
+  options: Option[];
+  onChange: (value: string | "") => void;
   sx?: SxProps;
 }) => {
   const commonT = useTranslations(NS_COMMON);
@@ -27,14 +29,14 @@ const StatusDropdown = (props: {
         startAdornment: (
           <InputAdornment position="start">
             <Typography sx={{ color: "grey.600", fontWeight: 600 }}>
-              {commonT("status")}:
+              {commonT("assigner")}:
             </Typography>
           </InputAdornment>
         ),
         IconComponent: (_props) => <ExpandMore {..._props} />,
       }}
       value={props.value}
-      onChange={(e) => props.onChange(e.target.value as ProjectStatus | "")}
+      onChange={(e) => props.onChange(e.target.value)}
       sx={{
         "& .MuiOutlinedInput-root": {
           "& .MuiOutlinedInput-notchedOutline": {
@@ -45,18 +47,20 @@ const StatusDropdown = (props: {
       }}
     >
       <MenuItem value="">{commonT("all")}</MenuItem>
-      {STATUS_OPTIONS.map((option) => (
+      {props.options.map((option) => (
         <MenuItem key={option.value} value={option.value}>
-          <TextStatus
-            text={commonT(option.label)}
-            color={COLOR_STATUS[option.value]}
-          >
-            {commonT(option.label)}
-          </TextStatus>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Avatar
+              alt={option.label}
+              src={option.avatar}
+              sx={{ width: 24, height: 24 }}
+            />
+            <Typography>{option.label}</Typography>
+          </Box>
         </MenuItem>
       ))}
     </TextField>
   );
 };
 
-export default StatusDropdown;
+export default AssignerDropdown;

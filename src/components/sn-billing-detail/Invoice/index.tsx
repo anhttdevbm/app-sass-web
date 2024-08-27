@@ -10,13 +10,16 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { memo, useEffect, useRef, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { Bill, Billing, Budgets } from "store/billing/reducer";
-import { Invoice } from "store/invoice/reducer";
+import { Invoice, Service } from "store/invoice/reducer";
 import { useInvoices } from "store/invoice/selectors";
 import MoreButton from "./MoreButton";
 import PdfButton from "./PdfButton";
 import TemplateOne from "./TemplateOne";
 import { downloadFile } from "utils/index";
 
+export type Form = {
+  service_items: Service[];
+};
 type TabProps = {
   title: string;
   editForm?: boolean;
@@ -36,6 +39,7 @@ const TabInvoice = (props: TabProps) => {
     item: itemInvoice,
     onGetInvoiceDetail,
     onDeleteInvoice,
+    onUpdateInvoice,
   } = useInvoices();
   const printRef = useRef(null);
 
@@ -44,13 +48,57 @@ const TabInvoice = (props: TabProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const pathname = usePathname();
   const { onAddSnackbar } = useSnackbar();
-  const formik = useFormik<Billing>({
-    enableReinitialize: true,
-    initialValues: {},
-    onSubmit(values, formikHelpers) {
-      return;
+
+  const formik = useFormik<Form>({
+    initialValues: {
+      service_items: itemInvoice?.service_items ?? [],
+    },
+    onSubmit: async (formData) => {
+      try {
+        await onUpdateInvoice(formData.service_items, id as string);
+        onAddSnackbar("Updated!", "success");
+        if (typeof id === "string") {
+          onGetInvoiceDetail(id);
+        }
+        setIsEdit(false);
+      } catch (er) {
+        onAddSnackbar("Failed to update", "error");
+      }
     },
   });
+
+  const handleChange = (name, value) => {
+    formik.setFieldValue(name, value);
+  };
+
+  useEffect(() => {
+    handleChange("service_items", itemInvoice?.service_items);
+  }, [itemInvoice]);
+
+  useEffect(() => {
+    if (formik.values.service_items) {
+      formik.values.service_items.forEach((service, index) => {
+        const amount =
+          (Number(service.rate) ?? 0) * (Number(service.quantity) ?? 0);
+        if (amount != Number(formik.values.service_items[index].amount)) {
+          handleChange(`service_items[${index}].amount`, amount);
+        }
+      });
+    }
+  }, [formik.values]);
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+    if (source.droppableId !== destination.droppableId) {
+      return;
+    }
+
+    const copiedItems = formik.values.service_items;
+    const [removed] = copiedItems.slice().splice(source.index, 1);
+    copiedItems.slice().splice(destination.index, 0, removed);
+    handleChange("service_items", copiedItems);
+  };
 
   useEffect(() => {
     if (typeof id === "string") {
@@ -163,17 +211,18 @@ const TabInvoice = (props: TabProps) => {
       </Stack>
 
       {/* Main */}
-      <div ref={printRef} style={{ width: "fit-content" }}>
-        <TemplateOne itemInvoice={itemInvoice} user={user} isEdit={isEdit} />
-      </div>
+      <Stack ref={printRef} width="fit-content">
+        <TemplateOne
+          itemInvoice={itemInvoice}
+          user={user}
+          isEdit={isEdit}
+          formik={formik}
+          handleChange={handleChange}
+          onDragEnd={onDragEnd}
+        />
+      </Stack>
     </Stack>
   );
-};
-
-const sxConfig = {
-  input: {
-    height: 46,
-  },
 };
 
 export default memo(TabInvoice);

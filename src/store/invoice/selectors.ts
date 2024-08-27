@@ -5,11 +5,14 @@ import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   createNewInvoice,
   deleteInvoice,
+  deleteMultipleInvoice,
   getAllPaymentByInvoiceId,
   getInvoiceDetail,
   getInvoiceList,
   GetInvoiceListQueries,
+  updateInvoice,
 } from "./actions";
+import { Service } from "./reducer";
 
 export const useInvoices = () => {
   const dispatch = useAppDispatch();
@@ -56,6 +59,21 @@ export const useInvoices = () => {
     },
     [dispatch],
   );
+  const onDeleteMultipleInvoice = useCallback(
+    async (invoice_numbers: string[]) => {
+      return await dispatch(
+        deleteMultipleInvoice({ invoice_number: invoice_numbers }),
+      );
+    },
+    [dispatch],
+  );
+
+  const onUpdateInvoice = useCallback(
+    async (service_items: Service[], id: string) => {
+      return await dispatch(updateInvoice({ service_items, id }));
+    },
+    [dispatch],
+  );
 
   return {
     items,
@@ -74,5 +92,7 @@ export const useInvoices = () => {
     onGetAllPayments,
     onCreateNewInvoice,
     onDeleteInvoice,
+    onDeleteMultipleInvoice,
+    onUpdateInvoice,
   };
 };

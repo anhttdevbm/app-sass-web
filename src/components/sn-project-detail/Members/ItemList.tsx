@@ -91,7 +91,7 @@ const ItemList = () => {
 
   return (
     <>
-      <FixedLayout>
+      <FixedLayout rounded="0">
         <TableLayout
           headerList={headerList}
           pending={isFetching}
@@ -103,7 +103,7 @@ const ItemList = () => {
               maxHeight: { xs: 0, md: undefined },
               minHeight: { xs: 0, md: HEADER_HEIGHT },
             },
-            borderRadius: "1rem",
+            borderRadius: 3,
           }}
         >
           {items.map((item, index) => {
@@ -134,6 +134,13 @@ const ItemList = () => {
             [`& .${paginationItemClasses.root}`]: {
               fontWeight: 600,
               bgcolor: "#D9F0FD",
+              borderRadius: 3,
+            },
+            [`& .${paginationItemClasses.selected}`]: {
+              bgcolor: "#14B9E5 !important",
+              borderColor: "primary.main",
+              color: "common.white",
+              borderRadius: 2,
             },
           }}
         />

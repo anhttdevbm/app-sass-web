@@ -4,7 +4,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
-import { Skeleton, Stack, TableCell, TableRow } from "@mui/material";
+import {
+  paginationItemClasses,
+  Skeleton,
+  Stack,
+  TableCell,
+  TableRow,
+} from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import Pagination from "components/Pagination";
 import { CellProps, TableLayout } from "components/Table";
@@ -229,6 +235,19 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
           containerProps={{ px: { md: 3 }, py: 1 }}
           onChangePage={onChangePage}
           onChangeSize={onChangeSize}
+          sx={{
+            [`& .${paginationItemClasses.root}`]: {
+              fontWeight: 600,
+              bgcolor: "#D9F0FD",
+              borderRadius: 3,
+            },
+            [`& .${paginationItemClasses.selected}`]: {
+              bgcolor: "#14B9E5 !important",
+              borderColor: "primary.main",
+              color: "common.white",
+              borderRadius: 2,
+            },
+          }}
         />
       </FixedLayout>
     </>

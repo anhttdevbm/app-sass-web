@@ -93,6 +93,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
             sx={{
               textTransform: "none",
               color: "text.primary",
+              justifyContent: "flex-start",
             }}
             onClick={async () => {
               const result: any = await api(
@@ -111,7 +112,9 @@ const DesktopCells = (props: DesktopCellsProps) => {
               }
             }}
           >
-            <Text fontSize={14}>{item?.name}</Text>
+            <Text fontSize={14} fontWeight={600}>
+              {item?.name}
+            </Text>
           </Button>
         </Box>
       </BodyCell>
@@ -136,7 +139,12 @@ const DesktopCells = (props: DesktopCellsProps) => {
       <BodyCell>
         <Box display="flex" gap={1} alignItems="center">
           <AccessTimeIcon sx={{ fontSize: 20 }} htmlColor="grey" />
-          <Text fontSize={14} whiteSpace="nowrap" color="grey.700">
+          <Text
+            fontSize={14}
+            whiteSpace="nowrap"
+            fontWeight={600}
+            color="grey.700"
+          >
             Updated {formatTime(item.updated_time)}
           </Text>
         </Box>

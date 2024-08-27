@@ -5,16 +5,15 @@ import { Wrapper, List, Actions } from "components/sn-invoice";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations(NS_INVOICE);
-    return Promise.resolve({
-        title: t("seo.title"),
-    });
+  return Promise.resolve({
+    title: t("seo.title"),
+  });
 }
 
-export default function Page(){
-    return(
-        <Wrapper>
-          <Actions />
-          <List />
-        </Wrapper>
-    );
+export default function Page() {
+  return (
+    <Wrapper>
+      <List />
+    </Wrapper>
+  );
 }

@@ -1,10 +1,10 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { IconButton, Input, InputProps } from "components/shared";
-import SearchIcon from "icons/SearchIcon";
-import useEventListener from "hooks/useEventListener";
-import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
+import useEventListener from "hooks/useEventListener";
 import CircleCloseIcon from "icons/CircleCloseIcon";
+import SearchIcon from "icons/SearchIcon";
+import { useTranslations } from "next-intl";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 export type SearchProps = Omit<InputProps, "name" | "onChange"> & {
   name: string;
@@ -81,7 +81,7 @@ const Search = (props: SearchProps) => {
     <Input
       size="small"
       name={name}
-      rootSx={{ height: 32, borderRadius: 1, background: "#ffffff" }}
+      rootSx={{ height: 32, borderRadius: 1, backgroundColor: "transparent" }}
       sx={{
         height: 32,
         ...sx,
