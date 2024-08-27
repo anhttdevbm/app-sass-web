@@ -317,7 +317,7 @@ const TableSheet: React.FC<IProps> = (props) => {
                 ...tableCellDataStyles,
               }}
             >
-              {formatHoursToHHMM(row.weeklyHours.sun)}
+              {formatHoursToHHMM(row.weeklyHours.mon)}
             </TableCell>
             <TableCell
               align="center"
