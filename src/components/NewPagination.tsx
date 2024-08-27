@@ -60,19 +60,20 @@ const Pagination = (props: PaginationProps) => {
         onChange={onChange}
         sx={{
           [`& .${paginationItemClasses.root}.${paginationItemClasses.root}`]: {
-            borderRadius: 4,
+            borderRadius: 3,
             fontWeight: 600,
             backgroundColor: "#D9F0FD",
             "&:hover": {
               color: "common.white",
               backgroundColor: "#14B9E5",
-            }
+            },
           },
-          [`& .${paginationItemClasses.selected}.${paginationItemClasses.selected}`]: {
-            borderRadius: 3,
-            backgroundColor: "#14B9E5",
-            color: "common.white",
-          },
+          [`& .${paginationItemClasses.selected}.${paginationItemClasses.selected}`]:
+            {
+              borderRadius: 3,
+              backgroundColor: "#14B9E5",
+              color: "common.white",
+            },
           ...sx,
         }}
         {...rest}

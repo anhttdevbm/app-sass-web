@@ -81,7 +81,7 @@ const Search = (props: SearchProps) => {
     <Input
       size="small"
       name={name}
-      rootSx={{ height: 32, borderRadius: 1, background: "#ffffff" }}
+      rootSx={{ height: 32, borderRadius: 1, backgroundColor: "transparent" }}
       sx={{
         height: 32,
         ...sx,
@@ -89,18 +89,17 @@ const Search = (props: SearchProps) => {
       InputProps={{
         onBlur,
       }}
-      // startNode={startNode}
+      startNode={startNode}
       endNode={
-        // endNode
-        //   ? endNode
-        //   : !!value &&
-        //     emitWhenEnter &&
-        //     hasClear && (
-        //       <IconButton onClick={onClear} noPadding size="small">
-        //         <CircleCloseIcon />
-        //       </IconButton>
-        //     )
-        startNode
+        endNode
+          ? endNode
+          : !!value &&
+            emitWhenEnter &&
+            hasClear && (
+              <IconButton onClick={onClear} noPadding size="small">
+                <CircleCloseIcon />
+              </IconButton>
+            )
       }
       onKeyDown={(e) => {
         e.stopPropagation();

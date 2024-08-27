@@ -1,0 +1,44 @@
+import { Box } from "@mui/material";
+import React from "react";
+import SortByCategory from "../Search";
+
+interface IProps {
+  personVisibleFilter?: boolean;
+  periodVisibleFilter?: boolean;
+}
+
+const FilterCategory: React.FC<IProps> = ({
+  personVisibleFilter = true,
+  periodVisibleFilter = true,
+}) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        border: "1px solid #EFEFEF",
+        borderRadius: "100px",
+        padding: "14px 1.5rem",
+        background: "#F7F7FD",
+        width: "100%",
+      }}
+    >
+      <p
+        style={{
+          marginRight: "2px",
+          fontSize: "13px",
+          fontWeight: "bold",
+          color: "neutral.700",
+        }}
+      >
+        View by:{" "}
+      </p>
+      <SortByCategory title="Project" />
+      {periodVisibleFilter && <SortByCategory title="Period" />}
+      {personVisibleFilter && <SortByCategory title="Person" />}
+    </Box>
+  );
+};
+
+export default FilterCategory;

@@ -1,12 +1,12 @@
-import { memo, useMemo } from "react";
 import { Stack } from "@mui/material";
 import dayjs from "dayjs";
+import { memo, useMemo } from "react";
 import StringFormat from "string-format";
 
+import Avatar from "components/Avatar";
 import Link from "components/Link";
 import { BodyCell, StatusCell } from "components/NewTable";
 import { Text } from "components/shared";
-import Avatar from "components/Avatar";
 import { NS_COMPANY } from "constant/index";
 import { EMPLOYEES_DETAIL_PATH } from "constant/paths";
 import { Employee } from "store/company/reducer";
@@ -25,6 +25,19 @@ const DesktopCells = (props: DesktopCellsProps) => {
     () => StringFormat(EMPLOYEES_DETAIL_PATH, { id: item.id }),
     [item.id],
   );
+
+  const roleMapping: { [key: string]: string } = {
+    AM: 'Admin',
+    MN: 'Manager',
+    LE: 'Leader',
+    ST: 'Staff',
+    CL: 'Client',
+    CT: 'Contractor',
+  };
+
+  const transformedRoles = item.roles.map((role: string) => roleMapping[role] || role);
+
+
   return (
     <>
       <BodyCell align="left">
@@ -37,6 +50,9 @@ const DesktopCells = (props: DesktopCellsProps) => {
       </BodyCell>
       <BodyCell align="left" noWrap>
         {item.email}
+      </BodyCell>
+      <BodyCell align="left" noWrap>
+      {transformedRoles.join(', ')}
       </BodyCell>
       <BodyCell align="left">{item.position?.name}</BodyCell>
       <BodyCell

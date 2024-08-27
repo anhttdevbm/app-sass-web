@@ -16,6 +16,7 @@ import InvoiceTable from "components/sn-invoice/components/InvoiceTable";
 import { useEffect } from "react";
 import { Stack } from "@mui/system";
 import { useInvoices } from "store/invoice/selectors";
+import Actions from "./Actions";
 
 const List = () => {
   const {
@@ -26,6 +27,7 @@ const List = () => {
     error,
     isFetching,
     isIdle,
+    onDeleteMultipleInvoice,
   } = useInvoices();
 
   const {
@@ -40,7 +42,7 @@ const List = () => {
     1,
     10,
     (page, size) => {
-      onGetInvoices({ page, size });
+      onGetInvoices({ page: page - 1, size });
     },
   );
 
@@ -95,7 +97,12 @@ const List = () => {
   }, [isReady, onGetInvoices, initQuery]);
 
   return (
-    <Stack padding={"0px 16px"} overflow={"auto"}>
+    <Stack padding={"0px 16px"}>
+      <Actions
+        selectedList={selectedList}
+        onDeleteMultipleInvoice={onDeleteMultipleInvoice}
+        onGetInvoices={onGetInvoices}
+      />
       <FixedLayout sxContainer={{ bgcolor: "transparent" }}>
         <InvoiceTable
           invoices={invoices}

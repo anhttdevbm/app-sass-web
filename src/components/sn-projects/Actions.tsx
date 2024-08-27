@@ -1,26 +1,20 @@
 "use client";
 
 import {
-  Avatar,
   Box,
   IconButton,
-  InputAdornment,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
   Paper,
   Stack,
-  SxProps,
-  TextField,
   Typography,
 } from "@mui/material";
 import { Search, Switch } from "components/Filters";
-import { Text } from "components/shared";
-import TextStatus from "components/TextStatus";
 import { DataAction } from "constant/enums";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
-import { Option } from "constant/types";
+import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
 import AIGradientIcon from "icons/AIGradientIcon";
 import FolderAddIcon from "icons/FolderAddIcon";
@@ -31,19 +25,14 @@ import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { memo, useEffect, useState } from "react";
 import { useEmployeeOptions } from "store/company/selectors";
-import { ProjectStatus } from "store/project/actions";
 import { useProjects } from "store/project/selectors";
 import { getPath } from "utils/index";
 import AiForm from "./AiForm";
 import ButtonWithDropdown from "./components/ButtonWithDropdown";
-import {
-  COLOR_STATUS,
-  INITIAL_VALUES,
-  STATUS_OPTIONS,
-} from "./components/helpers";
+import { INITIAL_VALUES } from "./components/helpers";
+import StatusDropdown from "./components/StatusDropdown";
 import Form, { ProjectDataForm } from "./Form";
-import useBreakpoint from "hooks/useBreakpoint";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import AssignerDropdown from "./components/AssignerDropdown";
 
 const Actions = () => {
   const { filters, onGetProjects, pageSize, onCreateProject } = useProjects();
@@ -107,7 +96,12 @@ const Actions = () => {
   const [isShowMobileSearch, setIsShowMobileSearch] = useState(false);
 
   const NewProjectButton = () => (
-    <ButtonWithDropdown text={commonT("createNew")} onClick={onShow}>
+    <ButtonWithDropdown
+      text={commonT("createNew")}
+      primaryButtonProps={{
+        onClick: onShow,
+      }}
+    >
       {(handleClose) => (
         <Paper>
           <MenuList>
@@ -247,6 +241,15 @@ const Actions = () => {
                 reverse
                 label={projectT("list.filter.recent")}
                 value={queries?.sort === LATEST_VALUE}
+                sx={{
+                  "& .MuiSwitch-track": {
+                    bgcolor: "grey",
+                  },
+                  "& .MuiSwitch-thumb": {
+                    bgcolor: "white",
+                    boxShadow: 0,
+                  },
+                }}
               />
               <Switch
                 name="saved"
@@ -255,6 +258,15 @@ const Actions = () => {
                 reverse
                 label={projectT("list.filter.saved")}
                 value={queries?.saved}
+                sx={{
+                  "& .MuiSwitch-track": {
+                    bgcolor: "grey",
+                  },
+                  "& .MuiSwitch-thumb": {
+                    bgcolor: "white",
+                    boxShadow: 0,
+                  },
+                }}
               />
 
               <StatusDropdown
@@ -288,10 +300,10 @@ const Actions = () => {
               value={queries?.["name"]}
               startNode={null}
               endNode={
-                <SearchIcon sx={{ fontSize: 16 }} htmlColor="dodgerblue" />
+                <SearchIcon sx={{ fontSize: 20 }} htmlColor="dodgerblue" />
               }
               sx={{ width: "35%" }}
-              rootSx={{ borderRadius: "1.5rem" }}
+              rootSx={{ borderRadius: "1.5rem", border: "none" }}
             />
           </Box>
         </>
@@ -316,101 +328,3 @@ const Actions = () => {
 export default memo(Actions);
 
 const LATEST_VALUE = "updated_time=-1";
-
-const StatusDropdown = (props: {
-  value: ProjectStatus | "";
-  onChange: (value: ProjectStatus | "") => void;
-  sx?: SxProps;
-}) => {
-  const commonT = useTranslations(NS_COMMON);
-
-  return (
-    <TextField
-      select
-      size="small"
-      SelectProps={{
-        displayEmpty: true,
-        startAdornment: (
-          <InputAdornment position="start">
-            <Typography sx={{ color: "grey.600" }}>
-              {commonT("status")}:
-            </Typography>
-          </InputAdornment>
-        ),
-        IconComponent: (_props) => <ExpandMore {..._props} />,
-      }}
-      value={props.value}
-      onChange={(e) => props.onChange(e.target.value as ProjectStatus | "")}
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderRadius: "2rem",
-          },
-        },
-        ...props.sx,
-      }}
-    >
-      <MenuItem value="">{commonT("all")}</MenuItem>
-      {STATUS_OPTIONS.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          <TextStatus
-            text={commonT(option.label)}
-            color={COLOR_STATUS[option.value]}
-          >
-            {commonT(option.label)}
-          </TextStatus>
-        </MenuItem>
-      ))}
-    </TextField>
-  );
-};
-
-const AssignerDropdown = (props: {
-  value: Option | "";
-  options: Option[];
-  onChange: (value: string | "") => void;
-  sx?: SxProps;
-}) => {
-  const commonT = useTranslations(NS_COMMON);
-
-  return (
-    <TextField
-      select
-      size="small"
-      SelectProps={{
-        displayEmpty: true,
-        startAdornment: (
-          <InputAdornment position="start">
-            <Typography sx={{ color: "grey.600" }}>
-              {commonT("assigner")}:
-            </Typography>
-          </InputAdornment>
-        ),
-      }}
-      value={props.value}
-      onChange={(e) => props.onChange(e.target.value)}
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderRadius: "2rem",
-          },
-        },
-        ...props.sx,
-      }}
-    >
-      <MenuItem value="">{commonT("all")}</MenuItem>
-      {props.options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          <Box display="flex" alignItems="center" gap={1}>
-            <Avatar
-              alt={option.label}
-              src={option.avatar}
-              sx={{ width: 24, height: 24 }}
-            />
-            <Typography>{option.label}</Typography>
-          </Box>
-        </MenuItem>
-      ))}
-    </TextField>
-  );
-};

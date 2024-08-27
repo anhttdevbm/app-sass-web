@@ -7,10 +7,9 @@ import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 import {
-  changeDocInfo,
   changeId,
   changePermDoc,
-  getDocDetails,
+  getDocDetails
 } from "./reducer";
 
 const useDocs = () => {
@@ -45,7 +44,8 @@ const useDocs = () => {
   const onCreateDoc = async (
     projectId?: string,
     content?: string,
-    name: string = "No Name",
+    name = "No Name",
+    description = "",
   ) => {
     setLoading(true);
     try {
@@ -53,7 +53,7 @@ const useDocs = () => {
         Endpoint.DOCS,
         {
           name,
-          description: "",
+          description,
           project_id: projectId,
           content,
         },

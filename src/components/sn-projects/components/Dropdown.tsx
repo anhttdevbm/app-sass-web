@@ -3,6 +3,8 @@ import { Text } from "components/shared";
 import { Dropdown as SharedDropdown } from "components/Filters";
 
 const Dropdown = ({
+  prefixLabel,
+  containerSx,
   ...props
 }: React.ComponentProps<typeof SharedDropdown> & {
   prefixLabel: string;
@@ -18,10 +20,12 @@ const Dropdown = ({
         gap: 1,
         px: 2,
         // py: 1,
-        ...props.containerSx,
+        ...containerSx,
       }}
     >
-      <Text sx={{ color: "gray", fontSize: 14 }}>{props.prefixLabel}:</Text>
+      <Text sx={{ color: "gray", fontSize: 14, fontWeight: 600 }}>
+        {prefixLabel}:
+      </Text>
       <SharedDropdown
         {...props}
         hasAll

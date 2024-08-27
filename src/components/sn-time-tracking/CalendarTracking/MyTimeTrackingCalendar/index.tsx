@@ -1,7 +1,8 @@
-"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import FullCalendar from "@fullcalendar/react"; // Import DateClickArg type
+import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -15,18 +16,20 @@ import {
   Menu,
   MenuItem,
   Stack,
+  SxProps,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Theme,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import dayjs from "dayjs";
 import _ from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { calendarStyles } from "./TrackingCalendar.styles";
@@ -44,13 +47,14 @@ import CustomizedInputBase from "components/shared/InputSeasrch";
 import { NS_COMMON, NS_TIME_TRACKING } from "constant/index";
 import useTheme from "hooks/useTheme";
 import CalendarIcon from "icons/CalendarIcon";
-import DayIcon from "icons/DayIcon";
 import PlusIcon from "icons/PlusIcon";
 import moment from "moment";
 import { useTranslations } from "next-intl";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
-import TimeCreate from "../../TimeTrackingModal/TimeCreate";
+import TimeCreate, {
+  TimeCreateValue,
+} from "../../TimeTrackingModal/TimeCreate";
 import TimeSheet from "./TimeSheet";
 
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
@@ -58,7 +62,20 @@ import useBreakpoint from "hooks/useBreakpoint";
 import DuplicateIcon from "icons/DuplicateIcon";
 import { getSameWorker } from "store/timeTracking/actions";
 import ListSheet from "./ListSheet";
-import FilterCategory from "components/sn-time-tracking/Component/FilterCategory";
+import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
+import DayIcon from "icons/DayIcon";
+import { DateSelectArg } from "@fullcalendar/core";
+import {
+  FullCalendarEventProps,
+  FullCalendarExtendedProps,
+  IFilter,
+  ITimeRangeAction,
+} from "components/sn-time-tracking/components/timeTracking.types";
+import { inter } from "../CalendarTracking.styles";
+import TimeRangeNavigator, {
+  TypeNavigator,
+} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
+import { WorkType } from "store/timeTracking/reducer";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -101,13 +118,8 @@ interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
   isOpenCreatePopup: boolean;
+  setIsOpenCreatePopup: (isOpen: boolean) => void;
   currentKindOfSheet: string;
-}
-
-interface IFilter {
-  start_date: string;
-  end_date: string;
-  search_key: string;
 }
 
 const today = dayjs(); // Ngày hiện tại + 1 ngày (ngày mai)
@@ -168,12 +180,13 @@ const StyledDay = styled(Box)(() => ({
   },
 }));
 
-const TrackingCalendar: React.FC<IProps> = (props) => {
+const TrackingCalendar = (props: IProps) => {
   const {
     items: myTime,
     onGetMyTimeSheet,
     onUpdateTimeSheet,
   } = useGetMyTimeSheet();
+  const { setIsOpenCreatePopup, currentKindOfSheet, isOpenCreatePopup } = props;
   const { isDarkMode } = useTheme();
   const { onAddSnackbar } = useSnackbar();
   const timeT = useTranslations(NS_TIME_TRACKING);
@@ -181,52 +194,64 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   const isGetLoading: any = false;
   const { user: userData } = useAuth();
 
-  const calendarRef = React.useRef<FullCalendar>(null);
-  const [filters, setFilters] = React.useState<IFilter>(DEFAULT_FILTER);
-  const prevFilters = React.useRef<IFilter>(DEFAULT_FILTER);
-  prevFilters.current = filters;
+  const calendarRef = useRef<FullCalendar>(null);
+  const [filters, setFilters] = useState<IFilter>(DEFAULT_FILTER);
 
-  const [currentDate, setCurrentDate] = React.useState<string>(
-    dayjs().toString(),
-  );
+  const [currentDate, setCurrentDate] = useState<string>(dayjs().toString());
   const [currentYear, setCurrentYear] = useState<string>("");
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(
-    props.isOpenCreatePopup,
-  );
-  const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
-  const [isEdit, setIsEdit] = React.useState<boolean>(false);
-  const [activeTab, setActiveTab] = React.useState<string>("timeSheet");
-  const [events, setEvents] = React.useState<any[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTimeEntry, setSelectedTimeEntry] = useState<
+    TimeCreateValue | undefined
+  >(undefined);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("timeSheet");
+  const [events, setEvents] = useState<FullCalendarEventProps[]>([]);
 
   const [sameTime, setSameTime] = useState({});
-  const [selectedDate, setSelectedDate] = React.useState<dayjs.Dayjs | Date>(
-    dayjs(),
-  );
+  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | Date>(dayjs());
 
-  const [dateClick, setDateClick] = React.useState<string>("");
+  const [dateClick, setDateClick] = useState<string>("");
 
-  const [dateRange, setDateRange] = React.useState<any[]>([]);
-  const [totalTime, setTotalTime] = React.useState({
-    work: 0,
-    break: 0,
+  const [dateRange, setDateRange] = useState<any[]>([]);
+  const [totalTime, setTotalTime] = useState({
+    todayWorkTime: 0,
+    todayBreakTime: 0,
+    totalWorkTime: 0,
+    totalBreakTime: 0,
   });
+
   const commonT = useTranslations(NS_COMMON);
+
+  useEffect(() => {
+    if (currentKindOfSheet === "timeSheet") {
+      const today = dayjs().format("YYYY-MM-DD");
+      // If current my time sheet not include today -> get week data that include today data
+      if (!(filters.start_date <= today && filters.end_date >= today)) {
+        onGetMyTimeSheet({
+          start_date: dayjs(today).startOf("week").format("YYYY-MM-DD"),
+          end_date: dayjs(today).endOf("week").format("YYYY-MM-DD"),
+          search_key: "",
+        });
+      }
+    } else {
+      onGetMyTimeSheet(filters);
+    }
+  }, [currentKindOfSheet]);
 
   useEffect(() => {
     const getYear = () => {
       if (dayjs.isDayjs(selectedDate)) {
         return selectedDate.year();
       } else {
-        return dayjs(selectedDate).year(); // Convert Date to dayjs and get year
+        return dayjs(selectedDate).year();
       }
     };
     setCurrentYear(getYear().toString());
   }, [selectedDate, dateRange]);
 
   useEffect(() => {
-    setIsOpenCreatePopup(props.isOpenCreatePopup);
-  }, [props.isOpenCreatePopup]);
+    setIsOpenCreatePopup(isOpenCreatePopup);
+  }, [isOpenCreatePopup]);
 
   useEffect(() => {
     _.forEach(myTime, (timesheet) => {
@@ -240,13 +265,15 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     });
   }, [myTime]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!_.isEmpty(myTime)) {
-      const result: any[] = [];
+      const result: FullCalendarEventProps[] = [];
       let totalWorkTime = 0;
       let totalBreakTime = 0;
+      let todayWorkTime = 0;
+      let todayBreakTime = 0;
       _.forEach(myTime, (timesheet) => {
-        const newEvent = {
+        const newEvent: FullCalendarEventProps = {
           title: timesheet?.project?.name,
           start: timesheet?.start_time,
           end: timesheet?.end_time,
@@ -262,26 +289,39 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             hour: timesheet?.duration,
             typeDefault: timesheet?.type,
             type:
-              timesheet?.type === "Work time" ? "working_time" : "break_time",
+              timesheet?.type === WorkType.WORK_TIME
+                ? "working_time"
+                : "break_time",
             note: timesheet?.note,
           },
         };
-        if (timesheet.type === "Work time")
+
+        if (timesheet.type === "Work time") {
           totalWorkTime += timesheet?.duration || 0;
-        else totalBreakTime += timesheet?.duration || 0;
+          if (timesheet.day === dayjs(today).format("YYYY-MM-DD")) {
+            todayWorkTime += timesheet?.duration || 0;
+          }
+        } else {
+          totalBreakTime += timesheet?.duration || 0;
+          if (timesheet.day === dayjs(today).format("YYYY-MM-DD")) {
+            todayBreakTime += timesheet?.duration || 0;
+          }
+        }
 
         result.push(newEvent);
       });
 
       setTotalTime({
-        work: totalWorkTime,
-        break: totalBreakTime,
+        todayWorkTime,
+        todayBreakTime,
+        totalWorkTime,
+        totalBreakTime,
       });
       setEvents(result);
     }
   }, [myTime, userData]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       !_.isEmpty(filters) &&
       dayjs(filters?.start_date).isValid() &&
@@ -290,8 +330,17 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       generateDateRange();
       onGetMyTimeSheet(filters);
     }
-    //eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters?.start_date, filters?.end_date]);
+
+  // useEffect(() => {
+
+  //   if (currentKindOfSheet === "timeSheet") {
+  //     onGetMyTimeSheet({
+  //       start_date
+  //     });
+  //   }
+  // }, [currentKindOfSheet])
 
   const generateDateRange = () => {
     const start_date = dayjs(filters?.start_date);
@@ -306,7 +355,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       result.push(currentDate.toDate());
       currentDate = currentDate.add(1, "day");
     }
-
     setDateRange(result);
   };
 
@@ -331,12 +379,12 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       },
     };
     setIsEdit(true);
-    setSelectedEvent(eventData);
+    // setSelectedEvent(eventData);
     setIsOpenCreatePopup(true);
     handleCloseEventMenu();
   };
 
-  const handleDateSelect = (selectInfo) => {
+  const handleDateSelect = (selectInfo: DateSelectArg) => {
     if (
       selectInfo.view.type === "timeGridWeek" ||
       selectInfo.view.type === "timeGridDay"
@@ -345,25 +393,27 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         .duration(moment(selectInfo.end).diff(moment(selectInfo.start)))
         .hours();
 
-      const eventData = {
-        ...selectInfo,
-        extendedProps: {
-          day: moment(selectInfo.start).format("YYYY-MM-DD"),
-          hour: duration,
-        },
+      const timeCreateValue: TimeCreateValue = {
+        day: moment(selectInfo.start).format("YYYY-MM-DD"),
+        duration,
+        start_time: selectInfo.start.toString(),
+        id: "",
+        note: "",
+        position: userData?.position?.id,
+        project_id: "",
+        type: undefined,
       };
+
       setIsEdit(true);
-      setSelectedEvent(eventData);
+      setSelectedTimeEntry(timeCreateValue);
       setIsOpenCreatePopup(true);
     }
   };
 
-  const getWeekStartAndEndDates = (date: any) => {
-    const startOfWeek = date?.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
-    const endOfWeek = date?.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
-    const startDate = startOfWeek?.format("YYYY-MM-DD");
-    const endDate = endOfWeek?.format("YYYY-MM-DD");
-    return { startDate, endDate };
+  const handleSelectListSheetRow = (selectedRowData: TimeCreateValue) => {
+    setIsEdit(true);
+    setSelectedTimeEntry(selectedRowData);
+    setIsOpenCreatePopup(true);
   };
 
   const handleTabChange = (tab: string) => {
@@ -374,9 +424,10 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     const calendarApi = calendarRef?.current && calendarRef?.current.getApi();
     calendarApi?.gotoDate(dayjs(value).format("YYYY-MM-DD"));
   };
-  const onAction = (action: "view" | "week", value: string) => {
-    const calendarApi = calendarRef?.current && calendarRef?.current.getApi();
 
+  const onAction = (params: ITimeRangeAction) => {
+    const { action, value } = params;
+    const calendarApi = calendarRef?.current && calendarRef?.current.getApi();
     if (action === "week") {
       if (value === "today") {
         const currentDate = new Date();
@@ -390,15 +441,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         }
       }
       if (value === "prev") {
-        const startDate = dayjs(filters?.start_date)
-          .subtract(7, "day")
-          .format("YYYY-MM-DD");
-        const endDate = dayjs(filters?.start_date)
-          .subtract(1, "day")
-          .format("YYYY-MM-DD");
+        const previousWeek = dayjs(selectedDate).subtract(1, "week");
+
+        const startDate = previousWeek.startOf("week").format("YYYY-MM-DD");
+        const endDate = previousWeek.endOf("week").format("YYYY-MM-DD");
+
         setFilters({ ...filters, start_date: startDate, end_date: endDate });
-        setCurrentDate("");
-        setSelectedDate(dayjs(filters?.start_date).subtract(6, "day"));
+        setCurrentDate(previousWeek.startOf("week").toString());
+        setSelectedDate(previousWeek.startOf("week"));
 
         if (calendarApi) {
           calendarApi.prev();
@@ -406,16 +456,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         }
       }
       if (value === "next") {
-        const startDate = dayjs(filters?.end_date)
-          .add(1, "day")
-          .format("YYYY-MM-DD");
-        const endDate = dayjs(filters?.end_date)
-          .add(7, "day")
-          .format("YYYY-MM-DD");
+        const nextWeek = dayjs(selectedDate).add(1, "week");
+
+        const startDate = nextWeek.startOf("week").format("YYYY-MM-DD");
+        const endDate = nextWeek.endOf("week").format("YYYY-MM-DD");
 
         setFilters({ ...filters, start_date: startDate, end_date: endDate });
-        setCurrentDate("");
-        setSelectedDate(dayjs(filters?.end_date).add(2, "day"));
+        setCurrentDate(nextWeek.startOf("week").toString());
+        setSelectedDate(nextWeek.startOf("week"));
         if (calendarApi) {
           calendarApi.next();
           calendarApi.refetchEvents();
@@ -455,7 +503,10 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               isActive={activeTab === "timeGridWeek"}
               title={timeT("myTime.calender")}
               onClick={() => {
-                onAction("view", "timeGridWeek");
+                // onAction({
+                //   action:"view",
+                //   value:"timeGridWeek"
+                // });
                 handleTabChange("timeGridWeek");
               }}
             />
@@ -492,168 +543,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     );
   };
 
-  const _renderHeader = () => {
-    return (
-      <>
-        <Grid
-          // container
-          // rowSpacing={1}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 20px",
-          }}
-        >
-          <p>Year: {currentYear}</p>
-          <Grid
-            item
-            sm={12}
-            md={4}
-            // sx={{
-            //   display: "flex",
-            //   alignItems: "center",
-            //   justifyContent: "center",
-            //   order: 2,
-            // }}
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <MobileDatePicker
-                open={isOpen}
-                onOpen={() => setIsOpen(true)}
-                onClose={() => setIsOpen(false)}
-                onChange={(date: any) => {
-                  if (date) {
-                    const { startDate, endDate } =
-                      getWeekStartAndEndDates(date);
-                    setSelectedDate(date);
-                    onGoDay(date);
-                    setFilters({
-                      ...filters,
-                      start_date: startDate,
-                      end_date: endDate,
-                    });
-                  }
-                }}
-                closeOnSelect
-                sx={{ display: "none" }}
-                slotProps={{
-                  actionBar: {
-                    actions: [],
-                  },
-                  toolbar: {
-                    hidden: true,
-                  },
-                  day: {
-                    sx: {
-                      transition: "all ease 0.25s",
-                      borderRadius: "4px",
-                      fontWeight: 600,
-                      "&.Mui-selected": {
-                        color: "#ffffff",
-                        backgroundColor: `rgba(54, 153, 255, 1) !important`,
-                        "&.MuiPickersDay-today": {
-                          color: "#ffffff",
-                          borderColor: "rgba(54, 153, 255, 1)",
-                        },
-                      },
-                      "&.MuiPickersDay-today": {
-                        color: "rgba(54, 153, 255, 1)",
-                        borderColor: "rgba(54, 153, 255, 1)",
-                      },
-                      ":hover": {
-                        background: "rgba(54, 153, 255, 1)",
-                      },
-                    },
-                  },
-                }}
-              />
-            </LocalizationProvider>
-
-            <Stack
-              direction="row"
-              alignItems="center"
-              sx={{
-                ":hover": {
-                  cursor: "pointer",
-                },
-              }}
-              onClick={() => setIsOpen(true)}
-            >
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  lineHeight: "18px",
-                  color: "#666666",
-                  marginRight: "10px",
-                }}
-              >
-                {`${dayjs(filters?.start_date).format("DD MMM YYYY")} - ${dayjs(
-                  filters?.end_date,
-                ).format("DD MMM YYYY")}`}
-              </Typography>
-              <ExpandMoreIcon sx={{ color: "rgba(102, 102, 102, 1)" }} />
-            </Stack>
-          </Grid>
-          <Grid item sm={12} md={4} sx={{ order: isSmSmaller ? 1 : 3 }}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-end"
-              sx={{ gap: "3px" }}
-            >
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "4px 0px 0px 4px",
-                  // backgroundColor: "grey.100",
-                  color: "grey.400",
-                }}
-                onClick={() => onAction("week", "prev")}
-              >
-                <ChevronLeftIcon />
-              </Button>
-              <Button
-                sx={{
-                  width: "97px",
-                  height: "30px",
-                  backgroundColor: "grey.100",
-                  padding: "4px",
-                  color: "grey.400",
-                  textAlign: "center",
-                }}
-                onClick={() => onAction("week", "today")}
-                disabled={
-                  dayjs(currentDate).format("YYYY-MM-DD") ===
-                  dayjs().format("YYYY-MM-DD")
-                }
-              >
-                {timeT("company_time.this_week")}
-              </Button>
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "0px 4px 4px 0px",
-                  // backgroundColor: "grey.100",
-                  color: "grey.400",
-                }}
-                onClick={() => onAction("week", "next")}
-              >
-                <ChevronRightIcon />
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-        {/* {_renderCalendarModule()} */}
-      </>
-    );
-  };
-
   const dataDayTable = useMemo(() => {
     if (!_.isEmpty(events)) {
       return events?.filter((item) => {
@@ -665,7 +554,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     }
   }, [events, selectedDate]);
 
-  const _renderFooter = () => {
+  const _renderFooter = (type: TypeNavigator) => {
     return (
       <Stack
         direction="column"
@@ -673,7 +562,9 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
         sx={{ marginTop: "15px", color: isDarkMode ? "#fff" : "#212121" }}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
-          {timeT("header.tab.weekly_total")}
+          {type === TypeNavigator.WEEKLY
+            ? timeT("header.tab.weekly_total")
+            : "Daily total"}
         </Typography>
         <Stack direction="row">
           <Stack
@@ -695,11 +586,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               sx={{
                 fontSize: "16px",
                 fontWeight: 400,
-
                 marginRight: "16px",
               }}
             >
-              {timeT("header.tab.workTime")}: {totalTime.work}h
+              {timeT("header.tab.workTime")}:{" "}
+              {type === TypeNavigator.WEEKLY
+                ? totalTime.totalWorkTime
+                : totalTime.todayWorkTime}
+              h
             </Typography>
           </Stack>
           <Stack
@@ -718,7 +612,11 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               }}
             ></span>
             <Typography sx={{ fontSize: "16px", fontWeight: 400 }}>
-              {timeT("header.tab.breakTime")}: {totalTime.break}h
+              {timeT("header.tab.breakTime")}:{" "}
+              {type === TypeNavigator.WEEKLY
+                ? totalTime.totalBreakTime
+                : totalTime.todayBreakTime}
+              h
             </Typography>
           </Stack>
         </Stack>
@@ -726,7 +624,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     );
   };
 
-  const _redderCreatePopup = () => (
+  const _renderCreatePopup = () => (
     <TimeCreate
       open={isOpenCreatePopup}
       onClose={() => {
@@ -737,7 +635,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       filters={filters}
       currentScreen="myTime"
       isEdit={isEdit}
-      selectedEvent={selectedEvent}
+      defaultValue={selectedTimeEntry}
       dateClick={dateClick}
     />
   );
@@ -750,6 +648,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   return (
     <Stack
       direction="column"
+      height="100%"
       sx={{
         ".fc-toolbar .fc-timeGridWeek-button": {
           display: "none",
@@ -760,15 +659,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       <Stack
         //ref={scrollRef}
         sx={{
-          height: `calc(100dvh - 250px)`,
-          overflow: "auto",
           position: "relative",
         }}
+        height="100%"
       >
         {/* {_renderCalendarModule()} */}
 
         {/* {_renderTimeSheetContent()} */}
-        {props.currentKindOfSheet === "timeSheet" && (
+        {currentKindOfSheet === "timeSheet" && (
           // <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />
           <>
             <div
@@ -778,24 +676,38 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 background: "#F7F7FD",
               }}
             >
-              {_renderHeader()}
-            </div>{" "}
+              <TimeRangeNavigator
+                currentDate={currentDate}
+                currentYear={currentYear}
+                filters={filters}
+                setFilters={setFilters}
+                onAction={onAction}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                type={TypeNavigator.DAILY}
+              />
+            </div>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "20px",
+                height: "100%",
               }}
             >
               <FilterCategory />
-              <ListSheet data={myTime} />
+              <ListSheet
+                data={myTime}
+                handleSelectListSheetRow={handleSelectListSheetRow}
+              />
             </Box>
+            {_renderFooter(TypeNavigator.DAILY)}
           </>
         )}
-        {props.currentKindOfSheet === "table" && (
+        {currentKindOfSheet === "table" && (
           <Typography sx={{ textAlign: "center" }}>No data found</Typography>
         )}
-        {props.currentKindOfSheet === "timeGridWeek" && (
+        {currentKindOfSheet === "timeGridWeek" && (
           <>
             <div
               style={{
@@ -804,15 +716,26 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 background: "#F7F7FD",
               }}
             >
-              {_renderHeader()}
+              <TimeRangeNavigator
+                currentDate={currentDate}
+                currentYear={currentYear}
+                filters={filters}
+                setFilters={setFilters}
+                onAction={onAction}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                type={TypeNavigator.WEEKLY}
+              />
             </div>
             <Stack
-              sx={{
-                ...calendarStyles,
-                flexGrow: 1,
-                minHeight: 0,
-                minWidth: 0,
-              }}
+              sx={
+                {
+                  ...calendarStyles,
+                  flexGrow: 1,
+                  minHeight: 0,
+                  minWidth: 0,
+                } as SxProps<Theme>
+              }
               className={`view-timeGridWeek`}
             >
               <Box
@@ -820,7 +743,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   height: "100%",
                   ".fc-timegrid-slot-label-cushion": {
                     padding: "0 8px",
-                    height: "36px",
+                    minHeight: "36px",
                     display: "flex",
                   },
                   ".fc-day.fc-day-sun, .fc-day.fc-day-sat, .fc-timegrid-axis, colgroup":
@@ -870,8 +793,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                       start_time: time,
                       type:
                         event?._def?.extendedProps?.type === "working_time"
-                          ? "Work time"
-                          : "Break time",
+                          ? WorkType.WORK_TIME
+                          : WorkType.BREAK_TIME,
                     };
                     onUpdateTimeSheet({
                       ...dataUpdate,
@@ -887,13 +810,25 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                       });
                   }}
                   eventClick={(eventInfo) => {
-                    setIsEdit(true);
-                    setSelectedEvent(eventInfo?.event);
+                    const { extendedProps } = eventInfo.event;
+                    const timeCreateValue: TimeCreateValue = {
+                      day: extendedProps.day,
+                      duration: extendedProps.hour,
+                      start_time: eventInfo.event.start?.toString(),
+                      id: extendedProps.id,
+                      note: extendedProps.note,
+                      position: extendedProps.position?.id,
+                      project_id: extendedProps.project?.id,
+                      type: extendedProps.typeDefault,
+                    };
 
+                    setIsEdit(true);
+                    setSelectedTimeEntry(timeCreateValue);
                     setIsOpenCreatePopup(true);
                   }}
                   initialView={"timeGridWeek"}
-                  //weekends={true}
+                  initialDate={dayjs(selectedDate).format("YYYY-MM-DD")}
+                  weekends={true}
                   editable={true}
                   droppable={true}
                   eventDrop={({ event }) => {
@@ -931,11 +866,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                     text: string;
                     isToday: boolean;
                   }) => {
-                    // const date = dayjs(eventInfo.date);
                     const dayOfWeek = eventInfo.text.split(" ").shift();
-                    // const isSelected = dayjs(dayjs(date).format('YYYY-MM-DDDD')).isSame(
-                    //   dayjs(selectedDate).format('YYYY-MM-DDDD')
-                    // );
+
                     return (
                       <Stack
                         direction="column"
@@ -971,14 +903,16 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                     );
                   }}
                   eventContent={(eventInfo) => {
-                    const type = eventInfo?.event?.extendedProps?.type;
+                    const extendedProps: FullCalendarExtendedProps = eventInfo
+                      ?.event.extendedProps as FullCalendarExtendedProps;
+                    const type = extendedProps.type;
                     const styles =
                       eventStyles[type as "working_time" | "break_time"];
                     const boxStyles = {
                       position: "relative",
                       ...styles,
                       height: "100%",
-                      padding: "0 6px",
+                      padding: extendedProps.hour === 1 ? "0 6px" : "6px",
                     };
                     if (type === "working_time")
                       return (
@@ -998,9 +932,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                       height: "20px",
                                       marginTop: "6px",
                                     }}
-                                    src={
-                                      eventInfo?.event?.extendedProps?.avatar
-                                    }
+                                    src={extendedProps?.avatar}
                                   />
                                   <Typography
                                     sx={{
@@ -1012,15 +944,14 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                       color: "primary.main",
                                     }}
                                   >
-                                    {eventInfo?.event?.extendedProps.name}
+                                    {extendedProps.name}
                                   </Typography>
                                 </Stack>
                                 <Typography sx={subEventDayStyles}>
-                                  {eventInfo?.event?.extendedProps?.position
-                                    ?.name || "--"}
+                                  {extendedProps.project?.name || "--"}
                                 </Typography>
                                 <Typography sx={subEventDayStyles}>
-                                  {eventInfo?.event?.extendedProps.hour}h
+                                  {extendedProps.hour}h
                                 </Typography>
 
                                 <Stack
@@ -1031,9 +962,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                   // }}
                                 >
                                   {!_.isEmpty(sameTime) &&
-                                    sameTime[
-                                      `${eventInfo?.event?.extendedProps?.id}`
-                                    ]?.length > 0 && (
+                                    sameTime[`${extendedProps?.id}`]?.length >
+                                      0 && (
                                       <>
                                         <Typography
                                           sx={{
@@ -1049,35 +979,35 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                           )}
                                           :
                                         </Typography>
-                                        {sameTime[
-                                          `${eventInfo?.event?.extendedProps?.id}`
-                                        ]?.map((item, index) => {
-                                          return (
-                                            <Box
-                                              key={index}
-                                              sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: 1,
-                                                mb: 1,
-                                              }}
-                                            >
-                                              <Avatar
-                                                sx={{ width: 20, height: 20 }}
-                                                src={item?.avatar?.link}
-                                              />
-                                              <Typography
+                                        {sameTime[`${extendedProps?.id}`]?.map(
+                                          (item, index) => {
+                                            return (
+                                              <Box
+                                                key={index}
                                                 sx={{
-                                                  fontSize: "12px",
-                                                  lineHeight: "16px",
-                                                  color: "#000",
+                                                  display: "flex",
+                                                  alignItems: "center",
+                                                  gap: 1,
+                                                  mb: 1,
                                                 }}
                                               >
-                                                {item.fullname}
-                                              </Typography>
-                                            </Box>
-                                          );
-                                        })}
+                                                <Avatar
+                                                  sx={{ width: 20, height: 20 }}
+                                                  src={item?.avatar?.link}
+                                                />
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: "12px",
+                                                    lineHeight: "16px",
+                                                    color: "#000",
+                                                  }}
+                                                >
+                                                  {item.fullname}
+                                                </Typography>
+                                              </Box>
+                                            );
+                                          },
+                                        )}
                                       </>
                                     )}
                                 </Stack>
@@ -1095,7 +1025,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                             sx={boxStyles}
                             // {...bindToggle(popupState)}
                           >
-                            <Stack direction="row" alignItems="center">
+                            {/* <Stack direction="row" alignItems="center">
                               <Avatar
                                 sx={{
                                   width: "20px",
@@ -1116,13 +1046,33 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                               >
                                 {eventInfo?.event?.extendedProps.name}
                               </Typography>
-                            </Stack>
-                            <Typography sx={subEventDayStyles}>
-                              {eventInfo?.event?.extendedProps?.position
-                                ?.name || "--"}
+                            </Stack> */}
+                            <Typography
+                              sx={{
+                                fontSize: "13px",
+                                color: extendedProps?.project?.name
+                                  ? "#0575E6"
+                                  : "#F64E60",
+                                fontFamily: inter.style.fontFamily,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                display: "-webkit-box",
+                                WebkitLineClamp: extendedProps.hour,
+                                WebkitBoxOrient: "vertical",
+                              }}
+                            >
+                              {extendedProps?.project?.name || "Break time"}
                             </Typography>
-                            <Typography sx={subEventDayStyles}>
-                              {eventInfo?.event?.extendedProps.hour}h
+
+                            <Typography
+                              sx={{
+                                fontSize: "13px",
+                                color: "#212121",
+                                fontFamily: inter.style.fontFamily,
+                                fontWeight: 500,
+                              }}
+                            >
+                              {extendedProps.hour}h
                             </Typography>
 
                             <Stack
@@ -1304,7 +1254,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                         }}
                       >
                         <Stack direction="column" sx={boxStyles}>
-                          <Stack direction="row" alignItems="center">
+                          {/* Employee Info */}
+                          {/* <Stack direction="row" alignItems="center">
                             <Box
                               sx={{
                                 display: "flex",
@@ -1319,7 +1270,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                   height: "20px",
                                   marginTop: "6px",
                                 }}
-                                src={eventInfo?.event?.extendedProps?.avatar}
+                                src={extendedProps.avatar}
                               />
                               <Typography
                                 sx={{
@@ -1331,17 +1282,32 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                   color: "rgba(246, 78, 96, 1)",
                                 }}
                               >
-                                {eventInfo?.event?.extendedProps.name}
+                                {extendedProps.name}
                               </Typography>
                             </Box>
-                          </Stack>
+                          </Stack> */}
 
-                          <Typography sx={subEventDayStyles}>
-                            {eventInfo?.event?.extendedProps.position?.name}
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              color: extendedProps?.project?.name
+                                ? "#0575E6"
+                                : "#F64E60",
+                              fontFamily: inter.style.fontFamily,
+                            }}
+                          >
+                            {extendedProps?.project?.name || "Break time"}
                           </Typography>
 
-                          <Typography sx={subEventDayStyles}>
-                            {eventInfo?.event?.extendedProps.hour}h
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              color: "#212121",
+                              fontFamily: inter.style.fontFamily,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {extendedProps.hour}h
                           </Typography>
 
                           <Stack
@@ -1352,8 +1318,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                             // }}
                           >
                             {!_.isEmpty(sameTime) &&
-                              sameTime[`${eventInfo?.event?.extendedProps?.id}`]
-                                ?.length > 0 && (
+                              sameTime[`${extendedProps.id}`]?.length > 0 && (
                                 <>
                                   <Typography
                                     sx={{
@@ -1369,35 +1334,35 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                     )}
                                     :
                                   </Typography>
-                                  {sameTime[
-                                    `${eventInfo?.event?.extendedProps?.id}`
-                                  ]?.map((item, index) => {
-                                    return (
-                                      <Box
-                                        key={index}
-                                        sx={{
-                                          display: "flex",
-                                          alignItems: "center",
-                                          gap: 1,
-                                          mb: 1,
-                                        }}
-                                      >
-                                        <Avatar
-                                          sx={{ width: 20, height: 20 }}
-                                          src={item?.avatar?.link}
-                                        />
-                                        <Typography
+                                  {sameTime[`${extendedProps.id}`]?.map(
+                                    (item, index) => {
+                                      return (
+                                        <Box
+                                          key={index}
                                           sx={{
-                                            fontSize: "12px",
-                                            lineHeight: "16px",
-                                            color: "#000",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 1,
+                                            mb: 1,
                                           }}
                                         >
-                                          {item.fullname}
-                                        </Typography>
-                                      </Box>
-                                    );
-                                  })}
+                                          <Avatar
+                                            sx={{ width: 20, height: 20 }}
+                                            src={item?.avatar?.link}
+                                          />
+                                          <Typography
+                                            sx={{
+                                              fontSize: "12px",
+                                              lineHeight: "16px",
+                                              color: "#000",
+                                            }}
+                                          >
+                                            {item.fullname}
+                                          </Typography>
+                                        </Box>
+                                      );
+                                    },
+                                  )}
                                 </>
                               )}
                           </Stack>
@@ -1454,9 +1419,10 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 </Menu>
               </Box>
             </Stack>
+            {_renderFooter(TypeNavigator.WEEKLY)}
           </>
         )}
-        {activeTab === "dayGridWeek" && (
+        {/* {activeTab === "dayGridWeek" && (
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <Box
@@ -1468,6 +1434,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 }}
               >
                 {_.map(dateRange, (date: Date, index) => {
+
                   const weekday = weekdays[date.getDay()];
                   const dayNumber = date.getDate();
                   return (
@@ -1565,12 +1532,12 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                                 cursor: "pointer",
                               }}
                               key={index}
-                              onClick={() => {
-                                setIsEdit(true);
-                                setSelectedEvent(event);
+                              // onClick={() => {
+                              //   setIsEdit(true);
+                              //   setSelectedEvent(event);
 
-                                setIsOpenCreatePopup(true);
-                              }}
+                              //   setIsOpenCreatePopup(true);
+                              // }}
                             >
                               <StyledTableCell>
                                 <Box
@@ -1659,10 +1626,9 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               </TableContainer>
             </Grid>
           </Grid>
-        )}
+        )} */}
       </Stack>
-      {_renderFooter()}
-      {_redderCreatePopup()}
+      {_renderCreatePopup()}
       {/* {_redderUpdatePopup()} */}
     </Stack>
   );

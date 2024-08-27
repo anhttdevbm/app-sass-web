@@ -166,7 +166,7 @@ const Form = (props: FormProps) => {
       }
 
       // format type project
-      dataParsed["type_project"] = typeProject.value ?? null;
+      dataParsed["type_project"] = formik.values.type_project?.value ?? null;
 
       const newItem = await onSubmitProps(dataParsed);
 
@@ -272,17 +272,6 @@ const Form = (props: FormProps) => {
   }, [onGetOptions]);
   const { onCreateProjectType } = useProjectTypes();
 
-  const [typeProject, setTypeProject] = useState(formik.values?.type_project);
-
-  const handleOnChangeTypeProject = (option: Option) => {
-    if (option) {
-      formik.setFieldValue("type_project", option.value);
-      setTypeProject(option);
-    } else {
-      formik.setFieldValue("type_project", "");
-    }
-  };
-
   return (
     <FormLayout
       sx={{
@@ -297,24 +286,8 @@ const Form = (props: FormProps) => {
         },
         "& .MuiButton-primaryOutlined": {
           px: 7,
-          bgcolor: "background.paper",
-          position: "relative",
-          border: "solid 1px transparent",
-          backgroundClip: "padding-box",
-          borderRadius: "2rem",
-          "&:before": {
-            position: "absolute",
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            margin: "-1px",
-            content: '""',
-            zIndex: -1,
-            borderRadius: "inherit",
-            background:
-              "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
-          },
+          color: "dodgerblue",
+          bgcolor: "white",
         },
       }}
       label={`${label} ${projectT("list.key")}`}
@@ -348,9 +321,10 @@ const Form = (props: FormProps) => {
                 },
                 left: -14,
                 color: "text.primary",
+                fontWeight: 600,
               }}
               rootSx={{
-                py: 0.5,
+                py: 0.75,
                 px: 1,
                 mt: 3,
                 borderRadius: "2rem",
@@ -373,7 +347,9 @@ const Form = (props: FormProps) => {
             onChangeSearch={onChangeSearch}
             SelectProps={{
               IconComponent: () => (
-                <ChevronCircleIcon sx={{ color: "transparent" }} />
+                <ChevronCircleIcon
+                  sx={{ fontSize: 20, color: "transparent" }}
+                />
               ),
             }}
             searchProps={{
@@ -383,19 +359,23 @@ const Form = (props: FormProps) => {
             onOpen={onGetEmployeeOptions}
             sx={sxConfig.input}
             titleSx={{
+              top: -14,
               left: -14,
               color: "text.primary",
+              fontWeight: 600,
             }}
             rootSx={{
-              p: 0.5,
-              mt: 3,
+              p: 0.75,
+              mt: 2.5,
               borderRadius: "2rem",
             }}
           />
           <div style={{ width: "100%" }}>
             <SelectTypeProject
-              onChange={handleOnChangeTypeProject}
-              value={typeProject}
+              onChange={(option) =>
+                formik.setFieldValue("type_project", option)
+              }
+              value={formik.values?.type_project}
             />
           </div>
         </Stack>
@@ -420,10 +400,11 @@ const Form = (props: FormProps) => {
             titleSx={{
               left: -14,
               color: "text.primary",
+              fontWeight: 600,
             }}
             rootSx={{
-              py: 0.5,
               px: 1,
+              py: 0.75,
               mt: 3,
               borderRadius: "2rem",
             }}
@@ -443,10 +424,11 @@ const Form = (props: FormProps) => {
             titleSx={{
               left: -14,
               color: "text.primary",
+              fontWeight: 600,
             }}
             rootSx={{
-              py: 0.5,
               px: 1,
+              py: 0.75,
               mt: 3,
               borderRadius: "2rem",
             }}
@@ -472,6 +454,7 @@ const Form = (props: FormProps) => {
               titleSx={{
                 left: -14,
                 color: "text.primary",
+                fontWeight: 600,
               }}
               rootSx={{
                 py: 0.5,
@@ -495,7 +478,9 @@ const Form = (props: FormProps) => {
               onEndReached={onCurrencyOptionsEndReached}
               SelectProps={{
                 IconComponent: () => (
-                  <ChevronCircleIcon sx={{ color: "transparent" }} />
+                  <ChevronCircleIcon
+                    sx={{ fontSize: 20, color: "transparent" }}
+                  />
                 ),
               }}
               sx={{
@@ -505,10 +490,11 @@ const Form = (props: FormProps) => {
               titleSx={{
                 left: -14,
                 color: "text.primary",
+                fontWeight: 600,
               }}
               rootSx={{
                 px: 0.5,
-                py: 0.75,
+                py: 1,
                 mt: 3,
                 borderRadius: "0 2rem 2rem 0",
               }}
@@ -532,6 +518,7 @@ const Form = (props: FormProps) => {
             titleSx={{
               left: -14,
               color: "text.primary",
+              fontWeight: 600,
             }}
             rootSx={{
               py: 0.5,
@@ -557,6 +544,7 @@ const Form = (props: FormProps) => {
             titleSx={{
               left: -14,
               color: "text.primary",
+              fontWeight: 600,
             }}
             rootSx={{
               mt: 3,

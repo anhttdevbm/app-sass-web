@@ -1,40 +1,31 @@
-import { memo, useState, useEffect, useMemo } from "react";
-import { Stack, Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Avatar from "components/Avatar";
-import { Text } from "components/shared";
-import { Comment } from "store/project/reducer";
-import Image from "next/image";
-import { formatDate } from "utils/index";
-import { useTranslations } from "next-intl";
-import { NS_BILLING, NS_COMMON, NS_PROJECT, NS_SALES } from "constant/index";
-import { Attachment } from "constant/types";
-import { useFormContext, useWatch } from "react-hook-form";
-import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
-import { SalesComment } from "store/sales/reducer";
-import { useSaleDetail } from "store/sales/selectors";
-import Loading from "components/Loading";
 import { Dropdown } from "components/Filters";
-import AttachmentPreview from "./AttachmentPreview";
+import Loading from "components/Loading";
+import { Text } from "components/shared";
+import { NS_BILLING, NS_COMMON } from "constant/index";
+import { useTranslations } from "next-intl";
+import { memo, useEffect, useMemo, useState } from "react";
+import { Billing, BillingCommentData } from "store/billing/reducer";
 import { useBillings } from "store/billing/selectors";
-import {
-  Billing,
-  BillingComment,
-  BillingCommentData,
-} from "store/billing/reducer";
+import { Invoice } from "store/invoice/reducer";
+import { formatDate } from "utils/index";
+import AttachmentPreview from "./AttachmentPreview";
 
 type CommentsProps = {
   comments?: BillingCommentData[];
   billing?: Billing;
+  invoiceDetail?: Invoice;
 };
 
-type CommentItemProps = { type: string } & BillingCommentData;
+type CommentItemProps = { type: string; content?: string } & BillingCommentData;
 
 const Comments = (props: CommentsProps) => {
-  const { comments, billing } = props;
+  const { comments, billing, invoiceDetail } = props;
   const billingT = useTranslations(NS_BILLING);
   const commonT = useTranslations(NS_COMMON);
   const { isFetching } = useBillings();
-  const [comentType, setCommentType] = useState("all");
+  const [comentType, setCommentType] = useState("Comment");
   // const { control, getValues } = useFormContext();
   const { onGetCommentBilling } = useBillings();
   const [listAttachmentsDown, setListAttachmentsDown] = useState<string[]>([
@@ -47,16 +38,19 @@ const Comments = (props: CommentsProps) => {
   const filteredComments = useMemo(() => {
     if (!comments) return [];
     if (!comentType) return comments;
-    if (comentType === "comments")
-      return comments?.filter((comment) => !comment?.file?.length);
+    if (comentType === "Comment")
+      return comments?.filter((comment) => !comment?.attachments?.length);
     return comments?.filter(
-      (comment) => comment?.file && comment?.file?.length > 0,
+      (comment) => comment?.attachments && comment?.attachments?.length > 0,
     );
   }, [comments, comentType]);
 
   useEffect(() => {
-    onGetCommentBilling(billing?.id ?? "", comentType);
-  }, [billing?.id, comentType, onGetCommentBilling]);
+    onGetCommentBilling(
+      invoiceDetail?.invoice_number ?? "",
+      "filter=" + comentType,
+    );
+  }, [comentType, onGetCommentBilling, invoiceDetail?.invoice_number]);
 
   return isFetching ? (
     <Loading open={false} />
@@ -66,38 +60,33 @@ const Comments = (props: CommentsProps) => {
         direction="row"
         justifyContent="flex-end"
         alignItems="center"
-        sx={{ position: "sticky", zIndex: 1, top: 241, background: "#fff" }}
+        sx={{ zIndex: 1, background: "#fff" }}
       >
         <Text>{billingT("detail.form.feed.title.show")}:</Text>
         <Dropdown
           onChange={(name, value) => {
             setCommentType(value);
           }}
-          placeholder={commonT("all")}
           value={comentType}
           options={[
             {
               label: billingT("detail.form.feed.button.option.comments"),
-              value: "comments",
+              value: "Comment",
             },
             {
               label: billingT("detail.form.feed.button.option.attachments"),
-              value: "attachments",
+              value: "Attachment",
             },
-            // {
-            //   label: billingT("detail.form.feed.button.option.changes"),
-            //   value: "changes",
-            // },
           ]}
           name="type"
         />
       </Stack>
-      {comments?.map((comment: BillingCommentData) => (
+      {(filteredComments ?? []).map((comment: BillingCommentData) => (
         <CommentItem
-          key={comment.bill_id}
-          type={comentType || "comments"}
+          key={comment.invoice_id}
+          type={comentType || "Comment"}
           {...comment}
-          file={comment.file ?? []}
+          file={comment.attachments ?? []}
         />
       ))}
     </Stack>
@@ -107,7 +96,7 @@ const Comments = (props: CommentsProps) => {
 export default memo(Comments);
 
 const CommentItem = (props: CommentItemProps) => {
-  const { type, comment, user_id, status, created_at, file } = props;
+  const { type, content, user_id, status, created_at, file } = props;
 
   return (
     <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
@@ -126,7 +115,7 @@ const CommentItem = (props: CommentItemProps) => {
         </Text>
       </Stack>
 
-      {!!comment && (
+      {!!content && (
         <Box
           sx={{
             fontSize: 14,
@@ -142,7 +131,7 @@ const CommentItem = (props: CommentItemProps) => {
             },
           }}
           className="html"
-          dangerouslySetInnerHTML={{ __html: comment }}
+          dangerouslySetInnerHTML={{ __html: content }}
         />
       )}
 

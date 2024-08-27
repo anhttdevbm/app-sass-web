@@ -85,7 +85,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
       containerHeaderProps={{
         sx: {
           maxHeight: { xs: 0, md: undefined },
-          minHeight: { xs: 0, md: HEADER_HEIGHT },
+          minHeight: { xs: 0, md: 70 },
         },
       }}
       sx={{ bgcolor: { xs: "grey.50", md: "transparent" } }}

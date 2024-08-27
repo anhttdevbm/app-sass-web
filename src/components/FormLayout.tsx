@@ -57,10 +57,10 @@ const FormLayout = (props: FormLayoutProps) => {
             sx={{
               ...defaultSx.button,
               borderRadius: "100px",
-              borderColor: '#2AF598',
+              borderColor: "#3699FF",
               "&:hover": {
-                borderColor: "#2AF598",
-              }
+                borderColor: "#3699FF",
+              },
             }}
           >
             {cancelText}
@@ -110,12 +110,9 @@ export default memo(FormLayout);
 const defaultSx = {
   root: {
     minWidth: { xs: "calc(100vw - 24px)", sm: 850 },
-    px: 0,
     zIndex: 50,
   },
   bottom: {
-    borderTop: "1px solid",
-    borderColor: "grey.100",
     pt: 3,
     pb: 0,
     px: 3,

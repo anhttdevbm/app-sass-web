@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material"
-import React from "react"
+import React, { ComponentProps } from "react";
 import { BoxOwnProps } from "@mui/system/Box/Box"
 import { Theme } from "@mui/system/createTheme/createTheme"
 
@@ -31,9 +31,9 @@ function StatOverviewCard({
         width: "auto",
         boxShadow: "0px 6px 20px -4px rgba(0, 0, 0, 0.08)",
       }}
-      {...rest}
+      {...(rest as ComponentProps<typeof Box>)}
     >
-      <Stack justifyContent='space-between' sx={{ height: "100%" }}>
+      <Stack justifyContent="space-between" sx={{ height: "100%" }}>
         <Stack spacing={0.5}>
           <Typography fontSize={13} fontWeight={500}>
             {title}
@@ -43,10 +43,10 @@ function StatOverviewCard({
           </Typography>
           {description}
         </Stack>
-        <Stack alignItems='end'>{cornerIcon}</Stack>
+        <Stack alignItems="end">{cornerIcon}</Stack>
       </Stack>
     </Box>
-  )
+  );
 }
 
 export default StatOverviewCard

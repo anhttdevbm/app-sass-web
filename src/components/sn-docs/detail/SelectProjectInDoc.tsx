@@ -52,6 +52,10 @@ const SelectProjectInDoc = () => {
         onClick={(e) => setAnchorEl(e.currentTarget)}
         sx={{
           cursor: "pointer",
+          color: {
+            xs: "common.white",
+            sm: "common.black"
+          },
         }}
       >
         {projectActive?.name || "No Project"}

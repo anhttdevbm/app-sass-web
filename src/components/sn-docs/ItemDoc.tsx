@@ -20,7 +20,7 @@ import axios from "axios";
 
 const AccordionSummaryWrapper = styled(AccordionSummary)({
   height: "50px",
-  "&.Mui-expanded": {
+  "& .Mui-expanded": {
     minHeight: "50px",
   },
 });
@@ -38,7 +38,7 @@ export const RowGroup = (props) => {
             <AccordionSummaryWrapper
               sx={{
                 bgcolor: isDarkMode ? "grey.50" : "primary.light",
-                borderRadius: '4px'
+                borderRadius: "4px",
               }}
               aria-controls="panel1a-content"
               id="panel1a-header"
@@ -73,7 +73,7 @@ export const RowGroup = (props) => {
 const StyledAccordion = styled(Accordion)(() => {
   const { isDarkMode } = useTheme();
   return {
-    "&.MuiAccordion-root": {
+    "& .MuiAccordion-root": {
       width: "100%",
       border: "none",
       borderBottom: "1px solid #2196f350",

@@ -169,7 +169,11 @@ const BoardBoxEditorItem: React.FC<IBoardBoxEditorItemProps> = (props) => {
   };
 
   return (
-    <Box display="flex" ref={ref} onClick={() => setIsShowRightButton(true)}>
+    <Box
+      display="flex"
+      ref={ref}
+      onClick={() => setIsShowRightButton(true)}
+    >
       <StyledTreeItem
         nodeId={id}
         label={
@@ -232,8 +236,12 @@ export default function BoardBoxEditor({
       }
       defaultExpandIcon={<PlusSquareBoard style={{ width: 14, height: 14 }} />}
       sx={{
-        height: 378,
-        minWidth: 456,
+        height: "auto",
+        width: {
+          xs: "100%",
+          sm: "456px"
+        },
+        maxHeight: "23.625rem",
         overflowY: "auto",
         display: "flex",
         flexDirection: "column",

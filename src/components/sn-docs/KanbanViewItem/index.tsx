@@ -38,14 +38,21 @@ export default function KanbanViewItem({
             [theme.breakpoints.down("md")]: {
               minHeight: 238,
             },
+            boxShadow: 0,
           })}
         >
           <CardActionArea onClick={() => redirectDetailDoc(item.id)}>
             <CardHeader
               sx={{
+                display: "flex",
+                alignItems: "center",
                 bgcolor: itemKanban.groupInfo ? "#14B9E5" : "#E6F1FD",
                 height: 54,
                 color: "common.white",
+                "& .MuiCardHeader-action": {
+                  height: "100% !important",
+                  m: 0,
+                },
               }}
               avatar={
                 itemKanban.groupInfo ? (
@@ -73,7 +80,7 @@ export default function KanbanViewItem({
                   </Box>
                 )
               }
-              // action={<ActionMoreListDoc />}
+              action={<ActionMoreListDoc />}
               title={
                 <Box
                   display="flex"
@@ -82,8 +89,18 @@ export default function KanbanViewItem({
                   gap={1}
                   onClick={() => redirectDetailDoc(item.id)}
                 >
-                  <Typography>
-                    {itemKanban.groupInfo ? itemKanban.groupInfo.name : ""}
+                  <Typography
+                    fontWeight="bold"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 1,
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    {itemKanban.groupInfo?.name} #{itemKanban.groupInfo?.number}
                   </Typography>
                   <GroupIcon />
                 </Box>
@@ -96,7 +113,15 @@ export default function KanbanViewItem({
                   fontSize={20}
                   variant="h3"
                   fontWeight={600}
-                  sx={{ fontWeight: "bold" }}
+                  sx={{
+                    fontWeight: "bold",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: 1,
+                    lineHeight: "1.5",
+                  }}
                 >
                   {item.name}
                 </Typography>
@@ -107,11 +132,11 @@ export default function KanbanViewItem({
                     sx={{ bgcolor: "#ddd5d5", height: 18, width: 18 }}
                     aria-label="avatar-content"
                   />
-                  <Typography variant="body1">
+                  <Typography variant="body2">
                     {(item.owner?.fullname || item.created_by?.fullname) &&
                       docsT("ownedBy")}
                   </Typography>
-                  <Typography variant="body1" sx={{ color: "#0575E6" }}>
+                  <Typography variant="body2" sx={{ color: "#0575E6" }}>
                     {item.owner?.fullname ?? item.created_by?.fullname ?? "--"}
                   </Typography>
                 </Box>
@@ -127,7 +152,7 @@ export default function KanbanViewItem({
                       lineHeight: "1.5",
                     }}
                   >
-                    {item.description}
+                    {item.description ?? itemKanban?.groupInfo?.description}
                   </Typography>
                 </Box>
                 {item.updated_time && (

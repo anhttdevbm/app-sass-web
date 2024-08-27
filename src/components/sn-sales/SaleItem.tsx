@@ -1,42 +1,30 @@
 "use client";
 
-import { TableRow, Stack } from "@mui/material";
-import { BodyCell, StatusCell } from "components/Table";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import {
-  COLOR_STAGE_STATUS,
-  TEXT_STAGE_STATUS,
-  CURRENCY_SYMBOL,
-  mappingStageStatusOptions,
-} from "./helpers";
-import { Dropdown } from "components/Filters";
-import {
-  formatDate,
-  formatNumber,
-  formatEstimateTime,
-  getPath,
-  formatCurrency,
-  getMessageErrorByAPI,
-} from "utils/index";
-import { DATE_LOCALE_FORMAT, NS_SALES } from "constant/index";
+import { Stack, TableRow } from "@mui/material";
 import Avatar from "components/Avatar";
-import { IconButton, Input, Text } from "components/shared";
-import { Sales } from "store/sales/reducer";
-import useGetEmployeeOptions from "./hooks/useGetEmployeeOptions";
-import { useSaleDetail, useSales } from "store/sales/selectors";
-import { SALE_DETAIL_PATH } from "constant/paths";
-import { Option, User } from "constant/types";
-import { useGetStageOptions } from "components/sn-sales-detail/hooks/useGetDealDetail";
-import LabelStatusCell from "./components/LabelStatusCell";
-import { useSnackbar } from "store/app/selectors";
-import { useLocale, useTranslations } from "next-intl";
-import dayjs from "dayjs";
-import LockIcon from "icons/LockIcon";
-import UnlockIcon from "icons/UnlockIcon";
-import ServiceItemAction from "./components/ItemsAction";
+import { Input, Text } from "components/shared";
 import { Action } from "components/sn-sales-detail/components/TodoList/SubItem";
-import { debounce } from "lodash";
+import { BodyCell } from "components/Table";
+import { DATE_LOCALE_FORMAT, NS_SALES } from "constant/index";
+import { SALE_DETAIL_PATH } from "constant/paths";
+import { Option } from "constant/types";
+import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { Sales } from "store/sales/reducer";
+import { useSaleDetail, useSales } from "store/sales/selectors";
+import {
+  formatCurrency,
+  formatNumber,
+  getMessageErrorByAPI,
+  getPath,
+} from "utils/index";
 import InputDropdown from "./components/InputDropdown";
+import ServiceItemAction from "./components/ItemsAction";
+import LabelStatusCell from "./components/LabelStatusCell";
+import { CURRENCY_SYMBOL, mappingStageStatusOptions } from "./helpers";
+import useGetEmployeeOptions from "./hooks/useGetEmployeeOptions";
 
 interface IProps {
   setShouldLoad: (value: boolean) => void;
@@ -134,15 +122,14 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           backgroundColor: "grey.50",
         },
         w: "100%",
-        "td": { border: "none" },
+        td: { border: "none" },
       }}
     >
       <BodyCell
-                align="left"
-                href={getPath(SALE_DETAIL_PATH, undefined, { id: item.id })}
-                onClick={() => onSetRevenue(item.revenue)}
+        align="left"
+        href={getPath(SALE_DETAIL_PATH, undefined, { id: item.id })}
+        onClick={() => onSetRevenue(item.revenue)}
       >
-
         <Text
           variant="body2"
           color="text.primary"
@@ -160,7 +147,6 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
         >
           {item.name}
         </Text>
-
       </BodyCell>
       <BodyCell>
         <LabelStatusCell
@@ -371,7 +357,6 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
         <Stack
           direction={"row"}
           spacing={0}
-
           sx={{
             position: "relative",
             zIndex: 99,
@@ -404,10 +389,9 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
               setIsFocused(false);
             }}
             onClose={() => setIsFocused(false)}
-            saleId={item.id}
+            service_id={item.id}
             index={1}
           />
-
         </Stack>
       </BodyCell>
     </TableRow>

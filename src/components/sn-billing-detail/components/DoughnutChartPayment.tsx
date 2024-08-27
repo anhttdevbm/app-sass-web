@@ -7,7 +7,7 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -24,8 +24,24 @@ const data: ChartData<"doughnut", number[], string> = {
 };
 
 const DoughnutChartPayment = ({ write, paid, balanceDue, amount }) => {
+  const [dataChart, setDataChart] = useState(data);
   useEffect(() => {
-    data.datasets[0].data = [write, paid, balanceDue];
+    const total = write + paid + balanceDue;
+    if (!total) return;
+
+    setDataChart((prev) => ({
+      ...prev,
+      datasets: [
+        {
+          ...prev.datasets[0],
+          data: [
+            (write * 100) / total,
+            (paid * 100) / total,
+            (balanceDue * 100) / total,
+          ],
+        },
+      ],
+    }));
   }, [write, paid, balanceDue]);
   return (
     <Box sx={{ position: "relative" }}>
@@ -33,8 +49,8 @@ const DoughnutChartPayment = ({ write, paid, balanceDue, amount }) => {
         direction="column"
         sx={{
           position: "absolute",
-          top: "76px",
-          left: "56px",
+          top: "80px",
+          left: "65px",
         }}
       >
         <Typography
@@ -49,7 +65,12 @@ const DoughnutChartPayment = ({ write, paid, balanceDue, amount }) => {
           {amount}
         </Typography>
       </Stack>
-      <Doughnut height={210} width={210} options={options as any} data={data} />
+      <Doughnut
+        height={210}
+        width={210}
+        options={options as any}
+        data={dataChart}
+      />
     </Box>
   );
 };

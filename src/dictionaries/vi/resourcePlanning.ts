@@ -3,7 +3,7 @@ import ResourceDictionary from "dictionaries/types/ResourceDictionary";
 export const ResourcePlanning: ResourceDictionary = {
   header: {
     title: "Quản lý lịch trình",
-
+    add:"Tạo mới",
     tab: {
       allPeople: "Lịch trình",
       mySchedule: "Tiến trình",

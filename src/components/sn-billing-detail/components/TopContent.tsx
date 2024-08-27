@@ -8,6 +8,7 @@ import {
   Stack,
   StackProps,
   Theme,
+  Typography,
   selectClasses,
 } from "@mui/material";
 import Link from "components/Link";
@@ -45,6 +46,7 @@ import DropdownTag from "./DropdownTag";
 import { useBillings } from "store/billing/selectors";
 import useTheme from "hooks/useTheme";
 import { Invoice, Member } from "store/invoice/reducer";
+import CommentHistory from "icons/CommentHistory";
 
 const ITEM_HEIGHT = 48;
 
@@ -53,10 +55,12 @@ type TopContentProps = {
   item?: Invoice;
   user: User;
   memberOptions?: Option[];
+  handleDisplayComment: (value: boolean) => void;
 };
 
 const TopContent = (props: TopContentProps) => {
-  const { tagsOptions, item, memberOptions, user } = props;
+  const { tagsOptions, item, memberOptions, user, handleDisplayComment } =
+    props;
   const {
     onAddUserToBilling,
     addUserStatus,
@@ -115,23 +119,6 @@ const TopContent = (props: TopContentProps) => {
     push(BILLING_PATH);
   };
 
-  // useEffect(() => {
-  //   if (user && listUser.length === 0 && item?.user && item.user.length === 0) {
-  //     if (!setMember.has(user.id)) {
-  //       setMember.add(user.id);
-  //       const member = {
-  //         id: user.id,
-  //         fullname: user.fullname,
-  //         avatar: {
-  //           link: user?.avatar?.link,
-  //         },
-  //       } as Member;
-
-  //       setListUser([member]);
-  //     }
-  //   }
-  // }, [user, item]);
-
   useEffect(() => {
     if (item?.members && item.members.length > 0 && listUser?.length === 0) {
       const filterMember = item.members
@@ -173,9 +160,6 @@ const TopContent = (props: TopContentProps) => {
     // setListUser([...listUser, ...filterMember] as Member[]);
   }, [item]);
 
-  // console.log(user);
-  // console.log(listUser);
-
   useEffect(() => {
     if ((addUserStatus || isUpdateTagBill) && id) {
       onGetBilling(id);
@@ -188,20 +172,6 @@ const TopContent = (props: TopContentProps) => {
       setMarkSent("");
     }
   }, [markAsSend]);
-
-  // useEffect(() => {
-  //   if (isDeleted) {
-  //     push(BILLING_PATH);
-  //   }
-  // }, [isDeleted]);
-
-  // const onDuplicate = () => {
-  //   localStorage.setItem(
-  //     "duplicateBill",
-  //     JSON.stringify({ ...item, duplicate: true }),
-  //   );
-  //   push(BILLING_DUPLICATE_PATH);
-  // };
 
   const onMarkAsSend = () => {
     const data = {
@@ -224,6 +194,7 @@ const TopContent = (props: TopContentProps) => {
         justifyContent="space-between"
         spacing={2}
         pr={3}
+        sx={{ borderBottom: "1px solid #EEEEEE" }}
       >
         <Stack
           direction="row"
@@ -238,223 +209,48 @@ const TopContent = (props: TopContentProps) => {
             display={"flex"}
             alignItems={"center"}
           >
-            <Avatar src={user?.avatar?.link ?? ""} />
+            {/* <Avatar src={user?.avatar?.link ?? ""} /> */}
 
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
-              {"Invoice " +
-                (item?.invoice_number ? item?.invoice_number?.toString() : "")}
+              {item?.invoice_number ? item?.invoice_number?.toString() : ""}
             </Text>
+
+            <Box
+              sx={{
+                border: "1px solid rgba(131, 129, 149, 0.2)",
+                color: "#838195",
+                padding: "3px",
+                marginLeft: "16px",
+                borderRadius: "3px",
+                fontSize: "14px",
+              }}
+            >
+              DRAFT
+            </Box>
           </Link>
         </Stack>
 
-        <Box
+        <Button
+          onClick={() => handleDisplayComment(true)}
           sx={{
             textAlign: "center",
-            width: 100,
             padding: 1,
-            borderRadius: 2,
-            background: "#C9F7F5",
             paddingRight: "3px",
+            display: "flex",
+            gap: "12px",
+            alignItems: "center",
+            cursor: "pointer",
           }}
         >
-          <Text variant={"body2"} sx={{ color: "#1BC5BD" }}>
-            {billingT("detail.form.top.title.paid")}
-          </Text>
-        </Box>
-        <CloseOutlined onClick={() => push(BILLING_PATH)} />
-      </Stack>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        spacing={2}
-      >
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          flex={1}
-          width="50%"
-        >
-          <Button
-            // startIcon={<PlusIcon />}
-            onClick={onMarkAsSend}
-            size="extraSmall"
-            variant="primary"
-          >
-            {/* {item?.mail_status == "Unsend"
-              ? billingT("detail.form.top.button.markAsSent")
-              : item?.mail_status == "Sent"
-              ? billingT("detail.form.top.button.unSent")
-              : ""} */}
-          </Button>
-        </Stack>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent={"end"}
-          spacing={1}
-          flex={1}
-          width="50%"
-        >
-          {/* <Dropdown
-            placeholder={"company name"}
-            options={[]}
-            name="status"
-            onChange={(name, value) => null}
-            // value={listUser}
-            rootSx={{
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(4)}!important`,
-                "& .sub": {
-                  display: "none",
-                },
-              },
-            }}
-          /> */}
-
-          <Stack
-            direction={"row"}
-            gap={2}
-            alignItems={"center"}
-            sx={{
-              ["& .MuiAvatar-root"]: {
-                // marginLeft: "-20px",
-                position: "initial",
-                background: "#E1F0FF",
-                color: "#666",
-                width: 24,
-                height: 24,
-              },
-              ["& .MuiAvatarGroup-root .MuiAvatar-root"]: {
-                marginLeft: "-15px",
-              },
-            }}
-          >
-            <AvatarGroup total={listUser?.length} max={5} spacing={"medium"}>
-              {listUser?.map((item, index) => {
-                // eslint-disable-next-line react/jsx-key
-                return (
-                  <Avatar
-                    key={index}
-                    src={""}
-                    alt=""
-                    sx={{ width: 24, height: 24 }}
-                  />
-                );
-              })}
-            </AvatarGroup>
-          </Stack>
-
-          <Stack direction={"row"} gap={2}>
-            <SelectMembers
-              onChange={(name, data) => onChangeMember(name, data)}
-              name=""
-              value={listUser}
-            />
-          </Stack>
-
-          <DropdownTag
-            placeholder={""}
-            options={tagsOptions ?? []}
-            name="Tag"
-            onChange={(name, value) => {
-              onChangeTag(value);
-              setTagSelected(value);
-            }}
-            value={tagSelected}
-            rootSx={{
-              px: "0px!important",
-              [`& .${selectClasses.outlined}`]: {
-                pr: "0!important",
-                mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                  `${spacing(4)}!important`,
-                "& .sub": {
-                  display: "none",
-                },
-              },
-            }}
-          />
-          <IconButton
-            aria-label="more"
-            id="long-button"
-            aria-controls={open ? "long-menu" : undefined}
-            aria-expanded={open ? "true" : undefined}
-            aria-haspopup="true"
-            onClick={handleClick}
-          >
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            id="long-menu"
-            MenuListProps={{
-              "aria-labelledby": "long-button",
-            }}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
-              style: {
-                maxHeight: ITEM_HEIGHT * 4.5,
-                width: "25ch",
-              },
-            }}
-          >
-            {options.map((option) => (
-              <MenuItem
-                key={option}
-                selected={option === "Pyxis"}
-                onClick={handleClose}
-              >
-                {option ===
-                billingT("detail.form.top.button.option.duplicateInvoice") ? (
-                  <Stack
-                    gap={2}
-                    direction={"row"}
-                    alignItems={"center"}
-                    // onClick={() => onDuplicate()}
-                  >
-                    <ContentCopyRounded />
-                    <Text variant={"body2"}>
-                      {billingT(
-                        "detail.form.top.button.option.duplicateInvoice",
-                      )}
-                    </Text>
-                  </Stack>
-                ) : option ===
-                  billingT("detail.form.top.button.option.createCreditNote") ? (
-                  <Stack gap={2} direction={"row"} alignItems={"center"}>
-                    <SubtitlesOutlined />
-                    <Text variant={"body2"}>
-                      {billingT(
-                        "detail.form.top.button.option.createCreditNote",
-                      )}
-                    </Text>
-                  </Stack>
-                ) : option ===
-                  billingT("detail.form.top.button.option.deleteInvoice") ? (
-                  <Stack
-                    gap={2}
-                    direction={"row"}
-                    alignItems={"center"}
-                    color={"red"}
-                    onClick={() => onDelete()}
-                  >
-                    <TrashIcon sx={{ fontSize: 25 }} />
-                    <Text variant={"body2"} color={"red"}>
-                      {billingT("detail.form.top.button.option.deleteInvoice")}
-                    </Text>
-                  </Stack>
-                ) : (
-                  ""
-                )}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Stack>
+          <CommentHistory sx={{ marginTop: "2px", width: "16px" }} />
+          <Typography fontSize={14} fontWeight={400} color="#212529">
+            Comments & History
+          </Typography>
+        </Button>
+        <CloseOutlined
+          sx={{ cursor: "pointer" }}
+          onClick={() => push(INVOICES_PATH)}
+        />
       </Stack>
     </Stack>
   );

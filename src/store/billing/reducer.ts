@@ -304,12 +304,14 @@ export interface BillingDataUpdate {
 }
 
 export interface BillingCommentData {
-  bill_id?: string;
+  invoice_id?: string;
   user_id?: User;
   file?: [];
   status?: string;
   comment?: string;
   created_at?: string;
+  creator?: string;
+  attachments?: [];
 }
 
 export interface BillingComment extends Omit<Comment, "creator"> {
@@ -586,7 +588,7 @@ const billingSlice = createSlice({
       .addCase(getCommentBilling.fulfilled, (state, { payload }) => {
         // const { items, ...paging } = action.payload;
 
-        state.dataComment = payload;
+        state.dataComment = payload.comments;
 
         state.status = DataStatus.SUCCEEDED;
         state.error = undefined;

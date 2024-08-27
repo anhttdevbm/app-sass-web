@@ -42,7 +42,7 @@ const Search = ({ projectId }: { projectId?: string }) => {
   };
 
   const onSearch = () => {
-    let newQueries: TBudgetListQueries = {};
+    const newQueries: TBudgetListQueries = {};
     if (projectId) {
       newQueries.project_id = projectId;
     }
@@ -146,7 +146,7 @@ export const SearchWithOnlyInput = () => {
   }, []);
 
   const onSearch = () => {
-    let newQueries: TBudgetListQueries = {};
+    const newQueries: TBudgetListQueries = {};
 
     if (projectId) {
       newQueries.project_id = String(projectId);

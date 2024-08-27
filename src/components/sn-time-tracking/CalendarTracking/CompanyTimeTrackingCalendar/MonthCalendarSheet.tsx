@@ -3,13 +3,7 @@
 import { CalendarToday, Group } from "@mui/icons-material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import {
-  AvatarGroup,
-  Box,
-  Drawer,
-  Stack,
-  Typography
-} from "@mui/material";
+import { AvatarGroup, Box, Drawer, Stack, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "icons/CloseIcon";
@@ -64,7 +58,7 @@ interface SelectedDate {
   event: Event | null;
 }
 
-const MonthCalendarSheetTest = () => {
+const MonthCalendarSheet = () => {
   const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
   // State to manage current month\
   const [timeSheetData, setTimeSheetData] = useState<Timesheet[]>([]);
@@ -476,7 +470,7 @@ const MonthCalendarSheetTest = () => {
           // minWidth: "100dvw", // Set a minimum width to prevent resizing below 1024px
         }}
       >
-        <table style={{ width: "100%",minWidth:"1280px" }}>
+        <table style={{ width: "100%", minWidth: "1280px" }}>
           <thead>
             <tr>
               {weekdaysTableHeader.map((day) => (
@@ -710,4 +704,4 @@ const SummaryBox = ({
   );
 };
 
-export default MonthCalendarSheetTest;
+export default MonthCalendarSheet;
