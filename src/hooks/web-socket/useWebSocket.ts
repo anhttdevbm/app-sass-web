@@ -16,26 +16,29 @@ const useWebSocket = (): WebSocket | null => {
 
     const connectSocket = () => {
       const wsClient = new WebSocket(
-        `${process.env.NEXT_APP_WS_URL_TICKET}?token=${encodeURIComponent(
-          token ?? "",
-        )}`,
+        `${process.env.NEXT_APP_WS_URL_TICKET}}`,
+        undefined,
       );
 
       wsClient.onopen = () => {
         console.log("WebSocket connection opened");
+        // Send authentication message with the token
+        // Send any other initial messages if needed
         wsClient.send(
           JSON.stringify({
-            event: "",
+            event: "ListOnline",
             page: 1,
           }),
         );
       };
-
       wsClient.onerror = (error) => {
         console.error("WebSocket error:", error);
         wsClient.close();
       };
 
+      wsClient.onmessage = (event) => {
+        console.log("event", event);
+      };
       wsClient.onclose = () => {
         console.log("WebSocket connection closed, reconnecting...");
         setTimeout(() => {

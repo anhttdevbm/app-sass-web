@@ -33,18 +33,15 @@ const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
   const { data: listAgent } = useGetListAgent();
-  console.log("check log" ,listAgent )
-  const [keyword, setKeyword] = useState('');
-  const [name, setName] = useState("All")
-
+  const [keyword, setKeyword] = useState("");
+  const [name, setName] = useState("All");
 
   const onChangeMembers = (id: string, fullname: string) => {
-    setName(fullname)
+    setName(fullname);
     const newData = { id, fullname };
     onChange("assingn", newData);
     handleClose();
   };
-
 
   return (
     <>
@@ -106,48 +103,54 @@ const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
               height: "auto",
               outline: "none",
               padding: "0 3px",
-              '& .MuiInputBase-input': {
-                fontSize: '0.75rem',
+              "& .MuiInputBase-input": {
+                fontSize: "0.75rem",
               },
-              '& .MuiInputBase-input::placeholder': {
-                fontSize: '0.75rem',
+              "& .MuiInputBase-input::placeholder": {
+                fontSize: "0.75rem",
               },
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  border: 'none',
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  border: "none",
                 },
-                '&:hover fieldset': {
-                  border: 'none',
+                "&:hover fieldset": {
+                  border: "none",
                 },
-                '&.Mui-focused fieldset': {
-                  border: 'none',
+                "&.Mui-focused fieldset": {
+                  border: "none",
                 },
               },
             }}
             variant="outlined"
           />
-             <Box
-                onClick={() => onChangeMembers("","All")}
-                display="flex"
-                alignItems="center"
-                gap="5px"
-                padding="10px 20px"
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "#D9F0FD",
-                    cursor: "pointer",
-                    borderRadius: "5px",
-                  },
-                }}
-              >
-                <Text sx={{ fontSize: 13 , fontWeight : 700 }}>{"All"}</Text>
-              </Box>
-          {listAgent?.data?.data?.
-            filter((item) => item?.detail?.fullname?.toLowerCase().includes(keyword.toLowerCase()))
+          <Box
+            onClick={() => onChangeMembers("", "All")}
+            display="flex"
+            alignItems="center"
+            gap="5px"
+            padding="10px 20px"
+            sx={{
+              "&:hover": {
+                backgroundColor: "#D9F0FD",
+                cursor: "pointer",
+                borderRadius: "5px",
+              },
+            }}
+          >
+            <Text sx={{ fontSize: 13, fontWeight: 700 }}>{"All"}</Text>
+          </Box>
+          {listAgent?.data?.data
+            ?.filter((item) =>
+              item?.detail?.fullname
+                ?.toLowerCase()
+                .includes(keyword.toLowerCase()),
+            )
             .map((item: any, index: number) => (
               <Box
                 key={index}
-                onClick={() => onChangeMembers(item?.detail?.id , item?.detail?.fullname)}
+                onClick={() =>
+                  onChangeMembers(item?.detail?.id, item?.detail?.fullname)
+                }
                 display="flex"
                 alignItems="center"
                 gap="5px"
@@ -164,11 +167,10 @@ const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
                   component="img"
                   height="30px"
                   width="30px"
-                  src=
-                  {
-                    item?.detail?.urlAvatar ?
-                      item?.detail?.urlAvatar :
-                      "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__"
+                  src={
+                    item?.detail?.urlAvatar
+                      ? item?.detail?.urlAvatar
+                      : "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__"
                   }
                   alt="Image description"
                   sx={{ borderRadius: "100%" }}

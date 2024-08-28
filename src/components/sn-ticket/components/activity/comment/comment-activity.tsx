@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { client, Endpoint } from "api";
 import { Button } from "components/shared";
 import { ACCEPT_MEDIA, IMAGES_ACCEPT, NS_COMMON } from "constant/index";

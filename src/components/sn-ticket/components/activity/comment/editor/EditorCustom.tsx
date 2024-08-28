@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Box, Stack } from "@mui/material";
+import { Avatar, Box, Button, Stack } from "@mui/material";
 import {
   ChangeEvent,
   memo,
@@ -98,6 +98,7 @@ const EditorCustom = (props: EditorProps) => {
   );
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log("aaaa");
     if (!event.target.files?.length) return;
     let newFiles = Array.from(event.target.files);
     newFiles = newFiles.reduce(
@@ -220,15 +221,13 @@ const EditorCustom = (props: EditorProps) => {
                 onRemove={onRemove(index)}
               />
             ))}
-            <input
-              multiple
+            <Box
               type="file"
-              accept="*"
-              style={{ display: "none" }}
+              accept={IMAGES_ACCEPT.join(", ")}
+              component="input"
+              // display="none"
+              onChange={onChangeFile}
               ref={inputFileRef}
-              onChange={(e) => {
-                onChangeFile(e);
-              }}
             />
           </Stack>
         </Stack>
