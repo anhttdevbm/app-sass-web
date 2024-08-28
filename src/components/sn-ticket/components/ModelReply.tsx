@@ -89,6 +89,7 @@ const ModelReply = (props: PropsModelReply) => {
               id="tour-chatmb-textarea"
               placeholder={t("modelReply.email")}
               value={formSendReply.email}
+              disabled={true}
               onChange={(e) => {
                 handleChange(e.target.value, "email");
               }}
@@ -109,6 +110,7 @@ const ModelReply = (props: PropsModelReply) => {
           </Box>
           <textarea
             id="tour-chatmb-textarea"
+            disabled={true}
             placeholder={t("modelReply.subject")}
             value={formSendReply.title}
             onChange={(e) => {
