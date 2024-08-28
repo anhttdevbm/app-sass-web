@@ -117,8 +117,8 @@ const TabInfo = (props: TabListProps) => {
   } = useBillings();
 
   const options = [
-    billingT("detail.form.top.button.option.duplicateInvoice"),
-    billingT("detail.form.top.button.option.createCreditNote"),
+    // billingT("detail.form.top.button.option.duplicateInvoice"),
+    // billingT("detail.form.top.button.option.createCreditNote"),
     billingT("detail.form.top.button.option.deleteInvoice"),
   ];
   const { isMdSmaller } = useBreakpoint();

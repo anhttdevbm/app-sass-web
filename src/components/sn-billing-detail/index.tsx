@@ -48,7 +48,7 @@ const InformationBillingPage = () => {
   return (
     <Stack
       padding={{ sm: 3 }}
-      sx={{ overflowY: "auto" }}
+      // sx={{ overflowY: "auto" }}
       bgcolor={{ md: "background.default" }}
     >
       <TopContent

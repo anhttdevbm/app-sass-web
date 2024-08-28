@@ -16,6 +16,7 @@ import MoreButton from "./MoreButton";
 import PdfButton from "./PdfButton";
 import TemplateOne from "./TemplateOne";
 import { downloadFile } from "utils/index";
+import TemplateTwo from "./TemplateTwo";
 
 export type Form = {
   service_items: Service[];
@@ -212,7 +213,15 @@ const TabInvoice = (props: TabProps) => {
 
       {/* Main */}
       <Stack ref={printRef} width="fit-content">
-        <TemplateOne
+        {/* <TemplateOne
+          itemInvoice={itemInvoice}
+          user={user}
+          isEdit={isEdit}
+          formik={formik}
+          handleChange={handleChange}
+          onDragEnd={onDragEnd}
+        /> */}
+        <TemplateTwo
           itemInvoice={itemInvoice}
           user={user}
           isEdit={isEdit}
