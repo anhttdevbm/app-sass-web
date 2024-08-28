@@ -3,6 +3,7 @@ export interface TicketDictionary {
   title: string;
   hide: string;
   actions: Actions;
+  createTicketFrom : any
   status: Status;
   comment: Comment;
   error: Error;
@@ -14,6 +15,7 @@ export interface TicketDictionary {
   cardTicket : CardTicket
   ticketDetail : TicketDetail
   modelReply : ModelReply
+  ticketAgnet : any
 }
 
 interface Error {
@@ -41,6 +43,9 @@ interface Actions {
   hide: string;
   update: Update;
   updateTicket: string;
+  viewBy: string;
+  createAgent : string;
+
 }
 
 interface Update {
@@ -71,6 +76,7 @@ interface FilterTicket {
   resolvedTicket: string;
   closedTicket: string;
   canceledTicket: string;
+  
 }
 
 interface TicketFields {
@@ -110,6 +116,15 @@ interface TicketDetail {
   description: string;
   btnShowDetail: string,
   btnHideDetail: string,
+  attachment: string;
+  download: string;
+  switchList: string;
+  switchStrip: string;
+  TableView: TableView;
+  activity : ActivityLabels
+  commentActivity : CommentActivityLabels
+  historyActivity : HistoryActivityLabels
+
 }
 
 interface ModelReply {
@@ -118,4 +133,36 @@ interface ModelReply {
   subject: string;
   send: string;
   cancel: string;
+}
+
+interface TableView  {
+  name: string;
+  Size: string;
+  dateAdded: string;
+};
+
+interface ActivityLabels {
+  activity: string;
+  show: string;
+  newest: string;
+  oldest: string;
+  first: string;
+  All: string;
+  Comments: string;
+  History: string;
+  Email: string;
+}
+
+interface CommentActivityLabels {
+  tabComment1: string;
+  tabComment2: string;
+  save: string;
+  cancel: string;
+  internalNote : string
+  edit : string
+  delete : string
+}
+
+interface HistoryActivityLabels {
+  time: string
 }

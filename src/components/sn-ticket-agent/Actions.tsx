@@ -178,7 +178,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         >
           <Box display={{ xs: "block" }}>
             <Search
-              placeholder={"Tìm kiếm theo id"}
+              placeholder={t("actions.search")}
               name="search_key"
               onChange={onChangeQueries}
               value={queries?.search_key}
@@ -237,8 +237,8 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
                 sx={{ display: { xs: "none", md: "block" } }}
                 color="inherit"
               >
-                {/* {t("actions.createTicket")} */}
-                New Agent
+                {t("actions.createAgent")}
+
               </Text>
             </Button>
           </Stack>
@@ -259,7 +259,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             overflow="auto"
           >
             <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
-              View by:
+              {t("actions.viewBy")}
             </Text>
             <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
           </Stack>

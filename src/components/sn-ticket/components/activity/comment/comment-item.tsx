@@ -5,7 +5,7 @@ import { Button, Text } from "components/shared";
 import { formatDate, getMessageErrorByAPI } from "utils/index";
 import AttachmentPreview from "components/AttachmentPreview";
 import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_PROJECT } from "constant/index";
+import { NS_COMMON, NS_PROJECT, NS_TICKET } from "constant/index";
 import { Attachment } from "constant/types";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import EditorCustom from "./editor/EditorCustom";
@@ -35,6 +35,8 @@ const CommentItem = (props) => {
   const params = useParams();
   const { onAddSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
+  const t = useTranslations(NS_TICKET);
+
 
   const handleUpdateComment = useCallback(
     (data) => {
@@ -116,7 +118,7 @@ const CommentItem = (props) => {
           >
             <LockCommentIcon />{" "}
             <Typography style={{ color: "#626F86", fontSize: "10px" }}>
-              Internal Note
+            {t("ticketDetail.commentActivity.internalNote")}
             </Typography>
           </Stack>
         )}
@@ -142,14 +144,14 @@ const CommentItem = (props) => {
               size="small"
               type="button"
             >
-              Save
+              {t("ticketDetail.commentActivity.save")}
             </Button>
             <Button
               onClick={() => setIsEdit(false)}
               variant="outlined"
               size="small"
             >
-              <Typography sx={{ color: "#333333" }}>Cancel</Typography>
+              <Typography sx={{ color: "#333333" }}>{t("ticketDetail.commentActivity.cancel")}</Typography>
             </Button>
           </Stack>
         </EditorCustom>
@@ -200,7 +202,7 @@ const CommentItem = (props) => {
               setValueContent(comment);
             }}
           >
-            Edit
+            {t("ticketDetail.commentActivity.edit")}
           </Typography>
           <Typography
             style={{
@@ -219,7 +221,7 @@ const CommentItem = (props) => {
             }}
             onClick={() => handleDeleteComment(id)}
           >
-            Delete
+            {t("ticketDetail.commentActivity.delete")}
           </Typography>
         </Stack>
       )}
