@@ -5,10 +5,12 @@ import { Text } from "components/shared";
 import { useGetListActivity } from "queries/ticket/useGetTicket/useGetListActivity";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { useTranslations } from "next-intl";
+import { NS_TICKET } from "constant/index";
 dayjs.extend(duration);
 
 const HistoryActivity = () => {
-
+  const t = useTranslations(NS_TICKET)
   const { data: listHistory } = useGetListActivity(false)
 
   const calculateTimeDifference = (pastDateString) => {
@@ -21,7 +23,7 @@ const HistoryActivity = () => {
     const seconds = diffDuration.seconds();
     let timeString = ''; 
     if (hours > 0) {
-      timeString += `${hours} giờ trước `;
+      timeString += `${hours} ${t("ticketDetail.historyActivity.time")} `;
     }
     // if (minutes > 0) {
     //   timeString += `${minutes} phút `;

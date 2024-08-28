@@ -77,10 +77,10 @@ const ModelRemove = (props: PropsModel) => {
             }}>
                 <Text
                     sx={{ fontSize: "18px", fontWeight: 600 }}
-                >Confirm to Delete</Text>
+                > {t("ticketAgnet.titleDelete")}</Text>
                 <Text
                     sx={{ fontSize: "15px", fontWeight: 600, color: "#999999" }}
-                >Are you sure to delete this agent?</Text>
+                >{t("ticketAgnet.quesionConfirmDelete")}</Text>
             </DialogContent>
             <DialogActions
                 sx={{
@@ -137,7 +137,7 @@ const ModelRemove = (props: PropsModel) => {
                         fontWeight="700"
                     >
                         {/* {billingT("list.button.invoice")} */}
-                        Confirm
+                        {t("ticketAgnet.CONFIRM")}
                     </Text>
                 </Button>
             </DialogActions>

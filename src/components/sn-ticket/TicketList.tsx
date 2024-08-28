@@ -52,11 +52,10 @@ const TickketList = () => {
   const dispatch = useAppDispatch();
   const { data: listTicket } = useGetListTicket();
   const dataFilter = useSelector(selectSearchTicket)
+  const t = useTranslations(NS_TICKET)
 
   //Store của các key tìm kiếm gói ở đây ///
   const keySearch = useSelector(selectSearchTicket);
-
-  const [list, setList] = useState<any>(null);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
@@ -66,48 +65,56 @@ const TickketList = () => {
       icon: SendAllTicketIcon,
       title: "All Ticket",
       active: false,
+      text: t("filterTicket.sendAll"),
     },
     {
       id: 2,
       icon: NewTicketIcon,
       title: "New",
       active: false,
+      text: t("filterTicket.newTicket"),
     },
     {
       id: 3,
       icon: OpenTicketIcon,
       title: "Open",
       active: false,
+      text: t("filterTicket.openTicket"),
     },
     {
       id: 4,
       icon: InProgressTicketIcon,
       title: "InProgress",
       active: false,
+      text: t("filterTicket.inProgressTicket"),
     },
     {
       id: 5,
       icon: OnHoldTicketIcon,
       title: "OnHold",
       active: false,
+      text: t("filterTicket.onHoldTicket"),
     },
     {
       id: 6,
       icon: ResolveTicketIcon,
       title: "Resolved",
       active: false,
+      text: t("filterTicket.resolvedTicket"),
     },
     {
       id: 7,
       icon: ClosedTicketIcon,
       title: "Closed",
       active: false,
+      text: t("filterTicket.closedTicket"),
     },
     {
       id: 8,
       icon: CanceledTicketIcon,
       title: "Cancelled",
       active: false,
+      text: t("filterTicket.canceledTicket"),
     },
   ];
 
@@ -223,7 +230,7 @@ const TickketList = () => {
                         color={item.active ? "#045EB8" : "#B3B3B3"}
                         fontWeight={item.active ? "700" : "400"}
                       >
-                        {item.title}
+                        {item.text}
                       </Text>
                       {item.active && (
                         <Paper

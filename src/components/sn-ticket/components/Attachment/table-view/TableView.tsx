@@ -13,10 +13,13 @@ import DownloadIcon from "public/images/ticket/downloadIcon.svg";
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
+import { useTranslations } from "next-intl";
+import { NS_TICKET } from "constant/index";
 
 const TableView = React.memo(
   ({ downloadAllImages }: { downloadAllImages: (file) => void }) => {
     const { data: dataTicket } = useGetTicketDetail();
+    const t = useTranslations(NS_TICKET)
     return (
       <TableContainer>
         <Table
@@ -25,9 +28,9 @@ const TableView = React.memo(
         >
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>Date Added</TableCell>
+              <TableCell>{t("ticketDetail.TableView.name")}</TableCell>
+              <TableCell>{t("ticketDetail.TableView.Size")}</TableCell>
+              <TableCell>{t("ticketDetail.TableView.dateAdded")}</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>

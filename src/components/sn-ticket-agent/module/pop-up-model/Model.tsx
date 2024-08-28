@@ -156,7 +156,6 @@ const Model = (props: PropsModel) => {
             color="#045EB8"
             fontWeight="700"
           >
-            {/* {billingT("list.button.invoice")} */}
             {t("modelReply.cancel")}
           </Text>
         </Button>
@@ -182,8 +181,7 @@ const Model = (props: PropsModel) => {
             color="inherit"
             fontWeight="700"
           >
-            {/* {billingT("list.button.invoice")} */}
-            Confirm
+            {t("ticketAgnet.CONFIRM")}
           </Text>
         </Button>
       </DialogActions>
