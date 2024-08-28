@@ -1,6 +1,8 @@
 import React from 'react';
 import { Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useTranslations } from 'next-intl';
+import { NS_TICKET } from 'constant/index';
 
 
 type PopsToptip = {
@@ -25,6 +27,8 @@ const TooltipPaper = styled(Paper)(({ theme }) => ({
 
 const Tooltip = (props: PopsToptip) => {
     const { open, openModelEdit, setStatusActions, openModelRemove } = props || null
+  const t = useTranslations(NS_TICKET)
+
     const handleClickEdit = () => {
         openModelEdit()
         setStatusActions()
@@ -57,7 +61,7 @@ const Tooltip = (props: PopsToptip) => {
                     <path d="M3.76 17.3116C3.76 17.3116 3.84 17.3116 3.87 17.3116L6.8 17.0416C7.21 17.0016 7.59 16.8216 7.88 16.5316L18.94 5.47156C19.46 4.95156 19.75 4.26156 19.75 3.53156C19.75 2.80156 19.46 2.11156 18.94 1.59156L18.23 0.881562C17.19 -0.158437 15.38 -0.158437 14.34 0.881562L12.93 2.29156L3.29 11.9316C3 12.2216 2.82 12.6016 2.79 13.0116L2.52 15.9416C2.49 16.3116 2.62 16.6716 2.88 16.9416C3.12 17.1816 3.43 17.3116 3.76 17.3116ZM16.29 1.57156C16.61 1.57156 16.93 1.69156 17.17 1.94156L17.88 2.65156C18.12 2.89156 18.25 3.20156 18.25 3.53156C18.25 3.86156 18.12 4.18156 17.88 4.41156L17 5.29156L14.53 2.82156L15.41 1.94156C15.65 1.70156 15.97 1.57156 16.29 1.57156ZM4.28 13.1516C4.28 13.0916 4.31 13.0416 4.35 13.0016L13.46 3.88156L15.93 6.35156L6.82 15.4616C6.82 15.4616 6.72 15.5316 6.67 15.5316L4.04 15.7716L4.28 13.1416V13.1516ZM21.75 20.5016C21.75 20.9116 21.41 21.2516 21 21.2516H1C0.59 21.2516 0.25 20.9116 0.25 20.5016C0.25 20.0916 0.59 19.7516 1 19.7516H21C21.41 19.7516 21.75 20.0916 21.75 20.5016Z" fill="#1A1A1A" />
                 </svg>
 
-                Edit
+                {(t("ticketAgnet.EDIT"))}
             </Typography>
             <Typography
                 onClick={handleClickRemove}
@@ -84,7 +88,8 @@ const Tooltip = (props: PopsToptip) => {
                     <path d="M12 18.75C11.8019 18.7474 11.6126 18.6676 11.4725 18.5275C11.3324 18.3874 11.2526 18.1981 11.25 18V10C11.25 9.80109 11.329 9.61032 11.4697 9.46967C11.6103 9.32902 11.8011 9.25 12 9.25C12.1989 9.25 12.3897 9.32902 12.5303 9.46967C12.671 9.61032 12.75 9.80109 12.75 10V18C12.7474 18.1981 12.6676 18.3874 12.5275 18.5275C12.3874 18.6676 12.1981 18.7474 12 18.75Z" fill="#FF2C56" />
                 </svg>
 
-                Delete
+                {(t("ticketAgnet.DELETE"))}
+
             </Typography>
         </TooltipPaper>
     );

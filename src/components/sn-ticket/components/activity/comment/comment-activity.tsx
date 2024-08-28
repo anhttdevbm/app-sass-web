@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Stack, Typography } from "@mui/material";
 import { client, Endpoint } from "api";
 import { Button } from "components/shared";
-import { ACCEPT_MEDIA, IMAGES_ACCEPT, NS_COMMON } from "constant/index";
+import { ACCEPT_MEDIA, IMAGES_ACCEPT, NS_COMMON, NS_TICKET } from "constant/index";
 import useToggle from "hooks/useToggle";
 import { useTranslations } from "next-intl";
 import React, {
@@ -23,13 +23,14 @@ import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "react-query";
 import { QUERY_TICKET_KEY } from "queries/ticket/keys";
+
 const tabComment = [
   {
-    label: "Add internal note",
+    label: "tabComment1",
     value: true,
   },
   {
-    label: "Reply to customer",
+    label: "tabComment2",
     value: false,
   },
 ];
@@ -40,6 +41,8 @@ const CommentActivity = () => {
   const { data: listComment } = useGetListComment();
   const { createComment, deleteComment, editComment } = useTicketAction();
   const commonT = useTranslations(NS_COMMON);
+  const t = useTranslations(NS_TICKET)
+
   const { onAddSnackbar } = useSnackbar();
   const [isIternal, setIsIternal] = useState(true);
   const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
@@ -134,7 +137,8 @@ const CommentActivity = () => {
             }}
             onClick={() => setIsIternal(it.value)}
           >
-            {it.label}
+            {/* {it.label} */}
+            {t(`ticketDetail.commentActivity.${it.label}`)}
           </Typography>
         ))}
       </Stack>
@@ -160,10 +164,10 @@ const CommentActivity = () => {
             size="small"
             type="button"
           >
-            Save
+            {t("ticketDetail.commentActivity.save")}
           </Button>
           <Button onClick={handleCancel} variant="outlined" size="small">
-            <Typography sx={{ color: "#333333" }}>Cancel</Typography>
+            <Typography sx={{ color: "#333333" }}> {t("ticketDetail.commentActivity.cancel")}</Typography>
           </Button>
         </Stack>
       </EditorCustom>
@@ -172,7 +176,7 @@ const CommentActivity = () => {
           key={`${comment.id}-${idx}`}
           handleDeleteComment={handleDeleteComment}
           {...comment}
-          // listAttachmentsDown={listAttachmentsDown}
+        // listAttachmentsDown={listAttachmentsDown}
         />
       ))}
     </>

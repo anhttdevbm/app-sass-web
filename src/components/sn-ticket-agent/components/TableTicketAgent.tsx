@@ -31,7 +31,7 @@ const TableTicketAgent = (props: any) => {
 
   const [tooltipOpen, setTooltipOpen] = useState<number | null>(null);
   const [statusActions, setStatusActions] = useState(false)
-  const [dataDetail , setDataDeatil] = useState(null)
+  const [dataDetail, setDataDeatil] = useState(null)
 
   const handleClickActions = (index) => {
     setTooltipOpen(index);
@@ -81,32 +81,32 @@ const TableTicketAgent = (props: any) => {
     <>
       <TableContainer sx={{ boxShadow: "none" }} component={Paper}>
         <Table>
-          <TableHead sx={{padding : 0}}>
+          <TableHead sx={{ padding: 0 }}>
             <TableRow sx={{ backgroundColor: "#D9F0FD" }}>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
-                <Typography fontWeight="500" fontSize="13px">{t("ticketFields.id")}</Typography>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{upperCaseText( t("ticketFields.id") )}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
-                <Typography fontWeight="500" fontSize="13px">{t("ticketFields.name")}</Typography>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{upperCaseText(t("ticketFields.name"))}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
-                <Typography fontWeight="500" fontSize="13px">EMAIL</Typography>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{upperCaseText(t("ticketAgnet.EMAIL"))}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
-                <Typography fontWeight="500" fontSize="13px">PHONE</Typography>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{upperCaseText(t("ticketAgnet.PHONE"))}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
-                <Typography fontWeight="500" fontSize="13px">POSITION</Typography>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{upperCaseText(t("ticketAgnet.POSITION"))}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
-                <Typography fontWeight="500" fontSize="13px">STATUS</Typography>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{upperCaseText(t("ticketAgnet.STATUS"))}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
-                <Typography fontWeight="500" fontSize="13px">Ticket in-progress</Typography>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
+                <Typography fontWeight="500" fontSize="13px">{upperCaseText(t("ticketAgnet.Inprogress"))}</Typography>
               </TableCell>
-              <TableCell sx={{ border: "none", padding : "10px" }}>
+              <TableCell sx={{ border: "none", padding: "10px" }}>
                 <Typography fontWeight="500" fontSize="13px">
-                  {t("ticketFields.creationTime")}
+                  {upperCaseText(t("ticketFields.creationTime"))}
                 </Typography>
               </TableCell>
               <TableCell sx={{ border: "none" }}>
@@ -143,9 +143,9 @@ const TableTicketAgent = (props: any) => {
                     {row?.numTicketAssign}
                   </TableCell>
                   <TableCell sx={{ border: "none" }}>
-                  {row?.createDate?.slice(0, 10)}{" "}
-                  {row?.createDate?.slice(11, 16)}{" "}
-                </TableCell>
+                    {row?.createDate?.slice(0, 10)}{" "}
+                    {row?.createDate?.slice(11, 16)}{" "}
+                  </TableCell>
 
                   <TableCell sx={{ position: 'relative', border: 'none' }}>
 
@@ -154,7 +154,7 @@ const TableTicketAgent = (props: any) => {
                     {tooltipOpen == index &&
                       <Tooltip
                         openModelEdit={() => handleClickOpenModel(row?.detail)}
-                        openModelRemove = {() => handleClickOpenModelRemove(row?.detail)}
+                        openModelRemove={() => handleClickOpenModelRemove(row?.detail)}
                         setStatusActions={() => setStatusActions(prev => !prev)}
                         open={statusActions}
                       />
@@ -172,14 +172,14 @@ const TableTicketAgent = (props: any) => {
         open={openModel}
         handleClickOpen={handleClickOpenModel}
         handleClose={handleCloseModel}
-        data = {dataDetail}
+        data={dataDetail}
       />
 
       <ModelRemove
         open={openModelRemove}
         handleClickOpen={handleClickOpenModelRemove}
         handleClose={handleCloseModelRemove}
-        data = {dataDetail}
+        data={dataDetail}
       />
 
     </>
