@@ -22,21 +22,6 @@ const ActivityTemplate = () => {
     setAnchorEl(null);
   };
 
-  const RenderActivity = ({ activityIdx }: { activityIdx: string }) => {
-    switch (activityIdx) {
-      case "All":
-        return <></>;
-      case "Comments":
-        return <CommentActivity />;
-      case "Email":
-        return <EmailActivity />;
-      case "History":
-        return <HistoryActivity />;
-      default:
-        return <></>;
-    }
-  };
-
   return (
     <Stack justifyContent={"center"} alignItems={"start"} gap={"12px"}>
       <Typography sx={{ fontWeight: 600, fontSize: 20 }}>Activity</Typography>
@@ -125,6 +110,26 @@ const ActivityTemplate = () => {
       <RenderActivity activityIdx={activityIdx} />
     </Stack>
   );
+};
+
+const RenderActivity = ({
+  activityIdx,
+}: {
+  activityIdx: string;
+}): React.JSX.Element => {
+  if (!activityIdx) return <></>;
+  switch (activityIdx) {
+    case "All":
+      return <></>;
+    case "Comments":
+      return <CommentActivity />;
+    case "Email":
+      return <EmailActivity />;
+    case "History":
+      return <HistoryActivity />;
+    default:
+      return <></>;
+  }
 };
 
 export default ActivityTemplate;

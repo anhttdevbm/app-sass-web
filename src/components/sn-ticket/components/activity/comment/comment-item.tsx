@@ -2,8 +2,6 @@ import { memo, useState, useEffect, useMemo, useCallback } from "react";
 import { Stack, Box, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Button, Text } from "components/shared";
-import { Comment } from "store/project/reducer";
-import Image from "next/image";
 import { formatDate, getMessageErrorByAPI } from "utils/index";
 import AttachmentPreview from "components/AttachmentPreview";
 import { useTranslations } from "next-intl";
@@ -23,9 +21,8 @@ const CommentItem = (props) => {
   const {
     creatorUser,
     comment,
-    attachments_down = [],
+    lstFile,
     createTime,
-    listAttachmentsDown,
     id,
     handleDeleteComment,
     isIternal,
@@ -33,7 +30,6 @@ const CommentItem = (props) => {
   const { user } = useAuth();
   const [isEdit, setIsEdit] = useState(false);
   const [valueContent, setValueContent] = useState("");
-  const [files, setFiles] = useState([]);
   const { editComment } = useTicketAction();
   const commonT = useTranslations(NS_COMMON);
   const params = useParams();
@@ -126,7 +122,13 @@ const CommentItem = (props) => {
         )}
       </Stack>
       {isEdit ? (
-        <EditorCustom value={valueContent} files={files} onChange={onChange}>
+        <EditorCustom
+          value={valueContent}
+          files={[]}
+          onChange={onChange}
+          disabledImage={true}
+          newFile={lstFile ?? []}
+        >
           <Stack
             direction="row"
             alignItems="center"
@@ -152,31 +154,33 @@ const CommentItem = (props) => {
           </Stack>
         </EditorCustom>
       ) : (
-        <Box
-          sx={{
-            fontSize: 14,
-            "& *": {
-              marginBlockStart: 0,
-              marginBlockEnd: 0,
-              wordBreak: "break-all",
-            },
-          }}
-          className="html"
-          dangerouslySetInnerHTML={{ __html: comment }}
-        />
+        <>
+          <Box
+            sx={{
+              fontSize: 14,
+              "& *": {
+                marginBlockStart: 0,
+                marginBlockEnd: 0,
+                wordBreak: "break-all",
+              },
+            }}
+            className="html"
+            dangerouslySetInnerHTML={{ __html: comment }}
+          />
+          <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
+            {lstFile?.map((attachment) => (
+              <AttachmentPreview
+                key={attachment.link}
+                src={attachment.link}
+                name={attachment.nameFile}
+                listData={lstFile}
+                listAttachmentsDown={lstFile}
+              />
+            ))}
+          </Stack>
+        </>
       )}
 
-      {/* <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
-          {attachments_down.map((attachment) => (
-            <AttachmentPreview
-              key={attachment.link}
-              src={attachment.link}
-              name={attachment.name}
-              listData={attachments_down}
-              listAttachmentsDown={listAttachmentsDown}
-            />
-          ))}
-        </Stack> */}
       {canEdit && !isEdit && (
         <Stack
           flexDirection={"row"}

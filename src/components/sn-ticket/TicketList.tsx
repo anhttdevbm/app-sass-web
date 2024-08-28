@@ -51,7 +51,7 @@ interface Ticket {
 const TickketList = () => {
   const dispatch = useAppDispatch();
   const { data: listTicket } = useGetListTicket();
-  const dataFilter = useSelector(selectSearchTicket)
+  const dataFilter = useSelector(selectSearchTicket);
 
   //Store của các key tìm kiếm gói ở đây ///
   const keySearch = useSelector(selectSearchTicket);
@@ -112,9 +112,8 @@ const TickketList = () => {
   ];
 
   useEffect(() => {
-    setTotalItems(listTicket?.data?.count)
+    setTotalItems(listTicket?.data?.count);
   }, [listTicket]);
-
 
   const [listFilterTicket, setListFilterTicket] = useState(defaultFilterTicket);
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
@@ -128,7 +127,7 @@ const TickketList = () => {
     if (typeViewDocStore == "kanbanViewListDoc") {
       const payload = {
         ...dataFilter,
-        stage: item.title
+        stage: item.title,
       };
       dispatch(setKeySearchTicket(payload));
     }
@@ -152,7 +151,6 @@ const TickketList = () => {
     handleFilterTicket(listFilterTicket[0]);
   }, []);
 
-
   return (
     <>
       <Stack
@@ -162,7 +160,7 @@ const TickketList = () => {
         px={{ xs: 0, md: 3 }}
         py={1}
         zIndex={2}
-      // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
+        // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
       >
         {typeViewDocStore == "kanbanViewListDoc" && (
           <Stack>
@@ -208,7 +206,7 @@ const TickketList = () => {
                         // padding: 2,
                         backgroundColor: item.active ? "#D9F0FD" : "#fff",
                         padding: "10px 10px",
-                        cursor: "pointer"
+                        cursor: "pointer",
                       }}
                     >
                       {item.active ? (

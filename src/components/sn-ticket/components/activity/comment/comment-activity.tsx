@@ -1,24 +1,15 @@
-import styled from "@emotion/styled";
+"use client";
 import { Stack, Typography } from "@mui/material";
-import { client, Endpoint } from "api";
 import { Button } from "components/shared";
-import { ACCEPT_MEDIA, IMAGES_ACCEPT, NS_COMMON } from "constant/index";
-import useToggle from "hooks/useToggle";
+import { NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import React, {
-  ChangeEvent,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import ReactQuill, { ReactQuillProps, UnprivilegedEditor } from "react-quill";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { UnprivilegedEditor } from "react-quill";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import EditorCustom from "./editor/EditorCustom";
 import { useGetListComment } from "queries/ticket/useGetTicket/useGetListComment";
 import CommentItem from "./comment-item";
-import { FileUploader } from "react-drag-drop-files";
 import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "react-query";
@@ -42,14 +33,11 @@ const CommentActivity = () => {
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar } = useSnackbar();
   const [isIternal, setIsIternal] = useState(true);
-  const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
   const editorRef = useRef<UnprivilegedEditor | undefined>();
-  const [newFiles, setNewFiles] = useState<File[]>([]);
 
   const [content, setContent] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
-  const [fileLoaded, setFileLoaded] = useState<string[]>([]);
 
   const onChange = (value: string, delta, _, editor: UnprivilegedEditor) => {
     const isEmpty = value === VALUE_AS_EMPTY;
@@ -73,7 +61,7 @@ const CommentActivity = () => {
 
   const onSubmit = async () => {
     createComment.mutate(
-      { comment: content, isIternal, ticketId: params?.id as string },
+      { comment: content, isIternal, ticketId: params?.id as string, ...files },
       {
         onSuccess: (data) => {
           onAddSnackbar("Create comment success", "success");
@@ -81,6 +69,7 @@ const CommentActivity = () => {
             queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
           });
           setContent("");
+          setFiles([]);
         },
         onError: (error) => {
           onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
@@ -100,6 +89,7 @@ const CommentActivity = () => {
               queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
             });
             setContent("");
+            setFiles([]);
           },
           onError: (error) => {
             onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");

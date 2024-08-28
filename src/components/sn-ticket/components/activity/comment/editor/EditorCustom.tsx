@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Box, Stack } from "@mui/material";
+import { Avatar, Box, Button, Stack } from "@mui/material";
 import {
   ChangeEvent,
   memo,
@@ -69,7 +69,7 @@ const TextEditor = styled(ReactQuill)(({ theme }) => ({
   "& .ql-container": {
     // borderBottomLeftRadius: 12,
     // borderBottomRightRadius: 12,
-    borderBottom: "none"
+    borderBottom: "none",
   },
 }));
 
@@ -77,8 +77,10 @@ export type EditorProps = {
   hasAttachment?: boolean;
   onChangeFiles?: (files: File[]) => void;
   children?: React.ReactNode;
-  files?: File[];
+  files?: File[] & { nameFile?: string };
+  newFile?: any[];
   noCss?: boolean;
+  disabledImage?: boolean;
 } & Omit<ReactQuillProps, "children">;
 
 const EditorCustom = (props: EditorProps) => {
@@ -88,6 +90,8 @@ const EditorCustom = (props: EditorProps) => {
     children,
     files = [],
     noCss,
+    disabledImage,
+    newFile,
     ...rest
   } = props;
   const [value, setValue] = useState("");
@@ -95,8 +99,11 @@ const EditorCustom = (props: EditorProps) => {
   const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   const urlFiles = useMemo(
-    () => files.map((file) => URL.createObjectURL(file)),
-    [files],
+    () =>
+      disabledImage
+        ? newFile ?? []
+        : files.map((file) => URL.createObjectURL(file)),
+    [files, disabledImage, newFile],
   );
 
   const onChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
@@ -116,6 +123,7 @@ const EditorCustom = (props: EditorProps) => {
 
   const onRemove = (index: number) => {
     return () => {
+      if (disabledImage) return files;
       const newFiles = [...files];
       newFiles.splice(index, 1);
       onChangeFiles && onChangeFiles(newFiles);
@@ -205,32 +213,30 @@ const EditorCustom = (props: EditorProps) => {
               noCss
                 ? {}
                 : {
-                  border: "1px solid",
-                  borderColor: "grey.A200",
-                  borderBottomLeftRadius: "12px",
-                  borderBottomRightRadius: "12px",
-                  borderTop: "none",
-                  marginBottom: "20px",
-                }
+                    border: "1px solid",
+                    borderColor: "grey.A200",
+                    borderBottomLeftRadius: "12px",
+                    borderBottomRightRadius: "12px",
+                    borderTop: "none",
+                    marginBottom: "20px",
+                  }
             }
           >
             {urlFiles.map((attachment, index) => (
               <AttachmentPreview
                 key={index}
                 src={attachment}
-                name={files[index].name}
-                onRemove={onRemove(index)}
+                name={files[index]?.name ?? urlFiles[index]?.nameFile}
+                onRemove={disabledImage ? undefined : onRemove(index)}
               />
             ))}
-            <input
-              multiple
+            <Box
               type="file"
-              accept="*"
-              style={{ display: "none" }}
+              accept={IMAGES_ACCEPT.join(", ")}
+              component="input"
+              display="none"
+              onChange={onChangeFile}
               ref={inputFileRef}
-              onChange={(e) => {
-                onChangeFile(e);
-              }}
             />
           </Stack>
         </Stack>
