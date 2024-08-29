@@ -40,7 +40,7 @@ const useWebSocket = (): WebSocket | null => {
       };
 
       wsClient.onmessage = (event) => {
-        console.log("event", event);
+        console.log("event>>>>>>>", event);
       };
       wsClient.onclose = () => {
         console.log("WebSocket connection closed, reconnecting...");

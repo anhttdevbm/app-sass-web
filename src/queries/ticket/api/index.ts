@@ -39,7 +39,7 @@ export const getTicketDetailApi = async (id) => {
 
 export const getListCommentApi = async (id) => {
   const response = await client.get(
-    `${Endpoint.TICKET}/comment/${id}?page=0&size=10`,
+    `${Endpoint.TICKET}/comment/${id}?page=0&size=50`,
     undefined,
     {
       baseURL: TICKET_API_URL,
