@@ -596,7 +596,7 @@ const TableSheet: React.FC<IProps> = (props) => {
       {isOpen === false && (
         <TableContainer
           sx={{
-            maxHeight: "100%",
+            height: "100%",
             overflow: "auto",
             borderRadius: "12px",
             border: "1px solid #EBEAF2",

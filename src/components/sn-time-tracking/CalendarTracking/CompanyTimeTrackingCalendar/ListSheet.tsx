@@ -78,7 +78,7 @@ const ListSheet = ({ data }: IProps) => {
     }
   }, [data]);
   return (
-    <TableContainer sx={{ maxHeight: "100%" }}>
+    <TableContainer sx={{ height: "100%" }}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead
           sx={{
@@ -125,31 +125,16 @@ const ListSheet = ({ data }: IProps) => {
                 key={timesheet?._id}
               >
                 <StyledTableCell>
-                  <Box
+                  <Typography
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
+                      fontSize: "14px",
+                      fontFamily: "inherit",
+                      position: "relative",
+                      top: "1px",
                     }}
                   >
-                    <Checkbox
-                      sx={{
-                        color: "#DFE1E6",
-                        "& > svg > path": {
-                          clipPath: "inset(0 round 4px)",
-                        },
-                      }}
-                    />
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontFamily: "inherit",
-                        position: "relative",
-                        top: "1px",
-                      }}
-                    >
-                      {moment(timesheet?.day).format("DD/MM/YYYY")}
-                    </Typography>
-                  </Box>
+                    {moment(timesheet?.day).format("DD/MM/YYYY")}
+                  </Typography>
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{

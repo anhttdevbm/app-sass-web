@@ -496,6 +496,7 @@ const MonthCalendarSheet = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "56px",
+          marginBottom: "20px",
         }}
       >
         <IconButton onClick={handlePrevMonth}>
@@ -515,7 +516,7 @@ const MonthCalendarSheet = () => {
           overflowX: "auto",
         }}
       >
-        <TableContainer style={{ width: "100%", minWidth: "1280px" }}>
+        <TableContainer style={{ width: "100%" }}>
           <Table sx={{ tableLayout: "fixed" }}>
             <TableHead>
               <TableRow>

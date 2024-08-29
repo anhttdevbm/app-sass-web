@@ -75,7 +75,7 @@ const ListSheet = ({ data, handleSelectListSheetRow }: IProps) => {
   };
 
   return (
-    <TableContainer sx={{ maxHeight: "100%" }}>
+    <TableContainer sx={{ height: "100%" }}>
       <Table
         stickyHeader
         aria-label="sticky table"
