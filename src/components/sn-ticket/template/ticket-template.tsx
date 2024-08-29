@@ -16,6 +16,8 @@ const TicketTemplate = () => {
     const handleMessage = (event: MessageEvent) => {
       const data: Notification = JSON.parse(event.data);
       console.log("Unknown action:", data);
+      console.log("event>>>>>", event);
+
       // switch (data.action) {
       //   case 'Online':
       //     // setOnlineUsers(data.users || []);

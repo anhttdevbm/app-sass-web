@@ -167,7 +167,7 @@ const TickketList = () => {
         px={{ xs: 0, md: 3 }}
         py={1}
         zIndex={2}
-        // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
+      // sx={{ overflowY: "auto", scrollbarWidth: "none" , height : 700 }}
       >
         {typeViewDocStore == "kanbanViewListDoc" && (
           <Stack>
@@ -185,7 +185,6 @@ const TickketList = () => {
                 alignItems="center"
                 justifyContent="flex-start"
                 spacing={3}
-                overflow="auto"
               >
                 <Box
                   display="flex"
@@ -198,6 +197,11 @@ const TickketList = () => {
                     // height: "56px",
                     backgroundColor: "#fff",
                     width: "100%",
+                    '&::-webkit-scrollbar': {
+                      display: "none" 
+                    },
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none'
                   }}
                 >
                   {listFilterTicket.map((item, index) => (
@@ -223,7 +227,8 @@ const TickketList = () => {
                       )}
                       <Text
                         sx={{
-                          display: { xs: "none", md: "block", fontSize: 13 },
+                          display: { xs: "block", md: "block" },
+                          fontSize: { xs: 10, md: 13 }
                         }}
                         color={item.active ? "#045EB8" : "#B3B3B3"}
                         fontWeight={item.active ? "700" : "400"}
@@ -239,8 +244,8 @@ const TickketList = () => {
                               ? "#045EB8"
                               : "#B3B3B3",
                             padding: 2,
-                            width: 15,
-                            height: 15,
+                            width: 5,
+                            height: 5,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
@@ -248,11 +253,7 @@ const TickketList = () => {
                         >
                           <Text
                             sx={{
-                              display: {
-                                xs: "none",
-                                md: "block",
-                                fontSize: 13,
-                              },
+                              fontSize: { xs: 12, md: 13 }
                             }}
                             color="#fff"
                           >

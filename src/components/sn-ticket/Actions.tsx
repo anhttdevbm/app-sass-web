@@ -159,12 +159,12 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         justifyContent="space-between"
         spacing={{ xs: 1, md: 2 }}
         px={{ xs: 0, md: 3 }}
-        py={1}
+        py={{ xs: 0, sm: 1, md: 1 }}
         zIndex={2}
       >
         <Stack
-          direction={{ xs: "column", md: "row" }}
-          alignItems={{ xs: "start", md: "center" }}
+          direction={{ xs: "column", sm: "row", md: "row" }}
+          alignItems={{ xs: "start", sm:"center",md: "center" }}
           gap={{ xs: 1 }}
           justifyContent={{ md: "space-between" }}
           width="100%"
@@ -192,7 +192,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Box>
           <Stack
             direction="row"
-            justifyContent={{ xs: "space-between", md: "flex-end" }}
+            justifyContent={{ xs: "space-between", sm: "flex-end", md: "flex-end" }}
             spacing={1}
             width={{ xs: "100%" }}
           >
@@ -232,8 +232,15 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
 
         <Box
           bgcolor="background.default"
-          borderRadius="2rem"
+          borderRadius={{ xs: "0rem", sm: "2rem", md: "2rem" }}
           overflow={{ xs: "auto" }}
+          sx={{
+            '&::-webkit-scrollbar': {
+              display: "none"
+            },
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
         >
           <Stack
             direction="row"
@@ -244,6 +251,13 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             py={{ xs: 1.25, md: 1, lg: 1.25 }}
             px={{ xs: 3, md: 2, lg: 2 }}
             overflow="auto"
+            sx={{
+              '&::-webkit-scrollbar': {
+                display: "none"
+              },
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}
           >
             <Text fontSize={{ xs: 12 }} sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
               {t("actions.viewBy")}

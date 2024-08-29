@@ -18,13 +18,11 @@ type PropsAssgiGroup = {
   styledDropdown?: React.CSSProperties
   setAssign?: any;
   mobile?: boolean;
-  handleGetData?: any
 };
 
 const AssignGroup = (props: PropsAssgiGroup) => {
   const { user } = useAuth();
   const checkRole = user?.roles?.some((item) => item == Permission.SA || item == Permission.SP)
-  console.log("check user", user)
   const { updateTicket } = useUpdateTicket()
   const { data: listAgent } = useGetListAgent();
   const { item, style, type, styledDropdown, setAssign, mobile } = props || null;
@@ -112,7 +110,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
               }}
             />
           ) : (
-            <Box sx={{ marginRight: "10px" }} onClick={() => { setOpen(false), props?.handleGetData() }}>
+            <Box sx={{ marginRight: "10px" }} onClick={() => { setOpen(false) }}>
               <svg
                 width="14"
                 height="8"

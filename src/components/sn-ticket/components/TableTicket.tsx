@@ -12,7 +12,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { memo, useEffect, useMemo, useState , useRef } from "react";
+import { memo, useEffect, useMemo, useState, useRef } from "react";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
@@ -25,11 +25,10 @@ const upperCaseText = (string: string) => {
 };
 const TableTicket = (props: any) => {
   const { data } = props;
-  const [list , setList] = useState(null);
+  const [list, setList] = useState<any>(null);
   const t = useTranslations(NS_TICKET);
   const { push } = useRouter();
 
-  // const handleOpenEditMobile = useRef(() => {});
 
 
   const bgStage = (check: String) => {
@@ -50,26 +49,22 @@ const TableTicket = (props: any) => {
   };
 
 
-const handleGetData = () => {
-  setList(data)
-  console.log("render")
-
-}
 
 
 
-  useEffect(()=>{
-    handleGetData()
+  useEffect(() => {
+    setList(data)
 
-  },[data])
 
-  console.log("check list", list)
+  }, [data])
+
   const handelClickAssginMobie = (id) => {
     const _data = [...data]
-    const idx = _data?.findIndex((item)=> item.id == id);
-    _data[idx] = {...data[idx], active : true}
+    const idx = _data?.findIndex((item) => item.id == id);
+    _data[idx] = { ...data[idx], active: true }
     setList(_data)
   }
+
 
 
 
@@ -181,7 +176,7 @@ const handleGetData = () => {
 
 
       <Box sx={{ display: { xs: 'block', md: 'none' }, p: 2 }}>
-        {list?.length > 0 && list?.map((row , index) => ( 
+        {list?.length > 0 && list?.map((row, index) => (
           <Box
             key={row.id}
             sx={{
@@ -190,7 +185,9 @@ const handleGetData = () => {
               p: 2,
               display: 'flex',
               flexDirection: 'column',
-              gap: 2,
+              gap: 5,
+              backgroundColor:"#FAFAFA",
+              borderRadius : 2
             }}
           >
             <Box
@@ -284,7 +281,7 @@ const handleGetData = () => {
                 alignItems: 'center',
               }}
             >
-              {!row.active ? (
+              {!row.active  ? (
                 <>
                   <Typography variant="body1">
                     {t("ticketFields.assignedTo")}
@@ -292,7 +289,7 @@ const handleGetData = () => {
                   <AssignGroup mobile={true} item={row} />
                 </>
               ) : (
-                <AssignGroup handleGetData={handleGetData} style={{ width: "100%" }} item={row} />
+                  <AssignGroup style={{ width: "100%" }} item={row} />
               )}
 
 

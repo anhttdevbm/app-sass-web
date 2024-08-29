@@ -85,9 +85,10 @@ const DescriptionDetail = (props: any) => {
   return (
     <>
       <Stack
-        direction="row"
+        direction={{ xs: 'column', sm: 'row', md: 'row' }}
         justifyContent="space-between"
-        alignItems="center"
+        alignItems={{ xs: 'start', sm: "center", md: "center" }}
+        py={{xs : 1}}
         sx={{ backgroundColor: "#F2FAFF", width: "100%", padding: "0px 24px" }}
       >
         <Box display="flex" gap="10px" alignItems="center" py={2}>
@@ -121,7 +122,7 @@ const DescriptionDetail = (props: any) => {
 
       {showDetail && (
         <Stack
-          direction="row"
+          direction={{ xs: 'column', sm: 'row', md: 'row' }}
           justifyContent="space-between"
           sx={{ padding: "24px", gap: 5 }}
           position="relative"
