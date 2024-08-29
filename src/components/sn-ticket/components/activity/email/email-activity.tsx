@@ -98,7 +98,7 @@ const EmailActivity = () => {
               flexDirection="column"
               gap={3}>
               <Box>
-                <Text py={1} fontSize={12} fontWeight={700}>To : {item?.to}</Text>
+                <Text py={1} fontSize={12} fontWeight={700}>From : {item?.to}</Text>
                 <Text fontSize={13} fontWeight={700}>Title : {item?.title}</Text>
               </Box>
 

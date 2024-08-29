@@ -163,19 +163,22 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         zIndex={2}
       >
         <Stack
-          direction="row"
-          alignItems="center"
+          direction={{ xs: "column", md: "row" }}
+          alignItems={{ xs: "start", md: "center" }}
+          gap={{ xs: 1 }}
           justifyContent={{ md: "space-between" }}
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Box display={{ xs: "block" }}>
+          <Box width={{ xs: "100%" }} display={{ xs: "block" }}>
             <Search
               placeholder={t("actions.search")}
               name="search_key"
               onChange={onChangeQueries}
               value={queries?.search_key}
-              sx={{ minWidth: 200 }}
+              sx={{
+                minWidth: { xs: "100%", sm: 200, md: 200 },
+              }}
               onKeyDown={(e) => {
                 e.stopPropagation();
                 if (e.key === "Enter") {
@@ -189,7 +192,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Box>
           <Stack
             direction="row"
-            justifyContent={{ xs: "flex-end" }}
+            justifyContent={{ xs: "space-between", md: "flex-end" }}
             spacing={1}
             width={{ xs: "100%" }}
           >
@@ -211,23 +214,14 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
                 },
               }}
             >
-              <AddSquareIcon
-                sx={{
-                  display: { xs: "block", md: "none" },
-                  width: 24,
-                  height: 24,
-                }}
-              />
               <PlusIcon
                 sx={{
-                  display: { xs: "none", md: "block" },
                   mr: 1,
                   width: 18,
                   height: 18,
                 }}
               />
               <Text
-                sx={{ display: { xs: "none", md: "block" } }}
                 color="inherit"
               >
                 {t("actions.createTicket")}
@@ -235,6 +229,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             </Button>
           </Stack>
         </Stack>
+
         <Box
           bgcolor="background.default"
           borderRadius="2rem"
@@ -250,7 +245,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             px={{ xs: 3, md: 2, lg: 2 }}
             overflow="auto"
           >
-            <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
+            <Text fontSize={{ xs: 12 }} sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
               {t("actions.viewBy")}
 
             </Text>
