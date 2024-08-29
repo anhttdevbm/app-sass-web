@@ -258,7 +258,7 @@ const TimeTrackingPage = () => {
               height: "100%",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "16px",
+              fontSize: "14px",
               fontFamily: "unset",
               fontWeight: "Regular",
               color: isDarkMode ? "#FFFFFF" : "#333333",
