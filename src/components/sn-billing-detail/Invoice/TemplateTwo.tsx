@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Paper,
   Stack,
   Table,
@@ -19,6 +20,7 @@ import { memo, PropsWithChildren, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Invoice } from "store/invoice/reducer";
 import { formatDate, formatNumber } from "utils/index";
+import { makeStyles, Theme } from "@mui/material/styles";
 
 type Props = {
   user?: User;
@@ -497,39 +499,66 @@ function TemplateTwo({
         >
           <Box
             sx={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "center",
+              borderRadius: "100px",
+              background: "linear-gradient(to left, #2AF598, #009EFD)",
               width: "100%",
-              paddingY: "8px",
-              margin: "auto",
-              backgroundColor: "#FAFAFA",
-              border: "1px solid",
-              justifyContent: "center",
-              borderImageSlice: 1,
-              borderImageSource: "linear-gradient(to left, #2AF598, #009EFD)",
-              "&::after": {
-                position: "absolute",
-                borderRadius: "100px",
-                top: "-4px",
-                bottom: "-4px",
-                left: "-4px",
-                right: "-4px",
-                background: "linear-gradient(to left, #2AF598, #009EFD)",
-                content: '""',
-                zIndex: -1,
-              },
+              padding: "1px",
             }}
           >
-            <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
-              Payment:{" "}
-            </Typography>
-            <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
-              {itemInvoice?.payment_items
-                ? itemInvoice?.payment_items[0]?.payment_method
-                : "Stripe"}{" "}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+                borderRadius: "100px",
+                background: "#FAFAFA",
+                width: "100%",
+                justifyContent: "center",
+                padding: "6px 0",
+              }}
+            >
+              <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
+                Payment:{" "}
+              </Typography>
+              <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
+                {itemInvoice?.payment_items
+                  ? itemInvoice?.payment_items[0]?.payment_method
+                  : "Stripe"}{" "}
+              </Typography>
+            </Box>
           </Box>
+        </Stack>
+
+        <Stack
+          sx={{
+            display: "flex",
+            direction: "column",
+            padding: "12px 14px 18px 46px",
+            background: "#0575E6",
+            marginBottom: "20px",
+            width: "300px",
+            gap: 1,
+          }}
+        >
+          <Typography
+            sx={{ marginRight: "auto" }}
+            fontSize={14}
+            fontWeight={700}
+            color="#FFFFFF"
+          >
+            Amount Due
+          </Typography>
+          <Typography
+            sx={{ marginLeft: "auto" }}
+            fontSize={24}
+            fontWeight={600}
+            color="#FFFFFF"
+          >
+            {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
+          </Typography>
         </Stack>
 
         {isEdit && (
