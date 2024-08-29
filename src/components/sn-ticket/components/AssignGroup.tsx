@@ -7,20 +7,25 @@ import EditIcon from "icons/EditIcon";
 import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
 import useUpdateTicket from "queries/ticket/useTicketAction/useUpdateTicket";
 import { memo, useEffect, useState } from "react";
-import { useSnackbar } from "store/app/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { Permission } from "constant/enums";
+
 
 type PropsAssgiGroup = {
   item: any;
   type?: "detail";
   style?: React.CSSProperties;
   styledDropdown?: React.CSSProperties
-  setAssign?: any
+  setAssign?: any;
+  mobile?: boolean;
 };
 
 const AssignGroup = (props: PropsAssgiGroup) => {
+  const { user } = useAuth();
+  const checkRole = user?.roles?.some((item) => item == Permission.SA || item == Permission.SP)
   const { updateTicket } = useUpdateTicket()
   const { data: listAgent } = useGetListAgent();
-  const { item, style, type, styledDropdown, setAssign } = props || null;
+  const { item, style, type, styledDropdown, setAssign, mobile } = props || null;
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(item?.assignUser?.fullname || "nothing");
   const [urlAvatar, setUrlAvatar] = useState(item?.assignUser?.urlAvatar);
@@ -33,7 +38,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
     setValue(value?.fullname);
     setUrlAvatar(value?.urlAvatar);
     setOpen(false);
-    
+
     if (type == "detail") {
       setAssign(value?.id)
 
@@ -57,8 +62,11 @@ const AssignGroup = (props: PropsAssgiGroup) => {
       });
     }
 
-
   };
+  const handleOpen = () => {
+    if (!checkRole) return
+    setOpen(prev => !prev)
+  }
   return (
     <Box
       py={1}
@@ -84,15 +92,12 @@ const AssignGroup = (props: PropsAssgiGroup) => {
           alt="Image description"
           sx={{ borderRadius: "100%" }}
         />
-        {type == "detail" &&
-          <Text onClick={() => setOpen(prev => !prev)} sx={{ fontSize: 13 }}>{value}</Text>
-        }
-        {type !== "detail" &&
-          <Text onClick={() => setOpen(prev => !prev)} sx={{ fontSize: 13 }}>{value}</Text>
-        }
-
+        <Text onClick={() => handleOpen()} sx={{ fontSize: 13 }}>{value}</Text>
       </Box>
-      {type !== "detail" &&
+      {
+        type !== "detail" &&
+        checkRole &&
+        !mobile &&
         <>
           {!open ? (
             <EditIcon
@@ -105,7 +110,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
               }}
             />
           ) : (
-            <Box sx={{ marginRight: "10px" }} onClick={() => setOpen(false)}>
+            <Box sx={{ marginRight: "10px" }} onClick={() => { setOpen(false) }}>
               <svg
                 width="14"
                 height="8"

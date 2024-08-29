@@ -91,8 +91,8 @@ const CardTicket = (props: any) => {
           }
         />
         <CardContent>
-          <Stack flexDirection="row">
-            <Stack width="60%" gap="10px">
+          <Stack gap={{ xs: 2, sm: 0, md: 0 }} flexDirection={{ xs: 'column', sm: "row", md: 'row' }}>
+            <Stack width={{ xs: '100%', sm: "60%", md: '60%' }} gap="10px">
               <Typography
                 sx={{ fontWeight: 700 }}
                 gutterBottom
@@ -111,9 +111,9 @@ const CardTicket = (props: any) => {
             </Stack>
             <Stack
               display="flex"
-              justifyContent="center"
-              alignItems="center"
-              width="20%"
+              justifyContent={{ xs: "flex-start", sm: "center", md: "center" }}
+              alignItems={{ xs: "start", sm: "center", md: "center" }}
+              width={{ xs: '100%', sm: "20%", md: '20%' }}
             >
               <Box
                 display="flex"
@@ -141,7 +141,8 @@ const CardTicket = (props: any) => {
               display="flex"
               alignItems="flex-start"
               justifyContent="center"
-              width="20%"
+              width={{ xs: '100%', sm: "20%", md: '20%' }}
+              gap={{ xs: 1 }}
             >
               <Text sx={{ fontSize: 13 }}>
                 {data?.createTime?.slice(0, 10)}{" "}
@@ -159,7 +160,7 @@ const CardTicket = (props: any) => {
             flexDirection="row"
             alignItems="center"
             justifyContent="space-between"
-            width="96%"
+            width={{ xs: '100%', sm: "96%", md: '96%' }}
           >
             <Box
               width="150px"
@@ -190,7 +191,8 @@ const CardTicket = (props: any) => {
               alignContent="center"
               justifyContent="center"
               gap="10px"
-              px={5}
+              px={{ xs: 0, sm: 5, md: 5 }}
+
             >
               <Text
                 sx={{

@@ -27,8 +27,6 @@ const EmailActivity = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  console.log("check data reply", listReply?.data?.data)
-
 
   const calculateTimeDifference = (pastDateString) => {
     const now = dayjs();
@@ -89,32 +87,45 @@ const EmailActivity = () => {
             justifyContent="space-between"
           >
 
-            <Box display="flex" flexDirection="column" gap={3}>
-              <Text fontSize={13} fontWeight={700}>To : {item?.to}</Text>
-              <Text fontSize={13} fontWeight={700}>{item?.title}</Text>
-              <Text fontSize={13} fontWeight={700}>.......</Text>
-              <Text fontSize={13} fontWeight={700}>{item?.content}</Text>
+            <Box
+              sx={{
+                overflow: "auto",
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                }
+              }}
+              display="flex"
+              flexDirection="column"
+              gap={3}>
+              <Box>
+                <Text py={1} fontSize={12} fontWeight={700}>From : {item?.to}</Text>
+                <Text fontSize={13} fontWeight={700}>Title : {item?.title}</Text>
+              </Box>
+
+              {/* <Text fontSize={13} fontWeight={700}>.......</Text> */}
+              <Text fontSize={14} fontWeight={500}>{item?.content}</Text>
             </Box>
 
-            <Stack direction="row">
-              {item?.lstFile?.length > 0 &&
-                <>
-                  {item?.lstFile?.map((file, index) => (
-                    <Box
-                      component="img"
-                      height={50}
-                      width={50}
-                      src={file?.link}
-                      alt="Image description"
-                      sx={{ borderRadius: "100%" }}
-                    />
-                  ))}
 
-                </>
-              }
-            </Stack>
 
-            <Stack display={"flex"} justifyContent="flex-end" alignItems="end">
+            <Box p={1} display="flex" justifyContent="space-between" alignItems="center">
+              <Box display="flex" gap={1}>
+                {item?.lstFile?.length > 0 &&
+                  <>
+                    {item?.lstFile?.map((file, index) => (
+                      <Box
+                        component="img"
+                        height={50}
+                        width={50}
+                        src={file?.link}
+                        alt="Image description"
+                        sx={{ borderRadius: "7px" }}
+                      />
+                    ))}
+
+                  </>
+                }
+              </Box>
               <Button
                 sx={{ backgroundColor: "rgba(255, 255, 255, 1)", width: "10%", display: "flex", gap: "3px" }}
                 onClick={() => setOpen(prev => !prev)}>
@@ -128,7 +139,7 @@ const EmailActivity = () => {
                   {t("ticketDetail.reply")}
                 </Text>
               </Button>
-            </Stack>
+            </Box>
 
           </Stack>
 

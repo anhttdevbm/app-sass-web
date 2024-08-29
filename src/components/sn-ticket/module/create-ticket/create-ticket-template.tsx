@@ -59,7 +59,7 @@ const CreateTicket = () => {
           height: "calc(100vh - 100px)",
         }}
       >
-        <Box sx={{ padding: "34px 36px" }}>
+        <Box sx={{ padding: { xs: "12px 12px", sm: "34px 36px", md: "34px 36px" } }}>
           <Typography
             sx={{ fontSize: "20px", fontWeight: "600", paddingBottom: "20px" }}
           >
@@ -170,10 +170,10 @@ const CreateTicket = () => {
               variant="primary"
               sx={{
                 height: 40,
-                width: "fit-content",
+                width: {xs : "100%",sm : "fit-content" , md: "fit-content"},
                 borderRadius: 100,
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                marginRight: "100px",
+                marginRight: {xs : "0px",sm : "100px" , md: "100px"},
                 "&:hover": {
                   background:
                     "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
