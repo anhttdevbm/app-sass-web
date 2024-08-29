@@ -1,16 +1,47 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
 import { Box } from "@mui/material";
-import React from "react";
-import SortByCategory from "../Search";
+import React, { useEffect, useMemo } from "react";
+import SortByCategory, { SelectDataProps } from "../Search";
+import { useProjects } from "store/project/selectors";
+import { useEmployeeOptions } from "store/company/selectors";
 
 interface IProps {
   personVisibleFilter?: boolean;
   periodVisibleFilter?: boolean;
 }
 
+const convertToSelectData = <T extends { id: string }>(
+  data: T[],
+  valueKey: keyof T,
+): SelectDataProps[] => {
+  return data.map((item) => ({
+    id: item.id,
+    value: item[valueKey] as unknown as string,
+  }));
+};
+
 const FilterCategory: React.FC<IProps> = ({
   personVisibleFilter = true,
   periodVisibleFilter = true,
 }) => {
+  const { items: projects } = useProjects();
+  const { items: employees, onGetOptions: onGetEmployeeOptions } =
+    useEmployeeOptions();
+  useEffect(() => {
+    if (personVisibleFilter) {
+      onGetEmployeeOptions({ pageIndex: 1, pageSize: 50 });
+    }
+  }, []);
+
+  const projectsSelectData = useMemo(() => {
+    return convertToSelectData(projects, "name");
+  }, [projects]);
+
+  const employeesSelectData = useMemo(() => {
+    return convertToSelectData(employees, "fullname");
+  }, [employees]);
+
   return (
     <Box
       sx={{
@@ -34,9 +65,11 @@ const FilterCategory: React.FC<IProps> = ({
       >
         View by:{" "}
       </p>
-      <SortByCategory title="Project" />
-      {periodVisibleFilter && <SortByCategory title="Period" />}
-      {personVisibleFilter && <SortByCategory title="Person" />}
+      <SortByCategory title="Project" data={projectsSelectData} />
+      {periodVisibleFilter && <SortByCategory title="Period" data={null} />}
+      {personVisibleFilter && (
+        <SortByCategory title="Person" data={employeesSelectData} />
+      )}
     </Box>
   );
 };
