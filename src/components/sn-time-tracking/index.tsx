@@ -364,7 +364,7 @@ const TimeTrackingPage = () => {
               }
               variant="contained"
               sx={{
-                width: "146px",
+                minWidth: "146px",
                 height: "48px",
                 marginLeft: "14px",
                 borderRadius: "100px",
@@ -415,6 +415,7 @@ const TimeTrackingPage = () => {
           value="companyTime"
           sx={{
             paddingTop: { sm: 0, md: "auto" },
+            paddingBottom: "36px",
             height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
           }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}

@@ -53,6 +53,7 @@ const FilterCategory: React.FC<IProps> = ({
         padding: "14px 1.5rem",
         background: "#F7F7FD",
         width: "100%",
+        height: " 60px",
       }}
     >
       <p
