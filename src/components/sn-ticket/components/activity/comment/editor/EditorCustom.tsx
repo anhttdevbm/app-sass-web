@@ -225,9 +225,11 @@ const EditorCustom = (props: EditorProps) => {
             {urlFiles.map((attachment, index) => (
               <AttachmentPreview
                 key={index}
-                src={attachment}
+                src={disabledImage ? attachment?.link : attachment}
                 name={files[index]?.name ?? urlFiles[index]?.nameFile}
                 onRemove={disabledImage ? undefined : onRemove(index)}
+                listData={newFile ? newFile : undefined}
+                listAttachmentsDown={newFile ? newFile : undefined}
               />
             ))}
             <Box

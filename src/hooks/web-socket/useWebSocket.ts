@@ -16,19 +16,25 @@ const useWebSocket = (): WebSocket | null => {
 
     const connectSocket = () => {
       const wsClient = new WebSocket(
-        `${process.env.NEXT_APP_WS_URL_TICKET!}?token=${token!}`,
+        `${process.env.NEXT_APP_WS_URL_TICKET!}?token=${token!}?language=vi`,
       );
-
+      wsClient.addEventListener("open", (event) => {
+        wsClient.send("Hello Server!");
+      });
       wsClient.onopen = () => {
         console.log("WebSocket connection opened");
         // Send authentication message with the token
         // Send any other initial messages if needed
-        wsClient.send(
-          JSON.stringify({
-            event: "ListOnline",
-            page: 1,
-          }),
-        );
+        // wsClient.send(
+        //   JSON.stringify({
+        //     event: "ListOnline",
+        //   }),
+        // );
+        // wsClient.send(
+        //   JSON.stringify({
+        //     event: "ReplyTicket",
+        //   }),
+        // );
       };
       wsClient.onerror = (error) => {
         console.error("WebSocket error:", error);

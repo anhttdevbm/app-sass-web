@@ -69,22 +69,31 @@ const CommentActivity = () => {
   );
 
   const onSubmit = async () => {
-    createComment.mutate(
-      { comment: content, isIternal, ticketId: params?.id as string, ...files },
-      {
-        onSuccess: (data) => {
-          onAddSnackbar("Create comment success", "success");
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
-          });
-          setContent("");
-          setFiles([]);
-        },
-        onError: (error) => {
-          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-        },
+    const formData = new FormData();
+
+    // Append the comment and other fields
+    formData.append("comment", content);
+    formData.append("isIternal", JSON.stringify(isIternal));
+    formData.append("ticketId", params?.id as string);
+
+    // Append each file with its name as the field name
+    files.forEach((file) => {
+      formData.append(file.name, file, file.name);
+    });
+
+    createComment.mutate(formData, {
+      onSuccess: (data) => {
+        onAddSnackbar("Create comment success", "success");
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
+        });
+        setContent("");
+        setFiles([]);
       },
-    );
+      onError: (error) => {
+        onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+      },
+    });
   };
 
   const handleDeleteComment = useCallback(
@@ -111,6 +120,7 @@ const CommentActivity = () => {
 
   const handleCancel = () => {
     setContent("");
+    setFiles([]);
   };
 
   return (
