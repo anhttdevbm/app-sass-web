@@ -17,7 +17,9 @@ const TicketTemplate = () => {
       const data: Notification = JSON.parse(event.data);
       console.log("Unknown action:", data);
       console.log("event>>>>>", event);
-
+      ws.onmessage = (event3) => {
+        console.log("event222222", event3);
+      };
       // switch (data.action) {
       //   case 'Online':
       //     // setOnlineUsers(data.users || []);
