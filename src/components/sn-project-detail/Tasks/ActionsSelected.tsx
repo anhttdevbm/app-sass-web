@@ -83,6 +83,7 @@ const ActionsSelected = (props: ActionsSelectedProps) => {
       px={1.5}
       py={{ xs: 1, md: 0.75 }}
       position="relative"
+      borderRadius="1rem"
       // top={{ xs: 209, md: 80 }}
       // zIndex={12}
     >
@@ -94,7 +95,7 @@ const ActionsSelected = (props: ActionsSelectedProps) => {
         spacing={1}
       >
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Text variant="h6" color="grey.400">
+          <Text variant="h6" color="grey.400" whiteSpace="nowrap">
             {projectT("detailTasks.selectedCount", {
               value: formatNumber(selectedList.length),
             })}
@@ -144,7 +145,6 @@ const ActionsSelected = (props: ActionsSelectedProps) => {
         {isShow && <MultiTaskAiForm open onClose={() => setIsShow(false)} />}
         <AssignerFilter
           onChange={onChange}
-          placeholder={projectT("detailTasks.assignee")}
           hasAvatar
           name="owner"
           disabled={!selectedList.length}
@@ -172,6 +172,9 @@ const ActionsSelected = (props: ActionsSelectedProps) => {
               fontSize: 16,
             },
           }}
+          textProps={{
+            fontWeight: 400,
+          }}
         />
         <Date
           label={commonT("form.title.dueDate")}
@@ -183,6 +186,9 @@ const ActionsSelected = (props: ActionsSelectedProps) => {
               fontSize: 16,
             },
           }}
+          textProps={{
+            fontWeight: 400,
+          }}
         />
         <Dropdown
           placeholder={commonT("status")}
@@ -193,6 +199,9 @@ const ActionsSelected = (props: ActionsSelectedProps) => {
           rootSx={{
             width: "fit-content",
             "& >svg": { fontSize: 16 },
+            ".text-option": {
+              fontWeight: 400,
+            },
             px: "0px!important",
             [`& .${selectClasses.outlined}`]: {
               pr: "0!important",

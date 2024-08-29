@@ -1,0 +1,113 @@
+import { TicketDictionary } from "dictionaries/types/TicketDictionary";
+
+export const TicketLang: TicketDictionary = {
+  ticket: {
+    head: {
+      title: "Vé",
+    },
+  },
+  title: "Vé",
+  // blogList: {
+  //     head: {
+  //         title: "Danh sách vé",
+  //     },
+  //     title: "Tiêu đề",
+  //     content: "Nội dung",
+  //     category: "Danh mục",
+  //     tag: "Nhãn dán",
+  //     statusBlog:"Trạng thái",
+  //     slug:"Đường dẫn",
+  //     created_time : "Ngày tạo",
+  //     short_description : "Mô tả",
+  //     notification: {
+  //         success: "Cập nhật trạng thái {label} thành công"
+  //     },
+  // },
+  hide: "Ẩn",
+  actions: {
+    createTicket: "Thêm mới",
+    search: "Tìm kiếm",
+    status: "Trạng thái",
+    delete: {
+      title: "Xác nhận xóa Vé",
+      confirm: "Bạn muốn xóa Vé ?",
+      remove: "Xóa",
+    },
+    draft: "Nháp",
+    published: "Xuất bản",
+    hide: "Ẩn",
+    update: {
+      title: "Bạn có muốn cập nhật trạng thái ?",
+      content: "Cập nhật trạng thái sang {label} ",
+    },
+    updateTicket: "Cập nhật",
+  },
+  status: {
+    published: "Xuất bản",
+    draft: "Nháp",
+    hide: "Ẩn",
+  },
+  comment: {
+    writeComment: "Viết bình luận",
+    sendComment: "Gửi bình luận",
+  },
+  error: {
+    anErrorTryAgain: "Có lỗi xảy ra, vui lòng thử lại !",
+  },
+  PUBLISHED: "xuất bản",
+  DRAFT: "nháp",
+  HIDE: "ẩn",
+  filterTicket: {
+    sendAll: "Tất cả vé",
+    newTicket: "Mới",
+    openTicket: "Mở",
+    inProgressTicket: "Đang xử lý",
+    onHoldTicket: "Đang giữ",
+    resolvedTicket: "Đã giải quyết",
+    closedTicket: "Đã đóng",
+    canceledTicket: "Đã hủy",
+  },
+  ticketFields: {
+    id: "ID",
+    stage: "Giai đoạn",
+    name: "Tên",
+    ticketType: "Loại vé",
+    priority: "Ưu tiên",
+    assignedTo: "Giao cho",
+    creator: "Người tạo",
+    creationTime: "Thời gian tạo",
+  },
+  cardTicket: {
+    title: "Vé#",
+    created: "Tạo bởi",
+    lastRespond: "Phản hồi gần nhất",
+    openTicket: "Mở vé",
+  },
+  ticketDetail: {
+    title: "Vé#",
+    created: "Tạo lúc",
+    New: "Mới",
+    Open: "Mở",
+    inProgress: "Đang xử lý",
+    onHold: "Đang chờ",
+    Sold: "Đã bán",
+    Closed: "Đã đóng",
+    question: "Làm cách nào để gửi tiền vào cổng của tôi?",
+    reply: "Trả lời",
+    createRequest: "đã tạo yêu cầu này",
+    requestTicketType: "Loại vé yêu cầu",
+    priority: "Ưu tiên",
+    assignee: "Người được giao",
+    rootCause: "Nguyên nhân gốc",
+    description: "Mô tả",
+    btnShowDetail: "Hiện chi tiết",
+    btnHideDetail: "Ẩn chi tiết",
+  },
+  modelReply: {
+    title: "Phản hồi vé",
+    email: "Email của bạn ....",
+    subject: "Chủ đề",
+    send: "Gửi",
+    cancel: "Huỷ",
+  },
+};

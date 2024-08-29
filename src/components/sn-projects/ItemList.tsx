@@ -298,8 +298,13 @@ const ItemList = () => {
             headerProps={{
               sx: {
                 px: 2,
-                py: 3,
+                py: 2,
                 bgcolor: "#D9F0FD",
+              },
+            }}
+            containerHeaderProps={{
+              sx: {
+                borderRadius: 3,
               },
             }}
             error={error as string}
@@ -350,6 +355,13 @@ const ItemList = () => {
             [`& .${paginationItemClasses.root}`]: {
               fontWeight: 600,
               bgcolor: "#D9F0FD",
+              borderRadius: 3,
+            },
+            [`& .${paginationItemClasses.selected}`]: {
+              bgcolor: "#14B9E5 !important",
+              borderColor: "primary.main",
+              color: "common.white",
+              borderRadius: 2,
             },
           }}
         />

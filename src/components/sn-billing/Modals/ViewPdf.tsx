@@ -76,7 +76,12 @@ const ViewPdf = () => {
           overflowY: "auto",
         }}
       >
-        <TemplateOne user={{}} isEdit={false} itemInvoice={item} />
+        <TemplateOne
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
       </div>
     </FixedLayout>
   );

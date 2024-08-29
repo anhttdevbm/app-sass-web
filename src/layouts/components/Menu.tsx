@@ -15,6 +15,7 @@ import {
   COMPANIES_PATH,
   COST_HISTORY_PATH,
   DOCS_PATH,
+  TICKET_PATH,
   EMPLOYEES_PATH,
   FEEDBACK_PATH,
   HOLIDAY_CALENDAR_PATH,
@@ -33,7 +34,8 @@ import {
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH
+  TIME_TRACKING_PATH,
+  TICKET_AGENT,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -52,6 +54,7 @@ import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
 import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
 import TaskcoverAIIcon from "icons/TaskcoverIcon";
+import TicketIcon from "icons/TicketIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
 import { memo, MouseEvent, useMemo, useState } from "react";
@@ -62,6 +65,7 @@ import { MenuItemProps } from "./helpers";
 
 const Menu = () => {
   const { user } = useAuth();
+  console.log("check user" , user)
 
   return (
     <Stack
@@ -339,6 +343,12 @@ const DATA: MenuItemProps[] = [
     icon: <MenuDocsIcon />,
     roles: [Permission.AM, Permission.ST],
   },
+  {
+    label: "menu.ticket",
+    href: TICKET_PATH,
+    icon: <TicketIcon />,
+    roles: [Permission.AM, Permission.ST],
+  },
   // Feedback
   {
     label: "menu.feedback",
@@ -407,14 +417,41 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
-  }
+  },
+  
+
+  // Ticket manager 
+  {
+    label: "menu.ticket",
+    icon: <TicketIcon />,
+    subs: [
+      {
+        label: "menu.dashboard",
+        href: STATEMENT_HISTORY_PATH,
+        roles: [Permission.SA],
+      },
+      {
+        label: "menu.ticket",
+        href: TICKET_PATH,
+        roles: [Permission.SA],
+      },
+      {
+        label: "menu.agent",
+        href: TICKET_AGENT,
+        roles: [Permission.SA],
+      },
+
+    ],
+    roles: [Permission.SA],
+  },
+
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
   return Boolean(
     pathname &&
-      href &&
-      (pathname === href ||
-        (href.length && href !== "/" && pathname.startsWith(href))),
+    href &&
+    (pathname === href ||
+      (href.length && href !== "/" && pathname.startsWith(href))),
   );
 };

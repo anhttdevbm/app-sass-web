@@ -23,7 +23,9 @@ const Dropdown = ({
         ...containerSx,
       }}
     >
-      <Text sx={{ color: "gray", fontSize: 14 }}>{prefixLabel}:</Text>
+      <Text sx={{ color: "gray", fontSize: 14, fontWeight: 600 }}>
+        {prefixLabel}:
+      </Text>
       <SharedDropdown
         {...props}
         hasAll
