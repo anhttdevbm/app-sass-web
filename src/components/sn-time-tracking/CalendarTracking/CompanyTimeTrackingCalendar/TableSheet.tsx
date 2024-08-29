@@ -130,6 +130,7 @@ const TableSheet: React.FC<IProps> = (props) => {
   const [searchUser, setSearchUser] = useState(() => {
     return userData.map((item) => ({
       fullname: item.fullname,
+      avatar: item?.avatar?.link,
     }));
   });
   const { onPinTimeSheet, onGetCompanyTimeSheet, isIdle } = useGetMyTimeSheet();
@@ -491,7 +492,16 @@ const TableSheet: React.FC<IProps> = (props) => {
                       width: "100%",
                     }}
                   >
-                    <Avatar sx={{ width: 22, height: 22 }}>A</Avatar>
+                    {user.avatar ? (
+                      <Avatar
+                        src={`${user.avatar}`}
+                        sx={{ width: 20, height: 20 }}
+                      />
+                    ) : (
+                      <Avatar sx={{ width: 20, height: 20 }}>
+                        <Person />
+                      </Avatar>
+                    )}
                     <Typography
                       sx={{
                         fontFamily: inter.style.fontFamily,
@@ -573,7 +583,12 @@ const TableSheet: React.FC<IProps> = (props) => {
   }, [filterUserData, userData]);
 
   useEffect(() => {
-    setSearchUser(userData.map((item) => ({ fullname: item.fullname })));
+    setSearchUser(
+      userData.map((item) => ({
+        fullname: item.fullname,
+        avatar: item?.avatar?.link,
+      })),
+    );
   }, [userData]);
 
   return (
