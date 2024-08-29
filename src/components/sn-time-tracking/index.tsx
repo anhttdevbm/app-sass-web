@@ -47,7 +47,7 @@ enum TabEnum {
 const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<TabEnum>(TabEnum.COMPANY_TIME);
+  const [tab, setTab] = useState<TabEnum>(TabEnum.MY_TIME);
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -56,7 +56,7 @@ const TimeTrackingPage = () => {
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
 
-  const [kindOfSheet, setKindOfSheet] = useState<string>("table");
+  const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
   const timeT = useTranslations(NS_TIME_TRACKING);
 
   const timeTabs: ITab[] = [
@@ -364,7 +364,7 @@ const TimeTrackingPage = () => {
               }
               variant="contained"
               sx={{
-                width: "146px",
+                minWidth: "146px",
                 height: "48px",
                 marginLeft: "14px",
                 borderRadius: "100px",
@@ -415,6 +415,7 @@ const TimeTrackingPage = () => {
           value="companyTime"
           sx={{
             paddingTop: { sm: 0, md: "auto" },
+            paddingBottom: "36px",
             height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
           }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
