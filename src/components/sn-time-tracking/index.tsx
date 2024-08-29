@@ -44,6 +44,12 @@ enum TabEnum {
   TIME_LOG = "timeLog",
 }
 
+enum KindOfTimeSheet {
+  TIME_SHEET = "timeSheet",
+  TIME_GRID_WEEK = "timeGridWeek",
+  TABLE = "table",
+}
+
 const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
@@ -56,7 +62,9 @@ const TimeTrackingPage = () => {
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
 
-  const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
+  const [kindOfSheet, setKindOfSheet] = useState<KindOfTimeSheet>(
+    KindOfTimeSheet.TIME_SHEET,
+  );
   const timeT = useTranslations(NS_TIME_TRACKING);
 
   const timeTabs: ITab[] = [
@@ -76,6 +84,7 @@ const TimeTrackingPage = () => {
 
   const onSelectTimeSheetChange = (event: SelectChangeEvent) => {
     setTab(event.target.value as TabEnum);
+    setKindOfSheet(KindOfTimeSheet.TIME_SHEET);
     setTimeBgColor(isDarkMode ? "#0575E6" : "#D9F0FD");
     setWorkBgColor("#FFFFFF");
     setWorkTopLeftRadius("0px");
@@ -93,10 +102,10 @@ const TimeTrackingPage = () => {
   const handleListSheet = () => {
     switch (tab) {
       case "myTime":
-        setKindOfSheet("timeSheet");
+        setKindOfSheet(KindOfTimeSheet.TIME_SHEET);
         break;
       case "companyTime":
-        setKindOfSheet("timeSheet");
+        setKindOfSheet(KindOfTimeSheet.TIME_SHEET);
         break;
       case "timeLog":
         break;
@@ -107,10 +116,10 @@ const TimeTrackingPage = () => {
   const handleShowTimeGrid = () => {
     switch (tab) {
       case "myTime":
-        setKindOfSheet("timeGridWeek");
+        setKindOfSheet(KindOfTimeSheet.TIME_GRID_WEEK);
         break;
       case "companyTime":
-        setKindOfSheet("timeGridWeek");
+        setKindOfSheet(KindOfTimeSheet.TIME_GRID_WEEK);
         break;
       case "timeLog":
         break;
@@ -121,10 +130,10 @@ const TimeTrackingPage = () => {
   const handleShowTable = () => {
     switch (tab) {
       case "myTime":
-        setKindOfSheet("table");
+        setKindOfSheet(KindOfTimeSheet.TABLE);
         break;
       case "companyTime":
-        setKindOfSheet("table");
+        setKindOfSheet(KindOfTimeSheet.TABLE);
         break;
       case "timeLog":
         break;
@@ -171,7 +180,7 @@ const TimeTrackingPage = () => {
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
-            height: "46px",
+            height: "36px",
             margin: "22px 22px 0 22px",
             borderRadius: "100px",
             border: "1px solid #EFEFEF",
@@ -199,17 +208,24 @@ const TimeTrackingPage = () => {
             sx={{
               display: "flex",
               marginLeft: "-1px",
-              fontSize: "16px",
+              fontSize: "14px",
               fontFamily: "unset",
               fontWeight: "Regular",
               textAlign: "center",
               width: "179px",
-              height: "54px",
+              height: "100%",
               borderRadius: "100px",
               backgroundColor: timeBgColor,
               color: isDarkMode ? "#FFFFFF" : "#045EB8",
               "& fieldset": {
                 border: "none",
+              },
+              "& > .MuiSelect-select": {
+                padding: "0 16px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
               },
             }}
           >
@@ -239,10 +255,10 @@ const TimeTrackingPage = () => {
             sx={{
               display: "flex",
               width: "159px",
-              height: "54px",
+              height: "100%",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "16px",
+              fontSize: "14px",
               fontFamily: "unset",
               fontWeight: "Regular",
               color: isDarkMode ? "#FFFFFF" : "#333333",
@@ -267,125 +283,127 @@ const TimeTrackingPage = () => {
           </Typography>
         </Box>
 
-        <Box
-          sx={{
-            height: "56px",
-            margin: "16px 22px 0 0",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-          }}
-        >
-          <Fab
+        {tab !== TabEnum.TIME_LOG && (
+          <Box
             sx={{
-              width: "34px",
-              height: "34px",
-              borderRadius: "100px",
-              backgroundColor:
-                kindOfSheet === "timeSheet" ? "#E9EBF3" : "transparent",
-              boxShadow: kindOfSheet === "timeSheet" ? "none" : undefined,
-              "&:hover": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              cursor: "pointer",
+              height: "56px",
+              margin: "16px 22px 0 0",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
             }}
-            onClick={handleListSheet}
           >
-            <TimeSheetIcon
-              sx={{
-                width: "18px",
-                height: "18px",
-              }}
-            />
-          </Fab>
-
-          {tab === "companyTime" && (
             <Fab
               sx={{
                 width: "34px",
                 height: "34px",
                 borderRadius: "100px",
                 backgroundColor:
-                  kindOfSheet === "table" ? "#E9EBF3" : "transparent",
-                boxShadow: kindOfSheet === "table" ? "none" : undefined,
+                  kindOfSheet === "timeSheet" ? "#E9EBF3" : "transparent",
+                boxShadow: kindOfSheet === "timeSheet" ? "none" : undefined,
                 "&:hover": {
                   border: "none",
                   backgroundColor: "#F2F5FA",
                 },
                 cursor: "pointer",
               }}
-              onClick={handleShowTable}
+              onClick={handleListSheet}
             >
-              <DayIcon
+              <TimeSheetIcon
                 sx={{
-                  width: "16px",
-                  height: "16px",
-                  fill: "none",
+                  width: "18px",
+                  height: "18px",
                 }}
               />
             </Fab>
-          )}
 
-          <Fab
-            sx={{
-              width: "34px",
-              height: "34px",
-              borderRadius: "100px",
-              backgroundColor:
-                kindOfSheet === "timeGridWeek" ? "#E9EBF3" : "transparent",
-              boxShadow: kindOfSheet === "timeGridWeek" ? "none" : undefined,
-              "&:hover": {
-                border: "none",
-                backgroundColor: "#F2F5FA",
-              },
-              cursor: "pointer",
-            }}
-            onClick={handleShowTimeGrid}
-          >
-            <CalendarIcon
-              sx={{
-                width: "18px",
-                height: "18px",
-                color: "#4C526C",
-              }}
-            />
-          </Fab>
-
-          {tab === "myTime" && (
-            <Button
-              startIcon={
-                <PlusIcon
+            {tab === "companyTime" && (
+              <Fab
+                sx={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "100px",
+                  backgroundColor:
+                    kindOfSheet === "table" ? "#E9EBF3" : "transparent",
+                  boxShadow: kindOfSheet === "table" ? "none" : undefined,
+                  "&:hover": {
+                    border: "none",
+                    backgroundColor: "#F2F5FA",
+                  },
+                  cursor: "pointer",
+                }}
+                onClick={handleShowTable}
+              >
+                <DayIcon
                   sx={{
-                    width: "32px",
-                    height: "32px",
+                    width: "16px",
+                    height: "16px",
+                    fill: "none",
                   }}
                 />
-              }
-              variant="contained"
+              </Fab>
+            )}
+
+            <Fab
               sx={{
-                minWidth: "146px",
-                height: "48px",
-                marginLeft: "14px",
+                width: "34px",
+                height: "34px",
                 borderRadius: "100px",
-                background: "linear-gradient(90deg, #2af598, #009efd)",
+                backgroundColor:
+                  kindOfSheet === "timeGridWeek" ? "#E9EBF3" : "transparent",
+                boxShadow: kindOfSheet === "timeGridWeek" ? "none" : undefined,
                 "&:hover": {
-                  background: "linear-gradient(90deg, #2af598, #009efd)",
+                  border: "none",
+                  backgroundColor: "#F2F5FA",
                 },
-                boxShadow: "none",
-                color: "common.white",
-                textTransform: "none",
-                fontSize: "16px",
-                fontWeight: "Bold",
                 cursor: "pointer",
-                fontFamily: "unset",
               }}
-              onClick={showLogTimePopup}
+              onClick={handleShowTimeGrid}
             >
-              {timeT("header.common.logTimeButton")}
-            </Button>
-          )}
-        </Box>
+              <CalendarIcon
+                sx={{
+                  width: "18px",
+                  height: "18px",
+                  color: "#4C526C",
+                }}
+              />
+            </Fab>
+
+            {tab === "myTime" && (
+              <Button
+                startIcon={
+                  <PlusIcon
+                    sx={{
+                      width: "32px",
+                      height: "32px",
+                    }}
+                  />
+                }
+                variant="contained"
+                sx={{
+                  minWidth: "146px",
+                  height: "48px",
+                  marginLeft: "14px",
+                  borderRadius: "100px",
+                  background: "linear-gradient(90deg, #2af598, #009efd)",
+                  "&:hover": {
+                    background: "linear-gradient(90deg, #2af598, #009efd)",
+                  },
+                  boxShadow: "none",
+                  color: "common.white",
+                  textTransform: "none",
+                  fontSize: "16px",
+                  fontWeight: "Bold",
+                  cursor: "pointer",
+                  fontFamily: "unset",
+                }}
+                onClick={showLogTimePopup}
+              >
+                {timeT("header.common.logTimeButton")}
+              </Button>
+            )}
+          </Box>
+        )}
       </Grid>
 
       <TabContext value={tab}>

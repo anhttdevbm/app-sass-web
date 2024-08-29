@@ -649,7 +649,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
           {currentKindOfSheet === "timeGridWeek" && (
             <Box
               sx={{
-                marginTop: "10px",
+                marginTop: "4px",
                 height: "100%",
               }}
             >
@@ -667,7 +667,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
             >
               <div
                 style={{
-                  marginBottom: "20px",
                   borderRadius: "100px",
                   background: "#F7F7FD",
                 }}
