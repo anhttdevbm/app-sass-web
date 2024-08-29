@@ -16,11 +16,9 @@ const useWebSocket = (): WebSocket | null => {
 
     const connectSocket = () => {
       const wsClient = new WebSocket(
-        `${process.env.NEXT_APP_WS_URL_TICKET!}?token=${token!}?language=vi`,
+        `${process.env.NEXT_APP_WS_URL_TICKET!}?token=${token!}&language=vi`,
       );
-      wsClient.addEventListener("open", (event) => {
-        wsClient.send("Hello Server!");
-      });
+
       wsClient.onopen = () => {
         console.log("WebSocket connection opened");
         // Send authentication message with the token
