@@ -30,6 +30,7 @@ import {
 import CalendarIcon from "icons/CalendarIcon";
 import PlusIcon from "icons/PlusIcon";
 import TimeSheetIcon from "icons/TimeSheetIcon";
+import { inter } from "./CalendarTracking/CalendarTracking.styles";
 import { TIME_TRACKING_HEADER_HEIGHT } from "./components/timeTracking.types";
 
 interface ITab {
@@ -46,7 +47,7 @@ enum TabEnum {
 const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
-  const [tab, setTab] = useState<TabEnum>(TabEnum.MY_TIME);
+  const [tab, setTab] = useState<TabEnum>(TabEnum.COMPANY_TIME);
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -55,8 +56,7 @@ const TimeTrackingPage = () => {
     useState<string>("0px");
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
 
-  const [kindOfSheet, setKindOfSheet] = useState<string>("timeSheet");
-
+  const [kindOfSheet, setKindOfSheet] = useState<string>("table");
   const timeT = useTranslations(NS_TIME_TRACKING);
 
   const timeTabs: ITab[] = [
@@ -190,7 +190,7 @@ const TimeTrackingPage = () => {
                 sx: {
                   borderRadius: "12px",
                   bgcolor: isDarkMode ? "#333333" : "#FFFFFF",
-                  fontFamily: "Inter",
+                  fontFamily: inter.style.fontFamily,
                   fontSize: "13px",
                   fontWeight: "Medium",
                 },

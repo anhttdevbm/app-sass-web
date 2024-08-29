@@ -1,7 +1,13 @@
 "use client";
 import { Person } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
-import { Avatar, Box, FormControlLabel, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  FormControlLabel,
+  TableFooter,
+  Typography,
+} from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
@@ -24,7 +30,6 @@ import PinActiveIcon from "icons/PinActiveIcon";
 import PinIcon from "icons/PinIcon";
 import _ from "lodash";
 import moment from "moment";
-import { Inter } from "next/font/google";
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "store/app/selectors";
@@ -37,12 +42,12 @@ import {
   setIsOpen,
   setUserName,
 } from "store/userNavigationDetail/reducer";
+import { inter } from "../CalendarTracking.styles";
 import EmployeesTableSheet from "./EmployeesTableSheet";
 import {
   tableCellDataStyles,
   trackingTableCellStyles,
 } from "./TrackingTable.styles";
-import { inter } from "../CalendarTracking.styles";
 
 interface IProps {
   dateRange: Date[];
@@ -100,32 +105,6 @@ function createUserDetailTableData(
 ) {
   return { project, task, sun, mon, tue, wed, thu, fri, sat, total };
 }
-const userDetailRowsFakeData = [
-  createUserDetailTableData(
-    "Project 1",
-    "Task 1",
-    "00:00",
-    "00:00",
-    "08:00",
-    "00:00",
-    "00:00",
-    "00:00",
-    "08:00",
-    "16:00",
-  ),
-  createUserDetailTableData(
-    "Project 1",
-    "Task 1",
-    "00:00",
-    "00:00",
-    "08:00",
-    "00:00",
-    "00:00",
-    "00:00",
-    "08:00",
-    "16:00",
-  ),
-];
 
 const TableSheet: React.FC<IProps> = (props) => {
   const dispatch = useDispatch();
@@ -147,16 +126,13 @@ const TableSheet: React.FC<IProps> = (props) => {
     fri: number;
     sat: number;
   }>({ sun: 0, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0 });
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [searchUser, setSearchUser] = useState([
-    { name: "Thu Nguyen" },
-    { name: "Tuan Anh" },
-    // Add more users here
-  ]);
-  // const [allTableDataVisible, setAllTableDataVisible] = useState<boolean>(true);
-  // const [detailDataTable, setDetailDataTable] = useState<boolean>(false);
-  const { onPinTimeSheet, onGetCompanyTimeSheet, params } = useGetMyTimeSheet();
+  const [searchUser, setSearchUser] = useState(() => {
+    return userData.map((item) => ({
+      fullname: item.fullname,
+    }));
+  });
+  const { onPinTimeSheet, onGetCompanyTimeSheet, isIdle } = useGetMyTimeSheet();
   const { onAddSnackbar } = useSnackbar();
   const [inputSearchData, setInputSearchData] = useState("");
   const open = Boolean(anchorEl);
@@ -373,6 +349,13 @@ const TableSheet: React.FC<IProps> = (props) => {
             </TableCell>
           </TableRow>
         ))}
+      </TableBody>
+    );
+  };
+
+  const _renderTableFooter = () => {
+    return (
+      <TableFooter>
         <TableRow
           sx={{
             background: "#D9F0FD",
@@ -383,6 +366,10 @@ const TableSheet: React.FC<IProps> = (props) => {
               color: "neutral.800",
               fontWeight: "600",
               borderRight: "1px solid #EBEAF2",
+              position: "sticky",
+              bottom: 0,
+              zIndex: 2,
+              background: "#D9F0FD",
             },
           }}
         >
@@ -417,7 +404,110 @@ const TableSheet: React.FC<IProps> = (props) => {
             )}
           </TableCell>
         </TableRow>
-      </TableBody>
+      </TableFooter>
+    );
+  };
+
+  const _renderSearchUserPopup = () => {
+    return (
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        sx={{
+          "& > .MuiPaper-root": {
+            borderRadius: "3px 3px 12px 12px",
+          },
+        }}
+      >
+        <Box
+          sx={{
+            p: 1,
+            width: "320px",
+            maxWidth: "320px",
+            padding: "10px 12px",
+          }}
+        >
+          <TextField
+            defaultValue={inputSearchData}
+            onChange={handleSearchUser}
+            placeholder="Search"
+            id="search-input"
+            sx={{ width: "100%" }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              sx: {
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderWidth: "2px",
+                  borderColor: "#EFEFEF",
+                  borderRadius: "100px",
+                },
+                height: 40,
+                fontFamily: "unset",
+              },
+            }}
+          />
+        </Box>
+        <Box sx={{ paddingBottom: "10px", maxHeight: "50vh" }}>
+          {searchUser.map((user, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "4px 12px",
+                "&:hover": {
+                  backgroundColor: "#D9F0FD",
+                },
+              }}
+            >
+              <FormControlLabel
+                sx={{
+                  margin: 0,
+                  width: "100%",
+                }}
+                control={
+                  <Checkbox
+                    sx={{
+                      color: "#DFE1EF",
+                    }}
+                  />
+                }
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: "8px",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Avatar sx={{ width: 22, height: 22 }}>A</Avatar>
+                    <Typography
+                      sx={{
+                        fontFamily: inter.style.fontFamily,
+                        fontWeight: "600",
+                        fontSize: "13px",
+                      }}
+                    >
+                      {user.fullname}
+                    </Typography>
+                  </Box>
+                }
+              />
+            </Box>
+          ))}
+        </Box>
+      </Popover>
     );
   };
 
@@ -481,6 +571,10 @@ const TableSheet: React.FC<IProps> = (props) => {
 
     calculateRowsAndTotals();
   }, [filterUserData, userData]);
+
+  useEffect(() => {
+    setSearchUser(userData.map((item) => ({ fullname: item.fullname })));
+  }, [userData]);
 
   return (
     <>
@@ -555,106 +649,7 @@ const TableSheet: React.FC<IProps> = (props) => {
                       )}
                     </Box>
                   </Box>
-                  <Popover
-                    open={open}
-                    anchorEl={anchorEl}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                    sx={{
-                      "& > .MuiPaper-root": {
-                        borderRadius: "3px 3px 12px 12px",
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        p: 1,
-                        width: "320px",
-                        maxWidth: "320px",
-                        padding: "10px 12px",
-                      }}
-                    >
-                      <TextField
-                        defaultValue={inputSearchData}
-                        onChange={handleSearchUser}
-                        placeholder="Search"
-                        id="search-input"
-                        sx={{ width: "100%" }}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <SearchIcon />
-                            </InputAdornment>
-                          ),
-                          sx: {
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderWidth: "2px",
-                              borderColor: "#EFEFEF",
-                              borderRadius: "100px",
-                            },
-                            height: 40,
-                            fontFamily: "unset",
-                          },
-                        }}
-                      />
-                    </Box>
-                    <Box sx={{ paddingBottom: "10px" }}>
-                      {searchUser.map((user, index) => (
-                        <Box
-                          key={index}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            padding: "4px 12px",
-                            "&:hover": {
-                              backgroundColor: "#D9F0FD",
-                            },
-                          }}
-                        >
-                          <FormControlLabel
-                            sx={{
-                              margin: 0,
-                              width: "100%",
-                            }}
-                            control={
-                              <Checkbox
-                                sx={{
-                                  color: "#DFE1EF",
-                                }}
-                              />
-                            }
-                            label={
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  gap: "8px",
-                                  alignItems: "center",
-                                  width: "100%",
-                                }}
-                              >
-                                <Avatar sx={{ width: 22, height: 22 }}>
-                                  A
-                                </Avatar>
-                                <Typography
-                                  sx={{
-                                    fontFamily: inter.style.fontFamily,
-                                    fontWeight: "600",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  {user.name}
-                                </Typography>
-                              </Box>
-                            }
-                          />
-                        </Box>
-                      ))}
-                    </Box>
-                  </Popover>
+                  {_renderSearchUserPopup()}
                 </TableCell>
                 {formattedDates.map((date, index) => (
                   <TableCell
@@ -704,6 +699,7 @@ const TableSheet: React.FC<IProps> = (props) => {
               </TableRow>
             </TableHead>
             {_renderTableBody()}
+            {_renderTableFooter()}
           </Table>
         </TableContainer>
       )}

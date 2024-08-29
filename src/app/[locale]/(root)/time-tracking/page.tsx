@@ -8,6 +8,7 @@ export const metadata = {
 export default function Page() {
   return (
     <Wrapper
+      inFrame
       overflow="hidden"
       sx={{
         "& > div:nth-of-type(2)": {

@@ -2,11 +2,9 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   Avatar,
   Box,
-  Button,
   Grid,
   IconButton,
   Stack,
@@ -19,15 +17,15 @@ import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-//import ButtonComponent from "../../Component/Button";
-//import { MobileDatePicker } from "@mui/x-date-pickers";
 import { Person } from "@mui/icons-material";
 import ListIcon from "@mui/icons-material/List";
 import { styled } from "@mui/system";
-import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ButtonCalendar from "components/shared/ButtonCalendar";
 import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
+import TimeRangeNavigator, {
+  TypeNavigator,
+} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
+import { ITimeRangeAction } from "components/sn-time-tracking/components/timeTracking.types";
 import { NS_TIME_TRACKING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -40,10 +38,7 @@ import TimeCreate from "../../TimeTrackingModal/TimeCreate";
 import ListSheet from "./ListSheet";
 import MonthCalendarSheet from "./MonthCalendarSheet";
 import TableSheet from "./TableSheet";
-import TimeRangeNavigator, {
-  TypeNavigator,
-} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
-import { ITimeRangeAction } from "components/sn-time-tracking/components/timeTracking.types";
+import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 
 interface IProps {
   events: any[];
@@ -267,14 +262,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     setDateRange(result);
   };
 
-  const getWeekStartAndEndDates = (date: any) => {
-    const startOfWeek = date?.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
-    const endOfWeek = date?.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
-    const startDate = startOfWeek?.format("YYYY-MM-DD");
-    const endDate = endOfWeek?.format("YYYY-MM-DD");
-    return { startDate, endDate };
-  };
-
   const onAction = (params: ITimeRangeAction) => {
     const { action, value } = params;
     if (action === "week") {
@@ -309,44 +296,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       }
     }
   };
-
-  const _renderCalendarModule = () => {
-    return (
-      <>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ mb: isSmSmaller ? "0px" : "16px" }}
-        >
-          <Grid
-            container
-            rowSpacing={1}
-            sx={{ mb: isSmSmaller ? "16px" : "0" }}
-          >
-            <Grid item md={6} sm={12}>
-              <Stack direction="row" alignItems="center" sx={{ gap: "16px" }}>
-                <ButtonCalendar
-                  icon={<ListIcon />}
-                  isActive={activeTab === "timeSheet"}
-                  title={timeT("company_time.timesheet")}
-                  onClick={() => setActiveTab("timeSheet")}
-                />
-                <ButtonCalendar
-                  icon={<ListIcon />}
-                  isActive={activeTab === "table"}
-                  title={timeT("company_time.table")}
-                  onClick={() => setActiveTab("table")}
-                />
-              </Stack>
-            </Grid>
-          </Grid>
-        </Stack>
-      </>
-    );
-  };
-
-  // const _renderHeader = () => {
   //   return (
   //     <>
   //       <Grid
@@ -536,17 +485,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   //     </>
   //   );
   // };
-
-  const dataDayTable = useMemo(() => {
-    if (!_.isEmpty(events)) {
-      return events?.filter((item) => {
-        return (
-          dayjs(item?.extendedProps?.day).format("YYYY-MM-DD") ===
-          dayjs(selectedDate).format("YYYY-MM-DD")
-        );
-      });
-    }
-  }, [events, selectedDate]);
 
   const _renderFooter = (type: TypeNavigator) => {
     return (
