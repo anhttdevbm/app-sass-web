@@ -8,6 +8,8 @@ import { useCallback, useEffect, useState } from "react";
 import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { TICKET_PATH } from "constant/paths";
 import { IFromAgent } from "../pop-up-model/Model";
+import { useTranslations } from "next-intl";
+import { NS_TICKET } from "constant/index";
 
 interface PropsFormAgent {
   formAgent: IFromAgent
@@ -19,6 +21,7 @@ interface PropsFormAgent {
 
 const CreateAgent = (props: PropsFormAgent) => {
   const { formAgent, handleChange, type } = props || null
+  const t = useTranslations(NS_TICKET)
 
   return (
     <>
@@ -31,12 +34,12 @@ const CreateAgent = (props: PropsFormAgent) => {
           <Typography
             sx={{ fontSize: "20px", fontWeight: "600", paddingBottom: "20px" }}
           >
-            {type == "create" ? "Create New Agent" : "Edit Agent"}
+            {type == "create" ? `${(t("ticketAgnet.createTitle"))}` : `${(t("ticketAgnet.editTitle"))}`}
 
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <LabelFormCustom title="Name" required />
+              <LabelFormCustom title={(t("ticketFields.name"))} required />
               <Input
                 fullWidth
                 rootSx={{ borderRadius: "30px" }}
@@ -49,7 +52,7 @@ const CreateAgent = (props: PropsFormAgent) => {
               />
             </Grid>
             <Grid item xs={6}>
-              <LabelFormCustom title="User name" required />
+              <LabelFormCustom title={(t("ticketAgnet.USERNAME"))} required />
               <Input
                 fullWidth
                 disabled={type == "edit" ? true : false}
@@ -63,7 +66,7 @@ const CreateAgent = (props: PropsFormAgent) => {
               />
             </Grid>
             <Grid item xs={6} >
-              <LabelFormCustom title="Email" required />
+              <LabelFormCustom title={(t("ticketAgnet.EMAIL"))} required />
               <Input
                 fullWidth
                 rootSx={{ borderRadius: "30px" }}
@@ -76,7 +79,7 @@ const CreateAgent = (props: PropsFormAgent) => {
               />
             </Grid>
             <Grid item xs={6} >
-              <LabelFormCustom title="Phone number" required />
+              <LabelFormCustom title={(t("ticketAgnet.PHONE"))} required />
               <Input
                 fullWidth
                 rootSx={{ borderRadius: "30px" }}
@@ -90,7 +93,7 @@ const CreateAgent = (props: PropsFormAgent) => {
             </Grid>
 
             <Grid item xs={12} md={12}>
-              <LabelFormCustom title="Password" required />
+              <LabelFormCustom title={(t("ticketAgnet.PASSWORD"))} required />
               <Input
                 fullWidth
                 disabled={type == "edit" ? true : false}

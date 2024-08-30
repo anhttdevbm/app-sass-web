@@ -18,14 +18,18 @@ import ModelReply from "components/sn-ticket/components/ModelReply";
 import Wrapper from "components/Wrapper";
 import { NS_TICKET } from "constant/index";
 import { TICKET_PATH } from "constant/paths";
+import ArrowDownIcon from "icons/ArrowDownIcon";
 import ReplyIcon from "icons/ReplyIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
+import { useParams } from "next/navigation";
 import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const TicketDetail = () => {
   const t = useTranslations(NS_TICKET);
+  const params = useParams();
+  const id = params?.id as string;
   const tags = useMemo(
     () => [
       {
@@ -129,7 +133,7 @@ const TicketDetail = () => {
     <Wrapper overflow="auto" inFrame>
       <Box
         sx={{
-          padding: "34px 36px",
+          padding: { xs: "12px 12px", sm: "34px 36px", md: "34px 36px" },
           gap: 1,
           display: "flex",
           flexDirection: "column",
@@ -141,23 +145,25 @@ const TicketDetail = () => {
         }}
       >
         <Stack
-          direction="row"
+          direction={{ xs: "column", sm: "row", md: "row" }}
           justifyContent="space-between"
-          alignItems="center"
+          alignItems={{ xs: "start", sm: "start", md: "center" }}
         >
           <Box
             onClick={() => {
               push(TICKET_PATH);
             }}
             sx={{
-              display: "flex",
+              display: { xs: "block", sm: "flex", md: "flex" },
               gap: 1,
               alignItems: "center",
               cursor: "pointer",
             }}
           >
-            {/* <ArrowDownIcon sx={{ width: 13, height: 13 }} />
-            <Text>{t("ticketDetail.title")} {data?.id}</Text> */}
+            <Box sx={{ display: { xs: "flex", sm: "none", md: "none" }, alignItems: "center", gap: 2 }}>
+              <ArrowDownIcon sx={{ width: 13, height: 13 }} />
+              <Text >{t("ticketDetail.title")} {""}</Text>
+            </Box>
             <Text
               fontWeight="600"
               sx={{ fontSize: 20, margin: "6px 0 12px 0" }}
@@ -174,8 +180,17 @@ const TicketDetail = () => {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
+          // overflow="auto"
+          // height = {200} 
+          sx={{
+            // '&::-webkit-scrollbar': {
+            //   display: "none"
+            // },
+            // scrollbarWidth: 'none',
+            // msOverflowStyle: 'none'
+          }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2  }}>
             {tags.map((tag, idx) => (
               <Tag
                 key={`${tag.id}-${idx}`}
@@ -193,6 +208,7 @@ const TicketDetail = () => {
             size="small"
             variant="primary"
             sx={{
+              display: { xs: "none", sm: "block", md: "block" },
               height: 32,
               width: 90,
               borderRadius: 100,

@@ -5,6 +5,8 @@ import EmailActivity from "./email/email-activity";
 import HistoryActivity from "./history/history-activity";
 import SortIcon from "public/images/ticket/sortIcon.svg";
 import CustomDropdown from "../drop-down/CustomDropdown";
+import { useTranslations } from "next-intl";
+import { NS_TICKET } from "constant/index";
 export enum TypeSort {
   OLDEST = "OLDEST",
   NEWEST = "NEWEST",
@@ -14,6 +16,7 @@ const ActivityTemplate = () => {
   const [activityIdx, setActivityIdx] = useState<string>("All");
   const [typeSort, setTypeSort] = useState<TypeSort>(TypeSort.NEWEST);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const t = useTranslations(NS_TICKET)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -22,24 +25,9 @@ const ActivityTemplate = () => {
     setAnchorEl(null);
   };
 
-  const RenderActivity = ({ activityIdx }: { activityIdx: string }) => {
-    switch (activityIdx) {
-      case "All":
-        return <></>;
-      case "Comments":
-        return <CommentActivity />;
-      case "Email":
-        return <EmailActivity />;
-      case "History":
-        return <HistoryActivity />;
-      default:
-        return <></>;
-    }
-  };
-
   return (
     <Stack justifyContent={"center"} alignItems={"start"} gap={"12px"}>
-      <Typography sx={{ fontWeight: 600, fontSize: 20 }}>Activity</Typography>
+      <Typography sx={{ fontWeight: 600, fontSize: 20 }}>{t("ticketDetail.activity.activity")}</Typography>
       <Stack
         justifyContent={"space-between"}
         alignItems={"center"}
@@ -53,7 +41,7 @@ const ActivityTemplate = () => {
           gap={"12px"}
         >
           <Typography sx={{ fontWeight: 700, fontSize: 13, color: "#172B4D" }}>
-            Show:
+            {t("ticketDetail.activity.show")}
           </Typography>
           {listTypeActivity.map((it: string, index: number) => (
             <button
@@ -75,7 +63,8 @@ const ActivityTemplate = () => {
               }}
               key={index}
             >
-              {it}
+
+              {t(`ticketDetail.activity.${it}`)}
             </button>
           ))}
         </Stack>
@@ -86,7 +75,7 @@ const ActivityTemplate = () => {
           gap={"2px"}
         >
           <Typography>
-            {typeSort === TypeSort.NEWEST ? "Newest" : "Oldest"} first
+            {typeSort === TypeSort.NEWEST ? `${t("ticketDetail.activity.newest")}` : `${t("ticketDetail.activity.oldest")}`} {t("ticketDetail.activity.first")}
           </Typography>
           <CustomDropdown
             anchorEl={anchorEl}
@@ -104,7 +93,7 @@ const ActivityTemplate = () => {
                 }}
               >
                 <Typography style={{ color: "#000", fontSize: "12px" }}>
-                  Newest
+                  {t("ticketDetail.activity.newest")}
                 </Typography>
               </Button>
               <Button
@@ -115,7 +104,7 @@ const ActivityTemplate = () => {
                 }}
               >
                 <Typography style={{ color: "#000", fontSize: "12px" }}>
-                  Oldest
+                  {t("ticketDetail.activity.oldest")}
                 </Typography>
               </Button>
             </>
@@ -125,6 +114,26 @@ const ActivityTemplate = () => {
       <RenderActivity activityIdx={activityIdx} />
     </Stack>
   );
+};
+
+const RenderActivity = ({
+  activityIdx,
+}: {
+  activityIdx: string;
+}): React.JSX.Element => {
+  if (!activityIdx) return <></>;
+  switch (activityIdx) {
+    case "All":
+      return <></>;
+    case "Comments":
+      return <CommentActivity />;
+    case "Email":
+      return <EmailActivity />;
+    case "History":
+      return <HistoryActivity />;
+    default:
+      return <></>;
+  }
 };
 
 export default ActivityTemplate;

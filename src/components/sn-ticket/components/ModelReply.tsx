@@ -11,6 +11,7 @@ import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useSnackbar } from "store/app/selectors";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "react-query";
+import { QUERY_TICKET_KEY } from "queries/ticket/keys";
 
 type PropsModelReply = {
   open: boolean
@@ -59,7 +60,7 @@ const ModelReply = (props: PropsModelReply) => {
     sendReply.mutate(payload, {
       onSuccess: (data) => {
         onAddSnackbar(" Reply success!", "success");
-        // queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, id] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_TICKET_KEY.LIST_REPLY , id] })
         clearForm()
         handleClose()
       },
@@ -89,6 +90,7 @@ const ModelReply = (props: PropsModelReply) => {
               id="tour-chatmb-textarea"
               placeholder={t("modelReply.email")}
               value={formSendReply.email}
+              disabled={true}
               onChange={(e) => {
                 handleChange(e.target.value, "email");
               }}
@@ -109,6 +111,7 @@ const ModelReply = (props: PropsModelReply) => {
           </Box>
           <textarea
             id="tour-chatmb-textarea"
+            disabled={true}
             placeholder={t("modelReply.subject")}
             value={formSendReply.title}
             onChange={(e) => {

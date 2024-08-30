@@ -21,8 +21,6 @@ const useGetListTicket = () => {
     size: data?.totalItems,
   };
 
-  // console.log("check params" , params)
-
   return useQuery({
     queryKey: [QUERY_TICKET_KEY.LIST_TICKET, params],
     queryFn: () => getListTicketApi(params),

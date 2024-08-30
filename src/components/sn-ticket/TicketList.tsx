@@ -51,12 +51,11 @@ interface Ticket {
 const TickketList = () => {
   const dispatch = useAppDispatch();
   const { data: listTicket } = useGetListTicket();
-  const dataFilter = useSelector(selectSearchTicket)
+  const dataFilter = useSelector(selectSearchTicket);
+  const t = useTranslations(NS_TICKET);
 
   //Store của các key tìm kiếm gói ở đây ///
   const keySearch = useSelector(selectSearchTicket);
-
-  const [list, setList] = useState<any>(null);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
@@ -66,55 +65,62 @@ const TickketList = () => {
       icon: SendAllTicketIcon,
       title: "All Ticket",
       active: false,
+      text: t("filterTicket.sendAll"),
     },
     {
       id: 2,
       icon: NewTicketIcon,
       title: "New",
       active: false,
+      text: t("filterTicket.newTicket"),
     },
     {
       id: 3,
       icon: OpenTicketIcon,
       title: "Open",
       active: false,
+      text: t("filterTicket.openTicket"),
     },
     {
       id: 4,
       icon: InProgressTicketIcon,
       title: "InProgress",
       active: false,
+      text: t("filterTicket.inProgressTicket"),
     },
     {
       id: 5,
       icon: OnHoldTicketIcon,
       title: "OnHold",
       active: false,
+      text: t("filterTicket.onHoldTicket"),
     },
     {
       id: 6,
       icon: ResolveTicketIcon,
       title: "Resolved",
       active: false,
+      text: t("filterTicket.resolvedTicket"),
     },
     {
       id: 7,
       icon: ClosedTicketIcon,
       title: "Closed",
       active: false,
+      text: t("filterTicket.closedTicket"),
     },
     {
       id: 8,
       icon: CanceledTicketIcon,
       title: "Cancelled",
       active: false,
+      text: t("filterTicket.canceledTicket"),
     },
   ];
 
   useEffect(() => {
-    setTotalItems(listTicket?.data?.count)
+    setTotalItems(listTicket?.data?.count);
   }, [listTicket]);
-
 
   const [listFilterTicket, setListFilterTicket] = useState(defaultFilterTicket);
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
@@ -128,7 +134,7 @@ const TickketList = () => {
     if (typeViewDocStore == "kanbanViewListDoc") {
       const payload = {
         ...dataFilter,
-        stage: item.title
+        stage: item.title,
       };
       dispatch(setKeySearchTicket(payload));
     }
@@ -151,7 +157,6 @@ const TickketList = () => {
   useEffect(() => {
     handleFilterTicket(listFilterTicket[0]);
   }, []);
-
 
   return (
     <>
@@ -180,7 +185,6 @@ const TickketList = () => {
                 alignItems="center"
                 justifyContent="flex-start"
                 spacing={3}
-                overflow="auto"
               >
                 <Box
                   display="flex"
@@ -193,6 +197,11 @@ const TickketList = () => {
                     // height: "56px",
                     backgroundColor: "#fff",
                     width: "100%",
+                    '&::-webkit-scrollbar': {
+                      display: "none" 
+                    },
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none'
                   }}
                 >
                   {listFilterTicket.map((item, index) => (
@@ -208,7 +217,7 @@ const TickketList = () => {
                         // padding: 2,
                         backgroundColor: item.active ? "#D9F0FD" : "#fff",
                         padding: "10px 10px",
-                        cursor: "pointer"
+                        cursor: "pointer",
                       }}
                     >
                       {item.active ? (
@@ -218,12 +227,13 @@ const TickketList = () => {
                       )}
                       <Text
                         sx={{
-                          display: { xs: "none", md: "block", fontSize: 13 },
+                          display: { xs: "block", md: "block" },
+                          fontSize: { xs: 10, md: 13 }
                         }}
                         color={item.active ? "#045EB8" : "#B3B3B3"}
                         fontWeight={item.active ? "700" : "400"}
                       >
-                        {item.title}
+                        {item.text}
                       </Text>
                       {item.active && (
                         <Paper
@@ -234,8 +244,8 @@ const TickketList = () => {
                               ? "#045EB8"
                               : "#B3B3B3",
                             padding: 2,
-                            width: 15,
-                            height: 15,
+                            width: 5,
+                            height: 5,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
@@ -243,11 +253,7 @@ const TickketList = () => {
                         >
                           <Text
                             sx={{
-                              display: {
-                                xs: "none",
-                                md: "block",
-                                fontSize: 13,
-                              },
+                              fontSize: { xs: 12, md: 13 }
                             }}
                             color="#fff"
                           >

@@ -49,7 +49,8 @@ export const getListCommentApi = async (id) => {
 };
 
 export const createCommentApi = (data) => {
-  return client.post(`${Endpoint.TICKET}/comment/${data?.ticketId}`, data, {
+  const ticketId = data.get("ticketId"); // Get the value associated with the "name" key
+  return client.post(`${Endpoint.TICKET}/comment/${ticketId}`, data, {
     baseURL: TICKET_API_URL,
     headers: {
       "Content-Type": "multipart/form-data",
