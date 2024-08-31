@@ -1,0 +1,77 @@
+import { PackageManagementDictionary } from "dictionaries/types/PackageManagementDictionary";
+
+export const PackageManagementLang: PackageManagementDictionary = {
+  head: {
+    sumary: "Tổng kết",
+    account: "Tài khoản",
+    transactionHistory: "Lịch sử giao dịch",
+    upgradePackage: "Nâng cấp gói",
+    upgradeNewAccount: "Nâng cấp tài khoản mới",
+    transactionDetail: "Chi tiết giao dịch",
+  },
+  form: {
+    package: "Gói",
+    billingPlan: "Kế hoạch thanh toán",
+    account: "Tài khoản",
+  },
+  placeholder: {
+    search: "Tìm kiếm theo tên hoặc email",
+  },
+  button: {
+    upgradePackage: "Nâng cấp gói",
+    change: "Thay đổi",
+    confirm: "Xác nhận",
+    cancel: "Hủy",
+    payNow: "Thanh toán ngay",
+    save: "Lưu",
+    buyNow: "Mua ngay",
+    upgradeNow: "Nâng cấp ngay",
+    requestUpgrade: "Yêu cầu nâng cấp",
+  },
+  list: {
+    name: "Tên",
+    email: "Email",
+    role: "Vai trò",
+    package: "Gói",
+    expiration: "Ngày hết hạn",
+    id: "ID",
+    type: "Loại",
+    accountNumber: "Số tài khoản",
+    totalAmount: "Tổng số tiền",
+    creationTime: "Thời gian tạo",
+    renewalDate: "Ngày gia hạn",
+  },
+  transactionDetail: {
+    transactionId: "ID giao dịch",
+    package: "Gói",
+    billingPlan: "Kế hoạch thanh toán",
+    account: "Tài khoản",
+  },
+
+  title: {
+    currentPackage: "GÓI HIỆN TẠI",
+    unupgradedAccount: "TÀI KHOẢN CHƯA NÂNG CẤP",
+    billingOwner: "CHỦ SỞ HỮU HÓA ĐƠN",
+    autoRenewal: "TỰ ĐỘNG GIA HẠN",
+    paymentDetails: "Chi tiết thanh toán",
+    orderSummary: "Tóm tắt đơn hàng",
+    expirationDate: "NGÀY HẾT HẠN",
+    standard: "Tiêu chuẩn",
+    business: "Kinh doanh",
+    enterPise: "Doanh nghiệp",
+    chooseBillingOwner: "Chọn chủ sở hữu hóa đơn",
+    confirmToChange: "Xác nhận để thay đổi chủ sở hữu hóa đơn",
+  },
+  description: {
+    byAssigning:
+      "Bằng cách chỉ định chủ sở hữu hóa đơn cho người khác, chủ sở hữu hiện tại sẽ không còn nhận được email liên quan đến việc nâng cấp",
+    confirm: "Bạn có chắc chắn muốn thay đổi chủ sở hữu hóa đơn không?",
+    onlyAdmin:
+      "Chỉ có admin mới có thể trở thành chủ sở hữu hóa đơn. Bằng cách chỉ định chủ sở hữu hóa đơn cho người khác, chủ sở hữu hiện tại sẽ không còn nhận được email liên quan đến việc nâng cấp",
+    pay: 'Để thanh toán bằng PayPal, vui lòng nhấp vào nút "PayPal". Một cửa sổ bật lên sẽ xuất hiện và bạn sẽ được yêu cầu hoàn tất thanh toán của mình.',
+    turn: "Bạn có chắc chắn muốn bật {value} Tự động gia hạn không?",
+    saveOfMonth: "tiết kiệm ${value}/tháng đối với gói hàng năm",
+    everyThing: "Mọi thứ đều đạt tiêu chuẩn",
+    paypal: "Paypal",
+  },
+};

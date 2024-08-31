@@ -23,7 +23,8 @@ import {
   NS_CONTENTS,
   NS_AI_CHAT,
   NS_AI_AGENT,
-  NS_INVOICE
+  NS_INVOICE,
+  NS_PACKAGE_MANAGERMENT,
 } from "constant/index";
 import { AccountLang } from "./account";
 import { AuthLang } from "./auth";
@@ -50,6 +51,7 @@ import { ContentsLang } from "./contents";
 import { AIChatLang } from "./aiChat";
 import { AIAgentLang } from "./aiAgent";
 import { InvoiceLang } from "./invoice";
+import { PackageManagementLang } from "./packageManagement";
 
 export default {
   [NS_COMMON]: CommonLang,
@@ -75,6 +77,7 @@ export default {
   [NS_APPLICANTS]: ApplicantsLang,
   [NS_COST_RATE]: CostRateLang,
   [NS_HOLIDAY_CALENDAR]: HolidayCalendarLang,
+  [NS_PACKAGE_MANAGERMENT]: PackageManagementLang,
   [NS_CONTENTS]: ContentsLang,
-  [NS_INVOICE]: InvoiceLang
+  [NS_INVOICE]: InvoiceLang,
 };

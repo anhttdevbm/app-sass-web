@@ -132,6 +132,7 @@ export const NS_AI_AGENT = "aiAgent";
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
 export const NS_HOLIDAY_CALENDAR = "holidayCalendar";
+export const NS_PACKAGE_MANAGERMENT = "packageManagement";
 //Feedback
 export const NS_FEEDBACK = "feeback";
 //blog

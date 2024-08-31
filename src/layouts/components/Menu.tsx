@@ -27,13 +27,14 @@ import {
   LANDING_PRICING_PATH,
   LANDING_TRUST_CENTER_PATH,
   MY_COMPANY_PATH,
+  PACKAGE_MANAGERMENT_PATH,
   POSITIONS_PATH,
   PROJECT_TYPES_PATH,
   PROJECTS_PATH,
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
-  TIME_TRACKING_PATH
+  TIME_TRACKING_PATH,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -259,6 +260,11 @@ const DATA: MenuItemProps[] = [
         href: HOLIDAY_CALENDAR_PATH,
         roles: [Permission.AM],
       },
+      {
+        label: "menu.packageManager",
+        href: PACKAGE_MANAGERMENT_PATH,
+        roles: [Permission.AM, Permission.ST, Permission.SA],
+      },
     ],
     roles: [Permission.AM],
   },
@@ -407,7 +413,7 @@ const DATA: MenuItemProps[] = [
       },
     ],
     roles: [Permission.SA],
-  }
+  },
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
