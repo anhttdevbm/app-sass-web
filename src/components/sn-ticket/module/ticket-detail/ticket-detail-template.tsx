@@ -160,6 +160,8 @@ const TicketDetail = () => {
               gap: 1,
               alignItems: "center",
               cursor: "pointer",
+              justifyContent: "space-between",
+              width: "100%",
             }}
           >
             <Box
@@ -174,35 +176,93 @@ const TicketDetail = () => {
                 {t("ticketDetail.title")} {""}
               </Text>
             </Box>
+
             <Text
               fontWeight="600"
               sx={{ fontSize: 20, margin: "6px 0 12px 0" }}
             >
               {t("ticketDetail.question")}
             </Text>
+
+            <Button
+              onClick={handleClickOpen}
+              size="small"
+              variant="primary"
+              sx={{
+                display: { xs: "none", sm: "flex", md: "flex" },
+                height: 32,
+                width: 90,
+                borderRadius: 100,
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                },
+                gap: 1,
+              }}
+            >
+              <ReplyIcon />
+              <Text color="inherit" fontWeight="700">
+                {/* {billingT("list.button.invoice")} */}
+                {t("ticketDetail.reply")}
+              </Text>
+            </Button>
           </Box>
-          <Text sx={{ fontSize: 13, color: "#84818A" }}>
-            {t("ticketDetail.created")} {dataTicket?.createTime?.slice(11, 16)}
-          </Text>
+
+          <Box
+            display={{ xs: "flex", sm: "none", md: "none" }}
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Text sx={{ fontSize: 13, color: "#84818A" }}>
+              {t("ticketDetail.created")}{" "}
+              {dataTicket?.createTime?.slice(11, 16)}
+            </Text>
+            <Button
+              onClick={handleClickOpen}
+              size="small"
+              variant="primary"
+              sx={{
+                display: { xs: "flex", sm: "none", md: "none" },
+                height: 32,
+                width: 90,
+                borderRadius: 100,
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                },
+                gap: 1,
+              }}
+            >
+              <ReplyIcon />
+              <Text color="inherit" fontWeight="700" fontSize={12}>
+                {/* {billingT("list.button.invoice")} */}
+                {t("ticketDetail.reply")}
+              </Text>
+            </Button>
+          </Box>
         </Stack>
 
         <Stack
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          // overflow="auto"
-          // height = {200}
-          sx={
-            {
-              // '&::-webkit-scrollbar': {
-              //   display: "none"
-              // },
-              // scrollbarWidth: 'none',
-              // msOverflowStyle: 'none'
-            }
-          }
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              overflowX: "auto",
+              alignItems: "center",
+              gap: 2,
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
             {tags.map((tag, idx) => (
               <Tag
                 key={`${tag.id}-${idx}`}
@@ -214,33 +274,6 @@ const TicketDetail = () => {
               />
             ))}
           </Box>
-
-          <Button
-            onClick={handleClickOpen}
-            size="small"
-            variant="primary"
-            sx={{
-              display: { xs: "none", sm: "block", md: "block" },
-              height: 32,
-              width: 90,
-              borderRadius: 100,
-              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-              "&:hover": {
-                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-              },
-              gap: 1,
-            }}
-          >
-            <ReplyIcon />
-            <Text
-              sx={{ display: { xs: "none", md: "block" } }}
-              color="inherit"
-              fontWeight="700"
-            >
-              {/* {billingT("list.button.invoice")} */}
-              {t("ticketDetail.reply")}
-            </Text>
-          </Button>
         </Stack>
 
         <Stack>
