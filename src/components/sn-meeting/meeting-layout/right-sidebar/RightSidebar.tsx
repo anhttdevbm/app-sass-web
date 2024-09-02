@@ -132,7 +132,7 @@ const initMessagesArray = [
       name: "John Doe",
       avatar: "https://via.placeholder.com/150",
     },
-    content: "Hello, how are you?",
+    content: "Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you?",
     time: "10:54",
     id: "1",
   },
@@ -142,7 +142,7 @@ const initMessagesArray = [
       avatar: "https://via.placeholder.com/150",
     },
     id: "2",
-    content: "I'm doing great, thanks!",
+    content: "I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks!I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks!",
     time: "10:54",
   },
   {

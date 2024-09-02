@@ -20,13 +20,25 @@ import React, { useState } from "react";
 import OptionPopup from "./OptionPopup";
 import { random } from "lodash";
 import useTheme from "hooks/useTheme";
+import { usePathname, useRouter } from "next/navigation";
+import { store } from "store/configureStore";
+import { useMeeting } from "store/meeting/selectors";
 
 interface OptionButtonLayoutProps {
   sx: object;
 }
 
 export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
+  const router = useRouter();
   const { isDarkMode } = useTheme();
+  const {
+    meetingWsClient: ws,
+    currentParticipants,
+    meetInfo,
+    localStream,
+  } = store.getState().meeting;
+  const { onLeaveMeeting, onEndMeeting, onResetMeet } = useMeeting();
+
   const [isMicActive, setIsMicActive] = useState(false);
   const [isVideocamActive, setIsVideocamActive] = useState(false);
   const [isScreenShareActive, setIsScreenShareActive] = useState(false);
@@ -74,6 +86,12 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   };
 
   const idPopup = random().toString();
+
+  const leaveMeeting = () => {
+    localStream?.getTracks().forEach((track) => track.stop());
+    onLeaveMeeting(meetInfo);
+    // router.back();
+  };
 
   return (
     <Stack
@@ -178,7 +196,9 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
       </Box>
 
       <Box width={"10%"} textAlign={"center"}>
-        <Button sx={{ padding: "14px", ...sxDangerBtn }}>End Call</Button>
+        <Button sx={{ padding: "14px", ...sxDangerBtn }} onClick={leaveMeeting}>
+          End Call
+        </Button>
       </Box>
     </Stack>
   );

@@ -16,14 +16,17 @@ import {
 } from "../style";
 import AvatarGroup from "components/shared/AvatarGroup";
 import useTheme from "hooks/useTheme";
+import { useDispatch } from "react-redux";
 
 interface MeetingHeaderLayoutProps {
   sx: object;
+  toggleMinimizeMeeting: () => void;
 }
 
 const MeetingHeaderLayout: React.FC<MeetingHeaderLayoutProps> = (
   props: MeetingHeaderLayoutProps,
 ) => {
+  const { toggleMinimizeMeeting } = props;
   const { isDarkMode } = useTheme();
   return (
     <Stack direction="row" justifyContent="space-between" sx={{ ...props.sx }}>
@@ -66,6 +69,7 @@ const MeetingHeaderLayout: React.FC<MeetingHeaderLayoutProps> = (
         <Box>
           <IconButton
             sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
+            onClick={toggleMinimizeMeeting}
           >
             <AspectRatio />
           </IconButton>
