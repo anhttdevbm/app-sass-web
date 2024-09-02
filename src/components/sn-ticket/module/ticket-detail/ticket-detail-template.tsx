@@ -25,10 +25,12 @@ import { useRouter } from "next-intl/client";
 import { useParams } from "next/navigation";
 import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useGetAgents } from "store/ticket-agent/selectors";
 
 const TicketDetail = () => {
   const t = useTranslations(NS_TICKET);
   const params = useParams();
+  useGetAgents();
   const id = params?.id as string;
   const tags = useMemo(
     () => [
@@ -160,9 +162,17 @@ const TicketDetail = () => {
               cursor: "pointer",
             }}
           >
-            <Box sx={{ display: { xs: "flex", sm: "none", md: "none" }, alignItems: "center", gap: 2 }}>
+            <Box
+              sx={{
+                display: { xs: "flex", sm: "none", md: "none" },
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
               <ArrowDownIcon sx={{ width: 13, height: 13 }} />
-              <Text >{t("ticketDetail.title")} {""}</Text>
+              <Text>
+                {t("ticketDetail.title")} {""}
+              </Text>
             </Box>
             <Text
               fontWeight="600"
@@ -181,16 +191,18 @@ const TicketDetail = () => {
           justifyContent="space-between"
           alignItems="center"
           // overflow="auto"
-          // height = {200} 
-          sx={{
-            // '&::-webkit-scrollbar': {
-            //   display: "none"
-            // },
-            // scrollbarWidth: 'none',
-            // msOverflowStyle: 'none'
-          }}
+          // height = {200}
+          sx={
+            {
+              // '&::-webkit-scrollbar': {
+              //   display: "none"
+              // },
+              // scrollbarWidth: 'none',
+              // msOverflowStyle: 'none'
+            }
+          }
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2  }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             {tags.map((tag, idx) => (
               <Tag
                 key={`${tag.id}-${idx}`}

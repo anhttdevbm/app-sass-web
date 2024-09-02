@@ -56,20 +56,12 @@ interface Ticket {
 const TicketAgentList = () => {
   const dispatch = useAppDispatch();
   const { data: listAgent } = useGetListAgent();
-  const dataFilter = useAppSelector(selectSearchTicketAgent)
-
-
-  console.log("check data agent list", listAgent)
+  const dataFilter = useAppSelector(selectSearchTicketAgent);
 
   //Store của các key tìm kiếm gói ở đây ///
-  const keySearch = useAppSelector(selectSearchTicket);
 
-  const [list, setList] = useState<any>([]);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(2);
-
-
-  const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
 
   const handlePageChange = (newPage: number) => {
     // handleQueryChange({ page: newPage, limit });
@@ -80,7 +72,6 @@ const TicketAgentList = () => {
       page: newPage,
     };
     dispatch(setKeySearchTicketAgent(payload));
-
   };
 
   const handleSizeChange = (newPageSize: number) => {

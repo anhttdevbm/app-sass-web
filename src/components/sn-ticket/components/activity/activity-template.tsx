@@ -16,7 +16,7 @@ const ActivityTemplate = () => {
   const [activityIdx, setActivityIdx] = useState<string>("All");
   const [typeSort, setTypeSort] = useState<TypeSort>(TypeSort.NEWEST);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const t = useTranslations(NS_TICKET)
+  const t = useTranslations(NS_TICKET);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -27,7 +27,9 @@ const ActivityTemplate = () => {
 
   return (
     <Stack justifyContent={"center"} alignItems={"start"} gap={"12px"}>
-      <Typography sx={{ fontWeight: 600, fontSize: 20 }}>{t("ticketDetail.activity.activity")}</Typography>
+      <Typography sx={{ fontWeight: 600, fontSize: 20 }}>
+        {t("ticketDetail.activity.activity")}
+      </Typography>
       <Stack
         justifyContent={"space-between"}
         alignItems={"center"}
@@ -63,7 +65,6 @@ const ActivityTemplate = () => {
               }}
               key={index}
             >
-
               {t(`ticketDetail.activity.${it}`)}
             </button>
           ))}
@@ -75,7 +76,10 @@ const ActivityTemplate = () => {
           gap={"2px"}
         >
           <Typography>
-            {typeSort === TypeSort.NEWEST ? `${t("ticketDetail.activity.newest")}` : `${t("ticketDetail.activity.oldest")}`} {t("ticketDetail.activity.first")}
+            {typeSort === TypeSort.NEWEST
+              ? `${t("ticketDetail.activity.newest")}`
+              : `${t("ticketDetail.activity.oldest")}`}{" "}
+            {t("ticketDetail.activity.first")}
           </Typography>
           <CustomDropdown
             anchorEl={anchorEl}

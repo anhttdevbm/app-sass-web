@@ -29,8 +29,6 @@ const TableTicket = (props: any) => {
   const t = useTranslations(NS_TICKET);
   const { push } = useRouter();
 
-
-
   const bgStage = (check: String) => {
     if (check == "New") return "#FF2C56";
     if (check == "In-progress") return "#03AE00";
@@ -48,35 +46,30 @@ const TableTicket = (props: any) => {
     if (check == "High") return "#FFEEF1";
   };
 
-
-
-
-
   useEffect(() => {
-    setList(data)
-
-
-  }, [data])
+    setList(data);
+  }, [data]);
 
   const handelClickAssginMobie = (id) => {
-    const _data = [...data]
+    const _data = [...data];
     const idx = _data?.findIndex((item) => item.id == id);
-    _data[idx] = { ...data[idx], active: true }
-    setList(_data)
-  }
-
-
-
+    _data[idx] = { ...data[idx], active: true };
+    setList(_data);
+  };
 
   return (
-
     <>
-      <TableContainer sx={{ boxShadow: "none", display: { xs: 'none', md: 'block' } }} component={Paper}>
+      <TableContainer
+        sx={{ boxShadow: "none", display: { xs: "none", md: "block" } }}
+        component={Paper}
+      >
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#D9F0FD" }}>
               <TableCell sx={{ border: "none", padding: "10px" }}>
-                <Typography fontSize="13px" fontWeight="500">{t("ticketFields.id")}</Typography>
+                <Typography fontSize="13px" fontWeight="500">
+                  {t("ticketFields.id")}
+                </Typography>
               </TableCell>
               <TableCell sx={{ border: "none", padding: "10px" }}>
                 <Typography fontSize="13px" fontWeight="500">
@@ -84,7 +77,9 @@ const TableTicket = (props: any) => {
                 </Typography>
               </TableCell>
               <TableCell sx={{ border: "none", padding: "10px" }}>
-                <Typography fontSize="13px" fontWeight="500">{t("ticketFields.name")}</Typography>
+                <Typography fontSize="13px" fontWeight="500">
+                  {t("ticketFields.name")}
+                </Typography>
               </TableCell>
               <TableCell sx={{ border: "none", padding: "10px" }}>
                 <Typography fontSize="13px" fontWeight="500">
@@ -173,159 +168,158 @@ const TableTicket = (props: any) => {
         </Table>
       </TableContainer>
 
-
-
-      <Box sx={{ display: { xs: 'block', md: 'none' }, p: 2 }}>
-        {list?.length > 0 && list?.map((row, index) => (
-          <Box
-            key={row.id}
-            sx={{
-              borderBottom: '1px solid #ddd',
-              mb: 2,
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 5,
-              backgroundColor:"#FAFAFA",
-              borderRadius : 2
-            }}
-          >
+      <Box sx={{ display: { xs: "block", md: "none" }, p: 2 }}>
+        {list?.length > 0 &&
+          list?.map((row, index) => (
             <Box
+              key={row.id}
               sx={{
-                display: 'flex',
-                justifyContent: 'space-between', // Space between label and value
-                alignItems: 'center',
+                borderBottom: "1px solid #ddd",
+                mb: 2,
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 5,
+                backgroundColor: "#FAFAFA",
+                borderRadius: 2,
               }}
             >
-              <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                {t("ticketFields.id")}
-              </Typography>
-              <Typography color="#0575E6" fontWeight={700} variant="body1">
-                {row?.code}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="body1">
-                {t("ticketFields.stage")}
-              </Typography>
-              <Text sx={{ color: bgStage(row?.stage), fontWeight: '700' }}>
-                {row?.stage}
-              </Text>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="body1">
-                {t("ticketFields.name")}
-              </Typography>
-              <Typography variant="body1">
-                {row?.title}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="body1">
-                {t("ticketFields.ticketType")}
-              </Typography>
-              <Typography variant="body1">
-                {row?.type}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="body1">
-                {t("ticketFields.priority")}
-              </Typography>
               <Box
-                display="inline-flex"
-                justifyContent="center"
-                alignItems="center"
                 sx={{
-                  borderRadius: '100px',
-                  backgroundColor: bgPriority(row?.priority),
-                  height: 30,
-                  px: 1,
-                  mr: 1,
+                  display: "flex",
+                  justifyContent: "space-between", // Space between label and value
+                  alignItems: "center",
                 }}
               >
-                <Text sx={{ fontSize: 12, color: colorPriority(row?.priority), fontWeight: 700 }}>
-                  {row?.priority}
+                <Typography variant="body1" sx={{ fontWeight: "500" }}>
+                  {t("ticketFields.id")}
+                </Typography>
+                <Typography color="#0575E6" fontWeight={700} variant="body1">
+                  {row?.code}
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">
+                  {t("ticketFields.stage")}
+                </Typography>
+                <Text sx={{ color: bgStage(row?.stage), fontWeight: "700" }}>
+                  {row?.stage}
                 </Text>
               </Box>
-            </Box>
-            <Box
-              onClick={() => handelClickAssginMobie(row.id)}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              {!row.active  ? (
-                <>
-                  <Typography variant="body1">
-                    {t("ticketFields.assignedTo")}
-                  </Typography>
-                  <AssignGroup mobile={true} item={row} />
-                </>
-              ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">
+                  {t("ticketFields.name")}
+                </Typography>
+                <Typography variant="body1">{row?.title}</Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">
+                  {t("ticketFields.ticketType")}
+                </Typography>
+                <Typography variant="body1">{row?.type}</Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">
+                  {t("ticketFields.priority")}
+                </Typography>
+                <Box
+                  display="inline-flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  sx={{
+                    borderRadius: "100px",
+                    backgroundColor: bgPriority(row?.priority),
+                    height: 30,
+                    px: 1,
+                    mr: 1,
+                  }}
+                >
+                  <Text
+                    sx={{
+                      fontSize: 12,
+                      color: colorPriority(row?.priority),
+                      fontWeight: 700,
+                    }}
+                  >
+                    {row?.priority}
+                  </Text>
+                </Box>
+              </Box>
+              <Box
+                onClick={() => handelClickAssginMobie(row.id)}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                {!row.active ? (
+                  <>
+                    <Typography variant="body1">
+                      {t("ticketFields.assignedTo")}
+                    </Typography>
+                    <AssignGroup mobile={true} item={row} />
+                  </>
+                ) : (
                   <AssignGroup style={{ width: "100%" }} item={row} />
-              )}
-
-
+                )}
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">
+                  {t("ticketFields.creator")}
+                </Typography>
+                <Typography variant="body1">
+                  {row?.creatorUser?.fullname}
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="body1">
+                  {t("ticketFields.creationTime")}
+                </Typography>
+                <Typography variant="body1">
+                  {row?.createTime?.slice(0, 10)}{" "}
+                  {row?.createTime?.slice(11, 16)}
+                </Typography>
+              </Box>
             </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="body1">
-                {t("ticketFields.creator")}
-              </Typography>
-              <Typography variant="body1">
-                {row?.creatorUser?.fullname}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="body1">
-                {t("ticketFields.creationTime")}
-              </Typography>
-              <Typography variant="body1">
-                {row?.createTime?.slice(0, 10)} {row?.createTime?.slice(11, 16)}
-              </Typography>
-            </Box>
-          </Box>
-        ))}
+          ))}
       </Box>
-
     </>
   );
 };
