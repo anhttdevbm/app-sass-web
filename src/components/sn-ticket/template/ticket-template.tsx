@@ -1,10 +1,8 @@
 "use client";
 import Wrapper from "components/Wrapper";
-import Actions from "../Actions";
-import TicketList from "../TicketList";
+import Actions from "../module/list-ticket/filter-header/Actions";
+import TicketList from "../module/list-ticket/TicketList";
 import { Stack } from "@mui/material";
-import { useEffect } from "react";
-import useWebSocket from "hooks/web-socket/useWebSocket";
 
 const TicketTemplate = () => {
   return (

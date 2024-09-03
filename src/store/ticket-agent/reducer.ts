@@ -23,7 +23,7 @@ const initialState: AgentDetailState = {
     keyword: "",
     status: "",
     page: 1,
-    size: 4,
+    size: 5,
   },
   listOnline: [],
   listAgent: [],

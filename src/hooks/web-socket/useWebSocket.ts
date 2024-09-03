@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
 import { clientStorage } from "utils/storage";
+import { useDispatch } from "react-redux";
+import { setListAgentOnline } from "store/ticket-agent/actions";
 
 interface WebSocketMessage {
   action: string;
@@ -10,6 +12,34 @@ interface WebSocketMessage {
 
 const useWebSocket = (): WebSocket | null => {
   const [ws, setWs] = useState<WebSocket | null>(null);
+  const dispatch = useDispatch();
+
+  const handleMessage = (event: MessageEvent) => {
+    const data = JSON.parse(event.data);
+    console.log("Unknown action:", data);
+    switch (data?.code) {
+      case "ListOnline":
+        dispatch(setListAgentOnline(data?.data));
+        break;
+      // case 'Offline':
+      //   setOnlineUsers((prev) => prev.filter(user => user.id !== data.userId));
+      //   break;
+      // case 'Assign':
+      //   setNotifications((prev) => [...prev, `Ticket assigned: ${data.ticketId}`]);
+      //   break;
+      // case 'ReplyTicket':
+      //   setNotifications((prev) => [...prev, `New reply on ticket: ${data.ticketId}`]);
+      //   break;
+      // case 'TagComment':
+      //   setNotifications((prev) => [...prev, `Tagged in comment on ticket: ${data.ticketId}`]);
+      //   break;
+      // case 'ListOnline':
+      //   setOnlineUsers(data.users || []);
+      //   break;
+      default:
+        console.log("Unknown action:", data);
+    }
+  };
 
   useEffect(() => {
     const token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
@@ -39,9 +69,8 @@ const useWebSocket = (): WebSocket | null => {
         wsClient.close();
       };
 
-      wsClient.onmessage = (event) => {
-        console.log("event>>>>>>>", event);
-      };
+      wsClient.addEventListener("message", handleMessage);
+
       wsClient.onclose = () => {
         console.log("WebSocket connection closed, reconnecting...");
         setTimeout(() => {
@@ -57,6 +86,7 @@ const useWebSocket = (): WebSocket | null => {
     return () => {
       if (ws) {
         ws.close();
+        ws.removeEventListener("message", handleMessage);
       }
     };
   }, []);

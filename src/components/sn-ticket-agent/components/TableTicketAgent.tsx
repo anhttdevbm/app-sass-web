@@ -47,14 +47,14 @@ const upperCaseText = (string: string) => {
   return string.toUpperCase();
 };
 const TableTicketAgent = (props: any) => {
+  const { data } = props;
   const listOnline = useSelector(selectListAgentOnline);
   const t = useTranslations(NS_TICKET);
   const [openModel, setOpenModel] = useState(false);
   const [openModelRemove, setOpenModelRemove] = useState(false);
-
   const [tooltipOpen, setTooltipOpen] = useState<number | null>(null);
   const [statusActions, setStatusActions] = useState(false);
-  const [dataDetail, setDataDeatil] = useState(null);
+  const [dataDetail, setDataDetail] = useState(null);
 
   const listIdOnline = React.useMemo(() => {
     if (!listOnline || !listOnline.length) return [];
@@ -66,11 +66,9 @@ const TableTicketAgent = (props: any) => {
     setStatusActions((prev) => !prev);
   };
 
-  const { data } = props;
-
   const handleClickOpenModel = (data) => {
     // console.log("check data click" , data)
-    setDataDeatil(data);
+    setDataDetail(data);
     setOpenModel(true);
   };
 
@@ -79,7 +77,7 @@ const TableTicketAgent = (props: any) => {
   };
 
   const handleClickOpenModelRemove = (data) => {
-    setDataDeatil(data);
+    setDataDetail(data);
     setOpenModelRemove(true);
   };
 
