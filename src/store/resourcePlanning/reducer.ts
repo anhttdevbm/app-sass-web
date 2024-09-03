@@ -47,6 +47,23 @@ export interface IBookingListItem {
   bookings: IBookingItem[];
   total_hour: number;
 }
+
+export interface IMyBooking {
+  project_id: string;
+  service_id: string;
+  services: {
+    service_name: string;
+    users: {
+      _id: string;
+      user_id: string;
+      fullname: string;
+      company: string;
+      bookings: IBookingItem[];
+    }[];
+  }[];
+  total_services: number;
+}
+
 interface ResoucrPlanningState {
   datePicker: IDatePicker;
   currentDate: string;
@@ -56,7 +73,7 @@ interface ResoucrPlanningState {
   bookingAllError: string;
   bookingAllStatus: DataStatus;
 
-  myBooking: IBookingItem[];
+  myBooking: IMyBooking[];
   myBookingError: string;
   myBookingFilter: IBookingAllFitler;
   myBookingStatus: DataStatus;

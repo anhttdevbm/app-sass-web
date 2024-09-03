@@ -2,7 +2,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import { ResourceInput } from "@fullcalendar/resource";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { TIME_OFF_TYPE } from "components/sn-sales/helpers";
 import { NS_RESOURCE_PLANNING } from "constant/index";
@@ -18,15 +18,14 @@ import {
   useMyBooking,
   useResourceDate,
 } from "store/resourcePlanning/selector";
+import "./assets/css/customCalendar.css";
 import FilterHeader from "./components/FilterHeader";
-import ResourceHeaderContent from "./components/ResourceHeaderContent";
 import SlotLabelContent from "./components/SlotLabelContent";
 import { TAB_TYPE } from "./helper";
 import { useFetchMyBooking } from "./hooks/useBookingAll";
 import useGetOptions from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
 import EditBooking from "./modals/EditBooking";
-
 const MyScheduleTab = ({
   setisServicePopup,
   isWorkload,
@@ -48,7 +47,6 @@ const MyScheduleTab = ({
   const [parentResource, setParentResource] = React.useState<string>("");
   const { updateBooking, bookingAll, bookingAllFilter, setBookingAllFilter } =
     useBookingAll();
-
   const [isOpenEdit, setIsOpenEdit] = React.useState({
     isOpen: false,
     bookingId: "",
@@ -132,7 +130,6 @@ const MyScheduleTab = ({
     ) as NodeListOf<HTMLElement>;
     if (collapseButton[0]) collapseButton[0].click();
   };
-
   const getEvents = useCallback(
     () =>
       resources.map((props: IBookingItem) => {
@@ -270,6 +267,7 @@ const MyScheduleTab = ({
     },
     "& .fc-datagrid-cell-frame": {
       // height: "auto!important",
+      minHeight: "37px",
     },
     "& .fc-icon, & .fc-datagrid-expander-placeholder, & .fc-datagrid-expander":
       {
@@ -284,31 +282,70 @@ const MyScheduleTab = ({
     },
   };
   function getFirstAndSecondLetters(name) {
+    if (!name) return "";
     const parts = name.split(" ");
     const firstLetter = parts[0][0];
     const lastLetter = parts[parts.length - 1][0];
     return firstLetter + lastLetter;
   }
-  const projectDumy: any = [];
-  bookingAll.map((item) => {
-    item.bookings.map((ite) => {
-      if (ite.booking_type === "PROJECT_BOOKING") {
-        projectDumy.push({
-          ...ite,
-          fullname: item.fullname,
-          backgroundName: `rgba(${Math.floor(Math.random() * 256)},${Math.floor(
-            Math.random() * 256,
-          )},${Math.floor(Math.random() * 256)},${Math.floor(
-            Math.random() * 256,
-          )})`,
-          id: ite._id,
-        });
-      }
-    });
-  });
 
-  const grouped = projectDumy.reduce((acc, item) => {
-    const projectId = item.project.id;
+  const listBookingByUser = useMemo(() => {
+    const listBooking: any[] = [];
+
+    myBooking.forEach((project) => {
+      project.services.forEach((service) => {
+        service.users.forEach((user) => {
+          user.bookings?.forEach((item) => {
+            listBooking.push({
+              ...item,
+              fullname: user.fullname,
+              backgroundName: `rgba(${Math.floor(
+                Math.random() * 256,
+              )},${Math.floor(Math.random() * 256)},${Math.floor(
+                Math.random() * 256,
+              )},${Math.floor(Math.random() * 256)})`,
+              id: item.user_id,
+              resourceId: item?.user_id,
+              project_id: project.project_id,
+              service_id: project.service_id,
+              start: item?.start_date,
+              end: item?.end_date,
+            });
+          });
+        });
+      });
+    });
+
+    return listBooking;
+  }, [myBooking]);
+
+  const listUser = useMemo(() => {
+    const listUser: any[] = [];
+
+    myBooking.forEach((project) => {
+      project.services.forEach((service) => {
+        service.users.forEach((item) => {
+          listUser.push({
+            ...item,
+            id: item?.user_id,
+            project_id: project.project_id,
+            service: service.service_name,
+            group: true,
+            backgroundName: `rgba(${Math.floor(
+              Math.random() * 256,
+            )},${Math.floor(Math.random() * 256)},${Math.floor(
+              Math.random() * 256,
+            )},${Math.floor(Math.random() * 256)})`,
+          });
+        });
+      });
+    });
+
+    return listUser;
+  }, [myBooking]);
+
+  const grouped = listBookingByUser.reduce((acc, item) => {
+    const projectId = item.project?.id;
     if (!acc[projectId]) {
       acc[projectId] = [];
     }
@@ -358,32 +395,6 @@ const MyScheduleTab = ({
     }
   }
 
-  const mapResours = () => {
-    const items: any = [];
-    result.map((item: any) => {
-      items.push({
-        id: item[0].project.id,
-        projectName: item[0].project.name,
-        children: [...item],
-      });
-    });
-    return items;
-  };
-
-  const mapEvent = () => {
-    const items: any = [];
-    projectDumy.map((item: any) => {
-      items.push({
-        ...item,
-        id: item._id,
-        start: item.start_date,
-        end: item.end_date,
-        resourceId: item._id,
-      });
-    });
-    return items;
-  };
-
   const currentDate = new Date();
   const currentWeekNumber = getWeekNumber(currentDate);
   function getWeekNumber(d) {
@@ -415,8 +426,9 @@ const MyScheduleTab = ({
   const handleChangeWorkingHour = (working_sort: "asc" | "desc") => {
     setBookingAllFilter({ ...bookingAllFilter, working_sort: working_sort });
   };
+
   return (
-    <Stack direction="column" rowGap={2}>
+    <Stack direction="column" rowGap={2} className="time-line-calendar">
       <FilterHeader
         type={TAB_TYPE.MY}
         setisServicePopup={setisServicePopup}
@@ -431,54 +443,78 @@ const MyScheduleTab = ({
         setFilters={setFilters}
         calendarRef={calendarRef}
       /> */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "end",
-          flexDirection: "column",
-          position: "relative",
-          top: "15px",
-        }}
+      <Stack
+        display={"flex"}
+        flexDirection={"row"}
+        position={"relative"}
+        top={"17px"}
       >
-        <p
-          style={{
-            width: "60%",
-            textAlign: "center",
-            margin: 0,
-            border: "1px solid #CCCCCC",
-          }}
+        <Stack
+          color={"#7D7D7D"}
+          fontWeight={700}
+          width={602.5}
+          flexDirection={"row"}
+          display={"flex"}
+          alignItems={"center"}
+          paddingLeft={"30px"}
+          gap={1}
+          border={"1px solid #ccc"}
+          borderRight={"1px solid transparent"}
+          fontSize={14}
         >
-          {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-        </p>
+          {myBooking?.[0]?.services?.length}/{myBooking?.[0]?.total_services}
+          <Typography fontWeight={400} fontSize={14}>
+            service
+          </Typography>
+        </Stack>
         <div
           style={{
             display: "flex",
-            width: "60%",
-            justifyContent: "space-around",
+            alignItems: "end",
+            flexDirection: "column",
+            flex: "1 1 0%",
           }}
         >
           <p
             style={{
-              margin: 0,
-              width: "50%",
+              width: "100%",
               textAlign: "center",
-              border: "1px solid #CCCCCC	",
+              margin: 0,
+              border: "1px solid #CCCCCC",
             }}
           >
-            week {getWeekNumber(currentDate)}
+            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </p>
-          <p
+          <div
             style={{
-              margin: 0,
-              width: "50%",
-              textAlign: "center",
-              border: "1px solid #CCCCCC	",
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-around",
             }}
           >
-            week {currentWeekNumber + 1}
-          </p>
+            <p
+              style={{
+                margin: 0,
+                width: "50%",
+                textAlign: "center",
+                border: "1px solid #CCCCCC	",
+              }}
+            >
+              week {getWeekNumber(currentDate)}
+            </p>
+            <p
+              style={{
+                margin: 0,
+                width: "50%",
+                textAlign: "center",
+                border: "1px solid #CCCCCC	",
+              }}
+            >
+              week {currentWeekNumber + 1}
+            </p>
+          </div>
         </div>
-      </div>
+      </Stack>
       <Box overflow="scroll" sx={{ ...defaultStyle }}>
         <FullCalendar
           ref={calendarRef}
@@ -496,77 +532,72 @@ const MyScheduleTab = ({
           slotDuration={{
             days: 1,
           }}
-          selectable={true}
-          resources={mapResours()}
-          events={mapEvent()}
-          slotLabelContent={(arg) => {
-            return <SlotLabelContent arg={arg} />;
-          }}
-          resourceAreaHeaderClassNames="custom-header"
-          resourceAreaHeaderContent={(resource) => {
+          resourceGroupLabelContent={(resource) => {
             return (
-              <ResourceHeaderContent
-                totalhour={totalhour}
-                resource={resource}
-              />
+              <h2
+                style={{
+                  color: "black",
+                  fontSize: 16,
+                  background: "#E1F0FFB2",
+                  margin: 0,
+                  lineHeight: "36px",
+                }}
+              >
+                {resource?.groupValue}
+              </h2>
             );
           }}
-          resourceLabelContent={({ resource }) => {
-            if (resource._resource.extendedProps.projectName) {
-              return (
-                <h2
-                  style={{
-                    paddingLeft: "10px",
-                    margin: 0,
-                    background: "#E1F0FFB2",
-                    lineHeight: "35px",
-                    fontSize: 16,
-                    fontWeight: 700,
-                    color: "#212529",
-                  }}
-                >
-                  {resource._resource.extendedProps.projectName}
-                </h2>
-              );
-            }
-            return (
-              <>
-                <div
-                  style={{
-                    display: "grid",
-                    borderTop: resource._resource.extendedProps.sale.border,
-                    borderBottom:
-                      resource._resource.extendedProps.sale.borderBottom,
-                    gridTemplateColumns: "repeat(10, minmax(0, 1fr))",
-                  }}
-                >
-                  <p
-                    style={{
-                      color: "black",
-                      paddingLeft: "10px",
-                      gridColumn: "span 5 / span 5",
-                    }}
-                  >
-                    {resource._resource.extendedProps.sale.nameService}
-                  </p>
+          selectable={true}
+          resources={listUser}
+          events={listBookingByUser}
+          resourceAreaColumns={[
+            {
+              field: "service",
+              headerContent: "Service",
+              group: true,
+              cellContent(renderProps) {
+                return (
                   <div
                     style={{
-                      gridColumn: "span 3 / span 3",
-                      borderBottom: "1px solid #CCCCCC",
-                      borderLeft: "1px solid #CCCCCC",
                       display: "flex",
-                      justifyContent: "space-between",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      alignItems: "center",
+                      paddingLeft: 24,
+                      fontSize: 14,
+                      minHeight: 36,
+                      height: "100%",
+                    }}
+                  >
+                    {renderProps.groupValue}
+                  </div>
+                );
+              },
+              headerClassNames: "border-bottom",
+              cellClassNames: "custom-cellContent-service",
+              width: 250,
+            },
+            {
+              field: "fullname",
+              headerContent: "User",
+              cellContent(renderProps) {
+                const resourceData =
+                  renderProps.resource?._resource.extendedProps;
+                return (
+                  <div
+                    style={{
+                      borderLeft: "1px solid #CCCCCC",
+                      borderBottom: "1px solid #CCCCCC",
+                      minHeight: 36,
+                      height: "100%",
                     }}
                   >
                     <div
                       style={{
                         display: "flex",
-                        justifyContent: "right",
                         alignItems: "center",
                         gap: "10px",
                         paddingLeft: "10px",
+                        height: "100%",
+                        minHeight: 35,
                       }}
                     >
                       <p
@@ -574,76 +605,89 @@ const MyScheduleTab = ({
                           width: "30px",
                           height: "30px",
                           borderRadius: "50%",
-                          background:
-                            resource._resource.extendedProps.backgroundName,
+                          background: resourceData?.backgroundName,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
                           border: "2px solid #091E4224",
                           color: "white",
                           fontWeight: 500,
+                        }}
+                      >
+                        {getFirstAndSecondLetters(resourceData?.fullname)}
+                      </p>
+                      <p
+                        style={{
+                          maxWidth: 150,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                           fontSize: 14,
                         }}
                       >
-                        {getFirstAndSecondLetters(
-                          resource._resource.extendedProps.fullname,
-                        )}
+                        {resourceData?.fullname}
                       </p>
-                      <p>{resource._resource.extendedProps.fullname}</p>
                     </div>
                   </div>
-                  <p
+                );
+              },
+              headerClassNames: "custom-calender-timeline-header-block",
+              width: 210,
+            },
+            {
+              field: "start",
+              headerContent: "StartDate",
+              cellContent(renderProps) {
+                const resourceData =
+                  renderProps.resource?._resource.extendedProps;
+                return (
+                  <div
                     style={{
                       borderLeft: "1px solid #CCCCCC",
                       margin: 0,
                       display: "flex",
                       alignItems: "center",
                       padding: "0 10px",
-                      gridColumn: "span 2 / span 2",
                       borderBottom: "1px solid #CCCCCC",
+                      minHeight: 36,
+                      height: "100%",
+                      fontSize: 14,
                     }}
                   >
-                    {resource._resource.extendedProps.start_date}
-                  </p>
-                </div>
-              </>
+                    {resourceData?.start_date}
+                  </div>
+                );
+              },
+              headerClassNames: "custom-calender-timeline-header",
+              width: 139,
+            },
+          ]}
+          slotLabelContent={(arg) => {
+            return <SlotLabelContent arg={arg} />;
+          }}
+          resourceAreaHeaderClassNames="custom-header"
+          resourceAreaHeaderContent={() => {
+            return (
+              <h2
+                style={{
+                  color: "black",
+                  fontSize: 16,
+                  background: "#E1F0FFB2",
+                  margin: 0,
+                  lineHeight: "36px",
+                  textAlign: "left",
+                  paddingLeft: 30,
+                  borderBottom: "1px solid #CCC",
+                }}
+              >
+                {myBooking?.[0]?.project_id}
+              </h2>
             );
-            // // const bookings = parentResource?.bookings || [];
-            // const isLastItem =
-            //   resources[resources.length - 1]?.id === resource._resource.id;
-            // if (resource._resource.id === "end") {
-            //   return (
-            //     <Button
-            //       variant="text"
-            //       startIcon={<PlusIcon />}
-            //       sx={{
-            //         color: "success.main",
-            //       }}
-            //       // startIcon={<AddIcon />}
-            //       onClick={() => setIsOpenCreate(true)}
-            //     >
-            //       {resourceT("schedule.action.addBooking")}
-            //     </Button>
-            //   );
-            // }
-            // return (
-            //   <ResourceLabel
-            //     setParentResource={setParentResource}
-            //     handleCollapseToggle={handleCollapseToggle}
-            //     isLastItem={isLastItem}
-            //     resource={resource}
-            //     resources={resources}
-            //     isMybooking={true}
-            //     selectedResource={selectedResource}
-            //     setIsOpenCreate={setIsOpenCreate}
-            //     totalhour={totalhour}
-            //   />
-            // );
           }}
           eventContent={({ event }) => {
             const startDate: any = new Date(
               event._def.extendedProps.start_date,
             );
+
             const endDate: any = new Date(event._def.extendedProps.end_date);
             const oneDay = 24 * 60 * 60 * 1000;
             const numberOfDays = Math.round((endDate - startDate) / oneDay);
@@ -654,8 +698,10 @@ const MyScheduleTab = ({
                   display: "flex",
                   alignItems: "center",
                   padding: "5px 0",
-                  gap: "1px",
+                  gap: "3px",
                   borderRadius: "5px",
+                  height: 36,
+                  paddingLeft: 4,
                 }}
               >
                 <div
@@ -668,20 +714,24 @@ const MyScheduleTab = ({
                     overflow: "hidden",
                     display: "flex",
                     justifyContent: "center",
+                    alignItems: "center",
                     width: "25px",
                     height: "25px",
                     background: event._def.extendedProps.backgroundName,
+                    fontSize: 9,
                   }}
                 >
-                  {getFirstAndSecondLetters(event._def.extendedProps.fullname)}
+                  {getFirstAndSecondLetters(event._def.extendedProps?.fullname)}
                 </div>
-
                 {numberOfDays > 1 && (
                   <span
                     style={{
                       color: "white",
                       textAlign: "center",
                       fontSize: "11px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {event._def.extendedProps.total_hour}h/day for{" "}

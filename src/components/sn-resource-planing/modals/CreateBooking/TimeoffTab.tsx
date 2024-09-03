@@ -295,6 +295,7 @@ const TimeOffTab = ({
             }}
             variant="primaryOutlined"
             size="medium"
+            onClick={onClose}
           >
             {commonT("form.cancel")}
           </Button>

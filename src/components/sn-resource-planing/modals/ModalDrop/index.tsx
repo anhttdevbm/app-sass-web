@@ -80,7 +80,7 @@ const ModalDrop = ({
       const res = await getServiceByBudgetQueries(budgetSelected, {
         query: `or(like(name,"${searchValue}") ${
           dateValue?.startDate
-            ? `, like( createdAt:"${dayjs(dateValue?.startDate).format(
+            ? `, like( createdAt,"${dayjs(dateValue?.startDate).format(
                 "YYYY-MM-DD:HH:mm",
               )}")`
             : ""
@@ -118,7 +118,7 @@ const ModalDrop = ({
           borderRadius: "12px",
           color: "black",
           padding: "16px",
-          maxHeight: "50vh",
+          maxHeight: "54vh",
           overflow: "auto",
         }}
         boxShadow={" -4px 10px 30px 0px #0000001A;"}
@@ -300,7 +300,13 @@ const ModalDrop = ({
               <VueSaxIcon /> 02/17 service
             </Typography> */}
 
-          <div id="external-events">
+          <div
+            id="external-events"
+            style={{
+              maxHeight: 150,
+              overflow: "auto",
+            }}
+          >
             {listServices.map((item: TBudgetService) => (
               <div key={item.id} draggable>
                 <Paper
