@@ -23,11 +23,6 @@ import { useAuth } from "store/app/selectors";
 import { Quill } from "react-quill";
 import QuillMention from "quill-mention";
 import useModuleTextEditor from "./useModuleTextEditor";
-import { useDispatch } from "react-redux";
-import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
-import { setKeySearchTicketAgent } from "store/ticket-agent/actions";
-import { useSelector } from "react-redux";
-import { selectListAgent } from "store/ticket-agent/selectors";
 Quill.register({
   "modules/mention": QuillMention,
 });
@@ -110,7 +105,8 @@ const EditorCustom = (props: EditorProps) => {
   } = props;
   const [value, setValue] = useState("");
   const { user } = useAuth();
-  const { inputFileRef, moduleConfig } = useModuleTextEditor();
+  const { inputFileRef, moduleConfig, quillRef } = useModuleTextEditor();
+
   const urlFiles = useMemo(
     () =>
       disabledImage
@@ -159,7 +155,6 @@ const EditorCustom = (props: EditorProps) => {
     }
   }, [props.value, value.length]);
 
-  console.log("value", value);
   return (
     <Stack className="" style={{ width: "100%" }}>
       <Stack
@@ -183,6 +178,7 @@ const EditorCustom = (props: EditorProps) => {
             onChange={setValue}
             value={value}
             {...rest}
+            ref={quillRef}
           />
           <Stack
             direction="row"

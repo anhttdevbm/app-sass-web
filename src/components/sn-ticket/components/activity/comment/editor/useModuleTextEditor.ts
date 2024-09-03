@@ -1,4 +1,5 @@
 import { COLORS } from "components/Editor";
+import ReactQuill, { Quill } from "react-quill"; // Import Quill from ReactQuill
 import "quill-mention/dist/quill.mention.css"; // Import CSS for the mention module
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -7,6 +8,7 @@ import { selectListAgent } from "store/ticket-agent/selectors";
 // Define the mention module configuration
 const useModuleTextEditor = () => {
   const inputFileRef = useRef<HTMLInputElement | null>(null);
+  const quillRef = useRef<ReactQuill | null>(null);
   const listAgents = useSelector(selectListAgent);
 
   const listAgentFilter = React.useMemo(() => {
@@ -41,11 +43,25 @@ const useModuleTextEditor = () => {
         },
       },
       mention: {
+        fixMentionsToQuill: true,
         allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
         mentionDenotationChars: ["@"],
         spaceAfterInsert: true,
         onSelect: (item: any, insertItem: (value: string) => void) => {
           insertItem(item);
+          if (quillRef.current) {
+            const quillEditor = quillRef.current.getEditor();
+            const cursorPosition = quillEditor.getSelection()?.index;
+            if (cursorPosition !== undefined) {
+              quillEditor.insertText(
+                cursorPosition,
+                item.value,
+                "mention",
+                item,
+              );
+              quillEditor.setSelection(cursorPosition + item.value.length);
+            }
+          }
         },
         source: async function (searchTerm: string, renderList: any) {
           if (searchTerm.length === 0) {
@@ -62,7 +78,7 @@ const useModuleTextEditor = () => {
     }),
     [listAgentFilter],
   );
-  return { moduleConfig, inputFileRef };
+  return { moduleConfig, inputFileRef, quillRef };
 };
 
 export default useModuleTextEditor;
