@@ -1,60 +1,51 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import _ from "lodash";
-import moment from "moment";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {
   Avatar,
   Box,
-  Button,
   Grid,
+  IconButton,
   Stack,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
   TableCell,
   TableRow,
   Typography,
-  CircularProgress,
-  IconButton,
 } from "@mui/material";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import dayjs from "dayjs";
-//import ButtonComponent from "../../Component/Button";
-import AddIcon from "@mui/icons-material/Add";
-import Filter from "../../../shared/Filter";
-//import { MobileDatePicker } from "@mui/x-date-pickers";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TimeSheet from "./Timesheet";
-import { styled } from "@mui/system";
-import PlusIcon from "icons/PlusIcon";
-import { useTranslations } from "next-intl";
-import { NS_TIME_TRACKING } from "constant/index";
-import ButtonCalendar from "components/shared/ButtonCalendar";
-import ListIcon from "@mui/icons-material/List";
-import TimeCreate from "../../TimeTrackingModal/TimeCreate";
-import { useGetMyTimeSheet } from "store/timeTracking/selectors";
-import CustomizedInputBase from "components/shared/InputSeasrch";
-import useTheme from "hooks/useTheme";
-import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import useBreakpoint from "hooks/useBreakpoint";
-import ListSheet from "./ListSheet";
-import TableSheet from "./TableSheet";
-import FilterCategory from "components/sn-time-tracking/Component/FilterCategory";
-import MonthCalendarSheet from "./MonthCalendarSheet";
-import { RootState } from "store/configureStore";
-import { useDispatch } from "react-redux";
-import { setIsOpen as setUserNavigationVisible } from "store/userNavigationDetail/reducer";
+import _ from "lodash";
+import moment from "moment";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { Person } from "@mui/icons-material";
+import ListIcon from "@mui/icons-material/List";
+import { styled } from "@mui/system";
+import ButtonCalendar from "components/shared/ButtonCalendar";
+import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
+import TimeRangeNavigator, {
+  TypeNavigator,
+} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
+import { ITimeRangeAction } from "components/sn-time-tracking/components/timeTracking.types";
+import { NS_TIME_TRACKING } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { useDispatch } from "react-redux";
+import { RootState } from "store/configureStore";
+import { useGetMyTimeSheet } from "store/timeTracking/selectors";
+import { setIsOpen as setUserNavigationVisible } from "store/userNavigationDetail/reducer";
+import TimeCreate from "../../TimeTrackingModal/TimeCreate";
+import ListSheet from "./ListSheet";
+import MonthCalendarSheet from "./MonthCalendarSheet";
+import TableSheet from "./TableSheet";
+import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
+
 interface IProps {
   events: any[];
   onClick(action: "create" | "edit", item?: any): void;
   isOpenCreatePopup: boolean;
   currentKindOfSheet: string;
+  setIsOpenCreatePopup: (isOpen: boolean) => void;
 }
 
 interface IFilter {
@@ -126,6 +117,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     username: userDetailTableName,
     avatar: userDetailTableAvatar,
   } = useSelector((state: RootState) => state.userNavigationDetail);
+  const { currentKindOfSheet, isOpenCreatePopup, setIsOpenCreatePopup } = props;
   const [currentYear, setCurrentYear] = useState<string>("");
   const isGetLoading: any = false;
   const timeT = useTranslations(NS_TIME_TRACKING);
@@ -134,9 +126,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [isOpenCreatePopup, setIsOpenCreatePopup] = React.useState(
-    props.isOpenCreatePopup,
-  );
   const [activeTab, setActiveTab] = React.useState<string>("timeSheet");
   const [events, setEvents] = React.useState<any[]>([]);
   const [filters, setFilters] = React.useState<IFilter>(DEFAULT_FILTER);
@@ -149,9 +138,27 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
 
   const [dateRange, setDateRange] = React.useState<any[]>([]);
   const [totalTime, setTotalTime] = React.useState({
-    work: 0,
-    break: 0,
+    todayWorkTime: 0,
+    todayBreakTime: 0,
+    totalWorkTime: 0,
+    totalBreakTime: 0,
   });
+
+  useEffect(() => {
+    if (currentKindOfSheet === "timeSheet") {
+      const today = dayjs().format("YYYY-MM-DD");
+      // If current my time sheet not include today -> get week data that include today data
+      if (!(filters.start_date <= today && filters.end_date >= today)) {
+        onGetCompanyTimeSheet({
+          start_date: dayjs(today).startOf("week").format("YYYY-MM-DD"),
+          end_date: dayjs(today).endOf("week").format("YYYY-MM-DD"),
+          search_key: "",
+        });
+      }
+    } else {
+      onGetCompanyTimeSheet(filters);
+    }
+  }, [currentKindOfSheet]);
 
   useEffect(() => {
     const getYear = () => {
@@ -164,19 +171,20 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     setCurrentYear(getYear().toString());
   }, [selectedDate, dateRange]);
 
-  React.useEffect(() => {
-    setIsOpenCreatePopup(props.isOpenCreatePopup);
-  }, [props.isOpenCreatePopup]);
+  useEffect(() => {
+    setIsOpenCreatePopup(isOpenCreatePopup);
+  }, [isOpenCreatePopup]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!_.isEmpty(company)) {
       const result: any[] = [];
+      const today = dayjs().format("YYYY-MM-DD");
       let totalWorkTime = 0;
       let totalBreakTime = 0;
+      let todayWorkTime = 0;
+      let todayBreakTime = 0;
       _.forEach(company, (user) => {
         if (user && user?.timesheet) {
-          let totalUserWorkTime = 0;
-          let totalUserBreakTime = 0;
           _.map(user?.timesheet, (data, index: number) => {
             if (!_.isEmpty(data)) {
               const newEvent = {
@@ -198,27 +206,34 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                   note: data?.note,
                 },
               };
-              if (data.type === "Work time")
-                totalUserWorkTime += data?.duration || 0;
-              else totalUserBreakTime += data?.duration || 0;
-
+              if (data.type === "Work time") {
+                totalWorkTime += data?.duration || 0;
+                if (dayjs(data.day).format("YYYY-MM-DD") === today) {
+                  todayWorkTime += data?.duration || 0;
+                }
+              } else {
+                totalBreakTime += data?.duration || 0;
+                if (dayjs(data.day).format("YYYY-MM-DD") === today) {
+                  todayBreakTime += data?.duration || 0;
+                }
+              }
               result.push(newEvent);
             }
           });
-          totalWorkTime += totalUserWorkTime;
-          totalBreakTime += totalUserBreakTime;
         }
       });
       setTotalTime({
-        work: totalWorkTime,
-        break: totalBreakTime,
+        todayBreakTime,
+        todayWorkTime,
+        totalBreakTime,
+        totalWorkTime,
       });
       setEvents(result);
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [company]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       !_.isEmpty(filters) &&
       dayjs(filters?.start_date).isValid() &&
@@ -247,15 +262,8 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
     setDateRange(result);
   };
 
-  const getWeekStartAndEndDates = (date: any) => {
-    const startOfWeek = date?.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
-    const endOfWeek = date?.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
-    const startDate = startOfWeek?.format("YYYY-MM-DD");
-    const endDate = endOfWeek?.format("YYYY-MM-DD");
-    return { startDate, endDate };
-  };
-
-  const onAction = (action: "view" | "week", value: string) => {
+  const onAction = (params: ITimeRangeAction) => {
+    const { action, value } = params;
     if (action === "week") {
       if (value === "today") {
         const currentDate = new Date();
@@ -288,276 +296,267 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       }
     }
   };
+  //   return (
+  //     <>
+  //       <Grid
+  //         // container
+  //         // rowSpacing={1}
+  //         sx={{
+  //           display: "flex",
+  //           alignItems: "center",
+  //           justifyContent: "space-between",
+  //           padding: "0 20px",
+  //         }}
+  //       >
+  //         <p>Year: {currentYear}</p>
+  //         <Grid
+  //           item
+  //           sm={12}
+  //           md={4}
+  //           // sx={{
+  //           //   display: "flex",
+  //           //   alignItems: "center",
+  //           //   justifyContent: "center",
+  //           //   order: 2,
+  //           // }}
+  //         >
+  //           <LocalizationProvider dateAdapter={AdapterDayjs}>
+  //             <MobileDatePicker
+  //               open={isOpen}
+  //               onOpen={() => setIsOpen(true)}
+  //               onClose={() => setIsOpen(false)}
+  //               onChange={(date: any) => {
+  //                 if (date) {
+  //                   const { startDate, endDate } =
+  //                     getWeekStartAndEndDates(date);
+  //                   setSelectedDate(date);
+  //                   // onGoDay(date);
+  //                   setFilters({
+  //                     ...filters,
+  //                     start_date: startDate,
+  //                     end_date: endDate,
+  //                   });
+  //                 }
+  //               }}
+  //               closeOnSelect
+  //               sx={{ display: "none" }}
+  //               slotProps={{
+  //                 actionBar: {
+  //                   actions: [],
+  //                 },
+  //                 toolbar: {
+  //                   hidden: true,
+  //                 },
+  //                 day: {
+  //                   sx: {
+  //                     transition: "all ease 0.25s",
+  //                     borderRadius: "4px",
+  //                     fontWeight: 600,
+  //                     "&.Mui-selected": {
+  //                       color: "#ffffff",
+  //                       backgroundColor: `rgba(54, 153, 255, 1) !important`,
+  //                       "&.MuiPickersDay-today": {
+  //                         color: "#ffffff",
+  //                         borderColor: "rgba(54, 153, 255, 1)",
+  //                       },
+  //                     },
+  //                     "&.MuiPickersDay-today": {
+  //                       color: "rgba(54, 153, 255, 1)",
+  //                       borderColor: "rgba(54, 153, 255, 1)",
+  //                     },
+  //                     ":hover": {
+  //                       background: "rgba(54, 153, 255, 1)",
+  //                     },
+  //                   },
+  //                 },
+  //               }}
+  //             />
+  //           </LocalizationProvider>
 
-  const _renderCalendarModule = () => {
-    return (
-      <>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ mb: isSmSmaller ? "0px" : "16px" }}
-        >
-          <Grid
-            container
-            rowSpacing={1}
-            sx={{ mb: isSmSmaller ? "16px" : "0" }}
-          >
-            <Grid item md={6} sm={12}>
-              <Stack direction="row" alignItems="center" sx={{ gap: "16px" }}>
-                <ButtonCalendar
-                  icon={<ListIcon />}
-                  isActive={activeTab === "timeSheet"}
-                  title={timeT("company_time.timesheet")}
-                  onClick={() => setActiveTab("timeSheet")}
-                />
-                <ButtonCalendar
-                  icon={<ListIcon />}
-                  isActive={activeTab === "table"}
-                  title={timeT("company_time.table")}
-                  onClick={() => setActiveTab("table")}
-                />
-              </Stack>
-            </Grid>
-            {/* <Grid
-              item
-              md={6}
-              sm={12}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            >
-              {activeTab === "timeSheet" && (
-                <CustomizedInputBase
-                  value={filters.search_key}
-                  placeholder={timeT("company_time.searchButton")}
-                  onChange={(event) => {
-                    const searchKey = event.target.value;
-                    setFilters({ ...filters, search_key: searchKey });
-                    onGetCompanyTimeSheet({
-                      ...filters,
-                      search_key: searchKey,
-                    });
-                  }}
-                />
-              )}
-            </Grid> */}
-          </Grid>
-        </Stack>
-      </>
-    );
-  };
-
-  const _renderHeader = () => {
-    return (
-      <>
-        <Grid
-          // container
-          // rowSpacing={1}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 20px",
-          }}
-        >
-          <p>Year: {currentYear}</p>
-          <Grid
-            item
-            sm={12}
-            md={4}
-            // sx={{
-            //   display: "flex",
-            //   alignItems: "center",
-            //   justifyContent: "center",
-            //   order: 2,
-            // }}
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <MobileDatePicker
-                open={isOpen}
-                onOpen={() => setIsOpen(true)}
-                onClose={() => setIsOpen(false)}
-                onChange={(date: any) => {
-                  if (date) {
-                    const { startDate, endDate } =
-                      getWeekStartAndEndDates(date);
-                    setSelectedDate(date);
-                    // onGoDay(date);
-                    setFilters({
-                      ...filters,
-                      start_date: startDate,
-                      end_date: endDate,
-                    });
-                  }
-                }}
-                closeOnSelect
-                sx={{ display: "none" }}
-                slotProps={{
-                  actionBar: {
-                    actions: [],
-                  },
-                  toolbar: {
-                    hidden: true,
-                  },
-                  day: {
-                    sx: {
-                      transition: "all ease 0.25s",
-                      borderRadius: "4px",
-                      fontWeight: 600,
-                      "&.Mui-selected": {
-                        color: "#ffffff",
-                        backgroundColor: `rgba(54, 153, 255, 1) !important`,
-                        "&.MuiPickersDay-today": {
-                          color: "#ffffff",
-                          borderColor: "rgba(54, 153, 255, 1)",
-                        },
-                      },
-                      "&.MuiPickersDay-today": {
-                        color: "rgba(54, 153, 255, 1)",
-                        borderColor: "rgba(54, 153, 255, 1)",
-                      },
-                      ":hover": {
-                        background: "rgba(54, 153, 255, 1)",
-                      },
-                    },
-                  },
-                }}
-              />
-            </LocalizationProvider>
-
-            <Stack
-              direction="row"
-              alignItems="center"
-              sx={{
-                ":hover": {
-                  cursor: "pointer",
-                },
-              }}
-              onClick={() => setIsOpen(true)}
-            >
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  lineHeight: "18px",
-                  color: "#666666",
-                  marginRight: "10px",
-                }}
-              >
-                {`${dayjs(filters?.start_date).format("DD MMM YYYY")} - ${dayjs(
-                  filters?.end_date,
-                ).format("DD MMM YYYY")}`}
-              </Typography>
-              <ExpandMoreIcon sx={{ color: "rgba(102, 102, 102, 1)" }} />
-            </Stack>
-          </Grid>
-          <Grid item sm={12} md={4} sx={{ order: isSmSmaller ? 1 : 3 }}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-end"
-              sx={{ gap: "3px" }}
-            >
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "4px 0px 0px 4px",
-                  // backgroundColor: "grey.100",
-                  color: "grey.400",
-                }}
-                onClick={() => onAction("week", "prev")}
-              >
-                <ChevronLeftIcon />
-              </Button>
-              <Button
-                sx={{
-                  width: "97px",
-                  height: "30px",
-                  backgroundColor: "grey.100",
-                  padding: "4px",
-                  color: "grey.400",
-                  textAlign: "center",
-                }}
-                onClick={() => onAction("week", "today")}
-                disabled={
-                  dayjs(currentDate).format("YYYY-MM-DD") ===
-                  dayjs().format("YYYY-MM-DD")
-                }
-              >
-                {timeT("company_time.this_week")}
-              </Button>
-              <Button
-                sx={{
-                  minWidth: "28px",
-                  height: "28px",
-                  padding: 0,
-                  // borderRadius: "0px 4px 4px 0px",
-                  // backgroundColor: "grey.100",
-                  color: "grey.400",
-                }}
-                onClick={() => onAction("week", "next")}
-              >
-                <ChevronRightIcon />
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-        {/* {_renderCalendarModule()} */}
-      </>
-    );
-  };
-
-  const dataDayTable = useMemo(() => {
-    if (!_.isEmpty(events)) {
-      return events?.filter((item) => {
-        return (
-          dayjs(item?.extendedProps?.day).format("YYYY-MM-DD") ===
-          dayjs(selectedDate).format("YYYY-MM-DD")
-        );
-      });
-    }
-  }, [events, selectedDate]);
-
-  // const _renderTimeSheetContent = () => {
-  //   if (activeTab !== "timeSheet") return;
-  //   return <TimeSheet data={company} filters={filters} dateRange={dateRange} />;
+  //           <Stack
+  //             direction="row"
+  //             alignItems="center"
+  //             sx={{
+  //               ":hover": {
+  //                 cursor: "pointer",
+  //               },
+  //             }}
+  //           >
+  //             <Button
+  //               sx={{
+  //                 minWidth: "28px",
+  //                 height: "28px",
+  //                 padding: 0,
+  //                 // borderRadius: "4px 0px 0px 4px",
+  //                 // backgroundColor: "grey.100",
+  //                 color: "#212529",
+  //               }}
+  //               onClick={() => onAction("week", "prev")}
+  //             >
+  //               <ChevronLeftIcon />
+  //             </Button>
+  //             <div onClick={() => setIsOpen(true)}>
+  //               <Typography
+  //                 sx={{
+  //                   fontSize: "16px",
+  //                   color: "neutral.800",
+  //                   margin: "0 10px",
+  //                   fontFamily: "unset",
+  //                   padding: "0 10px",
+  //                 }}
+  //               >
+  //                 {`${moment(filters?.start_date).format("MMMM D")} - ${dayjs(
+  //                   filters?.end_date,
+  //                 ).format("MMMM D")}`}
+  //               </Typography>
+  //             </div>
+  //             <Button
+  //               sx={{
+  //                 minWidth: "28px",
+  //                 height: "28px",
+  //                 padding: 0,
+  //                 // borderRadius: "0px 4px 4px 0px",
+  //                 // backgroundColor: "grey.100",
+  //                 color: "#212529",
+  //               }}
+  //               onClick={() => onAction("week", "next")}
+  //             >
+  //               <ChevronRightIcon />
+  //             </Button>
+  //           </Stack>
+  //         </Grid>
+  //         <Grid item sm={12} md={4} sx={{ order: isSmSmaller ? 1 : 3 }}>
+  //           <Stack
+  //             direction="row"
+  //             alignItems="center"
+  //             justifyContent="flex-end"
+  //             sx={{ gap: "3px" }}
+  //           >
+  //             <Button
+  //               sx={{
+  //                 minWidth: "28px",
+  //                 height: "28px",
+  //                 padding: 0,
+  //                 // borderRadius: "4px 0px 0px 4px",
+  //                 // backgroundColor: "grey.100",
+  //                 color: "#212529",
+  //               }}
+  //               onClick={() => onAction("week", "prev")}
+  //             >
+  //               <ChevronLeftIcon />
+  //             </Button>
+  //             <Button
+  //               sx={{
+  //                 width: "97px",
+  //                 height: "30px",
+  //                 padding: "4px",
+  //                 color: "neutral.800",
+  //                 textAlign: "center",
+  //                 textTransform: "capitalize",
+  //                 "&:hover": {
+  //                   backgroundColor: "#D9F0FD",
+  //                 },
+  //               }}
+  //               onClick={() => onAction("week", "today")}
+  //               disabled={
+  //                 dayjs(currentDate).format("YYYY-MM-DD") ===
+  //                 dayjs().format("YYYY-MM-DD")
+  //               }
+  //             >
+  //               {timeT("company_time.this_week")}
+  //             </Button>
+  //             <Button
+  //               sx={{
+  //                 minWidth: "28px",
+  //                 height: "28px",
+  //                 padding: 0,
+  //                 // borderRadius: "0px 4px 4px 0px",
+  //                 // backgroundColor: "grey.100",
+  //                 color: "#212529",
+  //               }}
+  //               onClick={() => onAction("week", "next")}
+  //             >
+  //               <ChevronRightIcon />
+  //             </Button>
+  //           </Stack>
+  //         </Grid>
+  //       </Grid>
+  //       {/* {_renderCalendarModule()} */}
+  //     </>
+  //   );
   // };
 
-  const _renderFooter = () => {
+  const _renderFooter = (type: TypeNavigator) => {
     return (
       <Stack
         direction="column"
         alignItems="center"
-        sx={{ marginTop: "16px", color: isDarkMode ? "#fff" : "#212121" }}
+        sx={{ marginTop: "15px", color: isDarkMode ? "#fff" : "#212121" }}
       >
         <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
-          {timeT("header.tab.weekly_total")}
+          {type === TypeNavigator.WEEKLY
+            ? timeT("header.tab.weekly_total")
+            : "Daily total"}
         </Typography>
         <Stack direction="row">
-          <Typography
+          <Stack
+            direction="row"
             sx={{
-              fontSize: "16px",
-              fontWeight: 400,
-
-              marginRight: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
             }}
           >
-            {timeT("header.tab.workTime")}: {totalTime.work}h
-          </Typography>
-          <Typography sx={{ fontSize: "16px", fontWeight: 400 }}>
-            {timeT("header.tab.breakTime")}: {totalTime.break}h
-          </Typography>
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                background: "#14B9E5",
+              }}
+            ></span>
+            <Typography
+              sx={{
+                fontSize: "16px",
+                fontWeight: 400,
+                marginRight: "16px",
+              }}
+            >
+              {timeT("header.tab.workTime")}:{" "}
+              {type === TypeNavigator.WEEKLY
+                ? totalTime.totalWorkTime
+                : totalTime.todayWorkTime}
+              h
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                background: "#FF2C56",
+              }}
+            ></span>
+            <Typography sx={{ fontSize: "16px", fontWeight: 400 }}>
+              {timeT("header.tab.breakTime")}:{" "}
+              {type === TypeNavigator.WEEKLY
+                ? totalTime.totalBreakTime
+                : totalTime.todayBreakTime}
+              h
+            </Typography>
+          </Stack>
         </Stack>
       </Stack>
     );
   };
 
-  const _redderCreatePopup = () => (
+  const _renderCreatePopup = () => (
     <TimeCreate
       open={isOpenCreatePopup}
       onClose={() => setIsOpenCreatePopup(false)}
@@ -567,13 +566,13 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   );
 
   return (
-    <Stack direction="column">
-      {props.currentKindOfSheet === "table" && (
+    <Stack direction="column" height="100%" paddingTop="20px">
+      {currentKindOfSheet === "table" && (
         <>
           {userDetailTablevisible && (
             <div
               style={{
-                marginTop: "20px",
+                margin: "20px 0",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
@@ -586,7 +585,10 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
               </IconButton>
               {userDetailTableAvatar ? (
                 <Avatar
-                  sx={{ width: 40, height: 40 }}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                  }}
                   src={userDetailTableAvatar}
                 />
               ) : (
@@ -595,243 +597,100 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 </Avatar>
               )}
 
-              <Typography>{userDetailTableName}</Typography>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  fontSize: "20px",
+                  fontFamily: "unset",
+                }}
+              >
+                {userDetailTableName}
+              </Typography>
             </div>
           )}
+        </>
+      )}
+      {currentKindOfSheet === "table" ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            height: "100%",
+          }}
+        >
           <div
             style={{
-              marginTop: "20px",
+              marginBottom: "20px",
               borderRadius: "100px",
               background: "#F7F7FD",
             }}
           >
-            {_renderHeader()}
+            <TimeRangeNavigator
+              currentDate={currentDate}
+              currentYear={currentYear}
+              filters={filters}
+              setFilters={setFilters}
+              onAction={onAction}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              type={TypeNavigator.WEEKLY}
+            />
           </div>
-        </>
-      )}
-      {props.currentKindOfSheet === "table" ? (
-        // <Stack
-        //   //ref={scrollRef}
-        //   sx={{
-        //     height: `calc(100vh - 430px)`,
-        //     overflow: "auto",
-        //     position: "relative",
-        //   }}
-        // >
-        //   <Grid container spacing={1} sx={{ height: "calc(100vh - 380px)" }}>
-        //     <Grid item xs={12}>
-        //       <TableContainer
-        //         sx={{
-        //           borderLeft: "1px solid rgb(224, 224, 224)",
-
-        //           //height: "calc(100vh - 420px)",
-        //         }}
-        //       >
-        //         <Table
-        //           sx={{
-        //             borderCollapse: "separate",
-        //             borderSpacing: "0 8px",
-        //             position: "relative",
-        //             bottom: "-7px",
-        //           }}
-        //           stickyHeader={true}
-        //         >
-        //           <TableHead>
-        //             <StyledTableRow>
-        //               <StyledTableCell>
-        //                 {timeT("company_time.table_tab.employee")}
-        //               </StyledTableCell>
-        //               <StyledTableCell>
-        //                 {timeT("company_time.table_tab.project")}
-        //               </StyledTableCell>
-        //               <StyledTableCell>
-        //                 {timeT("company_time.table_tab.position")}
-        //               </StyledTableCell>
-        //               <StyledTableCell>
-        //                 {timeT("company_time.table_tab.start_time")}
-        //               </StyledTableCell>
-        //               <StyledTableCell>
-        //                 {timeT("company_time.table_tab.time")}
-        //               </StyledTableCell>
-        //               <StyledTableCell>
-        //                 {timeT("company_time.table_tab.note")}
-        //               </StyledTableCell>
-        //             </StyledTableRow>
-        //           </TableHead>
-        //           <TableBody>
-        //             {!_.isEmpty(dataDayTable) ? (
-        //               dataDayTable?.map((event, index) => {
-        //                 const rowStyles = {
-        //                   borderLeft: `4px solid rgba(54, 153, 255, 1)`,
-        //                   backgroundColor: "primary.light",
-        //                 };
-        //                 if (event?.extendedProps?.type === "break_time")
-        //                   Object.assign(rowStyles, {
-        //                     borderLeft: `4px solid rgba(246, 78, 96, 1)`,
-        //                     backgroundColor: "error.light",
-        //                   });
-        //                 return (
-        //                   <StyledTableRow sx={rowStyles} key={index}>
-        //                     <StyledTableCell>
-        //                       <Box
-        //                         sx={{
-        //                           display: "flex",
-        //                           alignItems: "center",
-        //                           gap: "12px",
-        //                         }}
-        //                       >
-        //                         <Avatar sx={{ width: 20, height: 20 }} />
-        //                         {event?.extendedProps?.name}
-        //                       </Box>
-        //                     </StyledTableCell>
-        //                     <StyledTableCell>
-        //                       <Box
-        //                         sx={{
-        //                           display: "flex",
-        //                           alignItems: "center",
-        //                           gap: "12px",
-        //                         }}
-        //                       >
-        //                         <Avatar
-        //                           sx={{ width: 20, height: 20 }}
-        //                           src={event?.extendedProps?.avatar}
-        //                         />
-        //                         {event?.extendedProps?.project?.name ||
-        //                           "No Project"}
-        //                       </Box>
-        //                     </StyledTableCell>
-
-        //                     <StyledTableCell>
-        //                       {event?.extendedProps?.position}
-        //                     </StyledTableCell>
-        //                     <StyledTableCell>
-        //                       {event?.extendedProps?.start}
-        //                     </StyledTableCell>
-        //                     <StyledTableCell>
-        //                       {" "}
-        //                       {event?.extendedProps?.hour || 0}h
-        //                     </StyledTableCell>
-        //                     <StyledTableCell>
-        //                       {event?.extendedProps?.note}
-        //                     </StyledTableCell>
-        //                   </StyledTableRow>
-        //                 );
-        //               })
-        //             ) : (
-        //               <StyledTableRow>
-        //                 <StyledTableCell
-        //                   colSpan={9}
-        //                   align="center"
-        //                   sx={{
-        //                     fontSize: "14px",
-        //                     lineHeight: "20px",
-        //                     fontWeight: 400,
-        //                     p: 1,
-        //                     widtH: 1,
-        //                     textAlign: "center",
-        //                   }}
-        //                 >
-        //                   {timeT("header.noData")}
-        //                 </StyledTableCell>
-        //               </StyledTableRow>
-        //             )}
-
-        //             {isGetLoading && (
-        //               <Box
-        //                 sx={{
-        //                   position: "absolute",
-        //                   width: 1,
-        //                   height: 1,
-        //                   top: 0,
-        //                   left: 0,
-        //                   backgroundColor: " rgba(0, 0, 0, 0.1)",
-
-        //                   webkitTapHighlightColor: "transparent",
-        //                 }}
-        //               >
-        //                 <Stack
-        //                   sx={{
-        //                     display: "flex",
-        //                     alignItems: "center",
-        //                     justifyContent: "center",
-        //                     height: 1,
-        //                     width: 1,
-        //                   }}
-        //                 >
-        //                   <CircularProgress />
-        //                 </Stack>
-        //               </Box>
-        //             )}
-        //           </TableBody>
-        //         </Table>
-        //       </TableContainer>
-        //     </Grid>
-        //   </Grid>
-        // </Stack>
-        <Box
-          sx={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "30px",
-          }}
-        >
-          <FilterCategory personVisibleFilter={false} />
+          <FilterCategory periodVisibleFilter={false} />
           <TableSheet dateRange={dateRange} data={company} />
         </Box>
       ) : (
-        <Stack
-          //ref={scrollRef}
+        <Box
           sx={{
-            // minHeight:"100dvh",
-            overflow: "scroll",
-            position: "relative",
+            height: "100%",
           }}
         >
-          {/* {_renderTimeSheetContent()} */}
-          {props.currentKindOfSheet === "timeGridWeek" && (
-            // <TimeSheet data={company} filters={filters} dateRange={dateRange} />
+          {currentKindOfSheet === "timeGridWeek" && (
             <Box
               sx={{
-                marginTop: "20px",
+                marginTop: "4px",
+                height: "100%",
               }}
             >
               <MonthCalendarSheet />
-
-              {/* <MonthCalendarSheetCustom/> */}
             </Box>
-
-            // <TableSheet dateRange={dateRange}/>
           )}
-          {props.currentKindOfSheet === "timeSheet" && (
-            <>
+          {currentKindOfSheet === "timeSheet" && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+                height: "100%",
+              }}
+            >
               <div
                 style={{
-                  marginTop: "20px",
                   borderRadius: "100px",
                   background: "#F7F7FD",
                 }}
               >
-                {_renderHeader()}
+                <TimeRangeNavigator
+                  currentDate={currentDate}
+                  currentYear={currentYear}
+                  filters={filters}
+                  setFilters={setFilters}
+                  onAction={onAction}
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
+                  type={TypeNavigator.DAILY}
+                />
               </div>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "20px",
-                  marginTop: "20px",
-                }}
-              >
-                <FilterCategory />
-                <ListSheet data={company} />
-              </Box>
-            </>
-          )}
-        </Stack>
-      )}
+              <FilterCategory />
+              <ListSheet data={company} />
 
-      {/* {_renderFooter()} */}
-      {_redderCreatePopup()}
+              {_renderFooter(TypeNavigator.DAILY)}
+            </Box>
+          )}
+        </Box>
+      )}
+      {_renderCreatePopup()}
     </Stack>
   );
 };

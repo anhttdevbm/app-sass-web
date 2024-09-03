@@ -1,4 +1,4 @@
-import { Modal, Paper } from "@mui/material";
+import { CircularProgress, Modal, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useChatWithAI } from "store/aiChat/selectors";
 import TaskAiPrompt from "./components/TaskAiPrompt";
@@ -6,7 +6,7 @@ import TaskAiEdit from "./components/TaskAiEdit";
 import { AiTaskData, CreateTaskPrompt } from "store/project/actions";
 import { useTasksOfProject } from "store/project/selectors";
 
-const View = ["form", "edit"] as const;
+const View = ["form", "edit", "loading"] as const;
 type View = (typeof View)[number];
 
 const CREATE_WITH_AI_COMMANDS = ["Subtask"];
@@ -24,13 +24,15 @@ const TaskAiForm = (props: {
     onGetPersona,
   } = useChatWithAI();
   useEffect(() => {
-    Promise.allSettled([onGetTone({}), onGetPersona({})]);
+    Promise.allSettled([onGetTone({}), onGetPersona({})]).then(() => {
+      setView("form");
+    });
   }, [onGetPersona, onGetTone]);
 
   const { onCreateTaskWithAi, onCreateTask, items, onDeleteTasks } =
     useTasksOfProject();
 
-  const [view, setView] = useState<View>("form");
+  const [view, setView] = useState<View>("loading");
   const [taskData, setTaskData] = useState<AiTaskData | null>(null);
   const [taskPrompt, setTaskPrompt] = useState<CreateTaskPrompt | null>(null);
 
@@ -77,7 +79,7 @@ const TaskAiForm = (props: {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: { xs: "80%", md: "50%" },
+          width: "80%",
           bgcolor: "background.paper",
         }}
       >
@@ -99,6 +101,8 @@ const TaskAiForm = (props: {
             onReplace={onReplace}
             onRegenerate={onRegenerate}
           />
+        ) : view === "loading" ? (
+          <CircularProgress />
         ) : null}
       </Paper>
     </Modal>

@@ -2,7 +2,7 @@
 
 import { Snackbar, Stack } from "@mui/material";
 import AppLoading from "components/AppLoading";
-import Header from "./Header";
+import Header, { HEADER_HEIGHT } from "./Header";
 import { memo, useEffect, useMemo } from "react";
 import { Sidebar } from "./components";
 import { useAppSelector } from "store/hooks";
@@ -33,7 +33,11 @@ type MainLayoutProps = {
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH];
 
-const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH, AI_CHAT_PATH, AI_AGENT_CHAT.replace("/{id}", "")];
+const IS_CHATTING_ROOM = [
+  CHATTING_ROOM_PATH,
+  AI_CHAT_PATH,
+  AI_AGENT_CHAT.replace("/{id}", ""),
+];
 
 const MainLayout = (props: MainLayoutProps) => {
   const { children } = props;
@@ -94,7 +98,7 @@ const MainLayout = (props: MainLayoutProps) => {
           <Header />
           <Stack
             flex={1}
-            // height="fit-content"
+            height={`calc(100% - ${HEADER_HEIGHT}px)`}
             spacing={{ xs: 1.5, sm: 3 }}
             // sx={{ overflow: 'auto' }}
             // justifyContent={isAuthorized ? undefined : "center"}

@@ -558,13 +558,13 @@ const sxConfig = {
   },
   itemRootSx: {
     "&": {
-      marginLeft: '4px !important'
+      marginLeft: "4px !important",
     },
     "& > p": {
-      fontSize: '14px',
-      fontWeight: 600,
-      paddingRight: '4px'
+      fontSize: "14px",
+      fontWeight: 400,
+      paddingRight: "4px",
     },
     "& > svg": { fontSize: 16 },
-  }
+  },
 };

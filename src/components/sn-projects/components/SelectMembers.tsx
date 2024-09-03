@@ -91,16 +91,18 @@ const SelectMembers = (props: SelectMembersProps) => {
         minHeight={56}
         sx={{ cursor: "pointer" }}
       >
-        <Text variant="caption" color="text.primary">
+        <Text variant="caption" color="text.primary" fontWeight={600}>
           {projectT("list.form.title.members")}
         </Text>
         <Stack
           flex={1}
           direction="row"
           spacing={0.5}
-          p={1}
+          pl={1}
+          pr={0.5}
           bgcolor="grey.50"
           borderRadius="2rem"
+          alignItems="center"
         >
           <Stack
             direction="row"
@@ -117,7 +119,7 @@ const SelectMembers = (props: SelectMembersProps) => {
               />
             ))}
           </Stack>
-          <ChevronCircleIcon sx={{ color: "transparent" }} />
+          <ChevronCircleIcon sx={{ fontSize: 20, color: "transparent" }} />
         </Stack>
       </Stack>
       <Popover

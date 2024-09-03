@@ -10,9 +10,8 @@ import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
 import { isEmpty } from "lodash";
 import { useTranslations } from "next-intl";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useAuth } from "store/app/selectors";
-import { IBookingAllFitler } from "store/resourcePlanning/action";
 import { IBookingItem } from "store/resourcePlanning/reducer";
 import {
   useBookingAll,
@@ -22,7 +21,7 @@ import {
 import FilterHeader from "./components/FilterHeader";
 import ResourceHeaderContent from "./components/ResourceHeaderContent";
 import SlotLabelContent from "./components/SlotLabelContent";
-import { DEFAULT_BOOKING_ALL_FILTER, TAB_TYPE } from "./helper";
+import { TAB_TYPE } from "./helper";
 import { useFetchMyBooking } from "./hooks/useBookingAll";
 import useGetOptions from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
@@ -35,17 +34,11 @@ const MyScheduleTab = ({
   tab,
 }: any) => {
   const resourceT = useTranslations<string>(NS_RESOURCE_PLANNING);
-  const [filters, setFilters] = React.useState<IBookingAllFitler>(
-    DEFAULT_BOOKING_ALL_FILTER,
-  );
-  const prevFilters = React.useRef<IBookingAllFitler>(
-    DEFAULT_BOOKING_ALL_FILTER,
-  );
-  prevFilters.current = filters;
 
   const { selectedDate, updateDate } = useResourceDate();
   const { user } = useAuth();
   const { getMyBooking, myBooking, setMyBookingFilter } = useMyBooking();
+
   const [resources, setResources] = React.useState<IBookingItem[]>([]);
   const calendarRef = React.useRef<FullCalendar>(null);
   const [selectedDateRange, setSelectedDateRange] = React.useState<Date[]>([]);
@@ -53,7 +46,8 @@ const MyScheduleTab = ({
   const [isOpenCreate, setIsOpenCreate] = React.useState(false);
   const { palette } = useTheme();
   const [parentResource, setParentResource] = React.useState<string>("");
-  const { updateBooking, bookingAll } = useBookingAll();
+  const { updateBooking, bookingAll, bookingAllFilter, setBookingAllFilter } =
+    useBookingAll();
 
   const [isOpenEdit, setIsOpenEdit] = React.useState({
     isOpen: false,
@@ -61,7 +55,7 @@ const MyScheduleTab = ({
     isProject: true,
   });
   const generateDateRange = () => {
-    const start_date = dayjs(filters?.start_date);
+    const start_date = dayjs(bookingAllFilter?.start_date);
     const result: Array<Date> = [];
     let currentDate = start_date?.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
     const endOfWeek = start_date?.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
@@ -82,29 +76,22 @@ const MyScheduleTab = ({
 
   useFetchMyBooking();
 
-  useEffect(() => {
-    if (filters) {
-      setMyBookingFilter(filters);
-      setSelectedResource([]);
-    }
-  }, [filters]);
-
-  React.useEffect(() => {
-    if (myBooking) {
-      setResources(myBooking);
-      setSelectedResource([user?.id as string]);
-    }
-  }, [myBooking]);
+  // React.useEffect(() => {
+  //   if (myBooking) {
+  //     setResources(myBooking);
+  //     setSelectedResource([user?.id as string]);
+  //   }
+  // }, [myBooking]);
 
   React.useEffect(() => {
     if (
-      !isEmpty(filters) &&
-      dayjs(filters?.start_date).isValid() &&
-      dayjs(filters?.end_date).isValid()
+      !isEmpty(bookingAllFilter) &&
+      dayjs(bookingAllFilter?.start_date).isValid() &&
+      dayjs(bookingAllFilter?.end_date).isValid()
     ) {
       generateDateRange();
     }
-  }, [filters?.start_date, filters?.end_date]);
+  }, [bookingAllFilter?.start_date, bookingAllFilter?.end_date]);
 
   const handleEventChange =
     (calendarRef: React.RefObject<FullCalendar>, isResize: boolean) =>
@@ -187,8 +174,8 @@ const MyScheduleTab = ({
   // .concat([
   //   {
   //     resourceId: id,
-  //     start: dayjs(filters?.start_date).toDate(),
-  //     end: dayjs(filters?.end_date).toDate(),
+  //     start: dayjs(bookingAllFilter?.start_date).toDate(),
+  //     end: dayjs(bookingAllFilter?.end_date).toDate(),
   //     allDay: true,
   //     type: "campaign",
   //     campaignId: id,
@@ -273,7 +260,7 @@ const MyScheduleTab = ({
       },
     },
     "& .fc-media-screen": {
-      maxHeight: "70vh!important",
+      maxHeight: "calc(100vh - 360px) !important",
     },
     "& .fc-datagrid-cell-cushion": { padding: "0!important" },
     "& .fc-datagrid-cell": {},
@@ -420,6 +407,14 @@ const MyScheduleTab = ({
     "November",
     "December",
   ];
+
+  const handleChangePosition = (position: string) => {
+    setBookingAllFilter({ ...bookingAllFilter, position: position });
+  };
+
+  const handleChangeWorkingHour = (working_sort: "asc" | "desc") => {
+    setBookingAllFilter({ ...bookingAllFilter, working_sort: working_sort });
+  };
   return (
     <Stack direction="column" rowGap={2}>
       <FilterHeader
@@ -427,9 +422,12 @@ const MyScheduleTab = ({
         setisServicePopup={setisServicePopup}
         setIsWorkload={setIsWorkload}
         tab={tab}
+        handleChangePosition={handleChangePosition}
+        handleChangeWorkingHour={handleChangeWorkingHour}
+        bookingAllFilter={bookingAllFilter}
       />
       {/* <TimeHeader
-        filters={filters}
+        bookingAllFilter={bookingAllFilter}
         setFilters={setFilters}
         calendarRef={calendarRef}
       /> */}
@@ -499,25 +497,6 @@ const MyScheduleTab = ({
             days: 1,
           }}
           selectable={true}
-          // select={(arg) => {
-          //   const { startStr, endStr, resource, view } = arg;
-
-          //   if (resource?._resource.extendedProps.type === "end") {
-          //     view.calendar.unselect();
-          //     return;
-          //   }
-
-          //   setParentResource(
-          //     resource?._resource.parentId || resource?._resource.id || "",
-          //   );
-          //   const start_date = dayjs(startStr).toDate();
-
-          //   const end_date = dayjs(endStr).subtract(1, "day").toDate();
-          //   setSelectedDateRange([start_date, end_date]);
-          //   setIsOpenCreate(true);
-          // }}
-          // resources={mappedResources as ResourceInput}
-          // events={mappedEvents as ResourceInput}
           resources={mapResours()}
           events={mapEvent()}
           slotLabelContent={(arg) => {
@@ -537,8 +516,13 @@ const MyScheduleTab = ({
               return (
                 <h2
                   style={{
-                    borderTop: "1px solid #CCCCCC",
                     paddingLeft: "10px",
+                    margin: 0,
+                    background: "#E1F0FFB2",
+                    lineHeight: "35px",
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: "#212529",
                   }}
                 >
                   {resource._resource.extendedProps.projectName}
@@ -549,29 +533,31 @@ const MyScheduleTab = ({
               <>
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
+                    display: "grid",
                     borderTop: resource._resource.extendedProps.sale.border,
                     borderBottom:
                       resource._resource.extendedProps.sale.borderBottom,
+                    gridTemplateColumns: "repeat(10, minmax(0, 1fr))",
                   }}
                 >
                   <p
                     style={{
-                      width: "20%",
                       color: "black",
                       paddingLeft: "10px",
+                      gridColumn: "span 5 / span 5",
                     }}
                   >
                     {resource._resource.extendedProps.sale.nameService}
                   </p>
                   <div
                     style={{
-                      width: "50%",
+                      gridColumn: "span 3 / span 3",
                       borderBottom: "1px solid #CCCCCC",
                       borderLeft: "1px solid #CCCCCC",
                       display: "flex",
                       justifyContent: "space-between",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     <div
@@ -590,10 +576,13 @@ const MyScheduleTab = ({
                           borderRadius: "50%",
                           background:
                             resource._resource.extendedProps.backgroundName,
-                          fontSize: "15px",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
+                          border: "2px solid #091E4224",
+                          color: "white",
+                          fontWeight: 500,
+                          fontSize: 14,
                         }}
                       >
                         {getFirstAndSecondLetters(
@@ -602,19 +591,20 @@ const MyScheduleTab = ({
                       </p>
                       <p>{resource._resource.extendedProps.fullname}</p>
                     </div>
-                    <p
-                      style={{
-                        borderLeft: "1px solid #CCCCCC",
-                        margin: "0 10px 0 0",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        padding: "0 10px",
-                      }}
-                    >
-                      {resource._resource.extendedProps.start_date}
-                    </p>
                   </div>
+                  <p
+                    style={{
+                      borderLeft: "1px solid #CCCCCC",
+                      margin: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "0 10px",
+                      gridColumn: "span 2 / span 2",
+                      borderBottom: "1px solid #CCCCCC",
+                    }}
+                  >
+                    {resource._resource.extendedProps.start_date}
+                  </p>
                 </div>
               </>
             );
@@ -668,20 +658,24 @@ const MyScheduleTab = ({
                   borderRadius: "5px",
                 }}
               >
-                <span
+                <div
                   style={{
-                    width: "23px",
-                    height: "23px",
+                    border: "2px solid white",
+                    padding: 2,
+                    minWidth: "25px",
+                    minHeight: "25px",
                     borderRadius: "50%",
-                    background: event._def.extendedProps.backgroundName,
-                    fontSize: "15px",
+                    overflow: "hidden",
                     display: "flex",
                     justifyContent: "center",
-                    alignItems: "center",
+                    width: "25px",
+                    height: "25px",
+                    background: event._def.extendedProps.backgroundName,
                   }}
                 >
                   {getFirstAndSecondLetters(event._def.extendedProps.fullname)}
-                </span>
+                </div>
+
                 {numberOfDays > 1 && (
                   <span
                     style={{

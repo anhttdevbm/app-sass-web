@@ -7,12 +7,14 @@ import {
   DATE_LOCALE_FORMAT,
 } from "constant/index";
 import { ItemListResponse, OptionFormatNumber } from "constant/types";
+import dayjs, { OpUnitType, QUnitType } from "dayjs";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import _, { get } from "lodash";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { ReadonlyURLSearchParams } from "next/navigation";
 import StringFormat from "string-format";
 import { clientStorage } from "./storage";
-import dayjs, { OpUnitType, QUnitType } from "dayjs";
-import _, { get } from "lodash";
 
 export const parseHashURL = (value: string) => `#${value}`;
 
@@ -220,7 +222,6 @@ export const serverQueries = (
   return cleanData;
 };
 
-
 export const serverQueriesOr = (
   {
     pageIndex,
@@ -287,7 +288,6 @@ export const formatDate = (
   if (!date) return fallback ?? "";
   if (!format) format = DATE_FORMAT_SLASH;
   const dateObj = new Date(date);
-
   const year = dateObj.getFullYear();
 
   if (year === 1 || year === 1970) return fallback ?? "";
@@ -629,12 +629,33 @@ export const toHoursAndMinutes = (totalMinutes: number) => {
   const minutes = totalMinutes % 60;
 
   return { hours, minutes };
-}
+};
 
 export const clearNullField = (obj: any) => {
   return _(obj)
     .omitBy(_.isUndefined)
     .omitBy(_.isNull)
-    .omitBy((s) => _.isEqual(s, ''))
+    .omitBy((s) => _.isEqual(s, ""))
     .value();
+};
+
+export const downloadFile = async (printRef) => {
+  const element = printRef.current;
+
+  const canvas = await html2canvas(element as unknown as HTMLElement);
+  const data = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF({
+    orientation: "p",
+    unit: "px",
+    format: [1000, 1200],
+  });
+
+  const imgProperties = pdf.getImageProperties(data);
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+
+  pdf.addImage(data, "PNG", 10, 10, pdfWidth, pdfHeight);
+
+  pdf.save("print.pdf");
 };

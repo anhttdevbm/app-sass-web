@@ -18,7 +18,7 @@ import TextFieldSelect, {
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { useCalculateDetail } from "components/sn-resource-planing/hooks/useCalculateDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
-import Textarea from "components/sn-time-tracking/Component/Textarea";
+import Textarea from "components/Textarea";
 import TextStatus from "components/TextStatus";
 import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
@@ -178,9 +178,9 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
                     ".MuiBox-root": {
                       borderColor: "#EFEFEF",
                       borderRadius: "100px",
-                      height: 56,
+                      height: 36,
                       display: "block",
-                      padding: "16px 12px",
+                      padding: "4px 12px",
                     },
                     ".MuiSvgIcon-root": {
                       color: "#B3B3B3",
@@ -224,10 +224,11 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
                   sx={{
                     "& > .MuiBox-root": {
                       background: "transparent",
+                      height: 36,
                     },
                     flex: "1 1 0%",
                     ".MuiInputBase-input": {
-                      height: 32,
+                      height: 36,
                     },
                   }}
                   type="number"
@@ -250,6 +251,7 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
                     "& > .MuiBox-root": {
                       background: "transparent",
                       borderColor: "transparent",
+                      height: 36,
                     },
                     "& .MuiInputBase-root": {
                       background: "transparent",
@@ -494,6 +496,11 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
               sx={{
                 width: 150,
                 height: 40,
+                borderRadius: 100,
+                color: "#0575E6",
+                border: "3px solid",
+                "border-image-source":
+                  "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               }}
             >
               {commonT("form.cancel")}
@@ -502,6 +509,12 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
               sx={{
                 width: 160,
                 height: 40,
+                color: "white",
+                borderRadius: 100,
+                "&.MuiButton-root": {
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                },
               }}
               variant="contained"
               onClick={handleSubmitProject(onSubmitProject)}

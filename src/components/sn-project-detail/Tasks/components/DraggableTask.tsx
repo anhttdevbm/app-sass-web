@@ -113,14 +113,25 @@ const DraggableTask = (props: DraggableTaskProps) => {
               "&::after": {
                 position: "absolute",
                 top: "40px",
-                borderBottom: "1px solid",
+                borderBottom: {
+                  xs: "none",
+                  md: "1px solid",
+                },
                 borderColor: {
                   xs: "background.paper",
+                  md: "background.default",
                 },
                 content: "''",
                 width: "100%",
                 height: "1px",
-                boxShadow: 1,
+              },
+              borderBottom: {
+                xs: "1px solid",
+                md: "none",
+              },
+              borderColor: {
+                xs: "background.default",
+                md: "background.paper",
               },
             }}
             {...rest}
@@ -132,6 +143,7 @@ const DraggableTask = (props: DraggableTaskProps) => {
               ml={2}
               spacing={{ xs: 0.5, sm: 1 }}
               gap={1}
+              display={{ xs: "none", sm: "flex" }}
             >
               <CheckBoxCustom
                 size="small"

@@ -34,6 +34,8 @@ import {
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
+  TICKET_AGENT,
+  TICKET_PATH,
   TIME_TRACKING_PATH,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
@@ -53,6 +55,7 @@ import MenuProjectIcon from "icons/MenuProjectIcon";
 import MenuResourcePlaningIcon from "icons/MenuResourcePlaningIcon";
 import MenuTimeTrackingIcon from "icons/MenuTimeTrackingIcon";
 import TaskcoverAIIcon from "icons/TaskcoverIcon";
+import TicketIcon from "icons/TicketIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
 import { memo, MouseEvent, useMemo, useState } from "react";
@@ -345,6 +348,12 @@ const DATA: MenuItemProps[] = [
     icon: <MenuDocsIcon />,
     roles: [Permission.AM, Permission.ST],
   },
+  {
+    label: "menu.ticket",
+    href: TICKET_PATH,
+    icon: <TicketIcon />,
+    roles: [Permission.AM, Permission.ST],
+  },
   // Feedback
   {
     label: "menu.feedback",
@@ -414,13 +423,40 @@ const DATA: MenuItemProps[] = [
     ],
     roles: [Permission.SA],
   },
+  
+
+  // Ticket manager 
+  {
+    label: "menu.ticket",
+    icon: <TicketIcon />,
+    subs: [
+      {
+        label: "menu.dashboard",
+        href: STATEMENT_HISTORY_PATH,
+        roles: [Permission.SA],
+      },
+      {
+        label: "menu.ticket",
+        href: TICKET_PATH,
+        roles: [Permission.SA],
+      },
+      {
+        label: "menu.agent",
+        href: TICKET_AGENT,
+        roles: [Permission.SA],
+      },
+
+    ],
+    roles: [Permission.SA],
+  },
+
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
   return Boolean(
     pathname &&
-      href &&
-      (pathname === href ||
-        (href.length && href !== "/" && pathname.startsWith(href))),
+    href &&
+    (pathname === href ||
+      (href.length && href !== "/" && pathname.startsWith(href))),
   );
 };

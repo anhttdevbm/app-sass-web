@@ -1,42 +1,48 @@
 "use client";
 
-import { CalendarToday, Group } from "@mui/icons-material";
+import { AddCircle } from "@mui/icons-material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   AvatarGroup,
   Box,
+  Button,
   Drawer,
   Stack,
-  Typography
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
+import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
+import useBreakpoint from "hooks/useBreakpoint";
+import { CalendarTickIcon } from "icons/CalendarTickIcon";
 import CloseIcon from "icons/CloseIcon";
+import { GroupUserIcon } from "icons/GroupUserIcon";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { MyTimeSheet } from "store/timeTracking/reducer";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
+import { inter } from "../CalendarTracking.styles";
 import "./style.css";
 
-interface Timesheet {
-  created_time: string;
-  day: string;
-  duration: number;
-  end_time: string;
-  _id: string;
-  is_pin: boolean;
-  note: string;
-  fullname: string; // Assuming fullname is added to each timesheet
+interface Timesheet extends MyTimeSheet {
+  fullname: string;
   avatar: string;
-  project: Project;
+  // Override day in MyTimeSheet to make it is require field
+  day: string;
 }
 
-interface Project {
-  id: string;
-  name: string;
-  company: string;
-  avatar: string | null; // Example assumes avatar is a string URL or null
-}
+// interface Project {
+//   id: string;
+//   name: string;
+//   company: string;
+//   avatar: string | null; // Example assumes avatar is a string URL or null
+// }
 
 interface Task {
   avatarUrl: string;
@@ -45,7 +51,7 @@ interface Task {
   projectName: string;
 }
 
-interface Avatar {
+interface IAvatar {
   name: string;
   src: string;
 }
@@ -55,16 +61,18 @@ interface Event {
   totalTime: number;
   peopleCount: number;
   sheetCount: number;
-  avatars: Avatar[];
+  avatars: IAvatar[];
   tasks: Task[];
 }
 
 interface SelectedDate {
   day: Date | null;
-  event: Event | null;
+  event: Event | undefined;
 }
 
-const MonthCalendarSheetTest = () => {
+const TODAY_DATE = moment().format("D");
+
+const MonthCalendarSheet = () => {
   const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
   // State to manage current month\
   const [timeSheetData, setTimeSheetData] = useState<Timesheet[]>([]);
@@ -72,8 +80,10 @@ const MonthCalendarSheetTest = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<SelectedDate>({
     day: null,
-    event: null,
+    event: undefined,
   });
+
+  const { isXlBigger } = useBreakpoint();
   const weekdaysTableHeader = [...moment.weekdays(), "Total"];
   const [events, setEvents] = useState<Event[]>([
     {
@@ -153,26 +163,24 @@ const MonthCalendarSheetTest = () => {
   // Effect to log monthData whenever currentMonth changes
   useEffect(() => {
     const getCompanyTimeSheet = async () => {
-      const firstDayOfMonth = currentMonth.clone().startOf("month");
-      const lastDayOfMonth = currentMonth.clone().endOf("month");
+      // const firstDayOfMonth = currentMonth.clone().startOf("month");
+      // const lastDayOfMonth = currentMonth.clone().endOf("month");
 
-      await onGetCompanyTimeSheet({
-        start_date: firstDayOfMonth.format("YYYY-MM-DD"),
-        end_date: lastDayOfMonth.format("YYYY-MM-DD"),
-        search_key: "",
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const companyData: any = [...company];
-      if (companyData) {
-        let allTimesheets = [];
-
-        companyData.forEach((data) => {
+      // await onGetCompanyTimeSheet({
+      //   start_date: firstDayOfMonth.format("YYYY-MM-DD"),
+      //   end_date: lastDayOfMonth.format("YYYY-MM-DD"),
+      //   search_key: "",
+      // });
+      if (company) {
+        const allTimesheets: Timesheet[] = [];
+        company.forEach((data) => {
           if (data.timesheet && Array.isArray(data.timesheet)) {
-            allTimesheets = allTimesheets.concat(
-              data.timesheet.map((timesheet) => ({
+            allTimesheets.push(
+              ...data.timesheet.map((timesheet) => ({
                 ...timesheet,
                 fullname: data.fullname,
                 avatar: data.avatar?.link,
+                day: timesheet.day as string,
               })),
             );
           }
@@ -222,7 +230,6 @@ const MonthCalendarSheetTest = () => {
         aggregatedData[day].sheetCount += 1;
       }
     });
-
     // Convert aggregatedData object into an array of events
     setEvents(Object.values(aggregatedData));
   }, [timeSheetData]);
@@ -237,24 +244,25 @@ const MonthCalendarSheetTest = () => {
     setCurrentMonth(currentMonth.clone().subtract(1, "month"));
   };
 
-  const calculateTotalHours = (days) => {
-    let totalHours = 0;
-    days.forEach((day) => {
-      const dayDate = moment(day).format("YYYY-MM-DD");
-      // Check if the day is within the current month
-      const event = events.find((e) => e.date === dayDate);
-      if (event) {
-        totalHours += event.totalTime;
+  const calculateTotalHours = (week: (SelectedDate | null)[]) => {
+    const totalHours = week.reduce((pre, cur) => {
+      if (cur && cur.event) {
+        return pre + cur.event.totalTime;
       }
-    });
-    return totalHours;
+      return pre;
+    }, 0);
+
+    const hours = Math.floor(totalHours);
+    const minutes = Math.round((totalHours - hours) * 60);
+    const formattedTime = `${hours}:${minutes.toString().padStart(2, "0")}`;
+    return formattedTime;
   };
 
-  const handleOpenDrawerEvent = (day) => {
+  const handleOpenDrawerEvent = (day: Date) => {
     const selectedEvent = events.find(
       (e) => e.date === moment(day).format("YYYY-MM-DD"),
     );
-    setSelectedDate({ day, event: selectedEvent || null });
+    setSelectedDate({ day, event: selectedEvent || undefined });
     handleDrawerOpen();
   };
 
@@ -266,10 +274,8 @@ const MonthCalendarSheetTest = () => {
     const firstDayOfMonth = moment(daysInMonth[0]);
 
     const startDayIndex = firstDayOfMonth.day(); // 0 (Sunday) to 6 (Saturday)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const weeks: any = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let currentWeek: any = [];
+    const weeks: (SelectedDate | null)[][] = [];
+    let currentWeek: (SelectedDate | null)[] = [];
 
     // Push empty cells for days before the start of the month
     for (let i = 0; i < startDayIndex; i++) {
@@ -297,156 +303,191 @@ const MonthCalendarSheetTest = () => {
     }
 
     return weeks.map((week, weekIndex) => (
-      <tr key={weekIndex}>
-        {week.map((dayObj, dayIndex) => (
-          <td
-            key={dayIndex}
-            style={{
-              border: "2px solid #EBEAF2",
-              height: "80px",
-            }}
-          >
-            {dayObj ? (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100px",
-                  padding: "5px 11px",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleOpenDrawerEvent(dayObj.day!)}
-              >
-                {moment(dayObj.day).format("D")}
-                {dayObj.event && (
-                  <>
-                    {" "}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: "5px",
-                        position: "relative",
-                        right: "7px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          background: "#EBEAF2",
-                          height: "auto",
-                          width: "3px",
-                          border: "1px solid #EBEAF2",
-                        }}
-                      ></div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            color: "#21263C",
+      <TableRow key={weekIndex}>
+        {week.map((dayObj, dayIndex) => {
+          return (
+            <TableCell
+              key={dayIndex}
+              style={{
+                border: "2px solid #EBEAF2",
+                height: isXlBigger ? "100px" : "80px",
+                padding: 0,
+              }}
+            >
+              {dayObj ? (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    padding: "8px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    dayObj.day ? handleOpenDrawerEvent(dayObj.day) : undefined
+                  }
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: inter.style.fontFamily,
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "50%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      ...(moment(dayObj.day).format("D") === TODAY_DATE
+                        ? {
+                            backgroundColor: "#0575E6",
+                            color: "#FFF",
                             fontWeight: "600",
-                            lineHeight: "1.4",
-                          }}
-                        >
-                          {moment()
-                            .startOf("day")
-                            .add(dayObj.event.totalTime, "hours")
-                            .format("HH:mm")}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "12px",
-                            color: "#4C526C",
-                          }}
-                        >
-                          Total Logged Hours
-                        </Typography>
-                      </div>
-                    </Box>
-                    <Box
-                      sx={{
-                        marginTop: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        position: "relative",
-                        right: "7px",
-                        justifyContent: "space-between",
-                        width: "100%",
-                      }}
-                    >
-                      <div
-                        style={{
+                          }
+                        : {
+                            backgroundColor: "transparent",
+                            color: "#212529",
+                            fontWeight: "400",
+                          }),
+                    }}
+                  >
+                    {moment(dayObj.day).format("D")}
+                  </Typography>
+                  {dayObj.event && (
+                    <>
+                      {" "}
+                      <Box
+                        sx={{
                           display: "flex",
-                          alignItems: "center",
-                          gap: "2px",
+                          gap: "5px",
+                          position: "relative",
                         }}
                       >
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            color: "#212529",
+                        <div
+                          style={{
+                            background: "#EBEAF2",
+                            height: "auto",
+                            width: "3px",
+                            border: "1px solid #EBEAF2",
+                          }}
+                        ></div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
                           }}
                         >
-                          {dayObj.event.sheetCount} <span>Timesheets</span>
-                        </Typography>
-                        <ChevronRightIcon
-                          sx={{ width: 20, height: 20, color: "#408DFB" }}
-                        />
-                      </div>
-                      <div>
-                        <AvatarGroup max={4}>
-                          {dayObj.event.avatars.map((avatar, index) => (
-                            <Avatar
-                              key={index}
+                          <Typography
+                            sx={{
+                              color: "#21263C",
+                              fontWeight: "600",
+                              lineHeight: "1.4",
+                              fontSize: "14px",
+                              fontFamily: inter.style.fontFamily,
+                            }}
+                          >
+                            {moment()
+                              .startOf("day")
+                              .add(dayObj.event.totalTime, "hours")
+                              .format("HH:mm")}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: "12px",
+                              color: "#4C526C",
+                              fontFamily: inter.style.fontFamily,
+                            }}
+                          >
+                            Total Logged Hours
+                          </Typography>
+                        </div>
+                      </Box>
+                      {isXlBigger && (
+                        <Box
+                          sx={{
+                            marginTop: "4px",
+                            display: "flex",
+                            alignItems: "center",
+                            position: "relative",
+                            justifyContent: "space-between",
+                            width: "100%",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "2px",
+                            }}
+                          >
+                            <Typography
                               sx={{
-                                width: 15, // Adjust the width to make it smaller
-                                height: 15, // Adjust the height to make it smaller
-                                fontSize: 10, // Adjust the font size to make initials smaller
+                                fontSize: "13px",
+                                color: "#212529",
+                                fontFamily: inter.style.fontFamily,
                               }}
-                              src={avatar.avatar}
+                            >
+                              {dayObj.event.sheetCount} <span>Timesheets</span>
+                            </Typography>
+                            <ChevronRightIcon
+                              sx={{ width: 20, height: 20, color: "#408DFB" }}
                             />
-                          ))}
-                        </AvatarGroup>
-                      </div>
-                    </Box>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  background: "#14B9E5",
-                }}
-              >
-                {" "}
-              </div>
-            )}
-          </td>
-        ))}
-        <td
+                          </div>
+                          <div>
+                            <AvatarGroup max={4}>
+                              {dayObj.event.avatars.map((avatar, index) => (
+                                <Avatar
+                                  key={index}
+                                  sx={{
+                                    width: 15, // Adjust the width to make it smaller
+                                    height: 15, // Adjust the height to make it smaller
+                                    fontSize: 10, // Adjust the font size to make initials smaller
+                                  }}
+                                  src={avatar.src}
+                                />
+                              ))}
+                            </AvatarGroup>
+                          </div>
+                        </Box>
+                      )}
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: "#14B9E5",
+                  }}
+                >
+                  {" "}
+                </div>
+              )}
+            </TableCell>
+          );
+        })}
+        <TableCell
           style={{
             border: "2px solid #EBEAF2",
             padding: "8px",
             textAlign: "center",
             background: "#14B9E5",
+            fontFamily: inter.style.fontFamily,
+            color: "#FFF",
+            fontWeight: 700,
           }}
         >
-          {calculateTotalHours(
-            week
-              .filter((dayObj) => dayObj !== null && dayObj.event)
-              .map((dayObj) => dayObj.day),
-          )}{" "}
-          hrs
-        </td>
-      </tr>
+          {week && calculateTotalHours(week)}
+        </TableCell>
+      </TableRow>
     ));
   };
 
   return (
-    <Stack>
+    <Stack
+      sx={{
+        height: "100%",
+      }}
+    >
       <Box
         sx={{
           background: "#D9F0FD",
@@ -454,7 +495,8 @@ const MonthCalendarSheetTest = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "62px",
+          height: "56px",
+          marginBottom: "20px",
         }}
       >
         <IconButton onClick={handlePrevMonth}>
@@ -471,33 +513,34 @@ const MonthCalendarSheetTest = () => {
       </Box>
       <Box
         sx={{
-          // width: "100%",
           overflowX: "auto",
-          // minWidth: "100dvw", // Set a minimum width to prevent resizing below 1024px
         }}
       >
-        <table style={{ width: "100%",minWidth:"1280px" }}>
-          <thead>
-            <tr>
-              {weekdaysTableHeader.map((day) => (
-                <th
-                  key={day}
-                  style={{
-                    border: "none",
-                    padding: "8px",
-                    textAlign: "center",
-                    width: "calc(100%/8)",
-                    color: "#757383",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {day}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>{renderMonthDays()}</tbody>
-        </table>
+        <TableContainer style={{ width: "100%" }}>
+          <Table sx={{ tableLayout: "fixed" }}>
+            <TableHead>
+              <TableRow>
+                {weekdaysTableHeader.map((day) => (
+                  <TableCell
+                    key={day}
+                    sx={{
+                      border: "none",
+                      textAlign: "center",
+                      color: "#757383",
+                      textTransform: "uppercase",
+                      backgroundColor: "transparent",
+                      fontFamily: inter.style.fontFamily,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {day}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <tbody>{renderMonthDays()}</tbody>
+          </Table>
+        </TableContainer>
       </Box>
 
       <Drawer
@@ -520,9 +563,10 @@ const MonthCalendarSheetTest = () => {
             <Typography
               variant="body2"
               sx={{
-                color: "#333333",
+                color: "neutral.800",
                 fontWeight: "600",
                 fontSize: "16px",
+                fontFamily: inter.style.fontFamily,
               }}
             >
               {moment(selectedDate.day).format("DD MMM YYYY")}
@@ -534,19 +578,20 @@ const MonthCalendarSheetTest = () => {
                 gap: "10px",
               }}
             >
-              {/* <Button
+              <Button
                 sx={{
                   backgroundImage: "linear-gradient(to right,#2AF598,#009EFD)",
                   borderRadius: "100px",
                   color: "white",
                   textTransform: "none",
+                  border: "none",
                 }}
                 variant="outlined"
                 startIcon={<AddCircle style={{ color: "white" }} />}
               >
                 Add new
-              </Button> */}
-              {/* <div
+              </Button>
+              <div
                 style={{
                   display: "flex",
                 }}
@@ -573,7 +618,7 @@ const MonthCalendarSheetTest = () => {
                     height: "30px",
                   }}
                 />
-              </div> */}
+              </div>
               <IconButton
                 onClick={handleDrawerClose}
                 style={{
@@ -603,13 +648,13 @@ const MonthCalendarSheetTest = () => {
                   >
                     <SummaryBox
                       variant="square"
-                      icon={<CalendarToday />}
+                      icon={<CalendarTickIcon />}
                       value={selectedDate.event.totalTime}
                       label="Total Logged Hours"
                     />
                     <SummaryBox
                       variant="square"
-                      icon={<Group />}
+                      icon={<GroupUserIcon />}
                       value={selectedDate.event.peopleCount}
                       label="Total Users"
                     />
@@ -660,11 +705,23 @@ const TaskItem = ({ avatarUrl, hours, taskName, projectName }) => {
       <Box>
         <Typography
           variant="body1"
-          sx={{ fontWeight: "bold", color: "#424242", marginBottom: "4px" }}
+          sx={{
+            fontWeight: "700",
+            color: "neutral.800",
+            marginBottom: "4px",
+            fontFamily: inter.style.fontFamily,
+          }}
         >
-          {hours} hrs
+          {formatHoursToHHMM(hours)} hrs
         </Typography>
-        <Typography variant="body2" sx={{ color: "#757575" }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "neutral.400",
+            fontWeight: "700",
+            fontFamily: inter.style.fontFamily,
+          }}
+        >
           {taskName} • {projectName}
         </Typography>
       </Box>
@@ -710,4 +767,4 @@ const SummaryBox = ({
   );
 };
 
-export default MonthCalendarSheetTest;
+export default MonthCalendarSheet;

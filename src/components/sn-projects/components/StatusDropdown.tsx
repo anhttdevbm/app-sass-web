@@ -26,7 +26,7 @@ const StatusDropdown = (props: {
         displayEmpty: true,
         startAdornment: (
           <InputAdornment position="start">
-            <Typography sx={{ color: "grey.600" }}>
+            <Typography sx={{ color: "grey.600", fontWeight: 600 }}>
               {commonT("status")}:
             </Typography>
           </InputAdornment>
