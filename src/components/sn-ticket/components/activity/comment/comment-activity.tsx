@@ -20,6 +20,9 @@ import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "react-query";
 import { QUERY_TICKET_KEY } from "queries/ticket/keys";
+import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
+import { useSelector } from "react-redux";
+import { selectListAgent } from "store/ticket-agent/selectors";
 
 const tabComment = [
   {
@@ -39,7 +42,6 @@ const CommentActivity = () => {
   const { createComment, deleteComment, editComment } = useTicketAction();
   const commonT = useTranslations(NS_COMMON);
   const t = useTranslations(NS_TICKET);
-
   const { onAddSnackbar } = useSnackbar();
   const [isIternal, setIsIternal] = useState(true);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);

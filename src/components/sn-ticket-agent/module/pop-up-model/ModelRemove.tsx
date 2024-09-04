@@ -67,8 +67,11 @@ const ModelRemove = (props: PropsModel) => {
                 <CloseIcon onClick={handleClose} sx={{ width: 25, height: 25, cursor: "pointer" }} />
             </DialogTitle>
             <DialogContent sx={{
-                width: 450,
+                width: { xs: 300, sm: 400, md: 400 },
                 height: 100,
+                '&::-webkit-scrollbar': {
+                    display: "none"
+                },
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -94,7 +97,7 @@ const ModelRemove = (props: PropsModel) => {
                     variant="primary"
                     sx={{
                         height: 45,
-                        width: 150,
+                        width: {xs:100 , md : 150},
                         borderRadius: 100,
                         border: "1px solid #14B9E5",
                         gap: 1,
@@ -106,7 +109,6 @@ const ModelRemove = (props: PropsModel) => {
                     }}
                 >
                     <Text
-                        sx={{ display: { xs: "none", md: "block" } }}
                         color="#045EB8"
                         fontWeight="700"
                     >
@@ -121,7 +123,7 @@ const ModelRemove = (props: PropsModel) => {
                     variant="primary"
                     sx={{
                         height: 45,
-                        width: 150,
+                        width: {xs:100 , md : 150},
                         borderRadius: 100,
                         background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                         "&:hover": {
@@ -132,7 +134,6 @@ const ModelRemove = (props: PropsModel) => {
                     }}
                 >
                     <Text
-                        sx={{ display: { xs: "none", md: "block" } }}
                         color="inherit"
                         fontWeight="700"
                     >

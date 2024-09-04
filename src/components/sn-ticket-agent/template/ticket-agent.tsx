@@ -5,7 +5,6 @@ import { Stack } from "@mui/material";
 import TicketAgentList from "../TicketAgentList";
 
 const TicketAgent = () => {
-
   return (
     <Wrapper overflow="auto" inFrame>
       <Stack
@@ -16,7 +15,7 @@ const TicketAgent = () => {
         }}
       >
         <Actions isProjectTabMode={false} />
-        <TicketAgentList/>
+        <TicketAgentList />
       </Stack>
     </Wrapper>
   );
