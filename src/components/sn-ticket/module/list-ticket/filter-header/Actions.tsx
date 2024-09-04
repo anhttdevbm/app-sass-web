@@ -21,7 +21,7 @@ import { usePathname, useRouter } from "next-intl/client";
 import { useTranslations } from "next-intl";
 import { useDocs } from "store/docs/selectors";
 import NoneIcon from "icons/NoneIcon";
-import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
+import FilterSearchDocs from "../../../FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { useParams, useSearchParams } from "next/navigation";
@@ -30,57 +30,34 @@ import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import MenuIcon from "@mui/icons-material/Menu";
 import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
 import SearchIcon from "icons/SearchIcon";
-import BtnAdd from "./BtnAdd";
-import AIGradientIcon from "icons/AIGradientIcon";
 import useToggle from "hooks/useToggle";
-import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
-import ArrowExport from "icons/ArrowExport";
-import AddSquareIcon from "icons/AddSquareIcon";
 import { TICKET_CREATE_PATH } from "constant/paths";
 import { useSelector } from "react-redux";
-import {
-  selectSearchTicket,
-  selectTicketListTicket,
-} from "store/ticket/selectors";
-import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
-
-function convertStringToArray(inputString) {
-  let idArray = inputString.split(",");
-
-  let resultArray = idArray.map((id) => {
-    return { id: id, name: "" };
-  });
-
-  return resultArray;
-}
+import { selectSearchTicket } from "store/ticket/selectors";
+import { setKeySearchTicket } from "store/ticket/actions";
+import { TypeViewList } from "../../../@type";
 
 const ChangeViewListDoc = () => {
-  const [typeViewListDoc, setTypeViewListDoc] =
-    useState<TypeViewListDoc>("basicViewListDoc");
+  const [typeViewListDoc, setTypeViewListDoc] = useState<TypeViewList>(
+    TypeViewList.TABLE,
+  );
   const dispatch = useAppDispatch();
 
-  const handleViewKanban = () => {
-    dispatch(changeTypeViewDoc("kanbanViewListDoc"));
-    setTypeViewListDoc("kanbanViewListDoc");
-  };
-
-  const handleViewBasic = () => {
-    dispatch(changeTypeViewDoc("basicViewListDoc"));
-    setTypeViewListDoc("basicViewListDoc");
+  const handleChangeView = (type: TypeViewList) => {
+    dispatch(changeTypeViewDoc(type));
+    setTypeViewListDoc(type);
   };
 
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
       <IconButton
-        onClick={handleViewBasic}
+        onClick={() => handleChangeView(TypeViewList.TABLE)}
         aria-label="view-basic"
         sx={{
           backgroundColor:
-            typeViewListDoc === "kanbanViewListDoc"
-              ? "common.white"
-              : "#E9EBF3",
+            typeViewListDoc === TypeViewList.LIST ? "common.white" : "#E9EBF3",
           boxShadow:
-            typeViewListDoc === "kanbanViewListDoc"
+            typeViewListDoc === TypeViewList.LIST
               ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
               : "none",
         }}
@@ -88,22 +65,19 @@ const ChangeViewListDoc = () => {
         <MenuIcon />
       </IconButton>
       <IconButton
-        onClick={handleViewKanban}
+        onClick={() => handleChangeView(TypeViewList.LIST)}
         aria-label="view-kanban"
         sx={{
           backgroundColor:
-            typeViewListDoc !== "kanbanViewListDoc"
-              ? "common.white"
-              : "#E9EBF3",
+            typeViewListDoc !== TypeViewList.LIST ? "common.white" : "#E9EBF3",
           boxShadow:
-            typeViewListDoc !== "kanbanViewListDoc"
+            typeViewListDoc !== TypeViewList.LIST
               ? "0px 4px 8px rgba(0, 0, 0, 0.1)"
               : "none",
         }}
       >
         <ViewModuleIcon />
       </IconButton>
-
     </Stack>
   );
 };
@@ -115,21 +89,15 @@ type ActionProps = {
 const Actions = ({ isProjectTabMode }: ActionProps) => {
   const data = useSelector(selectSearchTicket);
   const dispatch = useAppDispatch();
-  const companyT = useTranslations(NS_COMPANY);
   const t = useTranslations(NS_TICKET);
-  const commonT = useTranslations(NS_COMMON);
-  const docsT = useTranslations(NS_DOCS);
-  const pathname = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
-  const [isShowImportForm, onShowImportForm, onHideImportForm] = useToggle();
   const [queries, setQueries] = useState<any>({});
 
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
     // onSearch();
   };
-  const { id } = useParams();
 
   const onSearch = () => {
     let newQueries = {
@@ -137,13 +105,16 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
       page: 1,
       // group_by: DocGroupByEnum.PROJECT_ID,
     };
-
     const payload = {
       ...data,
       keySearch: newQueries?.search_key,
-      priority: newQueries?.priority?.id == 0 ? "" : newQueries?.priority?.priority,
+      priority:
+        newQueries?.priority?.id == 0 ? "" : newQueries?.priority?.priority,
       assingn: newQueries?.assingn?.id,
-      ticketType: newQueries?.typeTicket?.id == 0 ? "" : newQueries?.typeTicket?.typeTicket,
+      ticketType:
+        newQueries?.typeTicket?.id == 0
+          ? ""
+          : newQueries?.typeTicket?.typeTicket,
     };
     dispatch(setKeySearchTicket(payload));
   };
@@ -159,23 +130,26 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         justifyContent="space-between"
         spacing={{ xs: 1, md: 2 }}
         px={{ xs: 0, md: 3 }}
-        py={1}
+        py={{ xs: 0, sm: 1, md: 1 }}
         zIndex={2}
       >
         <Stack
-          direction="row"
-          alignItems="center"
+          direction={{ xs: "column", sm: "row", md: "row" }}
+          alignItems={{ xs: "start", sm: "center", md: "center" }}
+          gap={{ xs: 1 }}
           justifyContent={{ md: "space-between" }}
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Box display={{ xs: "block" }}>
+          <Box width={{ xs: "100%" }} display={{ xs: "block" }}>
             <Search
-              placeholder={"Tìm kiếm theo id"}
+              placeholder={t("actions.search")}
               name="search_key"
               onChange={onChangeQueries}
               value={queries?.search_key}
-              sx={{ minWidth: 200 }}
+              sx={{
+                minWidth: { xs: "100%", sm: 200, md: 200 },
+              }}
               onKeyDown={(e) => {
                 e.stopPropagation();
                 if (e.key === "Enter") {
@@ -189,7 +163,11 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Box>
           <Stack
             direction="row"
-            justifyContent={{ xs: "flex-end" }}
+            justifyContent={{
+              xs: "space-between",
+              sm: "flex-end",
+              md: "flex-end",
+            }}
             spacing={1}
             width={{ xs: "100%" }}
           >
@@ -211,34 +189,29 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
                 },
               }}
             >
-              <AddSquareIcon
-                sx={{
-                  display: { xs: "block", md: "none" },
-                  width: 24,
-                  height: 24,
-                }}
-              />
               <PlusIcon
                 sx={{
-                  display: { xs: "none", md: "block" },
                   mr: 1,
                   width: 18,
                   height: 18,
                 }}
               />
-              <Text
-                sx={{ display: { xs: "none", md: "block" } }}
-                color="inherit"
-              >
-                {t("actions.createTicket")}
-              </Text>
+              <Text color="inherit">{t("actions.createTicket")}</Text>
             </Button>
           </Stack>
         </Stack>
+
         <Box
           bgcolor="background.default"
-          borderRadius="2rem"
+          borderRadius={{ xs: "0rem", sm: "2rem", md: "2rem" }}
           overflow={{ xs: "auto" }}
+          sx={{
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
         >
           <Stack
             direction="row"
@@ -249,9 +222,19 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             py={{ xs: 1.25, md: 1, lg: 1.25 }}
             px={{ xs: 3, md: 2, lg: 2 }}
             overflow="auto"
+            sx={{
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
           >
-            <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
-              View by:
+            <Text
+              fontSize={{ xs: 12 }}
+              sx={{ whiteSpace: "nowrap", color: "grey.700" }}
+            >
+              {t("actions.viewBy")}
             </Text>
             <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
           </Stack>

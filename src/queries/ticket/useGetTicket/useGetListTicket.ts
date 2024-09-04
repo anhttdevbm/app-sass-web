@@ -18,10 +18,8 @@ const useGetListTicket = () => {
     toDate: "",
     priority: data?.priority || "",
     page: data?.page,
-    size: data?.totalItems,
+    size: data?.size,
   };
-
-  // console.log("check params" , params)
 
   return useQuery({
     queryKey: [QUERY_TICKET_KEY.LIST_TICKET, params],

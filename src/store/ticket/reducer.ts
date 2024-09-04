@@ -21,7 +21,8 @@ const initialState: TicketDetailState = {
     ticketType: "",
     createTime: "",
     page: 1,
-    totalItems : 4
+    size: 5,
+    totalItems: 0,
   },
   dataListTicket: null,
   dataTicketDetail: {},
@@ -41,7 +42,7 @@ const ticketSlice = createSlice({
       })
       .addCase(setKeySearchTicket, (state, action: PayloadAction<any>) => {
         state.keySearch = action.payload;
-      })
+      });
   },
 });
 

@@ -33,6 +33,7 @@ const Tag = (props: PropsTagIcon) => {
     display: "flex",
     alignItems: "center",
     cursor: "pointer",
+    flexShrink : 0
   };
 
   return (

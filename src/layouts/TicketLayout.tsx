@@ -21,7 +21,7 @@ const TicketLayout = ({ children }) => {
     onUpdateHeaderConfig({
       title: pathName.includes("/create")
         ? "Create ticket"
-        : `Ticket# ${dataTicket?.code ?? ""}`,
+        : `${ticketT("title")}# ${dataTicket?.code ?? ""}`,
       searchPlaceholder: commonT("searchBy", { name: ticketT("header.key") }),
       endpoint: Endpoint.TICKET,
       key: "name",
