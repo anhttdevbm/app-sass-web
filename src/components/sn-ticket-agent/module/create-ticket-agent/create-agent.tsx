@@ -38,7 +38,7 @@ const CreateAgent = (props: PropsFormAgent) => {
 
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <LabelFormCustom title={(t("ticketFields.name"))} required />
               <Input
                 fullWidth
@@ -51,7 +51,7 @@ const CreateAgent = (props: PropsFormAgent) => {
                 }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <LabelFormCustom title={(t("ticketAgnet.USERNAME"))} required />
               <Input
                 fullWidth
@@ -65,7 +65,7 @@ const CreateAgent = (props: PropsFormAgent) => {
                 }}
               />
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={12} md={6} >
               <LabelFormCustom title={(t("ticketAgnet.EMAIL"))} required />
               <Input
                 fullWidth
@@ -78,7 +78,7 @@ const CreateAgent = (props: PropsFormAgent) => {
                 }}
               />
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={12} md={6} >
               <LabelFormCustom title={(t("ticketAgnet.PHONE"))} required />
               <Input
                 fullWidth
@@ -92,7 +92,7 @@ const CreateAgent = (props: PropsFormAgent) => {
               />
             </Grid>
 
-            <Grid item xs={12} md={12}>
+            <Grid item xs={12}  md={12}>
               <LabelFormCustom title={(t("ticketAgnet.PASSWORD"))} required />
               <Input
                 fullWidth

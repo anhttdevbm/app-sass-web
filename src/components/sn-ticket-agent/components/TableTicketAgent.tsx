@@ -40,7 +40,7 @@ const CustomStatus = styled(Box, {
   justifyContent: "center",
   display: "flex",
   alignItems: "center",
-  paddingBlock: "4px",
+  padding : " 4px 12px"
 }));
 
 const upperCaseText = (string: string) => {
@@ -128,7 +128,7 @@ const TableTicketAgent = (props: any) => {
 
   return (
     <>
-      <TableContainer sx={{ boxShadow: "none" }} component={Paper}>
+      <TableContainer sx={{ boxShadow: "none", display: { xs: "none", md: "block" } }} component={Paper}>
         <Table>
           <TableHead sx={{ padding: 0 }}>
             <TableRow sx={{ backgroundColor: "#D9F0FD" }}>
@@ -233,6 +233,107 @@ const TableTicketAgent = (props: any) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* {mobile table} */}
+
+      <Box sx={{ display: { xs: "block", md: "none" }, p: 2 }}>
+        {data?.map((row, index) => (
+          <Box
+            key={row.id}
+            sx={{
+              borderBottom: "1px solid #ddd",
+              mb: 2,
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              backgroundColor: "#FAFAFA",
+              borderRadius: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", justifyContent: "flex-end", position: "relative" }}>
+              <EssentialIcon
+                onClick={() => handleClickActions(index)}
+                sx={{ cursor: "pointer" }}
+              />
+              {tooltipOpen === index && (
+                <Tooltip
+                  mobile={true}
+                  openModelEdit={() => handleClickOpenModel(row?.detail)}
+                  openModelRemove={() => handleClickOpenModelRemove(row?.detail)}
+                  setStatusActions={() => setStatusActions((prev) => !prev)}
+                  open={statusActions}
+                />
+              )}
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500", }}>
+                {t("ticketFields.id")}
+              </Typography>
+              <Typography variant="body1" sx={{ color: "#0575E6", fontWeight: 700, textAlign: 'right' }}>
+                {row?.code}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500", }}>
+                {t("ticketFields.name")}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'right' ,fontWeight: "700"}}>
+                {row?.detail?.fullname}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500", }}>
+                {t("ticketAgnet.EMAIL")}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'right' }}>
+                {row?.detail?.email}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500", }}>
+                {t("ticketAgnet.PHONE")}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'right' }}>
+                {row?.detail?.phone}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500", }}>
+                {t("ticketAgnet.POSITION")}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'right' }}>
+                {row?.roleTicket[0]}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500", }}>
+                {t("ticketAgnet.STATUS")}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'right' }}>
+                {renderStatus(row?.detail?.id)}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500", }}>
+                {t("ticketAgnet.Inprogress")}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'right' }}>
+                {row?.numTicketAssign}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1" sx={{ fontWeight: "500" }}>
+                {t("ticketFields.creationTime")}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'right' }}>
+                {row?.createDate?.slice(0, 10)} {row?.createDate?.slice(11, 16)}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
 
       <Model
         type="edit"

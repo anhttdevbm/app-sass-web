@@ -168,7 +168,9 @@ const TableTicket = (props: any) => {
         </Table>
       </TableContainer>
 
-      <Box sx={{ display: { xs: "block", md: "none" }, p: 2 }}>
+
+      {/* {mobile table} */}
+      <Box sx={{ display: { xs: "block", md: "none"  }, p: 2 }}>
         {list?.length > 0 &&
           list?.map((row, index) => (
             <Box

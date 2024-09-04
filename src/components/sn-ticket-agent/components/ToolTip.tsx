@@ -9,11 +9,12 @@ type PopsToptip = {
   openModelEdit: () => void;
   setStatusActions: () => void;
   openModelRemove: () => void;
+  mobile ?: boolean 
 };
 
-const TooltipPaper = styled(Paper)(({ theme }) => ({
+const TooltipPaper = styled(Paper)<any>(({ theme ,  mobile }) => ({
   position: "absolute",
-  transform: "translateX(-100%)",
+  transform: mobile ? "translateX(0)" : "translateX(-100%)",
   boxShadow: theme.shadows[3],
   borderRadius: theme.shape.borderRadius,
   zIndex: theme.zIndex.tooltip,
@@ -22,7 +23,7 @@ const TooltipPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const Tooltip = (props: PopsToptip) => {
-  const { open, openModelEdit, setStatusActions, openModelRemove } =
+  const { open, openModelEdit, setStatusActions, openModelRemove , mobile } =
     props || null;
   const t = useTranslations(NS_TICKET);
 
@@ -36,7 +37,7 @@ const Tooltip = (props: PopsToptip) => {
   };
 
   return (
-    <TooltipPaper sx={{ display: open ? "block" : "none" }}>
+    <TooltipPaper mobile={mobile} sx={{ display: open ? "block" : "none" }}>
       <Typography
         onClick={handleClickEdit}
         sx={{

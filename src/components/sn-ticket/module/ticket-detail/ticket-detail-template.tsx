@@ -172,8 +172,8 @@ const TicketDetail = () => {
               }}
             >
               <ArrowDownIcon sx={{ width: 13, height: 13 }} />
-              <Text>
-                {t("ticketDetail.title")} {""}
+              <Text fontWeight={700}>
+                {t("ticketDetail.title")} {dataTicket?.code}
               </Text>
             </Box>
 
