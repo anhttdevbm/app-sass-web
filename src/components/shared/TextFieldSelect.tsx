@@ -27,6 +27,7 @@ interface IProps extends SelectProps {
   placeholder?: string;
   helperText?: string;
   hiddenIcon?: boolean;
+  ExpandIcon?: React.ReactNode;
 }
 
 const TextFieldSelect: React.FC<IProps> = React.forwardRef(
@@ -45,6 +46,7 @@ const TextFieldSelect: React.FC<IProps> = React.forwardRef(
       options,
       MenuProps,
       hiddenIcon = false,
+      ExpandIcon,
       ...props
     },
     ref,
@@ -206,16 +208,21 @@ const TextFieldSelect: React.FC<IProps> = React.forwardRef(
               {_renderOptions()}
             </Select>
           </Stack>
-          {!hiddenIcon && (
-            <OutLineExpandIcon
-              sx={{
-                width: "20px",
-                height: "20px",
-                transition: "all ease 0.25s",
-                transform: isFocus ? "rotate(180deg)" : "rotate(0deg)",
-              }}
-            />
-          )}
+          {!hiddenIcon &&
+            (ExpandIcon ? (
+              ExpandIcon
+            ) : (
+              <OutLineExpandIcon
+                sx={{
+                  position: "absolute",
+                  right: "20px",
+                  width: "20px",
+                  height: "20px",
+                  transition: "all ease 0.25s",
+                  transform: isFocus ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              />
+            ))}
         </Box>
         {helperText ? (
           <FormHelperText

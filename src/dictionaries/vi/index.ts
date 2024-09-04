@@ -1,58 +1,60 @@
 import {
   NS_ACCOUNT,
+  NS_AI_AGENT,
+  NS_AI_CHAT,
+  NS_APPLICANTS,
   NS_AUTH,
+  NS_BILLING,
+  NS_BLOG,
+  NS_BUDGETING,
+  NS_CAREER,
+  NS_CHAT,
+  NS_CHAT_BOX,
   NS_COMMON,
   NS_COMPANY,
+  NS_CONTENTS,
+  NS_COST_RATE,
+  NS_DOCS,
+  NS_FEEDBACK,
+  NS_HOLIDAY_CALENDAR,
+  NS_INVOICE,
   NS_LAYOUT,
   NS_MANAGER,
+  NS_PACKAGE_MANAGERMENT,
   NS_PROJECT,
   NS_RESOURCE_PLANNING,
   NS_SALES,
-  NS_CHAT_BOX,
-  NS_DOCS,
-  NS_TIME_TRACKING,
-  NS_CHAT,
-  NS_FEEDBACK,
-  NS_BLOG,
-  NS_CAREER,
-  NS_APPLICANTS,
-  NS_BUDGETING,
-  NS_BILLING,
-  NS_COST_RATE,
-  NS_HOLIDAY_CALENDAR,
-  NS_CONTENTS,
-  NS_AI_CHAT,
-  NS_AI_AGENT,
-  NS_INVOICE,
   NS_TICKET,
+  NS_TIME_TRACKING,
 } from "constant/index";
 
 import { AccountLang } from "./account";
+import { AIAgentLang } from "./aiAgent";
+import { AIChatLang } from "./aiChat";
+import { ApplicantsLang } from "./applicants";
 import { AuthLang } from "./auth";
+import { BillingLang } from "./billing";
+import { BlogLang } from "./blog";
+import { BudgetingLang } from "./budgeting";
+import { CareerLang } from "./career";
+import { ChatLang } from "./chat";
+import { ChatBoxLang } from "./chatbox";
 import { CommonLang } from "./common";
 import { CompanyLang } from "./company";
+import { ContentsLang } from "./contents";
+import { CostRateLang } from "./costRate";
+import { DocsLang } from "./docs";
+import { FeedbackLang } from "./feedback";
+import { HolidayCalendarLang } from "./holidayCalendar";
+import { InvoiceLang } from "./invoice";
 import { LayoutLang } from "./layout";
 import { ManagerLang } from "./manager";
+import { PackageManagementLang } from "./packageManagement";
 import { ProjectLang } from "./project";
 import { ResourcePlanning } from "./resourcePlanning";
 import { salesLang } from "./sales";
-import { TimeTrackingLang } from "./timetracking";
-import { ChatBoxLang } from "./chatbox";
-import { ChatLang } from "./chat";
-import { DocsLang } from "./docs";
-import { FeedbackLang } from "./feedback";
-import { BlogLang } from "./blog";
-import { CareerLang } from "./career";
-import { ApplicantsLang } from "./applicants";
-import { BudgetingLang } from "./budgeting";
-import { BillingLang } from "./billing";
-import { CostRateLang } from "./costRate";
-import { HolidayCalendarLang } from "./holidayCalendar";
-import { ContentsLang } from "./contents";
-import { AIChatLang } from "./aiChat";
-import { AIAgentLang } from "./aiAgent";
-import { InvoiceLang } from "./invoice";
 import { TicketLang } from "./ticket";
+import { TimeTrackingLang } from "./timetracking";
 
 export default {
   [NS_COMMON]: CommonLang,
@@ -78,6 +80,7 @@ export default {
   [NS_BILLING]: BillingLang,
   [NS_COST_RATE]: CostRateLang,
   [NS_HOLIDAY_CALENDAR]: HolidayCalendarLang,
+  [NS_PACKAGE_MANAGERMENT]: PackageManagementLang,
   [NS_CONTENTS]: ContentsLang,
   [NS_INVOICE]: InvoiceLang,
   [NS_TICKET]: TicketLang,
