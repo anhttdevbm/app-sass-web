@@ -1,11 +1,19 @@
 // redux/ticketDetail/reducer.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  setKeySearchTicketAgent
+  getListAgent,
+  setKeySearchTicketAgent,
+  setListAgentOnline,
 } from "./actions";
 
 interface AgentDetailState {
   keySearch: any;
+  listOnline: IAgentOnline[];
+  listAgent: any[];
+}
+
+export interface IAgentOnline {
+  id: string;
 }
 
 // Initial state
@@ -14,9 +22,11 @@ const initialState: AgentDetailState = {
     position: "",
     keyword: "",
     status: "",
-    page : 1,
-    size: 4,
+    page: 1,
+    size: 5,
   },
+  listOnline: [],
+  listAgent: [],
 };
 
 const ticketAgentSlice = createSlice({
@@ -24,10 +34,25 @@ const ticketAgentSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(setKeySearchTicketAgent, (state, action: PayloadAction<any>) => {
+    builder.addCase(
+      setKeySearchTicketAgent,
+      (state, action: PayloadAction<any>) => {
         state.keySearch = action.payload;
-      })
+      },
+    );
+    builder.addCase(
+      setListAgentOnline,
+      (state, action: PayloadAction<IAgentOnline[]>) => {
+        state.listOnline = action.payload;
+      },
+    );
+    builder.addCase(getListAgent.pending, (state, action) => {});
+    builder.addCase(getListAgent.fulfilled, (state, action) => {
+      state.listAgent = action.payload;
+    });
+    builder.addCase(getListAgent.rejected, (state, action) => {
+      state.listAgent = [];
+    });
   },
 });
 

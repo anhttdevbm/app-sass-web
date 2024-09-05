@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { TICKET_PATH } from "constant/paths";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
+import { isArray } from "lodash";
 
 export interface IFormTicket {
   title: string;
@@ -22,7 +23,7 @@ export interface IFormTicket {
 }
 
 const CreateTicket = () => {
-  const t = useTranslations(NS_TICKET)
+  const t = useTranslations(NS_TICKET);
   const { createTicket } = useTicketAction();
   const { onAddSnackbar } = useSnackbar();
   const { push, back } = useRouter();
@@ -39,7 +40,19 @@ const CreateTicket = () => {
   }, []);
 
   const handleSubmit = (data: IFormTicket) => {
-    createTicket.mutate(data, {
+    const formData = new FormData();
+    Object.keys(data).forEach((it) => {
+      if (isArray(data[it]) && it === "files") {
+        data[it].forEach((file) => {
+          formData.append(file.name, file, file.name);
+        });
+      } else {
+        formData.append(it, data[it]);
+      }
+    });
+    // Append each file with its name as the field name
+
+    createTicket.mutate(formData, {
       onSuccess: (data) => {
         push(TICKET_PATH);
         onAddSnackbar("Create ticket success!", "success");
@@ -59,18 +72,23 @@ const CreateTicket = () => {
           height: "calc(100vh - 100px)",
         }}
       >
-        <Box sx={{ padding: { xs: "12px 12px", sm: "34px 36px", md: "34px 36px" } }}>
+        <Box
+          sx={{
+            padding: { xs: "12px 12px", sm: "34px 36px", md: "34px 36px" },
+          }}
+        >
           <Typography
             sx={{ fontSize: "20px", fontWeight: "600", paddingBottom: "20px" }}
           >
-            {(t("createTicketFrom.titleHeader"))}
+            {t("createTicketFrom.titleHeader")}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <LabelFormCustom title={(t("createTicketFrom.Title"))} required />
+              <LabelFormCustom title={t("createTicketFrom.Title")} required />
               <Input
                 fullWidth
                 size="medium"
+                rootSx={{ borderRadius: "30px" }}
                 placeholder="Type ticket title"
                 value={formTicket.title}
                 onChange={(e) => {
@@ -79,7 +97,10 @@ const CreateTicket = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <LabelFormCustom title={(t("createTicketFrom.Description"))} required />
+              <LabelFormCustom
+                title={t("createTicketFrom.Description")}
+                required
+              />
               <MinHeightTextarea
                 placeholder={"Type ticket description"}
                 value={formTicket.description}
@@ -89,7 +110,9 @@ const CreateTicket = () => {
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <LabelFormCustom title={(t("createTicketFrom.RequestTicketType"))} />
+              <LabelFormCustom
+                title={t("createTicketFrom.RequestTicketType")}
+              />
               <Select
                 options={[
                   {
@@ -113,6 +136,7 @@ const CreateTicket = () => {
                 size="medium"
                 placeholder="Choose Type"
                 value={formTicket.type}
+                sx={{ borderRadius: "30px" }}
                 showPlaceholder={true}
                 onChange={(e) => {
                   handleChange(e.target.value, "type");
@@ -120,7 +144,7 @@ const CreateTicket = () => {
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <LabelFormCustom title={(t("createTicketFrom.Priority"))} />
+              <LabelFormCustom title={t("createTicketFrom.Priority")} />
               <Select
                 options={[
                   {
@@ -141,6 +165,7 @@ const CreateTicket = () => {
                 placeholder="Select Status"
                 value={formTicket.priority}
                 showPlaceholder={true}
+                sx={{ borderRadius: "30px" }}
                 onChange={(e) => {
                   handleChange(e.target.value, "priority");
                 }}
@@ -170,17 +195,17 @@ const CreateTicket = () => {
               variant="primary"
               sx={{
                 height: 40,
-                width: {xs : "100%",sm : "fit-content" , md: "fit-content"},
+                width: { xs: "100%", sm: "fit-content", md: "fit-content" },
                 borderRadius: 100,
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                marginRight: {xs : "0px",sm : "100px" , md: "100px"},
+                marginRight: { xs: "0px", sm: "100px", md: "100px" },
                 "&:hover": {
                   background:
                     "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 },
               }}
             >
-              {(t("createTicketFrom.create"))}
+              {t("createTicketFrom.create")}
             </Button>
           </Stack>
         </Box>
