@@ -4,6 +4,8 @@ import React, { useState } from "react";
 
 import MyVideoScreen from "./MyVideoScreen";
 import ParticipantList from "./ParticipantList";
+import { store } from "store/configureStore";
+import OneToOneCallLayout from "./OneToOneCallLayout";
 
 interface VideoScreenProps {
   sx: object;
@@ -19,6 +21,7 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
 
   const [count, setCount] = useState<number>(1);
   const [isShow, setShow] = useState(false);
+  const { meetInfo } = store.getState().meeting;
 
   const changeLayout = () => {
     if (count === 2) {
@@ -64,8 +67,14 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
           spacing={1}
           sx={{ justifyContent: "space-between", height: "100%" }}
         >
-          <MyVideoScreen sx={{}} />
-          <ParticipantList />
+          {meetInfo.room?.type === "g" ? (
+            <>
+              <MyVideoScreen sx={{}} />
+              <ParticipantList />
+            </>
+          ) : (
+            <OneToOneCallLayout />
+          )}
         </Stack>
       )}
       {layout === "content" && (

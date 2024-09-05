@@ -12,7 +12,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
 ) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const { localStream } = store.getState().meeting;
+  const { localStream, meetInfo } = store.getState().meeting;
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isScreenPinned, setIsScreenPinned] = useState(false);
@@ -53,8 +53,6 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
       const videoBlob = new Blob(chunks, { type: "video/webm" });
       const videoUrl = URL.createObjectURL(videoBlob);
 
-      // Do something with the video URL, e.g., download or display it
-      // For example, you can create a download link:
       const downloadLink = document.createElement("a");
       downloadLink.href = videoUrl;
       downloadLink.download = "my_video.webm";
@@ -99,6 +97,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
           height: "100%",
         }}
       />
+
       {!localStreamState.isCameraOn && <Avatar src={user?.avatar?.link} />}
       {/* <ButtonOnMyScreen
         sx={{

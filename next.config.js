@@ -18,6 +18,7 @@ const nextConfig = {
     CHAT_API_URL: process.env.CHAT_API_URL,
     SALE_API_URL: process.env.SALE_API_URL,
     NEXT_APP_WS_URL: process.env.NEXT_APP_WS_URL,
+    RESOURCE_API_URL: process.env.RESOURCE_API_URL,
     MEETING_API_URL: process.env.MEETING_API_URL,
     NEXT_APP_MEETING_WS_URL: process.env.NEXT_APP_MEETING_WS_URL,
     FEEDBACK_API_URL: process.env.FEEDBACK_API_URL,

@@ -1,19 +1,20 @@
-import { AspectRatio, Circle, IosShare } from "@mui/icons-material";
+import { Circle } from "@mui/icons-material";
 import { Box, Button, IconButton, Stack } from "@mui/material";
 import { Text } from "components/shared";
 import AvatarGroup from "components/shared/AvatarGroup";
+import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
+import { MaximizeIcon } from "icons/MaximizeIcon";
+import { MeetingShareLinkIcon } from "icons/MeetingShareLinkIcon";
+import moment from "moment";
+import { useMemo } from "react";
 import { useSidebar } from "store/app/selectors";
+import { store } from "store/configureStore";
 import {
   sxBtnCircleActiveDark,
   sxBtnCircleActiveLight,
   sxPrimaryBtn,
 } from "../style";
-import useBreakpoint from "hooks/useBreakpoint";
-import { MeetingShareLinkIcon } from "icons/MeetingShareLinkIcon";
-import { MaximizeIcon } from "icons/MaximizeIcon";
-import { store } from "store/configureStore";
-import { useMemo } from "react";
 
 interface MeetingHeaderLayoutProps {
   sx: object;
@@ -26,12 +27,13 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
   const { isExpandedSidebar } = useSidebar();
   const { isDarkMode } = useTheme();
   const { isXlSmaller } = useBreakpoint();
-  const { remoteStreams } = store.getState().meeting;
+  const { remoteStreams, meetInfo } = store.getState().meeting;
   const avatars = useMemo(() => {
     return remoteStreams.map((remoteStream) => ({
       src: remoteStream.participant.avatar,
     }));
-  }, []);
+  }, [remoteStreams]);
+
   return (
     <Stack
       direction={isExpandedSidebar || isXlSmaller ? "column" : "row"}
@@ -46,7 +48,9 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
             color: "#373131",
           }}
         >
-          [Internal] Weekly Report Marketing + Sales
+          {meetInfo.room?.type === "p"
+            ? remoteStreams.length > 0 && remoteStreams[0].participant.fullname
+            : "Group"}
         </Text>
         <Stack
           sx={{
@@ -58,7 +62,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
           }}
         >
           <Text variant="body2" color="#818A98">
-            31 May 2024
+            {moment(meetInfo.created_at).format("DD MMM YYYY")}
           </Text>
           {isRecording && (
             <Stack sx={{ flexDirection: "row", gap: 1 }}>
