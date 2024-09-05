@@ -92,6 +92,7 @@ import {
 import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
 import { FILE_ACCEPT, IMAGES_ACCEPT } from "constant/index";
+import { setEndMeeting } from "store/meeting/reducer";
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
@@ -823,6 +824,13 @@ export const useChat = () => {
   const onSetWsClient = useCallback(
     async (ws) => {
       return dispatch(setWsClient(ws));
+    },
+    [dispatch],
+  );
+
+  const onEndMeeting = useCallback(
+    async (data) => {
+      return dispatch(setEndMeeting(data));
     },
     [dispatch],
   );

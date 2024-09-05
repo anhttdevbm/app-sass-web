@@ -1,72 +1,99 @@
-import {
-  Mic,
-  MicOff,
-  Videocam,
-  VideocamOff,
-  VideocamOutlined,
-} from "@mui/icons-material";
-import { Stack, Avatar, Box, Grid } from "@mui/material";
+import { VideocamOff } from "@mui/icons-material";
+import { Box, Stack } from "@mui/material";
+import Avatar from "components/Avatar";
 import { IconButton, Text } from "components/shared";
 import { sxBtnIconActive, sxBtnIconDanger } from "components/sn-meeting/style";
+import { MicrophoneIcon } from "icons/MicrophoneIcon";
+import { MicrophoneOffIcon } from "icons/MicrophoneOffIcon";
+import { VideoIcon } from "icons/VideoIcon";
+import { VideoSlashIcon } from "icons/VideoSlashIcon";
 import React, { useState } from "react";
+import { RemoteStream } from "store/meeting/types";
 
-interface User {
-  id: string;
-  avatar: string;
-  name: string;
-  isMicOn: boolean;
-  isCameraOn: boolean;
+interface IProps {
+  remoteStream: RemoteStream;
 }
 
-interface ItemUserProps {
-  user: User;
-}
-
-const ItemUser: React.FC<ItemUserProps> = (props: ItemUserProps) => {
-  const { user } = props;
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCameraOn, setIsCameraOn] = useState(true);
-
-  const toggleMic = () => {
-    setIsMicOn(!isMicOn);
-  };
-
-  const toggleCamera = () => {
-    setIsCameraOn(!isCameraOn);
-  };
-
+const ItemUser = ({ remoteStream }: IProps) => {
+  const { isCameraOn, isMicOn } = remoteStream.streamState;
   return (
-    <Grid
-      container
-      key={user.id}
-      direction={"row"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      py={1}
+    <Stack
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
     >
-      <Grid item xs={2} alignItems={"center"} alignContent={"center"}>
-        <Avatar src="public/images/avatar1.png" />
-      </Grid>
-      <Grid item xs={7}>
-        <Text fontWeight={600}>{user.name}</Text>
-      </Grid>
-      <Grid item xs={3}>
-        <Stack direction={"row"} gap={1}>
-          <IconButton
-            onClick={toggleMic}
-            sx={isMicOn ? sxBtnIconActive : sxBtnIconDanger}
-          >
-            {isMicOn ? <Mic /> : <MicOff />}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <Avatar
+          size={32}
+          src={remoteStream.participant.avatar}
+          alt={remoteStream.participant.fullname}
+        />
+        <Text
+          fontWeight={600}
+          sx={{
+            fontSize: "14px",
+            color: "#000",
+          }}
+        >
+          {remoteStream.participant.fullname}
+        </Text>
+      </Box>
+      <Box>
+        <Stack direction={"row"}>
+          <IconButton sx={isMicOn ? sxBtnIconActive : sxBtnIconDanger}>
+            {isMicOn ? (
+              <MicrophoneIcon
+                sx={{
+                  width: "16px",
+                  height: "16px",
+                }}
+              />
+            ) : (
+              <MicrophoneOffIcon
+                sx={{
+                  width: "16px",
+                  height: "16px",
+                  fill: "#EB5757",
+                  "& path": {
+                    stroke: "#EB5757",
+                  },
+                }}
+              />
+            )}
           </IconButton>
-          <IconButton
-            onClick={toggleCamera}
-            sx={isCameraOn ? sxBtnIconActive : sxBtnIconDanger}
-          >
-            {isCameraOn ? <Videocam /> : <VideocamOff />}
+          <IconButton sx={isCameraOn ? sxBtnIconActive : sxBtnIconDanger}>
+            {isCameraOn ? (
+              <VideoIcon
+                sx={{
+                  width: "16px",
+                  height: "16px",
+                  fill: "#2174EA",
+                  "& path": {
+                    stroke: "#2174EA",
+                  },
+                }}
+              />
+            ) : (
+              <VideoSlashIcon
+                sx={{
+                  width: "16px",
+                  height: "16px",
+                }}
+              />
+            )}
           </IconButton>
         </Stack>
-      </Grid>
-    </Grid>
+      </Box>
+    </Stack>
   );
 };
 

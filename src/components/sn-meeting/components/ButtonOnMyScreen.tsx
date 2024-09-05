@@ -13,41 +13,39 @@ import {
 } from "components/sn-meeting/style";
 
 interface ButtonOnMyScreenProps {
-  togglePinScreen: () => void;
-  toggleMic: () => void;
-  toggleCamera: () => void;
-  isScreenPinned: boolean;
-  isMicOn: boolean;
-  isCameraOn: boolean;
   sx: object;
+  localStream: MediaStream;
+  isLocalStream: boolean;
 }
 
-const ButtonOnMyScreen = (props: ButtonOnMyScreenProps) => {
-  const {
-    togglePinScreen,
-    toggleMic,
-    toggleCamera,
-    isScreenPinned,
-    isMicOn,
-    isCameraOn,
-  } = props;
-  // const [isMicOn, setIsMicOn] = useState(true);
-  // const [isCameraOn, setIsCameraOn] = useState(true);
-  // const [isScreenPinned, setIsScreenPinned] = useState(false);
+const ButtonOnMyScreen = ({
+  localStream,
+  sx,
+  isLocalStream,
+}: ButtonOnMyScreenProps) => {
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isScreenPinned, setIsScreenPinned] = useState(false);
 
-  // const toggleMic = () => {
-  //   setIsMicOn(!isMicOn);
-  // };
+  const toggleMic = () => {
+    setIsMicOn(!isMicOn);
+    localStream
+      .getAudioTracks()
+      .forEach((track) => (track.enabled = !track.enabled));
+  };
 
-  // const toggleCamera = () => {
-  //   setIsCameraOn(!isCameraOn);
-  // };
+  const toggleCamera = () => {
+    setIsCameraOn(!isCameraOn);
+    localStream
+      .getVideoTracks()
+      .forEach((track) => (track.enabled = !track.enabled));
+  };
 
-  // const togglePinScreen = () => {
-  //   setIsScreenPinned(!isScreenPinned);
-  // };
+  const togglePinScreen = () => {
+    setIsScreenPinned(!isScreenPinned);
+  };
   return (
-    <Box textAlign={"center"} sx={{ ...props.sx }}>
+    <Box textAlign={"center"} sx={{ ...sx }}>
       <Stack direction={"row"} gap={1}>
         <IconButton onClick={togglePinScreen} sx={sxBtnCircleActive}>
           {isScreenPinned ? <PushPin /> : <PushPin />}
@@ -58,12 +56,14 @@ const ButtonOnMyScreen = (props: ButtonOnMyScreenProps) => {
         >
           {isMicOn ? <Mic /> : <MicOff />}
         </IconButton>
-        <IconButton
-          onClick={toggleCamera}
-          sx={isCameraOn ? sxBtnCircleActive : sxBtnCircleDanger}
-        >
-          {isCameraOn ? <Videocam /> : <VideocamOff />}
-        </IconButton>
+        {isLocalStream && (
+          <IconButton
+            onClick={toggleCamera}
+            sx={isCameraOn ? sxBtnCircleActive : sxBtnCircleDanger}
+          >
+            {isCameraOn ? <Videocam /> : <VideocamOff />}
+          </IconButton>
+        )}
       </Stack>
     </Box>
   );
