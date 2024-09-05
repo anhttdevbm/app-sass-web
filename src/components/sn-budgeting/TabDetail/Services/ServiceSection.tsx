@@ -1,11 +1,30 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, Typography } from "@mui/material";
+import ConfirmDialog from "components/ConfirmDialog";
 import { Button, IconButton } from "components/shared";
+import {
+  TBudgetSection,
+  TBudgetService,
+} from "components/sn-budgeting/BudgetDetail";
+import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
+import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
+import { NS_BUDGETING, NS_COMMON } from "constant/index";
+import dayjs from "dayjs";
+import useTheme from "hooks/useTheme";
+import useToggle from "hooks/useToggle";
+import MoveDotIcon from "icons/MoveDotIcon";
 import PlusIcon from "icons/PlusIcon";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
-import { getMessageErrorByAPI, uuid } from "utils/index";
-import { TErrors, TSection } from "./ServiceUtil";
+import TrashIcon from "icons/TrashIcon";
+import _ from "lodash";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import { useBudgetSectionDelete } from "queries/budgeting/section-delete";
+import {
+  TBudgetServiceForm,
+  useBudgetServiceAdd,
+} from "queries/budgeting/service-add";
+import { useBudgetServiceUpdate } from "queries/budgeting/service-update";
 import {
   createRef,
   useCallback,
@@ -14,37 +33,17 @@ import {
   useState,
 } from "react";
 import {
-  TBudgetServiceForm,
-  useBudgetServiceAdd,
-} from "queries/budgeting/service-add";
-import { useParams } from "next/navigation";
-import dayjs from "dayjs";
-import { NS_BUDGETING, NS_COMMON } from "constant/index";
-import { useSnackbar } from "store/app/selectors";
-import { useTranslations } from "next-intl";
-import ConfirmDialog from "components/ConfirmDialog";
-import useToggle from "hooks/useToggle";
-import TrashIcon from "icons/TrashIcon";
-import { useBudgetSectionDelete } from "queries/budgeting/section-delete";
-import _ from "lodash";
-import { useBudgetServiceUpdate } from "queries/budgeting/service-update";
-import {
-  TBudgetSection,
-  TBudgetService,
-} from "components/sn-budgeting/BudgetDetail";
-import { ScrollViewProvider } from "components/sn-sales-detail/hooks/useScrollErrorField";
-import useTheme from "hooks/useTheme";
-import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
-import dynamic from "next/dynamic";
-import {
   DragDropContext,
-  Droppable,
   Draggable,
-  ResponderProvided,
+  Droppable,
   DropResult,
+  ResponderProvided,
 } from "react-beautiful-dnd";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI, uuid } from "utils/index";
 import ServiceSectionRow from "./ServiceSectionRow";
-import MoveDotIcon from "icons/MoveDotIcon";
+import { TErrors, TSection } from "./ServiceUtil";
 
 type Props = {
   sectionsList: TBudgetSection[];
@@ -521,7 +520,15 @@ export const ServiceSection = ({
         >
           <Stack direction="row" gap={2} justifyContent="end" p="15px">
             <Button
-              sx={{ bgcolor: "primary.light", color: "grey.400" }}
+              variant="primaryOutlined"
+              sx={{
+                ...defaultSx.button,
+                borderRadius: "100px",
+                borderImageSource: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                "&:hover": {
+                  borderColor: "#3699FF",
+                },
+              }}
               onClick={() => {
                 onCloseEdit();
               }}
@@ -529,10 +536,16 @@ export const ServiceSection = ({
               {budgetT("tabService.section.cancelBtnText")}
             </Button>
             <Button
+              variant="primary"
               onClick={handleSaveAllService}
               sx={{
+                ...defaultSx.button,
                 bgcolor: "primary.main",
-                "&:hover": { bgcolor: "primary.light", color: "primary.main" },
+                borderRadius: "100px",
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                "&:hover": {
+                  background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                },
               }}
             >
               {budgetT("tabService.section.saveBtnText")}
@@ -606,18 +619,21 @@ export const ServiceSection = ({
                                     >
                                       {section?.name}
                                     </Typography>
+
+                                    <IconButton
+                                      onClick={() => openConfirmDelete(index)}
+                                    >
+                                      <TrashIcon
+                                        fontSize="medium"
+                                        sx={{
+                                          color: "error.main",
+                                          cursor: "pointer",
+                                        }}
+                                      />
+                                    </IconButton>
+                                    
                                   </Stack>
-                                  <IconButton
-                                    onClick={() => openConfirmDelete(index)}
-                                  >
-                                    <TrashIcon
-                                      fontSize="medium"
-                                      sx={{
-                                        color: "error.main",
-                                        cursor: "pointer",
-                                      }}
-                                    />
-                                  </IconButton>
+                                 
                                 </Stack>
                                 <Stack
                                   sx={{
@@ -650,7 +666,15 @@ export const ServiceSection = ({
           <Button
             startIcon={<PlusIcon />}
             size="small"
-            sx={{ color: "secondary.main" }}
+            sx={{ 
+              borderRadius: "100px",
+              background: "#D9F0FD",
+              "&:hover": {
+                background: "#D9F0FD",
+              },
+              color: "#0575E6",
+              fontWeight: "700",
+            }}
             onClick={onAddSection}
           >
             {budgetT("tabService.section.addSection")}
@@ -666,4 +690,34 @@ export const ServiceSection = ({
       />
     </>
   );
+};
+
+const defaultSx = {
+  root: {
+    minWidth: { xs: "calc(100vw - 24px)", sm: 850 },
+    zIndex: 50,
+  },
+  bottom: {
+    pt: 3,
+    pb: 0,
+    px: 3,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    borderBottom: "1px solid",
+    borderColor: "grey.100",
+    pb: 3,
+
+    "& > button": {
+      top: 0,
+      transform: "unset",
+    },
+  },
+  button: {
+    minWidth: 120,
+    mx: 1.5,
+  },
 };
