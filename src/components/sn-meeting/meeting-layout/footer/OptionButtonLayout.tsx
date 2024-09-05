@@ -11,7 +11,7 @@ import { MicrophoneIcon } from "icons/MicrophoneIcon";
 import ThreeDotsIcon from "icons/ThreeDotsIcon";
 import { VideoIcon } from "icons/VideoIcon";
 import { random } from "lodash";
-import { useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { store } from "store/configureStore";
 import { useMeeting } from "store/meeting/selectors";
@@ -27,6 +27,7 @@ import { useAuth } from "store/app/selectors";
 import { VideoSlashIcon } from "icons/VideoSlashIcon";
 import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import {
+  MeetRoomInfo,
   ParticipantStreamEvent,
   ParticipantStreamEventPayload,
 } from "store/meeting/types";
@@ -55,6 +56,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const [isAddReactionActive, setIsAddReactionActive] = useState(false);
   const [isBackHandActive, setIsBackHandActive] = useState(false);
   const [isPendingActive, setIsPendingActive] = useState(false);
+  const { id } = useParams();
 
   const handleMicButtonClick = () => {
     localStream?.getAudioTracks().forEach((track) => {
@@ -126,7 +128,25 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
 
   const leaveMeeting = async () => {
     localStream?.getTracks().forEach((track) => track.stop());
-    await onLeaveMeeting(meetInfo);
+    // Use fake meetInfo for get Room Id if connect fail
+    const fakeMeetInfo: MeetRoomInfo = {
+      id: "",
+      created_at: "",
+      host: {
+        avatar: "",
+        id: "",
+        fullname: "",
+        username: "",
+        position: "",
+      },
+      room: {
+        id: id as string,
+        members: [],
+        type: "p",
+      },
+    };
+
+    await onLeaveMeeting(meetInfo?.room?.id ? meetInfo : fakeMeetInfo);
     router.push("/");
   };
 
