@@ -1,3 +1,4 @@
+import { SignalData } from "simple-peer";
 export interface MeetResponse {
   data: MeetResponseData;
   type: string;
@@ -22,6 +23,7 @@ export const MEET_EVENT_TYPE = {
   RETURN_SIGNAL: "return_signal",
   LEAVE: "leave",
   END: "end_meet",
+  CANCLE: "canncel",
 };
 
 export interface MeetRoomInfo {
@@ -45,7 +47,7 @@ export interface HostInfo {
 export interface RoomInfo {
   id: string;
   members: string[];
-  type: string;
+  type: "p" | "g";
 }
 
 export const CallStatus = {
@@ -59,3 +61,40 @@ export const CallType = {
   DIRECT_CALL: "p",
   GROUP_CALL: "g",
 };
+
+export interface RemoteStream {
+  participant: MeetUser;
+  stream: MediaStream;
+  streamState: {
+    isCameraOn: boolean;
+    isMicOn: boolean;
+  };
+}
+
+export interface WSPayload {
+  event: "signal" | "return_signal";
+  receive: MeetUser;
+  send: MeetUser;
+  signal: any;
+}
+
+export interface MeetDataEntryEvent {
+  event: "join" | "leave";
+  user: MeetUser;
+}
+
+export enum ParticipantStreamEvent {
+  TOGGLE_CAMERA = "toggle_camera",
+  TOGGLE_MIC = "toggle_mic",
+}
+
+export interface ParticipantStreamEventPayload {
+  event: ParticipantStreamEvent;
+  participantId: string;
+  status: boolean;
+}
+
+export interface LocalStreamState {
+  isCameraOn: boolean;
+  isMicOn: boolean;
+}

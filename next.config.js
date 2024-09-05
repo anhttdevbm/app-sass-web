@@ -53,7 +53,7 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "113.192.9.79",
-      },,
+      },
     ],
   },
   eslint: {

@@ -15,8 +15,9 @@ import {
   endMeeting,
   getParticipants,
   startMeeting,
+  startReconnecting,
 } from "./actions";
-import { CallStatus } from "./types";
+import { CallStatus, MeetRoomInfo } from "./types";
 import { store } from "store/configureStore";
 
 export const useMeeting = () => {
@@ -93,12 +94,19 @@ export const useMeeting = () => {
   );
 
   const onLeaveMeeting = useCallback(
-    async (meetInfo) => {
+    async (meetInfo: MeetRoomInfo) => {
       const { meetingWsClient: ws } = store.getState().meeting;
+
+      // 1-1 call
+      if (meetInfo.room?.type === "p") {
+        onEndMeeting(meetInfo.room.id);
+        return;
+      }
       await dispatch(getParticipants(meetInfo.id))
         .unwrap()
         .then((res) => {
-          if (res.participants.length > 1) {
+          // Group call
+          if (meetInfo.room.id && res.participants.length > 1) {
             ws?.close();
             onResetMeet();
           } else {
@@ -113,6 +121,14 @@ export const useMeeting = () => {
     dispatch(resetMeet());
   }, [dispatch]);
 
+  const onGetMeetRoom = useCallback(
+    async (roomId: string) => {
+      const res = await dispatch(startReconnecting(roomId)).unwrap();
+      onSetMeetInfo(res);
+    },
+    [dispatch],
+  );
+
   return {
     onSetMeetingWsClient,
     onEndMeeting,
@@ -126,5 +142,6 @@ export const useMeeting = () => {
     onRejectCall,
     onLeaveMeeting,
     onResetMeet,
+    onGetMeetRoom,
   };
 };

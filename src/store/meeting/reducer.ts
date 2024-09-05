@@ -1,16 +1,24 @@
 // usersSlice.ts
-import { createSlice } from "@reduxjs/toolkit";
-import { MeetRoomInfo, MeetUser } from "./types";
-import { cancelMeeting, getParticipants, startMeeting } from "./actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  LocalStreamState,
+  MeetRoomInfo,
+  MeetUser,
+  ParticipantStreamEvent,
+  RemoteStream,
+} from "./types";
+import {
+  cancelMeeting,
+  startReconnecting,
+  getParticipants,
+  startMeeting,
+} from "./actions";
 
 export interface MeetingState {
   isEstablishingConnection: boolean;
   localStream: MediaStream | null;
   remoteStream: MediaStream | null;
-  remoteStreams: {
-    participant: string;
-    stream: MediaStream;
-  }[];
+  remoteStreams: RemoteStream[];
   meetingWsClient: WebSocket | null;
   meetInfo: MeetRoomInfo;
   audioOnly: boolean;
@@ -29,6 +37,7 @@ export interface MeetingState {
   peer: any;
   isLeaving: boolean;
   currentParticipants: MeetUser[];
+  localStreamState: LocalStreamState;
 }
 
 const initialState: MeetingState = {
@@ -48,6 +57,10 @@ const initialState: MeetingState = {
   peer: null,
   isLeaving: false,
   currentParticipants: [],
+  localStreamState: {
+    isCameraOn: false,
+    isMicOn: false,
+  },
 };
 
 const meetingSlice = createSlice({
@@ -208,6 +221,42 @@ const meetingSlice = createSlice({
     resetMeet() {
       return initialState;
     },
+    setLocalStreamState(
+      state,
+      action: PayloadAction<{ isCameraOn: boolean; isMicOn: boolean }>,
+    ) {
+      state.localStreamState = action.payload;
+    },
+    updateRemoteStreamState(
+      state,
+      action: PayloadAction<{
+        participantId: string;
+        event: ParticipantStreamEvent;
+        value: boolean;
+      }>,
+    ) {
+      const { participantId, event, value } = action.payload;
+      const remoteStream = state.remoteStreams.find(
+        (stream) => stream.participant.id === participantId,
+      );
+      let field: keyof LocalStreamState | undefined = undefined;
+      switch (event) {
+        case ParticipantStreamEvent.TOGGLE_CAMERA:
+          field = "isCameraOn";
+          break;
+        case ParticipantStreamEvent.TOGGLE_MIC:
+          field = "isMicOn";
+          break;
+        default:
+          break;
+      }
+      if (remoteStream && field) {
+        remoteStream.streamState = {
+          ...remoteStream.streamState,
+          [field]: value,
+        };
+      }
+    },
   },
   extraReducers(builder) {
     builder.addCase(getParticipants.fulfilled, (state, action) => {
@@ -218,6 +267,9 @@ const meetingSlice = createSlice({
     });
     builder.addCase(cancelMeeting.fulfilled, (state) => {
       state = initialState;
+    });
+    builder.addCase(startReconnecting.fulfilled, (state, action) => {
+      state.meetInfo = action.payload;
     });
   },
 });
@@ -241,6 +293,8 @@ export const {
   endMeet,
   resetMeet,
   setPeer,
+  setLocalStreamState,
+  updateRemoteStreamState,
 } = meetingSlice.actions;
 
 export default meetingSlice.reducer;

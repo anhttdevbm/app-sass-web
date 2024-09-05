@@ -1,32 +1,33 @@
 "use client";
 
-import { Box, Card, Stack, Avatar as MuiAvatar } from "@mui/material";
+import { Card, Stack } from "@mui/material";
 
-import React, { useEffect, useRef, useState } from "react";
+import useTheme from "hooks/useTheme";
+import { useRouter } from "next/navigation";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { store } from "store/configureStore";
+import { useAppSelector } from "store/hooks";
+import {
+  endMeet,
+  resetMeet,
+  setLocalStream,
+  setLocalStreamState,
+} from "store/meeting/reducer";
+import { useMeeting } from "store/meeting/selectors";
+import VideoScreen from "../components/VideoScreen";
 import MeetingHeaderLayout from "./MeetingHeaderLayout";
 import OptionButtonsLayout from "./footer/OptionButtonLayout";
 import RightSidebar from "./right-sidebar/RightSidebar";
-import VideoScreen from "../components/VideoScreen";
-import useBreakpoint from "hooks/useBreakpoint";
-import useWindowSize from "hooks/useWindowSize";
-import useTheme from "hooks/useTheme";
-import { useAuth } from "store/app/selectors";
-import { useAppSelector } from "store/hooks";
-// import { useWSMeeting } from "webSocket/wsConnection";
-import Avatar from "components/Avatar";
-import ButtonOnMyScreen from "../components/ButtonOnMyScreen";
 
 export default function MeetingLayout() {
   // useWSMeeting();
   const { isDarkMode } = useTheme();
-  const breack = useBreakpoint();
-  const size = useWindowSize();
-  const { user } = useAuth();
-  const { localStream, remoteStream, remoteStreams } = useAppSelector(
+  const { meetInfo, isEndMeeting, localStream } = useAppSelector(
     (state) => state.meeting,
   );
+  const { onLeaveMeeting } = useMeeting();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
+  const router = useRouter();
   const [toggleMinimize, setToggleMinimize] = useState(false);
 
   // const startRecording = () => {
@@ -70,23 +71,30 @@ export default function MeetingLayout() {
     setToggleMinimize(!toggleMinimize);
   };
 
-  console.log("remoteStreams", remoteStreams);
+  useEffect(() => {
+    const handleEndMeeting = async () => {
+      localStream?.getTracks().forEach((track) => track.stop());
+      store.dispatch(endMeet());
+      router.push("/");
+    };
+    isEndMeeting && handleEndMeeting();
+  }, [isEndMeeting]);
 
   return (
     <Card
       sx={{
         height: "100%",
         width: "100%",
-        minWidth: "1440px",
         overflow: "auto",
         borderRadius: 0,
-        bgcolor: "black",
+        padding: "24px",
+        background: "#F5F5FD",
       }}
     >
       <Stack
         direction="row"
         alignItems="stretch"
-        justifyContent={"space-between"}
+        justifyContent="space-between"
         pb={0}
         sx={{ height: "100%" }}
       >
@@ -99,60 +107,21 @@ export default function MeetingLayout() {
               ? "var(--mui-palette-grey-50)"
               : "white",
             justifyContent: "space-between",
+            flex: 1,
           }}
         >
           <MeetingHeaderLayout
+            isRecording={false}
             sx={{ px: 3 }}
             toggleMinimizeMeeting={toggleMinimizeMeeting}
           />
-          {/* <VideoScreen sx={{ flexGrow: 1, px: 3 }} users={initUsers} /> */}
-          <Stack
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 4,
-              placeItems: "center",
-              height: "100%",
-              padding: 2,
-            }}
-          >
-            {
-              localStream && (
-                <VideoStreaming
-                  localStream={localStream}
-                  isLocalStream={true}
-                />
-              )
-              //  : (
-              //   <Avatar size={100} src={user?.avatar?.link} />
-              // )
-            }
-            {
-              // remoteStream && (
-              //   <VideoStreaming
-              //     localStream={remoteStream}
-              //     isLocalStream={false}
-              //   />
-              // )
-              // : (
-              //   <MuiAvatar
-              //     sx={{ width: 100, height: 100 }}
-              //     src="/static/images/avatar/1.jpg"
-              //   />
-              // )
-            }
-            {remoteStreams.map((remoteStream, index) => (
-              <VideoStreaming
-                key={index}
-                localStream={remoteStream.stream}
-                isLocalStream={false}
-              />
-            ))}
-          </Stack>
+          <VideoScreen sx={{ flex: 1, px: 3 }} />
+
           <OptionButtonsLayout
             sx={{
               width: "100%",
               boxShadow: "0 -3px 20px 1px #00000026",
+              flexShrink: 0,
             }}
           />
         </Stack>
@@ -161,173 +130,3 @@ export default function MeetingLayout() {
     </Card>
   );
 }
-
-const VideoStreaming = ({
-  localStream,
-  isLocalStream,
-}: {
-  localStream: MediaStream;
-  isLocalStream: boolean;
-}) => {
-  const [isShow, setShow] = useState(false);
-
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    video!.srcObject = localStream;
-
-    video!.onloadedmetadata = () => {
-      video!.play();
-
-      if (isLocalStream) {
-        video!.muted = true;
-        video!.volume = 0;
-      }
-    };
-  }, [localStream, isLocalStream]);
-
-  return (
-    <Box
-      sx={{
-        bgcolor: "gray",
-        width: "100%",
-        height: "100%",
-        display: "grid",
-        placeItems: "center",
-        position: "relative",
-      }}
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-    >
-      <video
-        ref={videoRef}
-        autoPlay
-        style={{ background: "gray", width: "100%", height: "100%" }}
-      />
-      {isShow && (
-        <ButtonOnMyScreen
-          sx={{
-            position: "absolute",
-            bottom: "50%",
-            right: "50%",
-            transform: "translateX(50%) translateY(50%)",
-            bgcolor: "rgba(0,0,0,0.5)",
-            borderRadius: "90px",
-            padding: "8px 16px",
-            backdropFilter: "blur(20px)",
-          }}
-          localStream={localStream}
-          isLocalStream={isLocalStream}
-        />
-      )}
-    </Box>
-  );
-};
-
-const initUsers = [
-  {
-    id: "1",
-    name: "John Doe",
-    isMe: true,
-    avatar: "https://via.placeholder.com/150",
-    stream: null,
-    isMicOn: true,
-    isCameraOn: true,
-    isSpeaker: true,
-    recordStatus: "no" || "started" || "stopped",
-  },
-  {
-    id: "2",
-    name: "Mark Smith",
-    avatar: "https://via.placeholder.com/150",
-    stream: null,
-    isMicOn: false,
-    isCameraOn: false,
-    isSpeaker: false,
-    recordStatus: "no" || "started" || "stopped",
-  },
-  {
-    id: "3",
-    name: "Frank Doe",
-    avatar: "https://via.placeholder.com/150",
-    stream: null,
-    isMicOn: true,
-    isCameraOn: false,
-    isSpeaker: true,
-    recordStatus: "no" || "started" || "stopped",
-  },
-  {
-    id: "4",
-    name: "Hoang Van Doe",
-    avatar: "https://via.placeholder.com/150",
-    stream: null,
-    isMicOn: false,
-    isCameraOn: true,
-    isSpeaker: false,
-    recordStatus: "no" || "started" || "stopped",
-  },
-  {
-    id: "5",
-    name: "Steven Doe",
-    avatar: "https://via.placeholder.com/150",
-    stream: null,
-    isMicOn: true,
-    isCameraOn: false,
-    isSpeaker: false,
-    recordStatus: "no" || "started" || "stopped",
-  },
-  {
-    id: "6",
-    name: "Steven Doe",
-    avatar: "https://via.placeholder.com/150",
-    stream: null,
-    isMicOn: true,
-    isCameraOn: false,
-    isSpeaker: false,
-    recordStatus: "no" || "started" || "stopped",
-  },
-];
-
-const initMessagesArray = [
-  {
-    user: {
-      id: 1,
-      name: "John Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    message: "Hello, how are you?",
-  },
-  {
-    user: {
-      id: 2,
-      name: "Mark Smith",
-      avatar: "https://via.placeholder.com/150",
-    },
-    message: "I'm doing great, thanks!",
-  },
-  {
-    user: {
-      id: 3,
-      name: "Frank Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    message: "Nice to meet you!",
-  },
-  {
-    user: {
-      id: 4,
-      name: "Hoang Van Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    message: "Hello everyone!",
-  },
-  {
-    user: {
-      id: 5,
-      name: "Steven Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    message: "Good morning!",
-  },
-];

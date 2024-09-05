@@ -26,6 +26,8 @@ import { Text } from "components/shared";
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
 import { CHAT_EVENT_TYPE, RoomType } from "store/chat/type";
 import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
+import { useMeeting } from "store/meeting/selectors";
+import { usePathname, useRouter } from "next/navigation";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -56,6 +58,10 @@ const RoomHeader = () => {
   const { user } = useAuth();
   const inputRef = useRef<any>(null);
   const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
+  const { onStartMeeting } = useMeeting();
+  const pathname = usePathname();
+  const router = useRouter();
+
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
       ...prev,
@@ -97,6 +103,15 @@ const RoomHeader = () => {
 
   const onOpenSearchMessage = () => {
     setSearchText({ isOpen: !search.isOpen, text: "" });
+  };
+
+  const startMeeting = async () => {
+    await onStartMeeting(currentConversation.id)
+      .then(() => {
+        if (pathname.includes("/meeting")) return;
+        router.push(`meeting/${currentConversation.id}`);
+      })
+      .catch((e) => console.log(e.message));
   };
 
   useEffect(() => {
@@ -296,6 +311,7 @@ const RoomHeader = () => {
             sx={{
               color: "transparent",
             }}
+            onClick={startMeeting}
           >
             <VideoCallIcon htmlColor={"#1BC5BD"} />
           </IconButton>

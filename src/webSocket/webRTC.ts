@@ -1,19 +1,28 @@
 import { store } from "store/configureStore";
-import { setLocalStream } from "../store/meeting/reducer";
+import { setLocalStream, setLocalStreamState } from "../store/meeting/reducer";
 import Peer from "simple-peer";
 
-export const getLocalStream = (
-  audioOnly: boolean,
-  callback?: () => void,
-  room?: boolean,
-) => {
-  const constraints = { audio: audioOnly, video: true };
+export const getLocalStream = (callback?: () => void) => {
+  const constraints = { audio: true, video: true };
+
+  if (store.getState().meeting.localStream) {
+    if (callback) {
+      callback();
+    }
+    return;
+  }
 
   navigator.mediaDevices
     .getUserMedia(constraints)
     .then((stream) => {
-      store.dispatch(setLocalStream(stream));
+      console.log("webrtcv", stream);
 
+      const isCameraOn = stream
+        .getVideoTracks()
+        .every((track) => track.enabled);
+      const isMicOn = stream.getAudioTracks().every((track) => track.enabled);
+      store.dispatch(setLocalStream(stream));
+      store.dispatch(setLocalStreamState({ isCameraOn, isMicOn }));
       if (callback) {
         callback();
       }
