@@ -9,6 +9,10 @@ import useUpdateTicket from "queries/ticket/useTicketAction/useUpdateTicket";
 import { memo, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { Permission } from "constant/enums";
+import useDebounce from "hooks/useDebounce";
+import { setKeySearchTicketAgent } from "store/ticket-agent/actions";
+import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
+import { useAppDispatch, useAppSelector } from "store/hooks";
 
 
 type PropsAssgiGroup = {
@@ -31,6 +35,24 @@ const AssignGroup = (props: PropsAssgiGroup) => {
   const [urlAvatar, setUrlAvatar] = useState(item?.assignUser?.urlAvatar);
   const [keyword, setKeyword] = useState('');
   const { onAddSnackbar } = useSnackbar();
+  const dataSearch = useAppSelector(selectSearchTicketAgent);
+  const dispatch = useAppDispatch()
+
+
+  const [keySearch] = useDebounce(() => {
+    const payload = {
+      ...dataSearch,
+      keyword: keyword,
+    };
+    dispatch(setKeySearchTicketAgent(payload));
+  }, 500)
+
+
+  useEffect(() => {
+    keySearch();  
+  }, [keyword]);
+
+
 
 
   const hanldChange = (value) => {
@@ -38,6 +60,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
     setValue(value?.fullname);
     setUrlAvatar(value?.urlAvatar);
     setOpen(false);
+    setKeyword("");
 
     if (type == "detail") {
       setAssign(value?.id)
