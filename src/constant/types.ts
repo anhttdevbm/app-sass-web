@@ -65,6 +65,7 @@ export interface BaseQueries {
   pageIndex?: number;
   pageSize?: number;
   query?: string;
+  page?: number;
 }
 
 export interface BaseQueries_Feedback {
