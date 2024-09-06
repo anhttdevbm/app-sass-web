@@ -3,29 +3,30 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import {
   Box,
   ButtonBase,
+  FormLabel,
+  Grid,
   Grow,
-  IconButton,
+  InputAdornment,
   MenuItem,
   MenuList,
   Popper,
   Stack,
-  TableRow,
   TextField,
-  Tooltip,
-  popoverClasses,
+  popoverClasses
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
 import ConfirmDialog from "components/ConfirmDialog";
 import {
   Button,
-  IconButton as IconButton2,
+  IconButton,
   Select,
   Text,
+  Tooltip
 } from "components/shared";
 import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
-import { BodyCell, CellProps } from "components/Table";
+import { CellProps } from "components/Table";
 import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
 import { NS_BUDGETING } from "constant/index";
 import { Option } from "constant/types";
@@ -33,7 +34,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useOnClickOutside } from "hooks/useOnClickOutside";
 import useToggle from "hooks/useToggle";
 import CalendarIcon from "icons/CalendarIcon";
-import MoveDotIcon from "icons/MoveDotIcon";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
 import PlusIcon from "icons/PlusIcon";
 import _ from "lodash";
 import { useTranslations } from "next-intl";
@@ -372,387 +373,614 @@ const ServiceSectionRow = ({
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
+                          style={{ width: "100%" }}
                         >
                           <Stack
                             direction={{
                               xs: "column",
                               sm: "row",
                             }}
-                            alignItems="center"
+                            // alignItems="center"
                             py={1}
+                            sx={{
+                              background: "#edebeb", 
+                              borderRadius: "24px",  
+                              padding: "16px",  
+                              width: "100%",   
+                              marginBottom: "16px", 
+                            }}
                           >
-                            {/* <IconButton2
-                              noPadding
-                              {...provided.dragHandleProps}
-                            >
-                              <MoveDotIcon />
-                            </IconButton2> */}
-                            <TableRow key={service.id}>
-                              <BodyCell sx={{ px: 0, ...getSxCell(0) }}>
-                                <IconButton2
+                            <Grid container spacing={2} key={service.id}>
+                              <Grid item xs={12}>
+                                  {/* <IconButton2
                                   noPadding
                                   {...provided.dragHandleProps}
                                 >
                                   <MoveDotIcon />
-                                </IconButton2>
-                              </BodyCell>
-                              <BodyCell sx={getSxCell(1)}>
-                                <TextField
-                                  {...register(`services.${index}.name`)}
-                                  size="small"
-                                  variant="outlined"
-                                  fullWidth
-                                  sx={{
-                                    maxWidth: "350px !important",
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      ...(hasError(errs, index, "name") && {
-                                        borderColor: "error.main",
-                                      }),
-                                    },
-                                  }}
-                                  autoComplete="off"
-                                  onChange={(e) => {
-                                    setValue(
-                                      `services.${index}.name`,
-                                      e?.target?.value || "",
-                                    );
-                                    updateValue(
-                                      fieldIndex,
-                                      watch("services") as TBudgetService[],
-                                    );
-                                  }}
-                                />
-                              </BodyCell>
-                              <BodyCell sx={getSxCell(2)}>
-                                <Select
-                                  size="small"
-                                  fullWidth
-                                  options={positionOptions as Option[]}
-                                  onChangeValue={(value) => {
-                                    setValue(
-                                      `services.${index}.serviceType`,
-                                      String(value),
-                                    );
-                                    updateValue(
-                                      fieldIndex,
-                                      watch("services") as TBudgetService[],
-                                    );
-                                  }}
-                                  value={watch(`services.${index}.serviceType`)}
-                                  autoComplete="off"
-                                  sx={{
-                                    minWidth: "160px !important",
-                                    [`& .MuiInputBase-root`]: {
-                                      px: 1,
-                                      backgroundColor: "background.paper",
-                                      pl: 0,
-                                      gap: 1,
-                                    },
-                                    "& .MuiFormHelperText-root": {
-                                      display: "none",
-                                    },
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      ...(hasError(errs, index, "type") && {
-                                        borderColor: "error.main",
-                                      }),
-                                    },
-                                  }}
-                                />
-                              </BodyCell>
-                              <BodyCell sx={getSxCell(3)}>
-                                <Select
-                                  size="small"
-                                  fullWidth
-                                  options={billTypeOptions as Option[]}
-                                  onChangeValue={(value) => {
-                                    setValue(
-                                      `services.${index}.billType`,
-                                      String(value),
-                                    );
-                                    updateValue(
-                                      fieldIndex,
-                                      watch("services") as TBudgetService[],
-                                    );
-                                  }}
-                                  value={watch(`services.${index}.billType`)}
-                                  autoComplete="off"
-                                  sx={{
-                                    minWidth: "160px !important",
-                                    [`& .MuiInputBase-root`]: {
-                                      px: 1,
-                                      backgroundColor: "background.paper",
-                                      pl: 0,
-                                      gap: 1,
-                                    },
-                                    "& .MuiFormHelperText-root": {
-                                      display: "none",
-                                    },
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      ...(hasError(errs, index, "type") && {
-                                        borderColor: "error.main",
-                                      }),
-                                    },
-                                  }}
-                                />
-
-                              </BodyCell>
-                              <BodyCell sx={getSxCell(4)}>
-                                <Select
-                                  size="small"
-                                  fullWidth
-                                  options={[
-                                    {
-                                      label: SERVICE_UNIT_OPTIONS.DAY,
-                                      value: SERVICE_UNIT_OPTIONS.DAY,
-                                    },
-                                    {
-                                      label: SERVICE_UNIT_OPTIONS.HOUR,
-                                      value: SERVICE_UNIT_OPTIONS.HOUR,
-                                    },
-                                  ]}
-                                  onChangeValue={(value) => {
-                                    setValue(
-                                      `services.${index}.unit`,
-                                      String(value),
-                                    );
-                                    updateValue(
-                                      fieldIndex,
-                                      watch("services") as TBudgetService[],
-                                    );
-                                  }}
-                                  value={watch(`services.${index}.unit`)}
-                                  autoComplete="off"
-                                  sx={{
-                                    minWidth: "160px !important",
-                                    [`& .MuiInputBase-root`]: {
-                                      px: 1,
-                                      backgroundColor: "background.paper",
-                                      pl: 0,
-                                      gap: 1,
-                                    },
-                                    "& .MuiFormHelperText-root": {
-                                      display: "none",
-                                    },
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      ...(hasError(errs, index, "type") && {
-                                        borderColor: "error.main",
-                                      }),
-                                    },
-                                  }}
-                                />
-                              </BodyCell>
-                              <BodyCell sx={getSxCell(5)}>
-                                <Stack
-                                  gap={1}
-                                  direction="row"
-                                  justifyContent="center"
-                                >
-                                  <Box sx={{ cursor: "pointer" }}>
-                                    <Tooltip
-                                      placement="top"
-                                      arrow
-                                      title={`Time tracking is ${
-                                        !watch(`services.${index}.timeTracking`)
-                                          ? "disable"
-                                          : "enable"
-                                      }`}
-                                    >
-                                      <IconButton
-                                        onClick={() =>
-                                          changeTracking(index, "timeTracking")
+                                </IconButton2> */}
+                                <Grid container spacing={2}>
+                                  {/* Row 1 */}
+                                  <Grid item xs={3}>
+                                    <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.serviceName")}</FormLabel>
+                                    <TextField
+                                      {...register(`services.${index}.name`)}
+                                      size="small"
+                                      variant="outlined"
+                                      fullWidth
+                                      // sx={{
+                                      //   maxWidth: "350px !important",
+                                      //   "& .MuiOutlinedInput-notchedOutline": {
+                                      //     ...(hasError(errs, index, "name") && {
+                                      //       borderColor: "error.main",
+                                      //     }),
+                                      //   },
+                                      // }}
+                                      sx={{
+                                        background: '#FFFFFF',
+                                        border: '1px solid #EFEFEF',
+                                        borderRadius: 8,
+                                        opacity: 1, // Ensure opacity is 1 to make it visible
+                                        width: '90%',
+                                        '& .MuiOutlinedInput-root': {
+                                          padding: 0, // Reset padding to ensure it aligns with your custom padding
+                                          '& fieldset': {
+                                            border: 'none', // Remove default border
+                                          },
+                                        },
+                                        '& .MuiOutlinedInput-input': {
+                                          padding: '10px 20px',
+                                          fontWeight: 800,
+                                          color: '#4D4D4D', 
+                                        },
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                          border: 'none', // Remove default border
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                          borderColor: 'transparent', // Transparent border on hover
+                                        },
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                          borderColor: 'transparent', // Transparent border when focused
+                                        },
+                                      }}
+                                      autoComplete="off"
+                                      onChange={(e) => {
+                                        setValue(
+                                          `services.${index}.name`,
+                                          e?.target?.value || "",
+                                        );
+                                        updateValue(
+                                          index,
+                                          watch("services"),
+                                        );
+                                      }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.serviceType")}</FormLabel>
+                                    <Select
+                                      size="small"
+                                      fullWidth
+                                      options={positionOptions as Option[]}
+                                      SelectProps={{
+                                        IconComponent: () => (
+                                          <ChevronCircleIcon
+                                            sx={{ fontSize: 20, color: "transparent" }}
+                                          />
+                                        ),
+                                      }}
+                                      onChangeValue={(value) => {
+                                        setValue(
+                                          `services.${index}.serviceType`,
+                                          String(value),
+                                        );
+                                        updateValue(
+                                          fieldIndex,
+                                          watch("services") as TBudgetService[],
+                                        );
+                                      }}
+                                      value={watch(`services.${index}.serviceType`)}
+                                      autoComplete="off"
+                                      sx={{
+                                        ...sxConfig.input,
+                                        minWidth: "160px !important",
+                                        [`& .MuiOutlinedInput-notchedOutline`]: {
+                                          ...(hasError(errs, index, "type") && {
+                                            borderColor: "error.main",
+                                          }),
+                                        },
+                                        "& .MuiInputBase-root ": {
+                                          px: 1,
+                                          backgroundColor: "background.paper",
+                                          fontWeight: 800,
+                                        },
+                                      }}
+                                      titleSx={{
+                                        top: -14,
+                                        left: -14,
+                                        color: "text.primary",
+                                        fontWeight: 600,
+                                      }}
+                                      rootSx={{
+                                        p: 0.75,
+                                        borderRadius: "2rem",
+                                      }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.billType")}</FormLabel>
+                                    <Select
+                                      size="small"
+                                      fullWidth
+                                      options={billTypeOptions as Option[]}
+                                      onChangeValue={(value) => {
+                                        setValue(
+                                          `services.${index}.billType`,
+                                          String(value),
+                                        );
+                                        updateValue(
+                                          fieldIndex,
+                                          watch("services") as TBudgetService[],
+                                        );
+                                      }}
+                                      value={watch(`services.${index}.billType`)}
+                                      autoComplete="off"
+                                      SelectProps={{
+                                        IconComponent: () => (
+                                          <ChevronCircleIcon
+                                            sx={{ fontSize: 20, color: "transparent" }}
+                                          />
+                                        ),
+                                      }}
+                                      sx={{
+                                        ...sxConfig.input,
+                                        minWidth: "160px !important",
+                                        [`& .MuiOutlinedInput-notchedOutline`]: {
+                                          ...(hasError(errs, index, "type") && {
+                                            borderColor: "error.main",
+                                          }),
+                                        },
+                                        "& .MuiInputBase-root ": {
+                                          px: 1,
+                                          backgroundColor: "background.paper",
+                                        },
+                                      }}
+                                      titleSx={{
+                                        top: -14,
+                                        left: -14,
+                                        color: "text.primary",
+                                        fontWeight: 600,
+                                      }}
+                                      rootSx={{
+                                        p: 0.75,
+                                        borderRadius: "2rem",
+                                      }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.unit")}</FormLabel>
+                                    <Select
+                                      size="small"
+                                      fullWidth
+                                      options={[
+                                        {
+                                          label: SERVICE_UNIT_OPTIONS.DAY,
+                                          value: SERVICE_UNIT_OPTIONS.DAY,
+                                        },
+                                        {
+                                          label: SERVICE_UNIT_OPTIONS.HOUR,
+                                          value: SERVICE_UNIT_OPTIONS.HOUR,
+                                        },
+                                      ]}
+                                      onChangeValue={(value) => {
+                                        setValue(
+                                          `services.${index}.unit`,
+                                          String(value),
+                                        );
+                                        updateValue(
+                                          fieldIndex,
+                                          watch("services") as TBudgetService[],
+                                        );
+                                      }}
+                                      value={watch(`services.${index}.unit`)}
+                                      autoComplete="off"
+                                      SelectProps={{
+                                        IconComponent: () => (
+                                          <ChevronCircleIcon
+                                            sx={{ fontSize: 20, color: "transparent" }}
+                                          />
+                                        ),
+                                      }}
+                                      sx={{
+                                        ...sxConfig.input,
+                                        minWidth: "160px !important",
+                                        [`& .MuiOutlinedInput-notchedOutline`]: {
+                                          ...(hasError(errs, index, "type") && {
+                                            borderColor: "error.main",
+                                          }),
+                                        },
+                                        "& .MuiInputBase-root ": {
+                                          px: 1,
+                                          backgroundColor: "background.paper",
+                                        },
+                                      }}
+                                      titleSx={{
+                                        top: -14,
+                                        left: -14,
+                                        color: "text.primary",
+                                        fontWeight: 600,
+                                      }}
+                                      rootSx={{
+                                        p: 0.75,
+                                        borderRadius: "2rem",
+                                      }}
+                                    />
+                                  </Grid>
+                                  {/* Row 2 */}
+                                  <Grid item xs={3}>
+                                    <Stack spacing={1}>
+                                      <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.tracking")}</FormLabel>
+                                      <Stack
+                                          gap={1}
+                                          direction="row"
+                                          justifyContent="flex-start"
+                                          alignItems="center"
+                                        >
+                                          <Box sx={{ 
+                                              cursor: "pointer",
+                                              display: "flex",
+                                              alignItems: "center",
+                                              justifyContent: "center",
+                                              bgcolor: "white", // Background color for the circle
+                                              borderRadius: "50%", // Make the background round
+                                              width: 40, // Width of the circle
+                                              height: 40, // Height of the circle
+                                              p: 0.5, // Padding around the icon inside the circle
+                                              }}
+                                            >
+                                            <Tooltip
+                                              placement="top"
+                                              arrow
+                                              title={`Time tracking is ${
+                                                !watch(`services.${index}.timeTracking`)
+                                                  ? "disable"
+                                                  : "enable"
+                                              }`}
+                                            >
+                                              <IconButton
+                                                onClick={() =>
+                                                  changeTracking(index, "timeTracking")
+                                                }
+                                              >
+                                                <AccessTimeIcon
+                                                  sx={{
+                                                    color: !watch(
+                                                      `services.${index}.timeTracking`,
+                                                    )
+                                                      ? "grey.300"
+                                                      : "secondary.main",
+                                                  }}
+                                                />
+                                              </IconButton>
+                                            </Tooltip>
+                                          </Box>
+                                          <Box sx={{ 
+                                              cursor: "pointer",
+                                              display: "flex",
+                                              alignItems: "center",
+                                              justifyContent: "center",
+                                              bgcolor: "white", // Background color for the circle
+                                              borderRadius: "50%", // Make the background round
+                                              width: 40, // Width of the circle
+                                              height: 40, // Height of the circle
+                                              p: 0.5, // Padding around the icon inside the circle
+                                            }}
+                                          >
+                                            <Tooltip
+                                              placement="top"
+                                              arrow
+                                              title={`Booking tracking is ${
+                                                !watch(
+                                                  `services.${index}.bookingTracking`,
+                                                )
+                                                  ? "disable"
+                                                  : "enable"
+                                              }`}
+                                            >
+                                              <IconButton
+                                                onClick={() =>
+                                                  changeTracking(
+                                                    index,
+                                                    "bookingTracking",
+                                                  )
+                                                }
+                                              >
+                                                <CalendarIcon
+                                                  sx={{
+                                                    color: !watch(
+                                                      `services.${index}.bookingTracking`,
+                                                    )
+                                                      ? "grey.300"
+                                                      : "secondary.main",
+                                                  }}
+                                                />
+                                              </IconButton>
+                                            </Tooltip>
+                                          </Box>
+                                      </Stack>
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <Stack spacing={1}>
+                                      <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.estimate")}</FormLabel>
+                                      <TimePicker
+                                        disabled={
+                                          watch(`services.${index}.billType`) !==
+                                            BudgetServiceBillable.FIXED &&
+                                          watch(`services.${index}.billType`) !==
+                                            BudgetServiceBillable.NON_BILLABLE
                                         }
-                                      >
-                                        <AccessTimeIcon
-                                          sx={{
-                                            color: !watch(
-                                              `services.${index}.timeTracking`,
-                                            )
-                                              ? "grey.300"
-                                              : "secondary.main",
-                                          }}
-                                        />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </Box>
-                                  <Box sx={{ cursor: "pointer" }}>
-                                    <Tooltip
-                                      placement="top"
-                                      arrow
-                                      title={`Booking tracking is ${
-                                        !watch(
-                                          `services.${index}.bookingTracking`,
-                                        )
-                                          ? "disable"
-                                          : "enable"
-                                      }`}
-                                    >
-                                      <IconButton
-                                        onClick={() =>
-                                          changeTracking(
-                                            index,
-                                            "bookingTracking",
-                                          )
+                                        slotProps={{ textField: { size: "small" } }}
+                                        views={["hours", "minutes"]}
+                                        format="HH:mm"
+                                        defaultValue={
+                                          defautlEstimate
+                                            ? dayjs(defautlEstimate)
+                                            : null
                                         }
+                                        sx={{
+                                          ...sxConfig.input,
+                                          minWidth: "160px !important",
+                                          "& .MuiInputBase-input": {
+                                            textAlign: "center",
+                                            fontWeight: 800,
+                                          },
+                                          "& .MuiOutlinedInput-notchedOutline": {
+                                            ...(hasError(errs, index, "estimate") && {
+                                              borderColor: "error.main",
+                                            }),
+                                          },
+                                          "& .MuiInputBase-root": {
+                                            px: 1,
+                                            backgroundColor: "background.paper",
+                                            borderRadius: "20px",
+                                          },
+                                        }}
+                                        onChange={(time: Dayjs | null) =>
+                                          changeTime(index, time)
+                                        }
+                                      />
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.quantity")}</FormLabel>
+                                    <TextField
+                                      {...register(`services.${index}.qty`)}
+                                      disabled={
+                                        watch(`services.${index}.billType`) !==
+                                          BudgetServiceBillable.FIXED &&
+                                        watch(`services.${index}.billType`) !==
+                                          BudgetServiceBillable.ACTUALS
+                                      }
+                                      size="small"
+                                      variant="outlined"
+                                      fullWidth
+                                      type="number"
+                                      // sx={{
+                                      //   maxWidth: "350px !important",
+                                      //   "& .MuiOutlinedInput-notchedOutline": {
+                                      //     ...(hasError(errs, index, "qty") && {
+                                      //       borderColor: "error.main",
+                                      //     }),
+                                      //   },
+                                      // }}
+                                      sx={{
+                                        background: '#FFFFFF',
+                                        border: '1px solid #EFEFEF',
+                                        borderRadius: 8,
+                                        opacity: 1, // Ensure opacity is 1 to make it visible
+                                        width: '90%',
+                                        '& .MuiOutlinedInput-root': {
+                                          padding: 0, // Reset padding to ensure it aligns with your custom padding
+                                          '& fieldset': {
+                                            border: 'none', // Remove default border
+                                          },
+                                        },
+                                        '& .MuiOutlinedInput-input': {
+                                          padding: '10px 20px', 
+                                          fontWeight: 800,
+                                          color: '#4D4D4D', 
+                                        },
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                          border: 'none', // Remove default border
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                          borderColor: 'transparent', // Transparent border on hover
+                                        },
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                          borderColor: 'transparent', // Transparent border when focused
+                                        },
+                                      }}
+                                      autoComplete="off"
+                                      onChange={(e) => {
+                                        setValue(
+                                          `services.${index}.qty`,
+                                          Number(e?.target?.value) || 0,
+                                        );
+                                        updateValue(
+                                          fieldIndex,
+                                          watch("services") as TBudgetService[],
+                                        );
+                                      }}
+                                    />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                    <FormLabel sx={{ color: '#999999', fontWeight: 700, fontSize: '13px' }}>{budgetT("tabService.section.price")}</FormLabel>
+                                    <Stack
+                                      direction="row"
+                                      alignItems={"center"}
+                                      gap={1}
+                                    >
+                                      <TextField
+                                        {...register(`services.${index}.price`)}
+                                        disabled={
+                                          watch(`services.${index}.billType`) !==
+                                            BudgetServiceBillable.FIXED &&
+                                          watch(`services.${index}.billType`) !==
+                                            BudgetServiceBillable.ACTUALS
+                                        }
+                                        size="small"
+                                        variant="outlined"
+                                        fullWidth
+                                        type="number"
+                                        sx={{
+                                          maxWidth: "350px !important",
+                                          "& .MuiOutlinedInput-notchedOutline": {
+                                            ...(hasError(errs, index, "price") && {
+                                              borderColor: "error.main",
+                                            }),
+                                            border: 'none',
+                                          },
+                                          background: '#FFFFFF',
+                                          border: '1px solid #EFEFEF',
+                                          borderRadius: 8,
+                                          opacity: 1,
+                                          width: '90%',
+                                          '& .MuiOutlinedInput-root': {
+                                            padding: 0,
+                                            '& fieldset': {
+                                              border: 'none',
+                                            },
+                                          },
+                                          '& .MuiOutlinedInput-input': {
+                                            padding: '10px 20px',
+                                            fontWeight: 800,
+                                            color: '#4D4D4D', 
+                                          },
+                                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: 'transparent',
+                                          },
+                                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: 'transparent',
+                                          },
+                                        }}
+                                        autoComplete="off"
+                                        onChange={(e) => {
+                                          setValue(
+                                            `services.${index}.price`,
+                                            Number(e?.target?.value) || 0,
+                                          );
+                                          updateValue(
+                                            fieldIndex,
+                                            watch("services") as TBudgetService[],
+                                          );
+                                        }}
+                                        InputProps={{
+                                          endAdornment: (
+                                            <InputAdornment position="end">
+                                              <Box
+                                                sx={{
+                                                  fontSize: '13px',
+                                                  fontWeight: 800,
+                                                  lineHeight: '20.43px',
+                                                  textAlign: 'center',
+                                                  color: '#4D4D4D', 
+                                                  padding: '0 10px', 
+                                                }}
+                                              >
+                                                {"USD/" +
+                                                  (watch(`services.${index}.unit`) === "hour" ? "hr" : "day")
+                                                }
+                                              </Box>
+                                            </InputAdornment>
+                                          ),
+                                        }}
+                                      />
+                                      
+                                    </Stack>
+                                  </Grid>
+                                  {/* Row 3 */}
+                                  <Grid item xs={12}>
+                                    <Box
+                                      sx={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-end', // Align items to the right
+                                        alignItems: 'center', // Vertically center the items
+                                        gap: '10px', // Add spacing between elements
+                                      }}
+                                    >
+                                      <FormLabel
+                                        sx={{
+                                          color: '#999999',
+                                          fontWeight: 700,
+                                          fontSize: '13px',
+                                        }}
                                       >
-                                        <CalendarIcon
-                                          sx={{
-                                            color: !watch(
-                                              `services.${index}.bookingTracking`,
-                                            )
-                                              ? "grey.300"
-                                              : "secondary.main",
-                                          }}
-                                        />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </Box>
-                                </Stack>
-                              </BodyCell>
-                              <BodyCell sx={getSxCell(6)}>
-                                <TimePicker
-                                  disabled={
-                                    watch(`services.${index}.billType`) !==
-                                      BudgetServiceBillable.FIXED &&
-                                    watch(`services.${index}.billType`) !==
-                                      BudgetServiceBillable.NON_BILLABLE
-                                  }
-                                  slotProps={{ textField: { size: "small" } }}
-                                  views={["hours", "minutes"]}
-                                  format="HH:mm"
-                                  defaultValue={
-                                    defautlEstimate
-                                      ? dayjs(defautlEstimate)
-                                      : null
-                                  }
-                                  sx={{
-                                    width: "160px !important",
-                                    minWidth: "160px !important",
-                                    maxWidth: "160px !important",
-                                    "& .MuiInputBase-input": {
-                                      textAlign: "center",
-                                    },
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      ...(hasError(errs, index, "estimate") && {
-                                        borderColor: "error.main",
-                                      }),
-                                    },
-                                  }}
-                                  onChange={(time: Dayjs | null) =>
-                                    changeTime(index, time)
-                                  }
-                                />
-                              </BodyCell>
-
-                              <BodyCell sx={getSxCell(7)}>
-                                <TextField
-                                  {...register(`services.${index}.qty`)}
-                                  disabled={
-                                    watch(`services.${index}.billType`) !==
-                                      BudgetServiceBillable.FIXED &&
-                                    watch(`services.${index}.billType`) !==
-                                      BudgetServiceBillable.ACTUALS
-                                  }
-                                  size="small"
-                                  variant="outlined"
-                                  fullWidth
-                                  type="number"
-                                  sx={{
-                                    maxWidth: "350px !important",
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      ...(hasError(errs, index, "qty") && {
-                                        borderColor: "error.main",
-                                      }),
-                                    },
-                                  }}
-                                  autoComplete="off"
-                                  onChange={(e) => {
-                                    setValue(
-                                      `services.${index}.qty`,
-                                      Number(e?.target?.value) || 0,
-                                    );
-                                    updateValue(
-                                      fieldIndex,
-                                      watch("services") as TBudgetService[],
-                                    );
-                                  }}
-                                />
-                              </BodyCell>
-
-                              <BodyCell sx={getSxCell(8)}>
-                                <Stack
-                                  direction="row"
-                                  alignItems={"center"}
-                                  gap={1}
-                                >
-                                  <TextField
-                                    {...register(`services.${index}.price`)}
-                                    disabled={
-                                      watch(`services.${index}.billType`) !==
-                                        BudgetServiceBillable.FIXED &&
-                                      watch(`services.${index}.billType`) !==
-                                        BudgetServiceBillable.ACTUALS
-                                    }
-                                    size="small"
-                                    variant="outlined"
-                                    fullWidth
-                                    type="number"
-                                    sx={{
-                                      width: "59%",
-                                      maxWidth: "350px !important",
-                                      "& .MuiOutlinedInput-notchedOutline": {
-                                        ...(hasError(errs, index, "price") && {
-                                          borderColor: "error.main",
-                                        }),
-                                      },
-                                    }}
-                                    autoComplete="off"
-                                    onChange={(e) => {
-                                      setValue(
-                                        `services.${index}.price`,
-                                        Number(e?.target?.value) || 0,
-                                      );
-                                      updateValue(
-                                        fieldIndex,
-                                        watch("services") as TBudgetService[],
-                                      );
-                                    }}
-                                  />
-                                  {"USD/" +
-                                    (watch(`services.${index}.unit`) === "hour"
-                                      ? "hr"
-                                      : "day")}
-                                </Stack>
-                              </BodyCell>
-
-                              <BodyCell sx={getSxCell(9)}>
-                                {formatNumber(
-                                  (watch(`services.${index}.qty`) || 0) *
-                                    (watch(`services.${index}.price`) || 0),
-                                  {
-                                    prefix: CURRENCY_SYMBOL["USD"],
-                                    numberOfFixed: 0,
-                                  },
-                                )}
-                                {}
-                              </BodyCell>
-
-                              <BodyCell sx={getSxCell(10)}>
-                                <Stack
-                                  direction={"row"}
-                                  spacing={0}
-                                  sx={{
-                                    position: "relative",
-                                    zIndex: 99,
-                                  }}
-                                >
-                                  <ServiceItemAction
-                                    onChangeAction={handleExecActions}
-                                    serviceId={service.id}
-                                    index={index}
-                                  />
-                                </Stack>
-                              </BodyCell>
-                            </TableRow>
+                                        {budgetT("tabService.section.totalBudget")}
+                                      </FormLabel>
+                                      
+                                      <TextField
+                                        disabled
+                                        size="small"
+                                        variant="outlined"
+                                        type="number"
+                                        sx={{
+                                          "& .MuiOutlinedInput-notchedOutline": {
+                                            border: 'none',
+                                          },
+                                          background: '#FFFFFF',
+                                          border: '1px solid #EFEFEF',
+                                          borderRadius: 8,
+                                          opacity: 1,
+                                          width: 'auto', // Auto-adjust width
+                                          minWidth: '150px', // Minimum width
+                                          '& .MuiOutlinedInput-root': {
+                                            padding: 0,
+                                            '& fieldset': {
+                                              border: 'none',
+                                            },
+                                          },
+                                          '& .MuiOutlinedInput-input': {
+                                            padding: '10px 20px',
+                                            fontWeight: 800,
+                                            color: '#4D4D4D',
+                                            textAlign: 'right',
+                                            '&::placeholder': {
+                                              color: '#333333', // Darker color for placeholder
+                                              fontWeight: 700, // Bolder font weight for placeholder
+                                            },
+                                          },
+                                          '& .Mui-disabled': {
+                                            color: '#000000', // Custom color for disabled text
+                                            WebkitTextFillColor: '#000000', // Ensures color is applied in WebKit browsers
+                                          },
+                                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: 'transparent',
+                                          },
+                                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: 'transparent',
+                                          },
+                                        }}
+                                        placeholder={formatNumber(
+                                          (watch(`services.${index}.qty`) || 0) *
+                                            (watch(`services.${index}.price`) || 0),
+                                          {
+                                            prefix: CURRENCY_SYMBOL["USD"],
+                                            numberOfFixed: 0,
+                                          }
+                                        )}
+                                        autoComplete="off"
+                                      />
+                                      
+                                      <ServiceItemAction
+                                        onChangeAction={handleExecActions}
+                                        serviceId={service.id}
+                                        index={index}
+                                      />
+                                    </Box>
+                                  </Grid>
+                                </Grid>
+                                </Grid>
+                              </Grid>            
                           </Stack>
                         </div>
                       )}
@@ -851,3 +1079,9 @@ const ServiceSectionRow = ({
 };
 
 export default ServiceSectionRow;
+
+const sxConfig = {
+  input: {
+    height: 56,
+  },
+};
