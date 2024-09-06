@@ -58,8 +58,8 @@ export interface IMember {
 export type ISelectMember = Pick<IMember, "id" | "fullname">;
 
 const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
-  const { fullPath } = useQueryParams();
-  console.log('fullPath   =>>>', fullPath)
+  const { query } = useQueryParams();
+  console.log("fullPath   =>>>", query);
   const docsT = useTranslations(NS_DOCS);
   const [members, setMembers] = useState<IMember[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
@@ -76,8 +76,6 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-
 
   const [selectedMember, setSelectedMember] = useState<ISelectMember>();
   const [searchQueries, setSearchQueries] = useState("");
@@ -180,7 +178,7 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
 
   const onChangeMembers = (id: string, fullname: string) => {
     setSelectedMember({ id: id, fullname: fullname });
-    onChange("user_id", { id: id, fullname: fullname });
+    onChange("user_id", [{ id: id, fullname: fullname }]);
   };
 
   const fetchMember = async (queries?: any) => {
@@ -206,6 +204,12 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
     fetchMember();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (query.user_id) {
+      setSelectedMember({ id: query.user_id, fullname: "" });
+    }
+  }, [query.user_id]);
 
   return (
     <>
@@ -268,6 +272,7 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
           <Search
             name="email"
             value=""
+            hasClear
             //placeholder={commonT("searchBy", { name: "email" })}
             onEnter={onChangeSearch}
             emitWhenEnter
