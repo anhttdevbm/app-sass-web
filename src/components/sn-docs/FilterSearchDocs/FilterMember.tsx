@@ -21,11 +21,12 @@ import { Search } from "components/Filters";
 import MemberItem from "components/sn-projects/components/MemberItem";
 import { useEmployeeOptions } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getMembers } from "store/company/actions";
 import { MemberListSelect } from "./components";
 import CircularProgress from "@mui/material/CircularProgress";
+import useQueryParams from "hooks/useQueryParams";
 
 export interface IMember {
   id: string;
@@ -54,9 +55,11 @@ export interface IMember {
   last_online_at: string;
 }
 
-export type ISelectMember = Pick<IMember, 'id' | 'fullname'>;
+export type ISelectMember = Pick<IMember, "id" | "fullname">;
 
 const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
+  const { fullPath } = useQueryParams();
+  console.log('fullPath   =>>>', fullPath)
   const docsT = useTranslations(NS_DOCS);
   const [members, setMembers] = useState<IMember[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
@@ -74,7 +77,10 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
 
+
+
   const [selectedMember, setSelectedMember] = useState<ISelectMember>();
+  const [searchQueries, setSearchQueries] = useState("");
   // const [members, setMembers] = useState<any[]>([]);
 
   //const [name, setName] = useState<any>([]);
@@ -97,12 +103,15 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   // setMembers(newData);
   //   onChange("user_id", newData);
   // };
-  const onChangeSearch = async  (name: string, newValue?: string | number) => {
+  const onChangeSearch = async (name: string, newValue?: string | number) => {
+    const newPageIndex = 0;
     setMembers([]);
-    setPageIndex(0);
+    setPageIndex(newPageIndex);
     setHasMore(true);
-    const queries = { pageIndex: 1, pageSize: 10, [name]: newValue }
-    await fetchMember(queries)
+    const queries = { page: newPageIndex, [name]: newValue };
+    const queryString = transformQueries(queries);
+    setSearchQueries(queryString);
+    await fetchMember({ page: newPageIndex, query: queryString });
     // onGetEmployeeOptions({ pageIndex: 1, pageSize: 10, [name]: newValue });
   };
 
@@ -145,25 +154,51 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   //   console.log('newValue', newValue)
   // }
 
+  const transformQueries = (queries: Record<string, any>): string => {
+    const conditions: string[] = [];
+
+    for (const [key, value] of Object.entries(queries)) {
+      if (key !== "page" && value !== undefined && value !== "") {
+        if (typeof value === "string") {
+          conditions.push(`like(${key},"${value}")`);
+        } else if (typeof value === "number") {
+          conditions.push(`eq(${key},${value})`);
+        }
+      }
+    }
+
+    if (conditions.length === 0) {
+      return "";
+    }
+
+    if (conditions.length === 1) {
+      return conditions[0];
+    }
+
+    return `and(${conditions.join(",")})`;
+  };
+
   const onChangeMembers = (id: string, fullname: string) => {
-    setSelectedMember({id: id, fullname: fullname});
+    setSelectedMember({ id: id, fullname: fullname });
+    onChange("user_id", { id: id, fullname: fullname });
   };
 
   const fetchMember = async (queries?: any) => {
     let params = {
       page: pageIndex,
+      query: searchQueries,
     };
-    if (queries) {
-      params = queries
-    }
+
+    params = { ...params, ...queries };
+
     const res = await getMembers(params);
     if (res) {
-      if (pageIndex > res.totalPages) {
+      if (params.page >= res.total_page) {
         setHasMore(false);
       }
       setMembers((prevMembers) => [...prevMembers, ...res.data]);
-      setTotalPages(res.totalPages);
-      setPageIndex((prevPageIndex) => prevPageIndex + 1); 
+      setTotalPages(res.total_page);
+      setPageIndex((prevPageIndex) => params.page + 1);
     }
   };
 
