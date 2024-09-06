@@ -131,6 +131,25 @@ export const getEmployeeOptions = createAsyncThunk(
   },
 );
 
+export const getMembers = async (queries: BaseQueries & { email?: string; fullname?: string }) => {
+  queries = serverQueries({ ...queries, sort: "created_time=-1" }, [
+    "email",
+    "fullname",
+  ]) as GetEmployeeListQueries;
+  try {
+    const response = await client.get(Endpoint.COMPANY_MEMBERS, queries, {
+      baseURL: AUTH_API_URL,
+    });
+
+    if (response?.status === HttpStatusCode.OK) {
+      return response.data;
+    }
+    throw AN_ERROR_TRY_AGAIN;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const createEmployee = createAsyncThunk(
   "company/createEmployee",
   async (data: EmployeeData) => {
