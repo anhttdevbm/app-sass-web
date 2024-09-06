@@ -234,7 +234,6 @@ function TemplateTwo({
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
                             borderBottom: "1px solid #EFEFEF",
                           }}
                         >
@@ -246,7 +245,6 @@ function TemplateTwo({
                               fontSize: "13px",
                               fontWeight: 400,
                               padding: "12px 20px",
-                              border: "1px solid #EFEFEF",
                             }}
                           >
                             {isEdit ? (

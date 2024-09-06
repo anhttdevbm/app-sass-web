@@ -113,10 +113,14 @@ const TabInvoice = (props: TabProps) => {
         ? window.location.origin
         : "";
     const URL = `${origin}${pathname}`;
-    try {
-      await navigator.clipboard.writeText(URL);
-      onAddSnackbar("Copied!", "success");
-    } catch (er) {
+    if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(URL);
+        onAddSnackbar("Copied!", "success");
+      } catch (er) {
+        onAddSnackbar("Failed to copy", "error");
+      }
+    } else {
       onAddSnackbar("Failed to copy", "error");
     }
   };
@@ -195,7 +199,7 @@ const TabInvoice = (props: TabProps) => {
             borderRight: "1.5px solid #EBEAF2",
             display: "flex",
             gap: "8px",
-            padding: "12px 8px",
+            padding: "0px 8px",
             alignItems: "center",
           }}
         >
@@ -213,15 +217,7 @@ const TabInvoice = (props: TabProps) => {
 
       {/* Main */}
       <Stack ref={printRef} width="fit-content">
-        {/* <TemplateOne
-          itemInvoice={itemInvoice}
-          user={user}
-          isEdit={isEdit}
-          formik={formik}
-          handleChange={handleChange}
-          onDragEnd={onDragEnd}
-        /> */}
-        <TemplateTwo
+        <TemplateOne
           itemInvoice={itemInvoice}
           user={user}
           isEdit={isEdit}
@@ -229,6 +225,14 @@ const TabInvoice = (props: TabProps) => {
           handleChange={handleChange}
           onDragEnd={onDragEnd}
         />
+        {/* <TemplateTwo
+          itemInvoice={itemInvoice}
+          user={user}
+          isEdit={isEdit}
+          formik={formik}
+          handleChange={handleChange}
+          onDragEnd={onDragEnd}
+        /> */}
       </Stack>
     </Stack>
   );

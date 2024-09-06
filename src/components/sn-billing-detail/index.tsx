@@ -5,18 +5,34 @@ import { TabInfo, TopContent } from "./components";
 
 import { User } from "constant/types";
 import { useParams } from "next/navigation";
-import { useAuth } from "store/app/selectors";
+import { useAuth, useHeaderConfig } from "store/app/selectors";
 import { Service } from "store/billing/reducer";
 import { useTags } from "store/billing/selectors";
 import { useInvoices } from "store/invoice/selectors";
-
+import { Endpoint } from "api";
 const InformationBillingPage = () => {
   const { item, onGetInvoiceDetail, onGetInvoices } = useInvoices();
   const { tagsOptions, onGetTags } = useTags();
   const { user } = useAuth();
 
   const [openComment, setOpenComment] = useState(false);
+  const { onUpdateHeaderConfig } = useHeaderConfig();
 
+  useEffect(() => {
+    onUpdateHeaderConfig({
+      title: "Invoice Detail",
+      prevPath: Endpoint.INVOICE,
+    });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        endpoint: undefined,
+        key: undefined,
+      });
+    };
+  }, [onUpdateHeaderConfig]);
   const handleDisplayComment = (value: boolean) => {
     setOpenComment(value);
   };

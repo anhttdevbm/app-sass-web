@@ -130,7 +130,11 @@ const PaymentTable = (props: IProps) => {
               {isMdSmaller ? (
                 <MobileContentCell item={item} />
               ) : (
-                <DesktopCells item={item} order={0} />
+                <DesktopCells
+                  item={item}
+                  order={0}
+                  payment_number={String(index + 1)}
+                />
               )}
               <BodyCell
                 align="left"
