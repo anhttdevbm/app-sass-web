@@ -32,6 +32,7 @@ import { AIChatState } from "./aiChat/type";
 import meetingReducer from "./meeting/reducer";
 import { AIAgentState } from "./aiAgent/types";
 import { aiAgentReducer } from "./aiAgent/reducer";
+import paymentReducer from "./payment/reducer";
 import { promptTemplateReducer } from "store/promptTemplate/reducer";
 import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
 import userNavigationDetailReducer from "store/userNavigationDetail/reducer";
@@ -56,6 +57,7 @@ export interface State {
   aiAgent: AIAgentState;
   chatAIAgent: AIAgentState;
   invoice: InvoiceState;
+  payment: ReturnType<typeof paymentReducer>;
 }
 
 export const store = configureStore({
@@ -93,6 +95,9 @@ export const store = configureStore({
     promptTemplate: promptTemplateReducer,
     chatAIAgent: chatAIAgentReducer,
     userNavigationDetail: userNavigationDetailReducer,
+
+    //package management
+    payment: paymentReducer, // Sử dụng một phần tử duy nhất cho payment
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

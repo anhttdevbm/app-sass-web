@@ -5,9 +5,14 @@ import { CellProps } from "components/NewTable";
 import { BodyCell, TableLayout } from "components/Table";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { useTranslations } from "next-intl";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import SearchPackageManagement from "./components/Search";
+import { usePayment } from "store/payment/selectors";
+import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "store/configureStore";
+import { useSelector } from "react-redux";
+import { getListAccounts } from "store/payment/actions";
 
 const Title = styled.span`
   font-size: 25px;
@@ -20,46 +25,37 @@ const Count = styled.span`
 
 const ListAccount = () => {
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+
+  const {
+    data: accounts,
+    total,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.payment.accounts);
+
+  useEffect(() => {
+    dispatch(getListAccounts({ page, size }));
+  }, [dispatch, page, size]);
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: packageT("list.name"), width: "20%", align: "left" },
-      { value: packageT("list.email"), width: "20%", align: "left" },
-      { value: packageT("list.role"), width: "20%", align: "left" },
-      { value: packageT("list.package"), width: "20%", align: "left" },
-      { value: packageT("list.expiration"), width: "20%", align: "left" },
+      { value: packageT("list.name"), width: "20%", align: "center" },
+      { value: packageT("list.email"), width: "20%", align: "center" },
+      { value: packageT("list.role"), width: "20%", align: "center" },
+      { value: packageT("list.package"), width: "20%", align: "center" },
+      { value: packageT("list.expiration"), width: "20%", align: "center" },
     ],
     [packageT],
   );
 
-  const items = [
-    {
-      name: "Thư Nguyễn",
-      email: "email@gmail.com",
-      role: "Admin",
-      package: "Standard",
-      expirationDate: "19/07/2024",
-    },
-    {
-      name: "Thư Nguyễn",
-      email: "email@gmail.com",
-      role: "Admin",
-      package: "Standard",
-      expirationDate: "19/07/2024",
-    },
-    {
-      name: "Thư Nguyễn",
-      email: "email@gmail.com",
-      role: "admin",
-      package: "standard",
-      expirationDate: "19/07/2024",
-    },
-  ];
-
   return (
     <>
       <Title>
-        {packageT("head.account")} <Count>(10)</Count>
+        {packageT("head.account")} <Count>({total})</Count>
       </Title>
       <SearchPackageManagement placeholder={packageT("placeholder.search")} />
       <TableLayout
@@ -73,13 +69,13 @@ const ListAccount = () => {
         px={3}
         style={{ padding: 0 }}
       >
-        {items.map((item, index) => (
+        {accounts.map((item, index) => (
           <TableRow key={index}>
-            <BodyCell align="left">{item.name}</BodyCell>
-            <BodyCell align="left">{item.email}</BodyCell>
-            <BodyCell align="left">{item.role}</BodyCell>
-            <BodyCell align="left">{item.package}</BodyCell>
-            <BodyCell align="left">{item.expirationDate}</BodyCell>
+            <BodyCell>{item.fullname}</BodyCell>
+            <BodyCell>{item.email}</BodyCell>
+            <BodyCell>{item.roles}</BodyCell>
+            <BodyCell>{item.packageName ?? "0"}</BodyCell>
+            <BodyCell>{item.expirationDate}</BodyCell>
           </TableRow>
         ))}
       </TableLayout>

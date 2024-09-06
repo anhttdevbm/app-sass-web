@@ -7,16 +7,16 @@ type Props = {
   width?: number;
   text?: string;
   buttonDefault?: boolean;
+  type?: string;
 };
 
 const ButtonCustom = (props: Props) => {
-  const { onClick, height, width, text, buttonDefault } = props;
+  const { onClick, height, width, text, buttonDefault, type } = props;
   return (
     <Button
       onClick={onClick}
       size="extraSmall"
       variant="primary"
-      id="add_new_id"
       sx={{
         boxShadow: "none",
         fontWeight: "600",

@@ -11,6 +11,10 @@ export type PackageManagementDictionary = {
     package: string;
     billingPlan: string;
     account: string;
+    pricePerMonth: string;
+    subTotal: string;
+    vat: string;
+    total: string;
   };
   placeholder: {
     search: string;
@@ -68,5 +72,8 @@ export type PackageManagementDictionary = {
     saveOfMonth: string;
     everyThing: string;
     paypal: string;
+    yourSubscription: string;
+    renewAutomatically: string;
+    byCharging: string;
   };
 };

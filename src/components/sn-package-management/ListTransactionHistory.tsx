@@ -5,11 +5,15 @@ import { CellProps } from "components/NewTable";
 import { BodyCell, TableLayout } from "components/Table";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { useTranslations } from "next-intl";
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import SearchPackageManagement from "./components/Search";
 import TransactionDetail from "./modals/TransactionDetail";
 import { Text } from "components/shared";
+import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "store/configureStore";
+import { useSelector } from "react-redux";
+import { getAllTransaction } from "store/payment/actions";
 
 const Title = styled.span`
   font-size: 25px;
@@ -22,8 +26,23 @@ const Count = styled.span`
 
 const ListTransactionHistory = () => {
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
-
+  const dispatch = useDispatch<AppDispatch>();
   const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+
+  const {
+    data: transactions,
+    total,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.payment.transactions);
+
+  useEffect(() => {
+    dispatch(getAllTransaction({ page, size }));
+  }, [dispatch, page, size]);
+
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
       { value: packageT("list.id"), width: "12.5%", align: "left" },
@@ -36,7 +55,7 @@ const ListTransactionHistory = () => {
     ],
     [packageT],
   );
-
+  console.log(transactions, "transactions");
   const items = [
     {
       name: "Thư Nguyễn",
@@ -52,6 +71,24 @@ const ListTransactionHistory = () => {
       email: "email@gmail.com",
       role: "Admin",
       package: "Standard",
+      expirationDate: "19/07/2024",
+      totalAmount: "$12",
+      accountNumber: "5",
+    },
+    {
+      name: "Thư Nguyễn",
+      email: "email@gmail.com",
+      role: "admin",
+      package: "standard",
+      expirationDate: "19/07/2024",
+      totalAmount: "$12",
+      accountNumber: "5",
+    },
+    {
+      name: "Thư Nguyễn",
+      email: "email@gmail.com",
+      role: "admin",
+      package: "standard",
       expirationDate: "19/07/2024",
       totalAmount: "$12",
       accountNumber: "5",

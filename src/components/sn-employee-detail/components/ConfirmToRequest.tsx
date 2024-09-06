@@ -19,17 +19,17 @@ type Props = {
   question: string;
   open: boolean;
   onSubmit?: () => void;
-  onCancel?: () => void;
+  onClose: () => void;
 };
 
 const ConfirmToRequest = (props: Props) => {
-  const { title, open, onSubmit, onCancel, question } = props;
+  const { title, open, onSubmit, onClose, question } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
 
   return (
     <Modal
       open={open}
-      onClose={onCancel}
+      onClose={onClose}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
@@ -68,7 +68,7 @@ const ConfirmToRequest = (props: Props) => {
         </Box>
         <Box>
           <IconButton
-            onClick={onCancel}
+            onClick={onClose}
             sx={{ position: "absolute", top: 25, right: 30 }}
           >
             <CloseIcon sx={{ fontSize: "24px" }} />
@@ -96,7 +96,7 @@ const ConfirmToRequest = (props: Props) => {
         </Box>
         <Box display="flex" justifyContent={"center"} mt={5} gap={"10px"}>
           <Button
-            // onClick={onClick}
+            onClick={onClose}
             size="extraSmall"
             sx={{
               boxShadow: "none",

@@ -13,6 +13,10 @@ export const PackageManagementLang: PackageManagementDictionary = {
     package: "Package",
     billingPlan: "Billing plan",
     account: "Account",
+    pricePerMonth: "Price per month",
+    subTotal: "Subtotal",
+    vat: "VAT",
+    total: "Total",
   },
   placeholder: {
     search: "Search by name or email",
@@ -55,7 +59,7 @@ export const PackageManagementLang: PackageManagementDictionary = {
     autoRenewal: "AUTO-RENEWAL",
     paymentDetails: "Payment details",
     orderSummary: "Order summary",
-    expirationDate: "EXPIRE DATE",
+    expirationDate: "EXPIRATION DATE",
     standard: "Standard",
     business: "Business",
     enterPise: "Enterprise",
@@ -73,5 +77,8 @@ export const PackageManagementLang: PackageManagementDictionary = {
     saveOfMonth: "save ${value}/month on yearly plan",
     everyThing: "Everything in Standard",
     paypal: "Paypal",
+    yourSubscription: "Your subscription will renew automatically",
+    renewAutomatically: "renew automatically",
+    byCharging: "by charging your payment method on file until you cancel.",
   },
 };

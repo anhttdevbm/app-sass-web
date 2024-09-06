@@ -10,12 +10,14 @@ import ButtonCustom from "../components/Button";
 import { useTranslations } from "next-intl";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { Text } from "components/shared";
+import { DataPrice } from ".";
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
+  dataPrice: DataPrice;
 };
 const StepThree = (props: Props) => {
-  const { setStep, onClose } = props;
+  const { setStep, onClose, dataPrice } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
 
   const handleBack = () => {
@@ -108,29 +110,45 @@ const StepThree = (props: Props) => {
             {packageT("title.orderSummary")}{" "}
           </Text>
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text>Price per month</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text>{packageT("form.pricePerMonth")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.priceOfMonth ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>Subtotal</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}>{packageT("form.subTotal")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.subTotal ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>VAT</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}>{packageT("form.vat")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.vat ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>Total</Text>
-            <Text sx={{ fontSize: "20px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}>{packageT("form.total")}</Text>
+            <Text sx={{ fontSize: "20px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.total ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box mb={3}>
-            <Text>
-              Your subscription will renew automatically renew automatically by
-              charging your payment method on file until you cancel.{" "}
+            <Text sx={{ fontSize: "13px" }}>
+              {packageT("description.yourSubscription")}{" "}
+              <span style={{ fontWeight: "700" }}>
+                {" "}
+                {packageT("description.renewAutomatically")}{" "}
+              </span>{" "}
+              {packageT("description.byCharging")}{" "}
             </Text>
           </Box>
           <Box>
