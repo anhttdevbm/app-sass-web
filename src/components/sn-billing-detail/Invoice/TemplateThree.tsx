@@ -31,7 +31,7 @@ type Props = {
   formik?: any;
 };
 
-function TemplateTwo({
+function TemplateThree({
   user,
   itemInvoice,
   isEdit,
@@ -40,63 +40,30 @@ function TemplateTwo({
   onDragEnd,
 }: PropsWithChildren<Props>) {
   return (
-    <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4} pt={2}>
-      <Stack px={3}>
-        <Typography fontWeight={500} color="#4A4A4A" fontSize={14}>
-          VNP
-        </Typography>
-        <Typography
-          fontSize={24}
-          fontWeight={600}
-          color="#212529"
-          sx={{ width: "fit-content", margin: "auto 0" }}
-        >
-          Invoice {itemInvoice?.invoice_number}
-        </Typography>
-      </Stack>
-
+    <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4}>
       <Stack
         p={3}
-        mt={2}
         sx={{
-          background: "#F2FAFF",
+          background: "#D9F0FD",
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
         }}
       >
         <Stack direction="column">
-          <Typography color="#212529" fontSize={14} fontWeight={600}>
-            BILL FROM
+          <Typography fontWeight={500} color="#4A4A4A" fontSize={14}>
+            VNP
           </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-            Company {user?.company}
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            {user?.address ?? "Le Chan, Ho Chi Minh"}
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Tax ID: 00001
+          <Typography
+            fontSize={24}
+            fontWeight={600}
+            color="#212529"
+            sx={{ width: "fit-content", margin: "auto 0" }}
+          >
+            Invoice {itemInvoice?.invoice_number}
           </Typography>
         </Stack>
 
-        <Stack direction="column">
-          <Typography color="#212529" fontSize={14} fontWeight={600}>
-            BILL TO
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-            Company A
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Grand Via 34, Spain
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Tax ID: 00001
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            +03 522 017 08
-          </Typography>
-        </Stack>
         <Stack direction="column">
           <Stack direction="row">
             <Typography
@@ -142,31 +109,74 @@ function TemplateTwo({
         </Stack>
       </Stack>
 
+      <Stack
+        p={3}
+        mt={2}
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Stack direction="column">
+          <Typography color="#212529" fontSize={14} fontWeight={600}>
+            BILL FROM
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
+            Company {user?.company}
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            {user?.address ?? "Le Chan, Ho Chi Minh"}
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            Tax ID: 00001
+          </Typography>
+        </Stack>
+
+        <Stack direction="column">
+          <Typography color="#212529" fontSize={14} fontWeight={600}>
+            SHIP TO
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
+            Company A
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            Grand Via 34, Spain
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            Tax ID: 00001
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            +03 522 017 08
+          </Typography>
+        </Stack>
+      </Stack>
+
       <TableContainer
         component={Paper}
-        sx={{ boxShadow: "none", marginTop: 2, paddingX: 3 }}
+        sx={{ boxShadow: "none", marginTop: 2 }}
       >
         <Table sx={{ minWidth: 900, border: "none" }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell
                 sx={{
-                  color: "#FFFFFF",
+                  color: "#333333",
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#0575E6",
+                  background: "#D9F0FD",
                 }}
               >
                 ITEM
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#FFFFFF",
+                  color: "#333333",
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#0575E6",
+                  background: "#D9F0FD",
                 }}
                 align="right"
               >
@@ -174,11 +184,11 @@ function TemplateTwo({
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#FFFFFF",
+                  color: "#333333",
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#0575E6",
+                  background: "#D9F0FD",
                 }}
                 align="right"
               >
@@ -186,11 +196,11 @@ function TemplateTwo({
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#FFFFFF",
+                  color: "#333333",
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#0575E6",
+                  background: "#D9F0FD",
                 }}
                 align="right"
               >
@@ -198,11 +208,11 @@ function TemplateTwo({
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#FFFFFF",
+                  color: "#333333",
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#0575E6",
+                  background: "#D9F0FD",
                 }}
                 align="right"
               >
@@ -435,7 +445,7 @@ function TemplateTwo({
           }}
           direction="row"
         >
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
+          <Typography color="#878787" fontSize={14} fontWeight={400}>
             Subtotal
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
@@ -455,7 +465,7 @@ function TemplateTwo({
           }}
           direction="row"
         >
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
+          <Typography color="#878787" fontSize={14} fontWeight={400}>
             {`VAT`}
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
@@ -475,10 +485,10 @@ function TemplateTwo({
           }}
           direction="row"
         >
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
+          <Typography color="#878787" fontSize={14} fontWeight={400}>
             Total
           </Typography>
-          <Typography color="#212529" fontSize={16} fontWeight={400}>
+          <Typography color="#386aba" fontSize={16} fontWeight={700}>
             {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
@@ -594,4 +604,4 @@ function TemplateTwo({
   );
 }
 
-export default memo(TemplateTwo);
+export default memo(TemplateThree);

@@ -3,11 +3,12 @@ import { Stack } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import { Button } from "components/shared";
 import TemplateOne from "components/sn-billing-detail/Invoice/TemplateOne";
+import TemplateTwo from "components/sn-billing-detail/Invoice/TemplateTwo";
 import { INVOICE_EXPORT_PATH } from "constant/paths";
 import ArrowExport from "icons/ArrowExport";
 import DownloadIcon from "icons/DownloadIcon";
 import { useParams } from "next/navigation";
-import React, { memo, useEffect, useMemo } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { useInvoices } from "store/invoice/selectors";
 import { downloadFile, getPath } from "utils/index";
 
@@ -15,10 +16,48 @@ const ViewPdf = () => {
   const { item, onGetInvoiceDetail } = useInvoices();
   const printRef = React.useRef(null);
   const { id } = useParams();
+  const hash = window.location.hash;
+
+  const listTemplate = [
+    {
+      key: "template-one",
+      value: "Template 1",
+      component: (
+        <TemplateOne
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
+      ),
+    },
+    {
+      key: "template-two",
+      value: "Template 2",
+      component: (
+        <TemplateTwo
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
+      ),
+    },
+  ];
+
+  const [selectedTemplate, setSelectedTemplate] = useState(listTemplate[0]);
+
+  useEffect(() => {
+    const selected =
+      listTemplate.find((template) => hash.includes(template.key)) ??
+      listTemplate[0];
+
+    setSelectedTemplate(selected as any);
+  }, [hash]);
 
   useEffect(() => {
     onGetInvoiceDetail(id as string);
-  }, [onGetInvoiceDetail]);
+  }, [onGetInvoiceDetail, hash]);
 
   const openNewTab = () => {
     window.open(
@@ -29,12 +68,6 @@ const ViewPdf = () => {
   };
 
   const handleDownload = () => downloadFile(printRef);
-
-  const listService = useMemo(() => {
-    if (!item?.service_items) return;
-    const dataService = [...item?.service_items];
-    return dataService;
-  }, [item]);
 
   return (
     <FixedLayout
@@ -76,12 +109,7 @@ const ViewPdf = () => {
           overflowY: "auto",
         }}
       >
-        <TemplateOne
-          isEdit={false}
-          itemInvoice={item}
-          handleChange={() => {}}
-          onDragEnd={() => {}}
-        />
+        {selectedTemplate?.component}
       </div>
     </FixedLayout>
   );
