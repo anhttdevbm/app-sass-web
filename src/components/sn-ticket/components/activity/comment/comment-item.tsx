@@ -1,20 +1,19 @@
-import { memo, useState, useEffect, useMemo, useCallback } from "react";
-import { Stack, Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import AttachmentPreview from "components/AttachmentPreview";
 import Avatar from "components/Avatar";
 import { Button, Text } from "components/shared";
-import { formatDate, getMessageErrorByAPI } from "utils/index";
-import AttachmentPreview from "components/AttachmentPreview";
+import { NS_COMMON, NS_TICKET } from "constant/index";
+import LockCommentIcon from "icons/LockCommentIcon";
 import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_PROJECT, NS_TICKET } from "constant/index";
-import { Attachment } from "constant/types";
-import { useAuth, useSnackbar } from "store/app/selectors";
-import EditorCustom from "./editor/EditorCustom";
-import { UnprivilegedEditor } from "react-quill";
-import LockCommentIcon from "public/images/ticket/lock-comment.svg";
-import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
-import { useQueryClient } from "react-query";
 import { useParams } from "next/navigation";
 import { QUERY_TICKET_KEY } from "queries/ticket/keys";
+import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
+import { memo, useCallback, useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
+import { UnprivilegedEditor } from "react-quill";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { formatDate, getMessageErrorByAPI } from "utils/index";
+import EditorCustom from "./editor/EditorCustom";
 
 const VALUE_AS_EMPTY = "<p><br></p>";
 const CommentItem = (props) => {

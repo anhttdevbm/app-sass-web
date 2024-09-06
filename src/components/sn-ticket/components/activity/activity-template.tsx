@@ -1,12 +1,12 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
+import { NS_TICKET } from "constant/index";
+import SortIcon from "icons/SortIcon";
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
+import CustomDropdown from "../drop-down/CustomDropdown";
 import CommentActivity from "./comment/comment-activity";
 import EmailActivity from "./email/email-activity";
 import HistoryActivity from "./history/history-activity";
-import SortIcon from "public/images/ticket/sortIcon.svg";
-import CustomDropdown from "../drop-down/CustomDropdown";
-import { useTranslations } from "next-intl";
-import { NS_TICKET } from "constant/index";
 export enum TypeSort {
   OLDEST = "OLDEST",
   NEWEST = "NEWEST",

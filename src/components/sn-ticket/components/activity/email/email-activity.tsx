@@ -2,15 +2,13 @@
 
 import { Box, Stack } from "@mui/material";
 import { Button, Text } from "components/shared";
-import { useGetListReply } from "queries/ticket/useGetTicket/useGetListReply";
+import { NS_TICKET } from "constant/index";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import { useTranslations } from "next-intl";
-import { NS_TICKET } from "constant/index";
+import { useGetListReply } from "queries/ticket/useGetTicket/useGetListReply";
 import { useState } from "react";
-import Image from "next/image";
 import ModelReply from "../../ModelReply";
-import DeleteIcon from "public/images/ticket/deleteIcon.svg";
 
 dayjs.extend(duration);
 
