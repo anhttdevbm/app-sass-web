@@ -1,12 +1,9 @@
-import { memo, useCallback, useEffect, useMemo } from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import * as Yup from "yup";
 
-import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
-import { DataAction, EmployeeType, Permission } from "constant/enums";
-import { EMAIL_REGEX } from "constant/regex";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/NewFormLayout";
 import {
@@ -14,6 +11,9 @@ import {
   NewInput as Input,
   NewSelect as Select,
 } from "components/shared";
+import { DataAction, EmployeeType, Permission } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
+import { EMAIL_REGEX } from "constant/regex";
 import { useFormik } from "hooks/useFormik";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { InviteEmployeeData } from "store/company/actions";
@@ -267,6 +267,7 @@ const EmployeeCompanyForm = ({
               control={<Checkbox />}
               checked={formik.values.is_invite}
               onChange={formik.handleChange}
+              sx={{ px: 2 }}
             />
           </Stack>
         )}
