@@ -1,0 +1,77 @@
+import { PackageManagementDictionary } from "dictionaries/types/PackageManagementDictionary";
+
+export const PackageManagementLang: PackageManagementDictionary = {
+  head: {
+    sumary: "Sumary",
+    account: "Account",
+    transactionHistory: "Transaction History",
+    upgradePackage: "Upgrade package",
+    upgradeNewAccount: "Upgrade new account",
+    transactionDetail: "Transaction Detail",
+  },
+  form: {
+    package: "Package",
+    billingPlan: "Billing plan",
+    account: "Account",
+  },
+  placeholder: {
+    search: "Search by name or email",
+  },
+  button: {
+    upgradePackage: "Upgrade package",
+    change: "Change",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    payNow: "Pay now",
+    save: "Save",
+    buyNow: "Buy now",
+    upgradeNow: "Upgrade Now",
+    requestUpgrade: "Request Upgrade",
+  },
+  list: {
+    name: "Name",
+    email: "Email",
+    role: "Role",
+    package: "Package",
+    expiration: "Expiration date",
+    id: "ID",
+    type: "Type",
+    accountNumber: "Account Number",
+    totalAmount: "Total amount",
+    creationTime: "Creation time",
+    renewalDate: "Renewal date",
+  },
+  transactionDetail: {
+    transactionId: "Transaction ID",
+    package: "Package",
+    billingPlan: "Billing plan",
+    account: "Account",
+  },
+
+  title: {
+    currentPackage: "CURRENT PACKAGE",
+    unupgradedAccount: "UNUPGRADED ACCOUNT",
+    billingOwner: "BILLING OWNER",
+    autoRenewal: "AUTO-RENEWAL",
+    paymentDetails: "Payment details",
+    orderSummary: "Order summary",
+    expirationDate: "EXPIRE DATE",
+    standard: "Standard",
+    business: "Business",
+    enterPise: "Enterprise",
+    chooseBillingOwner: "Choose billing owner",
+    confirmToChange: "Confirm to change billing owner",
+  },
+  description: {
+    byAssigning:
+      "By assiging the billing owner to someone else, the current owner will no longer receive upgrade related emails",
+    confirm: "Are you sure to change billing owner?",
+    onlyAdmin:
+      "Only admin can become billing owner. By assiging the billing owner to someone else, the current owner will no longer receive upgrade related emails",
+    pay: 'To purchase with PayPal, please click the "PayPal" button. A pop-up will appear and you will be prompted to complete your payment.',
+    turn: "Are you sure to turn {value} Auto- renewal?",
+    saveOfMonth: "save ${value}/month on yearly plan",
+    everyThing: "Everything in Standard",
+    paypal: "Paypal",
+  },
+};

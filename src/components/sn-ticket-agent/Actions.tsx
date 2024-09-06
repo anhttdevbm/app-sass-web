@@ -166,23 +166,26 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         justifyContent="space-between"
         spacing={{ xs: 1, md: 2 }}
         px={{ xs: 0, md: 3 }}
-        py={1}
+        py={{ xs: 0, sm: 1, md: 1 }}
         zIndex={2}
       >
         <Stack
-          direction="row"
-          alignItems="center"
+          direction={{ xs: "column", sm: "row", md: "row" }}
+          alignItems={{ xs: "start", sm: "center", md: "center" }}
+          gap={{ xs: 1 }}
           justifyContent={{ md: "space-between" }}
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Box display={{ xs: "block" }}>
+          <Box width={{ xs: "100%" }} display={{ xs: "block" }}>
             <Search
-              placeholder={"Tìm kiếm theo id"}
+              placeholder={t("actions.search")}
               name="search_key"
               onChange={onChangeQueries}
               value={queries?.search_key}
-              sx={{ minWidth: 200 }}
+              sx={{
+                minWidth: { xs: "100%", sm: 200, md: 200 },
+              }}
               onKeyDown={(e) => {
                 e.stopPropagation();
                 if (e.key === "Enter") {
@@ -196,7 +199,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Box>
           <Stack
             direction="row"
-            justifyContent={{ xs: "flex-end" }}
+            justifyContent={{ xs: "space-between", sm: "flex-end", md: "flex-end" }}
             spacing={1}
             width={{ xs: "100%" }}
           >
@@ -218,35 +221,33 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
                 },
               }}
             >
-              <AddSquareIcon
-                sx={{
-                  display: { xs: "block", md: "none" },
-                  width: 24,
-                  height: 24,
-                }}
-              />
               <PlusIcon
                 sx={{
-                  display: { xs: "none", md: "block" },
                   mr: 1,
                   width: 18,
                   height: 18,
                 }}
               />
               <Text
-                sx={{ display: { xs: "none", md: "block" } }}
                 color="inherit"
               >
-                {/* {t("actions.createTicket")} */}
-                New Agent
+                {t("actions.createAgent")}
+
               </Text>
             </Button>
           </Stack>
         </Stack>
         <Box
           bgcolor="background.default"
-          borderRadius="2rem"
+          borderRadius={{ xs: "0rem", sm: "2rem", md: "2rem" }}
           overflow={{ xs: "auto" }}
+          sx={{
+            '&::-webkit-scrollbar': {
+              display: "none"
+            },
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
         >
           <Stack
             direction="row"
@@ -257,9 +258,16 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             py={{ xs: 1.25, md: 1, lg: 1.25 }}
             px={{ xs: 3, md: 2, lg: 2 }}
             overflow="auto"
+            sx={{
+              '&::-webkit-scrollbar': {
+                display: "none"
+              },
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}
           >
-            <Text sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
-              View by:
+            <Text fontSize={{ xs: 12 }} sx={{ whiteSpace: "nowrap", color: "grey.700" }}>
+              {t("actions.viewBy")}
             </Text>
             <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
           </Stack>

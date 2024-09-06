@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import {
   Box,
   ButtonBase,
@@ -14,40 +15,36 @@ import {
   popoverClasses,
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
-import { BodyCell, CellProps } from "components/Table";
+import ConfirmDialog from "components/ConfirmDialog";
 import {
   Button,
+  IconButton as IconButton2,
   Select,
   Text,
-  IconButton as IconButton2,
 } from "components/shared";
+import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { BodyCell, CellProps } from "components/Table";
+import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
+import { NS_BUDGETING } from "constant/index";
+import { Option } from "constant/types";
+import dayjs, { Dayjs } from "dayjs";
+import { useOnClickOutside } from "hooks/useOnClickOutside";
+import useToggle from "hooks/useToggle";
 import CalendarIcon from "icons/CalendarIcon";
+import MoveDotIcon from "icons/MoveDotIcon";
+import PlusIcon from "icons/PlusIcon";
+import _ from "lodash";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useFieldArray, useForm } from "react-hook-form";
 import { usePositions } from "store/company/selectors";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { useOnClickOutside } from "hooks/useOnClickOutside";
-import { useTranslations } from "next-intl";
-import { NS_BUDGETING } from "constant/index";
 import { formatNumber, uuid } from "utils/index";
-import PlusIcon from "icons/PlusIcon";
-import TrashIcon from "icons/TrashIcon";
-import ConfirmDialog from "components/ConfirmDialog";
-import useToggle from "hooks/useToggle";
-import dayjs, { Dayjs } from "dayjs";
-import { TError, TErrors } from "./ServiceUtil";
-import { serviceSectionRef } from "./ServiceSection";
-import _ from "lodash";
-import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
-import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
-import { HEADER_HEIGHT } from "layouts/Header";
-import { BudgetServiceBillable, SERVICE_UNIT_OPTIONS } from "constant/enums";
-import { Option } from "constant/types";
-import { Droppable, Draggable } from "react-beautiful-dnd";
-import MoveDotIcon from "icons/MoveDotIcon";
 import ServiceItemAction, { Action } from "./ServiceItemAction";
-import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { serviceSectionRef } from "./ServiceSection";
+import { TError, TErrors } from "./ServiceUtil";
 
 type TForm = {
   services: (TBudgetService & {
@@ -334,7 +331,7 @@ const ServiceSectionRow = ({
         }}
         width={"100%"}
       >
-        <TableLayoutWithScroll
+        {/* <TableLayoutWithScroll
           headerList={headerList}
           noData={false}
           titleColor="grey.300"
@@ -345,7 +342,7 @@ const ServiceSectionRow = ({
               minHeight: { xs: 0, md: 40 },
             },
           }}
-        >
+        > */}
           <Droppable
             droppableId={`sectionList.${sectionId}.${fieldIndex}`}
             type="service"
@@ -384,6 +381,12 @@ const ServiceSectionRow = ({
                             alignItems="center"
                             py={1}
                           >
+                            {/* <IconButton2
+                              noPadding
+                              {...provided.dragHandleProps}
+                            >
+                              <MoveDotIcon />
+                            </IconButton2> */}
                             <TableRow key={service.id}>
                               <BodyCell sx={{ px: 0, ...getSxCell(0) }}>
                                 <IconButton2
@@ -759,7 +762,7 @@ const ServiceSectionRow = ({
               </div>
             )}
           </Droppable>
-        </TableLayoutWithScroll>
+        {/* </TableLayoutWithScroll> */}
         <Box pl={3} mt={1}>
           <Button
             size="small"

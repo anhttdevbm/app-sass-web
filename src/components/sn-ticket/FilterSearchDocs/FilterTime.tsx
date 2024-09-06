@@ -79,7 +79,7 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
           {docsT("filter.filter.lastEdited")}:
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">
-          {docsT("filter.all")}
+          All
         </Text>
         <ChevronIcon fontSize="small"></ChevronIcon>
       </MenuItem>

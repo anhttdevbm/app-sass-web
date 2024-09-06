@@ -1,5 +1,5 @@
 "use client";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { FormikErrors, useFormik } from "formik";
@@ -17,6 +17,7 @@ import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
 import { useEmployeeDetailContext } from "./EmployeeDetailContext";
+import ConfirmToRequest from "./components/ConfirmToRequest";
 
 const EmployeeDetailForm = () => {
   const { user } = useAuth();
@@ -27,7 +28,10 @@ const EmployeeDetailForm = () => {
   const { type, employee, onUpdateUserInfo } = useEmployeeDetailContext();
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
   const { onAddSnackbar } = useSnackbar();
-
+  const [openModal, setOpenModal] = useState({
+    modalUpgrade: false,
+    modalRenewal: false,
+  });
   const isAdmin = useMemo(
     () => user?.roles.includes(Permission.AM),
     [user?.roles],
@@ -204,7 +208,51 @@ const EmployeeDetailForm = () => {
               }
             />
           </Grid>
-
+          <Grid item xs={12} sm={6}>
+            <Input
+              rootSx={sxConfig.input}
+              title="Package"
+              fullWidth
+              name="package"
+              disabled
+              // value={employee.email}
+              tooltip={
+                isEdit
+                  ? accountT("accountInformation.notAllowUpdate", {
+                      name: "Email",
+                    })
+                  : undefined
+              }
+              endNode={
+                <Button
+                  sx={{ color: "#0575E6" }}
+                  size="small"
+                  onClick={() =>
+                    setOpenModal({ ...openModal, modalUpgrade: true })
+                  }
+                >
+                  Request upgrade
+                </Button>
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Input
+              rootSx={sxConfig.input}
+              title="Expiration date"
+              fullWidth
+              name="expirationDate"
+              disabled
+              // value={employee.email}
+              tooltip={
+                isEdit
+                  ? accountT("accountInformation.notAllowUpdate", {
+                      name: "Email",
+                    })
+                  : undefined
+              }
+            />
+          </Grid>
           <Grid
             container
             item
@@ -254,6 +302,16 @@ const EmployeeDetailForm = () => {
           </Grid>
         </Grid>
       </Box>
+      <ConfirmToRequest
+        open={openModal.modalUpgrade}
+        title="Confirm to Request Upgrade"
+        question="Are you sure to request upgrade?"
+      />
+      <ConfirmToRequest
+        open={openModal.modalRenewal}
+        title="Confirm to Request Renewal"
+        question="Are you sure to request renewal?"
+      />
     </>
   );
 };

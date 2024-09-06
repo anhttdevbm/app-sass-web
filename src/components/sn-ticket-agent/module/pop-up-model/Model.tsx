@@ -128,19 +128,34 @@ const Model = (props: PropsModel) => {
       <DialogTitle textAlign="end" sx={{ backgroundColor: "#fff" }}>
         <CloseIcon onClick={handleClose} sx={{ width: 25, height: 25, cursor: "pointer" }} />
       </DialogTitle>
-      <DialogContent sx={{ width: 765, height: 400 }}>
+      <DialogContent sx={{
+        width: { xs: 300, sm: 700, md: 756 },
+        height: 400,
+        '&::-webkit-scrollbar': {
+          display: "none"
+        },
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}>
 
         <CreateAgent type={type} formAgent={formAgent} handleChange={handleChange} />
 
       </DialogContent>
-      <DialogActions sx={{ padding: "36px 24px" }}>
+
+
+      <DialogActions sx={{
+        padding: { xs: "12px 24px", md: "36px 24px" },
+        display: "flex",
+        flexDirection: { xs: "column ", md: "row" },
+        gap : {xs : 2 , md : 0}
+      }}>
         <Button
           onClick={handleClose}
           size="small"
           variant="primary"
           sx={{
             height: 45,
-            width: 150,
+            width: {xs : "100%" , md : 150},
             borderRadius: 100,
             border: "1px solid #14B9E5",
             gap: 1,
@@ -152,11 +167,9 @@ const Model = (props: PropsModel) => {
           }}
         >
           <Text
-            sx={{ display: { xs: "none", md: "block" } }}
             color="#045EB8"
             fontWeight="700"
           >
-            {/* {billingT("list.button.invoice")} */}
             {t("modelReply.cancel")}
           </Text>
         </Button>
@@ -167,7 +180,7 @@ const Model = (props: PropsModel) => {
           variant="primary"
           sx={{
             height: 45,
-            width: 150,
+            width: {xs : "100%" , md : 150},
             borderRadius: 100,
             background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
             "&:hover": {
@@ -178,12 +191,10 @@ const Model = (props: PropsModel) => {
           }}
         >
           <Text
-            sx={{ display: { xs: "none", md: "block" } }}
             color="inherit"
             fontWeight="700"
           >
-            {/* {billingT("list.button.invoice")} */}
-            Confirm
+            {t("ticketAgnet.CONFIRM")}
           </Text>
         </Button>
       </DialogActions>

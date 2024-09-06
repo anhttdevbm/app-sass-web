@@ -11,9 +11,9 @@ import Preview from "./Preview";
 import useToggle from "hooks/useToggle";
 
 interface AttachmentList {
-    link: string;
-    name: string;
-    object: string;
+  link: string;
+  name: string;
+  object: string;
 }
 
 type AttachmentPreviewProps = {
@@ -27,7 +27,15 @@ type AttachmentPreviewProps = {
 };
 
 const AttachmentPreview = (props: AttachmentPreviewProps) => {
-  const { name, onRemove, size = 64, showName, listData, listAttachmentsDown, ...rest } = props;
+  const {
+    name,
+    onRemove,
+    size = 64,
+    showName,
+    listData,
+    listAttachmentsDown,
+    ...rest
+  } = props;
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
   const commonT = useTranslations(NS_COMMON);
 

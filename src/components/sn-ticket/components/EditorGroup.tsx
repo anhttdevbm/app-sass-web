@@ -33,10 +33,10 @@ const EditorGroup = (props: any) => {
     // Hàm xử lý khi nội dung editor thay đổi
     const onChange = (newState: EditorState) => {
         setEditorState(newState);
-        setFormSendReply((prev) => ({ ...prev, content : getPlainTextContent(newState) }))
+        setFormSendReply((prev) => ({ ...prev, content: getPlainTextContent(newState) }))
     };
 
-    const getPlainTextContent = (newState : EditorState) => {
+    const getPlainTextContent = (newState: EditorState) => {
         const contentState = newState.getCurrentContent();
         return contentState.getPlainText();
     };
@@ -134,10 +134,9 @@ const EditorGroup = (props: any) => {
                     // blockStyleFn={blockStyleFn}
                     customStyleMap={customStyleMap}
                     ref={inputRef}
-
                 />
                 {openAttachment &&
-                    <>
+                    <Stack maxWidth={"100%"}>
                         <FileUpload
                             files={formSendReply.files}
                             setFiles={(files) =>
@@ -145,9 +144,9 @@ const EditorGroup = (props: any) => {
                             }
                         />
 
-                    </>
-
+                    </Stack>
                 }
+
             </Box>
 
 
@@ -157,7 +156,9 @@ const EditorGroup = (props: any) => {
                     alignItems: "center",
                     gap: 2,
                     borderBottom: '1px solid #EDEFF1',
-                    padding: "18px 0"
+                    padding: "18px 0",
+                    flexWrap:"wrap",
+                    width: "100%"
                 }
             }>
 
@@ -205,13 +206,10 @@ const EditorGroup = (props: any) => {
 
 
                 <ListFormatText customStyle={{ border: 'none', backgroundColor: "#fff" }} handleClickListFormat={handleClickListFormat} />
-
-
                 <Button onClick={() => setOpenAttachment(prev => !prev)} sx={{ padding: 0, minWidth: 30, minHeight: 40 }}>
                     <AttachmentsIcon />
                 </Button>
             </Box>
-
         </>
 
     );

@@ -1,35 +1,36 @@
-import styled from "@emotion/styled";
+"use client";
 import { Stack, Typography } from "@mui/material";
-import { client, Endpoint } from "api";
 import { Button } from "components/shared";
-import { ACCEPT_MEDIA, IMAGES_ACCEPT, NS_COMMON } from "constant/index";
+import {
+  ACCEPT_MEDIA,
+  IMAGES_ACCEPT,
+  NS_COMMON,
+  NS_TICKET,
+} from "constant/index";
 import useToggle from "hooks/useToggle";
 import { useTranslations } from "next-intl";
-import React, {
-  ChangeEvent,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import ReactQuill, { ReactQuillProps, UnprivilegedEditor } from "react-quill";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { UnprivilegedEditor } from "react-quill";
 import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import EditorCustom from "./editor/EditorCustom";
 import { useGetListComment } from "queries/ticket/useGetTicket/useGetListComment";
 import CommentItem from "./comment-item";
-import { FileUploader } from "react-drag-drop-files";
 import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "react-query";
 import { QUERY_TICKET_KEY } from "queries/ticket/keys";
+import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
+import { useSelector } from "react-redux";
+import { selectListAgent } from "store/ticket-agent/selectors";
+
 const tabComment = [
   {
-    label: "Add internal note",
+    label: "tabComment1",
     value: true,
   },
   {
-    label: "Reply to customer",
+    label: "tabComment2",
     value: false,
   },
 ];
@@ -40,16 +41,14 @@ const CommentActivity = () => {
   const { data: listComment } = useGetListComment();
   const { createComment, deleteComment, editComment } = useTicketAction();
   const commonT = useTranslations(NS_COMMON);
+  const t = useTranslations(NS_TICKET);
   const { onAddSnackbar } = useSnackbar();
   const [isIternal, setIsIternal] = useState(true);
-  const [isProcessing, onProcessingTrue, onProcessingFalse] = useToggle();
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
   const editorRef = useRef<UnprivilegedEditor | undefined>();
-  const [newFiles, setNewFiles] = useState<File[]>([]);
 
   const [content, setContent] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
-  const [fileLoaded, setFileLoaded] = useState<string[]>([]);
 
   const onChange = (value: string, delta, _, editor: UnprivilegedEditor) => {
     const isEmpty = value === VALUE_AS_EMPTY;
@@ -72,21 +71,31 @@ const CommentActivity = () => {
   );
 
   const onSubmit = async () => {
-    createComment.mutate(
-      { comment: content, isIternal, ticketId: params?.id as string },
-      {
-        onSuccess: (data) => {
-          onAddSnackbar("Create comment success", "success");
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
-          });
-          setContent("");
-        },
-        onError: (error) => {
-          onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-        },
+    const formData = new FormData();
+
+    // Append the comment and other fields
+    formData.append("comment", content);
+    formData.append("isIternal", JSON.stringify(isIternal));
+    formData.append("ticketId", params?.id as string);
+
+    // Append each file with its name as the field name
+    files.forEach((file) => {
+      formData.append(file.name, file, file.name);
+    });
+
+    createComment.mutate(formData, {
+      onSuccess: (data) => {
+        onAddSnackbar("Create comment success", "success");
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
+        });
+        setContent("");
+        setFiles([]);
       },
-    );
+      onError: (error) => {
+        onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+      },
+    });
   };
 
   const handleDeleteComment = useCallback(
@@ -100,6 +109,7 @@ const CommentActivity = () => {
               queryKey: [QUERY_TICKET_KEY.LIST_COMMENT, params?.id],
             });
             setContent("");
+            setFiles([]);
           },
           onError: (error) => {
             onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
@@ -112,6 +122,7 @@ const CommentActivity = () => {
 
   const handleCancel = () => {
     setContent("");
+    setFiles([]);
   };
 
   return (
@@ -134,7 +145,8 @@ const CommentActivity = () => {
             }}
             onClick={() => setIsIternal(it.value)}
           >
-            {it.label}
+            {/* {it.label} */}
+            {t(`ticketDetail.commentActivity.${it.label}`)}
           </Typography>
         ))}
       </Stack>
@@ -160,10 +172,13 @@ const CommentActivity = () => {
             size="small"
             type="button"
           >
-            Save
+            {t("ticketDetail.commentActivity.save")}
           </Button>
           <Button onClick={handleCancel} variant="outlined" size="small">
-            <Typography sx={{ color: "#333333" }}>Cancel</Typography>
+            <Typography sx={{ color: "#333333" }}>
+              {" "}
+              {t("ticketDetail.commentActivity.cancel")}
+            </Typography>
           </Button>
         </Stack>
       </EditorCustom>

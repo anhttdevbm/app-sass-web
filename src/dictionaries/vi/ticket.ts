@@ -7,22 +7,6 @@ export const TicketLang: TicketDictionary = {
     },
   },
   title: "Vé",
-  // blogList: {
-  //     head: {
-  //         title: "Danh sách vé",
-  //     },
-  //     title: "Tiêu đề",
-  //     content: "Nội dung",
-  //     category: "Danh mục",
-  //     tag: "Nhãn dán",
-  //     statusBlog:"Trạng thái",
-  //     slug:"Đường dẫn",
-  //     created_time : "Ngày tạo",
-  //     short_description : "Mô tả",
-  //     notification: {
-  //         success: "Cập nhật trạng thái {label} thành công"
-  //     },
-  // },
   hide: "Ẩn",
   actions: {
     createTicket: "Thêm mới",
@@ -41,6 +25,16 @@ export const TicketLang: TicketDictionary = {
       content: "Cập nhật trạng thái sang {label} ",
     },
     updateTicket: "Cập nhật",
+    viewBy: "Xem bởi",
+    createAgent : "Thêm mới"
+  },
+  createTicketFrom : {
+    titleHeader : "Tạo Vé Mới",
+    Title : "Tiêu đề",
+    Description : "Mô tả",
+    RequestTicketType : "Loại Vé Yêu Cầu",
+    Priority: "Mức độ ưu tiên",
+    create : "Tạo"
   },
   status: {
     published: "Xuất bản",
@@ -102,6 +96,38 @@ export const TicketLang: TicketDictionary = {
     description: "Mô tả",
     btnShowDetail: "Hiện chi tiết",
     btnHideDetail: "Ẩn chi tiết",
+    attachment: "Tệp đính kèm",
+    download: "Tải xuống tất cả",
+    switchList: "Chuyển sang chế độ danh sách",
+    switchStrip: "Chuyển sang chế độ dải",
+    TableView: {
+      name: "Tên",
+      Size: "Kích thước",
+      dateAdded: "Ngày thêm",
+    },
+    activity: {
+      activity: "Hoạt động",
+      show: "Hiển thị",
+      newest: "Mới",
+      oldest: "Cũ",
+      first: "Đầu tiên",
+      All: "Tất cả",
+      Comments: "Nhận xét",
+      History: "Lịch sử",
+      Email: "Thư",
+    },
+    commentActivity: {
+      tabComment1: "Thêm ghi chú nội bộ",
+      tabComment2: "Trả lời khách hàng",
+      save: "Lưu",
+      cancel: "Hủy",
+      internalNote: "Lưu hành nội bộ",
+      edit: "Chỉnh sửu",
+      delete: "Xoá",
+    },
+    historyActivity: {
+      time: "giờ trước",
+    },
   },
   modelReply: {
     title: "Phản hồi vé",
@@ -109,5 +135,22 @@ export const TicketLang: TicketDictionary = {
     subject: "Chủ đề",
     send: "Gửi",
     cancel: "Huỷ",
+  },
+  ticketAgnet: {
+    createTitle:"Tạo đại lý mới",
+    editTitle: "Sửa đại lý",
+    EMAIL: "Thư điện tử",
+    PHONE: "Điện thoại",
+    POSITION: "Vị trí",
+    STATUS: "Trạng thái",
+    Inprogress: "Vé đang xử lý",
+    USERNAME: "Tên người dùng",
+    PASSWORD: "Mật khẩu",
+    EDIT : "Chỉnh sửa",
+    DELETE : "Xoá" ,
+    CONFIRM : "Xác nhận",
+    titleDelete : "Xác nhận xóa",
+    quesionConfirmDelete : "Bạn có chắc chắn muốn xóa đại lý này không?",
+
   },
 };

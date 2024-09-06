@@ -11,6 +11,7 @@ import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useSnackbar } from "store/app/selectors";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "react-query";
+import { QUERY_TICKET_KEY } from "queries/ticket/keys";
 
 type PropsModelReply = {
   open: boolean
@@ -53,13 +54,13 @@ const ModelReply = (props: PropsModelReply) => {
 
   const handleSubmit = () => {
     const payload = {
-      ...formSendReply, id : id
+      ...formSendReply, id: id
     }
     console.log("check reply", formSendReply)
     sendReply.mutate(payload, {
       onSuccess: (data) => {
         onAddSnackbar(" Reply success!", "success");
-        // queryClient.invalidateQueries({ queryKey: [QUERY_AGENT_KEY.LIST_AGENT, id] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_TICKET_KEY.LIST_REPLY, id] })
         clearForm()
         handleClose()
       },
@@ -77,18 +78,35 @@ const ModelReply = (props: PropsModelReply) => {
   return (
 
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle display="flex" justifyContent="space-between" alignItems="center" sx={{ backgroundColor: "#F2FAFF" }}>
+
+      <DialogTitle
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ backgroundColor: "#F2FAFF" }}
+      >
         <Text sx={{ color: "#4D4D4D", fontSize: 20, fontWeight: 600 }}>{t("modelReply.title")}</Text>
         <CloseIcon onClick={handleClose} sx={{ width: 25, height: 25, cursor: "pointer" }} />
       </DialogTitle>
-      <DialogContent sx={{ width: 765, height: 400 }}>
-        <Stack py={1}>
+
+      <DialogContent
+        sx={{
+          width: { xs: 300, sm: 700, md: 756 },
+          height: 400,
+          '&::-webkit-scrollbar': {
+            display: "none"
+          },
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}>
+        <Stack sx={{ maxWidth: "100%" }} py={1}>
           <Box display="flex" sx={{ height: 35, gap: 1 }}>
             <Text fontSize={15}>To :</Text>
             <textarea
               id="tour-chatmb-textarea"
               placeholder={t("modelReply.email")}
               value={formSendReply.email}
+              disabled={true}
               onChange={(e) => {
                 handleChange(e.target.value, "email");
               }}
@@ -109,6 +127,7 @@ const ModelReply = (props: PropsModelReply) => {
           </Box>
           <textarea
             id="tour-chatmb-textarea"
+            disabled={true}
             placeholder={t("modelReply.subject")}
             value={formSendReply.title}
             onChange={(e) => {
@@ -128,13 +147,10 @@ const ModelReply = (props: PropsModelReply) => {
             rows={1}
             autoFocus
           />
-
+          <EditorGroup setFormSendReply={setFormSendReply} formSendReply={formSendReply} />
         </Stack>
-
-
-        <EditorGroup setFormSendReply={setFormSendReply} formSendReply={formSendReply} />
-
       </DialogContent>
+
       <DialogActions sx={{ padding: "36px 24px" }}>
         <Button
           onClick={handleClose}
@@ -154,11 +170,9 @@ const ModelReply = (props: PropsModelReply) => {
           }}
         >
           <Text
-            sx={{ display: { xs: "none", md: "block" } }}
             color="#045EB8"
             fontWeight="700"
           >
-            {/* {billingT("list.button.invoice")} */}
             {t("modelReply.cancel")}
           </Text>
         </Button>
@@ -180,15 +194,14 @@ const ModelReply = (props: PropsModelReply) => {
           }}
         >
           <Text
-            sx={{ display: { xs: "none", md: "block" } }}
             color="inherit"
             fontWeight="700"
           >
-            {/* {billingT("list.button.invoice")} */}
             {t("modelReply.send")}
           </Text>
         </Button>
       </DialogActions>
+      
     </Dialog>
   )
 }

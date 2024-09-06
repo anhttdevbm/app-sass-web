@@ -5,8 +5,11 @@ import ListView from "./list-view/ListView";
 import TableView from "./table-view/TableView";
 import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
 import CustomDropdown from "../drop-down/CustomDropdown";
+import { NS_TICKET } from "constant/index";
+import { useTranslations } from "next-intl";
 
 const AttachmentTemplate = () => {
+  const t = useTranslations(NS_TICKET)
   const { data: dataTicket } = useGetTicketDetail();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isListView, setIsListView] = useState<boolean>(true);
@@ -60,7 +63,7 @@ const AttachmentTemplate = () => {
           gap={"10px"}
         >
           <Typography sx={{ fontWeight: 600, fontSize: 20 }}>
-            Attachment
+            {t("ticketDetail.attachment")}
           </Typography>
           <Stack
             sx={{
@@ -96,7 +99,7 @@ const AttachmentTemplate = () => {
               }}
             >
               <Typography style={{ color: "#000", fontSize: "12px" }}>
-                Download all
+              {t("ticketDetail.download")}
               </Typography>
             </Button>
             <Button
@@ -107,7 +110,7 @@ const AttachmentTemplate = () => {
               }}
             >
               <Typography style={{ color: "#000", fontSize: "12px" }}>
-                {isListView ? "Switch to list view" : "Switch to strip view"}
+                {isListView ? `${t("ticketDetail.switchList")}` : `${t("ticketDetail.switchStrip")}`}
               </Typography>
             </Button>
           </>

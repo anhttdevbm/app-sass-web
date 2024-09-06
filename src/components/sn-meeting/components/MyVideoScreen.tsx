@@ -1,6 +1,7 @@
-import { Box, Card, CardMedia } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import ButtonOnMyScreen from "./ButtonOnMyScreen";
+import { useAuth } from "store/app/selectors";
+import { store } from "store/configureStore";
 
 interface MyVideoScreenProps {
   sx: object | null;
@@ -11,12 +12,12 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
 ) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
+  const { localStream, meetInfo } = store.getState().meeting;
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isScreenPinned, setIsScreenPinned] = useState(false);
-
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const { localStreamState } = store.getState().meeting;
+  const { user } = useAuth();
 
   const toggleMic = () => {
     setIsMicOn(!isMicOn);
@@ -30,36 +31,11 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
     setIsScreenPinned(!isScreenPinned);
   };
 
-  const startMedia = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        // audio: window.confirm("Allow access to microphone?"),
-        // video: window.confirm("Allow access to camera?"),
-        audio: isMicOn,
-        video: isCameraOn,
-      });
-      setStream(mediaStream);
-    } catch (error) {
-      console.error("Error accessing media devices:", error);
-    }
-  };
-
   useEffect(() => {
-    startMedia();
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => {
-          track.stop();
-        });
-      }
-    };
-  }, [isMicOn, isCameraOn]);
-
-  useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+    if (videoRef.current && localStream) {
+      videoRef.current.srcObject = localStream;
     }
-  }, [stream]);
+  }, [localStream]);
 
   const startRecording = () => {
     const stream = videoRef.current?.srcObject as MediaStream;
@@ -77,8 +53,6 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
       const videoBlob = new Blob(chunks, { type: "video/webm" });
       const videoUrl = URL.createObjectURL(videoBlob);
 
-      // Do something with the video URL, e.g., download or display it
-      // For example, you can create a download link:
       const downloadLink = document.createElement("a");
       downloadLink.href = videoUrl;
       downloadLink.download = "my_video.webm";
@@ -101,10 +75,14 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
   return (
     <Box
       sx={{
+        display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         position: "relative",
         overflow: "hidden",
+        width: "100%",
         height: "100%",
+        aspectRatio: "16/9",
         ...props.sx,
       }}
     >
@@ -112,10 +90,16 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         component={"video"}
         ref={videoRef}
         autoPlay
+        muted
         playsInline
-        sx={{ width: "calc(100% - 400px)", height: "100%" }}
+        sx={{
+          width: localStreamState.isCameraOn ? "100%" : "0%",
+          height: "100%",
+        }}
       />
-      <ButtonOnMyScreen
+
+      {!localStreamState.isCameraOn && <Avatar src={user?.avatar?.link} />}
+      {/* <ButtonOnMyScreen
         sx={{
           position: "absolute",
           bottom: "50%",
@@ -132,7 +116,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         isScreenPinned={isScreenPinned}
         isMicOn={isMicOn}
         isCameraOn={isCameraOn}
-      />
+      /> */}
       {/* <Box>
         <button onClick={startRecording}>Start Recording</button>
         <button onClick={stopRecording}>Stop Recording</button>

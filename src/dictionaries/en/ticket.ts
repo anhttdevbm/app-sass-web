@@ -6,7 +6,7 @@ export const TicketLang: TicketDictionary = {
       title: "Tickets",
     },
   },
-  title: "Tickets",
+  title: "Ticket",
   hide: "Hide",
   actions: {
     createTicket: "New Ticket",
@@ -25,6 +25,16 @@ export const TicketLang: TicketDictionary = {
       content: "Update ticket to {label}",
     },
     updateTicket: "Update ticket",
+    viewBy: "View by",
+    createAgent: "New Agent",
+  },
+  createTicketFrom : {
+    titleHeader : "Create New Ticket",
+    Title : "Title",
+    Description : "Description",
+    RequestTicketType : "Request Ticket Type",
+    Priority: "Priority",
+    create : "Create"
   },
 
   status: {
@@ -50,7 +60,7 @@ export const TicketLang: TicketDictionary = {
     onHoldTicket: "On Hold",
     resolvedTicket: "Rosolved",
     closedTicket: "Closed",
-    canceledTicket: "Canceled",
+    canceledTicket: "Cancelled",
   },
   ticketFields: {
     id: "ID",
@@ -87,6 +97,38 @@ export const TicketLang: TicketDictionary = {
     description: "Description",
     btnShowDetail: "Show detail",
     btnHideDetail: "Hide detail",
+    attachment: "attachment",
+    download: "DOWNL LOAD ALL",
+    switchList: "Switch to list view",
+    switchStrip: "Switch to strip view",
+    TableView: {
+      name: "Name",
+      Size: "Size",
+      dateAdded: "Date Added",
+    },
+    activity: {
+      activity: "Activity",
+      show: "Show",
+      newest: "Newest",
+      oldest: "Oldest",
+      first: "first",
+      All: "All",
+      Comments: "Comments",
+      History: "History",
+      Email: "Email",
+    },
+    commentActivity: {
+      tabComment1: "Add internal note",
+      tabComment2: "Reply to customer",
+      save: "Save",
+      cancel: "Cancel",
+      internalNote: "Internal Note",
+      edit: "Edit",
+      delete: "Delete",
+    },
+    historyActivity: {
+      time: "hour ago",
+    },
   },
   modelReply: {
     title: "Reply to ticket",
@@ -94,6 +136,23 @@ export const TicketLang: TicketDictionary = {
     subject: "Subject",
     send: "Send",
     cancel: "Cancel",
+  },
+  ticketAgnet: {
+    createTitle: "Create New Agent",
+    editTitle: "Edit Agent",
+    EMAIL: "Email",
+    PHONE: "Phone",
+    POSITION: "Position",
+    STATUS: "Status",
+    Inprogress: "Ticket in-progress",
+    USERNAME: "User name",
+    PASSWORD: "Password",
+    EDIT: "Edit",
+    DELETE: "Delete",
+    CONFIRM: "Confirm",
+    titleDelete : "Confirm to Delete",
+    quesionConfirmDelete : "Are you sure to delete this agent?",
+
 
   },
 };

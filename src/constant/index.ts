@@ -32,6 +32,8 @@ export const INVOICE_API_URL = process.env.INVOICE_API_URL as string;
 
 //Content
 export const CONTENT_API_URL = process.env.CONTENT_API_URL as string;
+//Meeting
+export const MEETING_API_URL = process.env.MEETING_API_URL as string;
 
 // AI
 export const AI_CHAT_API_URL = process.env.AI_CHAT_API_URL as string;
@@ -135,6 +137,7 @@ export const NS_AI_AGENT = "aiAgent";
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
 export const NS_HOLIDAY_CALENDAR = "holidayCalendar";
+export const NS_PACKAGE_MANAGERMENT = "packageManagement";
 //Feedback
 export const NS_FEEDBACK = "feeback";
 //blog

@@ -46,7 +46,8 @@ const FilterStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
                 onClick={(e) => setAnchorEl(e.currentTarget)}
             >
                 <Text variant="body2" color="grey.400">
-                  Status
+                { (t("ticketAgnet.STATUS"))}: 
+
                 </Text>
                 <Text variant="body2" fontWeight={600} color="grey.700">
                     {name}

@@ -111,50 +111,8 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                 </Typography>
               )}
             </InputLabel>
-            {/* <MobileTimePicker
-              sx={{
-                input: {
-                  fontSize: "14px",
-                  lineHeight: "22px",
-                  fontWeight: 400,
-                  color: isDarkMode ? "#fff" : "common.black",
-                  padding: 0,
-                  backgroundColor: isDarkMode ? "#393939" : "grey.50",
-                },
-                fieldset: {
-                  border: "none",
-                },
-                "> :before, :after": {
-                  display: "none",
-                },
-              }}
-              value={selectedDate}
-              onChange={(value: any) => {
-                // onChange && onChange(dayjs(value).format('YYYY/MM/DD'));
-                onChange && onChange(dayjs(value));
-              }}
-              onOpen={() => setIsFocus(true)}
-              onClose={() => setIsFocus(false)}
-              closeOnSelect
-              ref={datePickerRef}
-              slotProps={{
-                textField: {
-                  required: true,
-                  id: `input-field-${randomId}`,
-                },
-                actionBar: {
-                  actions: [],
-                },
-                // toolbar: {
-                //   hidden: true,
-                // },
-                rightArrowIcon: {
-                  display: "none",
-                },
-              }}
-            /> */}
+
             <TimePicker
-              // label="With Time Clock"
               sx={{
                 input: {
                   fontSize: "14px",
@@ -173,7 +131,10 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                 "& button": {
                   position: "absolute",
                   right: "2px",
-                  // bottom: '-1px',
+                  "& svg": {
+                    width: "20px",
+                    height: "20px",
+                  },
                 },
               }}
               value={selectedDate}
@@ -192,9 +153,6 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
                 actionBar: {
                   actions: [],
                 },
-                // toolbar: {
-                //   hidden: true,
-                // },
                 rightArrowIcon: {
                   display: "none",
                 },
@@ -205,15 +163,6 @@ const MobileDatePickerComponent: React.FC<TextFieldInputProps> = ({
               }}
             />
           </Stack>
-          {/* <OutLineExpandIcon
-            sx={{
-              width: "20px",
-              height: "20px",
-              ":hover": {
-                cursor: "pointer",
-              },
-            }}
-          /> */}
         </Box>
         {helperText ? (
           <FormHelperText

@@ -44,7 +44,7 @@ const onChangeMembers = (id: string, position: string) => {
         onClick={(e) => setAnchorEl(e.currentTarget)}
       >
         <Text variant="body2" color="grey.400">
-         Position
+       { (t("ticketAgnet.POSITION"))}: 
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">
          {name}
