@@ -2,12 +2,11 @@
 
 import { IconButton, Stack, TableRow } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
-import Pagination from "./components/Pagination";
+import { Checkbox } from "components/shared";
 import {
   ActionsCell,
-  BodyCell,
   CellProps,
-  TableLayout,
+  TableLayout
 } from "components/Table";
 import { DataAction } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
@@ -28,14 +27,14 @@ import {
 } from "react";
 import { useClientCompanies } from "store/company/selectors";
 import { getPath } from "utils/index";
+import { client, Endpoint } from "../../api";
+import TrashIcon from "../../icons/TrashIcon";
 import { DesktopCells, MobileContentCell } from "./components";
 import DeleteConfirm from "./components/DeleteConfirm";
 import DuplicateForm from "./components/DuplicateForm";
 import Form from "./components/Form";
+import Pagination from "./components/Pagination";
 import { ClientCompany } from "./type";
-import { client, Endpoint } from "../../api";
-import { Checkbox } from "components/shared";
-import TrashIcon from "../../icons/TrashIcon";
 
 const ItemList = () => {
   const {
@@ -265,10 +264,20 @@ const ItemList = () => {
           pending={isFetching}
           error={error as string}
           noData={!isIdle && items.length === 0}
-          mt={3}
+          // mt={3}
           px={{ xs: 0, md: 3 }}
           headerProps={{
-            sx: { px: { xs: 0.5, md: 2 }, wordBreak: "break-all" },
+            sx: {
+              px: { xs: 0.5, md: 2 },
+              wordBreak: "break-all",
+              overflow: "auto",
+              py: "2px",
+              height:"50px",
+              verticalAlign: "middle",
+              background: "#D9F0FD",
+              color: "#999999",
+              h6:{fontSize:"13px"}
+            }
           }}
         >
           {items.map((item, index) => {
@@ -334,6 +343,27 @@ const ItemList = () => {
         </TableLayout>
 
         <Pagination
+          sx={{
+            ".MuiPaginationItem-page.Mui-selected": {
+              background: "#14B9E5!important",
+              borderColor: "transparent",
+              color: "white",
+              borderRadius: "12px",
+            },
+            ".MuiPaginationItem-previousNext": {
+              background: "#D9F0FD!important",
+              borderColor: "transparent",
+              color: "black",
+              borderRadius: "12px",
+            },
+            ".MuiPaginationItem-page": {
+              background: "#D9F0FD!important",
+              borderColor: "transparent",
+              color: "black",
+              borderRadius: "12px",
+            },
+            
+          }}
           totalItems={totalItems}
           totalPages={totalPages}
           page={pageIndex}

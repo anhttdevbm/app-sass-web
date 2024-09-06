@@ -85,7 +85,7 @@ export const CompanyLang: CompanyDictionary = {
       title: "Công ty khách hàng | Taskcover",
     },
     title: "Công ty khách hàng",
-    create: "Thêm",
+    create: "Thêm mới công ty khách hàng",
     createBy: "Người tạo",
     createDate: "Ngày tạo",
     duplicate: "Nhân bản",
