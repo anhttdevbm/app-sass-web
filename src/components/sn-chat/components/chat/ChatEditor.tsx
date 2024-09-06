@@ -1,6 +1,14 @@
 "use client";
 
 import { Box, Stack } from "@mui/material";
+import AttachmentPreview from "components/AttachmentPreview";
+import { ACCEPT_MEDIA, FILE_ACCEPT, NS_CHAT_BOX } from "constant/index";
+import hljs from "highlight.js";
+import ImageImportIcon from "icons/ImageImportIcon";
+import UploadFileIcon from "icons/UploadFileIcon";
+import { useTranslations } from "next-intl";
+import dynamic from "next/dynamic";
+import "quill/dist/quill.snow.css";
 import {
   ChangeEvent,
   useCallback,
@@ -9,18 +17,10 @@ import {
   useRef,
   useState,
 } from "react";
-import "react-quill/dist/quill.snow.css";
-import { ACCEPT_MEDIA, FILE_ACCEPT, NS_CHAT_BOX } from "constant/index";
-import AttachmentPreview from "components/AttachmentPreview";
-import "quill/dist/quill.snow.css";
-import ImageImportIcon from "icons/ImageImportIcon";
-import UploadFileIcon from "icons/UploadFileIcon";
-import ChatEmoji, { Emoji } from "./ChatEmoji";
-import hljs from "highlight.js";
-import dynamic from "next/dynamic";
 import type ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { useChat } from "store/chat/selectors";
-import { useTranslations } from "next-intl";
+import ChatEmoji, { Emoji } from "./ChatEmoji";
 
 const QuillNoSSRWrapper = dynamic(
   async () => {
@@ -309,7 +309,7 @@ const ChatEditor = (props: EditorProps) => {
             marginRight: "60px",
             backgroundColor: "#E1F0FF",
             borderRadius: "20px!important",
-            width: "260px!important",
+            // width: "260px!important",
           },
         },
 
