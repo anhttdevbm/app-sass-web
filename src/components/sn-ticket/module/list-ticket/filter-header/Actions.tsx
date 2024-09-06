@@ -117,10 +117,10 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         newQueries?.typeTicket?.id == 0
           ? ""
           : newQueries?.typeTicket?.typeTicket,
+      createTime: newQueries?.createTime
     };
     dispatch(setKeySearchTicket(payload));
   }, [queries, data]);
-
 
   useEffect(() => {
     setQueries({ search_key: searchParams.get("search_key") });
