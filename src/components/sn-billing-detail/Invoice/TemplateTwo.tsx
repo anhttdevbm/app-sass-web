@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Paper,
   Stack,
   Table,
@@ -19,6 +20,7 @@ import { memo, PropsWithChildren, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Invoice } from "store/invoice/reducer";
 import { formatDate, formatNumber } from "utils/index";
+import { makeStyles, Theme } from "@mui/material/styles";
 
 type Props = {
   user?: User;
@@ -29,7 +31,7 @@ type Props = {
   formik?: any;
 };
 
-function TemplateOne({
+function TemplateTwo({
   user,
   itemInvoice,
   isEdit,
@@ -38,137 +40,133 @@ function TemplateOne({
   onDragEnd,
 }: PropsWithChildren<Props>) {
   return (
-    <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4} p={6}>
-      <Typography fontWeight={700}>VNP</Typography>
-      <Typography>{user?.country ?? "Vietnam"}</Typography>
-      <Stack
-        mt={3}
-        sx={{ display: "flex", flexWrap: "wrap", gap: "30px" }}
-        direction="row"
-      >
+    <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4} pt={2}>
+      <Stack px={3}>
+        <Typography fontWeight={500} color="#4A4A4A" fontSize={14}>
+          VNP
+        </Typography>
         <Typography
           fontSize={24}
           fontWeight={600}
-          color="#003169"
+          color="#212529"
           sx={{ width: "fit-content", margin: "auto 0" }}
         >
           Invoice {itemInvoice?.invoice_number}
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            gap: "8px",
-            padding: "15px 30px",
-            backgroundColor: "#FAFAFA",
-            border: "1px solid #2AF598",
-            width: "fit-content",
-            borderRadius: "4px",
-          }}
-        >
-          <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
-            Payment:{" "}
-          </Typography>
-          <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
-            {itemInvoice?.payment_items
-              ? itemInvoice?.payment_items[0]?.payment_method
-              : "Stripe"}{" "}
-            |{" "}
-          </Typography>
-          <Typography fontSize={14} fontWeight={500} color="#0575E6">
-            {itemInvoice?.payment_items
-              ? itemInvoice?.payment_items[0]?.payment_link
-              : "https://stripe.com"}
-          </Typography>
-        </Box>
-      </Stack>
-
-      <Stack direction="column" mt={2}>
-        <Typography color="#878787" fontSize={13} fontWeight={400}>
-          BILL FROM
-        </Typography>
-        <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
-          Company {user?.company}
-        </Typography>
-        <Typography color="#21263C" fontSize={14} fontWeight={400}>
-          {user?.address ?? "Le Chan, Ho Chi Minh"}
-        </Typography>
-        <Typography color="#21263C" fontSize={14} fontWeight={400}>
-          Tax ID: 00001
-        </Typography>
       </Stack>
 
       <Stack
-        direction="row"
-        my={3}
+        p={3}
+        mt={2}
         sx={{
+          background: "#F2FAFF",
           display: "flex",
+          flexDirection: "row",
           justifyContent: "space-between",
-          maxWidth: "80%",
         }}
       >
         <Stack direction="column">
-          <Typography color="#878787" fontSize={13} fontWeight={400}>
-            CLIENT
+          <Typography color="#212529" fontSize={14} fontWeight={600}>
+            BILL FROM
           </Typography>
-          <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
-            Company A
+          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
+            Company {user?.company}
           </Typography>
-          <Typography color="#21263C" fontSize={14} fontWeight={400}>
-            Grand Via 34, Spain
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            {user?.address ?? "Le Chan, Ho Chi Minh"}
           </Typography>
-          <Typography color="#21263C" fontSize={14} fontWeight={400}>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
             Tax ID: 00001
           </Typography>
         </Stack>
 
         <Stack direction="column">
-          <Typography color="#878787" fontSize={13} fontWeight={400}>
-            DATE
+          <Typography color="#212529" fontSize={14} fontWeight={600}>
+            BILL TO
           </Typography>
-          <Typography color="#4A4A4A" fontSize={14} fontWeight={400} mt={1}>
-            {formatDate(itemInvoice?.invoice_date)}
+          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
+            Company A
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            Grand Via 34, Spain
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            Tax ID: 00001
+          </Typography>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            +03 522 017 08
           </Typography>
         </Stack>
-
         <Stack direction="column">
-          <Typography color="#878787" fontSize={13} fontWeight={400}>
-            DUE DATE
-          </Typography>
-          <Typography color="#4A4A4A" fontSize={14} fontWeight={400} mt={1}>
-            {formatDate(itemInvoice?.due_date)}
-          </Typography>
-        </Stack>
+          <Stack direction="row">
+            <Typography
+              color="#212529"
+              minWidth={150}
+              fontSize={14}
+              fontWeight={700}
+            >
+              Created
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              Garry Hunt
+            </Typography>
+          </Stack>
 
-        <Stack direction="column">
-          <Typography color="#878787" fontSize={13} fontWeight={400}>
-            CREATED BY
-          </Typography>
-          <Typography color="#4A4A4A" fontSize={14} fontWeight={400} mt={1}>
-            Garry Hunt
-          </Typography>
+          <Stack direction="row">
+            <Typography
+              color="#212529"
+              minWidth={150}
+              fontSize={14}
+              fontWeight={700}
+            >
+              Date
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              {formatDate(itemInvoice?.invoice_date)}
+            </Typography>
+          </Stack>
+
+          <Stack direction="row">
+            <Typography
+              color="#212529"
+              minWidth={150}
+              fontSize={14}
+              fontWeight={700}
+            >
+              Due date
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              {formatDate(itemInvoice?.due_date)}
+            </Typography>
+          </Stack>
         </Stack>
       </Stack>
 
-      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
-        <Table sx={{ minWidth: 650, border: "none" }} aria-label="simple table">
+      <TableContainer
+        component={Paper}
+        sx={{ boxShadow: "none", marginTop: 2, paddingX: 3 }}
+      >
+        <Table sx={{ minWidth: 900, border: "none" }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell
                 sx={{
-                  color: "#878787",
+                  color: "#FFFFFF",
                   fontSize: "13px",
-                  fontWeight: 400,
-                  padding: "10px",
+                  fontWeight: 700,
+                  padding: "12px 20px",
+                  background: "#0575E6",
                 }}
               >
-                DESCRIPTION
+                ITEM
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#878787",
+                  color: "#FFFFFF",
                   fontSize: "13px",
-                  fontWeight: 400,
-                  padding: "10px",
+                  fontWeight: 700,
+                  padding: "12px 20px",
+                  background: "#0575E6",
                 }}
                 align="right"
               >
@@ -176,10 +174,11 @@ function TemplateOne({
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#878787",
+                  color: "#FFFFFF",
                   fontSize: "13px",
-                  fontWeight: 400,
-                  padding: "10px",
+                  fontWeight: 700,
+                  padding: "12px 20px",
+                  background: "#0575E6",
                 }}
                 align="right"
               >
@@ -187,10 +186,11 @@ function TemplateOne({
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#878787",
+                  color: "#FFFFFF",
                   fontSize: "13px",
-                  fontWeight: 400,
-                  padding: "10px",
+                  fontWeight: 700,
+                  padding: "12px 20px",
+                  background: "#0575E6",
                 }}
                 align="right"
               >
@@ -198,10 +198,11 @@ function TemplateOne({
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#878787",
+                  color: "#FFFFFF",
                   fontSize: "13px",
-                  fontWeight: 400,
-                  padding: "10px",
+                  fontWeight: 700,
+                  padding: "12px 20px",
+                  background: "#0575E6",
                 }}
                 align="right"
               >
@@ -233,7 +234,7 @@ function TemplateOne({
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
+                            borderBottom: "1px solid #EFEFEF",
                           }}
                         >
                           <TableCell
@@ -243,39 +244,54 @@ function TemplateOne({
                               color: "#21263C",
                               fontSize: "13px",
                               fontWeight: 400,
-                              padding: "10px",
+                              padding: "12px 20px",
                             }}
                           >
                             {isEdit ? (
-                              <TextField
-                                name={`service_items[${index}].service_name`}
-                                value={row.service_name}
-                                onChange={(e) =>
-                                  handleChange(
-                                    `service_items[${index}].service_name`,
-                                    e.target.value,
-                                  )
-                                }
-                                placeholder="Add a service name"
-                                fullWidth
-                                variant="standard"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  inputProps: {
-                                    style: {
-                                      textAlign: "left",
-                                      fontSize: "13px",
+                              <Stack>
+                                <TextField
+                                  name={`service_items[${index}].service_name`}
+                                  value={row.service_name}
+                                  onChange={(e) =>
+                                    handleChange(
+                                      `service_items[${index}].service_name`,
+                                      e.target.value,
+                                    )
+                                  }
+                                  placeholder="Add a service name"
+                                  fullWidth
+                                  variant="standard"
+                                  InputProps={{
+                                    disableUnderline: true,
+                                    inputProps: {
+                                      style: {
+                                        textAlign: "left",
+                                        fontSize: "13px",
+                                        fontWeight: 700,
+                                        color: "#212529",
+                                      },
                                     },
-                                  },
-                                }}
-                                sx={{
-                                  "& .MuiInputBase-input.MuiInput-input": {
-                                    padding: "8px",
-                                  },
-                                }}
-                              />
+                                  }}
+                                />
+                                00{index + 1}
+                              </Stack>
                             ) : (
-                              row.service_name
+                              <Stack>
+                                <Typography
+                                  color="#212529"
+                                  fontSize={14}
+                                  fontWeight={700}
+                                >
+                                  {row.service_name}
+                                </Typography>
+                                <Typography
+                                  color="#212529"
+                                  fontSize={14}
+                                  fontWeight={400}
+                                >
+                                  00{index + 1}
+                                </Typography>
+                              </Stack>
                             )}
                           </TableCell>
                           <TableCell
@@ -283,7 +299,7 @@ function TemplateOne({
                               color: "#21263C",
                               fontSize: "13px",
                               fontWeight: 400,
-                              padding: "10px",
+                              padding: "12px 20px",
                             }}
                             align="right"
                           >
@@ -294,7 +310,7 @@ function TemplateOne({
                               color: "#21263C",
                               fontSize: "13px",
                               fontWeight: 400,
-                              padding: "10px",
+                              padding: "12px 20px",
                             }}
                             align="right"
                           >
@@ -337,7 +353,7 @@ function TemplateOne({
                               color: "#21263C",
                               fontSize: "13px",
                               fontWeight: 400,
-                              padding: "10px",
+                              padding: "12px 20px",
                             }}
                             align="right"
                           >
@@ -383,7 +399,7 @@ function TemplateOne({
                               color: "#21263C",
                               fontSize: "13px",
                               fontWeight: 400,
-                              padding: "10px",
+                              padding: "12px 20px",
                             }}
                             align="right"
                           >
@@ -405,19 +421,22 @@ function TemplateOne({
 
       <Stack
         direction="column"
-        mt={2}
-        sx={{ alignItems: "flex-end", gap: "12px" }}
+        mt={8}
+        sx={{ alignItems: "flex-end", gap: "12px", paddingRight: 3 }}
       >
         <Stack
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            width: "350px",
+            width: "300px",
+            paddingTop: 2,
+            paddingX: 6,
+            borderTop: "1px solid #EFEFEF",
           }}
           direction="row"
         >
-          <Typography color="#878787" fontSize={14} fontWeight={400}>
-            SUBTOTAL
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            Subtotal
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
             {formatNumber(Number(itemInvoice?.total ?? 0), {
@@ -431,12 +450,13 @@ function TemplateOne({
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            width: "350px",
+            width: "300px",
+            paddingX: 6,
           }}
           direction="row"
         >
-          <Typography color="#878787" fontSize={14} fontWeight={400}>
-            {`VAT(10%)`}
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            {`VAT`}
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
             {formatNumber((Number(itemInvoice?.total ?? 0) * 10) / 100, {
@@ -450,14 +470,88 @@ function TemplateOne({
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            width: "350px",
+            width: "300px",
+            paddingX: 6,
           }}
           direction="row"
         >
-          <Typography color="#878787" fontSize={14} fontWeight={400}>
-            GRAND TOTAL
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            Total
           </Typography>
-          <Typography color="#386aba" fontSize={16} fontWeight={700}>
+          <Typography color="#212529" fontSize={16} fontWeight={400}>
+            {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
+              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+              numberOfFixed: 2,
+            })}
+          </Typography>
+        </Stack>
+        <Stack
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "300px",
+
+            paddingX: 6,
+          }}
+          direction="row"
+        >
+          <Box
+            sx={{
+              borderRadius: "100px",
+              background: "linear-gradient(to left, #2AF598, #009EFD)",
+              width: "100%",
+              padding: "1px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+                borderRadius: "100px",
+                background: "#FAFAFA",
+                width: "100%",
+                justifyContent: "center",
+                padding: "6px 0",
+              }}
+            >
+              <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
+                Payment:{" "}
+              </Typography>
+              <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
+                {itemInvoice?.payment_items
+                  ? itemInvoice?.payment_items[0]?.payment_method
+                  : "Stripe"}{" "}
+              </Typography>
+            </Box>
+          </Box>
+        </Stack>
+
+        <Stack
+          sx={{
+            display: "flex",
+            direction: "column",
+            padding: "12px 14px 18px 46px",
+            background: "#0575E6",
+            marginBottom: "20px",
+            width: "300px",
+            gap: 1,
+          }}
+        >
+          <Typography
+            sx={{ marginRight: "auto" }}
+            fontSize={14}
+            fontWeight={700}
+            color="#FFFFFF"
+          >
+            Amount Due
+          </Typography>
+          <Typography
+            sx={{ marginLeft: "auto" }}
+            fontSize={24}
+            fontWeight={600}
+            color="#FFFFFF"
+          >
             {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
@@ -500,4 +594,4 @@ function TemplateOne({
   );
 }
 
-export default memo(TemplateOne);
+export default memo(TemplateTwo);
