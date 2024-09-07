@@ -28,6 +28,8 @@ import { CHAT_EVENT_TYPE, RoomType } from "store/chat/type";
 import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
 import { useMeeting } from "store/meeting/selectors";
 import { usePathname, useRouter } from "next/navigation";
+import { getLocalStream } from "webSocket/webRTC";
+import { store } from "store/configureStore";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -58,9 +60,7 @@ const RoomHeader = () => {
   const { user } = useAuth();
   const inputRef = useRef<any>(null);
   const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
-  const { onStartMeeting } = useMeeting();
   const pathname = usePathname();
-  const router = useRouter();
 
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
@@ -106,12 +106,13 @@ const RoomHeader = () => {
   };
 
   const startMeeting = async () => {
-    await onStartMeeting(currentConversation.id)
-      .then(() => {
-        if (pathname.includes("/meeting")) return;
-        router.push(`meeting/${currentConversation.id}`);
-      })
-      .catch((e) => console.log(e.message));
+    if (pathname.includes("/meeting")) return;
+
+    window.open(
+      `/meeting/${currentConversation.id}`,
+      "_blank",
+      "width=800,height=600",
+    );
   };
 
   useEffect(() => {

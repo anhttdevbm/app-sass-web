@@ -5,7 +5,7 @@ import useTheme from "hooks/useTheme";
 import { useState } from "react";
 import { useSidebar } from "store/app/selectors";
 import { sxBtn, sxPrimaryBtn } from "../../style";
-import Conversation from "./Converstaion";
+import Conversation from "./Conversation";
 import ListUser from "./ListUser";
 import { AddUserIcon } from "icons/AddUserIcon";
 import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
@@ -117,7 +117,7 @@ const RightSidebar = () => {
           </Button>
         </Box>
       </Stack>
-      {typeShow === "message" && <Conversation messages={initMessagesArray} />}
+      {typeShow === "message" && <Conversation />}
       {typeShow === "participants" && <ListUser />}
     </Stack>
   );
@@ -163,62 +163,3 @@ const inActiveBadge = {
   fontWeight: "600",
   fontFamily: inter.style.fontFamily,
 };
-
-const initMessagesArray = [
-  {
-    user: {
-      name: "John Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    content:
-      "Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you? Hello, how are you?",
-    time: "10:54",
-    id: "1",
-  },
-  {
-    user: {
-      name: "Mark Smith",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "2",
-    content:
-      "I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks!I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks! I'm doing great, thanks!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Frank Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "3",
-    content: "Nice to meet you!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Hoang Van Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "4",
-    content: "Hello everyone!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Steven Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "5",
-    content: "Good morning!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Steven Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "6",
-    content: "How's everyone doing?",
-    time: "10:54",
-  },
-];

@@ -1,34 +1,39 @@
 import { Pending } from "@mui/icons-material";
 import SendIcon from "@mui/icons-material/Send";
-import { Avatar, Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
+import Avatar from "components/Avatar";
 import { Text } from "components/shared";
+import { WSMessagePayload, WSMessageType } from "components/sn-meeting/type";
+import useTheme from "hooks/useTheme";
 import React, { useState } from "react";
 import { useAuth } from "store/app/selectors";
-import useTheme from "hooks/useTheme";
+import { store } from "store/configureStore";
+import { MessageItem } from "store/meeting/types";
 
-interface Message {
-  user: {
-    name: string;
-    avatar: string;
-  };
-  content: string;
-  time: string;
-  id: string;
-}
-
-interface ConversationProps {
-  messages: Message[];
-}
-
-const Conversation: React.FC<ConversationProps> = ({
-  messages,
-}: ConversationProps) => {
+const Conversation = () => {
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
   const [inputValue, setInputValue] = useState("");
+  const { meetingWsClient, messages } = store.getState().meeting;
 
   const sendMessage = () => {
     if (inputValue === "") return;
+    const payload: WSMessagePayload = {
+      event: "signal",
+      type: WSMessageType.NEW_MESSAGE,
+      message: {
+        sender: {
+          id: user?.id || "",
+          avatar: user?.avatar?.link || "",
+          fullname: user?.fullname || "",
+          position: user?.position?.name || "",
+          username: user?.name || "",
+        },
+        content: inputValue,
+        sended_at: new Date().toISOString(),
+      },
+    };
+    meetingWsClient?.send(JSON.stringify(payload));
     setInputValue("");
   };
 
@@ -55,12 +60,15 @@ const Conversation: React.FC<ConversationProps> = ({
           }}
         >
           <div>
-            {[...messages, ...messages, ...messages].map((mes: Message) => (
-              <Box key={mes.id} sx={mes.id === "2" ? userStyle : guessStyle}>
-                {mes.id === "2" ? (
-                  <UserMessages content={mes} isDarkMode={isDarkMode} />
+            {messages.map((message) => (
+              <Box
+                key={`${message.sender.id}_${message.sended_at}`}
+                sx={message.sender.id === user?.id ? userStyle : guessStyle}
+              >
+                {message.sender.id === user?.id ? (
+                  <UserMessages message={message} isDarkMode={isDarkMode} />
                 ) : (
-                  <GuessMessages content={mes} isDarkMode={isDarkMode} />
+                  <GuessMessages message={message} isDarkMode={isDarkMode} />
                 )}
               </Box>
             ))}
@@ -92,6 +100,7 @@ const Conversation: React.FC<ConversationProps> = ({
               fontSize: "16px",
               fontFamily: "inherit",
               width: "100%",
+              outline: "none",
             }}
             rows={1}
             onKeyDown={handleInputText}
@@ -141,15 +150,15 @@ const userStyle = {
 };
 
 const UserMessages = ({
-  content,
+  message,
   isDarkMode,
 }: {
-  content: Message;
+  message: MessageItem;
   isDarkMode: boolean;
 }) => {
   return (
     <>
-      <Text variant={"body2"}>{content.time}</Text>
+      {/* <Text variant={"body2"}>{content.time}</Text> */}
       <Box
         sx={{
           bgcolor: isDarkMode ? "#3a3b3c" : "#fff",
@@ -158,23 +167,31 @@ const UserMessages = ({
         }}
       >
         <Text sx={{ fontWeight: 600 }}>You</Text>
-        <Text>{content.content}</Text>
+        <Text>{message.content}</Text>
       </Box>
-      <Avatar src="public/images/avatar1.png" sx={{ borderRadius: 2 }} />
+      <Avatar
+        src={message.sender.avatar}
+        alt={message.sender.fullname}
+        size={32}
+      />
     </>
   );
 };
 
 const GuessMessages = ({
-  content,
+  message,
   isDarkMode,
 }: {
-  content: Message;
+  message: MessageItem;
   isDarkMode: boolean;
 }) => {
   return (
     <>
-      <Avatar src="public/images/avatar1.png" sx={{ borderRadius: 2 }} />
+      <Avatar
+        src={message.sender.avatar}
+        alt={message.sender.fullname}
+        size={32}
+      />
       <Box
         sx={{
           bgcolor: isDarkMode ? "#3a3b3c" : "#fff",
@@ -182,10 +199,10 @@ const GuessMessages = ({
           borderRadius: "12px 12px 12px 0",
         }}
       >
-        <Text sx={{ fontWeight: 600 }}>{content.user.name}</Text>
-        <Text>{content.content}</Text>
+        <Text sx={{ fontWeight: 600 }}>{message.sender.fullname}</Text>
+        <Text>{message.content}</Text>
       </Box>
-      <Text variant={"body2"}>{content.time}</Text>
+      {/* <Text variant={"body2"}>{content.time}</Text> */}
     </>
   );
 };

@@ -1,14 +1,17 @@
 import { useCallback } from "react";
 import { useAppDispatch } from "store/hooks";
 import {
+  endMeet,
   leaveRoom,
   resetMeet,
   setCallRequest,
   setCallStatus,
+  setEndMeeting,
   setMeetInfo,
   setMeetingWsClient,
   setRemoteSignal,
   startConnecting,
+  updateMessages,
 } from "./reducer";
 import {
   cancelMeeting,
@@ -17,7 +20,7 @@ import {
   startMeeting,
   startReconnecting,
 } from "./actions";
-import { CallStatus, MeetRoomInfo } from "./types";
+import { CallStatus, MeetRoomInfo, MessageItem } from "./types";
 import { store } from "store/configureStore";
 
 export const useMeeting = () => {
@@ -129,6 +132,20 @@ export const useMeeting = () => {
     [dispatch],
   );
 
+  const onAddNewMessage = useCallback(
+    (message: MessageItem) => {
+      dispatch(updateMessages(message));
+    },
+    [dispatch],
+  );
+
+  const onUpdateMeetingStatus = useCallback(
+    (isEnding: boolean) => {
+      dispatch(setEndMeeting(isEnding));
+    },
+    [dispatch],
+  );
+
   return {
     onSetMeetingWsClient,
     onEndMeeting,
@@ -143,5 +160,7 @@ export const useMeeting = () => {
     onLeaveMeeting,
     onResetMeet,
     onGetMeetRoom,
+    onAddNewMessage,
+    onUpdateMeetingStatus,
   };
 };

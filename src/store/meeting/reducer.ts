@@ -4,6 +4,7 @@ import {
   LocalStreamState,
   MeetRoomInfo,
   MeetUser,
+  MessageItem,
   ParticipantStreamEvent,
   RemoteStream,
 } from "./types";
@@ -38,6 +39,7 @@ export interface MeetingState {
   isLeaving: boolean;
   currentParticipants: MeetUser[];
   localStreamState: LocalStreamState;
+  messages: MessageItem[];
 }
 
 const initialState: MeetingState = {
@@ -61,6 +63,7 @@ const initialState: MeetingState = {
     isCameraOn: false,
     isMicOn: false,
   },
+  messages: [],
 };
 
 const meetingSlice = createSlice({
@@ -257,6 +260,9 @@ const meetingSlice = createSlice({
         };
       }
     },
+    updateMessages(state, action: PayloadAction<MessageItem>) {
+      state.messages = [...state.messages, action.payload];
+    },
   },
   extraReducers(builder) {
     builder.addCase(getParticipants.fulfilled, (state, action) => {
@@ -295,6 +301,7 @@ export const {
   setPeer,
   setLocalStreamState,
   updateRemoteStreamState,
+  updateMessages,
 } = meetingSlice.actions;
 
 export default meetingSlice.reducer;

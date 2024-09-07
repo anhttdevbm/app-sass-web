@@ -73,8 +73,8 @@ export interface RemoteStream {
 
 export interface WSPayload {
   event: "signal" | "return_signal";
-  receive: MeetUser;
-  send: MeetUser;
+  receive: MeetUser | null;
+  send: MeetUser | null;
   signal: any;
 }
 
@@ -97,4 +97,11 @@ export interface ParticipantStreamEventPayload {
 export interface LocalStreamState {
   isCameraOn: boolean;
   isMicOn: boolean;
+}
+
+// Current structure only for text message
+export interface MessageItem {
+  sender: MeetUser;
+  content: string;
+  sended_at: string;
 }

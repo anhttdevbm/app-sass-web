@@ -36,7 +36,7 @@ import { promptTemplateReducer } from "store/promptTemplate/reducer";
 import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
 import userNavigationDetailReducer from "store/userNavigationDetail/reducer";
 import { invoiceReducer, InvoiceState } from "store/invoice/reducer";
-import {ticketReducer} from "store/ticket/reducer"
+import { ticketReducer } from "store/ticket/reducer";
 import { ticketAgentReducer } from "./ticket-agent/reducer";
 import { meetingMiddleware } from "./meeting/meetingMiddleware";
 
@@ -98,16 +98,15 @@ export const store = configureStore({
     userNavigationDetail: userNavigationDetailReducer,
 
     //ticket
-    ticket : ticketReducer,
+    ticket: ticketReducer,
 
     //ticket-agent
-    ticketAgent: ticketAgentReducer
-
+    ticketAgent: ticketAgentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat([documentApi.middleware, meetingMiddleware]),
+    }).concat([documentApi.middleware]),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

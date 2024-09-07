@@ -67,7 +67,7 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
           spacing={1}
           sx={{ justifyContent: "space-between", height: "100%" }}
         >
-          {meetInfo.room?.type === "g" ? (
+          {meetInfo?.room?.type === "g" ? (
             <>
               <MyVideoScreen sx={{}} />
               <ParticipantList />
