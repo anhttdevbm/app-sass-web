@@ -1,4 +1,13 @@
-import { Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
+import FormLayout from "components/FormLayout";
 import { INVOICES_PATH } from "constant/paths";
 import { User } from "constant/types";
 import { FormikProps, useFormik } from "formik";
@@ -6,17 +15,20 @@ import ChangeTemplateIcon from "icons/ChangeTemplateIcon";
 import EditIcon from "icons/EditIcon";
 import MarkAsSendIcon from "icons/MarkAsSendIcon";
 import ShareInvoiceIcon from "icons/ShareInvoiceIcon";
+import Image from "next/image";
 import { useParams, usePathname, useRouter } from "next/navigation";
+import TemplateTwoPng from "public/images/template-two.png";
 import { memo, useEffect, useRef, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { Bill, Billing, Budgets } from "store/billing/reducer";
 import { Invoice, Service } from "store/invoice/reducer";
 import { useInvoices } from "store/invoice/selectors";
+import { downloadFile } from "utils/index";
 import MoreButton from "./MoreButton";
 import PdfButton from "./PdfButton";
 import TemplateOne from "./TemplateOne";
-import { downloadFile } from "utils/index";
-
+import TemplateThree from "./TemplateThree";
+import TemplateTwo from "./TemplateTwo";
 export type Form = {
   service_items: Service[];
 };
@@ -32,6 +44,7 @@ type TabProps = {
   billFromInfo: Bill;
   setBillFromInfo: (value: Bill) => void;
 };
+const ITEM_HEIGHT = 48;
 
 const TabInvoice = (props: TabProps) => {
   const { user } = props;
@@ -48,6 +61,18 @@ const TabInvoice = (props: TabProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const pathname = usePathname();
   const { onAddSnackbar } = useSnackbar();
+
+  const [chooseTemplateModal, setChooseTemplateModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (template) => {
+    setSelectedTemplate(template);
+    setAnchorEl(null);
+  };
 
   const formik = useFormik<Form>({
     initialValues: {
@@ -100,6 +125,59 @@ const TabInvoice = (props: TabProps) => {
     handleChange("service_items", copiedItems);
   };
 
+  const listTemplate = [
+    {
+      key: "template-one",
+      value: "Template 1",
+      component: (
+        <TemplateOne
+          itemInvoice={itemInvoice}
+          user={user}
+          isEdit={isEdit}
+          formik={formik}
+          handleChange={handleChange}
+          onDragEnd={onDragEnd}
+        />
+      ),
+      imageUrl: TemplateTwoPng,
+    },
+    {
+      key: "template-two",
+      value: "Template 2",
+      component: (
+        <TemplateTwo
+          itemInvoice={itemInvoice}
+          user={user}
+          isEdit={isEdit}
+          formik={formik}
+          handleChange={handleChange}
+          onDragEnd={onDragEnd}
+        />
+      ),
+      imageUrl: TemplateTwoPng,
+    },
+    {
+      key: "template-three",
+      value: "Template 3",
+      component: (
+        <TemplateThree
+          itemInvoice={itemInvoice}
+          user={user}
+          isEdit={isEdit}
+          formik={formik}
+          handleChange={handleChange}
+          onDragEnd={onDragEnd}
+        />
+      ),
+      imageUrl: TemplateTwoPng,
+    },
+  ];
+  const [selectedTemplate, setSelectedTemplate] = useState(listTemplate[0]);
+  const [choosingTemplate, setChoosingTemplate] = useState(listTemplate[0]);
+  const handleCloseModalTemplate = () => {
+    handleClose(choosingTemplate);
+    setChooseTemplateModal(false);
+  };
   useEffect(() => {
     if (typeof id === "string") {
       onGetInvoiceDetail(id);
@@ -112,10 +190,14 @@ const TabInvoice = (props: TabProps) => {
         ? window.location.origin
         : "";
     const URL = `${origin}${pathname}`;
-    try {
-      await navigator.clipboard.writeText(URL);
-      onAddSnackbar("Copied!", "success");
-    } catch (er) {
+    if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(URL);
+        onAddSnackbar("Copied!", "success");
+      } catch (er) {
+        onAddSnackbar("Failed to copy", "error");
+      }
+    } else {
       onAddSnackbar("Failed to copy", "error");
     }
   };
@@ -175,7 +257,7 @@ const TabInvoice = (props: TabProps) => {
               borderRight: "1.5px solid #EBEAF2",
               display: "flex",
               gap: "8px",
-              padding: "0px 8px",
+              padding: "6px 8px",
               alignItems: "center",
               cursor: "pointer",
             }}
@@ -194,32 +276,144 @@ const TabInvoice = (props: TabProps) => {
             borderRight: "1.5px solid #EBEAF2",
             display: "flex",
             gap: "8px",
-            padding: "12px 8px",
+            padding: "0px 8px",
             alignItems: "center",
           }}
         >
           <ChangeTemplateIcon
             sx={{ width: "12px", height: "12px", margin: "auto 0" }}
           />
-          <Typography fontSize={14} fontWeight={400} color="#000000">
-            Change Template
-          </Typography>
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={open ? "long-menu" : undefined}
+            aria-expanded={open ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={handleClick}
+          >
+            <Typography fontSize={14} fontWeight={400} color="#000000">
+              Change Template
+            </Typography>
+          </IconButton>
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={() => handleClose(selectedTemplate)}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: "25ch",
+              },
+            }}
+          >
+            {listTemplate.map((template, index) => (
+              <MenuItem
+                key={index}
+                onClick={() => handleClose(template)}
+                sx={{
+                  "&:hover": {
+                    background: "rgba(217, 240, 253, 0.5)",
+                  },
+                  padding: "10px",
+                }}
+              >
+                <Typography fontSize={14} fontWeight={700} color="#4D4D4D">
+                  {template.value}
+                </Typography>
+              </MenuItem>
+            ))}
+            <MenuItem
+              key={listTemplate.length}
+              onClick={() => {
+                setChooseTemplateModal(true);
+                setAnchorEl(null);
+              }}
+              sx={{
+                "&:hover": {
+                  background: "rgba(217, 240, 253, 0.5)",
+                },
+                padding: "10px",
+              }}
+            >
+              <Typography fontSize={14} fontWeight={700} color="#4D4D4D">
+                All template
+              </Typography>
+            </MenuItem>
+          </Menu>
         </Stack>
 
-        <PdfButton handleDownloadPdf={handleDownloadPdf} />
+        <PdfButton
+          selectedTemplateHash={selectedTemplate.key}
+          handleDownloadPdf={handleDownloadPdf}
+        />
         <MoreButton onDeleteInvoice={handleDeleteInvoice} />
       </Stack>
-
+      <FormLayout
+        sx={{
+          minWidth: { xs: "calc(100vw - 24px)", lg: 600 },
+          maxWidth: { xs: "calc(100vw - 24px)", sm: 600 },
+          minHeight: "auto",
+        }}
+        open={chooseTemplateModal}
+        submitText="Choose"
+        cancelText={"Cancel"}
+        onClose={() => setChooseTemplateModal(false)}
+        onSubmit={handleCloseModalTemplate}
+        isAllTemplate={true}
+        submitWhenEnter={false}
+      >
+        <Typography
+          fontSize={20}
+          fontWeight={600}
+          color="#4D4D4D"
+          sx={{ marginBottom: "14px" }}
+        >
+          All template
+        </Typography>
+        <Grid container rowGap="30px" columnGap={3}>
+          {listTemplate.map((template, index) => (
+            <Grid item xs={4}>
+              <Box
+                sx={{
+                  width: "184px",
+                  height: "172px",
+                  padding: "1px",
+                  background:
+                    template.key == choosingTemplate.key
+                      ? "linear-gradient(to right, #2AF598, #009EFD)"
+                      : "transparent",
+                  borderRadius: "12px",
+                  cursor: "pointer",
+                }}
+                onClick={() => setChoosingTemplate(template)}
+              >
+                <Image
+                  src={template.imageUrl}
+                  width={182}
+                  height={170}
+                  alt={template.value}
+                />
+              </Box>
+              <Typography
+                textAlign="center"
+                fontWeight={600}
+                fontSize={14}
+                color="#212529"
+              >
+                {template.value}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      </FormLayout>
       {/* Main */}
+
       <Stack ref={printRef} width="fit-content">
-        <TemplateOne
-          itemInvoice={itemInvoice}
-          user={user}
-          isEdit={isEdit}
-          formik={formik}
-          handleChange={handleChange}
-          onDragEnd={onDragEnd}
-        />
+        {selectedTemplate.component}
       </Stack>
     </Stack>
   );

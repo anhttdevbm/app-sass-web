@@ -1,10 +1,9 @@
 import { Box, Stack, Typography } from "@mui/material";
+import DeleteIcon from "icons/DeleteIcon";
+import UploadIcon from "icons/UploadIcon";
 import moment from "moment";
 import Image from "next/image";
-import { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import IconUpload from "public/images/ticket/upload.svg";
-import DeleteIcon from "public/images/ticket/deleteIcon.svg";
 
 const fileTypes = ["JPEG", "PNG", "GIF"];
 
@@ -43,7 +42,7 @@ export default function FileUpload({
           flexDirection={"row"}
         >
           <Stack justifyContent={"center"} alignItems={"center"} gap={"10px"}>
-            <IconUpload />
+            <UploadIcon />
             <Typography
               sx={{ fontSize: "15px", fontWeight: "400", color: "#999999" }}
             >

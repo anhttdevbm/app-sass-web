@@ -1,11 +1,9 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
+import DownloadIcon from "icons/DownloadIcon";
 import moment from "moment";
 import Image from "next/image";
-import { useSelector } from "react-redux";
-import { selectTicketDetailData } from "store/ticket/selectors";
-import DownloadIcon from "public/images/ticket/downloadIcon.svg";
-import React, { useState } from "react";
 import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
+import React from "react";
 
 const ListView = React.memo(
   ({ downloadAllImages }: { downloadAllImages: (file) => void }) => {

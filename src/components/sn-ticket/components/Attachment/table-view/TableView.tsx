@@ -1,20 +1,17 @@
-import { useSelector } from "react-redux";
-import { selectTicketDetailData } from "store/ticket/selectors";
+import { Box, Stack, Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import ImageIcon from "public/images/ticket/ImageIcon.svg";
-import moment from "moment";
-import DownloadIcon from "public/images/ticket/downloadIcon.svg";
-import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
-import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
-import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
+import DownloadIcon from "icons/DownloadIcon";
+import ImageIcon from "icons/ImageIcon";
+import moment from "moment";
+import { useTranslations } from "next-intl";
+import { useGetTicketDetail } from "queries/ticket/useGetTicket/useGetTicketById";
+import React from "react";
 
 const TableView = React.memo(
   ({ downloadAllImages }: { downloadAllImages: (file) => void }) => {

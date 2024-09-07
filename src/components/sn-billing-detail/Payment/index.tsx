@@ -67,7 +67,6 @@ const TabPayment = (props: TabProps) => {
 
   useEffect(() => {
     if (itemInvoice?.id) {
-      onGetPayments(itemInvoice.id);
       onGetAllPayments(itemInvoice.id);
     }
   }, [itemInvoice]);
@@ -77,7 +76,6 @@ const TabPayment = (props: TabProps) => {
       itemInvoice?.id &&
       (isAddPayment || isUpdatePayment || isDeletedPayment)
     ) {
-      onGetPayments(itemInvoice.id);
       onGetAllPayments(itemInvoice.id);
     }
   }, [isAddPayment, isUpdatePayment, isDeletedPayment]);
@@ -247,12 +245,12 @@ const TabPayment = (props: TabProps) => {
         <Box
           sx={{
             backgroundColor: "#D9F0FD",
-            padding: "14px 0 14px 20px",
+            padding: "12px 20px",
             borderRadius: "12px",
           }}
         >
-          <Typography color="#0575E6" fontSize={20} fontWeight={600}>
-            Payments detail{" "}
+          <Typography color="#0575E6" fontSize={16} fontWeight={600}>
+            Payments detail
           </Typography>
         </Box>
         <PaymentTable

@@ -74,7 +74,7 @@ const Actions = ({ onDeleteMultipleInvoice, selectedList, onGetInvoices }) => {
   };
 
   return (
-    <Stack spacing={1} padding={2}>
+    <Stack spacing={1} paddingY={2}>
       <Stack
         direction="row"
         spacing={2}

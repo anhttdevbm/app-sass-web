@@ -1,18 +1,15 @@
-import { memo } from "react";
 import { SvgIcon, SvgIconProps } from "@mui/material";
+import { memo } from "react";
 
 const VideoCallIcon = (props: SvgIconProps) => {
   const color = props.htmlColor || "#FFFFFF";
   return (
-    <SvgIcon
-      width="24"
-      height="20"
-      viewBox="0 0 24 20"
-      fill="none"
+    <SvgIcon 
+      width="26" 
+      height="26" 
+      viewBox="0 0 26 26" 
+      fill="none" 
       xmlns="http://www.w3.org/2000/svg"
-      sx={{
-        fontSize: "1.6rem",
-      }}  
       {...props}
     >
       <path

@@ -9,7 +9,7 @@ import { useState } from "react";
 import StringFormat from "string-format";
 const ITEM_HEIGHT = 48;
 
-function PdfButton({ handleDownloadPdf }) {
+function PdfButton({ handleDownloadPdf, selectedTemplateHash }) {
   const { id } = useParams();
   const { push } = useRouter();
   const options = ["View PDF", "Download PDF"];
@@ -24,7 +24,9 @@ function PdfButton({ handleDownloadPdf }) {
   };
 
   const handleViewPdf = () => {
-    push(StringFormat(INVOICE_EXPORT_PATH, { id }));
+    push(
+      StringFormat(INVOICE_EXPORT_PATH, { id }) + "#" + selectedTemplateHash,
+    );
   };
 
   return (
@@ -34,7 +36,7 @@ function PdfButton({ handleDownloadPdf }) {
         borderRight: "1.5px solid #EBEAF2",
         display: "flex",
         gap: "8px",
-        padding: "12px 8px",
+        padding: "6px 8px",
         alignItems: "center",
       }}
     >
