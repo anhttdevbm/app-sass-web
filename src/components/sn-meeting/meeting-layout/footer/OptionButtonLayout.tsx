@@ -49,7 +49,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
     remoteStreams,
   } = store.getState().meeting;
   const { user } = useAuth();
-  const { onLeaveMeeting, onEndMeeting, onResetMeet } = useMeeting();
+  const { onLeaveMeeting, onUpdateMeetingStatus } = useMeeting();
   const [isScreenShareActive, setIsScreenShareActive] = useState(false);
   const [isRadioButtonActive, setIsRadioButtonActive] = useState(false);
   const [isClosedCaptionActive, setIsClosedCaptionActive] = useState(false);
@@ -86,6 +86,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
       isCameraOn: !localStreamState.isCameraOn,
     };
     store.dispatch(setLocalStreamState(newLocalStreamState));
+
     const payload: ParticipantStreamEventPayload = {
       event: ParticipantStreamEvent.TOGGLE_CAMERA,
       participantId: user?.id as string,
@@ -147,7 +148,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
     };
 
     await onLeaveMeeting(meetInfo?.room?.id ? meetInfo : fakeMeetInfo);
-    router.push("/");
+    onUpdateMeetingStatus(true);
   };
 
   return (
@@ -182,8 +183,8 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
                 : {
                     ...sxBtnCircleActiveLight,
                     "&:hover > svg > path:not(:first-of-type)": {
-                      fill: "#FFF",
-                      stroke: "#FFF",
+                      fill: localStreamState.isMicOn ? "#FFF" : "#F64E60",
+                      stroke: localStreamState.isMicOn ? "#FFF" : "#F64E60",
                     },
                   }
             }
@@ -211,12 +212,14 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
                 : {
                     ...sxBtnCircleActiveLight,
                     "&:hover > svg > path": {
-                      fill: "#FFF",
-                      stroke: "#FFF",
+                      fill: localStreamState.isCameraOn ? "#FFF" : "#F64E60",
+                      stroke: localStreamState.isCameraOn ? "#FFF" : "#F64E60",
                     },
                     "&:hover > svg > path:last-of-type": {
-                      fill: "#3699FF",
-                      stroke: "#3699FF",
+                      fill: localStreamState.isCameraOn ? "#3699FF" : "#F64E60",
+                      stroke: localStreamState.isCameraOn
+                        ? "#3699FF"
+                        : "#F64E60",
                     },
                   }
             }

@@ -18,13 +18,12 @@ import SearchIcon from "icons/SearchIcon";
 import SidebarIcon from "icons/SidebarIcon";
 import VideoCallIcon from "icons/VideoCallIcon";
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
 import { useChat } from "store/chat/selectors";
 import { CHAT_EVENT_TYPE } from "store/chat/type";
-import { useMeeting } from "store/meeting/selectors";
 import colorSchemes from "utils/colorSchemes";
 import { debounce } from "utils/index";
 import ChatDetailInfo from "./ChatDetailInfo";
@@ -58,9 +57,7 @@ const RoomHeader = () => {
   const { user } = useAuth();
   const inputRef = useRef<any>(null);
   const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
-  const { onStartMeeting } = useMeeting();
   const pathname = usePathname();
-  const router = useRouter();
 
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
@@ -106,12 +103,13 @@ const RoomHeader = () => {
   };
 
   const startMeeting = async () => {
-    await onStartMeeting(currentConversation.id)
-      .then(() => {
-        if (pathname.includes("/meeting")) return;
-        router.push(`meeting/${currentConversation.id}`);
-      })
-      .catch((e) => console.log(e.message));
+    if (pathname.includes("/meeting")) return;
+
+    window.open(
+      `/meeting/${currentConversation.id}`,
+      "_blank",
+      "width=800,height=600",
+    );
   };
 
   useEffect(() => {

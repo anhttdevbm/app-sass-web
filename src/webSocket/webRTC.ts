@@ -2,21 +2,19 @@ import { store } from "store/configureStore";
 import { setLocalStream, setLocalStreamState } from "../store/meeting/reducer";
 import Peer from "simple-peer";
 
-export const getLocalStream = (callback?: () => void) => {
+export const getLocalStream = async (callback?: () => void) => {
   const constraints = { audio: true, video: true };
 
   if (store.getState().meeting.localStream) {
     if (callback) {
       callback();
     }
-    return;
+    return true;
   }
 
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then((stream) => {
-      console.log("webrtcv", stream);
-
+  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  try {
+    if (stream) {
       const isCameraOn = stream
         .getVideoTracks()
         .every((track) => track.enabled);
@@ -26,11 +24,12 @@ export const getLocalStream = (callback?: () => void) => {
       if (callback) {
         callback();
       }
-    })
-    .catch((err) => {
-      console.log(err);
-      console.log("Error getting local stream");
-    });
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+  return false;
 };
 
 export const peerConfiguration = () => {

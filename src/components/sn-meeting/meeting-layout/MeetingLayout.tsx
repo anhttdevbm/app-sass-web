@@ -22,7 +22,7 @@ import RightSidebar from "./right-sidebar/RightSidebar";
 export default function MeetingLayout() {
   // useWSMeeting();
   const { isDarkMode } = useTheme();
-  const { meetInfo, isEndMeeting, localStream } = useAppSelector(
+  const { isEndMeeting, localStream } = useAppSelector(
     (state) => state.meeting,
   );
   const { onLeaveMeeting } = useMeeting();
@@ -71,14 +71,13 @@ export default function MeetingLayout() {
     setToggleMinimize(!toggleMinimize);
   };
 
-  useEffect(() => {
-    const handleEndMeeting = async () => {
-      localStream?.getTracks().forEach((track) => track.stop());
-      store.dispatch(endMeet());
-      router.push("/");
-    };
-    isEndMeeting && handleEndMeeting();
-  }, [isEndMeeting]);
+  // useEffect(() => {
+  //   const handleEndMeeting = async () => {
+  //     localStream?.getTracks().forEach((track) => track.stop());
+  //     store.dispatch(endMeet());
+  //   };
+  //   isEndMeeting && handleEndMeeting();
+  // }, [isEndMeeting]);
 
   return (
     <Card

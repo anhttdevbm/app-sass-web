@@ -3,7 +3,7 @@
 import { Box, Snackbar, Stack } from "@mui/material";
 import AppLoading from "components/AppLoading";
 import Header, { HEADER_HEIGHT } from "./Header";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Sidebar } from "./components";
 import { useAppSelector } from "store/hooks";
 import { shallowEqual } from "react-redux";
@@ -119,15 +119,18 @@ const MainLayout = (props: MainLayoutProps) => {
       </Stack>
       <Snackbar />
       {!isChatting ? <ChatListTemp /> : null}
-      {callStatus === CallStatus.ringing && <IncomingCall />}
+      <IncomingCall callStatus={callStatus} />
     </>
   );
 };
 
 export default memo(MainLayout);
 
-const IncomingCall = () => {
-  const router = useRouter();
+interface IncomingCallProps {
+  callStatus: "left" | "ringing" | "accepted" | "rejected" | null;
+}
+
+const IncomingCall = ({ callStatus }: IncomingCallProps) => {
   const { meetInfo } = useAppSelector((state) => state.meeting);
   const { onAcceptCall, onRejectCall } = useMeeting();
 
@@ -137,38 +140,46 @@ const IncomingCall = () => {
       return;
     }
     onAcceptCall(meetInfo.id);
-    router.push(`/meeting/${meetInfo?.room.id}`);
+    window.open(
+      `/meeting/${meetInfo.room.id}?meetInfo=${encodeURIComponent(
+        JSON.stringify(meetInfo),
+      )}&isJoining=true`,
+      "_blank",
+      "width=800,height=600",
+    );
   };
 
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: "10rem",
-        right: "2rem",
-        background: "var(--mui-palette-info-light)",
-        borderRadius: 2,
-        padding: 2,
-      }}
-    >
-      <p style={{ textAlign: "center" }}>Incoming Call</p>
-      {/* {!callRequest?.audioOnly && (
+    callStatus == CallStatus.ringing && (
+      <Box
+        sx={{
+          position: "fixed",
+          top: "10rem",
+          right: "2rem",
+          background: "var(--mui-palette-info-light)",
+          borderRadius: 2,
+          padding: 2,
+        }}
+      >
+        <p style={{ textAlign: "center" }}>Incoming Call</p>
+        {/* {!callRequest?.audioOnly && (
         <button onClick={() => handleCall(true, false)}>Accept</button>
       )} */}
-      <Button
-        onClick={() => handleCall(true)}
-        variant="outlined"
-        sx={{ bgcolor: "var(--mui-palette-primary-main)", margin: "0 4px" }}
-      >
-        Accept
-      </Button>
-      <Button
-        onClick={() => handleCall(false)}
-        variant="outlined"
-        sx={{ bgcolor: "var(--mui-palette-error-dark)" }}
-      >
-        Cancel
-      </Button>
-    </Box>
+        <Button
+          onClick={() => handleCall(true)}
+          variant="outlined"
+          sx={{ bgcolor: "var(--mui-palette-primary-main)", margin: "0 4px" }}
+        >
+          Accept
+        </Button>
+        <Button
+          onClick={() => handleCall(false)}
+          variant="outlined"
+          sx={{ bgcolor: "var(--mui-palette-error-dark)" }}
+        >
+          Cancel
+        </Button>
+      </Box>
+    )
   );
 };

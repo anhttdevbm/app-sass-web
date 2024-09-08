@@ -48,7 +48,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
             color: "#373131",
           }}
         >
-          {meetInfo.room?.type === "p"
+          {meetInfo?.room?.type === "p"
             ? remoteStreams.length > 0 && remoteStreams[0].participant.fullname
             : "Group"}
         </Text>
@@ -62,7 +62,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
           }}
         >
           <Text variant="body2" color="#818A98">
-            {moment(meetInfo.created_at).format("DD MMM YYYY")}
+            {moment(meetInfo?.created_at).format("DD MMM YYYY")}
           </Text>
           {isRecording && (
             <Stack sx={{ flexDirection: "row", gap: 1 }}>

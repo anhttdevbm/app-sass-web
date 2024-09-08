@@ -6,7 +6,7 @@ import { store } from "store/configureStore";
 export default function OneToOneCallLayout() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const { localStream, remoteStreams } = store.getState().meeting;
+  const { localStream, remoteStreams, meetInfo } = store.getState().meeting;
   const { localStreamState } = store.getState().meeting;
   const { user } = useAuth();
   const remoteStream = useMemo(() => remoteStreams[0], [remoteStreams]);
@@ -116,7 +116,6 @@ export default function OneToOneCallLayout() {
             component={"video"}
             ref={remoteVideoRef}
             autoPlay
-            muted
             playsInline
             sx={{
               width: remoteStream.streamState.isCameraOn ? "unset" : "0%",
