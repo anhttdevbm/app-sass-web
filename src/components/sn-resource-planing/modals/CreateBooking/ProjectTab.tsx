@@ -165,7 +165,7 @@ const ProjectTab = ({
   const handleChangeBudget = async (value: string) => {
     if (value) {
       const res = await getServiceByBudgetQueries(value);
-      const convertValue = res.data?.map((item: TBudgetService) => ({
+      const convertValue = res.data?.result?.map((item: TBudgetService) => ({
         value: item.id,
         label: item.name,
       }));
