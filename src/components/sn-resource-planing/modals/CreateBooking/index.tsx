@@ -41,7 +41,6 @@ const CreateBooking: React.FC<IProps> = ({
           sx={{
             display: "flex",
             alignItems: "center",
-            borderBottom: "1px solid #ECECF3",
             height: "60px",
             verticalAlign: "text-top",
           }}
@@ -75,6 +74,12 @@ const CreateBooking: React.FC<IProps> = ({
           boxShadow: "-4px 10px 30px 0px #0000001A",
           borderRadius: "20px",
         },
+        ".MuiDialogTitle-root": {
+          borderBottom: "1px solid #ECECF3",
+        },
+      }}
+      closeIconSx={{
+        marginTop: "12px",
       }}
     >
       <DialogContent
