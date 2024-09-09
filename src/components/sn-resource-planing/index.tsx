@@ -8,8 +8,8 @@ import useBreakpoint from "hooks/useBreakpoint";
 
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
-import { useAuth } from "store/app/selectors";
+import React, { useEffect, useState } from "react";
+import { useAuth, useHeaderConfig } from "store/app/selectors";
 import AllPeopleTab from "./AllPeopleTab";
 import CreateBooking from "./modals/CreateBooking";
 import ModalDrop from "./modals/ModalDrop";
@@ -17,6 +17,8 @@ import MyScheduleTab from "./MyScheduleTab";
 const ResourcePlanning = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller, isMdSmaller } = useBreakpoint();
+  const { onUpdateHeaderConfig } = useHeaderConfig();
+
   const { user } = useAuth();
 
   const [tab, setTab] = useState(
@@ -29,6 +31,25 @@ const ResourcePlanning = () => {
   const [isModalAdd, setIsModalAdd] = useState<boolean>(false);
   const [projectSelected, setProjectSelected] = useState<string | null>(null);
   const [budgetSelected, setBudgetSelected] = useState<string | null>(null);
+
+  useEffect(() => {
+    onUpdateHeaderConfig({
+      title: t("header.title"),
+      searchPlaceholder: t("searchBy", {
+        name: t("list.key"),
+      }),
+      key: "name",
+    });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        key: undefined,
+      });
+    };
+    //eslint-disable-next-line
+  }, []);
 
   return (
     <Stack
@@ -75,7 +96,6 @@ const ResourcePlanning = () => {
             //   backgroundColor: "background.default",
             // },
             alignItems: "center",
-            minHeight: "110px",
           }}
         >
           <Grid
@@ -91,15 +111,18 @@ const ResourcePlanning = () => {
               flexDirection: isMdSmaller ? "column" : "row",
               gap: "16px",
               width: "100%",
+              overflow: "hidden",
             }}
           >
             <TabList
               sx={{
+                minHeight: 34,
                 "& .MuiTab-root": {
                   borderRadius: "100px", // Bo góc cho các tab
                   textTransform: "none",
                   fontWeight: "bold",
                   mx: 1, // Khoảng cách giữa các tab
+                  minHeight: 32,
                   margin: 0,
                   "&.Mui-selected": {
                     backgroundColor: "rgba(0, 123, 255, 0.1)", // Màu nền cho tab được chọn
@@ -117,7 +140,7 @@ const ResourcePlanning = () => {
                 "& .MuiTabs-flexContainer": {
                   borderRadius: "100px",
                   width: isSmSmaller ? "100%" : "297px",
-                  height: "56px",
+                  height: "34px",
                   border: "1px solid rgba(0, 123, 255, 0.1)",
                 },
               }}
