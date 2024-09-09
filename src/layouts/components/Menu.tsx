@@ -36,6 +36,7 @@ import {
   STATEMENT_HISTORY_PATH,
   TIME_TRACKING_PATH,
   TICKET_AGENT,
+  TICKET_DASHBOARD,
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -426,7 +427,7 @@ const DATA: MenuItemProps[] = [
     subs: [
       {
         label: "menu.dashboard",
-        href: STATEMENT_HISTORY_PATH,
+        href: TICKET_DASHBOARD,
         roles: [Permission.SA],
       },
       {

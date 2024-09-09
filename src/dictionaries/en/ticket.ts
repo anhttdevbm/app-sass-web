@@ -1,3 +1,4 @@
+import { DashboardRounded } from "@mui/icons-material";
 import { TicketDictionary } from "dictionaries/types/TicketDictionary";
 
 export const TicketLang: TicketDictionary = {
@@ -152,7 +153,9 @@ export const TicketLang: TicketDictionary = {
     CONFIRM: "Confirm",
     titleDelete : "Confirm to Delete",
     quesionConfirmDelete : "Are you sure to delete this agent?",
-
-
   },
+
+  dashboard : {
+    title : "Dashboard"
+  }
 };
