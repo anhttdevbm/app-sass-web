@@ -69,6 +69,13 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
     setSelectedOption(value);
   };
 
+  const [startDatePicker, setStartDatePicker] = useState<dayjs.Dayjs | null>(
+    dayjs().subtract(30, "day")
+  );
+  const [endDatePicker, setEndDatePicker] = useState<dayjs.Dayjs | null>(
+    dayjs(new Date()),
+  );
+
   const {
     options: employeeOptions,
     onGetOptions,
@@ -99,6 +106,14 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
     },
     ...employeeOptions,
   ];
+
+  const handleStartDatePickerChange = (date: dayjs.Dayjs | null) => {
+    setStartDatePicker(date);
+  };
+
+  const handleEndDatePickerChange = (date: dayjs.Dayjs | null) => {
+    setEndDatePicker(date);
+  };
 
   const handleSearchDoc = () => {
     handleClose();
@@ -241,33 +256,43 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
           dispatch(updateFilterTimeDoc(docsT("filter.filter.threeMonthAgo")));
         }
         break;
-        case docsT("filter.filter.thisYear"):
+      case docsT("filter.filter.thisYear"):
         {
-          const startDate = dayjs().startOf('year').format('YYYY-MM-DD');
-          const endDate = dayjs().endOf('year').format('YYYY-MM-DD');
+          const startDate = dayjs().startOf("year").format("YYYY-MM-DD");
+          const endDate = dayjs().endOf("year").format("YYYY-MM-DD");
           onChange("from", [startDate]);
           onChange("to", [endDate]);
           dispatch(updateFilterTimeDoc(docsT("filter.filter.thisYear")));
         }
         break;
-        case docsT("filter.filter.lastYear"):
+      case docsT("filter.filter.lastYear"):
         {
-          const lastYear = dayjs().subtract(1, 'year');
-          const startOfYear = lastYear.startOf('year').format('YYYY-MM-DD');
-          const endOfYear = lastYear.endOf('year').format('YYYY-MM-DD');
+          const lastYear = dayjs().subtract(1, "year");
+          const startOfYear = lastYear.startOf("year").format("YYYY-MM-DD");
+          const endOfYear = lastYear.endOf("year").format("YYYY-MM-DD");
           onChange("from", [startOfYear]);
           onChange("to", [endOfYear]);
           dispatch(updateFilterTimeDoc(docsT("filter.filter.lastYear")));
         }
         break;
-        case docsT("filter.filter.oneYearAgo"):
+      case docsT("filter.filter.oneYearAgo"):
         {
-          const from = dayjs().subtract(1, 'year').startOf('day').format('YYYY-MM-DD');
-          const to = dayjs().endOf('day').format('YYYY-MM-DD');
+          const from = dayjs()
+            .subtract(1, "year")
+            .startOf("day")
+            .format("YYYY-MM-DD");
+          const to = dayjs().endOf("day").format("YYYY-MM-DD");
           onChange("from", [from]);
           onChange("to", [to]);
           dispatch(updateFilterTimeDoc(docsT("filter.filter.oneYearAgo")));
         }
+        break;
+      case "custom":
+        const from = startDatePicker?.format("YYYY-MM-DD");
+        const to = endDatePicker?.format("YYYY-MM-DD");
+        onChange("from", [from]);
+        onChange("to", [to]);
+        dispatch(updateFilterTimeDoc("custom"));
         break;
       default:
         break;
@@ -439,7 +464,8 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
                 borderRadius: "9999px",
               },
             }}
-            defaultValue={dayjs(new Date())}
+            onChange={handleStartDatePickerChange}
+            value={startDatePicker}
           />
           <div>-</div>
           <DatePicker
@@ -456,7 +482,8 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
                 borderRadius: "9999px",
               },
             }}
-            defaultValue={dayjs().subtract(30, "day")}
+            onChange={handleEndDatePickerChange}
+            value={endDatePicker}
           />
         </Box>
 
