@@ -26,10 +26,10 @@ import { useInvoices } from "store/invoice/selectors";
 import { downloadFile } from "utils/index";
 import MoreButton from "./MoreButton";
 import PdfButton from "./PdfButton";
+import TemplateFour from "./TemplateFour";
 import TemplateOne from "./TemplateOne";
 import TemplateThree from "./TemplateThree";
 import TemplateTwo from "./TemplateTwo";
-import TemplateFour from "./TemplateFour";
 
 export type Form = {
   service_items: Service[];
