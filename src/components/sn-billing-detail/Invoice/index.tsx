@@ -29,6 +29,7 @@ import PdfButton from "./PdfButton";
 import TemplateOne from "./TemplateOne";
 import TemplateThree from "./TemplateThree";
 import TemplateTwo from "./TemplateTwo";
+
 export type Form = {
   service_items: Service[];
 };
@@ -55,12 +56,20 @@ const TabInvoice = (props: TabProps) => {
     onUpdateInvoice,
   } = useInvoices();
   const printRef = useRef(null);
+  const hash = window.location.hash;
 
   const { id } = useParams();
   const { push } = useRouter();
   const [isEdit, setIsEdit] = useState(false);
   const pathname = usePathname();
   const { onAddSnackbar } = useSnackbar();
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "";
+
+  const URL = `${origin}${pathname}`;
+  const [selectedUrl, setSelectedUrl] = useState(hash);
 
   const [chooseTemplateModal, setChooseTemplateModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -69,10 +78,16 @@ const TabInvoice = (props: TabProps) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (template) => {
-    setSelectedTemplate(template);
+  const handleClose = (newHash) => {
+    console.log(newHash);
+
+    setSelectedUrl(URL + "#" + newHash);
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    push(selectedUrl);
+  }, [selectedUrl]);
 
   const formik = useFormik<Form>({
     initialValues: {
@@ -100,17 +115,17 @@ const TabInvoice = (props: TabProps) => {
     handleChange("service_items", itemInvoice?.service_items);
   }, [itemInvoice]);
 
-  useEffect(() => {
-    if (formik.values.service_items) {
-      formik.values.service_items.forEach((service, index) => {
-        const amount =
-          (Number(service.rate) ?? 0) * (Number(service.quantity) ?? 0);
-        if (amount != Number(formik.values.service_items[index].amount)) {
-          handleChange(`service_items[${index}].amount`, amount);
-        }
-      });
-    }
-  }, [formik.values]);
+  // useEffect(() => {
+  //   if (formik.values.service_items) {
+  //     formik.values.service_items.forEach((service, index) => {
+  //       const amount =
+  //         (Number(service.rate) ?? 0) * (Number(service.quantity) ?? 0);
+  //       if (amount != Number(formik.values.service_items[index].amount)) {
+  //         handleChange(`service_items[${index}].amount`, amount);
+  //       }
+  //     });
+  //   }
+  // }, [formik.values]);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -129,53 +144,24 @@ const TabInvoice = (props: TabProps) => {
     {
       key: "template-one",
       value: "Template 1",
-      component: (
-        <TemplateOne
-          itemInvoice={itemInvoice}
-          user={user}
-          isEdit={isEdit}
-          formik={formik}
-          handleChange={handleChange}
-          onDragEnd={onDragEnd}
-        />
-      ),
-      imageUrl: TemplateTwoPng,
+      imageUrl: "/images/template-one.svg",
     },
     {
       key: "template-two",
       value: "Template 2",
-      component: (
-        <TemplateTwo
-          itemInvoice={itemInvoice}
-          user={user}
-          isEdit={isEdit}
-          formik={formik}
-          handleChange={handleChange}
-          onDragEnd={onDragEnd}
-        />
-      ),
       imageUrl: TemplateTwoPng,
     },
     {
       key: "template-three",
       value: "Template 3",
-      component: (
-        <TemplateThree
-          itemInvoice={itemInvoice}
-          user={user}
-          isEdit={isEdit}
-          formik={formik}
-          handleChange={handleChange}
-          onDragEnd={onDragEnd}
-        />
-      ),
-      imageUrl: TemplateTwoPng,
+      imageUrl: "/images/template-three.svg",
     },
   ];
   const [selectedTemplate, setSelectedTemplate] = useState(listTemplate[0]);
   const [choosingTemplate, setChoosingTemplate] = useState(listTemplate[0]);
+
   const handleCloseModalTemplate = () => {
-    handleClose(choosingTemplate);
+    handleClose(choosingTemplate.key);
     setChooseTemplateModal(false);
   };
   useEffect(() => {
@@ -247,7 +233,12 @@ const TabInvoice = (props: TabProps) => {
       <Stack
         gap={1}
         direction="row"
-        sx={{ borderBottom: "1.5px solid #EBEAF2" }}
+        sx={{
+          borderBottom: "1.5px solid #EBEAF2",
+          position: "sticky",
+          top: 0,
+          background: "#ffffff",
+        }}
       >
         {listChoice.map((choice, index) => (
           <Stack
@@ -302,7 +293,7 @@ const TabInvoice = (props: TabProps) => {
             }}
             anchorEl={anchorEl}
             open={open}
-            onClose={() => handleClose(selectedTemplate)}
+            onClose={() => handleClose(hash)}
             PaperProps={{
               style: {
                 maxHeight: ITEM_HEIGHT * 4.5,
@@ -313,7 +304,7 @@ const TabInvoice = (props: TabProps) => {
             {listTemplate.map((template, index) => (
               <MenuItem
                 key={index}
-                onClick={() => handleClose(template)}
+                onClick={() => handleClose(template.key)}
                 sx={{
                   "&:hover": {
                     background: "rgba(217, 240, 253, 0.5)",
@@ -347,15 +338,15 @@ const TabInvoice = (props: TabProps) => {
         </Stack>
 
         <PdfButton
-          selectedTemplateHash={selectedTemplate.key}
+          selectedTemplateHash={selectedUrl.split("#")[1]}
           handleDownloadPdf={handleDownloadPdf}
         />
         <MoreButton onDeleteInvoice={handleDeleteInvoice} />
       </Stack>
       <FormLayout
         sx={{
-          minWidth: { xs: "calc(100vw - 24px)", lg: 600 },
-          maxWidth: { xs: "calc(100vw - 24px)", sm: 600 },
+          minWidth: { xs: "calc(100vw - 24px)", lg: 800 },
+          maxWidth: { xs: "calc(100vw - 24px)", sm: 800 },
           minHeight: "auto",
         }}
         open={chooseTemplateModal}
@@ -374,9 +365,17 @@ const TabInvoice = (props: TabProps) => {
         >
           All template
         </Typography>
-        <Grid container rowGap="30px" columnGap={3}>
+        <Grid container>
           {listTemplate.map((template, index) => (
-            <Grid item xs={4}>
+            <Grid
+              item
+              xs={4}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               <Box
                 sx={{
                   width: "184px",
@@ -396,6 +395,11 @@ const TabInvoice = (props: TabProps) => {
                   width={182}
                   height={170}
                   alt={template.value}
+                  style={{
+                    objectFit: "cover",
+                    borderRadius: "12px",
+                    background: "white",
+                  }}
                 />
               </Box>
               <Typography
@@ -412,8 +416,37 @@ const TabInvoice = (props: TabProps) => {
       </FormLayout>
       {/* Main */}
 
-      <Stack ref={printRef} width="fit-content">
-        {selectedTemplate.component}
+      <Stack ref={printRef} width="fit-content" margin="auto">
+        {(!Boolean(selectedUrl) || selectedUrl.includes("template-one")) && (
+          <TemplateOne
+            itemInvoice={itemInvoice}
+            user={user}
+            isEdit={isEdit}
+            formik={formik}
+            handleChange={handleChange}
+            onDragEnd={onDragEnd}
+          />
+        )}
+        {selectedUrl.includes("template-two") && (
+          <TemplateTwo
+            itemInvoice={itemInvoice}
+            user={user}
+            isEdit={isEdit}
+            formik={formik}
+            handleChange={handleChange}
+            onDragEnd={onDragEnd}
+          />
+        )}
+        {selectedUrl.includes("template-three") && (
+          <TemplateThree
+            itemInvoice={itemInvoice}
+            user={user}
+            isEdit={isEdit}
+            formik={formik}
+            handleChange={handleChange}
+            onDragEnd={onDragEnd}
+          />
+        )}
       </Stack>
     </Stack>
   );
