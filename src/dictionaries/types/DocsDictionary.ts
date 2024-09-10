@@ -25,6 +25,21 @@ export type DocsDictionary = {
       name: string;
       project: string;
       projectStatus: string;
+      lastHour: string;
+      today: string;
+      oneDayAgo: string;
+      thisWeek: string;
+      lastWeek: string;
+      oneWeekAgo: string;
+      thisMonth: string;
+      lastMonth: string;
+      oneMonthAgo: string;
+      thisQuarter: string;
+      lastQuarter: string;
+      threeMonthAgo: string;
+      thisYear: string;
+      lastYear: string;
+      oneYearAgo: string;
     };
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

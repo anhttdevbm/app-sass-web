@@ -59,7 +59,6 @@ export type ISelectMember = Pick<IMember, "id" | "fullname">;
 
 const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
   const { query } = useQueryParams();
-  console.log("fullPath   =>>>", query);
   const docsT = useTranslations(NS_DOCS);
   const [members, setMembers] = useState<IMember[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
