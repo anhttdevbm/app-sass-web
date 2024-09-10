@@ -29,6 +29,7 @@ import PdfButton from "./PdfButton";
 import TemplateOne from "./TemplateOne";
 import TemplateThree from "./TemplateThree";
 import TemplateTwo from "./TemplateTwo";
+import TemplateFour from "./TemplateFour";
 
 export type Form = {
   service_items: Service[];
@@ -155,6 +156,26 @@ const TabInvoice = (props: TabProps) => {
       key: "template-three",
       value: "Template 3",
       imageUrl: "/images/template-three.svg",
+    },
+    {
+      key: "template-four",
+      value: "Template 4",
+      imageUrl: "/images/template-four.svg",
+    },
+    {
+      key: "template-fifth",
+      value: "Template 5",
+      imageUrl: "/images/template-fifth.svg",
+    },
+    {
+      key: "template-sixth",
+      value: "Template 6",
+      imageUrl: "/images/template-sixth.svg",
+    },
+    {
+      key: "template-seventh",
+      value: "Template 7",
+      imageUrl: "/images/template-seventh.svg",
     },
   ];
   const [selectedTemplate, setSelectedTemplate] = useState(listTemplate[0]);
@@ -439,6 +460,16 @@ const TabInvoice = (props: TabProps) => {
         )}
         {selectedUrl.includes("template-three") && (
           <TemplateThree
+            itemInvoice={itemInvoice}
+            user={user}
+            isEdit={isEdit}
+            formik={formik}
+            handleChange={handleChange}
+            onDragEnd={onDragEnd}
+          />
+        )}
+        {selectedUrl.includes("template-four") && (
+          <TemplateFour
             itemInvoice={itemInvoice}
             user={user}
             isEdit={isEdit}

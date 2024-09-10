@@ -31,7 +31,7 @@ type Props = {
   formik?: any;
 };
 
-function TemplateThree({
+function TemplateFour({
   user,
   itemInvoice,
   isEdit,
@@ -43,75 +43,7 @@ function TemplateThree({
     <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4}>
       <Stack
         p={3}
-        sx={{
-          background: "#D9F0FD",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Stack direction="column">
-          <Typography fontWeight={500} color="#4A4A4A" fontSize={14}>
-            VNP
-          </Typography>
-          <Typography
-            fontSize={24}
-            fontWeight={600}
-            color="#212529"
-            sx={{ width: "fit-content", margin: "auto 0" }}
-          >
-            Invoice {itemInvoice?.invoice_number}
-          </Typography>
-        </Stack>
-
-        <Stack direction="column">
-          <Stack direction="row">
-            <Typography
-              color="#212529"
-              minWidth={150}
-              fontSize={14}
-              fontWeight={700}
-            >
-              Created
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              Garry Hunt
-            </Typography>
-          </Stack>
-
-          <Stack direction="row">
-            <Typography
-              color="#212529"
-              minWidth={150}
-              fontSize={14}
-              fontWeight={700}
-            >
-              Date
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              {formatDate(itemInvoice?.invoice_date)}
-            </Typography>
-          </Stack>
-
-          <Stack direction="row">
-            <Typography
-              color="#212529"
-              minWidth={150}
-              fontSize={14}
-              fontWeight={700}
-            >
-              Due date
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              {formatDate(itemInvoice?.due_date)}
-            </Typography>
-          </Stack>
-        </Stack>
-      </Stack>
-
-      <Stack
-        p={3}
-        mt={2}
+        pb={1}
         sx={{
           display: "flex",
           flexDirection: "row",
@@ -134,21 +66,102 @@ function TemplateThree({
         </Stack>
 
         <Stack direction="column">
+          <Typography
+            fontWeight={500}
+            color="#4A4A4A"
+            fontSize={14}
+            textAlign="right"
+          >
+            VNP
+          </Typography>
+          <Typography
+            fontSize={24}
+            fontWeight={600}
+            color="#212529"
+            sx={{ width: "fit-content", margin: "auto 0" }}
+          >
+            Invoice {itemInvoice?.invoice_number}
+          </Typography>
+        </Stack>
+      </Stack>
+
+      <Stack
+        p={3}
+        mt={2}
+        gap={2}
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Stack direction="column">
           <Typography color="#212529" fontSize={14} fontWeight={600}>
-            SHIP TO
+            BILL TO
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-            Company A
+            {itemInvoice?.bill_to?.name}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Grand Via 34, Spain
+            {itemInvoice?.bill_to?.address}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Tax ID: 00001
+            Tax ID: {itemInvoice?.bill_to?.tax_code}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            +03 522 017 08
+            {itemInvoice?.bill_to?.phone}
           </Typography>
+        </Stack>
+
+        <Stack
+          direction="row"
+          gap={2}
+          sx={{
+            padding: "10px 50px",
+            background: "#F5F5F5",
+          }}
+        >
+          <Stack direction="column">
+            <Typography
+              color="#212529"
+              minWidth={150}
+              fontSize={14}
+              fontWeight={700}
+            >
+              Created
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              Garry Hunt
+            </Typography>
+          </Stack>
+
+          <Stack direction="column">
+            <Typography
+              color="#212529"
+              minWidth={150}
+              fontSize={14}
+              fontWeight={700}
+            >
+              Date
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              {formatDate(itemInvoice?.invoice_date)}
+            </Typography>
+          </Stack>
+
+          <Stack direction="column">
+            <Typography
+              color="#212529"
+              minWidth={150}
+              fontSize={14}
+              fontWeight={700}
+            >
+              Due date
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              {formatDate(itemInvoice?.due_date)}
+            </Typography>
+          </Stack>
         </Stack>
       </Stack>
 
@@ -165,7 +178,7 @@ function TemplateThree({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#D9F0FD",
+                  background: "#F5F5F5",
                 }}
               >
                 ITEM
@@ -176,7 +189,7 @@ function TemplateThree({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#D9F0FD",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -188,7 +201,7 @@ function TemplateThree({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#D9F0FD",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -200,7 +213,7 @@ function TemplateThree({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#D9F0FD",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -212,7 +225,7 @@ function TemplateThree({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#D9F0FD",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -440,7 +453,6 @@ function TemplateThree({
             justifyContent: "space-between",
             width: "300px",
             paddingTop: 2,
-            borderTop: "1px solid #EFEFEF",
           }}
           direction="row"
         >
@@ -480,7 +492,6 @@ function TemplateThree({
             justifyContent: "space-between",
             width: "300px",
             paddingBottom: 3,
-            borderBottom: "1px solid #EFEFEF",
           }}
           direction="row"
         >
@@ -502,18 +513,17 @@ function TemplateThree({
           mt={1}
           alignItems="center"
           paddingBottom={4}
-          sx={{ width: "300px" }}
         >
-          <Stack display="flex" flexDirection="column" gap={1}>
+          <Stack display="flex" flexDirection="row" gap={1}>
             <Typography
               fontSize={16}
               fontWeight={700}
               color="#333333"
-              sx={{ textWrap: "nowrap" }}
+              sx={{ textWrap: "nowrap", margin: "auto 0", marginRight: "20px" }}
             >
               Amount Due
             </Typography>
-            <Typography fontSize={24} fontWeight={600} color="#14B9E5">
+            <Typography fontSize={24} fontWeight={600} color="#333333">
               {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
                 prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
                 numberOfFixed: 2,
@@ -522,7 +532,7 @@ function TemplateThree({
           </Stack>
           <Box
             sx={{
-              background: "#D9F0FD",
+              background: "#F5F5F5",
               padding: "6px 26px",
               borderRadius: "100px",
               height: "fit-content",
@@ -577,4 +587,4 @@ function TemplateThree({
   );
 }
 
-export default memo(TemplateThree);
+export default memo(TemplateFour);

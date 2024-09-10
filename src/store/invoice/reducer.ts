@@ -35,6 +35,12 @@ export interface Member {
   email?: string;
   date_in?: string;
 }
+export interface BillTo {
+  name: String;
+  tax_code: String;
+  phone: String;
+  address: String;
+}
 export interface Invoice {
   id?: string;
   invoice_number?: string;
@@ -51,6 +57,7 @@ export interface Invoice {
   status: boolean;
   balance_due: string;
   members?: Member[];
+  bill_to: BillTo;
 }
 
 export type InvoiceState = {
