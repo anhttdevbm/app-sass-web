@@ -19,8 +19,8 @@ const Actions = () => {
 
   return (
     <>
-      <Stack direction="row">
-        <Stack flex={7}>
+      <Stack direction={{ xs: "column", sm: "row", md: "row" }}>
+        <Stack flex={{ xs: 2, sm: 7, md: 7 }}>
           <Text
             fontSize={25}
             color={"#4D4D4D"}
@@ -30,14 +30,14 @@ const Actions = () => {
           </Text>
         </Stack>
         <Stack
-          flex={3}
-          direction="row"
+          flex={{ xs: 8, sm: 3, md: 3 }}
+          direction={{ xs: "column", sm: "row", md: "row" }}
           alignItems="center"
           justifyContent="flex-start"
-          width="fit-content"
+          width={{ xs: "100%", sm: "fit-content", md: "fit-content" }}
           spacing={3}
           py={{ xs: 1.25, md: 1, lg: 1.25 }}
-          px={{ xs: 3, md: 2, lg: 2 }}
+          px={{ xs: 0, md: 2, lg: 2 }}
           overflow="auto"
           sx={{
             '&::-webkit-scrollbar': {

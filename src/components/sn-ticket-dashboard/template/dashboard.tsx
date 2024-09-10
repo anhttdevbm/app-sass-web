@@ -13,7 +13,7 @@ const DashBoardTicket = () => {
           overflowY: "auto",
           scrollbarWidth: "none",
           height: "calc(100vh - 100px)",
-          padding: "24px 24px"
+          padding: {xs :"24px 12px", md :"24px 24px"}
         }}
       >
         <Actions />

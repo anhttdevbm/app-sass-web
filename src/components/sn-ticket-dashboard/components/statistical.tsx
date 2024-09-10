@@ -53,12 +53,12 @@ const Statistical = () => {
     );
     return (
         <>
-            <Stack direction="row" gap={2} flexWrap="wrap">
+            <Stack direction="row" gap={{ xs: 1, sm: 2, md: 2 }} flexWrap="wrap">
                 {Object.values(stateTicket).map((item, index) => (
                     <Box
                         sx={{
                             height: 165,
-                            width: 185,
+                            width: { xs: "48%", sm: "30%", md: "30%" },
                             borderRadius: "12px",
                             backgroundColor: `${item.bg}`,
                             padding: "25px",

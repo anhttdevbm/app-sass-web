@@ -1,18 +1,20 @@
 import { memo } from "react"
 import "./style.css"
+import { Box, Stack } from "@mui/material"
 
 interface ProgressBarProps {
     type: "priority" | "type" | "assign"
     data: any
+    totalTicket: number
 }
 
 const ProgressBar = (props: ProgressBarProps) => {
 
-    const { type, data } = props
+    const { type, data, totalTicket } = props
 
     const handleConvertPercent = (count: number, total: number) => {
         const percent = (count / total) * 100
-        console.log("check percent" , percent)
+        console.log("check percent", percent)
         return `${percent}%`
     }
 
@@ -28,32 +30,63 @@ const ProgressBar = (props: ProgressBarProps) => {
         }
     }
 
+    const bgStatusColor = (type: string) => {
+        switch (type) {
+            case "priority":
+                return "linear-gradient(143.13deg, #FFBF1A 5.36%, #FF4080 94.64%)"
+            case "type":
+                return "linear-gradient(270deg, #2FEA9B 15.5%, #7FDD53 85.5%)"
+            case "assign":
+                return "linear-gradient(143.13deg, #5EBBFF 5.36%, #1B59F8 94.64%)"
+            default:
+        }
+    }
+
     return (
         <>
             <div className="container-progress-bar">
-                {Object.entries(data).map(([key, value]) => (
-                    <div key={key} className="progress-bar">
-                        <label className="text-lable">{key}</label>
-                        <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: "12px" }}>
-                            <div
-                                className="progress-bar-item"
-                                style={{
-                                    background: bgColor(type)
-                                }}
+                {data?.map((item: any, index: number) => (
+                    <Stack mt={2} key={index} direction="row">
+                        <Box margin="auto" display={type !== "assign" ? "none" : "block"} pr={2}>
+                            <Box
+                                width={40}
+                                height={40}
+                                borderRadius={50}
+                                component="img"
+                                src={
+                                    item?.urlAvatar ?
+                                        item?.urlAvatar :
+                                        "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__"
+                                }
                             >
+                            </Box>
+                        </Box>
+                        <Box 
+                        width={type !== "assign" ? "100%" : "100%"}
+                        >
+                            <label className="text-lable">{item?.priority || item?.type || item?.fullname}</label>
+                            <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: "12px" }}>
                                 <div
-                                    className="progress-bar-item-before"
+                                    className="progress-bar-item"
                                     style={{
-                                        background: "linear-gradient(143.13deg, #FFBF1A 5.36%, #FF4080 94.64%)",
-                                        width : handleConvertPercent(value as number , 100)
+                                        background: bgColor(type)
                                     }}
                                 >
+                                    <div
+                                        className="progress-bar-item-before"
+                                        style={{
+                                            background: bgStatusColor(type),
+                                            width: handleConvertPercent(item?.count as number, totalTicket)
+                                        }}
+                                    >
+                                    </div>
                                 </div>
+                                <text className="text-count-ticket">{item?.count as number}</text>
                             </div>
-                            <text className="text-count-ticket">{value as number}</text>
-                        </div>
 
-                    </div>
+                        </Box>
+                    </Stack>
+
                 ))}
 
             </div>
