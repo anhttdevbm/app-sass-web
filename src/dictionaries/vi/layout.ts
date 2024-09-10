@@ -13,12 +13,13 @@ export const LayoutLang: LayoutDictionary = {
     expand: "Mở rộng",
   },
   menu: {
-    dashboard: "Dashboard",
+    dashboard: "Bảng điều khiển",
     project: "Dự án",
     task: "Công việc",
     company: "Công ty",
     employees: "Danh sách nhân viên",
     holidayCalendar: "Holiday Calendar",
+    packageManager: "Quản lý gói",
     costHistory: "Lịch sử chi phí",
     listOfPositions: "Danh sách chức vụ",
     projectTypeList: "Danh sách loại dự án",
@@ -58,5 +59,8 @@ export const LayoutLang: LayoutDictionary = {
     landingPricing: "Định giá",
 
     invoice: "Hóa đơn",
+
+    ticket: "Vé",
+    agent : "đại lý"
   },
 };

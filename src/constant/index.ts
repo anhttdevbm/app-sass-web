@@ -32,12 +32,17 @@ export const INVOICE_API_URL = process.env.INVOICE_API_URL as string;
 
 //Content
 export const CONTENT_API_URL = process.env.CONTENT_API_URL as string;
+//Meeting
+export const MEETING_API_URL = process.env.MEETING_API_URL as string;
 
 // AI
 export const AI_CHAT_API_URL = process.env.AI_CHAT_API_URL as string;
 export const AI_AGENT_API_URL = process.env.AI_AGENT_API_URL as string;
 export const PROJECT_AI_API_URL = process.env.PROJECT_AI_API_URL as string;
 export const AI_DOCS_API_URL = process.env.AI_DOCS_API_URL as string;
+
+//Ticket
+export const TICKET_API_URL = process.env.TICKET_API_URL as string;
 
 export const DARK_THEME_MEDIA_SYSTEM = "(prefers-color-scheme: dark)";
 export const DOCS_API_URL = process.env.DOCS_API_URL as string;
@@ -132,6 +137,7 @@ export const NS_AI_AGENT = "aiAgent";
 export const NS_DOCS = "documents";
 export const NS_COST_RATE = "costRate";
 export const NS_HOLIDAY_CALENDAR = "holidayCalendar";
+export const NS_PACKAGE_MANAGERMENT = "packageManagement";
 //Feedback
 export const NS_FEEDBACK = "feeback";
 //blog
@@ -152,6 +158,9 @@ export const NS_MEETING = "meeting";
 
 // Invoice
 export const NS_INVOICE = "invoice";
+
+//ticket
+export const NS_TICKET = "ticket";
 
 export const IMAGES_ACCEPT = ["image/png", "image/jpeg", "image/jpg"];
 export const VIDEO_ACCEPT = ["video/mp4"];

@@ -29,6 +29,9 @@ export enum WorkType {
 }
 
 export interface MyTimeSheet {
+  _id?: string;
+  user_id?: string;
+  type?: WorkType;
   project?: Project;
   created_time?: string;
   day?: string;
@@ -39,9 +42,7 @@ export interface MyTimeSheet {
   position?: { id: string; name: string };
   project_id?: string;
   start_time?: string;
-  type?: WorkType;
-  user_id?: string;
-  _id?: string;
+  is_pin?: boolean;
 }
 
 export interface WorkLogItem {

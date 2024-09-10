@@ -23,12 +23,13 @@ import { AbstractIntlMessages } from "next-intl";
 import NextIntlProvider from "./NextIntlProvider";
 import { getProfile } from "store/app/actions";
 // import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useWSChatConnect } from "store/chat/ws";
 import { useWSChat } from "store/chat/helpers";
+import useWebSocket from "hooks/web-socket/useWebSocket";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, RESET_PASSWORD_PATH];
 const LANDING_PATHS = [LANDING_HOME_PATH];
@@ -112,6 +113,7 @@ export default AppProvider;
 const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   useWSChatConnect();
   useWSChat();
+  useWebSocket();
   const appReady = useAppSelector((state) => state.app.appReady);
   const token = useAppSelector((state) => state.app.token);
 

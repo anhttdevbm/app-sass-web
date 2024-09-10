@@ -33,6 +33,8 @@ import DefaultPopupLayout from "./DefaultPopupLayout";
 import { timeCreateInputStyles } from "./timeTrackingModal.styles";
 import { WorkType } from "store/timeTracking/reducer";
 import Textarea from "components/Textarea";
+import ChevronIcon from "icons/ChevronIcon";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
 
 interface IProps {
   type?: string;
@@ -69,6 +71,16 @@ const formLabelStyles: SxProps = {
   color: "neutral.700",
   fontFamily: "unset",
   marginBottom: "12px",
+};
+
+const initValue = {
+  project_id: "",
+  position: "",
+  start_time: "",
+  type: "",
+  day: "",
+  duration: 0,
+  note: "",
 };
 
 const TimeCreate = ({
@@ -129,15 +141,7 @@ const TimeCreate = ({
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      project_id: "",
-      position: "",
-      start_time: "",
-      type: "",
-      day: "",
-      duration: undefined,
-      note: "",
-    },
+    defaultValues: initValue,
   });
 
   useEffect(() => {
@@ -162,6 +166,7 @@ const TimeCreate = ({
       };
       reset(validResetData);
     } else {
+      reset(initValue);
       setValue("position", userData?.position?.id || "");
     }
   }, [open]);
@@ -216,6 +221,8 @@ const TimeCreate = ({
             onGetCompanyTimeSheet({ ...params });
           }
           onAddSnackbar("Update timesheet success", "success");
+
+          reset(initValue);
           onClose();
         })
         .catch((err) => {
@@ -229,8 +236,9 @@ const TimeCreate = ({
       })
         .then(() => {
           onAddSnackbar("Create timesheet success", "success");
-          onClose();
 
+          reset(initValue);
+          onClose();
           if (currentScreen === "myTime") {
             onGetMyTimeSheet({ ...params });
           } else {
@@ -292,6 +300,8 @@ const TimeCreate = ({
                   sx={{
                     "& > .MuiBox-root": {
                       ...timeCreateInputStyles,
+                      paddingRight: 0,
+                      position: "relative",
                       "& > div, & > div > .MuiInputBase-root": {
                         height: "100%",
                         background: "transparent",
@@ -325,6 +335,32 @@ const TimeCreate = ({
                       </Box>
                     );
                   }}
+                  ExpandIcon={
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        right: "20px",
+                        width: "18px !important",
+                        height: "18px !important",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderWidth: "0.2px",
+                        borderStyle: "solid",
+                        borderColor: "#5C5C5C",
+                        borderRadius: "100%",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      <ChevronCircleIcon
+                        sx={{
+                          width: "18px !important",
+                          height: "18px !important",
+                          fill: "transparent",
+                        }}
+                      />
+                    </Box>
+                  }
                   {...(field as any)}
                 />
               </div>
@@ -338,31 +374,59 @@ const TimeCreate = ({
                 <TextFieldSelect
                   options={projectOptions}
                   label={timeT("modal.Project")}
-                  sx={{ flex: 1 }}
+                  sx={{
+                    "& > .MuiBox-root": {
+                      ...timeCreateInputStyles,
+                      paddingRight: 0,
+                      position: "relative",
+                      "& > div, & > div > .MuiInputBase-root": {
+                        width: "calc(100% - 20px)",
+                        height: "100%",
+                        background: "transparent",
+                      },
+                    },
+                    "& .MuiSelect-select": {
+                      height: "100%",
+                      display: "block",
+                    },
+                    "& .MuiFormLabel-root": {
+                      height: "22px",
+                    },
+                  }}
                   // required
                   error={Boolean(errors?.project_id?.message)}
                   helperText={errors?.project_id?.message}
+                  ExpandIcon={
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        right: "20px",
+                        width: "18px !important",
+                        height: "18px !important",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderWidth: "0.2px",
+                        borderStyle: "solid",
+                        borderColor: "#5C5C5C",
+                        borderRadius: "100%",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      <ChevronCircleIcon
+                        sx={{
+                          width: "18px !important",
+                          height: "18px !important",
+                          fill: "transparent",
+                        }}
+                      />
+                    </Box>
+                  }
                   {...(field as any)}
                 />
               )}
             />
           )}
-          {/* <Controller
-            name="position"
-            control={control}
-            render={({ field }) => (
-              <TextFieldSelect
-                disabled
-                options={positionOptions}
-                label={timeT("modal.Position")}
-                sx={{ flex: 1 }}
-                required
-                error={Boolean(errors?.position?.message)}
-                helperText={errors?.position?.message}
-                {...(field as any)}
-              />
-            )}
-          /> */}
           <Stack
             direction="row"
             sx={{
@@ -645,9 +709,7 @@ const TimeCreate = ({
   };
   return (
     <DefaultPopupLayout
-      title={
-        defaultValue?.id ? timeT("modal.edit_time") : timeT("modal.add_time")
-      }
+      title={isEdit ? timeT("modal.edit_time") : timeT("modal.add_time")}
       content={_renderMain()}
       open={open}
       onClose={onClose}

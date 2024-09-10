@@ -15,6 +15,7 @@ import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { ReadonlyURLSearchParams } from "next/navigation";
 import StringFormat from "string-format";
 import { clientStorage } from "./storage";
+import { i } from "@fullcalendar/resource/internal-common";
 
 export const parseHashURL = (value: string) => `#${value}`;
 
@@ -288,7 +289,6 @@ export const formatDate = (
   if (!date) return fallback ?? "";
   if (!format) format = DATE_FORMAT_SLASH;
   const dateObj = new Date(date);
-
   const year = dateObj.getFullYear();
 
   if (year === 1 || year === 1970) return fallback ?? "";
@@ -648,8 +648,8 @@ export const downloadFile = async (printRef) => {
 
   const pdf = new jsPDF({
     orientation: "p",
-    unit: "pt",
-    format: "a4",
+    unit: "px",
+    format: [1000, 1200],
   });
 
   const imgProperties = pdf.getImageProperties(data);
@@ -658,10 +658,94 @@ export const downloadFile = async (printRef) => {
 
   pdf.addImage(data, "PNG", 10, 10, pdfWidth, pdfHeight);
 
-  pdf.html(element ?? "", {
-    callback: function (pdf) {
-      pdf.save("print.pdf");
-    },
-    margin: 20,
-  });
+  pdf.save("print.pdf");
+};
+
+interface QuarterDates {
+  startOfQuarter: string;
+  endOfQuarter: string;
+}
+
+export const getCurrentQuarter = (): QuarterDates => {
+  const month = dayjs().month();
+  let startMonth: number;
+  let endMonth: number;
+
+  if (month >= 0 && month <= 2) {
+    startMonth = 0; // Q1: January to March
+    endMonth = 2;
+  } else if (month >= 3 && month <= 5) {
+    startMonth = 3; // Q2: April to June
+    endMonth = 5;
+  } else if (month >= 6 && month <= 8) {
+    startMonth = 6; // Q3: July to September
+    endMonth = 8;
+  } else {
+    startMonth = 9; // Q4: October to December
+    endMonth = 11;
+  }
+
+  const startOfQuarter = dayjs()
+    .month(startMonth)
+    .startOf("month")
+    .format("YYYY-MM-DD");
+  const endOfQuarter = dayjs()
+    .month(endMonth)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  return { startOfQuarter, endOfQuarter };
+};
+
+export const getLastQuarter = (): QuarterDates => {
+  const month = dayjs().month();
+  let startMonth: number;
+  let endMonth: number;
+
+  // Xác định quý hiện tại
+  let currentQuarter: number;
+  if (month >= 0 && month <= 2) {
+    currentQuarter = 1; // Q1
+    startMonth = 9; // Tháng 10
+    endMonth = 11; // Tháng 12
+  } else if (month >= 3 && month <= 5) {
+    currentQuarter = 2; // Q2
+    startMonth = 0; // Tháng 1
+    endMonth = 2; // Tháng 3
+  } else if (month >= 6 && month <= 8) {
+    currentQuarter = 3; // Q3
+    startMonth = 3; // Tháng 4
+    endMonth = 5; // Tháng 6
+  } else {
+    currentQuarter = 4; // Q4
+    startMonth = 6; // Tháng 7
+    endMonth = 8; // Tháng 9
+  }
+
+  // Tính quý trước
+  let lastQuarter: number;
+  if (currentQuarter === 1) {
+    lastQuarter = 4; // Quý trước Q4 của năm trước
+  } else {
+    lastQuarter = currentQuarter - 1; // Quý trước của quý hiện tại
+  }
+
+  // Xác định năm cho quý trước
+  const currentYear = dayjs().year();
+  const yearForLastQuarter = lastQuarter === 4 ? currentYear - 1 : currentYear;
+
+  // Ngày bắt đầu và ngày kết thúc của quý trước
+  const startOfLastQuarter = dayjs()
+    .year(yearForLastQuarter)
+    .month(startMonth)
+    .startOf("month")
+    .format("YYYY-MM-DD");
+
+  const endOfLastQuarter = dayjs()
+    .year(yearForLastQuarter)
+    .month(endMonth)
+    .endOf("month")
+    .format("YYYY-MM-DD");
+
+  return { startOfQuarter: startOfLastQuarter, endOfQuarter: endOfLastQuarter };
 };

@@ -214,11 +214,10 @@ export const Endpoint = {
 
   //AI Chat
   AI_CHAT_EXAMPLE_PROMPT: "ai-chat/example-prompt",
-  AI_CHAT_SESSION: "ai-chat/chat-sessions",
+  AI_CHAT_SESSION: "ai-chat/chat-session",
   AI_CHAT: "ai-chat/chat",
-  AI_CHAT_PERSONA: "ai-chat/personas",
-  AI_CHAT_TONE: "ai-chat/tones",
-  AI_CHAT_DELETE_ALL_SESSION: "ai-chat/close-all-chat-session",
+  AI_CHAT_PERSONA: "ai-chat/persona",
+  AI_CHAT_TONE: "ai-chat/tone",
 
   //AI Agent
   AI_AGENT: "/agent",
@@ -246,4 +245,11 @@ export const Endpoint = {
   AI_DOCS_COVERT_SHEET: "/docs/convert/sheet",
   AI_DOCS_IMPORT_MD: "/docs/import/md",
   AI_DOCS_IMPORT_OPML: "/docs/import/opml",
+
+  //Ticket
+  TICKET: "/ticket",
+  DETAIL_TICKET: "/ticket/{id}",
+
+  //Ticket-agent
+  TICKET_AGENT: "/ticket/user",
 };

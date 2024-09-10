@@ -13,6 +13,7 @@ export const BUDGET_DETAIL_PATH = "/budgeting/{id}";
 export const EMPLOYEES_PATH = "/employees";
 export const EMPLOYEES_DETAIL_PATH = "/employee-detail/{id}";
 export const HOLIDAY_CALENDAR_PATH = "/holiday-calendar";
+export const PACKAGE_MANAGERMENT_PATH = "/package-management";
 export const COST_HISTORY_PATH = "/cost-history";
 export const POSITIONS_PATH = "/positions";
 export const PROJECT_TYPES_PATH = "/project-types";
@@ -54,6 +55,15 @@ export const SALE_DETAIL_PATH = "/sales/{id}";
 export const DOCS_PATH = "/documents";
 export const DOCS_DETAIL_PATH = "/documents/{id}";
 export const DOCS_CREATE_PATH = "/documents/create";
+
+// ticket
+export const TICKET_PATH = "/ticket";
+export const TICKET_INFO_PATH = "/ticket/{id}";
+export const TICKET_CREATE_PATH = "/ticket/create";
+
+// ticket manager
+export const TICKET_AGENT = "/agent";
+
 
 // Feedback
 export const FEEDBACK_PATH = "/feedback";

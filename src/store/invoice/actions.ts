@@ -3,6 +3,7 @@ import { client, Endpoint } from "api";
 import { HttpStatusCode } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, INVOICE_API_URL } from "constant/index";
 import StringFormat from "string-format";
+import { Service } from "./reducer";
 
 export type GetInvoiceListQueries = {
   page?: number;
@@ -121,6 +122,28 @@ export const deleteMultipleInvoice = createAsyncThunk(
         baseURL: INVOICE_API_URL,
         data: invoice_number,
       });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const updateInvoice = createAsyncThunk(
+  "Invoice/updateInvoice",
+  async ({ service_items, id }: { service_items: Service[]; id: string }) => {
+    try {
+      const response = await client.put(
+        StringFormat(Endpoint.DETAIL_INVOICE, { id }),
+        { service_items },
+        {
+          baseURL: INVOICE_API_URL,
+        },
+      );
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data;

@@ -183,7 +183,7 @@ const TopContent = (props: TopContentProps) => {
   return (
     <Stack
       gap={1}
-      pt={2}
+      pt={1}
       px={2}
       bgcolor={isDarkMode ? "#313130" : "white"}
       borderRadius={1}
@@ -212,7 +212,7 @@ const TopContent = (props: TopContentProps) => {
             {/* <Avatar src={user?.avatar?.link ?? ""} /> */}
 
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
-              {item?.invoice_number ? item?.invoice_number?.toString() : ""}
+              INV-{item?.invoice_number ? item?.invoice_number?.toString() : ""}
             </Text>
 
             <Box
@@ -242,7 +242,20 @@ const TopContent = (props: TopContentProps) => {
             cursor: "pointer",
           }}
         >
-          <CommentHistory sx={{ marginTop: "2px", width: "16px" }} />
+          <Stack
+            sx={{
+              width: "1.5px",
+              height: "20px",
+              margin: "auto",
+              background: "#E0E0E0",
+            }}
+          />
+          <CommentHistory
+            sx={{
+              marginTop: "2px",
+              width: "16px",
+            }}
+          />
           <Typography fontSize={14} fontWeight={400} color="#212529">
             Comments & History
           </Typography>

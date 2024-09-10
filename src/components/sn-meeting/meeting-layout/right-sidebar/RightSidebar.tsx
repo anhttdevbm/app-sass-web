@@ -1,18 +1,27 @@
-import React, { useState } from "react";
-import { Box, Button, Stack } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { sxBtn, sxPrimaryBtn } from "../../style";
-import ListUser from "./ListUser";
-import Conversation from "./Converstaion";
+import { Box, Button, Stack } from "@mui/material";
+import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
+import { useState } from "react";
+import { useSidebar } from "store/app/selectors";
+import { sxBtn, sxPrimaryBtn } from "../../style";
+import Conversation from "./Conversation";
+import ListUser from "./ListUser";
+import { AddUserIcon } from "icons/AddUserIcon";
+import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
+import { fontFamily } from "html2canvas/dist/types/css/property-descriptors/font-family";
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
+import { store } from "store/configureStore";
 
 const RightSidebar = () => {
   const { isDarkMode } = useTheme();
-
+  const { isExpandedSidebar } = useSidebar();
+  const { isXlSmaller } = useBreakpoint();
   const [isActive, setIsActive] = useState<boolean>(true);
   const [typeShow, setTypeShow] = useState<"message" | "participants">(
     "participants",
   );
+  const { remoteStreams } = store.getState().meeting;
 
   const toggleIsActive = () => {
     setIsActive(!isActive);
@@ -26,22 +35,44 @@ const RightSidebar = () => {
     <Stack
       direction={"column"}
       sx={{
-        width: 400,
+        width: 360,
         backgroundColor: isDarkMode ? "var(--mui-palette-grey-50)" : "#F5F5FD",
-        height: "calc(100vh - 50px)",
+        height: "100%",
       }}
     >
-      <Box textAlign={"center"} py={2} bgcolor={isDarkMode ? "#000" : "#fff"}>
+      <Box
+        textAlign={"center"}
+        py={2}
+        sx={{
+          paddingX: "16px",
+        }}
+        bgcolor={isDarkMode ? "#000" : "#fff"}
+      >
         <Button
           sx={{
-            ...sxBtn,
-            width: "60%",
-            borderRadius: "20px",
+            minWidth: "120px",
+            backgroundColor: "#E1F0FF",
+            width: isExpandedSidebar || isXlSmaller ? "100%" : "240px",
+            borderRadius: isExpandedSidebar || isXlSmaller ? "4px" : "40px",
             textTransform: "capitalize",
+            "&:hover": {
+              backgroundColor: "#E1F0FF",
+              opacity: 0.8,
+            },
           }}
-          startIcon={<AddCircleIcon />}
+          startIcon={
+            <AddUserIcon
+              sx={{
+                fill: "transparent",
+                width: "18px",
+                height: "18px",
+                position: "relative",
+                top: "1px",
+              }}
+            />
+          }
         >
-          Add Participant
+          {isExpandedSidebar || isXlSmaller ? "Participant" : "Add Participant"}
         </Button>
       </Box>
       <Stack
@@ -53,10 +84,10 @@ const RightSidebar = () => {
       >
         <Box
           sx={{
-            bgcolor: isDarkMode ? "#3a3b3c" : "#fff",
+            bgcolor: isDarkMode ? "#3a3b3c" : "transparent",
             borderRadius: 1,
-            padding: 0.5,
-            width: "90%",
+            padding: "0 16px",
+            width: "100%",
           }}
         >
           <Button
@@ -81,13 +112,13 @@ const RightSidebar = () => {
             <span
               style={typeShow === "participants" ? activeBadge : inActiveBadge}
             >
-              24
+              {remoteStreams.length}
             </span>
           </Button>
         </Box>
       </Stack>
-      {typeShow === "message" && <Conversation messages={initMessagesArray} />}
-      {typeShow === "participants" && <ListUser users={[]} />}
+      {typeShow === "message" && <Conversation />}
+      {typeShow === "participants" && <ListUser />}
     </Stack>
   );
 };
@@ -101,6 +132,7 @@ const activeButton = {
   padding: "8px 16px",
   gap: 1,
   textTransform: "capitalize",
+  fontWeight: "600",
 };
 
 const unActiveButton = {
@@ -110,75 +142,24 @@ const unActiveButton = {
   padding: "8px 16px",
   gap: 1,
   textTransform: "capitalize",
+  color: "#667085",
+  fontWeight: "600",
 };
 
 const activeBadge = {
-  borderRadius: "20px",
+  borderRadius: "16px",
   background: "#fff",
   color: "#000",
   padding: "0 8px",
+  fontWeight: "600",
+  fontFamily: inter.style.fontFamily,
 };
 
 const inActiveBadge = {
-  borderRadius: "20px",
+  borderRadius: "16px",
   background: "#EEF2F6",
-  color: "#000",
+  color: "#697586",
   padding: "0 8px",
+  fontWeight: "600",
+  fontFamily: inter.style.fontFamily,
 };
-
-const initMessagesArray = [
-  {
-    user: {
-      name: "John Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    content: "Hello, how are you?",
-    time: "10:54",
-    id: "1",
-  },
-  {
-    user: {
-      name: "Mark Smith",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "2",
-    content: "I'm doing great, thanks!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Frank Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "3",
-    content: "Nice to meet you!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Hoang Van Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "4",
-    content: "Hello everyone!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Steven Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "5",
-    content: "Good morning!",
-    time: "10:54",
-  },
-  {
-    user: {
-      name: "Steven Doe",
-      avatar: "https://via.placeholder.com/150",
-    },
-    id: "6",
-    content: "How's everyone doing?",
-    time: "10:54",
-  },
-];

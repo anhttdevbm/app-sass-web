@@ -1,10 +1,10 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { IconButton, Input, InputProps } from "components/shared";
-import SearchIcon from "icons/SearchIcon";
-import useEventListener from "hooks/useEventListener";
-import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
+import useEventListener from "hooks/useEventListener";
 import CircleCloseIcon from "icons/CircleCloseIcon";
+import SearchIcon from "icons/SearchIcon";
+import { useTranslations } from "next-intl";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 export type SearchProps = Omit<InputProps, "name" | "onChange"> & {
   name: string;
@@ -100,6 +100,7 @@ const Search = (props: SearchProps) => {
                 <CircleCloseIcon />
               </IconButton>
             )
+        // startNode
       }
       onKeyDown={(e) => {
         e.stopPropagation();

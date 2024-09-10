@@ -17,6 +17,7 @@ export type LayoutDictionary = {
     company: string;
     employees: string;
     holidayCalendar: string;
+    packageManager: string;
     costHistory: string;
     listOfPositions: string;
     projectTypeList: string;
@@ -60,5 +61,9 @@ export type LayoutDictionary = {
 
     //Invoice
     invoice: string;
+
+    ticket: string;
+    agent : string;
+
   };
 };

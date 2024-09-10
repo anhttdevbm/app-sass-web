@@ -8,11 +8,18 @@ import {
   MESSAGE_TYPE,
   STEP,
 } from "./type";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AN_ERROR_TRY_AGAIN,
+  NS_COMMON,
+} from "constant/index";
 import { useEmployeesOfCompany } from "store/manager/selectors";
 import { debounce } from "utils/index";
 import { useTranslations } from "next-intl";
 import { initPagingV2 } from "store/chat/reducer";
+import { useMeeting } from "store/meeting/selectors";
+import { CallStatus, CallType } from "store/meeting/types";
+import { clientStorage } from "utils/storage";
 
 const PAGE_INITIAL = 1;
 
@@ -77,9 +84,11 @@ export const useWSChat = () => {
     onSetMessageSearch,
     onSetListMessages,
   } = useChat();
+  const { onSetMeetInfo, updateCallStatus, getAllParticipants } = useMeeting();
   const { items } = useEmployeesOfCompany();
   const commonT = useTranslations(NS_COMMON);
   const { onAddSnackbar, onAddNotification } = useSnackbar();
+  const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
   const resetData = () => {
     onSetStateSearchMessage(null);
@@ -198,13 +207,30 @@ export const useWSChat = () => {
     }
   };
 
+  const handleNotiMeeting = (data) => {
+    if (!isRelatedGroup(data.room.members, user?.id)) return;
+    if (data.host.id !== user?.id) {
+      updateCallStatus(CallStatus.ringing);
+    }
+  };
+
   // Connect message websocket
   const connectMessage = useCallback(
     async (ws: WebSocket | null) => {
       if (ws) {
         ws.onmessage = async (event) => {
           const resp: IWsChatRespMessage = JSON.parse(event.data);
-          console.info(resp);
+          // console.info("resp", resp);
+
+          if (resp?.data?.event === "start_meet") {
+            handleNotiMeeting(resp.data);
+            onSetMeetInfo(resp.data);
+            // getAllParticipants(resp.data.id);
+          } else if (resp?.data?.event === "cancel_meet") {
+            updateCallStatus(CallStatus.rejected);
+          } else if (resp?.data?.event === "end_meet") {
+            updateCallStatus(CallStatus.left);
+          }
 
           switch (resp.event) {
             case CHAT_EVENT_TYPE.ROOM_LIST:

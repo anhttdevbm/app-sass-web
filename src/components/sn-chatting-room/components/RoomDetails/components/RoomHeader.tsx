@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -8,24 +8,25 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { Text } from "components/shared";
+import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
+import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
+import CloseIcon from "icons/CloseIcon";
 import ProfileAdd from "icons/ProfileAdd";
 import SearchIcon from "icons/SearchIcon";
 import SidebarIcon from "icons/SidebarIcon";
 import VideoCallIcon from "icons/VideoCallIcon";
-import colorSchemes from "utils/colorSchemes";
-import ChatDetailInfo from "./ChatDetailInfo";
-import CloseIcon from "icons/CloseIcon";
-import useGetScreenMode from "hooks/useGetScreenMode";
-import { AN_ERROR_TRY_AGAIN, NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { useChat } from "store/chat/selectors";
-import { debounce } from "utils/index";
-import { Text } from "components/shared";
-import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
-import { CHAT_EVENT_TYPE, RoomType } from "store/chat/type";
 import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
+import { useChat } from "store/chat/selectors";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
+import colorSchemes from "utils/colorSchemes";
+import { debounce } from "utils/index";
+import ChatDetailInfo from "./ChatDetailInfo";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -56,6 +57,8 @@ const RoomHeader = () => {
   const { user } = useAuth();
   const inputRef = useRef<any>(null);
   const isOwner = isOwnerGroup(currentConversation?.owner, user?.id);
+  const pathname = usePathname();
+
   const onResetSearchText = useCallback(() => {
     setSearchText((prev) => ({
       ...prev,
@@ -97,6 +100,16 @@ const RoomHeader = () => {
 
   const onOpenSearchMessage = () => {
     setSearchText({ isOpen: !search.isOpen, text: "" });
+  };
+
+  const startMeeting = async () => {
+    if (pathname.includes("/meeting")) return;
+
+    window.open(
+      `/meeting/${currentConversation.id}`,
+      "_blank",
+      "width=800,height=600",
+    );
   };
 
   useEffect(() => {
@@ -143,7 +156,7 @@ const RoomHeader = () => {
         width="100%"
         display="flex"
         justifyContent="space-between"
-        height="77px"
+        height="55px"
         padding="10px"
         bgcolor={isDarkMode ? "#3a3b3c" : "var(--Gray0, #F7F7FD)"}
       >
@@ -161,7 +174,7 @@ const RoomHeader = () => {
                   ? currentConversation?.avatar?.link
                   : currentConversation?.peer_detail?.avatar
               }
-              sx={{ height: "56px", width: "56px", borderRadius: "10px" }}
+              sx={{ height: "50px", width: "50px", borderRadius: "50px" }}
             />
             <Box display="flex" flexDirection="column" gap="4px">
               <Typography
@@ -296,6 +309,7 @@ const RoomHeader = () => {
             sx={{
               color: "transparent",
             }}
+            onClick={startMeeting}
           >
             <VideoCallIcon htmlColor={"#1BC5BD"} />
           </IconButton>

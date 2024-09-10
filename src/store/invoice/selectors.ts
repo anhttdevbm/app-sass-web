@@ -10,7 +10,9 @@ import {
   getInvoiceDetail,
   getInvoiceList,
   GetInvoiceListQueries,
+  updateInvoice,
 } from "./actions";
+import { Service } from "./reducer";
 
 export const useInvoices = () => {
   const dispatch = useAppDispatch();
@@ -66,6 +68,13 @@ export const useInvoices = () => {
     [dispatch],
   );
 
+  const onUpdateInvoice = useCallback(
+    async (service_items: Service[], id: string) => {
+      return await dispatch(updateInvoice({ service_items, id }));
+    },
+    [dispatch],
+  );
+
   return {
     items,
     item,
@@ -84,5 +93,6 @@ export const useInvoices = () => {
     onCreateNewInvoice,
     onDeleteInvoice,
     onDeleteMultipleInvoice,
+    onUpdateInvoice,
   };
 };

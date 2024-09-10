@@ -1,36 +1,31 @@
 "use client";
 
-import { Stack, Theme, selectClasses, IconButton } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { Endpoint, client } from "api";
-import { Date, Search } from "components/Filters";
+import { Search } from "components/Filters";
 import { Button, Text } from "components/shared";
 import { DataAction } from "constant/enums";
 import {
   AUTH_API_URL,
-  DATE_FORMAT_HYPHEN,
   NS_COMMON,
-  NS_COMPANY,
+  NS_COMPANY
 } from "constant/index";
 import { Option } from "constant/types";
 import useToggle from "hooks/useToggle";
+import AddSquareIcon from "icons/AddSquareIcon";
 import PlusIcon from "icons/PlusIcon";
+import { debounce } from "lodash";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import Image from "next/image";
-import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
 import { memo, useCallback, useEffect, useState } from "react";
-import { useClientCompanies } from "store/company/selectors";
-import { getPath } from "utils/index";
-import AssignerFilter from "./components/AssignerFilter";
-import Form from "./components/Form";
 import { useHeaderConfig } from "store/app/selectors";
-import { ClientCompany } from "./type";
+import { useClientCompanies } from "store/company/selectors";
 import StringFormat from "string-format";
-import { debounce } from "lodash";
-import ArrowRightIcon from "icons/ArrowRightIcon";
-import ChevronIcon from "../../icons/ChevronIcon";
+import { getPath } from "utils/index";
 import SearchIcon from "../../icons/SearchIcon";
+import Form from "./components/Form";
+import { ClientCompany } from "./type";
 
 const Actions = () => {
   const {
@@ -164,10 +159,6 @@ const Actions = () => {
         justifyContent="space-between"
         spacing={{ xs: 1, md: 3 }}
         px={{ xs: 0, md: 3 }}
-        py={{ xs: 0, md: 1, lg: 1.5 }}
-        borderBottom={1}
-        borderColor="grey.100"
-        rowGap={1}
       >
         <Stack
           direction="row"
@@ -176,158 +167,107 @@ const Actions = () => {
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <IconButton
-            size="medium"
-            sx={{ display: { md: "none" }, pl: { xs: 0, sm: 0 } }}
-          >
-            <ChevronIcon
-              sx={{ color: "text.primary", transform: "rotate(90deg)" }}
-              fontSize="medium"
-            />
-            <Text variant="h4" display={{ md: "none" }}>
-              {companyT("clientCompany.title")}
-            </Text>
-          </IconButton>
-          <Button
+          <Text variant="h4" display={{ md: "none" }}>
+            {companyT("projectTypes.title")}
+          </Text>
+          {/* <Button
             onClick={onShow}
             startIcon={<PlusIcon />}
             size="extraSmall"
             variant="primary"
-            sx={{
-              display: { xs: "none", sm: "none", md: "block" },
-              height: { xs: 32, sm: 32, md: 32, lg: 40 },
-              px: ({ spacing }) => `${spacing(3)}!important`,
-              lineHeight: "20px"
-            }}
+            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
           >
-            {companyT("clientCompany.create")}
-          </Button>
-        </Stack>
-
-        <Stack direction="row" width="100%" justifyContent="space-between">
-          <Search
+            {commonT("createNew")}
+          </Button> */}
+           <Search
+            name="name"
             placeholder={commonT("search")}
-            name={"name"}
-            onChange={onChangeQueries}
-            value={queries["name"]}
-            sx={{
-              width: 210,
-              minWidth: 210,
-              display: { xs: "block", sm: "block", md: "none" },
-              my: "auto"
-            }}
-            rootSx={{ bgcolor: "#F7F7FD", paddingLeft: "4px!important", height: 32 }}
-            startNode={
-              <SearchIcon sx={{ width: 24, height: 24 }} color="info" />
-            }
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 onSearch();
               }
             }}
-          />
-          <Button
-            onClick={onShow}
-            startIcon={<PlusIcon />}
-            size="extraSmall"
-            variant="primary"
+            onChange={onChangeQueries}
+            value={queries["name"]}
             sx={{
-              display: { xs: "block", sm: "block", md: "none" },
               height: 40,
-              px: ({ spacing }) => `${spacing(3)}!important`,
-              py: ({ spacing }) => `${spacing(1.5)}!important`,
+              width: {
+                lg: 332,
+              },
+              ".MuiInputBase-root": { height: 40, borderRadius: "100px" },
             }}
-          >
-            {companyT("clientCompany.create")}
-          </Button>
+            startNode={""}
+            endNode={<IconButton aria-label="search"><SearchIcon onClick={onSearch} style={{ color: "#0575E6" ,height:"18px",width:"18px"}} /></IconButton>}
+          />
         </Stack>
 
+        {/* <Stack
+          direction="row"
+          alignItems="center"
+          spacing={3}
+          py={{ xs: 1.25, md: 0.5, lg: 1.25 }}
+          px={{ md: 1, lg: 2 }}
+          borderRadius={1}
+          width={{ xs: "100%", md: undefined }}
+          justifyContent={{ xs: "flex-start", md: "flex-end" }}
+          maxWidth={{ xs: "100%", md: "fit-content" }}
+          overflow="auto"
+          minWidth={{ md: "fit-content" }}
+        > */}
         <Stack
           direction="row"
           alignItems="center"
           spacing={3}
-          py={{ xs: 1.25, md: 0.5, lg: 1.5 }}
-          px={{ xs: 1.25, md: 1, lg: 1.5 }}
-          borderRadius={1}
-          width={{ xs: "100%", md: undefined }}
-          justifyContent={{ xs: "space-between", md: "flex-end" }}
-          maxWidth={{ xs: "100%", md: "fit-content" }}
-          overflow="auto"
-          minWidth={{ md: "fit-content" }}
-          border={1}
-          borderColor="grey.100"
+          py={{ xs: 1.25, md: 0.5, lg: 1.25 }}
+          px={{ md: 1, lg: 2 }}
+          justifyContent={{ xs: "flex-start", md: "flex-end" }}
+          overflow="hidden"
+          width="100%"
         >
-          <Search
-            placeholder={commonT("search")}
-            name={"name"}
-            onChange={onChangeQueries}
-            value={queries["name"]}
+          <Button
+            onClick={onShow}
+            size="small"
+            variant="contained"
             sx={{
-              width: 210,
-              minWidth: 210,
-              display: { xs: "none", sm: "none", md: "block" },
-              marginRight: { md: "24px!important" },
+              boxShadow: "none",
+
+              fontWeight: "700",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              },
+              borderRadius: "100px",
+              height: 40,
+              width: 129,
+              "p,svg": { fontWeight: "700" },
+              svg: {
+                border: "1px solid white",
+                borderRadius: "50px",
+                color: "#2AF598",
+                background: "white",
+              },
             }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                onSearch();
-              }
-            }}
-          />
-          {optionSelected && (
-            <Button
-              size="extraSmall"
+          >
+            <AddSquareIcon
               sx={{
-                padding: 0,
-                display: "flex",
-                gap: 1,
-                mx: { xs: "0px!important", sm: "0px!important" },
-                px: { xs: "0px!important", sm: "0px!important" },
-              }}
-              onDoubleClick={onDoubleClick}
-            >
-              <Image
-                className="rounded"
-                style={{ margin: "auto" }}
-                src={optionSelected?.avatar || UserPlaceholderImage}
-                alt={optionSelected?.label}
-                width={22}
-                height={22}
-              ></Image>
-              <Text>{optionSelected?.label}</Text>
-            </Button>
-          )}
-          {!optionSelected && (
-            <AssignerFilter
-              onChange={onChangeCreateBy}
-              value={optionSelected}
-              hasAvatar
-              name="created_by"
-              sx={{ ml: { xs: "0px!important", sm: "0px!important" } }}
-              rootSx={{
-                "& >svg": { fontSize: 16 },
-                px: "0px!important",
-                [`& .${selectClasses.outlined}`]: {
-                  pr: "0!important",
-                  mr: ({ spacing }: { spacing: Theme["spacing"] }) =>
-                    `${spacing(0.5)}!important`,
-                  "& .sub": {
-                    display: "none",
-                  },
-                },
+                display: { xs: "block", md: "none" },
+                width: 24,
+                height: 24,
               }}
             />
-          )}
-          <Date
-            label={companyT("clientCompany.createDate")}
-            name="created_time"
-            onChange={onChangeQueries}
-            value={queries?.["created_time"]}
-            format={DATE_FORMAT_HYPHEN}
-            iconProps={{
-              sx: { fontSize: 16 },
-            }}
-          />
+            <PlusIcon
+              sx={{
+                display: { xs: "none", md: "block" },
+                mr: 1,
+                width: 18,
+                height: 18,
+              }}
+            />
+            <Text sx={{ fontSize:"16px", display: { xs: "none", md: "block" } }} color="inherit">
+              {companyT("clientCompany.create")}
+            </Text>
+          </Button>
+          
         </Stack>
       </Stack>
       {isShow && (
