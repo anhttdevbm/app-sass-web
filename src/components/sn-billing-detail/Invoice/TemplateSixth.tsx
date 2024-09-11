@@ -442,7 +442,6 @@ function TemplateSixth({
         mt={2}
         sx={{
           alignItems: "flex-end",
-          gap: "12px",
           paddingX: 5,
         }}
       >

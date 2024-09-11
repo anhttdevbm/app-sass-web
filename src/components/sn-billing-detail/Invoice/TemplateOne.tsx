@@ -103,21 +103,21 @@ function TemplateOne({
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          maxWidth: "80%",
+          gap: 2,
         }}
       >
-        <Stack direction="column">
+        <Stack direction="column" sx={{ maxWidth: "45%" }}>
           <Typography color="#878787" fontSize={13} fontWeight={400}>
             CLIENT
           </Typography>
           <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
-            Company A
+            {itemInvoice?.bill_to?.name}
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
-            Grand Via 34, Spain
+            {itemInvoice?.bill_to?.address}
           </Typography>
           <Typography color="#21263C" fontSize={14} fontWeight={400}>
-            Tax ID: 00001
+            Tax ID: {itemInvoice?.bill_to?.tax_code}
           </Typography>
         </Stack>
 
