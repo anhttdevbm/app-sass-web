@@ -63,6 +63,8 @@ export const TICKET_CREATE_PATH = "/ticket/create";
 
 // ticket manager
 export const TICKET_AGENT = "/agent";
+export const TICKET_DASHBOARD = "/dashboard-ticket";
+
 
 
 // Feedback

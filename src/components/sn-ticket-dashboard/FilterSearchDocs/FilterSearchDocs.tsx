@@ -12,11 +12,9 @@ import { NS_COMMON, NS_DOCS } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
 import { useTranslations } from "next-intl";
 import React, { memo, useState } from "react";
-import FilterAssign from "./FilterAssign";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import FilterPeople from "./FilterPeople";
 import FilterTime from "./FilterTime";
-import FillterPriority from "./FillterPriority";
-import FillterTypeTicket from "./FillterTypeTicket";
 
 
 export interface FilterSearchDocsProps {
@@ -42,13 +40,10 @@ const FilterSearchDocs = ({ onChange, queries  }: FilterSearchDocsProps) => {
 
   return (
     <>
-      <FillterPriority  queries={queries} onChange={onChange}></FillterPriority>
-      <FilterAssign queries={queries} onChange={onChange}></FilterAssign>
-      <FillterTypeTicket queries={queries} onChange={onChange}></FillterTypeTicket>
-      <FilterTime
-        queries={queries}
-        onChange={onChange}
-      ></FilterTime>
+      <FilterTime queries={queries}  onChange={onChange} >       
+      </FilterTime>
+      <FilterPeople  queries={queries} onChange={onChange}></FilterPeople>
+
     </>
   );
 };

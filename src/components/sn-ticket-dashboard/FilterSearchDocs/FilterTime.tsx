@@ -18,23 +18,22 @@ import { useTranslations } from "next-intl";
 import {  NS_TICKET } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
 
-const FilterPosition = ({ onChange, queries }: FilterSearchDocsProps) => {
+const FillterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
   const t = useTranslations(NS_TICKET);
 
-const ignoreItems = ["All" , "Admin" , "Agent"];
+const ignoreItems = ["All","Last 7 Days" , "This Month" , "This Year" , "Custom"];
 const [name , setName] = useState("All")
 const [anchorEl, setAnchorEl] = useState<any>(null);
 const handleClose = () => {
   setAnchorEl(null);
 };
 
-const onChangeMembers = (id: string, position: string) => {
-  setName(position)
-  const newData = { id, position };
+const onChangeMembers = (id: string, priority: string) => {
+  setName(priority)
+  const newData = { id, priority };
 
-  onChange("position", newData);
-  handleClose();
-
+  onChange("priority", newData);
+  handleClose()
 
 };
 
@@ -46,7 +45,7 @@ const onChangeMembers = (id: string, position: string) => {
         onClick={(e) => setAnchorEl(e.currentTarget)}
       >
         <Text variant="body2" color="grey.400">
-       { (t("ticketAgnet.POSITION"))}: 
+          Duration
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">
          {name}
@@ -69,8 +68,8 @@ const onChangeMembers = (id: string, position: string) => {
         sx={{
           [`& .${popoverClasses.paper}`]: {
             backgroundImage: "none",
-            minWidth: 100,
-            maxWidth: 100,
+            minWidth: "fit-content",
+            maxWidth: "fit-content",
           },
         }}
         slotProps={{
@@ -113,4 +112,4 @@ const onChangeMembers = (id: string, position: string) => {
   );
 };
 
-export default memo(FilterPosition);
+export default memo(FillterPriority);

@@ -35,6 +35,7 @@ import {
   SALES_LIST_PATH,
   STATEMENT_HISTORY_PATH,
   TICKET_AGENT,
+  TICKET_DASHBOARD,
   TICKET_PATH,
   TIME_TRACKING_PATH,
 } from "constant/paths";
@@ -432,7 +433,7 @@ const DATA: MenuItemProps[] = [
     subs: [
       {
         label: "menu.dashboard",
-        href: STATEMENT_HISTORY_PATH,
+        href: TICKET_DASHBOARD,
         roles: [Permission.SA],
       },
       {
