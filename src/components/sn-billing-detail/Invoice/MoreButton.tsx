@@ -12,7 +12,7 @@ function MoreButton({ onDeleteInvoice }) {
   const billingT = useTranslations(NS_BILLING);
   const options = [
     billingT("detail.form.top.button.option.deleteInvoice"),
-    billingT("detail.form.top.button.option.duplicateInvoice"),
+    // billingT("detail.form.top.button.option.duplicateInvoice"),
   ];
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

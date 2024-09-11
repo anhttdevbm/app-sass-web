@@ -31,7 +31,7 @@ type Props = {
   formik?: any;
 };
 
-function TemplateFour({
+function TemplateFifth({
   user,
   itemInvoice,
   isEdit,
@@ -40,88 +40,27 @@ function TemplateFour({
   onDragEnd,
 }: PropsWithChildren<Props>) {
   return (
-    <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4}>
-      <Stack
-        p={3}
-        pb={1}
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Stack direction="column">
-          <Typography color="#212529" fontSize={14} fontWeight={600}>
-            BILL FROM
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-            Company {user?.company}
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            {user?.address ?? "Le Chan, Ho Chi Minh"}
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Tax ID: 00001
-          </Typography>
-        </Stack>
-
-        <Stack direction="column">
-          <Typography
-            fontWeight={500}
-            color="#4A4A4A"
-            fontSize={14}
-            textAlign="right"
-          >
-            VNP
-          </Typography>
-          <Typography
-            fontSize={24}
-            fontWeight={600}
-            color="#212529"
-            sx={{ width: "fit-content", margin: "auto 0" }}
-          >
-            Invoice {itemInvoice?.invoice_number}
-          </Typography>
-        </Stack>
-      </Stack>
-
+    <Stack sx={{ border: "1px solid #EFEFEF" }} mt={4} pt={2}>
       <Stack
         p={3}
         mt={2}
-        gap={2}
+        px={5}
         sx={{
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
         }}
       >
-        <Stack direction="column">
-          <Typography color="#212529" fontSize={14} fontWeight={600}>
-            BILL TO
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-            {itemInvoice?.bill_to?.name}
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            {itemInvoice?.bill_to?.address}
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Tax ID: {itemInvoice?.bill_to?.tax_code}
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            {itemInvoice?.bill_to?.phone}
-          </Typography>
-        </Stack>
-
         <Stack
-          direction="row"
-          gap={2}
+          direction="column"
           sx={{
-            padding: "10px 50px",
-            background: "#F5F5F5",
+            borderTop: "2px solid #000000",
+            borderBottom: "2px solid #000000",
+            height: "fit-content",
+            paddingY: 1,
           }}
         >
-          <Stack direction="column">
+          <Stack direction="row">
             <Typography
               color="#212529"
               minWidth={150}
@@ -135,7 +74,7 @@ function TemplateFour({
             </Typography>
           </Stack>
 
-          <Stack direction="column">
+          <Stack direction="row">
             <Typography
               color="#212529"
               minWidth={150}
@@ -149,7 +88,7 @@ function TemplateFour({
             </Typography>
           </Stack>
 
-          <Stack direction="column">
+          <Stack direction="row">
             <Typography
               color="#212529"
               minWidth={150}
@@ -163,11 +102,59 @@ function TemplateFour({
             </Typography>
           </Stack>
         </Stack>
+        <Stack direction="row" gap={3}>
+          <Stack direction="column">
+            <Typography color="#212529" fontSize={14} fontWeight={600}>
+              BILL FROM
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
+              Company {user?.company}
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              {user?.address ?? "Le Chan, Ho Chi Minh"}
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              Tax ID: 00001
+            </Typography>
+          </Stack>
+
+          <Stack direction="column" sx={{ maxWidth: "200px" }}>
+            <Typography color="#212529" fontSize={14} fontWeight={600}>
+              BILL TO
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
+              {itemInvoice?.bill_to?.name}
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              {itemInvoice?.bill_to?.address}
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              Tax ID: {itemInvoice?.bill_to?.tax_code}
+            </Typography>
+            <Typography color="#212529" fontSize={14} fontWeight={400}>
+              {itemInvoice?.bill_to?.phone}
+            </Typography>
+          </Stack>
+        </Stack>
+      </Stack>
+
+      <Stack py={4} px={5} sx={{ background: "#EEEEEE" }}>
+        <Typography fontWeight={500} color="#4A4A4A" fontSize={14}>
+          VNP
+        </Typography>
+        <Typography
+          fontSize={24}
+          fontWeight={600}
+          color="#212529"
+          sx={{ width: "fit-content", margin: "auto 0" }}
+        >
+          Invoice {itemInvoice?.invoice_number}
+        </Typography>
       </Stack>
 
       <TableContainer
         component={Paper}
-        sx={{ boxShadow: "none", marginTop: 2 }}
+        sx={{ boxShadow: "none", marginTop: 4 }}
       >
         <Table sx={{ minWidth: 900, border: "none" }} aria-label="simple table">
           <TableHead>
@@ -178,7 +165,9 @@ function TemplateFour({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#F5F5F5",
+                  paddingLeft: 5,
+                  borderTop: "2px solid #333333",
+                  borderBottom: "2px solid #333333",
                 }}
               >
                 ITEM
@@ -189,7 +178,8 @@ function TemplateFour({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#F5F5F5",
+                  borderTop: "2px solid #333333",
+                  borderBottom: "2px solid #333333",
                 }}
                 align="right"
               >
@@ -201,7 +191,8 @@ function TemplateFour({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#F5F5F5",
+                  borderTop: "2px solid #333333",
+                  borderBottom: "2px solid #333333",
                 }}
                 align="right"
               >
@@ -213,7 +204,8 @@ function TemplateFour({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#F5F5F5",
+                  borderTop: "2px solid #333333",
+                  borderBottom: "2px solid #333333",
                 }}
                 align="right"
               >
@@ -225,7 +217,8 @@ function TemplateFour({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  background: "#F5F5F5",
+                  borderTop: "2px solid #333333",
+                  borderBottom: "2px solid #333333",
                 }}
                 align="right"
               >
@@ -239,7 +232,13 @@ function TemplateFour({
               droppableId="template-one-droppable"
             >
               {(provided, snapshot) => (
-                <TableBody ref={provided.innerRef} {...provided.droppableProps}>
+                <TableBody
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  sx={{
+                    borderBottom: "2px solid #333333",
+                  }}
+                >
                   {(formik
                     ? formik.values.service_items
                     : itemInvoice?.service_items
@@ -256,9 +255,6 @@ function TemplateFour({
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          sx={{
-                            borderBottom: "1px solid #EFEFEF",
-                          }}
                         >
                           <TableCell
                             component="th"
@@ -267,7 +263,8 @@ function TemplateFour({
                               color: "#21263C",
                               fontSize: "13px",
                               fontWeight: 400,
-                              padding: "12px 20px",
+                              padding: "12px 20px 12px 40px",
+                              border: "none",
                             }}
                           >
                             {isEdit ? (
@@ -323,6 +320,7 @@ function TemplateFour({
                               fontSize: "13px",
                               fontWeight: 400,
                               padding: "12px 20px",
+                              border: "none",
                             }}
                             align="right"
                           >
@@ -334,6 +332,7 @@ function TemplateFour({
                               fontSize: "13px",
                               fontWeight: 400,
                               padding: "12px 20px",
+                              border: "none",
                             }}
                             align="right"
                           >
@@ -377,6 +376,7 @@ function TemplateFour({
                               fontSize: "13px",
                               fontWeight: 400,
                               padding: "12px 20px",
+                              border: "none",
                             }}
                             align="right"
                           >
@@ -423,6 +423,7 @@ function TemplateFour({
                               fontSize: "13px",
                               fontWeight: 400,
                               padding: "12px 20px",
+                              border: "none",
                             }}
                             align="right"
                           >
@@ -444,111 +445,140 @@ function TemplateFour({
 
       <Stack
         direction="column"
-        mt={4}
+        mt={2}
         sx={{ alignItems: "flex-end", gap: "12px", paddingRight: 3 }}
       >
-        <Stack
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "300px",
-          }}
-          direction="row"
-        >
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Subtotal
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            {formatNumber(Number(itemInvoice?.total ?? 0), {
-              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-              numberOfFixed: 2,
-            })}
-          </Typography>
+        <Stack direction="row">
+          <Stack direction="column" gap={1}>
+            <Stack
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "300px",
+              }}
+              direction="row"
+            >
+              <Typography color="#212529" fontSize={14} fontWeight={400}>
+                Subtotal
+              </Typography>
+              <Typography color="#21263C" fontSize={14} fontWeight={400}>
+                {formatNumber(Number(itemInvoice?.total ?? 0), {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </Typography>
+            </Stack>
+
+            <Stack
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "300px",
+                paddingLeft: "28px",
+              }}
+              direction="row"
+            >
+              <Typography color="#212529" fontSize={14} fontWeight={400}>
+                VAT
+              </Typography>
+              <Typography color="#21263C" fontSize={14} fontWeight={400}>
+                {formatNumber((Number(itemInvoice?.total ?? 0) * 10) / 100, {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </Typography>
+            </Stack>
+
+            <Stack
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "300px",
+                paddingLeft: "20px",
+              }}
+              direction="row"
+            >
+              <Typography color="#212529" fontSize={14} fontWeight={400}>
+                Total
+              </Typography>
+              <Typography color="#212529" fontSize={14} fontWeight={400}>
+                {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
+                  prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                  numberOfFixed: 2,
+                })}
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack
+            sx={{
+              display: "flex",
+              alignItems: "flex-end",
+              paddingX: 6,
+            }}
+            direction="row"
+          >
+            <Box
+              sx={{
+                borderRadius: "100px",
+                background: "linear-gradient(to left, #2AF598, #009EFD)",
+                width: "100%",
+                padding: "1px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "8px",
+                  alignItems: "center",
+                  borderRadius: "100px",
+                  background: "#F2FAFF",
+                  width: "100%",
+                  justifyContent: "center",
+                  padding: "6px 30px",
+                }}
+              >
+                <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
+                  Payment:{" "}
+                </Typography>
+                <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
+                  {itemInvoice?.payment_items
+                    ? itemInvoice?.payment_items[0]?.payment_method
+                    : "Stripe"}{" "}
+                </Typography>
+              </Box>
+            </Box>
+          </Stack>
         </Stack>
 
         <Stack
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            width: "300px",
+            flexDirection: "row",
+            marginBottom: "20px",
+            alignItems: "center",
+            gap: 10,
+            paddingRight: 5,
           }}
-          direction="row"
         >
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            VAT
+          <Typography
+            sx={{ marginRight: "auto" }}
+            fontSize={16}
+            fontWeight={700}
+            color="#333333"
+          >
+            Amount Due
           </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            {formatNumber((Number(itemInvoice?.total ?? 0) * 10) / 100, {
-              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-              numberOfFixed: 2,
-            })}
-          </Typography>
-        </Stack>
-
-        <Stack
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "300px",
-            paddingBottom: 3,
-          }}
-          direction="row"
-        >
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Total
-          </Typography>
-          <Typography color="#212529" fontSize={14} fontWeight={400}>
+          <Typography
+            sx={{ marginLeft: "auto" }}
+            fontSize={24}
+            fontWeight={600}
+            color="#333333"
+          >
             {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
             })}
           </Typography>
-        </Stack>
-
-        <Stack
-          display="flex"
-          direction="row"
-          gap={5}
-          mt={1}
-          alignItems="center"
-          paddingBottom={4}
-        >
-          <Stack display="flex" flexDirection="row" gap={1}>
-            <Typography
-              fontSize={16}
-              fontWeight={700}
-              color="#333333"
-              sx={{ textWrap: "nowrap", margin: "auto 0", marginRight: "20px" }}
-            >
-              Amount Due
-            </Typography>
-            <Typography fontSize={24} fontWeight={600} color="#333333">
-              {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
-                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-                numberOfFixed: 2,
-              })}
-            </Typography>
-          </Stack>
-          <Box
-            sx={{
-              background: "#F5F5F5",
-              padding: "6px 26px",
-              borderRadius: "100px",
-              height: "fit-content",
-              textAlign: "center",
-              display: "flex",
-              gap: "8px",
-            }}
-          >
-            <Typography fontSize={14} fontWeight={700} color="#1A1A1A">
-              Payment:
-            </Typography>
-            <Typography fontSize={14} fontWeight={500} color="#1A1A1A">
-              {itemInvoice?.payment_items?.length
-                ? itemInvoice?.payment_items[0]?.payment_method
-                : "Stripe"}
-            </Typography>
-          </Box>
         </Stack>
 
         {isEdit && (
@@ -586,4 +616,4 @@ function TemplateFour({
   );
 }
 
-export default memo(TemplateFour);
+export default memo(TemplateFifth);
