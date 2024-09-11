@@ -2,6 +2,7 @@
 import { Stack } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import { Button } from "components/shared";
+import TemplateFifth from "components/sn-billing-detail/Invoice/TemplateFifth";
 import TemplateFour from "components/sn-billing-detail/Invoice/TemplateFour";
 import TemplateOne from "components/sn-billing-detail/Invoice/TemplateOne";
 import TemplateThree from "components/sn-billing-detail/Invoice/TemplateThree";
@@ -62,6 +63,18 @@ const ViewPdf = () => {
       value: "Template 4",
       component: (
         <TemplateFour
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
+      ),
+    },
+    {
+      key: "template-fifth",
+      value: "Template 5",
+      component: (
+        <TemplateFifth
           isEdit={false}
           itemInvoice={item}
           handleChange={() => {}}

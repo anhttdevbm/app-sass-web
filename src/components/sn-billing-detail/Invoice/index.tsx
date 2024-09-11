@@ -26,6 +26,7 @@ import { useInvoices } from "store/invoice/selectors";
 import { downloadFile } from "utils/index";
 import MoreButton from "./MoreButton";
 import PdfButton from "./PdfButton";
+import TemplateFifth from "./TemplateFifth";
 import TemplateFour from "./TemplateFour";
 import TemplateOne from "./TemplateOne";
 import TemplateThree from "./TemplateThree";
@@ -250,7 +251,7 @@ const TabInvoice = (props: TabProps) => {
   ];
 
   return (
-    <Stack mt={2} sx={{ overflowY: "auto", height: "60vh" }}>
+    <Stack mt={2} sx={{ overflowY: "auto", height: "70vh" }}>
       <Stack
         gap={1}
         direction="row"
@@ -470,6 +471,16 @@ const TabInvoice = (props: TabProps) => {
         )}
         {selectedUrl.includes("template-four") && (
           <TemplateFour
+            itemInvoice={itemInvoice}
+            user={user}
+            isEdit={isEdit}
+            formik={formik}
+            handleChange={handleChange}
+            onDragEnd={onDragEnd}
+          />
+        )}
+        {selectedUrl.includes("template-fifth") && (
+          <TemplateFifth
             itemInvoice={itemInvoice}
             user={user}
             isEdit={isEdit}
