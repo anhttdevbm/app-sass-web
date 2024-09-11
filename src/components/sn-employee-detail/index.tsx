@@ -1,13 +1,13 @@
 "use client";
-import { ReactNode, useCallback, useEffect } from "react";
-import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import { ReactNode, useCallback, useEffect } from "react";
 
+import { Text } from "components/shared";
 import { DataStatus } from "constant/enums";
 import { AN_ERROR_TRY_RELOAD_PAGE, NS_COMMON } from "constant/index";
-import { Text } from "components/shared";
-import { useAuth, useUserInfo } from "store/app/selectors";
 import { UpdateUserInfoData } from "store/app/actions";
+import { useAuth, useUserInfo } from "store/app/selectors";
 import { UpdateEmployee } from "store/employeeDetail/actions";
 import { useEmployeeDetail } from "store/employeeDetail/selectors";
 import { EmployeeDetailContextProvider } from "./EmployeeDetailContext";
