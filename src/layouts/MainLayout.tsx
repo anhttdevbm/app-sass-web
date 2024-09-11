@@ -1,9 +1,9 @@
 "use client";
 
-import { Snackbar, Stack } from "@mui/material";
+import { Box, Snackbar, Stack } from "@mui/material";
 import AppLoading from "components/AppLoading";
-import Header from "./Header";
-import { memo, useEffect, useMemo } from "react";
+import Header, { HEADER_HEIGHT } from "./Header";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Sidebar } from "./components";
 import { useAppSelector } from "store/hooks";
 import { shallowEqual } from "react-redux";
@@ -11,21 +11,20 @@ import { usePathname, useRouter } from "next-intl/client";
 import {
   AI_AGENT_CHAT,
   AI_CHAT_PATH,
-  AUTHORIZED_PATHS,
   CHATTING_ROOM_PATH,
   FORGOT_PASSWORD_PATH,
-  HOME_PATH,
   JOIN_WORKSPACE_PATH,
   SIGNIN_PATH,
   SIGNUP_PATH,
 } from "constant/paths";
-import { Text } from "components/shared";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
 import { useAuth } from "store/app/selectors";
-import { Permission } from "constant/enums";
 import ChatListTemp from "components/sn-chat/ChatListTemp";
+import { useMeeting } from "store/meeting/selectors";
+import { CallStatus } from "store/meeting/types";
+import { Button } from "components/shared";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -33,7 +32,11 @@ type MainLayoutProps = {
 
 const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH];
 
-const IS_CHATTING_ROOM = [CHATTING_ROOM_PATH, AI_CHAT_PATH, AI_AGENT_CHAT.replace("/{id}", "")];
+const IS_CHATTING_ROOM = [
+  CHATTING_ROOM_PATH,
+  AI_CHAT_PATH,
+  AI_AGENT_CHAT.replace("/{id}", ""),
+];
 
 const MainLayout = (props: MainLayoutProps) => {
   const { children } = props;
@@ -49,6 +52,7 @@ const MainLayout = (props: MainLayoutProps) => {
     (state) => state.app,
     shallowEqual,
   );
+  const { callStatus } = useAppSelector((state) => state.meeting);
 
   const { onGetProfile } = useAuth();
 
@@ -94,7 +98,7 @@ const MainLayout = (props: MainLayoutProps) => {
           <Header />
           <Stack
             flex={1}
-            // height="fit-content"
+            height={`calc(100% - ${HEADER_HEIGHT}px)`}
             spacing={{ xs: 1.5, sm: 3 }}
             // sx={{ overflow: 'auto' }}
             // justifyContent={isAuthorized ? undefined : "center"}
@@ -115,8 +119,67 @@ const MainLayout = (props: MainLayoutProps) => {
       </Stack>
       <Snackbar />
       {!isChatting ? <ChatListTemp /> : null}
+      <IncomingCall callStatus={callStatus} />
     </>
   );
 };
 
 export default memo(MainLayout);
+
+interface IncomingCallProps {
+  callStatus: "left" | "ringing" | "accepted" | "rejected" | null;
+}
+
+const IncomingCall = ({ callStatus }: IncomingCallProps) => {
+  const { meetInfo } = useAppSelector((state) => state.meeting);
+  const { onAcceptCall, onRejectCall } = useMeeting();
+
+  const handleCall = (accepted) => {
+    if (!accepted) {
+      onRejectCall(meetInfo.id);
+      return;
+    }
+    onAcceptCall(meetInfo.id);
+    window.open(
+      `/meeting/${meetInfo.room.id}?meetInfo=${encodeURIComponent(
+        JSON.stringify(meetInfo),
+      )}&isJoining=true`,
+      "_blank",
+      "width=800,height=600",
+    );
+  };
+
+  return (
+    callStatus == CallStatus.ringing && (
+      <Box
+        sx={{
+          position: "fixed",
+          top: "10rem",
+          right: "2rem",
+          background: "var(--mui-palette-info-light)",
+          borderRadius: 2,
+          padding: 2,
+        }}
+      >
+        <p style={{ textAlign: "center" }}>Incoming Call</p>
+        {/* {!callRequest?.audioOnly && (
+        <button onClick={() => handleCall(true, false)}>Accept</button>
+      )} */}
+        <Button
+          onClick={() => handleCall(true)}
+          variant="outlined"
+          sx={{ bgcolor: "var(--mui-palette-primary-main)", margin: "0 4px" }}
+        >
+          Accept
+        </Button>
+        <Button
+          onClick={() => handleCall(false)}
+          variant="outlined"
+          sx={{ bgcolor: "var(--mui-palette-error-dark)" }}
+        >
+          Cancel
+        </Button>
+      </Box>
+    )
+  );
+};

@@ -19,6 +19,8 @@ import { useLocale } from "next-intl";
 import dayjs from "dayjs";
 import { preventDefault } from "@fullcalendar/core/internal";
 import { ExpandMore } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import { NS_COMMON } from "constant/index";
 
 registerLocale("vi", vi);
 registerLocale("en", enUS);
@@ -44,6 +46,7 @@ const FDate = (props: DateProps) => {
   } = props;
 
   const locale = useLocale();
+  const commonT = useTranslations(NS_COMMON);
 
   const ref = useRef<DatePicker | null>(null);
 
@@ -68,16 +71,18 @@ const FDate = (props: DateProps) => {
         fontWeight={600}
         color={value ? "primary.main" : "grey.400"}
         whiteSpace="nowrap"
+      >
+        {label}:
+      </Text>
+      <Text
+        variant="body2"
+        fontWeight={600}
+        color={value ? "primary.main" : "grey.400"}
+        whiteSpace="nowrap"
         onClick={onClick}
         sx={{ cursor: "pointer" }}
       >
-        {/* {value
-          ? formatDate(refactorDate(value, format)?.getTime() as number)
-          : label} */}
-        {value ? dayjs(value).format(DATE_LOCALE_FORMAT) : label}
-        {/* {value
-          ? formatDate(refactorDate(value, format)?.getTime() as number)
-          : label} */}
+        {value ? dayjs(value).format(DATE_LOCALE_FORMAT) : commonT("all")}
       </Text>
       <DatePicker
         ref={ref}

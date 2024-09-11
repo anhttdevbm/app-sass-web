@@ -1,32 +1,38 @@
 "use client";
 import { Stack } from "@mui/material";
-import { memo, use, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TabInfo, TopContent } from "./components";
 
-import FixedLayout from "components/FixedLayout";
-import useQueryParams from "hooks/useQueryParams";
-import { useParams } from "next/navigation";
-import { useAuth } from "store/app/selectors";
-import { Service } from "store/billing/reducer";
-import {
-  useBillings,
-  useBudgets,
-  useServiceBudgets,
-  useTags,
-} from "store/billing/selectors";
-import { useEmployeeOptions, useEmployees } from "store/company/selectors";
-import { useTagOptions } from "store/tags/selector";
 import { User } from "constant/types";
+import { useParams } from "next/navigation";
+import { useAuth, useHeaderConfig } from "store/app/selectors";
+import { Service } from "store/billing/reducer";
+import { useTags } from "store/billing/selectors";
 import { useInvoices } from "store/invoice/selectors";
-
+import { Endpoint } from "api";
 const InformationBillingPage = () => {
   const { item, onGetInvoiceDetail, onGetInvoices } = useInvoices();
   const { tagsOptions, onGetTags } = useTags();
-  const { initQuery, isReady, query } = useQueryParams();
   const { user } = useAuth();
 
   const [openComment, setOpenComment] = useState(false);
+  const { onUpdateHeaderConfig } = useHeaderConfig();
 
+  useEffect(() => {
+    onUpdateHeaderConfig({
+      title: "Invoice Detail",
+      prevPath: Endpoint.INVOICE,
+    });
+    return () => {
+      onUpdateHeaderConfig({
+        title: undefined,
+        searchPlaceholder: undefined,
+        prevPath: undefined,
+        endpoint: undefined,
+        key: undefined,
+      });
+    };
+  }, [onUpdateHeaderConfig]);
   const handleDisplayComment = (value: boolean) => {
     setOpenComment(value);
   };
@@ -49,7 +55,6 @@ const InformationBillingPage = () => {
 
   const { id } = useParams();
 
-  const [newServices, setNewServices] = useState<Service[]>([]);
   useEffect(() => {
     if (typeof id === "string" && id) {
       onGetInvoiceDetail(id);
@@ -59,29 +64,23 @@ const InformationBillingPage = () => {
   return (
     <Stack
       padding={{ sm: 3 }}
-      sx={{ overflowY: "auto" }}
+      // sx={{ overflowY: "auto" }}
       bgcolor={{ md: "background.default" }}
     >
       <TopContent
         tagsOptions={tagsOptions}
-        // item={id ? item : duplicateBill}
         item={item}
         user={userInfo}
         handleDisplayComment={handleDisplayComment}
-        // memberOptions={options}
       />
 
       <TabInfo
-        // item={id ? item : duplicateBill}
         item={item}
         user={userInfo}
         handleDisplayComment={handleDisplayComment}
         openComment={openComment}
-
-        // arrBudgets={budgets}
       />
     </Stack>
-    // </FixedLayout>
   );
 };
 export default InformationBillingPage;

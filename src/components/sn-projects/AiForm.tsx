@@ -10,7 +10,7 @@ import { AiProjectData, CreateProjectPrompt } from "store/project/actions";
 import { convertFromHTML, RawDraftContentBlock } from "draft-js";
 import { useRouter } from "next/navigation";
 
-const View = ["form", "edit"] as const;
+const View = ["form", "edit", "loading"] as const;
 type View = (typeof View)[number];
 
 const CREATE_WITH_AI_PRESETS = [
@@ -36,13 +36,15 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
     onGetPersona,
   } = useChatWithAI();
   useEffect(() => {
-    Promise.allSettled([onGetTone({}), onGetPersona({})]);
+    Promise.allSettled([onGetTone({}), onGetPersona({})]).then(() => {
+      setView("form");
+    });
   }, [onGetPersona, onGetTone]);
 
   const [tone, setTone] = useState("");
   const [persona, setPersona] = useState("");
   const [projectData, setProjectData] = useState<AiProjectData | null>(null);
-  const [view, setView] = useState<View>("form");
+  const [view, setView] = useState<View>("loading");
 
   const onFormSubmit = async (data: CreateProjectPrompt) => {
     const result = await onCreateProjectWithAI(data);
@@ -69,10 +71,15 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
       docData += `<p>${projectData.description}</p>`;
       docData += "<h2>Milestones</h2>";
       for (const _taskList of projectData.taskList) {
+        const taskList = await onCreateTaskList({
+          name: _taskList.title,
+          project: project.id,
+        });
         docData += `<h3>${_taskList.title}</h3>`;
 
         docData += "<ul>";
         for (const _task of _taskList.tasks) {
+          await onCreateTask({ name: _task }, taskList.id);
           docData += `<li>${_task}</li>`;
         }
         docData += "</ul>";
@@ -98,7 +105,7 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: { xs: "80%", md: "50%" },
+          width: "80%",
           bgcolor: "background.paper",
           padding: 3,
         }}
@@ -117,6 +124,8 @@ const AiForm = (props: { isOpen: boolean; onClose: () => void }) => {
             projectData={projectData!}
             onSubmit={generateProject}
           />
+        ) : view === "loading" ? (
+          <CircularProgress />
         ) : null}
       </Paper>
     </Modal>

@@ -1,8 +1,8 @@
 import React from "react";
-import MeetingLayout from "./meeting-layout/MeetingLayout";
+import MeetingWrapper from "./MeetingWrapper";
 
 const Meeting: React.FC = () => {
-  return <MeetingLayout />;
+  return <MeetingWrapper />;
 };
 
 export default Meeting;

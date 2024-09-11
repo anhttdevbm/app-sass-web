@@ -32,6 +32,7 @@ export const AuthLang: AuthDictionary = {
     form: {
       title: {
         fullName: "Full name",
+        username: "Username",
         phone: "Phone number",
         avatar: "Avatar",
         position: "Position",

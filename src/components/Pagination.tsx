@@ -62,6 +62,9 @@ const Pagination = (props: PaginationProps) => {
         sx={{
           [`& .${paginationItemClasses.root}`]: {
             fontWeight: 600,
+            border: "none",
+            backgroundColor: "#D9F0FD",
+            borderRadius : 3
           },
           [`& .${paginationItemClasses.selected}`]: {
             backgroundColor: ({ palette }) =>
@@ -84,10 +87,12 @@ const Pagination = (props: PaginationProps) => {
           {/* {t("paging.show")} */} Show
         </Text>
         <Select
-          rootSx={{  height: 40,background: "#D9F0FD!important",
-          borderColor: "transparent",
-          color: "black",
-          borderRadius: "12px", }}
+          rootSx={{
+            height: 40, background: "#D9F0FD!important",
+            borderColor: "transparent",
+            color: "black",
+            borderRadius: "12px",
+          }}
           options={OPTIONS}
           onChange={onChangePageSize}
           value={pageSize}

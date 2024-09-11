@@ -158,7 +158,8 @@ export const BudgetingLang: BudgetingDictionary = {
       addSection: 'Add Section',
       addItem: 'Add Item',
       cancelBtnText: "Cancel",
-      saveBtnText: "Save changes"
+      saveBtnText: "Save changes",
+      billType: "Bill Type",
     },
   },
   dialog: {

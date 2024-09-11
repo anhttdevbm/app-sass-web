@@ -1,7 +1,13 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Box, Checkbox, FormControlLabel, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Button, Input, Text } from "components/shared";
 import Link from "components/Link";
 import { FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
@@ -131,7 +137,6 @@ const Form = () => {
           <Box>
             <Link
               sx={{
-
                 fontSize: 14,
                 alignSelf: "flex-end",
                 "&:hover": {
@@ -167,21 +172,26 @@ const Form = () => {
       </Button>
       <Button
         sx={{
-          mt:2,
-          background: 
-        "linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #2AF598, #009EFD) border-box",
-        color: "black",
-        border: "1px solid transparent",
-        borderRadius: "4px",
+          mt: 2,
+          background:
+            "linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #2AF598, #009EFD) border-box",
+          color: "black",
+          border: "1px solid transparent",
+          borderRadius: "4px",
         }}
         fullWidth
       >
-        <Typography sx={{
-
-
-  color: "#3699FF",
-
-}} mr={2} variant="body2" gutterBottom>or login by</Typography> <Image src={GoogleLogo} alt="App logo" width={32} />
+        <Typography
+          sx={{
+            color: "#3699FF",
+          }}
+          mr={2}
+          variant="body2"
+          gutterBottom
+        >
+          or login by
+        </Typography>{" "}
+        <Image src={GoogleLogo} alt="App logo" width={32} />
       </Button>
     </Stack>
   );

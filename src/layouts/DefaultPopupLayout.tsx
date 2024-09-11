@@ -1,6 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import CloseIcon from "@mui/icons-material/Close";
-import { Dialog, DialogTitle, Divider, IconButton, Stack } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Stack,
+  SxProps,
+  Theme,
+} from "@mui/material";
 //import { Filter } from '../Common';
 import React, { PropsWithChildren } from "react";
 
@@ -14,6 +22,7 @@ interface IProps {
   width?: string | number;
   isSearchable?: boolean;
   onChangeSearch?(keyword: string): void;
+  rootSx?: SxProps<Theme>;
 }
 
 const DefaultPopupLayout: React.FC<PropsWithChildren<IProps>> = ({
@@ -26,6 +35,7 @@ const DefaultPopupLayout: React.FC<PropsWithChildren<IProps>> = ({
   isSearchable = false,
   onChangeSearch,
   children,
+  rootSx,
 }) => {
   const [keyword, setKeyword] = React.useState<string>("");
 
@@ -47,6 +57,7 @@ const DefaultPopupLayout: React.FC<PropsWithChildren<IProps>> = ({
       PaperProps={{
         sx,
       }}
+      sx={rootSx}
     >
       <Stack
         direction="row"

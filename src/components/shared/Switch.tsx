@@ -45,7 +45,7 @@ const Switch = (props: SwitchProps) => {
 };
 
 const CoreSwitch = (props: CoreSwitchProps) => {
-  const { onChange, value = false, ...rest } = props;
+  const { onChange, value = false, sx, ...rest } = props;
 
   const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
@@ -55,7 +55,7 @@ const CoreSwitch = (props: CoreSwitchProps) => {
   return (
     <MuiSwitch
       disableRipple
-      sx={defaultSx as SxProps}
+      sx={{ ...defaultSx, ...sx } as SxProps}
       checked={value}
       onChange={onChangeValue}
       {...rest}

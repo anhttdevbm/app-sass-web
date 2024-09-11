@@ -1,13 +1,13 @@
 import { Avatar, Box, CircularProgress } from "@mui/material";
-import AccountInfoHeader from "./InfoHeader";
-import AccountInfoItem from "./AccountInfoItem";
-import { UserInfo } from "store/app/reducer";
-import { useTranslations } from "next-intl";
 import { NS_AUTH } from "constant/index";
-import { useChat } from "store/chat/selectors";
 import useGetScreenMode from "hooks/useGetScreenMode";
 import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { UserInfo } from "store/app/reducer";
 import { useAuth } from 'store/app/selectors';
+import { useChat } from "store/chat/selectors";
+import AccountInfoItem from "./AccountInfoItem";
+import AccountInfoHeader from "./InfoHeader";
 
 const mapperDataToInfo = (partnerInfo: Partial<UserInfo>) => ({
   fullName: partnerInfo.fullname,

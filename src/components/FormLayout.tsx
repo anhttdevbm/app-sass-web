@@ -14,6 +14,7 @@ type FormLayoutProps = {
   pending?: boolean;
   bodyFlex?: number;
   renderHeader?: React.ReactNode;
+  isAllTemplate?: boolean;
 } & DialogLayoutProps;
 
 const FormLayout = (props: FormLayoutProps) => {
@@ -33,16 +34,17 @@ const FormLayout = (props: FormLayoutProps) => {
     renderHeader,
     bodyFlex = 1,
     bottomProps,
+    isAllTemplate,
     ...rest
   } = props;
   return (
     <DialogLayout
       sx={{ ...defaultSx.root, ...sx }}
       headerProps={{
-        sx: defaultSx.header,
+        sx: {...defaultSx.header, borderBottom: isAllTemplate ? "none" : "1px solid"},
       }}
       bottomProps={{
-        sx: defaultSx.bottom,
+        sx: {...defaultSx.bottom, marginLeft: isAllTemplate ? "auto" : "" },
       }}
       renderHeader={label ?? renderHeader}
       contentProps={{ sx: { px: 3 } }}
@@ -110,12 +112,9 @@ export default memo(FormLayout);
 const defaultSx = {
   root: {
     minWidth: { xs: "calc(100vw - 24px)", sm: 850 },
-    px: 0,
     zIndex: 50,
   },
   bottom: {
-    borderTop: "1px solid",
-    borderColor: "grey.100",
     pt: 3,
     pb: 0,
     px: 3,
@@ -123,6 +122,7 @@ const defaultSx = {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: "",
   },
   header: {
     borderBottom: "1px solid",

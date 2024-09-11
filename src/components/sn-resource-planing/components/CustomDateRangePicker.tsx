@@ -1,19 +1,18 @@
-import React, { useEffect } from "react";
 import {
   Box,
+  Dialog,
   FormHelperText,
   InputLabel,
+  Stack,
   TextFieldProps,
   Typography,
-  Dialog,
 } from "@mui/material";
-import { Stack } from "@mui/material";
 import dayjs from "dayjs";
-import _ from "lodash";
-import { DateRangePicker, DateRange } from "mui-daterange-picker";
-import CalendarIcon from "icons/CalendarIcon";
 import useTheme from "hooks/useTheme";
+import CalendarIcon from "icons/CalendarIcon";
 import ChevronIcon from "icons/ChevronIcon";
+import { DateRange, DateRangePicker } from "mui-daterange-picker";
+import React, { useEffect } from "react";
 interface ISectionProps {
   value?: DateRange | null;
   label?: string;
@@ -200,7 +199,7 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
         PaperProps={{
           sx: {
             width: "100%",
-            maxWidth: 570,
+            maxWidth: 600,
           },
         }}
         hideBackdrop={true}

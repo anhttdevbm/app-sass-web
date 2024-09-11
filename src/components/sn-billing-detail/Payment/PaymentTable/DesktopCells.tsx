@@ -14,10 +14,11 @@ import { formatDate, formatNumber, getPath } from "utils/index";
 type DesktopCellsProps = {
   item?: PaymentData;
   order: number;
+  payment_number: String;
 };
 
 const DesktopCells = (props: DesktopCellsProps) => {
-  const { item, order } = props;
+  const { item, order, payment_number } = props;
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
 
@@ -26,7 +27,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
       {/* <BodyCell align="center">{order}</BodyCell> */}
       <BodyCell align="left">{formatDate(item?.created_time)}</BodyCell>
       <BodyCell align="left">
-        {item?.overdue ?? 0 + " " + billingT("detail.form.payment.table2.day")}
+        <Text color="#0575E6">{payment_number}</Text>
       </BodyCell>
       <BodyCell align="left">{item?.note}</BodyCell>
       <BodyCell align="left">
@@ -42,7 +43,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
           >
             <Text
               variant="body2"
-              color="#1BC5BD"
+              color="#0BB783"
               fontWeight={600}
               lineHeight={1.28}
               // sx={{ "&:hover": { color: "primary.main" } }}
@@ -62,7 +63,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
           >
             <Text
               variant="body2"
-              color="#f78080"
+              color="#FF2C56"
               fontWeight={600}
               lineHeight={1.28}
               // sx={{ "&:hover": { color: "primary.main" } }}
@@ -82,7 +83,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
             lineHeight={1.28}
             // sx={{ "&:hover": { color: "primary.main" } }}
           >
-            {formatNumber(item?.amount, {
+            {formatNumber(Number(item?.amount), {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
             })}
@@ -95,7 +96,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
             lineHeight={1.28}
             // sx={{ "&:hover": { color: "primary.main" } }}
           >
-            {formatNumber(item?.amount, {
+            {formatNumber(Number(item?.amount), {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
             })}

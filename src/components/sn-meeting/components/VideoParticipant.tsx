@@ -1,200 +1,160 @@
-import {
-  Mic,
-  MicNone,
-  MicOff,
-  PushPin,
-  RecordVoiceOverSharp,
-  Videocam,
-  VideocamOff,
-} from "@mui/icons-material";
+import { Mic, MicOff } from "@mui/icons-material";
 import { Box, IconButton } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import Avatar from "components/Avatar";
+import { Text } from "components/shared";
+import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
+import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
+import { useEffect, useRef } from "react";
+import { RemoteStream } from "store/meeting/types";
 import {
-  sxBtnCircleActive,
-  sxBtn,
-  sxBtnCircleDanger,
   sxBtnCircleActiveDark,
   sxBtnCircleActiveLight,
+  sxBtnCircleDanger,
 } from "../style";
-import ButtonOnMyScreen from "./ButtonOnMyScreen";
-import { Text } from "components/shared";
 import useTheme from "hooks/useTheme";
 
 interface VideoParticipantProps {
-  user?: UserI;
+  streamData: RemoteStream;
 }
 
-const VideoParticipant: React.FC<VideoParticipantProps> = (
-  props: VideoParticipantProps,
-) => {
-  const { user } = props;
+const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { isDarkMode } = useTheme();
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCameraOn, setIsCameraOn] = useState(true);
+  const isCameraOn = streamData.streamState?.isCameraOn;
 
-  const [isScreenPinned, setIsScreenPinned] = useState(false);
-
-  const toggleMic = () => {
-    setIsMicOn(!isMicOn);
-  };
-
-  const toggleCamera = () => {
-    setIsCameraOn(!isCameraOn);
-  };
-
-  const togglePinScreen = () => {
-    setIsScreenPinned(!isScreenPinned);
-  };
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = streamData.stream || null;
+    }
+  }, []);
 
   return (
     <Box
       sx={{
         borderRadius: 2,
         flex: 1,
-        bgcolor: "gray",
         position: "relative",
         overflow: "hidden",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "120px",
       }}
     >
-      {user?.isCameraOn ? (
-        <ShowCamera
-          isMicOn={isMicOn}
-          toggleMic={toggleMic}
-          isDarkMode={isDarkMode}
-        />
-      ) : (
-        <ShowAvatar
-          isMicOn={isMicOn}
-          toggleMic={toggleMic}
-          isDarkMode={isDarkMode}
+      {/* Background Image */}
+      {!isCameraOn && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url(${
+              streamData.participant.avatar
+                ? streamData.participant.avatar
+                : "/images/img-user-placeholder.webp"
+            })`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(8px)",
+            zIndex: 0,
+          }}
         />
       )}
+      {/* Video and Avatar */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <video
+          ref={videoRef}
+          width={isCameraOn ? "100%" : "0%"}
+          height="100%"
+          autoPlay
+          style={{
+            objectFit: "cover",
+          }}
+        />
+        {!isCameraOn && (
+          <Avatar
+            size={40}
+            src={streamData.participant.avatar}
+            alt={streamData.participant.fullname}
+          />
+        )}
+      </Box>
+      <Box
+        sx={[
+          streamData.streamState.isMicOn
+            ? isDarkMode
+              ? sxBtnCircleActiveDark
+              : {
+                  borderRadius: "50%",
+                  background: "#3699FF",
+                  "&:hover": {
+                    bgcolor: "#3699FF",
+                  },
+                }
+            : {
+                borderRadius: "50%",
+                backgroundColor: "#F64E60",
+                color: "#F64E60",
+                "&:hover": {
+                  bgcolor: "#F64E60",
+                  color: "#F64E60",
+                },
+              },
+          {
+            position: "absolute",
+            right: 16,
+            top: 16,
+            width: "40px",
+            height: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10,
+          },
+        ]}
+      >
+        {streamData.streamState.isMicOn ? (
+          <MicrophoneIconV1
+            sx={{
+              position: "relative",
+              left: "1px",
+            }}
+          />
+        ) : (
+          <MicrophoneSlashIcon />
+        )}
+      </Box>
+      <Text
+        sx={{
+          position: "absolute",
+          bottom: 8,
+          left: "50%",
+          transform: "translateX(-50%)",
+          bgcolor: "#000",
+          color: "#fff",
+          borderRadius: "90px",
+          padding: "4px 12px",
+          width: "max-content",
+          textAlign: "center",
+          fontSize: "14px",
+        }}
+      >
+        {streamData.participant.fullname}
+      </Text>
     </Box>
   );
 };
 
 export default VideoParticipant;
-
-const ShowCamera = ({
-  isMicOn,
-  toggleMic,
-  isDarkMode,
-}: {
-  isMicOn: boolean;
-  toggleMic: () => void;
-  isDarkMode: boolean;
-}) => {
-  return (
-    <Box
-      sx={{
-        backgroundImage: "url(/images/meeting/participant.png)",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100%",
-      }}
-    >
-      <video src="user_video_url" width={"100%"} autoPlay muted={!isMicOn} />
-
-      {/* <ButtonOnMyScreen
-        sx={{
-          position: "absolute",
-          bottom: "10px",
-          right: "50%",
-          transform: "translateX(50%)",
-        }}
-        isCameraOn={isCameraOn}
-        isMicOn={isMicOn}
-        isScreenPinned={isScreenPinned}
-        toggleCamera={toggleCamera}
-        toggleMic={toggleMic}
-        togglePinScreen={togglePinScreen}
-      /> */}
-      <IconButton
-        onClick={toggleMic}
-        sx={[
-          isMicOn
-            ? isDarkMode
-              ? sxBtnCircleActiveDark
-              : sxBtnCircleActiveLight
-            : sxBtnCircleDanger,
-          { position: "absolute", right: 16, top: 16 },
-        ]}
-      >
-        {isMicOn ? <Mic /> : <MicOff />}
-      </IconButton>
-      <Text
-        sx={{
-          position: "absolute",
-          bottom: 8,
-          left: "50%",
-          transform: "translateX(-50%)",
-          bgcolor: "#000",
-          color: "#fff",
-          borderRadius: "90px",
-          padding: "4px 12px",
-          width: "max-content",
-          textAlign: "center",
-        }}
-      >
-        Alice Wong
-      </Text>
-    </Box>
-  );
-};
-
-const ShowAvatar = ({
-  isMicOn,
-  toggleMic,
-  isDarkMode,
-}: {
-  isMicOn: boolean;
-  toggleMic: () => void;
-  isDarkMode: boolean;
-}) => {
-  return (
-    <Box
-      sx={{
-        height: "100%",
-        width: "100%",
-        placeItems: "center",
-        display: "grid",
-      }}
-    >
-      <img
-        src="/images/meeting/participant.png"
-        alt="avatar"
-        style={{ position: "absolute", top: 16 }}
-      />
-      <IconButton
-        onClick={toggleMic}
-        sx={[
-          isMicOn
-            ? isDarkMode
-              ? sxBtnCircleActiveDark
-              : sxBtnCircleActiveLight
-            : sxBtnCircleDanger,
-          { position: "absolute", right: 16, top: 16 },
-        ]}
-      >
-        {isMicOn ? <Mic /> : <MicOff />}
-      </IconButton>
-      <Text
-        sx={{
-          position: "absolute",
-          bottom: 8,
-          left: "50%",
-          transform: "translateX(-50%)",
-          bgcolor: "#000",
-          color: "#fff",
-          borderRadius: "90px",
-          padding: "4px 12px",
-          width: "max-content",
-          textAlign: "center",
-        }}
-      >
-        Alice Wong
-      </Text>
-    </Box>
-  );
-};

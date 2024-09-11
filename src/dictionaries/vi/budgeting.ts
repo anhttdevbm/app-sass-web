@@ -159,6 +159,7 @@ export const BudgetingLang: BudgetingDictionary = {
             addItem: 'Thêm mục',
             cancelBtnText: "Hủy",
             saveBtnText: "Lưu thay đổi",
+            billType: "Loại hóa đơn",
         }
     },
     dialog: {

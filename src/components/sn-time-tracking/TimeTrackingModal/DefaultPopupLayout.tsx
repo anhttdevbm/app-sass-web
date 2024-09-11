@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, Divider, IconButton, Stack } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 //import { Filter } from '../Common';
 import React from "react";
+import { inter } from "../CalendarTracking/CalendarTracking.styles";
 
 interface IProps {
   open: boolean;
@@ -59,8 +60,9 @@ const DefaultPopupLayout: React.FC<IProps> = ({
           id="alert-dialog-title"
           sx={{
             fontSize: "20px",
-            fontFamily: "Inter",
-            fontWeight: "Semi-Bold",
+            fontFamily: inter.style.fontFamily,
+            fontWeight: "600",
+            color: "neutral.700",
             padding: 0,
             width: "100%",
             textAlign: isCenterTitle ? "center" : "left",

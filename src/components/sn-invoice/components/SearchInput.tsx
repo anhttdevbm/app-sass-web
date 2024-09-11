@@ -18,7 +18,7 @@ export const SearchInput = ({
     <Paper
       component="form"
       sx={{
-        p: "2px 16px",
+        paddingX: "16px",
         display: "flex",
         alignItems: "center",
         width: 400,
@@ -45,7 +45,7 @@ export const SearchInput = ({
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
       />
-      <IconButton sx={{ p: "10px" }} aria-label="menu">
+      <IconButton sx={{ p: "6px 10px" }} aria-label="menu">
         <SearchIcon
           style={{
             color: "#0575E6",

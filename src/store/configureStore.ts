@@ -29,7 +29,7 @@ import holidayCalendarReducer, {
 import { aiChatReducer } from "./aiChat/reducer";
 import { AIChatState } from "./aiChat/type";
 
-import meetingReducer from "./meeting/reducer";
+import meetingReducer, { MeetingState } from "./meeting/reducer";
 import { AIAgentState } from "./aiAgent/types";
 import { aiAgentReducer } from "./aiAgent/reducer";
 import paymentReducer from "./payment/reducer";
@@ -37,6 +37,9 @@ import { promptTemplateReducer } from "store/promptTemplate/reducer";
 import { chatAIAgentReducer } from "store/chatAIAgent/reducer";
 import userNavigationDetailReducer from "store/userNavigationDetail/reducer";
 import { invoiceReducer, InvoiceState } from "store/invoice/reducer";
+import { ticketReducer } from "store/ticket/reducer";
+import { ticketAgentReducer } from "./ticket-agent/reducer";
+import { meetingMiddleware } from "./meeting/meetingMiddleware";
 
 export interface State {
   app: AppState;
@@ -58,6 +61,7 @@ export interface State {
   chatAIAgent: AIAgentState;
   invoice: InvoiceState;
   payment: ReturnType<typeof paymentReducer>;
+  meeting: MeetingState;
 }
 
 export const store = configureStore({
@@ -74,7 +78,6 @@ export const store = configureStore({
     doc: docReducer,
     resourcePlanning: resourcePlanningReducer,
     invoice: invoiceReducer,
-
     //feedback
     feedback: feedbackReducer,
     blogs: blogReducer,
@@ -97,7 +100,12 @@ export const store = configureStore({
     userNavigationDetail: userNavigationDetailReducer,
 
     //package management
-    payment: paymentReducer, // Sử dụng một phần tử duy nhất cho payment
+    payment: paymentReducer,
+    //ticket
+    ticket: ticketReducer,
+
+    //ticket-agent
+    ticketAgent: ticketAgentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

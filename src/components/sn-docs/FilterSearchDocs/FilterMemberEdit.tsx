@@ -24,18 +24,57 @@ import CalendarIcon from "icons/CalendarIcon";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
+import useQueryParams from "hooks/useQueryParams";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { useDispatch } from "react-redux";
+import { updateFilterTimeDoc } from "store/docs/reducer";
+import { getCurrentQuarter, getLastQuarter } from "utils/index";
+import isoWeek from "dayjs/plugin/isoWeek";
+dayjs.extend(isoWeek);
+
 const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
-  const [anchorEl, setAnchorEl] = useState<any>(null);
+  const selectedfilterTimeDocStore = useAppSelector(
+    (state) => state.doc.selectedFilterTimeDoc,
+  );
+  const { query } = useQueryParams();
+  const dispatch = useAppDispatch();
+  const daytimes = [
+    { name: docsT("filter.filter.lastHour") },
+    { name: docsT("filter.filter.today") },
+    { name: docsT("filter.filter.oneDayAgo") },
+    { name: docsT("filter.filter.thisWeek") },
+    { name: docsT("filter.filter.lastWeek") },
+    { name: docsT("filter.filter.oneWeekAgo") },
+    { name: docsT("filter.filter.thisMonth") },
+    { name: docsT("filter.filter.lastMonth") },
+    { name: docsT("filter.filter.oneMonthAgo") },
+    { name: docsT("filter.filter.thisQuarter") },
+    { name: docsT("filter.filter.lastQuarter") },
+    { name: docsT("filter.filter.threeMonthAgo") },
+    { name: docsT("filter.filter.thisYear") },
+    { name: docsT("filter.filter.lastYear") },
+    { name: docsT("filter.filter.oneYearAgo") },
+  ];
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const [selectedOption, setSelectedOption] = useState<any>("option1");
+  const [selectedOption, setSelectedOption] = useState<string>(
+    selectedfilterTimeDocStore,
+  );
 
-  const handleRadioChange = (value) => {
+  const handleRadioChange = (value: string) => {
     setSelectedOption(value);
   };
+
+  const [startDatePicker, setStartDatePicker] = useState<dayjs.Dayjs | null>(
+    dayjs().subtract(30, "day")
+  );
+  const [endDatePicker, setEndDatePicker] = useState<dayjs.Dayjs | null>(
+    dayjs(new Date()),
+  );
 
   const {
     options: employeeOptions,
@@ -68,6 +107,203 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
     ...employeeOptions,
   ];
 
+  const handleStartDatePickerChange = (date: dayjs.Dayjs | null) => {
+    setStartDatePicker(date);
+  };
+
+  const handleEndDatePickerChange = (date: dayjs.Dayjs | null) => {
+    setEndDatePicker(date);
+  };
+
+  const handleSearchDoc = () => {
+    handleClose();
+    switch (selectedOption) {
+      case "alltime":
+      case "Today":
+        {
+          const from = dayjs(new Date()).format("YYYY-MM-DD");
+          const to = dayjs(new Date()).format("YYYY-MM-DD");
+          onChange("from", [from]);
+          onChange("to", [to]);
+          dispatch(updateFilterTimeDoc("Today"));
+        }
+        break;
+      case docsT("filter.filter.oneDayAgo"):
+        {
+          const from = dayjs().subtract(1, "day").format("YYYY-MM-DD");
+          const to = dayjs(new Date()).format("YYYY-MM-DD");
+          onChange("from", [from]);
+          onChange("to", [to]);
+          dispatch(updateFilterTimeDoc("1 day ago"));
+        }
+        break;
+      case docsT("filter.filter.thisWeek"):
+        {
+          const from = dayjs().startOf("isoWeek").format("YYYY-MM-DD");
+          const to = dayjs().endOf("isoWeek").format("YYYY-MM-DD");
+          onChange("from", [from]);
+          onChange("to", [to]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.thisWeek")));
+        }
+        break;
+      case docsT("filter.filter.lastWeek"):
+        {
+          const startOfLastWeek = dayjs()
+            .subtract(1, "week")
+            .startOf("isoWeek")
+            .format("YYYY-MM-DD");
+
+          const endOfLastWeek = dayjs()
+            .subtract(1, "week")
+            .endOf("isoWeek")
+            .format("YYYY-MM-DD");
+          onChange("from", [startOfLastWeek]);
+          onChange("to", [endOfLastWeek]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.lastWeek")));
+        }
+        break;
+      case docsT("filter.filter.oneWeekAgo"):
+        {
+          const startOfLastWeek = dayjs()
+            .subtract(1, "week")
+            .startOf("isoWeek")
+            .format("YYYY-MM-DD");
+
+          const endOfLastWeek = dayjs()
+            .subtract(1, "week")
+            .endOf("isoWeek")
+            .format("YYYY-MM-DD");
+          onChange("from", [startOfLastWeek]);
+          onChange("to", [endOfLastWeek]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.oneWeekAgo")));
+        }
+        break;
+      case docsT("filter.filter.thisMonth"):
+        {
+          const startOfThisMonth = dayjs()
+            .startOf("month")
+            .format("YYYY-MM-DD");
+
+          const endOfThisMonth = dayjs().endOf("month").format("YYYY-MM-DD");
+
+          onChange("from", [startOfThisMonth]);
+          onChange("to", [endOfThisMonth]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.thisMonth")));
+        }
+        break;
+      case docsT("filter.filter.lastMonth"):
+        {
+          const startOfLastMonth = dayjs()
+            .subtract(1, "month")
+            .startOf("month")
+            .format("YYYY-MM-DD");
+
+          const endOfLastMonth = dayjs()
+            .subtract(1, "month")
+            .endOf("month")
+            .format("YYYY-MM-DD");
+
+          onChange("from", [startOfLastMonth]);
+          onChange("to", [endOfLastMonth]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.lastMonth")));
+        }
+        break;
+      case docsT("filter.filter.oneMonthAgo"):
+        {
+          const startOfLastMonth = dayjs()
+            .subtract(1, "month")
+            .startOf("month")
+            .format("YYYY-MM-DD");
+
+          const endOfLastMonth = dayjs()
+            .subtract(1, "month")
+            .endOf("month")
+            .format("YYYY-MM-DD");
+
+          onChange("from", [startOfLastMonth]);
+          onChange("to", [endOfLastMonth]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.oneMonthAgo")));
+        }
+        break;
+      case docsT("filter.filter.thisQuarter"):
+        {
+          const { startOfQuarter, endOfQuarter } = getCurrentQuarter();
+          onChange("from", [startOfQuarter]);
+          onChange("to", [endOfQuarter]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.thisQuarter")));
+        }
+        break;
+      case docsT("filter.filter.lastQuarter"):
+        {
+          const { startOfQuarter, endOfQuarter } = getLastQuarter();
+          onChange("from", [startOfQuarter]);
+          onChange("to", [endOfQuarter]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.lastQuarter")));
+        }
+        break;
+      case docsT("filter.filter.threeMonthAgo"):
+        {
+          const startDate = dayjs()
+            .subtract(3, "month")
+            .startOf("month")
+            .format("YYYY-MM-DD");
+          const endDate = dayjs()
+            .subtract(1, "month")
+            .endOf("month")
+            .format("YYYY-MM-DD");
+          onChange("from", [startDate]);
+          onChange("to", [endDate]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.threeMonthAgo")));
+        }
+        break;
+      case docsT("filter.filter.thisYear"):
+        {
+          const startDate = dayjs().startOf("year").format("YYYY-MM-DD");
+          const endDate = dayjs().endOf("year").format("YYYY-MM-DD");
+          onChange("from", [startDate]);
+          onChange("to", [endDate]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.thisYear")));
+        }
+        break;
+      case docsT("filter.filter.lastYear"):
+        {
+          const lastYear = dayjs().subtract(1, "year");
+          const startOfYear = lastYear.startOf("year").format("YYYY-MM-DD");
+          const endOfYear = lastYear.endOf("year").format("YYYY-MM-DD");
+          onChange("from", [startOfYear]);
+          onChange("to", [endOfYear]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.lastYear")));
+        }
+        break;
+      case docsT("filter.filter.oneYearAgo"):
+        {
+          const from = dayjs()
+            .subtract(1, "year")
+            .startOf("day")
+            .format("YYYY-MM-DD");
+          const to = dayjs().endOf("day").format("YYYY-MM-DD");
+          onChange("from", [from]);
+          onChange("to", [to]);
+          dispatch(updateFilterTimeDoc(docsT("filter.filter.oneYearAgo")));
+        }
+        break;
+      case "custom":
+        const from = startDatePicker?.format("YYYY-MM-DD");
+        const to = endDatePicker?.format("YYYY-MM-DD");
+        onChange("from", [from]);
+        onChange("to", [to]);
+        dispatch(updateFilterTimeDoc("custom"));
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (query.user_id) {
+    }
+  }, [query.user_id]);
+
   return (
     <>
       <MenuItem
@@ -75,7 +311,7 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
         component={ButtonBase}
         sx={sxConfig.item}
       >
-        <Text variant="body2" color="grey.400">
+        <Text variant="body2" fontWeight={600} color="grey.400">
           {docsT("filter.filter.lastEdited")}:
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">
@@ -132,7 +368,7 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
             borderBottom: "1px solid",
             borderBottomColor: "grey.100",
           }}
-          onClick={() => handleRadioChange("option1")}
+          onClick={() => handleRadioChange("alltime")}
         >
           <Radio
             sx={{
@@ -144,7 +380,7 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
               },
             }}
             name="radio-buttons"
-            checked={selectedOption === "option1"}
+            checked={selectedOption === "alltime"}
           />
           <Typography>All time</Typography>
         </Box>
@@ -160,7 +396,7 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
         >
           {daytimes?.map((item, index) => (
             <Box
-              key={index}
+              key={item.name ?? index}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -194,9 +430,22 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
             alignItems: "center",
             borderTop: "1px solid",
             borderTopColor: "grey.100",
+            gap: 2,
           }}
+          onClick={() => handleRadioChange("custom")}
         >
-          <Radio value="option1" name="radio-buttons" />
+          <Radio
+            sx={{
+              "&.Mui-checked": {
+                color: "#1BC5BD", // Màu xanh khi được chọn
+                "&.Mui-disabled": {
+                  color: "#1BC5BD", // Màu xanh khi bị vô hiệu hóa (nếu cần)
+                },
+              },
+            }}
+            name="radio-buttons"
+            checked={selectedOption === "custom"}
+          />
           <Typography sx={{ display: "flex", alignItems: "center" }}>
             Custom{" "}
           </Typography>
@@ -207,12 +456,34 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
               [`& .MuiInputBase-root`]: {
                 gap: 1,
               },
-
               "& .MuiOutlinedInput-input": {
-                padding: "5px",
+                paddingLeft: "10px",
+                paddingY: "5px",
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "9999px",
               },
             }}
-            defaultValue={dayjs(new Date())}
+            onChange={handleStartDatePickerChange}
+            value={startDatePicker}
+          />
+          <div>-</div>
+          <DatePicker
+            sx={{
+              width: "160px",
+              [`& .MuiInputBase-root`]: {
+                gap: 1,
+              },
+              "& .MuiOutlinedInput-input": {
+                paddingLeft: "10px",
+                paddingY: "5px",
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "9999px",
+              },
+            }}
+            onChange={handleEndDatePickerChange}
+            value={endDatePicker}
           />
         </Box>
 
@@ -225,12 +496,39 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
         >
           <Button
             variant="outlined"
-            sx={{ width: "50%", marginRight: "8px" }}
-            color="primary"
+            sx={{
+              width: "50%",
+              marginRight: "8px",
+              color: "primary",
+              position: "relative",
+              overflow: "hidden",
+              border: "1px solid transparent",
+              borderRadius: "100px",
+              backgroundImage:
+                "linear-gradient(white, white), linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "padding-box, border-box",
+              "&:hover": {
+                backgroundImage:
+                  "linear-gradient(white, white), linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+                border: "1px solid transparent",
+              },
+            }}
+            onClick={handleClose}
           >
             {docsT("button.cancel")}
           </Button>
-          <Button variant="contained" sx={{ width: "50%" }} color="primary">
+          <Button
+            variant="contained"
+            sx={{
+              width: "50%",
+              borderRadius: "100px",
+              background:
+                "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+            }}
+            color="primary"
+            onClick={handleSearchDoc}
+          >
             {docsT("button.search")}
           </Button>
         </Box>
@@ -254,21 +552,3 @@ const sxConfig: Record<string, SxProps> = {
     bgcolor: "white",
   },
 };
-
-const daytimes = [
-  { name: "Last Hour" },
-  { name: "Today" },
-  { name: "1 day ago" },
-  { name: "This week" },
-  { name: "Last week" },
-  { name: "1 week ago" },
-  { name: "This month" },
-  { name: "Last month" },
-  { name: "1 month ago" },
-  { name: "This quarter" },
-  { name: "Last quarter" },
-  { name: "3 month ago" },
-  { name: "This year" },
-  { name: "Last year" },
-  { name: "1 year ago" },
-];

@@ -148,7 +148,8 @@ const ItemList = () => {
           // }}
           headerProps={{
             sx: {
-              // px: { xs: 2, md: 2 },
+              px: { xs: 0.5, md: 2 },
+              wordBreak: "break-all",
               overflow: "auto",
               py: "2px",
               height:"50px",

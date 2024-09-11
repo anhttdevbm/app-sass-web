@@ -13,7 +13,7 @@ export const LayoutLang: LayoutDictionary = {
     expand: "Mở rộng",
   },
   menu: {
-    dashboard: "Dashboard",
+    dashboard: "Bảng điều khiển",
     project: "Dự án",
     task: "Công việc",
     company: "Công ty",
@@ -59,5 +59,8 @@ export const LayoutLang: LayoutDictionary = {
     landingPricing: "Định giá",
 
     invoice: "Hóa đơn",
+
+    ticket: "Vé",
+    agent : "đại lý"
   },
 };

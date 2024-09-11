@@ -1,18 +1,16 @@
-import { Menu, MenuItem, Stack, TableRow } from "@mui/material";
+import { TableRow } from "@mui/material";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
-import { Button, IconButton, Text } from "components/shared";
-import { NS_BILLING, NS_COMMON } from "constant/index";
+import { Text } from "components/shared";
+import { NS_BILLING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
+import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useTranslations } from "next-intl";
-import { memo, useMemo, useState } from "react";
-import { Bill, Billing, Budgets } from "store/billing/reducer";
-import MobileContentCell from "./MobileContentCell";
-import DesktopCells from "./DesktopCells";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import MoreHoriz from "@mui/icons-material/MoreHoriz";
-import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
+import { memo, useMemo } from "react";
 import { PaymentData } from "store/billing/actions";
+import { Billing, Budgets } from "store/billing/reducer";
+import DesktopCells from "./DesktopCells";
+import MobileContentCell from "./MobileContentCell";
 
 type IProps = {
   arrBudgets?: Budgets[];
@@ -23,29 +21,12 @@ type IProps = {
   onDeletePayment?: (id: string) => void;
 };
 
-const ITEM_HEIGHT = 48;
-
 const PaymentTable = (props: IProps) => {
-  const { arrBudgets, isEdit, item, handleOpen, dataPayment, onDeletePayment } =
-    props;
+  const { handleOpen, dataPayment, onDeletePayment } = props;
 
   const { isMdSmaller } = useBreakpoint();
-  const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
 
-  const options = [
-    billingT("detail.form.payment.button.option.edit"),
-    billingT("detail.form.payment.button.option.delete"),
-  ];
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
       {
@@ -54,7 +35,7 @@ const PaymentTable = (props: IProps) => {
         width: "15%",
       },
       {
-        value: `${billingT("detail.form.payment.table2.overdue")}`,
+        value: "Payment #",
         align: "left",
         width: "15%",
       },
@@ -84,7 +65,7 @@ const PaymentTable = (props: IProps) => {
         width: "15%",
       },
       {
-        value: `${billingT("detail.form.payment.table2.overdue")}`,
+        value: "Payment #",
         align: "left",
         width: "15%",
       },
@@ -117,10 +98,6 @@ const PaymentTable = (props: IProps) => {
     ] as CellProps[];
   }, [desktopHeaderList, isMdSmaller, mobileHeaderList]);
 
-  const findBudget = arrBudgets?.filter((budget) =>
-    item?.budget?.find((budget2) => budget2.id === budget.id),
-  );
-
   const handleDeletePayment = (id: string) => {
     onDeletePayment?.(id);
   };
@@ -128,14 +105,13 @@ const PaymentTable = (props: IProps) => {
     <>
       <TableLayout
         headerList={headerList}
-        // pending={isFetching}
         headerProps={{
-          sx: { px: { xs: 0.5, md: 2 } },
+          sx: {
+            px: { xs: 0.5, md: 2 },
+            background: "#fff",
+            borderBottom: "1px solid #EFEFEF",
+          },
         }}
-
-        // error={error as string}
-        // noData={!isIdle && totalItems === 0}
-        // px={{ md: 3 }}
       >
         {dataPayment?.map((item, index) => {
           {
@@ -154,7 +130,11 @@ const PaymentTable = (props: IProps) => {
               {isMdSmaller ? (
                 <MobileContentCell item={item} />
               ) : (
-                <DesktopCells item={item} order={0} />
+                <DesktopCells
+                  item={item}
+                  order={0}
+                  payment_number={String(index + 1)}
+                />
               )}
               <BodyCell
                 align="left"

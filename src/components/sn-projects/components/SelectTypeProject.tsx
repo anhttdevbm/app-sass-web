@@ -94,7 +94,7 @@ const SelectTypeProject = (props: SelectTypeProjectProps) => {
         sx={{ cursor: "pointer" }}
         className="hellsssssso"
       >
-        <Text variant="caption" color="text.primary">
+        <Text variant="caption" color="text.primary" fontWeight={600}>
           {projectT("list.form.title.projectType")}
         </Text>
         <Stack
@@ -105,6 +105,7 @@ const SelectTypeProject = (props: SelectTypeProjectProps) => {
           bgcolor="grey.50"
           borderRadius="2rem"
           p={0.5}
+          alignItems="center"
         >
           <Stack
             direction="row"
@@ -116,7 +117,7 @@ const SelectTypeProject = (props: SelectTypeProjectProps) => {
           >
             {selectedValue?.value && <DisplayItem {...selectedValue} />}
           </Stack>
-          <ChevronCircleIcon sx={{ color: "transparent" }} />
+          <ChevronCircleIcon sx={{ fontSize: 20, color: "transparent" }} />
         </Stack>
       </Stack>
       <Popover

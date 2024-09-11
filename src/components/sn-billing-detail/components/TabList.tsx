@@ -117,8 +117,8 @@ const TabInfo = (props: TabListProps) => {
   } = useBillings();
 
   const options = [
-    billingT("detail.form.top.button.option.duplicateInvoice"),
-    billingT("detail.form.top.button.option.createCreditNote"),
+    // billingT("detail.form.top.button.option.duplicateInvoice"),
+    // billingT("detail.form.top.button.option.createCreditNote"),
     billingT("detail.form.top.button.option.deleteInvoice"),
   ];
   const { isMdSmaller } = useBreakpoint();
@@ -529,7 +529,7 @@ const TabItem = (props: TabItemProps) => {
   return (
     <TabPanel
       value={value}
-      sx={{ padding: 0 }}
+      sx={{ padding: 0, height: "75vh" }}
 
       // color={value ? "#212121" : "grey.300"}
       // sx={{ overflow: "scroll" }}

@@ -31,6 +31,7 @@ export enum DataAction {
 
 export enum Permission {
   SA = "SA",
+  SP = "SP",
   AM = "AM",
   ST = "ST",
   EU = "EU",

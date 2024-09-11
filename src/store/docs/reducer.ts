@@ -109,6 +109,7 @@ export interface IDocs {
     isOpenBoard: boolean;
   };
   heightHeaderDocDetail: number;
+  selectedFilterTimeDoc: string;
 }
 
 const initialState: IDocs = {
@@ -185,7 +186,8 @@ const initialState: IDocs = {
   board: {
     isOpenBoard: false,
   },
-  heightHeaderDocDetail: 0
+  heightHeaderDocDetail: 0,
+  selectedFilterTimeDoc: "alltime"
 };
 
 const docSlice = createSlice({
@@ -273,7 +275,10 @@ const docSlice = createSlice({
       state.board.isOpenBoard = action.payload;
     },
     updateHeightHeaderDetail: (state,action) => {
-      state.heightHeaderDocDetail = action.payload
+      state.heightHeaderDocDetail = action.payload;
+    },
+    updateFilterTimeDoc: (state,action) => {
+      state.selectedFilterTimeDoc = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -361,7 +366,8 @@ export const {
   updateStatusOpenMindMap,
   updateVersionMindMap,
   updateStatusOpenBoardEditor,
-  updateHeightHeaderDetail
+  updateHeightHeaderDetail,
+  updateFilterTimeDoc
 } = docSlice.actions;
 
 export default docSlice.reducer;

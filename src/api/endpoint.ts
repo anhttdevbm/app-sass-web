@@ -214,11 +214,10 @@ export const Endpoint = {
 
   //AI Chat
   AI_CHAT_EXAMPLE_PROMPT: "ai-chat/example-prompt",
-  AI_CHAT_SESSION: "ai-chat/chat-sessions",
+  AI_CHAT_SESSION: "ai-chat/chat-session",
   AI_CHAT: "ai-chat/chat",
-  AI_CHAT_PERSONA: "ai-chat/personas",
-  AI_CHAT_TONE: "ai-chat/tones",
-  AI_CHAT_DELETE_SESSION: "ai-chat/close-all-chat-session",
+  AI_CHAT_PERSONA: "ai-chat/persona",
+  AI_CHAT_TONE: "ai-chat/tone",
 
   //AI Agent
   AI_AGENT: "/agent",
@@ -239,6 +238,7 @@ export const Endpoint = {
   INVOICE: "/invoices",
   DETAIL_INVOICE: "/invoices/{id}",
   NEW_INVOICE: "/invoices/create",
+  DELETE_MULTIPLE_INVOICES: "/invoices/delete-multiple",
 
   // AI Assistants Docs
   AI_DOCS_SUMMARIZE: "/docs/summerization/document",
@@ -253,4 +253,10 @@ export const Endpoint = {
   GET_PRICE_UPGRADE_PACKAGE: "account/get-price-upgrade-package",
   CHANGE_PACKAGE_ACCOUNT: "account/change-package",
   PAY: "payments/process-payment",
+  //Ticket
+  TICKET: "/ticket",
+  DETAIL_TICKET: "/ticket/{id}",
+
+  //Ticket-agent
+  TICKET_AGENT: "/ticket/user",
 };

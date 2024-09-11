@@ -11,6 +11,7 @@ import useTheme from "hooks/useTheme";
 import BlueArrowIcon from "icons/BlueArrowIcon";
 import GrayArrowIcon from "icons/GrayArrowIcon";
 import ProjectBookingIcon from "icons/ProjectBookingIcon";
+import { ProjectBookingLargeIcon } from "icons/ProjectBookingLargeIcon";
 import SickLeaveIcon from "icons/SickLeaveIcon";
 import { useTranslations } from "next-intl";
 import { IEditState } from "../AllPeopleTab";
@@ -39,13 +40,20 @@ const EventContents = ({
   const { mappedTimeSymbol } = useGetMappingTime();
   const { palette, isDarkMode } = useTheme();
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
+  const day = dayjs(event.end).diff(dayjs(event.start), "days");
+
   const checkEventType = (value) => {
     switch (value) {
       case RESOURCE_EVENT_TYPE.PROJECT_BOOKING:
         return {
-          icon: <ProjectBookingIcon width={16} height={16} />,
+          icon:
+            day > 1 ? (
+              <ProjectBookingLargeIcon style={{ fontSize: 16 }} />
+            ) : (
+              <ProjectBookingIcon style={{ fontSize: 16 }} />
+            ),
           color: "#000000",
-          background: "#408DFB",
+          background: day > 1 ? "#172B4D" : "#408DFB",
           backgroundTitle: "#091E420F",
           backgroundContent: "#FFFFFFCC",
         };
@@ -72,7 +80,6 @@ const EventContents = ({
     }
   };
   const checkedEventType = checkEventType(booking_type);
-  const day = dayjs(event.end).diff(dayjs(event.start), "days");
 
   let unit;
   switch (allocation_type) {
@@ -90,7 +97,7 @@ const EventContents = ({
 
   return (
     <>
-      {!isWorkload && (
+      {!isWorkload ? (
         <Stack
           className="fc-event-title fc-sticky"
           direction="row"
@@ -194,28 +201,36 @@ const EventContents = ({
         {checkedEventType.icon}
       </Stack> */}
         </Stack>
-      )}
-      {isWorkload &&
-        (booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING &&
-        total_hour >= 8 ? (
+      ) : (
+        booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING && (
           <h2
             style={{
-              color: "black",
-              background: "red",
+              color: "white",
               textAlign: "center",
               margin: 0,
-              height: "100px",
+              height: "60px",
               display: "flex",
               alignItems: "center ",
               justifyContent: "center",
-              backgroundColor: "#33FFFF",
+              background:
+                "linear-gradient(180deg, rgba(255, 192, 203, 0) 0%, #57D9A3 0%)",
             }}
           >
-            8
+            <div
+              style={{
+                background: "#00875A",
+                fontSize: 11,
+                minWidth: 20,
+                height: 20,
+                padding: 2,
+                borderRadius: 3,
+              }}
+            >
+              {total_hour}
+            </div>
           </h2>
-        ) : (
-          ""
-        ))}
+        )
+      )}
     </>
   );
 };
