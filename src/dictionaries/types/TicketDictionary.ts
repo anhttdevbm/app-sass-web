@@ -16,6 +16,7 @@ export interface TicketDictionary {
   ticketDetail : TicketDetail
   modelReply : ModelReply
   ticketAgnet : any
+  dashboard : any
 }
 
 interface Error {

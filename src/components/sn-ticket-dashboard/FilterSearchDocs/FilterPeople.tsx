@@ -64,7 +64,7 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
         sx={sxConfig.item}
       >
         <Text variant="body2" color="grey.400">
-          {docsT("filter.filter.lastEdited")}:
+          People
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">
           {selectedOption ? selectedOption : selectedDate.format('YYYY/MM/DD')}

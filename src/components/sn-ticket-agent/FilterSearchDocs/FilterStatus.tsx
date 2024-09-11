@@ -34,6 +34,7 @@ const FilterStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
         setName(status)
         const newData = { id, status: removeAllWhitespace(status) };
         onChange("status", newData);
+        handleClose();
     };
 
 
