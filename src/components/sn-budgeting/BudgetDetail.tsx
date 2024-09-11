@@ -74,6 +74,12 @@ export type TBudgetSection = {
   services: TBudgetService[];
 };
 
+export type TBudgetServiceRes = {
+  countItem: number;
+  totalService: number;
+  result: TBudgetService[];
+};
+
 export type TBudgetService = {
   id: string;
   name: string;
@@ -197,7 +203,8 @@ export const BudgetDetail = () => {
             variant="primary"
             size="small"
             sx={{
-              height: "40px", mx: "2px",
+              height: "40px",
+              mx: "2px",
               fontWeight: "bold",
               background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               color: "white",
@@ -206,10 +213,9 @@ export const BudgetDetail = () => {
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 color: "white",
               },
-
             }}
-            >
-              {budgetT("toolbar.addTime")}
+          >
+            {budgetT("toolbar.addTime")}
           </Button>
         );
       case TABS.EXPENSES:
@@ -221,7 +227,8 @@ export const BudgetDetail = () => {
             variant="primary"
             size="small"
             sx={{
-              height: "40px", mx: "2px",
+              height: "40px",
+              mx: "2px",
               fontWeight: "bold",
               background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               color: "white",
@@ -230,7 +237,6 @@ export const BudgetDetail = () => {
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 color: "white",
               },
-
             }}
           >
             {budgetT("toolbar.addExpense")}
@@ -260,7 +266,8 @@ export const BudgetDetail = () => {
             variant="primary"
             size="small"
             sx={{
-              height: "40px", mx: "2px",
+              height: "40px",
+              mx: "2px",
 
               background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
               color: "white",
@@ -269,7 +276,6 @@ export const BudgetDetail = () => {
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 color: "white",
               },
-
             }}
           >
             {budgetT("toolbar.serviceEdit")}
@@ -395,9 +401,11 @@ export const BudgetDetail = () => {
               <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}
               </Text>
-              <Text fontSize="16px" lineHeight={1.2}>{budget.name}</Text>
+              <Text fontSize="16px" lineHeight={1.2}>
+                {budget.name}
+              </Text>
             </Stack>
-            <Stack direction="row" gap={1} alignItems="center" >
+            <Stack direction="row" gap={1} alignItems="center">
               <TextStatus
                 text="status.open"
                 color={
@@ -443,7 +451,11 @@ export const BudgetDetail = () => {
                     ? dayjs(budget.end_date).toDate()
                     : undefined,
                 }}
-                sx={{ background: "white", borderRadius: "100px","label.MuiBox-root":{p:"2px 15px"} }}
+                sx={{
+                  background: "white",
+                  borderRadius: "100px",
+                  "label.MuiBox-root": { p: "2px 15px" },
+                }}
                 onChange={handleUpdateDate}
                 iconPosition="left"
                 isDropdown
@@ -455,15 +467,23 @@ export const BudgetDetail = () => {
               {/*>*/}
               {/*  <OpenSidebarIcon />*/}
               {/*</IconButton>*/}
-
             </Stack>
           </Stack>
           <Stack gap={2} direction="row" alignItems="center">
             <Stack direction="column" alignItems="center">
-              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+              <Text
+                sx={{ textWrap: "nowrap" }}
+                color={"#999999"}
+                fontSize={"13px"}
+              >
                 {projectT("budget.table.revenue")}
               </Text>
-              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+              <Text
+                sx={{ textWrap: "nowrap" }}
+                fontSize={"13px"}
+                fontWeight={600}
+                color="#03AE00"
+              >
                 {formatNumber(109000567, {
                   prefix: CURRENCY_SYMBOL["USD"],
                   numberOfFixed: 0,
@@ -471,10 +491,19 @@ export const BudgetDetail = () => {
               </Text>
             </Stack>
             <Stack direction="column" alignItems="center">
-              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+              <Text
+                sx={{ textWrap: "nowrap" }}
+                color={"#999999"}
+                fontSize={"13px"}
+              >
                 {projectT("budget.table.margin")}
               </Text>
-              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+              <Text
+                sx={{ textWrap: "nowrap" }}
+                fontSize={"13px"}
+                fontWeight={600}
+                color="#03AE00"
+              >
                 {formatNumber(123, {
                   prefix: CURRENCY_SYMBOL["USD"],
                   numberOfFixed: 0,
@@ -482,14 +511,22 @@ export const BudgetDetail = () => {
               </Text>
             </Stack>
             <Stack direction="column" alignItems="center">
-              <Text sx={{ textWrap: "nowrap" }} color={"#999999"} fontSize={"13px"}>
+              <Text
+                sx={{ textWrap: "nowrap" }}
+                color={"#999999"}
+                fontSize={"13px"}
+              >
                 {projectT("budget.table.invoiced") + " %"}
               </Text>
-              <Text sx={{ textWrap: "nowrap" }} fontSize={"13px"} fontWeight={600} color="#03AE00">
+              <Text
+                sx={{ textWrap: "nowrap" }}
+                fontSize={"13px"}
+                fontWeight={600}
+                color="#03AE00"
+              >
                 {formatNumber(123, {}) + " %"}
               </Text>
             </Stack>
-
           </Stack>
         </Stack>
         <Stack
@@ -499,42 +536,44 @@ export const BudgetDetail = () => {
           sx={{ overflowX: "auto" }}
           p={"10px"}
         >
-
-
-            <Stack
-              sx={{height:"40px", border: "1px solid #EFEFEF", borderRadius: "100px", mr: { xs: "10px", md: "20px", xl: "38px" } }}
-              direction="row"
-              justifyContent="start"
-              alignItems="center">
-              {Object.keys(TABS).map((tab, index) => {
-                const currentTab = TABS[tab];
-                return (
-                  <Box
-                    key={`budget-detail-tab-${index}`}
-                    p={1}
-                    // mx="2px"
-                    borderBottom="2px solid transparent"
-                    sx={{
-                      px: { xs: "20px",md:"30px"},
-                      borderRadius: "100px",
-                      cursor: "pointer",
-                      transaction: "all .2s",
-                      ...(activeTab === currentTab && {
-                        color: "primary.main",
-                        background: "#D9F0FD",
-                      }),
-                    }}
-                    onClick={() => changeActiveTab(currentTab)}
-                  >
-                    {TAB_NAME[currentTab]}
-                  </Box>
-                );
-              })}
-
-            </Stack>
-            {ButtonAction}
+          <Stack
+            sx={{
+              height: "40px",
+              border: "1px solid #EFEFEF",
+              borderRadius: "100px",
+              mr: { xs: "10px", md: "20px", xl: "38px" },
+            }}
+            direction="row"
+            justifyContent="start"
+            alignItems="center"
+          >
+            {Object.keys(TABS).map((tab, index) => {
+              const currentTab = TABS[tab];
+              return (
+                <Box
+                  key={`budget-detail-tab-${index}`}
+                  p={1}
+                  // mx="2px"
+                  borderBottom="2px solid transparent"
+                  sx={{
+                    px: { xs: "20px", md: "30px" },
+                    borderRadius: "100px",
+                    cursor: "pointer",
+                    transaction: "all .2s",
+                    ...(activeTab === currentTab && {
+                      color: "primary.main",
+                      background: "#D9F0FD",
+                    }),
+                  }}
+                  onClick={() => changeActiveTab(currentTab)}
+                >
+                  {TAB_NAME[currentTab]}
+                </Box>
+              );
+            })}
           </Stack>
-
+          {ButtonAction}
+        </Stack>
       </Stack>
 
       <Stack p={"10px"} direction="row" mt={1}>

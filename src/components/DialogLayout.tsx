@@ -34,6 +34,7 @@ export type DialogLayoutProps = Omit<DialogProps, "onSubmit"> & {
   submitWhenEnter?: boolean;
   sizeCloseIcon?: "extraSmall" | "small" | "medium" | "large" | "normal";
   rootSx?: SxProps<Theme>;
+  closeIconSx?: SxProps<Theme>;
 };
 
 const DialogLayout = forwardRef(
@@ -54,6 +55,7 @@ const DialogLayout = forwardRef(
       submitWhenEnter,
       sizeCloseIcon = "normal",
       rootSx,
+      closeIconSx,
       ...rest
     } = props;
     const t = useTranslations(NS_COMMON);
@@ -119,6 +121,7 @@ const DialogLayout = forwardRef(
               onClick={onCloseProps}
               sx={{
                 color: "grey.400",
+                ...closeIconSx,
               }}
             >
               <CloseIcon />

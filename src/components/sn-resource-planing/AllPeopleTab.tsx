@@ -52,6 +52,11 @@ interface IAllPeopleTabProp {
   isSmSmaller?: boolean;
 }
 
+interface WeekDates {
+  startOfWeek: Date;
+  endOfWeek: Date;
+}
+
 const AllPeopleTab = ({
   setisServicePopup,
   setIsWorkload,
@@ -107,18 +112,14 @@ const AllPeopleTab = ({
   useFetchBookingAll();
 
   React.useEffect(() => {
-    let delay;
     if (bookingAll) {
       setResources(bookingAll);
-      delay = setTimeout(() => {
-        setSelectedResource([...bookingAll?.map((item) => item.id)]);
-      }, 500);
+      setSelectedResource([...bookingAll?.map((item) => item.id)]);
     } else {
       setSelectedResource([]);
     }
 
-    calendarRef.current?.getApi().refetchResources();
-    return () => clearTimeout(delay);
+    // calendarRef.current?.getApi().refetchResources();
   }, [bookingAll]);
 
   React.useEffect(() => {
@@ -366,7 +367,6 @@ const AllPeopleTab = ({
 
     return items;
   };
-
   const monthNames = [
     "January",
     "February",
@@ -533,6 +533,20 @@ const AllPeopleTab = ({
           top: "5px",
         }}
       >
+        {/* <div style={{ width: "1294px", display: "flex" }}>
+          {currentWeekMonths.map((item, index) => (
+            <p
+              key={index}
+              style={{
+                width: currentWeekMonths.length === 1 ? "100%" : "50%",
+                textAlign: "center",
+                margin: 0,
+              }}
+            >
+              {item}
+            </p>
+          ))}
+        </div> */}
         <div style={{ width: "1294px", display: "flex" }}>
           <p style={{ width: "50%", textAlign: "center", margin: 0 }}>
             {currentWeekMonths.join("-")}
@@ -684,7 +698,6 @@ const AllPeopleTab = ({
           }}
           eventContent={({ event }) => {
             // Content on calendar
-
             return (
               <EventContents
                 event={event}

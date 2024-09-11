@@ -18,7 +18,7 @@ import { useFormik } from "formik";
 import useQueryParams from "hooks/useQueryParams";
 import PlusIcon from "icons/PlusIcon";
 import { memo, useEffect, useState } from "react";
-import { useAuth, useHeaderConfig } from "store/app/selectors";
+import { useAuth, useHeaderConfig, useSnackbar } from "store/app/selectors";
 import { useBudgets, useServiceBudgets } from "store/billing/selectors";
 import { useClientCompanies, useMyCompany } from "store/company/selectors";
 import { useInvoices } from "store/invoice/selectors";
@@ -74,6 +74,7 @@ const FormCreate = () => {
   const { onGetBudgets, budgets } = useBudgets();
   const { arrService, sumAmount, onGetServiceBudgets } = useServiceBudgets();
   const { onCreateNewInvoice } = useInvoices();
+  const { onAddSnackbar } = useSnackbar();
   const { user } = useAuth();
   const [total, setTotal] = useState(0);
   const [paymentSelected, setPaymentSelected] = useState(0);
@@ -136,7 +137,7 @@ const FormCreate = () => {
     onGetServiceBudgets(formik.values.budget_name ?? "");
   }, [onGetServiceBudgets, formik.values.budget_name]);
 
-  console.log("test", arrService);
+  console.log("test", budgets);
 
   useEffect(() => {
     let prev = 0;
@@ -502,12 +503,16 @@ const FormCreate = () => {
           }}
         >
           <MenuItem
-            onClick={() =>
-              handleChange("service_items", [
-                ...formik.values.service_items,
-                { ...initRow, _id: uuid(), typeRowTwo: true },
-              ])
-            }
+            onClick={() => {
+              if (formik.values.budget_name) {
+                handleChange("service_items", [
+                  ...formik.values.service_items,
+                  { ...initRow, _id: uuid(), typeRowTwo: true },
+                ]);
+              } else {
+                onAddSnackbar("Select budget to select services", "error");
+              }
+            }}
           >
             Add a select service row
           </MenuItem>

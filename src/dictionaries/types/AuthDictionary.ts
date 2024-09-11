@@ -29,6 +29,7 @@ export type AuthDictionary = {
     form: {
       title: {
         fullName: string;
+        username: string;
         phone: string;
         avatar: string;
         position: string;

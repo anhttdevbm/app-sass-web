@@ -15,6 +15,8 @@ export const UPLOAD_API_URL = process.env.UPLOAD_API_URL as string;
 export const TIME_SHEET_API_URL = process.env.TIME_SHEET_API_URL as string;
 export const CHAT_API_URL = process.env.CHAT_API_URL as string;
 export const SALE_API_URL = process.env.SALE_API_URL as string;
+export const PAY_API_URL = process.env.PAY_API_URL as string;
+
 export const BUDGET_UPLOAD_FILE_API_URL = process.env
   .BUDGET_UPLOAD_FILE_API_URL as string;
 export const DEFAULT_MODE: Mode = ThemeMode.LIGHT;
@@ -32,6 +34,8 @@ export const INVOICE_API_URL = process.env.INVOICE_API_URL as string;
 
 //Content
 export const CONTENT_API_URL = process.env.CONTENT_API_URL as string;
+//Meeting
+export const MEETING_API_URL = process.env.MEETING_API_URL as string;
 
 // AI
 export const AI_CHAT_API_URL = process.env.AI_CHAT_API_URL as string;

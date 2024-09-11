@@ -14,27 +14,20 @@ import { formatDate, formatNumber, getPath } from "utils/index";
 type DesktopCellsProps = {
   item?: PaymentData;
   order: number;
+  payment_number: String;
 };
 
 const DesktopCells = (props: DesktopCellsProps) => {
-  const { item, order } = props;
+  const { item, order, payment_number } = props;
   const commonT = useTranslations(NS_COMMON);
   const billingT = useTranslations(NS_BILLING);
-
-  console.log(
-    "formatNumber",
-    formatNumber(1244644, {
-      prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-      numberOfFixed: 2,
-    }),
-  );
 
   return (
     <>
       {/* <BodyCell align="center">{order}</BodyCell> */}
       <BodyCell align="left">{formatDate(item?.created_time)}</BodyCell>
       <BodyCell align="left">
-        <Text color="#0575E6">1</Text>
+        <Text color="#0575E6">{payment_number}</Text>
       </BodyCell>
       <BodyCell align="left">{item?.note}</BodyCell>
       <BodyCell align="left">

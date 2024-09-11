@@ -156,6 +156,7 @@ export type BudgetingDictionary = {
       addItem: string;
       cancelBtnText: string;
       saveBtnText: string;
+      billType: string;
     };
     alert: string;
   };

@@ -13,6 +13,10 @@ export const PackageManagementLang: PackageManagementDictionary = {
     package: "Gói",
     billingPlan: "Kế hoạch thanh toán",
     account: "Tài khoản",
+    pricePerMonth: "Giá mỗi tháng",
+    subTotal: "Tổng phụ",
+    vat: "VAT",
+    total: "Tổng",
   },
   placeholder: {
     search: "Tìm kiếm theo tên hoặc email",
@@ -40,6 +44,7 @@ export const PackageManagementLang: PackageManagementDictionary = {
     totalAmount: "Tổng số tiền",
     creationTime: "Thời gian tạo",
     renewalDate: "Ngày gia hạn",
+    billingPlan: "Kế hoạch thanh toán",
   },
   transactionDetail: {
     transactionId: "ID giao dịch",
@@ -73,5 +78,9 @@ export const PackageManagementLang: PackageManagementDictionary = {
     saveOfMonth: "tiết kiệm ${value}/tháng đối với gói hàng năm",
     everyThing: "Mọi thứ đều đạt tiêu chuẩn",
     paypal: "Paypal",
+    yourSubscription: "Đăng ký của bạn sẽ tự động gia hạn",
+    renewAutomatically: "tự động gia hạn",
+    byCharging:
+      "bằng cách tính phí phương thức thanh toán đã lưu của bạn cho đến khi bạn hủy.",
   },
 };

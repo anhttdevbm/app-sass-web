@@ -1,20 +1,20 @@
 "use client";
 
-import { memo, useMemo } from "react";
 import { Stack } from "@mui/material";
-import { Button, Input } from "components/shared";
-import * as Yup from "yup";
-import { AN_ERROR_TRY_AGAIN, NS_AUTH, NS_COMMON } from "constant/index";
-import { useFormik, FormikErrors } from "formik";
-import { SignupData } from "store/app/actions";
-import { EMAIL_REGEX, VN_PHONE_REGEX } from "constant/regex";
-import { cleanObject, getMessageErrorByAPI } from "utils/index";
-import { useSnackbar, useAuth } from "store/app/selectors";
-import { AvatarUpload } from "./components";
-import { formErrorCode } from "api/formErrorCode";
-import { ErrorResponse } from "constant/types";
 import { Endpoint, client } from "api";
+import { formErrorCode } from "api/formErrorCode";
+import { Button, Input } from "components/shared";
+import { NS_AUTH, NS_COMMON } from "constant/index";
+import { EMAIL_REGEX } from "constant/regex";
+import { ErrorResponse } from "constant/types";
+import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
+import { memo, useMemo } from "react";
+import { SignupData } from "store/app/actions";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+import * as Yup from "yup";
+import { AvatarUpload } from "./components";
 
 const Form = () => {
   const { onSignup } = useAuth();
@@ -104,6 +104,20 @@ const Form = () => {
           })}
           required
         />
+        <Input 
+          rootSx={sxConfig.input}
+          fullWidth
+          title={authT("signup.form.title.username")}
+          name="username"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values?.username}
+          error={commonT(touchedErrors?.username, {
+            name: authT("signup.form.title.username"),
+            min: 6,
+          })}
+          required
+        />
         <Input
           rootSx={sxConfig.input}
           fullWidth
@@ -177,6 +191,7 @@ export default memo(Form);
 
 const INITIAL_VALUES = {
   fullname: "",
+  username: "",
   phone: "",
   email: "",
   password: "",
@@ -203,6 +218,8 @@ export const validationSchema = Yup.object().shape({
   rePassword: Yup.string()
     .oneOf([Yup.ref("password"), ""], "form.error.confirmNotMatch")
     .required("form.error.required"),
+  username: Yup.string().trim()
+    .required("form.error.required")
 });
 
 const sxConfig = {

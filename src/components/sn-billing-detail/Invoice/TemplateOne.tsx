@@ -125,7 +125,7 @@ function TemplateOne({
           <Typography color="#878787" fontSize={13} fontWeight={400}>
             DATE
           </Typography>
-          <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+          <Typography color="#4A4A4A" fontSize={14} fontWeight={400} mt={1}>
             {formatDate(itemInvoice?.invoice_date)}
           </Typography>
         </Stack>
@@ -134,7 +134,7 @@ function TemplateOne({
           <Typography color="#878787" fontSize={13} fontWeight={400}>
             DUE DATE
           </Typography>
-          <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+          <Typography color="#4A4A4A" fontSize={14} fontWeight={400} mt={1}>
             {formatDate(itemInvoice?.due_date)}
           </Typography>
         </Stack>
@@ -143,7 +143,7 @@ function TemplateOne({
           <Typography color="#878787" fontSize={13} fontWeight={400}>
             CREATED BY
           </Typography>
-          <Typography color="#4A4A4A" fontSize={14} fontWeight={700} mt={1}>
+          <Typography color="#4A4A4A" fontSize={14} fontWeight={400} mt={1}>
             Garry Hunt
           </Typography>
         </Stack>

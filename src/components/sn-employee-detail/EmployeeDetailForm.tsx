@@ -21,6 +21,7 @@ import ConfirmToRequest from "./components/ConfirmToRequest";
 
 const EmployeeDetailForm = () => {
   const { user } = useAuth();
+  console.log(user, "user");
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
   // const { isSmSmaller } = useBreakpoint();
@@ -306,11 +307,7 @@ const EmployeeDetailForm = () => {
         open={openModal.modalUpgrade}
         title="Confirm to Request Upgrade"
         question="Are you sure to request upgrade?"
-      />
-      <ConfirmToRequest
-        open={openModal.modalRenewal}
-        title="Confirm to Request Renewal"
-        question="Are you sure to request renewal?"
+        onClose={() => setOpenModal({ ...openModal, modalUpgrade: false })}
       />
     </>
   );

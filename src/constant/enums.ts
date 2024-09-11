@@ -39,6 +39,7 @@ export enum Permission {
   LE = "LE",
   CL = "CL",
   CT = "CT",
+  BO = "BO",
 }
 
 export enum Status {

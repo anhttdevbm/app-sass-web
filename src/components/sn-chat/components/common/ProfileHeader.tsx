@@ -19,6 +19,11 @@ import { useAuth, useSnackbar } from "store/app/selectors";
 import { STEP } from "store/chat/type";
 import InfoUserIcon from "icons/InfoUserIcon";
 
+import DialogLayout from "components/DialogLayout";
+import { useMeeting } from "store/meeting/selectors";
+import { usePathname, useRouter } from "next/navigation";
+import { clientStorage } from "utils/storage";
+
 interface ProfileHeaderProps {
   textSearch?: string;
   isSearch?: boolean;
@@ -45,6 +50,8 @@ const ProfileHeader = ({
   onSearch,
   onChangeText,
 }: ProfileHeaderProps) => {
+  const pathname = usePathname();
+  const router = useRouter();
   const [openSearch, setOpenSearch] = useState(false);
   const [avatarClone, setAvatarClone] = useState<string | undefined>(
     avatar?.url,
@@ -63,31 +70,25 @@ const ProfileHeader = ({
   const commonT = useTranslations(NS_COMMON);
 
   const { user } = useAuth();
+  const { onStartMeeting } = useMeeting();
   const { onAddSnackbar } = useSnackbar();
 
-  const handleCreateGroup = async () => {
-    const result = await onCreateDirectMessageGroup({
-      groupName: (() => {
-        return `${dataTransfer?.username?.slice(0, 8)}...-and-me...${Math.floor(
-          Math.random() * (9999 - 1 + 1) + 1,
-        )}`;
-      })(),
-      members: [dataTransfer?.username],
-      type: "d",
-    });
-    onSetRoomId(result.payload.group._id);
-    onSetDataTransfer(result.payload.group);
-    onSetConversationInfo(result.payload.group);
-    onAddSnackbar(commonT("success"), "success");
-    onSetStep(STEP.CHAT_GROUP, result?.payload?.group);
-  };
-
-  useEffect(() => {
-    setOpenSearch(isSearch || false);
-    return () => {
-      setOpenSearch(false);
-    };
-  }, [isSearch]);
+  // const handleCreateGroup = async () => {
+  //   const result = await onCreateDirectMessageGroup({
+  //     groupName: (() => {
+  //       return `${dataTransfer?.username?.slice(0, 8)}...-and-me...${Math.floor(
+  //         Math.random() * (9999 - 1 + 1) + 1,
+  //       )}`;
+  //     })(),
+  //     members: [dataTransfer?.username],
+  //     type: "d",
+  //   });
+  //   onSetRoomId(result.payload.group._id);
+  //   onSetDataTransfer(result.payload.group);
+  //   onSetConversationInfo(result.payload.group);
+  //   onAddSnackbar(commonT("success"), "success");
+  //   onSetStep(STEP.CHAT_GROUP, result?.payload?.group);
+  // };
 
   const handleKeyDown = useCallback(
     (event) => {
@@ -106,6 +107,22 @@ const ProfileHeader = ({
       onPrevious();
     }
   };
+
+  const startMeeting = async () => {
+    await onStartMeeting(dataTransfer.id)
+      .then(() => {
+        if (pathname.includes("/meeting")) return;
+        router.push(`meeting/${dataTransfer.id}`);
+      })
+      .catch((e) => console.log(e.message));
+  };
+
+  useEffect(() => {
+    setOpenSearch(isSearch || false);
+    return () => {
+      setOpenSearch(false);
+    };
+  }, [isSearch]);
 
   const groupButton = useCallback(() => {
     return (
@@ -145,16 +162,12 @@ const ProfileHeader = ({
             <ProfileAdd />
           </IconButton>
           <IconButton
-            onClick={() => {
-              onSetStep(STEP.CONVENTION, {
-                isNew: true,
-                currentSelects: dataTransfer,
-              });
-            }}
+            onClick={startMeeting}
             sx={{
               color: "white",
               padding: "6px",
             }}
+            className="call-button"
           >
             <VideoCallIcon />
           </IconButton>

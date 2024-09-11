@@ -8,7 +8,6 @@ import {
   AUTH_API_URL,
 } from "constant/index";
 import { State } from "store/configureStore";
-import StringFormat from "string-format";
 import { UserInfo } from "./reducer";
 
 export type SigninData = {
@@ -18,6 +17,7 @@ export type SigninData = {
 
 export type SignupData = {
   email: string;
+  username: string;
   password: string;
   phone?: string;
   fullname: string;
@@ -46,7 +46,7 @@ export const signin = createAsyncThunk(
   async (data: SigninData) => {
     try {
       const response = await client.post(Endpoint.SIGNIN, data, {
-        baseURL: AUTH_API_URL,
+        baseURL: "http://113.192.9.79:6801/api/v1",
       });
 
       if (response?.status === HttpStatusCode.OK) {

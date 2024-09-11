@@ -18,7 +18,7 @@ import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 
 type Props = {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
 };
 
 const Change = (props: Props) => {
@@ -45,7 +45,7 @@ const Change = (props: Props) => {
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
-      <Paper
+      <Box
         sx={{
           position: "absolute",
           top: "50%",
@@ -53,8 +53,14 @@ const Change = (props: Props) => {
           transform: "translate(-50%, -50%)",
           bgcolor: "background.paper",
           borderRadius: 3,
-          width: 744,
-          padding: "33px 100px 58px 100px",
+        }}
+        width={{
+          xs: 342,
+          sm: 774,
+        }}
+        padding={{
+          xs: "55px 24px",
+          sm: "33px 100px 58px 100px",
         }}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -76,25 +82,28 @@ const Change = (props: Props) => {
               sx={{
                 fontSize: "20px",
                 fontWeight: 600,
-                textAlign: "left",
                 flexGrow: 1,
               }}
+              textAlign={{ xs: "center", sm: "left" }}
             >
               {packageT("title.chooseBillingOwner")}
             </Text>
           )}
         </Box>
-        <Box>
-          <IconButton
-            onClick={handleClose}
-            sx={{ position: "absolute", top: 25, right: 30 }}
-          >
+        <Box
+          sx={{ position: "absolute" }}
+          top={{ xs: "17px", sm: "35px" }}
+          right={{ xs: "20px", sm: "60px" }}
+        >
+          <IconButton onClick={handleClose}>
             <CloseIcon sx={{ fontSize: "24px" }} />
           </IconButton>
         </Box>
         {step === 0 ? (
           <Box marginTop="20px">
-            <Text>{packageT("description.onlyAdmin")}</Text>
+            <Text color="#999999" textAlign={{ xs: "center", sm: "left" }}>
+              {packageT("description.onlyAdmin")}
+            </Text>
             <SearchPackageManagement width="100%" />
             <Box
               onClick={() => setStep((prevStep) => prevStep + 1)}
@@ -108,7 +117,18 @@ const Change = (props: Props) => {
             </Box>
           </Box>
         ) : step === 1 ? (
-          <Box marginTop="20px" display="flex" gap={2}>
+          <Box
+            marginTop="20px"
+            display="flex"
+            gap={2}
+            border="1px solid #EFEFEF"
+            borderRadius="100px"
+            padding="14px "
+            sx={{
+              background:
+                "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            }}
+          >
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             Nguyễn Văn A (phamvana@taskcover.com){" "}
           </Box>
@@ -133,16 +153,19 @@ const Change = (props: Props) => {
               text={packageT("button.cancel")}
               width={168}
               height={40}
+              sx={{
+                display: { xs: "none", sm: "block" },
+              }}
             />
             <ButtonCustom
               onClick={onSubmit}
               text={packageT("button.confirm")}
-              width={168}
+              width={{ xs: 292, sm: 168 }}
               height={40}
             />
           </Box>
         )}
-      </Paper>
+      </Box>
     </Modal>
   );
 };
