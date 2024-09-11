@@ -30,34 +30,16 @@ export const DropdownButton = (props: Props) => {
 
   const options = ["Paid", "Write Off"];
 
-  // const handleClick = () => {
-  //   console.info(`You clicked ${options[selectedIndex]}`);
-  // };
   React.useEffect(() => {
     setSelectedIndex(selectedOps);
   }, [selectedOps]);
+
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
     index: number,
   ) => {
     setSelectedIndex(index);
-    // setOpen(false);
   };
-
-  // const handleToggle = () => {
-  //   setOpen((prevOpen) => !prevOpen);
-  // };
-
-  // const handleClose = (event: Event) => {
-  //   if (
-  //     anchorRef.current &&
-  //     anchorRef.current.contains(event.target as HTMLElement)
-  //   ) {
-  //     return;
-  //   }
-
-  //   setOpen(false);
-  // };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -70,28 +52,6 @@ export const DropdownButton = (props: Props) => {
 
   return (
     <Stack sx={{ position: "relative" }}>
-      {/* <IconButton
-        aria-label="more"
-        id="long-button"
-        aria-controls={open ? "long-menu" : undefined}
-        aria-expanded={open ? "true" : undefined}
-        aria-haspopup="true"
-        onClick={handleClick}
-      >
-        <MoreHoriz />
-      </IconButton> */}
-      {/* <Button
-        onClick={handleClick}
-        aria-label="more"
-        id="long-button"
-        aria-controls={open ? "long-menu" : undefined}
-        aria-expanded={open ? "true" : undefined}
-        aria-haspopup="true"
-        variant="contained"
-        size="medium"
-      >
-        {options[selectedIndex]}
-      </Button> */}
       <Box
         onClick={handleClick}
         sx={{
@@ -153,73 +113,6 @@ export const DropdownButton = (props: Props) => {
           </MenuItem>
         ))}
       </Menu>
-      {/* <ButtonGroup
-        variant="contained"
-        ref={anchorRef}
-        aria-label="split button"
-      >
-        <Button
-          onClick={() => {
-            if (
-              options[selectedIndex] ==
-              billingT("detail.form.top.button.addWriteOff")
-            ) {
-              handleOpen("write");
-            } else {
-              handleOpen("add");
-            }
-          }}
-        >
-          {options[selectedIndex]}
-        </Button>
-        <Button
-          size="small"
-          aria-controls={open ? "split-button-menu" : undefined}
-          aria-expanded={open ? "true" : undefined}
-          aria-label="select merge strategy"
-          aria-haspopup="menu"
-          onClick={handleToggle}
-        >
-          <ArrowDropDownIcon />
-        </Button>
-      </ButtonGroup>
-      <Popper
-        sx={{
-          zIndex: 4,
-        }}
-        open={open}
-        anchorEl={anchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
-      >
-        {({ TransitionProps, placement }) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin:
-                placement === "bottom" ? "center top" : "center bottom",
-            }}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={handleClose}>
-                <MenuList id="split-button-menu" autoFocusItem>
-                  {options.map((option, index) => (
-                    <MenuItem
-                      key={option}
-                      disabled={index === 2}
-                      selected={index === selectedIndex}
-                      onClick={(event) => handleMenuItemClick(event, index)}
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper> */}
     </Stack>
   );
 };
