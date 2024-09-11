@@ -5,6 +5,7 @@ import { Button } from "components/shared";
 import TemplateFifth from "components/sn-billing-detail/Invoice/TemplateFifth";
 import TemplateFour from "components/sn-billing-detail/Invoice/TemplateFour";
 import TemplateOne from "components/sn-billing-detail/Invoice/TemplateOne";
+import TemplateSixth from "components/sn-billing-detail/Invoice/TemplateSixth";
 import TemplateThree from "components/sn-billing-detail/Invoice/TemplateThree";
 import TemplateTwo from "components/sn-billing-detail/Invoice/TemplateTwo";
 import { INVOICE_EXPORT_PATH } from "constant/paths";
@@ -75,6 +76,18 @@ const ViewPdf = () => {
       value: "Template 5",
       component: (
         <TemplateFifth
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
+      ),
+    },
+    {
+      key: "template-sixth",
+      value: "Template 6",
+      component: (
+        <TemplateSixth
           isEdit={false}
           itemInvoice={item}
           handleChange={() => {}}

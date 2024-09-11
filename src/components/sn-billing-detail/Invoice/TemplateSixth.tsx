@@ -31,7 +31,7 @@ type Props = {
   formik?: any;
 };
 
-function TemplateFifth({
+function TemplateSixth({
   user,
   itemInvoice,
   isEdit,
@@ -51,73 +51,20 @@ function TemplateFifth({
           justifyContent: "space-between",
         }}
       >
-        <Stack
-          direction="column"
-          sx={{
-            borderTop: "2px solid #000000",
-            borderBottom: "2px solid #000000",
-            height: "fit-content",
-            paddingY: 1,
-          }}
-        >
-          <Stack direction="row">
-            <Typography
-              color="#212529"
-              minWidth={150}
-              fontSize={14}
-              fontWeight={700}
-            >
-              Created
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              Garry Hunt
-            </Typography>
-          </Stack>
-
-          <Stack direction="row">
-            <Typography
-              color="#212529"
-              minWidth={150}
-              fontSize={14}
-              fontWeight={700}
-            >
-              Date
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              {formatDate(itemInvoice?.invoice_date)}
-            </Typography>
-          </Stack>
-
-          <Stack direction="row">
-            <Typography
-              color="#212529"
-              minWidth={150}
-              fontSize={14}
-              fontWeight={700}
-            >
-              Due date
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              {formatDate(itemInvoice?.due_date)}
-            </Typography>
-          </Stack>
-        </Stack>
         <Stack direction="row" gap={3}>
           <Stack direction="column">
-            <Typography color="#212529" fontSize={14} fontWeight={600}>
-              BILL FROM
+            <Typography fontWeight={500} color="#4A4A4A" fontSize={14}>
+              VNP
             </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-              Company {user?.company}
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              {user?.address ?? "Le Chan, Ho Chi Minh"}
-            </Typography>
-            <Typography color="#212529" fontSize={14} fontWeight={400}>
-              Tax ID: 00001
+            <Typography
+              fontSize={24}
+              fontWeight={600}
+              color="#212529"
+              sx={{ width: "fit-content", marginTop: 1 }}
+            >
+              Invoice {itemInvoice?.invoice_number}
             </Typography>
           </Stack>
-
           <Stack direction="column" sx={{ maxWidth: "200px" }}>
             <Typography color="#212529" fontSize={14} fontWeight={600}>
               BILL TO
@@ -135,26 +82,79 @@ function TemplateFifth({
               {itemInvoice?.bill_to?.phone}
             </Typography>
           </Stack>
-        </Stack>
-      </Stack>
 
-      <Stack py={4} px={5} sx={{ background: "#EEEEEE" }}>
-        <Typography fontWeight={500} color="#4A4A4A" fontSize={14}>
-          VNP
-        </Typography>
-        <Typography
-          fontSize={24}
-          fontWeight={600}
-          color="#212529"
-          sx={{ width: "fit-content", margin: "auto 0" }}
-        >
-          Invoice {itemInvoice?.invoice_number}
-        </Typography>
+          <Stack direction="column">
+            <Stack direction="column">
+              <Typography color="#212529" fontSize={14} fontWeight={600}>
+                BILL FROM
+              </Typography>
+              <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
+                Company {user?.company}
+              </Typography>
+              <Typography color="#212529" fontSize={14} fontWeight={400}>
+                {user?.address ?? "Le Chan, Ho Chi Minh"}
+              </Typography>
+              <Typography color="#212529" fontSize={14} fontWeight={400}>
+                Tax ID: 00001
+              </Typography>
+            </Stack>
+            <Stack
+              direction="row"
+              sx={{
+                height: "fit-content",
+                paddingY: 1,
+                mt: 4,
+              }}
+            >
+              <Stack direction="column" gap={1}>
+                <Typography
+                  color="#212529"
+                  minWidth={150}
+                  fontSize={14}
+                  fontWeight={700}
+                >
+                  Created
+                </Typography>
+                <Typography color="#212529" fontSize={14} fontWeight={400}>
+                  Garry Hunt
+                </Typography>
+              </Stack>
+
+              <Stack direction="column" gap={1}>
+                <Typography
+                  color="#212529"
+                  minWidth={150}
+                  fontSize={14}
+                  fontWeight={700}
+                >
+                  Date
+                </Typography>
+                <Typography color="#212529" fontSize={14} fontWeight={400}>
+                  {formatDate(itemInvoice?.invoice_date)}
+                </Typography>
+              </Stack>
+
+              <Stack direction="column" gap={1}>
+                <Typography
+                  color="#212529"
+                  minWidth={150}
+                  fontSize={14}
+                  fontWeight={700}
+                >
+                  Due date
+                </Typography>
+                <Typography color="#212529" fontSize={14} fontWeight={400}>
+                  {formatDate(itemInvoice?.due_date)}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Stack>
       </Stack>
 
       <TableContainer
         component={Paper}
-        sx={{ boxShadow: "none", marginTop: 4 }}
+        sx={{ boxShadow: "none", marginTop: 4, paddingX: 5 }}
       >
         <Table sx={{ minWidth: 900, border: "none" }} aria-label="simple table">
           <TableHead>
@@ -166,8 +166,7 @@ function TemplateFifth({
                   fontWeight: 700,
                   padding: "12px 20px",
                   paddingLeft: 5,
-                  borderTop: "2px solid #333333",
-                  borderBottom: "2px solid #333333",
+                  background: "#F5F5F5",
                 }}
               >
                 ITEM
@@ -178,8 +177,7 @@ function TemplateFifth({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  borderTop: "2px solid #333333",
-                  borderBottom: "2px solid #333333",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -191,8 +189,7 @@ function TemplateFifth({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  borderTop: "2px solid #333333",
-                  borderBottom: "2px solid #333333",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -204,8 +201,7 @@ function TemplateFifth({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  borderTop: "2px solid #333333",
-                  borderBottom: "2px solid #333333",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -217,8 +213,7 @@ function TemplateFifth({
                   fontSize: "13px",
                   fontWeight: 700,
                   padding: "12px 20px",
-                  borderTop: "2px solid #333333",
-                  borderBottom: "2px solid #333333",
+                  background: "#F5F5F5",
                 }}
                 align="right"
               >
@@ -232,13 +227,7 @@ function TemplateFifth({
               droppableId="template-one-droppable"
             >
               {(provided, snapshot) => (
-                <TableBody
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  sx={{
-                    borderBottom: "2px solid #333333",
-                  }}
-                >
+                <TableBody ref={provided.innerRef} {...provided.droppableProps}>
                   {(formik
                     ? formik.values.service_items
                     : itemInvoice?.service_items
@@ -265,6 +254,7 @@ function TemplateFifth({
                               fontWeight: 400,
                               padding: "12px 20px 12px 40px",
                               border: "none",
+                              background: "#F5F5F5",
                             }}
                           >
                             {isEdit ? (
@@ -321,6 +311,7 @@ function TemplateFifth({
                               fontWeight: 400,
                               padding: "12px 20px",
                               border: "none",
+                              background: "#F5F5F5",
                             }}
                             align="right"
                           >
@@ -333,6 +324,7 @@ function TemplateFifth({
                               fontWeight: 400,
                               padding: "12px 20px",
                               border: "none",
+                              background: "#F5F5F5",
                             }}
                             align="right"
                           >
@@ -377,6 +369,7 @@ function TemplateFifth({
                               fontWeight: 400,
                               padding: "12px 20px",
                               border: "none",
+                              background: "#F5F5F5",
                             }}
                             align="right"
                           >
@@ -424,6 +417,7 @@ function TemplateFifth({
                               fontWeight: 400,
                               padding: "12px 20px",
                               border: "none",
+                              background: "#F5F5F5",
                             }}
                             align="right"
                           >
@@ -446,9 +440,21 @@ function TemplateFifth({
       <Stack
         direction="column"
         mt={2}
-        sx={{ alignItems: "flex-end", gap: "12px", paddingRight: 3 }}
+        sx={{
+          alignItems: "flex-end",
+          gap: "12px",
+          paddingX: 5,
+        }}
       >
-        <Stack direction="row">
+        <Stack
+          direction="row-reverse"
+          sx={{
+            background: "#F5F5F5",
+            paddingY: 3,
+            width: "100%",
+            paddingRight: 2,
+          }}
+        >
           <Stack direction="column">
             <Stack
               sx={{
@@ -510,45 +516,6 @@ function TemplateFifth({
               </Typography>
             </Stack>
           </Stack>
-          <Stack
-            sx={{
-              display: "flex",
-              alignItems: "flex-end",
-              paddingX: 6,
-            }}
-            direction="row"
-          >
-            <Box
-              sx={{
-                borderRadius: "100px",
-                background: "linear-gradient(to left, #2AF598, #009EFD)",
-                width: "100%",
-                padding: "1px",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: "8px",
-                  alignItems: "center",
-                  borderRadius: "100px",
-                  background: "#F2FAFF",
-                  width: "100%",
-                  justifyContent: "center",
-                  padding: "6px 30px",
-                }}
-              >
-                <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
-                  Payment:{" "}
-                </Typography>
-                <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
-                  {itemInvoice?.payment_items
-                    ? itemInvoice?.payment_items[0]?.payment_method
-                    : "Stripe"}{" "}
-                </Typography>
-              </Box>
-            </Box>
-          </Stack>
         </Stack>
 
         <Stack
@@ -557,29 +524,63 @@ function TemplateFifth({
             flexDirection: "row",
             marginBottom: "20px",
             alignItems: "center",
-            gap: 10,
-            paddingRight: 5,
+            gap: 3,
+            paddingRight: 3,
+            marginTop: 2,
+            background: "#F5F5F5",
+            width: "100%",
+            paddingY: 5,
+            justifyContent: "flex-end",
           }}
         >
-          <Typography
-            sx={{ marginRight: "auto" }}
-            fontSize={16}
-            fontWeight={700}
-            color="#333333"
+          <Stack
+            sx={{
+              display: "flex",
+              paddingX: 6,
+              background: "#14B9E5",
+              borderRadius: "100px",
+              padding: "6px 30px",
+              gap: 1,
+            }}
+            direction="row"
           >
-            Amount Due
-          </Typography>
-          <Typography
-            sx={{ marginLeft: "auto" }}
-            fontSize={24}
-            fontWeight={600}
-            color="#333333"
+            <Typography fontSize={14} fontWeight={700} color="#FFFFFF">
+              Payment:{" "}
+            </Typography>
+            <Typography fontSize={14} fontWeight={500} color="#FFFFFF">
+              {itemInvoice?.payment_items
+                ? itemInvoice?.payment_items[0]?.payment_method
+                : "Stripe"}{" "}
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            sx={{
+              width: "335px",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
           >
-            {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
-              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-              numberOfFixed: 2,
-            })}
-          </Typography>
+            <Typography
+              sx={{ marginRight: "auto" }}
+              fontSize={16}
+              fontWeight={700}
+              color="#333333"
+            >
+              Amount Due
+            </Typography>
+            <Typography
+              sx={{ marginLeft: "auto" }}
+              fontSize={24}
+              fontWeight={600}
+              color="#333333"
+            >
+              {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
+                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                numberOfFixed: 2,
+              })}
+            </Typography>
+          </Stack>
         </Stack>
 
         {isEdit && (
@@ -617,4 +618,4 @@ function TemplateFifth({
   );
 }
 
-export default memo(TemplateFifth);
+export default memo(TemplateSixth);
