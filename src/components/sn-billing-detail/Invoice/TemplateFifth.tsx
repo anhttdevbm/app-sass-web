@@ -449,13 +449,12 @@ function TemplateFifth({
         sx={{ alignItems: "flex-end", gap: "12px", paddingRight: 3 }}
       >
         <Stack direction="row">
-          <Stack direction="column">
+          <Stack direction="column" gap={1}>
             <Stack
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 width: "300px",
-                paddingTop: 2,
               }}
               direction="row"
             >

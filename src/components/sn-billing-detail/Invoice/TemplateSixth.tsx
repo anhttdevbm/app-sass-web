@@ -449,18 +449,17 @@ function TemplateSixth({
           direction="row-reverse"
           sx={{
             background: "#F5F5F5",
-            paddingY: 3,
+            paddingY: 2,
             width: "100%",
             paddingRight: 2,
           }}
         >
-          <Stack direction="column">
+          <Stack direction="column" gap={1}>
             <Stack
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 width: "300px",
-                paddingTop: 2,
               }}
               direction="row"
             >

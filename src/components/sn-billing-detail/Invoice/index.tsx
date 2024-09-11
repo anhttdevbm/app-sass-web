@@ -29,6 +29,7 @@ import PdfButton from "./PdfButton";
 import TemplateFifth from "./TemplateFifth";
 import TemplateFour from "./TemplateFour";
 import TemplateOne from "./TemplateOne";
+import TemplateSeventh from "./TemplateSeventh";
 import TemplateSixth from "./TemplateSixth";
 import TemplateThree from "./TemplateThree";
 import TemplateTwo from "./TemplateTwo";
@@ -492,6 +493,16 @@ const TabInvoice = (props: TabProps) => {
         )}
         {selectedUrl.includes("template-sixth") && (
           <TemplateSixth
+            itemInvoice={itemInvoice}
+            user={user}
+            isEdit={isEdit}
+            formik={formik}
+            handleChange={handleChange}
+            onDragEnd={onDragEnd}
+          />
+        )}
+        {selectedUrl.includes("template-seventh") && (
+          <TemplateSeventh
             itemInvoice={itemInvoice}
             user={user}
             isEdit={isEdit}
