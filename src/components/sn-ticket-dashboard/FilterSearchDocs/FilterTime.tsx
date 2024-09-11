@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
   ButtonBase,
-  FormControl,
-  InputLabel,
   MenuItem,
-  MenuList,
   Popover,
-  Select,
   Stack,
-  popoverClasses,
+  popoverClasses
 } from "@mui/material";
-import React, { memo, useEffect, useMemo, useState } from "react";
-import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 import { Text } from "components/shared";
-import { useTranslations } from "next-intl";
-import {  NS_TICKET } from "constant/index";
+import { NS_TICKET } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
+import { useTranslations } from "next-intl";
+import { memo, useState } from "react";
+import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 
 const FillterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
   const t = useTranslations(NS_TICKET);
@@ -93,16 +88,16 @@ const onChangeMembers = (id: string, priority: string) => {
           {ignoreItems.map((item , index) => {
             return (
               <Stack
-              onClick={()=>onChangeMembers(String(index) , String(item))}
-              padding={2} textAlign={"left"}
-              sx={{cursor:"pointer" ,
-                '&:hover': {
-                  backgroundColor: '#f0f0f0', 
-              
-                },
-              }}
+                key={index} // Add a unique "key" prop
+                onClick={()=>onChangeMembers(String(index) , String(item))}
+                padding={2} textAlign={"left"}
+                sx={{cursor:"pointer" ,
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', 
+                  },
+                }}
               >
-                <Text >{item}</Text>
+                  <Text >{item}</Text>
               </Stack>
             );
           })}

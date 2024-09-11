@@ -1,29 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
+  Button,
   ButtonBase,
   MenuItem,
-  MenuList,
   Popover,
-  Radio,
-  Stack,
-  Button,
-  Typography,
   popoverClasses,
+  Radio,
   SxProps,
+  Typography
 } from "@mui/material";
-import React, { memo, useEffect, useState } from "react";
-import { FilterSearchDocsProps } from "./FilterSearchDocs";
-import { Select, Text } from "components/shared";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_DOCS } from "constant/index";
-import { useFormik } from "formik";
-import { useEmployeeOptions } from "store/company/selectors";
-import ChevronIcon from "icons/ChevronIcon";
-import CalendarIcon from "icons/CalendarIcon";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Text } from "components/shared";
+import { NS_DOCS } from "constant/index";
 import dayjs from "dayjs";
-import { useSearchParams } from "next/navigation";
+import ChevronIcon from "icons/ChevronIcon";
+import { useTranslations } from "next-intl";
+import { memo, useState } from "react";
+import { FilterSearchDocsProps } from "./FilterSearchDocs";
 const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
@@ -40,15 +34,12 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
   const handleDateChange = (newDate) => {
     setSelectedOption("")
     setSelectedDate(newDate);
-    console.log('Selected date:', newDate.format('YYYY-MM-DD')); // Or use newDate.toDate() for a JavaScript Date object
   };
 
 
 
 
   const handelSearch = () => {
-    console.log("check key", selectedOption)
-    console.log("check key", selectedDate.format('YYYY/MM/DD'))
     const newData = selectedOption || selectedDate.format('YYYY/MM/DD')
     onChange("createTime", newData);
     handleClose();

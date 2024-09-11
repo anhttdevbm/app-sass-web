@@ -1,20 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
-  MenuList,
-  Popover,
-  Stack,
-  SxProps,
-  popoverClasses,
+  SxProps
 } from "@mui/material";
-import { Text } from "components/shared";
 import { NS_COMMON, NS_DOCS } from "constant/index";
-import ChevronIcon from "icons/ChevronIcon";
 import { useTranslations } from "next-intl";
-import React, { memo, useState } from "react";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { memo, useState } from "react";
 import FilterPeople from "./FilterPeople";
-import FilterTime from "./FilterTime";
 
 
 export interface FilterSearchDocsProps {
@@ -40,8 +32,9 @@ const FilterSearchDocs = ({ onChange, queries  }: FilterSearchDocsProps) => {
 
   return (
     <>
-      <FilterTime queries={queries}  onChange={onChange} >       
-      </FilterTime>
+      {/* TODO: build error */}
+      {/* <FilterTime queries={queries}  onChange={onChange} >       
+      </FilterTime> */}
       <FilterPeople  queries={queries} onChange={onChange}></FilterPeople>
 
     </>
