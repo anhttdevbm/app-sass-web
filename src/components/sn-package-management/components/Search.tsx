@@ -12,7 +12,7 @@ export default function SearchPackageManagement(props) {
       sx={{
         display: "flex",
         alignItems: "center",
-        width: rest.width ?? 332,
+        width: { sm: rest.width ?? 332, xs: "100%" },
         height: 48,
         backgroundColor: "grey.50",
         boxShadow: "none",

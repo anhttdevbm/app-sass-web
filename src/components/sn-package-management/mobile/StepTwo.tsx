@@ -12,13 +12,13 @@ import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { useTranslations } from "next-intl";
 import { Select, Text } from "components/shared";
 import { useDispatch } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
 import { getPriceUpgradePackage } from "store/payment/actions";
 import { DataPrice, DataStepOne } from ".";
 import { AppDispatch } from "store/configureStore";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  onClose: () => void;
   dataStepOne: DataStepOne;
   setDataPrice: React.Dispatch<React.SetStateAction<DataPrice>>;
   dataPrice: DataPrice;
@@ -32,14 +32,8 @@ type FormValues = {
 };
 
 const StepTwo = (props: Props) => {
-  const {
-    setStep,
-    onClose,
-    dataStepOne,
-    dataPrice,
-    setDataPrice,
-    setDataStepOne,
-  } = props;
+  const { setStep, dataStepOne, dataPrice, setDataPrice, setDataStepOne } =
+    props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -87,37 +81,12 @@ const StepTwo = (props: Props) => {
   };
 
   const handleClose = () => {
-    onClose();
     setStep(0);
   };
 
   return (
-    <Paper
-      sx={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        bgcolor: "background.paper",
-        borderRadius: 3,
-        padding: "74px 136px 45px 74px",
-        width: 1278,
-      }}
-    >
-      <IconButton
-        onClick={handleClose}
-        sx={{ position: "absolute", top: 50, right: 74 }}
-      >
-        <CloseIcon sx={{ fontSize: "24px" }} />
-      </IconButton>
-
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={10}
-        mt={3}
-      >
+    <>
+      <Box mb={2} display="flex" alignItems="center">
         <IconButton onClick={handleBack}>
           <ArrowBackIcon />
         </IconButton>
@@ -125,18 +94,41 @@ const StepTwo = (props: Props) => {
           id="modal-title"
           variant="h6"
           sx={{
-            fontSize: "39px",
+            fontSize: "16px",
             fontWeight: 600,
-            textAlign: "center",
-            flexGrow: 1,
           }}
         >
           {packageT("head.upgradePackage")}
         </Text>
       </Box>
 
-      <Box display="flex" justifyContent="space-between" mb={5}>
-        <Box width="40%">
+      <Box width="100%">
+        <Text
+          sx={{
+            fontSize: "13px",
+            fontWeight: 700,
+          }}
+          mb={1}
+        >
+          {packageT("form.package")}
+        </Text>
+        <Select
+          options={[
+            { label: "Standard", value: "Standard" },
+            { label: "Business", value: "Business" },
+            { label: "Enterprise", value: "Enterprise" },
+          ]}
+          value={newPackage}
+          onChange={(e) => setNewPackage(e.target.value)}
+          fullWidth
+          rootSx={{
+            borderRadius: 100,
+            height: 40,
+            background:
+              "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+          }}
+        />
+        <Box>
           <Text
             sx={{
               fontSize: "13px",
@@ -144,82 +136,49 @@ const StepTwo = (props: Props) => {
             }}
             mb={1}
           >
-            {packageT("form.package")}
+            {packageT("form.billingPlan")}
           </Text>
           <Select
-            options={[
-              { label: "Standard", value: "Standard" },
-              { label: "Business", value: "Business" },
-              { label: "Enterprise", value: "Enterprise" },
-            ]}
-            value={newPackage}
-            onChange={(e) => setNewPackage(e.target.value)}
+            options={[{ label: "Monthly", value: "monthly" }]}
+            value={billingPlan}
+            onChange={(e) => setBillingPlan(e.target.value)}
+            fullWidth
             rootSx={{
               borderRadius: 100,
               height: 40,
-              width: 376,
               background:
                 "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
             }}
           />
-          <Box display="flex" gap="16px" mt={2}>
-            <Box>
-              <Text
-                sx={{
-                  fontSize: "13px",
-                  fontWeight: 700,
-                }}
-                mb={1}
-              >
-                {packageT("form.billingPlan")}
-              </Text>
-              <Select
-                options={[
-                  { label: "Monthly", value: "monthly" },
-                  { label: "Yearly", value: "yearly" },
-                ]}
-                value={billingPlan}
-                onChange={(e) => setBillingPlan(e.target.value)}
-                rootSx={{
-                  borderRadius: 100,
-                  height: 40,
-                  width: 180,
-                  background:
-                    "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
-                }}
-              />
-            </Box>
-            <Box>
-              <Text
-                sx={{
-                  fontSize: "13px",
-                  fontWeight: 700,
-                }}
-                mb={1}
-              >
-                {packageT("form.account")}
-              </Text>
-              <TextField
-                variant="standard"
-                disabled
-                InputProps={{
-                  disableUnderline: true,
-                }}
-                sx={{
-                  width: 180,
-                  height: 40,
-                  backgroundColor: "#EAEAEA",
-                  borderRadius: "100px ",
-                  padding: "4px 20px",
-                }}
-                value={numberOfUser + "  accounts"}
-              />
-            </Box>
+          <Box>
+            <Text
+              sx={{
+                fontSize: "13px",
+                fontWeight: 700,
+              }}
+              mb={1}
+            >
+              {packageT("form.account")}
+            </Text>
+            <TextField
+              variant="standard"
+              disabled
+              InputProps={{
+                disableUnderline: true,
+              }}
+              sx={{
+                width: "100%",
+                height: 40,
+                backgroundColor: "#EAEAEA",
+                borderRadius: "100px ",
+                padding: "4px 20px",
+              }}
+              value={numberOfUser + "  accounts"}
+            />
           </Box>
         </Box>
 
         <Box
-          width="48%"
           sx={{
             padding: "30px",
             background: "#F9F8F8",
@@ -258,22 +217,25 @@ const StepTwo = (props: Props) => {
 
       <ListItem />
 
-      <Box display="flex" justifyContent="flex-end" mt={5} gap={"10px"}>
+      <Box mt={5}>
         <ButtonCustom
           onClick={handleClose}
           text={packageT("button.cancel")}
           buttonDefault
-          width={168}
-          height={40}
+          width={"100%"}
+          height={44}
+          sx={{
+            marginBottom: "16px",
+          }}
         />
         <ButtonCustom
           onClick={() => setStep((prevStep) => prevStep + 1)}
           text={packageT("button.confirm")}
-          width={168}
-          height={40}
+          height={44}
+          width={"100%"}
         />
       </Box>
-    </Paper>
+    </>
   );
 };
 

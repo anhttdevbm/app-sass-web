@@ -44,6 +44,7 @@ export const PackageManagementLang: PackageManagementDictionary = {
     totalAmount: "Total amount",
     creationTime: "Creation time",
     renewalDate: "Renewal date",
+    billingPlan: "Billing plan",
   },
   transactionDetail: {
     transactionId: "Transaction ID",

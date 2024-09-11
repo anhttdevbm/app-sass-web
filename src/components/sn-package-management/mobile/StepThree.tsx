@@ -10,85 +10,29 @@ import ButtonCustom from "../components/Button";
 import { useTranslations } from "next-intl";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { Text } from "components/shared";
-import { DataPrice, DataStepOne } from ".";
-import { pay } from "store/payment/actions";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "store/configureStore";
+import { DataPrice } from ".";
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  onClose: () => void;
   dataPrice: DataPrice;
-  dataStepOne: DataStepOne;
 };
 const StepThree = (props: Props) => {
-  const { setStep, onClose, dataPrice, dataStepOne } = props;
+  const { setStep, dataPrice } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
-  const dispatch = useDispatch<AppDispatch>();
 
   const handleBack = () => {
     setStep((prevStep) => prevStep - 1);
   };
   const handleClose = () => {
-    onClose();
     setStep(0);
   };
 
-  const handleSubmit = async () => {
-    const payload = {
-      billing_plan:
-        dataStepOne.billingPlan === "monthly"
-          ? "Monthly"
-          : dataStepOne.billingPlan === "yearly"
-          ? "Yearly"
-          : "",
-      packageName:
-        dataStepOne.newPackage === "Standard"
-          ? "1"
-          : dataStepOne.newPackage === "Business"
-          ? "2"
-          : dataStepOne.newPackage === "Enterprise"
-          ? "3"
-          : "0",
-      currency_code: "USD",
-      sub_total: dataPrice.subTotal,
-      vat: dataPrice.vat,
-    };
-    const resultAction = await dispatch(pay(payload));
-
-    if (pay.fulfilled.match(resultAction)) {
-      window.open(resultAction?.payload?.return_url, "_blank");
-    } else {
-      console.error("Error");
-    }
-    // onClose();
+  const handleSubmit = () => {
+    setStep(0);
   };
 
   return (
-    <Paper
-      sx={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "1278px",
-        bgcolor: "background.paper",
-        borderRadius: 3,
-        padding: "74px 63px",
-      }}
-    >
-      <IconButton
-        onClick={handleClose}
-        sx={{ position: "absolute", top: 50, right: 74 }}
-      >
-        <CloseIcon sx={{ fontSize: "24px" }} />
-      </IconButton>
-
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={10}
-      >
+    <>
+      <Box mb={2} display="flex" alignItems="center">
         <IconButton onClick={handleBack}>
           <ArrowBackIcon />
         </IconButton>
@@ -96,23 +40,16 @@ const StepThree = (props: Props) => {
           id="modal-title"
           variant="h6"
           sx={{
-            fontSize: "39px",
+            fontSize: "16px",
             fontWeight: 600,
-            textAlign: "center",
-            flexGrow: 1,
           }}
         >
           {packageT("head.upgradePackage")}
         </Text>
       </Box>
 
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        gap="68px"
-        padding="0 144px"
-      >
-        <Box width="527px">
+      <Box>
+        <Box>
           <Text
             sx={{
               fontSize: "16px",
@@ -130,7 +67,7 @@ const StepThree = (props: Props) => {
           </Box>
         </Box>
 
-        <Box width="425px">
+        <Box>
           <Text
             sx={{
               fontSize: "16px",
@@ -186,13 +123,13 @@ const StepThree = (props: Props) => {
             <ButtonCustom
               onClick={handleSubmit}
               text={packageT("button.payNow")}
-              width={365}
-              height={40}
+              width="100%"
+              height={44}
             />
           </Box>
         </Box>
       </Box>
-    </Paper>
+    </>
   );
 };
 

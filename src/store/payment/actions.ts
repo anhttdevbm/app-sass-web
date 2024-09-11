@@ -3,6 +3,7 @@ import { client, Endpoint } from "api";
 import { HttpStatusCode } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN } from "constant/index";
 import { BaseQueries_Feedback } from "constant/types";
+import { PAY_API_URL } from "constant/index";
 
 export type GetListAccounts = BaseQueries_Feedback;
 export type GetAllTransaction = BaseQueries_Feedback;
@@ -24,6 +25,8 @@ interface changePackageAccountParams {
 }
 
 interface payParams {
+  billing_plan: string;
+  packageName: string;
   currency_code: string;
   sub_total: number;
   vat: number;
@@ -47,7 +50,9 @@ export const getAllTransaction = createAsyncThunk(
   "packageManagement/getAllTransaction",
   async ({ ...queries }: GetAllTransaction) => {
     try {
-      const response = await client.get(Endpoint.ALL_TRANSACTION, queries);
+      const response = await client.get(Endpoint.ALL_TRANSACTION, queries, {
+        baseURL: PAY_API_URL,
+      });
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
       }
@@ -112,7 +117,9 @@ export const pay = createAsyncThunk(
   "packageManagement/pay",
   async (params: payParams) => {
     try {
-      const response = await client.post(Endpoint.PAY, params);
+      const response = await client.post(Endpoint.PAY, params, {
+        baseURL: PAY_API_URL,
+      });
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
       }

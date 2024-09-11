@@ -11,12 +11,15 @@ interface AccountType {
 }
 
 interface TransactionType {
-  id: number;
-  name: string;
+  billing_plan: string;
+  created_time: string;
   email: string;
-  role: string;
-  package: string;
-  expirationDate: string;
+  id: string;
+  packageName: string;
+  status: string;
+  total_amount: string;
+  type: string;
+  _id: string;
 }
 
 interface DataState<T> {
@@ -60,6 +63,27 @@ const paymentSlice = createSlice({
       .addCase(getListAccounts.rejected, (state, action) => {
         state.accounts.loading = false;
         state.accounts.error =
+          action.error.message || "Failed to fetch accounts";
+      })
+      // transsaction
+      .addCase(getAllTransaction.pending, (state) => {
+        state.transactions.loading = true;
+        state.transactions.error = null;
+      })
+      .addCase(
+        getAllTransaction.fulfilled,
+        (
+          state,
+          action: PayloadAction<{ data: TransactionType[]; total: number }>,
+        ) => {
+          state.transactions.loading = false;
+          state.transactions.data = action.payload.data;
+          state.transactions.total = action.payload.total;
+        },
+      )
+      .addCase(getAllTransaction.rejected, (state, action) => {
+        state.transactions.loading = false;
+        state.transactions.error =
           action.error.message || "Failed to fetch accounts";
       });
   },

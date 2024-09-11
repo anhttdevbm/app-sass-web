@@ -42,6 +42,7 @@ export type PackageManagementDictionary = {
     totalAmount: string;
     creationTime: string;
     renewalDate: string;
+    billingPlan: string;
   };
   transactionDetail: {
     transactionId: string;

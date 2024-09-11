@@ -44,6 +44,7 @@ export const PackageManagementLang: PackageManagementDictionary = {
     totalAmount: "Tổng số tiền",
     creationTime: "Thời gian tạo",
     renewalDate: "Ngày gia hạn",
+    billingPlan: "Kế hoạch thanh toán",
   },
   transactionDetail: {
     transactionId: "ID giao dịch",
