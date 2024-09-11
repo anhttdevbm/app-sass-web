@@ -43,7 +43,7 @@ const Confirm = (props: Props) => {
           transform: "translate(-50%, -50%)",
           bgcolor: "background.paper",
           borderRadius: 3,
-          padding: "33px 100px 58px 100px",
+          padding: { xs: "47px 27px", sm: "33px 100px 58px 100px" },
         }}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -76,19 +76,24 @@ const Confirm = (props: Props) => {
           gap={"10px"}
         >
           {onCancel && (
-            <ButtonCustom
-              buttonDefault
-              onClick={onCancel}
-              text={packageT("button.cancel")}
-              width={168}
-              height={40}
-            />
+            <Box>
+              <ButtonCustom
+                buttonDefault
+                onClick={onCancel}
+                text={packageT("button.cancel")}
+                width={168}
+                height={40}
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                }}
+              />
+            </Box>
           )}
           {onSubmit && (
             <ButtonCustom
               onClick={onSubmit}
               text={packageT("button.confirm")}
-              width={168}
+              width={{ xs: 292, sm: 168 }}
               height={40}
             />
           )}

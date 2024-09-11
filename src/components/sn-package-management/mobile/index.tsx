@@ -1,20 +1,19 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 import StepTwo from "./StepTwo";
 import StepOne from "./StepOne";
 import StepThree from "./StepThree";
+import { Box, useMediaQuery } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 export interface DataStepOne {
   newPackage: string;
   billingPlan: string;
   numberOfUser: number;
 }
-type Props = {
-  open: boolean;
-  onClose: () => void;
-};
+type Props = {};
 export type DataPrice = {
   priceOfMonth: number;
   subTotal: number;
@@ -22,9 +21,11 @@ export type DataPrice = {
   vat: number;
 };
 
-const ModalUpgradePackage = (props: Props) => {
-  const { open, onClose } = props;
+const MobileUpgradePackage = (props: Props) => {
   const [step, setStep] = useState(0);
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const router = useRouter();
+
   const [dataStepOne, setDataStepOne] = useState<DataStepOne>({
     billingPlan: "",
     newPackage: "",
@@ -37,21 +38,20 @@ const ModalUpgradePackage = (props: Props) => {
     vat: 0,
   });
 
+  useEffect(() => {
+    if (!isMobile) {
+      router.push("/package-management");
+    }
+  }, [isMobile, router]);
+
   const renderModal = () => {
     switch (step) {
       case 0:
-        return (
-          <StepOne
-            setStep={setStep}
-            onClose={onClose}
-            setDataStepOne={setDataStepOne}
-          />
-        );
+        return <StepOne setStep={setStep} setDataStepOne={setDataStepOne} />;
       case 1:
         return (
           <StepTwo
             setStep={setStep}
-            onClose={onClose}
             dataStepOne={dataStepOne}
             dataPrice={dataPrice}
             setDataPrice={setDataPrice}
@@ -59,27 +59,12 @@ const ModalUpgradePackage = (props: Props) => {
           />
         );
       case 2:
-        return (
-          <StepThree
-            setStep={setStep}
-            onClose={onClose}
-            dataPrice={dataPrice}
-            dataStepOne={dataStepOne}
-          />
-        );
+        return <StepThree setStep={setStep} dataPrice={dataPrice} />;
       default:
         return null;
     }
   };
-  return (
-    <Modal
-      open={open}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <>{renderModal()}</>
-    </Modal>
-  );
+  return <Box padding="16px">{renderModal()}</Box>;
 };
 
-export default memo(ModalUpgradePackage);
+export default memo(MobileUpgradePackage);
