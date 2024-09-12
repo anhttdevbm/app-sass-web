@@ -1,5 +1,12 @@
-import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  REFRESH_TOKEN_STORAGE_KEY,
+} from "constant/index";
+import { User } from "constant/types";
+import { StaticImageData } from "next/image";
 import { uuid } from "utils";
+import { clientStorage } from "utils/storage";
 import {
   getProfile,
   signin,
@@ -7,13 +14,6 @@ import {
   signupVerify,
   updateUserInfo,
 } from "./actions";
-import { clientStorage, sessionStorage } from "utils/storage";
-import {
-  ACCESS_TOKEN_STORAGE_KEY,
-  REFRESH_TOKEN_STORAGE_KEY,
-} from "constant/index";
-import { User } from "constant/types";
-import { StaticImageData } from "next/image";
 
 export interface Snackbar {
   message: string;
@@ -35,6 +35,8 @@ export interface UserInfo extends User {
   date_start_using: string;
   is_pay_user: boolean;
   id_rocket?: string;
+  auto_renewal?: boolean;
+  packageName?: string;
 }
 
 export type HeaderConfig = {

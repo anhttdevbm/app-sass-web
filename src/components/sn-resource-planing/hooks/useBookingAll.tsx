@@ -9,7 +9,6 @@ export const useFetchBookingAll = () => {
   const { bookingAllFilter, getBookingResource } = useBookingAll();
   useEffect(() => {
     getBookingResource(bookingAllFilter);
-    console.log(bookingAllFilter);
   }, [bookingAllFilter]);
 };
 

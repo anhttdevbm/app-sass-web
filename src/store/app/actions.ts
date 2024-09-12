@@ -8,7 +8,6 @@ import {
   AUTH_API_URL,
 } from "constant/index";
 import { State } from "store/configureStore";
-import StringFormat from "string-format";
 import { UserInfo } from "./reducer";
 
 export type SigninData = {
@@ -18,6 +17,7 @@ export type SigninData = {
 
 export type SignupData = {
   email: string;
+  username: string;
   password: string;
   phone?: string;
   fullname: string;

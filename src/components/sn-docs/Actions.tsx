@@ -183,17 +183,17 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent={{ md: "space-between" }}
+          justifyContent="space-between"
           width="100%"
           spacing={{ xs: 2, md: 0 }}
         >
-          <Box display={{ xs: "none" }}>
+          <Box display={{ xs: "none", md: "block", lg: "block" }}>
             <Search
               placeholder={docsT("filter.search", { name: "email" })}
               name="search_key"
               onChange={onChangeQueries}
               value={queries?.search_key}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: 400, backgroundColor: "inherit" }}
               onKeyDown={(e) => {
                 e.stopPropagation();
                 if (e.key === "Enter") {
@@ -207,12 +207,12 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
           </Box>
           <Stack
             direction="row"
-            justifyContent={{ xs: "space-between" }}
             spacing={1}
-            width={{ xs: "100%" }}
+            display="flex"
+            justifyContent={{ xs: "space-between" }}
+            width={{ xs: "100%", md: "auto", lg: "auto" }}
           >
             <ChangeViewListDoc />
-
             <ButtonWithDropdown
               text={commonT("form.add")}
               onClick={handleCreateDoc}

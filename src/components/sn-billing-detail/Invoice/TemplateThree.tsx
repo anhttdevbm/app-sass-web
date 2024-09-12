@@ -133,21 +133,21 @@ function TemplateThree({
           </Typography>
         </Stack>
 
-        <Stack direction="column">
+        <Stack direction="column" sx={{ maxWidth: "45%" }}>
           <Typography color="#212529" fontSize={14} fontWeight={600}>
             SHIP TO
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-            Company A
+            {itemInvoice?.bill_to?.name}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Grand Via 34, Spain
+            {itemInvoice?.bill_to?.address}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Tax ID: 00001
+            Tax ID: {itemInvoice?.bill_to?.tax_code}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            +03 522 017 08
+            {itemInvoice?.bill_to?.phone}
           </Typography>
         </Stack>
       </Stack>
@@ -440,15 +440,14 @@ function TemplateThree({
             justifyContent: "space-between",
             width: "300px",
             paddingTop: 2,
-            paddingX: 6,
             borderTop: "1px solid #EFEFEF",
           }}
           direction="row"
         >
-          <Typography color="#878787" fontSize={14} fontWeight={400}>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
             Subtotal
           </Typography>
-          <Typography color="#21263C" fontSize={14} fontWeight={400}>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
             {formatNumber(Number(itemInvoice?.total ?? 0), {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
@@ -461,14 +460,13 @@ function TemplateThree({
             display: "flex",
             justifyContent: "space-between",
             width: "300px",
-            paddingX: 6,
           }}
           direction="row"
         >
-          <Typography color="#878787" fontSize={14} fontWeight={400}>
-            {`VAT`}
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
+            VAT
           </Typography>
-          <Typography color="#21263C" fontSize={14} fontWeight={400}>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
             {formatNumber((Number(itemInvoice?.total ?? 0) * 10) / 100, {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
@@ -481,92 +479,67 @@ function TemplateThree({
             display: "flex",
             justifyContent: "space-between",
             width: "300px",
-            paddingX: 6,
+            paddingBottom: 3,
+            borderBottom: "1px solid #EFEFEF",
           }}
           direction="row"
         >
-          <Typography color="#878787" fontSize={14} fontWeight={400}>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
             Total
           </Typography>
-          <Typography color="#386aba" fontSize={16} fontWeight={700}>
+          <Typography color="#212529" fontSize={14} fontWeight={400}>
             {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
               prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
               numberOfFixed: 2,
             })}
           </Typography>
         </Stack>
-        <Stack
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            width: "300px",
 
-            paddingX: 6,
-          }}
+        <Stack
+          display="flex"
           direction="row"
+          gap={5}
+          mt={1}
+          alignItems="center"
+          paddingBottom={4}
+          sx={{ width: "300px" }}
         >
+          <Stack display="flex" flexDirection="column" gap={1}>
+            <Typography
+              fontSize={16}
+              fontWeight={700}
+              color="#333333"
+              sx={{ textWrap: "nowrap" }}
+            >
+              Amount Due
+            </Typography>
+            <Typography fontSize={24} fontWeight={600} color="#14B9E5">
+              {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
+                prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+                numberOfFixed: 2,
+              })}
+            </Typography>
+          </Stack>
           <Box
             sx={{
+              background: "#D9F0FD",
+              padding: "6px 26px",
               borderRadius: "100px",
-              background: "linear-gradient(to left, #2AF598, #009EFD)",
-              width: "100%",
-              padding: "1px",
+              height: "fit-content",
+              textAlign: "center",
+              display: "flex",
+              gap: "8px",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                gap: "8px",
-                alignItems: "center",
-                borderRadius: "100px",
-                background: "#FAFAFA",
-                width: "100%",
-                justifyContent: "center",
-                padding: "6px 0",
-              }}
-            >
-              <Typography fontSize={14} fontWeight={700} color="#4A4A4A">
-                Payment:{" "}
-              </Typography>
-              <Typography fontSize={14} fontWeight={500} color="#4A4A4A">
-                {itemInvoice?.payment_items
-                  ? itemInvoice?.payment_items[0]?.payment_method
-                  : "Stripe"}{" "}
-              </Typography>
-            </Box>
+            <Typography fontSize={14} fontWeight={700} color="#1A1A1A">
+              Payment:
+            </Typography>
+            <Typography fontSize={14} fontWeight={500} color="#1A1A1A">
+              {itemInvoice?.payment_items?.length
+                ? itemInvoice?.payment_items[0]?.payment_method
+                : "Stripe"}
+            </Typography>
           </Box>
-        </Stack>
-
-        <Stack
-          sx={{
-            display: "flex",
-            direction: "column",
-            padding: "12px 14px 18px 46px",
-            background: "#0575E6",
-            marginBottom: "20px",
-            width: "300px",
-            gap: 1,
-          }}
-        >
-          <Typography
-            sx={{ marginRight: "auto" }}
-            fontSize={14}
-            fontWeight={700}
-            color="#FFFFFF"
-          >
-            Amount Due
-          </Typography>
-          <Typography
-            sx={{ marginLeft: "auto" }}
-            fontSize={24}
-            fontWeight={600}
-            color="#FFFFFF"
-          >
-            {formatNumber((Number(itemInvoice?.total ?? 0) * 110) / 100, {
-              prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
-              numberOfFixed: 2,
-            })}
-          </Typography>
         </Stack>
 
         {isEdit && (

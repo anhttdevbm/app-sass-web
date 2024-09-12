@@ -10,13 +10,20 @@ import ButtonCustom from "../components/Button";
 import { useTranslations } from "next-intl";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { Text } from "components/shared";
+import { DataPrice, DataStepOne } from ".";
+import { pay } from "store/payment/actions";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "store/configureStore";
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
+  dataPrice: DataPrice;
+  dataStepOne: DataStepOne;
 };
 const StepThree = (props: Props) => {
-  const { setStep, onClose } = props;
+  const { setStep, onClose, dataPrice, dataStepOne } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleBack = () => {
     setStep((prevStep) => prevStep - 1);
@@ -26,8 +33,34 @@ const StepThree = (props: Props) => {
     setStep(0);
   };
 
-  const handleSubmit = () => {
-    onClose();
+  const handleSubmit = async () => {
+    const payload = {
+      billing_plan:
+        dataStepOne.billingPlan === "monthly"
+          ? "Monthly"
+          : dataStepOne.billingPlan === "yearly"
+          ? "Yearly"
+          : "",
+      packageName:
+        dataStepOne.newPackage === "Standard"
+          ? "1"
+          : dataStepOne.newPackage === "Business"
+          ? "2"
+          : dataStepOne.newPackage === "Enterprise"
+          ? "3"
+          : "0",
+      currency_code: "USD",
+      sub_total: dataPrice.subTotal,
+      vat: dataPrice.vat,
+    };
+    const resultAction = await dispatch(pay(payload));
+
+    if (pay.fulfilled.match(resultAction)) {
+      window.open(resultAction?.payload?.return_url, "_blank");
+    } else {
+      console.error("Error");
+    }
+    // onClose();
   };
 
   return (
@@ -108,29 +141,45 @@ const StepThree = (props: Props) => {
             {packageT("title.orderSummary")}{" "}
           </Text>
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text>Price per month</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text>{packageT("form.pricePerMonth")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.priceOfMonth ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>Subtotal</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}>{packageT("form.subTotal")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.subTotal ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>VAT</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}>{packageT("form.vat")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.vat ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>Total</Text>
-            <Text sx={{ fontSize: "20px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}>{packageT("form.total")}</Text>
+            <Text sx={{ fontSize: "20px", fontWeight: "600" }}>
+              {" "}
+              ${Number(dataPrice?.total ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box mb={3}>
-            <Text>
-              Your subscription will renew automatically renew automatically by
-              charging your payment method on file until you cancel.{" "}
+            <Text sx={{ fontSize: "13px" }}>
+              {packageT("description.yourSubscription")}{" "}
+              <span style={{ fontWeight: "700" }}>
+                {" "}
+                {packageT("description.renewAutomatically")}{" "}
+              </span>{" "}
+              {packageT("description.byCharging")}{" "}
             </Text>
           </Box>
           <Box>

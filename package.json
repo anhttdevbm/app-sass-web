@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 2023",
+    "start": "next start -p 2024",
     "lint": "next lint",
     "prepare": "husky install",
     "typecheck": "tsc --noEmit"
@@ -138,6 +138,7 @@
     "react-textarea-autosize": "^8.5.2",
     "react-use-websocket": "^4.3.1",
     "react-websocket": "^2.1.0",
+    "recharts": "^2.12.7",
     "sass": "^1.63.0",
     "sharp": "^0.32.1",
     "simple-peer": "^9.11.1",

@@ -13,7 +13,6 @@ import {
   CHATTING_ROOM_PATH,
   CLIENT_COMPANIES_PATH,
   COMPANIES_PATH,
-  COST_HISTORY_PATH,
   DOCS_PATH,
   EMPLOYEES_PATH,
   FEEDBACK_PATH,
@@ -33,10 +32,10 @@ import {
   PROJECTS_PATH,
   RESOURCE_PLANING_PATH,
   SALES_LIST_PATH,
-  STATEMENT_HISTORY_PATH,
   TICKET_AGENT,
+  TICKET_DASHBOARD,
   TICKET_PATH,
-  TIME_TRACKING_PATH,
+  TIME_TRACKING_PATH
 } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -233,11 +232,11 @@ const DATA: MenuItemProps[] = [
     icon: <MenuCompanyIcon />,
     subs: [
       { label: "menu.employees", href: EMPLOYEES_PATH, roles: [Permission.AM] },
-      {
-        label: "menu.costHistory",
-        href: COST_HISTORY_PATH,
-        roles: [Permission.AM],
-      },
+      // {
+      //   label: "menu.costHistory",
+      //   href: COST_HISTORY_PATH,
+      //   roles: [Permission.AM],
+      // },
       {
         label: "menu.listOfPositions",
         href: POSITIONS_PATH,
@@ -280,11 +279,11 @@ const DATA: MenuItemProps[] = [
         href: COMPANIES_PATH,
         roles: [Permission.SA],
       },
-      {
-        label: "menu.statementHistory",
-        href: STATEMENT_HISTORY_PATH,
-        roles: [Permission.SA],
-      },
+      // {
+      //   label: "menu.statementHistory",
+      //   href: STATEMENT_HISTORY_PATH,
+      //   roles: [Permission.SA],
+      // },
     ],
     roles: [Permission.SA],
   },
@@ -298,20 +297,19 @@ const DATA: MenuItemProps[] = [
     label: "menu.resourcePlaning",
     href: RESOURCE_PLANING_PATH,
     icon: <MenuResourcePlaningIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM],
   },
   {
     label: "menu.budgeting",
-    // icon: <WalletMoneyIcon style={{ color: '#3699FF' }} />,
     icon: <BudgetIcon />,
     href: BUDGETING_PATH,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM],
   },
   {
     label: "menu.invoice",
     icon: <BillingIcon />,
     href: INVOICES_PATH,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM],
   },
   {
     label: "menu.chat",
@@ -432,7 +430,7 @@ const DATA: MenuItemProps[] = [
     subs: [
       {
         label: "menu.dashboard",
-        href: STATEMENT_HISTORY_PATH,
+        href: TICKET_DASHBOARD,
         roles: [Permission.SA],
       },
       {

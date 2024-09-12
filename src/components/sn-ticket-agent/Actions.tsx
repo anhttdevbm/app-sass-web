@@ -5,7 +5,7 @@ import PlusIcon from "icons/PlusIcon";
 import { Button, Text } from "components/shared";
 import { Dropdown, Search } from "components/Filters";
 import { getPath } from "utils/index";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { NS_COMMON, NS_COMPANY, NS_DOCS, NS_TICKET } from "constant/index";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import {
@@ -126,12 +126,16 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
 
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
-    // onSearch();
+
   };
+
+  useEffect(() => {
+    onSearch();
+  }, [queries]);
 
   const { id } = useParams();
 
-  const onSearch = () => {
+  const onSearch = useCallback(() => {
     let newQueries = {
       ...queries,
       page: 1,
@@ -145,7 +149,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
       position: newQueries?.position?.id == 0 ? "" : newQueries?.position?.position,
     };
     dispatch(setKeySearchTicketAgent(payload));
-  };
+  },[queries , data]);
 
   useEffect(() => {
     setQueries({ search_key: searchParams.get("search_key") });

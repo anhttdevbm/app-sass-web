@@ -1,28 +1,87 @@
 "use client";
 
-import Search from "components/sn-project-detail/Budget/Actions/Search";
 import ListAccount from "./ListAccount";
 import Sumary from "./Sumary";
 import ListTransactionHistory from "./ListTransactionHistory";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
+import { useAuth } from "store/app/selectors";
+import { Permission } from "constant/enums";
+import { memo } from "react";
+import MobileUpgradePackage from "./mobile/index";
 
 const PackageManagement = () => {
+  const { user } = useAuth();
+  const isRole =
+    user?.roles?.includes(Permission.SA) ||
+    user?.roles?.includes(Permission.AM);
   return (
-    <>
-      <Box sx={{ padding: "26px 42px" }}>
+    <Stack
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        overflowY: "scroll",
+        scrollbarWidth: "none",
+        height: "calc(98vh - 100px)",
+        boxSizing: "border-box",
+      }}
+    >
+      <Box
+        padding={{
+          xs: "26px 27px",
+          sm: "26px 42px",
+        }}
+        borderRadius={{
+          xs: "12px",
+        }}
+        border={{
+          xs: "1px solid #EFEFEF",
+          sm: "none",
+        }}
+        mb={{
+          xs: "16px",
+        }}
+      >
         <Sumary />
       </Box>
-      <Box sx={{ padding: "26px 42px" }}>
-        <ListAccount />
-      </Box>
-      <Box sx={{ padding: "26px 42px" }}>
+      {isRole && (
+        <Box
+          padding={{
+            xs: "26px 27px",
+            sm: "26px 42px",
+          }}
+          borderRadius={{
+            xs: "12px",
+          }}
+          border={{
+            xs: "1px solid #EFEFEF",
+            sm: "none",
+          }}
+          mb={{
+            xs: "16px",
+          }}
+        >
+          {" "}
+          <ListAccount />
+        </Box>
+      )}
+      <Box
+        padding={{
+          xs: "26px 27px",
+          sm: "26px 42px",
+        }}
+        borderRadius={{
+          xs: "12px",
+        }}
+        border={{
+          xs: "1px solid #EFEFEF",
+          sm: "none",
+        }}
+      >
+        {" "}
         <ListTransactionHistory />
       </Box>
-    </>
+    </Stack>
   );
 };
 
-export default PackageManagement;
-
-const getContainerBoundingClientRect = (element: HTMLElement) =>
-  element.getBoundingClientRect();
+export default memo(PackageManagement);

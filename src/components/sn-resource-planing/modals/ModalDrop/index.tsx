@@ -10,19 +10,22 @@ import {
 } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
+import { DatePicker } from "@mui/x-date-pickers";
 import { Select } from "components/shared";
-import { TBudgetService } from "components/sn-budgeting/BudgetDetail";
+import {
+  TBudgetService,
+  TBudgetServiceRes,
+} from "components/sn-budgeting/BudgetDetail";
 import GuideIcon from "components/sn-resource-planing/assets/GuideIcon";
+import VueSaxIcon from "components/sn-resource-planing/assets/VueSaxIcon";
 import { NS_RESOURCE_PLANNING } from "constant/index";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import SearchIcon from "icons/SearchIcon";
-import { DateRange } from "mui-daterange-picker";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { TBudget } from "store/project/budget/action";
 import { useProjects } from "store/project/selectors";
 import { useGetServiceBudget } from "store/resourcePlanning/selector";
-import CustomDateRangePicker from "../../components/CustomDateRangePicker";
 
 type ModalDropProps = {
   setBudgetSelected: (value: string | null) => void;
@@ -47,13 +50,13 @@ const ModalDrop = ({
   const t = useTranslations(NS_RESOURCE_PLANNING);
 
   const [listBudgets, setListBudgets] = useState<TBudget[] | []>([]);
-  const [listServices, setListServices] = useState<TBudgetService[] | []>([]);
+  const [listServices, setListServices] = useState<TBudgetServiceRes | null>(
+    null,
+  );
 
   const [searchValue, setSearchValue] = useState<string>("");
-  const [dateValue, setDateValue] = useState<DateRange>({
-    startDate: undefined,
-    endDate: undefined,
-  });
+  const [dateValue, setDateValue] = useState<Dayjs | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
 
   const listProjects =
     useMemo(
@@ -79,8 +82,8 @@ const ModalDrop = ({
     if (budgetSelected) {
       const res = await getServiceByBudgetQueries(budgetSelected, {
         query: `or(like(name,"${searchValue}") ${
-          dateValue?.startDate
-            ? `, like( createdAt:"${dayjs(dateValue?.startDate).format(
+          dateValue
+            ? `, like( createdAt,"${dayjs(dateValue).format(
                 "YYYY-MM-DD:HH:mm",
               )}")`
             : ""
@@ -100,8 +103,7 @@ const ModalDrop = ({
         setIsServicePopup(false);
         projectSelected && setProjectSelected(null);
         budgetSelected && setBudgetSelected(null);
-        dateValue.startDate &&
-          setDateValue({ startDate: undefined, endDate: undefined });
+        dateValue && setDateValue(dateValue);
         searchValue && setSearchValue("");
       }}
       sx={{ ".MuiBackdrop-root": { background: "transparent" } }}
@@ -118,7 +120,7 @@ const ModalDrop = ({
           borderRadius: "12px",
           color: "black",
           padding: "16px",
-          maxHeight: "50vh",
+          maxHeight: "54vh",
           overflow: "auto",
         }}
         boxShadow={" -4px 10px 30px 0px #0000001A;"}
@@ -247,21 +249,20 @@ const ModalDrop = ({
             >
               Date <span style={{ color: "red" }}>*</span>
             </Typography>
-            <CustomDateRangePicker
-              value={dateValue || undefined}
+            <DatePicker
+              value={dateValue}
               onChange={(e) => setDateValue(e)}
-              errorMessage={""}
-              fullWidth
               sx={{
-                border: "1px solid  #EFEFEF",
-                fontSize: 10,
-                borderRadius: 100,
-                color: "#333333",
+                width: "100%",
                 ".MuiBox-root": {
                   padding: "5px 10px",
                 },
                 ".MuiTypography-root": {
                   fontSize: 10,
+                },
+                ".MuiOutlinedInput-notchedOutline": {
+                  border: "1px solid  #EFEFEF",
+                  borderRadius: 100,
                 },
                 ".MuiSvgIcon-root": {
                   width: 14,
@@ -272,10 +273,29 @@ const ModalDrop = ({
                   width: "100%",
                   justifyContent: "space-between",
                 },
+                ".MuiInputBase-input": {
+                  padding: "8px 14px",
+                  fontSize: 12,
+                  color: "#333333",
+                },
+              }}
+              open={calendarOpen}
+              onClose={() => setCalendarOpen(false)}
+              slotProps={{
+                textField: {
+                  onClick: () => {
+                    setCalendarOpen(true);
+                  },
+                },
+                openPickerIcon: {
+                  onClick: () => {
+                    setCalendarOpen(true);
+                  },
+                },
               }}
             />
           </Stack>
-          {listServices?.length > 0 && (
+          {listServices?.result && listServices?.result?.length > 0 && (
             <Typography
               variant="subtitle1"
               gutterBottom
@@ -286,7 +306,8 @@ const ModalDrop = ({
               <GuideIcon /> Drag service to the calendar
             </Typography>
           )}
-          {/* <Typography
+          {listServices && (
+            <Typography
               variant="body1"
               color="#44546F"
               gutterBottom
@@ -297,11 +318,19 @@ const ModalDrop = ({
               alignItems={"center"}
               gap={"4px"}
             >
-              <VueSaxIcon /> 02/17 service
-            </Typography> */}
+              <VueSaxIcon /> {listServices?.countItem}/
+              {listServices?.totalService} service
+            </Typography>
+          )}
 
-          <div id="external-events">
-            {listServices.map((item: TBudgetService) => (
+          <div
+            id="external-events"
+            style={{
+              maxHeight: 150,
+              overflow: "auto",
+            }}
+          >
+            {listServices?.result.map((item: TBudgetService) => (
               <div key={item.id} draggable>
                 <Paper
                   className="fc-event"

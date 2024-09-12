@@ -22,9 +22,10 @@ import FillterTypeTicket from "./FillterTypeTicket";
 export interface FilterSearchDocsProps {
   queries: Params;
   onChange: (name: string, value: any) => void;
+
 }
 
-const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
+const FilterSearchDocs = ({ onChange, queries  }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const commonT = useTranslations(NS_COMMON);
@@ -41,7 +42,7 @@ const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
 
   return (
     <>
-      <FillterPriority queries={queries} onChange={onChange}></FillterPriority>
+      <FillterPriority  queries={queries} onChange={onChange}></FillterPriority>
       <FilterAssign queries={queries} onChange={onChange}></FilterAssign>
       <FillterTypeTicket queries={queries} onChange={onChange}></FillterTypeTicket>
       <FilterTime

@@ -11,6 +11,7 @@ import useTheme from "hooks/useTheme";
 import BlueArrowIcon from "icons/BlueArrowIcon";
 import GrayArrowIcon from "icons/GrayArrowIcon";
 import ProjectBookingIcon from "icons/ProjectBookingIcon";
+import { ProjectBookingLargeIcon } from "icons/ProjectBookingLargeIcon";
 import SickLeaveIcon from "icons/SickLeaveIcon";
 import { useTranslations } from "next-intl";
 import { IEditState } from "../AllPeopleTab";
@@ -39,13 +40,20 @@ const EventContents = ({
   const { mappedTimeSymbol } = useGetMappingTime();
   const { palette, isDarkMode } = useTheme();
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
+  const day = dayjs(event.end).diff(dayjs(event.start), "days");
+
   const checkEventType = (value) => {
     switch (value) {
       case RESOURCE_EVENT_TYPE.PROJECT_BOOKING:
         return {
-          icon: <ProjectBookingIcon width={16} height={16} />,
+          icon:
+            day > 1 ? (
+              <ProjectBookingLargeIcon style={{ fontSize: 16 }} />
+            ) : (
+              <ProjectBookingIcon style={{ fontSize: 16 }} />
+            ),
           color: "#000000",
-          background: "#408DFB",
+          background: day > 1 ? "#172B4D" : "#408DFB",
           backgroundTitle: "#091E420F",
           backgroundContent: "#FFFFFFCC",
         };
@@ -72,7 +80,6 @@ const EventContents = ({
     }
   };
   const checkedEventType = checkEventType(booking_type);
-  const day = dayjs(event.end).diff(dayjs(event.start), "days");
 
   let unit;
   switch (allocation_type) {

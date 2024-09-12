@@ -1,0 +1,54 @@
+.custom-calender-timeline-header {
+  border-left: 1px solid #cccccc !important;
+  height: 38px;
+  line-height: 38px;
+  border-bottom: 1px solid #cccccc !important;
+  color: #757383;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 20px !important;
+}
+
+.custom-calender-timeline-header-block {
+  border-bottom: 1px solid #cccccc !important;
+  border-left: 1px solid #cccccc !important;
+  height: 38.5px;
+  color: #757383;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 30px;
+  padding-left: 30px !important;
+  line-height: 38.5px;
+}
+.border-bottom {
+  border-bottom: 1px solid #cccccc !important;
+  color: #757383;
+  text-transform: uppercase;
+  padding-left: 30px !important;
+  font-size: 14px;
+  height: 38px;
+  padding-left: 30px;
+  font-weight: 500;
+  line-height: 38px;
+}
+
+.custom-cellContent-service .fc-datagrid-cell-frame {
+  border-bottom: 1px solid #cccccc !important;
+  display: flex;
+  align-items: center;
+  font-size: 14;
+}
+
+.fc .fc-datagrid-cell-resizer {
+  width: 0 !important;
+}
+
+.custom-header {
+  background: #e1f0ffb2 !important;
+}
+
+.time-line-calendar .fc-scrollgrid-sync-inner {
+  height: 100%;
+}
