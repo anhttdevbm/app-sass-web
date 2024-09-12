@@ -15,19 +15,19 @@ import {
   sxBtnCircleActiveLight,
   sxPrimaryBtn,
 } from "../style";
+import RecordTimer from "../components/RecordTimer";
 
 interface MeetingHeaderLayoutProps {
   sx: object;
   toggleMinimizeMeeting: () => void;
-  isRecording: boolean;
 }
 
 const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
-  const { toggleMinimizeMeeting, isRecording } = props;
+  const { toggleMinimizeMeeting } = props;
   const { isExpandedSidebar } = useSidebar();
   const { isDarkMode } = useTheme();
   const { isXlSmaller } = useBreakpoint();
-  const { remoteStreams, meetInfo } = store.getState().meeting;
+  const { remoteStreams, meetInfo, isRecording } = store.getState().meeting;
   const avatars = useMemo(() => {
     return remoteStreams.map((remoteStream) => ({
       src: remoteStream.participant.avatar,
@@ -64,14 +64,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
           <Text variant="body2" color="#818A98">
             {moment(meetInfo?.created_at).format("DD MMM YYYY")}
           </Text>
-          {isRecording && (
-            <Stack sx={{ flexDirection: "row", gap: 1 }}>
-              <Circle color="error" />
-              <Text variant="body2" color="GrayText">
-                26:32
-              </Text>
-            </Stack>
-          )}
+          {isRecording && <RecordTimer />}
         </Stack>
       </Box>
 

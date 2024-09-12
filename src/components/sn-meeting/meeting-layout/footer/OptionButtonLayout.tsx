@@ -2,52 +2,46 @@ import {
   AddReaction,
   BackHand,
   ClosedCaption,
-  RadioButtonChecked,
   ScreenShare,
 } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, IconButton, Stack } from "@mui/material";
+import RecordButton from "components/sn-meeting/components/RecordButton";
 import useTheme from "hooks/useTheme";
 import { MicrophoneIcon } from "icons/MicrophoneIcon";
+import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import ThreeDotsIcon from "icons/ThreeDotsIcon";
 import { VideoIcon } from "icons/VideoIcon";
+import { VideoSlashIcon } from "icons/VideoSlashIcon";
 import { random } from "lodash";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
+import { setLocalStream, setLocalStreamState } from "store/meeting/reducer";
 import { useMeeting } from "store/meeting/selectors";
+import Picker from "emoji-picker-react";
+import {
+  MeetRoomInfo,
+  ParticipantStreamEvent,
+  ParticipantStreamEventPayload,
+} from "store/meeting/types";
 import {
   sxBtnCircleActiveDark,
   sxBtnCircleActiveLight,
   sxDangerBtn,
 } from "../../style";
 import OptionPopup from "./OptionPopup";
-import { RecordCircleIcon } from "icons/RecordCircleIcon";
-import { setLocalStream, setLocalStreamState } from "store/meeting/reducer";
-import { useAuth } from "store/app/selectors";
-import { VideoSlashIcon } from "icons/VideoSlashIcon";
-import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
-import {
-  MeetRoomInfo,
-  ParticipantStreamEvent,
-  ParticipantStreamEventPayload,
-} from "store/meeting/types";
+import ReactionButton from "components/sn-meeting/components/ReactionButton";
+import PopupModalSetting from "components/sn-meeting/components/modal-settings/PopupModalSetting";
 
 interface OptionButtonLayoutProps {
   sx: object;
 }
 
 export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
-  const router = useRouter();
   const { isDarkMode } = useTheme();
-  const {
-    meetingWsClient: ws,
-    currentParticipants,
-    meetInfo,
-    localStream,
-    localStreamState,
-    peer,
-    remoteStreams,
-  } = store.getState().meeting;
+  const { meetInfo, localStream, localStreamState, peer } =
+    store.getState().meeting;
   const { user } = useAuth();
   const { onLeaveMeeting, onUpdateMeetingStatus } = useMeeting();
   const [isScreenShareActive, setIsScreenShareActive] = useState(false);
@@ -57,6 +51,21 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const [isBackHandActive, setIsBackHandActive] = useState(false);
   const [isPendingActive, setIsPendingActive] = useState(false);
   const { id } = useParams();
+  const [anchorElCap, setAnchorElCap] = useState<null | HTMLElement>(null);
+  const [anchorElMoreButton, setAnchorElMoreButton] =
+    useState<HTMLElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElCap(anchorElCap ? null : event.currentTarget);
+  };
+
+  const onClickMoreButton = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElMoreButton(anchorElMoreButton ? null : event.currentTarget);
+  };
+
+  const onCloseSetting = () => {
+    setAnchorElCap(null);
+  };
 
   const handleMicButtonClick = () => {
     localStream?.getAudioTracks().forEach((track) => {
@@ -96,8 +105,41 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
     peer?.send(JSON.stringify(payload));
   };
 
-  const handleScreenShareButtonClick = () => {
-    setIsScreenShareActive(!isScreenShareActive);
+  const handleScreenShareButtonClick = async () => {
+    try {
+      const displayMedia = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+      });
+      store.dispatch(setLocalStream(displayMedia));
+      displayMedia.getVideoTracks()[0].addEventListener("ended", () => {
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: true })
+          .then((stream) => {
+            {
+              store.dispatch(setLocalStream(stream));
+              peer.streams[0].getVideoTracks()[0].stop();
+
+              peer.replaceTrack(
+                peer.streams[0].getVideoTracks()[0],
+                stream.getVideoTracks()[0],
+                peer.streams[0],
+              );
+            }
+          });
+      });
+      if (peer) {
+        peer.streams[0].getVideoTracks()[0].stop();
+
+        peer.replaceTrack(
+          peer.streams[0].getVideoTracks()[0],
+          displayMedia.getVideoTracks()[0],
+          peer.streams[0],
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleRadioButtonButtonClick = () => {
@@ -115,17 +157,6 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const handleBackHandButtonClick = () => {
     setIsBackHandActive(!isBackHandActive);
   };
-
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
-  const handlePendingButtonClick = (event) => {
-    setIsPendingActive(!isPendingActive);
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-
-    console.log("IsPendingActive ", isPendingActive);
-  };
-
-  const idPopup = random().toString();
 
   const leaveMeeting = async () => {
     localStream?.getTracks().forEach((track) => track.stop());
@@ -159,7 +190,6 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
         ...props.sx,
         justifyContent: "space-between",
         alignItems: "center",
-        overflow: "auto hidden",
         "& svg": {
           width: "20px",
           height: "20px",
@@ -247,37 +277,16 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
           >
             <ScreenShare />
           </IconButton>
-          <IconButton
-            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
-            color={isRadioButtonActive ? "primary" : "default"}
-            onClick={handleRadioButtonButtonClick}
-            style={{ width: "40px", height: "40px" }}
-          >
-            <RecordCircleIcon
-              sx={{
-                "& path": {
-                  fill: "currentcolor",
-                  stroke: "currentcolor",
-                },
-              }}
-            />
-          </IconButton>
+          <RecordButton />
           <IconButton
             sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isClosedCaptionActive ? "primary" : "default"}
-            onClick={handleClosedCaptionButtonClick}
+            onClick={handleClick}
             style={{ width: "40px", height: "40px" }}
           >
             <ClosedCaption />
           </IconButton>
-          <IconButton
-            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
-            color={isAddReactionActive ? "primary" : "default"}
-            onClick={handleAddReactionButtonClick}
-            style={{ width: "40px", height: "40px" }}
-          >
-            <AddReaction />
-          </IconButton>
+          <ReactionButton />
           <IconButton
             sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
             color={isBackHandActive ? "primary" : "default"}
@@ -288,8 +297,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
           </IconButton>
           <Button
             sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
-            onClick={handlePendingButtonClick}
-            aria-describedby={idPopup}
+            onClick={onClickMoreButton}
             variant="contained"
             style={{
               borderRadius: "50%",
@@ -308,14 +316,11 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
           </Button>
         </ButtonGroup>
 
-        {isPendingActive && (
-          <OptionPopup
-            sx={{}}
-            idPopup={idPopup}
-            isShown={isPendingActive}
-            anchorElP={anchorEl}
-          />
-        )}
+        {/* More Action */}
+        <OptionPopup
+          anchorElP={anchorElMoreButton}
+          onClose={() => setAnchorElMoreButton(null)}
+        />
       </Box>
 
       <Box marginLeft="12px" textAlign={"center"}>
@@ -326,6 +331,9 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
           End Call
         </Button>
       </Box>
+
+      {/* Popup modal for Setting and Capion  */}
+      <PopupModalSetting anchorEl={anchorElCap} onClose={onCloseSetting} />
     </Stack>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // usersSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
@@ -40,6 +41,8 @@ export interface MeetingState {
   currentParticipants: MeetUser[];
   localStreamState: LocalStreamState;
   messages: MessageItem[];
+  isRecording: boolean;
+  isBrowserSupported: boolean;
 }
 
 const initialState: MeetingState = {
@@ -64,6 +67,8 @@ const initialState: MeetingState = {
     isMicOn: false,
   },
   messages: [],
+  isRecording: false,
+  isBrowserSupported: true,
 };
 
 const meetingSlice = createSlice({
@@ -263,6 +268,12 @@ const meetingSlice = createSlice({
     updateMessages(state, action: PayloadAction<MessageItem>) {
       state.messages = [...state.messages, action.payload];
     },
+    setIsRecording(state, action: PayloadAction<boolean>) {
+      state.isRecording = action.payload;
+    },
+    setIsBrowserSupported(state, action: PayloadAction<boolean>) {
+      state.isBrowserSupported = action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(getParticipants.fulfilled, (state, action) => {
@@ -302,6 +313,8 @@ export const {
   setLocalStreamState,
   updateRemoteStreamState,
   updateMessages,
+  setIsRecording,
+  setIsBrowserSupported,
 } = meetingSlice.actions;
 
 export default meetingSlice.reducer;
