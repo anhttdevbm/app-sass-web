@@ -87,7 +87,7 @@ const ColumnChart = () => {
             <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
                 <CartesianGrid vertical={false} strokeWidth={0.3} />
-                <XAxis axisLine={false} tickLine={false} dataKey="name" tick={renderCustomAxisTick} />
+                <XAxis axisLine={false} tickLine={false} interval={0} dataKey="name" tick={renderCustomAxisTick} />
                 <YAxis tickMargin={12} fontSize={12} axisLine={false} tickLine={false} />
                 <Bar shape={<CustomBar radius={8} />} dataKey="value" barSize={30} fill="#14B9E5" />
             </BarChart>
