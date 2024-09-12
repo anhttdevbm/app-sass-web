@@ -1,5 +1,6 @@
 import { Box, Stack } from "@mui/material"
 import { Text } from "components/shared"
+import OpenTicketDetailIcon from "icons/OpenTicketDetailIcon";
 import { memo } from "react"
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer, Label, LabelList } from 'recharts';
 
@@ -28,8 +29,29 @@ const PieTicket = () => {
     }
     return (
         <Stack mt={2} p={{ xs: 0, sm: 2, md: 3 }} border="1px solid #EFEFEF" borderRadius="12px">
-            <Stack direction="row" pb={2} pl={2}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" pb={2} pl={2}>
                 <Text fontSize={20} fontWeight="700" color="#1A1A1A">Tickets  by status</Text>
+                <Box
+                    // onClick={() => handleOpenTicketDetail(data?.id)}
+                    display="flex"
+                    alignContent="center"
+                    justifyContent="flex-end"
+                    gap="10px"  
+                >
+                    <Text
+                        sx={{
+                            color: "#0575E6",
+                            fontSize: 13,
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                            fontWeight : 700
+                        }}
+                    >
+                        {" "}
+                        View Details
+                    </Text>
+                    <OpenTicketDetailIcon />
+                </Box>
 
             </Stack>
             <Stack direction={{ xs: "column", sm: "row", md: "row" }} width="100%" height="fit-content">
