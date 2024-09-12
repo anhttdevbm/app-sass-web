@@ -1,50 +1,50 @@
 import { Box, Stack } from "@mui/material"
 import { Text } from "components/shared"
-import CreateTicket from "../SVG/createTicket.svg"
-import UnsolvedTicket from "../SVG/unsolvedTicket.svg"
-import SolvedTicket from "../SVG/SolvedTicket.svg"
-import AvgFirstReplyTime from "../SVG/AvgFirstReplytime.svg"
-import AgentOnline from "../SVG/AgentOnline.svg"
-import SatisfactionRate from "../SVG/SatisfactionRate.svg"
 
-import React from "react";
+import AgentOnlineIcon from "icons/AgentOnlineIcon"
+import AvgFirstReplyTimeIcon from "icons/AvgFirstReplyTimeIcon"
+import CreateTicketIcon from "icons/CreateTicketIcon"
+import SatisfactionRateIcon from "icons/SatisfactionRateIcon"
+import SolvedTicketIcon from "icons/SolvedTicketIcon"
+import UnsolvedTicketIcon from "icons/UnsolvedTicketIcon"
+import React from "react"
 
 const Statistical = () => {
     const stateTicket = React.useMemo(
         () => ({
             Create_Ticket: {
                 id: 1,
-                icon: <CreateTicket />,
+                icon: <CreateTicketIcon />,
                 title: "Create ticket",
                 bg: "#FFD07C33"
             },
             Unsolved_Ticket: {
                 id: 1,
-                icon: <UnsolvedTicket />,
+                icon: <UnsolvedTicketIcon />,
                 title: "Unsolved ticket",
                 bg: "#E3FFFD"
             },
             Solved_Ticket: {
                 id: 1,
-                icon: <SolvedTicket />,
+                icon: <SolvedTicketIcon />,
                 title: "Solved ticket",
                 bg: "#E9FFC5"
             },
             Avg_First_Reply_time: {
                 id: 1,
-                icon: <AvgFirstReplyTime />,
+                icon: <AvgFirstReplyTimeIcon />,
                 title: "Avg First Reply time",
                 bg: "#FCECFE"
             },
             Agent_Online: {
                 id: 1,
-                icon: <AgentOnline />,
+                icon: <AgentOnlineIcon />,
                 title: "Agent online",
                 bg: "#E3FFDC"
             },
             Satisfaction_Rate: {
                 id: 1,
-                icon: <SatisfactionRate />,
+                icon: <SatisfactionRateIcon />,
                 title: "Satisfaction  Rate",
                 bg: "#FFF3C0"
             },
