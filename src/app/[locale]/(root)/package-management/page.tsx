@@ -14,5 +14,9 @@ import { getTranslations } from "next-intl/server";
 // }
 
 export default function Page() {
-  return <PackageManagement />;
+  return (
+    <Wrapper overflow="auto" inFrame>
+      <PackageManagement />{" "}
+    </Wrapper>
+  );
 }

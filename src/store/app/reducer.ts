@@ -37,6 +37,7 @@ export interface UserInfo extends User {
   id_rocket?: string;
   auto_renewal: boolean;
   packageName: string;
+  expiration_date: string;
 }
 
 export type HeaderConfig = {

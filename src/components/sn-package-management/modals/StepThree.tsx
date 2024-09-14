@@ -14,6 +14,7 @@ import { DataPrice, DataStepOne } from ".";
 import { pay } from "store/payment/actions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "store/configureStore";
+import BackIcon from "icons/BackIcon";
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
@@ -57,10 +58,10 @@ const StepThree = (props: Props) => {
 
     if (pay.fulfilled.match(resultAction)) {
       window.open(resultAction?.payload?.return_url, "_blank");
+      onClose();
     } else {
       console.error("Error");
     }
-    // onClose();
   };
 
   return (
@@ -90,7 +91,7 @@ const StepThree = (props: Props) => {
         mb={10}
       >
         <IconButton onClick={handleBack}>
-          <ArrowBackIcon />
+          <BackIcon />
         </IconButton>
         <Text
           id="modal-title"
@@ -122,8 +123,10 @@ const StepThree = (props: Props) => {
           >
             {packageT("title.paymentDetails")}
           </Text>
-          <Box>
-            <Radio checked={true} /> {packageT("description.paypal")}
+          <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <Radio sx={{ padding: 0 }} checked={true} />{" "}
+            {packageT("description.paypal")}
+            <img src="/images/paypal-logo.svg.png" alt="Paypal Logo" />
           </Box>
           <Box mb={3}>
             <Text>{packageT("description.pay")}</Text>

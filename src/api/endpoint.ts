@@ -253,6 +253,10 @@ export const Endpoint = {
   GET_PRICE_UPGRADE_PACKAGE: "account/get-price-upgrade-package",
   CHANGE_PACKAGE_ACCOUNT: "account/change-package",
   PAY: "payments/process-payment",
+  GET_ALL_ACCOUNT_ADMIN: "payments/get-all-account-admin",
+  GET_ACCOUNT_BILL_OWNER: "payments/get-account-bill-owner",
+  CHANGE_BILL_OWNER: "payments/change-bill-owner",
+  REQUEST_UPGRADE: "payments/request-upgrade",
   //Ticket
   TICKET: "/ticket",
   DETAIL_TICKET: "/ticket/{id}",

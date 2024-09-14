@@ -1,16 +1,32 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getAllTransaction, getListAccounts } from "./actions";
+import {
+  getAccountBillOwner,
+  getAllAccountAdmin,
+  getAllTransaction,
+  getListAccounts,
+} from "./actions";
 
-interface AccountType {
+export interface AccountType {
   id: number;
   fullname: string;
   email: string;
   roles: string;
   packageName: string;
-  expirationDate: string;
+  expiration_date: string;
+  renewal_date: string;
 }
-
-interface TransactionType {
+interface AvatarType {
+  object: string;
+  name: string;
+  link: string;
+}
+interface AccountAdminType {
+  fullname: string;
+  email: string;
+  avatar: AvatarType;
+  roles: string;
+}
+export interface TransactionType {
   billing_plan: string;
   created_time: string;
   email: string;
@@ -24,7 +40,8 @@ interface TransactionType {
 
 interface DataState<T> {
   data: T[];
-  total: number;
+  total?: number;
+  totalPage: number;
   loading: boolean;
   error: string | null;
 }
@@ -32,11 +49,19 @@ interface DataState<T> {
 interface RootState {
   accounts: DataState<AccountType>;
   transactions: DataState<TransactionType>;
+  listAccountAdmin: DataState<AccountAdminType>;
 }
 
 const initialState: RootState = {
-  accounts: { data: [], total: 0, loading: false, error: null },
-  transactions: { data: [], total: 0, loading: false, error: null },
+  accounts: { data: [], total: 0, totalPage: 0, loading: false, error: null },
+  transactions: {
+    data: [],
+    total: 0,
+    totalPage: 0,
+    loading: false,
+    error: null,
+  },
+  listAccountAdmin: { data: [], totalPage: 0, loading: false, error: null },
 };
 
 const paymentSlice = createSlice({
@@ -53,11 +78,16 @@ const paymentSlice = createSlice({
         getListAccounts.fulfilled,
         (
           state,
-          action: PayloadAction<{ data: AccountType[]; total: number }>,
+          action: PayloadAction<{
+            data: AccountType[];
+            total: number;
+            total_page: number;
+          }>,
         ) => {
           state.accounts.loading = false;
-          state.accounts.data = action.payload.data;
           state.accounts.total = action.payload.total;
+          state.accounts.data = action.payload.data;
+          state.accounts.totalPage = action.payload.total_page;
         },
       )
       .addCase(getListAccounts.rejected, (state, action) => {
@@ -84,6 +114,23 @@ const paymentSlice = createSlice({
       .addCase(getAllTransaction.rejected, (state, action) => {
         state.transactions.loading = false;
         state.transactions.error =
+          action.error.message || "Failed to fetch accounts";
+      })
+      // GET ALL ACCOUNT  ADMIN
+      .addCase(getAllAccountAdmin.pending, (state) => {
+        state.listAccountAdmin.loading = true;
+        state.listAccountAdmin.error = null;
+      })
+      .addCase(
+        getAllAccountAdmin.fulfilled,
+        (state, action: PayloadAction<AccountAdminType[]>) => {
+          state.listAccountAdmin.loading = false;
+          state.listAccountAdmin.data = action.payload;
+        },
+      )
+      .addCase(getAllAccountAdmin.rejected, (state, action) => {
+        state.listAccountAdmin.loading = false;
+        state.listAccountAdmin.error =
           action.error.message || "Failed to fetch accounts";
       });
   },
