@@ -1,22 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
-  MenuList,
-  Popover,
-  Stack,
-  SxProps,
-  popoverClasses,
+  SxProps
 } from "@mui/material";
-import { Text } from "components/shared";
 import { NS_COMMON, NS_DOCS } from "constant/index";
-import ChevronIcon from "icons/ChevronIcon";
 import { useTranslations } from "next-intl";
-import React, { memo, useState } from "react";
-import FilterMember from "./FilterMember";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { memo, useState } from "react";
+import FilterMember from "./FilterMember";
 import FilterMemberEdit from "./FilterMemberEdit";
-import FilterMemberProject from "./FilterMemberProject";
-import FilterProjectStatus from "./FilterProjectStatus";
 
 export interface FilterSearchDocsProps {
   queries: Params;
