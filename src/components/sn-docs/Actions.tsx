@@ -1,13 +1,9 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import PlusIcon from "icons/PlusIcon";
-import { Button, Text } from "components/shared";
-import { Dropdown, Search } from "components/Filters";
-import { getPath } from "utils/index";
-import { memo, useEffect, useMemo, useState } from "react";
-import { NS_COMMON, NS_COMPANY, NS_DOCS } from "constant/index";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
+import MenuIcon from "@mui/icons-material/Menu";
+import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import {
   Box,
   ListItemIcon,
@@ -17,26 +13,26 @@ import {
   Paper,
   Stack,
 } from "@mui/material";
-import { usePathname, useRouter } from "next-intl/client";
-import { useTranslations } from "next-intl";
-import { useDocs } from "store/docs/selectors";
-import NoneIcon from "icons/NoneIcon";
-import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
-import { DocGroupByEnum } from "constant/enums";
-import { useAppSelector } from "store/hooks";
-import { useParams, useSearchParams } from "next/navigation";
 import IconButton from "@mui/material/IconButton";
-import ViewModuleIcon from "@mui/icons-material/ViewModule";
-import MenuIcon from "@mui/icons-material/Menu";
+import { Search } from "components/Filters";
+import { Text } from "components/shared";
+import { DocGroupByEnum } from "constant/enums";
+import { NS_COMMON, NS_COMPANY, NS_DOCS } from "constant/index";
+import useToggle from "hooks/useToggle";
+import NoneIcon from "icons/NoneIcon";
+import SearchIcon from "icons/SearchIcon";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next-intl/client";
+import { useParams, useSearchParams } from "next/navigation";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
-import SearchIcon from "icons/SearchIcon";
-import BtnAdd from "./BtnAdd";
+import { useDocs } from "store/docs/selectors";
+import { useAppSelector } from "store/hooks";
+import { getPath } from "utils/index";
 import ButtonWithDropdown from "./ButtonWithDropdown";
-import AIGradientIcon from "icons/AIGradientIcon";
-import useToggle from "hooks/useToggle";
+import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
 import ImportForm from "./ImportForm";
-import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -221,15 +217,10 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
               {(handleClose) => (
                 <Paper>
                   <MenuList>
-                    <MenuItem>
-                      <ListItemIcon>
-                        <AIGradientIcon />
-                      </ListItemIcon>
-                      <ListItemText>
-                        {docsT("addDropdown.aiGenerator")}
-                      </ListItemText>
-                    </MenuItem>
-                    <MenuItem>
+                    <MenuItem 
+                      onClick={() => {
+                        handleCreateDoc();
+                    }}>
                       <ListItemIcon>
                         <DescriptionOutlined />
                       </ListItemIcon>
@@ -237,6 +228,15 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
                         {docsT("addDropdown.newDocument")}
                       </ListItemText>
                     </MenuItem>
+                    {/* <MenuItem>
+                      <ListItemIcon>
+                        <AIGradientIcon />
+                      </ListItemIcon>
+                      <ListItemText>
+                        {docsT("addDropdown.aiGenerator")}
+                      </ListItemText>
+                    </MenuItem> */}
+                    
                     <MenuItem
                       onClick={() => {
                         handleClose();

@@ -9,22 +9,20 @@ import {
   EditorState,
   RichUtils,
 } from "draft-js";
-import "./DraftEditor.css";
-import "./CheckableListItem.css";
-import ToolBarDraftEditor from "../ToolBarDraftEditor";
 import useDebounce from "hooks/useDebounce";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUpdateDocMutation } from "store/docs/api";
 import { useDocs } from "store/docs/selectors";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
-import AddSessionTool from "../AddSessionTool/components";
 import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
-import { toggleChecked } from "./CheckableListItemUltils";
-import CheckableListItem from "./CheckableListItem";
+import AddSessionTool from "../AddSessionTool/components";
 import BoardEditor from "../BoardEditor";
 import ReactFlowMindMap from "../ReactFlowMindMap";
+import ToolBarDraftEditor from "../ToolBarDraftEditor";
+import CheckableListItem from "./CheckableListItem";
 import "./CheckableListItem.css";
+import { toggleChecked } from "./CheckableListItemUltils";
 import "./DraftEditor.css";
 import "./EmojiEditor.css";
 

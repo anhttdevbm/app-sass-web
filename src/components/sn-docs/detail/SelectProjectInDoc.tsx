@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import _ from "lodash";
-import React, { memo, useCallback, useEffect, useState } from "react";
-import { useAppSelector } from "store/hooks";
-import { useDispatch } from "react-redux";
-import { useProjects } from "store/project/selectors";
-import { Text } from "components/shared";
 import {
   Box,
   ButtonBase,
@@ -15,10 +9,15 @@ import {
   Stack,
   popoverClasses,
 } from "@mui/material";
-import { Project } from "store/project/reducer";
-import { changeProjectId } from "store/docs/reducer";
 import Avatar from "components/Avatar";
 import { Search } from "components/Filters";
+import { Text } from "components/shared";
+import { memo, useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { changeProjectId } from "store/docs/reducer";
+import { useAppSelector } from "store/hooks";
+import { Project } from "store/project/reducer";
+import { useProjects } from "store/project/selectors";
 
 const SelectProjectInDoc = () => {
   const { project_id } = useAppSelector((state) => state.doc);
@@ -56,9 +55,20 @@ const SelectProjectInDoc = () => {
             xs: "common.white",
             sm: "common.black"
           },
+          display: "flex",
+          alignItems: "center"
         }}
       >
-        {projectActive?.name || "No Project"}
+        {projectActive ? (
+          <>
+            <Avatar size={32} src={projectActive.avatar?.link} /> 
+            <Text ml={2} variant="body2" color="grey.400">
+              {projectActive.name}
+            </Text>
+          </>
+        ) : (
+          "No Project"
+        )}
       </Text>
       <Popover
         anchorEl={anchorEl}
