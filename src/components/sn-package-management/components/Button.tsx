@@ -1,4 +1,3 @@
-import React from "react";
 import Button from "@mui/material/Button";
 import { SxProps, Theme } from "@mui/system";
 
@@ -15,7 +14,7 @@ type Props = {
 const ButtonCustom = (props: Props) => {
   const { onClick, height, width, text, buttonDefault, type, sx } = props;
 
-  const sxStyle: SxProps<Theme> = {
+  const sxStyle: SxProps<Theme> | undefined = {
     boxShadow: "none",
     fontWeight: "600",
     background: buttonDefault
@@ -32,7 +31,7 @@ const ButtonCustom = (props: Props) => {
     color: buttonDefault ? "#0575E6" : "#fff",
     textTransform: "none",
     border: buttonDefault ? "1px solid #2AF598" : "",
-    ...sx,
+    // ...sx,
   };
 
   return (

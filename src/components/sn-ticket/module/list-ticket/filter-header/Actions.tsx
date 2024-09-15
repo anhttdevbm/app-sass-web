@@ -5,7 +5,7 @@ import PlusIcon from "icons/PlusIcon";
 import { Button, Text } from "components/shared";
 import { Dropdown, Search } from "components/Filters";
 import { getPath } from "utils/index";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NS_COMMON, NS_COMPANY, NS_DOCS, NS_TICKET } from "constant/index";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import {
@@ -93,17 +93,19 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
   const { push } = useRouter();
   const searchParams = useSearchParams();
   const [queries, setQueries] = useState<any>({});
+  const queriesRef = useRef(queries);
 
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
-    // onSearch();
   };
+  useEffect(() => {
+    onSearch();
+  }, [queries]);
 
-  const onSearch = () => {
+  const onSearch = useCallback(() => {
     let newQueries = {
       ...queries,
       page: 1,
-      // group_by: DocGroupByEnum.PROJECT_ID,
     };
     const payload = {
       ...data,
@@ -115,9 +117,10 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
         newQueries?.typeTicket?.id == 0
           ? ""
           : newQueries?.typeTicket?.typeTicket,
+      createTime: newQueries?.createTime
     };
     dispatch(setKeySearchTicket(payload));
-  };
+  }, [queries, data]);
 
   useEffect(() => {
     setQueries({ search_key: searchParams.get("search_key") });

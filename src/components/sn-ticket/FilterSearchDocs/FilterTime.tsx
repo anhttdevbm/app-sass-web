@@ -31,42 +31,30 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
     setAnchorEl(null);
   };
 
-  const [selectedOption, setSelectedOption] = useState<any>("option1");
+  const [selectedOption, setSelectedOption] = useState<any>("All");
+  const [selectedDate, setSelectedDate] = useState(dayjs(new Date()));
 
   const handleRadioChange = (value) => {
     setSelectedOption(value);
   };
-
-  const {
-    options: employeeOptions,
-    onGetOptions,
-    isFetching,
-    filters,
-    pageSize,
-    pageIndex,
-    totalPages,
-  } = useEmployeeOptions();
-
-  const onChangeSearch = (name: string, newValue?: string | number) => {
-    onGetOptions({ pageIndex: 1, pageSize: 20, [name]: newValue });
+  const handleDateChange = (newDate) => {
+    setSelectedOption("")
+    setSelectedDate(newDate);
+    console.log('Selected date:', newDate.format('YYYY-MM-DD')); // Or use newDate.toDate() for a JavaScript Date object
   };
 
-  const onGetEmployeeOptions = () => {
-    onGetOptions({ pageIndex: 1, pageSize: 20 });
-  };
 
-  const onEndReached = () => {
-    if (isFetching || (totalPages && pageIndex >= totalPages)) return;
-    onGetOptions({ ...filters, pageSize, pageIndex: pageIndex + 1 });
-  };
 
-  const options = [
-    {
-      label: "none",
-      value: "",
-    },
-    ...employeeOptions,
-  ];
+
+  const handelSearch = () => {
+    console.log("check key", selectedOption)
+    console.log("check key", selectedDate.format('YYYY/MM/DD'))
+    const newData = selectedOption || selectedDate.format('YYYY/MM/DD')
+    onChange("createTime", newData);
+    handleClose();
+
+  }
+
 
   return (
     <>
@@ -79,7 +67,7 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
           {docsT("filter.filter.lastEdited")}:
         </Text>
         <Text variant="body2" fontWeight={600} color="grey.700">
-          All
+          {selectedOption ? selectedOption : selectedDate.format('YYYY/MM/DD')}
         </Text>
         <ChevronIcon fontSize="small"></ChevronIcon>
       </MenuItem>
@@ -98,8 +86,8 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
         sx={{
           [`& .${popoverClasses.paper}`]: {
             backgroundImage: "none",
-            minWidth: 600,
-            maxWidth: 450,
+            minWidth: { xs: 350, md: 600 },
+            maxWidth: { xs: 350, md: 450, }
           },
         }}
         slotProps={{
@@ -132,7 +120,7 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
             borderBottom: "1px solid",
             borderBottomColor: "grey.100",
           }}
-          onClick={() => handleRadioChange("option1")}
+          onClick={() => handleRadioChange("All")}
         >
           <Radio
             sx={{
@@ -144,7 +132,7 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
               },
             }}
             name="radio-buttons"
-            checked={selectedOption === "option1"}
+            checked={selectedOption === "All"}
           />
           <Typography>All time</Typography>
         </Box>
@@ -153,9 +141,11 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
           sx={{
             padding: "10px",
             display: "flex",
-            alignItems: "center",
+            alignItems: { xs: "flex-start", md: "center" },
             justifyContent: "space-between",
             flexWrap: "wrap",
+            flexDirection: { xs: "column", md: "row" }
+
           }}
         >
           {daytimes?.map((item, index) => (
@@ -164,7 +154,7 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                width: "30%",
+                width: { xs: "100%", md: "30%" },
                 marginBottom: "10px", // Add margin to create spacing between rows
               }}
               onClick={() => handleRadioChange(item.name)}
@@ -212,7 +202,9 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
                 padding: "5px",
               },
             }}
-            defaultValue={dayjs(new Date())}
+            // defaultValue={dayjs(new Date())}
+            value={selectedDate}
+            onChange={handleDateChange}
           />
         </Box>
 
@@ -227,10 +219,11 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
             variant="outlined"
             sx={{ width: "50%", marginRight: "8px" }}
             color="primary"
+            onClick={handleClose}
           >
             {docsT("button.cancel")}
           </Button>
-          <Button variant="contained" sx={{ width: "50%" }} color="primary">
+          <Button onClick={() => handelSearch()} variant="contained" sx={{ width: "50%" }} color="primary">
             {docsT("button.search")}
           </Button>
         </Box>

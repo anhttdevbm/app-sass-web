@@ -1,6 +1,7 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import GroupIcon from "@mui/icons-material/Group";
 import LockIcon from "@mui/icons-material/Lock";
+import { CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -10,11 +11,9 @@ import Typography from "@mui/material/Typography";
 import { NS_DOCS } from "constant/index";
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
+import { useDocs } from "store/docs/selectors";
 import ActionMoreListDoc from "../ActionMoreListDoc";
 import { IViewDocItem } from "../KanbanViewDocList";
-import { useDocs } from "store/docs/selectors";
-import { CardActionArea } from "@mui/material";
-import { useProject } from "store/project/selectors";
 
 export default function KanbanViewItem({
   itemKanban,
@@ -75,12 +74,19 @@ export default function KanbanViewItem({
                       sx={{
                         width: 12,
                         height: 12,
+                        color: "#666666",
                       }}
                     />
                   </Box>
                 )
               }
-              action={<ActionMoreListDoc />}
+              action={
+                itemKanban.groupInfo ? ( 
+                  <ActionMoreListDoc />
+                ) : (
+                  <ActionMoreListDoc style={{ colorIcon: "#666666"}}/>
+                )
+              }
               title={
                 <Box
                   display="flex"
@@ -100,9 +106,15 @@ export default function KanbanViewItem({
                       lineHeight: "1.5",
                     }}
                   >
-                    {itemKanban.groupInfo?.name} #{itemKanban.groupInfo?.number}
+                    {itemKanban.groupInfo ? `${itemKanban.groupInfo.name} #${itemKanban.groupInfo.number}` : ""}
                   </Typography>
-                  <GroupIcon />
+                  <GroupIcon sx={
+                    {
+                      width: 16,
+                      height: 16,
+                      color: itemKanban.groupInfo ? "#fff" : "#666666",
+                    }
+                  }/>
                 </Box>
               }
             />

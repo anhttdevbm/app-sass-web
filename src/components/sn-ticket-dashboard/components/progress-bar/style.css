@@ -1,0 +1,34 @@
+.container-progress-bar {
+  margin: 24px 0px;
+}
+
+.progress-bar {
+  width: 100%;
+}
+
+.progress-bar-item {
+  width: 100%;
+  height: 10px;
+  border-radius: 50px;
+  /* opacity: 20%; */
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-item-before {
+  position: absolute;
+  height: 10px;
+  border-radius: 50px;
+}
+
+.text-lable {
+  color: #000;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.text-count-ticket {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+  font-weight: 700;
+}

@@ -17,8 +17,14 @@ import { useTranslations } from "next-intl";
 import { NS_DOCS, NS_TICKET } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
 import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
+import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { setKeySearchTicketAgent } from "store/ticket-agent/actions";
+import useDebounce from "hooks/useDebounce";
 
 const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
+  const data = useAppSelector(selectSearchTicketAgent);
+  const dispatch = useAppDispatch()
   const t = useTranslations(NS_TICKET);
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
@@ -34,7 +40,21 @@ const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
     const newData = { id, fullname };
     onChange("assingn", newData);
     handleClose();
+    setKeyword("");
   };
+
+  const [keySearch] = useDebounce(() => {
+    const payload = {
+      ...data,
+      keyword: keyword,
+    };
+    dispatch(setKeySearchTicketAgent(payload));
+  }, 500)
+
+
+  useEffect(() => {
+    keySearch();  
+  }, [keyword]);
 
   return (
     <>
