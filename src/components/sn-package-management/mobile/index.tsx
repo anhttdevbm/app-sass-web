@@ -6,7 +6,7 @@ import StepTwo from "./StepTwo";
 import StepOne from "./StepOne";
 import StepThree from "./StepThree";
 import { Box, useMediaQuery } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export interface DataStepOne {
   newPackage: string;
@@ -22,6 +22,10 @@ export type DataPrice = {
 };
 
 const MobileUpgradePackage = (props: Props) => {
+  const searchParams = useSearchParams();
+
+  const unupgradedAccount = searchParams.get("unupgradedAccount");
+  const totalAccount = searchParams.get("totalAccount");
   const [step, setStep] = useState(0);
   const isMobile = useMediaQuery("(max-width:600px)");
   const router = useRouter();
@@ -43,6 +47,15 @@ const MobileUpgradePackage = (props: Props) => {
       router.push("/package-management");
     }
   }, [isMobile, router]);
+
+  useEffect(() => {
+    if (unupgradedAccount) {
+      setDataStepOne({
+        ...dataStepOne,
+        numberOfUser: Number(totalAccount) ?? 1,
+      });
+    }
+  }, [unupgradedAccount]);
 
   const renderModal = () => {
     switch (step) {

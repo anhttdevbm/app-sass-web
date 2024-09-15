@@ -58,7 +58,9 @@ const Sumary = () => {
     if (!isMobile) {
       setOpenUpgradePackage(true);
     } else {
-      router.push("/package-management/mobile/upgrade-package");
+      router.push(
+        `/package-management/mobile/upgrade-package?unupgradedAccount=${unupgradedAccount}&totalAccount=${total}`,
+      );
     }
     setUnupgradedAccount(status);
   };
