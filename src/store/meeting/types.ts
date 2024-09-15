@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SignalData } from "simple-peer";
 export interface MeetResponse {
   data: MeetResponseData;
@@ -88,7 +89,7 @@ export enum ParticipantStreamEvent {
   TOGGLE_MIC = "toggle_mic",
 }
 
-export interface ParticipantStreamEventPayload {
+export interface ParticipantAction {
   event: ParticipantStreamEvent;
   participantId: string;
   status: boolean;

@@ -10,7 +10,7 @@ export default function ReactionButton() {
   const { isDarkMode } = useTheme();
   const [isShow, setIsShow] = useState(false);
   return (
-    <Box sx={{}}>
+    <Box>
       <IconButton
         sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
         onClick={() => setIsShow(!isShow)}
@@ -24,8 +24,8 @@ export default function ReactionButton() {
         allowExpandReactions={false}
         style={{
           zIndex: 1000,
-          bottom: "50px",
-          position: "absolute",
+          bottom: "80px",
+          position: "fixed",
         }}
       />
     </Box>

@@ -1,17 +1,12 @@
-import { Mic, MicOff } from "@mui/icons-material";
-import { Box, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
+import useTheme from "hooks/useTheme";
 import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
 import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import { useEffect, useRef } from "react";
 import { RemoteStream } from "store/meeting/types";
-import {
-  sxBtnCircleActiveDark,
-  sxBtnCircleActiveLight,
-  sxBtnCircleDanger,
-} from "../style";
-import useTheme from "hooks/useTheme";
+import { sxBtnCircleActiveDark } from "../style";
 
 interface VideoParticipantProps {
   streamData: RemoteStream;

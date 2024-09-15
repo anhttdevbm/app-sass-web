@@ -1,29 +1,24 @@
-import {
-  AddReaction,
-  BackHand,
-  ClosedCaption,
-  ScreenShare,
-} from "@mui/icons-material";
+import { BackHand, ClosedCaption, ScreenShare } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, IconButton, Stack } from "@mui/material";
+import ReactionButton from "components/sn-meeting/components/ReactionButton";
 import RecordButton from "components/sn-meeting/components/RecordButton";
+import PopupModalSetting from "components/sn-meeting/components/modal-settings/PopupModalSetting";
 import useTheme from "hooks/useTheme";
 import { MicrophoneIcon } from "icons/MicrophoneIcon";
 import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import ThreeDotsIcon from "icons/ThreeDotsIcon";
 import { VideoIcon } from "icons/VideoIcon";
 import { VideoSlashIcon } from "icons/VideoSlashIcon";
-import { random } from "lodash";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
 import { setLocalStream, setLocalStreamState } from "store/meeting/reducer";
 import { useMeeting } from "store/meeting/selectors";
-import Picker from "emoji-picker-react";
 import {
   MeetRoomInfo,
   ParticipantStreamEvent,
-  ParticipantStreamEventPayload,
+  ParticipantAction,
 } from "store/meeting/types";
 import {
   sxBtnCircleActiveDark,
@@ -31,8 +26,11 @@ import {
   sxDangerBtn,
 } from "../../style";
 import OptionPopup from "./OptionPopup";
-import ReactionButton from "components/sn-meeting/components/ReactionButton";
-import PopupModalSetting from "components/sn-meeting/components/modal-settings/PopupModalSetting";
+import { useAppSelector } from "store/hooks";
+import {
+  WSParticipantActionPayload,
+  WSParticipantActionType,
+} from "components/sn-meeting/type";
 
 interface OptionButtonLayoutProps {
   sx: object;
@@ -40,8 +38,8 @@ interface OptionButtonLayoutProps {
 
 export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const { isDarkMode } = useTheme();
-  const { meetInfo, localStream, localStreamState, peer } =
-    store.getState().meeting;
+  const { meetInfo, localStream, localStreamState, peer, meetingWsClient } =
+    useAppSelector((state) => state.meeting);
   const { user } = useAuth();
   const { onLeaveMeeting, onUpdateMeetingStatus } = useMeeting();
   const [isScreenShareActive, setIsScreenShareActive] = useState(false);
@@ -49,7 +47,6 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const [isClosedCaptionActive, setIsClosedCaptionActive] = useState(false);
   const [isAddReactionActive, setIsAddReactionActive] = useState(false);
   const [isBackHandActive, setIsBackHandActive] = useState(false);
-  const [isPendingActive, setIsPendingActive] = useState(false);
   const { id } = useParams();
   const [anchorElCap, setAnchorElCap] = useState<null | HTMLElement>(null);
   const [anchorElMoreButton, setAnchorElMoreButton] =
@@ -75,15 +72,19 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
       ...localStreamState,
       isMicOn: !localStreamState.isMicOn,
     };
-    // localStream && store.dispatch(setLocalStream(new MediaStream(localStream)))
     store.dispatch(setLocalStreamState(newLocalStreamState));
-    const payload: ParticipantStreamEventPayload = {
+    const action: ParticipantAction = {
       event: ParticipantStreamEvent.TOGGLE_MIC,
       participantId: user?.id as string,
       status: newLocalStreamState.isMicOn,
     };
+    const payload: WSParticipantActionPayload = {
+      event: "signal",
+      type: WSParticipantActionType.PARTICIPANT_ACTION,
+      payload: action,
+    };
 
-    peer?.send(JSON.stringify(payload));
+    meetingWsClient?.send(JSON.stringify(payload));
   };
 
   const handleVideocamButtonClick = () => {
@@ -96,13 +97,17 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
     };
     store.dispatch(setLocalStreamState(newLocalStreamState));
 
-    const payload: ParticipantStreamEventPayload = {
+    const action: ParticipantAction = {
       event: ParticipantStreamEvent.TOGGLE_CAMERA,
       participantId: user?.id as string,
       status: newLocalStreamState.isCameraOn,
     };
-
-    peer?.send(JSON.stringify(payload));
+    const payload: WSParticipantActionPayload = {
+      event: "signal",
+      type: WSParticipantActionType.PARTICIPANT_ACTION,
+      payload: action,
+    };
+    meetingWsClient?.send(JSON.stringify(payload));
   };
 
   const handleScreenShareButtonClick = async () => {
@@ -190,6 +195,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
         ...props.sx,
         justifyContent: "space-between",
         alignItems: "center",
+        overflowY: "auto",
         "& svg": {
           width: "20px",
           height: "20px",

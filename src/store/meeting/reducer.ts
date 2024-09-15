@@ -9,12 +9,8 @@ import {
   ParticipantStreamEvent,
   RemoteStream,
 } from "./types";
-import {
-  cancelMeeting,
-  startReconnecting,
-  getParticipants,
-  startMeeting,
-} from "./actions";
+import { cancelMeeting, getParticipants, startMeeting } from "./actions";
+import { LayoutType } from "components/sn-meeting/type";
 
 export interface MeetingState {
   isEstablishingConnection: boolean;
@@ -43,6 +39,8 @@ export interface MeetingState {
   messages: MessageItem[];
   isRecording: boolean;
   isBrowserSupported: boolean;
+  meetingLayout: LayoutType;
+  groupMeetName: string;
 }
 
 const initialState: MeetingState = {
@@ -69,6 +67,8 @@ const initialState: MeetingState = {
   messages: [],
   isRecording: false,
   isBrowserSupported: true,
+  meetingLayout: LayoutType.SPEAKER,
+  groupMeetName: "",
 };
 
 const meetingSlice = createSlice({
@@ -274,6 +274,19 @@ const meetingSlice = createSlice({
     setIsBrowserSupported(state, action: PayloadAction<boolean>) {
       state.isBrowserSupported = action.payload;
     },
+    setMeetingLayout(state, action: PayloadAction<LayoutType>) {
+      state.meetingLayout = action.payload;
+    },
+    setGroupMeetName(state, action: PayloadAction<string>) {
+      state.groupMeetName = action.payload;
+    },
+    onRemoveParticipantStream(state, action: PayloadAction<string>) {
+      console.log("leave", state.remoteStreams);
+
+      state.remoteStreams = state.remoteStreams.filter(
+        (stream) => stream.participant.id !== action.payload,
+      );
+    },
   },
   extraReducers(builder) {
     builder.addCase(getParticipants.fulfilled, (state, action) => {
@@ -284,9 +297,6 @@ const meetingSlice = createSlice({
     });
     builder.addCase(cancelMeeting.fulfilled, (state) => {
       state = initialState;
-    });
-    builder.addCase(startReconnecting.fulfilled, (state, action) => {
-      state.meetInfo = action.payload;
     });
   },
 });
@@ -315,6 +325,9 @@ export const {
   updateMessages,
   setIsRecording,
   setIsBrowserSupported,
+  setMeetingLayout,
+  setGroupMeetName,
+  onRemoveParticipantStream,
 } = meetingSlice.actions;
 
 export default meetingSlice.reducer;

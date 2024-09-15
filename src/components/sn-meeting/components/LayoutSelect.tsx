@@ -3,7 +3,6 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
-  FormLabel,
   IconButton,
   Radio,
   RadioGroup,
@@ -13,15 +12,11 @@ import ArrowDownIcon from "icons/ArrowDownIcon";
 import { FocusOnContentLayout } from "icons/FocusOnContentLayout";
 import { GalleryLayoutIcon } from "icons/GalleryLayoutIcon";
 import { SpeakerLayoutIcon } from "icons/SpeakerLayoutIcon";
+import { LayoutType } from "../type";
+import { useMeeting } from "store/meeting/selectors";
 
 interface IProps {
   onBack: () => void;
-}
-
-enum LayoutType {
-  GALARY = "galary",
-  SPEAKER = "speaker",
-  FOCUS_ON_CONTENT = "focus_on_content",
 }
 
 interface LayoutDataProps {
@@ -87,6 +82,7 @@ const RadioLabel = (props: LayoutDataProps) => {
 };
 
 export default function LayoutSelect({ onBack }: IProps) {
+  const { onSetMeetingLayout } = useMeeting();
   return (
     <Stack
       sx={{
@@ -133,6 +129,7 @@ export default function LayoutSelect({ onBack }: IProps) {
             sx={{
               gap: "8px",
             }}
+            onChange={(e) => onSetMeetingLayout(e.target.value as LayoutType)}
           >
             {layoutData.map((item) => (
               <FormControlLabel

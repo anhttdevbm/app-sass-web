@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { store } from "store/configureStore";
 import { useAppSelector } from "store/hooks";
 import {
+  onRemoveParticipantStream,
   setCallRequest,
   setCurrentParticipants,
   setMeetingWsClient,
@@ -24,7 +25,7 @@ import {
   MeetRoomInfo,
   MeetUser,
   MessageItem,
-  ParticipantStreamEventPayload,
+  ParticipantAction,
   RemoteStream,
   WSPayload,
 } from "store/meeting/types";
@@ -33,7 +34,7 @@ import { getLocalStream, newPeerConnection } from "webSocket/webRTC";
 import MediaPermission from "./components/MediaPermission";
 import MeetingEndedScreen from "./components/MeetingEndedScreen";
 import MeetingLayout from "./meeting-layout/MeetingLayout";
-import { WSMessageType } from "./type";
+import { WSParticipantActionType } from "./type";
 
 export default function MeetingWrapper() {
   const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
@@ -88,27 +89,18 @@ export default function MeetingWrapper() {
         ws?.send(JSON.stringify(wsPayload));
       });
 
-      peer.on("stream", (stream) => {
+      peer.on("stream", (stream: MediaStream) => {
+        const isCameraOn = stream.getVideoTracks()[0].enabled;
+        const isMicOn = stream.getAudioTracks()[0].enabled;
         const remoteStream: RemoteStream = {
           participant: meetData.user,
           stream,
           streamState: {
-            isCameraOn: true,
-            isMicOn: true,
+            isCameraOn,
+            isMicOn,
           },
         };
         store.dispatch(setRemoteStreams(remoteStream));
-      });
-
-      peer.on("data", (data: string) => {
-        const message: ParticipantStreamEventPayload = JSON.parse(data);
-        store.dispatch(
-          updateRemoteStreamState({
-            event: message.event,
-            value: message.status,
-            participantId: message.participantId,
-          }),
-        );
       });
     };
 
@@ -132,26 +124,18 @@ export default function MeetingWrapper() {
         ws?.send(JSON.stringify(wsPayload));
       });
 
-      peer.on("stream", (stream) => {
+      peer.on("stream", (stream: MediaStream) => {
+        const isCameraOn = stream.getVideoTracks()[0].enabled;
+        const isMicOn = stream.getAudioTracks()[0].enabled;
+
         const remoteStream: RemoteStream = {
           participant: meetData.send as MeetUser,
           stream,
           streamState: {
-            isCameraOn: true,
-            isMicOn: true,
+            isCameraOn,
+            isMicOn,
           },
         };
-
-        peer.on("data", (data) => {
-          const message: ParticipantStreamEventPayload = JSON.parse(data);
-          store.dispatch(
-            updateRemoteStreamState({
-              event: message.event,
-              value: message.status,
-              participantId: message.participantId,
-            }),
-          );
-        });
 
         store.dispatch(setRemoteStreams(remoteStream));
       });
@@ -172,11 +156,7 @@ export default function MeetingWrapper() {
   };
 
   const handleLeave = (meetData: MeetDataEntryEvent) => {
-    const newRemoteStreams = remoteStreams.filter(
-      (stream) => stream.participant.id !== meetData.user.id,
-    );
-
-    store.dispatch(updateRemoteStream(newRemoteStreams));
+    store.dispatch(onRemoveParticipantStream(meetData.user.id));
   };
 
   const handleEndMeet = async () => {
@@ -185,6 +165,17 @@ export default function MeetingWrapper() {
 
   const handleNewMessage = async (message: MessageItem) => {
     onAddNewMessage(message);
+  };
+
+  const handleParticipantEvent = (payload: ParticipantAction) => {
+    const { event, participantId, status } = payload;
+    store.dispatch(
+      updateRemoteStreamState({
+        event: event,
+        value: status,
+        participantId: participantId,
+      }),
+    );
   };
 
   const handleConnectToWebSocket = (meetId: string) => {
@@ -204,19 +195,24 @@ export default function MeetingWrapper() {
           handleJoin(meetData, ws, meetId);
           break;
         case MEET_EVENT_TYPE.SIGNAL:
-          if (meetData?.type === WSMessageType.NEW_MESSAGE) {
-            handleNewMessage(meetData.message);
+          if (meetData?.type === WSParticipantActionType.NEW_MESSAGE) {
+            handleNewMessage(meetData?.payload);
             return;
           }
 
-          if (meetData.receive.id !== user?.id) return;
+          if (meetData?.type === WSParticipantActionType.PARTICIPANT_ACTION) {
+            handleParticipantEvent(meetData?.payload);
+          }
+
+          if (meetData?.receive?.id !== user?.id) return;
           handleSignal(meetData, meetData, ws);
           break;
         case MEET_EVENT_TYPE.RETURN_SIGNAL:
-          if (meetData.receive.id !== user?.id) return;
+          if (meetData?.receive?.id !== user?.id) return;
           handleReturnSignal(meetData);
           break;
         case MEET_EVENT_TYPE.LEAVE:
+          if (meetData?.receive?.id === user?.id) return;
           handleLeave(meetData);
           break;
         case MEET_EVENT_TYPE.END:
@@ -247,7 +243,9 @@ export default function MeetingWrapper() {
   useEffect(() => {
     const isJoining = searchParams.get("isJoining");
     if (isJoining && isHasPermission) {
-      const meetInfoDecode = decodeURIComponent(searchParams.get("meetInfo")!);
+      const meetInfoDecode = decodeURIComponent(
+        searchParams.get("meetInfo") as string,
+      );
       const meetInfo: MeetRoomInfo = JSON.parse(meetInfoDecode);
       onSetMeetInfo(meetInfo);
       handleConnectToWebSocket(meetInfo.id);

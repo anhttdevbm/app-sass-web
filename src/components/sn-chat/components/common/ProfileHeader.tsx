@@ -70,7 +70,6 @@ const ProfileHeader = ({
   const commonT = useTranslations(NS_COMMON);
 
   const { user } = useAuth();
-  const { onStartMeeting } = useMeeting();
   const { onAddSnackbar } = useSnackbar();
 
   // const handleCreateGroup = async () => {

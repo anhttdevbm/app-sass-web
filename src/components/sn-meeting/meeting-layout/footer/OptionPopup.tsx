@@ -49,6 +49,7 @@ const OptionPopup: React.FC<OptionPopupProps> = (props: OptionPopupProps) => {
   const handleClickOutside = (event) => {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
       onClose();
+      setIsOpenLayoutSelect(false);
       console.log("Clicked outside");
     }
   };
@@ -61,7 +62,14 @@ const OptionPopup: React.FC<OptionPopupProps> = (props: OptionPopupProps) => {
   }, []);
 
   return (
-    <Popper id={id} open={open} anchorEl={anchorElP}>
+    <Popper
+      id={id}
+      open={open}
+      anchorEl={anchorElP}
+      sx={{
+        zIndex: 999999,
+      }}
+    >
       <Stack
         ref={popupRef}
         direction="column"

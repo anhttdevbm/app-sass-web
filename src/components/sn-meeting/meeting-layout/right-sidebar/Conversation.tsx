@@ -1,11 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pending } from "@mui/icons-material";
 import SendIcon from "@mui/icons-material/Send";
 import { Box, Button, Stack } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
-import { WSMessagePayload, WSMessageType } from "components/sn-meeting/type";
+import {
+  WSParticipantActionPayload,
+  WSParticipantActionType,
+} from "components/sn-meeting/type";
 import useTheme from "hooks/useTheme";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
 import { MessageItem } from "store/meeting/types";
@@ -18,10 +22,10 @@ const Conversation = () => {
 
   const sendMessage = () => {
     if (inputValue === "") return;
-    const payload: WSMessagePayload = {
+    const payload: WSParticipantActionPayload = {
       event: "signal",
-      type: WSMessageType.NEW_MESSAGE,
-      message: {
+      type: WSParticipantActionType.NEW_MESSAGE,
+      payload: {
         sender: {
           id: user?.id || "",
           avatar: user?.avatar?.link || "",

@@ -27,13 +27,13 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
   const { isExpandedSidebar } = useSidebar();
   const { isDarkMode } = useTheme();
   const { isXlSmaller } = useBreakpoint();
-  const { remoteStreams, meetInfo, isRecording } = store.getState().meeting;
+  const { remoteStreams, meetInfo, isRecording, groupMeetName } =
+    store.getState().meeting;
   const avatars = useMemo(() => {
     return remoteStreams.map((remoteStream) => ({
       src: remoteStream.participant.avatar,
     }));
   }, [remoteStreams]);
-
   return (
     <Stack
       direction={isExpandedSidebar || isXlSmaller ? "column" : "row"}
@@ -50,7 +50,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
         >
           {meetInfo?.room?.type === "p"
             ? remoteStreams.length > 0 && remoteStreams[0].participant.fullname
-            : "Group"}
+            : groupMeetName || "Group Meeting"}
         </Text>
         <Stack
           sx={{
