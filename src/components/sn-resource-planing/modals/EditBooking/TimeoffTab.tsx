@@ -99,7 +99,7 @@ const TimeOffTab = ({ open, onClose, bookingId }: IProps) => {
         time_off_type: data.categoryTimeOff,
         position: positionOptions[0].value,
         allocation_type: data.allocation_type,
-        project_id: projectOptions[0].value,
+        project_id: projectOptions[0]?.value,
       },
       bookingEvent.id,
     ).then(() => {
