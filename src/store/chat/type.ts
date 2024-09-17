@@ -281,7 +281,7 @@ export interface ChatState {
   unReadMessage: UnReadMessageInfo | null;
   //UnReadMessage
   statusUnReadMessage: DataStatus;
- 
+
   newGroupData: ChatGroup | {};
   createGroupStatus: DataStatus;
   addMembers2GroupStatus: DataStatus;
@@ -430,7 +430,7 @@ export interface UserInfo {
   avatar: Avatar;
   status: 1;
   authToken: string;
-  id_rocket: string;
+  id: string;
   username: string;
 }
 

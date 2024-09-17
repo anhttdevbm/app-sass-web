@@ -34,7 +34,7 @@ export interface UserInfo extends User {
   date_end_using: string;
   date_start_using: string;
   is_pay_user: boolean;
-  id_rocket?: string;
+  // id?: string;
   auto_renewal?: boolean;
   packageName?: string;
   expiration_date?: string;

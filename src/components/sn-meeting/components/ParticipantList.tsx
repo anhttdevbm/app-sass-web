@@ -4,7 +4,6 @@ import VideoParticipant from "./VideoParticipant";
 
 export default function ParticipantList() {
   const { remoteStreams } = store.getState().meeting;
-
   return (
     <Stack
       sx={{

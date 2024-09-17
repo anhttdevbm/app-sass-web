@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ImageList, InputAdornment, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -33,7 +34,6 @@ const AccountInfoHeader = ({
   const pathname = usePathname();
   const router = useRouter();
   const { dataTransfer, onSetStep, prevStep, currStep } = useChat();
-  const { onStartMeeting } = useMeeting();
   const { usersCount, t, name } = accountInfo;
   const isGroup = useMemo(() => t !== "d", [t]);
 
@@ -44,13 +44,12 @@ const AccountInfoHeader = ({
   );
 
   const startGroupMeet = async () => {
-    console.log("group meet");
-    await onStartMeeting(dataTransfer.id)
-      .then((res: any) => {
-        if (pathname.includes("/meeting")) return;
-        router.push(`meeting/${dataTransfer.id}`);
-      })
-      .catch((e) => console.log(e.message));
+    if (pathname.includes("/meeting")) return;
+    window.open(
+      `/meeting/${dataTransfer.id}`,
+      "_blank",
+      "width=800,height=600",
+    );
   };
 
   const handleKeyDown = (event) => {

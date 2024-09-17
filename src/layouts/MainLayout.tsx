@@ -25,6 +25,9 @@ import ChatListTemp from "components/sn-chat/ChatListTemp";
 import { useMeeting } from "store/meeting/selectors";
 import { CallStatus } from "store/meeting/types";
 import { Button } from "components/shared";
+import NotSupportBrowser from "components/sn-meeting/components/NotSupportBrowser";
+import { store } from "store/configureStore";
+import { setIsBrowserSupported } from "store/meeting/reducer";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -52,7 +55,9 @@ const MainLayout = (props: MainLayoutProps) => {
     (state) => state.app,
     shallowEqual,
   );
-  const { callStatus } = useAppSelector((state) => state.meeting);
+  const { callStatus, isBrowserSupported } = useAppSelector(
+    (state) => state.meeting,
+  );
 
   const { onGetProfile } = useAuth();
 
@@ -120,6 +125,10 @@ const MainLayout = (props: MainLayoutProps) => {
       <Snackbar />
       {!isChatting ? <ChatListTemp /> : null}
       <IncomingCall callStatus={callStatus} />
+      <NotSupportBrowser
+        open={!isBrowserSupported}
+        onClose={() => store.dispatch(setIsBrowserSupported(true))}
+      />
     </>
   );
 };
