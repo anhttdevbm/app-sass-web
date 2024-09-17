@@ -202,6 +202,7 @@ const EventContents = ({
       </Stack> */}
         </Stack>
       ) : (
+        total_hour >= 8 &&
         booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING && (
           <h2
             style={{
