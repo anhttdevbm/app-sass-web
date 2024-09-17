@@ -70,7 +70,7 @@ export interface Employee extends User {
   date_end_using: string;
   date_start_using: string;
   is_pay_user: boolean;
-  id_rocket?: string;
+  id?: string;
 }
 
 export type EmployeeDetailState = {

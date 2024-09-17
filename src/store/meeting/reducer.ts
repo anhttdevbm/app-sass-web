@@ -58,6 +58,7 @@ const initialState: MeetingState = {
     isCameraOn: false,
     isMicOn: false,
     isRaiseHand: false,
+    reactionUnified: "",
   },
   messages: [],
   isRecording: false,
@@ -232,7 +233,7 @@ const meetingSlice = createSlice({
       action: PayloadAction<{
         participantId: string;
         event: ParticipantStreamEvent;
-        value: boolean;
+        value: boolean | string;
       }>,
     ) {
       const { participantId, event, value } = action.payload;
@@ -249,6 +250,9 @@ const meetingSlice = createSlice({
           break;
         case ParticipantStreamEvent.RAISE_HAND:
           field = "isRaiseHand";
+          break;
+        case ParticipantStreamEvent.REACTION:
+          field = "reactionUnified";
           break;
         default:
           break;

@@ -16,20 +16,38 @@ import { sxBtnCircleActiveDark } from "components/sn-meeting/style";
 import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
 import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import { useAppSelector } from "store/hooks";
-import { RemoteStream } from "store/meeting/types";
+import { ParticipantStreamEvent, RemoteStream } from "store/meeting/types";
 import { useAuth } from "store/app/selectors";
 import ButtonOnMyScreen from "../ButtonOnMyScreen";
+import { Emoji } from "emoji-picker-react";
+import { store } from "store/configureStore";
+import { updateRemoteStreamState } from "store/meeting/reducer";
 
 const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { participant, stream, streamState } = remoteStream;
   const { isDarkMode } = useTheme();
-
+  const { isCameraOn, isRaiseHand, reactionUnified, isMicOn } = streamState;
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream || null;
     }
   }, []);
+  useEffect(() => {
+    if (reactionUnified) {
+      const timer = setTimeout(() => {
+        store.dispatch(
+          updateRemoteStreamState({
+            event: ParticipantStreamEvent.REACTION,
+            participantId: remoteStream.participant.id,
+            value: "",
+          }),
+        );
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [reactionUnified]);
   return (
     <Card
       sx={{
@@ -43,7 +61,7 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
         },
       }}
     >
-      {!streamState.isCameraOn && (
+      {!isCameraOn && (
         <Box
           sx={{
             position: "absolute",
@@ -78,12 +96,12 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
           ref={videoRef}
           autoPlay
           style={{
-            width: streamState.isCameraOn ? "100%" : "0%",
+            width: isCameraOn ? "100%" : "0%",
             height: "100%",
             objectFit: "cover",
           }}
         />
-        {!streamState.isCameraOn && (
+        {!isCameraOn && (
           <Avatar
             size={64}
             src={participant.avatar}
@@ -98,7 +116,7 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
       <Box
         id="mic-ui"
         sx={[
-          streamState.isMicOn
+          isMicOn
             ? isDarkMode
               ? sxBtnCircleActiveDark
               : {
@@ -130,7 +148,7 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
           },
         ]}
       >
-        {streamState.isMicOn ? (
+        {isMicOn ? (
           <MicrophoneIconV1
             sx={{
               position: "relative",
@@ -168,22 +186,31 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
           {participant.fullname}
         </Typography>
       </CardContent>
-      {remoteStream.streamState.isRaiseHand && (
-        <Typography
-          sx={{
-            position: "absolute",
-            top: "8px",
-            left: "8px",
-            color: "white",
-            fontSize: "2rem",
-            userSelect: "none",
-            zIndex: 10,
-          }}
-        >
-          ✋
-        </Typography>
-      )}
-      {!remoteStream.streamState.isCameraOn && (
+      <Box
+        sx={{
+          position: "absolute",
+          top: "8px",
+          left: "8px",
+          zIndex: 10,
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        {isRaiseHand && (
+          <Typography
+            sx={{
+              color: "white",
+              fontSize: "30px",
+              userSelect: "none",
+            }}
+          >
+            ✋
+          </Typography>
+        )}
+        <Emoji unified={reactionUnified} size={30} />
+      </Box>
+      {!isCameraOn && (
         <ButtonOnMyScreen
           sx={{
             position: "absolute",
@@ -197,8 +224,8 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
             display: "none",
           }}
           isLocalStream={true}
-          localStream={remoteStream.stream}
-          streamState={remoteStream.streamState}
+          localStream={stream}
+          streamState={streamState}
         />
       )}
     </Card>

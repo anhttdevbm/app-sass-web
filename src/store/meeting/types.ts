@@ -86,18 +86,20 @@ export enum ParticipantStreamEvent {
   TOGGLE_MIC = "toggle_mic",
   RAISE_HAND = "raise_hand",
   LOWER_HAND = "lower_hand",
+  REACTION = "reaction",
 }
 
 export interface ParticipantAction {
   event: ParticipantStreamEvent;
   participantId: string;
-  status: boolean;
+  status: boolean | string;
 }
 
 export interface LocalStreamState {
   isCameraOn: boolean;
   isMicOn: boolean;
   isRaiseHand: boolean;
+  reactionUnified: string;
 }
 
 // Current structure only for text message

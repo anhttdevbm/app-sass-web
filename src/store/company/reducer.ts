@@ -45,7 +45,7 @@ export interface Employee extends User {
   status: PayStatus;
   approve?: boolean;
   username?: string;
-  id_rocket?: string;
+  id?: string;
   client_company?: string;
 }
 
@@ -343,7 +343,7 @@ const companySlice = createSlice({
               action.payload,
             );
           } else {
-            state.employees.push(action.payload)
+            state.employees.push(action.payload);
           }
         },
       )

@@ -6,8 +6,11 @@ import useTheme from "hooks/useTheme";
 import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
 import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import { useEffect, useRef } from "react";
-import { RemoteStream } from "store/meeting/types";
+import { ParticipantStreamEvent, RemoteStream } from "store/meeting/types";
 import { sxBtnCircleActiveDark } from "../style";
+import { Emoji } from "emoji-picker-react";
+import { store } from "store/configureStore";
+import { updateRemoteStreamState } from "store/meeting/reducer";
 
 interface VideoParticipantProps {
   streamData: RemoteStream;
@@ -16,13 +19,31 @@ interface VideoParticipantProps {
 const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { isDarkMode } = useTheme();
-  const isCameraOn = streamData.streamState?.isCameraOn;
+
+  const { isCameraOn, isMicOn, isRaiseHand, reactionUnified } =
+    streamData.streamState;
 
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = streamData.stream || null;
     }
   }, []);
+
+  useEffect(() => {
+    if (reactionUnified) {
+      const timer = setTimeout(() => {
+        store.dispatch(
+          updateRemoteStreamState({
+            event: ParticipantStreamEvent.REACTION,
+            participantId: streamData.participant.id,
+            value: "",
+          }),
+        );
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [reactionUnified]);
 
   return (
     <Box
@@ -111,7 +132,7 @@ const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
       </Box>
       <Box
         sx={[
-          streamData.streamState.isMicOn
+          isMicOn
             ? isDarkMode
               ? sxBtnCircleActiveDark
               : {
@@ -143,7 +164,7 @@ const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
           },
         ]}
       >
-        {streamData.streamState.isMicOn ? (
+        {isMicOn ? (
           <MicrophoneIconV1
             sx={{
               position: "relative",
@@ -154,22 +175,30 @@ const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
           <MicrophoneSlashIcon />
         )}
       </Box>
-
-      {streamData.streamState.isRaiseHand && (
-        <Typography
-          sx={{
-            position: "absolute",
-            top: "8px",
-            left: "8px",
-            color: "white",
-            fontSize: "2rem",
-            userSelect: "none",
-            zIndex: 10,
-          }}
-        >
-          ✋
-        </Typography>
-      )}
+      <Box
+        sx={{
+          position: "absolute",
+          top: "8px",
+          left: "8px",
+          zIndex: 10,
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        {isRaiseHand && (
+          <Typography
+            sx={{
+              color: "white",
+              fontSize: "30px",
+              userSelect: "none",
+            }}
+          >
+            ✋
+          </Typography>
+        )}
+        <Emoji unified={reactionUnified} size={30} />
+      </Box>
     </Box>
   );
 };

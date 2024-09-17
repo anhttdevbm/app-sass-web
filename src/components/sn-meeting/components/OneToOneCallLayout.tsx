@@ -1,10 +1,12 @@
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import Avatar from "components/Avatar";
+import { Emoji } from "emoji-picker-react";
+import { useEffect, useMemo, useRef } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
 import { useAppSelector } from "store/hooks";
-import ButtonOnMyScreen from "./ButtonOnMyScreen";
-import Avatar from "components/Avatar";
+import { updateRemoteStreamState } from "store/meeting/reducer";
+import { ParticipantStreamEvent } from "store/meeting/types";
 
 export default function OneToOneCallLayout() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -23,6 +25,22 @@ export default function OneToOneCallLayout() {
   useEffect(() => {
     if (remoteVideoRef.current && remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream.stream;
+    }
+  }, [remoteStream]);
+
+  useEffect(() => {
+    if (remoteStream && remoteStream.streamState.reactionUnified) {
+      const timer = setTimeout(() => {
+        store.dispatch(
+          updateRemoteStreamState({
+            event: ParticipantStreamEvent.REACTION,
+            participantId: remoteStream.participant.id,
+            value: "",
+          }),
+        );
+      }, 5000);
+
+      return () => clearTimeout(timer);
     }
   }, [remoteStream]);
 
@@ -156,6 +174,22 @@ export default function OneToOneCallLayout() {
               }}
             />
           )}
+          <Box
+            sx={{
+              position: "absolute",
+              top: "8px",
+              left: "8px",
+              zIndex: 10,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Emoji
+              unified={remoteStream.streamState.reactionUnified}
+              size={30}
+            />
+          </Box>
         </Box>
       )}
     </Box>

@@ -99,6 +99,7 @@ export default function MeetingWrapper() {
             isCameraOn,
             isMicOn,
             isRaiseHand: localStreamState.isRaiseHand,
+            reactionUnified: "",
           },
         };
         store.dispatch(setRemoteStreams(remoteStream));
@@ -136,6 +137,7 @@ export default function MeetingWrapper() {
             isCameraOn,
             isMicOn,
             isRaiseHand: localStreamState.isRaiseHand,
+            reactionUnified: "",
           },
         };
 
@@ -174,7 +176,7 @@ export default function MeetingWrapper() {
     store.dispatch(
       updateRemoteStreamState({
         event: event,
-        value: status,
+        value: status as boolean,
         participantId: participantId,
       }),
     );

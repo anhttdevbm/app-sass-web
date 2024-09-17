@@ -46,7 +46,6 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   const [isRadioButtonActive, setIsRadioButtonActive] = useState(false);
   const [isClosedCaptionActive, setIsClosedCaptionActive] = useState(false);
   const [isAddReactionActive, setIsAddReactionActive] = useState(false);
-  const [isBackHandActive, setIsBackHandActive] = useState(false);
   const { id } = useParams();
   const [anchorElCap, setAnchorElCap] = useState<null | HTMLElement>(null);
   const [anchorElMoreButton, setAnchorElMoreButton] =
@@ -332,7 +331,7 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
                       : {}),
                   }
             }
-            color={isBackHandActive ? "primary" : "default"}
+            color={localStreamState.isRaiseHand ? "primary" : "default"}
             onClick={handleBackHandButtonClick}
             style={{ width: "40px", height: "40px" }}
           >

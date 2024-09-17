@@ -84,7 +84,7 @@ export const useActionGroupDetails = () => {
       }
       // (await onChangeGroupRole({
       //   groupId: dataTransfer?._id,
-      //   userIdToChange: user?.id_rocket ?? "",
+      //   userIdToChange: user?.id ?? "",
       //   newRole: "removeOwner",
       // })) as any;
       onAddSnackbar(commonChatBox("chatBox.group.adminChange"), "success");

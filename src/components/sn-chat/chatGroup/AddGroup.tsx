@@ -151,7 +151,7 @@ const AddGroup: FC<AddGroupProps> = ({
     });
     setEmployeeIdSelected({
       ...employeeIdSelected,
-      [employee?.id_rocket ?? ""]: event.target.checked,
+      [employee?.id ?? ""]: event.target.checked,
     });
   };
 
@@ -285,22 +285,18 @@ const AddGroup: FC<AddGroupProps> = ({
           <>
             {items?.length > 0
               ? items
-                  // ?.filter(
-                  //   (item) =>
-                  //     dataTransfer?.isNew ||
-                  //     type === "modal" ||
-                  //     (!dataTransfer?.isNew &&
-                  //       !groupMembers
-                  //         ?.map((m) => m.id)
-                  //         ?.includes(item.id_rocket)),
-                  // )
-                  // ?.filter((m) => m.id_rocket !== user?.id_rocket)
+                  ?.filter(
+                    (item) =>
+                      dataTransfer?.isNew ||
+                      type === "modal" ||
+                      (!dataTransfer?.isNew &&
+                        !groupMembers?.map((m) => m.id)?.includes(item.id)),
+                  )
+                  ?.filter((m) => m.id !== user?.id)
                   .map((item, index) => {
                     return (
                       <SelectItem
-                        checked={
-                          employeeIdSelected[item.id_rocket as string] === true
-                        }
+                        checked={employeeIdSelected[item.id as string] === true}
                         checkbox
                         employee={item}
                         key={index}
