@@ -37,12 +37,14 @@ import {
   TICKET_PATH,
   TIME_TRACKING_PATH
 } from "constant/paths";
+import dayjs from "dayjs";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import BillingIcon from "icons/BillingIcon";
 import BudgetIcon from "icons/BudgetIcon";
 import CardReceive from "icons/CardReceive";
 import CareerIcon from "icons/CareerIcon";
+import CrownIconUpgrade from "icons/CrownIconUpgrade";
 import FeedbackIcon from "icons/FeedbackIcon";
 import HomeOutlinedIcon from "icons/HomeOutlinedIcon";
 import MenuBlogIcon from "icons/MenuBlogIcon";
@@ -58,20 +60,17 @@ import TicketIcon from "icons/TicketIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
 import { memo, MouseEvent, useMemo, useState } from "react";
-import { useAuth, useSidebar, useSnackbar } from "store/app/selectors";
-import Collapse from "./Collapse";
-import SubMenu from "./SubMenu";
-import { MenuItemProps } from "./helpers";
-import CrownIcon from "icons/CrownIcon";
-import CrownIconUpgrade from "icons/CrownIconUpgrade";
-import dayjs from "dayjs";
-import { AppDispatch } from "store/configureStore";
 import { useDispatch } from "react-redux";
+import { useAuth, useSidebar, useSnackbar } from "store/app/selectors";
+import { AppDispatch } from "store/configureStore";
 import {
   getPriceUpgradePackage,
   getRequestUpgradePayment,
   pay,
 } from "store/payment/actions";
+import Collapse from "./Collapse";
+import SubMenu from "./SubMenu";
+import { MenuItemProps } from "./helpers";
 
 const Menu = () => {
   const { user } = useAuth();
@@ -93,11 +92,11 @@ const Menu = () => {
         }
       } else {
         const priceUpgradePackage = {
-          newPackage: user.packageName,
+          newPackage: user.packageName || "",
           billingPlan: "monthly",
           numberOfUser: 1,
         };
-
+        
         const resultAction = await dispatch(
           getPriceUpgradePackage(priceUpgradePackage),
         );
