@@ -30,7 +30,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import BackIcon from "public/images/ic-back.svg";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
 import { useBudgetGetServiceQuery } from "queries/budgeting/service-list";
@@ -54,6 +53,8 @@ import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Service } from "./TabDetail/Service";
+import ArrowDownIcon from "icons/ArrowDownIcon";
+import "./styles.css"
 
 enum TABS {
   FEED = "Feed",
@@ -176,9 +177,11 @@ export const BudgetDetail = () => {
 
     if (isEditService) {
       Swal.fire({
-        title: budgetT("tabService.alert"),
-        text: "",
+        text: budgetT("tabService.alert"),
         icon: "info",
+        customClass: {
+          icon: 'Swal-custom-icon-info',
+        }
       });
 
       return;
@@ -374,10 +377,10 @@ export const BudgetDetail = () => {
     <Box ref={budgetDetailRef}>
       <Stack
         sx={{
-          position: "sticky !important",
+          // position: "sticky !important",
           top: 0,
           background: isDarkMode ? "#313130" : "white",
-          pb: 2,
+          // pb: 2,
           zIndex: 11,
           borderRadius: 1,
         }}
@@ -393,7 +396,7 @@ export const BudgetDetail = () => {
           <Stack gap={1} direction="row" alignItems="center">
             <Link href={BUDGETING_PATH}>
               <IconButton>
-                <Image src={BackIcon} alt="App logo" width={20} />
+                <ArrowDownIcon />
               </IconButton>
             </Link>
             <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
@@ -576,12 +579,19 @@ export const BudgetDetail = () => {
         </Stack>
       </Stack>
 
-      <Stack p={"10px"} direction="row" mt={1}>
+      <Stack p={"10px"} direction="row" >
         <Box
           position="relative"
           sx={{
             width: isOpenRightSidebar ? "calc(100% - 350px)" : "100%",
             transition: "all .2s",
+            overflow: "auto",
+            height: "calc(100vh - 200px)",
+            '&::-webkit-scrollbar': {
+              display: 'none', 
+            },
+            msOverflowStyle: 'none', 
+            scrollbarWidth: 'none', 
           }}
         >
           <Stack
