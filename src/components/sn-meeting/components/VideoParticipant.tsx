@@ -1,4 +1,5 @@
-import { Box } from "@mui/material";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Box, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import useTheme from "hooks/useTheme";
@@ -33,7 +34,7 @@ const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: "120px",
+        height: "137px",
       }}
     >
       {/* Background Image */}
@@ -64,15 +65,16 @@ const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
           zIndex: 1,
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-between",
           width: "100%",
           height: "100%",
+          flexDirection: "column",
+          pb: "8px",
         }}
       >
         <video
           ref={videoRef}
           width={isCameraOn ? "100%" : "0%"}
-          height="100%"
           autoPlay
           style={{
             objectFit: "cover",
@@ -80,11 +82,32 @@ const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
         />
         {!isCameraOn && (
           <Avatar
-            size={40}
+            size={64}
             src={streamData.participant.avatar}
             alt={streamData.participant.fullname}
+            style={{
+              borderRadius: "12px",
+            }}
           />
         )}
+
+        <Typography
+          color="white"
+          sx={{
+            backgroundColor: "#212121",
+            borderRadius: "80px",
+            padding: "4px 16px",
+            display: "inline-block",
+            ...(isCameraOn
+              ? {
+                  position: "absolute",
+                  bottom: "8px",
+                }
+              : {}),
+          }}
+        >
+          {streamData.participant.fullname}
+        </Typography>
       </Box>
       <Box
         sx={[
@@ -131,23 +154,22 @@ const VideoParticipant = ({ streamData }: VideoParticipantProps) => {
           <MicrophoneSlashIcon />
         )}
       </Box>
-      <Text
-        sx={{
-          position: "absolute",
-          bottom: 8,
-          left: "50%",
-          transform: "translateX(-50%)",
-          bgcolor: "#000",
-          color: "#fff",
-          borderRadius: "90px",
-          padding: "4px 12px",
-          width: "max-content",
-          textAlign: "center",
-          fontSize: "14px",
-        }}
-      >
-        {streamData.participant.fullname}
-      </Text>
+
+      {streamData.streamState.isRaiseHand && (
+        <Typography
+          sx={{
+            position: "absolute",
+            top: "8px",
+            left: "8px",
+            color: "white",
+            fontSize: "2rem",
+            userSelect: "none",
+            zIndex: 10,
+          }}
+        >
+          ✋
+        </Typography>
+      )}
     </Box>
   );
 };

@@ -66,10 +66,7 @@ export const CallType = {
 export interface RemoteStream {
   participant: MeetUser;
   stream: MediaStream;
-  streamState: {
-    isCameraOn: boolean;
-    isMicOn: boolean;
-  };
+  streamState: LocalStreamState;
 }
 
 export interface WSPayload {
@@ -87,6 +84,8 @@ export interface MeetDataEntryEvent {
 export enum ParticipantStreamEvent {
   TOGGLE_CAMERA = "toggle_camera",
   TOGGLE_MIC = "toggle_mic",
+  RAISE_HAND = "raise_hand",
+  LOWER_HAND = "lower_hand",
 }
 
 export interface ParticipantAction {
@@ -98,6 +97,7 @@ export interface ParticipantAction {
 export interface LocalStreamState {
   isCameraOn: boolean;
   isMicOn: boolean;
+  isRaiseHand: boolean;
 }
 
 // Current structure only for text message
@@ -105,4 +105,5 @@ export interface MessageItem {
   sender: MeetUser;
   content: string;
   sended_at: string;
+  type: "link" | "text";
 }

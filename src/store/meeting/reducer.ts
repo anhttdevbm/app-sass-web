@@ -25,12 +25,6 @@ export interface MeetingState {
   isEndMeeting: boolean;
   callStatus: "ringing" | "accepted" | "rejected" | "left" | null;
   callRequest: any;
-  // callRequest: {
-  //   callerName: string;
-  //   audioOnly: boolean;
-  //   callerUserId: string;
-  //   signal: SimplePeer.SignalData;
-  // } | null;
   remoteSignal: any;
   peer: any;
   isLeaving: boolean;
@@ -63,6 +57,7 @@ const initialState: MeetingState = {
   localStreamState: {
     isCameraOn: false,
     isMicOn: false,
+    isRaiseHand: false,
   },
   messages: [],
   isRecording: false,
@@ -229,13 +224,69 @@ const meetingSlice = createSlice({
     resetMeet() {
       return initialState;
     },
-    setLocalStreamState(
-      state,
-      action: PayloadAction<{ isCameraOn: boolean; isMicOn: boolean }>,
-    ) {
+    setLocalStreamState(state, action: PayloadAction<LocalStreamState>) {
       state.localStreamState = action.payload;
     },
     updateRemoteStreamState(
+      state,
+      action: PayloadAction<{
+        participantId: string;
+        event: ParticipantStreamEvent;
+        value: boolean;
+      }>,
+    ) {
+      const { participantId, event, value } = action.payload;
+      const remoteStreamIndex = state.remoteStreams.findIndex(
+        (stream) => stream.participant.id === participantId,
+      );
+      let field: keyof LocalStreamState | undefined = undefined;
+      switch (event) {
+        case ParticipantStreamEvent.TOGGLE_CAMERA:
+          field = "isCameraOn";
+          break;
+        case ParticipantStreamEvent.TOGGLE_MIC:
+          field = "isMicOn";
+          break;
+        case ParticipantStreamEvent.RAISE_HAND:
+          field = "isRaiseHand";
+          break;
+        default:
+          break;
+      }
+      if (remoteStreamIndex !== -1 && field) {
+        const remoteStream = state.remoteStreams[remoteStreamIndex];
+
+        remoteStream.streamState = {
+          ...remoteStream.streamState,
+          [field]: value,
+        };
+        if (field === "isRaiseHand") {
+          state.remoteStreams.splice(remoteStreamIndex, 1);
+          state.remoteStreams.unshift(remoteStream);
+        }
+      }
+    },
+    updateMessages(state, action: PayloadAction<MessageItem>) {
+      state.messages = [...state.messages, action.payload];
+    },
+    setIsRecording(state, action: PayloadAction<boolean>) {
+      state.isRecording = action.payload;
+    },
+    setIsBrowserSupported(state, action: PayloadAction<boolean>) {
+      state.isBrowserSupported = action.payload;
+    },
+    setMeetingLayout(state, action: PayloadAction<LayoutType>) {
+      state.meetingLayout = action.payload;
+    },
+    setGroupMeetName(state, action: PayloadAction<string>) {
+      state.groupMeetName = action.payload;
+    },
+    onRemoveParticipantStream(state, action: PayloadAction<string>) {
+      state.remoteStreams = state.remoteStreams.filter(
+        (stream) => stream.participant.id !== action.payload,
+      );
+    },
+    setParticipantActionState(
       state,
       action: PayloadAction<{
         participantId: string;
@@ -264,28 +315,6 @@ const meetingSlice = createSlice({
           [field]: value,
         };
       }
-    },
-    updateMessages(state, action: PayloadAction<MessageItem>) {
-      state.messages = [...state.messages, action.payload];
-    },
-    setIsRecording(state, action: PayloadAction<boolean>) {
-      state.isRecording = action.payload;
-    },
-    setIsBrowserSupported(state, action: PayloadAction<boolean>) {
-      state.isBrowserSupported = action.payload;
-    },
-    setMeetingLayout(state, action: PayloadAction<LayoutType>) {
-      state.meetingLayout = action.payload;
-    },
-    setGroupMeetName(state, action: PayloadAction<string>) {
-      state.groupMeetName = action.payload;
-    },
-    onRemoveParticipantStream(state, action: PayloadAction<string>) {
-      console.log("leave", state.remoteStreams);
-
-      state.remoteStreams = state.remoteStreams.filter(
-        (stream) => stream.participant.id !== action.payload,
-      );
     },
   },
   extraReducers(builder) {

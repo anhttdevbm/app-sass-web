@@ -14,6 +14,7 @@ import { GalleryLayoutIcon } from "icons/GalleryLayoutIcon";
 import { SpeakerLayoutIcon } from "icons/SpeakerLayoutIcon";
 import { LayoutType } from "../type";
 import { useMeeting } from "store/meeting/selectors";
+import { useAppSelector } from "store/hooks";
 
 interface IProps {
   onBack: () => void;
@@ -82,6 +83,7 @@ const RadioLabel = (props: LayoutDataProps) => {
 };
 
 export default function LayoutSelect({ onBack }: IProps) {
+  const { meetingLayout } = useAppSelector((state) => state.meeting);
   const { onSetMeetingLayout } = useMeeting();
   return (
     <Stack
@@ -124,7 +126,8 @@ export default function LayoutSelect({ onBack }: IProps) {
         <FormControl fullWidth>
           <RadioGroup
             aria-labelledby="layout-select"
-            defaultValue={LayoutType.SPEAKER}
+            defaultValue={meetingLayout}
+            value={meetingLayout}
             name="layout-select-radio-buttons-group"
             sx={{
               gap: "8px",

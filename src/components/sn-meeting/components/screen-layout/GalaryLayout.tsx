@@ -18,6 +18,7 @@ import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import { useAppSelector } from "store/hooks";
 import { RemoteStream } from "store/meeting/types";
 import { useAuth } from "store/app/selectors";
+import ButtonOnMyScreen from "../ButtonOnMyScreen";
 
 const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -37,6 +38,9 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
         flexDirection: "column",
         position: "relative",
         boxShadow: "none",
+        "&:hover #btn_screen": {
+          display: "block",
+        },
       }}
     >
       {!streamState.isCameraOn && (
@@ -81,9 +85,12 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
         />
         {!streamState.isCameraOn && (
           <Avatar
-            size={40}
+            size={64}
             src={participant.avatar}
             alt={participant.fullname}
+            style={{
+              borderRadius: "12px",
+            }}
           />
         )}
       </Box>
@@ -161,6 +168,39 @@ const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
           {participant.fullname}
         </Typography>
       </CardContent>
+      {remoteStream.streamState.isRaiseHand && (
+        <Typography
+          sx={{
+            position: "absolute",
+            top: "8px",
+            left: "8px",
+            color: "white",
+            fontSize: "2rem",
+            userSelect: "none",
+            zIndex: 10,
+          }}
+        >
+          ✋
+        </Typography>
+      )}
+      {!remoteStream.streamState.isCameraOn && (
+        <ButtonOnMyScreen
+          sx={{
+            position: "absolute",
+            bottom: "50%",
+            right: "50%",
+            transform: "translateX(50%) translateY(50%)",
+            bgcolor: "rgba(0,0,0,0.5)",
+            borderRadius: "90px",
+            padding: "8px 16px",
+            backdropFilter: "blur(20px)",
+            display: "none",
+          }}
+          isLocalStream={true}
+          localStream={remoteStream.stream}
+          streamState={remoteStream.streamState}
+        />
+      )}
     </Card>
   );
 };

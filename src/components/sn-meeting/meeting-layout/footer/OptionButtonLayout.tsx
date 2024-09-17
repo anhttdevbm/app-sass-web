@@ -160,7 +160,23 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   };
 
   const handleBackHandButtonClick = () => {
-    setIsBackHandActive(!isBackHandActive);
+    const action: ParticipantAction = {
+      event: ParticipantStreamEvent.RAISE_HAND,
+      participantId: user?.id as string,
+      status: !localStreamState.isRaiseHand,
+    };
+    const payload: WSParticipantActionPayload = {
+      event: "signal",
+      type: WSParticipantActionType.PARTICIPANT_ACTION,
+      payload: action,
+    };
+    store.dispatch(
+      setLocalStreamState({
+        ...localStreamState,
+        isRaiseHand: !localStreamState.isRaiseHand,
+      }),
+    );
+    meetingWsClient?.send(JSON.stringify(payload));
   };
 
   const leaveMeeting = async () => {
@@ -229,7 +245,16 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
             style={{ width: "40px", height: "40px" }}
           >
             {localStreamState.isMicOn ? (
-              <MicrophoneIcon />
+              <MicrophoneIcon
+                sx={{
+                  "& path": {
+                    fill: "#3699FF",
+                  },
+                  "& path:last-of-type": {
+                    stroke: "#3699FF",
+                  },
+                }}
+              />
             ) : (
               <MicrophoneSlashIcon
                 sx={{
@@ -294,7 +319,19 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
           </IconButton>
           <ReactionButton />
           <IconButton
-            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
+            sx={
+              isDarkMode
+                ? { ...sxBtnCircleActiveDark }
+                : {
+                    ...sxBtnCircleActiveLight,
+                    ...(localStreamState.isRaiseHand
+                      ? {
+                          backgroundColor: "#3699FF",
+                          color: "#E1F0FF",
+                        }
+                      : {}),
+                  }
+            }
             color={isBackHandActive ? "primary" : "default"}
             onClick={handleBackHandButtonClick}
             style={{ width: "40px", height: "40px" }}

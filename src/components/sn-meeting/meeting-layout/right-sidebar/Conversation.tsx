@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Pending } from "@mui/icons-material";
-import SendIcon from "@mui/icons-material/Send";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, IconButton, Stack } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import {
@@ -9,10 +7,38 @@ import {
   WSParticipantActionType,
 } from "components/sn-meeting/type";
 import useTheme from "hooks/useTheme";
+import { SendMessageIcon } from "icons/SendMessageIcon";
+import ThreeDotsIcon from "icons/ThreeDotsIcon";
+import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
 import { MessageItem } from "store/meeting/types";
+
+const isLink = (str: string): boolean => {
+  const urlPattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i", // fragment locator
+  );
+  return !!urlPattern.test(str);
+};
+
+const extractLinks = (str: string) => {
+  const urlPattern = new RegExp(
+    "(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[^\\s]+|www\\.[^\\s]+)",
+    "gi",
+  );
+  const parts = str.split(urlPattern);
+  return parts.map((part) => ({
+    text: part,
+    isLink: urlPattern.test(part),
+  }));
+};
 
 const Conversation = () => {
   const { user } = useAuth();
@@ -22,6 +48,7 @@ const Conversation = () => {
 
   const sendMessage = () => {
     if (inputValue === "") return;
+    const type = isLink(inputValue.trim()) ? "link" : "text";
     const payload: WSParticipantActionPayload = {
       event: "signal",
       type: WSParticipantActionType.NEW_MESSAGE,
@@ -34,6 +61,7 @@ const Conversation = () => {
           username: user?.name || "",
         },
         content: inputValue,
+        type,
         sended_at: new Date().toISOString(),
       },
     };
@@ -97,7 +125,7 @@ const Conversation = () => {
               background: isDarkMode ? "#3a3b3c" : "#fff",
               height: "100%",
               resize: "none",
-              padding: "10px 16px",
+              padding: "10px 54px 10px 16px",
               appearance: "none",
               border: "none",
               borderRadius: "8px",
@@ -105,6 +133,8 @@ const Conversation = () => {
               fontFamily: "inherit",
               width: "100%",
               outline: "none",
+              display: "flex",
+              alignItems: "center",
             }}
             rows={1}
             onKeyDown={handleInputText}
@@ -112,16 +142,17 @@ const Conversation = () => {
             onChange={handleChange}
             autoFocus
           />
-          <SendIcon
-            color="primary"
+          <IconButton
+            onClick={sendMessage}
             sx={{
               position: "absolute",
               right: 16,
               top: "50%",
-              transform: "translateY(-60%) rotate(-45deg)",
+              transform: "translateY(-50%)",
             }}
-            onClick={sendMessage}
-          />
+          >
+            <SendMessageIcon />
+          </IconButton>
         </Box>
         <Button
           sx={{
@@ -131,7 +162,11 @@ const Conversation = () => {
             height: "44px",
           }}
         >
-          <Pending />
+          <ThreeDotsIcon
+            sx={{
+              rotate: "90deg",
+            }}
+          />
         </Button>
       </Box>
     </>
@@ -160,18 +195,47 @@ const UserMessages = ({
   message: MessageItem;
   isDarkMode: boolean;
 }) => {
+  const messagePart = extractLinks(message.content);
+
   return (
     <>
-      {/* <Text variant={"body2"}>{content.time}</Text> */}
       <Box
         sx={{
           bgcolor: isDarkMode ? "#3a3b3c" : "#fff",
           padding: 1.5,
           borderRadius: "12px 12px 0 12px",
+          width: "calc(100% - 74px)",
         }}
       >
         <Text sx={{ fontWeight: 600 }}>You</Text>
-        <Text>{message.content}</Text>
+        {messagePart.map((part) => (
+          <Box key={part.text}>
+            {part.isLink ? (
+              <Link href={part.text} target="_blank">
+                <Text
+                  sx={{
+                    fontSize: "14px",
+                    color: "#3699FF",
+                    textDecoration: "underline",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {part.text}
+                </Text>
+              </Link>
+            ) : (
+              <Text
+                sx={{
+                  fontSize: "14px",
+                  color: "#17171F",
+                  wordBreak: "break-word",
+                }}
+              >
+                {part.text}
+              </Text>
+            )}
+          </Box>
+        ))}
       </Box>
       <Avatar
         src={message.sender.avatar}
@@ -189,6 +253,7 @@ const GuessMessages = ({
   message: MessageItem;
   isDarkMode: boolean;
 }) => {
+  const messagePart = extractLinks(message.content);
   return (
     <>
       <Avatar
@@ -201,12 +266,40 @@ const GuessMessages = ({
           bgcolor: isDarkMode ? "#3a3b3c" : "#fff",
           padding: 1.5,
           borderRadius: "12px 12px 12px 0",
+          // 74px = x2 image size + gap
+          width: "calc(100% - 74px)",
         }}
       >
         <Text sx={{ fontWeight: 600 }}>{message.sender.fullname}</Text>
-        <Text>{message.content}</Text>
+        {messagePart.map((part) => (
+          <Box key={part.text}>
+            {part.isLink ? (
+              <Link href={part.text} target="_blank">
+                <Text
+                  sx={{
+                    fontSize: "14px",
+                    color: "#3699FF",
+                    textDecoration: "underline",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {part.text}
+                </Text>
+              </Link>
+            ) : (
+              <Text
+                sx={{
+                  fontSize: "14px",
+                  color: "#17171F",
+                  wordBreak: "break-word",
+                }}
+              >
+                {part.text}
+              </Text>
+            )}
+          </Box>
+        ))}
       </Box>
-      {/* <Text variant={"body2"}>{content.time}</Text> */}
     </>
   );
 };

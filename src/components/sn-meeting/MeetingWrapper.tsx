@@ -39,7 +39,7 @@ import { WSParticipantActionType } from "./type";
 export default function MeetingWrapper() {
   const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
-  const { remoteStreams, meetingWsClient, localStream, isEndMeeting } =
+  const { localStreamState, meetingWsClient, localStream, isEndMeeting } =
     useAppSelector((state) => state.meeting);
   const { user } = store.getState().app;
   const searchParams = useSearchParams();
@@ -98,6 +98,7 @@ export default function MeetingWrapper() {
           streamState: {
             isCameraOn,
             isMicOn,
+            isRaiseHand: localStreamState.isRaiseHand,
           },
         };
         store.dispatch(setRemoteStreams(remoteStream));
@@ -134,6 +135,7 @@ export default function MeetingWrapper() {
           streamState: {
             isCameraOn,
             isMicOn,
+            isRaiseHand: localStreamState.isRaiseHand,
           },
         };
 
@@ -182,6 +184,7 @@ export default function MeetingWrapper() {
     const ws = new WebSocket(
       `${process.env.NEXT_APP_MEETING_WS_URL}/${meetId}?token=${aT}`,
     );
+
     if (meetingWsClient) return;
     store.dispatch(setMeetingWsClient(ws));
 

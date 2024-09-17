@@ -1,10 +1,5 @@
 import { DirectionChat } from "store/chat/type";
-import {
-  LocalStreamState,
-  MessageItem,
-  ParticipantAction,
-  ParticipantStreamEvent,
-} from "store/meeting/types";
+import { MessageItem, ParticipantAction } from "store/meeting/types";
 
 export type HeaderMobileProps = {
   children?: React.ReactNode;
@@ -40,15 +35,14 @@ export interface WSParticipantActionNewMessage extends WSParticipantActionBase {
   payload: MessageItem;
 }
 
-export interface WSParticipantActionParticipantAction
-  extends WSParticipantActionBase {
+export interface WSParticipantAction extends WSParticipantActionBase {
   type: WSParticipantActionType.PARTICIPANT_ACTION;
   payload: ParticipantAction;
 }
 
 export type WSParticipantActionPayload =
   | WSParticipantActionNewMessage
-  | WSParticipantActionParticipantAction;
+  | WSParticipantAction;
 
 export enum LayoutType {
   GALARY = "galary",

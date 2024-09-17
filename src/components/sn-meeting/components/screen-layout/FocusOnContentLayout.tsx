@@ -1,11 +1,16 @@
 import { Box, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
+import { sxBtnCircleActiveDark } from "components/sn-meeting/style";
+import useTheme from "hooks/useTheme";
+import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
+import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import { useEffect, useMemo, useRef } from "react";
 import { useAuth } from "store/app/selectors";
 import { useAppSelector } from "store/hooks";
 
 export default function FocusOnContentLayout() {
   const { user } = useAuth();
+  const { isDarkMode } = useTheme();
   const { localStream, localStreamState, remoteStreams } = useAppSelector(
     (state) => state.meeting,
   );
@@ -19,6 +24,7 @@ export default function FocusOnContentLayout() {
       videoRef.current.srcObject = remoteStreams[0].stream;
     }
   }, [remoteStreams]);
+
   useEffect(() => {
     if (videoLocalRef.current && localStream) {
       videoLocalRef.current.srcObject = localStream;
@@ -44,6 +50,7 @@ export default function FocusOnContentLayout() {
           justifyContent: "center",
           width: "100%",
           height: "100%",
+          background: "#000",
         }}
       >
         <video
@@ -56,22 +63,72 @@ export default function FocusOnContentLayout() {
                 : "0%",
             height: "100%",
             objectFit: "contain",
+            borderRadius: "12px",
           }}
         />
 
-        {!remoteStream && (
+        {
           <video
             ref={videoLocalRef}
             autoPlay
             style={{
-              width: localStreamState.isCameraOn ? "100%" : "0%",
+              width:
+                !remoteStream && localStreamState.isCameraOn ? "100%" : "0%",
               height: "100%",
               objectFit: "contain",
+              borderRadius: "12px",
             }}
           />
-        )}
+        }
         {!remoteStream && !localStreamState.isCameraOn && (
           <Avatar size={40} src={user?.avatar?.link} alt={user?.fullname} />
+        )}
+      </Box>
+
+      <Box
+        id="mic-ui"
+        sx={[
+          remoteStream?.streamState.isMicOn
+            ? isDarkMode
+              ? sxBtnCircleActiveDark
+              : {
+                  borderRadius: "50%",
+                  background: "#3699FF",
+                  "&:hover": {
+                    bgcolor: "#3699FF",
+                  },
+                }
+            : {
+                borderRadius: "50%",
+                backgroundColor: "#F64E60",
+                color: "#F64E60",
+                "&:hover": {
+                  bgcolor: "#F64E60",
+                  color: "#F64E60",
+                },
+              },
+          {
+            position: "absolute",
+            right: 16,
+            bottom: 16,
+            width: "40px",
+            height: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10,
+          },
+        ]}
+      >
+        {remoteStream?.streamState.isMicOn ? (
+          <MicrophoneIconV1
+            sx={{
+              position: "relative",
+              left: "1px",
+            }}
+          />
+        ) : (
+          <MicrophoneSlashIcon />
         )}
       </Box>
 

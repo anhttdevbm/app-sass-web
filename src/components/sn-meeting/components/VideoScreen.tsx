@@ -11,6 +11,7 @@ import { LayoutType } from "../type";
 import GalaryLayout from "./screen-layout/GalaryLayout";
 import { useChat } from "store/chat/selectors";
 import FocusOnContentLayout from "./screen-layout/FocusOnContentLayout";
+import SpeakerLayout from "./screen-layout/SpeakerLayout";
 
 interface VideoScreenProps {
   sx: object;
@@ -34,10 +35,7 @@ const VideoScreen: React.FC<VideoScreenProps> = (props: VideoScreenProps) => {
           sx={{ justifyContent: "space-between", height: "100%" }}
         >
           {meetInfo?.room?.type === "g" ? (
-            <>
-              <MyVideoScreen sx={{}} />
-              <ParticipantList />
-            </>
+            <SpeakerLayout />
           ) : (
             <OneToOneCallLayout />
           )}

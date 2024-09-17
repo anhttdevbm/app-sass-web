@@ -285,16 +285,16 @@ const AddGroup: FC<AddGroupProps> = ({
           <>
             {items?.length > 0
               ? items
-                  ?.filter(
-                    (item) =>
-                      dataTransfer?.isNew ||
-                      type === "modal" ||
-                      (!dataTransfer?.isNew &&
-                        !groupMembers
-                          ?.map((m) => m.id)
-                          ?.includes(item.id_rocket)),
-                  )
-                  ?.filter((m) => m.id_rocket !== user?.id_rocket)
+                  // ?.filter(
+                  //   (item) =>
+                  //     dataTransfer?.isNew ||
+                  //     type === "modal" ||
+                  //     (!dataTransfer?.isNew &&
+                  //       !groupMembers
+                  //         ?.map((m) => m.id)
+                  //         ?.includes(item.id_rocket)),
+                  // )
+                  // ?.filter((m) => m.id_rocket !== user?.id_rocket)
                   .map((item, index) => {
                     return (
                       <SelectItem

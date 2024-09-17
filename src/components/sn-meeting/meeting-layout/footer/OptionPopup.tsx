@@ -47,10 +47,12 @@ const OptionPopup: React.FC<OptionPopupProps> = (props: OptionPopupProps) => {
     console.log("Settings");
   };
   const handleClickOutside = (event) => {
-    if (popupRef.current && !popupRef.current.contains(event.target)) {
+    if (
+      popupRef.current &&
+      (open || !popupRef.current.contains(event.target))
+    ) {
       onClose();
       setIsOpenLayoutSelect(false);
-      console.log("Clicked outside");
     }
   };
 

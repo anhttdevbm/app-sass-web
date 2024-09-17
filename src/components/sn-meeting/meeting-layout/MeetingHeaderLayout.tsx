@@ -23,10 +23,8 @@ interface MeetingHeaderLayoutProps {
 }
 
 const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
-  const { toggleMinimizeMeeting } = props;
-  const { isExpandedSidebar } = useSidebar();
   const { isDarkMode } = useTheme();
-  const { isXlSmaller } = useBreakpoint();
+  const { isLgSmaller } = useBreakpoint();
   const { remoteStreams, meetInfo, isRecording, groupMeetName } =
     store.getState().meeting;
   const avatars = useMemo(() => {
@@ -36,7 +34,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
   }, [remoteStreams]);
   return (
     <Stack
-      direction={isExpandedSidebar || isXlSmaller ? "column" : "row"}
+      direction={isLgSmaller ? "column" : "row"}
       justifyContent="space-between"
       sx={{ ...props.sx }}
     >
@@ -86,7 +84,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
               ...sxPrimaryBtn,
               textTransform: "capitalize",
               bgcolor: isDarkMode ? "#3a3b3c" : "#3699FF",
-              borderRadius: isExpandedSidebar || isXlSmaller ? "4px" : "44px",
+              borderRadius: isLgSmaller ? "4px" : "44px",
               display: "flex",
               gap: "6px",
               alignItems: "center",
@@ -113,14 +111,14 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
                 : {
                     ...sxBtnCircleActiveLight,
                     bgcolor: "#3699FF",
-                    borderRadius: "4px",
+                    borderRadius: isLgSmaller ? "4px" : "44px",
                     "&:hover": {
                       opacity: 0.8,
                       bgcolor: "#3699FF",
                     },
                   }
             }
-            onClick={toggleMinimizeMeeting}
+            // onClick={toggleMinimizeMeeting}
           >
             <Box
               sx={{
