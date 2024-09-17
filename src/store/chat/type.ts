@@ -430,7 +430,6 @@ export interface UserInfo {
   avatar: Avatar;
   status: 1;
   authToken: string;
-  id: string;
   username: string;
 }
 

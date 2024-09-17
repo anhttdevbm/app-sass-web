@@ -1,38 +1,38 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  getEmployees,
-  GetEmployeeListQueries,
-  createEmployee,
-  createEmployeeClient,
-  updateEmployee,
-  createPosition,
-  updatePosition,
-  getProjectTypeList,
-  createProjectType,
-  updateProjectType,
-  deleteProjectType,
-  deletePosition,
-  updateMyCompany,
-  getCostHistory,
-  getPositionList,
-  getMyCompany,
-  deleteEmployees,
-  getEmployeeOptions,
-  getClientCompanies,
-  GetClientConpanyListQueries,
-  getClientCompaniesMemberOptions,
-  createClientCompany,
-  deleteClientCompany,
-  multipleDeleteClientCompany,
-  getClientCompanyDetails,
-  updateClientCompany,
-  GetClientConpanyOptionListQueries,
-} from "./actions";
-import { ItemListResponse, Paging, User, Option } from "constant/types";
+import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 import { DataStatus, PayStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
+import { ItemListResponse, Option, Paging, User } from "constant/types";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
-import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
+import {
+  createClientCompany,
+  createEmployee,
+  createEmployeeClient,
+  createPosition,
+  createProjectType,
+  deleteClientCompany,
+  deleteEmployees,
+  deletePosition,
+  deleteProjectType,
+  getClientCompanies,
+  getClientCompaniesMemberOptions,
+  getClientCompanyDetails,
+  GetClientConpanyListQueries,
+  GetClientConpanyOptionListQueries,
+  getCostHistory,
+  GetEmployeeListQueries,
+  getEmployeeOptions,
+  getEmployees,
+  getMyCompany,
+  getPositionList,
+  getProjectTypeList,
+  multipleDeleteClientCompany,
+  updateClientCompany,
+  updateEmployee,
+  updateMyCompany,
+  updatePosition,
+  updateProjectType,
+} from "./actions";
 
 export interface Employee extends User {
   _id: string;
@@ -45,7 +45,7 @@ export interface Employee extends User {
   status: PayStatus;
   approve?: boolean;
   username?: string;
-  id?: string;
+  id: string;
   client_company?: string;
 }
 
