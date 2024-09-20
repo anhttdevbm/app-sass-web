@@ -34,10 +34,10 @@ export interface UserInfo extends User {
   date_end_using: string;
   date_start_using: string;
   is_pay_user: boolean;
-  id_rocket?: string;
-  auto_renewal: boolean;
-  packageName: string;
-  expiration_date: string;
+  // id?: string;
+  auto_renewal?: boolean;
+  packageName?: string;
+  expiration_date?: string;
 }
 
 export type HeaderConfig = {
@@ -57,7 +57,7 @@ export enum SignupStep {
 export interface AppState {
   appReady: boolean;
   snackbarList: SnackbarItem[];
-  notificationList: any[];
+  notificationList: SnackbarItem[];
   token?: string;
   user?: UserInfo;
 

@@ -70,7 +70,6 @@ const ProfileHeader = ({
   const commonT = useTranslations(NS_COMMON);
 
   const { user } = useAuth();
-  const { onStartMeeting } = useMeeting();
   const { onAddSnackbar } = useSnackbar();
 
   // const handleCreateGroup = async () => {
@@ -109,12 +108,13 @@ const ProfileHeader = ({
   };
 
   const startMeeting = async () => {
-    await onStartMeeting(dataTransfer.id)
-      .then(() => {
-        if (pathname.includes("/meeting")) return;
-        router.push(`meeting/${dataTransfer.id}`);
-      })
-      .catch((e) => console.log(e.message));
+    if (pathname.includes("/meeting")) return;
+
+    window.open(
+      `/meeting/${dataTransfer.id}`,
+      "_blank",
+      "width=800,height=600",
+    );
   };
 
   useEffect(() => {

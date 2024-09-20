@@ -110,7 +110,6 @@ export default function MeetingLayout() {
           }}
         >
           <MeetingHeaderLayout
-            isRecording={false}
             sx={{ px: 3 }}
             toggleMinimizeMeeting={toggleMinimizeMeeting}
           />

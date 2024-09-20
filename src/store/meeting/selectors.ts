@@ -7,7 +7,9 @@ import {
   setCallRequest,
   setCallStatus,
   setEndMeeting,
+  setGroupMeetName,
   setMeetInfo,
+  setMeetingLayout,
   setMeetingWsClient,
   setRemoteSignal,
   startConnecting,
@@ -18,10 +20,11 @@ import {
   endMeeting,
   getParticipants,
   startMeeting,
-  startReconnecting,
+  getMeetRoom,
 } from "./actions";
 import { CallStatus, MeetRoomInfo, MessageItem } from "./types";
 import { store } from "store/configureStore";
+import { LayoutType } from "components/sn-meeting/type";
 
 export const useMeeting = () => {
   const dispatch = useAppDispatch();
@@ -102,6 +105,7 @@ export const useMeeting = () => {
 
       // 1-1 call
       if (meetInfo.room?.type === "p") {
+        ws?.close();
         onEndMeeting(meetInfo.room.id);
         return;
       }
@@ -124,14 +128,6 @@ export const useMeeting = () => {
     dispatch(resetMeet());
   }, [dispatch]);
 
-  const onGetMeetRoom = useCallback(
-    async (roomId: string) => {
-      const res = await dispatch(startReconnecting(roomId)).unwrap();
-      onSetMeetInfo(res);
-    },
-    [dispatch],
-  );
-
   const onAddNewMessage = useCallback(
     (message: MessageItem) => {
       dispatch(updateMessages(message));
@@ -142,6 +138,13 @@ export const useMeeting = () => {
   const onUpdateMeetingStatus = useCallback(
     (isEnding: boolean) => {
       dispatch(setEndMeeting(isEnding));
+    },
+    [dispatch],
+  );
+
+  const onSetMeetingLayout = useCallback(
+    (layout: LayoutType) => {
+      dispatch(setMeetingLayout(layout));
     },
     [dispatch],
   );
@@ -159,8 +162,8 @@ export const useMeeting = () => {
     onRejectCall,
     onLeaveMeeting,
     onResetMeet,
-    onGetMeetRoom,
     onAddNewMessage,
     onUpdateMeetingStatus,
+    onSetMeetingLayout,
   };
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // usersSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
@@ -8,12 +9,8 @@ import {
   ParticipantStreamEvent,
   RemoteStream,
 } from "./types";
-import {
-  cancelMeeting,
-  startReconnecting,
-  getParticipants,
-  startMeeting,
-} from "./actions";
+import { cancelMeeting, getParticipants, startMeeting } from "./actions";
+import { LayoutType } from "components/sn-meeting/type";
 
 export interface MeetingState {
   isEstablishingConnection: boolean;
@@ -28,18 +25,16 @@ export interface MeetingState {
   isEndMeeting: boolean;
   callStatus: "ringing" | "accepted" | "rejected" | "left" | null;
   callRequest: any;
-  // callRequest: {
-  //   callerName: string;
-  //   audioOnly: boolean;
-  //   callerUserId: string;
-  //   signal: SimplePeer.SignalData;
-  // } | null;
   remoteSignal: any;
   peer: any;
   isLeaving: boolean;
   currentParticipants: MeetUser[];
   localStreamState: LocalStreamState;
   messages: MessageItem[];
+  isRecording: boolean;
+  isBrowserSupported: boolean;
+  meetingLayout: LayoutType;
+  groupMeetName: string;
 }
 
 const initialState: MeetingState = {
@@ -62,8 +57,14 @@ const initialState: MeetingState = {
   localStreamState: {
     isCameraOn: false,
     isMicOn: false,
+    isRaiseHand: false,
+    reactionUnified: "",
   },
   messages: [],
+  isRecording: false,
+  isBrowserSupported: true,
+  meetingLayout: LayoutType.SPEAKER,
+  groupMeetName: "",
 };
 
 const meetingSlice = createSlice({
@@ -224,13 +225,72 @@ const meetingSlice = createSlice({
     resetMeet() {
       return initialState;
     },
-    setLocalStreamState(
-      state,
-      action: PayloadAction<{ isCameraOn: boolean; isMicOn: boolean }>,
-    ) {
+    setLocalStreamState(state, action: PayloadAction<LocalStreamState>) {
       state.localStreamState = action.payload;
     },
     updateRemoteStreamState(
+      state,
+      action: PayloadAction<{
+        participantId: string;
+        event: ParticipantStreamEvent;
+        value: boolean | string;
+      }>,
+    ) {
+      const { participantId, event, value } = action.payload;
+      const remoteStreamIndex = state.remoteStreams.findIndex(
+        (stream) => stream.participant.id === participantId,
+      );
+      let field: keyof LocalStreamState | undefined = undefined;
+      switch (event) {
+        case ParticipantStreamEvent.TOGGLE_CAMERA:
+          field = "isCameraOn";
+          break;
+        case ParticipantStreamEvent.TOGGLE_MIC:
+          field = "isMicOn";
+          break;
+        case ParticipantStreamEvent.RAISE_HAND:
+          field = "isRaiseHand";
+          break;
+        case ParticipantStreamEvent.REACTION:
+          field = "reactionUnified";
+          break;
+        default:
+          break;
+      }
+      if (remoteStreamIndex !== -1 && field) {
+        const remoteStream = state.remoteStreams[remoteStreamIndex];
+
+        remoteStream.streamState = {
+          ...remoteStream.streamState,
+          [field]: value,
+        };
+        if (field === "isRaiseHand") {
+          state.remoteStreams.splice(remoteStreamIndex, 1);
+          state.remoteStreams.unshift(remoteStream);
+        }
+      }
+    },
+    updateMessages(state, action: PayloadAction<MessageItem>) {
+      state.messages = [...state.messages, action.payload];
+    },
+    setIsRecording(state, action: PayloadAction<boolean>) {
+      state.isRecording = action.payload;
+    },
+    setIsBrowserSupported(state, action: PayloadAction<boolean>) {
+      state.isBrowserSupported = action.payload;
+    },
+    setMeetingLayout(state, action: PayloadAction<LayoutType>) {
+      state.meetingLayout = action.payload;
+    },
+    setGroupMeetName(state, action: PayloadAction<string>) {
+      state.groupMeetName = action.payload;
+    },
+    onRemoveParticipantStream(state, action: PayloadAction<string>) {
+      state.remoteStreams = state.remoteStreams.filter(
+        (stream) => stream.participant.id !== action.payload,
+      );
+    },
+    setParticipantActionState(
       state,
       action: PayloadAction<{
         participantId: string;
@@ -260,9 +320,6 @@ const meetingSlice = createSlice({
         };
       }
     },
-    updateMessages(state, action: PayloadAction<MessageItem>) {
-      state.messages = [...state.messages, action.payload];
-    },
   },
   extraReducers(builder) {
     builder.addCase(getParticipants.fulfilled, (state, action) => {
@@ -273,9 +330,6 @@ const meetingSlice = createSlice({
     });
     builder.addCase(cancelMeeting.fulfilled, (state) => {
       state = initialState;
-    });
-    builder.addCase(startReconnecting.fulfilled, (state, action) => {
-      state.meetInfo = action.payload;
     });
   },
 });
@@ -302,6 +356,11 @@ export const {
   setLocalStreamState,
   updateRemoteStreamState,
   updateMessages,
+  setIsRecording,
+  setIsBrowserSupported,
+  setMeetingLayout,
+  setGroupMeetName,
+  onRemoveParticipantStream,
 } = meetingSlice.actions;
 
 export default meetingSlice.reducer;

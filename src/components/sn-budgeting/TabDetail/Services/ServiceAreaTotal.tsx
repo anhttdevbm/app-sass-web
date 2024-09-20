@@ -88,10 +88,10 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
   return (
     <Box
       sx={{
-        position: "sticky !important",
-        top: "170px", // header height
+        // position: "sticky !important",
+        // top: "170px", 
         background: isDarkMode ? "#313130" : "white",
-        zIndex: 10,
+        // zIndex: 10,
       }}
     >
       <Grid container spacing={2}>

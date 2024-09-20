@@ -59,7 +59,7 @@ const CustomDateRangePicker: React.FC<TextFieldInputProps> = ({
         sx={{
           width: fullWidth ? "100%" : "auto",
           cursor: "pointer",
-          zIndex: 0,
+          zIndex: 1,
           position: 'relative',
           ...sx,
         }}
