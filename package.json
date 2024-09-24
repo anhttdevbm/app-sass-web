@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 2024",
+    "start": "next start -p 1999",
     "lint": "next lint",
     "prepare": "husky install",
     "typecheck": "tsc --noEmit"
