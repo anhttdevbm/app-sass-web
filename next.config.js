@@ -51,11 +51,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "img.freepik.com",
-      },
-      {
-        protocol: "http",
-        hostname: "113.192.9.79",
-      },
+      }
     ],
   },
   eslint: {
