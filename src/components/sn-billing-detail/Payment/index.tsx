@@ -68,6 +68,7 @@ const TabPayment = (props: TabProps) => {
   useEffect(() => {
     if (itemInvoice?.id) {
       onGetAllPayments(itemInvoice.id);
+      onGetPayments(itemInvoice.id);
     }
   }, [itemInvoice]);
 
@@ -77,6 +78,7 @@ const TabPayment = (props: TabProps) => {
       (isAddPayment || isUpdatePayment || isDeletedPayment)
     ) {
       onGetAllPayments(itemInvoice.id);
+      onGetPayments(itemInvoice.id);
     }
   }, [isAddPayment, isUpdatePayment, isDeletedPayment]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Box, Paper, IconButton, TextField } from "@mui/material";
 import {
   Close as CloseIcon,
@@ -11,25 +11,83 @@ import ListItem from "../components/ListItem";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { useTranslations } from "next-intl";
 import { Select, Text } from "components/shared";
+import { useDispatch } from "react-redux";
+import { getPriceUpgradePackage } from "store/payment/actions";
+import { DataPrice, DataStepOne } from ".";
+import { AppDispatch, RootState } from "store/configureStore";
+import { useSelector } from "react-redux";
+import BackIcon from "icons/BackIcon";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
+  dataStepOne: DataStepOne;
+  setDataPrice: React.Dispatch<React.SetStateAction<DataPrice>>;
+  dataPrice: DataPrice;
+  setDataStepOne: React.Dispatch<React.SetStateAction<DataStepOne>>;
+  unupgradedAccount: boolean;
 };
 
 const StepTwo = (props: Props) => {
-  const { setStep, onClose } = props;
+  const {
+    setStep,
+    onClose,
+    dataStepOne,
+    dataPrice,
+    setDataPrice,
+    setDataStepOne,
+    unupgradedAccount,
+  } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const [newPackage, setNewPackage] = useState("");
+  const [billingPlan, setBillingPlan] = useState("");
+  const [numberOfUser, setNumberOfUser] = useState<number>(1);
+
+  useEffect(() => {
+    if (dataStepOne) {
+      setNewPackage(dataStepOne.newPackage);
+      setBillingPlan(dataStepOne.billingPlan);
+      setNumberOfUser(dataStepOne.numberOfUser);
+    }
+  }, [dataStepOne]);
+  const fetchPrice = useCallback(async () => {
+    try {
+      const payload = {
+        newPackage,
+        billingPlan,
+        numberOfUser,
+      };
+
+      const resultAction = await dispatch(getPriceUpgradePackage(payload));
+
+      if (getPriceUpgradePackage.fulfilled.match(resultAction)) {
+        setDataPrice(resultAction.payload?.data);
+        setDataStepOne({
+          ...dataStepOne,
+          newPackage: newPackage,
+          billingPlan: billingPlan,
+        });
+      } else {
+        console.error("Error");
+      }
+    } catch (error) {
+      console.error("Error", error);
+    }
+  }, [newPackage, billingPlan, numberOfUser, dispatch]);
+
+  useEffect(() => {
+    fetchPrice();
+  }, [fetchPrice]);
+
   const handleBack = () => {
     setStep((prevStep) => prevStep - 1);
   };
+
   const handleClose = () => {
     onClose();
     setStep(0);
-  };
-
-  const handleSubmit = () => {
-    setStep((prevStep) => prevStep + 1);
   };
 
   return (
@@ -41,7 +99,7 @@ const StepTwo = (props: Props) => {
         transform: "translate(-50%, -50%)",
         bgcolor: "background.paper",
         borderRadius: 3,
-        padding: "74px 136px 45px 74px",
+        padding: "74px 74px 45px 74px",
         width: 1278,
       }}
     >
@@ -60,7 +118,7 @@ const StepTwo = (props: Props) => {
         mt={3}
       >
         <IconButton onClick={handleBack}>
-          <ArrowBackIcon />
+          <BackIcon />
         </IconButton>
         <Text
           id="modal-title"
@@ -72,7 +130,9 @@ const StepTwo = (props: Props) => {
             flexGrow: 1,
           }}
         >
-          {packageT("head.upgradePackage")}
+          {unupgradedAccount
+            ? packageT("head.upgradeNewAccount")
+            : packageT("head.upgradePackage")}
         </Text>
       </Box>
 
@@ -93,7 +153,15 @@ const StepTwo = (props: Props) => {
               { label: "Business", value: "Business" },
               { label: "Enterprise", value: "Enterprise" },
             ]}
-            rootSx={{ borderRadius: 100, height: 40, width: 376 }}
+            value={newPackage}
+            onChange={(e) => setNewPackage(e.target.value)}
+            rootSx={{
+              borderRadius: 100,
+              height: 40,
+              width: 376,
+              background:
+                "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+            }}
           />
           <Box display="flex" gap="16px" mt={2}>
             <Box>
@@ -107,8 +175,19 @@ const StepTwo = (props: Props) => {
                 {packageT("form.billingPlan")}
               </Text>
               <Select
-                options={[{ label: "Monthly", value: "Monthly" }]}
-                rootSx={{ borderRadius: 100, height: 40, width: 180 }}
+                options={[
+                  { label: "Monthly", value: "monthly" },
+                  { label: "Yearly", value: "yearly" },
+                ]}
+                value={billingPlan}
+                onChange={(e) => setBillingPlan(e.target.value)}
+                rootSx={{
+                  borderRadius: 100,
+                  height: 40,
+                  width: 180,
+                  background:
+                    "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
+                }}
               />
             </Box>
             <Box>
@@ -132,7 +211,9 @@ const StepTwo = (props: Props) => {
                   height: 40,
                   backgroundColor: "#EAEAEA",
                   borderRadius: "100px ",
+                  padding: "4px 20px",
                 }}
+                value={numberOfUser + "  accounts"}
               />
             </Box>
           </Box>
@@ -147,28 +228,36 @@ const StepTwo = (props: Props) => {
           }}
         >
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text>Price per month</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text> {packageT("form.pricePerMonth")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              ${Number(dataPrice?.priceOfMonth ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>Subtotal</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}> {packageT("form.subTotal")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              ${Number(dataPrice?.subTotal ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>VAT</Text>
-            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}> {packageT("form.vat")}</Text>
+            <Text sx={{ fontSize: "14px", fontWeight: "600" }}>
+              ${Number(dataPrice?.vat ?? 0).toFixed(2)}
+            </Text>
           </Box>
 
           <Box display="flex" justifyContent="space-between" mb={1}>
-            <Text sx={{ fontSize: "14px" }}>Total</Text>
-            <Text sx={{ fontSize: "20px", fontWeight: "600" }}>$23.00</Text>
+            <Text sx={{ fontSize: "14px" }}> {packageT("form.total")}</Text>
+            <Text sx={{ fontSize: "20px", fontWeight: "600" }}>
+              $ {Number(dataPrice?.total ?? 0).toFixed(2)}
+            </Text>
           </Box>
         </Box>
       </Box>
 
-      <ListItem />
+      {unupgradedAccount ? <ListItem /> : <></>}
 
       <Box display="flex" justifyContent="flex-end" mt={5} gap={"10px"}>
         <ButtonCustom
@@ -179,7 +268,7 @@ const StepTwo = (props: Props) => {
           height={40}
         />
         <ButtonCustom
-          onClick={handleSubmit}
+          onClick={() => setStep((prevStep) => prevStep + 1)}
           text={packageT("button.confirm")}
           width={168}
           height={40}

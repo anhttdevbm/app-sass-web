@@ -94,7 +94,6 @@ const EventContents = ({
       unit = mappedTimeSymbol[RESOURCE_ALLOCATION_TYPE.PERCENTAGE];
       break;
   }
-
   return (
     <>
       {!isWorkload ? (
@@ -205,7 +204,7 @@ const EventContents = ({
         booking_type === RESOURCE_EVENT_TYPE.PROJECT_BOOKING && (
           <h2
             style={{
-              color: "white",
+              color: total_hour < 8 ? "#626F86" : "white",
               textAlign: "center",
               margin: 0,
               height: "60px",
@@ -213,12 +212,14 @@ const EventContents = ({
               alignItems: "center ",
               justifyContent: "center",
               background:
-                "linear-gradient(180deg, rgba(255, 192, 203, 0) 0%, #57D9A3 0%)",
+                total_hour > 7
+                  ? "linear-gradient(180deg, rgba(255, 192, 203, 0) 0%, #57D9A3 0%)"
+                  : "transparent",
             }}
           >
             <div
               style={{
-                background: "#00875A",
+                background: total_hour > 7 ? "#00875A" : "transparent",
                 fontSize: 11,
                 minWidth: 20,
                 height: 20,

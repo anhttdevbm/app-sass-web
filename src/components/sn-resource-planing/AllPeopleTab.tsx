@@ -35,7 +35,6 @@ import { useFetchBookingAll } from "./hooks/useBookingAll";
 import useGetOptions, { useFetchOptions } from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
 import EditBooking from "./modals/EditBooking";
-
 export interface IEditState {
   isOpen: boolean;
   bookingId: string;
@@ -325,7 +324,7 @@ const AllPeopleTab = ({
       border: "none!important",
     },
     "& .fc-datagrid-cell-frame": {
-      // height: "auto!important",
+      height: "auto!important",
     },
     "& .fc-icon, & .fc-datagrid-expander-placeholder, & .fc-datagrid-expander":
       {
@@ -338,7 +337,11 @@ const AllPeopleTab = ({
     "& th.fc-day-sun, & th.fc-day-sat": {
       background: palette.grey[50],
     },
+    "& .fc-timeline-lane-frame": {
+      height: `${isWorkload ? "63px" : "107px"} !important`,
+    },
   };
+
   const mapResours = () => {
     const items: any = [];
     mappedResources.map((item: any) => {

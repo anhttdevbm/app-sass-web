@@ -25,7 +25,6 @@ import { DataAction, EmployeeType, PayStatus } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useQueryParams from "hooks/useQueryParams";
-import { HEADER_HEIGHT } from "layouts/Header";
 // import useTheme from "hooks/useTheme";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import TrashIcon from "icons/TrashAltIcon";
@@ -86,14 +85,14 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: commonT("fullName"), width: "25%", align: "left" },
+      { value: commonT("fullName"), width: "20%", align: "left" },
       { value: "Email", width: "15%", align: "left" },
-      { value: commonT("roles"), width: "9%", align: "left" },
+      { value: commonT("roles"), width: "15%", align: "left" },
       { value: commonT("position"), width: "12%", align: "left" },
       { value: commonT("creationDate"), width: "12%", align: "left" },
       {
         value: companyT("employees.expirationDate"),
-        width: "13.5%",
+        width: "13%",
         align: "left",
       },
       { value: commonT("status"), width: "12.5%" },
@@ -282,18 +281,37 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
           </IconButton>
         </Stack>
         <TableLayout
+          // headerList={headerList}
+          // pending={isFetching}
+          // error={error as string}
+          // noData={!isIdle && totalItems === 0}
+          // px={{ xs: 0, md: 3 }}
+          // containerHeaderProps={{
+          //   sx: {
+          //     maxHeight: { xs: 0, md: undefined },
+          //     minHeight: { xs: 0, md: HEADER_HEIGHT },
+          //   },
+          // }}
+          // sx={{ bgcolor: { xs: "grey.50", md: "transparent" } }}
           headerList={headerList}
           pending={isFetching}
           error={error as string}
           noData={!isIdle && totalItems === 0}
+          // mt={3}
           px={{ xs: 0, md: 3 }}
-          containerHeaderProps={{
+          headerProps={{
             sx: {
-              maxHeight: { xs: 0, md: undefined },
-              minHeight: { xs: 0, md: HEADER_HEIGHT },
-            },
+              px: { xs: 0.5, md: 2 },
+              wordBreak: "break-all",
+              overflow: "auto",
+              // py: "2px",
+              // height:"50px",
+              verticalAlign: "middle",
+              background: "#D9F0FD",
+              color: "#999999",
+              h6:{fontSize:"13px"}
+            }
           }}
-          sx={{ bgcolor: { xs: "grey.50", md: "transparent" } }}
         >
           {employees.map((item) => {
             const indexSelected = selectedList.findIndex(

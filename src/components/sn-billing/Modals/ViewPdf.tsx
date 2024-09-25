@@ -2,8 +2,11 @@
 import { Stack } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import { Button } from "components/shared";
+import TemplateFifth from "components/sn-billing-detail/Invoice/TemplateFifth";
 import TemplateFour from "components/sn-billing-detail/Invoice/TemplateFour";
 import TemplateOne from "components/sn-billing-detail/Invoice/TemplateOne";
+import TemplateSeventh from "components/sn-billing-detail/Invoice/TemplateSeventh";
+import TemplateSixth from "components/sn-billing-detail/Invoice/TemplateSixth";
 import TemplateThree from "components/sn-billing-detail/Invoice/TemplateThree";
 import TemplateTwo from "components/sn-billing-detail/Invoice/TemplateTwo";
 import { INVOICE_EXPORT_PATH } from "constant/paths";
@@ -62,6 +65,42 @@ const ViewPdf = () => {
       value: "Template 4",
       component: (
         <TemplateFour
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
+      ),
+    },
+    {
+      key: "template-fifth",
+      value: "Template 5",
+      component: (
+        <TemplateFifth
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
+      ),
+    },
+    {
+      key: "template-sixth",
+      value: "Template 6",
+      component: (
+        <TemplateSixth
+          isEdit={false}
+          itemInvoice={item}
+          handleChange={() => {}}
+          onDragEnd={() => {}}
+        />
+      ),
+    },
+    {
+      key: "template-seventh",
+      value: "Template 7",
+      component: (
+        <TemplateSeventh
           isEdit={false}
           itemInvoice={item}
           handleChange={() => {}}

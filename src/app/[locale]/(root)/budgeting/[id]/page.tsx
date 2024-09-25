@@ -15,8 +15,8 @@ export default function Page() {
   return (
     <Wrapper
       sx={{
-        overflowX: "hidden",
-        overflowY: "auto",
+        // overflowX: "hidden",
+        // overflowY: "auto",
         scrollBehavior: "smooth",
         paddingLeft: { lg: "24px!important" },
         paddingRight: { lg: "24px!important" },

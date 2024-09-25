@@ -444,7 +444,7 @@ function TemplateFour({
 
       <Stack
         direction="column"
-        mt={8}
+        mt={4}
         sx={{ alignItems: "flex-end", gap: "12px", paddingRight: 3 }}
       >
         <Stack
@@ -452,7 +452,6 @@ function TemplateFour({
             display: "flex",
             justifyContent: "space-between",
             width: "300px",
-            paddingTop: 2,
           }}
           direction="row"
         >

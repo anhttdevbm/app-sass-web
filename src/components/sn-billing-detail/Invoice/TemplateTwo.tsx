@@ -80,21 +80,21 @@ function TemplateTwo({
           </Typography>
         </Stack>
 
-        <Stack direction="column">
+        <Stack direction="column" sx={{ maxWidth: "35%" }}>
           <Typography color="#212529" fontSize={14} fontWeight={600}>
             BILL TO
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400} mt={1}>
-            Company A
+            {itemInvoice?.bill_to?.name}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Grand Via 34, Spain
+            {itemInvoice?.bill_to?.address}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            Tax ID: 00001
+            Tax ID: {itemInvoice?.bill_to?.tax_code}
           </Typography>
           <Typography color="#212529" fontSize={14} fontWeight={400}>
-            +03 522 017 08
+            {itemInvoice?.bill_to?.phone}
           </Typography>
         </Stack>
         <Stack direction="column">

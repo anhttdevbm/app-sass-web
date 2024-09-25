@@ -153,4 +153,8 @@ export const TicketLang: TicketDictionary = {
     quesionConfirmDelete : "Bạn có chắc chắn muốn xóa đại lý này không?",
 
   },
+  dashboard : {
+    title : "Bảng điều khiển"
+    
+  }
 };

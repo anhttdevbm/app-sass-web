@@ -7,8 +7,11 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
+import { CURRENCY_CODE } from "constant/enums";
 import { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
+import { formatNumber } from "utils/index";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const labels = ["Write off", "Paid", "Balance due"];
@@ -49,8 +52,12 @@ const DoughnutChartPayment = ({ write, paid, balanceDue, amount }) => {
         direction="column"
         sx={{
           position: "absolute",
+          width: "210px",
+          left: 0,
+          right: 0,
+          marginLeft: "auto",
+          marginRight: "auto",
           top: "80px",
-          left: "65px",
         }}
       >
         <Typography
@@ -61,8 +68,16 @@ const DoughnutChartPayment = ({ write, paid, balanceDue, amount }) => {
         >
           Total Amount
         </Typography>
-        <Typography color="#0A0A0A" fontSize={28} fontWeight={700}>
-          {amount}
+        <Typography
+          color="#0A0A0A"
+          fontSize={28}
+          fontWeight={700}
+          textAlign="center"
+        >
+          {formatNumber(Number(amount), {
+            prefix: CURRENCY_SYMBOL[CURRENCY_CODE.USD],
+            numberOfFixed: 2,
+          })}
         </Typography>
       </Stack>
       <Doughnut

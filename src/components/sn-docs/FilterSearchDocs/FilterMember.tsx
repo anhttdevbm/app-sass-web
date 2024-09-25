@@ -42,7 +42,7 @@ export interface IMember {
     link: string;
   };
   username: string;
-  id_rocket: string;
+  // id: string;
   authToken: string;
   approve: boolean;
   company: string;

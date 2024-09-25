@@ -14,7 +14,7 @@ const useGetListTicket = () => {
     stage: data?.stage || "",
     type: data?.ticketType || "",
     fromDate: "",
-    createTime: "",
+    createTime: data?.createTime || "",
     toDate: "",
     priority: data?.priority || "",
     page: data?.page,

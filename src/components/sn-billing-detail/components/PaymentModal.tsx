@@ -1,20 +1,16 @@
-import { CheckBox } from "@mui/icons-material";
-import { Grid, Stack, TextField, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import FormLayout from "components/FormLayout";
-import { DatePicker, Input, Select } from "components/shared";
-import Textarea from "components/Textarea";
+import { DatePicker, Input } from "components/shared";
 import { NS_BILLING, NS_COMMON } from "constant/index";
 import dayjs from "dayjs";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useState } from "react";
-import { Controller } from "react-hook-form";
 import { BillPaymentData, PaymentData } from "store/billing/actions";
 import { useBillings } from "store/billing/selectors";
+import { useInvoices } from "store/invoice/selectors";
 import * as Yup from "yup";
 import DropdownButton from "./DropdownButton";
-import { useInvoices } from "store/invoice/selectors";
-import { log } from "console";
 
 type Iprops = {
   open: boolean;
@@ -40,7 +36,7 @@ const BillModal = (props: Iprops) => {
   const currentDate = dayjs().format("DD/MM/YYYY");
   const [action, setAction] = useState({ type: "add", value: "paid" });
   const handleOpen = (value) => {
-    setAction((prev) => ({ ...prev, value }));
+    setAction((prev) => ({ ...prev, value: value }));
   };
   const formik = useFormik<PaymentData>({
     enableReinitialize: true,
@@ -69,17 +65,13 @@ const BillModal = (props: Iprops) => {
     },
   });
 
-  const touchedErrors = useMemo(() => {
-    return Object.entries(formik.errors).reduce(
-      (out: FormikErrors<BillPaymentData>, [key, error]) => {
-        // if (formik.touched[key]) {
-        out[key] = error;
-        // }
-        return out;
-      },
-      {},
-    );
-  }, [formik.touched, formik.errors]);
+  useEffect(() => {
+    if (Number(formik.values.amount) > Number(itemInvoice?.total)) {
+      handleOpen("write");
+    } else {
+      handleOpen("paid");
+    }
+  }, [formik.values.amount]);
 
   useEffect(() => {
     if (dataUpdate && Object.keys(dataUpdate).length > 0) {
@@ -99,7 +91,6 @@ const BillModal = (props: Iprops) => {
 
   const onChangeDate = (name: string, newDate?: Date) => {
     formik.setFieldValue(name, newDate ? newDate : null);
-    formik.setFieldTouched(name, true);
 
     // Fix validate failed when change network
     // let timeout: NodeJS.Timeout | null = null;
@@ -121,8 +112,6 @@ const BillModal = (props: Iprops) => {
       cancelText={commonT("form.cancel")}
       onClose={handleClose}
       onSubmit={formik.handleSubmit}
-
-      //   submitting={isFetching}
     >
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -133,15 +122,11 @@ const BillModal = (props: Iprops) => {
               </Typography>
               <Input
                 isSeparateError={true}
-                // title={billingT("detail.form.payment.title.amount")}
                 name="amount"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values?.amount}
                 error={formik.errors?.amount}
-                // error={commonT(touchedErrors?.amount, {
-                //   name: commonT("form.title.amount"),
-                // })}
                 fullWidth
                 rootSx={sxConfig.input}
                 sx={{
@@ -186,7 +171,7 @@ const BillModal = (props: Iprops) => {
             </Typography>
             <DropdownButton
               handleOpen={handleOpen}
-              selectedOps={formik.values.status ? 0 : 1}
+              selectedOps={action.value === "paid" ? 0 : 1}
             />
           </Stack>
         </Grid>
@@ -197,14 +182,10 @@ const BillModal = (props: Iprops) => {
                 Note
               </Typography>
               <Input
-                // title={billingT("detail.form.payment.title.note")}
                 name="note"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values?.note}
-                // error={commonT(touchedErrors?.description, {
-                //   name: commonT("form.title.description"),
-                // })}
                 fullWidth
                 rootSx={sxConfig.input}
                 sx={{

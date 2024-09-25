@@ -1,13 +1,13 @@
 import { Stack } from "@mui/material";
-import ImgPlaceholderAgent from "public/images/img-placeholder-agent.svg";
 import Avatar from "components/Avatar";
 import { Button, Text } from "components/shared";
 import { NS_AI_AGENT } from "constant/index";
-import { useTranslations } from "next-intl";
-import PencilUnderlineFillIcon from "icons/PencilUnderlineFillIcon";
-import { useRouter } from "next/navigation";
-import { getPath } from "utils/index";
 import { AI_AGENT_GENERAL_PATH } from "constant/paths";
+import PencilUnderlineFillIcon from "icons/PencilUnderlineFillIcon";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import ImgPlaceholderAgent from "public/images/img-placeholder-agent.svg";
+import { getPath } from "utils/index";
 
 export const HEADER_HEIGHT_AGENT_CHAT = 72;
 
@@ -21,9 +21,9 @@ export const Header = ({ id, title, avatar }: HeaderProps) => {
   const t = useTranslations(NS_AI_AGENT);
   const route = useRouter();
 
-  const handleSendMsg = () => {
-    console.log("Send Message");
-  };
+  // const handleSendMsg = () => {
+  //   console.log("Send Message");
+  // };
 
   const handleEditAgent = () => {
     const generalPath = getPath(AI_AGENT_GENERAL_PATH, undefined, { id });

@@ -33,6 +33,8 @@ const onChangeMembers = (id: string, position: string) => {
   const newData = { id, position };
 
   onChange("position", newData);
+  handleClose();
+
 
 };
 

@@ -26,6 +26,7 @@ const TicketList = () => {
     dispatch(setKeySearchTicket(payload));
   };
 
+
   const handleSizeChange = (newPageSize: number) => {
     const payload = {
       ...dataFilter,

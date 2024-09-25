@@ -10,14 +10,17 @@ import ButtonCustom from "../components/Button";
 import CloseIcon from "icons/CloseIcon";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { useTranslations } from "next-intl";
+import { DataStepOne } from ".";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
+  setDataStepOne: React.Dispatch<React.SetStateAction<DataStepOne>>;
+  dataStepOne: DataStepOne;
 };
 
 const StepOne = (props: Props) => {
-  const { setStep, onClose } = props;
+  const { setStep, onClose, setDataStepOne, dataStepOne } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
 
   const handleClose = () => {
@@ -33,6 +36,15 @@ const StepOne = (props: Props) => {
     "Optimized hashtags",
     "Standard using AI in writing script",
   ];
+
+  const handleClickUprade = (value: string) => {
+    setDataStepOne({
+      ...dataStepOne,
+      newPackage: value,
+      billingPlan: "monthly",
+    });
+    setStep((prevStep) => prevStep + 1);
+  };
   return (
     <>
       <Paper
@@ -158,6 +170,7 @@ const StepOne = (props: Props) => {
                 text={packageT("button.buyNow")}
                 height={56}
                 width={169}
+                onClick={() => handleClickUprade("Standard")}
               />
             </Box>
           </Box>
@@ -277,7 +290,7 @@ const StepOne = (props: Props) => {
                 text={packageT("button.upgradeNow")}
                 height={56}
                 width={169}
-                onClick={() => setStep(1)}
+                onClick={() => handleClickUprade("Business")}
               />
             </Box>
           </Box>
@@ -383,6 +396,7 @@ const StepOne = (props: Props) => {
                 text={packageT("button.upgradeNow")}
                 height={56}
                 width={169}
+                onClick={() => handleClickUprade("Enterprise")}
               />
             </Box>
           </Box>

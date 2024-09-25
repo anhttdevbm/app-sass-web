@@ -18,18 +18,18 @@ type Props = {
   title: string;
   question: string;
   open: boolean;
-  onSubmit?: () => void;
-  onCancel?: () => void;
+  onSubmit: () => void;
+  onClose: () => void;
 };
 
 const ConfirmToRequest = (props: Props) => {
-  const { title, open, onSubmit, onCancel, question } = props;
+  const { title, open, onSubmit, onClose, question } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
 
   return (
     <Modal
       open={open}
-      onClose={onCancel}
+      onClose={onClose}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
@@ -41,16 +41,17 @@ const ConfirmToRequest = (props: Props) => {
           transform: "translate(-50%, -50%)",
           bgcolor: "background.paper",
           borderRadius: 3,
-          padding: "33px 0 58px 0",
+          padding: { sm: "33px 0 58px 0", xs: "33px 0 30px 0" },
+          width: { xs: 360, sm: 500 },
         }}
       >
         <Box
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          paddingBottom="20px"
           sx={{
             borderBottom: "1px solid #EFEFEF",
+            padding: "20px",
           }}
         >
           <Typography
@@ -68,13 +69,17 @@ const ConfirmToRequest = (props: Props) => {
         </Box>
         <Box>
           <IconButton
-            onClick={onCancel}
-            sx={{ position: "absolute", top: 25, right: 30 }}
+            onClick={onClose}
+            sx={{
+              position: "absolute",
+              top: { sm: 25, xs: 10 },
+              right: { sm: 30, xs: 10 },
+            }}
           >
             <CloseIcon sx={{ fontSize: "24px" }} />
           </IconButton>
         </Box>
-        <Box marginTop="20px" padding="0 100px">
+        <Box marginTop="20px" padding={{ sm: "0 100px", xs: "0 30px" }}>
           <Text
             sx={{
               paddingBottom: "37px",
@@ -82,7 +87,7 @@ const ConfirmToRequest = (props: Props) => {
               paddingTop: "32px",
             }}
           >
-            Are you sure to request {question}?
+            {question}?
           </Text>
           <Text
             sx={{
@@ -96,7 +101,7 @@ const ConfirmToRequest = (props: Props) => {
         </Box>
         <Box display="flex" justifyContent={"center"} mt={5} gap={"10px"}>
           <Button
-            // onClick={onClick}
+            onClick={onClose}
             size="extraSmall"
             sx={{
               boxShadow: "none",
@@ -111,12 +116,13 @@ const ConfirmToRequest = (props: Props) => {
               color: "#0575E6",
               textTransform: "none",
               border: "1px solid  #2AF598 ",
+              display: { xs: "none", sm: "block" },
             }}
           >
             Cancel
           </Button>
           <Button
-            // onClick={onClick}
+            onClick={onSubmit}
             size="extraSmall"
             sx={{
               boxShadow: "none",
@@ -128,7 +134,7 @@ const ConfirmToRequest = (props: Props) => {
               },
               borderRadius: "100px",
               height: 34,
-              width: 158,
+              width: { xs: 292, sm: 168 },
               color: "#fff",
               textTransform: "none",
             }}
