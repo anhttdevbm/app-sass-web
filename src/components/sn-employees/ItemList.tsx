@@ -87,7 +87,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
     () => [
       { value: commonT("fullName"), width: "20%", align: "left" },
       { value: "Email", width: "15%", align: "left" },
-      { value: commonT("roles"), width: "15%", align: "left" },
+      { value: commonT("roles"), width: "10.5%", align: "left" },
       { value: commonT("position"), width: "12%", align: "left" },
       { value: commonT("creationDate"), width: "12%", align: "left" },
       {
@@ -95,7 +95,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
         width: "13%",
         align: "left",
       },
-      { value: commonT("status"), width: "12.5%" },
+      { value: commonT("status"), width: "17%" },
     ],
     [commonT, companyT],
   );
@@ -248,7 +248,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
             <Checkbox
               checked={isCheckedAll}
               onChange={onChangeAll}
-              sx={{ mr: "auto" }}
+              // sx={{ mr: "auto" }}
             />
           )}
           <IconButton
@@ -298,7 +298,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
           error={error as string}
           noData={!isIdle && totalItems === 0}
           // mt={3}
-          px={{ xs: 0, md: 3 }}
+          // px={{ xs: 0, md: 3 }}
           headerProps={{
             sx: {
               px: { xs: 0.5, md: 2 },
