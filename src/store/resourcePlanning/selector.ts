@@ -1,5 +1,5 @@
 import { Endpoint } from "api";
-import { saleClient } from "api/client";
+import { budgetClient } from "api/client";
 import { DataStatus } from "constant/enums";
 import { NS_RESOURCE_PLANNING } from "constant/index";
 import dayjs from "dayjs";
@@ -275,7 +275,7 @@ export const useGetServiceBudget = () => {
   const getBudgetsByIdProject = async (id: string) => {
     const url = StringFormat(Endpoint.BUDGETS_BY_PROJECT_ID, { id });
 
-    const res = await saleClient.get(url);
+    const res = await budgetClient.get(url);
     return res;
   };
 
@@ -292,7 +292,7 @@ export const useGetServiceBudget = () => {
 
     const url = StringFormat(Endpoint.SERVICE_QUERIES_BY_BUDGET, { id });
 
-    const res = await saleClient.get(`${url}?${queryString}`);
+    const res = await budgetClient.get(`${url}?${queryString}`);
     return res;
   };
 

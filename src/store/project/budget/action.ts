@@ -9,7 +9,7 @@ import { Endpoint } from "../../../api";
 import { HttpStatusCode } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN } from "constant/index";
 import { BaseQueries } from "constant/types";
-import { saleClient } from "../../../api/client";
+import { budgetClient } from "../../../api/client";
 import StringFormat from "string-format";
 
 export type TBudget = any;
@@ -84,7 +84,7 @@ export const getProjectBudgetList = createAsyncThunk(
       delete queries[key];
     }
 
-    const response = await saleClient.get(Endpoint.BUDGET_ALL, {
+    const response = await budgetClient.get(Endpoint.BUDGET_ALL, {
       ...serverQueries(queries),
       ...dataSearchInParam,
     });
@@ -102,7 +102,7 @@ export const createProjectBudget = createAsyncThunk(
   "project/createProjectBudget",
   async (param: TBudgetCreateParam) => {
     const url = Endpoint.BUDGET_CREATE;
-    const response = await saleClient.post(url, param);
+    const response = await budgetClient.post(url, param);
 
     if (response?.status !== HttpStatusCode.CREATED) {
       throw AN_ERROR_TRY_AGAIN;
@@ -116,7 +116,7 @@ export const deleteProjectBudget = createAsyncThunk(
   "project/deleteProjectBudget",
   async (budgetId:string) => {
     const url = StringFormat(Endpoint.BUDGET_DELETE_BY_ID, { budgetId });
-    const response = await saleClient.delete(url);
+    const response = await budgetClient.delete(url);
 
     if (response?.status !== HttpStatusCode.OK) {
       throw AN_ERROR_TRY_AGAIN;
