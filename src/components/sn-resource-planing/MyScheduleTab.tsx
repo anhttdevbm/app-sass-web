@@ -95,6 +95,7 @@ const MyScheduleTab = ({
     (calendarRef: React.RefObject<FullCalendar>, isResize: boolean) =>
     ({ event, revert }) => {
       const { type, service_id, ...restData } = event.extendedProps;
+
       if (isResize && type === "campaign") return revert();
       if (type === "campaign") {
         // Campaign has been moved, compute diff and update each steps
@@ -266,7 +267,7 @@ const MyScheduleTab = ({
       border: "none!important",
     },
     "& .fc-datagrid-cell-frame": {
-      // height: "auto!important",
+      height: "auto!important",
       minHeight: "37px",
     },
     "& .fc-icon, & .fc-datagrid-expander-placeholder, & .fc-datagrid-expander":
@@ -280,6 +281,13 @@ const MyScheduleTab = ({
     "& th.fc-day-sun, & th.fc-day-sat": {
       background: palette.grey[50],
     },
+    "& .fc-h-event": {
+      background: "none!important",
+      border: "none!important",
+    },
+    "& .fc-timeline-lane-frame": {
+      // height:"64px !important"
+    },
   };
   function getFirstAndSecondLetters(name) {
     if (!name) return "";
@@ -289,36 +297,6 @@ const MyScheduleTab = ({
     return firstLetter + lastLetter;
   }
 
-  const listBookingByUser = useMemo(() => {
-    const listBooking: any[] = [];
-
-    myBooking.forEach((project) => {
-      project.services.forEach((service) => {
-        service.users.forEach((user) => {
-          user.bookings?.forEach((item) => {
-            listBooking.push({
-              ...item,
-              fullname: user.fullname,
-              backgroundName: `rgba(${Math.floor(
-                Math.random() * 256,
-              )},${Math.floor(Math.random() * 256)},${Math.floor(
-                Math.random() * 256,
-              )},${Math.floor(Math.random() * 256)})`,
-              id: item.user_id,
-              resourceId: item?.user_id,
-              project_id: project.project_id,
-              service_id: project.service_id,
-              start: item?.start_date,
-              end: item?.end_date,
-            });
-          });
-        });
-      });
-    });
-
-    return listBooking;
-  }, [myBooking]);
-
   const listUser = useMemo(() => {
     const listUser: any[] = [];
 
@@ -327,7 +305,7 @@ const MyScheduleTab = ({
         service.users.forEach((item) => {
           listUser.push({
             ...item,
-            id: item?.user_id,
+            id: item?.user_id + project?.project_id,
             project_id: project.project_id,
             service: service.service_name,
             group: true,
@@ -343,6 +321,36 @@ const MyScheduleTab = ({
 
     return listUser;
   }, [myBooking]);
+
+  const listBookingByUser = useMemo(() => {
+    const listBooking: any[] = [];
+
+    myBooking.forEach((project) => {
+      project.services.forEach((service) => {
+        service.users.forEach((user) => {
+          const userSelected = listUser?.find(
+            (item) => item?.user_id === user?.user_id,
+          );
+
+          user.bookings?.forEach((item) => {
+            listBooking.push({
+              ...item,
+              fullname: user.fullname,
+              backgroundName: userSelected?.backgroundName,
+              id: item.user_id + project.project_id,
+              resourceId: item?.user_id + project.project_id,
+              project_id: project.project_id,
+              service_id: project.service_id,
+              start: item?.start_date,
+              end: item?.end_date,
+            });
+          });
+        });
+      });
+    });
+
+    return listBooking;
+  }, [listUser]);
 
   const grouped = listBookingByUser.reduce((acc, item) => {
     const projectId = item.project?.id;
@@ -524,14 +532,15 @@ const MyScheduleTab = ({
           resourceAreaWidth={600}
           resourceOrder="from"
           weekends={true}
-          editable={true}
+          editable={false}
           nowIndicator={true}
-          eventResourceEditable={true}
+          eventResourceEditable={false}
           headerToolbar={false}
           duration={{ weeks: 2 }}
           slotDuration={{
             days: 1,
           }}
+          resourceGroupField={"project_id"}
           resourceGroupLabelContent={(resource) => {
             return (
               <h2
@@ -541,6 +550,7 @@ const MyScheduleTab = ({
                   background: "#E1F0FFB2",
                   margin: 0,
                   lineHeight: "36px",
+                  paddingLeft: 8,
                 }}
               >
                 {resource?.groupValue}
@@ -550,137 +560,142 @@ const MyScheduleTab = ({
           selectable={true}
           resources={listUser}
           events={listBookingByUser}
-          resourceAreaColumns={[
-            {
-              field: "service",
-              headerContent: "Service",
-              group: true,
-              cellContent(renderProps) {
-                return (
+          resourceLabelContent={({ resource }) => {
+            const data = resource?._resource?.extendedProps;
+
+            return (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
+                  height: 64,
+                }}
+              >
+                <div
+                  style={{
+                    gridColumn: "span 4 / span 4",
+                    border: "1px solid #091E4224",
+                    borderLeft: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    paddingLeft: 10,
+                  }}
+                >
+                  {data?.service}
+                </div>
+                <div
+                  style={{
+                    gridColumn: "span 3 / span 3",
+                    border: "1px solid #091E4224",
+                    borderLeft: "none",
+                    borderRight: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    paddingLeft: 10,
+                    gap: 8,
+                  }}
+                >
                   <div
                     style={{
+                      border: "2px solid  #DCDCDC",
+                      padding: 2,
+                      minWidth: "25px",
+                      minHeight: "25px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
                       display: "flex",
+                      justifyContent: "center",
                       alignItems: "center",
-                      paddingLeft: 24,
-                      fontSize: 14,
-                      minHeight: 36,
-                      height: "100%",
+                      width: "25px",
+                      height: "25px",
+                      background: data.backgroundName,
+                      fontSize: 9,
+                      color: "white",
                     }}
                   >
-                    {renderProps.groupValue}
+                    {getFirstAndSecondLetters(data?.fullname)}
                   </div>
-                );
-              },
-              headerClassNames: "border-bottom",
-              cellClassNames: "custom-cellContent-service",
-              width: 250,
-            },
-            {
-              field: "fullname",
-              headerContent: "User",
-              cellContent(renderProps) {
-                const resourceData =
-                  renderProps.resource?._resource.extendedProps;
-                return (
-                  <div
-                    style={{
-                      borderLeft: "1px solid #CCCCCC",
-                      borderBottom: "1px solid #CCCCCC",
-                      minHeight: 36,
-                      height: "100%",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        paddingLeft: "10px",
-                        height: "100%",
-                        minHeight: 35,
-                      }}
-                    >
-                      <p
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "50%",
-                          background: resourceData?.backgroundName,
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          border: "2px solid #091E4224",
-                          color: "white",
-                          fontWeight: 500,
-                        }}
-                      >
-                        {getFirstAndSecondLetters(resourceData?.fullname)}
-                      </p>
-                      <p
-                        style={{
-                          maxWidth: 150,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          fontSize: 14,
-                        }}
-                      >
-                        {resourceData?.fullname}
-                      </p>
-                    </div>
-                  </div>
-                );
-              },
-              headerClassNames: "custom-calender-timeline-header-block",
-              width: 210,
-            },
-            {
-              field: "start",
-              headerContent: "StartDate",
-              cellContent(renderProps) {
-                const resourceData =
-                  renderProps.resource?._resource.extendedProps;
-                return (
-                  <div
-                    style={{
-                      borderLeft: "1px solid #CCCCCC",
-                      margin: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "0 10px",
-                      borderBottom: "1px solid #CCCCCC",
-                      minHeight: 36,
-                      height: "100%",
-                      fontSize: 14,
-                    }}
-                  >
-                    {resourceData?.start_date}
-                  </div>
-                );
-              },
-              headerClassNames: "custom-calender-timeline-header",
-              width: 139,
-            },
-          ]}
+                  {data?.fullname}
+                </div>
+                <div
+                  style={{
+                    gridColumn: "span 2 / span 2",
+                    border: "1px solid #091E4224",
+                    borderRight: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    paddingLeft: 10,
+                  }}
+                >
+                  {data?.start_date}
+                </div>
+              </div>
+            );
+          }}
           slotLabelContent={(arg) => {
             return <SlotLabelContent arg={arg} />;
           }}
           resourceAreaHeaderClassNames="custom-header"
           resourceAreaHeaderContent={() => {
             return (
-              <h2
+              <div
                 style={{
-                  color: "black",
-                  fontSize: 16,
-                  background: "#E1F0FFB2",
-                  margin: 0,
-                  lineHeight: "36px",
-                  textAlign: "left",
-                  paddingLeft: 30,
-                  borderBottom: "1px solid #CCC",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
+                  height: 36,
+                  background: "white",
                 }}
               >
-                {myBooking?.[0]?.project_id}
-              </h2>
+                <div
+                  style={{
+                    gridColumn: "span 4 / span 4",
+                    border: "1px solid #091E4224",
+                    borderLeft: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    paddingLeft: 10,
+                    borderTop: "none",
+                    color: "#757383",
+                    fontWeight: 500,
+                    fontSize: 13,
+                  }}
+                >
+                  SERVICE
+                </div>
+                <div
+                  style={{
+                    gridColumn: "span 3 / span 3",
+                    border: "1px solid #091E4224",
+                    borderLeft: "none",
+                    borderRight: "none",
+                    display: "flex",
+                    borderTop: "none",
+                    alignItems: "center",
+                    paddingLeft: 10,
+                    color: "#757383",
+                    fontWeight: 500,
+                    fontSize: 13,
+                  }}
+                >
+                  USER
+                </div>
+                <div
+                  style={{
+                    gridColumn: "span 2 / span 2",
+                    border: "1px solid #091E4224",
+                    borderRight: "none",
+                    display: "flex",
+                    borderTop: "none",
+                    alignItems: "center",
+                    paddingLeft: 10,
+                    color: "#757383",
+                    fontWeight: 500,
+                    fontSize: 13,
+                  }}
+                >
+                  START DATE
+                </div>
+              </div>
             );
           }}
           eventContent={({ event }) => {
@@ -706,7 +721,7 @@ const MyScheduleTab = ({
               >
                 <div
                   style={{
-                    border: "2px solid white",
+                    border: "2px solid #DCDCDC",
                     padding: 2,
                     minWidth: "25px",
                     minHeight: "25px",

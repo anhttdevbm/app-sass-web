@@ -332,10 +332,10 @@ const AllPeopleTab = ({
       },
     "& td.fc-day-sun, & td.fc-day-sat": {
       borderBottom: "none!important",
-      background: palette.grey[50],
+      background: !isWorkload && palette.grey[50],
     },
     "& th.fc-day-sun, & th.fc-day-sat": {
-      background: palette.grey[50],
+      background: !isWorkload && palette.grey[50],
     },
     "& .fc-timeline-lane-frame": {
       height: `${isWorkload ? "63px" : "107px"} !important`,
