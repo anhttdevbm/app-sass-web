@@ -1,31 +1,26 @@
 "use client";
 
-import { memo, useMemo } from "react";
 import {
   Box,
   Checkbox,
   FormControlLabel,
-  Stack,
-  Typography,
+  Stack
 } from "@mui/material";
-import { Button, Input, Text } from "components/shared";
-import Link from "components/Link";
-import { FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
-import * as Yup from "yup";
-import { AN_ERROR_TRY_AGAIN, NS_AUTH, NS_COMMON } from "constant/index";
-import { useFormik, FormikErrors } from "formik";
-import { SigninData } from "store/app/actions";
-import { EMAIL_REGEX } from "constant/regex";
-import { getMessageErrorByAPI } from "utils/index";
-import { useSnackbar, useAuth } from "store/app/selectors";
-import { useTranslations } from "next-intl";
 import { formErrorCode } from "api/formErrorCode";
+import Link from "components/Link";
+import { Button, Input } from "components/shared";
+import { AN_ERROR_TRY_AGAIN, NS_AUTH, NS_COMMON } from "constant/index";
+import { FORGOT_PASSWORD_PATH } from "constant/paths";
+import { EMAIL_REGEX } from "constant/regex";
 import { ErrorResponse } from "constant/types";
-import { sessionStorage } from "utils/storage";
-import { Permission } from "constant/enums";
+import { FormikErrors, useFormik } from "formik";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
-import GoogleLogo from "public/images/ic-google.svg";
-import Image from "next/image";
+import { memo, useMemo } from "react";
+import { SigninData } from "store/app/actions";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+import * as Yup from "yup";
 const Form = () => {
   const { onSignin } = useAuth();
   const { onAddSnackbar } = useSnackbar();
@@ -170,7 +165,7 @@ const Form = () => {
       >
         {authT("signin.key")}
       </Button>
-      <Button
+      {/* <Button
         sx={{
           mt: 2,
           background:
@@ -192,7 +187,7 @@ const Form = () => {
           or login by
         </Typography>{" "}
         <Image src={GoogleLogo} alt="App logo" width={32} />
-      </Button>
+      </Button> */}
     </Stack>
   );
 };
