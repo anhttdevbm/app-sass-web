@@ -12,64 +12,132 @@ import {
 import Avatar from "components/Avatar";
 import { Search } from "components/Filters";
 import { Text } from "components/shared";
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useUpdateDocMutation } from "store/docs/api";
 import { changeProjectId } from "store/docs/reducer";
 import { useAppSelector } from "store/hooks";
 import { Project } from "store/project/reducer";
 import { useProjects } from "store/project/selectors";
+import ChangeProjectConfirm from "./LeftSlide/modal/ConfirmModal";
+import ConfirmModal from "./LeftSlide/modal/ConfirmModal";
 
-const SelectProjectInDoc = () => {
-  const { project_id } = useAppSelector((state) => state.doc);
+interface IProps {
+  updateOnSelect?: boolean;
+  currentProjectId?: string;
+}
+
+const SelectProjectInDoc = ({ updateOnSelect, currentProjectId }: IProps) => {
+  const { id, docInfo, project_id } = useAppSelector((state) => state.doc);
   const dispatch = useDispatch();
   const { items: projects, onGetProjects } = useProjects();
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const [projectActive, setProjectActive] = useState<Project | null>(null);
+  const [updateDoc] = useUpdateDocMutation();
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   useEffect(() => {
-    const active = projects.find((e) => e.id === project_id);
+    const active = projects.find((e) => e.id === currentProjectId);
     setProjectActive(active || null);
-  }, [projects]);
+  }, [projects, currentProjectId]);
 
   useEffect(() => {
     onGetProjects({ pageSize: -1, pageIndex: 0 });
   }, []);
 
   const handleSelect = useCallback((e: Project) => {
+    if (docInfo?.is_public) {
+      updateOnSelect &&
+        updateDoc({
+          id,
+          payload: {
+            project_id: e.id,
+          },
+        });
+    } else {
+      setIsOpenConfirmModal(true);
+    }
     dispatch(changeProjectId(e.id));
     setProjectActive(e);
     handleClose();
   }, []);
 
+  const onConfirm = () => {
+    console.log("pid", project_id);
+
+    updateDoc({
+      id,
+      payload: {
+        project_id,
+      },
+    });
+    setIsOpenConfirmModal(false);
+    handleClose();
+  };
+
+  const onCloseConfirm = () => {
+    setIsOpenConfirmModal(false);
+    dispatch(changeProjectId(""));
+    setProjectActive(null);
+  };
+
   const [searchKey, setSearchKey] = useState("");
 
   return (
     <>
-      <Text
+      {isOpenConfirmModal && (
+        <ConfirmModal
+          onConfirm={onConfirm}
+          onClose={onCloseConfirm}
+          open={isOpenConfirmModal}
+          title=" Change document access ?"
+          content="This document will be viewed by all members in project"
+        />
+      )}
+      <Box
         onClick={(e) => setAnchorEl(e.currentTarget)}
         sx={{
           cursor: "pointer",
           color: {
             xs: "common.white",
-            sm: "common.black"
+            sm: "common.black",
           },
           display: "flex",
-          alignItems: "center"
+          alignItems: "center",
+          gap: "6px",
         }}
       >
         {projectActive ? (
           <>
-            <Avatar size={32} src={projectActive.avatar?.link} /> 
-            <Text ml={2} variant="body2" color="grey.400">
+            <Avatar size={24} src={projectActive.avatar?.link} />
+            <Text
+              component="span"
+              color="neutral.800"
+              sx={{
+                fontSize: "16px",
+                fontFamily: inter.style.fontFamily,
+              }}
+            >
               {projectActive.name}
             </Text>
           </>
         ) : (
-          "No Project"
+          <Text
+            component="span"
+            color="neutral.800"
+            sx={{
+              fontSize: "16px",
+              fontFamily: inter.style.fontFamily,
+            }}
+          >
+            No Project
+          </Text>
         )}
-      </Text>
+      </Box>
       <Popover
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -126,9 +194,17 @@ const SelectProjectInDoc = () => {
                   component={ButtonBase}
                   sx={sxConfig.item}
                 >
-                  <Avatar size={32} src={e.avatar?.link} />
+                  <Avatar size={24} src={e.avatar?.link} />
 
-                  <Text ml={2} variant="body2" color="grey.400">
+                  <Text
+                    component="span"
+                    ml={2}
+                    color="neutral.800"
+                    sx={{
+                      fontSize: "16px",
+                      fontFamily: inter.style.fontFamily,
+                    }}
+                  >
                     {e.name}
                   </Text>
                 </MenuItem>

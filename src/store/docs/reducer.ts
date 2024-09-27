@@ -5,6 +5,7 @@ import { DataStatus, DocAccessibility } from "constant/enums";
 import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
 import { ItemDocsProps } from "components/sn-docs/detail/LeftSlide/ItemDocs";
+import { GetDocQueries } from "components/sn-docs/helpers";
 /* eslint-disable no-var */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -110,6 +111,7 @@ export interface IDocs {
   };
   heightHeaderDocDetail: number;
   selectedFilterTimeDoc: string;
+  getDocsQueries: GetDocQueries;
 }
 
 const initialState: IDocs = {
@@ -187,7 +189,11 @@ const initialState: IDocs = {
     isOpenBoard: false,
   },
   heightHeaderDocDetail: 0,
-  selectedFilterTimeDoc: "alltime"
+  selectedFilterTimeDoc: "alltime",
+  getDocsQueries: {
+    page: 1,
+    size: 50,
+  },
 };
 
 const docSlice = createSlice({
@@ -274,12 +280,21 @@ const docSlice = createSlice({
     updateStatusOpenBoardEditor: (state, action) => {
       state.board.isOpenBoard = action.payload;
     },
-    updateHeightHeaderDetail: (state,action) => {
+    updateHeightHeaderDetail: (state, action) => {
       state.heightHeaderDocDetail = action.payload;
     },
-    updateFilterTimeDoc: (state,action) => {
+    updateFilterTimeDoc: (state, action) => {
       state.selectedFilterTimeDoc = action.payload;
-    }
+    },
+    addGetDocsQueries: (
+      state,
+      action: PayloadAction<Partial<GetDocQueries>>,
+    ) => {
+      state.getDocsQueries = {
+        ...state.getDocsQueries,
+        ...action.payload,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getDocs.pending, (state, action) => {
@@ -367,7 +382,8 @@ export const {
   updateVersionMindMap,
   updateStatusOpenBoardEditor,
   updateHeightHeaderDetail,
-  updateFilterTimeDoc
+  updateFilterTimeDoc,
+  addGetDocsQueries,
 } = docSlice.actions;
 
 export default docSlice.reducer;

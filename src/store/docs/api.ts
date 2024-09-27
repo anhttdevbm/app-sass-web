@@ -32,13 +32,7 @@ const documentApi = createApi({
       invalidatesTags: (_result, error) => (error ? [] : TagTypes),
     }),
     updateDoc: build.mutation({
-      query: ({
-                id,
-                payload,
-              }: {
-        id: string;
-        payload: Partial<IDocument>;
-      }) => {
+      query: ({ id, payload }: { id: string; payload: Partial<IDocument> }) => {
         return {
           url: "/docs/" + id,
           data: payload,
@@ -79,6 +73,13 @@ const documentApi = createApi({
       }),
       invalidatesTags: (_result, error) => (error ? [] : TagTypes),
     }),
+    deleteDoc: build.mutation({
+      query: (id: string) => ({
+        url: "/docs/inactive-document/" + id,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, error) => (error ? [] : TagTypes),
+    }),
   }),
 });
 
@@ -89,6 +90,7 @@ const {
   useGetCommentsQuery,
   usePostCommentMutation,
   useCreateDocMutation,
+  useDeleteDocMutation,
 } = documentApi;
 
 export {
@@ -98,5 +100,6 @@ export {
   useGetCommentsQuery,
   usePostCommentMutation,
   useCreateDocMutation,
+  useDeleteDocMutation,
   documentApi as default,
 };

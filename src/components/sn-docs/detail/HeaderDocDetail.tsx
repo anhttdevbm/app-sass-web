@@ -7,7 +7,7 @@ import {
   IconButton,
   Tooltip as MuiTooltip,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text, Tooltip } from "components/shared";
@@ -66,8 +66,8 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
     dispatch(updateHeightHeaderDetail(refHeader.current?.offsetHeight));
   }, []);
 
-  console.log("doc", doc);
-  console.log("rootDocument", rootDocument);
+  // console.log("doc", doc);
+  // console.log("rootDocument", rootDocument);
 
   return (
     <>
@@ -103,7 +103,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 }}
                 onClick={() => router.back()}
               />
-              <SelectProjectInDoc></SelectProjectInDoc>
+              <SelectProjectInDoc currentProjectId={doc.project_id} />
               <Text pr={"2px"} sx={{ color: { xs: "common.white" } }}>
                 /
               </Text>
@@ -187,7 +187,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                     sx={{
                       "&:hover": {
                         backgroundColor: "transparent",
-                        pointerEvents: "none"
+                        pointerEvents: "none",
                       },
                     }}
                   >
@@ -210,7 +210,10 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               <Text pl={"3px"} pr={"6px"}>
                 /
               </Text>
-              <SelectProjectInDoc />
+              <SelectProjectInDoc
+                updateOnSelect={true}
+                currentProjectId={doc.project_id}
+              />
             </Box>
             <Box
               sx={{
@@ -231,9 +234,9 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               }}
             >
               {rootDocument && (
-                <Avatar 
-                  size={32} 
-                  src={rootDocument?.owner?.avatar?.link} 
+                <Avatar
+                  size={32}
+                  src={rootDocument?.owner?.avatar?.link}
                   title={rootDocument?.owner?.fullname}
                 />
               )}

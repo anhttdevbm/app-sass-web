@@ -3,7 +3,6 @@
 "use client";
 import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import {
   Box,
   ListItemIcon,
@@ -16,23 +15,30 @@ import {
 import IconButton from "@mui/material/IconButton";
 import { Search } from "components/Filters";
 import { Text } from "components/shared";
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { DocGroupByEnum } from "constant/enums";
-import { NS_COMMON, NS_COMPANY, NS_DOCS } from "constant/index";
+import { NS_COMMON, NS_DOCS } from "constant/index";
 import useToggle from "hooks/useToggle";
 import NoneIcon from "icons/NoneIcon";
 import SearchIcon from "icons/SearchIcon";
+import { ViewModuleIcon } from "icons/ViewModuleIcon";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
 import { useParams, useSearchParams } from "next/navigation";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
+import {
+  changeTypeViewDoc,
+  addGetDocsQueries,
+  TypeViewListDoc,
+} from "store/docs/reducer";
 import { useDocs } from "store/docs/selectors";
-import { useAppSelector } from "store/hooks";
 import { getPath } from "utils/index";
 import ButtonWithDropdown from "./ButtonWithDropdown";
 import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
+import { GetDocQueries } from "./helpers";
 import ImportForm from "./ImportForm";
+import { useAppDispatch, useAppSelector } from "store/hooks";
 
 function convertStringToArray(inputString) {
   let idArray = inputString.split(",");
@@ -75,7 +81,12 @@ const ChangeViewListDoc = () => {
               : "none",
         }}
       >
-        <ViewModuleIcon />
+        <ViewModuleIcon
+          sx={{
+            width: "20px",
+            height: "20px",
+          }}
+        />
       </IconButton>
       <IconButton
         onClick={handleViewBasic}
@@ -91,7 +102,12 @@ const ChangeViewListDoc = () => {
               : "none",
         }}
       >
-        <MenuIcon />
+        <MenuIcon
+          sx={{
+            width: "24px",
+            height: "22px",
+          }}
+        />
       </IconButton>
     </Stack>
   );
@@ -102,69 +118,25 @@ type ActionProps = {
 };
 
 const Actions = ({ isProjectTabMode }: ActionProps) => {
-  const companyT = useTranslations(NS_COMPANY);
   const commonT = useTranslations(NS_COMMON);
   const docsT = useTranslations(NS_DOCS);
-  const { filters, onCreateDoc, loading } = useDocs();
-  const { perm } = useAppSelector((state) => state.doc);
-  const pathname = usePathname();
-  const { push } = useRouter();
-  const searchParams = useSearchParams();
+  const { onCreateDoc, loading } = useDocs();
   const [isShowImportForm, onShowImportForm, onHideImportForm] = useToggle();
-  const [queries, setQueries] = useState<any>({});
-  const grOptions = useMemo(
-    () => Group_OPTIONS.map((item) => ({ ...item, label: docsT(item.label) })),
-    [companyT],
-  );
+  const { getDocsQueries } = useAppSelector((state) => state.doc);
+  const dispatch = useAppDispatch();
 
-  const onChangeQueries = (name: string, value: any) => {
-    setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
-    onSearch();
+  const onChangeQueries = (queries: Partial<GetDocQueries>) => {
+    let userIds: string | string[] = [];
+    if (queries.user_id) {
+      userIds = queries.user_id.split(",") || [];
+    }
+    dispatch(addGetDocsQueries(queries));
   };
   const { id } = useParams();
 
   const handleCreateDoc = () => {
     onCreateDoc(id as string);
-    // if (id && id !== undefined && isProjectTabMode) {
-    // }
   };
-
-  const onSearch = () => {
-    let newQueries = {
-      ...queries,
-      page: 1,
-      group_by: DocGroupByEnum.PROJECT_ID,
-    };
-
-    if (queries?.user_id?.length > 0) {
-      const newListId = queries?.user_id?.map((person) => `${person.id}`);
-
-      newQueries = {
-        ...queries,
-        user_id: newListId.join(","),
-      };
-    }
-    const path = getPath(pathname, newQueries);
-    console.log("New path", { path });
-    push(path);
-  };
-
-  useEffect(() => {
-    let newFilter = filters;
-
-    if (filters?.user_id) {
-      newFilter = {
-        ...filters,
-        user_id: convertStringToArray(filters?.user_id),
-      };
-    }
-
-    setQueries(newFilter);
-  }, [filters]);
-
-  useEffect(() => {
-    setQueries({ search_key: searchParams.get("search_key") });
-  }, [searchParams.get("search_key")]);
 
   return (
     <>
@@ -187,14 +159,15 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             <Search
               placeholder={docsT("filter.search", { name: "email" })}
               name="search_key"
-              onChange={onChangeQueries}
-              value={queries?.search_key}
-              sx={{ minWidth: 400, backgroundColor: "inherit" }}
-              onKeyDown={(e) => {
-                e.stopPropagation();
-                if (e.key === "Enter") {
-                  onSearch();
-                }
+              // onChange={onChangeQueries}
+              value={getDocsQueries?.search_key}
+              sx={{
+                minWidth: 400,
+                backgroundColor: "inherit",
+                "& .MuiInputBase-root": {
+                  borderColor: "1px solid #efefef",
+                  borderRadius: "100px",
+                },
               }}
               startNode={null}
               endNode={<SearchIcon sx={{ color: "dodgerblue" }} />}
@@ -217,10 +190,11 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
               {(handleClose) => (
                 <Paper>
                   <MenuList>
-                    <MenuItem 
+                    <MenuItem
                       onClick={() => {
                         handleCreateDoc();
-                    }}>
+                      }}
+                    >
                       <ListItemIcon>
                         <DescriptionOutlined />
                       </ListItemIcon>
@@ -236,7 +210,7 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
                         {docsT("addDropdown.aiGenerator")}
                       </ListItemText>
                     </MenuItem> */}
-                    
+
                     <MenuItem
                       onClick={() => {
                         handleClose();
@@ -271,11 +245,17 @@ const Actions = ({ isProjectTabMode }: ActionProps) => {
             overflow="auto"
           >
             <Text
-              sx={{ whiteSpace: "nowrap", color: "grey.700", fontWeight: 600 }}
+              sx={{
+                whiteSpace: "nowrap",
+                color: "neutral.700",
+                fontWeight: 700,
+                fontFamily: inter.style.fontFamily,
+                fontSize: "13px",
+              }}
             >
               View by:
             </Text>
-            <FilterSearchDocs queries={queries} onChange={onChangeQueries} />
+            <FilterSearchDocs onChange={onChangeQueries} />
           </Stack>
         </Box>
       </Stack>

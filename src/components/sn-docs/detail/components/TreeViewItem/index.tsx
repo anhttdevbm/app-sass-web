@@ -28,7 +28,7 @@ export default function TreeViewItem({
   const { redirectDetailDoc } = useDocs();
 
   const handleAddNewChildDoc = () => {
-    handleAddChild(idDocParent, projectId);
+    handleAddChild(childDocItem.id, projectId);
   };
   if (childDocItem)
     return (
@@ -47,7 +47,7 @@ export default function TreeViewItem({
           onClick={() => redirectDetailDoc(childDocItem.id)}
           nodeId={`expand-${childDocItem?.id}`}
           label={renderLabelChildItem({ content: childDocItem.name ?? "" })}
-        ></TreeItem>
+        />
       </TreeItem>
     );
 }

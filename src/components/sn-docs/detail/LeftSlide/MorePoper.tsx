@@ -11,70 +11,76 @@ import {
 } from "@mui/material";
 import ConfirmDialog from "components/ConfirmDialog";
 import { Text } from "components/shared";
-import UpdateFormDoc, { IFormUpdateDoc } from "components/sn-docs/UpdateFormDoc";
+import UpdateFormDoc, {
+  IFormUpdateDoc,
+} from "components/sn-docs/UpdateFormDoc";
 import MoveTaskList from "components/sn-project-detail/Tasks/MoveTaskList";
-import TaskListForm from "components/sn-project-detail/Tasks/TaskListForm";
 import { DataAction } from "constant/enums";
 import { NS_COMMON, NS_DOCS } from "constant/index";
 import DuplicateIcon from "icons/DuplicateIcon";
 import MoreDotIcon from "icons/MoreDotIcon";
-import MoreIcon from "icons/MoreIcon";
-import MoveArrowIcon from "icons/MoveArrowIcon";
-import PencilIcon from "icons/PencilIcon";
 import TrashIcon from "icons/TrashIcon";
 import { useTranslations } from "next-intl";
-import React, { useId, useState, useTransition } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useUpdateDocMutation } from "store/docs/api";
+import { useDeleteDocMutation, useUpdateDocMutation } from "store/docs/api";
 import { changeTitle } from "store/docs/reducer";
-import { useDocs } from "store/docs/selectors";
 enum Action {
   RENAME = 1,
   DUPLICATE,
   MOVE,
   DELETE,
 }
-const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
+const MorePoper = ({
+  id,
+  isParentDoc,
+}: {
+  id?: string;
+  isParentDoc?: boolean;
+}) => {
   const commonT = useTranslations(NS_COMMON);
   const [anchorEl, setAnchorEl] = useState<any>(null);
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.stopPropagation();
     setAnchorEl(null);
   };
   const docsT = useTranslations(NS_DOCS);
 
   const [type, setType] = useState<Action | undefined>();
   const [updateDoc] = useUpdateDocMutation();
-  const dispatch = useDispatch()
-  
+  const [deleteDoc] = useDeleteDocMutation();
+  const dispatch = useDispatch();
+
   const onSetTType = (action?: Action) => {
-    return () => {
-      setAnchorEl(false);
-      setType(action);
-    };
+    setAnchorEl(false);
+    setType(action);
   };
 
-  const renameDoc = async(values: IFormUpdateDoc) => {
+  const renameDoc = async (values: IFormUpdateDoc) => {
     if (values) {
       updateDoc({ id: id as string, payload: { name: values.name } });
 
-      if(isParentDoc && values.name) {
-        dispatch(changeTitle(values.name))
+      if (isParentDoc && values.name) {
+        dispatch(changeTitle(values.name));
       }
     }
-  }
+  };
 
-  const deleteDoc = async () => {
-    console.log('delete document')
-  }
+  const onDeleteDoc = async () => {
+    id && deleteDoc(id);
+  };
 
   return (
     <>
       <Box
-        onClick={(e) => setAnchorEl(e.currentTarget)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setAnchorEl(e.currentTarget);
+        }}
         sx={{
           cursor: "pointer",
           display: "flex",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <MoreDotIcon
@@ -82,7 +88,7 @@ const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
             color: "grey.300",
           }}
           fontSize={"medium"}
-        ></MoreDotIcon>
+        />
       </Box>
       <Popover
         anchorEl={anchorEl}
@@ -100,7 +106,6 @@ const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
           [`& .${popoverClasses.paper}`]: {
             backgroundImage: "none",
             minWidth: 150,
-            maxWidth: 150,
           },
         }}
         slotProps={{
@@ -123,16 +128,6 @@ const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
           }}
         >
           <MenuList component={Box} sx={{ py: 0 }}>
-            <MenuItem
-              onClick={onSetTType(Action.RENAME)}
-              component={ButtonBase}
-              sx={sxConfig.item}
-            >
-              <PencilIcon sx={{ color: "grey.400" }} fontSize="medium" />
-              <Text ml={2} variant="body2" color="grey.400">
-                {commonT("rename")}
-              </Text>
-            </MenuItem>
             <MenuItem component={ButtonBase} sx={sxConfig.item}>
               <DuplicateIcon sx={{ color: "grey.400" }} fontSize="medium" />
               <Text ml={2} variant="body2" color="grey.400">
@@ -140,17 +135,20 @@ const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
               </Text>
             </MenuItem>
             <MenuItem
-              onClick={onSetTType(Action.MOVE)}
+              // onClick={onSetTType(Action.DELETE)}
               component={ButtonBase}
               sx={sxConfig.item}
             >
-              <MoveArrowIcon sx={{ color: "grey.400" }} fontSize="medium" />
+              <DuplicateIcon sx={{ color: "grey.400" }} fontSize="medium" />
               <Text ml={2} variant="body2" color="grey.400">
-                {commonT("move")}
+                {docsT("extendBtn.convertToDoc")}
               </Text>
             </MenuItem>
             <MenuItem
-              onClick={onSetTType(Action.DELETE)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSetTType(Action.DELETE);
+              }}
               component={ButtonBase}
               sx={sxConfig.item}
             >
@@ -166,12 +164,11 @@ const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
       {type === Action.RENAME && (
         <UpdateFormDoc
           open
-          onClose={onSetTType()}
+          onClose={() => onSetTType()}
           type={DataAction.UPDATE}
           initialValues={{ name: "" }}
           onSubmit={renameDoc}
         />
-       
       )}
       {type === Action.MOVE && (
         <MoveTaskList
@@ -180,16 +177,16 @@ const MorePoper = ({id, isParentDoc}:{id?: string, isParentDoc?: boolean}) => {
             ["23423"]: ["32423"],
           }}
           open
-          onClose={onSetTType()}
+          onClose={() => onSetTType()}
         />
       )}
       {type === Action.DELETE && (
         <ConfirmDialog
           open
-          onClose={onSetTType()}
-          title={docsT("expandBtn.delete")}
+          onClose={() => onSetTType()}
+          title={docsT("extendBtn.delete")}
           content={docsT("deleteConfirmDoc")}
-          onSubmit={deleteDoc}
+          onSubmit={onDeleteDoc}
         />
       )}
     </>
