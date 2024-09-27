@@ -55,7 +55,7 @@ export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
               handleClickTreeLabel={() => {
                 handleAddNewChildDoc({
                   idDoc: doc.id,
-                  projectId: doc.project_id,
+                  projectId: doc.project_id?.id,
                 });
               }}
             />
@@ -66,7 +66,7 @@ export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
               key={item.id}
               childDocItem={item}
               idDocParent={doc?.id ?? ""}
-              projectId={doc?.project_id ?? ""}
+              projectId={doc?.project_id?.id ?? ""}
             />
           ))}
         </TreeItem>

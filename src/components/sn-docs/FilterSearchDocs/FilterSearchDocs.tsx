@@ -1,67 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  SxProps
-} from "@mui/material";
-import { NS_COMMON, NS_DOCS } from "constant/index";
-import { useTranslations } from "next-intl";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { memo, useState } from "react";
+import { memo } from "react";
 import FilterMember from "./FilterMember";
 import FilterMemberEdit from "./FilterMemberEdit";
+import FilterProject from "./FilterProject";
+import FilterSharingType from "./FilterSharingType";
+import { GetDocQueries } from "../helpers";
+import { useAuth } from "store/app/selectors";
+import { Permission } from "constant/enums";
 
 export interface FilterSearchDocsProps {
-  queries: Params;
-  onChange: (name: string, value: any) => void;
+  onChange: (queries: Partial<GetDocQueries>) => void;
 }
 
-const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
-  const docsT = useTranslations(NS_DOCS);
-  const [anchorEl, setAnchorEl] = useState<any>(null);
-  const commonT = useTranslations(NS_COMMON);
-
-  const isHasValue =
-    queries?.user_id ||
-    queries?.project ||
-    queries?.lastEdit ||
-    queries?.project_status;
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+const FilterSearchDocs = ({ onChange }: FilterSearchDocsProps) => {
+  const { user } = useAuth();
 
   return (
     <>
-      <FilterMember queries={queries} onChange={onChange}></FilterMember>
-      <FilterMemberEdit
-        queries={queries}
-        onChange={onChange}
-      ></FilterMemberEdit>
-      {/* <FilterName queries={queries} onChange={onChange}></FilterName> */}
-      {/* <FilterMemberProject
-        queries={queries}
-        onChange={onChange}
-      ></FilterMemberProject> */}
-      {/* <FilterProjectStatus
-        queries={queries}
-        onChange={onChange}
-      ></FilterProjectStatus> */}
+      <FilterProject onChange={onChange} />
+      {!user?.roles.includes(Permission.ST) && (
+        <FilterMember onChange={onChange} />
+      )}
+      <FilterMemberEdit onChange={onChange} />
+      <FilterSharingType />
     </>
   );
 };
 
 export default memo(FilterSearchDocs);
-
-export const sxConfig: Record<string, SxProps> = {
-  item: {
-    width: "100%",
-    py: 1,
-    pr: 1,
-    pl: 2,
-    gap: 1,
-    margin: "8px 0",
-    marginLeft: "auto",
-    border: "solid 1px lightgrey",
-    borderRadius: "2rem",
-    bgcolor: "white",
-  },
-};
