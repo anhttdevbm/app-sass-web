@@ -1,14 +1,18 @@
-import { MoreHoriz } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import ContentPasteGoIcon from "@mui/icons-material/ContentPasteGo";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { useTranslations } from "next-intl";
-import { NS_DOCS } from "constant/index";
-import useActionMoreListDoc from "./hooks/useActionMoreListDoc";
-import MoveArrowIcon from "icons/MoveArrowIcon";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { IconButton, Menu, MenuItem, SxProps } from "@mui/material";
+import { NS_DOCS } from "constant/index";
+import MoveArrowIcon from "icons/MoveArrowIcon";
+import ThreeDotsIcon from "icons/ThreeDotsIcon";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { useDocs } from "store/docs/selectors";
 import { IDocItem } from "../KanbanViewDocList";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ConfirmChangeModal from "./ConfirmChangeModal";
+import useActionMoreListDoc from "./hooks/useActionMoreListDoc";
+import { useDeleteDocMutation } from "store/docs/api";
+import ConfirmModal from "../detail/LeftSlide/modal/ConfirmModal";
+import { useSnackbar } from "store/app/selectors";
 
 interface IStyleActionMoreListDoc {
   colorIcon: string;
@@ -18,12 +22,16 @@ export default function ActionMoreListDoc({
   style,
   docItem,
   isHor,
+  iconStyles,
 }: {
   style?: IStyleActionMoreListDoc;
-  docItem?: IDocItem;
+  docItem: IDocItem;
   isHor?: boolean;
+  iconStyles?: SxProps;
 }) {
   const docsT = useTranslations(NS_DOCS);
+
+  const { onAddSnackbar } = useSnackbar();
   const {
     anchorEl,
     open,
@@ -34,38 +42,95 @@ export default function ActionMoreListDoc({
     handleDuplicateDoc,
     handleDeleteDoc,
   } = useActionMoreListDoc();
+  const { onCreateDoc, handleGetDocDetail } = useDocs();
+  // This is for confirm Move Project
+  const [isOpenConfirmMove, setIsOpenConfirmMove] = useState(false);
+  // This is for simple confirm
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+  const [deleteDoc] = useDeleteDocMutation();
+
+  const onMoveDoc = () => {
+    setIsOpenConfirmMove(true);
+  };
+
+  const onCloseConfirmMove = () => {
+    setIsOpenConfirmMove(false);
+  };
+
+  const onOpenConfirm = () => {
+    setIsOpenConfirm(true);
+  };
+
+  const onCloseConfirm = () => {
+    setIsOpenConfirm(false);
+  };
+
+  const onDeleteDoc = () => {
+    deleteDoc(docItem.id)
+      .unwrap()
+      .then(() => {
+        onAddSnackbar("Xóa document thành công", "success");
+        onCloseConfirm();
+      })
+      .catch((e) => {
+        onAddSnackbar(e.data.errors[0].message, "error");
+        onCloseConfirm();
+      });
+  };
+
+  const onDupilcateDoc = async () => {
+    const docDetail = await handleGetDocDetail(docItem.id);
+    onCreateDoc(
+      docDetail?.project_id,
+      docDetail?.content,
+      docDetail?.name,
+      docDetail?.description,
+    );
+  };
   return (
     <>
+      {isOpenConfirm && (
+        <ConfirmModal
+          content="This document will be deleted, and you won't be able to view it."
+          onClose={onCloseConfirm}
+          onConfirm={onDeleteDoc}
+          open={isOpenConfirm}
+          title="Are you sure to delete?"
+          buttonTitle="Confirm"
+        />
+      )}
+      {docItem && isOpenConfirmMove && (
+        <ConfirmChangeModal
+          open={isOpenConfirmMove}
+          onClose={onCloseConfirmMove}
+          docItem={docItem}
+        />
+      )}
       <IconButton
         aria-label="settings"
         sx={{
           zIndex: 1,
           padding: 0,
           marginRight: 1,
+          width: "100%",
+          height: "100%",
           "&:hover": { bgcolor: "transparent" },
+          justifyContent: "end",
         }}
         onClick={(event) => {
           event.stopPropagation();
           handleClick(event);
         }}
       >
-        {isHor ? (
-          <MoreVertIcon
-            sx={{
-              color: style?.colorIcon ?? "common.white",
-              height: 18,
-              width: 18,
-            }}
-          />
-        ) : (
-          <MoreHoriz
-            sx={{
-              color: style?.colorIcon ?? "common.white",
-              height: 18,
-              width: 18,
-            }}
-          />
-        )}
+        <ThreeDotsIcon
+          sx={{
+            color: style?.colorIcon ?? "common.white",
+            height: 18,
+            width: 18,
+            rotate: "90deg",
+            ...iconStyles,
+          }}
+        />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -73,11 +138,6 @@ export default function ActionMoreListDoc({
         onClose={handleClose}
         MenuListProps={{
           "aria-labelledby": "basic-button",
-        }}
-        PaperProps={{
-          sx: {
-            width: 193,
-          },
         }}
         anchorOrigin={{
           vertical: "bottom",
@@ -97,16 +157,18 @@ export default function ActionMoreListDoc({
           />{" "}
           {docsT("extendBtn.rename")}
         </MenuItem> */}
+        {docItem?.project_id && (
+          <MenuItem
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+            onClick={onMoveDoc}
+          >
+            <MoveArrowIcon sx={{ height: 15, width: 15, color: "grey.400" }} />{" "}
+            {docsT("extendBtn.moveProject") || "Move Project"}
+          </MenuItem>
+        )}
         <MenuItem
           sx={{ display: "flex", alignItems: "center", gap: 1 }}
-          onClick={handleMoveDoc}
-        >
-          <MoveArrowIcon sx={{ height: 15, width: 15, color: "grey.400" }} />{" "}
-          {docsT("extendBtn.move")}
-        </MenuItem>
-        <MenuItem
-          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-          onClick={handleDuplicateDoc}
+          onClick={onDupilcateDoc}
         >
           <ContentCopyIcon sx={{ height: 15, width: 15, color: "grey.400" }} />{" "}
           {docsT("extendBtn.duplicate")}
@@ -118,7 +180,7 @@ export default function ActionMoreListDoc({
             gap: 1,
             color: "#DE360E",
           }}
-          onClick={handleDeleteDoc}
+          onClick={onOpenConfirm}
         >
           <DeleteOutlineIcon sx={{ height: 15, width: 15 }} />{" "}
           {docsT("extendBtn.delete")}

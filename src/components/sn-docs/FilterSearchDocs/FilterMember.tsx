@@ -2,31 +2,24 @@
 import {
   Box,
   ButtonBase,
-  FormControl,
-  InputLabel,
   MenuItem,
-  MenuList,
   Popover,
-  Select,
   Stack,
+  Typography,
   popoverClasses,
 } from "@mui/material";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
-import { Text } from "components/shared";
-import { useTranslations } from "next-intl";
+import { Search } from "components/Filters";
+import { Checkbox, Text } from "components/shared";
 import { NS_DOCS } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
-import { Search } from "components/Filters";
-import MemberItem from "components/sn-projects/components/MemberItem";
-import { useEmployeeOptions } from "store/company/selectors";
-import { usePositionOptions } from "store/global/selectors";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { memo, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getMembers } from "store/company/actions";
 import { MemberListSelect } from "./components";
-import CircularProgress from "@mui/material/CircularProgress";
-import useQueryParams from "hooks/useQueryParams";
+import { FilterSearchDocsProps } from "./FilterSearchDocs";
+import { filterTextStyles, sxConfig } from "./styles";
+import Avatar from "components/Avatar";
 
 export interface IMember {
   id: string;
@@ -55,51 +48,26 @@ export interface IMember {
   last_online_at: string;
 }
 
-export type ISelectMember = Pick<IMember, "id" | "fullname">;
+export type ISelectMember = {
+  id: string;
+  fullname: string;
+  avatar: string;
+};
 
-const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
-  const { query } = useQueryParams();
+const FilterMember = ({ onChange }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [members, setMembers] = useState<IMember[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const {
-    items,
-    filters,
-    onGetOptions: onGetEmployeeOptions,
-  } = useEmployeeOptions();
-
-  // const { onGetOptions } = usePositionOptions();
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const [selectedMember, setSelectedMember] = useState<ISelectMember>();
+  const [selectedMember, setSelectedMember] = useState<ISelectMember[]>([]);
   const [searchQueries, setSearchQueries] = useState("");
-  // const [members, setMembers] = useState<any[]>([]);
 
-  //const [name, setName] = useState<any>([]);
-  // const ignoreItems = useMemo(() => {
-  //   return items;
-  // }, [items]);
-
-  // const onChangeMembers = (id: string, fullname: string) => {
-  // const indexSelected = members.findIndex((item) => item.id === id);
-
-  // const newData = [{ id, fullname }];
-
-  // setSelectedMember({ id, fullname });
-
-  // if (indexSelected === -1) {
-  //   newData.push({ id, fullname });
-  // } else {
-  //   newData.splice(indexSelected, 1);
-  // }
-  // setMembers(newData);
-  //   onChange("user_id", newData);
-  // };
   const onChangeSearch = async (name: string, newValue?: string | number) => {
     const newPageIndex = 0;
     setMembers([]);
@@ -109,47 +77,7 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
     const queryString = transformQueries(queries);
     setSearchQueries(queryString);
     await fetchMember({ page: newPageIndex, query: queryString });
-    // onGetEmployeeOptions({ pageIndex: 1, pageSize: 10, [name]: newValue });
   };
-
-  // const [selectedOptions, setSelectedOptions] = useState<any>(null);
-
-  // const searchParams = useSearchParams();
-
-  // useEffect(() => {
-  //   const selectedMemberIds =
-  //     searchParams
-  //       .get("user_id")
-  //       ?.split(",")
-  //       .map((item) => {
-  //         return {
-  //           id: item,
-  //           name: undefined,
-  //         };
-  //       }) || [];
-  //   setMembers(selectedMemberIds);
-  // }, [ignoreItems, searchParams.get("user_id")]);
-
-  // const fetchUser = () => {
-  //   const params = {
-  //     pageIndex: 1,
-  //     pageSize: 10,
-  //   };
-  //   onGetEmployeeOptions({ ...params });
-  // };
-
-  // useEffect(() => {
-  //   onGetOptions({ pageIndex: 1, pageSize: 10 });
-  // }, [onGetOptions]);
-
-  // useEffect(() => {
-  //   fetchUser();
-  // }, []);
-
-  // const onChangeSearch = (name: string, newValue?: string | number) => {
-  //   console.log('name', name)
-  //   console.log('newValue', newValue)
-  // }
 
   const transformQueries = (queries: Record<string, any>): string => {
     const conditions: string[] = [];
@@ -175,9 +103,27 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
     return `and(${conditions.join(",")})`;
   };
 
-  const onChangeMembers = (id: string, fullname: string) => {
-    setSelectedMember({ id: id, fullname: fullname });
-    onChange("user_id", [{ id: id, fullname: fullname }]);
+  const onChangeMembers = (id: string, fullname: string, avatar: string) => {
+    setSelectedMember((pre) => {
+      const idIndex = pre.findIndex((item) => item.id === id);
+      const newSelected = [...pre];
+      if (idIndex !== -1) {
+        newSelected.splice(idIndex, 1);
+      } else newSelected.push({ id, fullname, avatar });
+      const newIds = newSelected.map((item) => item.id).join(",");
+
+      onChange({
+        user_id: newIds,
+      });
+      return newSelected;
+    });
+  };
+
+  const clearSelectedMembers = () => {
+    setSelectedMember([]);
+    onChange({
+      user_id: "",
+    });
   };
 
   const fetchMember = async (queries?: any) => {
@@ -204,12 +150,6 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (query.user_id) {
-      setSelectedMember({ id: query.user_id, fullname: "" });
-    }
-  }, [query.user_id]);
-
   return (
     <>
       <MenuItem
@@ -217,13 +157,60 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
         component={ButtonBase}
         sx={sxConfig.item}
       >
-        <Text variant="body2" color="grey.400" fontWeight={600}>
+        <Text
+          sx={{
+            ...filterTextStyles,
+            opacity: 0.5,
+          }}
+        >
           {docsT("filter.filter.creator")}:
         </Text>
-        <Text variant="body2" fontWeight={600} color="grey.700">
-          {docsT("filter.all")}
-        </Text>
-        <ChevronIcon fontSize="small"></ChevronIcon>
+        {selectedMember.length === 1 ? (
+          <Box
+            sx={{
+              pr: "40px",
+              display: "flex",
+              alignItems: "center",
+              gap: "1px",
+            }}
+          >
+            <Avatar
+              size={18}
+              src={selectedMember[0].avatar}
+              alt={selectedMember[0].fullname}
+            />
+            <Text sx={filterTextStyles}>{selectedMember[0].fullname}</Text>
+          </Box>
+        ) : (
+          <Text
+            sx={{
+              ...filterTextStyles,
+              pr: "40px",
+            }}
+          >
+            {selectedMember.length === 0 ? docsT("filter.all") : "..."}
+          </Text>
+        )}
+        <Box
+          sx={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: "18px",
+            height: "18px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderWidth: "0.2px",
+            borderStyle: "solid",
+            borderColor: "#5C5C5C",
+            borderRadius: "100%",
+            pointerEvents: "none",
+          }}
+        >
+          <ChevronIcon />
+        </Box>
       </MenuItem>
       <Popover
         anchorEl={anchorEl}
@@ -231,11 +218,11 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
         onClose={handleClose}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "right",
+          horizontal: "left",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "right",
+          horizontal: "left",
         }}
         sx={{
           [`& .${popoverClasses.paper}`]: {
@@ -285,25 +272,31 @@ const FilterMember = ({ onChange, queries }: FilterSearchDocsProps) => {
             loader={undefined}
             scrollableTarget="scrollableStack"
           >
-            {members.map((item) => {
-              const isChecked = selectedMember?.id === item.id;
-              // const isChecked = members.some((member) => item.id === member.id);
-              return (
-                // <MenuItem key={item.id}>
-                //   <MemberItem
-                //     {...item}
-                //     onChange={onChangeMembers}
-                //     checked={isChecked}
-                //   />
-                // </MenuItem>
-                <MemberListSelect
-                  onChangeMember={onChangeMembers}
-                  key={item.id}
-                  member={item}
-                  checked={isChecked}
-                />
-              );
-            })}
+            <MenuItem key={"all"} sx={{ height: "100%", width: "100%" }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{
+                  cursor: "pointer",
+                }}
+                onClick={clearSelectedMembers}
+              >
+                <Checkbox checked={selectedMember.length === 0} />
+                <Typography>All</Typography>
+              </Stack>
+            </MenuItem>
+            {members.map((item) => (
+              <MemberListSelect
+                onChangeMember={onChangeMembers}
+                key={item.id}
+                member={item}
+                checked={
+                  selectedMember.findIndex((i) => i.id === item.id) !== -1
+                }
+              />
+            ))}
           </InfiniteScroll>
         </Stack>
       </Popover>

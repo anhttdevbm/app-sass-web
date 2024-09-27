@@ -131,12 +131,11 @@ export const getEmployeeOptions = createAsyncThunk(
   },
 );
 
-export const getMembers = async (queries: { page: number; query: string}) => {
+export const getMembers = async (queries: { page: number; query: string }) => {
   // queries = serverQueries({ ...queries, sort: "created_time=-1" }, [
   //   "email",
   //   "fullname",
   // ]) as GetEmployeeListQueries;
-  console.log('queries', queries)
   try {
     const response = await client.get(Endpoint.COMPANY_MEMBERS, queries, {
       baseURL: AUTH_API_URL,
