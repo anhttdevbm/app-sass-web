@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Permission } from "constant/enums";
 import { memo } from "react";
+import { useAuth } from "store/app/selectors";
+import { GetDocQueries } from "../helpers";
 import FilterMember from "./FilterMember";
 import FilterMemberEdit from "./FilterMemberEdit";
 import FilterProject from "./FilterProject";
 import FilterSharingType from "./FilterSharingType";
-import { GetDocQueries } from "../helpers";
-import { useAuth } from "store/app/selectors";
-import { Permission } from "constant/enums";
 
 export interface FilterSearchDocsProps {
   onChange: (queries: Partial<GetDocQueries>) => void;
