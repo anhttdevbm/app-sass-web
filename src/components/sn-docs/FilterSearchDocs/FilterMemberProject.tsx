@@ -1,28 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
   ButtonBase,
   MenuItem,
-  MenuList,
   Popover,
   Stack,
-  popoverClasses,
+  popoverClasses
 } from "@mui/material";
-import React, { memo, useEffect, useState } from "react";
-import { FilterSearchDocsProps } from "./FilterSearchDocs";
-import { Select, Text } from "components/shared";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_DOCS, NS_TIME_TRACKING } from "constant/index";
-import { useFormik } from "formik";
-import { useEmployeeOptions } from "store/company/selectors";
-import TextFieldSelect, {
+import { Text } from "components/shared";
+import {
   IOptionStructure,
 } from "components/shared/TextFieldSelect";
-import _ from "lodash";
-import { useProject, useProjects } from "store/project/selectors";
+import { NS_COMMON, NS_DOCS, NS_TIME_TRACKING } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
-import { useRouter } from "next/router";
+import _ from "lodash";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
+import { memo, useEffect, useState } from "react";
+import { useProject, useProjects } from "store/project/selectors";
+import { FilterSearchDocsProps } from "./FilterSearchDocs";
 
 const FilterMemberProject = ({ onChange }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);

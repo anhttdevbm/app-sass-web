@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client, Endpoint } from "api";
 import { HttpStatusCode } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN } from "constant/index";
+import { AN_ERROR_TRY_AGAIN, AUTH_API_URL } from "constant/index";
 import { BaseQueries_Feedback } from "constant/types";
 import { PAY_API_URL } from "constant/index";
 
@@ -47,7 +47,9 @@ export const getListAccounts = createAsyncThunk(
   "packageManagement/getListAccounts",
   async ({ ...queries }: GetListAccounts) => {
     try {
-      const response = await client.get(Endpoint.LIST_ACCOUNTS, queries);
+      const response = await client.get(Endpoint.LIST_ACCOUNTS, queries, {
+        baseURL: AUTH_API_URL,
+      });
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
       }
@@ -79,7 +81,9 @@ export const changeAutoRenewal = createAsyncThunk(
   "packageManagement/changeAutoRenewal",
   async (params: ChangeAutoRenewalParams) => {
     try {
-      const response = await client.post(Endpoint.CHANGE_AUTO_RENEWAL, params);
+      const response = await client.post(Endpoint.CHANGE_AUTO_RENEWAL, params, {
+        baseURL: AUTH_API_URL,
+      });
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
       }
@@ -97,6 +101,9 @@ export const getPriceUpgradePackage = createAsyncThunk(
       const response = await client.get(
         Endpoint.GET_PRICE_UPGRADE_PACKAGE,
         queries,
+        {
+          baseURL: AUTH_API_URL,
+        },
       );
       if (response?.status === HttpStatusCode.OK) {
         return response.data;
@@ -114,6 +121,9 @@ export const changePackageAccount = createAsyncThunk(
       const response = await client.post(
         Endpoint.CHANGE_PACKAGE_ACCOUNT,
         params,
+        {
+          baseURL: AUTH_API_URL,
+        },
       );
       if (response?.status === HttpStatusCode.OK) {
         return response.data;

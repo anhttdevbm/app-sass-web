@@ -1,6 +1,6 @@
-import { ForwardedRef, forwardRef, memo } from "react";
 import { TableCell, TableCellProps } from "@mui/material";
 import { Text, TextProps } from "components/shared";
+import { ForwardedRef, forwardRef, memo } from "react";
 
 export type HeaderCellProps = {
   children: string | React.ReactNode;

@@ -2,20 +2,18 @@
 
 import { Box, TableRow, useMediaQuery } from "@mui/material";
 import { CellProps } from "components/NewTable";
+import { Text } from "components/shared";
 import { BodyCell, TableLayout } from "components/Table";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
-import { useTranslations } from "next-intl";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
-import SearchPackageManagement from "./components/Search";
-import TransactionDetail from "./modals/TransactionDetail";
-import { Text } from "components/shared";
-import { useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "store/configureStore";
-import { useSelector } from "react-redux";
-import { getAllTransaction } from "store/payment/actions";
-import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "store/configureStore";
+import { getAllTransaction } from "store/payment/actions";
 import { TransactionType } from "store/payment/reducer";
+import SearchPackageManagement from "./components/Search";
 
 const ListTransactionHistory = () => {
   const router = useRouter();
@@ -46,7 +44,10 @@ const ListTransactionHistory = () => {
     const fetchAccounts = async () => {
       const result = await dispatch(getAllTransaction({ page, size }));
 
-      setTransactionList((prev) => [...prev, ...result.payload.data]);
+      //setTransactionList((prev) => [...prev, ...result.payload.data]);
+      // Ensure result.payload and result.payload.data are defined
+      const data = result.payload && Array.isArray(result.payload.data) ? result.payload.data : [];
+      setTransactionList((prev) => [...prev, ...data]);
     };
 
     fetchAccounts();
