@@ -10,6 +10,7 @@ import { Avatar, Box } from "@mui/material";
 import { useState } from "react";
 import BasicViewExpandItem from "../BasicViewExpandItem";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -52,7 +53,6 @@ export default function BasicViewDocItem({
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
-
   return (
     <Box sx={{ marginY: 0.2 }}>
       <Accordion
@@ -65,6 +65,11 @@ export default function BasicViewDocItem({
             bgcolor: data.groupInfo ? "#14B9E5" : "#D9F0FD",
             color: data.groupInfo ? "common.white" : "grey.400",
             fontWeight: 600,
+            justifyContent: "flex-start",
+            gap: "8px",
+            "& .MuiAccordionSummary-content": {
+              flexGrow: 0,
+            },
           }}
           aria-controls={`panel${data.group_by ?? keyExpanded}-content`}
           id={`panel${data.group_by ?? keyExpanded}-header`}
@@ -72,7 +77,7 @@ export default function BasicViewDocItem({
           <Box
             display="flex"
             alignItems="center"
-            justifyContent="space-between"
+            // justifyContent="space-between"
             sx={{ width: "100%" }}
           >
             {data.groupInfo ? (
@@ -82,13 +87,27 @@ export default function BasicViewDocItem({
                   alt={data?.groupInfo.avatar.name}
                   src={data?.groupInfo.avatar.link}
                 />
-                <Typography>
-                  {data.groupInfo.name}
-                   {/* #{data.groupInfo.number ?? 0} */}
+                <Typography
+                  sx={{
+                    color: "#fff",
+                    fontFamily: inter.style.fontFamily,
+                    fontWeight: 600,
+                  }}
+                >
+                  {`${data.groupInfo.name} #${data.groupInfo.number}`}
+                  {/* #{data.groupInfo.number ?? 0} */}
                 </Typography>
               </Box>
             ) : (
-              <Typography>No Project</Typography>
+              <Typography
+                sx={{
+                  color: "neutral.400",
+                  fontFamily: inter.style.fontFamily,
+                  fontWeight: 600,
+                }}
+              >
+                No Project
+              </Typography>
             )}
           </Box>
         </AccordionSummary>

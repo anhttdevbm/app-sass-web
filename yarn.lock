@@ -1185,6 +1185,13 @@
     react-popper "^2.3.0"
     to-style "^1.3.3"
 
+"@draft-js-plugins/image@^4.1.4":
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@draft-js-plugins/image/-/image-4.1.4.tgz#26b55d573252ef64e883491ff274507e0448cb8c"
+  integrity sha512-gLEYjhG2n9v5Y+e9sH9OD0/XVbHOaBwSBo3loXScmwSOTFP+9GBwp6HxCXvnBJj15SOQqGVvEkf6W3Jlzu/8ng==
+  dependencies:
+    clsx "^1.2.1"
+
 "@draft-js-plugins/utils@^4.2.1":
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/@draft-js-plugins/utils/-/utils-4.2.1.tgz#b3318762b6ba5924581e9432e8990a30e0edb85a"

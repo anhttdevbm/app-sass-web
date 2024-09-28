@@ -1,6 +1,7 @@
 import { AddCircle, ExpandMore } from "@mui/icons-material";
 import { Box, Popover } from "@mui/material";
 import { Button, Text } from "components/shared";
+import PlusIcon from "icons/PlusIcon";
 import { MouseEventHandler, useState } from "react";
 
 const ButtonWithDropdown = ({
@@ -22,22 +23,42 @@ const ButtonWithDropdown = ({
     <Box
       sx={{
         display: "flex",
-        background:
-          "linear-gradient(90deg, rgba(41,242,155,1) 0%, rgba(1,160,250,1) 100%)",
+        background: "linear-gradient(90deg, #2af598, #009efd)",
+        "&:hover": {
+          background: "linear-gradient(90deg, #2af598, #009efd)",
+        },
         borderRadius: "2rem",
+        overflow: "hidden",
+        minWidth: "146px",
+        height: "48px",
+        marginLeft: "14px",
       }}
     >
       <Button
-        startIcon={<AddCircle />}
-        variant="primary"
-        size="small"
+        startIcon={
+          <PlusIcon
+            sx={{
+              width: "32px",
+              height: "32px",
+            }}
+          />
+        }
+        variant="contained"
         sx={{
-          borderRadius: "2rem 0 0 2rem",
+          color: "common.white",
           bgcolor: "transparent",
+          fontSize: "16px",
+          fontWeight: "Bold",
+          cursor: "pointer",
+          fontFamily: "unset",
+          pl: "20px !important",
+          "&:hover": {
+            background: "transparent",
+          },
         }}
         {...props}
       >
-        <Text sx={{ color: "white" }}>{props.text}</Text>
+        {props.text}
       </Button>
       <Button
         variant="primary"
@@ -47,6 +68,9 @@ const ButtonWithDropdown = ({
           borderRadius: "0 2rem 2rem 0",
           borderLeft: "solid 1px white",
           bgcolor: "transparent",
+          "&:hover": {
+            background: "transparent",
+          },
         }}
         size="small"
         onClick={(e) => setAnchorEl(e.currentTarget)}

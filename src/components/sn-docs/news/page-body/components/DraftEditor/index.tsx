@@ -1,5 +1,6 @@
 import EditorPlugins from "@draft-js-plugins/editor";
 import createEmojiPlugin from "@draft-js-plugins/emoji";
+import createImagePlugin from "@draft-js-plugins/image";
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import { Box, Typography } from "@mui/material";
 import {
@@ -16,6 +17,7 @@ import { useDocs } from "store/docs/selectors";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
 import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
+import AddImageButton from "../AddImageButton";
 import AddSessionTool from "../AddSessionTool/components";
 import BoardEditor from "../BoardEditor";
 import ReactFlowMindMap from "../ReactFlowMindMap";
@@ -25,6 +27,7 @@ import "./CheckableListItem.css";
 import { toggleChecked } from "./CheckableListItemUltils";
 import "./DraftEditor.css";
 import "./EmojiEditor.css";
+import Image from "next/image";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();
@@ -35,10 +38,20 @@ export default function DraftEditor() {
   const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
   const [updateDoc] = useUpdateDocMutation();
   const page = useAppSelector((state) => state.doc);
-  const { perm, content, id, title: name, description, project_id } = page;
+  const {
+    perm,
+    content,
+    id,
+    title: name,
+    description,
+    project_id,
+    docInfo,
+  } = page;
   const [mounted, setMounted] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState(name);
-
+  const [headerImage, setHeaderImage] = useState<string | null>(
+    docInfo.avatar?.link || null,
+  );
   const [debounceChange] = useDebounce(
     ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
       updateDoc({
@@ -62,6 +75,7 @@ export default function DraftEditor() {
         </Box>
       ),
     });
+
     return {
       plugins: [emojiPlugin],
       EmojiSelect: emojiPlugin.EmojiSelect,
@@ -90,21 +104,23 @@ export default function DraftEditor() {
       const firstBlockText = firstBlock.getText();
 
       // lấy properties các block khác trừ first block
-      const remainingBlocks = blocksArray.slice(1).map((block) => ({
-        key: block.getKey(),
-        text: block.getText(),
-        type: block.getType(),
-        depth: block.getDepth(),
-        inlineStyleRanges: block.getCharacterList().map((char, index) => ({
-          offset: index,
-          style: char?.getStyle(),
-        })),
-        entityRanges: block.findEntityRanges(
-          (character) => character.getEntity() !== null,
-          (start, end) => ({ start, end, entity: block.getEntityAt(start) }),
-        ),
-        data: block.getData(),
-      }));
+      const remainingBlocks = blocksArray.slice(1).map((block) => {
+        return {
+          key: block.getKey(),
+          text: block.getText(),
+          type: block.getType(),
+          depth: block.getDepth(),
+          inlineStyleRanges: block.getCharacterList().map((char, index) => ({
+            offset: index,
+            style: char?.getStyle(),
+          })),
+          entityRanges: block.findEntityRanges(
+            (character) => character.getEntity() !== null,
+            (start, end) => ({ start, end, entity: block.getEntityAt(start) }),
+          ),
+          data: block.getData(),
+        };
+      });
 
       debounceChange({
         nameDoc: firstBlockText,
@@ -230,7 +246,6 @@ export default function DraftEditor() {
     // dispatch(getDocDetails(currentId));
   }, [name, currentId]);
 
-
   // set giá trị cho doc khi mounted
   useEffect(() => {
     const contentArr = content ? JSON.parse(content) : [];
@@ -282,28 +297,33 @@ export default function DraftEditor() {
       }}
       // onClick={focusEditor}
     >
-     <Box
-        paddingX="1rem"
-        paddingY="0.5rem"
-        display="flex"
-        alignItems="center"
-        marginTop={1}
-      >
-        <EmojiSelect />
-      </Box>
-      <ToolBarDraftEditor
-        editorState={editorState}
-        setEditorState={setEditorState}
-        setHeightToolBar={setHeightToolBar}
-      />
+      {headerImage && (
+        <Box
+          sx={{
+            width: "100%",
+            height: "200px",
+            position: "relative",
+          }}
+        >
+          <Image src={headerImage} fill alt="" objectFit="cover" />
+        </Box>
+      )}
       <Box
         paddingX="1rem"
         paddingY="0.5rem"
         display="flex"
         alignItems="center"
         marginTop={1}
+        gap="4px"
       >
+        <EmojiSelect />
+        <AddImageButton docId={currentId} setImageUrl={setHeaderImage} />
       </Box>
+      <ToolBarDraftEditor
+        editorState={editorState}
+        setEditorState={setEditorState}
+        setHeightToolBar={setHeightToolBar}
+      />
       <Box
         sx={{
           position: "relative",

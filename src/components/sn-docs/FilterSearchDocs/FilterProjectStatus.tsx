@@ -3,26 +3,21 @@ import {
   Box,
   ButtonBase,
   MenuItem,
-  MenuList,
   Popover,
-  Stack,
-  popoverClasses,
-  selectClasses,
-  Theme,
+  popoverClasses
 } from "@mui/material";
-import React, { memo, useMemo, useState } from "react";
-import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 import { Text } from "components/shared";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_DOCS } from "constant/index";
-import { SelectMembers } from "components/sn-projects/components";
-import { useFormik } from "formik";
 import TextFieldSelect from "components/shared/TextFieldSelect";
-import { Dropdown } from "components/Filters";
 import { STATUS_OPTIONS } from "components/sn-projects/components/helpers";
+import { sxConfig } from "components/sn-ticket/FilterSearchDocs/FilterSearchDocs";
+import { NS_COMMON, NS_DOCS } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
+import { useTranslations } from "next-intl";
+import { memo, useMemo, useState } from "react";
+import { GetDocQueries } from "../helpers";
+import type { FilterSearchDocsProps } from "./FilterSearchDocs";
 
-const FilterProjectStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
+const FilterProjectStatus = ({ onChange }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
@@ -94,9 +89,9 @@ const FilterProjectStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
           }}
         >
           <TextFieldSelect
-            value={queries?.project_status}
+            value={""} // Replace with the appropriate value or state
             onChange={(e) => {
-              onChange("project_status", e.target.value);
+              onChange(e.target.value as Partial<GetDocQueries>);
             }}
             options={statusOptions}
             label={commonT("status")}

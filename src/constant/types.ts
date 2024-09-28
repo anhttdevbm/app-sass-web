@@ -131,6 +131,12 @@ export type Attachment = {
   link: string;
 };
 
+interface Avatar {
+  object: string;
+  name: string;
+  link: string;
+}
+
 export declare interface IDocument {
   _id?: string;
   id?: string;
@@ -155,6 +161,7 @@ export declare interface IDocument {
   project_id?: string;
   content?: string;
   child?: [];
+  avatar: Avatar;
 }
 
 export declare type TPagination<T> = {

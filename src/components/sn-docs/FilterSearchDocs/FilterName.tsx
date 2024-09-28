@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
   ButtonBase,
   MenuItem,
-  MenuList,
   Popover,
-  Stack,
-  popoverClasses,
+  popoverClasses
 } from "@mui/material";
-import React, { memo, useState } from "react";
-import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 import { Input, Text } from "components/shared";
-import { useTranslations } from "next-intl";
+import { sxConfig } from "components/sn-ticket/FilterSearchDocs/FilterSearchDocs";
 import { NS_DOCS } from "constant/index";
-import { SelectMembers } from "components/sn-projects/components";
-import { useFormik } from "formik";
+import { useTranslations } from "next-intl";
+import { memo, useState } from "react";
 
-const FilterName = ({ onChange, queries }: FilterSearchDocsProps) => {
+interface FilterSearchDocsProps {
+  onChange: (value: string) => void;
+  queries: { name: string };
+}
+
+const FilterName = ({ onChange, queries }: FilterSearchDocsProps & { queries: { name: string } }) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
@@ -63,7 +63,7 @@ const FilterName = ({ onChange, queries }: FilterSearchDocsProps) => {
         }}
       >
         <Input
-          onChange={(e) => onChange("name", e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           value={queries?.name}
           placeholder="Nhập tên doc"
         ></Input>

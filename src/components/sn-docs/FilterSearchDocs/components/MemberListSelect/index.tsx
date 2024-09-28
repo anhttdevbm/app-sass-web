@@ -10,7 +10,7 @@ export default function MemberListSelect({
 }: {
   member: IMember;
   checked: boolean;
-  onChangeMember: (id: string, fullname: string) => void;
+  onChangeMember: (id: string, fullname: string, avatar: string) => void;
 }) {
   return (
     <MenuItem key={member.id} sx={{ height: "100%", width: "100%" }}>
@@ -19,7 +19,13 @@ export default function MemberListSelect({
         spacing={2}
         alignItems="center"
         justifyContent="space-between"
-        onClick={() => onChangeMember(member.id,  member.fullname)}
+        onClick={() =>
+          onChangeMember(
+            member.id,
+            member.fullname,
+            member.avatar?.link as string,
+          )
+        }
         sx={{
           cursor: "pointer",
         }}
