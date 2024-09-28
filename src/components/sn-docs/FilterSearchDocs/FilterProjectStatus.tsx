@@ -4,18 +4,17 @@ import {
   ButtonBase,
   MenuItem,
   Popover,
-  popoverClasses
+  popoverClasses,
 } from "@mui/material";
+import React, { memo, useMemo, useState } from "react";
+import { FilterSearchDocsProps } from "./FilterSearchDocs";
 import { Text } from "components/shared";
 import TextFieldSelect from "components/shared/TextFieldSelect";
 import { STATUS_OPTIONS } from "components/sn-projects/components/helpers";
-import { sxConfig } from "components/sn-ticket/FilterSearchDocs/FilterSearchDocs";
 import { NS_COMMON, NS_DOCS } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
+import { sxConfig } from "./styles";
 import { useTranslations } from "next-intl";
-import { memo, useMemo, useState } from "react";
-import { GetDocQueries } from "../helpers";
-import type { FilterSearchDocsProps } from "./FilterSearchDocs";
 
 const FilterProjectStatus = ({ onChange }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
@@ -23,6 +22,7 @@ const FilterProjectStatus = ({ onChange }: FilterSearchDocsProps) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [value, setValue] = useState<"ACTIVE" | "PAUSE" | "CLOSE" | null>(null);
   const commonT = useTranslations(NS_COMMON);
 
   const statusOptions = useMemo(() => {
@@ -89,9 +89,12 @@ const FilterProjectStatus = ({ onChange }: FilterSearchDocsProps) => {
           }}
         >
           <TextFieldSelect
-            value={""} // Replace with the appropriate value or state
+            value={value}
             onChange={(e) => {
-              onChange(e.target.value as Partial<GetDocQueries>);
+              onChange({
+                project_status: e.target.value as "ACTIVE" | "PAUSE" | "CLOSE",
+              });
+              setValue(e.target.value as "ACTIVE" | "PAUSE" | "CLOSE");
             }}
             options={statusOptions}
             label={commonT("status")}
