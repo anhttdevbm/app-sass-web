@@ -74,7 +74,7 @@ const useDocs = () => {
 
   const handleUpdateDoc = async (data, id) => {
     await client.put(Endpoint.DOCS + `/${id}`, data, {
-      baseURL: "http://113.192.9.79:6813/api/v1",
+      baseURL: DOCS_API_URL,
     });
   };
 
