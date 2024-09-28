@@ -11,7 +11,7 @@ import {
   Theme,
 } from "@mui/material";
 import React, { memo, useMemo, useState } from "react";
-import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
+import { FilterSearchDocsProps } from "./FilterSearchDocs";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import { NS_COMMON, NS_DOCS } from "constant/index";
@@ -21,13 +21,15 @@ import TextFieldSelect from "components/shared/TextFieldSelect";
 import { Dropdown } from "components/Filters";
 import { STATUS_OPTIONS } from "components/sn-projects/components/helpers";
 import ChevronIcon from "icons/ChevronIcon";
+import { sxConfig } from "./styles";
 
-const FilterProjectStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
+const FilterProjectStatus = ({ onChange }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [value, setValue] = useState<"ACTIVE" | "PAUSE" | "CLOSE" | null>(null);
   const commonT = useTranslations(NS_COMMON);
 
   const statusOptions = useMemo(() => {
@@ -94,9 +96,12 @@ const FilterProjectStatus = ({ onChange, queries }: FilterSearchDocsProps) => {
           }}
         >
           <TextFieldSelect
-            value={queries?.project_status}
+            value={value}
             onChange={(e) => {
-              onChange("project_status", e.target.value);
+              onChange({
+                project_status: e.target.value as "ACTIVE" | "PAUSE" | "CLOSE",
+              });
+              setValue(e.target.value as "ACTIVE" | "PAUSE" | "CLOSE");
             }}
             options={statusOptions}
             label={commonT("status")}

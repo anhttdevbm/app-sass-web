@@ -1,6 +1,5 @@
 import EditorPlugins from "@draft-js-plugins/editor";
 import createEmojiPlugin from "@draft-js-plugins/emoji";
-import createImagePlugin from "@draft-js-plugins/image";
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import { Box, Typography } from "@mui/material";
 import {
@@ -11,6 +10,7 @@ import {
   RichUtils,
 } from "draft-js";
 import useDebounce from "hooks/useDebounce";
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUpdateDocMutation } from "store/docs/api";
 import { useDocs } from "store/docs/selectors";
@@ -27,7 +27,6 @@ import "./CheckableListItem.css";
 import { toggleChecked } from "./CheckableListItemUltils";
 import "./DraftEditor.css";
 import "./EmojiEditor.css";
-import Image from "next/image";
 
 export default function DraftEditor() {
   const { handleUpdateDoc } = useDocs();

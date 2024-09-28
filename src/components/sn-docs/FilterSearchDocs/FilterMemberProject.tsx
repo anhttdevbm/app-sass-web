@@ -24,7 +24,7 @@ import ChevronIcon from "icons/ChevronIcon";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
 
-const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
+const FilterMemberProject = ({ onChange }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -137,7 +137,7 @@ const FilterMemberProject = ({ onChange, queries }: FilterSearchDocsProps) => {
                 key={item.value}
                 onClick={() => {
                   setCurrentProjectLabel(item.label);
-                  onChange("project", item.value);
+                  onChange({ project: item.value });
                   handleClose();
                   setSelectedItem(item.value);
                 }}
