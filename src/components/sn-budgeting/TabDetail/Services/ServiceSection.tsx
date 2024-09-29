@@ -44,7 +44,6 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI, uuid } from "utils/index";
 import ServiceSectionRow from "./ServiceSectionRow";
 import { TErrors, TSection } from "./ServiceUtil";
-import FontSize from "components/sn-docs/news/tiptap/extensions/font-size";
 
 type Props = {
   sectionsList: TBudgetSection[];
@@ -71,8 +70,8 @@ const defaultValues: TSectionForm = {
 export const serviceSectionRef = createRef<any>();
 
 export const ServiceSection = ({
-  onCloseEdit = () => { },
-  refetch = () => { },
+  onCloseEdit = () => {},
+  refetch = () => {},
   sectionsList = [],
 }: Props) => {
   const { id: budgetId } = useParams();
@@ -323,7 +322,7 @@ export const ServiceSection = ({
           });
         }
       })
-      .then(() => { })
+      .then(() => {})
       .catch((err) => {
         onAddSnackbar("Update services failed!", "error");
       });
@@ -517,7 +516,7 @@ export const ServiceSection = ({
             top: "0%",
             background: isDarkMode ? "#313130" : "white",
             zIndex: 20,
-            padding: "6px 0"
+            padding: "6px 0",
           }}
         >
           <Stack direction="row" gap={2} justifyContent="end" height={40}>
@@ -535,7 +534,9 @@ export const ServiceSection = ({
                 onCloseEdit();
               }}
             >
-              <Text fontSize={12} fontWeight={700} color="#0575E6">{budgetT("tabService.section.cancelBtnText")} </Text>
+              <Text fontSize={12} fontWeight={700} color="#0575E6">
+                {budgetT("tabService.section.cancelBtnText")}{" "}
+              </Text>
             </Button>
             <Button
               variant="primary"
@@ -547,11 +548,14 @@ export const ServiceSection = ({
                 borderRadius: "100px",
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 "&:hover": {
-                  background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 },
               }}
             >
-              <Text fontSize={12} fontWeight={700} color="#fff">{budgetT("tabService.section.saveBtnText")}</Text>
+              <Text fontSize={12} fontWeight={700} color="#fff">
+                {budgetT("tabService.section.saveBtnText")}
+              </Text>
             </Button>
           </Stack>
         </Box>
@@ -634,9 +638,7 @@ export const ServiceSection = ({
                                         }}
                                       />
                                     </IconButton>
-
                                   </Stack>
-
                                 </Stack>
                                 <Stack
                                   sx={{
@@ -724,6 +726,5 @@ const defaultSx = {
     height: "40px",
     // width : "120px" ,
     // // minHeight: 40
-
   },
 };

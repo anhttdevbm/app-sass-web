@@ -304,7 +304,12 @@ export default function DraftEditor() {
             position: "relative",
           }}
         >
-          <Image src={headerImage} fill alt="" objectFit="cover" />
+          <Image
+            src={headerImage || docInfo?.avatar?.link}
+            fill
+            alt=""
+            objectFit="cover"
+          />
         </Box>
       )}
       <Box

@@ -13,7 +13,6 @@ import * as React from "react";
 import { useAuth } from "store/app/selectors";
 import { usePostCommentMutation } from "store/docs/api";
 import { NewPageContext } from "../../context/NewPageContext";
-import useDocEditor from "../../hook/useDocEditor";
 import { useParams } from "next/navigation";
 
 export class Comment {
@@ -34,7 +33,6 @@ export default function CommentDialog() {
   const [comment, setComment] = React.useState<string>("");
   const { id } = useParams();
 
-  const editor = useDocEditor();
   const handleClose = () => {
     setCommentDialogOpen(false);
   };

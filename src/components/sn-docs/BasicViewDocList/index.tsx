@@ -19,8 +19,9 @@ export default function BasicViewDocList({ data }: { data: IViewDocItem[] }) {
   return (
     <Box
       sx={{
-        paddingX: {  xs: 0.5, md: 4 },
+        paddingX: { xs: 0.5, md: 4 },
         paddingY: 1,
+        flex: 1,
       }}
       overflow="auto"
     >
