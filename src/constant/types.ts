@@ -1,7 +1,7 @@
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { DocAccessibility, Permission, ThemeMode } from "./enums";
 import { i18n } from ".";
-import { Editor } from "@tiptap/core";
+import { Editor } from "draft-js";
 
 export interface Option {
   label: string;

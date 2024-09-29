@@ -85,6 +85,7 @@ export default function KanbanViewDocList({
         overflow: "auto",
         width: "100%",
         maxWidth: "100%!important",
+        flex: 1,
 
         [theme.breakpoints.up("md")]: {
           paddingLeft: 3.125,
