@@ -2,7 +2,6 @@
 "use client";
 
 import { Box, Divider, IconButton, Stack } from "@mui/material";
-import { Editor } from "@tiptap/core";
 import { client } from "api";
 import { AxiosError, AxiosRequestConfig, HttpStatusCode } from "axios";
 import Avatar from "components/Avatar";
@@ -11,6 +10,7 @@ import { Text, Tooltip } from "components/shared";
 import { DOCS_API_URL, NS_DOCS } from "constant/index";
 import { User } from "constant/types";
 import { format } from "date-fns";
+import { Editor } from "draft-js";
 import CloseIcon from "icons/CloseIcon";
 import HistoryIcon from "icons/HistoryIcon";
 import RestoreIcon from "icons/RestoreIcon";
@@ -292,7 +292,7 @@ const DrawSlider = ({
               <OptionGroup
                 options={FontFamilyOptions}
                 handleChangeOption={(value) => {
-                  editor.chain().selectAll().setFontFamily(value).run();
+                  // editor.chain().selectAll().setFontFamily(value).run();
                 }}
               />
             </Box>
@@ -312,7 +312,7 @@ const DrawSlider = ({
               <OptionGroup
                 options={TextSizeOptions}
                 handleChangeOption={(value) => {
-                  editor.chain().selectAll().setFontSize(value).run();
+                  // editor.chain().selectAll().setFontSize(value).run();
                 }}
               />
             </Box>

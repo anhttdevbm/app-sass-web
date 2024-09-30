@@ -3,18 +3,15 @@ import { Box, IconButton, Stack } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import { NS_DOCS } from "constant/index";
-import { formatDistance } from "date-fns";
 import CloseIcon from "icons/CloseIcon";
 import { useTranslations } from "next-intl";
 import React, { useContext } from "react";
 import { NewPageContext } from "../news/context/NewPageContext";
 
-import useTheme from "hooks/useTheme";
-import { useGetCommentsQuery } from "store/docs/api";
-import { useParams } from "next/navigation";
 import { IComment } from "constant/types";
-import useDocEditor from "../news/hook/useDocEditor";
-import { Editor } from "@tiptap/react";
+import useTheme from "hooks/useTheme";
+import { useParams } from "next/navigation";
+import { useGetCommentsQuery } from "store/docs/api";
 export const LayoutSlider = ({
   children,
   heightToolbar,
@@ -58,15 +55,15 @@ export const CommentItem: React.FC<IComment> = (props) => {
   const activeBgColor = isDarkMode ? "grey.50" : "primary.light";
   return (
     <Box
-      onClick={() => {
-        if (activeCommentId === props.position?.position) {
-          props.editor?.commands.setComment(props.position?.position);
-        } else {
-          props.editor?.commands.focus();
-          props.editor?.commands.unsetComment(props.position?.position);
-        }
-        setActiveCommentId(props.position?.position);
-      }}
+      // onClick={() => {
+      //   if (activeCommentId === props.position?.position) {
+      //     props.editor?.commands.setComment(props.position?.position);
+      //   } else {
+      //     props.editor?.commands.focus();
+      //     props.editor?.commands.unsetComment(props.position?.position);
+      //   }
+      //   setActiveCommentId(props.position?.position);
+      // }}
       sx={{
         cursor: "pointer",
         display: "flex",

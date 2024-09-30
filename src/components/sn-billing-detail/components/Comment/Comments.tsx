@@ -9,8 +9,9 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { Billing, BillingCommentData } from "store/billing/reducer";
 import { useBillings } from "store/billing/selectors";
 import { Invoice } from "store/invoice/reducer";
-import { formatDate } from "utils/index";
-import AttachmentPreview from "./AttachmentPreview";
+import { fetchUser, formatDate } from "utils/index";
+import { Attachment } from "constant/types";
+import AttachmentPreview from "components/sn-sales-detail/components/Comment/AttachmentPreview";
 
 type CommentsProps = {
   comments?: BillingCommentData[];
@@ -95,18 +96,43 @@ const Comments = (props: CommentsProps) => {
 
 export default memo(Comments);
 
-const CommentItem = (props: CommentItemProps) => {
-  const { type, content, user_id, status, created_at, file } = props;
+function CommentItem(props: CommentItemProps) {
+  const { type, content, status, created_at, creator, file } = props;
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
 
+  const callData = async () => {
+    if (creator) {
+      const data = await fetchUser(creator);
+      setName(data?.fullname);
+      setEmail(data?.email);
+    }
+  };
+
+  useEffect(() => {
+    callData();
+  }, [creator]);
+
+  const [attachments_down, setAttachment] = useState<Attachment[]>([]);
+
+  useEffect(() => {
+    const newList = (file ?? []).map((e) => ({
+      link: e,
+      name: "image.png",
+      object: "e4a2d270-7c18-11ef-b62f-4b6fa1ded3d8-540a7dbc74402284",
+    }));
+
+    setAttachment(newList);
+  }, [file]);
   return (
     <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
       <Stack direction="row" justifyContent="space-between" spacing={1}>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={user_id?.avatar?.link} />
+          <Avatar size={32} src={""} />
           <Stack>
-            <Text variant="body2">{user_id?.name ?? "--"}</Text>
+            <Text variant="body2">{name ?? "--"}</Text>
             <Text variant="caption" color="grey.400">
-              {user_id?.email ?? "--"}
+              {email ?? "--"}
             </Text>
           </Stack>
         </Stack>
@@ -136,17 +162,16 @@ const CommentItem = (props: CommentItemProps) => {
       )}
 
       <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
-        {file &&
-          file?.map((attachment) => (
-            <AttachmentPreview
-              key={""}
-              src={attachment}
-              name={""}
-              listData={[]}
-              listAttachmentsDown={[]}
-            />
-          ))}
+        {attachments_down.map((attachment) => (
+          <AttachmentPreview
+            key={attachment.link}
+            src={attachment.link}
+            name={attachment.name}
+            listData={attachments_down}
+            listAttachmentsDown={attachments_down}
+          />
+        ))}
       </Stack>
     </Stack>
   );
-};
+}

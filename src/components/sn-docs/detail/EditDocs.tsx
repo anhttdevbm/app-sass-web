@@ -2,17 +2,15 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box } from "@mui/material";
 import { COLORS } from "components/Editor";
+import { Editor } from "draft-js";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import ReactQuill from "react-quill";
-import { Box, Stack } from "@mui/material";
 import "react-quill/dist/quill.snow.css";
-import "./style.css";
 import DrawComment, { LayoutSlider } from "./DrawComment";
-import { Text } from "components/shared";
-import CloseIcon from "icons/CloseIcon";
 import DrawSlider from "./DrawSlider";
-import { Editor } from "@tiptap/core";
+import "./style.css";
 
 interface IEditDocs {
   open: boolean;
