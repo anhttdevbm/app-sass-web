@@ -259,4 +259,9 @@ export const Endpoint = {
 
   //Ticket-agent
   TICKET_AGENT: "/ticket/user",
+
+
+  //Push Notification
+
+  NOTIFY_REGISTER_USER : "/addUser"
 };

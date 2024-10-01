@@ -12,7 +12,7 @@ import { Button, Input, Text } from "components/shared";
 import Link from "components/Link";
 import { FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
 import * as Yup from "yup";
-import { AN_ERROR_TRY_AGAIN, NS_AUTH, NS_COMMON } from "constant/index";
+import { AN_ERROR_TRY_AGAIN, NOTIFY_API_URL, NS_AUTH, NS_COMMON } from "constant/index";
 import { useFormik, FormikErrors } from "formik";
 import { SigninData } from "store/app/actions";
 import { EMAIL_REGEX } from "constant/regex";
@@ -26,6 +26,8 @@ import { Permission } from "constant/enums";
 import { useRouter } from "next-intl/client";
 import GoogleLogo from "public/images/ic-google.svg";
 import Image from "next/image";
+import useNotification from "hooks/useNotification/useNotification";
+import { Endpoint } from "api";
 const Form = () => {
   const { onSignin } = useAuth();
   const { onAddSnackbar } = useSnackbar();
@@ -33,12 +35,27 @@ const Form = () => {
   const authT = useTranslations(NS_AUTH);
   const commonT = useTranslations(NS_COMMON);
 
+
+  const {fcmToken} = useNotification();
   const onSubmit = async (values: SigninData) => {
+
     try {
       const newData = await onSignin(values);
 
       if (newData) {
         onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
+
+        await fetch(`${NOTIFY_API_URL}/${Endpoint.NOTIFY_REGISTER_USER}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: newData?.id,
+            token: fcmToken,
+          }),
+        })
+
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
