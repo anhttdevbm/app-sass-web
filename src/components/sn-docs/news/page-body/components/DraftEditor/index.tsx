@@ -1,19 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import EditorPlugins from "@draft-js-plugins/editor";
 import createEmojiPlugin from "@draft-js-plugins/emoji";
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import { Box, Typography } from "@mui/material";
+import { NewPageContext } from "components/sn-docs/news/context/NewPageContext";
 import {
+  CompositeDecorator,
   ContentBlock,
+  ContentState,
   convertFromRaw,
   DraftStyleMap,
   EditorState,
   RichUtils,
+  SelectionState,
 } from "draft-js";
 import useDebounce from "hooks/useDebounce";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useUpdateDocMutation } from "store/docs/api";
-import { useDocs } from "store/docs/selectors";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useAuth } from "store/app/selectors";
+import { useGetDocDetailQuery, useUpdateDocMutation } from "store/docs/api";
 import { useAppSelector } from "store/hooks";
 import { uuid } from "utils/index";
 import { CHECKABLE_LIST_ITEM } from "../../constants/draft.constants";
@@ -25,32 +37,27 @@ import ToolBarDraftEditor from "../ToolBarDraftEditor";
 import CheckableListItem from "./CheckableListItem";
 import "./CheckableListItem.css";
 import { toggleChecked } from "./CheckableListItemUltils";
+import CommentSpan from "./CommentSpan";
 import "./DraftEditor.css";
 import "./EmojiEditor.css";
 
 export default function DraftEditor() {
-  const { handleUpdateDoc } = useDocs();
-  const currentId = useAppSelector((state) => state.doc.id);
+  const { user } = useAuth();
+
+  const { setCommentDialogOpen, setCommentPosition } =
+    useContext(NewPageContext);
   const isOpenMindMap = useAppSelector(
     (state) => state.doc.mindMap.isOpenMindMap,
   );
   const isOpenBoard = useAppSelector((state) => state.doc.board.isOpenBoard);
   const [updateDoc] = useUpdateDocMutation();
-  const page = useAppSelector((state) => state.doc);
-  const {
-    perm,
-    content,
-    id,
-    title: name,
-    description,
-    project_id,
-    docInfo,
-  } = page;
-  const [mounted, setMounted] = useState(false);
-  const [textAreaValue, setTextAreaValue] = useState(name);
-  const [headerImage, setHeaderImage] = useState<string | null>(
-    docInfo.avatar?.link || null,
+  const { id, content, title: name } = useAppSelector((state) => state.doc);
+  const { data } = useGetDocDetailQuery({ id });
+  const [textAreaValue, setTextAreaValue] = useState(name || "");
+  const [headerImage, setHeaderImage] = useState<string>(
+    data?.avatar?.link || "",
   );
+
   const [debounceChange] = useDebounce(
     ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
       updateDoc({
@@ -86,6 +93,15 @@ export default function DraftEditor() {
   const [showAddSession, setShowAddSession] = useState(false);
   const [heightToolBar, setHeightToolBar] = useState(0);
 
+  const parsePosition = (position: string) => {
+    const [startOffset, endOffset, startKey] = position.split("-");
+    return {
+      startOffset: parseInt(startOffset, 10),
+      endOffset: parseInt(endOffset, 10),
+      startKey,
+    };
+  };
+
   // xử lý event open Add Session
   const handleKeyDown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "d") {
@@ -94,9 +110,62 @@ export default function DraftEditor() {
     }
   };
 
+  const findCommentEntities = (
+    contentBlock: ContentBlock,
+    callback: (start: number, end: number) => void,
+    contentState: ContentState,
+  ) => {
+    const blockKey = contentBlock.getKey();
+    if (!data) return;
+    data.positionComment.forEach((item) => {
+      const { startOffset, endOffset, startKey } = parsePosition(item.position);
+      if (blockKey === startKey) {
+        callback(startOffset, endOffset);
+      }
+    });
+  };
+
+  const isCommentOverlap = (
+    startOffset: number,
+    endOffset: number,
+    blockKey: string,
+  ) => {
+    if (data) {
+      data.positionComment.find((item) => {
+        const {
+          startOffset: start,
+          endOffset: end,
+          startKey,
+        } = parsePosition(item.position);
+        if (blockKey === startKey) {
+          if (
+            (startOffset >= start && startOffset <= end) ||
+            (endOffset >= start && endOffset <= end) ||
+            (startOffset <= start && endOffset >= end)
+          ) {
+            return true;
+          }
+        }
+        return false;
+      });
+    }
+  };
+
   const handleChangeEditor = (editorState: EditorState) => {
     const contentState = editorState.getCurrentContent();
     const blocksArray = contentState.getBlocksAsArray();
+    const selection = editorState.getSelection();
+
+    if (!selection.isCollapsed()) {
+      const newSelection = SelectionState.createEmpty(selection.getAnchorKey());
+      setEditorState(EditorState.forceSelection(editorState, newSelection));
+
+      setCommentDialogOpen(true);
+      setCommentPosition(
+        `${selection.getStartOffset()}-${selection.getEndOffset()}-${selection.getAnchorKey()}`,
+      );
+      return;
+    }
 
     if (blocksArray.length > 0) {
       const firstBlock = blocksArray[0];
@@ -115,7 +184,11 @@ export default function DraftEditor() {
           })),
           entityRanges: block.findEntityRanges(
             (character) => character.getEntity() !== null,
-            (start, end) => ({ start, end, entity: block.getEntityAt(start) }),
+            (start, end) => ({
+              start,
+              end,
+              entity: block.getEntityAt(start),
+            }),
           ),
           data: block.getData(),
         };
@@ -241,9 +314,8 @@ export default function DraftEditor() {
   }, []);
 
   useEffect(() => {
-    setTextAreaValue(name);
-    // dispatch(getDocDetails(currentId));
-  }, [name, currentId]);
+    setTextAreaValue(name || "");
+  }, [name]);
 
   // set giá trị cho doc khi mounted
   useEffect(() => {
@@ -279,6 +351,31 @@ export default function DraftEditor() {
   }, [content, textAreaValue]);
 
   useEffect(() => {
+    if (!data) return;
+    const { positionComment } = data;
+
+    if (positionComment?.length > 0) {
+      const decorator = new CompositeDecorator([
+        {
+          strategy: findCommentEntities,
+          component: (props) => (
+            <CommentSpan
+              avatarUrl={user?.avatar?.link || ""}
+              blockKey={props.blockKey}
+              positionComments={positionComment}
+            >
+              {props.children}
+            </CommentSpan>
+          ),
+          props: { editor },
+        },
+      ]);
+
+      setEditorState((prevState) => EditorState.set(prevState, { decorator }));
+    }
+  }, [data]);
+
+  useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
@@ -305,7 +402,7 @@ export default function DraftEditor() {
           }}
         >
           <Image
-            src={headerImage || docInfo?.avatar?.link}
+            src={headerImage || data?.avatar?.link || ""}
             fill
             alt=""
             objectFit="cover"
@@ -321,7 +418,7 @@ export default function DraftEditor() {
         gap="4px"
       >
         <EmojiSelect />
-        <AddImageButton docId={currentId} setImageUrl={setHeaderImage} />
+        <AddImageButton docId={id} setImageUrl={setHeaderImage} />
       </Box>
       <ToolBarDraftEditor
         editorState={editorState}

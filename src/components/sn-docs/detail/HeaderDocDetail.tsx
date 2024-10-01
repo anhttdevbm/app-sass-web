@@ -32,6 +32,7 @@ import { NewPageContext } from "../news/context/NewPageContext";
 import { IDocDetail } from "./DocDetail";
 import ModalShare from "./LeftSlide/modal/ModalShare";
 import SelectProjectInDoc from "./SelectProjectInDoc";
+import React from "react";
 
 const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const [openShare, setOpenShare] = useState(false);
@@ -46,28 +47,19 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
     }
   }, []);
 
-  const { data: rootDocument } = useGetDocDetailQuery(id as string);
+  const { data: rootDocument } = useGetDocDetailQuery({ id: id as string });
 
-  const { isDarkMode } = useTheme();
   const doc = useAppSelector((state) => state.doc);
   const docsT = useTranslations(NS_DOCS);
-  const { data: document } = useGetDocDetailQuery(currentId as string);
-  const [updateDoc] = useUpdateDocMutation();
   const [valueCopy, copy, isCopied] = useCopyToClipboard();
   const { isSmSmaller } = useBreakpoint();
   const { setOpenComment } = useContext(NewPageContext);
-  const [debounceChange] = useDebounce((value: string) => {
-    updateDoc({ id: currentId as string, payload: { name: value } });
-  }, 200);
 
   const refHeader = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     dispatch(updateHeightHeaderDetail(refHeader.current?.offsetHeight));
   }, []);
-
-  // console.log("doc", doc);
-  // console.log("rootDocument", rootDocument);
 
   return (
     <>

@@ -181,6 +181,7 @@ export declare type TPagination<T> = {
 export declare interface IComment {
   _id: string;
   create_time: Date;
+  created_time: string;
   updated_time: Date;
   created_by?: Partial<User>;
   content: string;

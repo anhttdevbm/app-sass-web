@@ -1,3 +1,4 @@
+import { DocInfo } from "components/sn-docs/news/types/doc.type";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCreateDocMutation, useGetDocDetailQuery } from "store/docs/api";
@@ -6,8 +7,10 @@ import { uuid } from "utils/index";
 const useLeftSlideDoc = () => {
   const { id } = useParams();
   const [createDoc, { data: docsData, error }] = useCreateDocMutation();
-  const { data: document, isLoading } = useGetDocDetailQuery(id as string);
-  const [data, setData] = useState({});
+  const { data: document, isLoading } = useGetDocDetailQuery({
+    id: id as string,
+  });
+  const [data, setData] = useState<any>({});
 
   const addChildToData = (parent, child) => {
     const newData = { ...data };
@@ -32,7 +35,7 @@ const useLeftSlideDoc = () => {
     setData(newData);
   };
 
- // Hàm xử lý khi nhấn nút "Thêm mục con"
+  // Hàm xử lý khi nhấn nút "Thêm mục con"
   const handleAddChild = (parent, project_id) => {
     const id = uuid();
     const newChild = {
