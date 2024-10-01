@@ -8,10 +8,12 @@ import { useTranslations } from "next-intl";
 import React, { useContext } from "react";
 import { NewPageContext } from "../news/context/NewPageContext";
 
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { IComment } from "constant/types";
 import useTheme from "hooks/useTheme";
 import { useParams } from "next/navigation";
 import { useGetCommentsQuery } from "store/docs/api";
+import dayjs from "dayjs";
 export const LayoutSlider = ({
   children,
   heightToolbar,
@@ -91,19 +93,21 @@ export const CommentItem: React.FC<IComment> = (props) => {
         >
           <Text
             sx={{
-              fontSize: "10px",
+              fontSize: "14px",
               fontWeight: "600",
+              fontFamily: inter.style.fontFamily,
             }}
           >
             {props?.created_by?.fullname}
           </Text>
           <Text
             sx={{
-              fontSize: "10px",
+              fontSize: "12px",
               fontWeight: "300",
+              fontFamily: inter.style.fontFamily,
             }}
           >
-            {/* {formatDistance(props?.createdAt, new Date(), { addSuffix: true })} */}
+            {dayjs(props?.created_time).format("h:mm A")}
           </Text>
         </Box>
         <Text
@@ -130,6 +134,7 @@ const DrawComment = ({ editor }) => {
   const { data } = useGetCommentsQuery({ docId: id });
   const { openComment, setOpenComment, comments, activeCommentId } =
     useContext(NewPageContext);
+  console.log(data);
 
   return (
     <>
