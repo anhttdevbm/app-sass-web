@@ -21,6 +21,7 @@ export type AuthDictionary = {
       signinSuccess: string;
       emailOrPasswordWrong: string;
     };
+    rememberAccount: string;
   };
   signup: {
     head: {

@@ -1,27 +1,27 @@
 "use client";
-import { memo, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
+import { memo, useMemo, useState } from "react";
 import * as Yup from "yup";
 
 import { NewButton as Button, NewInput as Input } from "components/shared";
-import { NS_ACCOUNT, NS_COMMON } from "constant/index";
 import { Permission } from "constant/enums";
+import { NS_ACCOUNT, NS_COMMON } from "constant/index";
 // import useBreakpoint from "hooks/useBreakpoint";
+import dayjs from "dayjs";
 import useToggle from "hooks/useToggle";
 import CopyIcon from "icons/NewCopyIcon";
 import OutlineEditIcon from "icons/OutlineEditIcon";
+import { useDispatch } from "react-redux";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar } from "store/app/selectors";
+import { AppDispatch } from "store/configureStore";
+import { getRequestUpgradePayment } from "store/payment/actions";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
 import { useEmployeeDetailContext } from "./EmployeeDetailContext";
 import ConfirmToRequest from "./components/ConfirmToRequest";
-import dayjs from "dayjs";
-import { getRequestUpgradePayment } from "store/payment/actions";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "store/configureStore";
 
 const EmployeeDetailForm = () => {
   const { user } = useAuth();
@@ -274,7 +274,7 @@ const EmployeeDetailForm = () => {
             justifyContent="center"
             my={{ xs: 5, sm: 6 }}
           >
-            {(type === "SELF" || isAdmin) && !isEdit ? (
+            {type === "SELF" && !isEdit ? (
               <Button
                 onClick={onEditTrue}
                 variant="secondaryOutlined"
@@ -289,9 +289,7 @@ const EmployeeDetailForm = () => {
               >
                 {accountT("accountInformation.changeInformation")}
               </Button>
-            ) : (
-              <></>
-            )}
+            ) : null}
             {isEdit ? (
               <>
                 <Button
@@ -310,9 +308,7 @@ const EmployeeDetailForm = () => {
                   {commonT("form.save")}
                 </Button>
               </>
-            ) : (
-              <></>
-            )}
+            ) : null}
           </Grid>
         </Grid>
       </Box>

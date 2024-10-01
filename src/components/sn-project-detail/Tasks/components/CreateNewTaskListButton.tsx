@@ -56,17 +56,6 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
               <MenuItem
                 onClick={() => {
                   handleClose();
-                  onShowAiForm();
-                }}
-              >
-                <ListItemIcon>
-                  <AIGradientIcon />
-                </ListItemIcon>
-                <ListItemText>AI Assistant</ListItemText>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  handleClose();
                   onShow();
                 }}
               >
@@ -74,6 +63,17 @@ const CreateNewTaskListButton = (props: { sx?: SxProps }) => {
                   <DocumentTextIcon sx={{ color: "transparent" }} />
                 </ListItemIcon>
                 <ListItemText>New list</ListItemText>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  onShowAiForm();
+                }}
+              >
+                <ListItemIcon>
+                  <AIGradientIcon />
+                </ListItemIcon>
+                <ListItemText>AI Assistant</ListItemText>
               </MenuItem>
             </MenuList>
           </Paper>

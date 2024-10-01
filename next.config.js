@@ -46,6 +46,10 @@ const nextConfig = {
         hostname: "103.196.145.232",
       },
       {
+        protocol: "http",
+        hostname: "113.192.9.79",
+      },
+      {
         protocol: "https",
         hostname: "picsum.photos",
       },

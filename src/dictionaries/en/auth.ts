@@ -24,6 +24,7 @@ export const AuthLang: AuthDictionary = {
       signinSuccess: "Sign in successfully!",
       emailOrPasswordWrong: "Email or password is incorrect!",
     },
+    rememberAccount: "Remember account",
   },
   signup: {
     head: {
