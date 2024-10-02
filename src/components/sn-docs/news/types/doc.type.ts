@@ -65,4 +65,5 @@ export interface DocInfo {
   positionComment: DocPositionComment[];
   updated_by: DocUser;
   updated_time: string;
+  project_id?: string;
 }
