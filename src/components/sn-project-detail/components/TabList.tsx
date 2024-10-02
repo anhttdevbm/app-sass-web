@@ -8,12 +8,11 @@ import {
 } from "components/sn-project-detail/Information/components";
 import { NS_PROJECT } from "constant/index";
 import {
-  PROJECT_ACTIVITIES_PATH,
   PROJECT_BUDGET_PATH,
   PROJECT_DOCUMENT_PATH,
   PROJECT_INFORMATION_PATH,
   PROJECT_MEMBERS_PATH,
-  PROJECT_TASKS_PATH,
+  PROJECT_TASKS_PATH
 } from "constant/paths";
 import useTheme from "hooks/useTheme";
 import { useTranslations } from "next-intl";
@@ -141,7 +140,7 @@ const TabActions = (props: StackProps) => {
 
 const TABS = [
   { label: "tabList.tasks", href: PROJECT_TASKS_PATH },
-  { label: "tabList.activities", href: PROJECT_ACTIVITIES_PATH },
+  // { label: "tabList.activities", href: PROJECT_ACTIVITIES_PATH },
   { label: "tabList.budget", href: PROJECT_BUDGET_PATH },
   { label: "tabList.documents", href: PROJECT_DOCUMENT_PATH },
   { label: "tabList.members", href: PROJECT_MEMBERS_PATH },

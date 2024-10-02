@@ -16,17 +16,27 @@ import { ErrorResponse } from "constant/types";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { SigninData } from "store/app/actions";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
+
 const Form = () => {
   const { onSignin } = useAuth();
   const { onAddSnackbar } = useSnackbar();
   const { push } = useRouter();
   const authT = useTranslations(NS_AUTH);
   const commonT = useTranslations(NS_COMMON);
+  const [rememberAccount, setRememberAccount] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      formik.setFieldValue("email", savedEmail);
+      setRememberAccount(true);
+    }
+  }, []);
 
   const onSubmit = async (values: SigninData) => {
     try {
@@ -34,6 +44,11 @@ const Form = () => {
 
       if (newData) {
         onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
+        if (rememberAccount) {
+          localStorage.setItem("rememberedEmail", values.email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
@@ -87,7 +102,6 @@ const Form = () => {
       width="100%"
       mt={2}
       onSubmit={formik.handleSubmit}
-      // overflow="hidden"
       noValidate
     >
       <Stack overflow="auto" spacing={2}>
@@ -126,8 +140,14 @@ const Form = () => {
             sx={{
               fontSize: 14,
             }}
-            control={<Checkbox disableRipple />}
-            label="Remember password"
+            control={
+              <Checkbox
+                disableRipple
+                checked={rememberAccount}
+                onChange={(e) => setRememberAccount(e.target.checked)}
+              />
+            }
+            label={authT("signin.rememberAccount")}
           />
           <Box>
             <Link
@@ -159,35 +179,11 @@ const Form = () => {
             background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
           },
         }}
-        // variant="primary"
         fullWidth
         pending={formik.isSubmitting}
       >
         {authT("signin.key")}
       </Button>
-      {/* <Button
-        sx={{
-          mt: 2,
-          background:
-            "linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #2AF598, #009EFD) border-box",
-          color: "black",
-          border: "1px solid transparent",
-          borderRadius: "4px",
-        }}
-        fullWidth
-      >
-        <Typography
-          sx={{
-            color: "#3699FF",
-          }}
-          mr={2}
-          variant="body2"
-          gutterBottom
-        >
-          or login by
-        </Typography>{" "}
-        <Image src={GoogleLogo} alt="App logo" width={32} />
-      </Button> */}
     </Stack>
   );
 };

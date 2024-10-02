@@ -14,7 +14,7 @@ import { resetDocDetail } from "store/docs/reducer";
 import { NewPageContext } from "../context/NewPageContext";
 import DraftEditor from "./components/DraftEditor";
 
-const PageBody = ({ openSlider, setOpenSlider }: IDocDetail) => {
+const PageBody = () => {
   const dispatch = useDispatch();
   const { openComment } = useContext(NewPageContext);
   const [minHeight, setMinHeight] = useState("100vh");
