@@ -3,7 +3,7 @@ import ResourceDictionary from "dictionaries/types/ResourceDictionary";
 export const ResourcePlanning: ResourceDictionary = {
   header: {
     title: "Quản lý lịch trình",
-    add:"Tạo mới",
+    add: "Tạo mới",
     tab: {
       allPeople: "Lịch trình",
       mySchedule: "Tiến trình",
@@ -26,6 +26,7 @@ export const ResourcePlanning: ResourceDictionary = {
     time: {
       eventTime: "{allocation}{unit} cho {day} ngày",
       thisWeek: "Tuần này",
+      hourPerDay: "{total} giờ/ngày cho",
     },
     resourceHeader: {
       available: "Khả dụng",
@@ -33,6 +34,8 @@ export const ResourcePlanning: ResourceDictionary = {
       service: "Dịch vụ",
       user: "người dùng",
       startDate: "ngày bắt đầu",
+      Workload: "Khối lượng công việc",
+      chooseService: "Chọn dịch vụ",
     },
     unit: {
       day: "ngày",
@@ -108,10 +111,27 @@ export const ResourcePlanning: ResourceDictionary = {
     deleteSuccess: "Xóa lịch thành công",
   },
   popupService: {
-    project: "dự án",
+    project: "Dự án",
     chooseProjectPlacehodle: "chọn dự án",
     chooseBudgetPlacehodle: "chọn ngân sách",
-    budget: "ngân sách",
+    budget: "Ngân sách",
     search: "Tìm kiếm",
+    servicePlaceholder: "Enter summary or service key",
+    dragText: "Kéo dịch vụ vào bảng lịch",
+    date: "Ngày",
+  },
+  months: {
+    january: "Tháng 1",
+    february: "Tháng 2",
+    march: "Tháng 3",
+    april: "Tháng 4",
+    may: "Tháng 5",
+    june: "Tháng 6",
+    july: "Tháng 7",
+    august: "Tháng 8",
+    september: "Tháng 9",
+    october: "Tháng 10",
+    november: "Tháng 11",
+    december: "Tháng 12",
   },
 };

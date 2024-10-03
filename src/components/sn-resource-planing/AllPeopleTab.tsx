@@ -370,19 +370,20 @@ const AllPeopleTab = ({
 
     return items;
   };
+
   const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    resourceT("months.january"),
+    resourceT("months.february"),
+    resourceT("months.march"),
+    resourceT("months.april"),
+    resourceT("months.may"),
+    resourceT("months.june"),
+    resourceT("months.july"),
+    resourceT("months.august"),
+    resourceT("months.september"),
+    resourceT("months.october"),
+    resourceT("months.november"),
+    resourceT("months.december"),
   ];
 
   function getWeekDates(year, weekNumber) {
@@ -501,7 +502,7 @@ const AllPeopleTab = ({
             onClick={() => setIsWorkload((prev: Boolean) => !prev)}
           >
             <ClockIcon sx={{ width: 14, height: 14 }} />
-            Workload
+            {resourceT("schedule.resourceHeader.Workload")}
           </Button>
 
           <Button
@@ -524,7 +525,7 @@ const AllPeopleTab = ({
             }}
           >
             <ServiceIcon sx={{ width: 14, height: 14 }} />
-            Choose Service
+            {resourceT("schedule.resourceHeader.chooseService")}
           </Button>
         </Stack>
       )}

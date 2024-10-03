@@ -341,8 +341,8 @@ const MyScheduleTab = ({
               resourceId: item?.user_id + project.project_id,
               project_id: project.project_id,
               service_id: project.service_id,
-              start: item?.start_date,
-              end: item?.end_date,
+              start: new Date(item?.start_date),
+              end: new Date(item?.end_date),
             });
           });
         });
@@ -361,6 +361,7 @@ const MyScheduleTab = ({
     return acc;
   }, {});
   const result: any = Object.values(grouped);
+
   for (let i = 0; i < result.length; i++) {
     for (let j = 0; j < result[i].length; j++) {
       let index;
@@ -413,18 +414,18 @@ const MyScheduleTab = ({
     return weekNo;
   }
   const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    resourceT("months.january"),
+    resourceT("months.february"),
+    resourceT("months.march"),
+    resourceT("months.april"),
+    resourceT("months.may"),
+    resourceT("months.june"),
+    resourceT("months.july"),
+    resourceT("months.august"),
+    resourceT("months.september"),
+    resourceT("months.october"),
+    resourceT("months.november"),
+    resourceT("months.december"),
   ];
 
   const handleChangePosition = (position: string) => {
@@ -472,7 +473,7 @@ const MyScheduleTab = ({
         >
           {myBooking?.[0]?.services?.length}/{myBooking?.[0]?.total_services}
           <Typography fontWeight={400} fontSize={14}>
-            service
+            {resourceT("resourceHeader.service")}
           </Typography>
         </Stack>
         <div
@@ -508,7 +509,7 @@ const MyScheduleTab = ({
                 border: "1px solid #CCCCCC	",
               }}
             >
-              week {getWeekNumber(currentDate)}
+              {resourceT("form.week")} {getWeekNumber(currentDate)}
             </p>
             <p
               style={{
@@ -518,7 +519,7 @@ const MyScheduleTab = ({
                 border: "1px solid #CCCCCC	",
               }}
             >
-              week {currentWeekNumber + 1}
+              {resourceT("form.week")} {currentWeekNumber + 1}
             </p>
           </div>
         </div>
@@ -658,9 +659,10 @@ const MyScheduleTab = ({
                     color: "#757383",
                     fontWeight: 500,
                     fontSize: 13,
+                    textTransform: "uppercase",
                   }}
                 >
-                  SERVICE
+                  {resourceT("schedule.resourceHeader.service")}
                 </div>
                 <div
                   style={{
@@ -675,9 +677,10 @@ const MyScheduleTab = ({
                     color: "#757383",
                     fontWeight: 500,
                     fontSize: 13,
+                    textTransform: "uppercase",
                   }}
                 >
-                  USER
+                  {resourceT("form.user")}
                 </div>
                 <div
                   style={{
@@ -691,9 +694,10 @@ const MyScheduleTab = ({
                     color: "#757383",
                     fontWeight: 500,
                     fontSize: 13,
+                    textTransform: "uppercase",
                   }}
                 >
-                  START DATE
+                  {resourceT("schedule.resourceHeader.startDate")}
                 </div>
               </div>
             );
@@ -717,6 +721,7 @@ const MyScheduleTab = ({
                   borderRadius: "5px",
                   height: 36,
                   paddingLeft: 4,
+                  // minWidth: "fit-content",
                 }}
               >
                 <div
@@ -749,8 +754,10 @@ const MyScheduleTab = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {event._def.extendedProps.total_hour}h/day for{" "}
-                    {numberOfDays} day
+                    {resourceT("schedule.time.hourPerDay", {
+                      total: event._def.extendedProps.total_hour,
+                    })}{" "}
+                    {numberOfDays} {resourceT("schedule.unit.day")}
                   </span>
                 )}
               </div>
