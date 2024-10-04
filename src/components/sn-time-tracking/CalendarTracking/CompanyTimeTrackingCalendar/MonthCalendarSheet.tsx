@@ -1,12 +1,10 @@
 "use client";
 
-import { AddCircle } from "@mui/icons-material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   AvatarGroup,
   Box,
-  Button,
   Drawer,
   Stack,
   Table,
@@ -14,7 +12,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
@@ -578,7 +576,7 @@ const MonthCalendarSheet = () => {
                 gap: "10px",
               }}
             >
-              <Button
+              {/* <Button
                 sx={{
                   backgroundImage: "linear-gradient(to right,#2AF598,#009EFD)",
                   borderRadius: "100px",
@@ -618,7 +616,7 @@ const MonthCalendarSheet = () => {
                     height: "30px",
                   }}
                 />
-              </div>
+              </div> */}
               <IconButton
                 onClick={handleDrawerClose}
                 style={{
