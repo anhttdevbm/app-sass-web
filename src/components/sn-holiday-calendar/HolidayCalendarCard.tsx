@@ -1,4 +1,11 @@
 "use client";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import { styled, SxProps, Theme } from "@mui/material/styles";
+import dayjs from "dayjs";
+import { FieldArray, Formik, FormikValues, useFormikContext } from "formik";
+import { useTranslations } from "next-intl";
 import {
   Dispatch,
   SetStateAction,
@@ -8,36 +15,29 @@ import {
   useRef,
   useState,
 } from "react";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
-import { styled, SxProps, Theme } from "@mui/material/styles";
 import DatePicker from "react-datepicker";
-import dayjs from "dayjs";
-import { useTranslations } from "next-intl";
-import { FieldArray, Formik, FormikValues, useFormikContext } from "formik";
 import * as Yup from "yup";
 
-import { NS_HOLIDAY_CALENDAR, NS_COMMON } from "constant/index";
-import { DataStatus } from "constant/enums";
-import { Option } from "constant/types";
 import { NewButton as Button, IconButton, Text } from "components/shared";
+import { DataStatus } from "constant/enums";
+import { NS_COMMON, NS_HOLIDAY_CALENDAR } from "constant/index";
+import { Option } from "constant/types";
 import { useAdditionalFormikUtils } from "hooks/useFormik";
 import useToggle from "hooks/useToggle";
 import AddCircleGradientIcon from "icons/AddCircleGradientIcon";
 import AddCircleIcon from "icons/AddCircleIcon";
-import CalendarIcon from "icons/NewCalendarIcon";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import GreenTickIcon from "icons/GreenTickIcon";
+import CalendarIcon from "icons/NewCalendarIcon";
 import SearchIcon from "icons/SearchIcon";
 import TrashIcon from "icons/TrashAltIcon";
 import { useSnackbar } from "store/app/selectors";
 import { HolidayCalendar, HolidayItem } from "store/holidayCalendar/reducer";
 import { useHolidayCalendar } from "store/holidayCalendar/selectors";
 import { getMessageErrorByAPI } from "utils/index";
-import TitleInput from "./components/TitleInput";
-import Select from "./components/Select";
 import Input from "./components/Input";
+import Select from "./components/Select";
+import TitleInput from "./components/TitleInput";
 
 type HolidayCalendarCardProps = {
   isNew?: boolean;
@@ -540,6 +540,16 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                   rootSx={{
                     ...holidayItemInputSx,
                     flexBasis: { xs: "100%", sm: "calc(100% * 4 / 12)" },
+                    position: "relative",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      bottom: 0,
+                      left: "10px", // Tạo khoảng cách ở đầu trái
+                      right: "10px", // Tạo khoảng cách ở đầu phải
+                      height: "1px",
+                      backgroundColor: "#000", // Màu của border
+                    },
                   }}
                 />
                 <Stack
@@ -572,7 +582,19 @@ function HolidayCalendarCardForm<Values extends FormikValues = FormikValues>({
                     dateFormat="dd/MM/yyyy"
                     customInput={
                       <Input
-                        rootSx={{ ...holidayItemInputSx }}
+                        rootSx={{ 
+                          ...holidayItemInputSx, 
+                          position: "relative",
+                          "&::after": {
+                            content: '""',
+                            position: "absolute",
+                            bottom: 0,
+                            left: "10px", // Tạo khoảng cách ở đầu trái
+                            right: "30px", // Tạo khoảng cách ở đầu phải
+                            height: "1px",
+                            backgroundColor: "#000", // Màu của border
+                          },
+                        }}
                         endAdornment={isEdit ? <CalendarIcon /> : undefined}
                       />
                     }
