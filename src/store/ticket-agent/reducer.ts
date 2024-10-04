@@ -4,12 +4,14 @@ import {
   getListAgent,
   setKeySearchTicketAgent,
   setListAgentOnline,
+  setParamsDashboard,
 } from "./actions";
 
 interface AgentDetailState {
   keySearch: any;
   listOnline: IAgentOnline[];
   listAgent: any[];
+  paramsDashboard: any
 }
 
 export interface IAgentOnline {
@@ -25,8 +27,17 @@ const initialState: AgentDetailState = {
     page: 1,
     size: 5,
   },
+  paramsDashboard : {
+    createTime : "year" ,
+    fromDate : "" ,
+    toDate : "" ,
+    startDate : "",
+    startDateAvgTicket : "" ,
+    fields : `["TICKETCREATE" , "TICKETUNSOLVED" , "TICKETSOLVED" , "AVGFIRSTREPLY" , "AGENTONLINE" , "AVGRATESTAR"]`,
+  },
   listOnline: [],
   listAgent: [],
+
 };
 
 const ticketAgentSlice = createSlice({
@@ -38,6 +49,12 @@ const ticketAgentSlice = createSlice({
       setKeySearchTicketAgent,
       (state, action: PayloadAction<any>) => {
         state.keySearch = action.payload;
+      },
+    );
+    builder.addCase(
+      setParamsDashboard,
+      (state, action: PayloadAction<any>) => {
+        state.paramsDashboard = action.payload;
       },
     );
     builder.addCase(

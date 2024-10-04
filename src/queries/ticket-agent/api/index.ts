@@ -51,3 +51,10 @@ export const removeAgentApi = async (id) => {
     baseURL: TICKET_AGENT_API_URL,
   });
 };
+
+
+export const getDashBoardApi = async (params) => {
+  return client.get(Endpoint.TICKET_DASHBOARD, params, {
+    baseURL: TICKET_AGENT_API_URL,
+  });
+}
