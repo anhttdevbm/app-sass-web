@@ -85,7 +85,7 @@ export const CompanyLang: CompanyDictionary = {
       title: "Client Company | Taskcover",
     },
     title: "Client Company",
-    create: "Create a new client company",
+    create: "Create new",
     createBy: "Create by",
     createDate: "Create date",
     duplicate: "Duplicate",
