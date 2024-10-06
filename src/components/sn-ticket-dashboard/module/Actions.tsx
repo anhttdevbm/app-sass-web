@@ -1,6 +1,6 @@
 import { NS_TICKET } from "constant/index";
 import { useTranslations } from "next-intl";
-import { memo, useState } from "react"
+import { memo, useEffect, useState } from "react"
 import FilterSearchDocs from "../FilterSearchDocs/FilterSearchDocs";
 import { Stack } from "@mui/material";
 import { Text } from "components/shared";
@@ -18,10 +18,11 @@ const Actions = () => {
   const [queries, setQueries] = useState<any>({});
   const onChangeQueries = (name: string, value: any) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
-    const changeParams = { ...params, createTime: queries?.priority?.priority }
+    const changeParams = { ...params, createTime: value?.priority }
     dispath(setParamsDashboard(changeParams))
 
   };
+
 
 
   return (

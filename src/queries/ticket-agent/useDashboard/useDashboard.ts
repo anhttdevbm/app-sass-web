@@ -6,22 +6,50 @@ import { selectParamsDashboard } from "store/ticket-agent/selectors";
 
 const useGetDashboardData = () => {
   const params = useAppSelector(selectParamsDashboard);
-  console.log("🚀 ~ useGetDashboardData ~ paramsRedux:", params);
 
-  // const params = {
-  //     createTime : "year" ,
-  //     fromDate : "" ,
-  //     toDate : "" ,
-  //     startDate : "",
-  //     startDateAvgTicket : "" ,
-  //     fields : `["TICKETCREATE" , "TICKETUNSOLVED" , "TICKETSOLVED" , "AVGFIRSTREPLY" , "AGENTONLINE" , "AVGRATESTAR"]`,
-  // }
+  const paramsStatistical = { ...params, fields: `["TICKETCREATE" , "TICKETUNSOLVED" , "TICKETSOLVED" , "AVGFIRSTREPLY" , "AGENTONLINE" , "AVGRATESTAR"]` }
+  const paramsColumnChart = { ...params, fields: `["AVGTICKETBYWEEK"]` }
+  const paramsOpenTicket = { ...params, fields: `["TICKETOPEN"]` }
+  const paramsPieTickets = { ...params, fields: `["TICKETBYSTATUS"]` }
 
-  return useQuery({
-    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, params],
-    queryFn: () => getDashBoardApi(params),
+
+
+
+
+
+
+
+  
+  const statisticalData = useQuery({
+    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsStatistical],
+    queryFn: () => getDashBoardApi(paramsStatistical),
     staleTime: 60,
     enabled: true,
   });
+
+  const columnChartData = useQuery({
+    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsColumnChart],
+    queryFn: () => getDashBoardApi(paramsColumnChart),
+    staleTime: 60,
+    enabled: true,
+  });
+
+  const openTicketData = useQuery({
+    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsOpenTicket],
+    queryFn: () => getDashBoardApi(paramsOpenTicket),
+    staleTime: 60,
+    enabled: true,
+  });
+
+
+  const pieTicketsData = useQuery({
+    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsPieTickets],
+    queryFn: () => getDashBoardApi(paramsPieTickets),
+    staleTime: 60,
+    enabled: true,
+  });
+
+
+  return { statisticalData , columnChartData , openTicketData , pieTicketsData}
 };
 export default useGetDashboardData;
