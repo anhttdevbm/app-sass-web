@@ -36,7 +36,7 @@ const FilterSearchDocs = ({ onChange, queries  }: FilterSearchDocsProps) => {
       {/* TODO: build error */}
       <FilterTime queries={queries}  onChange={onChange} >       
       </FilterTime>
-      <FilterPeople  queries={queries} onChange={onChange}></FilterPeople>
+      {/* <FilterPeople  queries={queries} onChange={onChange}></FilterPeople> */}
 
     </>
   );

@@ -13,9 +13,15 @@ import {
     ReferenceLine,
     ResponsiveContainer,
 } from 'recharts';
+import useGetDashboardData from 'queries/ticket-agent/useDashboard/useDashboard';
 
 const LineChartTicket = () => {
 
+
+    const lineChartTicketData = useGetDashboardData();
+    // console.log("🚀 ~ LineChartTicket ~ lineChartTicketData:", lineChartTicketData)
+
+    
     const data = [
         {
             name: 'Jan',

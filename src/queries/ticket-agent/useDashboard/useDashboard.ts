@@ -7,19 +7,24 @@ import { selectParamsDashboard } from "store/ticket-agent/selectors";
 const useGetDashboardData = () => {
   const params = useAppSelector(selectParamsDashboard);
 
-  const paramsStatistical = { ...params, fields: `["TICKETCREATE" , "TICKETUNSOLVED" , "TICKETSOLVED" , "AVGFIRSTREPLY" , "AGENTONLINE" , "AVGRATESTAR"]` }
-  const paramsColumnChart = { ...params, fields: `["AVGTICKETBYWEEK"]` }
-  const paramsOpenTicket = { ...params, fields: `["TICKETOPEN"]` }
-  const paramsPieTickets = { ...params, fields: `["TICKETBYSTATUS"]` }
+  const paramsStatistical = {
+    ...params,
+    fields: `["TICKETCREATE" , "TICKETUNSOLVED" , "TICKETSOLVED" , "AVGFIRSTREPLY" , "AGENTONLINE" , "AVGRATESTAR"]`,
+  };
+  const paramsColumnChart = { ...params, fields: `["AVGTICKETBYWEEK"]` };
+  const paramsOpenTicket = { ...params, fields: `["TICKETOPEN"]` };
+  const paramsPieTickets = { ...params, fields: `["TICKETBYSTATUS"]` };
+  const paramsLineChartTicket = { ...params, fields: `["AGENTPERFORMANCE"]` };
+  const paramsTopAgentByResolved = {
+    ...params,
+    fields: `["TOPAGENTBYRESOLVED"]`,
+  };
 
+  const paramsTopAgentByRating = {
+    ...params,
+    fields: `["TOPAGENTBYRATING"]`,
+  };
 
-
-
-
-
-
-
-  
   const statisticalData = useQuery({
     queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsStatistical],
     queryFn: () => getDashBoardApi(paramsStatistical),
@@ -41,7 +46,6 @@ const useGetDashboardData = () => {
     enabled: true,
   });
 
-
   const pieTicketsData = useQuery({
     queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsPieTickets],
     queryFn: () => getDashBoardApi(paramsPieTickets),
@@ -49,7 +53,36 @@ const useGetDashboardData = () => {
     enabled: true,
   });
 
+  const lineChartTicketData = useQuery({
+    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsLineChartTicket],
+    queryFn: () => getDashBoardApi(paramsLineChartTicket),
+    staleTime: 60,
+    enabled: true,
+  });
 
-  return { statisticalData , columnChartData , openTicketData , pieTicketsData}
+  const topAgentByResolvedData = useQuery({
+    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsTopAgentByResolved],
+    queryFn: () => getDashBoardApi(paramsTopAgentByResolved),
+    staleTime: 60,
+    enabled: true,
+  });
+
+  const topAgentByRatingData = useQuery({
+    queryKey: [QUERY_AGENT_KEY.TICKET_DASHBOARD, paramsTopAgentByRating],
+    queryFn: () => getDashBoardApi(paramsTopAgentByRating),
+    staleTime: 60,
+    enabled: true,
+  });
+  
+
+  return {
+    statisticalData,
+    columnChartData,
+    openTicketData,
+    pieTicketsData,
+    lineChartTicketData,
+    topAgentByResolvedData,
+    topAgentByRatingData,
+  };
 };
 export default useGetDashboardData;
