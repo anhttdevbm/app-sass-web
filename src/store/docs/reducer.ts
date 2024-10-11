@@ -193,6 +193,12 @@ const initialState: IDocs = {
   getDocsQueries: {
     page: 1,
     size: 50,
+    project: "",
+    project_status: undefined,
+    user_id: "",
+    order_by: "created_by",
+    sort_by: "DESC",
+    group_by: "owner",
   },
 };
 
