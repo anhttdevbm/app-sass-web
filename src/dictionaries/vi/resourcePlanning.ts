@@ -116,7 +116,7 @@ export const ResourcePlanning: ResourceDictionary = {
     chooseBudgetPlacehodle: "chọn ngân sách",
     budget: "Ngân sách",
     search: "Tìm kiếm",
-    servicePlaceholder: "Enter summary or service key",
+    servicePlaceholder: "Nhập khóa tóm tắt hoặc khóa dịch vụ",
     dragText: "Kéo dịch vụ vào bảng lịch",
     date: "Ngày",
   },
