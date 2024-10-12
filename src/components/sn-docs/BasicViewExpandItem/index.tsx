@@ -1,9 +1,11 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { Avatar, Box, IconButton, Stack } from "@mui/material";
+import { Avatar, Box, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { NS_DOCS } from "constant/index";
 import dayjs from "dayjs";
+import { LockDocIcon } from "icons/LockDocIcon";
+import { UserGroupIcon } from "icons/UserGroupIcon";
 import { useTranslations } from "next-intl";
 import { useDocs } from "store/docs/selectors";
 import ActionMoreListDoc from "../ActionMoreListDoc";
@@ -37,11 +39,21 @@ export default function BasicViewExpandItem({
         justifyContent={{ xs: "space-between" }}
       >
         <Box display="flex" alignItems="center">
-          <IconButton color="inherit" aria-label="menu">
+          <Box display="flex" alignItems="center" gap="4px">
+            {expandedItem.is_public ? (
+              <UserGroupIcon
+                sx={{
+                  width: 18,
+                  height: 18,
+                }}
+              />
+            ) : (
+              <LockDocIcon sx={{ height: 16, width: 16 }} />
+            )}
             <DescriptionIcon
               sx={{ color: "primary.main", height: 16, width: 16 }}
             />
-          </IconButton>
+          </Box>
           <Typography variant="h6">{expandedItem?.name ?? "--"}</Typography>
         </Box>
         <Box
@@ -53,7 +65,11 @@ export default function BasicViewExpandItem({
             [theme.breakpoints.up("xs")]: {},
           })}
         >
-          <ActionMoreListDoc isHor={true} style={{ colorIcon: "text.primary" }} />
+          <ActionMoreListDoc
+            isHor={true}
+            style={{ colorIcon: "text.primary" }}
+            docItem={expandedItem}
+          />
         </Box>
       </Box>
       <Box
@@ -105,20 +121,29 @@ export default function BasicViewExpandItem({
           </Typography>
         </Box>
       </Box>
-      <Box
-        sx={(theme) => ({
-          width: "10%",
-          [theme.breakpoints.up("md")]: {
-            display: "flex",
-            justifyContent: "flex-end",
-          },
-          [theme.breakpoints.up("xs")]: {
-            display: "none",
-          },
-        })}
-      >
-        <ActionMoreListDoc isHor={true} style={{ colorIcon: "text.primary" }} />
-      </Box>
+      {expandedItem.hasPerm && (
+        <Box
+          sx={(theme) => ({
+            width: "10%",
+            [theme.breakpoints.up("md")]: {
+              display: "flex",
+              justifyContent: "flex-end",
+            },
+            [theme.breakpoints.up("xs")]: {
+              display: "none",
+            },
+          })}
+        >
+          <ActionMoreListDoc
+            isHor={true}
+            style={{ colorIcon: "text.primary" }}
+            iconStyles={{
+              rotate: "0",
+            }}
+            docItem={expandedItem}
+          />
+        </Box>
+      )}
     </Stack>
   );
 }

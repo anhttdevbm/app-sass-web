@@ -4,36 +4,35 @@
 
 import {
   Box,
-  Stack,
-  TextField,
-  Typography,
   IconButton,
   Tooltip as MuiTooltip,
+  Stack,
+  Typography,
 } from "@mui/material";
+import Avatar from "components/Avatar";
 import { Text, Tooltip } from "components/shared";
 import { DocAccessibility } from "constant/enums";
 import { NS_DOCS } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useDebounce from "hooks/useDebounce";
+import useTheme from "hooks/useTheme";
 import BackIcon from "icons/BackIcon";
 import CommentIcon from "icons/CommentIcon";
 import CopyIcon from "icons/CopyIcon";
 import MoreIcon from "icons/MoreIcon";
-import OpenSidebarIcon from "icons/OpenSidebarIcon";
 import ShareIcon from "icons/ShareIcon";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useGetDocDetailQuery, useUpdateDocMutation } from "store/docs/api";
+import { changeId, updateHeightHeaderDetail } from "store/docs/reducer";
 import { useAppSelector } from "store/hooks";
 import { NewPageContext } from "../news/context/NewPageContext";
 import { IDocDetail } from "./DocDetail";
 import ModalShare from "./LeftSlide/modal/ModalShare";
 import SelectProjectInDoc from "./SelectProjectInDoc";
-import useTheme from "hooks/useTheme";
-import { useDispatch } from "react-redux";
-import { changeId, updateHeightHeaderDetail } from "store/docs/reducer";
-import Avatar from "components/Avatar";
+import React from "react";
 
 const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const [openShare, setOpenShare] = useState(false);
@@ -48,28 +47,19 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
     }
   }, []);
 
-  const { data: rootDocument } = useGetDocDetailQuery(id as string);
+  const { data: rootDocument } = useGetDocDetailQuery({ id: id as string });
 
-  const { isDarkMode } = useTheme();
   const doc = useAppSelector((state) => state.doc);
   const docsT = useTranslations(NS_DOCS);
-  const { data: document } = useGetDocDetailQuery(currentId as string);
-  const [updateDoc] = useUpdateDocMutation();
   const [valueCopy, copy, isCopied] = useCopyToClipboard();
   const { isSmSmaller } = useBreakpoint();
   const { setOpenComment } = useContext(NewPageContext);
-  const [debounceChange] = useDebounce((value: string) => {
-    updateDoc({ id: currentId as string, payload: { name: value } });
-  }, 200);
 
   const refHeader = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     dispatch(updateHeightHeaderDetail(refHeader.current?.offsetHeight));
   }, []);
-
-  console.log("doc", doc);
-  console.log("rootDocument", rootDocument);
 
   return (
     <>
@@ -105,7 +95,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 }}
                 onClick={() => router.back()}
               />
-              <SelectProjectInDoc></SelectProjectInDoc>
+              <SelectProjectInDoc currentProjectId={doc.project_id} />
               <Text pr={"2px"} sx={{ color: { xs: "common.white" } }}>
                 /
               </Text>
@@ -160,10 +150,6 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                 }}
                 onClick={() => router.back()}
               />
-              <SelectProjectInDoc />
-              <Text pl={"3px"} pr={"6px"}>
-                /
-              </Text>
               {/* <TextField
                 placeholder="Nhập Tên Doc"
                 variant="outlined"
@@ -193,7 +179,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                     sx={{
                       "&:hover": {
                         backgroundColor: "transparent",
-                        pointerEvents: "none"
+                        pointerEvents: "none",
                       },
                     }}
                   >
@@ -213,6 +199,13 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                   {rootDocument?.name}
                 </Typography>
               </Box>
+              <Text pl={"3px"} pr={"6px"}>
+                /
+              </Text>
+              <SelectProjectInDoc
+                updateOnSelect={true}
+                currentProjectId={doc.project_id}
+              />
             </Box>
             <Box
               sx={{
@@ -233,7 +226,11 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               }}
             >
               {rootDocument && (
-                <Avatar size={32} src={rootDocument?.owner?.avatar?.link} />
+                <Avatar
+                  size={32}
+                  src={rootDocument?.owner?.avatar?.link}
+                  title={rootDocument?.owner?.fullname}
+                />
               )}
               <Box
                 borderRadius="6px"

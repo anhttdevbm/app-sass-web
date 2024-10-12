@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { User } from "constant/types";
 import { CostRateType, CURRENCY_CODE, DataStatus } from "constant/enums";
+import { User } from "constant/types";
 import {
-  getEmployeeDetail,
-  updateEmployee,
-  getAllCostRate,
   addCostRate,
-  getCostRate,
-  updateCostRate,
   deleteCostRate,
   deleteMultiCostRate,
   DeleteMultiCostRateResponse,
+  getAllCostRate,
+  getCostRate,
   getCostRateChart,
+  getEmployeeDetail,
+  updateCostRate,
+  updateEmployee,
 } from "./actions";
 
 export type CostRateWorkingHours = {
@@ -70,7 +70,7 @@ export interface Employee extends User {
   date_end_using: string;
   date_start_using: string;
   is_pay_user: boolean;
-  id_rocket?: string;
+  id: string;
 }
 
 export type EmployeeDetailState = {

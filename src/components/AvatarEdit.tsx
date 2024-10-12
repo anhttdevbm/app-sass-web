@@ -21,8 +21,6 @@
 //     if (editor) {
 //       const canvas = editor?.getImageScaledToCanvas();
 //       const dataURL = canvas.toDataURL();
-//       // Làm gì đó với dataURL, ví dụ như lưu vào state hoặc gửi lên server
-//       console.log(dataURL);
 //     }
 //   };
 

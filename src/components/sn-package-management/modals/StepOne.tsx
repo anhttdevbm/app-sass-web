@@ -16,10 +16,11 @@ type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
   setDataStepOne: React.Dispatch<React.SetStateAction<DataStepOne>>;
+  dataStepOne: DataStepOne;
 };
 
 const StepOne = (props: Props) => {
-  const { setStep, onClose, setDataStepOne } = props;
+  const { setStep, onClose, setDataStepOne, dataStepOne } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
 
   const handleClose = () => {
@@ -38,9 +39,9 @@ const StepOne = (props: Props) => {
 
   const handleClickUprade = (value: string) => {
     setDataStepOne({
+      ...dataStepOne,
       newPackage: value,
       billingPlan: "monthly",
-      numberOfUser: 0,
     });
     setStep((prevStep) => prevStep + 1);
   };

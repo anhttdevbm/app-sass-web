@@ -7,6 +7,7 @@ import { Text } from "components/shared";
 import { DataStatus } from "constant/enums";
 import { AN_ERROR_TRY_RELOAD_PAGE, NS_COMMON } from "constant/index";
 import { UpdateUserInfoData } from "store/app/actions";
+import { UserInfo } from "store/app/reducer";
 import { useAuth, useUserInfo } from "store/app/selectors";
 import { UpdateEmployee } from "store/employeeDetail/actions";
 import { useEmployeeDetail } from "store/employeeDetail/selectors";
@@ -95,7 +96,7 @@ const EmployeeDetailProvider = ({ type, children }: EmployeeDetailPageProps & { 
   return (
     <EmployeeDetailContextProvider value={{
       type,
-      employee,
+      employee: employee as UserInfo,
       onGetProfile,
       onUpdateUserInfo
     }}>

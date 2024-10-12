@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, Typography } from "@mui/material";
 import ConfirmDialog from "components/ConfirmDialog";
-import { Button, IconButton } from "components/shared";
+import { Button, IconButton, Text } from "components/shared";
 import {
   TBudgetSection,
   TBudgetService,
@@ -513,42 +513,49 @@ export const ServiceSection = ({
         <Box
           sx={{
             position: "sticky !important",
-            top: "21%",
+            top: "0%",
             background: isDarkMode ? "#313130" : "white",
-            zIndex: 10,
+            zIndex: 20,
+            padding: "6px 0",
           }}
         >
-          <Stack direction="row" gap={2} justifyContent="end" p="15px">
+          <Stack direction="row" gap={2} justifyContent="end" height={40}>
             <Button
               variant="primaryOutlined"
               sx={{
                 ...defaultSx.button,
                 borderRadius: "100px",
-                borderImageSource: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 "&:hover": {
                   borderColor: "#3699FF",
                 },
               }}
+              size="small"
               onClick={() => {
                 onCloseEdit();
               }}
             >
-              {budgetT("tabService.section.cancelBtnText")}
+              <Text fontSize={12} fontWeight={700} color="#0575E6">
+                {budgetT("tabService.section.cancelBtnText")}{" "}
+              </Text>
             </Button>
             <Button
               variant="primary"
               onClick={handleSaveAllService}
+              size="small"
               sx={{
                 ...defaultSx.button,
                 bgcolor: "primary.main",
                 borderRadius: "100px",
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 "&:hover": {
-                  background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                  background:
+                    "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
                 },
               }}
             >
-              {budgetT("tabService.section.saveBtnText")}
+              <Text fontSize={12} fontWeight={700} color="#fff">
+                {budgetT("tabService.section.saveBtnText")}
+              </Text>
             </Button>
           </Stack>
         </Box>
@@ -584,7 +591,7 @@ export const ServiceSection = ({
                                 boxSizing: "border-box",
                                 width: "100%",
                                 backgroundColor: "common.white",
-                                mt: 2,
+                                // mt: 2,
                               }}
                               ref={providedInner.innerRef}
                               {...providedInner.draggableProps}
@@ -605,7 +612,7 @@ export const ServiceSection = ({
                                       sm: "row",
                                     }}
                                     alignItems="center"
-                                    py={1}
+                                    // py={1}
                                   >
                                     <IconButton noPadding>
                                       <MoveDotIcon />
@@ -631,9 +638,7 @@ export const ServiceSection = ({
                                         }}
                                       />
                                     </IconButton>
-                                    
                                   </Stack>
-                                 
                                 </Stack>
                                 <Stack
                                   sx={{
@@ -666,7 +671,7 @@ export const ServiceSection = ({
           <Button
             startIcon={<PlusIcon />}
             size="small"
-            sx={{ 
+            sx={{
               borderRadius: "100px",
               background: "#D9F0FD",
               "&:hover": {
@@ -718,6 +723,8 @@ const defaultSx = {
   },
   button: {
     minWidth: 120,
-    mx: 1.5,
+    height: "40px",
+    // width : "120px" ,
+    // // minHeight: 40
   },
 };

@@ -60,7 +60,9 @@ export const getDocCustom = createAsyncThunk(
   async (docId: string) => {
     try {
       const response = await client.get(
-        Endpoint.DETAIL_DOCS + docId, {}, {
+        Endpoint.DETAIL_DOCS + docId,
+        {},
+        {
           baseURL: DOCS_API_URL,
         },
       );
@@ -73,13 +75,11 @@ export const getDocCustom = createAsyncThunk(
 
 export const updateDocCustom = createAsyncThunk(
   "docs/updateDoc",
-  async ({ id, data }: { id: string; data:  { content: string } }) => {
+  async ({ id, data }: { id: string; data: { content: string } }) => {
     try {
-      const response = await client.put(
-        Endpoint.DOCS + `/${id}`, data, {
-          baseURL: DOCS_API_URL,
-        },
-      );
+      const response = await client.put(Endpoint.DOCS + `/${id}`, data, {
+        baseURL: DOCS_API_URL,
+      });
       if (response.status === HttpStatusCode.OK) return response.data;
     } catch (error) {
       throw error;

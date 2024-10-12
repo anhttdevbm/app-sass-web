@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 import StepTwo from "./StepTwo";
 import StepOne from "./StepOne";
@@ -14,6 +14,8 @@ export interface DataStepOne {
 type Props = {
   open: boolean;
   onClose: () => void;
+  unupgradedAccount: boolean;
+  totalAccount?: number;
 };
 export type DataPrice = {
   priceOfMonth: number;
@@ -23,12 +25,12 @@ export type DataPrice = {
 };
 
 const ModalUpgradePackage = (props: Props) => {
-  const { open, onClose } = props;
+  const { open, onClose, unupgradedAccount, totalAccount } = props;
   const [step, setStep] = useState(0);
   const [dataStepOne, setDataStepOne] = useState<DataStepOne>({
     billingPlan: "",
     newPackage: "",
-    numberOfUser: 0,
+    numberOfUser: 1,
   });
   const [dataPrice, setDataPrice] = useState<DataPrice>({
     priceOfMonth: 0,
@@ -37,6 +39,11 @@ const ModalUpgradePackage = (props: Props) => {
     vat: 0,
   });
 
+  useEffect(() => {
+    if (unupgradedAccount) {
+      setDataStepOne({ ...dataStepOne, numberOfUser: totalAccount ?? 1 });
+    }
+  }, [unupgradedAccount]);
   const renderModal = () => {
     switch (step) {
       case 0:
@@ -45,6 +52,7 @@ const ModalUpgradePackage = (props: Props) => {
             setStep={setStep}
             onClose={onClose}
             setDataStepOne={setDataStepOne}
+            dataStepOne={dataStepOne}
           />
         );
       case 1:
@@ -56,6 +64,7 @@ const ModalUpgradePackage = (props: Props) => {
             dataPrice={dataPrice}
             setDataPrice={setDataPrice}
             setDataStepOne={setDataStepOne}
+            unupgradedAccount={unupgradedAccount}
           />
         );
       case 2:

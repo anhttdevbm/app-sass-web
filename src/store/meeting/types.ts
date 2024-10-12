@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SignalData } from "simple-peer";
 export interface MeetResponse {
   data: MeetResponseData;
@@ -65,10 +66,7 @@ export const CallType = {
 export interface RemoteStream {
   participant: MeetUser;
   stream: MediaStream;
-  streamState: {
-    isCameraOn: boolean;
-    isMicOn: boolean;
-  };
+  streamState: LocalStreamState;
 }
 
 export interface WSPayload {
@@ -86,17 +84,22 @@ export interface MeetDataEntryEvent {
 export enum ParticipantStreamEvent {
   TOGGLE_CAMERA = "toggle_camera",
   TOGGLE_MIC = "toggle_mic",
+  RAISE_HAND = "raise_hand",
+  LOWER_HAND = "lower_hand",
+  REACTION = "reaction",
 }
 
-export interface ParticipantStreamEventPayload {
+export interface ParticipantAction {
   event: ParticipantStreamEvent;
   participantId: string;
-  status: boolean;
+  status: boolean | string;
 }
 
 export interface LocalStreamState {
   isCameraOn: boolean;
   isMicOn: boolean;
+  isRaiseHand: boolean;
+  reactionUnified: string;
 }
 
 // Current structure only for text message
@@ -104,4 +107,5 @@ export interface MessageItem {
   sender: MeetUser;
   content: string;
   sended_at: string;
+  type: "link" | "text";
 }

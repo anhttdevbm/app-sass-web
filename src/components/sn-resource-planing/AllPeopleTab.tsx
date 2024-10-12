@@ -35,7 +35,6 @@ import { useFetchBookingAll } from "./hooks/useBookingAll";
 import useGetOptions, { useFetchOptions } from "./hooks/useGetOptions";
 import CreateBooking from "./modals/CreateBooking";
 import EditBooking from "./modals/EditBooking";
-
 export interface IEditState {
   isOpen: boolean;
   bookingId: string;
@@ -325,7 +324,7 @@ const AllPeopleTab = ({
       border: "none!important",
     },
     "& .fc-datagrid-cell-frame": {
-      // height: "auto!important",
+      height: "auto!important",
     },
     "& .fc-icon, & .fc-datagrid-expander-placeholder, & .fc-datagrid-expander":
       {
@@ -333,12 +332,16 @@ const AllPeopleTab = ({
       },
     "& td.fc-day-sun, & td.fc-day-sat": {
       borderBottom: "none!important",
-      background: palette.grey[50],
+      background: !isWorkload && palette.grey[50],
     },
     "& th.fc-day-sun, & th.fc-day-sat": {
-      background: palette.grey[50],
+      background: !isWorkload && palette.grey[50],
+    },
+    "& .fc-timeline-lane-frame": {
+      height: `${isWorkload ? "63px" : "107px"} !important`,
     },
   };
+
   const mapResours = () => {
     const items: any = [];
     mappedResources.map((item: any) => {
@@ -367,19 +370,20 @@ const AllPeopleTab = ({
 
     return items;
   };
+
   const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    resourceT("months.january"),
+    resourceT("months.february"),
+    resourceT("months.march"),
+    resourceT("months.april"),
+    resourceT("months.may"),
+    resourceT("months.june"),
+    resourceT("months.july"),
+    resourceT("months.august"),
+    resourceT("months.september"),
+    resourceT("months.october"),
+    resourceT("months.november"),
+    resourceT("months.december"),
   ];
 
   function getWeekDates(year, weekNumber) {
@@ -498,7 +502,7 @@ const AllPeopleTab = ({
             onClick={() => setIsWorkload((prev: Boolean) => !prev)}
           >
             <ClockIcon sx={{ width: 14, height: 14 }} />
-            Workload
+            {resourceT("schedule.resourceHeader.Workload")}
           </Button>
 
           <Button
@@ -521,7 +525,7 @@ const AllPeopleTab = ({
             }}
           >
             <ServiceIcon sx={{ width: 14, height: 14 }} />
-            Choose Service
+            {resourceT("schedule.resourceHeader.chooseService")}
           </Button>
         </Stack>
       )}

@@ -1,12 +1,12 @@
 import {
+  Stack,
   Table,
+  TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   Typography,
-  TableContainer,
-  TableBody,
-  Stack,
 } from "@mui/material"
 import { BodyCell, StatusCell } from "components/Table"
 import Image from "next/image"
@@ -222,7 +222,6 @@ function MyTaskTable() {
         </TableHead>
         <TableBody>
           {mockData.map((row) => {
-            console.log(row.status)
             return             <TableRow key={row.id}>
             <BodyCell>
               <Typography textAlign='left' fontWeight={600} fontSize={14}>
@@ -325,7 +324,7 @@ function TimeOffTable() {
   )
 }
 
-export { MyTaskTable, TimeOffTable, ActiveProjectsTable }
+export { ActiveProjectsTable, MyTaskTable, TimeOffTable }
 
 function convertTimestamp(timestamp: string): string {
   const date = new Date(timestamp)

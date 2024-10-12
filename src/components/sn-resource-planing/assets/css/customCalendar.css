@@ -1,4 +1,4 @@
-.custom-calender-timeline-header {
+/* .custom-calender-timeline-header {
   border-left: 1px solid #cccccc !important;
   height: 38px;
   line-height: 38px;
@@ -39,7 +39,7 @@
   display: flex;
   align-items: center;
   font-size: 14;
-}
+} */
 
 .fc .fc-datagrid-cell-resizer {
   width: 0 !important;

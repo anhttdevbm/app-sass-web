@@ -1,12 +1,11 @@
 "use client";
 
 import { Box } from "@mui/material";
-import React, { useState } from "react";
-import HeaderDocDetail from "./HeaderDocDetail";
-import DocDetail from "./DocDetail";
+import { useState } from "react";
 import { NewPageContextProvider } from "../news/context/NewPageContext";
 import { ThemeProvider } from "../news/context/ThemeContext";
-import FixedLayout from "components/FixedLayout";
+import DocDetail from "./DocDetail";
+import HeaderDocDetail from "./HeaderDocDetail";
 
 const PageDocDetail = () => {
   const [openComment, setOpenComment] = useState(false);
@@ -15,19 +14,14 @@ const PageDocDetail = () => {
   return (
     <ThemeProvider>
       <NewPageContextProvider>
-        <Box sx={{ height: "100%"}}>
+        <Box sx={{ height: "100%" }}>
           <HeaderDocDetail
             openComment={openComment}
             setOpenComment={setOpenComment}
             openSlider={openSlider}
             setOpenSlider={setOpenSlider}
           />
-          <DocDetail
-            openComment={openComment}
-            setOpenComment={setOpenComment}
-            openSlider={openSlider}
-            setOpenSlider={setOpenSlider}
-          />
+          <DocDetail />
         </Box>
       </NewPageContextProvider>
     </ThemeProvider>
