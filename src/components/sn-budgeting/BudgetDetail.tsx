@@ -586,7 +586,7 @@ export const BudgetDetail = () => {
             width: isOpenRightSidebar ? "calc(100% - 350px)" : "100%",
             transition: "all .2s",
             overflow: "auto",
-            height: "calc(100vh - 200px)",
+            height: "calc(100vh - 300px)",
             '&::-webkit-scrollbar': {
               display: 'none', 
             },
