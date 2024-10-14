@@ -1,11 +1,11 @@
 // hooks/useWebSocket.ts
-import { useEffect, useState } from "react";
-import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
-import { clientStorage } from "utils/storage";
-import { useDispatch } from "react-redux";
-import { setListAgentOnline } from "store/ticket-agent/actions";
-import { useAuth } from "store/app/selectors";
 import { Permission } from "constant/enums";
+import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useAuth } from "store/app/selectors";
+import { setListAgentOnline } from "store/ticket-agent/actions";
+import { clientStorage } from "utils/storage";
 
 interface WebSocketMessage {
   action: string;
@@ -23,7 +23,6 @@ const useWebSocket = (): WebSocket | null => {
 
   const handleMessage = (event: MessageEvent) => {
     const data = JSON.parse(event.data);
-    console.log("Unknown action:", data);
     switch (data?.code) {
       case "ListOnline":
         dispatch(setListAgentOnline(data?.data));
@@ -44,7 +43,7 @@ const useWebSocket = (): WebSocket | null => {
       //   setOnlineUsers(data.users || []);
       //   break;
       default:
-        console.log("Unknown action:", data);
+        break;
     }
   };
 
