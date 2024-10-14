@@ -264,4 +264,5 @@ export const Endpoint = {
 
   //Ticket-agent
   TICKET_AGENT: "/ticket/user",
+  TICKET_DASHBOARD : "/ticket/dashboard"
 };
