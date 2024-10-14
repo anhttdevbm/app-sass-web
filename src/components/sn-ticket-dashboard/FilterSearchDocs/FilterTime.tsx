@@ -16,8 +16,8 @@ import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 const FillterPriority = ({ onChange, queries }: FilterSearchDocsProps) => {
   const t = useTranslations(NS_TICKET);
 
-const ignoreItems = ["All","Last 7 Days" , "This Month" , "This Year" , "Custom"];
-const [name , setName] = useState("All")
+const ignoreItems = ["month","year"];
+const [name , setName] = useState("year")
 const [anchorEl, setAnchorEl] = useState<any>(null);
 const handleClose = () => {
   setAnchorEl(null);

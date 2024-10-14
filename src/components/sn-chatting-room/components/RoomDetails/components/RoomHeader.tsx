@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
 import {
   Avatar,
@@ -27,6 +28,7 @@ import { CHAT_EVENT_TYPE } from "store/chat/type";
 import colorSchemes from "utils/colorSchemes";
 import { debounce } from "utils/index";
 import ChatDetailInfo from "./ChatDetailInfo";
+import { headers } from "next/headers";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();

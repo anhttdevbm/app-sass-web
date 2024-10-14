@@ -9,49 +9,43 @@ import TextField from "@mui/material/TextField";
 import Avatar from "components/Avatar";
 import { NS_DOCS } from "constant/index";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import * as React from "react";
 import { useAuth } from "store/app/selectors";
 import { usePostCommentMutation } from "store/docs/api";
 import { NewPageContext } from "../../context/NewPageContext";
-import useDocEditor from "../../hook/useDocEditor";
-import { useParams } from "next/navigation";
-
-export class Comment {
-  content: string;
-  position: string;
-  constructor(content) {
-    this.content = content;
-    this.position = `a${crypto.randomUUID()}a`;
-  }
-}
 
 export default function CommentDialog() {
-  const { openCommentDialog, setCommentDialogOpen, setActiveCommentId } =
-    React.useContext(NewPageContext);
+  const {
+    openCommentDialog,
+    commentPosition,
+    showExistComment,
+    handleCloseCommentDialog,
+  } = React.useContext(NewPageContext);
   const { user } = useAuth();
   const t = useTranslations(NS_DOCS);
   const [addComment] = usePostCommentMutation();
-  const [comment, setComment] = React.useState<string>("");
+  const [comment, setComment] = React.useState<string>(
+    showExistComment ? showExistComment.comment[0].content : "",
+  );
   const { id } = useParams();
 
-  const editor = useDocEditor();
-  const handleClose = () => {
-    setCommentDialogOpen(false);
-  };
-
   const handleAddComment = async () => {
-    const newComment = new Comment(comment);
-    // position of doc comment!
-    // editor?.commands.setComment(newComment.position);
     const response = await addComment({
-      ...newComment,
       docId: id as string,
+      content: comment,
+      position: commentPosition,
     }).unwrap();
-    // setActiveCommentId(newComment.position);
-    handleClose();
+
+    handleCloseCommentDialog();
   };
+  React.useEffect(() => {
+    if (showExistComment) {
+      setComment(showExistComment.comment[0].content);
+    } else setComment("");
+  }, [showExistComment]);
   return (
-    <Dialog open={openCommentDialog} onClose={handleClose}>
+    <Dialog open={openCommentDialog} onClose={handleCloseCommentDialog}>
       <DialogTitle sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <Avatar size={32} src={user?.avatar?.link} />
         <span>{user?.fullname}</span>
@@ -62,16 +56,17 @@ export default function CommentDialog() {
           margin="dense"
           id="name"
           label="Comment"
+          spellCheck={false}
           type="text"
           fullWidth
-          defaultValue={comment}
+          value={comment}
           onChange={(e) => setComment(e.target.value)}
           InputLabelProps={{ sx: { color: "InactiveCaptionText" } }}
           sx={{ color: "inherit" }}
           variant="standard"
           onKeyDown={(e) => {
             if (e.key === "Enter") handleAddComment();
-            if (e.key === "Esc") setCommentDialogOpen(!openCommentDialog);
+            if (e.key === "Esc") handleCloseCommentDialog();
           }}
         />
       </DialogContent>
@@ -79,13 +74,14 @@ export default function CommentDialog() {
         <Button
           sx={{ textTransform: "none" }}
           color="inherit"
-          onClick={handleClose}
+          onClick={handleCloseCommentDialog}
         >
           {t("button.cancel")}
         </Button>
         <Button
           sx={{ textTransform: "none" }}
           onClick={() => handleAddComment()}
+          disabled={showExistComment ? true : false}
         >
           {t("button.comment")}
         </Button>

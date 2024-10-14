@@ -1,38 +1,34 @@
 "use client";
 
-import { memo, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mui/material";
-import AppLogo from "components/AppLogo";
-import { Button, Input, Text } from "components/shared";
-import { useAppReady, useAuth, useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI } from "utils/index";
-import CrownIcon from "icons/CrownIcon";
-import { SUFFIX_EMAIL_REGEX } from "constant/regex";
-import ConfirmDialog from "components/ConfirmDialog";
-import useToggle from "hooks/useToggle";
-import SwitchLanguage from "components/SwitchLanguage";
+import { Endpoint, client } from "api";
+import { formErrorCode } from "api/formErrorCode";
 import AppLoading from "components/AppLoading";
-import { HttpStatusCode, Permission } from "constant/enums";
-import {
-  JOIN_WORKSPACE_PATH,
-  HOME_PATH,
-  UPGRADE_ACCOUNT_PATH,
-  SIGNIN_PATH,
-} from "constant/paths";
-import useWindowSize from "hooks/useWindowSize";
-import { useRouter } from "next-intl/client";
-import { useTranslations } from "next-intl";
+import AppLogo from "components/AppLogo";
+import ConfirmDialog from "components/ConfirmDialog";
+import { Button, Input, Text } from "components/shared";
+import SwitchLanguage from "components/SwitchLanguage";
+import SwitchTheme from "components/SwitchTheme";
+import { HttpStatusCode } from "constant/enums";
 import {
   AN_ERROR_TRY_AGAIN,
   AUTH_API_URL,
   NS_AUTH,
   NS_COMMON,
 } from "constant/index";
-import Link from "components/Link";
-import { Endpoint, client } from "api";
-import SwitchTheme from "components/SwitchTheme";
-import { formErrorCode } from "api/formErrorCode";
+import {
+  HOME_PATH
+} from "constant/paths";
+import { SUFFIX_EMAIL_REGEX } from "constant/regex";
 import { ErrorResponse } from "constant/types";
+import useToggle from "hooks/useToggle";
+import useWindowSize from "hooks/useWindowSize";
+import CrownIcon from "icons/CrownIcon";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next-intl/client";
+import { memo, useEffect, useMemo, useState } from "react";
+import { useAppReady, useAuth, useSnackbar } from "store/app/selectors";
+import { getMessageErrorByAPI } from "utils/index";
 
 const JoinWorkspace = () => {
   const { onAddSnackbar } = useSnackbar();
@@ -95,6 +91,24 @@ const JoinWorkspace = () => {
     } finally {
       onHide();
       setIsSubmitting(false);
+    }
+  };
+
+  const onUpgradeAccountClick = async () => {
+    try {
+      const response = await client.get(Endpoint.CREATE_WORKSPACE,undefined, {
+        baseURL: AUTH_API_URL,
+      });
+      
+      if (response?.status === HttpStatusCode.OK) {
+        onAddSnackbar(authT("joinWorkspace.notification.success"), "success");
+        onGetProfile();
+        push(HOME_PATH);
+      } else {
+        throw AN_ERROR_TRY_AGAIN;
+      }
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
 
@@ -199,15 +213,14 @@ const JoinWorkspace = () => {
               {authT("joinWorkspace.content")}
             </Text>
 
-            <Link href={UPGRADE_ACCOUNT_PATH} underline="none">
-              <Button
+            <Button
                 variant="secondary"
                 startIcon={<CrownIcon color="primary" sx={{ fontSize: 24 }} />}
+                onClick={onUpgradeAccountClick}
                 fullWidth
               >
-                {commonT("upgradeAccount")}
-              </Button>
-            </Link>
+                {commonT("createWorkspace")}
+            </Button>
           </Stack>
         </Stack>
       </Stack>

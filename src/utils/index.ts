@@ -1,7 +1,8 @@
-import { ThemeMode } from "constant/enums";
+import { HttpStatusCode, ThemeMode } from "constant/enums";
 import {
   AN_ERROR_TRY_AGAIN,
   AN_ERROR_TRY_RELOAD_PAGE,
+  AUTH_API_URL,
   DARK_THEME_MEDIA_SYSTEM,
   DATE_FORMAT_SLASH,
   DATE_LOCALE_FORMAT,
@@ -16,6 +17,7 @@ import { ReadonlyURLSearchParams } from "next/navigation";
 import StringFormat from "string-format";
 import { clientStorage } from "./storage";
 import { i } from "@fullcalendar/resource/internal-common";
+import { client, Endpoint } from "api";
 
 export const parseHashURL = (value: string) => `#${value}`;
 
@@ -748,4 +750,23 @@ export const getLastQuarter = (): QuarterDates => {
     .format("YYYY-MM-DD");
 
   return { startOfQuarter: startOfLastQuarter, endOfQuarter: endOfLastQuarter };
+};
+
+export const fetchUser = async (userId) => {
+  try {
+    const response = await client.get(
+      StringFormat(Endpoint.USER_ITEM, { id: userId }),
+      undefined,
+      {
+        baseURL: AUTH_API_URL,
+      },
+    );
+
+    if (response?.status === HttpStatusCode.OK) {
+      return response.data;
+    }
+    throw AN_ERROR_TRY_AGAIN;
+  } catch (error) {
+    throw error;
+  }
 };

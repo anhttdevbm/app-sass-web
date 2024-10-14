@@ -36,7 +36,6 @@ interface CommandListProps {
 
 export const CommandList = React.forwardRef(
   ({ items, command, editor, range }: CommandListProps, ref) => {
-    console.log("🚀 ~ file: CommandList.tsx:35 ~ props:", range);
     const { theme } = useContext(ThemeContext);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const scrollContainerRef = useRef<HTMLDivElement>(null);

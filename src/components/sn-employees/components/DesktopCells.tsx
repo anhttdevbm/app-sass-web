@@ -74,6 +74,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
         text={TEXT_STATUS[item.status]}
         color={COLOR_STATUS[item.status]}
         width={93}
+        align="center"
       />
     </>
   );

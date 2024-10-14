@@ -149,6 +149,7 @@ const TableLayout = forwardRef((props: TableLayoutProps, ref) => {
       // maxHeight={HEIGHT_ROW * (numberOfRows + 1) + HEIGHT_HEADER + 10}
       // maxHeight={HEIGHT_ROW * (numberOfRows + 1)}
       overflow="hidden"
+      flex={1}
       {...rest}
     >
       <Box

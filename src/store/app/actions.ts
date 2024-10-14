@@ -46,7 +46,7 @@ export const signin = createAsyncThunk(
   async (data: SigninData) => {
     try {
       const response = await client.post(Endpoint.SIGNIN, data, {
-        baseURL: "http://103.250.79.246:6801/api/v1",
+        baseURL: AUTH_API_URL,
       });
 
       if (response?.status === HttpStatusCode.OK) {

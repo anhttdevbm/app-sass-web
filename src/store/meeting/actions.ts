@@ -68,8 +68,8 @@ export const endMeeting = createAsyncThunk(
   },
 );
 
-export const startReconnecting = createAsyncThunk(
-  "meeting/startReconnecting",
+export const getMeetRoom = createAsyncThunk(
+  "meeting/getMeetRoom",
   async (paramReq: string, { rejectWithValue }) => {
     try {
       const response = await client.get(`meet/room/${paramReq}`, undefined, {

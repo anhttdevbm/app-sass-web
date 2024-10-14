@@ -14,7 +14,9 @@ import { Select, Text } from "components/shared";
 import { useDispatch } from "react-redux";
 import { getPriceUpgradePackage } from "store/payment/actions";
 import { DataPrice, DataStepOne } from ".";
-import { AppDispatch } from "store/configureStore";
+import { AppDispatch, RootState } from "store/configureStore";
+import { useSelector } from "react-redux";
+import BackIcon from "icons/BackIcon";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -23,12 +25,7 @@ type Props = {
   setDataPrice: React.Dispatch<React.SetStateAction<DataPrice>>;
   dataPrice: DataPrice;
   setDataStepOne: React.Dispatch<React.SetStateAction<DataStepOne>>;
-};
-
-type FormValues = {
-  newPackage: string;
-  billingPlan: string;
-  numberOfUser: number;
+  unupgradedAccount: boolean;
 };
 
 const StepTwo = (props: Props) => {
@@ -39,29 +36,31 @@ const StepTwo = (props: Props) => {
     dataPrice,
     setDataPrice,
     setDataStepOne,
+    unupgradedAccount,
   } = props;
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
   const dispatch = useDispatch<AppDispatch>();
 
   const [newPackage, setNewPackage] = useState("");
   const [billingPlan, setBillingPlan] = useState("");
-  const [numberOfUser, setNumberOfUser] = useState(4);
+  const [numberOfUser, setNumberOfUser] = useState<number>(1);
 
   useEffect(() => {
     if (dataStepOne) {
       setNewPackage(dataStepOne.newPackage);
       setBillingPlan(dataStepOne.billingPlan);
+      setNumberOfUser(dataStepOne.numberOfUser);
     }
   }, [dataStepOne]);
   const fetchPrice = useCallback(async () => {
     try {
-      const formValues = {
+      const payload = {
         newPackage,
         billingPlan,
         numberOfUser,
       };
 
-      const resultAction = await dispatch(getPriceUpgradePackage(formValues));
+      const resultAction = await dispatch(getPriceUpgradePackage(payload));
 
       if (getPriceUpgradePackage.fulfilled.match(resultAction)) {
         setDataPrice(resultAction.payload?.data);
@@ -100,7 +99,7 @@ const StepTwo = (props: Props) => {
         transform: "translate(-50%, -50%)",
         bgcolor: "background.paper",
         borderRadius: 3,
-        padding: "74px 136px 45px 74px",
+        padding: "74px 74px 45px 74px",
         width: 1278,
       }}
     >
@@ -119,7 +118,7 @@ const StepTwo = (props: Props) => {
         mt={3}
       >
         <IconButton onClick={handleBack}>
-          <ArrowBackIcon />
+          <BackIcon />
         </IconButton>
         <Text
           id="modal-title"
@@ -131,7 +130,9 @@ const StepTwo = (props: Props) => {
             flexGrow: 1,
           }}
         >
-          {packageT("head.upgradePackage")}
+          {unupgradedAccount
+            ? packageT("head.upgradeNewAccount")
+            : packageT("head.upgradePackage")}
         </Text>
       </Box>
 
@@ -256,7 +257,7 @@ const StepTwo = (props: Props) => {
         </Box>
       </Box>
 
-      <ListItem />
+      {unupgradedAccount ? <ListItem /> : <></>}
 
       <Box display="flex" justifyContent="flex-end" mt={5} gap={"10px"}>
         <ButtonCustom

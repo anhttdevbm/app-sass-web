@@ -1,6 +1,6 @@
+import Peer from "simple-peer";
 import { store } from "store/configureStore";
 import { setLocalStream, setLocalStreamState } from "../store/meeting/reducer";
-import Peer from "simple-peer";
 
 export const getLocalStream = async (callback?: () => void) => {
   const constraints = { audio: true, video: true };
@@ -20,7 +20,11 @@ export const getLocalStream = async (callback?: () => void) => {
         .every((track) => track.enabled);
       const isMicOn = stream.getAudioTracks().every((track) => track.enabled);
       store.dispatch(setLocalStream(stream));
-      store.dispatch(setLocalStreamState({ isCameraOn, isMicOn }));
+      store.dispatch(setLocalStreamState({
+        isCameraOn, isMicOn,
+        isRaiseHand: false,
+        reactionUnified: ""
+      }));
       if (callback) {
         callback();
       }

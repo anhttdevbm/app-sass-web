@@ -194,7 +194,7 @@ const TransactionDetail = (props: Props) => {
           </Box>
         </Box>
 
-        <ListItem />
+        {/* <ListItem /> */}
       </Paper>
     </Modal>
   );

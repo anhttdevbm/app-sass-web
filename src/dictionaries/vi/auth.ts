@@ -23,6 +23,7 @@ export const AuthLang: AuthDictionary = {
       signinSuccess: "Đăng nhập thành công!",
       emailOrPasswordWrong: "Tài khoản hoặc mật khẩu không chính xác!",
     },
+    rememberAccount: "Ghi nhớ tài khoản",
   },
   signup: {
     head: {

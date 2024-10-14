@@ -1,5 +1,5 @@
 import { DirectionChat } from "store/chat/type";
-import { MessageItem } from "store/meeting/types";
+import { MessageItem, ParticipantAction } from "store/meeting/types";
 
 export type HeaderMobileProps = {
   children?: React.ReactNode;
@@ -20,12 +20,32 @@ export interface ParamChatState extends Omit<ParamState, "text"> {
   roomId: string;
 }
 
-export enum WSMessageType {
-  NEW_MESSAGE = "new_message",
+export enum WSParticipantActionType {
+  NEW_MESSAGE = "message.created",
+  PARTICIPANT_ACTION = "participant.action",
+  INIT_STREAM_STATE = "stream.initState",
 }
 
-export interface WSMessagePayload {
+export interface WSParticipantActionBase {
   event: "signal";
-  type: WSMessageType;
-  message: MessageItem;
+}
+
+export interface WSParticipantActionNewMessage extends WSParticipantActionBase {
+  type: WSParticipantActionType.NEW_MESSAGE;
+  payload: MessageItem;
+}
+
+export interface WSParticipantAction extends WSParticipantActionBase {
+  type: WSParticipantActionType.PARTICIPANT_ACTION;
+  payload: ParticipantAction;
+}
+
+export type WSParticipantActionPayload =
+  | WSParticipantActionNewMessage
+  | WSParticipantAction;
+
+export enum LayoutType {
+  GALARY = "galary",
+  SPEAKER = "speaker",
+  FOCUS_ON_CONTENT = "focus_on_content",
 }
