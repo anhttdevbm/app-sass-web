@@ -56,7 +56,6 @@ const useWebSocket = (): WebSocket | null => {
         );
   
         wsClient.onopen = () => {
-          console.log("WebSocket connection opened");
           // Send authentication message with the token
           // Send any other initial messages if needed
           // wsClient.send(
@@ -78,7 +77,6 @@ const useWebSocket = (): WebSocket | null => {
         wsClient.addEventListener("message", handleMessage);
   
         wsClient.onclose = () => {
-          console.log("WebSocket connection closed, reconnecting...");
           setTimeout(() => {
             connectSocket();
           }, 3000);
