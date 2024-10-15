@@ -122,6 +122,7 @@ export interface IDocs {
   heightHeaderDocDetail: number;
   selectedFilterTimeDoc: string;
   getDocsQueries: {
+    search_key?: string;
     page: number;
     size: number;
     project: string;
