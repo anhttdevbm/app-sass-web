@@ -1,8 +1,11 @@
 import { Stack, TextField } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { Date } from "components/Filters";
 import Loading from "components/Loading";
 import { Collapse, Text } from "components/shared";
+import { reorderPriority } from "components/sn-sales-detail/helpers";
 import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_SALES } from "constant/index";
+import { User } from "constant/types";
 import useToggle from "hooks/useToggle";
 import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
@@ -14,19 +17,14 @@ import React, {
   useState,
 } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import { Controller, useForm, useFormContext, useWatch } from "react-hook-form";
-import { useSaleDetail, useSalesTodo } from "store/sales/selectors";
-import { User } from "constant/types";
-import AssignTodo from "../AssignTodo";
-import SubItem from "./SubItem";
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { useSnackbar } from "store/app/selectors";
 import { TodoItemData } from "store/sales/actions";
 import { Todo } from "store/sales/reducer";
-import { TaskDetail } from "store/project/reducer";
-import { getMessageErrorByAPI, uuid } from "utils/index";
-import { reorderPriority } from "components/sn-sales-detail/helpers";
-import { on } from "events";
-import { useSnackbar } from "store/app/selectors";
+import { useSaleDetail, useSalesTodo } from "store/sales/selectors";
+import { getMessageErrorByAPI } from "utils/index";
+import AssignTodo from "../AssignTodo";
+import SubItem from "./SubItem";
 
 export const TodoName = ({
   onSubmit,
