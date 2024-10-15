@@ -1,6 +1,5 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import GroupIcon from "@mui/icons-material/Group";
-import LockIcon from "@mui/icons-material/Lock";
 import { CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -8,8 +7,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Typography from "@mui/material/Typography";
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { NS_DOCS } from "constant/index";
 import dayjs from "dayjs";
+import { LockDocIcon } from "icons/LockDocIcon";
 import { useTranslations } from "next-intl";
 import { useDocs } from "store/docs/selectors";
 import ActionMoreListDoc from "../ActionMoreListDoc";
@@ -24,23 +25,25 @@ export default function KanbanViewItem({
   const { redirectDetailDoc } = useDocs();
 
   return (
-    <>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "24px",
+        px: "80px",
+        width: "100%",
+      }}
+    >
       {itemKanban?.docs?.map((item) => (
         <Card
           key={item.id}
-          sx={(theme) => ({
-            borderRadius: 4,
-            [theme.breakpoints.up("md")]: {
-              width: 344,
-              height: 238,
-            },
-            [theme.breakpoints.down("md")]: {
-              minHeight: 238,
-            },
-            boxShadow: 0,
-          })}
+          sx={{
+            boxShadow: "none",
+            borderRadius: "12px",
+            border: "1px solid #EFEFEF",
+          }}
         >
-          <CardActionArea onClick={() => redirectDetailDoc(item.id)}>
+          <CardActionArea>
             <CardHeader
               sx={{
                 display: "flex",
@@ -69,22 +72,33 @@ export default function KanbanViewItem({
                     color="grey.400"
                     sx={{ cursor: "pointer" }}
                   >
-                    <Typography>No Project</Typography>
-                    <LockIcon
+                    <Typography
                       sx={{
-                        width: 12,
-                        height: 12,
-                        color: "#666666",
+                        fontSize: "14px",
+                        fontFamily: inter.style.fontFamily,
+                        color: "neutral.400",
+                        fontWeight: "700",
+                      }}
+                    >
+                      No Project
+                    </Typography>
+                    <LockDocIcon
+                      sx={{
+                        width: 16,
+                        height: 16,
                       }}
                     />
                   </Box>
                 )
               }
               action={
-                itemKanban.groupInfo ? ( 
-                  <ActionMoreListDoc />
+                itemKanban.groupInfo ? (
+                  <ActionMoreListDoc docItem={item} />
                 ) : (
-                  <ActionMoreListDoc style={{ colorIcon: "#666666"}}/>
+                  <ActionMoreListDoc
+                    docItem={item}
+                    style={{ colorIcon: "#666666" }}
+                  />
                 )
               }
               title={
@@ -106,33 +120,39 @@ export default function KanbanViewItem({
                       lineHeight: "1.5",
                     }}
                   >
-                    {itemKanban.groupInfo ? `${itemKanban.groupInfo.name} #${itemKanban.groupInfo.number}` : ""}
+                    {itemKanban.groupInfo
+                      ? `${itemKanban.groupInfo.name} #${itemKanban.groupInfo.number}`
+                      : ""}
                   </Typography>
-                  <GroupIcon sx={
-                    {
+                  {/* <GroupIcon
+                    sx={{
                       width: 16,
                       height: 16,
                       color: itemKanban.groupInfo ? "#fff" : "#666666",
-                    }
-                  }/>
+                    }}
+                  /> */}
                 </Box>
               }
             />
-            <CardContent sx={{ paddingTop: 0.5, paddingX: 2.5, height: 184 }}>
+            <CardContent
+              sx={{ paddingTop: 0.5, paddingX: 2.5 }}
+              onClick={() => redirectDetailDoc(item.id)}
+            >
               <Box display="flex" flexDirection="column" gap={0.5}>
                 <Typography
                   color="text.primary"
                   fontSize={20}
                   variant="h3"
-                  fontWeight={600}
                   sx={{
-                    fontWeight: "bold",
+                    fontWeight: "600",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
                     WebkitBoxOrient: "vertical",
                     WebkitLineClamp: 1,
                     lineHeight: "1.5",
+                    fontFamily: inter.style.fontFamily,
+                    color: "#222",
                   }}
                 >
                   {item.name}
@@ -144,17 +164,31 @@ export default function KanbanViewItem({
                     sx={{ bgcolor: "#ddd5d5", height: 18, width: 18 }}
                     aria-label="avatar-content"
                   />
-                  <Typography variant="body2">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontFamily: inter.style.fontFamily,
+                      fontSize: "13px",
+                      color: "neutral.400",
+                    }}
+                  >
                     {(item.owner?.fullname || item.created_by?.fullname) &&
                       docsT("ownedBy")}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "#0575E6" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#0575E6",
+                      fontSize: "13px",
+                      fontFamily: inter.style.fontFamily,
+                    }}
+                  >
                     {item.owner?.fullname ?? item.created_by?.fullname ?? "--"}
                   </Typography>
                 </Box>
                 <Box>
                   <Typography
-                    variant="body1"
+                    variant="body2"
                     sx={{
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -162,6 +196,9 @@ export default function KanbanViewItem({
                       WebkitBoxOrient: "vertical",
                       WebkitLineClamp: 3,
                       lineHeight: "1.5",
+                      fontFamily: inter.style.fontFamily,
+                      color: "neutral.700",
+                      fontWeight: "700",
                     }}
                   >
                     {item.description ?? itemKanban?.groupInfo?.description}
@@ -171,7 +208,7 @@ export default function KanbanViewItem({
                   <Box
                     display="flex"
                     alignItems="center"
-                    paddingTop={1}
+                    paddingTop={0.5}
                     gap={0.5}
                     sx={{ color: "grey.300" }}
                   >
@@ -186,6 +223,6 @@ export default function KanbanViewItem({
           </CardActionArea>
         </Card>
       ))}
-    </>
+    </Box>
   );
 }

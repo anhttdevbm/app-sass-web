@@ -1,6 +1,7 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ItemDocsProps } from "components/sn-docs/detail/LeftSlide/ItemDocs";
+import { GetDocQueries } from "components/sn-docs/helpers";
 import { DataStatus, DocAccessibility } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
@@ -304,12 +305,21 @@ const docSlice = createSlice({
     updateStatusOpenBoardEditor: (state, action) => {
       state.board.isOpenBoard = action.payload;
     },
-    updateHeightHeaderDetail: (state,action) => {
+    updateHeightHeaderDetail: (state, action) => {
       state.heightHeaderDocDetail = action.payload;
     },
-    updateFilterTimeDoc: (state,action) => {
+    updateFilterTimeDoc: (state, action) => {
       state.selectedFilterTimeDoc = action.payload;
-    }
+    },
+    addGetDocsQueries: (
+      state,
+      action: PayloadAction<Partial<GetDocQueries>>,
+    ) => {
+      state.getDocsQueries = {
+        ...state.getDocsQueries,
+        ...action.payload,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getDocs.pending, (state, action) => {
@@ -397,7 +407,8 @@ export const {
   updateVersionMindMap,
   updateStatusOpenBoardEditor,
   updateHeightHeaderDetail,
-  updateFilterTimeDoc
+  updateFilterTimeDoc,
+  addGetDocsQueries,
 } = docSlice.actions;
 
 export default docSlice.reducer;

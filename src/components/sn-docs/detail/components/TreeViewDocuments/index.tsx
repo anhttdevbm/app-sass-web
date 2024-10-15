@@ -9,8 +9,13 @@ import TreeViewLabel from "../TreeViewLabel";
 import "./TreeViewStyle.css";
 import useLeftSlideDoc from "../../LeftSlide/hooks/useLeftSlideDoc";
 import { useDispatch } from "react-redux";
+import { DocInfo } from "components/sn-docs/news/types/doc.type";
 
-export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
+export default function TreeViewDocuments({
+  doc,
+}: {
+  doc: DocInfo | undefined;
+}) {
   const [expanded, setExpanded] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const dispatch = useDispatch();
@@ -55,7 +60,7 @@ export default function TreeViewDocuments({ doc }: { doc: IDocItemDetail }) {
               handleClickTreeLabel={() => {
                 handleAddNewChildDoc({
                   idDoc: doc.id,
-                  projectId: doc.project_id,
+                  projectId: doc.project_id ?? "",
                 });
               }}
             />

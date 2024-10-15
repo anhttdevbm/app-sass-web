@@ -1,11 +1,11 @@
-import axios, { AxiosInstance } from "axios";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
   AN_ERROR_TRY_AGAIN,
   API_TIMEOUT,
   API_URL,
   AUTH_API_URL,
+  BUDGET_API_URL,
   BUDGET_UPLOAD_FILE_API_URL,
   REFRESH_TOKEN_STORAGE_KEY,
   SALE_API_URL,
@@ -246,6 +246,10 @@ export const client = new RequestClient();
 export const saleClient = new RequestClient({
   baseURL: SALE_API_URL,
 });
+
+export const budgetClient = new RequestClient({
+  baseURL: BUDGET_API_URL,
+}); 
 
 export const fileClient = new RequestClient({
   baseURL: UPLOAD_API_URL,

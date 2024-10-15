@@ -106,6 +106,7 @@ export type CommonDictionary = {
   yes: string;
   no: string;
   upgradeAccount: string;
+  createWorkspace: string;
   clickGoDetail: string;
   waiting: string;
   approved: string;

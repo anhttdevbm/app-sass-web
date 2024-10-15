@@ -3,6 +3,7 @@ export const Endpoint = {
   SIGNUP: "/auth/register",
   VERIFY: "/auth/code",
   JOIN_WORKSPACE: "/users/join",
+  CREATE_WORKSPACE: "/users/createWorkspace",
   FORGOT_PASSWORD: "/auth/forgot-password",
   RESET_PASSWORD: "/auth/set-password",
   CHANGE_PASSWORD: "/auth/update-pasword",

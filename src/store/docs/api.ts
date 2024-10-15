@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { AxiosRequestConfig } from "axios";
+import { DocInfo } from "components/sn-docs/news/types/doc.type";
 import { DOCS_API_URL } from "constant/index";
 import { IDocument, IComment, TPagination } from "constant/types";
 import axiosBaseQuery from "store/axiosBaseQuery";
@@ -32,13 +34,7 @@ const documentApi = createApi({
       invalidatesTags: (_result, error) => (error ? [] : TagTypes),
     }),
     updateDoc: build.mutation({
-      query: ({
-                id,
-                payload,
-              }: {
-        id: string;
-        payload: Partial<IDocument>;
-      }) => {
+      query: ({ id, payload }: { id: string; payload: Partial<IDocument> }) => {
         return {
           url: "/docs/" + id,
           data: payload,
@@ -47,8 +43,11 @@ const documentApi = createApi({
       },
       invalidatesTags: (_result, error) => (error ? [] : TagTypes),
     }),
-    getDocDetail: build.query({
-      query: (id: string, params?: AxiosRequestConfig["params"]) => ({
+    getDocDetail: build.query<
+      DocInfo,
+      { id: string; params?: AxiosRequestConfig["params"] }
+    >({
+      query: ({ id, params }) => ({
         url: "/docs/detail/" + id,
         method: "GET",
         params: params,
@@ -79,6 +78,13 @@ const documentApi = createApi({
       }),
       invalidatesTags: (_result, error) => (error ? [] : TagTypes),
     }),
+    deleteDoc: build.mutation({
+      query: (id: string) => ({
+        url: "/docs/inactive-document/" + id,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, error) => (error ? [] : TagTypes),
+    }),
   }),
 });
 
@@ -89,6 +95,7 @@ const {
   useGetCommentsQuery,
   usePostCommentMutation,
   useCreateDocMutation,
+  useDeleteDocMutation,
 } = documentApi;
 
 export {
@@ -98,5 +105,6 @@ export {
   useGetCommentsQuery,
   usePostCommentMutation,
   useCreateDocMutation,
+  useDeleteDocMutation,
   documentApi as default,
 };
