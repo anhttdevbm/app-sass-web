@@ -207,19 +207,20 @@ const EventContents = ({
               color: total_hour < 8 ? "#626F86" : "white",
               textAlign: "center",
               margin: 0,
-              height: "60px",
+              height: total_hour >= 8 ? 60 : 56,
               display: "flex",
               alignItems: "center ",
               justifyContent: "center",
               background:
                 total_hour > 7
                   ? "linear-gradient(180deg, rgba(255, 192, 203, 0) 0%, #57D9A3 0%)"
-                  : "transparent",
+                  : "white",
+              maxWidth: 56,
             }}
           >
             <div
               style={{
-                background: total_hour > 7 ? "#00875A" : "transparent",
+                background: total_hour > 7 ? "#00875A" : "white",
                 fontSize: 11,
                 minWidth: 20,
                 height: 20,

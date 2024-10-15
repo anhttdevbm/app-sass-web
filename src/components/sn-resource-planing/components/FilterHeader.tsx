@@ -190,7 +190,7 @@ const FilterHeader = ({
                 onClick={() => setIsWorkload((prev: Boolean) => !prev)}
               >
                 <ClockIcon sx={{ width: 14, height: 14 }} />
-                Workload
+                {resourceT("schedule.resourceHeader.Workload")}
               </Button>
 
               <Button
@@ -213,7 +213,7 @@ const FilterHeader = ({
                 }}
               >
                 <ServiceIcon sx={{ width: 14, height: 14 }} />
-                Choose Service
+                {resourceT("schedule.resourceHeader.chooseService")}
               </Button>
             </>
           )}

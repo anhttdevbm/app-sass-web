@@ -1,15 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // redux/ticketDetail/reducer.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   getListAgent,
   setKeySearchTicketAgent,
   setListAgentOnline,
+  setParamsDashboard,
 } from "./actions";
 
 interface AgentDetailState {
   keySearch: any;
   listOnline: IAgentOnline[];
   listAgent: any[];
+  paramsDashboard: any
 }
 
 export interface IAgentOnline {
@@ -25,8 +28,18 @@ const initialState: AgentDetailState = {
     page: 1,
     size: 5,
   },
+  paramsDashboard : {
+    createTime : "year" ,
+    fromDate : "" ,
+    toDate : "" ,
+    startDate : "",
+    startDateAvgTicket : "" ,
+    fields : "",
+
+  },
   listOnline: [],
   listAgent: [],
+
 };
 
 const ticketAgentSlice = createSlice({
@@ -36,8 +49,14 @@ const ticketAgentSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       setKeySearchTicketAgent,
-      (state, action: PayloadAction<any>) => {
+      (state, action: PayloadAction<{ position: string; keyword: string; status: string; page: number; size: number }>) => {
         state.keySearch = action.payload;
+      },
+    );
+    builder.addCase(
+      setParamsDashboard,
+      (state, action: PayloadAction<{ createTime: string; fromDate: string; toDate: string; startDate: string; startDateAvgTicket: string; fields: string }>) => {
+        state.paramsDashboard = action.payload;
       },
     );
     builder.addCase(
@@ -46,7 +65,9 @@ const ticketAgentSlice = createSlice({
         state.listOnline = action.payload;
       },
     );
-    builder.addCase(getListAgent.pending, (state, action) => {});
+    builder.addCase(getListAgent.pending, (state, action) => {
+      // Handle pending state if needed
+    });
     builder.addCase(getListAgent.fulfilled, (state, action) => {
       state.listAgent = action.payload;
     });

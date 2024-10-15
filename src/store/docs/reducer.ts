@@ -1,11 +1,11 @@
 "use client";
-import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DataStatus, DocAccessibility } from "constant/enums";
-import { getDocCustom, getDocs, updateDocCustom } from "./actions";
-import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
 import { ItemDocsProps } from "components/sn-docs/detail/LeftSlide/ItemDocs";
 import { GetDocQueries } from "components/sn-docs/helpers";
+import { DataStatus, DocAccessibility } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
+import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
+import { getDocCustom, getDocs, updateDocCustom } from "./actions";
 /* eslint-disable no-var */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -40,6 +40,16 @@ export interface WorkspaceState {
   icon: string;
   members: string[];
   pages: PageType[];
+  getDocsQueries: {
+    page: number;
+    size: number;
+    project: string;
+    project_status?: string;
+    user_id: string;
+    order_by: string;
+    sort_by: string;
+    group_by: string;
+  };
 }
 
 export type ContentType = {
@@ -111,7 +121,17 @@ export interface IDocs {
   };
   heightHeaderDocDetail: number;
   selectedFilterTimeDoc: string;
-  getDocsQueries: GetDocQueries;
+  getDocsQueries: {
+    search_key?: string;
+    page: number;
+    size: number;
+    project: string;
+    project_status?: string;
+    user_id: string;
+    order_by: string;
+    sort_by: string;
+    group_by: string;
+  };
 }
 
 const initialState: IDocs = {
@@ -193,6 +213,12 @@ const initialState: IDocs = {
   getDocsQueries: {
     page: 1,
     size: 50,
+    project: "",
+    project_status: undefined,
+    user_id: "",
+    order_by: "created_by",
+    sort_by: "DESC",
+    group_by: "owner",
   },
 };
 
@@ -202,11 +228,11 @@ const docSlice = createSlice({
   reducers: {
     createPage(state, actions) {
       const { parentId, child } = actions.payload;
-      function addChildToParent(parent, childToAdd) {
+      function addChildToParent(parent: any, childToAdd: any) {
         if (parent.id === parentId) {
           parent.children.push(childToAdd);
         } else if (parent.children) {
-          parent.children.forEach((child) => {
+          parent.children.forEach((child: any) => {
             addChildToParent(child, childToAdd);
           });
         }

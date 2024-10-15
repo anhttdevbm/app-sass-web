@@ -1,5 +1,6 @@
 import { Box, Stack } from "@mui/material";
 import { Text } from "components/shared";
+import useGetDashboardData from "queries/ticket-agent/useDashboard/useDashboard";
 import { memo } from "react"
 import React, { PureComponent } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -7,14 +8,19 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 const ColumnChart = () => {
 
+
+    const { columnChartData } = useGetDashboardData()
+
+    const valueChart = columnChartData?.data?.data?.data?.avgTicketByWeek || []
+    
     const data = [
-        { name: 'Sun', value: 400, },
-        { name: 'Mon', value: 500, },
-        { name: 'Tue', value: 900, },
-        { name: 'Wed', value: 700, },
-        { name: 'Thu', value: 123, },
-        { name: 'Fri', value: 300, },
-        { name: 'Sat', value: 560, },
+        { name: 'Sun', value: valueChart[0] ?? 0 },
+        { name: 'Mon', value: valueChart[1] ?? 0, },
+        { name: 'Tue', value: valueChart[2] ?? 0, },
+        { name: 'Wed', value: valueChart[3] ?? 0, },
+        { name: 'Thu', value: valueChart[4] ?? 0, },
+        { name: 'Fri', value: valueChart[5] ?? 0, },
+        { name: 'Sat', value: valueChart[6] ?? 0, },
 
     ];
 
@@ -78,20 +84,20 @@ const ColumnChart = () => {
         );
     };
     return (
-        <Stack p={{xs:0 , sm: 2 ,md :3}} border="1px solid #EFEFEF" borderRadius="12px">
+        <Stack p={{ xs: 0, sm: 2, md: 3 }} border="1px solid #EFEFEF" borderRadius="12px">
             <Stack direction="row" pb={2} pl={2}>
                 <Text fontSize={20} fontWeight="700" color="#1A1A1A">Average ticket  by week</Text>
 
             </Stack>
             <Stack margin="auto" width="100%" height="230px">
-            <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data}>
-                <CartesianGrid vertical={false} strokeWidth={0.3} />
-                <XAxis axisLine={false} tickLine={false} interval={0} dataKey="name" tick={renderCustomAxisTick} />
-                <YAxis tickMargin={12} fontSize={12} axisLine={false} tickLine={false} />
-                <Bar shape={<CustomBar radius={8} />} dataKey="value" barSize={30} fill="#14B9E5" />
-            </BarChart>
-            </ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data}>
+                        <CartesianGrid vertical={false} strokeWidth={0.3} />
+                        <XAxis axisLine={false} tickLine={false} interval={0} dataKey="name" tick={renderCustomAxisTick} />
+                        <YAxis tickMargin={12} fontSize={12} axisLine={false} tickLine={false} />
+                        <Bar shape={<CustomBar radius={8} />} dataKey="value" barSize={30} fill="#14B9E5" />
+                    </BarChart>
+                </ResponsiveContainer>
             </Stack>
 
         </Stack>
