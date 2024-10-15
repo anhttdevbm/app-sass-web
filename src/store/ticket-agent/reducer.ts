@@ -33,7 +33,8 @@ const initialState: AgentDetailState = {
     toDate : "" ,
     startDate : "",
     startDateAvgTicket : "" ,
-    fields : `["TICKETCREATE" , "TICKETUNSOLVED" , "TICKETSOLVED" , "AVGFIRSTREPLY" , "AGENTONLINE" , "AVGRATESTAR"]`,
+    fields : "",
+
   },
   listOnline: [],
   listAgent: [],

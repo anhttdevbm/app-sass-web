@@ -12,8 +12,7 @@ import React from "react"
 
 const Statistical = () => {
 
-    const { data: list } = useGetDashboardData();
-    console.log("🚀 ~ Statistical ~ list:", list)
+    const { statisticalData  } = useGetDashboardData();
     const stateTicket = React.useMemo(
         () => ({
             Create_Ticket: {
@@ -56,8 +55,8 @@ const Statistical = () => {
         [],
     );
     const mapData = (type: string) => {
-        if (!list || list == null || !list.data || !list.data.data) return;
-        const foundItem = Object.entries(list?.data?.data).find(([key, value]) => key === type);
+        if (!statisticalData || statisticalData == null || !statisticalData.data || !statisticalData.data.data) return;
+        const foundItem = Object.entries(statisticalData?.data?.data?.data).find(([key, value]) => key === type);
         return foundItem ? foundItem[1] : 0;
     }
     return (
@@ -65,6 +64,7 @@ const Statistical = () => {
             <Stack direction="row" gap={{ xs: 1, sm: 2, md: 2 }} flexWrap="wrap">
                 {Object.values(stateTicket).map((item, index) => (
                     <Box
+                        key={item.id}
                         sx={{
                             height: 165,
                             width: { xs: "48%", sm: "30%", md: "30%" },

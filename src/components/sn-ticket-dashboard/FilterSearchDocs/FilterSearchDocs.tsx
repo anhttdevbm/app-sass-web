@@ -6,7 +6,6 @@ import { NS_COMMON, NS_DOCS } from "constant/index";
 import { useTranslations } from "next-intl";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { memo, useState } from "react";
-import FilterPeople from "./FilterPeople";
 import FilterTime from "./FilterTime";
 
 
@@ -36,7 +35,7 @@ const FilterSearchDocs = ({ onChange, queries  }: FilterSearchDocsProps) => {
       {/* TODO: build error */}
       <FilterTime queries={queries}  onChange={onChange} >       
       </FilterTime>
-      <FilterPeople  queries={queries} onChange={onChange}></FilterPeople>
+      {/* <FilterPeople  queries={queries} onChange={onChange}></FilterPeople> */}
 
     </>
   );
