@@ -1,23 +1,18 @@
-import { memo, useRef, ComponentProps } from "react";
 import { Stack, SvgIconProps } from "@mui/material";
 import { Text } from "components/shared";
+import {
+  DATE_FORMAT_FORM,
+  DATE_FORMAT_HYPHEN
+} from "constant/index";
+import { enUS, vi } from "date-fns/locale";
+import CalendarIcon from "icons/CalendarIcon";
+import { useLocale } from "next-intl";
+import { ComponentProps, memo, useRef } from "react";
 import DatePicker, {
   ReactDatePickerProps,
   registerLocale,
 } from "react-datepicker";
-import CalendarIcon from "icons/CalendarIcon";
 import { formatDate } from "utils/index";
-import {
-  DATE_FORMAT_FORM,
-  DATE_FORMAT_HYPHEN,
-  DATE_LOCALE_FORMAT,
-  DATE_FORMAT_SLASH,
-} from "constant/index";
-import { vi, enUS } from "date-fns/locale";
-import { format as formatFns } from "date-fns";
-import { useLocale } from "next-intl";
-import dayjs from "dayjs";
-import { preventDefault } from "@fullcalendar/core/internal";
 
 registerLocale("vi", vi);
 registerLocale("en", enUS);
@@ -73,10 +68,10 @@ const FDate = (props: DateProps) => {
         sx={{ cursor: "pointer" }}
         {...textProps}
       >
-        {/* {value
+        {value
           ? formatDate(refactorDate(value, format)?.getTime() as number)
-          : label} */}
-        {value ? dayjs(value).format(DATE_LOCALE_FORMAT) : label}
+          : label} 
+        {/* {value ? dayjs(value).format(DATE_LOCALE_FORMAT) : label} */}
         {/* {value
           ? formatDate(refactorDate(value, format)?.getTime() as number)
           : label} */}

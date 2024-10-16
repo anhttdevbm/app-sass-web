@@ -1,14 +1,7 @@
+import { PayloadAction } from "@reduxjs/toolkit";
+import { DataStatus } from "constant/enums";
+import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
-import { useAppDispatch, useAppSelector } from "store/hooks";
-import {
-  AddSourceInput,
-  CreateAIAgentPayload,
-  CreateCommandInput,
-  DeleteSourceInput,
-  GetAIAgentListQueries,
-  GetAIAgentsPayload,
-  UpdateAIAgentPayload,
-} from "./types";
 import {
   addSource,
   createAgent,
@@ -24,9 +17,16 @@ import {
   updateAgent,
   uploadFile,
 } from "store/aiAgent/actions";
-import { useCallback, useMemo } from "react";
-import { DataStatus } from "constant/enums";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import {
+  AddSourceInput,
+  CreateAIAgentPayload,
+  CreateCommandInput,
+  DeleteSourceInput,
+  GetAIAgentListQueries,
+  GetAIAgentsPayload,
+  UpdateAIAgentPayload,
+} from "./types";
 
 export const useAIAgent = () => {
   const dispatch = useAppDispatch();
@@ -92,6 +92,7 @@ export const useAIAgent = () => {
   const onUploadFile = useCallback(async (file: File): Promise<string | undefined> => {
     try {
       const result = await dispatch(uploadFile(file));
+      console.log(result);
       return result.payload;
     } catch (error) {
     }
