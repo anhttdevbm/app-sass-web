@@ -70,8 +70,11 @@ const FDate = (props: DateProps) => {
       >
         {value
           ? formatDate(refactorDate(value, format)?.getTime() as number)
-          : label}
+          : label} 
         {/* {value ? dayjs(value).format(DATE_LOCALE_FORMAT) : label} */}
+        {/* {value
+          ? formatDate(refactorDate(value, format)?.getTime() as number)
+          : label} */}
       </Text>
       <DatePicker
         ref={ref}
