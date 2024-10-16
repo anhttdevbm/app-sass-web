@@ -283,23 +283,6 @@ export const ModalAddTime = ({
             autoComplete="off"
           />
 
-          <Controller
-            control={control}
-            name="timeRanges"
-            render={({ field: { onChange, value } }) => (
-              <Input
-                sx={{...newBorderSVG,...newInput}}
-                // rootSx={sxInput}
-                title={budgetT("dialog.timeRanger")}
-                fullWidth
-                value={value}
-                onChange={onChange}
-                autoComplete="off"
-                disabled
-              />
-            )}
-          />
-
           <Stack gap={2} direction="row" sx={{ '& .react-datepicker-popper': { zIndex: 999 }}}>
             <Controller
               control={control}
@@ -347,6 +330,23 @@ export const ModalAddTime = ({
             />
           </Stack>
 
+          <Controller
+            control={control}
+            name="timeRanges"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                sx={{...newBorderSVG,...newInput}}
+                // rootSx={sxInput}
+                title={budgetT("dialog.timeRanger")}
+                fullWidth
+                value={value}
+                onChange={onChange}
+                autoComplete="off"
+                disabled
+              />
+            )}
+          />
+          
           <Controller
             control={control}
             name="note"
