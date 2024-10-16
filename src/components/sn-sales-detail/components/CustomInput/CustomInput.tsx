@@ -150,6 +150,7 @@ const CustomInput = (props: CustomInputProps, ref) => {
                   width: "100%",
                   "& .MuiInputBase-root": {
                     backgroundColor: disabled ? "#F7F7FD" : "background.paper",
+                    height: '40px', borderRadius: '50px',
                     pr: helperText ? 3 : 1,
                   },
                   [`& input::-webkit-inner-spin-button`]: {
@@ -187,8 +188,8 @@ const CustomInput = (props: CustomInputProps, ref) => {
         />
         <Stack
           position="absolute"
-          right={10}
-          top={13}
+          right={17}
+          top={6}
           justifyContent={"center"}
           alignItems={"center"}
           sx={{
