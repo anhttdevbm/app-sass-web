@@ -23,7 +23,6 @@ export const Endpoint = {
   MY_COMPANY: "/companies/me",
   COMPANY_ITEM: "/companies/{id}",
   PROJECTS: "/projects",
-  PROJECT_GENERATE: "/project/project-generate/",
   PROJECT_ITEM: "/projects/{id}",
   PROJECT_FILE: "/projects/{id}/files",
   PROJECT_MEMBERS: "/projects/{id}/members",
@@ -32,7 +31,6 @@ export const Endpoint = {
   PROJECT_TASK_ITEM: "/tasks/{id}",
   CURRENCY: "projects/currency/",
   TASKS: "/tasks/add",
-  TASK_GENERATE: "task/task-generate/",
   TASK_LIST: "/tasks/task-list/{id}",
   SUB_TASKS: "/tasks/sub",
   SUB_TASK: "/tasks/sub-task",
@@ -214,12 +212,14 @@ export const Endpoint = {
   CONTENT_PRICING_UNLOCK: "content/pricing/unlock-unbeatable-value",
   CONTENT_PRICING_PARTNERS: "content/pricing/partners",
 
-  //AI Chat
+  //Taskcover AI
   AI_CHAT_EXAMPLE_PROMPT: "ai-chat/example-prompt/",
   AI_CHAT_SESSION: "ai-chat/chat-session/",
   AI_CHAT: "ai-chat/chat",
   AI_CHAT_PERSONA: "ai-chat/persona/",
   AI_CHAT_TONE: "ai-chat/tone/",
+  AI_PROJECT_GENERATE: "ai-chat/project-generate/",
+  AI_TASK_GENERATE: "ai-chat/task-generate/",
   // AI_CHAT_CLOSE_ALL_CHAT_SESSION: "ai-chat/close-all-chat-session/",
 
 

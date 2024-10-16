@@ -285,7 +285,7 @@ export const createProject = createAsyncThunk(
 export const createProjectWithAI = createAsyncThunk(
   "project/createProjectWithAI",
   async (data: CreateProjectPrompt) => {
-    const response = await client.post(Endpoint.PROJECT_GENERATE, data, {
+    const response = await client.post(Endpoint.AI_PROJECT_GENERATE, data, {
       baseURL: AI_CHAT_API_URL,
     });
     if (response?.status === HttpStatusCode.CREATED) {
@@ -462,7 +462,7 @@ export const createTask = createAsyncThunk(
 export const createTaskWithAI = createAsyncThunk(
   "project/createTaskWithAI",
   async (data: CreateTaskPrompt) => {
-    const response = await client.post(Endpoint.TASK_GENERATE, data, {
+    const response = await client.post(Endpoint.AI_TASK_GENERATE, data, {
       baseURL: AI_CHAT_API_URL,
     });
     if (response.status === HttpStatusCode.CREATED) {
