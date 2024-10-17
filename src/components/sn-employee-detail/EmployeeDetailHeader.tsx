@@ -69,13 +69,13 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
       const file = new File([blob], "avatar.png", { type: blob.type });
       setAvatar(file);
 
-      const avatarUrl: string = await client.upload(
-        Endpoint.UPLOAD,
+      const avatarUrl = await client.uploadFile(
+        Endpoint.UPLOAD_FILE,
         file,
       );
 
       const data = {
-        avatar: avatarUrl,
+        avatar: avatarUrl.data?.link,
       } as UpdateUserInfoData;
 
       await onUpdateUserInfo(data);

@@ -1,5 +1,4 @@
-import axios, { AxiosInstance } from "axios";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
   AN_ERROR_TRY_AGAIN,
@@ -222,6 +221,23 @@ const RequestClient = class {
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async uploadFile(endpoint: string, file: File) {
+    try {
+      const data = {
+        type: file.type,
+        filename: file.name,
+        fileBuffer: file
+      }
+      const response = await this.post(endpoint, data, {
+        baseURL: UPLOAD_API_URL,
+      });
+
+      return response;
     } catch (error) {
       throw error;
     }
