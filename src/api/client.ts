@@ -227,6 +227,23 @@ const RequestClient = class {
     }
   }
 
+  async uploadFile(endpoint: string, file: File) {
+    try {  
+      const data = {
+        type: file.type,
+        filename: file.name,
+        fileBuffer: file
+      }
+      const response = await this.post(endpoint, data, {
+        baseURL: UPLOAD_API_URL,
+      });
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getExport(endpoint: string, configs = {} as AxiosRequestConfig) {
     try {
       const response = await this.axios.get(endpoint, {

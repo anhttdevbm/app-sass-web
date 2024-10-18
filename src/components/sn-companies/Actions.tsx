@@ -1,19 +1,19 @@
 "use client";
 
-import { memo, useEffect, useState, useMemo } from "react";
 import { Stack } from "@mui/material";
+import { Date, Dropdown, Search } from "components/Filters";
 import { Button, Text } from "components/shared";
-import { Clear, Date, Dropdown, Refresh, Search } from "components/Filters";
-import { formatNumber, getPath } from "utils/index";
+import { PayStatus } from "constant/enums";
+import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_MANAGER } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { memo, useEffect, useMemo, useState } from "react";
 import { CompanyStatus } from "store/company/actions";
-import { TEXT_PAY_STATUS, TEXT_STATUS } from "./components/helpers";
 import { useCompanies } from "store/manager/selectors";
-import { useTranslations } from "next-intl";
-import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_MANAGER } from "constant/index";
-import { PayStatus } from "constant/enums";
-import useBreakpoint from "hooks/useBreakpoint";
+import { formatNumber, getPath } from "utils/index";
+import { TEXT_PAY_STATUS, TEXT_STATUS } from "./components/helpers";
 
 const Actions = () => {
   const { filters, onGetCompanies, pageSize, statistic } = useCompanies();

@@ -57,10 +57,6 @@ const useWebSocket = (): WebSocket | null => {
   
         wsClient.onopen = () => {
           // Send authentication message with the token
-          // Send any other initial messages if needed
-          // wsClient.send(
-          //   JSON.stringify({
-          //     event: "ListOnline",
           //   }),
           // );
           // wsClient.send(

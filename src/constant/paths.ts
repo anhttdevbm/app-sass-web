@@ -30,8 +30,7 @@ export const PROJECT_ACTIVITIES_PATH = "/projects/{id}/activities";
 export const PROJECT_BUDGET_PATH = "/projects/{id}/budget";
 export const PROJECT_MEMBERS_PATH = "/projects/{id}/members";
 export const PROJECT_INFORMATION_PATH = "/projects/{id}";
-export const PROJECT_DOCUMENT_PATH =
-  "/projects/{id}/docs?project={id}&page=1&group_by=project_id&size=50";
+export const PROJECT_DOCUMENT_PATH = "/projects/{id}/docs?project={id}&page=0&group_by=project_id&size=50";
 
 export const TIME_TRACKING_PATH = "/time-tracking";
 export const RESOURCE_PLANING_PATH = "/resource-planing";
