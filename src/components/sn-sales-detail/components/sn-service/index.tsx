@@ -13,7 +13,7 @@ import { NS_SALES } from "constant/index";
 import { useTranslations } from "next-intl";
 import { ServiceSection } from "store/sales/reducer";
 import { useSalesService } from "store/sales/selectors";
-import { Button } from "components/shared";
+import { Button, Text } from "components/shared";
 import useGetOptions, {
   useFetchOptions,
 } from "components/sn-resource-planing/hooks/useGetOptions";
@@ -142,12 +142,13 @@ const SaleService = () => {
                 //   textAlign: "center",
                 // },
                 [`&.MuiButtonBase-root`]: {
-                  px: "10px!important",
-                  py: "8px!important",
+                  backgroundColor: "#D9F0FD",
+                  borderRadius: 50,
+                  color: "#0575E6",
+                  minHeight: 40
                 },
                 width: "fit-content",
               }}
-              // color="primary"
               startIcon={
                 <PlusIcon
                   sx={{
@@ -157,9 +158,12 @@ const SaleService = () => {
                 />
               }
             >
-              {!isEdit
-                ? salesT("detail.service.addService")
-                : salesT("detail.service.addSection")}
+              <Text fontSize={13} color="#0575E6" fontWeight={700}>
+                {!isEdit
+                  ? salesT("detail.service.addService")
+                  : salesT("detail.service.addSection")}
+              </Text>
+
             </Button>
           )}
           <ServiceHeader />
