@@ -27,6 +27,12 @@ const ServiceHeader = () => {
         <Stack>
           {sectionsList.length !== 0 && (
             <Button
+              sx={{
+                height: 40,
+                borderRadius: 50,
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                width: 100
+              }}
               variant="contained"
               size="medium"
               startIcon={
@@ -47,10 +53,28 @@ const ServiceHeader = () => {
       ) : (
         !isMdSmaller && (
           <Stack direction="row" spacing={2} sx={{}}>
-            <Button variant="outlined" onClick={onCancel}>
+            <Button 
+             sx={{
+              height: 40,
+              borderRadius: 50,
+              width: 100,
+              fontWeight : 700
+            }}
+            variant="outlined" 
+            onClick={onCancel}>
               {commonT("form.cancel")}
             </Button>
-            <Button onClick={handleSubmit(onSaveChange)} variant="contained">
+            <Button
+              sx={{
+                height: 40,
+                borderRadius: 50,
+                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                width: 100,
+                fontWeight : 700
+              }}
+              onClick={handleSubmit(onSaveChange)}
+              variant="contained"
+            >
               {commonT("form.save")}
             </Button>
           </Stack>
