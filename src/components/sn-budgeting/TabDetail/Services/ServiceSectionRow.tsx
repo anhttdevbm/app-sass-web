@@ -193,13 +193,13 @@ const ServiceSectionRow = ({
 
   useEffect(() => {
     onGetPositions({});
-  }, []);
+  }, [onGetPositions]);
 
   useEffect(() => {
     if (serviceData.length === 0) return;
 
     setValue("services", serviceData);
-  }, [JSON.stringify(serviceData)]);
+  }, [serviceData, setValue]);
 
   const createEmptyRow = () => {
     const emptyService = {
