@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
-import { useEmployeeOptions } from "store/company/selectors";
-import { useSaleDetail } from "store/sales/selectors";
 import { useFormContext, useWatch } from "react-hook-form";
+import { useEmployeeOptions } from "store/company/selectors";
 
 const useGetEmployeeOptions = () => {
   const {
@@ -18,9 +17,13 @@ const useGetEmployeeOptions = () => {
     onGetOptions({ ...filters, pageSize, pageIndex: pageIndex + 1 });
   };
 
+  useEffect(() => {
+    onGetOptions({ pageIndex: 0, pageSize: 20 });
+  }, [onGetOptions]);
+
   const onSearchEmployee = (name: string, value?: string) => {
     onGetOptions({
-      pageIndex: 1,
+      pageIndex: 0,
       pageSize: 20,
       email: value as string,
       fullname: value as string,
