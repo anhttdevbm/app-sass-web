@@ -56,7 +56,6 @@ const useWebSocket = (): WebSocket | null => {
         );
   
         wsClient.onopen = () => {
-
           // Send authentication message with the token
           //   }),
           // );
@@ -74,7 +73,6 @@ const useWebSocket = (): WebSocket | null => {
         wsClient.addEventListener("message", handleMessage);
   
         wsClient.onclose = () => {
-
           setTimeout(() => {
             connectSocket();
           }, 3000);
