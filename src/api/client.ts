@@ -228,7 +228,7 @@ const RequestClient = class {
   }
 
   async uploadFile(endpoint: string, file: File) {
-    try {
+    try {  
       const data = {
         type: file.type,
         filename: file.name,

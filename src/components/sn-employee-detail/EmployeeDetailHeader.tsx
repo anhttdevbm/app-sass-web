@@ -1,19 +1,19 @@
 "use client";
-import { ChangeEvent, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Slider from "@mui/material/Slider";
 import Stack from "@mui/material/Stack";
-import AvatarEditor from "react-avatar-editor";
 import { useTranslations } from "next-intl";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
+import AvatarEditor from "react-avatar-editor";
 
 import { Endpoint, client } from "api";
-import DefaultPopupLayout from "layouts/DefaultPopupLayout";
-import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
-import { Permission } from "constant/enums";
-import { Button, IconButton, Text } from "components/shared";
 import Avatar from "components/Avatar";
+import { Button, IconButton, Text } from "components/shared";
+import { Permission } from "constant/enums";
+import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
 import PencilIcon from "icons/FocusedCameraIcon";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
