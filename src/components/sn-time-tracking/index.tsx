@@ -32,6 +32,8 @@ import PlusIcon from "icons/PlusIcon";
 import TimeSheetIcon from "icons/TimeSheetIcon";
 import { inter } from "./CalendarTracking/CalendarTracking.styles";
 import { TIME_TRACKING_HEADER_HEIGHT } from "./components/timeTracking.types";
+import { useAuth } from "store/app/selectors";
+import { Permission } from "constant/enums";
 
 interface ITab {
   label: string;
@@ -53,6 +55,7 @@ enum KindOfTimeSheet {
 const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
+  const { user } = useAuth();
   const [tab, setTab] = useState<TabEnum>(TabEnum.MY_TIME);
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
@@ -239,16 +242,18 @@ const TimeTrackingPage = () => {
             >
               {timeTabs[0].label}
             </MenuItem>
-            <MenuItem
-              sx={{
-                fontSize: "13px",
-                fontWeight: "Bold",
-                color: "neutral.700",
-              }}
-              value={timeTabs[1].value}
-            >
-              {timeTabs[1].label}
-            </MenuItem>
+            {user?.roles.includes(Permission.AM) && (
+              <MenuItem
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: "Bold",
+                  color: "neutral.700",
+                }}
+                value={timeTabs[1].value}
+              >
+                {timeTabs[1].label}
+              </MenuItem>
+            )}
           </Select>
 
           <Typography

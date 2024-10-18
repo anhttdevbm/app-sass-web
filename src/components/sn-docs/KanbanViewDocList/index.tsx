@@ -1,5 +1,6 @@
 import Container from "@mui/material/Container";
 import KanbanViewItem from "../KanbanViewItem";
+import { Project } from "store/project/reducer";
 
 export interface IAvatarViewDoc {
   object: string;
@@ -59,9 +60,11 @@ export interface IDocItem {
   updated_by?: ICUViewDocItem;
   owner?: ICUViewDocItem;
   avatar?: IAvatarViewDoc;
-  project_id?: string;
+  project_id?: Project;
   hasPerm: boolean;
   description: string;
+  content: string;
+  is_public: boolean;
 }
 
 export interface IViewDocItem {
@@ -82,6 +85,7 @@ export default function KanbanViewDocList({
         overflow: "auto",
         width: "100%",
         maxWidth: "100%!important",
+        flex: 1,
 
         [theme.breakpoints.up("md")]: {
           paddingLeft: 3.125,

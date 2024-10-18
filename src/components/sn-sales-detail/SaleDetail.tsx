@@ -1,23 +1,23 @@
 "use client";
-import FixedLayout from "components/FixedLayout";
-import React, { useContext, useEffect, useState } from "react";
-import TabList, { SALES_DETAIL_TAB } from "./components/TabList/TabList";
-import TabHeader from "./components/TabHeader/TabHeader";
-import { useFetchDealDetail } from "./hooks/useGetDealDetail";
 import { TabContext, TabPanel } from "@mui/lab";
-import SaleFeed from "./sn-feed";
+import FixedLayout from "components/FixedLayout";
+import Loading from "components/Loading";
+import { useFetchEmployeeOptions } from "components/sn-sales/hooks/useGetEmployeeOptions";
+import { DATE_FORMAT_HYPHEN } from "constant/index";
+import moment from "moment";
+import React, { useContext, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Todo } from "store/sales/reducer";
 import { useSaleDetail, useSalesService } from "store/sales/selectors";
-import Loading from "components/Loading";
-import { useFetchEmployeeOptions } from "components/sn-sales/hooks/useGetEmployeeOptions";
-import moment from "moment";
-import { DATE_FORMAT_HYPHEN } from "constant/index";
 import { formatDate } from "utils/index";
-import SaleService from "./components/sn-service";
-import useFetchServiceSection from "./hooks/useGetServiceSection";
-import { EditContext } from "./components/sn-service/context/EditContext";
 import SaleClient from "./components/Client/index";
+import SaleService from "./components/sn-service";
+import { EditContext } from "./components/sn-service/context/EditContext";
+import TabHeader from "./components/TabHeader/TabHeader";
+import TabList, { SALES_DETAIL_TAB } from "./components/TabList/TabList";
+import { useFetchDealDetail } from "./hooks/useGetDealDetail";
+import useFetchServiceSection from "./hooks/useGetServiceSection";
+import SaleFeed from "./sn-feed";
 
 const SalesDetail = () => {
   const [tab, setTab] = useState<SALES_DETAIL_TAB>(SALES_DETAIL_TAB.FEED);
@@ -48,6 +48,9 @@ const SalesDetail = () => {
 
     const todo_list: Record<string, Todo> = sortedTodoList.reduce(
       (acc, todo, index) => {
+        console.log("todo", todo);
+        console.log("date",  formatDate(todo.expiration_date, DATE_FORMAT_HYPHEN))
+        
         acc[todo.id] = {
           ...todo,
           priority: todo.priority,

@@ -1,28 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { memo } from "react";
-import { BodyCell } from "components/Table";
-import {
-  DATE_TIME_FORMAT_HYPHEN,
-  DATE_TIME_FORMAT_SLASH,
-  DATE_LOCALE_FORMAT,
-} from "constant/index";
-import { formatDate, formatNumber } from "utils/index";
-import { Position } from "store/company/reducer";
-import { Text } from "components/shared";
-import Avatar from "components/Avatar";
-import { Box, Button, Stack, TableRow } from "@mui/material";
-import Link from "next/link";
-import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
-import { setContentRow } from "store/docs/reducer";
-import { DOCS_API_URL } from "constant/index";
-import axiosBaseQuery from "store/axiosBaseQuery";
-import { useRouter } from "next-intl/client";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import GroupIcon from "@mui/icons-material/Group";
 import ArticleIcon from "@mui/icons-material/Article";
-import { useDocs } from "store/docs/selectors";
+import GroupIcon from "@mui/icons-material/Group";
+import { Box, Button, Stack } from "@mui/material";
 import { BaseQueryApi } from "@reduxjs/toolkit/dist/query";
+import Avatar from "components/Avatar";
+import { Text } from "components/shared";
+import { BodyCell } from "components/Table";
+import { DOCS_API_URL } from "constant/index";
+import { useRouter } from "next-intl/client";
+import { memo } from "react";
+import { useDispatch } from "react-redux";
+import axiosBaseQuery from "store/axiosBaseQuery";
+import { setContentRow } from "store/docs/reducer";
 
 type DesktopCellsProps = {
   item: any;

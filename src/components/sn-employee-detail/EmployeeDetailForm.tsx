@@ -1,38 +1,39 @@
 "use client";
-import { memo, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslations } from "next-intl";
+import { memo, useMemo, useState } from "react";
 import * as Yup from "yup";
 
 import { NewButton as Button, NewInput as Input } from "components/shared";
-import { NS_ACCOUNT, NS_COMMON } from "constant/index";
 import { Permission } from "constant/enums";
+import { NS_ACCOUNT, NS_COMMON } from "constant/index";
 // import useBreakpoint from "hooks/useBreakpoint";
+import dayjs from "dayjs";
 import useToggle from "hooks/useToggle";
 import CopyIcon from "icons/NewCopyIcon";
 import OutlineEditIcon from "icons/OutlineEditIcon";
+import { useDispatch } from "react-redux";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar } from "store/app/selectors";
+import { AppDispatch } from "store/configureStore";
+import { getRequestUpgradePayment } from "store/payment/actions";
 import { getDataFromKeys, getMessageErrorByAPI } from "utils/index";
 import { useEmployeeDetailContext } from "./EmployeeDetailContext";
 import ConfirmToRequest from "./components/ConfirmToRequest";
 
 const EmployeeDetailForm = () => {
   const { user } = useAuth();
-  console.log(user, "user");
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
   // const { isSmSmaller } = useBreakpoint();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { type, employee, onUpdateUserInfo } = useEmployeeDetailContext();
   const [isEdit, onEditTrue, onEditFalse] = useToggle();
   const { onAddSnackbar } = useSnackbar();
-  const [openModal, setOpenModal] = useState({
-    modalUpgrade: false,
-    modalRenewal: false,
-  });
+  const [openModal, setOpenModal] = useState(false);
   const isAdmin = useMemo(
     () => user?.roles.includes(Permission.AM),
     [user?.roles],
@@ -55,6 +56,20 @@ const EmployeeDetailForm = () => {
   //   formik.resetForm();
   //   onEditFalse();
   // };
+  const onSubmitConfirmToRequest = async () => {
+    try {
+      const result = await dispatch(getRequestUpgradePayment());
+      if (result?.payload?.success) {
+        onAddSnackbar("Request Success", "success");
+      } else {
+        onAddSnackbar("Already sent a payment request!", "error");
+      }
+      setOpenModal(false);
+    } catch (error) {
+      onAddSnackbar("Request Error", "error");
+      setOpenModal(false);
+    }
+  };
 
   const initialValues = useMemo(
     () => ({
@@ -216,21 +231,19 @@ const EmployeeDetailForm = () => {
               fullWidth
               name="package"
               disabled
-              // value={employee.email}
-              tooltip={
-                isEdit
-                  ? accountT("accountInformation.notAllowUpdate", {
-                      name: "Email",
-                    })
-                  : undefined
-              }
+              value={employee.packageName}
+              // tooltip={
+              //   isEdit
+              //     ? accountT("accountInformation.notAllowUpdate", {
+              //         name: "Email",
+              //       })
+              //     : undefined
+              // }
               endNode={
                 <Button
                   sx={{ color: "#0575E6" }}
                   size="small"
-                  onClick={() =>
-                    setOpenModal({ ...openModal, modalUpgrade: true })
-                  }
+                  onClick={() => setOpenModal(true)}
                 >
                   Request upgrade
                 </Button>
@@ -244,14 +257,14 @@ const EmployeeDetailForm = () => {
               fullWidth
               name="expirationDate"
               disabled
-              // value={employee.email}
-              tooltip={
-                isEdit
-                  ? accountT("accountInformation.notAllowUpdate", {
-                      name: "Email",
-                    })
-                  : undefined
-              }
+              value={dayjs(employee?.expiration_date).format("D MMMM, YYYY")}
+              // tooltip={
+              //   isEdit
+              //     ? accountT("accountInformation.notAllowUpdate", {
+              //         name: "Email",
+              //       })
+              //     : undefined
+              // }
             />
           </Grid>
           <Grid
@@ -261,7 +274,7 @@ const EmployeeDetailForm = () => {
             justifyContent="center"
             my={{ xs: 5, sm: 6 }}
           >
-            {(type === "SELF" || isAdmin) && !isEdit ? (
+            {type === "SELF" && !isEdit ? (
               <Button
                 onClick={onEditTrue}
                 variant="secondaryOutlined"
@@ -276,9 +289,7 @@ const EmployeeDetailForm = () => {
               >
                 {accountT("accountInformation.changeInformation")}
               </Button>
-            ) : (
-              <></>
-            )}
+            ) : null}
             {isEdit ? (
               <>
                 <Button
@@ -297,17 +308,16 @@ const EmployeeDetailForm = () => {
                   {commonT("form.save")}
                 </Button>
               </>
-            ) : (
-              <></>
-            )}
+            ) : null}
           </Grid>
         </Grid>
       </Box>
       <ConfirmToRequest
-        open={openModal.modalUpgrade}
+        open={openModal}
         title="Confirm to Request Upgrade"
         question="Are you sure to request upgrade?"
-        onClose={() => setOpenModal({ ...openModal, modalUpgrade: false })}
+        onClose={() => setOpenModal(false)}
+        onSubmit={onSubmitConfirmToRequest}
       />
     </>
   );

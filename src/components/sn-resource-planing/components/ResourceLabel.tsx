@@ -252,7 +252,7 @@ const ResourceLabel = ({
                 }}
               >
                 <Typography sx={{ fontSize: "13px", marginTop: "5px" }}>
-                  Available
+                  {resourceT("schedule.resourceHeader.available")}
                 </Typography>
                 <Typography color={"#212121"} fontSize={13}>
                   {formatNumber(totalLeftToSchedule[resource._resource.id], {
@@ -276,7 +276,8 @@ const ResourceLabel = ({
                 }}
               >
                 <Typography fontSize={13}>
-                  Schedule{" ("}
+                  {resourceT("schedule.resourceHeader.schedule")}
+                  {" ("}
                   {formatNumber(schedulePerLeft, {
                     numberOfFixed: 2,
                     suffix: "%",

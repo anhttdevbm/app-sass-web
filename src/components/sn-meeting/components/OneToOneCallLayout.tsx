@@ -1,13 +1,19 @@
-import { Avatar, Box } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Box } from "@mui/material";
+import Avatar from "components/Avatar";
+import { Emoji } from "emoji-picker-react";
+import { useEffect, useMemo, useRef } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
+import { useAppSelector } from "store/hooks";
+import { updateRemoteStreamState } from "store/meeting/reducer";
+import { ParticipantStreamEvent } from "store/meeting/types";
 
 export default function OneToOneCallLayout() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const { localStream, remoteStreams, meetInfo } = store.getState().meeting;
-  const { localStreamState } = store.getState().meeting;
+  const { localStream, remoteStreams, localStreamState } = useAppSelector(
+    (state) => state.meeting,
+  );
   const { user } = useAuth();
   const remoteStream = useMemo(() => remoteStreams[0], [remoteStreams]);
 
@@ -21,6 +27,23 @@ export default function OneToOneCallLayout() {
       remoteVideoRef.current.srcObject = remoteStream.stream;
     }
   }, [remoteStream]);
+
+  useEffect(() => {
+    if (remoteStream && remoteStream.streamState.reactionUnified) {
+      const timer = setTimeout(() => {
+        store.dispatch(
+          updateRemoteStreamState({
+            event: ParticipantStreamEvent.REACTION,
+            participantId: remoteStream.participant.id,
+            value: "",
+          }),
+        );
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [remoteStream]);
+
   return (
     <Box
       sx={{
@@ -31,6 +54,10 @@ export default function OneToOneCallLayout() {
         position: "relative",
         overflow: "hidden",
         gap: "12px",
+        "&:hover #btn_screen": {
+          display: "block",
+        },
+        paddingX: "24px",
       }}
     >
       <Box
@@ -74,10 +101,21 @@ export default function OneToOneCallLayout() {
           sx={{
             width: localStreamState.isCameraOn ? "unset" : "0%",
             height: "100%",
+            borderRadius: "12px",
           }}
         />
 
-        {!localStreamState.isCameraOn && <Avatar src={user?.avatar?.link} />}
+        {!localStreamState.isCameraOn && (
+          <Avatar
+            src={user?.avatar?.link}
+            size={64}
+            alt={user?.fullname}
+            style={{
+              borderRadius: "12px",
+              zIndex: 9,
+            }}
+          />
+        )}
       </Box>
       {remoteStream && (
         <Box
@@ -120,12 +158,38 @@ export default function OneToOneCallLayout() {
             sx={{
               width: remoteStream.streamState.isCameraOn ? "unset" : "0%",
               height: "100%",
+              borderRadius: "12px",
+              backgroundColor: "#000",
             }}
           />
 
           {!remoteStream.streamState.isCameraOn && (
-            <Avatar src={remoteStream.participant.avatar} />
+            <Avatar
+              src={remoteStream.participant.avatar}
+              size={64}
+              alt={remoteStream.participant.fullname}
+              style={{
+                borderRadius: "12px",
+                zIndex: 9,
+              }}
+            />
           )}
+          <Box
+            sx={{
+              position: "absolute",
+              top: "8px",
+              left: "8px",
+              zIndex: 10,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Emoji
+              unified={remoteStream.streamState.reactionUnified}
+              size={30}
+            />
+          </Box>
         </Box>
       )}
     </Box>

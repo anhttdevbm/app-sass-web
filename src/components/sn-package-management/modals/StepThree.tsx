@@ -1,19 +1,20 @@
 "use client";
 
-import { memo } from "react";
-import { Box, Paper, IconButton, Radio } from "@mui/material";
 import {
-  Close as CloseIcon,
-  ArrowBack as ArrowBackIcon,
+  Close as CloseIcon
 } from "@mui/icons-material";
-import ButtonCustom from "../components/Button";
-import { useTranslations } from "next-intl";
-import { NS_PACKAGE_MANAGERMENT } from "constant/index";
+import { Box, IconButton, Paper, Radio } from "@mui/material";
 import { Text } from "components/shared";
-import { DataPrice, DataStepOne } from ".";
-import { pay } from "store/payment/actions";
+import TextFieldInput from "components/shared/TextFieldInput";
+import { NS_PACKAGE_MANAGERMENT } from "constant/index";
+import BackIcon from "icons/BackIcon";
+import { useTranslations } from "next-intl";
+import { memo } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "store/configureStore";
+import { pay } from "store/payment/actions";
+import { DataPrice, DataStepOne } from ".";
+import ButtonCustom from "../components/Button";
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onClose: () => void;
@@ -57,10 +58,10 @@ const StepThree = (props: Props) => {
 
     if (pay.fulfilled.match(resultAction)) {
       window.open(resultAction?.payload?.return_url, "_blank");
+      onClose();
     } else {
       console.error("Error");
     }
-    // onClose();
   };
 
   return (
@@ -90,7 +91,7 @@ const StepThree = (props: Props) => {
         mb={10}
       >
         <IconButton onClick={handleBack}>
-          <ArrowBackIcon />
+          <BackIcon />
         </IconButton>
         <Text
           id="modal-title"
@@ -122,11 +123,30 @@ const StepThree = (props: Props) => {
           >
             {packageT("title.paymentDetails")}
           </Text>
-          <Box>
-            <Radio checked={true} /> {packageT("description.paypal")}
+          <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <Radio sx={{ padding: 0 }} checked={true} />{" "}
+            {packageT("description.paypal")}
+            <img src="/images/paypal-logo.svg.png" alt="Paypal Logo" />
           </Box>
           <Box mb={3}>
             <Text>{packageT("description.pay")}</Text>
+          </Box>
+
+          <Text
+            sx={{
+              fontSize: "16px",
+              fontWeight: 600,
+            }}
+            mb={1}
+          >
+            Enter discount code
+          </Text>
+          <Box mb={3}>
+            <TextFieldInput 
+              label={"Discount code"}
+              fullWidth
+              placeholder="Enter payment code"
+            />
           </Box>
         </Box>
 

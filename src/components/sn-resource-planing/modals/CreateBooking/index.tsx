@@ -120,7 +120,7 @@ const CreateBooking: React.FC<IProps> = ({
                 setTypeBooking("PROJECT");
               }}
             >
-              Project
+              {resourceT("form.project")}
             </Button>
             <Button
               style={{
@@ -135,7 +135,7 @@ const CreateBooking: React.FC<IProps> = ({
                 setTypeBooking("TIME_OFF");
               }}
             >
-              Time off
+              {resourceT("form.timeoff")}
             </Button>
           </div>
         </div>

@@ -6,10 +6,11 @@ import { client } from "api";
 import { AxiosError, AxiosRequestConfig, HttpStatusCode } from "axios";
 import Avatar from "components/Avatar";
 import { Switch } from "components/Filters";
-import { Button, Text, Tooltip } from "components/shared";
+import { Text, Tooltip } from "components/shared";
 import { DOCS_API_URL, NS_DOCS } from "constant/index";
 import { User } from "constant/types";
 import { format } from "date-fns";
+import { Editor } from "draft-js";
 import CloseIcon from "icons/CloseIcon";
 import HistoryIcon from "icons/HistoryIcon";
 import RestoreIcon from "icons/RestoreIcon";
@@ -19,8 +20,6 @@ import { useParams } from "next/navigation";
 import React, { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setContentRow } from "store/docs/reducer";
-import useDocEditor from "../news/hook/useDocEditor";
-import { Editor } from "@tiptap/core";
 
 declare type TDocHistory = {
   _id: string;
@@ -165,6 +164,7 @@ const OptionGroup = ({ options, handleChangeOption }) => {
     >
       {options.map((item) => (
         <Box
+          key={item.value}
           onClick={() => {
             setState(item.value);
             handleChangeOption(item.value);
@@ -292,7 +292,7 @@ const DrawSlider = ({
               <OptionGroup
                 options={FontFamilyOptions}
                 handleChangeOption={(value) => {
-                  editor.chain().selectAll().setFontFamily(value).run();
+                  // editor.chain().selectAll().setFontFamily(value).run();
                 }}
               />
             </Box>
@@ -312,7 +312,7 @@ const DrawSlider = ({
               <OptionGroup
                 options={TextSizeOptions}
                 handleChangeOption={(value) => {
-                  editor.chain().selectAll().setFontSize(value).run();
+                  // editor.chain().selectAll().setFontSize(value).run();
                 }}
               />
             </Box>

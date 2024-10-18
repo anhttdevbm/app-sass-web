@@ -5,6 +5,7 @@ import {
   API_TIMEOUT,
   API_URL,
   AUTH_API_URL,
+  BUDGET_API_URL,
   BUDGET_UPLOAD_FILE_API_URL,
   REFRESH_TOKEN_STORAGE_KEY,
   SALE_API_URL,
@@ -262,6 +263,10 @@ export const client = new RequestClient();
 export const saleClient = new RequestClient({
   baseURL: SALE_API_URL,
 });
+
+export const budgetClient = new RequestClient({
+  baseURL: BUDGET_API_URL,
+}); 
 
 export const fileClient = new RequestClient({
   baseURL: UPLOAD_API_URL,

@@ -109,6 +109,7 @@ export const CommonLang: CommonDictionary = {
   show: "Hiển thị",
   hide: "Ẩn",
   upgradeAccount: "Nâng cấp tài khoản",
+  createWorkspace: "Tạo công ty của bạn",
   clickGoDetail: "Nhấn để tới trang chi tiết {name}",
   waiting: "Đang chờ",
   approved: "Đã chấp nhận",

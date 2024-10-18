@@ -6,11 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { getDocCustom, getDocs, updateDocCustom } from "./actions";
-import {
-  changeId,
-  changePermDoc,
-  getDocDetails
-} from "./reducer";
+import { changeId, changePermDoc, getDocDetails } from "./reducer";
 
 const useDocs = () => {
   const [loading, setLoading] = useState(false);
@@ -76,13 +72,13 @@ const useDocs = () => {
     }
   };
 
-  const handleUpdateDoc = async (data, id) => {
+  const handleUpdateDoc = async (data: Record<string, unknown>, id: string) => {
     await client.put(Endpoint.DOCS + `/${id}`, data, {
-      baseURL: "http://113.192.9.79:6813/api/v1",
+      baseURL: DOCS_API_URL,
     });
   };
 
-  const handleGetDocDetail = async (id, content?: string) => {
+  const handleGetDocDetail = async (id: string, content?: string) => {
     const resPrem = await client.get(
       Endpoint.PERM_DOCS + id,
       {},
@@ -90,7 +86,7 @@ const useDocs = () => {
         baseURL: DOCS_API_URL,
       },
     );
-    const isView = resPrem.data.find((e) => e?.user?.id === IdUser);
+    const isView = resPrem.data.find((e: { user?: { id?: string } }) => e?.user?.id === IdUser);
 
     dispatch(changeId(id));
     dispatch(changePermDoc(isView?.perm || ""));
@@ -98,8 +94,6 @@ const useDocs = () => {
     if (!isView?.perm) {
       return;
     }
-
-    console.log({ id });
 
     const res = await client.get(
       Endpoint.DETAIL_DOCS + id,
@@ -110,12 +104,13 @@ const useDocs = () => {
     );
 
     if (res.status === HttpStatusCode.OK) {
-      console.log({ data: res.data });
       if (content) {
         res.data.content = content;
       }
       dispatch(getDocDetails(res.data));
+      return res.data;
     }
+    return null;
   };
 
   const onGetDocCustom = useCallback(

@@ -1,5 +1,5 @@
 import { VideocamOff } from "@mui/icons-material";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
 import { IconButton, Text } from "components/shared";
 import { sxBtnIconActive, sxBtnIconDanger } from "components/sn-meeting/style";
@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const ItemUser = ({ remoteStream }: IProps) => {
-  const { isCameraOn, isMicOn } = remoteStream.streamState;
+  const { isCameraOn, isMicOn, isRaiseHand } = remoteStream.streamState;
   return (
     <Stack
       sx={{
@@ -48,7 +48,24 @@ const ItemUser = ({ remoteStream }: IProps) => {
         </Text>
       </Box>
       <Box>
-        <Stack direction={"row"}>
+        <Stack direction="row" alignItems="center">
+          {isRaiseHand && (
+            <IconButton
+              sx={{
+                width: "32px",
+                height: "32px",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  userSelect: "none",
+                }}
+              >
+                ✋
+              </Typography>
+            </IconButton>
+          )}
           <IconButton sx={isMicOn ? sxBtnIconActive : sxBtnIconDanger}>
             {isMicOn ? (
               <MicrophoneIcon
