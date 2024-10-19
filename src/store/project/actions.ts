@@ -6,11 +6,11 @@ import {
   AI_CHAT_API_URL,
   AN_ERROR_TRY_AGAIN,
   AN_ERROR_TRY_RELOAD_PAGE,
-  PROJECT_AI_API_URL,
+  API_URL
 } from "constant/index";
 import { BaseQueries, Option } from "constant/types";
-import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import StringFormat from "string-format";
+import { refactorRawItemListResponse, serverQueries } from "utils/index";
 import { Task } from "./reducer";
 
 export enum ProjectStatus {
@@ -40,6 +40,11 @@ export type GetTasksOfProjectQueries = BaseQueries & {
   status?: Status;
   project?: string;
   name?: string;
+};
+
+export type GetTaskLogQueries = {
+  task_id: string;
+  subtask_id?: string;
 };
 
 export type ProjectData = {
@@ -802,6 +807,26 @@ export const getActivitiesOfProject = createAsyncThunk(
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ] as any[];
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+export const getTaskLog = createAsyncThunk(
+  "project/getTaskLog",
+  async (queries: GetTaskLogQueries) => {
+    const newQueries = { ...queries };
+
+    try {
+      const response = await client.get(Endpoint.TASKS_LOG, newQueries, {
+        baseURL: API_URL,
+      });
+
+      if (response?.status === HttpStatusCode.OK) {
+        return response.data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
     } catch (error) {
       throw error;
     }

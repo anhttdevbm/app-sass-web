@@ -24,6 +24,8 @@ import {
   getProjectList,
   GetProjectListQueries,
   getTaskList,
+  getTaskLog,
+  GetTaskLogQueries,
   getTasksOfProject,
   GetTasksOfProjectQueries,
   moveTask,
@@ -241,6 +243,7 @@ export interface ProjectState {
   activitiesStatus: DataStatus;
   activitiesError?: string;
   activitiesFilters: GetActivitiesQueries;
+  taskLogFilters: GetTaskLogQueries;
   attachments?: AttachmentOfProject[];
 
   budgets?: TBudgets;
