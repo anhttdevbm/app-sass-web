@@ -1,58 +1,87 @@
+"use client"
+
 import { Box, Stack } from "@mui/material"
 import { Text } from "components/shared"
 import { memo } from "react"
 import ProgressBar from "./progress-bar/ProgressBar"
+import useGetDashboardData from "queries/ticket-agent/useDashboard/useDashboard"
 
 const OpenTicket = () => {
+    const { openTicketData } = useGetDashboardData()
+    const data = openTicketData?.data?.data?.data?.ticketOpen || []
+    let totalTicket = openTicketData?.data?.data?.data?.ticketOpen.length ?? 0
 
 
-    let fakeTotalTicket = 100
-    const fakeDataPriority = [
+    const filterDataPriority = (type: string) => {
+        const _data = [...data]
+        const filter = _data?.filter((item => item?.priority == type))
+        return filter.length
+    }
+
+    const filterDataType = (type: string) => {
+        const _data = [...data]
+        const filter = _data?.filter((item => item?.type == type))
+        return filter.length
+    }
+
+    const filterAssignUser = () => {
+
+        const assignUserCount = {};
+
+        data.forEach(ticket => {
+            const assignUser = ticket.assignUser;
+            if (assignUser?.id) {
+
+                if (!assignUserCount[assignUser.id]) {
+                    assignUserCount[assignUser.id] = {
+                        ...assignUser,
+                        count: 1
+                    };
+                } else {
+                    assignUserCount[assignUser.id].count += 1;
+                }
+            }
+        });
+
+        const sortedUsers = Object.values(assignUserCount).sort((a: any, b: any) => b.count - a.count);
+
+        const top3Users = sortedUsers.slice(0, 3);
+
+        return top3Users;
+
+    }
+
+    const dataPriority = [
         {
             priority: "Hight",
-            count: 100
+            count: filterDataPriority("Hight")
         },
         {
             priority: "Medium",
-            count: 52
+            count: filterDataPriority("Medium")
         },
         {
             priority: "Low",
-            count: 10
+            count: filterDataPriority("Low")
         },
     ]
 
-    const fakeDataType = [
+    const dataType = [
         {
             type: "Request",
-            count: 34
+            count: filterDataType("Request")
         },
         {
             type: "Problem",
-            count: 2
+            count: filterDataType("Problem")
         },
         {
             type: "Question",
-            count: 7
+            count: filterDataType("Question")
         },
     ]
-    const fakeDataAssign = [
-        {
-            urlAvatar : "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__" ,
-            fullname: "Tung",
-            count: 50
-        },
-        {
-            urlAvatar : "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__" ,
-            fullname: "Toan",
-            count: 12
-        },
-        {
-            urlAvatar : "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__" ,
-            fullname: "Long",
-            count: 9
-        },
-    ]
+
+    const dataAssign = filterAssignUser()
 
 
     return (
@@ -67,7 +96,7 @@ const OpenTicket = () => {
                             Priority
                         </Text>
                         <Box>
-                            <ProgressBar totalTicket={fakeTotalTicket} data={fakeDataPriority} type="priority" />
+                            <ProgressBar totalTicket={totalTicket} data={dataPriority} type="priority" />
                         </Box>
                     </Box>
                     <Box width={{ xs: "100%", sm: "25%", md: "25%" }}>
@@ -75,7 +104,7 @@ const OpenTicket = () => {
                             Type
                         </Text>
                         <Box>
-                            <ProgressBar totalTicket={fakeTotalTicket} data={fakeDataType} type="type" />
+                            <ProgressBar totalTicket={totalTicket} data={dataType} type="type" />
                         </Box>
                     </Box>
                     <Box width={{ xs: "100%", sm: "25%", md: "25%" }}>
@@ -83,7 +112,7 @@ const OpenTicket = () => {
                             assigness
                         </Text>
                         <Box>
-                            <ProgressBar totalTicket={fakeTotalTicket} data={fakeDataAssign} type="assign" />
+                            <ProgressBar totalTicket={totalTicket} data={dataAssign} type="assign" />
                         </Box>
 
                     </Box>
