@@ -204,7 +204,7 @@ const RequestClient = class {
 
   async upload(endpoint: string, file: File) {
     try {
-      let response = await this.get(
+      const response = await this.get(
         `${endpoint}/${file.name}`,
         { type: file.type },
         {
@@ -213,12 +213,8 @@ const RequestClient = class {
       );
 
       if (response?.status === HttpStatusCode.OK) {
-        const urlUpload = response.data.object;
-        response = await this.put(response.data.upload, file);
-        if (response?.status === HttpStatusCode.OK) {
-          return urlUpload;
-        }
-        throw AN_ERROR_TRY_AGAIN;
+        const urlUpload = response.data.upload;
+        return urlUpload;
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
@@ -249,7 +245,7 @@ export const saleClient = new RequestClient({
 
 export const budgetClient = new RequestClient({
   baseURL: BUDGET_API_URL,
-}); 
+});
 
 export const fileClient = new RequestClient({
   baseURL: UPLOAD_API_URL,
