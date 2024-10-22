@@ -40,8 +40,11 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" /> 
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      />
+      {/* <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />  */}
       <body suppressHydrationWarning={true} className={openSans.className}>
         <AppProvider locale={locale} messages={messages}>
           {children}
