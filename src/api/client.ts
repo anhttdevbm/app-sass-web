@@ -204,7 +204,7 @@ const RequestClient = class {
 
   async upload(endpoint: string, file: File) {
     try {
-      const response = await this.get(
+      let response = await this.get(
         `${endpoint}/${file.name}`,
         { type: file.type },
         {
@@ -213,11 +213,37 @@ const RequestClient = class {
       );
 
       if (response?.status === HttpStatusCode.OK) {
-        const urlUpload = response.data.upload;
-        return urlUpload;
+        const urlUpload = response.data.object;
+        response = await this.put(response.data.upload, file);
+        if (response?.status === HttpStatusCode.OK) {
+          return urlUpload;
+        }
+        throw AN_ERROR_TRY_AGAIN;
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async uploadFile(endpoint: string, file: File) {
+    try {
+      const formData = new FormData();
+      formData.append("type", file.type);
+      formData.append("fileBuffer", file);
+
+      const response = await this.post(endpoint, formData, {
+        baseURL: UPLOAD_API_URL,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response?.data.status === HttpStatusCode.OK) {
+        return response?.data?.data[0]?.link;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
     } catch (error) {
       throw error;
     }
