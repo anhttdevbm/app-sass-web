@@ -117,8 +117,8 @@ export const Endpoint = {
   POSITIONS_INACTIVE: "/positions/inactive",
 
   UPLOAD: "/files/upload-avatar",
-  UPLOAD_FILE: "/files/upload",
-  SIGNUP_UPLOAD: "/avatar/upload",
+  UPLOAD_FILE: "/files/upload/",
+  SIGNUP_UPLOAD: "/avatar/upload/",
   UPLOAD_LINK: "/files/upload-link",
   DOWNLOAD_LINK: "/in/files/download-links",
 
