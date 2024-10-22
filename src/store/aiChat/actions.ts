@@ -59,7 +59,7 @@ export const editChatSession = createAsyncThunk(
   async ({ id, ...data }: Partial<ChatSessionData> & { id: string }) => {
     try {
       const response = await client.put(
-        `${Endpoint.AI_CHAT}/${id}`,
+        `${Endpoint.AI_CHAT_SESSION}/${id}/`,
         data,
         {
           baseURL: AI_CHAT_API_URL,
@@ -80,7 +80,7 @@ export const deleteChatSession = createAsyncThunk(
   async (id: string) => {
     try {
       const response = await client.delete(
-        `${Endpoint.AI_CHAT}/${id}`,
+        `${Endpoint.AI_CHAT_SESSION}/${id}/`,
         {
           baseURL: AI_CHAT_API_URL,
         },

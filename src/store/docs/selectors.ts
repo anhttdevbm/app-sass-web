@@ -72,13 +72,13 @@ const useDocs = () => {
     }
   };
 
-  const handleUpdateDoc = async (data, id) => {
+  const handleUpdateDoc = async (data: Record<string, unknown>, id: string) => {
     await client.put(Endpoint.DOCS + `/${id}`, data, {
       baseURL: DOCS_API_URL,
     });
   };
 
-  const handleGetDocDetail = async (id, content?: string) => {
+  const handleGetDocDetail = async (id: string, content?: string) => {
     const resPrem = await client.get(
       Endpoint.PERM_DOCS + id,
       {},
@@ -86,7 +86,7 @@ const useDocs = () => {
         baseURL: DOCS_API_URL,
       },
     );
-    const isView = resPrem.data.find((e) => e?.user?.id === IdUser);
+    const isView = resPrem.data.find((e: { user?: { id?: string } }) => e?.user?.id === IdUser);
 
     dispatch(changeId(id));
     dispatch(changePermDoc(isView?.perm || ""));

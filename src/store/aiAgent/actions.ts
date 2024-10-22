@@ -1,4 +1,8 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { client, Endpoint } from "api";
+import { fileClient } from "api/client";
+import { HttpStatusCode } from "constant/enums";
+import { AI_AGENT_API_URL, AN_ERROR_TRY_AGAIN, UPLOAD_API_URL } from "constant/index";
 import {
   AddSourceInput,
   AIAgent,
@@ -7,9 +11,6 @@ import {
   GetAIAgentListQueries, GetAIAgentsPayload,
   UpdateAIAgentPayload,
 } from "./types";
-import { client, Endpoint } from "api";
-import { AI_AGENT_API_URL, AN_ERROR_TRY_AGAIN, UPLOAD_API_URL } from "constant/index";
-import { HttpStatusCode } from "constant/enums";
 
 export const getAgents = createAsyncThunk(
   "aiAgent/getAgents",
@@ -91,7 +92,7 @@ export const uploadFile = createAsyncThunk(
     "aiAgent/uploadAvatar",
   async (file: File) => {
       try {
-        return client.upload(Endpoint.UPLOAD_LINK, file)
+        return fileClient.upload(Endpoint.UPLOAD, file)
       } catch (error) {
         throw error;
       }

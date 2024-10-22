@@ -81,7 +81,7 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean }) => {
       const avatarUrl = await client.uploadFile(Endpoint.SIGNUP_UPLOAD, file);
 
       const data = {
-        avatar: avatarUrl,
+        avatar: avatarUrl.data?.link,
       } as UpdateUserInfoData;
 
       await onUpdateUserInfo(data);

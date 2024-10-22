@@ -1,12 +1,12 @@
-import { NS_TICKET } from "constant/index";
-import { useTranslations } from "next-intl";
-import { memo, useEffect, useState } from "react"
-import FilterSearchDocs from "../FilterSearchDocs/FilterSearchDocs";
 import { Stack } from "@mui/material";
 import { Text } from "components/shared";
+import { NS_TICKET } from "constant/index";
+import { useTranslations } from "next-intl";
+import { memo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { selectParamsDashboard } from "store/ticket-agent/selectors";
 import { setParamsDashboard } from "store/ticket-agent/actions";
+import { selectParamsDashboard } from "store/ticket-agent/selectors";
+import FilterSearchDocs from "../FilterSearchDocs/FilterSearchDocs";
 
 
 
@@ -15,10 +15,10 @@ const Actions = () => {
   const params = useAppSelector(selectParamsDashboard)
   const dispath = useAppDispatch()
 
-  const [queries, setQueries] = useState<any>({});
-  const onChangeQueries = (name: string, value: any) => {
+  const [queries, setQueries] = useState<Record<string, string | number | boolean>>({});
+  const onChangeQueries = (name: string, value: string | number | boolean) => {
     setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
-    const changeParams = { ...params, createTime: value?.priority }
+    const changeParams = { ...params, createTime: typeof value === 'object' && 'priority' in value ? (value as { priority: string | number | boolean }).priority : value }
     dispath(setParamsDashboard(changeParams))
 
   };

@@ -1,17 +1,53 @@
-import { memo } from "react";
 import { Box, Stack } from "@mui/material";
-import { Text } from "components/shared";
-import { formatDate } from "utils/index";
-import { DATE_TIME_FORMAT_SLASH } from "constant/index";
-import { ActivityTask } from "store/project/reducer";
+import { client, Endpoint } from "api";
 import Avatar from "components/Avatar";
+import { Text } from "components/shared";
+import { API_URL, DATE_TIME_FORMAT_SLASH } from "constant/index";
+import { memo } from "react";
+import { useQuery } from "react-query";
+import { ActivityTask } from "store/project/reducer";
+import { formatDate } from "utils/index";
 
-type ActivitiesProps = {};
+type ActivitiesProps = {
+  task_id: string;
+  subtask_id?: string;
+};
 
 const Activities = (props: ActivitiesProps) => {
+  const { task_id, subtask_id } = props;
+
+  // handle func get data task from task_id or subtask_id
+  const { data, isLoading } = useQuery(
+    ["task", task_id, subtask_id],
+    async () => {
+      const params = subtask_id ? { subtask_id } : { task_id };
+
+      const { data } = await client.get(
+        Endpoint.TASKS_LOG,
+        params,
+        API_URL
+      );
+      console.log("this is id task", task_id);
+      console.log("this is id subtask", subtask_id);
+      
+      console.log("data task log nè", data);
+      
+      return data;
+    },
+    {
+      enabled: !!task_id,
+    }
+  );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  const activities = Array.isArray(data) ? data : [];
+
+
   return (
     <Stack>
-      {DATA.map((item) => (
+      {activities.map((item) => (
         <Item key={item.id} {...item} />
       ))}
     </Stack>
