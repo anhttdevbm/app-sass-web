@@ -59,7 +59,7 @@ export const Feed = ({ budget }: { budget: TBudget }) => {
                 }),
               }}
             >
-              <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
+              <Avatar size={40} src={budget?.created_by?.avatar || ""} />
               <Stack px="10px">
                 <Text fontSize="16px" fontWeight="bold" mb="5px">
                   {budgetT(`actionStatus.${FeedAction[feed.action]}`)}

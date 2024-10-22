@@ -180,7 +180,7 @@ const BlogDetailSection = () => {
                                   <Grid container spacing={5} >
                                       <Grid item xs={12} md={12} sx={{ '& .markdown': { py: 3, }, }}>
                                           <Stack direction="row" alignItems="center" spacing={1}>
-                                              <Avatar src={detailItem?.created_by?.avatar?.link} size={40} alt='' />
+                                              <Avatar src={typeof detailItem?.created_by?.avatar === 'string' ? detailItem?.created_by?.avatar : undefined} size={40} alt='' />
                                               <Stack>
                                                   <Text variant="h4">{detailItem?.title}</Text>
                                                   <Text color="GrayText" fontSize={12}>

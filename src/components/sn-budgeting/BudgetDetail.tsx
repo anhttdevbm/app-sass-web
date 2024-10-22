@@ -23,12 +23,12 @@ import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
 import AddCircleIcon from "icons/AddCircleIcon";
+import ArrowDownIcon from "icons/ArrowDownIcon";
 import EditIcon from "icons/EditIcon";
 import _ from "lodash";
 import { DateRange } from "mui-daterange-picker";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 import { useBudgetGetExpenseQuery } from "queries/budgeting/expense";
@@ -53,8 +53,7 @@ import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Service } from "./TabDetail/Service";
-import ArrowDownIcon from "icons/ArrowDownIcon";
-import "./styles.css"
+import "./styles.css";
 
 enum TABS {
   FEED = "Feed",
@@ -399,7 +398,7 @@ export const BudgetDetail = () => {
                 <ArrowDownIcon />
               </IconButton>
             </Link>
-            <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
+            <Avatar size={40} src={budget?.created_by?.avatar || ""} />
             <Stack width={"150px"}>
               <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}

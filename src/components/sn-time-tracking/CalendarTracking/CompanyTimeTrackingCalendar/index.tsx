@@ -1,36 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Person } from "@mui/icons-material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import {
   Avatar,
   Box,
-  Grid,
   IconButton,
   Stack,
   TableCell,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
-import dayjs from "dayjs";
-import _ from "lodash";
-import moment from "moment";
-import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { Person } from "@mui/icons-material";
-import ListIcon from "@mui/icons-material/List";
 import { styled } from "@mui/system";
-import ButtonCalendar from "components/shared/ButtonCalendar";
 import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
 import TimeRangeNavigator, {
   TypeNavigator,
 } from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
 import { ITimeRangeAction } from "components/sn-time-tracking/components/timeTracking.types";
 import { NS_TIME_TRACKING } from "constant/index";
+import dayjs from "dayjs";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
+import _ from "lodash";
+import moment from "moment";
 import { useTranslations } from "next-intl";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store/configureStore";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import { setIsOpen as setUserNavigationVisible } from "store/userNavigationDetail/reducer";
@@ -38,7 +34,6 @@ import TimeCreate from "../../TimeTrackingModal/TimeCreate";
 import ListSheet from "./ListSheet";
 import MonthCalendarSheet from "./MonthCalendarSheet";
 import TableSheet from "./TableSheet";
-import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 
 interface IProps {
   events: any[];
@@ -193,7 +188,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 end: moment(data?.end_time).format("hh:mm A"),
                 extendedProps: {
                   project: {
-                    avatar: data?.project?.avatar?.link,
+                    avatar: data?.project?.avatar,
                     name: data?.project?.name,
                   },
                   day: data?.day,

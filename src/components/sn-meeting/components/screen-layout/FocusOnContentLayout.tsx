@@ -81,7 +81,7 @@ export default function FocusOnContentLayout() {
           />
         }
         {!remoteStream && !localStreamState.isCameraOn && (
-          <Avatar size={40} src={user?.avatar?.link} alt={user?.fullname} />
+          <Avatar size={40} src={user?.avatar} alt={user?.fullname} />
         )}
       </Box>
 
@@ -211,7 +211,7 @@ export default function FocusOnContentLayout() {
           {!localStreamState.isCameraOn && (
             <Avatar
               size={64}
-              src={user?.avatar?.link}
+              src={user?.avatar}
               alt={user?.fullname}
               style={{
                 position: "absolute",

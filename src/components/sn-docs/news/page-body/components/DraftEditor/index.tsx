@@ -360,7 +360,7 @@ export default function DraftEditor() {
           strategy: findCommentEntities,
           component: (props) => (
             <CommentSpan
-              avatarUrl={user?.avatar?.link || ""}
+              avatarUrl={user?.avatar || ""}
               blockKey={props.blockKey}
               positionComments={positionComment}
             >

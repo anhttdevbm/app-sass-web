@@ -1,6 +1,6 @@
 import { MenuItem, Stack } from "@mui/material";
-import { Text, Checkbox } from "components/shared";
 import Avatar from "components/Avatar";
+import { Checkbox, Text } from "components/shared";
 import { IMember } from "../../FilterMember";
 
 export default function MemberListSelect({

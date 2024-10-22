@@ -81,8 +81,8 @@ export default function OneToOneCallLayout() {
               width: "100%",
               height: "100%",
               backgroundImage: `url(${
-                user?.avatar?.link
-                  ? user?.avatar?.link
+                user?.avatar
+                  ? user?.avatar
                   : "/images/img-user-placeholder.webp"
               })`,
               backgroundSize: "cover",
@@ -107,7 +107,7 @@ export default function OneToOneCallLayout() {
 
         {!localStreamState.isCameraOn && (
           <Avatar
-            src={user?.avatar?.link}
+            src={user?.avatar}
             size={64}
             alt={user?.fullname}
             style={{

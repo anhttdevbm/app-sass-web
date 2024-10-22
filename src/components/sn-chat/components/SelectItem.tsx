@@ -1,11 +1,11 @@
+import { Checkbox, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
-import { Checkbox, Typography } from "@mui/material";
-import { ChangeEvent } from "react";
-import CircleUnchecked from "icons/CircleUnchecked";
-import CircleCheckedFilled from "icons/CircleCheckedFilled";
-import { Employee } from "store/company/reducer";
 import useTheme from "hooks/useTheme";
+import CircleCheckedFilled from "icons/CircleCheckedFilled";
+import CircleUnchecked from "icons/CircleUnchecked";
+import { ChangeEvent } from "react";
+import { Employee } from "store/company/reducer";
 
 interface SelectItemProp {
   employee: Employee;
@@ -55,7 +55,7 @@ const SelectItem = ({
         />
       )}
       <Avatar
-        src={avatar?.link}
+        src={avatar}
         alt="Avatar"
         size={42}
         style={{

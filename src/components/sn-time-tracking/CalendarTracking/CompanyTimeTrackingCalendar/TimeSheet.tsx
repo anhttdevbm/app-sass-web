@@ -1,31 +1,31 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, memo } from "react";
 import { styled } from "@mui/material/styles";
-import _ from "lodash";
 import dayjs from "dayjs";
+import _ from "lodash";
+import React, { memo, useEffect, useState } from "react";
 
 import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-  Box,
   Avatar,
+  Box,
+  CircularProgress,
   IconButton,
   Stack,
-  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
 } from "@mui/material";
+import { NS_TIME_TRACKING } from "constant/index";
+import useTheme from "hooks/useTheme";
 import PinActiveIcon from "icons/PinActiveIcon";
 import PinIcon from "icons/PinIcon";
+import { useTranslations } from "next-intl";
 import { useSnackbar } from "store/app/selectors";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
-import useTheme from "hooks/useTheme";
-import { useTranslations } from "next-intl";
-import { NS_TIME_TRACKING } from "constant/index";
 
 interface IProps {
   data: any[];
@@ -142,7 +142,7 @@ const TimeSheet: React.FC<IProps> = ({ data, filters, dateRange }) => {
                   >
                     <Avatar
                       sx={{ width: 20, height: 20, objectFit: "cover" }}
-                      src={user?.avatar?.link}
+                      src={user?.avatar}
                     />
                     <Typography
                       sx={{

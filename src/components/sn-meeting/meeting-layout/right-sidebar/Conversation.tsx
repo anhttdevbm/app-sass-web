@@ -55,7 +55,7 @@ const Conversation = () => {
       payload: {
         sender: {
           id: user?.id || "",
-          avatar: user?.avatar?.link || "",
+          avatar: user?.avatar || "",
           fullname: user?.fullname || "",
           position: user?.position?.name || "",
           username: user?.name || "",

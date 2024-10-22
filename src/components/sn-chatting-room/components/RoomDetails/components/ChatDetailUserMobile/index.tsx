@@ -1,12 +1,12 @@
 import { Avatar, Box, Drawer, Typography } from "@mui/material";
-import ChatDetailUserHeaderMobile from "./ChatDetailUserHeaderMobile";
-import { IChatItemInfo } from "store/chat/type";
-import ChatDetailUserMenuItemMobile from "./ChatDetailUserMenuItemMobile";
-import DeleteChatIcon from "icons/DeleteChatIcon";
-import SearchDetailChatUser from "../SearchDetailChatUser";
-import { useChatDetailUserMobile } from "./UseChatDetailUserMobile";
 import { useChatDetailInfoReturns } from "components/sn-chatting-room/hooks/useChatDetailInfo";
+import DeleteChatIcon from "icons/DeleteChatIcon";
+import { IChatItemInfo } from "store/chat/type";
 import DrawerMobile from "../DrawerMobile";
+import SearchDetailChatUser from "../SearchDetailChatUser";
+import ChatDetailUserHeaderMobile from "./ChatDetailUserHeaderMobile";
+import ChatDetailUserMenuItemMobile from "./ChatDetailUserMenuItemMobile";
+import { useChatDetailUserMobile } from "./UseChatDetailUserMobile";
 
 type ChatDetailUserMobileProps = {
   isOpen: boolean;
@@ -67,7 +67,7 @@ const ChatDetailUserMobile: React.FC<ChatDetailUserMobileProps> = ({
           }}
         >
           <Avatar
-            src={currentConversation?.avatar?.link}
+            src={currentConversation?.avatar}
             sx={{
               height: "80px",
               width: "80px",

@@ -4,50 +4,33 @@
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   Avatar,
   Box,
-  Button,
-  CircularProgress,
   Grid,
   ListItemIcon,
   Menu,
   MenuItem,
   Stack,
   SxProps,
-  Table,
-  TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
   Theme,
-  Typography,
+  Typography
 } from "@mui/material";
 import { styled } from "@mui/system";
 import dayjs from "dayjs";
 import _ from "lodash";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { calendarStyles } from "./TrackingCalendar.styles";
 
 import interactionPlugin from "@fullcalendar/interaction";
 import ListIcon from "@mui/icons-material/List";
-import {
-  LocalizationProvider,
-  MobileDatePicker,
-  yearCalendarClasses,
-} from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ButtonCalendar from "components/shared/ButtonCalendar";
-import CustomizedInputBase from "components/shared/InputSeasrch";
 import { NS_COMMON, NS_TIME_TRACKING } from "constant/index";
 import useTheme from "hooks/useTheme";
 import CalendarIcon from "icons/CalendarIcon";
-import PlusIcon from "icons/PlusIcon";
 import moment from "moment";
 import { useTranslations } from "next-intl";
 import { useAuth, useSnackbar } from "store/app/selectors";
@@ -57,25 +40,25 @@ import TimeCreate, {
 } from "../../TimeTrackingModal/TimeCreate";
 import TimeSheet from "./TimeSheet";
 
-import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
-import useBreakpoint from "hooks/useBreakpoint";
-import DuplicateIcon from "icons/DuplicateIcon";
-import { getSameWorker } from "store/timeTracking/actions";
-import ListSheet from "./ListSheet";
-import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
-import DayIcon from "icons/DayIcon";
 import { DateSelectArg } from "@fullcalendar/core";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
+import TimeRangeNavigator, {
+  TypeNavigator,
+} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
 import {
   FullCalendarEventProps,
   FullCalendarExtendedProps,
   IFilter,
   ITimeRangeAction,
 } from "components/sn-time-tracking/components/timeTracking.types";
-import { inter } from "../CalendarTracking.styles";
-import TimeRangeNavigator, {
-  TypeNavigator,
-} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
+import useBreakpoint from "hooks/useBreakpoint";
+import DayIcon from "icons/DayIcon";
+import DuplicateIcon from "icons/DuplicateIcon";
+import { getSameWorker } from "store/timeTracking/actions";
 import { WorkType } from "store/timeTracking/reducer";
+import { inter } from "../CalendarTracking.styles";
+import ListSheet from "./ListSheet";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -282,7 +265,7 @@ const TrackingCalendar = (props: IProps) => {
             date: timesheet?.day,
             start_time: moment(timesheet?.start_time).format("hh:mm A"),
             project: timesheet?.project,
-            avatar: userData?.avatar?.link,
+            avatar: userData?.avatar,
             day: timesheet?.day,
             name: userData?.fullname,
             position: timesheet?.position,
@@ -993,7 +976,7 @@ const TrackingCalendar = (props: IProps) => {
                                               >
                                                 <Avatar
                                                   sx={{ width: 20, height: 20 }}
-                                                  src={item?.avatar?.link}
+                                                  src={item?.avatar}
                                                 />
                                                 <Typography
                                                   sx={{
@@ -1116,7 +1099,7 @@ const TrackingCalendar = (props: IProps) => {
                                         >
                                           <Avatar
                                             sx={{ width: 20, height: 20 }}
-                                            src={item?.avatar?.link}
+                                            src={item?.avatar}
                                           />
                                           <Typography
                                             sx={{
@@ -1227,7 +1210,7 @@ const TrackingCalendar = (props: IProps) => {
                                           >
                                             <Avatar
                                               sx={{ width: 20, height: 20 }}
-                                              src={item?.avatar?.link}
+                                              src={item?.avatar}
                                             />
                                             <Typography
                                               sx={{
@@ -1348,7 +1331,7 @@ const TrackingCalendar = (props: IProps) => {
                                         >
                                           <Avatar
                                             sx={{ width: 20, height: 20 }}
-                                            src={item?.avatar?.link}
+                                            src={item?.avatar}
                                           />
                                           <Typography
                                             sx={{

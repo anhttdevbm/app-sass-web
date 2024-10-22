@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 import { People, Public } from "@mui/icons-material";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import {
   Autocomplete,
   Box,
@@ -22,14 +20,12 @@ import { DocAccessibility } from "constant/enums";
 import {
   DEFAULT_PAGING,
   DOCS_API_URL,
-  NS_COMMON,
-  NS_DOCS,
+  NS_DOCS
 } from "constant/index";
 import { useFormik } from "formik";
 import useQueryParams from "hooks/useQueryParams";
 import CloseIcon from "icons/CloseIcon";
 import LockIcon from "icons/LockIcon";
-import { UserGroupIcon } from "icons/UserGroupIcon";
 import { useTranslations } from "next-intl";
 import React, { SetStateAction, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
@@ -144,7 +140,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
   const options = items?.map((e) => ({
     value: e.id,
     label: e.fullname || "",
-    avatar: e.avatar?.link || "",
+    avatar: e.avatar || "",
     subText: e.email,
   }));
 
@@ -331,7 +327,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
                   }}
                 >
                   <Avatar
-                    src={user.avatar?.link}
+                    src={user.avatar}
                     size={32}
                     alt={user.fullname}
                   />
@@ -425,7 +421,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
             }}
           >
             <Avatar
-              src={docInfo.owner?.avatar?.link}
+              src={docInfo.owner?.avatar}
               size={32}
               alt={docInfo.owner?.fullname}
             />

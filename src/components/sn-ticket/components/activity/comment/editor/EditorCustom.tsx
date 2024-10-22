@@ -1,27 +1,26 @@
 "use client";
 
-import { Avatar, Box, Button, Stack } from "@mui/material";
+import { Avatar, Box, Stack } from "@mui/material";
 import React, {
   ChangeEvent,
   memo,
   useCallback,
   useEffect,
   useMemo,
-  useRef,
-  useState,
+  useState
 } from "react";
 import { ReactQuillProps } from "react-quill";
 // import "react-quill/dist/quill.snow.css";
 // import "./style.css";
-import { IMAGES_ACCEPT } from "constant/index";
 import AttachmentPreview from "components/AttachmentPreview";
-import dynamic from "next/dynamic";
-import hljs from "highlight.js";
 import { replaceDescriptionBr } from "components/sn-project-detail/Tasks/helpers";
-import styled from "styled-components";
-import { useAuth } from "store/app/selectors";
-import { Quill } from "react-quill";
+import { IMAGES_ACCEPT } from "constant/index";
+import hljs from "highlight.js";
+import dynamic from "next/dynamic";
 import QuillMention from "quill-mention";
+import { Quill } from "react-quill";
+import { useAuth } from "store/app/selectors";
+import styled from "styled-components";
 import useModuleTextEditor from "./useModuleTextEditor";
 Quill.register({
   "modules/mention": QuillMention,
@@ -165,7 +164,7 @@ const EditorCustom = (props: EditorProps) => {
       >
         <Avatar
           alt={user?.name || "User"}
-          src={user?.avatar?.link}
+          src={user?.avatar}
           variant="rounded"
           sx={{ borderRadius: "10px", marginBottom: "0px" }}
         />

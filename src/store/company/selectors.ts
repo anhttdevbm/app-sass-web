@@ -1,42 +1,42 @@
+import { ClientCompany } from "components/sn-client-companies/type";
+import { DataStatus } from "constant/enums";
+import { BaseQueries, Option } from "constant/types";
+import { useCallback, useMemo } from "react";
+import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   CompanyData,
-  EmployeeData,
-  InviteEmployeeData,
   EmployeeClientData,
+  EmployeeData,
   GetEmployeeListQueries,
+  InviteEmployeeData,
   PositionData,
+  createClientCompany,
   createEmployee,
-  inviteEmployee,
   createEmployeeClient,
   createPosition,
   createProjectType,
+  deleteClientCompany,
   deleteEmployees,
   deletePosition,
   deleteProjectType,
+  getClientCompanies,
+  getClientCompaniesMemberOptions,
+  getClientCompanyDetails,
   getCostHistory,
   getEmployeeOptions,
   getEmployees,
   getMyCompany,
   getPositionList,
   getProjectTypeList,
-  getClientCompanies,
+  inviteEmployee,
+  multipleDeleteClientCompany,
+  updateClientCompany,
   updateEmployee,
   updateMyCompany,
   updatePosition,
   updateProjectType,
-  createClientCompany,
-  getClientCompaniesMemberOptions,
-  deleteClientCompany,
-  getClientCompanyDetails,
-  updateClientCompany,
-  multipleDeleteClientCompany,
 } from "./actions";
-import { DataStatus } from "constant/enums";
-import { useMemo, useCallback } from "react";
-import { shallowEqual } from "react-redux";
-import { BaseQueries, Option } from "constant/types";
-import { ClientCompany } from "components/sn-client-companies/type";
 
 export const useEmployees = () => {
   const dispatch = useAppDispatch();
@@ -151,7 +151,7 @@ export const useEmployeeOptions = () => {
       items.map((item) => ({
         label: item.fullname,
         value: item.id,
-        avatar: item?.avatar?.link,
+        avatar: item?.avatar,
         subText: item.email,
       })),
     [items],

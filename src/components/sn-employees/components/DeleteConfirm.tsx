@@ -50,7 +50,7 @@ const DeleteConfirm = (props: DeleteConfirmProps) => {
       <Stack alignItems="center" spacing={2} my={3} flex={1}>
         {items.map((item) => (
           <Stack direction="row" width={275} key={item.id} spacing={1.5}>
-            <Avatar size={40} src={item.avatar?.link} />
+            <Avatar size={40} src={item.avatar} />
             <Stack>
               <Text variant="h6">{item.fullname}</Text>
               <Text variant="body2">{item.email}</Text>

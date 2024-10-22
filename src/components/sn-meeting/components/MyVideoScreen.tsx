@@ -1,13 +1,12 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
+import useTheme from "hooks/useTheme";
+import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
+import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
-import ButtonOnMyScreen from "./ButtonOnMyScreen";
-import { display } from "html2canvas/dist/types/css/property-descriptors/display";
-import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
-import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import { sxBtnCircleActiveDark } from "../style";
-import useTheme from "hooks/useTheme";
+import ButtonOnMyScreen from "./ButtonOnMyScreen";
 
 interface MyVideoScreenProps {
   sx: object | null;
@@ -113,7 +112,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         }}
       />
 
-      {!localStreamState.isCameraOn && <Avatar src={user?.avatar?.link} />}
+      {!localStreamState.isCameraOn && <Avatar src={user?.avatar} />}
 
       <Box
         id="mic-ui"

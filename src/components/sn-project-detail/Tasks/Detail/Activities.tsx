@@ -92,7 +92,7 @@ const Item = (props: ActivityTask) => {
         }}
       />
       <Stack direction="row" alignItems="center" spacing={1}>
-        <Avatar size={32} src={user?.avatar?.link} />
+        <Avatar size={32} src={user?.avatar} />
         <Stack>
           <Text variant="body2">{user?.fullname ?? "--"}</Text>
           <Text variant="caption" color="grey.400">

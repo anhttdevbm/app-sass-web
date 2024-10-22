@@ -1,27 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useRef, useEffect, useMemo } from "react";
 import {
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
   Box,
-  IconButton,
+  Card,
+  CardContent,
+  Grid,
+  Typography
 } from "@mui/material";
-import { Mic, MicOff, Videocam, VideocamOff } from "@mui/icons-material";
 import Avatar from "components/Avatar";
-import useTheme from "hooks/useTheme";
 import { sxBtnCircleActiveDark } from "components/sn-meeting/style";
+import { Emoji } from "emoji-picker-react";
+import useTheme from "hooks/useTheme";
 import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
 import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
-import { useAppSelector } from "store/hooks";
-import { ParticipantStreamEvent, RemoteStream } from "store/meeting/types";
+import { useEffect, useMemo, useRef } from "react";
 import { useAuth } from "store/app/selectors";
-import ButtonOnMyScreen from "../ButtonOnMyScreen";
-import { Emoji } from "emoji-picker-react";
 import { store } from "store/configureStore";
+import { useAppSelector } from "store/hooks";
 import { updateRemoteStreamState } from "store/meeting/reducer";
+import { ParticipantStreamEvent, RemoteStream } from "store/meeting/types";
+import ButtonOnMyScreen from "../ButtonOnMyScreen";
 
 const ParticipantCard = ({ remoteStream }: { remoteStream: RemoteStream }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -242,7 +239,7 @@ const GalleryLayout = () => {
       participant: {
         id: user?.id || "",
         fullname: user?.fullname || "",
-        avatar: user?.avatar?.link || "",
+        avatar: user?.avatar || "",
         position: user?.position?.name || "",
         username: user?.name || "",
       },

@@ -1,18 +1,18 @@
-import { memo, RefObject } from "react";
 import { Stack } from "@mui/material";
 import Avatar from "components/Avatar";
-import { Checkbox, Text } from "components/shared";
-import { BodyCell } from "components/Table";
-import { NS_COMPANY, NS_COMMON, DATE_LOCALE_FORMAT } from "constant/index";
-import { useTranslations } from "next-intl";
-import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
-import { DataAction } from "constant/enums";
-import EditIcon from "../../../icons/EditIcon";
-import DuplicateIcon from "../../../icons/DuplicateIcon";
-import ActionsCell from "./ActionsCell";
-import dayjs from "dayjs";
-import { CLIENT_COMPANIES_PATH } from "constant/paths";
 import Link from "components/Link";
+import { Checkbox, Text } from "components/shared";
+import { ClientCompany } from "components/sn-client-companies/type";
+import { BodyCell } from "components/Table";
+import { DataAction } from "constant/enums";
+import { DATE_LOCALE_FORMAT, NS_COMMON, NS_COMPANY } from "constant/index";
+import { CLIENT_COMPANIES_PATH } from "constant/paths";
+import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { memo, RefObject } from "react";
+import DuplicateIcon from "../../../icons/DuplicateIcon";
+import EditIcon from "../../../icons/EditIcon";
+import ActionsCell from "./ActionsCell";
 
 type MobileContentCellProps = {
   item: ClientCompany;
@@ -104,7 +104,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
           {companyT("clientCompany.createBy")}
         </Text>
         <Stack direction="row" gap={1}>
-          <Avatar size={32} src={item?.created_by?.avatar?.link} />
+          <Avatar size={32} src={item?.created_by?.avatar} />
           <Text variant="h6" my="auto" align="right">
             {item?.created_by?.fullname}
           </Text>

@@ -1,52 +1,29 @@
-import { memo, useEffect, useMemo, useState } from "react";
 import {
-  Avatar,
-  AvatarGroup,
+  CloseOutlined
+} from "@mui/icons-material";
+import {
   Box,
-  Menu,
-  MenuItem,
   Stack,
-  StackProps,
-  Theme,
-  Typography,
-  selectClasses,
+  Typography
 } from "@mui/material";
 import Link from "components/Link";
-import ChevronIcon from "icons/ChevronIcon";
-import { Button, IconButton, Select, Text } from "components/shared";
-import { useHeaderConfig } from "store/app/selectors";
-import useBreakpoint from "hooks/useBreakpoint";
-import { usePathname, useRouter } from "next-intl/client";
-import { useParams } from "next/navigation";
+import { Button, Text } from "components/shared";
+import { NS_BILLING } from "constant/index";
 import {
-  BILLING_DUPLICATE_PATH,
   BILLING_PATH,
-  INVOICES_PATH,
-  PROJECT_MEMBERS_PATH,
-  PROJECT_TASKS_PATH,
+  INVOICES_PATH
 } from "constant/paths";
-import PlusIcon from "icons/PlusIcon";
-import { useTranslations } from "next-intl";
-import { NS_BILLING, NS_PROJECT } from "constant/index";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Billing } from "store/billing/reducer";
 import { Option, User } from "constant/types";
-import TrashIcon from "icons/TrashIcon";
-import {
-  CloseOutlined,
-  ContentCopyRounded,
-  Subtitles,
-  SubtitlesOutlined,
-  TagOutlined,
-} from "@mui/icons-material";
-import CopyIcon from "icons/CopyIcon";
-import SelectMembers from "./SelectMembers";
-import { Dropdown } from "components/Filters";
-import DropdownTag from "./DropdownTag";
-import { useBillings } from "store/billing/selectors";
+import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
-import { Invoice, Member } from "store/invoice/reducer";
 import CommentHistory from "icons/CommentHistory";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next-intl/client";
+import { useParams } from "next/navigation";
+import { memo, useEffect, useState } from "react";
+import { useHeaderConfig } from "store/app/selectors";
+import { useBillings } from "store/billing/selectors";
+import { Invoice, Member } from "store/invoice/reducer";
 
 const ITEM_HEIGHT = 48;
 
@@ -209,8 +186,6 @@ const TopContent = (props: TopContentProps) => {
             display={"flex"}
             alignItems={"center"}
           >
-            {/* <Avatar src={user?.avatar?.link ?? ""} /> */}
-
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               INV-{item?.invoice_number ? item?.invoice_number?.toString() : ""}
             </Text>
