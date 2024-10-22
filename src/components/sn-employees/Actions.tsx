@@ -1,28 +1,27 @@
 "use client";
-import { memo, useMemo, useEffect, useState, ReactNode } from "react";
 import Stack from "@mui/material/Stack";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { useTranslations } from "next-intl";
+import { memo, ReactNode, useEffect, useMemo, useState } from "react";
 
-import { NS_COMPANY, NS_COMMON } from "constant/index";
+import { Dropdown, Search } from "components/NewFilters";
+import { NewButton as Button } from "components/shared";
 import {
   DataAction,
   EmployeeType,
   PayStatus,
   Permission,
 } from "constant/enums";
-import { NewButton as Button, Text } from "components/shared";
-import { Dropdown, Search } from "components/NewFilters";
-import { TEXT_STATUS } from "./helpers";
+import { NS_COMMON, NS_COMPANY } from "constant/index";
 import useToggle from "hooks/useToggle";
-import { getPath } from "utils/index";
-import { InviteEmployeeData } from "store/company/actions";
+import AddCircleIcon from "icons/AddCircleIcon";
 import { useEmployees } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
-import AddCircleIcon from "icons/AddCircleIcon";
+import { getPath } from "utils/index";
 import EmployeeCompanyForm from "./EmployeeCompanyForm";
 import EmployeeTypeForm from "./EmployeeTypeForm";
+import { TEXT_STATUS } from "./helpers";
 
 const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
   const {
