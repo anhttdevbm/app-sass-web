@@ -30,7 +30,7 @@ const Form = () => {
           Endpoint.SIGNUP_UPLOAD,
           values.avatar,
         );
-        newData["avatar"] = [avatarUrl];
+        newData["avatar"] = avatarUrl;
       }
       if (newData["rePassword"]) {
         delete newData["rePassword"];
