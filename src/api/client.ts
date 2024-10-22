@@ -239,7 +239,7 @@ const RequestClient = class {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (response?.data.status === HttpStatusCode.OK) {
+      if (response?.status === HttpStatusCode.OK) {
         return response?.data?.data[0]?.link;
       }
 
