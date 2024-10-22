@@ -26,7 +26,7 @@ const Form = () => {
     try {
       const newData = { ...values } as SignupData;
       if (values?.avatar) {
-        const avatarUrl = await client.upload(
+        const avatarUrl = await client.uploadFile(
           Endpoint.SIGNUP_UPLOAD,
           values.avatar,
         );
@@ -104,7 +104,7 @@ const Form = () => {
           })}
           required
         />
-        <Input 
+        <Input
           rootSx={sxConfig.input}
           fullWidth
           title={authT("signup.form.title.username")}
@@ -218,8 +218,7 @@ export const validationSchema = Yup.object().shape({
   rePassword: Yup.string()
     .oneOf([Yup.ref("password"), ""], "form.error.confirmNotMatch")
     .required("form.error.required"),
-  username: Yup.string().trim()
-    .required("form.error.required")
+  username: Yup.string().trim().required("form.error.required"),
 });
 
 const sxConfig = {
