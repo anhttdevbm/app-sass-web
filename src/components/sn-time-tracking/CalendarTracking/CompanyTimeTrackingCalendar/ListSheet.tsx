@@ -20,6 +20,8 @@ import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper
 import { Person } from "@mui/icons-material";
 import { CompanyTimeSheet, MyTimeSheet } from "store/timeTracking/reducer";
 import dayjs from "dayjs";
+import MobileListSheet from "../MobileListSheet";
+import useBreakpoint from "hooks/useBreakpoint";
 
 interface TimeSheetRowData extends MyTimeSheet {
   avatar: string;
@@ -28,6 +30,7 @@ interface TimeSheetRowData extends MyTimeSheet {
 
 interface IProps {
   data: CompanyTimeSheet[];
+  selectedDate: dayjs.Dayjs | Date;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -51,18 +54,18 @@ const tableCellHeader = [
   "Start time",
 ];
 
-const ListSheet = ({ data }: IProps) => {
+const ListSheet = ({ data, selectedDate }: IProps) => {
   const [timeSheetData, setTimeSheetData] = useState<TimeSheetRowData[]>([]);
+  const { isSmSmaller } = useBreakpoint();
   useEffect(() => {
     // Add additional field (fullname, avatar)
     if (data) {
       const allTimesheets: TimeSheetRowData[] = [];
-      const today = dayjs().format("YYYY-MM-DD");
       data.forEach((data) => {
         if (data.timesheet && Array.isArray(data.timesheet)) {
           const pushedTimeSheet: TimeSheetRowData[] = [];
           data.timesheet.forEach((item) => {
-            if (item.day === today) {
+            if (item.day === dayjs(selectedDate).format("YYYY-MM-DD")) {
               pushedTimeSheet.push({
                 ...item,
                 fullname: data.fullname,
@@ -76,8 +79,10 @@ const ListSheet = ({ data }: IProps) => {
 
       setTimeSheetData(allTimesheets);
     }
-  }, [data]);
-  return (
+  }, [data, selectedDate]);
+  return isSmSmaller ? (
+    <MobileListSheet data={timeSheetData} />
+  ) : (
     <TableContainer sx={{ height: "100%" }}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead
