@@ -28,20 +28,6 @@ const ButtonOnMyScreen = ({
   };
   const [isScreenPinned, setIsScreenPinned] = useState(false);
 
-  // const toggleMic = () => {
-  //   setIsMicOn(!isMicOn);
-  //   localStream
-  //     .getAudioTracks()
-  //     .forEach((track) => (track.enabled = !track.enabled));
-  // };
-
-  // const toggleCamera = () => {
-  //   setIsCameraOn(!isCameraOn);
-  //   localStream
-  //     .getVideoTracks()
-  //     .forEach((track) => (track.enabled = !track.enabled));
-  // };
-
   const togglePinScreen = () => {
     setIsScreenPinned(!isScreenPinned);
   };

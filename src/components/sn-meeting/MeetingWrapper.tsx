@@ -248,10 +248,9 @@ export default function MeetingWrapper() {
   useEffect(() => {
     const isJoining = searchParams.get("isJoining");
     if (isJoining && isHasPermission) {
-      const meetInfoDecode = decodeURIComponent(
+      const meetInfo: MeetRoomInfo = JSON.parse(
         searchParams.get("meetInfo") as string,
       );
-      const meetInfo: MeetRoomInfo = JSON.parse(meetInfoDecode);
       onSetMeetInfo(meetInfo);
       handleConnectToWebSocket(meetInfo.id);
       return;

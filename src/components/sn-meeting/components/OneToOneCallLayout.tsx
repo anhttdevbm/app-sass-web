@@ -140,7 +140,7 @@ export default function OneToOneCallLayout() {
                 height: "100%",
                 backgroundImage: `url(${
                   remoteStream.participant.avatar
-                    ? remoteStream.participant.avatar
+                    ? remoteStream.participant.avatar[0]
                     : "/images/img-user-placeholder.webp"
                 })`,
                 backgroundSize: "cover",
@@ -165,7 +165,7 @@ export default function OneToOneCallLayout() {
 
           {!remoteStream.streamState.isCameraOn && (
             <Avatar
-              src={remoteStream.participant.avatar}
+              src={remoteStream.participant.avatar[0]}
               size={64}
               alt={remoteStream.participant.fullname}
               style={{
