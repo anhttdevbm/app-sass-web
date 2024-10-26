@@ -112,7 +112,7 @@ const RightSidebar = () => {
             <span
               style={typeShow === "participants" ? activeBadge : inActiveBadge}
             >
-              {remoteStreams.length}
+              {remoteStreams.length || 1}
             </span>
           </Button>
         </Box>

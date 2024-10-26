@@ -146,18 +146,6 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
     }
   };
 
-  const handleRadioButtonButtonClick = () => {
-    setIsRadioButtonActive(!isRadioButtonActive);
-  };
-
-  const handleClosedCaptionButtonClick = () => {
-    setIsClosedCaptionActive(!isClosedCaptionActive);
-  };
-
-  const handleAddReactionButtonClick = () => {
-    setIsAddReactionActive(!isAddReactionActive);
-  };
-
   const handleBackHandButtonClick = () => {
     const action: ParticipantAction = {
       event: ParticipantStreamEvent.RAISE_HAND,

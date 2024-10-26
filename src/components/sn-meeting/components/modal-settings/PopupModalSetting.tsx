@@ -73,6 +73,7 @@ export default function PopupModalSetting({ anchorEl, onClose }: IProps) {
         justifyContent: "center",
         transform: "none !important",
         paddingTop: "40px",
+        zIndex: 9999,
       }}
     >
       <Stack

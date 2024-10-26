@@ -30,6 +30,8 @@ export default function CommentDialog() {
   );
   const { id } = useParams();
 
+  console.log(openCommentDialog);
+
   const handleAddComment = async () => {
     const response = await addComment({
       docId: id as string,
@@ -44,6 +46,7 @@ export default function CommentDialog() {
       setComment(showExistComment.comment[0].content);
     } else setComment("");
   }, [showExistComment]);
+  console.log(user);
   return (
     <Dialog open={openCommentDialog} onClose={handleCloseCommentDialog}>
       <DialogTitle sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
