@@ -47,7 +47,7 @@ export default function CommentDialog() {
   return (
     <Dialog open={openCommentDialog} onClose={handleCloseCommentDialog}>
       <DialogTitle sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <Avatar size={32} src={user?.avatar?.link} />
+        <Avatar size={32} src={user?.avatar} />
         <span>{user?.fullname}</span>
       </DialogTitle>
       <DialogContent sx={{ minWidth: "384px" }}>

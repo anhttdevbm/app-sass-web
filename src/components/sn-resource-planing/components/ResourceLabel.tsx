@@ -80,7 +80,7 @@ const ResourceLabel = ({
   const schedulePerLeft =
     (totalhour / totalLeftToSchedule[resource._resource.id]) * 100;
 
-  const ownerAvatar = user?.avatar?.link;
+  const ownerAvatar = user?.avatar;
 
   const avatarUrl = useMemo(() => {
     if (eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING) {
@@ -89,7 +89,7 @@ const ResourceLabel = ({
     if (user_id === user?.id || isMybooking) {
       return ownerAvatar;
     }
-    return userDetail?.avatar?.link;
+    return userDetail?.avatar;
   }, [projectDetail, project?.id, user, userDetail]);
 
   const isAddbutton = useMemo(() => {
@@ -217,7 +217,7 @@ const ResourceLabel = ({
                   fontSize: 14,
                   fontWeight: 600,
                 }}
-                src={avatarUrl}
+                src={typeof avatarUrl === 'string' ? avatarUrl : undefined}
               >
                 {getFirstAndSecondLetters(fullName)}
               </Avatar>

@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { memo, useMemo } from "react";
-import PencilIcon from "icons/PencilIcon";
+import { Endpoint, client } from "api";
 import { IconButton } from "components/shared";
 import useToggle from "hooks/useToggle";
+import PencilIcon from "icons/PencilIcon";
+import { useParams } from "next/navigation";
+import { memo, useMemo } from "react";
 import { CompanyData } from "store/company/actions";
+import { useMyCompany } from "store/company/selectors";
+import { useCompany } from "store/manager/selectors";
 import { getDataFromKeys } from "utils/index";
 import Form from "./Form";
-import { useMyCompany } from "store/company/selectors";
-import { useParams } from "next/navigation";
-import { useCompany } from "store/manager/selectors";
-import { Endpoint, client } from "api";
 
 const EditCompany = () => {
   const { item: detailItem } = useCompany();
@@ -76,7 +76,7 @@ const EditCompany = () => {
     "avatar"
   ])
 
-  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).avatar?.link } as CompanyData  
+  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).avatar } as CompanyData  
   return (
     <>
       <IconButton

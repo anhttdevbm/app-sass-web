@@ -116,7 +116,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
             alignItems="center"
             spacing={1}
           >
-            <Avatar size={20} src={item.created_by?.avatar?.link} />
+            <Avatar size={20} src={item.created_by?.avatar} />
             <Text fontSize={14} color="grey.700" whiteSpace="nowrap">
               Created by
             </Text>

@@ -1,19 +1,18 @@
-import { Box, Typography, Avatar, CircularProgress } from "@mui/material";
-import { FC, useMemo } from "react";
-import useTheme from "hooks/useTheme";
+import { Avatar, Box, Typography } from "@mui/material";
 import { UploadAvatarGroup } from "components/sn-chat/chatGroup/UploadAvatarGroup";
+import { useChatDetailInfo } from "components/sn-chatting-room/hooks/useChatDetailInfo";
+import { NS_CHAT_BOX } from "constant/index";
+import useGetScreenMode from "hooks/useGetScreenMode";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
+import { useAuth } from "store/app/selectors";
+import { isOwnerGroup, useChatHelpers } from "store/chat/helpers";
+import { useChat } from "store/chat/selectors";
+import ChatDetailGroup from "../../ChatDetailInfo/ChatDetailGroup";
 import ChatDetailInfoHeader from "../../ChatDetailInfo/ChatDetailInfoHeader";
 import ChatDetailInfoMenuItem from "../../ChatDetailInfo/ChatDetailInfoMenuItem";
-import ChatDetailGroup from "../../ChatDetailInfo/ChatDetailGroup";
 import { useActionGroupDetails } from "../../ChatDetailInfo/useActionGroupDetails";
-import useGetScreenMode from "hooks/useGetScreenMode";
-import { useChat } from "store/chat/selectors";
-import { useChatDetailInfo } from "components/sn-chatting-room/hooks/useChatDetailInfo";
-import { useAuth } from "store/app/selectors";
-import { TYPE_POPUP } from "components/sn-chat/chatGroup/ChatDetailGroup";
-import { useTranslations } from "next-intl";
-import { NS_CHAT_BOX } from "constant/index";
-import { isOwnerGroup, useChatHelpers } from "store/chat/helpers";
 
 const MenuInfo = () => {
   const { isDarkMode } = useTheme();
@@ -73,7 +72,7 @@ const MenuInfo = () => {
         >
           <Avatar
             src={
-              currentConversation?.avatar?.link ||
+              currentConversation?.avatar ||
               currentConversation?.peer_detail?.avatar
             }
             sx={{

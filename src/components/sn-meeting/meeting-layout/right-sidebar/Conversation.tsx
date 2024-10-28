@@ -12,6 +12,8 @@ import ThreeDotsIcon from "icons/ThreeDotsIcon";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "store/app/selectors";
+import { useWSChat } from "store/chat/helpers";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
 import { store } from "store/configureStore";
 import { MessageItem } from "store/meeting/types";
 
@@ -44,9 +46,19 @@ const Conversation = () => {
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
   const [inputValue, setInputValue] = useState("");
-  const { meetingWsClient, messages } = store.getState().meeting;
+  const { meetingWsClient, messages, meetInfo } = store.getState().meeting;
+  const { sendMessage } = useWSChat();
 
-  const sendMessage = () => {
+  const handleSendMessage = async (message: string) => {
+    if (message) {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT,
+        roomId: meetInfo.room.id,
+        message: message,
+      });
+    }
+  };
+  const onSendMessage = () => {
     if (inputValue === "") return;
     const type = isLink(inputValue.trim()) ? "link" : "text";
     const payload: WSParticipantActionPayload = {
@@ -55,7 +67,7 @@ const Conversation = () => {
       payload: {
         sender: {
           id: user?.id || "",
-          avatar: user?.avatar?.link || "",
+          avatar: user?.avatar || "",
           fullname: user?.fullname || "",
           position: user?.position?.name || "",
           username: user?.name || "",
@@ -65,6 +77,7 @@ const Conversation = () => {
         sended_at: new Date().toISOString(),
       },
     };
+    handleSendMessage(inputValue);
     meetingWsClient?.send(JSON.stringify(payload));
     setInputValue("");
   };
@@ -72,7 +85,7 @@ const Conversation = () => {
   const handleInputText = (e: any) => {
     if (e.keyCode === 13 && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      onSendMessage();
     }
   };
 

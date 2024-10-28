@@ -1,4 +1,3 @@
-import { Circle } from "@mui/icons-material";
 import { Box, Button, IconButton, Stack } from "@mui/material";
 import { Text } from "components/shared";
 import AvatarGroup from "components/shared/AvatarGroup";
@@ -8,14 +7,13 @@ import { MaximizeIcon } from "icons/MaximizeIcon";
 import { MeetingShareLinkIcon } from "icons/MeetingShareLinkIcon";
 import moment from "moment";
 import { useMemo } from "react";
-import { useSidebar } from "store/app/selectors";
 import { store } from "store/configureStore";
+import RecordTimer from "../components/RecordTimer";
 import {
   sxBtnCircleActiveDark,
   sxBtnCircleActiveLight,
   sxPrimaryBtn,
 } from "../style";
-import RecordTimer from "../components/RecordTimer";
 
 interface MeetingHeaderLayoutProps {
   sx: object;
@@ -32,6 +30,10 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
       src: remoteStream.participant.avatar,
     }));
   }, [remoteStreams]);
+
+  const onCoppyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+  };
   return (
     <Stack
       direction={isLgSmaller ? "column" : "row"}
@@ -89,6 +91,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
               gap: "6px",
               alignItems: "center",
             }}
+            onClick={onCoppyLink}
           >
             <MeetingShareLinkIcon
               sx={{

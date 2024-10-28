@@ -1,13 +1,18 @@
+import { LayoutType } from "components/sn-meeting/type";
 import { useCallback } from "react";
+import { store } from "store/configureStore";
 import { useAppDispatch } from "store/hooks";
 import {
-  endMeet,
-  leaveRoom,
+  cancelMeeting,
+  endMeeting,
+  getParticipants,
+  startMeeting,
+} from "./actions";
+import {
   resetMeet,
   setCallRequest,
   setCallStatus,
   setEndMeeting,
-  setGroupMeetName,
   setMeetInfo,
   setMeetingLayout,
   setMeetingWsClient,
@@ -15,16 +20,7 @@ import {
   startConnecting,
   updateMessages,
 } from "./reducer";
-import {
-  cancelMeeting,
-  endMeeting,
-  getParticipants,
-  startMeeting,
-  getMeetRoom,
-} from "./actions";
 import { CallStatus, MeetRoomInfo, MessageItem } from "./types";
-import { store } from "store/configureStore";
-import { LayoutType } from "components/sn-meeting/type";
 
 export const useMeeting = () => {
   const dispatch = useAppDispatch();

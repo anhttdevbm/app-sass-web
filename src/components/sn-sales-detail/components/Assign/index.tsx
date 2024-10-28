@@ -1,34 +1,30 @@
 import {
-  debounce,
-  Stack,
-  MenuList,
   Box,
-  MenuItem,
   ButtonBase,
-  CircularProgress,
   Checkbox,
+  CircularProgress,
+  debounce,
+  MenuItem,
+  MenuList,
+  Stack,
 } from "@mui/material";
-import { Search } from "components/Filters";
-import PopoverLayout from "components/sn-project-detail/Tasks/Detail/components/SubTasksOfTask/PopoverLayout";
-import {
-  NS_COMMON,
-  NS_PROJECT,
-  AN_ERROR_TRY_AGAIN,
-  NS_SALES,
-} from "constant/index";
-import ChevronIcon from "icons/ChevronIcon";
-import { useTranslations } from "next-intl";
-import React, { memo, useRef, useState } from "react";
-import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
 import Avatar from "components/Avatar";
+import { Search } from "components/Filters";
 import { Text } from "components/shared";
-import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 import AvatarGroup, { AvatarProps } from "components/shared/AvatarGroup";
-import PlusIcon from "icons/PlusIcon";
-import { useFormContext } from "react-hook-form";
+import PopoverLayout from "components/sn-project-detail/Tasks/Detail/components/SubTasksOfTask/PopoverLayout";
+import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
+import {
+  NS_SALES
+} from "constant/index";
 import { Option, User } from "constant/types";
-import { useSaleDetail } from "store/sales/selectors";
+import PlusIcon from "icons/PlusIcon";
+import { useTranslations } from "next-intl";
+import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useRef } from "react";
+import { useFormContext } from "react-hook-form";
 import { useSnackbar } from "store/app/selectors";
+import { useSaleDetail } from "store/sales/selectors";
 
 const WRONG_NUMBER = 10;
 
@@ -143,9 +139,7 @@ const Assign = (props: AssignProps) => {
         id: user.value as string,
         fullname: user.label,
         email: "",
-        avatar: {
-          link: user.avatar as string,
-        },
+        avatar: user.avatar as string,
       } as User);
     }
 

@@ -76,7 +76,7 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
         key: undefined,
       });
     };
-  }, [commonT, item?.name, item?.avatar?.link, onUpdateHeaderConfig, projectT]);
+  }, [commonT, item?.name, item?.avatar, onUpdateHeaderConfig, projectT]);
 
   return (
     <Wrapper

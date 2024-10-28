@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import ConfirmDialog from "components/ConfirmDialog";
-import { Button, IconButton, Text } from "components/shared";
+import { Button, IconButton, Input, Text } from "components/shared";
 import {
   TBudgetSection,
   TBudgetService,
@@ -30,6 +30,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 import {
@@ -99,6 +100,9 @@ export const ServiceSection = ({
     control,
   });
 
+  const [editingSectionIndex, setEditingSectionIndex] = useState<number | null>(null);
+  const sectionsRef = useRef(fields);
+  
   useEffect(() => {
     const sectionList = _.map(sectionsList, (section: any) => {
       return {
@@ -142,7 +146,8 @@ export const ServiceSection = ({
     });
 
     setValue("sections", sectionList);
-  }, [JSON.stringify(sectionsList)]);
+    sectionsRef.current = sectionList;
+  }, [sectionsList, setValue]);
 
   useImperativeHandle(serviceSectionRef, () => ({
     setDeletedServices: (deletedService = "", sectionIndex: number) => {
@@ -207,6 +212,21 @@ export const ServiceSection = ({
       ],
     });
   };
+
+
+
+  const handleSectionNameChange = useCallback((index: number, newName: string) => {
+    sectionsRef.current[index].name = newName;
+    setValue("sections", sectionsRef.current, { shouldDirty: true });
+  }, [setValue]);
+  
+  const handleSectionClick = useCallback((index: number) => {
+    setEditingSectionIndex(index);
+  }, []);
+  
+  const handleSectionNameBlur = useCallback(() => {
+    setEditingSectionIndex(null);
+  }, []);
 
   const handleChangeValue = (index: number, services: TBudgetService[]) => {
     setValue(`sections.${index}.services`, services);
@@ -617,7 +637,7 @@ export const ServiceSection = ({
                                     <IconButton noPadding>
                                       <MoveDotIcon />
                                     </IconButton>
-                                    <Typography
+                                    {/* <Typography
                                       component="h3"
                                       fontSize={20}
                                       fontWeight="bold"
@@ -625,7 +645,29 @@ export const ServiceSection = ({
                                       sx={{ color: "grey.300" }}
                                     >
                                       {section?.name}
-                                    </Typography>
+                                    </Typography> */}
+                                    {editingSectionIndex === index ? (
+                                      <Input
+                                        value={section.name}
+                                        onChange={(e) => handleSectionNameChange(index, e.target.value)}
+                                        onBlur={handleSectionNameBlur}
+                                        variant="outlined"
+                                        size="small"
+                                        autoFocus
+                                        sx={{ mx: 2, width: "200px" }}
+                                      />
+                                    ) : (
+                                      <Text
+                                        component="h3"
+                                        fontSize={20}
+                                        fontWeight="bold"
+                                        px={2}
+                                        sx={{ color: "grey.300", cursor: "pointer" }}
+                                        onClick={() => handleSectionClick(index)}
+                                      >
+                                        {section.name || `Section ${index + 1}`}
+                                      </Text>
+                                  )}
 
                                     <IconButton
                                       onClick={() => openConfirmDelete(index)}

@@ -275,7 +275,7 @@ const AllPeopleTab = ({
           project: booking?.project,
           time_off_type: booking?.time_off_type,
           user_id: booking?.user_id,
-          avatarUrl: booking.project?.owner?.avatar?.link,
+          avatarUrl: booking.project?.owner?.avatar,
           service_id: booking?.service_id,
         })),
       };

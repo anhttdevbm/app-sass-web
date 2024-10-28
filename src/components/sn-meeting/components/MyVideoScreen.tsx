@@ -1,13 +1,12 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
+import useTheme from "hooks/useTheme";
+import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
+import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
-import ButtonOnMyScreen from "./ButtonOnMyScreen";
-import { display } from "html2canvas/dist/types/css/property-descriptors/display";
-import { MicrophoneIconV1 } from "icons/MicrophoneIconV1";
-import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
 import { sxBtnCircleActiveDark } from "../style";
-import useTheme from "hooks/useTheme";
+import ButtonOnMyScreen from "./ButtonOnMyScreen";
 
 interface MyVideoScreenProps {
   sx: object | null;
@@ -17,68 +16,17 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
   props: MyVideoScreenProps,
 ) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const { localStream, meetInfo } = store.getState().meeting;
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isScreenPinned, setIsScreenPinned] = useState(false);
+  const { localStream } = store.getState().meeting;
   const { localStreamState } = store.getState().meeting;
   const { user } = useAuth();
 
   const { isDarkMode } = useTheme();
-
-  const toggleMic = () => {
-    setIsMicOn(!isMicOn);
-  };
-
-  const toggleCamera = () => {
-    setIsCameraOn(!isCameraOn);
-  };
-
-  const togglePinScreen = () => {
-    setIsScreenPinned(!isScreenPinned);
-  };
 
   useEffect(() => {
     if (videoRef.current && localStream) {
       videoRef.current.srcObject = localStream;
     }
   }, [localStream]);
-
-  const startRecording = () => {
-    const stream = videoRef.current?.srcObject as MediaStream;
-    const chunks: Blob[] = [];
-
-    mediaRecorderRef.current = new MediaRecorder(stream);
-
-    mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
-      if (event.data.size > 0) {
-        chunks.push(event.data);
-      }
-    });
-
-    mediaRecorderRef.current.addEventListener("stop", () => {
-      const videoBlob = new Blob(chunks, { type: "video/webm" });
-      const videoUrl = URL.createObjectURL(videoBlob);
-
-      const downloadLink = document.createElement("a");
-      downloadLink.href = videoUrl;
-      downloadLink.download = "my_video.webm";
-      downloadLink.click();
-
-      // Clean up
-      URL.revokeObjectURL(videoUrl);
-      chunks.length = 0;
-    });
-
-    mediaRecorderRef.current.start();
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-    }
-  };
 
   return (
     <Box
@@ -113,7 +61,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         }}
       />
 
-      {!localStreamState.isCameraOn && <Avatar src={user?.avatar?.link} />}
+      {!localStreamState.isCameraOn && <Avatar src={user?.avatar} />}
 
       <Box
         id="mic-ui"

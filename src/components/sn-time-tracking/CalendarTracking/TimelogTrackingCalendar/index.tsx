@@ -1,35 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import _ from "lodash";
 import dayjs from "dayjs";
-import { useSelector } from "react-redux";
+import _ from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   Avatar,
   Box,
+  CircularProgress,
   Divider,
   // Grid,
   Link,
   Stack,
   Typography,
-  CircularProgress,
 } from "@mui/material";
-import Filter from "../../../shared/Filter";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { MobileDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import { ENUMS } from "../../components/Constants";
-import CustomizedInputBase from "components/shared/InputSeasrch";
-import { useGetMyTimeSheet } from "store/timeTracking/selectors";
-import { WorkLogItem } from "store/timeTracking/reducer";
-import useTheme from "hooks/useTheme";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { NS_TIME_TRACKING } from "constant/index";
+import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { WorkLogItem } from "store/timeTracking/reducer";
+import { useGetMyTimeSheet } from "store/timeTracking/selectors";
+import { ENUMS } from "../../components/Constants";
 
 const { TASK_ACTION } = ENUMS;
 
@@ -147,7 +144,7 @@ const TimelogTrackingCalendar: React.FC<IProps> = ({}) => {
               }}
             />
             <Avatar
-              src={timeLog?.user?.avatar?.link}
+              src={timeLog?.user?.avatar}
               sx={{ width: "32px", height: "32px", marginRight: "8px" }}
             />
             <Stack direction="column">

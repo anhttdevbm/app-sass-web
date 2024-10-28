@@ -1,39 +1,34 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
-import ButtonCustom from "./components/Button";
-import { Switch, Text } from "components/shared";
-import Box from "@mui/material/Box";
-import ModalUpgradePackage from "./modals/index";
-import Confirm from "./modals/Confirm";
-import Change from "./modals/Change";
 import { Avatar, useMediaQuery } from "@mui/material";
-import { useTranslations } from "next-intl";
+import Box from "@mui/material/Box";
+import { Switch, Text } from "components/shared";
+import ConfirmToRequest from "components/sn-employee-detail/components/ConfirmToRequest";
+import { Permission } from "constant/enums";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
-import { useDispatch } from "react-redux";
+import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { AppDispatch, RootState } from "store/configureStore";
 import {
   changeAutoRenewal,
   getAccountBillOwner,
   getRequestUpgradePayment,
 } from "store/payment/actions";
-import { AppDispatch, RootState } from "store/configureStore";
-import { useAuth, useSnackbar } from "store/app/selectors";
-import { Permission } from "constant/enums";
-import ConfirmToRequest from "components/sn-employee-detail/components/ConfirmToRequest";
-import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import dayjs from "dayjs";
-import Image from "next/image";
-import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import ButtonCustom from "./components/Button";
+import Change from "./modals/Change";
+import Confirm from "./modals/Confirm";
+import ModalUpgradePackage from "./modals/index";
 
 type AccountBillOwnerType = {
   email: string;
   username: string;
-  avatar: {
-    link: string;
-    name: string;
-    object: string;
-  };
+  avatar: string;
 };
 const Sumary = () => {
   const { user } = useAuth();
@@ -542,8 +537,8 @@ const Sumary = () => {
                 </Text>
                 <Box display="flex" gap={2}>
                   <Image
-                    alt={accountBillOwner?.avatar?.name || "Default alt text"}
-                    src={accountBillOwner?.avatar?.link ?? UserPlaceholderImage}
+                    alt={accountBillOwner?.avatar || "Default alt text"}
+                    src={accountBillOwner?.avatar ?? UserPlaceholderImage}
                     width={32}
                     height={32}
                     layout="fixed"

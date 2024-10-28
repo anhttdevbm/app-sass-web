@@ -1,16 +1,16 @@
 import { Stack, useMediaQuery } from "@mui/material";
-import { Textarea } from "../General/components";
-import { useLocale, useTranslations } from "next-intl";
-import { NS_AI_AGENT } from "constant/index";
 import { EmptyMessage } from "components/sn-ai-agent-detail/ChatAI/components/EmptyMesage";
-import { useEffect, useRef, useState } from "react";
+import { HEADER_HEIGHT_AGENT_CHAT } from "components/sn-ai-agent-detail/ChatAI/Header";
 import { MessageLayout, MessageList } from "components/sn-ai-chat/components/BoxChat/components/Message";
+import { NS_AI_AGENT } from "constant/index";
+import { useLocale, useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+import { useAIAgent } from "store/aiAgent/selectors";
+import { File } from "store/aiChat/type";
 import { useChatAIAgent } from "store/chatAIAgent/selectors";
 import { ChatResponse } from "store/chatAIAgent/types";
-import { useAIAgent } from "store/aiAgent/selectors";
 import { HEADER_HEIGHT } from "../../../layouts/Header";
-import { HEADER_HEIGHT_AGENT_CHAT } from "components/sn-ai-agent-detail/ChatAI/Header";
-import { File } from "store/aiChat/type";
+import { Textarea } from "../General/components";
 
 export const Body = () => {
   const t = useTranslations(NS_AI_AGENT);

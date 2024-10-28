@@ -1,14 +1,13 @@
-import { memo, useState, useEffect } from "react";
-import { Stack, Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
+import AttachmentPreview from "components/AttachmentPreview";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
-import { Comment } from "store/project/reducer";
-import Image from "next/image";
-import { formatDate } from "utils/index";
-import AttachmentPreview from "components/AttachmentPreview";
-import { useTranslations } from "next-intl";
 import { NS_PROJECT } from "constant/index";
 import { Attachment } from "constant/types";
+import { useTranslations } from "next-intl";
+import { memo, useEffect, useState } from "react";
+import { Comment } from "store/project/reducer";
+import { formatDate } from "utils/index";
 
 type CommentsProps = {
   comments?: Comment[];
@@ -63,7 +62,7 @@ const CommentItem = (props: CommentItemProps) => {
     <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
       <Stack direction="row" justifyContent="space-between" spacing={1}>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={creator?.avatar?.link} />
+          <Avatar size={32} src={creator?.avatar} />
           <Stack>
             <Text variant="body2">{creator?.fullname ?? "--"}</Text>
             <Text variant="caption" color="grey.400">

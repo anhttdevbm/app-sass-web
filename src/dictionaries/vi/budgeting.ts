@@ -167,7 +167,7 @@ export const BudgetingLang: BudgetingDictionary = {
         titleModalUpdate: "Cập nhật thời gian",
         date: 'Ngày',
         project: 'Dự án',
-        timeRanger: 'Thời gian',
+        timeRanger: 'Khoảng thời gian (giờ)',
         startTime: 'Thời gian bắt đầu',
         endTime: 'Thời gian kết thúc',
         note: 'Ghi chú',

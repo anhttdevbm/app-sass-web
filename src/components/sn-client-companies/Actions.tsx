@@ -119,7 +119,7 @@ const Actions = () => {
     const opt = {
       label: response.data?.fullname ?? "",
       value: response.data?.id ?? "",
-      avatar: response.data?.avatar?.link ?? "",
+      avatar: response.data?.avatar ?? "",
     };
     setOptionSelected(opt);
   };

@@ -1,7 +1,7 @@
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { DocAccessibility, Permission, ThemeMode } from "./enums";
-import { i18n } from ".";
 import { Editor } from "draft-js";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { i18n } from ".";
+import { DocAccessibility, Permission, ThemeMode } from "./enums";
 
 export interface Option {
   label: string;
@@ -93,9 +93,7 @@ export interface User {
     id: string;
   };
   roles: Permission[];
-  avatar?: {
-    link: string;
-  };
+  avatar?: string;
 }
 
 export interface Paging {

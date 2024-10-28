@@ -1,11 +1,11 @@
+import { ImageList, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
-import { ImageList, Typography } from "@mui/material";
-import { CHAT_ROOM_TYPE, IChatItemInfo, MESSAGE_TYPE } from "store/chat/type";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
 import { NS_CHAT_BOX } from "constant/index";
 import useTheme from "hooks/useTheme";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { CHAT_ROOM_TYPE, IChatItemInfo, MESSAGE_TYPE } from "store/chat/type";
 
 interface ChatItemRenderProps {
   sessionId: string | undefined;
@@ -30,7 +30,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const { isDarkMode } = useTheme();
 
   const [avatarClone, setAvatarClone] = useState<string | undefined>(
-    avatar?.link,
+    avatar,
   );
   const isUnReadMessage = useMemo(
     () => unseen_message_count > 0,
@@ -77,7 +77,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setAvatarClone(avatar?.link);
+    setAvatarClone(avatar);
   }, [avatar]);
   useEffect(() => {
     if (lastMessageContent && lastMessageRef.current) {

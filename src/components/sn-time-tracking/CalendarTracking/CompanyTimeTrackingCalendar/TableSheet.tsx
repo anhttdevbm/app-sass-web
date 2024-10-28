@@ -130,7 +130,7 @@ const TableSheet: React.FC<IProps> = (props) => {
   const [searchUser, setSearchUser] = useState(() => {
     return userData.map((item) => ({
       fullname: item.fullname,
-      avatar: item?.avatar?.link,
+      avatar: item?.avatar,
     }));
   });
   const { onPinTimeSheet, onGetCompanyTimeSheet, isIdle } = useGetMyTimeSheet();
@@ -545,7 +545,7 @@ const TableSheet: React.FC<IProps> = (props) => {
           ? userData.map((user) =>
               createRowData(
                 user.fullname,
-                user.avatar?.link,
+                user?.avatar,
                 user.timesheet,
                 user.id,
                 user.is_pin as string,
@@ -554,7 +554,7 @@ const TableSheet: React.FC<IProps> = (props) => {
           : filterUserData.map((user) =>
               createRowData(
                 user.fullname,
-                user.avatar?.link,
+                user.avatar,
                 user.timesheet,
                 user.id,
                 user.is_pin as string,
@@ -586,7 +586,7 @@ const TableSheet: React.FC<IProps> = (props) => {
     setSearchUser(
       userData.map((item) => ({
         fullname: item.fullname,
-        avatar: item?.avatar?.link,
+        avatar: item?.avatar,
       })),
     );
   }, [userData]);

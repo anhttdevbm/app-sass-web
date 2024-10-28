@@ -43,23 +43,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "103.196.145.232",
-      },
-      {
-        protocol: "http",
-        hostname: "113.192.9.79",
-      },
-      {
-        protocol: "https",
-        hostname: "picsum.photos",
-      },
-      {
-        protocol: "https",
-        hostname: "img.freepik.com",
-      },
-      {
-        protocol: "http",
-        hostname: "113.192.9.79",
+        hostname: "103.250.79.80",
       },
       {
         protocol: "http",

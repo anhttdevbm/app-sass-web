@@ -1,9 +1,9 @@
+import { Box, Drawer } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Drawer, Box } from "@mui/material";
-import SearchDetailChatUserHead from "./SearchDetailUserChatHead";
 import { createPortal } from "react-dom";
-import SearchDetailUserChatItem from "./SearchDetailUserChatItem";
 import { IChatItemInfo } from "store/chat/type";
+import SearchDetailChatUserHead from "./SearchDetailUserChatHead";
+import SearchDetailUserChatItem from "./SearchDetailUserChatItem";
 
 interface SearchDetailChatUserProps {
   isOpen: boolean;
@@ -24,17 +24,17 @@ const SearchDetailChatUser: React.FC<SearchDetailChatUserProps> = ({
 }) => {
   const chatSearch: chatSearch[] = [
     {
-      avatar: currentConversation?.avatar?.link || "",
+      avatar: currentConversation?.avatar || "",
       name: currentConversation?.name,
       message: "Have a good day!",
     },
     {
-      avatar: currentConversation?.avatar?.link || "",
+      avatar: currentConversation?.avatar || "",
       name: currentConversation?.name,
       message: "Have a good day!",
     },
     {
-      avatar: currentConversation?.avatar?.link || "",
+      avatar: currentConversation?.avatar || "",
       name: currentConversation?.name,
       message: "Have a good day!",
     },

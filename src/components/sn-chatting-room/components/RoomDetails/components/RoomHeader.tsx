@@ -28,7 +28,6 @@ import { CHAT_EVENT_TYPE } from "store/chat/type";
 import colorSchemes from "utils/colorSchemes";
 import { debounce } from "utils/index";
 import ChatDetailInfo from "./ChatDetailInfo";
-import { headers } from "next/headers";
 
 const RoomHeader = () => {
   const { isDarkMode } = useTheme();
@@ -107,11 +106,7 @@ const RoomHeader = () => {
   const startMeeting = async () => {
     if (pathname.includes("/meeting")) return;
 
-    window.open(
-      `/meeting/${currentConversation.id}`,
-      "_blank",
-      "width=800,height=600",
-    );
+    window.open(`/meeting/${currentConversation.id}`, "_blank");
   };
 
   useEffect(() => {
@@ -173,7 +168,7 @@ const RoomHeader = () => {
             <Avatar
               src={
                 isGroup(currentConversation?.type)
-                  ? currentConversation?.avatar?.link
+                  ? currentConversation?.avatar
                   : currentConversation?.peer_detail?.avatar
               }
               sx={{ height: "50px", width: "50px", borderRadius: "50px" }}

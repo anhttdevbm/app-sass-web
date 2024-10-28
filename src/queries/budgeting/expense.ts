@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Endpoint } from "api";
-import { client, fileClient, saleClientInstance } from "api/client";
+import { budgetClient, client, fileClient, saleClientInstance } from "api/client";
 import { ExportFormData } from "components/sn-budgeting/TabDetail/Modals/ModalExportExpense";
 import { DocumentFormat } from "constant/enums";
 import { UPLOAD_API_URL } from "constant/index";
@@ -34,7 +34,7 @@ export const useBudgetGetExpenseQuery = (budgetId: string): any | undefined => {
 };
 
 export const budgetExpenseAdd = (data: TBudgetExpenseAdd) => {
-  return saleClientInstance.post(Endpoint.BUDGET_EXPENSE_CREATE, data);
+  return budgetClient.post(Endpoint.BUDGET_EXPENSE_CREATE, data);
 };
 
 export const useBudgetExpenseAdd = () => {
@@ -52,7 +52,7 @@ export const budgetExpenseUpdate = (data: TBudgetExpense) => {
     },
   );
 
-  return saleClientInstance.put(url, data);
+  return budgetClient.put(url, data);
 };
 
 export const useBudgetExpenseUpdate = () => {
@@ -113,7 +113,7 @@ export const budgetExpenseDelete = (expenseId: string) => {
     },
   );
 
-  return saleClientInstance.delete(url);
+  return budgetClient.delete(url);
 };
 
 export const useBudgetExpenseDelete = () => {

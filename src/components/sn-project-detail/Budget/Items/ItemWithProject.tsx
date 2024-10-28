@@ -1,16 +1,16 @@
-import { useMemo } from "react";
-import { useTranslations } from "next-intl";
-import { NS_PROJECT } from "constant/index";
-import { BodyCell, CellProps } from "components/Table";
-import { TBudgets } from "store/project/budget/action";
-import { Checkbox, Text } from "components/shared";
-import { TableRow, formLabelClasses } from "@mui/material";
-import { HEADER_HEIGHT } from "layouts/Header";
-import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
-import Link from "components/Link";
-import { getPath } from "utils/index";
-import { BUDGET_DETAIL_PATH } from "constant/paths";
+import { TableRow } from "@mui/material";
 import Avatar from "components/Avatar";
+import Link from "components/Link";
+import { Checkbox, Text } from "components/shared";
+import { BodyCell, CellProps } from "components/Table";
+import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
+import { NS_PROJECT } from "constant/index";
+import { BUDGET_DETAIL_PATH } from "constant/paths";
+import { HEADER_HEIGHT } from "layouts/Header";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
+import { TBudgets } from "store/project/budget/action";
+import { getPath } from "utils/index";
 
 type Props = {
   idSelecteds: string[];
@@ -171,7 +171,7 @@ export const ItemWithProject = ({
                     },
                   }}
                 >
-                  <Avatar src={budget?.created_by?.avatar?.link} size={35} />
+                  <Avatar src={budget?.created_by?.avatar} size={35} />
                   <Text paddingLeft="10px">{budget.name}</Text>
                 </Link>
               )}

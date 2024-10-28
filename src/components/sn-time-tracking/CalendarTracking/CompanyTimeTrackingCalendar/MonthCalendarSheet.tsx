@@ -177,7 +177,7 @@ const MonthCalendarSheet = () => {
               ...data.timesheet.map((timesheet) => ({
                 ...timesheet,
                 fullname: data.fullname,
-                avatar: data.avatar?.link,
+                avatar: data.avatar,
                 day: timesheet.day as string,
               })),
             );
