@@ -1,17 +1,15 @@
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Box, Button, Stack } from "@mui/material";
+import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
+import { AddUserIcon } from "icons/AddUserIcon";
 import { useState } from "react";
 import { useSidebar } from "store/app/selectors";
+import { store } from "store/configureStore";
 import { sxBtn, sxPrimaryBtn } from "../../style";
 import Conversation from "./Conversation";
 import ListUser from "./ListUser";
-import { AddUserIcon } from "icons/AddUserIcon";
-import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
-import { fontFamily } from "html2canvas/dist/types/css/property-descriptors/font-family";
-import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
-import { store } from "store/configureStore";
+import AddParticipantModal from "components/sn-meeting/components/AddParticipantModal";
 
 const RightSidebar = () => {
   const { isDarkMode } = useTheme();
@@ -21,10 +19,15 @@ const RightSidebar = () => {
   const [typeShow, setTypeShow] = useState<"message" | "participants">(
     "participants",
   );
+  const [openAddParticipant, setOpenAddParticipant] = useState(false);
   const { remoteStreams } = store.getState().meeting;
 
   const toggleIsActive = () => {
     setIsActive(!isActive);
+  };
+
+  const handleCloseAddParticipant = () => {
+    setOpenAddParticipant(false);
   };
 
   const toggleTypeShow = () => {
@@ -40,6 +43,10 @@ const RightSidebar = () => {
         height: "100%",
       }}
     >
+      <AddParticipantModal
+        open={openAddParticipant}
+        handleClose={handleCloseAddParticipant}
+      />
       <Box
         textAlign={"center"}
         py={2}
@@ -60,6 +67,7 @@ const RightSidebar = () => {
               opacity: 0.8,
             },
           }}
+          onClick={() => setOpenAddParticipant(true)}
           startIcon={
             <AddUserIcon
               sx={{
@@ -112,7 +120,7 @@ const RightSidebar = () => {
             <span
               style={typeShow === "participants" ? activeBadge : inActiveBadge}
             >
-              {remoteStreams.length || 1}
+              {remoteStreams.length + 1 || 1}
             </span>
           </Button>
         </Box>

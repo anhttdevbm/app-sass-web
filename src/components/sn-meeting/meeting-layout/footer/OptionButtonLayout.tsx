@@ -1,8 +1,13 @@
 import { BackHand, ClosedCaption, ScreenShare } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, IconButton, Stack } from "@mui/material";
+import CaptionShow from "components/sn-meeting/components/CaptionShow";
 import ReactionButton from "components/sn-meeting/components/ReactionButton";
 import RecordButton from "components/sn-meeting/components/RecordButton";
 import PopupModalSetting from "components/sn-meeting/components/modal-settings/PopupModalSetting";
+import {
+  WSParticipantActionPayload,
+  WSParticipantActionType,
+} from "components/sn-meeting/type";
 import useTheme from "hooks/useTheme";
 import { MicrophoneIcon } from "icons/MicrophoneIcon";
 import { MicrophoneSlashIcon } from "icons/MicrophoneSlashIcon";
@@ -13,12 +18,13 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
+import { useAppSelector } from "store/hooks";
 import { setLocalStream, setLocalStreamState } from "store/meeting/reducer";
 import { useMeeting } from "store/meeting/selectors";
 import {
   MeetRoomInfo,
-  ParticipantStreamEvent,
   ParticipantAction,
+  ParticipantStreamEvent,
 } from "store/meeting/types";
 import {
   sxBtnCircleActiveDark,
@@ -26,11 +32,6 @@ import {
   sxDangerBtn,
 } from "../../style";
 import OptionPopup from "./OptionPopup";
-import { useAppSelector } from "store/hooks";
-import {
-  WSParticipantActionPayload,
-  WSParticipantActionType,
-} from "components/sn-meeting/type";
 
 interface OptionButtonLayoutProps {
   sx: object;
@@ -42,17 +43,18 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
     useAppSelector((state) => state.meeting);
   const { user } = useAuth();
   const { onLeaveMeeting, onUpdateMeetingStatus } = useMeeting();
-  const [isScreenShareActive, setIsScreenShareActive] = useState(false);
-  const [isRadioButtonActive, setIsRadioButtonActive] = useState(false);
-  const [isClosedCaptionActive, setIsClosedCaptionActive] = useState(false);
-  const [isAddReactionActive, setIsAddReactionActive] = useState(false);
   const { id } = useParams();
   const [anchorElCap, setAnchorElCap] = useState<null | HTMLElement>(null);
   const [anchorElMoreButton, setAnchorElMoreButton] =
     useState<HTMLElement | null>(null);
+  const [isOpenCaption, setIsOpenCaption] = useState(false);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const onClickSetting = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCap(anchorElCap ? null : event.currentTarget);
+  };
+
+  const onClickShowCaption = () => {
+    setIsOpenCaption(!isOpenCaption);
   };
 
   const onClickMoreButton = (event: React.MouseEvent<HTMLElement>) => {
@@ -191,179 +193,185 @@ export default function OptionButtonsLayout(props: OptionButtonLayoutProps) {
   };
 
   return (
-    <Stack
-      direction="row"
-      padding="12px"
-      sx={{
-        ...props.sx,
-        justifyContent: "space-between",
-        alignItems: "center",
-        overflowY: "auto",
-        "& svg": {
-          width: "20px",
-          height: "20px",
-        },
-      }}
-    >
-      <Box textAlign={"center"} position={"relative"} sx={{ flexGrow: 1 }}>
-        <ButtonGroup
-          component="div"
-          // variant="contained"
-          aria-label="outlined button group"
-          sx={{
-            gap: 1.5,
-            textAlign: "center",
-          }}
-        >
-          <IconButton
-            sx={
-              isDarkMode
-                ? sxBtnCircleActiveDark
-                : {
-                    ...sxBtnCircleActiveLight,
-                    "&:hover > svg > path:not(:first-of-type)": {
-                      fill: localStreamState.isMicOn ? "#FFF" : "#F64E60",
-                      stroke: localStreamState.isMicOn ? "#FFF" : "#F64E60",
-                    },
-                  }
-            }
-            color={localStreamState.isMicOn ? "primary" : "default"}
-            onClick={handleMicButtonClick}
-            style={{ width: "40px", height: "40px" }}
-          >
-            {localStreamState.isMicOn ? (
-              <MicrophoneIcon
-                sx={{
-                  "& path": {
-                    fill: "#3699FF",
-                  },
-                  "& path:last-of-type": {
-                    stroke: "#3699FF",
-                  },
-                }}
-              />
-            ) : (
-              <MicrophoneSlashIcon
-                sx={{
-                  "& path": {
-                    stroke: "#F64E60",
-                    fill: "#F64E60",
-                  },
-                }}
-              />
-            )}
-          </IconButton>
-          <IconButton
-            sx={
-              isDarkMode
-                ? sxBtnCircleActiveDark
-                : {
-                    ...sxBtnCircleActiveLight,
-                    "&:hover > svg > path": {
-                      fill: localStreamState.isCameraOn ? "#FFF" : "#F64E60",
-                      stroke: localStreamState.isCameraOn ? "#FFF" : "#F64E60",
-                    },
-                    "&:hover > svg > path:last-of-type": {
-                      fill: localStreamState.isCameraOn ? "#3699FF" : "#F64E60",
-                      stroke: localStreamState.isCameraOn
-                        ? "#3699FF"
-                        : "#F64E60",
-                    },
-                  }
-            }
-            color={localStreamState.isCameraOn ? "primary" : "default"}
-            onClick={handleVideocamButtonClick}
-            style={{ width: "40px", height: "40px" }}
-          >
-            {localStreamState.isCameraOn ? (
-              <VideoIcon
-                sx={{
-                  "& path": {
-                    stroke: "#3699FF",
-                  },
-                }}
-              />
-            ) : (
-              <VideoSlashIcon />
-            )}
-          </IconButton>
-          <IconButton
-            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
-            color={isScreenShareActive ? "primary" : "default"}
-            onClick={handleScreenShareButtonClick}
-            style={{ width: "40px", height: "40px" }}
-          >
-            <ScreenShare />
-          </IconButton>
-          <RecordButton />
-          <IconButton
-            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
-            color={isClosedCaptionActive ? "primary" : "default"}
-            onClick={handleClick}
-            style={{ width: "40px", height: "40px" }}
-          >
-            <ClosedCaption />
-          </IconButton>
-          <ReactionButton />
-          <IconButton
-            sx={
-              isDarkMode
-                ? { ...sxBtnCircleActiveDark }
-                : {
-                    ...sxBtnCircleActiveLight,
-                    ...(localStreamState.isRaiseHand
-                      ? {
-                          backgroundColor: "#3699FF",
-                          color: "#E1F0FF",
-                        }
-                      : {}),
-                  }
-            }
-            color={localStreamState.isRaiseHand ? "primary" : "default"}
-            onClick={handleBackHandButtonClick}
-            style={{ width: "40px", height: "40px" }}
-          >
-            <BackHand />
-          </IconButton>
-          <Button
-            sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
-            onClick={onClickMoreButton}
-            variant="contained"
-            style={{
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              boxShadow: "none",
+    <Stack>
+      {isOpenCaption && <CaptionShow onClickSetting={onClickSetting} />}
+      <Stack
+        direction="row"
+        padding="12px"
+        sx={{
+          ...props.sx,
+          justifyContent: "space-between",
+          alignItems: "center",
+          overflowY: "auto",
+          "& svg": {
+            width: "20px",
+            height: "20px",
+          },
+        }}
+      >
+        <Box textAlign={"center"} position={"relative"} sx={{ flexGrow: 1 }}>
+          <ButtonGroup
+            component="div"
+            // variant="contained"
+            aria-label="outlined button group"
+            sx={{
+              gap: 1.5,
+              textAlign: "center",
             }}
           >
-            <ThreeDotsIcon
-              sx={{
-                rotate: "90deg",
-                width: "18px",
-                height: "18px",
+            <IconButton
+              sx={
+                isDarkMode
+                  ? sxBtnCircleActiveDark
+                  : {
+                      ...sxBtnCircleActiveLight,
+                      "&:hover > svg > path:not(:first-of-type)": {
+                        fill: localStreamState.isMicOn ? "#FFF" : "#F64E60",
+                        stroke: localStreamState.isMicOn ? "#FFF" : "#F64E60",
+                      },
+                    }
+              }
+              color={localStreamState.isMicOn ? "primary" : "default"}
+              onClick={handleMicButtonClick}
+              style={{ width: "40px", height: "40px" }}
+            >
+              {localStreamState.isMicOn ? (
+                <MicrophoneIcon
+                  sx={{
+                    "& path": {
+                      fill: "#3699FF",
+                    },
+                    "& path:last-of-type": {
+                      stroke: "#3699FF",
+                    },
+                  }}
+                />
+              ) : (
+                <MicrophoneSlashIcon
+                  sx={{
+                    "& path": {
+                      stroke: "#F64E60",
+                      fill: "#F64E60",
+                    },
+                  }}
+                />
+              )}
+            </IconButton>
+            <IconButton
+              sx={
+                isDarkMode
+                  ? sxBtnCircleActiveDark
+                  : {
+                      ...sxBtnCircleActiveLight,
+                      "&:hover > svg > path": {
+                        fill: localStreamState.isCameraOn ? "#FFF" : "#F64E60",
+                        stroke: localStreamState.isCameraOn
+                          ? "#FFF"
+                          : "#F64E60",
+                      },
+                      "&:hover > svg > path:last-of-type": {
+                        fill: localStreamState.isCameraOn
+                          ? "#3699FF"
+                          : "#F64E60",
+                        stroke: localStreamState.isCameraOn
+                          ? "#3699FF"
+                          : "#F64E60",
+                      },
+                    }
+              }
+              color={localStreamState.isCameraOn ? "primary" : "default"}
+              onClick={handleVideocamButtonClick}
+              style={{ width: "40px", height: "40px" }}
+            >
+              {localStreamState.isCameraOn ? (
+                <VideoIcon
+                  sx={{
+                    "& path": {
+                      stroke: "#3699FF",
+                    },
+                  }}
+                />
+              ) : (
+                <VideoSlashIcon />
+              )}
+            </IconButton>
+            <IconButton
+              sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
+              onClick={handleScreenShareButtonClick}
+              style={{ width: "40px", height: "40px" }}
+            >
+              <ScreenShare />
+            </IconButton>
+            <RecordButton />
+            <IconButton
+              sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
+              onClick={onClickShowCaption}
+              style={{ width: "40px", height: "40px" }}
+            >
+              <ClosedCaption />
+            </IconButton>
+            <ReactionButton />
+            <IconButton
+              sx={
+                isDarkMode
+                  ? { ...sxBtnCircleActiveDark }
+                  : {
+                      ...sxBtnCircleActiveLight,
+                      ...(localStreamState.isRaiseHand
+                        ? {
+                            backgroundColor: "#3699FF",
+                            color: "#E1F0FF",
+                          }
+                        : {}),
+                    }
+              }
+              color={localStreamState.isRaiseHand ? "primary" : "default"}
+              onClick={handleBackHandButtonClick}
+              style={{ width: "40px", height: "40px" }}
+            >
+              <BackHand />
+            </IconButton>
+            <Button
+              sx={isDarkMode ? sxBtnCircleActiveDark : sxBtnCircleActiveLight}
+              onClick={onClickMoreButton}
+              variant="contained"
+              style={{
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                boxShadow: "none",
               }}
-            />
+            >
+              <ThreeDotsIcon
+                sx={{
+                  rotate: "90deg",
+                  width: "18px",
+                  height: "18px",
+                }}
+              />
+            </Button>
+          </ButtonGroup>
+
+          {/* More Action */}
+          <OptionPopup
+            anchorElP={anchorElMoreButton}
+            onClose={() => setAnchorElMoreButton(null)}
+            onClickSetting={onClickSetting}
+          />
+        </Box>
+
+        <Box marginLeft="12px" textAlign={"center"}>
+          <Button
+            sx={{ padding: "0", height: "32px", ...sxDangerBtn }}
+            onClick={leaveMeeting}
+          >
+            End Call
           </Button>
-        </ButtonGroup>
+        </Box>
 
-        {/* More Action */}
-        <OptionPopup
-          anchorElP={anchorElMoreButton}
-          onClose={() => setAnchorElMoreButton(null)}
-        />
-      </Box>
-
-      <Box marginLeft="12px" textAlign={"center"}>
-        <Button
-          sx={{ padding: "0", height: "32px", ...sxDangerBtn }}
-          onClick={leaveMeeting}
-        >
-          End Call
-        </Button>
-      </Box>
-
-      {/* Popup modal for Setting and Capion  */}
-      <PopupModalSetting anchorEl={anchorElCap} onClose={onCloseSetting} />
+        {/* Popup modal for Setting and Capion  */}
+        <PopupModalSetting anchorEl={anchorElCap} onClose={onCloseSetting} />
+      </Stack>
     </Stack>
   );
 }

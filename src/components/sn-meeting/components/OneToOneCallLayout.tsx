@@ -26,7 +26,12 @@ export default function OneToOneCallLayout() {
     }
   }, [localStream]);
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
+    if (
+      remoteVideoRef.current &&
+      remoteStream.stream &&
+      (remoteVideoRef.current?.srcObject as MediaStream)?.id !==
+        remoteStream?.stream.id
+    ) {
       remoteVideoRef.current.srcObject = remoteStream.stream;
     }
   }, [remoteStream]);
@@ -88,6 +93,7 @@ export default function OneToOneCallLayout() {
           width: "100%",
           aspectRatio: "16/9",
           flex: 1,
+          backgroundColor: "#000",
         }}
       >
         {!localStreamState.isCameraOn && (
@@ -178,8 +184,29 @@ export default function OneToOneCallLayout() {
             width: "100%",
             aspectRatio: "16/9",
             flex: 1,
+
+            backgroundColor: "#000",
           }}
         >
+          {remoteStream.streamState.isRaiseHand && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: "8px",
+                left: "8px",
+                zIndex: 10,
+                fontSize: "24px",
+                color: "white",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                padding: "4px",
+                borderRadius: "8px",
+                userSelect: "none",
+                cursor: "default",
+              }}
+            >
+              🖐️
+            </Box>
+          )}
           {!remoteStream.streamState.isCameraOn && (
             <Box
               sx={{

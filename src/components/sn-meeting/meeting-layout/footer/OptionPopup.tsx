@@ -22,10 +22,11 @@ interface OptionPopupProps {
   sx?: object;
   anchorElP: HTMLElement | null;
   onClose: () => void;
+  onClickSetting?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
 const OptionPopup: React.FC<OptionPopupProps> = (props: OptionPopupProps) => {
-  const { anchorElP, onClose } = props;
+  const { anchorElP, onClose, onClickSetting } = props;
   const [isOpenLayoutSelect, setIsOpenLayoutSelect] = useState(false);
   const popupRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,8 +44,9 @@ const OptionPopup: React.FC<OptionPopupProps> = (props: OptionPopupProps) => {
     console.log("Apply Visual Effects");
   };
 
-  const handleSettings = () => {
-    console.log("Settings");
+  const handleSettings = (e: React.MouseEvent<HTMLElement>) => {
+    onClickSetting && onClickSetting(e);
+    onClose();
   };
   const handleClickOutside = (event) => {
     if (

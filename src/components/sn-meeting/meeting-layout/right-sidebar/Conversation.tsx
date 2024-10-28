@@ -10,7 +10,7 @@ import useTheme from "hooks/useTheme";
 import { SendMessageIcon } from "icons/SendMessageIcon";
 import ThreeDotsIcon from "icons/ThreeDotsIcon";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { useWSChat } from "store/chat/helpers";
 import { CHAT_EVENT_TYPE } from "store/chat/type";
