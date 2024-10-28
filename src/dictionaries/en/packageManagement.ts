@@ -3,7 +3,7 @@ import { PackageManagementDictionary } from "dictionaries/types/PackageManagemen
 export const PackageManagementLang: PackageManagementDictionary = {
   head: {
     sumary: "Sumary",
-    account: "Account",
+    account: "Unpaid Account",
     transactionHistory: "Transaction History",
     upgradePackage: "Upgrade package",
     upgradeNewAccount: "Upgrade new account",
