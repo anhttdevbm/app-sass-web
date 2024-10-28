@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ItemDocsProps } from "components/sn-docs/detail/LeftSlide/ItemDocs";
 import { GetDocQueries } from "components/sn-docs/helpers";
-import { DataStatus, DocAccessibility } from "constant/enums";
+import { DataStatus, DocAccessibility, DocGroupByEnum } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { getFiltersFromQueries, removeDuplicateItem } from "utils/index";
 import { getDocCustom, getDocs, updateDocCustom } from "./actions";
@@ -128,8 +128,8 @@ export interface IDocs {
     project: string;
     project_status?: string;
     user_id: string;
-    order_by: string;
-    sort_by: string;
+    order_by?: string;
+    sort_by?: string;
     group_by: string;
   };
 }
@@ -216,9 +216,9 @@ const initialState: IDocs = {
     project: "",
     project_status: undefined,
     user_id: "",
-    order_by: "created_by",
-    sort_by: "DESC",
-    group_by: "owner",
+    // order_by: "",
+    // sort_by: "",
+    group_by: DocGroupByEnum.PROJECT_ID,
   },
 };
 

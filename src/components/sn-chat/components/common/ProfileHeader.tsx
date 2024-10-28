@@ -110,11 +110,7 @@ const ProfileHeader = ({
   const startMeeting = async () => {
     if (pathname.includes("/meeting")) return;
 
-    window.open(
-      `/meeting/${dataTransfer.id}`,
-      "_blank",
-      "width=800,height=600",
-    );
+    window.open(`/meeting/${dataTransfer.id}`, "_blank");
   };
 
   useEffect(() => {

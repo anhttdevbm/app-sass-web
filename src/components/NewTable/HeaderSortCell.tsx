@@ -43,9 +43,6 @@ const HeaderSortCell = forwardRef(
     return (
       <TableCell
         sx={{
-          // "&:hover": {
-          //   backgroundColor: "grey.200",
-          // },
           backgroundColor: "grey.50",
           borderBottom: "none",
           py: 0,

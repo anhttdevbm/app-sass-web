@@ -154,7 +154,6 @@ const IncomingCall = ({ callStatus }: IncomingCallProps) => {
         JSON.stringify(meetInfo),
       )}&isJoining=true`,
       "_blank",
-      "width=800,height=600",
     );
   };
 

@@ -180,7 +180,10 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                       },
                     }}
                   >
-                    <Avatar size={32} src={rootDocument?.owner?.avatar as string | undefined} />
+                    <Avatar
+                      size={32}
+                      src={rootDocument?.owner?.avatar as string | undefined}
+                    />
                   </IconButton>
                 </MuiTooltip>
                 <Typography
@@ -225,7 +228,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               {rootDocument && (
                 <Avatar
                   size={32}
-                  src={rootDocument?.owner?.avatar as unknown as string | undefined}
+                  src={rootDocument?.owner?.avatar as string | undefined}
                   title={rootDocument?.owner?.fullname}
                 />
               )}

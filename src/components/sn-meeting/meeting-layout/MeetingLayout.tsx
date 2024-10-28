@@ -4,15 +4,8 @@ import { Card, Stack } from "@mui/material";
 
 import useTheme from "hooks/useTheme";
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { store } from "store/configureStore";
+import { useRef, useState } from "react";
 import { useAppSelector } from "store/hooks";
-import {
-  endMeet,
-  resetMeet,
-  setLocalStream,
-  setLocalStreamState,
-} from "store/meeting/reducer";
 import { useMeeting } from "store/meeting/selectors";
 import VideoScreen from "../components/VideoScreen";
 import MeetingHeaderLayout from "./MeetingHeaderLayout";

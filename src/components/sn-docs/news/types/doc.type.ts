@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-interface Avatar {
-  object: string;
-  name: string;
-  link: string;
-}
+// interface Avatar {
+//   object: string;
+//   name: string;
+//   link: string;
+// }
 
 interface Position {
   id: string;
@@ -20,7 +20,7 @@ interface DocMember {
 
 interface DocUser {
   id: string;
-  avatar: Avatar;
+  avatar: string;
   company: string;
   email: string;
   fullname: string;
@@ -49,7 +49,7 @@ export interface DocPositionComment {
 
 export interface DocInfo {
   _id: string;
-  avatar: Avatar;
+  avatar: string;
   child: any[];
   company: string;
   content: string;

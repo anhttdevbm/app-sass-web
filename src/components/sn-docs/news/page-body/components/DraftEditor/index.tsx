@@ -40,7 +40,9 @@ import { toggleChecked } from "./CheckableListItemUltils";
 import CommentSpan from "./CommentSpan";
 import "./DraftEditor.css";
 import "./EmojiEditor.css";
-
+import { InlineToolbar, inlineToolbarPlugin } from "./InlineToolbarPlugin";
+import "@draft-js-plugins/inline-toolbar/lib/plugin.css";
+import { CommentOutlined } from "@mui/icons-material";
 export default function DraftEditor() {
   const { user } = useAuth();
 
@@ -83,7 +85,7 @@ export default function DraftEditor() {
     });
 
     return {
-      plugins: [emojiPlugin],
+      plugins: [emojiPlugin, inlineToolbarPlugin],
       EmojiSelect: emojiPlugin.EmojiSelect,
     };
   }, []);
@@ -151,21 +153,21 @@ export default function DraftEditor() {
     }
   };
 
-  const handleChangeEditor = (editorState: EditorState) => {
-    const contentState = editorState.getCurrentContent();
-    const blocksArray = contentState.getBlocksAsArray();
+  const onClickAddComment = () => {
     const selection = editorState.getSelection();
-
     if (!selection.isCollapsed()) {
       const newSelection = SelectionState.createEmpty(selection.getAnchorKey());
       setEditorState(EditorState.forceSelection(editorState, newSelection));
-
       setCommentDialogOpen(true);
       setCommentPosition(
         `${selection.getStartOffset()}-${selection.getEndOffset()}-${selection.getAnchorKey()}`,
       );
-      return;
     }
+  };
+
+  const handleChangeEditor = (editorState: EditorState) => {
+    const contentState = editorState.getCurrentContent();
+    const blocksArray = contentState.getBlocksAsArray();
 
     if (blocksArray.length > 0) {
       const firstBlock = blocksArray[0];
@@ -427,7 +429,7 @@ export default function DraftEditor() {
       />
       <Box
         sx={{
-          position: "relative",
+          // position: "relative",
           paddingX: "1rem",
           height: `calc(100% - ${heightToolMemo}px)`,
           overflowY: "auto",
@@ -451,6 +453,25 @@ export default function DraftEditor() {
             focusEditor={focusEditor}
           />
         )}
+        <InlineToolbar>
+          {(externalProps) => (
+            <Box
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={onClickAddComment}
+              sx={{
+                display: "flex",
+                padding: "4px 8px",
+                cursor: "pointer",
+                ":hover": {
+                  backgroundColor: "rgba(0,0,0,0.1)",
+                },
+              }}
+            >
+              <CommentOutlined />
+              <Typography>Add comment</Typography>
+            </Box>
+          )}
+        </InlineToolbar>
         {isOpenMindMap ? <ReactFlowMindMap /> : null}
         {isOpenBoard ? <BoardEditor /> : null}
       </Box>
