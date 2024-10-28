@@ -7,7 +7,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
 } from "react";
 import { ReactQuillProps } from "react-quill";
 // import "react-quill/dist/quill.snow.css";
@@ -86,6 +86,7 @@ export type EditorProps = {
   onChangeFiles?: (files: File[]) => void;
   children?: React.ReactNode;
   files?: File[] & { nameFile?: string };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   newFile?: any[];
   noCss?: boolean;
   disabledImage?: boolean;

@@ -1,13 +1,12 @@
 "use client";
 
-import { Box, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Box, Stack, TextField} from "@mui/material";
 import { Button, Text } from "components/shared";
 import { NS_TICKET } from "constant/index";
 import { useTranslations } from "next-intl";
 
 import { memo, useEffect, useMemo, useState } from "react";
 import AssignGroup from "./AssignGroup";
-import EditIcon from "icons/EditIcon";
 import useUpdateTicket from "queries/ticket/useTicketAction/useUpdateTicket";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { Permission } from "constant/enums";
@@ -35,9 +34,6 @@ const DescriptionDetail = (props: any) => {
   const [priority, setPriority] = useState(data?.priority || "None")
   const [assign, setAssign] = useState("")
   const [rootCause, setRootCause] = useState(data?.rootCause || "None")
-
-  console.log("check type priority", data)
-
 
 
 

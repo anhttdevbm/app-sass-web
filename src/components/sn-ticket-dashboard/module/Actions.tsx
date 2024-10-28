@@ -16,10 +16,13 @@ const Actions = () => {
   const dispath = useAppDispatch()
 
   const [queries, setQueries] = useState<Record<string, string | number | boolean>>({});
+
   const onChangeQueries = (name: string, value: string | number | boolean) => {
-    setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
-    const changeParams = { ...params, createTime: typeof value === 'object' && 'priority' in value ? (value as { priority: string | number | boolean }).priority : value }
-    dispath(setParamsDashboard(changeParams))
+    if (value !== null && value !== undefined) {
+      setQueries((prevQueries) => ({ ...prevQueries, [name]: value }));
+      const changeParams = { ...params, createTime: typeof value === 'object' && 'priority' in value ? (value as { priority: string | number | boolean }).priority : value }
+      dispath(setParamsDashboard(changeParams))
+    }
 
   };
 
