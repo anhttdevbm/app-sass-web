@@ -124,31 +124,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     [searchParams],
   );
 
-  const createParamString = useCallback(
-    (obj: Record<string, string>) => {
-      const params = new URLSearchParams(
-        searchParams as unknown as typeof URLSearchParams.prototype,
-      );
-      Object.entries(obj).forEach(([key, value]) => {
-        params.set(key, value);
-      });
-      return params.toString();
-    },
-    [searchParams],
-  );
-
-  // useEffect(() => {
-  //   if (!searchParams.get("group_by")) {
-  //     push(
-  //       pathname +
-  //         "?" +
-  //         createParamString({
-  //           group_by: DocGroupByEnum.PROJECT_ID,
-  //           size: "50",
-  //         }),
-  //     );
-  //   }
-  // }, [searchParams]);
+  console.log(data);
 
   return (
     <>

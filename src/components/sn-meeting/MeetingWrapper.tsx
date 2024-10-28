@@ -15,7 +15,6 @@ import {
   setMeetingWsClient,
   setPeer,
   setRemoteStreams,
-  updateRemoteStream,
   updateRemoteStreamState,
 } from "store/meeting/reducer";
 import { useMeeting } from "store/meeting/selectors";
@@ -39,8 +38,13 @@ import { WSParticipantActionType } from "./type";
 export default function MeetingWrapper() {
   const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
 
-  const { localStreamState, meetingWsClient, localStream, isEndMeeting } =
-    useAppSelector((state) => state.meeting);
+  const {
+    localStreamState,
+    meetingWsClient,
+    localStream,
+    isEndMeeting,
+    meetInfo,
+  } = useAppSelector((state) => state.meeting);
   const { user } = store.getState().app;
   const searchParams = useSearchParams();
   const { id } = useParams();

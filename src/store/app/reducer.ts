@@ -183,6 +183,10 @@ const appSlice = createSlice({
       .addCase(
         getProfile.fulfilled,
         (state, action: PayloadAction<UserInfo>) => {
+          action.payload.avatar =
+            action.payload.avatar && action.payload.avatar.length > 0
+              ? action.payload.avatar[0]
+              : "";
           state.user = Object.assign(state?.user ?? {}, action.payload);
           state.appReady = true;
         },
