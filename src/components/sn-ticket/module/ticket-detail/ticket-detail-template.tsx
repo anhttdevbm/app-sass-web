@@ -1,13 +1,7 @@
 "use client";
 import {
   Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Stack,
-  TextField,
-  Typography,
 } from "@mui/material";
 import { Button, Text } from "components/shared";
 import ActivityTemplate from "components/sn-ticket/components/activity/activity-template";

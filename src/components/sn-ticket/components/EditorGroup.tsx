@@ -2,11 +2,10 @@
 
 
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { convertToRaw, Editor, EditorState, Modifier, RichUtils } from 'draft-js';
+import { Editor, EditorState, Modifier, RichUtils } from 'draft-js';
 import 'draft-js/dist/Draft.css';
-import { Box, Button, FormControl, InputLabel, MenuItem, Stack, Select } from '@mui/material';
+import { Box, Button ,Stack } from '@mui/material';
 import UndoIcon from 'icons/undoIcon';
-import RedoIcon from 'icons/RedoIcon';
 import RedoIconTicket from 'icons/RedoIconTicket';
 import UppercaseIcon from 'icons/UppercaseIcon';
 import ItalicIcon from 'icons/ItalicIcon';
