@@ -63,8 +63,8 @@ export const Message: React.FC<MessageProps> = ({
     const textToCopy = assistant_content as string;
 
     const parser = new DOMParser();
-    const doc = parser.parseFromString(textToCopy, 'text/html');
-    const plainText = doc.body.textContent || '';
+    const doc = parser.parseFromString(textToCopy, "text/html");
+    const plainText = doc.body.textContent || "";
 
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(plainText);
@@ -83,13 +83,13 @@ export const Message: React.FC<MessageProps> = ({
   };
 
   const handleEdit = () => {
-    setEditedMessage(user_prompt)
+    setEditedMessage(user_prompt);
     setIsEditing(true);
   };
 
   const handleBlur = () => {
     setIsEditing(false);
-  }
+  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -107,17 +107,17 @@ export const Message: React.FC<MessageProps> = ({
 
   const optionsRenderHtml: HTMLReactParserOptions = {
     replace: (domNode) => {
-      if (domNode.type === 'tag' && domNode.name === 'code') {
+      if (domNode.type === "tag" && domNode.name === "code") {
         /* eslint-disable @typescript-eslint/no-explicit-any */
         return (
-          <div style={{ width: '100%', overflowX: "auto" }}>
+          <div style={{ width: "100%", overflowX: "auto" }}>
             <code>
               {domToReact(domNode.children as any, optionsRenderHtml)}
             </code>
           </div>
         );
       }
-    }
+    },
   };
 
   return (
@@ -161,9 +161,10 @@ export const Message: React.FC<MessageProps> = ({
           ) : (
             <>
               <Stack direction={"column"} spacing={1} flex={1}>
-                {message.files && message.files.map((file, index) => (
-                  <FileItem file={file} key={index} />
-                ))}
+                {message.files &&
+                  message.files.map((file, index) => (
+                    <FileItem file={file} key={index} />
+                  ))}
                 <Text variant="body1" flex={1}>
                   {user_prompt}
                 </Text>
@@ -198,8 +199,8 @@ export const Message: React.FC<MessageProps> = ({
             isMobile={isMobile}
           >
             {!isLoading ? (
-              <Stack width={"100%"} sx={{wordBreak: "break-word"}}>
-                  {parse(assistant_content as string, optionsRenderHtml)}
+              <Stack width={"100%"} sx={{ wordBreak: "break-word" }}>
+                {parse(assistant_content as string, optionsRenderHtml)}
               </Stack>
             ) : (
               <Box

@@ -174,10 +174,7 @@ const DesktopInformation = (props) => {
       <Stack>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar
-              src={item?.avatar?.link ?? ProjectPlaceholderImage}
-              size={40}
-            />
+            <Avatar src={item?.avatar ?? ProjectPlaceholderImage} size={40} />
 
             <Stack>
               <Text variant="h4">{item?.name}</Text>

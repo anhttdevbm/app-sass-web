@@ -37,7 +37,6 @@ const EditCompany = () => {
 
     let dataOnlyUpdated = { ...data };
 
-
     dataOnlyUpdated = Object.entries(dataOnlyUpdated).reduce(
       (out, [key, value]) => {
         if (item[key] !== value) {
@@ -48,7 +47,7 @@ const EditCompany = () => {
       {},
     ) as any;
 
-    const payload = { ...dataOnlyUpdated } as any
+    const payload = { ...dataOnlyUpdated } as any;
 
     if (typeof data["avatar"] === "object") {
       const logoUrl = await client.uploadFile(Endpoint.SIGNUP_UPLOAD, data["avatar"]);
@@ -58,11 +57,11 @@ const EditCompany = () => {
     }
 
     if (paramId) {
-      const data = await onUpdateCompany(id, payload);      
-      return data
+      const data = await onUpdateCompany(id, payload);
+      return data;
     }
     const result = await onUpdateMyCompany(payload);
-    return result
+    return result;
   };
 
   if (!item || paramId) return null;
@@ -73,10 +72,13 @@ const EditCompany = () => {
     "phone",
     "tax_code",
     "created_by",
-    "avatar"
-  ])
+    "avatar",
+  ]);
 
-  const initialValues = { ...dataFromKeys, avatar: (dataFromKeys as any).avatar } as CompanyData  
+  const initialValues = {
+    ...dataFromKeys,
+    avatar: (dataFromKeys as any).avatar,
+  } as CompanyData;
   return (
     <>
       <IconButton
@@ -90,9 +92,7 @@ const EditCompany = () => {
         <Form
           open
           onClose={onHide}
-          initialValues={
-            initialValues
-          }
+          initialValues={initialValues}
           onSubmit={onUpdate}
         />
       )}

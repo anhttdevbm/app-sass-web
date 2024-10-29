@@ -113,7 +113,7 @@ const SelectProjectInDoc = ({ updateOnSelect, currentProjectId }: IProps) => {
       >
         {projectActive ? (
           <>
-            <Avatar size={24} src={projectActive.avatar?.link} />
+            <Avatar size={24} src={projectActive.avatar} />
             <Text
               component="span"
               color="neutral.800"
@@ -194,7 +194,7 @@ const SelectProjectInDoc = ({ updateOnSelect, currentProjectId }: IProps) => {
                   component={ButtonBase}
                   sx={sxConfig.item}
                 >
-                  <Avatar size={24} src={e.avatar?.link} />
+                  <Avatar size={24} src={e.avatar} />
 
                   <Text
                     component="span"

@@ -41,7 +41,6 @@ export type InviteEmployeeData = EmployeeData & {
   company: string;
   roles: Permission[];
   client?: string;
-  is_invite?: boolean;
 };
 
 export type EmployeeClientData = EmployeeData & {
@@ -172,17 +171,12 @@ export const inviteEmployee = createAsyncThunk(
   "company/inviteEmployee",
   async (data: InviteEmployeeData) => {
     try {
-      const { is_invite, ...rest } = data;
+      const { ...rest } = data;
       const response = await client.post(
         Endpoint.INVITE_USER_TO_COMPANY,
         { ...rest },
         {
-          baseURL: AUTH_API_URL,
-          params: is_invite
-            ? {
-                is_invite: "true",
-              }
-            : {},
+          baseURL: AUTH_API_URL
         },
       );
 

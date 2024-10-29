@@ -36,12 +36,8 @@ export const TYPE_POPUP = {
 const ChatDetailGroup = (props) => {
   const { isDarkMode } = useTheme();
 
-  const {
-    dataTransfer,
-    onSetStep,
-    onSetTypeList,
-    onSetDataTransfer,
-  } = useChat();
+  const { dataTransfer, onSetStep, onSetTypeList, onSetDataTransfer } =
+    useChat();
   const { user } = useAuth();
   const {
     handleGetChatMedias,
@@ -239,7 +235,6 @@ const ChatDetailGroup = (props) => {
   };
 
   const handlePopup = async () => {
-
     const renameGroupApi = async () => {
       if (!renameGroup.trim()) {
         return onAddSnackbar("Invalid group name!", "error");
@@ -480,7 +475,9 @@ const ChatDetailGroup = (props) => {
                           type: TYPE_POPUP.LEAVE_OWNER,
                           statusPopup: true,
                           title: commonChatBox("chatBox.leaveGroup"),
-                          content: <>{commonChatBox("chatBox.sureLeaveGroup")}</>,
+                          content: (
+                            <>{commonChatBox("chatBox.sureLeaveGroup")}</>
+                          ),
                         }));
                       } else {
                         setShowPopup((pre) => ({
@@ -495,10 +492,14 @@ const ChatDetailGroup = (props) => {
                               }}
                             >
                               <Typography>
-                                {commonChatBox("chatBox.leaveGroupConfirm.text_1")}
+                                {commonChatBox(
+                                  "chatBox.leaveGroupConfirm.text_1",
+                                )}
                               </Typography>
                               <Typography>
-                                {commonChatBox("chatBox.leaveGroupConfirm.text_2")}{" "}
+                                {commonChatBox(
+                                  "chatBox.leaveGroupConfirm.text_2",
+                                )}{" "}
                                 <span
                                   style={{
                                     color: "var(--brand-primary, #3699FF)",
@@ -506,8 +507,8 @@ const ChatDetailGroup = (props) => {
                                   }}
                                   onClick={handleNewAdd}
                                 >
-                              {commonChatBox("chatBox.selectAdminNew")}
-                            </span>
+                                  {commonChatBox("chatBox.selectAdminNew")}
+                                </span>
                               </Typography>
                             </Box>
                           ),

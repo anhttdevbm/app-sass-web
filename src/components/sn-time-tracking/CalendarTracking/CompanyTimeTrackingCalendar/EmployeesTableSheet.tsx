@@ -15,6 +15,8 @@ import {
   trackingTableCellStyles,
 } from "./TrackingTable.styles";
 import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
+import useBreakpoint from "hooks/useBreakpoint";
+import EmployeeTableSheetMobile from "./EmployeeTableSheetMobile";
 
 interface IProps {
   formattedDates: IFormattedDate[];
@@ -22,6 +24,7 @@ interface IProps {
 }
 
 function EmployeesTableSheet({ formattedDates, employeeDataDetail }: IProps) {
+  const { isSmSmaller } = useBreakpoint();
   const isDateEqual = (day: string, date: string) => {
     const year = day.split("-")[0] || 0;
     return day === moment(`${date} ${year}`).format("YYYY-MM-DD");
@@ -156,7 +159,7 @@ function EmployeesTableSheet({ formattedDates, employeeDataDetail }: IProps) {
     );
   };
 
-  return (
+  return !isSmSmaller ? (
     <TableContainer
       sx={{
         maxHeight: "100%",
@@ -252,6 +255,11 @@ function EmployeesTableSheet({ formattedDates, employeeDataDetail }: IProps) {
         {_renderTableBody()}
       </Table>
     </TableContainer>
+  ) : (
+    <EmployeeTableSheetMobile
+      employeeDataDetail={employeeDataDetail}
+      formattedDates={formattedDates}
+    />
   );
 }
 

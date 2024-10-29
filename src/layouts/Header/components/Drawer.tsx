@@ -4,7 +4,7 @@ import {
   Popover,
   Stack,
   drawerClasses,
-  popoverClasses
+  popoverClasses,
 } from "@mui/material";
 import AppLogo from "components/AppLogo";
 import Avatar from "components/Avatar";

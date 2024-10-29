@@ -60,7 +60,7 @@ const ProjectDetailLayout = ({ children, id }: ProjectDetailLayoutProps) => {
 
     onUpdateHeaderConfig({
       title: item?.name,
-      imageUrl: item?.avatar?.link,
+      imageUrl: item?.avatar,
       searchPlaceholder: commonT("searchBy", { name: projectT("list.key") }),
       prevPath,
       endpoint: Endpoint.PROJECTS,

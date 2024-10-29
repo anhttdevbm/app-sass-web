@@ -174,8 +174,8 @@ const TimeTrackingPage = () => {
             : isDarkMode
             ? "#565656"
             : "#FFFFFF",
-          height: isSmSmaller ? "110px" : "auto",
-          justifyContent: "space-between",
+          justifyContent: isSmSmaller ? "center" : "space-between",
+          marginBottom: isSmSmaller ? "16px" : "0px",
         }}
       >
         <Box
@@ -423,6 +423,7 @@ const TimeTrackingPage = () => {
           sx={{
             "& .MuiTabPanel-root": { paddingTop: "0px!important" },
             height: `calc(100% - ${TIME_TRACKING_HEADER_HEIGHT}px)`,
+            overflowY: "auto",
           }}
           classes={{ root: isSmSmaller ? "tab-panel-top-0" : "" }}
         >

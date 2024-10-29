@@ -84,7 +84,7 @@ const ResourceLabel = ({
 
   const avatarUrl = useMemo(() => {
     if (eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING) {
-      return projectDetail?.avatar?.link;
+      return projectDetail?.avatar;
     }
     if (user_id === user?.id || isMybooking) {
       return ownerAvatar;

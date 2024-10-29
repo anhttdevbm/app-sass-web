@@ -241,7 +241,7 @@ const ItemList = () => {
     () =>
       item
         ? {
-            avatar: item?.avatar?.link,
+            avatar: item?.avatar,
             // name: item.name,
             // description: item.description,
             // owner: item?.owner?.id,

@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Box,
-  IconButton,
-  Modal
-} from "@mui/material";
+import { Box, IconButton, Modal } from "@mui/material";
 import { Text } from "components/shared";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import CloseIcon from "icons/CloseIcon";
@@ -165,7 +161,7 @@ const Change = (props: Props) => {
                     >
                       <Image
                         alt={item?.avatar?.name || "Default alt text"}
-                        src={item?.avatar?.link ?? UserPlaceholderImage}
+                        src={item?.avatar.link ?? UserPlaceholderImage}
                         width={32}
                         height={32}
                         layout="fixed"

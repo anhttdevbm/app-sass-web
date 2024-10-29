@@ -29,9 +29,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
 
-  const [avatarClone, setAvatarClone] = useState<string | undefined>(
-    avatar,
-  );
+  const [avatarClone, setAvatarClone] = useState<string | undefined>(avatar);
   const isUnReadMessage = useMemo(
     () => unseen_message_count > 0,
     [unseen_message_count],

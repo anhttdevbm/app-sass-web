@@ -56,9 +56,7 @@ export default function DraftEditor() {
   const { id, content, title: name } = useAppSelector((state) => state.doc);
   const { data } = useGetDocDetailQuery({ id });
   const [textAreaValue, setTextAreaValue] = useState(name || "");
-  const [headerImage, setHeaderImage] = useState<string>(
-    data?.avatar || "",
-  );
+  const [headerImage, setHeaderImage] = useState<string>(data?.avatar || "");
 
   const [debounceChange] = useDebounce(
     ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
