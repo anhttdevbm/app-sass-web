@@ -161,7 +161,7 @@ const Change = (props: Props) => {
                     >
                       <Image
                         alt={item?.avatar?.name || "Default alt text"}
-                        src={item?.avatar ?? UserPlaceholderImage}
+                        src={item?.avatar.link ?? UserPlaceholderImage}
                         width={32}
                         height={32}
                         layout="fixed"
