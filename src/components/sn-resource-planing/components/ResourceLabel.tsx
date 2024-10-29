@@ -217,7 +217,7 @@ const ResourceLabel = ({
                   fontSize: 14,
                   fontWeight: 600,
                 }}
-                src={avatarUrl}
+                src={typeof avatarUrl === 'string' ? avatarUrl : undefined}
               >
                 {getFirstAndSecondLetters(fullName)}
               </Avatar>

@@ -1,37 +1,35 @@
 "use client";
 
-import React, { memo, useEffect, useState } from "react";
 import { Box, Stack, StackProps } from "@mui/material";
-import { Button, Text } from "components/shared";
-import { useProject, useProjectAttachment } from "store/project/selectors";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import { experimentalStyled as styled } from "@mui/material/styles";
+import Avatar from "components/Avatar";
+import FixedLayout from "components/FixedLayout";
+import Preview, { TitlePreview } from "components/Preview";
+import StatusServer from "components/StatusServer";
 import TextStatus from "components/TextStatus";
+import { Button, Text } from "components/shared";
 import {
+  ATTACHMENT_TYPE,
   COLOR_STATUS,
   TEXT_STATUS,
-  ATTACHMENT_TYPE,
 } from "components/sn-projects/components/helpers";
-import { formatBytes, formatDate, formatNumber } from "utils/index";
-import Avatar from "components/Avatar";
-import StatusServer from "components/StatusServer";
-import { NS_COMMON, NS_PROJECT } from "constant/index";
-import { useTranslations } from "next-intl";
+import { FILE_ACCEPT, IMAGES_ACCEPT, NS_COMMON, NS_PROJECT } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import ArrowTriangleIcon from "icons/ArrowTriangleIcon";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
-import FixedLayout from "components/FixedLayout";
-import { experimentalStyled as styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import FilePdfIcon from "../../../icons/FilePdfIcon";
+import React, { memo, useEffect, useState } from "react";
+import { MediaType, TypeMedia } from "store/chat/media/typeMedia";
+import { useProject, useProjectAttachment } from "store/project/selectors";
+import { copyImage, downloadImage, formatBytes, formatDate, formatNumber } from "utils/index";
 import FileDocIcon from "../../../icons/FileDocIcon";
 import FileExcelIcon from "../../../icons/FileExcelIcon";
 import FileIcon from "../../../icons/FileIcon";
-import { useParams } from "next/navigation";
-import { FILE_ACCEPT, IMAGES_ACCEPT } from "constant/index";
-import Link from "@mui/material/Link";
-import Preview, { TitlePreview } from "components/Preview";
-import { copyImage, downloadImage } from "utils/index";
-import { MediaType, TypeMedia } from "store/chat/media/typeMedia";
+import FilePdfIcon from "../../../icons/FilePdfIcon";
 
 type InformationItemProps = StackProps & {
   label: string;

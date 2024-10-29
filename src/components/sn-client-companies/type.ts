@@ -29,7 +29,7 @@ export interface CreatedBy {
   company: string
   fullname: string
   position: Position
-  avatar: IAvatar
+  avatar: string
 }
 
 export interface ClientCompany {

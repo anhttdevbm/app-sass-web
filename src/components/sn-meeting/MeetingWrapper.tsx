@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -15,7 +16,6 @@ import {
   setMeetingWsClient,
   setPeer,
   setRemoteStreams,
-  updateRemoteStream,
   updateRemoteStreamState,
 } from "store/meeting/reducer";
 import { useMeeting } from "store/meeting/selectors";
@@ -144,7 +144,7 @@ export default function MeetingWrapper() {
         store.dispatch(setRemoteStreams(remoteStream));
       });
 
-      peer.signal(callRequest?.signal!);
+      peer.signal(callRequest?.signal);
     };
 
     getLocalStream(() => {
@@ -248,10 +248,9 @@ export default function MeetingWrapper() {
   useEffect(() => {
     const isJoining = searchParams.get("isJoining");
     if (isJoining && isHasPermission) {
-      const meetInfoDecode = decodeURIComponent(
+      const meetInfo: MeetRoomInfo = JSON.parse(
         searchParams.get("meetInfo") as string,
       );
-      const meetInfo: MeetRoomInfo = JSON.parse(meetInfoDecode);
       onSetMeetInfo(meetInfo);
       handleConnectToWebSocket(meetInfo.id);
       return;

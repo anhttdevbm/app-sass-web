@@ -1,9 +1,9 @@
+import { Box, Drawer } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Drawer, Box } from "@mui/material";
-import SearchDetailChatUserHead from "./SearchDetailUserChatHead";
 import { createPortal } from "react-dom";
-import SearchDetailUserChatItem from "./SearchDetailUserChatItem";
 import { IChatItemInfo } from "store/chat/type";
+import SearchDetailChatUserHead from "./SearchDetailUserChatHead";
+import SearchDetailUserChatItem from "./SearchDetailUserChatItem";
 
 interface SearchDetailChatUserProps {
   isOpen: boolean;

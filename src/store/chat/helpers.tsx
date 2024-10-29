@@ -1,5 +1,17 @@
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  AN_ERROR_TRY_AGAIN,
+  NS_COMMON,
+} from "constant/index";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
+import { initPagingV2 } from "store/chat/reducer";
+import { useEmployeesOfCompany } from "store/manager/selectors";
+import { useMeeting } from "store/meeting/selectors";
+import { CallStatus } from "store/meeting/types";
+import { debounce } from "utils/index";
+import { clientStorage } from "utils/storage";
 import { useChat } from "./selectors";
 import {
   CHAT_EVENT_TYPE,
@@ -8,18 +20,6 @@ import {
   MESSAGE_TYPE,
   STEP,
 } from "./type";
-import {
-  ACCESS_TOKEN_STORAGE_KEY,
-  AN_ERROR_TRY_AGAIN,
-  NS_COMMON,
-} from "constant/index";
-import { useEmployeesOfCompany } from "store/manager/selectors";
-import { debounce } from "utils/index";
-import { useTranslations } from "next-intl";
-import { initPagingV2 } from "store/chat/reducer";
-import { useMeeting } from "store/meeting/selectors";
-import { CallStatus, CallType } from "store/meeting/types";
-import { clientStorage } from "utils/storage";
 
 const PAGE_INITIAL = 1;
 
@@ -252,7 +252,7 @@ export const useWSChat = () => {
                 },
                 ...item,
               }));
-              return onSetConvention([...groups, ...users] || []);
+              return onSetConvention([...groups, ...users]);
 
             case CHAT_EVENT_TYPE.GROUP_CREATE:
               const { room } = resp.data;

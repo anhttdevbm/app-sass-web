@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { HttpStatusCode } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN } from "constant/index";
+import { BaseQueries } from "constant/types";
+import StringFormat from "string-format";
 import {
   formatDocResponseToItemResponse,
   refactorRawItemListResponse,
   serverQueries,
 } from "utils/index";
 import { Endpoint } from "../../../api";
-import { HttpStatusCode } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN } from "constant/index";
-import { BaseQueries } from "constant/types";
 import { budgetClient } from "../../../api/client";
-import StringFormat from "string-format";
 
 export type TBudget = any;
 export type TBudgets = TBudget[];
@@ -101,8 +101,7 @@ export const getProjectBudgetList = createAsyncThunk(
 export const createProjectBudget = createAsyncThunk(
   "project/createProjectBudget",
   async (param: TBudgetCreateParam) => {
-    const url = Endpoint.BUDGET_CREATE;
-    const response = await budgetClient.post(url, param);
+    const response = await budgetClient.post(Endpoint.BUDGET_CREATE, param);
 
     if (response?.status !== HttpStatusCode.CREATED) {
       throw AN_ERROR_TRY_AGAIN;

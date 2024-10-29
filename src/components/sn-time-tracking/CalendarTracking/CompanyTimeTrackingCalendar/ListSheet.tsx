@@ -1,5 +1,6 @@
 "use client";
 
+import { Person } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -11,13 +12,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import Checkbox from "@mui/material/Checkbox";
 import { styled } from "@mui/material/styles";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
-import "../CompanyTimeTrackingCalendar/style.css";
 import { formatHoursToHHMM } from "components/sn-time-tracking/components/helper";
-import { Person } from "@mui/icons-material";
+import dayjs from "dayjs";
+import moment from "moment";
+import { useEffect, useState } from "react";
 import { CompanyTimeSheet, MyTimeSheet } from "store/timeTracking/reducer";
 import dayjs from "dayjs";
 import MobileListSheet from "../MobileListSheet";

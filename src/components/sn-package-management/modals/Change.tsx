@@ -1,27 +1,19 @@
 "use client";
 
-import { memo, ReactNode, useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Modal,
-  Paper,
-  IconButton,
-  Avatar,
-} from "@mui/material";
+import { Box, IconButton, Modal } from "@mui/material";
+import { Text } from "components/shared";
+import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import CloseIcon from "icons/CloseIcon";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getProfile } from "store/app/actions";
+import { AppDispatch, RootState } from "store/configureStore";
+import { changeBillOwner, getAllAccountAdmin } from "store/payment/actions";
 import ButtonCustom from "../components/Button";
 import SearchPackageManagement from "../components/Search";
-import { Text } from "components/shared";
-import { useTranslations } from "next-intl";
-import { NS_PACKAGE_MANAGERMENT } from "constant/index";
-import { changeBillOwner, getAllAccountAdmin } from "store/payment/actions";
-import { useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "store/configureStore";
-import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
-import { useSelector } from "react-redux";
-import Image from "next/image";
-import { getProfile } from "store/app/actions";
 
 type Props = {
   open: boolean;
@@ -32,11 +24,7 @@ type account = {
   email?: string;
   fullName?: string;
   roles?: string;
-  avatar: {
-    link: string;
-    name: string;
-    object: string;
-  };
+  avatar: string;
 };
 
 const Change = (props: Props) => {
@@ -204,7 +192,7 @@ const Change = (props: Props) => {
             {accountChange && (
               <>
                 <Image
-                  alt={accountChange?.avatar?.name || "Default alt text"}
+                  alt={accountChange?.fullName || "Default alt text"}
                   src={accountChange?.avatar ?? UserPlaceholderImage}
                   width={32}
                   height={32}

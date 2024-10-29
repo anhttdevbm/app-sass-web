@@ -113,7 +113,7 @@ const ProfileHeader = ({
     window.open(
       `/meeting/${dataTransfer.id}`,
       "_blank",
-      "width=800,height=600",
+      "width=800;height=600",
     );
   };
 

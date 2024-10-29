@@ -64,6 +64,7 @@ const Statistical = () => {
             <Stack direction="row" gap={{ xs: 1, sm: 2, md: 2 }} flexWrap="wrap">
                 {Object.values(stateTicket).map((item, index) => (
                     <Box
+                        key={item.id}
                         sx={{
                             height: 165,
                             width: { xs: "48%", sm: "30%", md: "30%" },

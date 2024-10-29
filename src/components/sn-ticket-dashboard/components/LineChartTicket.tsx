@@ -1,19 +1,16 @@
-import React, { PureComponent } from 'react';
-import { Stack } from "@mui/material"
-import { Text } from "components/shared"
-import { memo } from "react"
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ReferenceLine,
-    ResponsiveContainer,
-} from 'recharts';
+import { Stack } from "@mui/material";
+import { Text } from "components/shared";
 import useGetDashboardData from 'queries/ticket-agent/useDashboard/useDashboard';
+import { memo } from "react";
+import {
+    Legend,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
+} from 'recharts';
 
 
 interface MonthData {
@@ -33,7 +30,7 @@ const LineChartTicket = () => {
 
     const {lineChartTicketData} = useGetDashboardData();
 
-    const lstMonthArray = lineChartTicketData?.data?.data?.data?.agentPerformance?.map((item : any) => item.lstMonth)
+    const lstMonthArray = lineChartTicketData?.data?.data?.data?.agentPerformance?.map((item: { lstMonth: MonthData }) => item.lstMonth)
 
     const transformedData : TransformedData[]  = lstMonthArray?.flatMap((item : MonthData) => {
         return Object.entries(item).map(([month, monthData]) => {
@@ -46,22 +43,22 @@ const LineChartTicket = () => {
         });
     });
 
-    const formatTick = (value : any) => {
+    const formatTick = (value: number) => {
         const absValue = Math.abs(value); 
         let suffix = '';
         let formattedValue = value;
     
         if (absValue >= 1e9) { 
-            formattedValue = (value / 1e9).toFixed(1);
+            formattedValue = Number((value / 1e9).toFixed(1));
             suffix = 'B'; 
         } else if (absValue >= 1e6) { 
-            formattedValue = (value / 1e6).toFixed(1); 
+            formattedValue = Number((value / 1e6).toFixed(1)); 
             suffix = 'M'; 
         } else if (absValue >= 1e3) { 
-            formattedValue = (value / 1e3).toFixed(1); 
+            formattedValue = Number((value / 1e3).toFixed(1)); 
             suffix = 'K';
         } else {
-            formattedValue = value.toFixed(1); 
+            formattedValue = Number(value.toFixed(1)); 
         }
         return `${formattedValue}${suffix}`;
     };

@@ -1,7 +1,6 @@
 import { memo } from "react"
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import useGetDashboardData from "queries/ticket-agent/useDashboard/useDashboard"
-import RateIcon from "icons/RateIcon";
 
 const TopAgentByRating = () => {
 

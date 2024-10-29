@@ -10,7 +10,7 @@ import {
   Stack,
   TableCell,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
 import { styled } from "@mui/system";
 import FilterCategory from "components/sn-time-tracking/components/FilterCategory";

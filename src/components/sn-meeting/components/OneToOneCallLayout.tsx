@@ -5,7 +5,10 @@ import { useEffect, useMemo, useRef } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
 import { useAppSelector } from "store/hooks";
-import { updateRemoteStreamState } from "store/meeting/reducer";
+import {
+  setLocalStreamState,
+  updateRemoteStreamState,
+} from "store/meeting/reducer";
 import { ParticipantStreamEvent } from "store/meeting/types";
 
 export default function OneToOneCallLayout() {
@@ -23,7 +26,12 @@ export default function OneToOneCallLayout() {
     }
   }, [localStream]);
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
+    if (
+      remoteVideoRef.current &&
+      remoteStream.stream &&
+      (remoteVideoRef.current?.srcObject as MediaStream)?.id !==
+        remoteStream?.stream.id
+    ) {
       remoteVideoRef.current.srcObject = remoteStream.stream;
     }
   }, [remoteStream]);
@@ -43,6 +51,21 @@ export default function OneToOneCallLayout() {
       return () => clearTimeout(timer);
     }
   }, [remoteStream]);
+
+  useEffect(() => {
+    if (localStreamState && localStreamState.reactionUnified) {
+      const timer = setTimeout(() => {
+        store.dispatch(
+          setLocalStreamState({
+            ...localStreamState,
+            reactionUnified: "",
+          }),
+        );
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [localStreamState]);
 
   return (
     <Box
@@ -70,6 +93,7 @@ export default function OneToOneCallLayout() {
           width: "100%",
           aspectRatio: "16/9",
           flex: 1,
+          backgroundColor: "#000",
         }}
       >
         {!localStreamState.isCameraOn && (
@@ -116,6 +140,38 @@ export default function OneToOneCallLayout() {
             }}
           />
         )}
+        {localStreamState.isRaiseHand && (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "8px",
+              left: "8px",
+              zIndex: 10,
+              fontSize: "24px",
+              color: "white",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              padding: "4px",
+              borderRadius: "8px",
+              userSelect: "none",
+              cursor: "default",
+            }}
+          >
+            🖐️
+          </Box>
+        )}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "8px",
+            right: "8px",
+            zIndex: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Emoji unified={localStreamState.reactionUnified} size={30} />
+        </Box>
       </Box>
       {remoteStream && (
         <Box
@@ -128,8 +184,29 @@ export default function OneToOneCallLayout() {
             width: "100%",
             aspectRatio: "16/9",
             flex: 1,
+
+            backgroundColor: "#000",
           }}
         >
+          {remoteStream.streamState.isRaiseHand && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: "8px",
+                left: "8px",
+                zIndex: 10,
+                fontSize: "24px",
+                color: "white",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                padding: "4px",
+                borderRadius: "8px",
+                userSelect: "none",
+                cursor: "default",
+              }}
+            >
+              🖐️
+            </Box>
+          )}
           {!remoteStream.streamState.isCameraOn && (
             <Box
               sx={{

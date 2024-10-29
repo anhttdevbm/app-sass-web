@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from "react";
-import { Avatar, Box, IconButton, ImageList, Typography } from "@mui/material";
-import VideoCallIcon from "icons/VideoCallIcon";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Avatar, Box, IconButton, ImageList, Typography } from "@mui/material";
+import ComponentAvatar from "components/Avatar";
 import CallIcon from "icons/CallIcon";
+import VideoCallIcon from "icons/VideoCallIcon";
+import { useMemo, useState } from "react";
+import { useChatHelpers } from "store/chat/helpers";
+import { useChat } from "store/chat/selectors";
 import ChatDetailUserMobile from "./ChatDetailUserMobile";
 import GroupChatMobile from "./GroupChatMobile";
-import ComponentAvatar from "components/Avatar";
-import { useChat } from "store/chat/selectors";
-import { useChatHelpers } from "store/chat/helpers";
 
 const RoomHeaderMobile = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

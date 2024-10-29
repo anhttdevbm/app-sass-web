@@ -1,12 +1,7 @@
 "use client";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { Button, Input, Select } from "components/shared";
+import {  Input } from "components/shared";
 import LabelFormCustom from "components/sn-ticket-agent/form/LabelFormCustom";
-import MinHeightTextarea from "components/sn-ticket-agent/form/MinHeightTextarea";
-import Wrapper from "components/Wrapper";
-import { useCallback, useEffect, useState } from "react";
-import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
-import { TICKET_PATH } from "constant/paths";
 import { IFromAgent } from "../pop-up-model/Model";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";

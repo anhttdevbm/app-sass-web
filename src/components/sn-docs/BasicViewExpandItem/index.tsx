@@ -90,7 +90,7 @@ export default function BasicViewExpandItem({
           <Avatar
             sx={{ height: 18, width: 18 }}
             alt={expandedItem?.avatar?.name}
-            src={expandedItem?.created_by?.avatar.link}
+            src={expandedItem?.created_by?.avatar}
           />
           {expandedItem?.created_by ? (
             <>

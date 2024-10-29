@@ -10,10 +10,10 @@ import { NewPageContext } from "../news/context/NewPageContext";
 
 import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { IComment } from "constant/types";
+import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
 import { useParams } from "next/navigation";
 import { useGetCommentsQuery } from "store/docs/api";
-import dayjs from "dayjs";
 export const LayoutSlider = ({
   children,
   heightToolbar,

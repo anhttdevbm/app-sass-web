@@ -1,12 +1,11 @@
-import { memo } from "react";
-import { BodyCell } from "components/Table";
-import { DATE_TIME_FORMAT_SLASH, DATE_LOCALE_FORMAT } from "constant/index";
-import { formatDate } from "utils/index";
-import { Position } from "store/company/reducer";
-import { Text } from "components/shared";
-import Avatar from "components/Avatar";
 import { Stack } from "@mui/material";
+import Avatar from "components/Avatar";
+import { Text } from "components/shared";
+import { BodyCell } from "components/Table";
+import { DATE_LOCALE_FORMAT } from "constant/index";
 import dayjs from "dayjs";
+import { memo } from "react";
+import { Position } from "store/company/reducer";
 
 type DesktopCellsProps = {
   item: Position;

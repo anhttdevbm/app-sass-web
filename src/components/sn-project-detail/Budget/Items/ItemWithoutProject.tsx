@@ -6,14 +6,17 @@ import { Checkbox, Text } from "components/shared";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { BodyCell, CellProps } from "components/Table";
 import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
-import { NS_PROJECT } from "constant/index";
+import { DATE_FORMAT_FORM, NS_PROJECT } from "constant/index";
 import { BUDGET_DETAIL_PATH } from "constant/paths";
 import { HEADER_HEIGHT } from "layouts/Header";
 import _ from "lodash";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
-import { TBudgets } from "store/project/budget/action";
-import { formatNumber, getPath } from "utils/index";
+import { useSnackbar } from "store/app/selectors";
+import { TBudgetCreateParam, TBudgets } from "store/project/budget/action";
+import { useBudgets } from "store/project/budget/selector";
+import { formatDate, formatNumber, getPath } from "utils/index";
+import ActionsCell from "./ActionsCell";
 import FilterWithIds from "./FilterWithIds";
 
 type Props = {
@@ -28,6 +31,40 @@ export const ItemWithoutProject = ({
   budgets,
 }: Props) => {
   const projectT = useTranslations(NS_PROJECT);
+  const projectBudget = useBudgets();
+  const { onAddSnackbar } = useSnackbar();
+
+  const handleDuplicate = async (budgetId: string) => {
+    const budget = budgets.find(b => b.id === budgetId);
+    if (!budget) return;
+
+    const param: TBudgetCreateParam = {
+      project_id: budget.project.id,
+      start_date: formatDate(budget.start_date, DATE_FORMAT_FORM),
+      end_date: formatDate(budget.end_date, DATE_FORMAT_FORM),
+      owner: budget.owner.id,
+      name: budget.name
+    } as TBudgetCreateParam;
+
+    try {
+      await projectBudget.create(param);
+      onAddSnackbar(projectT("budget.duplicateBudgetSuccess"), "success");
+      await projectBudget.get();
+    } catch (error) {
+      onAddSnackbar("budget.duplicateBudgetFailed", "error");
+    }
+  };
+
+  const handleDelete = async (budgetId: string) => {
+    try {
+      await projectBudget.delete(budgetId);
+      onAddSnackbar(projectT("budget.deleteBudgetSuccess"), "success");
+      setIdSelected(idSelecteds.filter(id => id !== budgetId));
+      await projectBudget.get();
+    } catch (error) {
+      onAddSnackbar("budget.deleteBudgetFailed", "error");
+    }
+  };
 
   const getXsCell = (index: number) => {
     return {
@@ -96,29 +133,9 @@ export const ItemWithoutProject = ({
         }),
         color: "green",
       },
-      {
-        value: projectT("budget.table.margin"),
-        align: "center",
-        data: "",
-        width: "100px",
-        minwidth: "100px",
-      },
-      {
-        value: projectT("budget.table.budgetedTimeUse"),
-        align: "center",
-        data: "",
-        width: "200px",
-        minwidth: "200px",
-      },
-      {
-        value: projectT("budget.table.invoiced") + " %",
-        align: "center",
-        data: "",
-        width: "140px",
-        minwidth: "140px",
-      },
+      { value: "", width: "15%", align: "center" },
     ];
-  }, [idSelecteds, budgets]);
+  }, [budgets, idSelecteds.length, projectT, setIdSelected]);
 
   const selectBudget = (id: string) => {
     const indexExist = idSelecteds.findIndex((idBudget) => idBudget === id);
@@ -220,15 +237,10 @@ export const ItemWithoutProject = ({
                 })}
               </Text>
             </BodyCell>
-            <BodyCell sx={getXsCell(4)}>
-              <Text>0</Text>
-            </BodyCell>
-            <BodyCell sx={getXsCell(5)}>
-              <Text></Text>
-            </BodyCell>
-            <BodyCell sx={getXsCell(6)}>
-              <Text></Text>
-            </BodyCell>
+            <ActionsCell
+              onDuplicate={() => handleDuplicate(budget.id)}
+              onDelete={() => handleDelete(budget.id)}
+            />
           </TableRow>
         );
       })}

@@ -1,6 +1,6 @@
 import Container from "@mui/material/Container";
-import KanbanViewItem from "../KanbanViewItem";
 import { Project } from "store/project/reducer";
+import KanbanViewItem from "../KanbanViewItem";
 
 export interface IAvatarViewDoc {
   object: string;
@@ -21,7 +21,7 @@ export interface ICUViewDocItem {
     id: string;
     name: string;
   };
-  avatar: IAvatarViewDoc;
+  avatar: string;
 }
 
 export interface IGroupInfoDoc {

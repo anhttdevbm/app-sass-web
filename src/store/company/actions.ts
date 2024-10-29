@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "api/client";
 import { Endpoint } from "api/endpoint";
+import { ClientCompany } from "components/sn-client-companies/type";
 import { HttpStatusCode, Permission } from "constant/enums";
 import {
   AN_ERROR_TRY_AGAIN,
@@ -8,10 +9,9 @@ import {
   COMPANY_API_URL,
 } from "constant/index";
 import { BaseQueries } from "constant/types";
-import { refactorRawItemListResponse, serverQueries } from "utils/index";
-import StringFormat from "string-format";
 import { getPositions, getProjectTypes } from "store/global/actions";
-import { ClientCompany } from "components/sn-client-companies/type";
+import StringFormat from "string-format";
+import { refactorRawItemListResponse, serverQueries } from "utils/index";
 
 export enum CompanyStatus {
   REJECT,
@@ -338,7 +338,7 @@ export const createProjectType = createAsyncThunk(
   "company/createProjectType",
   async (data: ProjectTypeData) => {
     try {
-      const response = await client.post(Endpoint.PROJECT_TYPES, data, {
+      const response = await client.post(Endpoint.PROJECT_TYPES , data, {
         baseURL: COMPANY_API_URL,
       });
 

@@ -1,11 +1,11 @@
-import { Box, Typography, Avatar } from "@mui/material";
-import AccountInfoMobileHeader from "./AccountInfoMobileHeader";
-import { IChatItemInfo } from "store/chat/type";
-import { useChat } from "store/chat/selectors";
+import { Avatar, Box, Typography } from "@mui/material";
+import { NS_AUTH } from "constant/index";
+import { useTranslations } from "next-intl";
 import React from "react";
 import { UserInfo } from "store/app/reducer";
-import { useTranslations } from "next-intl";
-import { NS_AUTH } from "constant/index";
+import { useChat } from "store/chat/selectors";
+import { IChatItemInfo } from "store/chat/type";
+import AccountInfoMobileHeader from "./AccountInfoMobileHeader";
 import AccountInfoMobileItem from "./AccountInfoMobileItem";
 
 interface AccountInfoMobileProps {
@@ -19,6 +19,7 @@ const mapperDataToInfo = (partnerInfo: Partial<UserInfo>) => ({
   position: partnerInfo.position?.name,
   phone: partnerInfo.phone,
   email: partnerInfo.email,
+  avatar: partnerInfo.avatar,
 });
 
 const AccountInfoMobile: React.FC<AccountInfoMobileProps> = (props) => {

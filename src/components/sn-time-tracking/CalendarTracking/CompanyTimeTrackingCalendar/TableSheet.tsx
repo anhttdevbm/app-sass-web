@@ -533,7 +533,7 @@ const TableSheet: React.FC<IProps> = (props) => {
           ? userData.map((user) =>
               createRowData(
                 user.fullname,
-                user.avatar,
+                user?.avatar,
                 user.timesheet,
                 user.id,
                 user.is_pin as string,

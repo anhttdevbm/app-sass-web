@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import EditorPlugins from "@draft-js-plugins/editor";
 import createEmojiPlugin from "@draft-js-plugins/emoji";
+import "@draft-js-plugins/inline-toolbar/lib/plugin.css";
+import { CommentOutlined } from "@mui/icons-material";
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import { Box, Typography } from "@mui/material";
 import { NewPageContext } from "components/sn-docs/news/context/NewPageContext";
@@ -40,7 +42,7 @@ import { toggleChecked } from "./CheckableListItemUltils";
 import CommentSpan from "./CommentSpan";
 import "./DraftEditor.css";
 import "./EmojiEditor.css";
-
+import { InlineToolbar, inlineToolbarPlugin } from "./InlineToolbarPlugin";
 export default function DraftEditor() {
   const { user } = useAuth();
 
@@ -54,9 +56,7 @@ export default function DraftEditor() {
   const { id, content, title: name } = useAppSelector((state) => state.doc);
   const { data } = useGetDocDetailQuery({ id });
   const [textAreaValue, setTextAreaValue] = useState(name || "");
-  const [headerImage, setHeaderImage] = useState<string>(
-    data?.avatar.link || "",
-  );
+  const [headerImage, setHeaderImage] = useState<string>(data?.avatar || "");
 
   const [debounceChange] = useDebounce(
     ({ nameDoc, content }: { nameDoc: string; content?: string }) => {
@@ -83,7 +83,7 @@ export default function DraftEditor() {
     });
 
     return {
-      plugins: [emojiPlugin],
+      plugins: [emojiPlugin, inlineToolbarPlugin],
       EmojiSelect: emojiPlugin.EmojiSelect,
     };
   }, []);
@@ -151,21 +151,21 @@ export default function DraftEditor() {
     }
   };
 
-  const handleChangeEditor = (editorState: EditorState) => {
-    const contentState = editorState.getCurrentContent();
-    const blocksArray = contentState.getBlocksAsArray();
+  const onClickAddComment = () => {
     const selection = editorState.getSelection();
-
     if (!selection.isCollapsed()) {
       const newSelection = SelectionState.createEmpty(selection.getAnchorKey());
       setEditorState(EditorState.forceSelection(editorState, newSelection));
-
       setCommentDialogOpen(true);
       setCommentPosition(
         `${selection.getStartOffset()}-${selection.getEndOffset()}-${selection.getAnchorKey()}`,
       );
-      return;
     }
+  };
+
+  const handleChangeEditor = (editorState: EditorState) => {
+    const contentState = editorState.getCurrentContent();
+    const blocksArray = contentState.getBlocksAsArray();
 
     if (blocksArray.length > 0) {
       const firstBlock = blocksArray[0];
@@ -402,7 +402,7 @@ export default function DraftEditor() {
           }}
         >
           <Image
-            src={headerImage || data?.avatar.link || ""}
+            src={headerImage || data?.avatar || ""}
             fill
             alt=""
             objectFit="cover"
@@ -427,7 +427,7 @@ export default function DraftEditor() {
       />
       <Box
         sx={{
-          position: "relative",
+          // position: "relative",
           paddingX: "1rem",
           height: `calc(100% - ${heightToolMemo}px)`,
           overflowY: "auto",
@@ -451,6 +451,25 @@ export default function DraftEditor() {
             focusEditor={focusEditor}
           />
         )}
+        <InlineToolbar>
+          {(externalProps) => (
+            <Box
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={onClickAddComment}
+              sx={{
+                display: "flex",
+                padding: "4px 8px",
+                cursor: "pointer",
+                ":hover": {
+                  backgroundColor: "rgba(0,0,0,0.1)",
+                },
+              }}
+            >
+              <CommentOutlined />
+              <Typography>Add comment</Typography>
+            </Box>
+          )}
+        </InlineToolbar>
         {isOpenMindMap ? <ReactFlowMindMap /> : null}
         {isOpenBoard ? <BoardEditor /> : null}
       </Box>

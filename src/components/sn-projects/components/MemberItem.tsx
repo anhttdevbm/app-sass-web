@@ -1,8 +1,8 @@
-import { memo } from "react";
 import { Stack } from "@mui/material";
-import { Employee } from "store/company/reducer";
-import { Text, Checkbox } from "components/shared";
 import Avatar from "components/Avatar";
+import { Checkbox, Text } from "components/shared";
+import { memo } from "react";
+import { Employee } from "store/company/reducer";
 
 type MemberItemProps = Employee & {
   onChange: (id: string, fullname: string) => void;

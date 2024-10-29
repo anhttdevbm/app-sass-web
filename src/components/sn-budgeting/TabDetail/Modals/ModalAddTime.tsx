@@ -147,6 +147,7 @@ export const ModalAddTime = ({
     }
   };
 
+
   const newInput = {
     // height: "65px",
     ".MuiInputBase-root": {
@@ -160,8 +161,14 @@ export const ModalAddTime = ({
       mt: "35px",
       fontSize: "16px!important",
       // height:"38px",
-      ".MuiInputBase-input": { p: "0 10px!important" },
-    
+      ".MuiInputBase-input": { p: "0 10px!important",margin:"0!important" },
+      // svg: {
+      //   borderRadius: "50px",
+      //   border: "0.2px solid #5C5C5C",
+      //   fontSize: "16px",
+      //   color: "black",
+      //   "&:hover": { color: "black" },
+      // },
       ".MuiChip-root": {
         color: "#0575e6",
         padding: "5px",
@@ -246,7 +253,7 @@ export const ModalAddTime = ({
               <DatePicker
                 sx={newInput}
                 title={budgetT("dialog.date")}
-                rootSx={sxInput}
+                // rootSx={sxInput}
                 fullWidth
                 name="date"
                 value={value}
@@ -266,7 +273,7 @@ export const ModalAddTime = ({
             sx={{...newBorderSVG,...newInput}}
             title={budgetT("dialog.service")}
             name="service"
-            rootSx={sxInput}
+            // rootSx={sxInput}
             fullWidth
             onChange={(e) => {
               setValue("service", e.target.value);
@@ -276,21 +283,6 @@ export const ModalAddTime = ({
             autoComplete="off"
           />
 
-          <Controller
-            control={control}
-            name="timeRanges"
-            render={({ field: { onChange, value } }) => (
-              <Input
-                sx={{...newBorderSVG,...newInput}}
-                rootSx={sxInput}
-                title={budgetT("dialog.timeRanger")}
-                fullWidth
-                value={value}
-                onChange={onChange}
-                autoComplete="off"
-              />
-            )}
-          />
           <Stack gap={2} direction="row" sx={{ '& .react-datepicker-popper': { zIndex: 999 }}}>
             <Controller
               control={control}
@@ -340,11 +332,28 @@ export const ModalAddTime = ({
 
           <Controller
             control={control}
+            name="timeRanges"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                sx={{...newBorderSVG,...newInput}}
+                // rootSx={sxInput}
+                title={budgetT("dialog.timeRanger")}
+                fullWidth
+                value={value}
+                onChange={onChange}
+                autoComplete="off"
+                disabled
+              />
+            )}
+          />
+          
+          <Controller
+            control={control}
             name="note"
             render={({ field: { onChange, value } }) => (
               <Input
                 sx={{...newBorderSVG,...newInput}}
-                rootSx={sxInput}
+                // rootSx={sxInput}
                 title={budgetT("dialog.note")}
                 fullWidth
                 value={value}

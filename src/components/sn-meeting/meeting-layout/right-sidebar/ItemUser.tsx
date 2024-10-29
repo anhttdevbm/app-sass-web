@@ -1,4 +1,3 @@
-import { VideocamOff } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
 import { IconButton, Text } from "components/shared";
@@ -7,7 +6,6 @@ import { MicrophoneIcon } from "icons/MicrophoneIcon";
 import { MicrophoneOffIcon } from "icons/MicrophoneOffIcon";
 import { VideoIcon } from "icons/VideoIcon";
 import { VideoSlashIcon } from "icons/VideoSlashIcon";
-import React, { useState } from "react";
 import { RemoteStream } from "store/meeting/types";
 
 interface IProps {

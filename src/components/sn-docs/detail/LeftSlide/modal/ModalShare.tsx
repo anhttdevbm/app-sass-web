@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 import { People, Public } from "@mui/icons-material";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import {
   Autocomplete,
   Box,
@@ -19,17 +17,11 @@ import FormLayout from "components/FormLayout";
 import { Button } from "components/shared";
 import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { DocAccessibility } from "constant/enums";
-import {
-  DEFAULT_PAGING,
-  DOCS_API_URL,
-  NS_COMMON,
-  NS_DOCS,
-} from "constant/index";
+import { DEFAULT_PAGING, DOCS_API_URL, NS_DOCS } from "constant/index";
 import { useFormik } from "formik";
 import useQueryParams from "hooks/useQueryParams";
 import CloseIcon from "icons/CloseIcon";
 import LockIcon from "icons/LockIcon";
-import { UserGroupIcon } from "icons/UserGroupIcon";
 import { useTranslations } from "next-intl";
 import React, { SetStateAction, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";

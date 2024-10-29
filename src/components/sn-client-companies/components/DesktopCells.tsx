@@ -50,7 +50,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
       </BodyCell>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={item?.created_by?.avatar.link} />
+          <Avatar size={32} src={item?.created_by?.avatar} />
           <Text variant="h6">{item?.created_by?.fullname}</Text>
         </Stack>
       </BodyCell>

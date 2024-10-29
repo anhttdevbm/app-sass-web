@@ -1,8 +1,8 @@
 import { useQuery } from "react-query";
-import { getDashBoardApi } from "../api";
-import { QUERY_AGENT_KEY } from "../keys";
 import { useAppSelector } from "store/hooks";
 import { selectParamsDashboard } from "store/ticket-agent/selectors";
+import { getDashBoardApi } from "../api";
+import { QUERY_AGENT_KEY } from "../keys";
 
 const useGetDashboardData = () => {
   const params = useAppSelector(selectParamsDashboard);

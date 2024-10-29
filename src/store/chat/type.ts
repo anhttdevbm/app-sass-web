@@ -27,7 +27,7 @@ export interface IChatInfo {
   ro: boolean;
   default: boolean;
   sysMes: boolean;
-  avatar?: string;
+  avatar: string;
   unreadCount: number;
   unreadsFrom: string;
   members: string[] | IMembersGroup[];
@@ -595,7 +595,7 @@ export interface IChatListResponseV2 {
 
 export interface IChatItemV2 {
   admins: string[];
-  avatar: IAvatarChatV2;
+  avatar: string;
   company: string;
   created_at: string;
   creator: string;

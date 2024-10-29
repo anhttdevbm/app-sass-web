@@ -1,12 +1,11 @@
 import { Avatar, Box, Drawer, IconButton, Typography } from "@mui/material";
-import GroupChatHeaderMobile from "./GroupChatHeaderMobile";
-import { useGroupChat } from "./useGroupChat";
 import EditGroupNameIcon from "icons/EditGroupNameIcon";
-import GroupChatItemMobile from "./GroupChatItemMobile";
-import MembersMobile from "../GroupDrawerMobile/MembersMobile";
 import { IChatItemInfo } from "store/chat/type";
-import GroupDrawerMobile from "../GroupDrawerMobile";
 import { useChatDetailInfoReturns } from "../ChatDetailUserMobile/UseChatDetailUserMobile";
+import GroupDrawerMobile from "../GroupDrawerMobile";
+import GroupChatHeaderMobile from "./GroupChatHeaderMobile";
+import GroupChatItemMobile from "./GroupChatItemMobile";
+import { useGroupChat } from "./useGroupChat";
 
 type GroupChatMobileProps = {
   isOpen: boolean;

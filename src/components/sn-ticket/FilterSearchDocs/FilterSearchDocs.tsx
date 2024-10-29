@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
-  MenuList,
-  Popover,
-  Stack,
   SxProps,
-  popoverClasses,
 } from "@mui/material";
 import { Text } from "components/shared";
 import { NS_COMMON, NS_DOCS } from "constant/index";
@@ -25,24 +20,11 @@ export interface FilterSearchDocsProps {
 
 }
 
-const FilterSearchDocs = ({ onChange, queries  }: FilterSearchDocsProps) => {
-  const docsT = useTranslations(NS_DOCS);
-  const [anchorEl, setAnchorEl] = useState<any>(null);
-  const commonT = useTranslations(NS_COMMON);
-
-  const isHasValue =
-    queries?.user_id ||
-    queries?.project ||
-    queries?.lastEdit ||
-    queries?.project_status;
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
 
   return (
     <>
-      <FillterPriority  queries={queries} onChange={onChange}></FillterPriority>
+      <FillterPriority queries={queries} onChange={onChange}></FillterPriority>
       <FilterAssign queries={queries} onChange={onChange}></FilterAssign>
       <FillterTypeTicket queries={queries} onChange={onChange}></FillterTypeTicket>
       <FilterTime

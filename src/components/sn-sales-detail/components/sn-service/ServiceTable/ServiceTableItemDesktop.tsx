@@ -154,12 +154,15 @@ const ServiceTableItem = ({
         >
           <Stack
             direction={{
-              xs: "column",
+              xs: "row",
               sm: "row",
             }}
-            alignItems="center"
+            // alignItems="center"
             py={1}
+            sx={{ width: "100%", backgroundColor: "#FAFAFA" }}
+            gap={2}
           >
+            <Stack mt={1}>
             {isEdit && (
               <IconButton
                 sx={{
@@ -172,15 +175,11 @@ const ServiceTableItem = ({
                 <MoveDotIcon />
               </IconButton>
             )}
-            <TableRow>
-              <BodyCell
-                align="left"
-                size="small"
-                sx={{
-                  ...defaultSx.item,
-                  ml: 2,
-                }}
-              >
+            </Stack>
+
+            <Stack direction="row" gap={3} flexWrap="wrap">
+              <Box sx={{ width: 200 }} >
+                <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.name`)}</Text>
                 <CustomDesktopInput
                   name={`${sectionKey}.${index}.name`}
                   control={control}
@@ -189,15 +188,10 @@ const ServiceTableItem = ({
                   isEdit={isEdit}
                   value={service.name}
                 />
-              </BodyCell>
+              </Box>
               {isShowCols(ServiceColumn.DESCRIPTION) && isEdit && (
-                <BodyCell
-                  sx={{
-                    ...defaultSx.item,
-                    height: "auto",
-                  }}
-                  align="left"
-                >
+                <Box sx={{ width: 200 }}>
+                  <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.description`)}</Text>
                   <CustomDesktopInput
                     name={`${sectionKey}.${index}.desc`}
                     control={control}
@@ -205,70 +199,69 @@ const ServiceTableItem = ({
                     isEdit={isEdit}
                     value={service.desc}
                   />
-                </BodyCell>
+                </Box>
               )}
-              <BodyCell
-                sx={{
-                  ...defaultSx.item,
-                }}
-                align="right"
-              >
+              <Box sx={{ width: 200 }}>
                 {isEdit ? (
-                  <Controller
-                    control={control}
-                    {...register(`${sectionKey}.${index}.serviceType`)}
-                    render={({ field }) => {
-                      return (
-                        <Select
-                          defaultValue={
-                            service?.serviceType || positionOptions[0]
-                          }
-                          {...field}
-                          disabled={isLocked}
-                          showSubText
-                          options={positionOptions as Option[]}
-                          sx={{
-                            width: "100%",
-                            [`& .MuiInputBase-root`]: {
-                              px: 1,
-                              backgroundColor: "background.paper",
-                              pl: 0,
-                              gap: 1,
-                            },
-                          }}
-                        />
-                      );
-                    }}
-                  />
+                  <>
+                    <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.position`)}</Text>
+                    <Controller
+                      control={control}
+                      {...register(`${sectionKey}.${index}.serviceType`)}
+                      render={({ field }) => {
+                        return (
+                          <Select
+                            defaultValue={
+                              service?.serviceType || positionOptions[0]
+                            }
+                            {...field}
+                            disabled={isLocked}
+                            showSubText
+                            options={positionOptions as Option[]}
+                            sx={{
+                              width: "100%",
+                              [`& .MuiInputBase-root`]: {
+                                px: 1,
+                                backgroundColor: "background.paper",
+                                pl: 0,
+                                gap: 1,
+                                height: 40,
+                                borderRadius: 50
+                              },
+                            }}
+                          />
+                        );
+                      }}
+                    />
+
+                  </>
+
                 ) : (
                   <Text variant="body2">{position}</Text>
                 )}
-              </BodyCell>
-              <BodyCell
-                sx={{
-                  ...defaultSx.item,
-                  [`& .MuiFormControl-root`]: {
-                    width: "100%",
-                  },
-                }}
-                align="left"
-              >
+              </Box>
+              <Box sx={{ width: 200 }}>
                 {isEdit ? (
-                  <Controller
-                    control={control}
-                    {...register(`${sectionKey}.${index}.billType`)}
-                    defaultValue={{
-                      value: defaultBillType,
-                    }}
-                    render={({ field }) => (
-                      <CustomLabelSelect
-                        {...field}
-                        defaultValue={defaultBillType}
-                        options={billTypeOptions as Option[]}
-                        disabled={isLocked}
-                      />
-                    )}
-                  />
+                  <>
+                    <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.billType`)}</Text>
+                    <Controller
+                      control={control}
+                      {...register(`${sectionKey}.${index}.billType`)}
+                      defaultValue={{
+                        value: defaultBillType,
+                      }}
+                      render={({ field }) => (
+                        <CustomLabelSelect
+                          {...field}
+                          defaultValue={defaultBillType}
+                          options={billTypeOptions as Option[]}
+                          disabled={isLocked}
+                          sx={{ width: "100%", marginTop: 1 }}
+                        />
+                      )}
+                    />
+                  </>
+
                 ) : (
                   <StatusCell
                     sx={{
@@ -301,54 +294,51 @@ const ServiceTableItem = ({
                     namespace={NS_SALES}
                   />
                 )}
-              </BodyCell>
-              <BodyCell
-                sx={{
-                  ...defaultSx.item,
-                }}
-                align="left"
-              >
+              </Box>
+              <Box sx={{ width: 200 }}>
                 {isEdit ? (
-                  <Controller
-                    control={control}
-                    {...register(`${sectionKey}.${index}.unit`)}
-                    render={({ field }) => {
-                      return (
-                        <Select
-                          defaultValue={currency}
-                          {...field}
-                          disabled={isLocked}
-                          showSubText
-                          options={serviceUnitOptions as Option[]}
-                          sx={{
-                            width: "100%",
-                            [`& .MuiInputBase-root`]: {
-                              backgroundColor: "background.paper",
-                              px: 1,
-                              [`& .MuiTypography-root:nth-child(2)`]: {
-                                display: "none",
+                  <>
+                    <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.unit`)}</Text>
+                    <Controller
+                      control={control}
+                      {...register(`${sectionKey}.${index}.unit`)}
+                      render={({ field }) => {
+                        return (
+                          <Select
+                            defaultValue={currency}
+                            {...field}
+                            disabled={isLocked}
+                            showSubText
+                            options={serviceUnitOptions as Option[]}
+                            sx={{
+                              width: "100%",
+                              [`& .MuiInputBase-root`]: {
+                                backgroundColor: "background.paper",
+                                px: 1,
+                                height: 40,
+                                borderRadius: 50,
+                                [`& .MuiTypography-root:nth-child(2)`]: {
+                                  display: "none",
+                                },
                               },
-                            },
-                          }}
-                        />
-                      );
-                    }}
-                  />
+                            }}
+                          />
+
+                        );
+                      }}
+                    />
+                  </>
+
                 ) : (
                   <Text variant="body2">
                     {saleT(`detail.service.unit.${unit}`)}
                   </Text>
                 )}
-              </BodyCell>
+              </Box >
 
               {isShowCols(ServiceColumn.ESTIMATE) && (
-                <BodyCell
-                  sx={{
-                    ...defaultSx.item,
-                    pointerEvents: "auto",
-                  }}
-                  align="left"
-                >
+                <Box sx={{ width: 200 }}>
+                  <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.estimate`)}</Text>
                   <CustomDesktopInput
                     name={`${sectionKey}.${index}.estimate`}
                     control={control}
@@ -371,15 +361,11 @@ const ServiceTableItem = ({
                     type="number"
                     value={`${service.estimate || 0}h`}
                   />
-                </BodyCell>
+                </Box>
               )}
 
-              <BodyCell
-                sx={{
-                  ...defaultSx.item,
-                }}
-                align="left"
-              >
+              <Box sx={{ width: 200 }}>
+                <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.quantity`)}</Text>
                 <CustomDesktopInput
                   name={`${sectionKey}.${index}.qty`}
                   control={control}
@@ -408,14 +394,10 @@ const ServiceTableItem = ({
                     { suffix: "pcs" },
                   )}
                 />
-              </BodyCell>
+              </Box>
               {isShowCols(ServiceColumn.PRICE) && (
-                <BodyCell
-                  sx={{
-                    ...defaultSx.item,
-                  }}
-                  align="left"
-                >
+                <Box sx={{ width: 200 }}>
+                  <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.price`)}</Text>
                   <CustomDesktopInput
                     name={`${sectionKey}.${index}.price`}
                     control={control}
@@ -449,19 +431,14 @@ const ServiceTableItem = ({
                         message: "It must be no less than 0",
                       },
                     }}
-                    helperText={`${
-                      CURRENCY_SYMBOL[currency as CURRENCY_CODE] || ""
-                    }/${saleT(`detail.service.unit.${unit}`).toLowerCase()}`}
+                    helperText={`${CURRENCY_SYMBOL[currency as CURRENCY_CODE] || ""
+                      }/${saleT(`detail.service.unit.${unit}`).toLowerCase()}`}
                   />
-                </BodyCell>
+                </Box>
               )}
               {isShowCols(ServiceColumn.DISCOUNT) && (
-                <BodyCell
-                  sx={{
-                    ...defaultSx.item,
-                  }}
-                  align="left"
-                >
+                <Box sx={{ width: 200 }} >
+                  <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.discount`)}</Text>
                   <CustomDesktopInput
                     name={`${sectionKey}.${index}.discount`}
                     control={control}
@@ -490,14 +467,10 @@ const ServiceTableItem = ({
                     type="number"
                     helperText="%"
                   />
-                </BodyCell>
+                </Box>
               )}
-              <BodyCell
-                sx={{
-                  ...defaultSx.item,
-                }}
-                align="left"
-              >
+              <Box sx={{ width: 200 }}>
+                <Text fontWeight={700} color="#999999" fontSize={12} ml={1} mb={1}>{saleT(`detail.service.table.totalBuget`)}</Text>
                 <CustomDesktopInput
                   name={`${sectionKey}.${index}.tolBudget`}
                   control={control}
@@ -513,12 +486,12 @@ const ServiceTableItem = ({
                   helperText={CURRENCY_SYMBOL[currency as CURRENCY_CODE]}
                   type="number"
                 />
-              </BodyCell>
+              </Box>
 
               {isEdit && (
-                <BodyCell
+                <Box
                   sx={{
-                    padding: 0,
+                    padding: 3,
                     position: "relative",
                     maxWidth: "max-content",
                   }}
@@ -546,9 +519,9 @@ const ServiceTableItem = ({
                       index={index}
                     />
                   </Stack>
-                </BodyCell>
+                </Box>
               )}
-            </TableRow>
+            </Stack>
           </Stack>
         </div>
       )}

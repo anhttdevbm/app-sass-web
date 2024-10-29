@@ -1,10 +1,9 @@
 import { Stack } from "@mui/material";
 import { ArrowLeftIcon } from "@mui/x-date-pickers";
-import { formErrorCode } from "api/formErrorCode";
 import Avatar from "components/Avatar";
 import { Dropdown } from "components/Filters";
 import Link from "components/Link";
-import { Button, Input, Text } from "components/shared";
+import { Input, Text } from "components/shared";
 import { useGetStageOptions } from "components/sn-sales-detail/hooks/useGetDealDetail";
 import LabelStatusCell from "components/sn-sales/components/LabelStatusCell";
 import {
@@ -14,8 +13,7 @@ import {
 import { CURRENCY_CODE } from "constant/enums";
 import { NS_COMMON, NS_SALES } from "constant/index";
 import { SALES_LIST_PATH } from "constant/paths";
-import { ErrorResponse, Option } from "constant/types";
-import { Data } from "emoji-mart";
+import { Option } from "constant/types";
 import CoinIcon from "icons/CoinIcon";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";

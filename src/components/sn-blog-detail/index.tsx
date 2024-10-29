@@ -210,7 +210,11 @@ const BlogDetailSection = () => {
                     >
                       <Stack direction="row" alignItems="center" spacing={1}>
                         <Avatar
-                          src={detailItem?.created_by?.avatar?.link}
+                          src={
+                            typeof detailItem?.created_by?.avatar === "string"
+                              ? detailItem?.created_by?.avatar
+                              : undefined
+                          }
                           size={40}
                           alt=""
                         />

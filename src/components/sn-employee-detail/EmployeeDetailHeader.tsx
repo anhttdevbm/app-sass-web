@@ -61,8 +61,8 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean }) => {
   };
 
   const previewImage = useMemo(() => {
-    if (typeof avatar === "object") {
-      return URL.createObjectURL(avatar as unknown as File);
+    if (avatar instanceof File) {
+      return URL.createObjectURL(avatar);
     }
     return avatar as string | undefined;
   }, [avatar]);
@@ -81,7 +81,7 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean }) => {
       const avatarUrl = await client.uploadFile(Endpoint.SIGNUP_UPLOAD, file);
 
       const data = {
-        avatar: avatarUrl,
+        avatar: avatarUrl.data?.link,
       } as UpdateUserInfoData;
 
       await onUpdateUserInfo(data);

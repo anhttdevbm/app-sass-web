@@ -14,8 +14,6 @@ import { Text, Tooltip } from "components/shared";
 import { DocAccessibility } from "constant/enums";
 import { NS_DOCS } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
-import useDebounce from "hooks/useDebounce";
-import useTheme from "hooks/useTheme";
 import BackIcon from "icons/BackIcon";
 import CommentIcon from "icons/CommentIcon";
 import CopyIcon from "icons/CopyIcon";
@@ -25,14 +23,13 @@ import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useGetDocDetailQuery, useUpdateDocMutation } from "store/docs/api";
+import { useGetDocDetailQuery } from "store/docs/api";
 import { changeId, updateHeightHeaderDetail } from "store/docs/reducer";
 import { useAppSelector } from "store/hooks";
 import { NewPageContext } from "../news/context/NewPageContext";
 import { IDocDetail } from "./DocDetail";
 import ModalShare from "./LeftSlide/modal/ModalShare";
 import SelectProjectInDoc from "./SelectProjectInDoc";
-import React from "react";
 
 const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
   const [openShare, setOpenShare] = useState(false);
@@ -183,7 +180,10 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
                       },
                     }}
                   >
-                    <Avatar size={32} src={rootDocument?.owner?.avatar.link} />
+                    <Avatar
+                      size={32}
+                      src={rootDocument?.owner?.avatar as string | undefined}
+                    />
                   </IconButton>
                 </MuiTooltip>
                 <Typography
@@ -228,7 +228,7 @@ const HeaderDocDetail = ({ setOpenSlider }: IDocDetail) => {
               {rootDocument && (
                 <Avatar
                   size={32}
-                  src={rootDocument?.owner?.avatar.link}
+                  src={rootDocument?.owner?.avatar as string | undefined}
                   title={rootDocument?.owner?.fullname}
                 />
               )}

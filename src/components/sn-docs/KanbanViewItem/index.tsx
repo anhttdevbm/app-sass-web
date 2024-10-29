@@ -1,5 +1,4 @@
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import GroupIcon from "@mui/icons-material/Group";
 import { CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -159,8 +158,8 @@ export default function KanbanViewItem({
                 </Typography>
                 <Box display="flex" alignItems="center" gap={1}>
                   <Avatar
-                    alt={item.created_by?.avatar.name}
-                    src={item.created_by?.avatar.link}
+                    alt={item.created_by?.fullname}
+                    src={item.created_by?.avatar}
                     sx={{ bgcolor: "#ddd5d5", height: 18, width: 18 }}
                     aria-label="avatar-content"
                   />

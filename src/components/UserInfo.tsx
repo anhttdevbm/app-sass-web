@@ -1,8 +1,8 @@
-import { memo } from "react";
 import { Stack, StackProps } from "@mui/material";
+import { User } from "constant/types";
+import { memo } from "react";
 import Avatar from "./Avatar";
 import { Text } from "./shared";
-import { User } from "constant/types";
 
 type UserInfoProps = {
   user?: User;
