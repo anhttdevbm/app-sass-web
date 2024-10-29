@@ -114,14 +114,11 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   } = useSelector((state: RootState) => state.userNavigationDetail);
   const { currentKindOfSheet, isOpenCreatePopup, setIsOpenCreatePopup } = props;
   const [currentYear, setCurrentYear] = useState<string>("");
-  const isGetLoading: any = false;
   const timeT = useTranslations(NS_TIME_TRACKING);
   const { isSmSmaller } = useBreakpoint();
   const { isDarkMode } = useTheme();
   const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState<string>("timeSheet");
   const [events, setEvents] = React.useState<any[]>([]);
   const [filters, setFilters] = React.useState<IFilter>(DEFAULT_FILTER);
   const [currentDate, setCurrentDate] = React.useState<string>(
@@ -291,195 +288,6 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
       }
     }
   };
-  //   return (
-  //     <>
-  //       <Grid
-  //         // container
-  //         // rowSpacing={1}
-  //         sx={{
-  //           display: "flex",
-  //           alignItems: "center",
-  //           justifyContent: "space-between",
-  //           padding: "0 20px",
-  //         }}
-  //       >
-  //         <p>Year: {currentYear}</p>
-  //         <Grid
-  //           item
-  //           sm={12}
-  //           md={4}
-  //           // sx={{
-  //           //   display: "flex",
-  //           //   alignItems: "center",
-  //           //   justifyContent: "center",
-  //           //   order: 2,
-  //           // }}
-  //         >
-  //           <LocalizationProvider dateAdapter={AdapterDayjs}>
-  //             <MobileDatePicker
-  //               open={isOpen}
-  //               onOpen={() => setIsOpen(true)}
-  //               onClose={() => setIsOpen(false)}
-  //               onChange={(date: any) => {
-  //                 if (date) {
-  //                   const { startDate, endDate } =
-  //                     getWeekStartAndEndDates(date);
-  //                   setSelectedDate(date);
-  //                   // onGoDay(date);
-  //                   setFilters({
-  //                     ...filters,
-  //                     start_date: startDate,
-  //                     end_date: endDate,
-  //                   });
-  //                 }
-  //               }}
-  //               closeOnSelect
-  //               sx={{ display: "none" }}
-  //               slotProps={{
-  //                 actionBar: {
-  //                   actions: [],
-  //                 },
-  //                 toolbar: {
-  //                   hidden: true,
-  //                 },
-  //                 day: {
-  //                   sx: {
-  //                     transition: "all ease 0.25s",
-  //                     borderRadius: "4px",
-  //                     fontWeight: 600,
-  //                     "&.Mui-selected": {
-  //                       color: "#ffffff",
-  //                       backgroundColor: `rgba(54, 153, 255, 1) !important`,
-  //                       "&.MuiPickersDay-today": {
-  //                         color: "#ffffff",
-  //                         borderColor: "rgba(54, 153, 255, 1)",
-  //                       },
-  //                     },
-  //                     "&.MuiPickersDay-today": {
-  //                       color: "rgba(54, 153, 255, 1)",
-  //                       borderColor: "rgba(54, 153, 255, 1)",
-  //                     },
-  //                     ":hover": {
-  //                       background: "rgba(54, 153, 255, 1)",
-  //                     },
-  //                   },
-  //                 },
-  //               }}
-  //             />
-  //           </LocalizationProvider>
-
-  //           <Stack
-  //             direction="row"
-  //             alignItems="center"
-  //             sx={{
-  //               ":hover": {
-  //                 cursor: "pointer",
-  //               },
-  //             }}
-  //           >
-  //             <Button
-  //               sx={{
-  //                 minWidth: "28px",
-  //                 height: "28px",
-  //                 padding: 0,
-  //                 // borderRadius: "4px 0px 0px 4px",
-  //                 // backgroundColor: "grey.100",
-  //                 color: "#212529",
-  //               }}
-  //               onClick={() => onAction("week", "prev")}
-  //             >
-  //               <ChevronLeftIcon />
-  //             </Button>
-  //             <div onClick={() => setIsOpen(true)}>
-  //               <Typography
-  //                 sx={{
-  //                   fontSize: "16px",
-  //                   color: "neutral.800",
-  //                   margin: "0 10px",
-  //                   fontFamily: "unset",
-  //                   padding: "0 10px",
-  //                 }}
-  //               >
-  //                 {`${moment(filters?.start_date).format("MMMM D")} - ${dayjs(
-  //                   filters?.end_date,
-  //                 ).format("MMMM D")}`}
-  //               </Typography>
-  //             </div>
-  //             <Button
-  //               sx={{
-  //                 minWidth: "28px",
-  //                 height: "28px",
-  //                 padding: 0,
-  //                 // borderRadius: "0px 4px 4px 0px",
-  //                 // backgroundColor: "grey.100",
-  //                 color: "#212529",
-  //               }}
-  //               onClick={() => onAction("week", "next")}
-  //             >
-  //               <ChevronRightIcon />
-  //             </Button>
-  //           </Stack>
-  //         </Grid>
-  //         <Grid item sm={12} md={4} sx={{ order: isSmSmaller ? 1 : 3 }}>
-  //           <Stack
-  //             direction="row"
-  //             alignItems="center"
-  //             justifyContent="flex-end"
-  //             sx={{ gap: "3px" }}
-  //           >
-  //             <Button
-  //               sx={{
-  //                 minWidth: "28px",
-  //                 height: "28px",
-  //                 padding: 0,
-  //                 // borderRadius: "4px 0px 0px 4px",
-  //                 // backgroundColor: "grey.100",
-  //                 color: "#212529",
-  //               }}
-  //               onClick={() => onAction("week", "prev")}
-  //             >
-  //               <ChevronLeftIcon />
-  //             </Button>
-  //             <Button
-  //               sx={{
-  //                 width: "97px",
-  //                 height: "30px",
-  //                 padding: "4px",
-  //                 color: "neutral.800",
-  //                 textAlign: "center",
-  //                 textTransform: "capitalize",
-  //                 "&:hover": {
-  //                   backgroundColor: "#D9F0FD",
-  //                 },
-  //               }}
-  //               onClick={() => onAction("week", "today")}
-  //               disabled={
-  //                 dayjs(currentDate).format("YYYY-MM-DD") ===
-  //                 dayjs().format("YYYY-MM-DD")
-  //               }
-  //             >
-  //               {timeT("company_time.this_week")}
-  //             </Button>
-  //             <Button
-  //               sx={{
-  //                 minWidth: "28px",
-  //                 height: "28px",
-  //                 padding: 0,
-  //                 // borderRadius: "0px 4px 4px 0px",
-  //                 // backgroundColor: "grey.100",
-  //                 color: "#212529",
-  //               }}
-  //               onClick={() => onAction("week", "next")}
-  //             >
-  //               <ChevronRightIcon />
-  //             </Button>
-  //           </Stack>
-  //         </Grid>
-  //       </Grid>
-  //       {/* {_renderCalendarModule()} */}
-  //     </>
-  //   );
-  // };
 
   const _renderFooter = (type: TypeNavigator) => {
     return (
@@ -561,7 +369,11 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
   );
 
   return (
-    <Stack direction="column" height="100%" paddingTop="20px">
+    <Stack
+      direction="column"
+      height="100%"
+      paddingTop={isSmSmaller ? "0" : "20px"}
+    >
       {currentKindOfSheet === "table" && (
         <>
           {userDetailTablevisible && (
@@ -678,7 +490,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 />
               </div>
               <FilterCategory />
-              <ListSheet data={company} />
+              <ListSheet data={company} selectedDate={selectedDate} />
 
               {_renderFooter(TypeNavigator.DAILY)}
             </Box>

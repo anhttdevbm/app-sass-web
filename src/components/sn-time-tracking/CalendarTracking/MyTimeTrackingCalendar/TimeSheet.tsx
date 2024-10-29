@@ -73,7 +73,7 @@ const TimeSheet: React.FC<IProps> = ({ data, filters, dateRange }) => {
             totalDuration: 0,
             projectName: project?.name,
             projectId: project?.id,
-            avatar: project?.avatar?.link,
+            avatar: project?.avatar,
             is_pin: timesheet?.is_pin || false,
           };
         }

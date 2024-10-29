@@ -103,11 +103,24 @@ export const Feed = ({ budget }: { budget: TBudget }) => {
                 </Stack>
               </Stack>
               <Stack textAlign="center" direction="row">
-                <Text sx={{ color: "gray.300", fontSize: "14px", display: 'inline-block' }}>
+                <Text
+                  sx={{
+                    color: "gray.300",
+                    fontSize: "14px",
+                    display: "inline-block",
+                  }}
+                >
                   {formatDate(feed.created_time, SHORT_TIME_FORMAT)}
                 </Text>
                 {!isSameDay && (
-                  <Text sx={{ color: "gray.300", fontSize: "14px", display: 'inline-block', ml: 1 }}>
+                  <Text
+                    sx={{
+                      color: "gray.300",
+                      fontSize: "14px",
+                      display: "inline-block",
+                      ml: 1,
+                    }}
+                  >
                     {formatDate(feed.created_time, DATE_FORMAT_HYPHEN)}
                   </Text>
                 )}

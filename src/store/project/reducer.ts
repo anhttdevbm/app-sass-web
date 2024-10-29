@@ -101,11 +101,7 @@ export interface Project {
   start_date: string;
   end_date: string;
   number?: string;
-  avatar?: {
-    link?: string;
-    name?: string;
-    object?: string;
-  };
+  avatar?: string;
 }
 
 export interface Currency {

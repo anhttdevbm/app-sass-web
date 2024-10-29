@@ -20,7 +20,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
       <BodyCell>{order}</BodyCell>
       <BodyCell align="left">
         <Text variant="h6">{item?.name}</Text>
-        </BodyCell>
+      </BodyCell>
       <BodyCell align="center" noWrap>
         {item?.created_by?.id ? (
           <Stack direction="row" alignItems="center" spacing={1}>
@@ -29,11 +29,16 @@ const DesktopCells = (props: DesktopCellsProps) => {
           </Stack>
         ) : undefined}
       </BodyCell>
-      <BodyCell align="center" tooltip={dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}>
+      <BodyCell
+        align="center"
+        tooltip={dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}
+      >
         {/* {formatDate(item.created_time)} */}
         {dayjs(item.created_time).format(DATE_LOCALE_FORMAT)}
       </BodyCell>
-      <BodyCell align="center">{formatNumber(item?.total_member_of_position)}</BodyCell>
+      <BodyCell align="center">
+        {formatNumber(item?.total_member_of_position)}
+      </BodyCell>
     </>
   );
 };

@@ -1,18 +1,9 @@
-import {
-  CloseOutlined
-} from "@mui/icons-material";
-import {
-  Box,
-  Stack,
-  Typography
-} from "@mui/material";
+import { CloseOutlined } from "@mui/icons-material";
+import { Box, Stack, Typography } from "@mui/material";
 import Link from "components/Link";
 import { Button, Text } from "components/shared";
 import { NS_BILLING } from "constant/index";
-import {
-  BILLING_PATH,
-  INVOICES_PATH
-} from "constant/paths";
+import { BILLING_PATH, INVOICES_PATH } from "constant/paths";
 import { Option, User } from "constant/types";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
@@ -186,6 +177,8 @@ const TopContent = (props: TopContentProps) => {
             display={"flex"}
             alignItems={"center"}
           >
+            {/* <Avatar src={user?.avatar ?? ""} /> */}
+
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               INV-{item?.invoice_number ? item?.invoice_number?.toString() : ""}
             </Text>

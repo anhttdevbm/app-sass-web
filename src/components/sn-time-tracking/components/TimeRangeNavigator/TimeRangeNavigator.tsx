@@ -55,11 +55,12 @@ export default function TimeRangeNavigator({
       sx={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 20px",
+        justifyContent: isSmSmaller ? "center" : "space-between",
+        paddingX: "20px",
+        paddingY: isSmSmaller ? "12px" : "0",
       }}
     >
-      <p>Year: {currentYear}</p>
+      {!isSmSmaller && <p>Year: {currentYear}</p>}
       {type === TypeNavigator.WEEKLY ? (
         <Grid item sm={12} md={4}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -146,6 +147,7 @@ export default function TimeRangeNavigator({
                   margin: "0 10px",
                   fontFamily: "unset",
                   padding: "0 10px",
+                  fontWeight: isSmSmaller ? 600 : 400,
                 }}
               >
                 {`${dayjs(selectedDate)
@@ -174,21 +176,85 @@ export default function TimeRangeNavigator({
           </Stack>
         </Grid>
       ) : (
-        <Typography
-          sx={{
-            fontSize: "16px",
-            color: "neutral.800",
-            margin: "0 10px",
-            fontFamily: "unset",
-            padding: "0 10px",
-            flex: "1",
-            textAlign: "center",
-          }}
-        >
-          {dayjs().format("MMMM D")}
-        </Typography>
+        <Grid item sm={12} md={4}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileDatePicker
+              open={isOpen}
+              onOpen={() => setIsOpen(true)}
+              onClose={() => setIsOpen(false)}
+              onChange={(date) => {
+                if (date) {
+                  const { startDate, endDate } = getWeekStartAndEndDates(date);
+                  setSelectedDate(date);
+                  setFilters({
+                    ...filters,
+                    start_date: startDate,
+                    end_date: endDate,
+                  });
+                }
+              }}
+              closeOnSelect
+              sx={{ display: "none" }}
+              slotProps={{
+                actionBar: {
+                  actions: [],
+                },
+                toolbar: {
+                  hidden: true,
+                },
+                day: {
+                  sx: {
+                    transition: "all ease 0.25s",
+                    borderRadius: "4px",
+                    fontWeight: 600,
+                    "&.Mui-selected": {
+                      color: "#ffffff",
+                      backgroundColor: `rgba(54, 153, 255, 1) !important`,
+                      "&.MuiPickersDay-today": {
+                        color: "#ffffff",
+                        borderColor: "rgba(54, 153, 255, 1)",
+                      },
+                    },
+                    "&.MuiPickersDay-today": {
+                      color: "rgba(54, 153, 255, 1)",
+                      borderColor: "rgba(54, 153, 255, 1)",
+                    },
+                    ":hover": {
+                      background: "rgba(54, 153, 255, 1)",
+                    },
+                  },
+                },
+              }}
+            />
+          </LocalizationProvider>
+
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              ":hover": {
+                cursor: "pointer",
+              },
+            }}
+          >
+            <div onClick={() => setIsOpen(true)}>
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  color: "neutral.800",
+                  margin: "0 10px",
+                  fontFamily: "unset",
+                  padding: "0 10px",
+                  fontWeight: isSmSmaller ? 600 : 400,
+                }}
+              >
+                {`${dayjs(selectedDate).format("MMMM D")}`}
+              </Typography>
+            </div>
+          </Stack>
+        </Grid>
       )}
-      {type === TypeNavigator.WEEKLY && (
+      {type === TypeNavigator.WEEKLY && !isSmSmaller ? (
         <Grid item sm={12} md={4} sx={{ order: isSmSmaller ? 1 : 3 }}>
           <Stack
             direction="row"
@@ -261,6 +327,8 @@ export default function TimeRangeNavigator({
             </Button>
           </Stack>
         </Grid>
+      ) : (
+        <div />
       )}
     </Grid>
   );

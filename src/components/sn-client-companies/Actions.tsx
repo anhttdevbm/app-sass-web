@@ -5,11 +5,7 @@ import { Endpoint, client } from "api";
 import { Search } from "components/Filters";
 import { Button, Text } from "components/shared";
 import { DataAction } from "constant/enums";
-import {
-  AUTH_API_URL,
-  NS_COMMON,
-  NS_COMPANY
-} from "constant/index";
+import { AUTH_API_URL, NS_COMMON, NS_COMPANY } from "constant/index";
 import { Option } from "constant/types";
 import useToggle from "hooks/useToggle";
 import AddSquareIcon from "icons/AddSquareIcon";
@@ -179,7 +175,7 @@ const Actions = () => {
           >
             {commonT("createNew")}
           </Button> */}
-           <Search
+          <Search
             name="name"
             placeholder={commonT("search")}
             onKeyDown={(e) => {
@@ -197,7 +193,14 @@ const Actions = () => {
               ".MuiInputBase-root": { height: 40, borderRadius: "100px" },
             }}
             startNode={""}
-            endNode={<IconButton aria-label="search"><SearchIcon onClick={onSearch} style={{ color: "#0575E6" ,height:"18px",width:"18px"}} /></IconButton>}
+            endNode={
+              <IconButton aria-label="search">
+                <SearchIcon
+                  onClick={onSearch}
+                  style={{ color: "#0575E6", height: "18px", width: "18px" }}
+                />
+              </IconButton>
+            }
           />
         </Stack>
 
@@ -263,11 +266,13 @@ const Actions = () => {
                 height: 18,
               }}
             />
-            <Text sx={{ fontSize:"16px", display: { xs: "none", md: "block" } }} color="inherit">
+            <Text
+              sx={{ fontSize: "16px", display: { xs: "none", md: "block" } }}
+              color="inherit"
+            >
               {companyT("clientCompany.create")}
             </Text>
           </Button>
-          
         </Stack>
       </Stack>
       {isShow && (

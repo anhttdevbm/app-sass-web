@@ -17,11 +17,7 @@ import FormLayout from "components/FormLayout";
 import { Button } from "components/shared";
 import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { DocAccessibility } from "constant/enums";
-import {
-  DEFAULT_PAGING,
-  DOCS_API_URL,
-  NS_DOCS
-} from "constant/index";
+import { DEFAULT_PAGING, DOCS_API_URL, NS_DOCS } from "constant/index";
 import { useFormik } from "formik";
 import useQueryParams from "hooks/useQueryParams";
 import CloseIcon from "icons/CloseIcon";
@@ -326,11 +322,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
                     alignItems: "center",
                   }}
                 >
-                  <Avatar
-                    src={user.avatar}
-                    size={32}
-                    alt={user.fullname}
-                  />
+                  <Avatar src={user.avatar} size={32} alt={user.fullname} />
                   <Box
                     sx={{
                       fontFamily: inter.style.fontFamily,

@@ -222,7 +222,7 @@ const AllPeopleTab = ({
                 project: project,
                 allocation_type,
                 total_hour,
-                avatarUrl: project?.avatar?.link,
+                avatarUrl: project?.avatar,
                 time_off_type,
                 service_id: service_id,
                 eventType: booking_type,

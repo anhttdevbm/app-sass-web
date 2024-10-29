@@ -179,8 +179,8 @@ export const BudgetDetail = () => {
         text: budgetT("tabService.alert"),
         icon: "info",
         customClass: {
-          icon: 'Swal-custom-icon-info',
-        }
+          icon: "Swal-custom-icon-info",
+        },
       });
 
       return;
@@ -578,7 +578,7 @@ export const BudgetDetail = () => {
         </Stack>
       </Stack>
 
-      <Stack p={"10px"} direction="row" >
+      <Stack p={"10px"} direction="row">
         <Box
           position="relative"
           sx={{
@@ -586,11 +586,11 @@ export const BudgetDetail = () => {
             transition: "all .2s",
             overflow: "auto",
             height: "calc(100vh - 300px)",
-            '&::-webkit-scrollbar': {
-              display: 'none', 
+            "&::-webkit-scrollbar": {
+              display: "none",
             },
-            msOverflowStyle: 'none', 
-            scrollbarWidth: 'none', 
+            msOverflowStyle: "none",
+            scrollbarWidth: "none",
           }}
         >
           <Stack
