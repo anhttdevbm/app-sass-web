@@ -2,8 +2,8 @@ import { Box, Stack } from "@mui/material";
 import { Text } from "components/shared";
 import useGetDashboardData from "queries/ticket-agent/useDashboard/useDashboard";
 import { memo } from "react"
-import React, { PureComponent } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 
 const ColumnChart = () => {

@@ -12,7 +12,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { memo, useEffect, useMemo, useState, useRef } from "react";
+import { memo, useEffect, useState } from "react";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
@@ -20,9 +20,6 @@ import AssignGroup from "./AssignGroup";
 import { useRouter } from "next/navigation";
 import { TICKET_PATH } from "constant/paths";
 
-const upperCaseText = (string: string) => {
-  return string.toUpperCase();
-};
 const TableTicket = (props: any) => {
   const { data } = props;
   const [list, setList] = useState<any>(null);

@@ -3,59 +3,28 @@
 "use client";
 import PlusIcon from "icons/PlusIcon";
 import { Button, Text } from "components/shared";
-import { Dropdown, Search } from "components/Filters";
-import { getPath } from "utils/index";
+import {  Search } from "components/Filters";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { NS_COMMON, NS_COMPANY, NS_DOCS, NS_TICKET } from "constant/index";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import {  NS_TICKET } from "constant/index";
 import {
   Box,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Paper,
   Stack,
 } from "@mui/material";
 import { usePathname, useRouter } from "next-intl/client";
 import { useTranslations } from "next-intl";
-import { useDocs } from "store/docs/selectors";
-import NoneIcon from "icons/NoneIcon";
 import FilterSearchDocs from "./FilterSearchDocs/FilterSearchDocs";
-import { DocGroupByEnum } from "constant/enums";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { useParams, useSearchParams } from "next/navigation";
 import IconButton from "@mui/material/IconButton";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useDispatch } from "react-redux";
 import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
 import SearchIcon from "icons/SearchIcon";
-import AIGradientIcon from "icons/AIGradientIcon";
-import useToggle from "hooks/useToggle";
-import { DescriptionOutlined, FileOpenOutlined } from "@mui/icons-material";
-import ArrowExport from "icons/ArrowExport";
-import AddSquareIcon from "icons/AddSquareIcon";
-import { TICKET_CREATE_PATH } from "constant/paths";
 import { useSelector } from "react-redux";
-import {
-  selectSearchTicket,
-  selectTicketListTicket,
-} from "store/ticket/selectors";
-import { setDataListTicket, setKeySearchTicket } from "store/ticket/actions";
 import Model from "./module/pop-up-model/Model";
 import { setKeySearchTicketAgent } from "store/ticket-agent/actions";
 import { selectSearchTicketAgent } from "store/ticket-agent/selectors";
 
-function convertStringToArray(inputString) {
-  let idArray = inputString.split(",");
-
-  let resultArray = idArray.map((id) => {
-    return { id: id, name: "" };
-  });
-
-  return resultArray;
-}
 
 const ChangeViewListDoc = () => {
   const [typeViewListDoc, setTypeViewListDoc] =

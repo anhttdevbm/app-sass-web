@@ -3,7 +3,7 @@ import { PackageManagementDictionary } from "dictionaries/types/PackageManagemen
 export const PackageManagementLang: PackageManagementDictionary = {
   head: {
     sumary: "Tổng kết",
-    account: "Tài khoản",
+    account: "Tài khoản chưa thanh toán",
     transactionHistory: "Lịch sử giao dịch",
     upgradePackage: "Nâng cấp gói",
     upgradeNewAccount: "Nâng cấp tài khoản mới",

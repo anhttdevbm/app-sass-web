@@ -3,34 +3,25 @@
 "use client";
 import PlusIcon from "icons/PlusIcon";
 import { Button, Text } from "components/shared";
-import { Dropdown, Search } from "components/Filters";
-import { getPath } from "utils/index";
+import {  Search } from "components/Filters";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NS_COMMON, NS_COMPANY, NS_DOCS, NS_TICKET } from "constant/index";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { NS_TICKET } from "constant/index";
 import {
   Box,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Paper,
   Stack,
 } from "@mui/material";
-import { usePathname, useRouter } from "next-intl/client";
+import { useRouter } from "next-intl/client";
 import { useTranslations } from "next-intl";
-import { useDocs } from "store/docs/selectors";
 import NoneIcon from "icons/NoneIcon";
 import FilterSearchDocs from "../../../FilterSearchDocs/FilterSearchDocs";
 import { DocGroupByEnum } from "constant/enums";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import IconButton from "@mui/material/IconButton";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import MenuIcon from "@mui/icons-material/Menu";
-import { changeTypeViewDoc, TypeViewListDoc } from "store/docs/reducer";
+import { changeTypeViewDoc } from "store/docs/reducer";
 import SearchIcon from "icons/SearchIcon";
-import useToggle from "hooks/useToggle";
 import { TICKET_CREATE_PATH } from "constant/paths";
 import { useSelector } from "react-redux";
 import { selectSearchTicket } from "store/ticket/selectors";

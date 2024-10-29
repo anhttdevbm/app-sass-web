@@ -1,6 +1,5 @@
 "use client";
 import { Stack } from "@mui/material";
-import { usePathname, useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import Pagination from "components/Pagination";

@@ -3,10 +3,8 @@ import {
   Box,
   ButtonBase,
   MenuItem,
-  MenuList,
   Popover,
   Radio,
-  Stack,
   Button,
   Typography,
   popoverClasses,
@@ -14,16 +12,12 @@ import {
 } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 import { FilterSearchDocsProps } from "./FilterSearchDocs";
-import { Select, Text } from "components/shared";
+import {  Text } from "components/shared";
 import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_DOCS } from "constant/index";
-import { useFormik } from "formik";
-import { useEmployeeOptions } from "store/company/selectors";
+import {  NS_DOCS } from "constant/index";
 import ChevronIcon from "icons/ChevronIcon";
-import CalendarIcon from "icons/CalendarIcon";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { useSearchParams } from "next/navigation";
 const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
   const docsT = useTranslations(NS_DOCS);
   const [anchorEl, setAnchorEl] = useState<any>(null);
@@ -47,8 +41,6 @@ const FilterTime = ({ onChange, queries }: FilterSearchDocsProps) => {
 
 
   const handelSearch = () => {
-    console.log("check key", selectedOption)
-    console.log("check key", selectedDate.format('YYYY/MM/DD'))
     const newData = selectedOption || selectedDate.format('YYYY/MM/DD')
     onChange("createTime", newData);
     handleClose();

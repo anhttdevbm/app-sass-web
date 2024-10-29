@@ -1,17 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
   ButtonBase,
-  FormControl,
-  InputLabel,
   MenuItem,
-  MenuList,
   Popover,
-  Select,
   Stack,
   popoverClasses,
 } from "@mui/material";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useState } from "react";
 import { FilterSearchDocsProps, sxConfig } from "./FilterSearchDocs";
 import { Text } from "components/shared";
 import { useTranslations } from "next-intl";

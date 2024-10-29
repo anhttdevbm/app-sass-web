@@ -29,9 +29,8 @@ const AccountInfoHeader = ({
   viewStep,
 }: AccountInfoHeaderProp) => {
   const pathname = usePathname();
-  const router = useRouter();
-  const { dataTransfer, onSetStep, prevStep, currStep } = useChat();
-  const { usersCount, t, name } = accountInfo;
+  const { dataTransfer, onSetStep, currStep } = useChat();
+  const { t, name } = accountInfo;
   const isGroup = useMemo(() => t !== "d", [t]);
 
   const [textSearch, setTextSearch] = useState("");
@@ -42,7 +41,11 @@ const AccountInfoHeader = ({
 
   const startGroupMeet = async () => {
     if (pathname.includes("/meeting")) return;
-    window.open(`/meeting/${dataTransfer.id}`, "_blank");
+    window.open(
+      `/meeting/${dataTransfer.id}`,
+      "_blank",
+      "width=800;height=600",
+    );
   };
 
   const handleKeyDown = (event) => {
