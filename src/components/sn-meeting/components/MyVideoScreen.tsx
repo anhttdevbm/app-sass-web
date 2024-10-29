@@ -113,7 +113,7 @@ const MyVideoScreen: React.FC<MyVideoScreenProps> = (
         }}
       />
 
-      {!localStreamState.isCameraOn && <Avatar src={user?.avatar?.link} />}
+      {!localStreamState.isCameraOn && <Avatar src={user?.avatar} />}
 
       <Box
         id="mic-ui"

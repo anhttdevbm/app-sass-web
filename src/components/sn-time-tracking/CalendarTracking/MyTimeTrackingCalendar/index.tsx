@@ -989,7 +989,7 @@ const TrackingCalendar = (props: IProps) => {
                                               >
                                                 <Avatar
                                                   sx={{ width: 20, height: 20 }}
-                                                  src={item?.avatar?.link}
+                                                  src={item?.avatar}
                                                 />
                                                 <Typography
                                                   sx={{
@@ -1112,7 +1112,7 @@ const TrackingCalendar = (props: IProps) => {
                                         >
                                           <Avatar
                                             sx={{ width: 20, height: 20 }}
-                                            src={item?.avatar?.link}
+                                            src={item?.avatar}
                                           />
                                           <Typography
                                             sx={{
@@ -1223,7 +1223,7 @@ const TrackingCalendar = (props: IProps) => {
                                           >
                                             <Avatar
                                               sx={{ width: 20, height: 20 }}
-                                              src={item?.avatar?.link}
+                                              src={item?.avatar}
                                             />
                                             <Typography
                                               sx={{
@@ -1344,7 +1344,7 @@ const TrackingCalendar = (props: IProps) => {
                                         >
                                           <Avatar
                                             sx={{ width: 20, height: 20 }}
-                                            src={item?.avatar?.link}
+                                            src={item?.avatar}
                                           />
                                           <Typography
                                             sx={{

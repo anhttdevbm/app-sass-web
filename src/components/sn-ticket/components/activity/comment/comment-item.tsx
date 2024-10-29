@@ -36,7 +36,6 @@ const CommentItem = (props) => {
   const queryClient = useQueryClient();
   const t = useTranslations(NS_TICKET);
 
-
   const handleUpdateComment = useCallback(
     (data) => {
       editComment.mutate(
@@ -95,7 +94,7 @@ const CommentItem = (props) => {
         spacing={1}
       >
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={creatorUser?.avatar?.link} />
+          <Avatar size={32} src={creatorUser?.avatar} />
           <Stack>
             <Text variant="body2" style={{ fontSize: "13px", fontWeight: 600 }}>
               {creatorUser?.fullname ?? "--"}
@@ -117,7 +116,7 @@ const CommentItem = (props) => {
           >
             <LockCommentIcon />{" "}
             <Typography style={{ color: "#626F86", fontSize: "10px" }}>
-            {t("ticketDetail.commentActivity.internalNote")}
+              {t("ticketDetail.commentActivity.internalNote")}
             </Typography>
           </Stack>
         )}
@@ -150,7 +149,9 @@ const CommentItem = (props) => {
               variant="outlined"
               size="small"
             >
-              <Typography sx={{ color: "#333333" }}>{t("ticketDetail.commentActivity.cancel")}</Typography>
+              <Typography sx={{ color: "#333333" }}>
+                {t("ticketDetail.commentActivity.cancel")}
+              </Typography>
             </Button>
           </Stack>
         </EditorCustom>

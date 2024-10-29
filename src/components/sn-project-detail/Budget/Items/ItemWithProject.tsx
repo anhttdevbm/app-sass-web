@@ -171,7 +171,7 @@ export const ItemWithProject = ({
                     },
                   }}
                 >
-                  <Avatar src={budget?.created_by?.avatar?.link} size={35} />
+                  <Avatar src={budget?.created_by?.avatar} size={35} />
                   <Text paddingLeft="10px">{budget.name}</Text>
                 </Link>
               )}

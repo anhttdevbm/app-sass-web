@@ -104,7 +104,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
           {companyT("clientCompany.createBy")}
         </Text>
         <Stack direction="row" gap={1}>
-          <Avatar size={32} src={item?.created_by?.avatar?.link} />
+          <Avatar size={32} src={item?.created_by?.avatar.link} />
           <Text variant="h6" my="auto" align="right">
             {item?.created_by?.fullname}
           </Text>

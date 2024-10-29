@@ -54,7 +54,7 @@ import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Service } from "./TabDetail/Service";
 import ArrowDownIcon from "icons/ArrowDownIcon";
-import "./styles.css"
+import "./styles.css";
 
 enum TABS {
   FEED = "Feed",
@@ -180,8 +180,8 @@ export const BudgetDetail = () => {
         text: budgetT("tabService.alert"),
         icon: "info",
         customClass: {
-          icon: 'Swal-custom-icon-info',
-        }
+          icon: "Swal-custom-icon-info",
+        },
       });
 
       return;
@@ -399,7 +399,7 @@ export const BudgetDetail = () => {
                 <ArrowDownIcon />
               </IconButton>
             </Link>
-            <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
+            <Avatar size={40} src={budget?.created_by?.avatar || ""} />
             <Stack width={"150px"}>
               <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}
@@ -579,7 +579,7 @@ export const BudgetDetail = () => {
         </Stack>
       </Stack>
 
-      <Stack p={"10px"} direction="row" >
+      <Stack p={"10px"} direction="row">
         <Box
           position="relative"
           sx={{
@@ -587,11 +587,11 @@ export const BudgetDetail = () => {
             transition: "all .2s",
             overflow: "auto",
             height: "calc(100vh - 300px)",
-            '&::-webkit-scrollbar': {
-              display: 'none', 
+            "&::-webkit-scrollbar": {
+              display: "none",
             },
-            msOverflowStyle: 'none', 
-            scrollbarWidth: 'none', 
+            msOverflowStyle: "none",
+            scrollbarWidth: "none",
           }}
         >
           <Stack

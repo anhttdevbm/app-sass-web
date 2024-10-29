@@ -209,7 +209,7 @@ const TopContent = (props: TopContentProps) => {
             display={"flex"}
             alignItems={"center"}
           >
-            {/* <Avatar src={user?.avatar?.link ?? ""} /> */}
+            {/* <Avatar src={user?.avatar ?? ""} /> */}
 
             <Text fontWeight={600} variant={{ xs: "body2", md: "h4" }} pl={1}>
               INV-{item?.invoice_number ? item?.invoice_number?.toString() : ""}

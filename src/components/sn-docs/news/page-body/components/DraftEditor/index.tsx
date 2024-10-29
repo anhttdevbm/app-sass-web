@@ -55,7 +55,7 @@ export default function DraftEditor() {
   const { data } = useGetDocDetailQuery({ id });
   const [textAreaValue, setTextAreaValue] = useState(name || "");
   const [headerImage, setHeaderImage] = useState<string>(
-    data?.avatar?.link || "",
+    data?.avatar.link || "",
   );
 
   const [debounceChange] = useDebounce(
@@ -360,7 +360,7 @@ export default function DraftEditor() {
           strategy: findCommentEntities,
           component: (props) => (
             <CommentSpan
-              avatarUrl={user?.avatar?.link || ""}
+              avatarUrl={user?.avatar || ""}
               blockKey={props.blockKey}
               positionComments={positionComment}
             >
@@ -402,7 +402,7 @@ export default function DraftEditor() {
           }}
         >
           <Image
-            src={headerImage || data?.avatar?.link || ""}
+            src={headerImage || data?.avatar.link || ""}
             fill
             alt=""
             objectFit="cover"

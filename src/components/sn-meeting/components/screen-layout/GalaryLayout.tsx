@@ -242,7 +242,7 @@ const GalleryLayout = () => {
       participant: {
         id: user?.id || "",
         fullname: user?.fullname || "",
-        avatar: user?.avatar?.link || "",
+        avatar: user?.avatar || "",
         position: user?.position?.name || "",
         username: user?.name || "",
       },

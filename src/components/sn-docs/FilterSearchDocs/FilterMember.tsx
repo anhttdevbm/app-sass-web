@@ -29,11 +29,7 @@ export interface IMember {
   is_active: boolean;
   created_time: string;
   status: number;
-  avatar?: {
-    object: string;
-    name: string;
-    link: string;
-  };
+  avatar: string;
   username: string;
   // id: string;
   authToken: string;

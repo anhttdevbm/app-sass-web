@@ -127,7 +127,7 @@ const UserInfo = () => {
         }}
         onClick={onOpen}
       >
-        <Avatar size={64} alt={user.fullname} src={user?.avatar?.link} />
+        <Avatar size={64} alt={user.fullname} src={user?.avatar} />
         <Stack>
           <Text fontWeight={600} sx={{ wordBreak: "break-all" }}>
             {user.fullname}

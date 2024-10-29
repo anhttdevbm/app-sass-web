@@ -141,9 +141,7 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
         pageSize={pageSize}
         sessionId={user?.id}
         isGroup={isGroup}
-        avatarPartner={
-          account?.avatar?.link ?? conversationInfo?.avatar?.link ?? undefined
-        }
+        avatarPartner={account?.avatar ?? conversationInfo?.avatar ?? undefined}
         initialMessage={messages}
         mediaListPreview={mediaListConversation}
         stateMessage={stateSendMessage}

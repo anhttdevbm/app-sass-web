@@ -625,7 +625,7 @@ const companySlice = createSlice({
           const newOptions: Option[] = (items as Employee[]).map((item) => ({
             label: item.fullname,
             value: item.id,
-            avatar: item?.avatar?.link,
+            avatar: item?.avatar,
             subText: item.email,
           }));
           state.clientCompaniesMemberOptions = removeDuplicateItem(

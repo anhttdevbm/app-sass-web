@@ -82,7 +82,7 @@ const GroupChatMobile: React.FC<GroupChatMobileProps> = ({
               }}
             >
               <Avatar
-                src={currentConversation.avatar?.link}
+                src={currentConversation.avatar}
                 sx={{
                   height: "55px",
                   width: "55px",

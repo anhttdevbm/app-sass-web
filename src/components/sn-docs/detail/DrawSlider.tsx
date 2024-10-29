@@ -72,7 +72,7 @@ const HistoryDocItem: React.FC<{ data: TDocHistory }> = ({ data }) => {
           >
             <Avatar
               size={16}
-              src={data.user?.avatar?.link || "https://picsum.photos/60"}
+              src={data.user?.avatar || "https://picsum.photos/60"}
             />
           </Box>
           <Text

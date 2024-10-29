@@ -186,7 +186,7 @@ export const ItemWithoutProject = ({
                     },
                   }}
                 >
-                  <Avatar src={budget?.created_by?.avatar?.link} size={35} />
+                  <Avatar src={budget?.created_by?.avatar} size={35} />
                   <Text paddingLeft="10px" align="left">
                     {budget.name}
                   </Text>
@@ -195,7 +195,7 @@ export const ItemWithoutProject = ({
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
               <Stack direction="row" alignItems="center">
-                <Avatar src={budget?.created_by?.avatar?.link} size={35} />
+                <Avatar src={budget?.created_by?.avatar} size={35} />
                 <Text paddingLeft="10px" align="left">
                   {budget.company}
                 </Text>

@@ -165,7 +165,7 @@ const EditorCustom = (props: EditorProps) => {
       >
         <Avatar
           alt={user?.name || "User"}
-          src={user?.avatar?.link}
+          src={user?.avatar}
           variant="rounded"
           sx={{ borderRadius: "10px", marginBottom: "0px" }}
         />

@@ -95,7 +95,7 @@ const CommentItem = (props: CommentItemProps) => {
     <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
       <Stack direction="row" justifyContent="space-between" spacing={1}>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={body?.avatar?.link} />
+          <Avatar size={32} src={body?.avatar} />
           <Stack>
             <Text variant="body2">{body?.fullname ?? "--"}</Text>
             <Text variant="caption" color="grey.400">

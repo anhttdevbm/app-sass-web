@@ -245,10 +245,10 @@ export const useWSChat = () => {
               const groups = resp.data?.result;
               const users = items.map((item) => ({
                 type: CHAT_ROOM_TYPE.PERSONAL,
-                avatar: item?.avatar?.link,
+                avatar: item?.avatar,
                 peer_detail: {
                   fullname: item?.fullname,
-                  avatar: item?.avatar?.link,
+                  avatar: item?.avatar,
                 },
                 ...item,
               }));

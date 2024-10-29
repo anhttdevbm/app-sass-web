@@ -20,11 +20,7 @@ export default function MemberListSelect({
         alignItems="center"
         justifyContent="space-between"
         onClick={() =>
-          onChangeMember(
-            member.id,
-            member.fullname,
-            member.avatar?.link as string,
-          )
+          onChangeMember(member.id, member.fullname, member.avatar as string)
         }
         sx={{
           cursor: "pointer",
@@ -32,7 +28,7 @@ export default function MemberListSelect({
       >
         <Checkbox checked={checked} />
         <Stack direction={{ sm: "row" }} spacing={1.5} flex={1}>
-          <Avatar size={40} src={member.avatar?.link} />
+          <Avatar size={40} src={member.avatar} />
           <Stack>
             <Text variant="h6">{member.fullname}</Text>
             <Text variant="body2">{member.email}</Text>

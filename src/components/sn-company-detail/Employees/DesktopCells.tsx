@@ -23,7 +23,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
     <>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={item?.avatar?.link} />
+          <Avatar size={32} src={item?.avatar} />
           <Text variant="h6">{item.fullname}</Text>
         </Stack>
       </BodyCell>

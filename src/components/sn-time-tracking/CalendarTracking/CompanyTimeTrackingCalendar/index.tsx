@@ -185,7 +185,7 @@ const TrackingCalendar: React.FC<IProps> = (props) => {
                 end: moment(data?.end_time).format("hh:mm A"),
                 extendedProps: {
                   project: {
-                    avatar: data?.project?.avatar?.link,
+                    avatar: data?.project?.avatar,
                     name: data?.project?.name,
                   },
                   day: data?.day,

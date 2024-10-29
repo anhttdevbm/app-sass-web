@@ -40,7 +40,7 @@ const AccountInfoHeader = ({
   const [textSearch, setTextSearch] = useState("");
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const [avatar, setAvatar] = useState<string | undefined>(
-    dataTransfer?.avatar?.link,
+    dataTransfer?.avatar,
   );
 
   const startGroupMeet = async () => {
@@ -59,7 +59,7 @@ const AccountInfoHeader = ({
   };
 
   useEffect(() => {
-    setAvatar(dataTransfer?.avatar?.link);
+    setAvatar(dataTransfer?.avatar);
   }, [dataTransfer?.avatar]);
 
   const _renderChatGroup = () => {

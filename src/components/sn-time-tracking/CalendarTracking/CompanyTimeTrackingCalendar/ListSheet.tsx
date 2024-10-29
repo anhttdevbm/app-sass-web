@@ -69,7 +69,7 @@ const ListSheet = ({ data, selectedDate }: IProps) => {
               pushedTimeSheet.push({
                 ...item,
                 fullname: data.fullname,
-                avatar: data.avatar?.link,
+                avatar: data.avatar,
               });
             }
           });

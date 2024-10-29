@@ -543,7 +543,7 @@ const Sumary = () => {
                 <Box display="flex" gap={2}>
                   <Image
                     alt={accountBillOwner?.avatar?.name || "Default alt text"}
-                    src={accountBillOwner?.avatar?.link ?? UserPlaceholderImage}
+                    src={accountBillOwner?.avatar ?? UserPlaceholderImage}
                     width={32}
                     height={32}
                     layout="fixed"

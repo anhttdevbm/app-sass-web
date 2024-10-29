@@ -176,10 +176,7 @@ const DesktopInformation = (props) => {
       <Stack>
         <Stack direction="row" spacing={2} justifyContent="space-between">
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar
-              src={item?.avatar?.link ?? ProjectPlaceholderImage}
-              size={40}
-            />
+            <Avatar src={item?.avatar ?? ProjectPlaceholderImage} size={40} />
 
             <Stack>
               <Text variant="h4">{item?.name}</Text>
@@ -208,7 +205,7 @@ const DesktopInformation = (props) => {
       <InformationItem label={commonT("assigner")}>
         {item?.owner?.fullname ? (
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar size={32} src={item?.owner?.avatar?.link} />
+            <Avatar size={32} src={item?.owner?.avatar} />
             <Text variant="body2">{item?.owner?.fullname ?? "--"}</Text>
           </Stack>
         ) : undefined}
@@ -552,7 +549,7 @@ const MobileInformation = (props) => {
       <InformationItem label={commonT("assigner")}>
         {item?.owner?.fullname ? (
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar size={32} src={item?.owner?.avatar?.link} />
+            <Avatar size={32} src={item?.owner?.avatar} />
             <Text variant="body2">{item?.owner?.fullname ?? "--"}</Text>
           </Stack>
         ) : undefined}

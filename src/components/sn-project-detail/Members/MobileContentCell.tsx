@@ -59,7 +59,7 @@ const Label = ({ item }: { item: Member }) => {
       pr={3}
     >
       <Stack direction="row" py={1.5} alignItems="center" spacing={1}>
-        <Avatar size={32} src={item?.avatar?.link} />
+        <Avatar size={32} src={item?.avatar} />
         <Stack>
           <Text variant="h6">{item.fullname}</Text>
           <Text variant="caption"></Text>

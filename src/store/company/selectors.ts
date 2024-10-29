@@ -151,7 +151,7 @@ export const useEmployeeOptions = () => {
       items.map((item) => ({
         label: item.fullname,
         value: item.id,
-        avatar: item?.avatar?.link,
+        avatar: item?.avatar,
         subText: item.email,
       })),
     [items],

@@ -147,7 +147,7 @@ const TimelogTrackingCalendar: React.FC<IProps> = ({}) => {
               }}
             />
             <Avatar
-              src={timeLog?.user?.avatar?.link}
+              src={timeLog?.user?.avatar}
               sx={{ width: "32px", height: "32px", marginRight: "8px" }}
             />
             <Stack direction="column">

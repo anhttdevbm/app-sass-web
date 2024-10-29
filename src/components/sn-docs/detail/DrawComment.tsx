@@ -77,7 +77,7 @@ export const CommentItem: React.FC<IComment> = (props) => {
         color: "ButtonText",
       }}
     >
-      <Avatar src={props?.created_by?.avatar?.link} size={32} />
+      <Avatar src={props?.created_by?.avatar} size={32} />
 
       <Box
         sx={{

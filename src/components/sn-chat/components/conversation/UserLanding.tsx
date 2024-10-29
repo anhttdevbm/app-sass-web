@@ -123,7 +123,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
         <Box textAlign="center" pt={2} pb={4} overflow="auto">
           <Avatar
             alt="Avatar"
-            src={avatar?.link || peer_detail?.avatar || undefined}
+            src={avatar || peer_detail?.avatar || undefined}
             size={120}
             style={{
               borderRadius: "50%",

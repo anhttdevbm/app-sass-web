@@ -25,22 +25,25 @@ const MobileContentCell = (props: MobileContentCellProps) => {
   return (
     <>
       <BodyCell align="left" sx={{ px: "10px" }}>
-      <div
-      style={{cursor: 'pointer'}}
-          onClick={async () => {
-            const result: any = await api(
-              {
-                url: `/docs/detail/${item.id}`,
-                method: "GET",
-                //@ts-ignore
-              }, {}, {});
-            if (result.error) {
-              console.error("Error:", result.error);
-            } else {
-              await dispatch(setContentRow(result?.data?.content));
-              push(`/documents/${item.id}`);
-            }
-          }}
+        <div
+          style={{ cursor: "pointer" }}
+          // onClick={async () => {
+          //   const result: any = await api(
+          //     {
+          //       url: `/docs/detail/${item.id}`,
+          //       method: "GET",
+          //       //@ts-ignore
+          //     },
+          //     {},
+          //     {},
+          //   );
+          //   if (result.error) {
+          //     console.error("Error:", result.error);
+          //   } else {
+          //     await dispatch(setContentRow(result?.data?.content));
+          //     push(`/documents/${item.id}`);
+          //   }
+          // }}
         >
           <Text fontWeight={600} fontSize={12}>
             {item?.name}
@@ -65,7 +68,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
             alignItems="center"
             spacing={1}
           >
-            <Avatar size={24} src={item.created_by?.avatar?.link} />
+            <Avatar size={24} src={item.created_by?.avatar} />
             <Stack
               justifyContent={"start"}
               alignItems={"start"}

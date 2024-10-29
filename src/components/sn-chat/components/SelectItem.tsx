@@ -55,7 +55,7 @@ const SelectItem = ({
         />
       )}
       <Avatar
-        src={avatar?.link}
+        src={avatar}
         alt="Avatar"
         size={42}
         style={{

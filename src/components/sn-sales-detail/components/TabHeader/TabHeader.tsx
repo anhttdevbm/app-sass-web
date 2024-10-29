@@ -123,7 +123,7 @@ const TabHeader = () => {
             width={24}
             color="inherit"
           />
-          <Avatar size={32} src={saleDetail?.owner?.avatar?.link} />
+          <Avatar size={32} src={saleDetail?.owner?.avatar} />
           <Text
             variant="h5"
             sx={{

@@ -67,7 +67,7 @@ const ChatDetailUserMobile: React.FC<ChatDetailUserMobileProps> = ({
           }}
         >
           <Avatar
-            src={currentConversation?.avatar?.link}
+            src={currentConversation?.avatar}
             sx={{
               height: "80px",
               width: "80px",

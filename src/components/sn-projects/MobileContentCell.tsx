@@ -35,10 +35,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
         sx={{ px: 0.5 }}
       >
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar
-            size={24}
-            src={item.avatar?.link ?? ProjectPlaceholderImage}
-          />
+          <Avatar size={24} src={item.avatar ?? ProjectPlaceholderImage} />
           <Text
             variant="body2"
             color="text.primary"
@@ -55,13 +52,22 @@ const MobileContentCell = (props: MobileContentCellProps) => {
       </BodyCell>
       <BodyCell align="left">
         {/* {formatDate(item.start_date)} */}
-        {item.start_date ? dayjs(item.start_date).format(DATE_LOCALE_FORMAT) : ""}
+        {item.start_date
+          ? dayjs(item.start_date).format(DATE_LOCALE_FORMAT)
+          : ""}
       </BodyCell>
       <BodyCell align="left">
         {item.end_date ? dayjs(item.end_date).format(DATE_LOCALE_FORMAT) : ""}
       </BodyCell>
       {item.status ? (
-        <BodyCell sx={{ display: 'flex', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
+        <BodyCell
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
           <SelectStatus value={item.status} id={item.id} />
         </BodyCell>
       ) : (

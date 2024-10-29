@@ -142,7 +142,7 @@ const TimeSheet: React.FC<IProps> = ({ data, filters, dateRange }) => {
                   >
                     <Avatar
                       sx={{ width: 20, height: 20, objectFit: "cover" }}
-                      src={user?.avatar?.link}
+                      src={user?.avatar}
                     />
                     <Typography
                       sx={{

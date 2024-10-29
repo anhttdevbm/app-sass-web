@@ -144,7 +144,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
   const options = items?.map((e) => ({
     value: e.id,
     label: e.fullname || "",
-    avatar: e.avatar?.link || "",
+    avatar: e.avatar || "",
     subText: e.email,
   }));
 
@@ -330,11 +330,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
                     alignItems: "center",
                   }}
                 >
-                  <Avatar
-                    src={user.avatar?.link}
-                    size={32}
-                    alt={user.fullname}
-                  />
+                  <Avatar src={user.avatar} size={32} alt={user.fullname} />
                   <Box
                     sx={{
                       fontFamily: inter.style.fontFamily,
@@ -425,7 +421,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
             }}
           >
             <Avatar
-              src={docInfo.owner?.avatar?.link}
+              src={docInfo.owner?.avatar}
               size={32}
               alt={docInfo.owner?.fullname}
             />

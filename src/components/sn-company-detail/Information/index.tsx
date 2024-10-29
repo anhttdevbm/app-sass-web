@@ -42,9 +42,9 @@ const InformationProjectPage = () => {
   const { prevPath, title } = useHeaderConfig();
 
   const [item, error, isFetching] = useMemo(() => {
-    if (id) {      
+    if (id) {
       return [detailItem, detailItemError, detailItemIsFetching];
-    }    
+    }
     return [myItem, myItemError, myItemIsFetching];
   }, [
     detailItem,

@@ -44,7 +44,7 @@ const RoomHeaderMobile = () => {
   const groupAvatar = useMemo(() => {
     if (
       !isGroup(currentConversation?.type) &&
-      currentConversation?.avatar?.link &&
+      currentConversation?.avatar &&
       currentConversation?.usersCount > 3
     ) {
       return (
@@ -104,7 +104,7 @@ const RoomHeaderMobile = () => {
       return (
         <Avatar
           src={
-            currentConversation?.avatar?.link ||
+            currentConversation?.avatar ||
             currentConversation?.peer_detail?.avatar
           }
           sx={{

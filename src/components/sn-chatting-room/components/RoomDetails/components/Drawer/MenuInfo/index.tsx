@@ -73,7 +73,7 @@ const MenuInfo = () => {
         >
           <Avatar
             src={
-              currentConversation?.avatar?.link ||
+              currentConversation?.avatar ||
               currentConversation?.peer_detail?.avatar
             }
             sx={{
