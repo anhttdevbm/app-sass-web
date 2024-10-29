@@ -51,7 +51,7 @@ const EditCompany = () => {
     const payload = { ...dataOnlyUpdated } as any
 
     if (typeof data["avatar"] === "object") {
-      const logoUrl = await client.uploadFile(Endpoint.UPLOAD, data["avatar"]);
+      const logoUrl = await client.uploadFile(Endpoint.SIGNUP_UPLOAD, data["avatar"]);
       payload.avatar = [logoUrl];
     } else {
       delete payload["avatar"];
