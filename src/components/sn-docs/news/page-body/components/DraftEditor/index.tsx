@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import EditorPlugins from "@draft-js-plugins/editor";
 import createEmojiPlugin from "@draft-js-plugins/emoji";
+import "@draft-js-plugins/inline-toolbar/lib/plugin.css";
+import { CommentOutlined } from "@mui/icons-material";
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import { Box, Typography } from "@mui/material";
 import { NewPageContext } from "components/sn-docs/news/context/NewPageContext";
@@ -41,8 +43,6 @@ import CommentSpan from "./CommentSpan";
 import "./DraftEditor.css";
 import "./EmojiEditor.css";
 import { InlineToolbar, inlineToolbarPlugin } from "./InlineToolbarPlugin";
-import "@draft-js-plugins/inline-toolbar/lib/plugin.css";
-import { CommentOutlined } from "@mui/icons-material";
 export default function DraftEditor() {
   const { user } = useAuth();
 
@@ -404,7 +404,7 @@ export default function DraftEditor() {
           }}
         >
           <Image
-            src={headerImage || data?.avatar?.link || ""}
+            src={headerImage || data?.avatar || ""}
             fill
             alt=""
             objectFit="cover"
