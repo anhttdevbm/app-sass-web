@@ -254,5 +254,4 @@ const INITIAL_VALUES = {
   position: "",
   client: "",
   permission: Permission.ST,
-  is_invite: false,
 };

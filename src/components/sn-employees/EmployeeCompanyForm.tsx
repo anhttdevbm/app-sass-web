@@ -85,7 +85,7 @@ const EmployeeCompanyForm = ({
       try {
         let newItem;
         if (type === DataAction.CREATE) {
-          const { email, position, permission, client, is_invite } =
+          const { email, position, permission, client } =
             values as typeof initialValues;
           switch (typeEmployee) {
             case EmployeeType.EMPLOYEE:
@@ -93,7 +93,6 @@ const EmployeeCompanyForm = ({
                 email,
                 position,
                 roles: [permission],
-                is_invite,
                 password: "123456",
                 company: user?.company ?? "",
               });
@@ -104,7 +103,6 @@ const EmployeeCompanyForm = ({
                 position,
                 roles: [Permission.CL],
                 client,
-                is_invite,
                 password: "123456",
                 company: user?.company ?? "",
               });
@@ -115,7 +113,6 @@ const EmployeeCompanyForm = ({
                 position,
                 roles: [Permission.CT],
                 client,
-                is_invite,
                 password: "123456",
                 company: user?.company ?? "",
               });
@@ -259,18 +256,6 @@ const EmployeeCompanyForm = ({
             onEndReached={onEndReached}
           />
         </Stack>
-        {type === DataAction.CREATE && (
-          <Stack direction="row">
-            <FormControlLabel
-              label={companyT("employees.form.isInvite")}
-              name="is_invite"
-              control={<Checkbox />}
-              checked={formik.values.is_invite}
-              onChange={formik.handleChange}
-              sx={{ px: 2 }}
-            />
-          </Stack>
-        )}
       </Stack>
     </FormLayout>
   );
