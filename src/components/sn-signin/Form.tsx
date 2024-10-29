@@ -37,6 +37,7 @@ const Form = () => {
 
 
   const {fcmToken} = useNotification();
+  console.log("🚀 ~ Form ~ fcmToken:", fcmToken)
   const onSubmit = async (values: SigninData) => {
 
     try {

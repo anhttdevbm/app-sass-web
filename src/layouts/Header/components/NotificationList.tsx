@@ -9,6 +9,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import NotificationIcon from "icons/NotificationIcon";
+import ItemNotification from "../../../components/sn-notification/index"
 import { Stack, Box, Input } from "@mui/material";
 import { Text } from "components/shared";
 import CloseIcon from "icons/CloseIcon";
@@ -108,8 +109,12 @@ const NotificationList = () => {
                     </Stack>
 
                     <Stack direction="row" mt={1} p={1} alignItems='center' bgcolor="#F7F7FD" borderRadius="4px">
-                        <SearchIcon/>
-                        <Input disableUnderline placeholder="Search" sx={{paddingLeft : "12px" , width:"90%"}}/>
+                        <SearchIcon />
+                        <Input disableUnderline placeholder="Search" sx={{ paddingLeft: "12px", width: "90%" }} />
+                    </Stack>
+
+                    <Stack direction="row" mt={1} p={1} alignItems='center'>
+                        <ItemNotification/>
                     </Stack>
 
                 </DialogContent>

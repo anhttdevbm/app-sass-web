@@ -20,6 +20,7 @@ const useNotification = () => {
             vapidKey:
               "BP9tsAtOcvmk0JnGjih1wU88A8cKTIuhnxrN5Y-Q73mHv4zaIqjamHFut7QsfHZGVBD-X3DhiKL9WLDNUvcDw-c",
           });
+          console.log("🚀 ~ requestPermission ~ currentToken:", currentToken)
 
           if (currentToken) {
             setFcmToken(currentToken);
