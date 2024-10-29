@@ -106,7 +106,11 @@ const RoomHeader = () => {
   const startMeeting = async () => {
     if (pathname.includes("/meeting")) return;
 
-    window.open(`/meeting/${currentConversation.id}`, "_blank");
+    window.open(
+      `/meeting/${currentConversation.id}`,
+      "_blank",
+      "width=800;height=600",
+    );
   };
 
   useEffect(() => {
