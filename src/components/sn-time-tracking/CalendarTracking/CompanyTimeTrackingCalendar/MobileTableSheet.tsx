@@ -1,7 +1,9 @@
+import { KeyboardArrowDown, Person } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   Checkbox,
+  Chip,
   FormControlLabel,
   IconButton,
   InputAdornment,
@@ -10,7 +12,6 @@ import {
   Select,
   Stack,
   Table,
-  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -19,40 +20,41 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  EmployeeTimeSheetRowData,
+  IFormattedDate,
+  WeeklyHours,
+} from "components/sn-time-tracking/components/timeTracking.types";
+import PinActiveIcon from "icons/PinActiveIcon";
+import PinIcon from "icons/PinIcon";
+import SearchIcon from "icons/SearchIcon";
+import moment from "moment";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
+import {
   CompanyTimeSheet,
   MyTimeSheet,
   setAvatar,
   setIsOpen,
   setUserName,
 } from "store/timeTracking/reducer";
-import {
-  tableCellDataStyles,
-  trackingTableCellStyles,
-} from "./TrackingTable.styles";
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import SearchIcon from "icons/SearchIcon";
-import {
-  EmployeeTimeSheetRowData,
-  IFormattedDate,
-  WeeklyHours,
-} from "components/sn-time-tracking/components/timeTracking.types";
-import moment from "moment";
-import { KeyboardArrowDown, Person } from "@mui/icons-material";
-import PinActiveIcon from "icons/PinActiveIcon";
-import PinIcon from "icons/PinIcon";
-import { useDispatch } from "react-redux";
 import { inter } from "../CalendarTracking.styles";
+import { trackingTableCellStyles } from "./TrackingTable.styles";
 
 interface IProps {
   dateRange: Date[];
   data: CompanyTimeSheet[];
+  setUserFilterDataDetail: (data: CompanyTimeSheet) => void;
 }
 
 interface EmployeeTimeSheetMobileRowData extends EmployeeTimeSheetRowData {
   selectedDate: string;
 }
 
-export default function MobileTableSheet({ dateRange, data }: IProps) {
+export default function MobileTableSheet({
+  dateRange,
+  data,
+  setUserFilterDataDetail,
+}: IProps) {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -313,7 +315,7 @@ export default function MobileTableSheet({ dateRange, data }: IProps) {
 
     const filteredUser = data.filter((user) => user.id === id);
     if (filteredUser) {
-      //   setUserFilterDataDetail(filteredUser[0]);
+      setUserFilterDataDetail(filteredUser[0]);
     }
   };
 
@@ -533,16 +535,16 @@ export default function MobileTableSheet({ dateRange, data }: IProps) {
                         }}
                       />
                     </IconButton>
-                    {/* {inputSearchData.length >= 1 && (
-                <Chip
-                  label={inputSearchData.length}
-                  sx={{
-                    background: "white",
-                    color: "#0575E6",
-                    height: "18px",
-                  }}
-                />
-              )} */}
+                    {inputSearchData.length >= 1 && (
+                      <Chip
+                        label={inputSearchData.length}
+                        sx={{
+                          background: "white",
+                          color: "#0575E6",
+                          height: "18px",
+                        }}
+                      />
+                    )}
                   </Box>
                 </Box>
                 {_renderSearchUserPopup()}

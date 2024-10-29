@@ -579,6 +579,16 @@ const TableSheet: React.FC<IProps> = (props) => {
     );
   }, [userData]);
 
+  if (isOpen) {
+    // Detail timesheet of user
+    return (
+      <EmployeesTableSheet
+        employeeDataDetail={userFilterDataDetail}
+        formattedDates={formattedDates}
+      />
+    );
+  }
+
   return (
     <>
       {isOpen === false && !isSmSmaller ? (
@@ -706,13 +716,10 @@ const TableSheet: React.FC<IProps> = (props) => {
           </Table>
         </TableContainer>
       ) : (
-        <MobileTableSheet data={props.data} dateRange={props.dateRange} />
-      )}
-      {/* TimeSheet detail of user */}
-      {isOpen && (
-        <EmployeesTableSheet
-          employeeDataDetail={userFilterDataDetail}
-          formattedDates={formattedDates}
+        <MobileTableSheet
+          setUserFilterDataDetail={setUserFilterDataDetail}
+          data={props.data}
+          dateRange={props.dateRange}
         />
       )}
     </>
