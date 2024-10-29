@@ -15,16 +15,11 @@ const RightSidebar = () => {
   const { isDarkMode } = useTheme();
   const { isExpandedSidebar } = useSidebar();
   const { isXlSmaller } = useBreakpoint();
-  const [isActive, setIsActive] = useState<boolean>(true);
   const [typeShow, setTypeShow] = useState<"message" | "participants">(
     "participants",
   );
   const [openAddParticipant, setOpenAddParticipant] = useState(false);
   const { remoteStreams } = store.getState().meeting;
-
-  const toggleIsActive = () => {
-    setIsActive(!isActive);
-  };
 
   const handleCloseAddParticipant = () => {
     setOpenAddParticipant(false);
