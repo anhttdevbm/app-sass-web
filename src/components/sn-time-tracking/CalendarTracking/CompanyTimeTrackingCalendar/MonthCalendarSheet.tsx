@@ -12,7 +12,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
+  Typography,
 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
@@ -31,16 +31,8 @@ import "./style.css";
 interface Timesheet extends MyTimeSheet {
   fullname: string;
   avatar: string;
-  // Override day in MyTimeSheet to make it is require field
   day: string;
 }
-
-// interface Project {
-//   id: string;
-//   name: string;
-//   company: string;
-//   avatar: string | null; // Example assumes avatar is a string URL or null
-// }
 
 interface Task {
   avatarUrl: string;

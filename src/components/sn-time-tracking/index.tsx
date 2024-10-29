@@ -56,7 +56,7 @@ const TimeTrackingPage = () => {
   const { isDarkMode } = useTheme();
   const { isSmSmaller } = useBreakpoint();
   const { user } = useAuth();
-  const [tab, setTab] = useState<TabEnum>(TabEnum.MY_TIME);
+  const [tab, setTab] = useState<TabEnum>(TabEnum.COMPANY_TIME);
   const [workBgColor, setWorkBgColor] = useState<string>("#FFFFFF");
   const [timeBgColor, setTimeBgColor] = useState<string>("#D9F0FD");
   const [workBorder, setWorkBorder] = useState<string>("");
@@ -66,7 +66,7 @@ const TimeTrackingPage = () => {
   const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false);
 
   const [kindOfSheet, setKindOfSheet] = useState<KindOfTimeSheet>(
-    KindOfTimeSheet.TIME_SHEET,
+    KindOfTimeSheet.TABLE,
   );
   const timeT = useTranslations(NS_TIME_TRACKING);
 

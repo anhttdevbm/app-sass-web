@@ -48,6 +48,8 @@ import {
   tableCellDataStyles,
   trackingTableCellStyles,
 } from "./TrackingTable.styles";
+import useBreakpoint from "hooks/useBreakpoint";
+import MobileTableSheet from "./MobileTableSheet";
 
 interface IProps {
   dateRange: Date[];
@@ -91,26 +93,14 @@ const createRowData = (
     is_pin,
   };
 };
-function createUserDetailTableData(
-  project: string,
-  task: string,
-  sun: string,
-  mon: string,
-  tue: string,
-  wed: string,
-  thu: string,
-  fri: string,
-  sat: string,
-  total: string,
-) {
-  return { project, task, sun, mon, tue, wed, thu, fri, sat, total };
-}
 
 const TableSheet: React.FC<IProps> = (props) => {
   const dispatch = useDispatch();
   const { isOpen } = useSelector(
     (state: RootState) => state.userNavigationDetail,
   );
+
+  const { isSmSmaller } = useBreakpoint();
 
   const [userData, setUserData] = useState<CompanyTimeSheet[]>([]);
   const [filterUserData, setFilterUserData] = useState<CompanyTimeSheet[]>([]);
@@ -177,8 +167,6 @@ const TableSheet: React.FC<IProps> = (props) => {
     if (filteredUser) {
       setUserFilterDataDetail(filteredUser[0]);
     }
-    // setAllTableDataVisible(!allTableDataVisible);
-    // setDetailDataTable(!detailDataTable);
   };
 
   const handlePinEmployee = (
@@ -545,7 +533,7 @@ const TableSheet: React.FC<IProps> = (props) => {
           ? userData.map((user) =>
               createRowData(
                 user.fullname,
-                user.avatar?.link,
+                user.avatar,
                 user.timesheet,
                 user.id,
                 user.is_pin as string,
@@ -554,7 +542,7 @@ const TableSheet: React.FC<IProps> = (props) => {
           : filterUserData.map((user) =>
               createRowData(
                 user.fullname,
-                user.avatar?.link,
+                user.avatar,
                 user.timesheet,
                 user.id,
                 user.is_pin as string,
@@ -593,7 +581,7 @@ const TableSheet: React.FC<IProps> = (props) => {
 
   return (
     <>
-      {isOpen === false && (
+      {isOpen === false && !isSmSmaller ? (
         <TableContainer
           sx={{
             height: "100%",
@@ -717,6 +705,8 @@ const TableSheet: React.FC<IProps> = (props) => {
             {_renderTableFooter()}
           </Table>
         </TableContainer>
+      ) : (
+        <MobileTableSheet data={props.data} dateRange={props.dateRange} />
       )}
       {/* TimeSheet detail of user */}
       {isOpen && (

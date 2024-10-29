@@ -57,6 +57,7 @@ const FilterCategory: React.FC<IProps> = ({
         width: "100%",
         height: isSmSmaller ? "auto" : "60px",
         overflow: "auto hidden",
+        flexShrink: 0,
       }}
     >
       <p
