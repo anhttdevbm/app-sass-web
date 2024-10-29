@@ -57,7 +57,7 @@ export default function DraftEditor() {
   const { data } = useGetDocDetailQuery({ id });
   const [textAreaValue, setTextAreaValue] = useState(name || "");
   const [headerImage, setHeaderImage] = useState<string>(
-    data?.avatar?.link || "",
+    data?.avatar || "",
   );
 
   const [debounceChange] = useDebounce(
