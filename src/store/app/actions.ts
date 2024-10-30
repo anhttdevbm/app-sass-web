@@ -33,7 +33,7 @@ export type UpdateUserInfoData = {
   phone?: string;
   address?: string;
   fullname?: string;
-  avatar?: string | string[];
+  avatar?: string;
 };
 
 export type ChangePasswordData = {
