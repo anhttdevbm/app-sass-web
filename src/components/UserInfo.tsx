@@ -16,7 +16,7 @@ const UserInfo = (props: UserInfoProps) => {
 
   return (
     <Stack direction="row" alignItems="center" spacing={1} {...rest}>
-      <Avatar size={size} src={user?.avatar} alt={user.fullname} />
+      <Avatar size={size} src={user.avatar} alt={user.fullname} />
       <Stack>
         <Text variant="h5" color="text.primary" textAlign="left">
           {user.fullname}

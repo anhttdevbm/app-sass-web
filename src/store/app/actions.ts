@@ -21,7 +21,7 @@ export type SignupData = {
   password: string;
   phone?: string;
   fullname: string;
-  avatar?: string[];
+  avatar?: string;
 };
 
 export type ResetPasswordData = {
