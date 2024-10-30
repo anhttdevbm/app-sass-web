@@ -49,17 +49,18 @@ const EditCompany = () => {
 
     const payload = { ...dataOnlyUpdated } as any;
 
-    if (typeof data["avatar"] === "object") {
-      const logoUrl = await client.uploadFile(Endpoint.UPLOAD, data["avatar"]);
-      payload.avatar = [logoUrl];
+    // Upload avatar file and update payload.avatar with the returned URL
+    if (data["avatar"] && data["avatar"] instanceof File) {
+      const logoUrl = await client.uploadFile(Endpoint.UPLOAD_FILE, data["avatar"]);
+      payload.avatar = logoUrl;
     } else {
-      delete payload["avatar"];
+      payload.avatar = data["avatar"];
     }
 
     if (paramId) {
-      const data = await onUpdateCompany(id, payload);
+      const data = await onUpdateCompany(id, payload);      
       return data;
-    }
+    }    
     const result = await onUpdateMyCompany(payload);
     return result;
   };
