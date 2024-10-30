@@ -1,23 +1,23 @@
 "use client";
 
-import { memo, useMemo } from "react";
 import { Divider, Stack, StackProps } from "@mui/material";
-import { Text } from "components/shared";
-import { formatDate, formatNumber } from "utils/index";
-import EditCompany from "./EditCompany";
-import { useMyCompany } from "store/company/selectors";
-import StatusServer from "components/StatusServer";
-import { useParams } from "next/navigation";
-import { useHeaderConfig } from "store/app/selectors";
-import { useCompany } from "store/manager/selectors";
-import { NS_COMMON, NS_COMPANY, DATE_LOCALE_FORMAT } from "constant/index";
-import { useTranslations } from "next-intl";
-import Link from "components/Link";
 import Avatar from "components/Avatar";
-import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
-import { EMPLOYEES_PATH, POSITIONS_PATH, PROJECTS_PATH } from "constant/paths";
 import FixedLayout from "components/FixedLayout";
+import Link from "components/Link";
+import { Text } from "components/shared";
+import StatusServer from "components/StatusServer";
+import { DATE_LOCALE_FORMAT, NS_COMMON, NS_COMPANY } from "constant/index";
+import { EMPLOYEES_PATH, POSITIONS_PATH, PROJECTS_PATH } from "constant/paths";
 import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
+import { memo, useMemo } from "react";
+import { useHeaderConfig } from "store/app/selectors";
+import { useMyCompany } from "store/company/selectors";
+import { useCompany } from "store/manager/selectors";
+import { formatNumber } from "utils/index";
+import EditCompany from "./EditCompany";
 
 type InformationItemProps = StackProps & {
   label: string;
@@ -63,7 +63,7 @@ const InformationProjectPage = () => {
           <Stack direction="row" spacing={2} justifyContent="space-between">
             <Stack direction="row" alignItems="center" spacing={1}>
               <Avatar
-                src={item?.avatar?.link ?? ProjectPlaceholderImage}
+                src={typeof item?.avatar === 'string' ? item.avatar : ProjectPlaceholderImage}
                 size={40}
               />
               <Stack>
