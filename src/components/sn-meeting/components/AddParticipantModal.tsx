@@ -2,17 +2,14 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
 import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
-import { useEffect, useState } from "react";
-import { useChat } from "store/chat/selectors";
-import { CHAT_EVENT_TYPE, DirectionChat } from "store/chat/type";
-import { useAppDispatch, useAppSelector } from "store/hooks";
-import { useMeeting } from "store/meeting/selectors";
-import useFetchingChatting from "../hooks/useFetchingChatting";
-import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import { useParams } from "next/navigation";
-import { getParticipants } from "store/meeting/actions";
+import { useEffect, useState } from "react";
 import { useAuth } from "store/app/selectors";
+import { useChatHelpers, useWSChat } from "store/chat/helpers";
+import { useChat } from "store/chat/selectors";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
 import { getEmployees } from "store/company/actions";
+import { useAppDispatch } from "store/hooks";
 
 interface IProps {
   open: boolean;
@@ -24,6 +21,7 @@ interface CompanyMember {
   avatar: string;
   company: string;
   created_time: string;
+  expiration_date?: string;
   date_end_using: string;
   date_start_using: string;
   email: string;

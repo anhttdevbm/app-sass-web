@@ -64,10 +64,10 @@ const DesktopCells = (props: DesktopCellsProps) => {
       </BodyCell>
       <BodyCell
         align="left"
-        tooltip={dayjs(item.date_end_using).format(DATE_FORMAT)}
+        tooltip={dayjs(item.expiration_date).format(DATE_FORMAT)}
       >
         {/* {formatDate(item.date_end_using)} */}
-        {dayjs(item.date_end_using).format(DATE_FORMAT)}
+        {dayjs(item.expiration_date).format(DATE_FORMAT)}
       </BodyCell>
       <StatusCell
         namespace={NS_COMPANY}

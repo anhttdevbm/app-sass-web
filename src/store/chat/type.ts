@@ -420,6 +420,7 @@ export interface UserInfo {
   phone: string;
   position: Position;
   date_end_using: string;
+  expiration_date: string;
   date_start_using: string;
   approve: true;
   avatar: string;

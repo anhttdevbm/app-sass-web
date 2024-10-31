@@ -248,9 +248,9 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
 export default memo(Actions);
 
 const PAYMENT_OPTIONS = [
-  { label: TEXT_STATUS[1], value: PayStatus.PAID },
+  { label: TEXT_STATUS[1], value: PayStatus.ACTIVE },
   { label: TEXT_STATUS[2], value: PayStatus.UNPAID },
-  { label: TEXT_STATUS[3], value: PayStatus.WAITING },
+  { label: TEXT_STATUS[3], value: PayStatus.PENDING },
 ];
 
 const INITIAL_VALUES = {
