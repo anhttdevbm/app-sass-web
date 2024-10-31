@@ -203,9 +203,9 @@ const Actions = () => {
 export default memo(Actions);
 
 const PAYMENT_OPTIONS = [
-  { label: TEXT_PAY_STATUS[PayStatus.PAID], value: PayStatus.PAID },
+  { label: TEXT_PAY_STATUS[PayStatus.ACTIVE], value: PayStatus.ACTIVE },
   { label: TEXT_PAY_STATUS[PayStatus.UNPAID], value: PayStatus.UNPAID },
-  { label: TEXT_PAY_STATUS[PayStatus.WAITING], value: PayStatus.WAITING },
+  { label: TEXT_PAY_STATUS[PayStatus.PENDING], value: PayStatus.PENDING },
   { label: TEXT_STATUS[CompanyStatus.APPROVE], value: "true" },
   { label: TEXT_STATUS[CompanyStatus.REJECT], value: "false" },
 ];
