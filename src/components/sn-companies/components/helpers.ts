@@ -11,12 +11,14 @@ export const TEXT_PAY_STATUS: { [key in PayStatus]: string } = {
   [PayStatus.ACTIVE]: "paid",
   [PayStatus.UNPAID]: "unpaid",
   [PayStatus.PENDING]: "waiting",
+  [PayStatus.EXPIRED]: "error",
 };
 
 export const COLOR_PAY_STATUS: { [key in PayStatus]: string } = {
   [PayStatus.ACTIVE]: "success",
   [PayStatus.UNPAID]: "error",
   [PayStatus.PENDING]: "warning",
+  [PayStatus.EXPIRED]: "error",
 };
 
 export const COLOR_STATUS: {
