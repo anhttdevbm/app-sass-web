@@ -1,5 +1,6 @@
 export type PackageManagementDictionary = {
   head: {
+    title: string;
     sumary: string;
     account: string;
     transactionHistory: string;

@@ -1,7 +1,9 @@
+import { title } from 'process';
 import { PackageManagementDictionary } from "dictionaries/types/PackageManagementDictionary";
 
 export const PackageManagementLang: PackageManagementDictionary = {
   head: {
+    title: "Package Management",
     sumary: "Sumary",
     account: "Unpaid Account",
     transactionHistory: "Transaction History",
