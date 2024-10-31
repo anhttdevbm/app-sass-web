@@ -16,13 +16,13 @@ import {
 import { NS_COMMON, NS_COMPANY } from "constant/index";
 import useToggle from "hooks/useToggle";
 import AddCircleIcon from "icons/AddCircleIcon";
+import { useAuth } from "store/app/selectors";
 import { useEmployees } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
 import { getPath } from "utils/index";
 import EmployeeCompanyForm from "./EmployeeCompanyForm";
 import EmployeeTypeForm from "./EmployeeTypeForm";
 import { TEXT_STATUS } from "./helpers";
-
 const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
   const {
     options,
@@ -46,6 +46,8 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
 
   const pathname = usePathname();
   const { push } = useRouter();
+  const { user } = useAuth();
+
 
   const [queries, setQueries] = useState<Params>({});
   const [filterField, setFilterField] = useState("email");
@@ -119,15 +121,17 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
           spacing={{ xs: 2, md: 0 }}
         >
           {tabSwitcher}
-          <Button
-            onClick={onShow}
-            startIcon={<AddCircleIcon />}
-            size="small"
-            variant="primary"
-            sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
-          >
-            {commonT("createNew")}
-          </Button>
+            {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
+              <Button
+                onClick={onShow}
+                startIcon={<AddCircleIcon />}
+                size="small"
+                variant="primary"
+                sx={{ height: 32, px: ({ spacing }) => `${spacing(2)}!important` }}
+              >
+                {commonT("createNew")}
+              </Button>
+            )}
         </Stack>
 
         <Stack
