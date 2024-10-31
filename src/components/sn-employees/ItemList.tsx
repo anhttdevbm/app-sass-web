@@ -346,7 +346,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
                   onDelete={onActionToItem(DataAction.DELETE, item)}
                   hasPopup={false}
                   options={
-                    item.status === PayStatus.WAITING
+                    item.status === PayStatus.PENDING
                       ? [
                           {
                             content: companyT("employees.pay"),
