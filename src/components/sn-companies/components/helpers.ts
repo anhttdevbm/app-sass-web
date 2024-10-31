@@ -10,13 +10,13 @@ export const TEXT_STATUS: { [key in CompanyStatus]: string } = {
 export const TEXT_PAY_STATUS: { [key in PayStatus]: string } = {
   [PayStatus.ACTIVE]: "paid",
   [PayStatus.UNPAID]: "unpaid",
-  [PayStatus.WAITING]: "waiting",
+  [PayStatus.PENDING]: "waiting",
 };
 
 export const COLOR_PAY_STATUS: { [key in PayStatus]: string } = {
   [PayStatus.ACTIVE]: "success",
   [PayStatus.UNPAID]: "error",
-  [PayStatus.WAITING]: "warning",
+  [PayStatus.PENDING]: "warning",
 };
 
 export const COLOR_STATUS: {
