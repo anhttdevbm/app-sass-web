@@ -40,6 +40,7 @@ export interface Employee extends User {
   department: string;
   is_active: boolean;
   updated_time: string;
+  expiration_date: string;
   date_end_using: string;
   date_start_using: string;
   status: PayStatus;

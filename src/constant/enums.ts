@@ -62,8 +62,9 @@ export enum CostRateType {
 export enum PayStatus {
   // ALL,
   ACTIVE = 1,
-  UNPAID,
-  PENDING,
+  UNPAID = 2,
+  PENDING = 3,
+  EXPIRED = 4
 }
 
 export enum FILE_MAP {

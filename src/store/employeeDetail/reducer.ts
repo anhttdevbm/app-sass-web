@@ -68,6 +68,7 @@ export interface Employee extends User {
   approve?: boolean;
   updated_time: string;
   date_end_using: string;
+  expiration_date: string;
   date_start_using: string;
   is_pay_user: boolean;
   id: string;

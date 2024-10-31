@@ -9,6 +9,7 @@ export type CompanyDictionary = {
     pay: string;
     unPaid: string;
     waiting: string;
+    expiration: string;
     key: string;
     isNeedSelect: string;
     employee: string;

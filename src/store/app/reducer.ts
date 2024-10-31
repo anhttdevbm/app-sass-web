@@ -37,7 +37,7 @@ export interface UserInfo extends User {
   // id?: string;
   auto_renewal?: boolean;
   packageName?: string;
-  expiration_date?: string;
+  expiration_date: string;
 }
 
 export type HeaderConfig = {
