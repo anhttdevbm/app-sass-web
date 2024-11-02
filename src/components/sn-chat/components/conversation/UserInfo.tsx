@@ -17,7 +17,7 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
   const { user } = useAuth();
   const { conversationInfo, partnerInfoStatus, onGetUserInfo } = useChat();
   const { name, members } = conversationInfo || {};
-  const partnerInfo = members?.find((item) => item?.id != user?.id);
+  const partnerInfo = members?.find((item) => typeof item !== 'string' && item?.id != user?.id);
   const t = useTranslations(NS_AUTH);
 
   const styleFormItem: SxProps = {
