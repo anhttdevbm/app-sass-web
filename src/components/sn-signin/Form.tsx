@@ -37,7 +37,7 @@ const Form = () => {
 
 
   const {fcmToken} = useNotification();
-  console.log("🚀 ~ Form ~ fcmToken:", fcmToken)
+  // console.log("🚀 ~ Form ~ fcmToken:", fcmToken)
   const onSubmit = async (values: SigninData) => {
 
     try {
@@ -46,7 +46,7 @@ const Form = () => {
       if (newData) {
         onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
 
-        await fetch(`${NOTIFY_API_URL}/${Endpoint.NOTIFY_REGISTER_USER}`, {
+        await fetch(`${NOTIFY_API_URL}/notification/${Endpoint.NOTIFY_REGISTER_USER}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

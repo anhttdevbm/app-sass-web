@@ -18,13 +18,13 @@ const useNotification = () => {
         try {
           const currentToken = await getToken(messaging, {
             vapidKey:
-              "BP9tsAtOcvmk0JnGjih1wU88A8cKTIuhnxrN5Y-Q73mHv4zaIqjamHFut7QsfHZGVBD-X3DhiKL9WLDNUvcDw-c",
+              "BFMiKJKXIB5BH-hRi-2jeZz0kSmYc9zSVU6ugZoZqSTAcjMaPL2Pg0JdGQOT9vHpVVrmW8-tJsSP5hL_JRYDreM",
           });
           console.log("🚀 ~ requestPermission ~ currentToken:", currentToken)
 
           if (currentToken) {
             setFcmToken(currentToken);
-            // console.log("Current token:", currentToken);
+            console.log("Current token:", currentToken);
           } else {
             console.log(
               "No registration token available. Request permission to generate one.",
@@ -45,10 +45,10 @@ const useNotification = () => {
   };
 
   useEffect(() => {
+    requestPermission();
   
     if (!isRequested.current) {
       isRequested.current = true;
-      requestPermission();
     }
   }, []);
 

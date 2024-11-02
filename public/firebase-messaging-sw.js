@@ -2,13 +2,13 @@ importScripts("https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging.js");
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBswIUARLNVHGrYAKxAa5SW4Xns9ZQhbrk",
-  authDomain: "task-cover-notification.firebaseapp.com",
-  projectId: "task-cover-notification",
-  storageBucket: "task-cover-notification.appspot.com",
-  messagingSenderId: "588821095572",
-  appId: "1:588821095572:web:b45719a6b4cef895b00081",
-  measurementId: "G-XGRM15R8FV",
+  apiKey: "AIzaSyAVzHKDlv5bKBTgmbpwNYNPeDr8r6bOUNo",
+  authDomain: "saas-387913.firebaseapp.com",
+  projectId: "saas-387913",
+  storageBucket: "saas-387913.firebasestorage.app",
+  messagingSenderId: "617215876101",
+  appId: "1:617215876101:web:45d8f0ccea7e8ae8a7d06c",
+  measurementId: "G-TSE82HY83P"
 };
 
 firebase.initializeApp(firebaseConfig);
