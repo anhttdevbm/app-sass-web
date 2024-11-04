@@ -114,7 +114,7 @@ const NotificationList = () => {
                     </Stack>
 
                     <Stack direction="row" mt={1} p={1} alignItems='center'>
-                        <ItemNotification/>
+                        <ItemNotification handleClose={handleClose}/>
                     </Stack>
 
                 </DialogContent>
