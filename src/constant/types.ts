@@ -1,7 +1,7 @@
+import { Editor } from "draft-js";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { DocAccessibility, Permission, ThemeMode } from "./enums";
 import { i18n } from ".";
-import { Editor } from "@tiptap/core";
+import { DocAccessibility, Permission, ThemeMode } from "./enums";
 
 export interface Option {
   label: string;
@@ -93,9 +93,7 @@ export interface User {
     id: string;
   };
   roles: Permission[];
-  avatar?: {
-    link: string;
-  };
+  avatar?: string;
 }
 
 export interface Paging {
@@ -131,6 +129,12 @@ export type Attachment = {
   link: string;
 };
 
+interface Avatar {
+  object: string;
+  name: string;
+  link: string;
+}
+
 export declare interface IDocument {
   _id?: string;
   id?: string;
@@ -155,6 +159,7 @@ export declare interface IDocument {
   project_id?: string;
   content?: string;
   child?: [];
+  avatar: Avatar;
 }
 
 export declare type TPagination<T> = {
@@ -174,6 +179,7 @@ export declare type TPagination<T> = {
 export declare interface IComment {
   _id: string;
   create_time: Date;
+  created_time: string;
   updated_time: Date;
   created_by?: Partial<User>;
   content: string;

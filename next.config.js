@@ -17,6 +17,7 @@ const nextConfig = {
     TIME_SHEET_API_URL: process.env.TIME_SHEET_API_URL,
     CHAT_API_URL: process.env.CHAT_API_URL,
     SALE_API_URL: process.env.SALE_API_URL,
+    BUDGET_API_URL: process.env.BUDGET_API_URL,
     PAY_API_URL: process.env.PAY_API_URL,
     NEXT_APP_WS_URL: process.env.NEXT_APP_WS_URL,
     RESOURCE_API_URL: process.env.RESOURCE_API_URL,
@@ -42,20 +43,16 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "103.196.145.232",
-      },
-      {
-        protocol: "https",
-        hostname: "picsum.photos",
-      },
-      {
-        protocol: "https",
-        hostname: "img.freepik.com",
+        hostname: "103.250.79.80",
       },
       {
         protocol: "http",
-        hostname: "113.192.9.79",
+        hostname: "103.250.79.246",
       },
+      {
+        protocol: "http",
+        hostname: "216.128.182.224",
+      }
     ],
   },
   eslint: {

@@ -1,17 +1,17 @@
+import { Stack } from "@mui/material";
+import Avatar from "components/Avatar";
+import { Text } from "components/shared";
+import { BodyCell, StatusCell } from "components/Table";
+import { DATE_TIME_FORMAT_SLASH } from "constant/index";
 import { memo } from "react";
 import { Employee } from "store/company/reducer";
-import { BodyCell, StatusCell } from "components/Table";
-import { DATE_TIME_FORMAT_SLASH, NS_COMPANY, NS_MANAGER } from "constant/index";
 import { formatDate } from "utils/index";
 import {
-  TEXT_STATUS,
+  COLOR_PAY_STATUS,
   COLOR_STATUS,
   TEXT_PAY_STATUS,
-  COLOR_PAY_STATUS,
+  TEXT_STATUS,
 } from "./components/helpers";
-import { Text } from "components/shared";
-import Avatar from "components/Avatar";
-import { Stack } from "@mui/material";
 
 type DesktopCellsProps = {
   item: Employee;
@@ -23,7 +23,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
     <>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={item?.avatar?.link} />
+          <Avatar size={32} src={item?.avatar} />
           <Text variant="h6">{item.fullname}</Text>
         </Stack>
       </BodyCell>

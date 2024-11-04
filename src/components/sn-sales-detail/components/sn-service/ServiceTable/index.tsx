@@ -222,7 +222,7 @@ const ServiceTable = ({
                 }}
               >
                 <TableLayout
-                  headerList={headerList}
+                  headerList={!isEdit ? headerList : []} 
                   maxHeight={920}
                   headerProps={{
                     sx: {
@@ -233,9 +233,9 @@ const ServiceTable = ({
                   sx={{
                     minHeight: 100,
                     minWidth: {
-                      md: isEdit ? 1625 : 1120,
+                      md: isEdit ? "100%" : 1120,
                       xs: isEdit ? "100%" : 1120,
-                      overflow: "visible",
+                      overflow : "visible"
                     },
                     width: "100%",
                     [`&.MuiTableCell-root :first-child`]: {

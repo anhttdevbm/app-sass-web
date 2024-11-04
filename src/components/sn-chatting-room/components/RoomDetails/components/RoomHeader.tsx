@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArrowCircleDown, ArrowCircleUp } from "@mui/icons-material";
 import {
   Avatar,
@@ -108,7 +109,7 @@ const RoomHeader = () => {
     window.open(
       `/meeting/${currentConversation.id}`,
       "_blank",
-      "width=800,height=600",
+      "width=800;height=600",
     );
   };
 
@@ -171,7 +172,7 @@ const RoomHeader = () => {
             <Avatar
               src={
                 isGroup(currentConversation?.type)
-                  ? currentConversation?.avatar?.link
+                  ? currentConversation?.avatar
                   : currentConversation?.peer_detail?.avatar
               }
               sx={{ height: "50px", width: "50px", borderRadius: "50px" }}

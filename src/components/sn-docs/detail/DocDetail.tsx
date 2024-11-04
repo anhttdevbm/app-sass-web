@@ -63,12 +63,7 @@ export interface IDocDetail {
   setOpenComment: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DocDetail = ({
-  openComment,
-  setOpenComment,
-  openSlider,
-  setOpenSlider,
-}: IDocDetail) => {
+const DocDetail = () => {
   const [open, setOpen] = useState(false);
   const heightDocDetail = useAppSelector(
     (state) => state.doc.heightHeaderDocDetail,
@@ -99,12 +94,7 @@ const DocDetail = ({
       pb={{ xs: 1.5, md: 1, lg: 1.5 }}
     >
       <LeftSlideDoc open={open} setOpen={setOpen} />
-      <PageBody
-        openSlider={openSlider}
-        setOpenSlider={setOpenSlider}
-        openComment={openComment}
-        setOpenComment={setOpenComment}
-      />
+      <PageBody />
       <CommentDialog />
     </Box>
   );

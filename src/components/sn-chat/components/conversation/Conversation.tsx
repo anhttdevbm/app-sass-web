@@ -1,17 +1,17 @@
+import { SxProps, Theme } from "@mui/material";
+import { DrawerChatIgnore } from "components/sn-chatting-room/components/RoomDetails";
+import { NS_COMMON } from "constant/index";
+import useGetScreenMode from "hooks/useGetScreenMode";
+import { useTranslations } from "next-intl";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useChat } from "store/chat/selectors";
 import { useAuth } from "store/app/selectors";
 import { useWSChat } from "store/chat/helpers";
+import { uploadFile } from "store/chat/media/actionMedia";
+import { useChat } from "store/chat/selectors";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { useAppDispatch } from "store/hooks";
 import ChatInput from "../chat/ChatInput";
 import Messages from "../messages/Messages";
-import { NS_COMMON } from "constant/index";
-import { useTranslations } from "next-intl";
-import { SxProps, Theme } from "@mui/material";
-import useGetScreenMode from "hooks/useGetScreenMode";
-import { DrawerChatIgnore } from "components/sn-chatting-room/components/RoomDetails";
-import { CHAT_EVENT_TYPE } from "store/chat/type";
-import { uploadFile } from "store/chat/media/actionMedia";
-import { useAppDispatch } from "store/hooks";
 
 const initPageIndex = 10;
 
@@ -141,9 +141,7 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
         pageSize={pageSize}
         sessionId={user?.id}
         isGroup={isGroup}
-        avatarPartner={
-          account?.avatar?.link ?? conversationInfo?.avatar?.link ?? undefined
-        }
+        avatarPartner={account?.avatar ?? conversationInfo?.avatar ?? undefined}
         initialMessage={messages}
         mediaListPreview={mediaListConversation}
         stateMessage={stateSendMessage}

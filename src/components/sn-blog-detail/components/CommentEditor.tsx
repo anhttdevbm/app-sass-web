@@ -1,23 +1,16 @@
 "use client";
 
-import {
-  ForwardedRef,
-  forwardRef,
-  memo,
-  useRef,
-  useState,
-} from "react";
-import Editor from "components/Editor";
-import { useTranslations } from "next-intl";
-import { ACCESS_TOKEN_STORAGE_KEY, NS_BLOG, NS_COMMON } from "constant/index";
 import { Stack } from "@mui/material";
+import Editor from "components/Editor";
 import { Button } from "components/shared";
-import { getMessageErrorByAPI } from "utils/index";
-import { useAuth, useSnackbar } from "store/app/selectors";
+import { ACCESS_TOKEN_STORAGE_KEY, NS_BLOG, NS_COMMON } from "constant/index";
+import { useTranslations } from "next-intl";
+import { ForwardedRef, forwardRef, memo, useRef, useState } from "react";
 import { UnprivilegedEditor } from "react-quill";
-import { useBlogs } from "store/blog/selectors";
+import { useAuth, useSnackbar } from "store/app/selectors";
 import { CommentBlogData } from "store/blog/actions";
-import { useParams } from "next/navigation";
+import { useBlogs } from "store/blog/selectors";
+import { getMessageErrorByAPI } from "utils/index";
 import { clientStorage } from "utils/storage";
 
 // CommentEditor.tsx
@@ -29,7 +22,15 @@ interface CommentEditorProps {
 }
 
 const CommentEditor = forwardRef(
-  ({ postId, replyToCommentId, resetReplyToCommentId, forwardedRef }: CommentEditorProps, ref: ForwardedRef<HTMLDivElement | null>) => {
+  (
+    {
+      postId,
+      replyToCommentId,
+      resetReplyToCommentId,
+      forwardedRef,
+    }: CommentEditorProps,
+    ref: ForwardedRef<HTMLDivElement | null>,
+  ) => {
     const commonT = useTranslations(NS_COMMON);
     const blogT = useTranslations(NS_BLOG);
     const { onCreateCommentBlog } = useBlogs();
@@ -53,11 +54,15 @@ const CommentEditor = forwardRef(
           reply_to: replyToCommentId ?? "",
           content: editorRef.current?.getHTML() ?? content,
           post_slug: postId,
-          avatar: user?.avatar?.link,
+          avatar: user?.avatar,
         } as CommentBlogData;
 
         const accessToken = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
-        const newData = await onCreateCommentBlog(postId, data, accessToken as string);
+        const newData = await onCreateCommentBlog(
+          postId,
+          data,
+          accessToken as string,
+        );
         if (newData) {
           setContent("");
           resetReplyToCommentId();
@@ -81,11 +86,7 @@ const CommentEditor = forwardRef(
           justifyContent="space-between"
           mt={2}
         >
-          <Button
-            onClick={onSubmit}
-            variant="primary"
-            size="small"
-          >
+          <Button onClick={onSubmit} variant="primary" size="small">
             {blogT("comment.sendComment")}
           </Button>
         </Stack>
@@ -97,9 +98,6 @@ const CommentEditor = forwardRef(
 CommentEditor.displayName = "CommentEditor";
 
 export default memo(CommentEditor);
-
-
-
 
 // const CommentEditor = forwardRef(
 //   ({ postIdOrSlug }, ref: ForwardedRef<HTMLDivElement | null>) => {

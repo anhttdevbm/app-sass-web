@@ -11,29 +11,21 @@ import {
   TableCell,
   TableRow,
 } from "@mui/material";
+import Avatar from "components/Avatar";
 import FixedLayout from "components/FixedLayout";
 import Pagination from "components/Pagination";
 import { CellProps, TableLayout } from "components/Table";
 import { DocGroupByEnum } from "constant/enums";
-import { DEFAULT_PAGING } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
-import useQueryParams from "hooks/useQueryParams";
 import { usePathname, useRouter } from "next-intl/client";
 import { useSearchParams } from "next/navigation";
-import { memo, useCallback, useEffect, useMemo } from "react";
-import { useDocs } from "store/docs/selectors";
-import { getPath } from "utils/index";
-import DesktopCells from "./DesktopCells";
-import { RowGroup } from "./ItemDoc";
-import MobileContentCell from "./MobileContentCell";
+import { memo, useCallback, useMemo } from "react";
 import { useGetDocsQuery } from "store/docs/api";
-import Avatar from "components/Avatar";
-import { MenuButton } from "@mui/base";
-import KanbanViewDocList from "./KanbanViewDocList";
-import { useAppSelector } from "store/hooks";
-import { Data } from "emoji-mart";
-import { Text } from "components/shared";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { getPath } from "utils/index";
 import BasicViewDocList from "./BasicViewDocList";
+import { RowGroup } from "./ItemDoc";
+import KanbanViewDocList from "./KanbanViewDocList";
 
 export declare type TDocumentGroup = {
   _id: string;
@@ -50,11 +42,13 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
   const { isMdSmaller } = useBreakpoint();
   const pathname = usePathname();
-  const { query } = useQueryParams();
+  const { getDocsQueries: query } = useAppSelector((state) => state.doc);
+
+  const dispatch = useAppDispatch();
   const { data, isLoading } = useGetDocsQuery(query, {
     refetchOnMountOrArgChange: true,
   });
-  const searchParams = useSearchParams()!;
+  const searchParams = useSearchParams();
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
@@ -130,31 +124,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
     [searchParams],
   );
 
-  const createParamString = useCallback(
-    (obj: Record<string, string>) => {
-      const params = new URLSearchParams(
-        searchParams as unknown as typeof URLSearchParams.prototype,
-      );
-      Object.entries(obj).forEach(([key, value]) => {
-        params.set(key, value);
-      });
-      return params.toString();
-    },
-    [searchParams],
-  );
-
-  useEffect(() => {
-    if (!searchParams.get("group_by")) {
-      push(
-        pathname +
-          "?" +
-          createParamString({
-            group_by: DocGroupByEnum.PROJECT_ID,
-            size: "50",
-          }),
-      );
-    }
-  }, [searchParams.get("group_by")]);
+  console.log(data);
 
   return (
     <>
@@ -231,7 +201,7 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
           totalItems={data?.totalDocs}
           totalPages={data?.totalPages}
           page={data?.page}
-          pageSize={+query.size}
+          pageSize={query.size ? +query.size : 10}
           containerProps={{ px: { md: 3 }, py: 1 }}
           onChangePage={onChangePage}
           onChangeSize={onChangeSize}

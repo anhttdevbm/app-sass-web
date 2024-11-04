@@ -67,11 +67,7 @@ export interface CompanyTimeSheet {
   id: string;
   fullname: string;
   company: string;
-  avatar: {
-    object: string;
-    name: string;
-    link: string;
-  };
+  avatar: string;
   email: string;
   position: string;
   timesheet: MyTimeSheet[];
@@ -81,11 +77,7 @@ export interface ISameWorker {
   id?: string;
   fullname?: string;
   company?: string;
-  avatar?: {
-    object?: string;
-    name?: string;
-    link?: string;
-  };
+  avatar?: string;
   email?: string;
   position?: {
     id?: string;

@@ -1,26 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, Typography } from "@mui/material";
-import { H6, PTag, ServiceBox } from "./ServiceUtil";
-import { NS_BUDGETING } from "constant/index";
-import { useTranslations } from "next-intl";
-import { BILLING_CREATE_PATH } from "constant/paths";
-import { useRouter } from "next-intl/client";
-import { useParams } from "next/navigation";
-import _ from "lodash";
-import { useMemo } from "react";
-import moment from "moment";
-import useTheme from "hooks/useTheme";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { styled } from "@mui/material/styles";
-import TimeIcon from "public/images/ic-time.svg";
-import ProfitIcon from "public/images/ic-profit.svg";
-import BudgetIcon from "public/images/ic-budget.svg";
-import InvoicingIcon from "public/images/ic-invoicing.svg";
-import GoogleLogo from "public/images/ic-google.svg";
-import Image from "next/image";
+import { NS_BUDGETING } from "constant/index";
+import useTheme from "hooks/useTheme";
+import _ from "lodash";
+import moment from "moment";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next-intl/client";
+import { useParams } from "next/navigation";
+import { useMemo } from "react";
+import { H6, PTag, ServiceBox } from "./ServiceUtil";
+// import TimeIcon from "public/images/ic-time.svg";
 import Grid from "@mui/material/Unstable_Grid2";
+import BudgetsIcon from "icons/BudgetsIcon";
+import BudgetTimeIcon from "icons/BudgetTimeIcon";
+import InvoicingIcon from "icons/InvoicingIcon";
+import ProfitIcon from "icons/ProfitIcon";
 
 interface Props {
   serviceData: any;
@@ -123,7 +121,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                 justifyContent="space-between"
               >
                 <Stack flexDirection={"row"}>
-                  <Image src={TimeIcon} alt="Time Icon" width={24} />
+                  <BudgetTimeIcon />
                   <H6 >{budgetT("tabService.totalArea.time.title")}</H6>
                 </Stack>
                 <PTag>{moment().format("D MMM, YYYY")}</PTag>
@@ -185,7 +183,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                 justifyContent="space-between"
               >
                 <Stack flexDirection={"row"}>
-                  <Image src={ProfitIcon} alt="Profit Icon" width={24} />
+                  <ProfitIcon />
                   <H6 >{budgetT("tabService.totalArea.profit.title")}</H6>
                 </Stack>
                 <PTag>{moment().format("D MMM, YYYY")}</PTag>
@@ -234,7 +232,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                 }}
               >
                 <Stack flexDirection={"row"}>
-                  <Image src={BudgetIcon} alt="Budget Icon" width={24} />
+                  <BudgetsIcon />
                   <H6>{budgetT("tabService.totalArea.budget.title")}</H6>
                 </Stack>
                 <PTag>{moment().format("D MMM, YYYY")}</PTag>
@@ -293,7 +291,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
               >
 
                 <Stack flexDirection={"row"}>
-                  <Image src={InvoicingIcon} alt="Invoicing Icon" width={24} />
+                  <InvoicingIcon />
                   <H6>{budgetT("tabService.totalArea.invoicing.title")}</H6>
                 </Stack>
                 <PTag >{moment().format("D MMM, YYYY")}</PTag>

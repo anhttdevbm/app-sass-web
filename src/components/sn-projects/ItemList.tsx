@@ -122,7 +122,7 @@ const ItemList = () => {
     () =>
       item
         ? {
-            avatar: item?.avatar?.link,
+            avatar: item?.avatar,
             name: item.name,
             description: item.description,
             owner: item?.owner?.id,
@@ -253,7 +253,7 @@ const ItemList = () => {
                       <Stack direction="row" alignItems="center" gap={1}>
                         <Avatar
                           size={32}
-                          src={_item.avatar?.link ?? ProjectPlaceholderImage}
+                          src={_item.avatar ?? ProjectPlaceholderImage}
                         />
                         <Text
                           variant="body2"

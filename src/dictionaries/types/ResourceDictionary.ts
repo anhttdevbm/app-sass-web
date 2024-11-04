@@ -24,6 +24,7 @@ export default interface ResourceDictionary {
     time: {
       eventTime: string;
       thisWeek: string;
+      hourPerDay: string;
     };
     unit: {
       day: string;
@@ -39,6 +40,8 @@ export default interface ResourceDictionary {
       service: string;
       user: string;
       startDate: string;
+      Workload: string;
+      chooseService: string;
     };
     action: {
       addBooking: string;
@@ -112,5 +115,22 @@ export default interface ResourceDictionary {
     chooseBudgetPlacehodle: string;
     budget: string;
     search: string;
+    servicePlaceholder: string;
+    dragText: string;
+    date: string;
+  };
+  months: {
+    january: string;
+    february: string;
+    march: string;
+    april: string;
+    may: string;
+    june: string;
+    july: string;
+    august: string;
+    september: string;
+    october: string;
+    november: string;
+    december: string;
   };
 }

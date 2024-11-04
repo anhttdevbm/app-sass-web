@@ -1,27 +1,26 @@
+import { LayoutType } from "components/sn-meeting/type";
 import { useCallback } from "react";
+import { store } from "store/configureStore";
 import { useAppDispatch } from "store/hooks";
-import {
-  endMeet,
-  leaveRoom,
-  resetMeet,
-  setCallRequest,
-  setCallStatus,
-  setEndMeeting,
-  setMeetInfo,
-  setMeetingWsClient,
-  setRemoteSignal,
-  startConnecting,
-  updateMessages,
-} from "./reducer";
 import {
   cancelMeeting,
   endMeeting,
   getParticipants,
   startMeeting,
-  startReconnecting,
 } from "./actions";
+import {
+  resetMeet,
+  setCallRequest,
+  setCallStatus,
+  setEndMeeting,
+  setMeetInfo,
+  setMeetingLayout,
+  setMeetingWsClient,
+  setRemoteSignal,
+  startConnecting,
+  updateMessages,
+} from "./reducer";
 import { CallStatus, MeetRoomInfo, MessageItem } from "./types";
-import { store } from "store/configureStore";
 
 export const useMeeting = () => {
   const dispatch = useAppDispatch();
@@ -102,6 +101,7 @@ export const useMeeting = () => {
 
       // 1-1 call
       if (meetInfo.room?.type === "p") {
+        ws?.close();
         onEndMeeting(meetInfo.room.id);
         return;
       }
@@ -124,14 +124,6 @@ export const useMeeting = () => {
     dispatch(resetMeet());
   }, [dispatch]);
 
-  const onGetMeetRoom = useCallback(
-    async (roomId: string) => {
-      const res = await dispatch(startReconnecting(roomId)).unwrap();
-      onSetMeetInfo(res);
-    },
-    [dispatch],
-  );
-
   const onAddNewMessage = useCallback(
     (message: MessageItem) => {
       dispatch(updateMessages(message));
@@ -142,6 +134,13 @@ export const useMeeting = () => {
   const onUpdateMeetingStatus = useCallback(
     (isEnding: boolean) => {
       dispatch(setEndMeeting(isEnding));
+    },
+    [dispatch],
+  );
+
+  const onSetMeetingLayout = useCallback(
+    (layout: LayoutType) => {
+      dispatch(setMeetingLayout(layout));
     },
     [dispatch],
   );
@@ -159,8 +158,8 @@ export const useMeeting = () => {
     onRejectCall,
     onLeaveMeeting,
     onResetMeet,
-    onGetMeetRoom,
     onAddNewMessage,
     onUpdateMeetingStatus,
+    onSetMeetingLayout,
   };
 };

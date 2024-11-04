@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ImageList, InputAdornment, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Avatar from "components/Avatar";
-import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
+import { NS_CHAT_BOX } from "constant/index";
 import ArrowDownIcon from "icons/ArrowDownIcon";
-import ArrowRightIcon from "icons/ArrowRightIcon";
 import CloseIcon from "icons/CloseIcon";
 import InfoUserIcon from "icons/InfoUserIcon";
 import PointOnline from "icons/pointOnline";
@@ -14,11 +14,9 @@ import SearchIcon from "icons/SearchIcon";
 import VideoCallIcon from "icons/VideoCallIcon";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useChat } from "store/chat/selectors";
 import { IChatItemInfo, STEP } from "store/chat/type";
-import { useMeeting } from "store/meeting/selectors";
 
 interface AccountInfoHeaderProp {
   accountInfo: IChatItemInfo;
@@ -31,26 +29,23 @@ const AccountInfoHeader = ({
   viewStep,
 }: AccountInfoHeaderProp) => {
   const pathname = usePathname();
-  const router = useRouter();
-  const { dataTransfer, onSetStep, prevStep, currStep } = useChat();
-  const { onStartMeeting } = useMeeting();
-  const { usersCount, t, name } = accountInfo;
+  const { dataTransfer, onSetStep, currStep } = useChat();
+  const { t, name } = accountInfo;
   const isGroup = useMemo(() => t !== "d", [t]);
 
   const [textSearch, setTextSearch] = useState("");
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const [avatar, setAvatar] = useState<string | undefined>(
-    dataTransfer?.avatar?.link,
+    dataTransfer?.avatar,
   );
 
   const startGroupMeet = async () => {
-    console.log("group meet");
-    await onStartMeeting(dataTransfer.id)
-      .then((res: any) => {
-        if (pathname.includes("/meeting")) return;
-        router.push(`meeting/${dataTransfer.id}`);
-      })
-      .catch((e) => console.log(e.message));
+    if (pathname.includes("/meeting")) return;
+    window.open(
+      `/meeting/${dataTransfer.id}`,
+      "_blank",
+      "width=800;height=600",
+    );
   };
 
   const handleKeyDown = (event) => {
@@ -60,7 +55,7 @@ const AccountInfoHeader = ({
   };
 
   useEffect(() => {
-    setAvatar(dataTransfer?.avatar?.link);
+    setAvatar(dataTransfer?.avatar);
   }, [dataTransfer?.avatar]);
 
   const _renderChatGroup = () => {

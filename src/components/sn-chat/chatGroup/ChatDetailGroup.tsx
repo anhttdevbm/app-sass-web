@@ -1,26 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
-import Avatar from "components/Avatar";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import ItemMemberDetail from "./ItemMemberDetail";
-import GroupNameIcon from "icons/GroupNameIcon";
-import DefaultPopupLayout from "layouts/DefaultPopupLayout";
-import { useEffect, useState, ChangeEvent } from "react";
-import { useTranslations } from "next-intl";
+import Avatar from "components/Avatar";
+import ForwardLayout from "components/sn-chatting-room/components/RoomDetails/components/Drawer/ChatForward/ForwardLayout";
 import { NS_CHAT_BOX, NS_COMMON } from "constant/index";
-import FileGroupIcon from "icons/FileGroupIcon";
+import useTheme from "hooks/useTheme";
 import ArrowRightIcon from "icons/ArrowRightIcon";
 import EditGroupNameIcon from "icons/EditGroupNameIcon";
+import FileGroupIcon from "icons/FileGroupIcon";
+import GroupNameIcon from "icons/GroupNameIcon";
+import LinkIconGroup from "icons/LinkIconGroup";
+import MediaFileIconGroup from "icons/MediaFileIconGroup";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
+import { useTranslations } from "next-intl";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { isAdminGroup, isOwnerGroup, useChatHelpers } from "store/chat/helpers";
 import { useChat } from "store/chat/selectors";
 import { STEP, TYPE_LIST } from "store/chat/type";
-import { useAuth, useSnackbar } from "store/app/selectors";
 import ItemDetail from "../components/ItemDetail";
-import MediaFileIconGroup from "icons/MediaFileIconGroup";
-import LinkIconGroup from "icons/LinkIconGroup";
-import useTheme from "hooks/useTheme";
+import ItemMemberDetail from "./ItemMemberDetail";
 import { UploadAvatarGroup } from "./UploadAvatarGroup";
-import ForwardLayout from "components/sn-chatting-room/components/RoomDetails/components/Drawer/ChatForward/ForwardLayout";
-import { isAdminGroup, isOwnerGroup, useChatHelpers } from "store/chat/helpers";
 
 export const TYPE_POPUP = {
   DELETE: "DELETE",
@@ -36,12 +36,8 @@ export const TYPE_POPUP = {
 const ChatDetailGroup = (props) => {
   const { isDarkMode } = useTheme();
 
-  const {
-    dataTransfer,
-    onSetStep,
-    onSetTypeList,
-    onSetDataTransfer,
-  } = useChat();
+  const { dataTransfer, onSetStep, onSetTypeList, onSetDataTransfer } =
+    useChat();
   const { user } = useAuth();
   const {
     handleGetChatMedias,
@@ -239,7 +235,6 @@ const ChatDetailGroup = (props) => {
   };
 
   const handlePopup = async () => {
-
     const renameGroupApi = async () => {
       if (!renameGroup.trim()) {
         return onAddSnackbar("Invalid group name!", "error");
@@ -331,7 +326,7 @@ const ChatDetailGroup = (props) => {
           >
             <Avatar
               alt="Avatar"
-              src={dataTransfer?.avatar?.link}
+              src={dataTransfer?.avatar}
               size={80}
               style={{
                 borderRadius: "50%",
@@ -480,7 +475,9 @@ const ChatDetailGroup = (props) => {
                           type: TYPE_POPUP.LEAVE_OWNER,
                           statusPopup: true,
                           title: commonChatBox("chatBox.leaveGroup"),
-                          content: <>{commonChatBox("chatBox.sureLeaveGroup")}</>,
+                          content: (
+                            <>{commonChatBox("chatBox.sureLeaveGroup")}</>
+                          ),
                         }));
                       } else {
                         setShowPopup((pre) => ({
@@ -495,10 +492,14 @@ const ChatDetailGroup = (props) => {
                               }}
                             >
                               <Typography>
-                                {commonChatBox("chatBox.leaveGroupConfirm.text_1")}
+                                {commonChatBox(
+                                  "chatBox.leaveGroupConfirm.text_1",
+                                )}
                               </Typography>
                               <Typography>
-                                {commonChatBox("chatBox.leaveGroupConfirm.text_2")}{" "}
+                                {commonChatBox(
+                                  "chatBox.leaveGroupConfirm.text_2",
+                                )}{" "}
                                 <span
                                   style={{
                                     color: "var(--brand-primary, #3699FF)",
@@ -506,8 +507,8 @@ const ChatDetailGroup = (props) => {
                                   }}
                                   onClick={handleNewAdd}
                                 >
-                              {commonChatBox("chatBox.selectAdminNew")}
-                            </span>
+                                  {commonChatBox("chatBox.selectAdminNew")}
+                                </span>
                               </Typography>
                             </Box>
                           ),

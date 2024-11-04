@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import Link from "components/Link";
-import { Text } from "components/shared";
+import { Button, Text } from "components/shared";
 import { Permission } from "constant/enums";
 import { NS_LAYOUT } from "constant/index";
 import {
@@ -37,12 +37,14 @@ import {
   TICKET_PATH,
   TIME_TRACKING_PATH
 } from "constant/paths";
+import dayjs from "dayjs";
 import useBreakpoint from "hooks/useBreakpoint";
 import useTheme from "hooks/useTheme";
 import BillingIcon from "icons/BillingIcon";
 import BudgetIcon from "icons/BudgetIcon";
 import CardReceive from "icons/CardReceive";
 import CareerIcon from "icons/CareerIcon";
+import CrownIconUpgrade from "icons/CrownIconUpgrade";
 import FeedbackIcon from "icons/FeedbackIcon";
 import HomeOutlinedIcon from "icons/HomeOutlinedIcon";
 import MenuBlogIcon from "icons/MenuBlogIcon";
@@ -58,14 +60,70 @@ import TicketIcon from "icons/TicketIcon";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
 import { memo, MouseEvent, useMemo, useState } from "react";
-import { useAuth, useSidebar } from "store/app/selectors";
+import { useDispatch } from "react-redux";
+import { useAuth, useSidebar, useSnackbar } from "store/app/selectors";
+import { AppDispatch } from "store/configureStore";
+import {
+  getPriceUpgradePackage,
+  getRequestUpgradePayment,
+  pay,
+} from "store/payment/actions";
 import Collapse from "./Collapse";
 import SubMenu from "./SubMenu";
 import { MenuItemProps } from "./helpers";
 
 const Menu = () => {
   const { user } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  const { onAddSnackbar } = useSnackbar();
 
+  const onClickUpgradeAccount = async () => {
+    if (user)
+      if (
+        user?.roles?.includes(Permission.AM) &&
+        !user?.roles?.includes(Permission.BO)
+      ) {
+        const result = await dispatch(getRequestUpgradePayment());
+
+        if (result?.payload?.success) {
+          onAddSnackbar("Request Success", "success");
+        } else {
+          onAddSnackbar("Already sent a payment request!", "error");
+        }
+      } else {
+        const priceUpgradePackage = {
+          newPackage: user.packageName || "",
+          billingPlan: "monthly",
+          numberOfUser: 1,
+        };
+        
+        const resultAction = await dispatch(
+          getPriceUpgradePackage(priceUpgradePackage),
+        );
+        const price = resultAction.payload?.data;
+        const payload = {
+          billing_plan: "Monthly",
+          packageName:
+            user?.packageName === "Standard"
+              ? "1"
+              : user?.packageName === "Business"
+              ? "2"
+              : user?.packageName === "Enterprise"
+              ? "3"
+              : "0",
+          currency_code: "USD",
+          sub_total: price?.subTotal,
+          vat: price?.vat,
+        };
+        const result = await dispatch(pay(payload));
+
+        if (pay.fulfilled.match(result)) {
+          window.open(result?.payload?.return_url, "_blank");
+        } else {
+          console.error("Error");
+        }
+      }
+  };
   return (
     <Stack
       width="100%"
@@ -75,6 +133,21 @@ const Menu = () => {
         overflowY: "auto",
       }}
     >
+      {user?.expiration_date &&
+        dayjs(user?.expiration_date).diff(dayjs(), "day") < 3 && (
+          <Button
+            size="extraSmall"
+            variant="primary"
+            sx={{ height: 48 }}
+            onClick={onClickUpgradeAccount}
+          >
+            <CrownIconUpgrade />
+            <Text sx={{ marginLeft: "6px", color: "#fff" }}>
+              Upgrade account
+            </Text>
+          </Button>
+        )}
+
       {DATA.map((item) => {
         const isAuthorized = user?.roles?.some((role) =>
           item?.roles?.includes(role),
@@ -231,7 +304,11 @@ const DATA: MenuItemProps[] = [
     label: "menu.company",
     icon: <MenuCompanyIcon />,
     subs: [
-      { label: "menu.employees", href: EMPLOYEES_PATH, roles: [Permission.AM] },
+      { 
+        label: "menu.employees", 
+        href: EMPLOYEES_PATH, 
+        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
+      },
       // {
       //   label: "menu.costHistory",
       //   href: COST_HISTORY_PATH,
@@ -240,22 +317,22 @@ const DATA: MenuItemProps[] = [
       {
         label: "menu.listOfPositions",
         href: POSITIONS_PATH,
-        roles: [Permission.AM],
+        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
       },
       {
         label: "menu.projectTypeList",
         href: PROJECT_TYPES_PATH,
-        roles: [Permission.AM],
+        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
       },
       {
         label: "menu.clientCompanies",
         href: CLIENT_COMPANIES_PATH,
-        roles: [Permission.AM],
+        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
       },
       {
         label: "menu.companyInformation",
         href: MY_COMPANY_PATH,
-        roles: [Permission.AM],
+        roles: [Permission.AM], 
       },
       {
         label: "menu.holidayCalendar",
@@ -265,10 +342,10 @@ const DATA: MenuItemProps[] = [
       {
         label: "menu.packageManager",
         href: PACKAGE_MANAGERMENT_PATH,
-        roles: [Permission.AM, Permission.ST, Permission.SA],
+        roles: [Permission.AM], 
       },
     ],
-    roles: [Permission.AM],
+    roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
   },
   {
     label: "menu.manager",
@@ -291,45 +368,45 @@ const DATA: MenuItemProps[] = [
     label: "menu.timeTracking",
     href: TIME_TRACKING_PATH,
     icon: <MenuTimeTrackingIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.ST, Permission.MN],
   },
   {
     label: "menu.resourcePlaning",
     href: RESOURCE_PLANING_PATH,
     icon: <MenuResourcePlaningIcon />,
-    roles: [Permission.AM],
+    roles: [Permission.AM, Permission.MN],
   },
   {
     label: "menu.budgeting",
     icon: <BudgetIcon />,
     href: BUDGETING_PATH,
-    roles: [Permission.AM],
+    roles: [Permission.AM, Permission.MN],
   },
   {
     label: "menu.invoice",
     icon: <BillingIcon />,
     href: INVOICES_PATH,
-    roles: [Permission.AM],
+    roles: [Permission.AM, Permission.MN],
   },
   {
     label: "menu.chat",
     href: CHATTING_ROOM_PATH,
     icon: <MenuChatIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.ST, Permission.MN],
   },
   {
     label: "menu.taskcoverAI",
     icon: <TaskcoverAIIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.ST, Permission.MN],
     subs: [
       {
         label: "menu.aiChat",
-        roles: [Permission.AM, Permission.ST],
+        roles: [Permission.AM, Permission.ST, Permission.MN],
         href: AI_CHAT_PATH,
       },
       {
         label: "menu.aiAgent",
-        roles: [Permission.AM, Permission.ST],
+        roles: [Permission.AM, Permission.ST, Permission.MN],
         href: AI_AGENT_PATH,
       },
     ],
@@ -338,19 +415,19 @@ const DATA: MenuItemProps[] = [
     label: "menu.sales",
     href: SALES_LIST_PATH,
     icon: <CardReceive />,
-    roles: [Permission.AM],
+    roles: [Permission.AM, Permission.MN],
   },
   {
     label: "menu.docs",
     href: DOCS_PATH,
     icon: <MenuDocsIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.ST, Permission.MN],
   },
   {
     label: "menu.ticket",
     href: TICKET_PATH,
     icon: <TicketIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.ST, Permission.MN],
   },
   // Feedback
   {
@@ -421,9 +498,8 @@ const DATA: MenuItemProps[] = [
     ],
     roles: [Permission.SA],
   },
-  
 
-  // Ticket manager 
+  // Ticket manager
   {
     label: "menu.ticket",
     icon: <TicketIcon />,
@@ -443,18 +519,16 @@ const DATA: MenuItemProps[] = [
         href: TICKET_AGENT,
         roles: [Permission.SA],
       },
-
     ],
     roles: [Permission.SA],
   },
-
 ];
 
 const checkIsActiveLink = (pathname: string, href?: string) => {
   return Boolean(
     pathname &&
-    href &&
-    (pathname === href ||
-      (href.length && href !== "/" && pathname.startsWith(href))),
+      href &&
+      (pathname === href ||
+        (href.length && href !== "/" && pathname.startsWith(href))),
   );
 };

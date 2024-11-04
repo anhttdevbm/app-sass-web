@@ -1,11 +1,13 @@
 "use client";
 
 import { Stack, TableRow } from "@mui/material";
-import FixedLayout from "components/FixedLayout";
 import Pagination from "components/Pagination";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
+import { Checkbox, Text } from "components/shared";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { CURRENCY_CODE, DataAction } from "constant/enums";
 import { DEFAULT_PAGING_BILLING, NS_BILLING, NS_COMMON } from "constant/index";
+import { BILLING_EXPORT_PATH } from "constant/paths";
 import useBreakpoint from "hooks/useBreakpoint";
 import useQueryParams from "hooks/useQueryParams";
 import useTheme from "hooks/useTheme";
@@ -19,25 +21,20 @@ import {
   useMemo,
   useState,
 } from "react";
+import { BillingDataExport } from "store/billing/actions";
 import { Billing } from "store/billing/reducer";
 import { useBillings } from "store/billing/selectors";
 import { ProjectData } from "store/project/actions";
 import {
   cleanObject,
   formatNumber,
-  getPath,
-  stringifyURLSearchParams,
+  getPath
 } from "utils/index";
 import Actions from "./Actions";
 import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
-import ViewPdf from "./Modals/ViewPdf";
-import { INITIAL_VALUES } from "./components/helpers";
-import { Checkbox, Text } from "components/shared";
-import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
-import { BillingDataExport } from "store/billing/actions";
 import ExportView from "./Modals/ExportView";
-import { BILLING_EXPORT_PATH } from "constant/paths";
+import { INITIAL_VALUES } from "./components/helpers";
 
 const ItemList = () => {
   const {
@@ -244,7 +241,7 @@ const ItemList = () => {
     () =>
       item
         ? {
-            avatar: item?.avatar?.link,
+            avatar: item?.avatar,
             // name: item.name,
             // description: item.description,
             // owner: item?.owner?.id,

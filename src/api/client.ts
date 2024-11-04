@@ -1,11 +1,11 @@
-import axios, { AxiosInstance } from "axios";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
   AN_ERROR_TRY_AGAIN,
   API_TIMEOUT,
   API_URL,
   AUTH_API_URL,
+  BUDGET_API_URL,
   BUDGET_UPLOAD_FILE_API_URL,
   REFRESH_TOKEN_STORAGE_KEY,
   SALE_API_URL,
@@ -227,6 +227,28 @@ const RequestClient = class {
     }
   }
 
+  async uploadFile(endpoint: string, file: File) {
+    try {
+      const formData = new FormData();
+      formData.append("type", file.type);
+      formData.append("fileBuffer", file);
+
+      const response = await this.post(endpoint, formData, {
+        baseURL: UPLOAD_API_URL,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response?.status === HttpStatusCode.OK) {
+        return response?.data?.data[0]?.link;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getExport(endpoint: string, configs = {} as AxiosRequestConfig) {
     try {
       const response = await this.axios.get(endpoint, {
@@ -245,6 +267,10 @@ export const client = new RequestClient();
 
 export const saleClient = new RequestClient({
   baseURL: SALE_API_URL,
+});
+
+export const budgetClient = new RequestClient({
+  baseURL: BUDGET_API_URL,
 });
 
 export const fileClient = new RequestClient({

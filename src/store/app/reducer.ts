@@ -34,9 +34,10 @@ export interface UserInfo extends User {
   date_end_using: string;
   date_start_using: string;
   is_pay_user: boolean;
-  id_rocket?: string;
+  // id?: string;
   auto_renewal?: boolean;
   packageName?: string;
+  expiration_date: string;
 }
 
 export type HeaderConfig = {
@@ -56,7 +57,7 @@ export enum SignupStep {
 export interface AppState {
   appReady: boolean;
   snackbarList: SnackbarItem[];
-  notificationList: any[];
+  notificationList: SnackbarItem[];
   token?: string;
   user?: UserInfo;
 
@@ -182,6 +183,10 @@ const appSlice = createSlice({
       .addCase(
         getProfile.fulfilled,
         (state, action: PayloadAction<UserInfo>) => {
+          action.payload.avatar =
+            action.payload.avatar && action.payload.avatar.length > 0
+              ? action.payload.avatar[0]
+              : "";
           state.user = Object.assign(state?.user ?? {}, action.payload);
           state.appReady = true;
         },

@@ -3,12 +3,14 @@ import { CellProps } from "components/NewTable";
 import { BodyCell, TableLayout } from "components/Table";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import { useTranslations } from "next-intl";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState, useRef } from "react";
 import SearchPackageManagement from "./components/Search";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "store/configureStore";
 import { getListAccounts } from "store/payment/actions";
 import { Text } from "components/shared";
+import dayjs from "dayjs";
+import { AccountType } from "store/payment/reducer";
 
 const ListAccount = () => {
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
@@ -18,17 +20,55 @@ const ListAccount = () => {
 
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+  const [query, setQuery] = useState();
 
-  const {
-    data: accounts,
-    total,
-    loading,
-    error,
-  } = useSelector((state: RootState) => state.payment.accounts);
+  const { loading, total, totalPage } = useSelector(
+    (state: RootState) => state.payment.accounts,
+  );
+  const [accountList, setAccountList] = useState<AccountType[]>([]);
+
+  const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    dispatch(getListAccounts({ page, size }));
-  }, [dispatch, page, size]);
+    const fetchAccounts = async () => {
+      const result = await dispatch(getListAccounts({ page, size, query }));
+      setAccountList((prev) => [...prev, ...result.payload.data]);
+    };
+
+    fetchAccounts();
+  }, [dispatch, page, size, query]);
+
+  const handleSearch = (value) => {
+    setQuery(value);
+    setPage(1);
+    setAccountList([]);
+  };
+
+  const handleTableScroll = () => {
+    if (tableRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = tableRef.current;
+      if (
+        scrollTop + clientHeight >= scrollHeight - 50 &&
+        !loading &&
+        page < totalPage
+      ) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const currentTable = tableRef.current;
+    if (currentTable) {
+      currentTable.addEventListener("scroll", handleTableScroll);
+    }
+
+    return () => {
+      if (currentTable) {
+        currentTable.removeEventListener("scroll", handleTableScroll);
+      }
+    };
+  }, [loading]);
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
@@ -55,8 +95,10 @@ const ListAccount = () => {
         <>
           <SearchPackageManagement
             placeholder={packageT("placeholder.search")}
+            onSearch={handleSearch}
           />
           <TableLayout
+            ref={tableRef}
             headerList={desktopHeaderList}
             headerProps={{
               style: {
@@ -66,20 +108,31 @@ const ListAccount = () => {
             }}
             px={3}
             style={{ padding: 0 }}
+            height={300}
           >
-            {accounts.map((item, index) => (
-              <TableRow key={index}>
-                <BodyCell>{item.fullname}</BodyCell>
-                <BodyCell>{item.email}</BodyCell>
-                <BodyCell>{item.roles}</BodyCell>
-                <BodyCell>{item.packageName ?? "0"}</BodyCell>
-                <BodyCell>{item.expirationDate}</BodyCell>
-              </TableRow>
-            ))}
+            {accountList &&
+              accountList.map((item, index) => (
+                <TableRow key={index}>
+                  <BodyCell>{item.fullname}</BodyCell>
+                  <BodyCell>{item.email}</BodyCell>
+                  <BodyCell>{item.roles}</BodyCell>
+                  <BodyCell>{item.packageName ?? "0"}</BodyCell>
+                  <BodyCell>
+                    {dayjs(item.expiration_date).format("YYYY/MM/DD")}
+                  </BodyCell>
+                </TableRow>
+              ))}
           </TableLayout>
+          {loading && (
+            <Box display="flex" justifyContent="center" padding={2}>
+              <Text>Loading...</Text>
+            </Box>
+          )}
         </>
       ) : (
-        accounts.map((item, index) => (
+        accountList &&
+        accountList.length > 0 &&
+        accountList.map((item, index) => (
           <Box
             key={index}
             width="100%"
@@ -108,7 +161,7 @@ const ListAccount = () => {
             </Box>
             <Box display="flex" justifyContent="space-between" mb={1}>
               <Text>{packageT("list.expiration")}</Text>
-              <Text>{item.expirationDate}</Text>
+              <Text>{dayjs(item.expiration_date).format("YYYY/MM/DD")}</Text>
             </Box>
           </Box>
         ))

@@ -1,8 +1,7 @@
 import React, { ReactNode } from "react";
-import { Box, Button, Stack, SvgIconTypeMap, Typography } from "@mui/material";
+import {Stack } from "@mui/material";
 import Popper from "@mui/material/Popper";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import { OverridableComponent } from "@mui/material/OverridableComponent";
 
 interface ICustomDropdown {
   handleClose: () => void;

@@ -12,8 +12,7 @@ export default function TreeViewLabel({
   dataRename?: {
     idDoc?: string;
     isParent?: boolean;
-  }
-  
+  };
 }) {
   return (
     <Box
@@ -38,10 +37,11 @@ export default function TreeViewLabel({
           visibility: "hidden",
           display: "flex",
           alignItems: "center",
-          gap: 1.4,
+          justifyContent: "end",
+          flex: 1,
         }}
       >
-        <MorePoper id={dataRename?.idDoc} isParentDoc={dataRename?.isParent}></MorePoper>
+        <MorePoper id={dataRename?.idDoc} isParentDoc={dataRename?.isParent} />
         <Box
           onClick={() => handleClickTreeLabel()}
           sx={{
@@ -50,7 +50,7 @@ export default function TreeViewLabel({
             alignItems: "center",
           }}
         >
-          <IconAdd></IconAdd>
+          <IconAdd />
         </Box>
       </Box>
     </Box>

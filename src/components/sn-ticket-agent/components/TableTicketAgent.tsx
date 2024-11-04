@@ -11,12 +11,10 @@ import {
   Paper,
   Typography,
   Box,
-  Stack,
   BoxProps,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { memo, useEffect, useMemo, useState } from "react";
-import { Button, Text } from "components/shared";
+import { memo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { NS_TICKET } from "constant/index";
 import Model from "../module/pop-up-model/Model";

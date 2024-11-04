@@ -11,6 +11,7 @@ export const CompanyLang: CompanyDictionary = {
     pay: "Thanh toán",
     unPaid: "Chưa thanh toán",
     waiting: "Chờ thanh toán",
+    expiration: "Hết hạn",
     key: "nhân viên",
     isNeedSelect: "Không có bất kỳ nhân viên nào được chọn",
     employee: "Nhân viên",

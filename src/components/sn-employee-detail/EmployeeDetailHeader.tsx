@@ -1,40 +1,49 @@
 "use client";
-import { ChangeEvent, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Slider from "@mui/material/Slider";
 import Stack from "@mui/material/Stack";
-import AvatarEditor from "react-avatar-editor";
 import { useTranslations } from "next-intl";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
+import AvatarEditor from "react-avatar-editor";
 
 import { Endpoint, client } from "api";
-import DefaultPopupLayout from "layouts/DefaultPopupLayout";
-import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
-import { Permission } from "constant/enums";
-import { Button, IconButton, Text } from "components/shared";
 import Avatar from "components/Avatar";
+import { Button, IconButton, Text } from "components/shared";
+import { Permission } from "constant/enums";
+import { IMAGES_ACCEPT, NS_ACCOUNT, NS_COMMON } from "constant/index";
 import PencilIcon from "icons/FocusedCameraIcon";
+import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { UpdateUserInfoData } from "store/app/actions";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import { useEmployeeDetailContext } from "./EmployeeDetailContext";
 
-const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
+const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean }) => {
   const { user } = useAuth();
   const commonT = useTranslations(NS_COMMON);
   const accountT = useTranslations(NS_ACCOUNT);
 
-  const { type, employee, onGetProfile, onUpdateUserInfo } = useEmployeeDetailContext();
+  const { type, employee, onGetProfile, onUpdateUserInfo } =
+    useEmployeeDetailContext();
   const { onAddSnackbar } = useSnackbar();
-  const [avatar, setAvatar] = useState<string | File>(employee.avatar?.link ?? "");
+  const [avatar, setAvatar] = useState<string | File>(
+    employee?.avatar ?? "",
+  );
   const imageEdittorRef = useRef<AvatarEditor>(null);
   const [imageScale, setImageScale] = useState(1.2);
   const [openImageEditor, setOpenImageEditor] = useState<string | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
 
-  const isAdmin = useMemo(() => user?.roles.includes(Permission.AM), [user?.roles])
+  const isAdmin = useMemo(
+    () => user?.roles.includes(Permission.AM),
+    [user?.roles],
+  );
 
-  const hasPermissionToEdit = useMemo(() => type === 'SELF' || isAdmin, [type, isAdmin])
+  const hasPermissionToEdit = useMemo(
+    () => type === "SELF" || isAdmin,
+    [type, isAdmin],
+  );
 
   const onChooseFile = () => {
     inputFileRef?.current?.click();
@@ -52,8 +61,8 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
   };
 
   const previewImage = useMemo(() => {
-    if (typeof avatar === "object") {
-      return URL.createObjectURL(avatar as unknown as File);
+    if (avatar instanceof File) {
+      return URL.createObjectURL(avatar);
     }
     return avatar as string | undefined;
   }, [avatar]);
@@ -69,10 +78,7 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
       const file = new File([blob], "avatar.png", { type: blob.type });
       setAvatar(file);
 
-      const avatarUrl: string = await client.upload(
-        Endpoint.UPLOAD,
-        file,
-      );
+      const avatarUrl = await client.uploadFile(Endpoint.UPLOAD_FILE, file);      
 
       const data = {
         avatar: avatarUrl,
@@ -96,16 +102,16 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
 
   return (
     <>
-      <Stack direction="row" alignItems="center" >
+      <Stack direction="row" alignItems="center">
         <Stack width={100} height={100} borderRadius="50%" position="relative">
           <Avatar
             size={100}
             src={previewImage}
             alt={employee.fullname}
-            onClick={(isEdit && hasPermissionToEdit) ? onChooseFile : undefined}
+            onClick={isEdit && hasPermissionToEdit ? onChooseFile : undefined}
             style={{ cursor: "pointer" }}
           />
-          {(isEdit && hasPermissionToEdit) && (
+          {isEdit && hasPermissionToEdit && (
             <>
               <IconButton
                 onClick={onChooseFile}
@@ -137,7 +143,14 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
           )}
         </Stack>
         <Stack marginLeft={2} spacing="8px" alignItems="start">
-          <Text variant="subtitle1" fontWeight={600} color="#404040" fontSize={20}>{employee.fullname}</Text>
+          <Text
+            variant="subtitle1"
+            fontWeight={600}
+            color="#404040"
+            fontSize={20}
+          >
+            {employee.fullname}
+          </Text>
           <Text
             py="6px"
             px="18px"
@@ -147,7 +160,9 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
             textAlign="center"
             fontSize={13}
             fontWeight={500}
-          >{ `${employee.position?.name ?? "--"} at ${employee.company ?? "--"}` }</Text>
+          >{`${employee.position?.name ?? "--"} at ${
+            employee.company ?? "--"
+          }`}</Text>
         </Stack>
       </Stack>
 
@@ -195,7 +210,7 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean; }) => {
         </DialogContent>
       </DefaultPopupLayout>
     </>
-  )
+  );
 };
 
 export default EmployeeDetailHeader;

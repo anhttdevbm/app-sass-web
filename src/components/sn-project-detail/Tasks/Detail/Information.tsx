@@ -376,7 +376,7 @@ const Information = () => {
       <InformationItem label={commonT("assigner")}>
         {!!task?.owner?.id ? (
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Avatar size={32} src={task.owner?.avatar?.link} />
+            <Avatar size={32} src={task.owner?.avatar} />
             <Stack>
               <Text variant="body2" lineHeight={1.57}>
                 {task.owner?.fullname ?? "--"}

@@ -1,16 +1,14 @@
+import { Stack } from "@mui/material";
 import Avatar from "components/Avatar";
-import { BodyCell } from "components/Table";
-import { formatDate } from "utils/index";
-import { memo } from "react";
-import { Position } from "store/company/reducer";
-import { Stack, TableRow } from "@mui/material";
 import { Text } from "components/shared";
-import Link from "next/link";
-import { useDispatch } from "react-redux";
-import { setContentRow } from "store/docs/reducer";
+import { BodyCell } from "components/Table";
 import { DOCS_API_URL } from "constant/index";
-import axiosBaseQuery from "store/axiosBaseQuery";
 import { useRouter } from "next-intl/client";
+import { memo } from "react";
+import { useDispatch } from "react-redux";
+import axiosBaseQuery from "store/axiosBaseQuery";
+import { setContentRow } from "store/docs/reducer";
+import { formatDate } from "utils/index";
 
 type MobileContentCellProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,22 +23,25 @@ const MobileContentCell = (props: MobileContentCellProps) => {
   return (
     <>
       <BodyCell align="left" sx={{ px: "10px" }}>
-      <div
-      style={{cursor: 'pointer'}}
-          onClick={async () => {
-            const result: any = await api(
-              {
-                url: `/docs/detail/${item.id}`,
-                method: "GET",
-                //@ts-ignore
-              }, {}, {});
-            if (result.error) {
-              console.error("Error:", result.error);
-            } else {
-              await dispatch(setContentRow(result?.data?.content));
-              push(`/documents/${item.id}`);
-            }
-          }}
+        <div
+          style={{ cursor: "pointer" }}
+          // onClick={async () => {
+          //   const result: any = await api(
+          //     {
+          //       url: `/docs/detail/${item.id}`,
+          //       method: "GET",
+          //       //@ts-ignore
+          //     },
+          //     {},
+          //     {},
+          //   );
+          //   if (result.error) {
+          //     console.error("Error:", result.error);
+          //   } else {
+          //     await dispatch(setContentRow(result?.data?.content));
+          //     push(`/documents/${item.id}`);
+          //   }
+          // }}
         >
           <Text fontWeight={600} fontSize={12}>
             {item?.name}
@@ -65,7 +66,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
             alignItems="center"
             spacing={1}
           >
-            <Avatar size={24} src={item.created_by?.avatar?.link} />
+            <Avatar size={24} src={item.created_by?.avatar} />
             <Stack
               justifyContent={"start"}
               alignItems={"start"}

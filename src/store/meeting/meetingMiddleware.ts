@@ -1,27 +1,4 @@
 import { Middleware } from "@reduxjs/toolkit";
-import { client } from "api";
-import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
-import { clientStorage } from "utils/storage";
-import { getLocalStream, newPeerConnection } from "webSocket/webRTC";
-import {
-  MeetingState,
-  setCallRequest,
-  setCurrentParticipants,
-  setEndMeeting,
-  setMeetingWsClient,
-  setPeer,
-  setRemoteStreams,
-  updateRemoteStream,
-  updateRemoteStreamState,
-} from "./reducer";
-import {
-  MEET_EVENT_TYPE,
-  MeetDataEntryEvent,
-  MeetUser,
-  ParticipantStreamEventPayload,
-  RemoteStream,
-  WSPayload,
-} from "./types";
 
 export const meetingMiddleware: Middleware = (store) => (next) => (action) => {
   // const aT = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);

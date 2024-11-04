@@ -1,9 +1,11 @@
 // hooks/useWebSocket.ts
-import { useEffect, useState } from "react";
+import { Permission } from "constant/enums";
 import { ACCESS_TOKEN_STORAGE_KEY } from "constant/index";
-import { clientStorage } from "utils/storage";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useAuth } from "store/app/selectors";
 import { setListAgentOnline } from "store/ticket-agent/actions";
+import { clientStorage } from "utils/storage";
 
 interface WebSocketMessage {
   action: string;
@@ -11,12 +13,16 @@ interface WebSocketMessage {
 }
 
 const useWebSocket = (): WebSocket | null => {
+  const { user } = useAuth();
+  const isAuthorized = user?.roles?.some(
+    (role) => role == Permission.SA || role == Permission.SP,
+  );
+
   const [ws, setWs] = useState<WebSocket | null>(null);
   const dispatch = useDispatch();
 
   const handleMessage = (event: MessageEvent) => {
     const data = JSON.parse(event.data);
-    console.log("Unknown action:", data);
     switch (data?.code) {
       case "ListOnline":
         dispatch(setListAgentOnline(data?.data));
@@ -37,58 +43,55 @@ const useWebSocket = (): WebSocket | null => {
       //   setOnlineUsers(data.users || []);
       //   break;
       default:
-        console.log("Unknown action:", data);
+        break;
     }
   };
 
   useEffect(() => {
     const token = clientStorage.get(ACCESS_TOKEN_STORAGE_KEY);
-
-    const connectSocket = () => {
-      const wsClient = new WebSocket(
-        `${process.env.NEXT_APP_WS_URL_TICKET!}?token=${token!}&language=vi`,
-      );
-
-      wsClient.onopen = () => {
-        console.log("WebSocket connection opened");
-        // Send authentication message with the token
-        // Send any other initial messages if needed
-        // wsClient.send(
-        //   JSON.stringify({
-        //     event: "ListOnline",
-        //   }),
-        // );
-        // wsClient.send(
-        //   JSON.stringify({
-        //     event: "ReplyTicket",
-        //   }),
-        // );
+    if (isAuthorized) {
+      const connectSocket = () => {
+        const wsClient = new WebSocket(
+          `${process.env.NEXT_APP_WS_URL_TICKET!}?token=${token!}&language=vi`,
+        );
+  
+        wsClient.onopen = () => {
+          // Send authentication message with the token
+          //   }),
+          // );
+          // wsClient.send(
+          //   JSON.stringify({
+          //     event: "ReplyTicket",
+          //   }),
+          // );
+        };
+        wsClient.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          wsClient.close();
+        };
+  
+        wsClient.addEventListener("message", handleMessage);
+  
+        wsClient.onclose = () => {
+          setTimeout(() => {
+            connectSocket();
+          }, 3000);
+        };
+  
+        setWs(wsClient);
       };
-      wsClient.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        wsClient.close();
+  
+      connectSocket();
+  
+      return () => {
+        if (ws) {
+          ws.close();
+          ws.removeEventListener("message", handleMessage);
+        }
       };
+    }
 
-      wsClient.addEventListener("message", handleMessage);
 
-      wsClient.onclose = () => {
-        console.log("WebSocket connection closed, reconnecting...");
-        setTimeout(() => {
-          connectSocket();
-        }, 3000);
-      };
-
-      setWs(wsClient);
-    };
-
-    connectSocket();
-
-    return () => {
-      if (ws) {
-        ws.close();
-        ws.removeEventListener("message", handleMessage);
-      }
-    };
   }, []);
 
   return ws;

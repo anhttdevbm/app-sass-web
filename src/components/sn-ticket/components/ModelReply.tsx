@@ -1,12 +1,11 @@
 "use client";
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from "@mui/material";
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Stack} from "@mui/material";
 import { Button, Text } from "components/shared";
 import EditorGroup from "components/sn-ticket/components/EditorGroup";
 import { NS_TICKET } from "constant/index";
 import CloseIcon from "icons/CloseIcon";
 import { useTranslations } from "next-intl";
 import { memo, useCallback, useState } from "react";
-import FileUpload from "../module/create-ticket/upload/FileUpload";
 import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useSnackbar } from "store/app/selectors";
 import { useParams } from "next/navigation";

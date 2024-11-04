@@ -4,50 +4,33 @@
 import dayGridPlugin from "@fullcalendar/daygrid";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   Avatar,
   Box,
-  Button,
-  CircularProgress,
   Grid,
   ListItemIcon,
   Menu,
   MenuItem,
   Stack,
   SxProps,
-  Table,
-  TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
   Theme,
-  Typography,
+  Typography
 } from "@mui/material";
 import { styled } from "@mui/system";
 import dayjs from "dayjs";
 import _ from "lodash";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { calendarStyles } from "./TrackingCalendar.styles";
 
 import interactionPlugin from "@fullcalendar/interaction";
 import ListIcon from "@mui/icons-material/List";
-import {
-  LocalizationProvider,
-  MobileDatePicker,
-  yearCalendarClasses,
-} from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ButtonCalendar from "components/shared/ButtonCalendar";
-import CustomizedInputBase from "components/shared/InputSeasrch";
 import { NS_COMMON, NS_TIME_TRACKING } from "constant/index";
 import useTheme from "hooks/useTheme";
 import CalendarIcon from "icons/CalendarIcon";
-import PlusIcon from "icons/PlusIcon";
 import moment from "moment";
 import { useTranslations } from "next-intl";
 import { useAuth, useSnackbar } from "store/app/selectors";
@@ -57,25 +40,25 @@ import TimeCreate, {
 } from "../../TimeTrackingModal/TimeCreate";
 import TimeSheet from "./TimeSheet";
 
-import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
-import useBreakpoint from "hooks/useBreakpoint";
-import DuplicateIcon from "icons/DuplicateIcon";
-import { getSameWorker } from "store/timeTracking/actions";
-import ListSheet from "./ListSheet";
-import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
-import DayIcon from "icons/DayIcon";
 import { DateSelectArg } from "@fullcalendar/core";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import FilterCategory from "components/sn-time-tracking/components/FilterCategory";
+import TimeRangeNavigator, {
+  TypeNavigator,
+} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
 import {
   FullCalendarEventProps,
   FullCalendarExtendedProps,
   IFilter,
   ITimeRangeAction,
 } from "components/sn-time-tracking/components/timeTracking.types";
-import { inter } from "../CalendarTracking.styles";
-import TimeRangeNavigator, {
-  TypeNavigator,
-} from "components/sn-time-tracking/components/TimeRangeNavigator/TimeRangeNavigator";
+import useBreakpoint from "hooks/useBreakpoint";
+import DayIcon from "icons/DayIcon";
+import DuplicateIcon from "icons/DuplicateIcon";
+import { getSameWorker } from "store/timeTracking/actions";
 import { WorkType } from "store/timeTracking/reducer";
+import { inter } from "../CalendarTracking.styles";
+import ListSheet from "./ListSheet";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -124,7 +107,7 @@ interface IProps {
 
 const today = dayjs(); // Ngày hiện tại + 1 ngày (ngày mai)
 const startOfWeek = today.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
-const endOfWeek = today.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
+const endOfWeek = today.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)\
 
 const defaultStartDate = startOfWeek.format("YYYY-MM-DD");
 const defaultEndDate = endOfWeek.format("YYYY-MM-DD");
@@ -190,16 +173,14 @@ const TrackingCalendar = (props: IProps) => {
   const { isDarkMode } = useTheme();
   const { onAddSnackbar } = useSnackbar();
   const timeT = useTranslations(NS_TIME_TRACKING);
-  const { isSmSmaller } = useBreakpoint();
-  const isGetLoading: any = false;
   const { user: userData } = useAuth();
+  const { isSmSmaller } = useBreakpoint();
 
   const calendarRef = useRef<FullCalendar>(null);
   const [filters, setFilters] = useState<IFilter>(DEFAULT_FILTER);
 
   const [currentDate, setCurrentDate] = useState<string>(dayjs().toString());
   const [currentYear, setCurrentYear] = useState<string>("");
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedTimeEntry, setSelectedTimeEntry] = useState<
     TimeCreateValue | undefined
   >(undefined);
@@ -234,9 +215,21 @@ const TrackingCalendar = (props: IProps) => {
         });
       }
     } else {
-      onGetMyTimeSheet(filters);
+      onGetMyTimeSheet({
+        start_date: dayjs(today).startOf("day").format("YYYY-MM-DD"),
+        end_date: dayjs(today).endOf("day").format("YYYY-MM-DD"),
+        search_key: "",
+      });
     }
   }, [currentKindOfSheet]);
+
+  useEffect(() => {
+    onGetMyTimeSheet({
+      start_date: dayjs(selectedDate).startOf("day").format("YYYY-MM-DD"),
+      end_date: dayjs(selectedDate).endOf("day").format("YYYY-MM-DD"),
+      search_key: "",
+    });
+  }, [selectedDate]);
 
   useEffect(() => {
     const getYear = () => {
@@ -282,7 +275,7 @@ const TrackingCalendar = (props: IProps) => {
             date: timesheet?.day,
             start_time: moment(timesheet?.start_time).format("hh:mm A"),
             project: timesheet?.project,
-            avatar: userData?.avatar?.link,
+            avatar: userData?.avatar,
             day: timesheet?.day,
             name: userData?.fullname,
             position: timesheet?.position,
@@ -298,12 +291,12 @@ const TrackingCalendar = (props: IProps) => {
 
         if (timesheet.type === "Work time") {
           totalWorkTime += timesheet?.duration || 0;
-          if (timesheet.day === dayjs(today).format("YYYY-MM-DD")) {
+          if (timesheet.day === dayjs(selectedDate).format("YYYY-MM-DD")) {
             todayWorkTime += timesheet?.duration || 0;
           }
         } else {
           totalBreakTime += timesheet?.duration || 0;
-          if (timesheet.day === dayjs(today).format("YYYY-MM-DD")) {
+          if (timesheet.day === dayjs(selectedDate).format("YYYY-MM-DD")) {
             todayBreakTime += timesheet?.duration || 0;
           }
         }
@@ -332,15 +325,6 @@ const TrackingCalendar = (props: IProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters?.start_date, filters?.end_date]);
-
-  // useEffect(() => {
-
-  //   if (currentKindOfSheet === "timeSheet") {
-  //     onGetMyTimeSheet({
-  //       start_date
-  //     });
-  //   }
-  // }, [currentKindOfSheet])
 
   const generateDateRange = () => {
     const start_date = dayjs(filters?.start_date);
@@ -566,7 +550,7 @@ const TrackingCalendar = (props: IProps) => {
             ? timeT("header.tab.weekly_total")
             : "Daily total"}
         </Typography>
-        <Stack direction="row">
+        <Stack direction={isSmSmaller ? "column" : "row"}>
           <Stack
             direction="row"
             sx={{
@@ -639,12 +623,6 @@ const TrackingCalendar = (props: IProps) => {
       dateClick={dateClick}
     />
   );
-
-  const _renderTimeSheetContent = () => {
-    if (activeTab !== "timeSheet") return;
-    return <TimeSheet data={myTime} filters={filters} dateRange={dateRange} />;
-  };
-
   return (
     <Stack
       direction="column"
@@ -699,6 +677,7 @@ const TrackingCalendar = (props: IProps) => {
               <ListSheet
                 data={myTime}
                 handleSelectListSheetRow={handleSelectListSheetRow}
+                selectedDate={selectedDate}
               />
             </Box>
             {_renderFooter(TypeNavigator.DAILY)}
@@ -732,7 +711,7 @@ const TrackingCalendar = (props: IProps) => {
                 {
                   ...calendarStyles,
                   flexGrow: 1,
-                  minHeight: 0,
+                  minHeight: isSmSmaller ? "unset" : 0,
                   minWidth: 0,
                 } as SxProps<Theme>
               }
@@ -759,7 +738,7 @@ const TrackingCalendar = (props: IProps) => {
                     color: isDarkMode ? "#fff" : undefined,
                   },
                   "colgroup, colgroup col": {
-                    width: "112px !important",
+                    width: isSmSmaller ? "62px !important" : "112px !important",
                   },
                 }}
               >
@@ -993,7 +972,7 @@ const TrackingCalendar = (props: IProps) => {
                                               >
                                                 <Avatar
                                                   sx={{ width: 20, height: 20 }}
-                                                  src={item?.avatar?.link}
+                                                  src={item?.avatar}
                                                 />
                                                 <Typography
                                                   sx={{
@@ -1116,7 +1095,7 @@ const TrackingCalendar = (props: IProps) => {
                                         >
                                           <Avatar
                                             sx={{ width: 20, height: 20 }}
-                                            src={item?.avatar?.link}
+                                            src={item?.avatar}
                                           />
                                           <Typography
                                             sx={{
@@ -1227,7 +1206,7 @@ const TrackingCalendar = (props: IProps) => {
                                           >
                                             <Avatar
                                               sx={{ width: 20, height: 20 }}
-                                              src={item?.avatar?.link}
+                                              src={item?.avatar}
                                             />
                                             <Typography
                                               sx={{
@@ -1348,7 +1327,7 @@ const TrackingCalendar = (props: IProps) => {
                                         >
                                           <Avatar
                                             sx={{ width: 20, height: 20 }}
-                                            src={item?.avatar?.link}
+                                            src={item?.avatar}
                                           />
                                           <Typography
                                             sx={{
@@ -1399,7 +1378,6 @@ const TrackingCalendar = (props: IProps) => {
                     if (timeGridAxisElement)
                       timeGridAxisElement.innerHTML = "Time";
                   }}
-                  //allDayDidMount={(arg) => ""}
                 />
                 <Menu
                   id="basic-menu"
@@ -1422,214 +1400,8 @@ const TrackingCalendar = (props: IProps) => {
             {_renderFooter(TypeNavigator.WEEKLY)}
           </>
         )}
-        {/* {activeTab === "dayGridWeek" && (
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(7, 1fr)",
-                  borderTop: "1px solid rgb(224, 224, 224)",
-                  borderLeft: "1px solid rgb(224, 224, 224)",
-                }}
-              >
-                {_.map(dateRange, (date: Date, index) => {
-
-                  const weekday = weekdays[date.getDay()];
-                  const dayNumber = date.getDate();
-                  return (
-                    <StyledDay
-                      key={index}
-                      className={
-                        dayjs(dayjs(date).format("YYYY-MM-DDDD")).isSame(
-                          dayjs(selectedDate).format("YYYY-MM-DDDD"),
-                        )
-                          ? "selected"
-                          : ""
-                      }
-                      onClick={() => setSelectedDate(date)}
-                    >
-                      <h3>{weekday}</h3>
-                      <Typography
-                        variant="h4"
-                        sx={{ color: isDarkMode ? "#fff" : "common.black" }}
-                      >
-                        {dayNumber}
-                      </Typography>
-                    </StyledDay>
-                  );
-                })}
-              </Box>
-            </Grid>
-            <Grid item xs={12} sx={{ paddingTop: "0px!important" }}>
-              <TableContainer
-                sx={{
-                  // borderLeft: "1px solid rgb(224, 224, 224)",
-                  maxHeight: "calc(100vh - 340px)",
-                  // paddingTop: "0px!important",
-                  overflow: "auto",
-                }}
-              >
-                <Table
-                  sx={{
-                    borderCollapse: "separate",
-                    borderSpacing: "0 8px",
-                    position: "relative",
-                    //bottom: "-7px",
-                  }}
-                  stickyHeader={true}
-                >
-                  <TableHead>
-                    <StyledTableRow>
-                      <StyledTableCell>
-                        <Box sx={{ minWidth: 100 }}>
-                          {timeT("myTime.day_tab.project")}
-                        </Box>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Box sx={{ minWidth: 100 }}>
-                          {timeT("myTime.day_tab.position")}
-                        </Box>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Box sx={{ minWidth: 100 }}>
-                          {timeT("myTime.day_tab.start_time")}
-                        </Box>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Box sx={{ minWidth: 100 }}>
-                          {timeT("myTime.day_tab.time")}
-                        </Box>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Box sx={{ minWidth: 100 }}>
-                          {timeT("myTime.day_tab.note")}
-                        </Box>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  </TableHead>
-                  <TableBody>
-                    {!_.isEmpty(dataDayTable) ? (
-                      dataDayTable?.map((event, index) => {
-                        const rowStyles = {
-                          borderLeft: `4px solid rgba(54, 153, 255, 1)`,
-                          backgroundColor: "primary.light",
-                        };
-                        if (event?.extendedProps?.type === "break_time")
-                          Object.assign(rowStyles, {
-                            borderLeft: `4px solid rgba(246, 78, 96, 1)`,
-                            backgroundColor: "error.light",
-                          });
-                        return (
-                          <Tooltip
-                            key={index}
-                            title="Click to view detail"
-                            arrow
-                          >
-                            <StyledTableRow
-                              sx={{
-                                ...rowStyles,
-                                cursor: "pointer",
-                              }}
-                              key={index}
-                              // onClick={() => {
-                              //   setIsEdit(true);
-                              //   setSelectedEvent(event);
-
-                              //   setIsOpenCreatePopup(true);
-                              // }}
-                            >
-                              <StyledTableCell>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "12px",
-                                    maxWidth: 200,
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  }}
-                                >
-                                  <Avatar sx={{ width: 20, height: 20 }} />
-                                  {event?.extendedProps?.project?.name}
-                                </Box>
-                              </StyledTableCell>
-                              <StyledTableCell>
-                                {event?.extendedProps?.position?.name}
-                              </StyledTableCell>
-                              <StyledTableCell>
-                                {event?.extendedProps?.start_time}
-                              </StyledTableCell>
-                              <StyledTableCell>
-                                {" "}
-                                {event?.extendedProps?.hour || 0}h
-                              </StyledTableCell>
-                              <StyledTableCell>
-                                {event?.extendedProps?.note &&
-                                event.extendedProps.note.length > 20
-                                  ? event.extendedProps.note.slice(0, 20) +
-                                    "..."
-                                  : event?.extendedProps?.note}
-                              </StyledTableCell>
-                            </StyledTableRow>
-                          </Tooltip>
-                        );
-                      })
-                    ) : (
-                      <StyledTableRow>
-                        <StyledTableCell
-                          colSpan={9}
-                          align="center"
-                          sx={{
-                            fontSize: "14px",
-                            lineHeight: "20px",
-                            fontWeight: 400,
-                            p: 1,
-                            widtH: 1,
-                            textAlign: "center",
-                          }}
-                        >
-                          {timeT("header.noData")}
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    )}
-
-                    {isGetLoading && (
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          width: 1,
-                          height: 1,
-                          top: 0,
-                          left: 0,
-                          backgroundColor: " rgba(0, 0, 0, 0.1)",
-
-                          webkitTapHighlightColor: "transparent",
-                        }}
-                      >
-                        <Stack
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: 1,
-                            width: 1,
-                          }}
-                        >
-                          <CircularProgress />
-                        </Stack>
-                      </Box>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-          </Grid>
-        )} */}
       </Stack>
       {_renderCreatePopup()}
-      {/* {_redderUpdatePopup()} */}
     </Stack>
   );
 };

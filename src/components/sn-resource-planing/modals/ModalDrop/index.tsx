@@ -209,7 +209,7 @@ const ModalDrop = ({
         </Button>
         <TextField
           variant="outlined"
-          placeholder="Enter summary or service key"
+          placeholder={t("popupService.servicePlaceholder")}
           fullWidth
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
@@ -247,7 +247,7 @@ const ModalDrop = ({
               color={"#7A869A"}
               whiteSpace={"nowrap"}
             >
-              Date <span style={{ color: "red" }}>*</span>
+              {t("popupService.date")} <span style={{ color: "red" }}>*</span>
             </Typography>
             <DatePicker
               value={dateValue}
@@ -303,7 +303,7 @@ const ModalDrop = ({
               marginTop={2}
               fontWeight="bold"
             >
-              <GuideIcon /> Drag service to the calendar
+              <GuideIcon /> {t("popupService.dragText")}
             </Typography>
           )}
           {listServices && (
@@ -317,9 +317,11 @@ const ModalDrop = ({
               display={"flex"}
               alignItems={"center"}
               gap={"4px"}
+              textTransform={"lowercase"}
             >
               <VueSaxIcon /> {listServices?.countItem}/
-              {listServices?.totalService} service
+              {listServices?.totalService}{" "}
+              {t("schedule.resourceHeader.service")}
             </Typography>
           )}
 

@@ -5,7 +5,6 @@ import { NS_INVOICE } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import { useTranslations } from "next-intl";
 import { ChangeEvent, useMemo } from "react";
-import { HEADER_HEIGHT } from "../../../layouts/Header";
 import { Invoice } from "store/invoice/reducer";
 
 const MOBILE_HEADER_LIST = [{ value: "#", width: "70%", align: "left" }];

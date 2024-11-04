@@ -2,11 +2,9 @@
 import {
   SxProps
 } from "@mui/material";
-import { NS_COMMON, NS_DOCS } from "constant/index";
-import { useTranslations } from "next-intl";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { memo, useState } from "react";
-import FilterPeople from "./FilterPeople";
+import FilterTime from "./FilterTime";
 
 
 export interface FilterSearchDocsProps {
@@ -16,26 +14,12 @@ export interface FilterSearchDocsProps {
 }
 
 const FilterSearchDocs = ({ onChange, queries  }: FilterSearchDocsProps) => {
-  const docsT = useTranslations(NS_DOCS);
-  const [anchorEl, setAnchorEl] = useState<any>(null);
-  const commonT = useTranslations(NS_COMMON);
-
-  const isHasValue =
-    queries?.user_id ||
-    queries?.project ||
-    queries?.lastEdit ||
-    queries?.project_status;
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <>
       {/* TODO: build error */}
-      {/* <FilterTime queries={queries}  onChange={onChange} >       
-      </FilterTime> */}
-      <FilterPeople  queries={queries} onChange={onChange}></FilterPeople>
+      <FilterTime queries={queries}  onChange={onChange} /> 
+      {/* <FilterPeople  queries={queries} onChange={onChange}></FilterPeople> */}
 
     </>
   );

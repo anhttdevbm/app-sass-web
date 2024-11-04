@@ -15,12 +15,15 @@ import { MyTimeSheet } from "store/timeTracking/reducer";
 import { tableCellHeadingStyles } from "../CalendarTracking.styles";
 import "../CompanyTimeTrackingCalendar/style.css";
 import { TimeCreateValue } from "components/sn-time-tracking/TimeTrackingModal/TimeCreate";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useMemo } from "react";
+import useBreakpoint from "hooks/useBreakpoint";
+import MobileListSheet from "../MobileListSheet";
 
 interface IProps {
   data: MyTimeSheet[];
   handleSelectListSheetRow?: (selectedRowData: TimeCreateValue) => void;
+  selectedDate: dayjs.Dayjs | Date;
 }
 
 const tableCellHeader = ["Date", "Project name", "Type", "Time", "Start time"];
@@ -54,12 +57,18 @@ const StyledTableHeadRow = styled(TableRow)(({ theme }) => ({
     background: "#D9F0FD",
   },
 }));
-const TODAY = dayjs().format("YYYY-MM-DD");
 
-const ListSheet = ({ data, handleSelectListSheetRow }: IProps) => {
+const ListSheet = ({
+  data,
+  handleSelectListSheetRow,
+  selectedDate,
+}: IProps) => {
   const rowsData = useMemo(() => {
-    return data.filter((item) => item.day === TODAY);
-  }, [data]);
+    return data.filter(
+      (item) => item.day === dayjs(selectedDate).format("YYYY-MM-DD"),
+    );
+  }, [data, selectedDate]);
+  const { isSmSmaller } = useBreakpoint();
   const onRowSelected = (row: MyTimeSheet) => {
     const rowData: TimeCreateValue = {
       day: row.day,
@@ -74,7 +83,9 @@ const ListSheet = ({ data, handleSelectListSheetRow }: IProps) => {
     handleSelectListSheetRow?.(rowData);
   };
 
-  return (
+  return isSmSmaller ? (
+    <MobileListSheet data={rowsData} />
+  ) : (
     <TableContainer sx={{ height: "100%" }}>
       <Table
         stickyHeader

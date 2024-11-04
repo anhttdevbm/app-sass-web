@@ -1,7 +1,8 @@
 import { Box, Stack } from "@mui/material"
 import { Text } from "components/shared"
 import OpenTicketDetailIcon from "icons/OpenTicketDetailIcon";
-import { memo } from "react"
+import useGetDashboardData from "queries/ticket-agent/useDashboard/useDashboard";
+import { ReactNode, memo } from "react"
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer, Label, LabelList } from 'recharts';
 
 interface ViewBox {
@@ -11,20 +12,37 @@ interface ViewBox {
     height: number;
 }
 
-let fakeTotalTicket = 212
-
 const PieTicket = () => {
+
+
+
+    const { pieTicketsData } = useGetDashboardData()
+
+    const sumTicket = () => {
+        const ticketByStatus = pieTicketsData?.data?.data?.data?.ticketByStatus || {};
+        const total = Object.values(ticketByStatus).reduce((accumulator : any, value) => accumulator + value, 0);
+        return Number(total);
+    }
+    let totalTicket : number = sumTicket()
+
+
+    const mapData = (type: string) => {
+        if (!pieTicketsData || pieTicketsData == null || !pieTicketsData.data || !pieTicketsData.data.data) return;
+        const foundItem = Object.entries(pieTicketsData?.data?.data?.data?.ticketByStatus).find(([key, value]) => key === type);
+        return foundItem ? foundItem[1] : 0;
+    }
+
     const data = [
-        { name: 'New', value: 50 },
-        { name: 'Open', value: 25 },
-        { name: 'In-progress', value: 20 },
-        { name: 'On-hold', value: 25 },
-        { name: 'Resolved', value: 78 },
-        { name: 'closed', value: 12 },
+        { name: 'New', value: mapData("New") },
+        { name: 'Open', value: mapData("Open") },
+        { name: 'In-progress', value: mapData("InProgress'") },
+        { name: 'On-hold', value: mapData("OnHold") },
+        { name: 'Resolved', value: mapData("Resolved") },
+        { name: 'closed', value: mapData("Closed") },
     ];
     const COLORS = ['#14B8A6', '#3B82F6', '#6366F1', '#EC4899', "#F59E0B", "#FACC15"];
 
-    const calculatePercent = (value: number, count: number) => {
+    const calculatePercent = (value: any, count: number) => {
         return ((value / count) * 100).toFixed(2)
     }
     return (
@@ -36,7 +54,7 @@ const PieTicket = () => {
                     display="flex"
                     alignContent="center"
                     justifyContent="flex-end"
-                    gap="10px"  
+                    gap="10px"
                 >
                     <Text
                         sx={{
@@ -44,7 +62,7 @@ const PieTicket = () => {
                             fontSize: 13,
                             textDecoration: "underline",
                             cursor: "pointer",
-                            fontWeight : 700
+                            fontWeight: 700
                         }}
                     >
                         {" "}
@@ -80,7 +98,7 @@ const PieTicket = () => {
                                                     {"Total Ticket"}
                                                 </text>
                                                 <text x={cx} y={cy + 10} textAnchor="middle" dominantBaseline="central" fill="#000" fontSize={20}>
-                                                    {fakeTotalTicket}
+                                                    {totalTicket}
                                                 </text>
                                             </g>
                                         );
@@ -107,8 +125,8 @@ const PieTicket = () => {
                                 <Box width={12} height={12} borderRadius={50} mt={0.5} sx={{ backgroundColor: COLORS[index] }}></Box>
                                 <Text fontSize={12} fontWeight={700} color="#737373">{item?.name}</Text>
                             </Box>
-                            <Text width={"25%"} fontSize={12} fontWeight={700} color="#737373">{item?.value}</Text>
-                            <Text width={"25%"} fontSize={12} fontWeight={700} color="#737373">{calculatePercent(item?.value, fakeTotalTicket)}%</Text>
+                            <Text width={"25%"} fontSize={12} fontWeight={700} color="#737373">{item?.value as ReactNode}</Text>
+                            <Text width={"25%"} fontSize={12} fontWeight={700} color="#737373">{calculatePercent(item?.value, totalTicket)}%</Text>
                         </Box>
                     ))}
 

@@ -18,7 +18,7 @@ type Props = {
   title: string;
   question: string;
   open: boolean;
-  onSubmit?: () => void;
+  onSubmit: () => void;
   onClose: () => void;
 };
 
@@ -122,7 +122,7 @@ const ConfirmToRequest = (props: Props) => {
             Cancel
           </Button>
           <Button
-            // onClick={onClick}
+            onClick={onSubmit}
             size="extraSmall"
             sx={{
               boxShadow: "none",

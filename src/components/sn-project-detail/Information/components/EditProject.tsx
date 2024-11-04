@@ -39,7 +39,7 @@ const EditProject = () => {
               fullname,
               position_project: rest?.position_project?.id,
             })),
-            avatar: item?.avatar?.link,
+            avatar: item?.avatar,
           }
         : INITIAL_VALUES,
     [item],
