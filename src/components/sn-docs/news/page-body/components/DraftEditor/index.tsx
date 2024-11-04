@@ -431,6 +431,7 @@ export default function DraftEditor() {
           paddingX: "1rem",
           height: `calc(100% - ${heightToolMemo}px)`,
           overflowY: "auto",
+          backgroundColor: "white",
         }}
       >
         <EditorPlugins

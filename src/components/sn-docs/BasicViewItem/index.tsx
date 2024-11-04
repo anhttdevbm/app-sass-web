@@ -84,8 +84,8 @@ export default function BasicViewDocItem({
               <Box display="flex" alignItems="center" gap={1}>
                 <Avatar
                   sx={{ height: 25, width: 25 }}
-                  alt={data?.groupInfo.avatar.name}
-                  src={data?.groupInfo.avatar.link}
+                  alt={data?.groupInfo.avatar?.name}
+                  src={data?.groupInfo.avatar?.link}
                 />
                 <Typography
                   sx={{
