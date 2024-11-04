@@ -1,6 +1,6 @@
 "use client";
 import { Box, Stack } from "@mui/material";
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import CardTicket from "../../components/CardTicket";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import Pagination from "components/Pagination";
@@ -11,6 +11,8 @@ import { selectSearchTicket } from "store/ticket/selectors";
 import useGetListTicket from "queries/ticket/useGetTicket/useGetListTicket";
 import { ITicket, TypeViewList } from "../../@type";
 import FilterTicket from "./filter-header/filter-ticket";
+import useNotification from "hooks/useNotification/useNotification";
+
 
 const TicketList = () => {
   const dispatch = useAppDispatch();
@@ -18,7 +20,13 @@ const TicketList = () => {
   const dataFilter = useSelector(selectSearchTicket);
   const typeViewDocStore = useAppSelector((state) => state.doc.typeViewDoc);
 
-  const handlePageChange = (newPage: number) => {
+  // const checktoken = useNotification()
+  // console.log("🚀 ~ TicketList ~ checktoken:", checktoken)
+
+
+
+
+  const handlePageChange = (newPage: number) => { 
     const payload = {
       ...dataFilter,
       page: newPage,
