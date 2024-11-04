@@ -211,7 +211,7 @@ const Detail = () => {
             <Box ref={scrollEndRef} />
           </>
         ) : (
-          <Activities />
+          <Activities task_id={task.taskId} subtask_id={task.subTaskId}/>
         )}
       </Stack>
     </Drawer>

@@ -7,6 +7,9 @@ import { useAppDispatch } from "store/hooks";
 export const selectSearchTicketAgent = (state: any) =>
   state.ticketAgent.keySearch;
 
+export const selectParamsDashboard = (state: any) =>
+  state.ticketAgent.paramsDashboard;
+
 export const selectListAgentOnline = (state) => state?.ticketAgent.listOnline;
 
 export const useGetAgents = () => {

@@ -36,7 +36,7 @@ const MessageItemRender = ({
   const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   const isCurrentAcc = useMemo(
-    () => user?.["id_rocket"] === message?.sender,
+    () => user?.id === message?.sender,
     [message, user],
   );
 

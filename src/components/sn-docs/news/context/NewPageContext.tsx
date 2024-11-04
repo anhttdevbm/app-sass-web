@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useState } from "react";
+import { DocPositionComment } from "../types/doc.type";
 
 export const NewPageContext = createContext<any>({
   coverPicture: {
@@ -35,7 +37,7 @@ export const NewPageContext = createContext<any>({
     lock: false,
   },
   activeCommentId: null,
-  setActiveCommentId: function () {},
+  setActiveCommentId: () => {},
   openCommentDialog: false,
   setCommentDialogOpen: function () {},
 });
@@ -48,6 +50,7 @@ export const NewPageContextProvider: React.FC<{ children: any }> = ({
     verticalPosition: 0,
   });
   const [comments, setComments] = useState([]);
+  const [commentPosition, setCommentPosition] = useState("");
   const [content, setContent] = useState({
     type: "doc",
     content: [
@@ -62,6 +65,10 @@ export const NewPageContextProvider: React.FC<{ children: any }> = ({
     ],
   });
   const [openCommentDialog, setCommentDialogOpen] = useState<boolean>(false);
+
+  const [showExistComment, shetShowExistComment] = useState<
+    DocPositionComment | undefined
+  >(undefined);
   const [pageSettings, setPageSettings] = useState({
     font: "san-serif",
     smallText: false,
@@ -71,6 +78,11 @@ export const NewPageContextProvider: React.FC<{ children: any }> = ({
   const [openComment, setOpenComment] = useState(false);
   const [activeCommentId, setActiveCommentId] = useState(null);
   const [isAddingNewLink, setIsAddingNewLink] = useState(false);
+
+  const handleCloseCommentDialog = () => {
+    setCommentDialogOpen(false);
+    shetShowExistComment(undefined);
+  };
   return (
     <NewPageContext.Provider
       value={{
@@ -91,6 +103,11 @@ export const NewPageContextProvider: React.FC<{ children: any }> = ({
         setIsAddingNewLink,
         openComment,
         setOpenComment,
+        commentPosition,
+        setCommentPosition,
+        showExistComment,
+        shetShowExistComment,
+        handleCloseCommentDialog,
       }}
     >
       {children}

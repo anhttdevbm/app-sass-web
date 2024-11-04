@@ -1,13 +1,13 @@
-import { useChat } from "store/chat/selectors";
-import ProfileHeader from "../common/ProfileHeader";
+import { SxProps, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
-import { SxProps, Typography } from "@mui/material";
-import { STEP_INFO } from "store/chat/type";
 import { DataStatus } from "constant/enums";
-import { useTranslations } from "next-intl";
 import { NS_AUTH } from "constant/index";
+import { useTranslations } from "next-intl";
 import { useAuth } from "store/app/selectors";
+import { useChat } from "store/chat/selectors";
+import { IMembersGroup, STEP_INFO } from "store/chat/type";
+import ProfileHeader from "../common/ProfileHeader";
 
 interface UserInfoProps {
   onPrevious: (step) => void;
@@ -17,8 +17,7 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
   const { user } = useAuth();
   const { conversationInfo, partnerInfoStatus, onGetUserInfo } = useChat();
   const { name, members } = conversationInfo || {};
-  // @ts-ignore
-  const partnerInfo = members?.find((item) => item?.id != user?.id);
+  const partnerInfo = members?.find((item): item is IMembersGroup => (item as IMembersGroup)?.id !== user?.id);
   const t = useTranslations(NS_AUTH);
 
   const styleFormItem: SxProps = {

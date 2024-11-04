@@ -9,6 +9,9 @@ import {
 export const setKeySearchTicketAgent = createAction<any>(
   "ticket-agent/setKeySearchTicketAgent",
 );
+export const setParamsDashboard = createAction<any>(
+  "ticket-agent/setParamsDashboard",
+);
 
 export const setListAgentOnline = createAction<{ id: string }[]>(
   "ticket-agent/setListAgent",

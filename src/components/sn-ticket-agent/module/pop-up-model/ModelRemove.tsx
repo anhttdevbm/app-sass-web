@@ -2,13 +2,9 @@
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { Button, Text } from "components/shared";
 import { NS_TICKET } from "constant/index";
-import { TICKET_PATH } from "constant/paths";
 import CloseIcon from "icons/CloseIcon";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next-intl/client";
 import { memo, useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 import { useSnackbar } from "store/app/selectors";
 import useRemoveAgent from "queries/ticket-agent/useRemoveAgent/useRemoveAgent";
 import { useQueryClient } from "react-query";

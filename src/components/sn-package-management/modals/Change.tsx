@@ -1,43 +1,83 @@
 "use client";
 
-import { memo, ReactNode, useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Modal,
-  Paper,
-  IconButton,
-  Avatar,
-} from "@mui/material";
+import { Box, IconButton, Modal } from "@mui/material";
+import { Text } from "components/shared";
+import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 import CloseIcon from "icons/CloseIcon";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getProfile } from "store/app/actions";
+import { AppDispatch, RootState } from "store/configureStore";
+import { changeBillOwner, getAllAccountAdmin } from "store/payment/actions";
 import ButtonCustom from "../components/Button";
 import SearchPackageManagement from "../components/Search";
-import { Text } from "components/shared";
-import { useTranslations } from "next-intl";
-import { NS_PACKAGE_MANAGERMENT } from "constant/index";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
 
+type account = {
+  email?: string;
+  fullName?: string;
+  roles?: string;
+  avatar: string;
+};
+
 const Change = (props: Props) => {
   const { open, onClose } = props;
 
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: listAccount } = useSelector(
+    (state: RootState) => state.payment.listAccountAdmin,
+  );
+  const [query, setQuery] = useState();
 
   const [step, setStep] = useState<number>(0);
-  const onSubmit = () => {
+  const [accountChange, setAccountChange] = useState<account>();
+  const onSubmit = async () => {
     if (step === 1) {
       setStep((prevStep) => prevStep + 1);
     } else {
+      const payload = {
+        email: accountChange?.email ?? "",
+      };
+      const resultAction = await dispatch(changeBillOwner(payload));
       handleClose();
+      dispatch(getProfile());
+
+      if (changeBillOwner.fulfilled.match(resultAction)) {
+        handleClose();
+      } else {
+        console.error("Error");
+      }
     }
   };
+  useEffect(() => {
+    dispatch(
+      getAllAccountAdmin({
+        searchKey: query,
+      }),
+    );
+  }, [open, query]);
   const handleClose = () => {
     onClose();
     setStep(0);
   };
+
+  const onClickChangeAccount = (account) => {
+    setAccountChange(account);
+    setStep((prevStep) => prevStep + 1);
+  };
+
+  const handleSearch = (value) => {
+    setQuery(value.toString());
+  };
+
   return (
     <Modal
       open={open}
@@ -53,6 +93,7 @@ const Change = (props: Props) => {
           transform: "translate(-50%, -50%)",
           bgcolor: "background.paper",
           borderRadius: 3,
+          maxHeight: "500px",
         }}
         width={{
           xs: 342,
@@ -100,19 +141,38 @@ const Change = (props: Props) => {
           </IconButton>
         </Box>
         {step === 0 ? (
-          <Box marginTop="20px">
-            <Text color="#999999" textAlign={{ xs: "center", sm: "left" }}>
-              {packageT("description.onlyAdmin")}
-            </Text>
-            <SearchPackageManagement width="100%" />
-            <Box
-              onClick={() => setStep((prevStep) => prevStep + 1)}
-              display="flex"
-              gap={2}
-            >
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-              <Box>
-                Nguyễn Văn A (phamvana@taskcover.com) <br /> Admin
+          <Box>
+            <Box marginTop="20px">
+              <Text color="#999999" textAlign={{ xs: "center", sm: "left" }}>
+                {packageT("description.onlyAdmin")}
+              </Text>
+              <SearchPackageManagement width="100%" onSearch={handleSearch} />
+              <Box overflow="auto" height="222px">
+                {listAccount?.map((item) => (
+                  <>
+                    <Box
+                      onClick={() => onClickChangeAccount(item)}
+                      display="flex"
+                      gap={2}
+                      marginTop="15px"
+                      sx={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Image
+                        alt={item?.avatar?.name || "Default alt text"}
+                        src={typeof item?.avatar === "string" ? item.avatar : UserPlaceholderImage}
+                        width={32}
+                        height={32}
+                        layout="fixed"
+                      />
+                      <Box>
+                        {item?.fullname ?? ""} ({item?.email ?? ""}) <br />{" "}
+                        {item?.roles ?? ""}
+                      </Box>
+                    </Box>
+                  </>
+                ))}
               </Box>
             </Box>
           </Box>
@@ -129,8 +189,18 @@ const Change = (props: Props) => {
                 "linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)",
             }}
           >
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-            Nguyễn Văn A (phamvana@taskcover.com){" "}
+            {accountChange && (
+              <>
+                <Image
+                  alt={accountChange?.fullName || "Default alt text"}
+                  src={accountChange?.avatar ?? UserPlaceholderImage}
+                  width={32}
+                  height={32}
+                  layout="fixed"
+                />
+                {accountChange?.fullName || ""} ({accountChange?.email || ""}){" "}
+              </>
+            )}
           </Box>
         ) : (
           <Box marginTop="20px" textAlign={"center"}>

@@ -46,9 +46,10 @@ export type DocsDictionary = {
   createDoc: any;
   extendBtn: {
     rename: string;
-    move: string;
+    moveProject: string;
     duplicate: string;
     delete: string;
+    convertToDoc: string;
   };
   ownedBy: string;
   createdBy: string;

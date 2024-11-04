@@ -1,4 +1,3 @@
-import { Circle } from "@mui/icons-material";
 import { Box, Button, IconButton, Stack } from "@mui/material";
 import { Text } from "components/shared";
 import AvatarGroup from "components/shared/AvatarGroup";
@@ -8,8 +7,8 @@ import { MaximizeIcon } from "icons/MaximizeIcon";
 import { MeetingShareLinkIcon } from "icons/MeetingShareLinkIcon";
 import moment from "moment";
 import { useMemo } from "react";
-import { useSidebar } from "store/app/selectors";
 import { store } from "store/configureStore";
+import RecordTimer from "../components/RecordTimer";
 import {
   sxBtnCircleActiveDark,
   sxBtnCircleActiveLight,
@@ -19,24 +18,25 @@ import {
 interface MeetingHeaderLayoutProps {
   sx: object;
   toggleMinimizeMeeting: () => void;
-  isRecording: boolean;
 }
 
 const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
-  const { toggleMinimizeMeeting, isRecording } = props;
-  const { isExpandedSidebar } = useSidebar();
   const { isDarkMode } = useTheme();
-  const { isXlSmaller } = useBreakpoint();
-  const { remoteStreams, meetInfo } = store.getState().meeting;
+  const { isLgSmaller } = useBreakpoint();
+  const { remoteStreams, meetInfo, isRecording, groupMeetName } =
+    store.getState().meeting;
   const avatars = useMemo(() => {
     return remoteStreams.map((remoteStream) => ({
       src: remoteStream.participant.avatar,
     }));
   }, [remoteStreams]);
 
+  const onCoppyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+  };
   return (
     <Stack
-      direction={isExpandedSidebar || isXlSmaller ? "column" : "row"}
+      direction={isLgSmaller ? "column" : "row"}
       justifyContent="space-between"
       sx={{ ...props.sx }}
     >
@@ -50,7 +50,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
         >
           {meetInfo?.room?.type === "p"
             ? remoteStreams.length > 0 && remoteStreams[0].participant.fullname
-            : "Group"}
+            : groupMeetName || "Group Meeting"}
         </Text>
         <Stack
           sx={{
@@ -64,14 +64,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
           <Text variant="body2" color="#818A98">
             {moment(meetInfo?.created_at).format("DD MMM YYYY")}
           </Text>
-          {isRecording && (
-            <Stack sx={{ flexDirection: "row", gap: 1 }}>
-              <Circle color="error" />
-              <Text variant="body2" color="GrayText">
-                26:32
-              </Text>
-            </Stack>
-          )}
+          {isRecording && <RecordTimer />}
         </Stack>
       </Box>
 
@@ -93,11 +86,12 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
               ...sxPrimaryBtn,
               textTransform: "capitalize",
               bgcolor: isDarkMode ? "#3a3b3c" : "#3699FF",
-              borderRadius: isExpandedSidebar || isXlSmaller ? "4px" : "44px",
+              borderRadius: isLgSmaller ? "4px" : "44px",
               display: "flex",
               gap: "6px",
               alignItems: "center",
             }}
+            onClick={onCoppyLink}
           >
             <MeetingShareLinkIcon
               sx={{
@@ -120,14 +114,14 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
                 : {
                     ...sxBtnCircleActiveLight,
                     bgcolor: "#3699FF",
-                    borderRadius: "4px",
+                    borderRadius: isLgSmaller ? "4px" : "44px",
                     "&:hover": {
                       opacity: 0.8,
                       bgcolor: "#3699FF",
                     },
                   }
             }
-            onClick={toggleMinimizeMeeting}
+            // onClick={toggleMinimizeMeeting}
           >
             <Box
               sx={{

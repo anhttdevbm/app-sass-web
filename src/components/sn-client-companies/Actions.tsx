@@ -4,12 +4,8 @@ import { IconButton, Stack } from "@mui/material";
 import { Endpoint, client } from "api";
 import { Search } from "components/Filters";
 import { Button, Text } from "components/shared";
-import { DataAction } from "constant/enums";
-import {
-  AUTH_API_URL,
-  NS_COMMON,
-  NS_COMPANY
-} from "constant/index";
+import { DataAction, Permission } from "constant/enums";
+import { AUTH_API_URL, NS_COMMON, NS_COMPANY } from "constant/index";
 import { Option } from "constant/types";
 import useToggle from "hooks/useToggle";
 import AddSquareIcon from "icons/AddSquareIcon";
@@ -19,7 +15,7 @@ import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { memo, useCallback, useEffect, useState } from "react";
-import { useHeaderConfig } from "store/app/selectors";
+import { useAuth, useHeaderConfig } from "store/app/selectors";
 import { useClientCompanies } from "store/company/selectors";
 import StringFormat from "string-format";
 import { getPath } from "utils/index";
@@ -42,6 +38,7 @@ const Actions = () => {
 
   const pathname = usePathname();
   const { push } = useRouter();
+  const { user } = useAuth();
 
   const [queries, setQueries] = useState<Params>({});
   const [optionSelected, setOptionSelected] = useState<Option | undefined>(
@@ -119,7 +116,7 @@ const Actions = () => {
     const opt = {
       label: response.data?.fullname ?? "",
       value: response.data?.id ?? "",
-      avatar: response.data?.avatar?.link ?? "",
+      avatar: response.data?.avatar ?? "",
     };
     setOptionSelected(opt);
   };
@@ -179,7 +176,7 @@ const Actions = () => {
           >
             {commonT("createNew")}
           </Button> */}
-           <Search
+          <Search
             name="name"
             placeholder={commonT("search")}
             onKeyDown={(e) => {
@@ -197,7 +194,14 @@ const Actions = () => {
               ".MuiInputBase-root": { height: 40, borderRadius: "100px" },
             }}
             startNode={""}
-            endNode={<IconButton aria-label="search"><SearchIcon onClick={onSearch} style={{ color: "#0575E6" ,height:"18px",width:"18px"}} /></IconButton>}
+            endNode={
+              <IconButton aria-label="search">
+                <SearchIcon
+                  onClick={onSearch}
+                  style={{ color: "#0575E6", height: "18px", width: "18px" }}
+                />
+              </IconButton>
+            }
           />
         </Stack>
 
@@ -224,50 +228,59 @@ const Actions = () => {
           overflow="hidden"
           width="100%"
         >
-          <Button
-            onClick={onShow}
-            size="small"
-            variant="contained"
-            sx={{
-              boxShadow: "none",
+          {(
+            (user?.roles.includes(Permission.AM) ||
+              user?.roles.includes(Permission.MN) ||
+              user?.roles.includes(Permission.LE)) && (
+              <Button
+                onClick={onShow}
+                size="small"
+                variant="contained"
+                sx={{
+                  boxShadow: "none",
 
-              fontWeight: "700",
-              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-              "&:hover": {
-                background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-              },
-              borderRadius: "100px",
-              height: 40,
-              width: 129,
-              "p,svg": { fontWeight: "700" },
-              svg: {
-                border: "1px solid white",
-                borderRadius: "50px",
-                color: "#2AF598",
-                background: "white",
-              },
-            }}
-          >
-            <AddSquareIcon
-              sx={{
-                display: { xs: "block", md: "none" },
-                width: 24,
-                height: 24,
-              }}
-            />
-            <PlusIcon
-              sx={{
-                display: { xs: "none", md: "block" },
-                mr: 1,
-                width: 18,
-                height: 18,
-              }}
-            />
-            <Text sx={{ fontSize:"16px", display: { xs: "none", md: "block" } }} color="inherit">
-              {companyT("clientCompany.create")}
-            </Text>
-          </Button>
-          
+                  fontWeight: "700",
+                  background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                  "&:hover": {
+                    background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                  },
+                  borderRadius: "100px",
+                  height: 40,
+                  width: 129,
+                  "p,svg": { fontWeight: "700" },
+                  svg: {
+                    border: "1px solid white",
+                    borderRadius: "50px",
+                    color: "#2AF598",
+                    background: "white",
+                  },
+                }}
+              >
+                <AddSquareIcon
+                  sx={{
+                    display: { xs: "block", md: "none" },
+                    width: 24,
+                    height: 24,
+                  }}
+                />
+                <PlusIcon
+                  sx={{
+                    display: { xs: "none", md: "block" },
+                    mr: 1,
+                    width: 18,
+                    height: 18,
+                  }}
+                />
+                <Text
+                  sx={{ fontSize: "16px", display: { xs: "none", md: "block" } }}
+                  color="inherit"
+                >
+                  {companyT("clientCompany.create")}
+                </Text>
+              </Button>
+            )
+          )}
+
         </Stack>
       </Stack>
       {isShow && (

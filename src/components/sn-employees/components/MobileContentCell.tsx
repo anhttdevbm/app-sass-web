@@ -1,15 +1,15 @@
-import { memo } from "react";
 import { Stack } from "@mui/material";
 import { useTranslations } from "next-intl";
+import { memo } from "react";
 
 import Avatar from "components/Avatar";
+import { BodyCell } from "components/NewTable";
 import { Text } from "components/shared";
 import TextStatus from "components/TextStatus";
-import { BodyCell } from "components/NewTable";
+import { NS_COMMON, NS_COMPANY } from "constant/index";
+import { Employee } from "store/company/reducer";
 import { formatDate } from "utils/index";
 import { COLOR_STATUS, TEXT_STATUS } from "../helpers";
-import { Employee } from "store/company/reducer";
-import { NS_COMPANY, NS_COMMON } from "constant/index";
 
 type MobileContentCellProps = {
   item: Employee;
@@ -29,7 +29,7 @@ const MobileContentCell = (props: MobileContentCellProps) => {
     <BodyCell align="left">
       <Stack spacing={2} py={1.5}>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar size={32} />
+          <Avatar size={32} src={item?.avatar} />
           <Text variant="h6">{item.fullname}</Text>
         </Stack>
         <InformationItem label="Email">{item.email}</InformationItem>

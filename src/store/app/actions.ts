@@ -21,7 +21,7 @@ export type SignupData = {
   password: string;
   phone?: string;
   fullname: string;
-  avatar?: string[];
+  avatar?: string;
 };
 
 export type ResetPasswordData = {
@@ -33,7 +33,7 @@ export type UpdateUserInfoData = {
   phone?: string;
   address?: string;
   fullname?: string;
-  avatar?: string | string[];
+  avatar?: string;
 };
 
 export type ChangePasswordData = {

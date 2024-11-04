@@ -59,7 +59,7 @@ export const Feed = ({ budget }: { budget: TBudget }) => {
                 }),
               }}
             >
-              <Avatar size={40} src={budget?.created_by?.avatar?.link || ""} />
+              <Avatar size={40} src={budget?.created_by?.avatar || ""} />
               <Stack px="10px">
                 <Text fontSize="16px" fontWeight="bold" mb="5px">
                   {budgetT(`actionStatus.${FeedAction[feed.action]}`)}
@@ -103,11 +103,24 @@ export const Feed = ({ budget }: { budget: TBudget }) => {
                 </Stack>
               </Stack>
               <Stack textAlign="center" direction="row">
-                <Text sx={{ color: "gray.300", fontSize: "14px", display: 'inline-block' }}>
+                <Text
+                  sx={{
+                    color: "gray.300",
+                    fontSize: "14px",
+                    display: "inline-block",
+                  }}
+                >
                   {formatDate(feed.created_time, SHORT_TIME_FORMAT)}
                 </Text>
                 {!isSameDay && (
-                  <Text sx={{ color: "gray.300", fontSize: "14px", display: 'inline-block', ml: 1 }}>
+                  <Text
+                    sx={{
+                      color: "gray.300",
+                      fontSize: "14px",
+                      display: "inline-block",
+                      ml: 1,
+                    }}
+                  >
                     {formatDate(feed.created_time, DATE_FORMAT_HYPHEN)}
                   </Text>
                 )}

@@ -1,6 +1,4 @@
-import { memo, useEffect, MouseEvent, useId, useState } from "react";
 import {
-  ButtonBase,
   IconButton,
   Drawer as MuiDrawer,
   Popover,
@@ -8,22 +6,23 @@ import {
   drawerClasses,
   popoverClasses,
 } from "@mui/material";
-import { Menu } from "layouts/components";
+import AppLogo from "components/AppLogo";
+import Avatar from "components/Avatar";
+import Link from "components/Link";
+import { Button, Text } from "components/shared";
+import { Permission } from "constant/enums";
+import { NS_COMMON } from "constant/index";
+import { HOME_PATH, UPGRADE_ACCOUNT_PATH } from "constant/paths";
+import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
 import BarsIcon from "icons/BarsIcon";
 import CloseIcon from "icons/CloseIcon";
-import AppLogo from "components/AppLogo";
-import { useAuth } from "store/app/selectors";
-import { Button, Text } from "components/shared";
-import Avatar from "components/Avatar";
-import useBreakpoint from "hooks/useBreakpoint";
-import Link from "components/Link";
-import { HOME_PATH, UPGRADE_ACCOUNT_PATH } from "constant/paths";
 import CrownIcon from "icons/CrownIcon";
-import { Permission } from "constant/enums";
+import { Menu } from "layouts/components";
 import { useTranslations } from "next-intl";
-import { NS_COMMON } from "constant/index";
 import { usePathname } from "next-intl/client";
+import { MouseEvent, memo, useEffect, useId, useState } from "react";
+import { useAuth } from "store/app/selectors";
 import { useAppDispatch } from "store/hooks";
 import UserActions from "./UserActions";
 
@@ -127,7 +126,7 @@ const UserInfo = () => {
         }}
         onClick={onOpen}
       >
-        <Avatar size={64} alt={user.fullname} src={user?.avatar?.link} />
+        <Avatar size={64} alt={user.fullname} src={user.avatar} />
         <Stack>
           <Text fontWeight={600} sx={{ wordBreak: "break-all" }}>
             {user.fullname}

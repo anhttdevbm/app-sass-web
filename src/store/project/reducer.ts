@@ -1,5 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
+import { DataStatus, Permission, Status } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
+import {
+  Attachment,
+  ItemListResponse,
+  Option,
+  Paging,
+  User,
+} from "constant/types";
+import { subDays } from "date-fns";
+import { Position } from "store/company/reducer";
+import { TBudgetListFilter, TBudgets } from "store/project/budget/action";
+import { BudgetReducer } from "store/project/budget/reducer";
+import {
+  formatDate,
+  getFiltersFromQueries,
+  removeDuplicateItem,
+} from "utils/index";
 import {
   changeParentTask,
   commentTask,
@@ -31,26 +49,8 @@ import {
   updateProject,
   updateTask,
   updateTaskList,
-  updateTodoStatus,
+  updateTodoStatus
 } from "./actions";
-import {
-  Attachment,
-  ItemListResponse,
-  Option,
-  Paging,
-  User,
-} from "constant/types";
-import { DataStatus, Permission, Status } from "constant/enums";
-import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
-import {
-  formatDate,
-  getFiltersFromQueries,
-  removeDuplicateItem,
-} from "utils/index";
-import { Position } from "store/company/reducer";
-import { subDays } from "date-fns";
-import { BudgetReducer } from "store/project/budget/reducer";
-import { TBudgetListFilter, TBudgets } from "store/project/budget/action";
 
 export interface Member {
   id: string;
@@ -101,11 +101,7 @@ export interface Project {
   start_date: string;
   end_date: string;
   number?: string;
-  avatar?: {
-    link?: string;
-    name?: string;
-    object?: string;
-  };
+  avatar?: string;
 }
 
 export interface Currency {

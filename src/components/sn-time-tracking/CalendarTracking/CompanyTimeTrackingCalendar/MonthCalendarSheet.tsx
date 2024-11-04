@@ -1,12 +1,10 @@
 "use client";
 
-import { AddCircle } from "@mui/icons-material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   AvatarGroup,
   Box,
-  Button,
   Drawer,
   Stack,
   Table,
@@ -33,16 +31,8 @@ import "./style.css";
 interface Timesheet extends MyTimeSheet {
   fullname: string;
   avatar: string;
-  // Override day in MyTimeSheet to make it is require field
   day: string;
 }
-
-// interface Project {
-//   id: string;
-//   name: string;
-//   company: string;
-//   avatar: string | null; // Example assumes avatar is a string URL or null
-// }
 
 interface Task {
   avatarUrl: string;
@@ -73,7 +63,7 @@ interface SelectedDate {
 const TODAY_DATE = moment().format("D");
 
 const MonthCalendarSheet = () => {
-  const { companyItems: company, onGetCompanyTimeSheet } = useGetMyTimeSheet();
+  const { companyItems: company } = useGetMyTimeSheet();
   // State to manage current month\
   const [timeSheetData, setTimeSheetData] = useState<Timesheet[]>([]);
   const [currentMonth, setCurrentMonth] = useState(moment().startOf("month"));
@@ -83,8 +73,10 @@ const MonthCalendarSheet = () => {
     event: undefined,
   });
 
-  const { isXlBigger } = useBreakpoint();
-  const weekdaysTableHeader = [...moment.weekdays(), "Total"];
+  const { isXlBigger, isSmSmaller } = useBreakpoint();
+  const weekdaysTableHeader = isSmSmaller
+    ? [...moment.weekdaysShort(), "Total"]
+    : [...moment.weekdays(), "Total"];
   const [events, setEvents] = useState<Event[]>([
     {
       date: "2024-07-01",
@@ -179,7 +171,7 @@ const MonthCalendarSheet = () => {
               ...data.timesheet.map((timesheet) => ({
                 ...timesheet,
                 fullname: data.fullname,
-                avatar: data.avatar?.link,
+                avatar: data.avatar,
                 day: timesheet.day as string,
               })),
             );
@@ -361,14 +353,16 @@ const MonthCalendarSheet = () => {
                           position: "relative",
                         }}
                       >
-                        <div
-                          style={{
-                            background: "#EBEAF2",
-                            height: "auto",
-                            width: "3px",
-                            border: "1px solid #EBEAF2",
-                          }}
-                        ></div>
+                        {!isSmSmaller && (
+                          <div
+                            style={{
+                              background: "#EBEAF2",
+                              height: "auto",
+                              width: "3px",
+                              border: "1px solid #EBEAF2",
+                            }}
+                          />
+                        )}
                         <div
                           style={{
                             display: "flex",
@@ -389,15 +383,17 @@ const MonthCalendarSheet = () => {
                               .add(dayObj.event.totalTime, "hours")
                               .format("HH:mm")}
                           </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: "12px",
-                              color: "#4C526C",
-                              fontFamily: inter.style.fontFamily,
-                            }}
-                          >
-                            Total Logged Hours
-                          </Typography>
+                          {!isSmSmaller && (
+                            <Typography
+                              sx={{
+                                fontSize: "12px",
+                                color: "#4C526C",
+                                fontFamily: inter.style.fontFamily,
+                              }}
+                            >
+                              Total Logged Hours
+                            </Typography>
+                          )}
                         </div>
                       </Box>
                       {isXlBigger && (
@@ -516,7 +512,7 @@ const MonthCalendarSheet = () => {
           overflowX: "auto",
         }}
       >
-        <TableContainer style={{ width: "100%" }}>
+        <TableContainer style={{ width: "100%", marginBottom: "100px" }}>
           <Table sx={{ tableLayout: "fixed" }}>
             <TableHead>
               <TableRow>
@@ -531,6 +527,7 @@ const MonthCalendarSheet = () => {
                       backgroundColor: "transparent",
                       fontFamily: inter.style.fontFamily,
                       fontWeight: 600,
+                      paddingX: 0,
                     }}
                   >
                     {day}
@@ -548,7 +545,7 @@ const MonthCalendarSheet = () => {
         open={drawerOpen}
         onClose={handleDrawerClose}
         PaperProps={{
-          sx: { width: "30%" },
+          sx: { width: isSmSmaller ? "50%" : "30%" },
         }}
       >
         <Stack>
@@ -578,47 +575,6 @@ const MonthCalendarSheet = () => {
                 gap: "10px",
               }}
             >
-              <Button
-                sx={{
-                  backgroundImage: "linear-gradient(to right,#2AF598,#009EFD)",
-                  borderRadius: "100px",
-                  color: "white",
-                  textTransform: "none",
-                  border: "none",
-                }}
-                variant="outlined"
-                startIcon={<AddCircle style={{ color: "white" }} />}
-              >
-                Add new
-              </Button>
-              <div
-                style={{
-                  display: "flex",
-                }}
-              >
-                <ChevronLeftIcon
-                  style={{
-                    background: "#F5F5F5",
-                    border: "1px solid #DDDDDD",
-                    cursor: "pointer",
-                    borderTopLeftRadius: "6px",
-                    borderBottomLeftRadius: "6px",
-                    width: "30px",
-                    height: "30px",
-                  }}
-                />
-                <ChevronRightIcon
-                  style={{
-                    background: "#F5F5F5",
-                    border: "1px solid #DDDDDD",
-                    cursor: "pointer",
-                    borderTopRightRadius: "6px",
-                    borderBottomRightRadius: "6px",
-                    width: "30px",
-                    height: "30px",
-                  }}
-                />
-              </div>
               <IconButton
                 onClick={handleDrawerClose}
                 style={{
@@ -641,9 +597,10 @@ const MonthCalendarSheet = () => {
                   <Box
                     sx={{
                       display: "flex",
-                      alignItems: "center",
+                      alignItems: isSmSmaller ? "flex-start" : "center",
                       padding: "10px 0",
                       gap: "20px",
+                      flexDirection: isSmSmaller ? "column" : "row",
                     }}
                   >
                     <SummaryBox

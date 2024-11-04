@@ -1,38 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
+  Button,
   ButtonBase,
   MenuItem,
-  MenuList,
   Popover,
-  Radio,
-  Stack,
-  Button,
-  Typography,
   popoverClasses,
-  SxProps,
+  Radio,
+  Typography,
 } from "@mui/material";
-import React, { memo, useEffect, useState } from "react";
-import { FilterSearchDocsProps } from "./FilterSearchDocs";
-import { Select, Text } from "components/shared";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_DOCS } from "constant/index";
-import { useFormik } from "formik";
-import { useEmployeeOptions } from "store/company/selectors";
-import ChevronIcon from "icons/ChevronIcon";
-import CalendarIcon from "icons/CalendarIcon";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Text } from "components/shared";
+import { NS_DOCS } from "constant/index";
 import dayjs from "dayjs";
-import { useSearchParams } from "next/navigation";
-import useQueryParams from "hooks/useQueryParams";
-import { useAppDispatch, useAppSelector } from "store/hooks";
-import { useDispatch } from "react-redux";
-import { updateFilterTimeDoc } from "store/docs/reducer";
-import { getCurrentQuarter, getLastQuarter } from "utils/index";
 import isoWeek from "dayjs/plugin/isoWeek";
+import useQueryParams from "hooks/useQueryParams";
+import ChevronIcon from "icons/ChevronIcon";
+import { useTranslations } from "next-intl";
+import { memo, useEffect, useState } from "react";
+import { useEmployeeOptions } from "store/company/selectors";
+import { updateFilterTimeDoc } from "store/docs/reducer";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { getCurrentQuarter, getLastQuarter } from "utils/index";
+import { FilterSearchDocsProps } from "./FilterSearchDocs";
+import { filterTextStyles, sxConfig } from "./styles";
 dayjs.extend(isoWeek);
 
-const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
+const FilterMemberEdit = ({
+  onChange,
+}: Omit<FilterSearchDocsProps, "queries">) => {
   const docsT = useTranslations(NS_DOCS);
   const selectedfilterTimeDocStore = useAppSelector(
     (state) => state.doc.selectedFilterTimeDoc,
@@ -70,7 +66,7 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
   };
 
   const [startDatePicker, setStartDatePicker] = useState<dayjs.Dayjs | null>(
-    dayjs().subtract(30, "day")
+    dayjs().subtract(30, "day"),
   );
   const [endDatePicker, setEndDatePicker] = useState<dayjs.Dayjs | null>(
     dayjs(new Date()),
@@ -121,28 +117,34 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
       case "alltime":
       case "Today":
         {
-          const from = dayjs(new Date()).format("YYYY-MM-DD");
-          const to = dayjs(new Date()).format("YYYY-MM-DD");
-          onChange("from", [from]);
-          onChange("to", [to]);
+          const from = dayjs(new Date()).toISOString();
+          const to = dayjs(new Date()).toISOString();
+          onChange({
+            from,
+            to,
+          });
           dispatch(updateFilterTimeDoc("Today"));
         }
         break;
       case docsT("filter.filter.oneDayAgo"):
         {
-          const from = dayjs().subtract(1, "day").format("YYYY-MM-DD");
-          const to = dayjs(new Date()).format("YYYY-MM-DD");
-          onChange("from", [from]);
-          onChange("to", [to]);
+          const from = dayjs().subtract(1, "day").toISOString();
+          const to = dayjs(new Date()).toISOString();
+          onChange({
+            from,
+            to,
+          });
           dispatch(updateFilterTimeDoc("1 day ago"));
         }
         break;
       case docsT("filter.filter.thisWeek"):
         {
-          const from = dayjs().startOf("isoWeek").format("YYYY-MM-DD");
-          const to = dayjs().endOf("isoWeek").format("YYYY-MM-DD");
-          onChange("from", [from]);
-          onChange("to", [to]);
+          const from = dayjs().startOf("isoWeek").toISOString();
+          const to = dayjs().endOf("isoWeek").toISOString();
+          onChange({
+            from,
+            to,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.thisWeek")));
         }
         break;
@@ -151,14 +153,19 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
           const startOfLastWeek = dayjs()
             .subtract(1, "week")
             .startOf("isoWeek")
-            .format("YYYY-MM-DD");
+            .toISOString();
 
           const endOfLastWeek = dayjs()
             .subtract(1, "week")
             .endOf("isoWeek")
-            .format("YYYY-MM-DD");
-          onChange("from", [startOfLastWeek]);
-          onChange("to", [endOfLastWeek]);
+            .toISOString();
+          console.log("startOfLastWeek", startOfLastWeek);
+          console.log("endOfLastWeek", endOfLastWeek);
+
+          onChange({
+            from: startOfLastWeek,
+            to: endOfLastWeek,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.lastWeek")));
         }
         break;
@@ -167,27 +174,29 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
           const startOfLastWeek = dayjs()
             .subtract(1, "week")
             .startOf("isoWeek")
-            .format("YYYY-MM-DD");
+            .toISOString();
 
           const endOfLastWeek = dayjs()
             .subtract(1, "week")
             .endOf("isoWeek")
-            .format("YYYY-MM-DD");
-          onChange("from", [startOfLastWeek]);
-          onChange("to", [endOfLastWeek]);
+            .toISOString();
+          onChange({
+            from: startOfLastWeek,
+            to: endOfLastWeek,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.oneWeekAgo")));
         }
         break;
       case docsT("filter.filter.thisMonth"):
         {
-          const startOfThisMonth = dayjs()
-            .startOf("month")
-            .format("YYYY-MM-DD");
+          const startOfThisMonth = dayjs().startOf("month").toISOString();
 
-          const endOfThisMonth = dayjs().endOf("month").format("YYYY-MM-DD");
+          const endOfThisMonth = dayjs().endOf("month").toISOString();
 
-          onChange("from", [startOfThisMonth]);
-          onChange("to", [endOfThisMonth]);
+          onChange({
+            from: startOfThisMonth,
+            to: endOfThisMonth,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.thisMonth")));
         }
         break;
@@ -196,15 +205,16 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
           const startOfLastMonth = dayjs()
             .subtract(1, "month")
             .startOf("month")
-            .format("YYYY-MM-DD");
+            .toISOString();
 
           const endOfLastMonth = dayjs()
             .subtract(1, "month")
             .endOf("month")
-            .format("YYYY-MM-DD");
-
-          onChange("from", [startOfLastMonth]);
-          onChange("to", [endOfLastMonth]);
+            .toISOString();
+          onChange({
+            from: startOfLastMonth,
+            to: endOfLastMonth,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.lastMonth")));
         }
         break;
@@ -213,31 +223,36 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
           const startOfLastMonth = dayjs()
             .subtract(1, "month")
             .startOf("month")
-            .format("YYYY-MM-DD");
+            .toISOString();
 
           const endOfLastMonth = dayjs()
             .subtract(1, "month")
             .endOf("month")
-            .format("YYYY-MM-DD");
-
-          onChange("from", [startOfLastMonth]);
-          onChange("to", [endOfLastMonth]);
+            .toISOString();
+          onChange({
+            from: startOfLastMonth,
+            to: endOfLastMonth,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.oneMonthAgo")));
         }
         break;
       case docsT("filter.filter.thisQuarter"):
         {
           const { startOfQuarter, endOfQuarter } = getCurrentQuarter();
-          onChange("from", [startOfQuarter]);
-          onChange("to", [endOfQuarter]);
+          onChange({
+            from: startOfQuarter,
+            to: endOfQuarter,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.thisQuarter")));
         }
         break;
       case docsT("filter.filter.lastQuarter"):
         {
           const { startOfQuarter, endOfQuarter } = getLastQuarter();
-          onChange("from", [startOfQuarter]);
-          onChange("to", [endOfQuarter]);
+          onChange({
+            from: startOfQuarter,
+            to: endOfQuarter,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.lastQuarter")));
         }
         break;
@@ -246,52 +261,53 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
           const startDate = dayjs()
             .subtract(3, "month")
             .startOf("month")
-            .format("YYYY-MM-DD");
+            .toISOString();
           const endDate = dayjs()
             .subtract(1, "month")
             .endOf("month")
-            .format("YYYY-MM-DD");
-          onChange("from", [startDate]);
-          onChange("to", [endDate]);
+            .toISOString();
+          onChange({
+            from: startDate,
+            to: endDate,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.threeMonthAgo")));
         }
         break;
       case docsT("filter.filter.thisYear"):
-        {
-          const startDate = dayjs().startOf("year").format("YYYY-MM-DD");
-          const endDate = dayjs().endOf("year").format("YYYY-MM-DD");
-          onChange("from", [startDate]);
-          onChange("to", [endDate]);
-          dispatch(updateFilterTimeDoc(docsT("filter.filter.thisYear")));
-        }
+        // {
+        //   const startDate = dayjs().startOf("year").toISOString();
+        //   const endDate = dayjs().endOf("year").toISOString();
+        //   onChange("from", [startDate]);
+        //   onChange("to", [endDate]);
+        //   dispatch(updateFilterTimeDoc(docsT("filter.filter.thisYear")));
+        // }
         break;
       case docsT("filter.filter.lastYear"):
-        {
-          const lastYear = dayjs().subtract(1, "year");
-          const startOfYear = lastYear.startOf("year").format("YYYY-MM-DD");
-          const endOfYear = lastYear.endOf("year").format("YYYY-MM-DD");
-          onChange("from", [startOfYear]);
-          onChange("to", [endOfYear]);
-          dispatch(updateFilterTimeDoc(docsT("filter.filter.lastYear")));
-        }
+        // {
+        //   const lastYear = dayjs().subtract(1, "year");
+        //   const startOfYear = lastYear.startOf("year").toISOString();
+        //   const endOfYear = lastYear.endOf("year").toISOString();
+        //   onChange("from", [startOfYear]);
+        //   onChange("to", [endOfYear]);
+        //   dispatch(updateFilterTimeDoc(docsT("filter.filter.lastYear")));
+        // }
         break;
       case docsT("filter.filter.oneYearAgo"):
         {
-          const from = dayjs()
-            .subtract(1, "year")
-            .startOf("day")
-            .format("YYYY-MM-DD");
-          const to = dayjs().endOf("day").format("YYYY-MM-DD");
-          onChange("from", [from]);
-          onChange("to", [to]);
+          const from = dayjs().subtract(1, "year").startOf("day").toISOString();
+          const to = dayjs().endOf("day").toISOString();
+          onChange({
+            from,
+            to,
+          });
           dispatch(updateFilterTimeDoc(docsT("filter.filter.oneYearAgo")));
         }
         break;
       case "custom":
-        const from = startDatePicker?.format("YYYY-MM-DD");
-        const to = endDatePicker?.format("YYYY-MM-DD");
-        onChange("from", [from]);
-        onChange("to", [to]);
+        const from = startDatePicker?.toISOString();
+        const to = endDatePicker?.toISOString();
+        // onChange("from", [from]);
+        // onChange("to", [to]);
         dispatch(updateFilterTimeDoc("custom"));
         break;
       default:
@@ -309,15 +325,47 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
       <MenuItem
         onClick={(e) => setAnchorEl(e.currentTarget)}
         component={ButtonBase}
-        sx={sxConfig.item}
+        sx={{
+          ...sxConfig.item,
+          paddingRight: "8px !important",
+        }}
       >
-        <Text variant="body2" fontWeight={600} color="grey.400">
+        <Text
+          sx={{
+            ...filterTextStyles,
+            opacity: 0.5,
+          }}
+        >
           {docsT("filter.filter.lastEdited")}:
         </Text>
-        <Text variant="body2" fontWeight={600} color="grey.700">
+        <Text
+          sx={{
+            ...filterTextStyles,
+            pr: "40px",
+          }}
+        >
           {docsT("filter.all")}
         </Text>
-        <ChevronIcon fontSize="small"></ChevronIcon>
+        <Box
+          sx={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: "18px",
+            height: "18px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderWidth: "0.2px",
+            borderStyle: "solid",
+            borderColor: "#5C5C5C",
+            borderRadius: "100%",
+            pointerEvents: "none",
+          }}
+        >
+          <ChevronIcon />
+        </Box>
       </MenuItem>
       <Popover
         anchorEl={anchorEl}
@@ -538,17 +586,3 @@ const FilterMemberEdit = ({ onChange, queries }: FilterSearchDocsProps) => {
 };
 
 export default memo(FilterMemberEdit);
-const sxConfig: Record<string, SxProps> = {
-  input: {
-    height: 56,
-  },
-  item: {
-    width: "100%",
-    py: 1,
-    px: 2,
-    gap: 1,
-    border: "solid 1px lightgrey",
-    borderRadius: "2rem",
-    bgcolor: "white",
-  },
-};

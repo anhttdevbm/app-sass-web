@@ -1,19 +1,16 @@
-import { memo, useState, useEffect, useMemo } from "react";
-import { Stack, Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Avatar from "components/Avatar";
+import { Dropdown } from "components/Filters";
+import Loading from "components/Loading";
 import { Text } from "components/shared";
-import { Comment } from "store/project/reducer";
-import Image from "next/image";
-import { formatDate } from "utils/index";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_PROJECT, NS_SALES } from "constant/index";
+import { NS_COMMON, NS_SALES } from "constant/index";
 import { Attachment } from "constant/types";
+import { useTranslations } from "next-intl";
+import { memo, useMemo, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
-import useGetEmployeeOptions from "components/sn-sales/hooks/useGetEmployeeOptions";
 import { SalesComment } from "store/sales/reducer";
 import { useSaleDetail } from "store/sales/selectors";
-import Loading from "components/Loading";
-import { Dropdown } from "components/Filters";
+import { formatDate } from "utils/index";
 import AttachmentPreview from "./AttachmentPreview";
 
 type CommentsProps = {
@@ -95,7 +92,7 @@ const CommentItem = (props: CommentItemProps) => {
     <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
       <Stack direction="row" justifyContent="space-between" spacing={1}>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={body?.avatar?.link} />
+          <Avatar size={32} src={body?.avatar} />
           <Stack>
             <Text variant="body2">{body?.fullname ?? "--"}</Text>
             <Text variant="caption" color="grey.400">

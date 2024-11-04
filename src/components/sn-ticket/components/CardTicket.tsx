@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Button, Text } from "components/shared";
+import {  Text } from "components/shared";
 import { NS_TICKET } from "constant/index";
 import { TICKET_INFO_PATH } from "constant/paths";
 import OpenTicketDetailIcon from "icons/OpenTicketDetailIcon";

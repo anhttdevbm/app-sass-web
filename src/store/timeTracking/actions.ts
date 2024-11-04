@@ -50,7 +50,6 @@ export const getMyTimeSheet = createAsyncThunk(
   "timeTracking/getMyTimeSheet",
   async (queries: GetMyTimeSheetQueries) => {
     const newQueries = { ...queries };
-
     try {
       const response = await client.get(Endpoint.MY_TIME_SHEET, newQueries, {
         baseURL: TIME_SHEET_API_URL,

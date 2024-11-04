@@ -73,7 +73,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
       result.push({
         label: item.owner?.fullname,
         value: item.owner?.id,
-        avatar: item.owner?.avatar?.link,
+        avatar: item.owner?.avatar,
         subText: item.owner?.email,
       });
     }

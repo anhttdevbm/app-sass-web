@@ -110,6 +110,7 @@ export const CommonLang: CommonDictionary = {
   show: "Show",
   hide: "Hide",
   upgradeAccount: "Upgrade account",
+  createWorkspace: "Create workspace",
   clickGoDetail: "Click to go to detail {name}",
   waiting: "Waiting",
   approved: "Approved",

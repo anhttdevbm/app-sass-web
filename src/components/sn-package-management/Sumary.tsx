@@ -1,24 +1,35 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
-import styled from "styled-components";
-import ButtonCustom from "./components/Button";
-import { Switch, Text } from "components/shared";
-import Box from "@mui/material/Box";
-import ModalUpgradePackage from "./modals/index";
-import Confirm from "./modals/Confirm";
-import Change from "./modals/Change";
 import { Avatar, useMediaQuery } from "@mui/material";
-import { useTranslations } from "next-intl";
-import { NS_PACKAGE_MANAGERMENT } from "constant/index";
-import { useDispatch } from "react-redux";
-import { changeAutoRenewal } from "store/payment/actions";
-import { AppDispatch } from "store/configureStore";
-import { useAuth } from "store/app/selectors";
-import { Permission } from "constant/enums";
+import Box from "@mui/material/Box";
+import { Switch, Text } from "components/shared";
 import ConfirmToRequest from "components/sn-employee-detail/components/ConfirmToRequest";
+import { Permission } from "constant/enums";
+import { NS_PACKAGE_MANAGERMENT } from "constant/index";
+import dayjs from "dayjs";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
+import { memo, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useAuth, useSnackbar } from "store/app/selectors";
+import { AppDispatch, RootState } from "store/configureStore";
+import {
+  changeAutoRenewal,
+  getAccountBillOwner,
+  getRequestUpgradePayment,
+} from "store/payment/actions";
+import ButtonCustom from "./components/Button";
+import Change from "./modals/Change";
+import Confirm from "./modals/Confirm";
+import ModalUpgradePackage from "./modals/index";
 
+type AccountBillOwnerType = {
+  email: string;
+  username: string;
+  avatar: string;
+};
 const Sumary = () => {
   const { user } = useAuth();
   const router = useRouter();
@@ -26,23 +37,43 @@ const Sumary = () => {
   const packageT = useTranslations(NS_PACKAGE_MANAGERMENT);
   const dispatch = useDispatch<AppDispatch>();
   const isMobile = useMediaQuery("(max-width:600px)");
+  const { onAddSnackbar } = useSnackbar();
 
+  const { total } = useSelector((state: RootState) => state.payment.accounts);
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
   const [openModalUpgradePackage, setOpenUpgradePackage] =
     useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openModalChange, setOpenModalChange] = useState<boolean>(false);
-  const onClickUpgradePackage = () => {
+  const [accountBillOwner, setAccountBillOwner] =
+    useState<AccountBillOwnerType>();
+  const [unupgradedAccount, setUnupgradedAccount] = useState<boolean>(false);
+  const onClickUpgradePackage = (status: boolean) => {
     if (!isMobile) {
       setOpenUpgradePackage(true);
     } else {
-      router.push("/package-management/mobile/upgrade-package");
+      router.push(
+        `/package-management/mobile/upgrade-package?unupgradedAccount=${unupgradedAccount}&totalAccount=${total}`,
+      );
     }
+    setUnupgradedAccount(status);
   };
 
   useEffect(() => {
     if (user?.auto_renewal) setChecked(user.auto_renewal);
+    if (roleUser && roleUser.includes(Permission.BO)) {
+      const resultAction = dispatch(getAccountBillOwner());
+      resultAction
+        .then((action) => {
+          if (action.payload) {
+            setAccountBillOwner(action.payload);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching account bill owner:", error);
+        });
+    }
   }, [user]);
 
   const onChangeCheckPackage = async () => {
@@ -65,6 +96,21 @@ const Sumary = () => {
     const gmailPattern = /^[^\s@]+@gmail\.com$/;
     return gmailPattern.test(email);
   };
+  const onSubmitConfirmToRequest = async () => {
+    try {
+      const result = await dispatch(getRequestUpgradePayment());
+
+      if (result?.payload?.success) {
+        onAddSnackbar("Request Success", "success");
+      } else {
+        onAddSnackbar("Already sent a payment request!", "error");
+      }
+      setOpenModalConfirm(false);
+    } catch (error) {
+      onAddSnackbar("Request Error", "error");
+      setOpenModalConfirm(false);
+    }
+  };
   return (
     <>
       <Text
@@ -77,7 +123,8 @@ const Sumary = () => {
         {packageT("head.sumary")}
       </Text>
       {(roleUser && roleUser.includes(Permission.SA)) ||
-      roleUser?.includes(Permission.BO) ? (
+      (roleUser?.includes(Permission.AM) &&
+        !roleUser?.includes(Permission.BO)) ? (
         <Box
           sx={{
             display: "flex",
@@ -162,13 +209,16 @@ const Sumary = () => {
             >
               {packageT("title.expirationDate")}
             </Text>
-            <Text color="#999999">29 July, 2024 20 00</Text>
+            <Text color="#999999">
+              {dayjs(user?.expiration_date).format("D MMMM, YYYY HH:mm") ?? ""}
+            </Text>
           </Box>
           <ConfirmToRequest
             open={openModalConfirm}
             title="Confirm to Request Upgrade"
             question="Are you sure to request upgrade?"
             onClose={() => setOpenModalConfirm(false)}
+            onSubmit={onSubmitConfirmToRequest}
           />
         </Box>
       ) : user && user?.email && isGmail(user.email) ? (
@@ -232,7 +282,7 @@ const Sumary = () => {
                 </Box>
               </Box>
               <ButtonCustom
-                onClick={onClickUpgradePackage}
+                onClick={() => onClickUpgradePackage(false)}
                 text={packageT("button.upgradePackage")}
               />
             </Box>
@@ -263,9 +313,11 @@ const Sumary = () => {
               >
                 {packageT("title.expirationDate")}
               </Text>
-              <Text color="#999999">16 Jul 20:00</Text>
+              <Text color="#999999">
+                {dayjs(user?.expiration_date).format("D MMMM, YYYY HH:mm")}
+              </Text>
               <ButtonCustom
-                onClick={onClickUpgradePackage}
+                onClick={() => onClickUpgradePackage(false)}
                 text={packageT("button.upgradePackage")}
               />
             </Box>
@@ -333,7 +385,10 @@ const Sumary = () => {
               open={openModalUpgradePackage}
               onClose={() => {
                 setOpenUpgradePackage(false);
+                setUnupgradedAccount(false);
               }}
+              unupgradedAccount={unupgradedAccount}
+              totalAccount={total}
             />
           )}
 
@@ -414,7 +469,7 @@ const Sumary = () => {
                 </Box>
               </Box>
               <ButtonCustom
-                onClick={onClickUpgradePackage}
+                onClick={() => onClickUpgradePackage(false)}
                 text={packageT("button.upgradePackage")}
               />
             </Box>
@@ -454,10 +509,10 @@ const Sumary = () => {
                 >
                   {packageT("title.unupgradedAccount")}
                 </Text>
-                <Text color="#999999">3</Text>
+                <Text color="#999999">{total ?? 0}</Text>
               </Box>
               <ButtonCustom
-                onClick={onClickUpgradePackage}
+                onClick={() => onClickUpgradePackage(true)}
                 text={packageT("button.upgradePackage")}
               />
             </Box>
@@ -469,7 +524,7 @@ const Sumary = () => {
                   borderRight: "1px solid #EFEFEF",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "16px",
+                  gap: "20px",
                 }}
               >
                 <Text
@@ -481,8 +536,14 @@ const Sumary = () => {
                   {packageT("title.billingOwner")}
                 </Text>
                 <Box display="flex" gap={2}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                  Nguyễn Văn A (phamvana@taskcover.com){" "}
+                  <Image
+                    alt={accountBillOwner?.avatar || "Default alt text"}
+                    src={accountBillOwner?.avatar ?? UserPlaceholderImage}
+                    width={32}
+                    height={32}
+                    layout="fixed"
+                  />
+                  {accountBillOwner?.username} ({accountBillOwner?.email}){" "}
                 </Box>
                 <ButtonCustom
                   onClick={onClickChange}
@@ -534,7 +595,7 @@ const Sumary = () => {
                 </Box>
                 <Box display="flex" gap={2}>
                   <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                  Nguyễn Văn A (phamvana@taskcover.com){" "}
+                  {accountBillOwner?.username} ({accountBillOwner?.email}){" "}
                 </Box>
               </Box>
             )}
@@ -602,7 +663,10 @@ const Sumary = () => {
               open={openModalUpgradePackage}
               onClose={() => {
                 setOpenUpgradePackage(false);
+                setUnupgradedAccount(false);
               }}
+              unupgradedAccount={unupgradedAccount}
+              totalAccount={total}
             />
           )}
           <Confirm

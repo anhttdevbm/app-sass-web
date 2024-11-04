@@ -12,7 +12,7 @@ type PropsTagIcon = {
 };
 
 const Tag = (props: PropsTagIcon) => {
-  // Định nghĩa kiểu CSSProperties cho inline styles
+ 
   const tagStyle: React.CSSProperties = {
     display: "flex",
     justifyContent: "center",

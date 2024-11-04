@@ -10,6 +10,7 @@ import { Select, Text } from "./shared";
 import { useTranslations } from "next-intl";
 import { NS_COMMON } from "constant/index";
 import { formatNumber } from "utils/index";
+import { Pages } from "@mui/icons-material";
 
 type PaginationProps = Omit<MuiPaginationProps, "count"> & {
   totalPages?: number;
@@ -19,6 +20,13 @@ type PaginationProps = Omit<MuiPaginationProps, "count"> & {
   onChangeSize: (newSize: number, keepPageIndex?: boolean) => void;
   containerProps?: StackProps;
 };
+
+export const OPTIONS = [
+  { label: "5", value: 5 },
+  { label: "10", value: 10 },
+  { label: "25", value: 25 },
+  { label: "50", value: 50 },
+];
 
 const Pagination = (props: PaginationProps) => {
   const {
@@ -64,7 +72,7 @@ const Pagination = (props: PaginationProps) => {
             fontWeight: 600,
             border: "none",
             backgroundColor: "#D9F0FD",
-            borderRadius : 3
+            borderRadius: 3,
           },
           [`& .${paginationItemClasses.selected}`]: {
             backgroundColor: ({ palette }) =>
@@ -88,7 +96,8 @@ const Pagination = (props: PaginationProps) => {
         </Text>
         <Select
           rootSx={{
-            height: 40, background: "#D9F0FD!important",
+            height: 40,
+            background: "#D9F0FD!important",
             borderColor: "transparent",
             color: "black",
             borderRadius: "12px",
@@ -96,6 +105,9 @@ const Pagination = (props: PaginationProps) => {
           options={OPTIONS}
           onChange={onChangePageSize}
           value={pageSize}
+          renderValue={(value) => {
+            return value;
+          }}
           size="small"
         />
         <Text variant="body2" fontWeight={600}>
@@ -108,10 +120,3 @@ const Pagination = (props: PaginationProps) => {
 };
 
 export default memo(Pagination);
-
-export const OPTIONS = [
-  { label: "5", value: 5 },
-  { label: "10", value: 10 },
-  { label: "25", value: 25 },
-  { label: "50", value: 50 },
-];

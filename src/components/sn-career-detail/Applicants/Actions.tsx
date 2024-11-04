@@ -1,18 +1,18 @@
 "use client";
 
-import { memo, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mui/material";
+import { Date, Dropdown, Search } from "components/Filters";
 import { Button, Text } from "components/shared";
-import { Clear, Date, Dropdown, Refresh, Search } from "components/Filters";
-import { formatNumber, getPath } from "utils/index";
-import { usePathname, useRouter } from "next-intl/client";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { TEXT_PAY_STATUS, TEXT_STATUS } from "./components/helpers";
-import { useCompany, useEmployeesOfCompany } from "store/manager/selectors";
+import { PayStatus } from "constant/enums";
 import { DATE_FORMAT_HYPHEN, NS_COMMON, NS_MANAGER } from "constant/index";
 import { useTranslations } from "next-intl";
-import { PayStatus } from "constant/enums";
+import { usePathname, useRouter } from "next-intl/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { memo, useEffect, useMemo, useState } from "react";
 import { CompanyStatus } from "store/manager/actions";
+import { useCompany, useEmployeesOfCompany } from "store/manager/selectors";
+import { formatNumber, getPath } from "utils/index";
+import { TEXT_PAY_STATUS, TEXT_STATUS } from "./components/helpers";
 
 const Actions = () => {
   const { filters, onGetEmployees, pageSize, statistic } =
@@ -182,9 +182,9 @@ const Actions = () => {
 export default memo(Actions);
 
 const PAYMENT_OPTIONS = [
-  { label: TEXT_PAY_STATUS[PayStatus.PAID], value: PayStatus.PAID },
+  { label: TEXT_PAY_STATUS[PayStatus.ACTIVE], value: PayStatus.ACTIVE },
   { label: TEXT_PAY_STATUS[PayStatus.UNPAID], value: PayStatus.UNPAID },
-  { label: TEXT_PAY_STATUS[PayStatus.WAITING], value: PayStatus.WAITING },
+  { label: TEXT_PAY_STATUS[PayStatus.PENDING], value: PayStatus.PENDING },
   { label: TEXT_STATUS[CompanyStatus.APPROVE], value: "true" },
   { label: TEXT_STATUS[CompanyStatus.REJECT], value: "false" },
 ];

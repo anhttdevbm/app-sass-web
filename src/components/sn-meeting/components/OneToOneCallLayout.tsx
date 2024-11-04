@@ -1,13 +1,22 @@
-import { Avatar, Box } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Box } from "@mui/material";
+import Avatar from "components/Avatar";
+import { Emoji } from "emoji-picker-react";
+import { useEffect, useMemo, useRef } from "react";
 import { useAuth } from "store/app/selectors";
 import { store } from "store/configureStore";
+import { useAppSelector } from "store/hooks";
+import {
+  setLocalStreamState,
+  updateRemoteStreamState,
+} from "store/meeting/reducer";
+import { ParticipantStreamEvent } from "store/meeting/types";
 
 export default function OneToOneCallLayout() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const { localStream, remoteStreams, meetInfo } = store.getState().meeting;
-  const { localStreamState } = store.getState().meeting;
+  const { localStream, remoteStreams, localStreamState } = useAppSelector(
+    (state) => state.meeting,
+  );
   const { user } = useAuth();
   const remoteStream = useMemo(() => remoteStreams[0], [remoteStreams]);
 
@@ -17,10 +26,47 @@ export default function OneToOneCallLayout() {
     }
   }, [localStream]);
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
+    if (
+      remoteVideoRef.current &&
+      remoteStream.stream &&
+      (remoteVideoRef.current?.srcObject as MediaStream)?.id !==
+        remoteStream?.stream.id
+    ) {
       remoteVideoRef.current.srcObject = remoteStream.stream;
     }
   }, [remoteStream]);
+
+  useEffect(() => {
+    if (remoteStream && remoteStream.streamState.reactionUnified) {
+      const timer = setTimeout(() => {
+        store.dispatch(
+          updateRemoteStreamState({
+            event: ParticipantStreamEvent.REACTION,
+            participantId: remoteStream.participant.id,
+            value: "",
+          }),
+        );
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [remoteStream]);
+
+  useEffect(() => {
+    if (localStreamState && localStreamState.reactionUnified) {
+      const timer = setTimeout(() => {
+        store.dispatch(
+          setLocalStreamState({
+            ...localStreamState,
+            reactionUnified: "",
+          }),
+        );
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [localStreamState]);
+
   return (
     <Box
       sx={{
@@ -31,6 +77,10 @@ export default function OneToOneCallLayout() {
         position: "relative",
         overflow: "hidden",
         gap: "12px",
+        "&:hover #btn_screen": {
+          display: "block",
+        },
+        paddingX: "24px",
       }}
     >
       <Box
@@ -43,6 +93,7 @@ export default function OneToOneCallLayout() {
           width: "100%",
           aspectRatio: "16/9",
           flex: 1,
+          backgroundColor: "#000",
         }}
       >
         {!localStreamState.isCameraOn && (
@@ -54,8 +105,8 @@ export default function OneToOneCallLayout() {
               width: "100%",
               height: "100%",
               backgroundImage: `url(${
-                user?.avatar?.link
-                  ? user?.avatar?.link
+                user?.avatar
+                  ? user?.avatar
                   : "/images/img-user-placeholder.webp"
               })`,
               backgroundSize: "cover",
@@ -74,10 +125,53 @@ export default function OneToOneCallLayout() {
           sx={{
             width: localStreamState.isCameraOn ? "unset" : "0%",
             height: "100%",
+            borderRadius: "12px",
           }}
         />
 
-        {!localStreamState.isCameraOn && <Avatar src={user?.avatar?.link} />}
+        {!localStreamState.isCameraOn && (
+          <Avatar
+            src={user?.avatar}
+            size={64}
+            alt={user?.fullname}
+            style={{
+              borderRadius: "12px",
+              zIndex: 9,
+            }}
+          />
+        )}
+        {localStreamState.isRaiseHand && (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "8px",
+              left: "8px",
+              zIndex: 10,
+              fontSize: "24px",
+              color: "white",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              padding: "4px",
+              borderRadius: "8px",
+              userSelect: "none",
+              cursor: "default",
+            }}
+          >
+            🖐️
+          </Box>
+        )}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "8px",
+            right: "8px",
+            zIndex: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Emoji unified={localStreamState.reactionUnified} size={30} />
+        </Box>
       </Box>
       {remoteStream && (
         <Box
@@ -90,8 +184,29 @@ export default function OneToOneCallLayout() {
             width: "100%",
             aspectRatio: "16/9",
             flex: 1,
+
+            backgroundColor: "#000",
           }}
         >
+          {remoteStream.streamState.isRaiseHand && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: "8px",
+                left: "8px",
+                zIndex: 10,
+                fontSize: "24px",
+                color: "white",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                padding: "4px",
+                borderRadius: "8px",
+                userSelect: "none",
+                cursor: "default",
+              }}
+            >
+              🖐️
+            </Box>
+          )}
           {!remoteStream.streamState.isCameraOn && (
             <Box
               sx={{
@@ -120,12 +235,38 @@ export default function OneToOneCallLayout() {
             sx={{
               width: remoteStream.streamState.isCameraOn ? "unset" : "0%",
               height: "100%",
+              borderRadius: "12px",
+              backgroundColor: "#000",
             }}
           />
 
           {!remoteStream.streamState.isCameraOn && (
-            <Avatar src={remoteStream.participant.avatar} />
+            <Avatar
+              src={remoteStream.participant.avatar}
+              size={64}
+              alt={remoteStream.participant.fullname}
+              style={{
+                borderRadius: "12px",
+                zIndex: 9,
+              }}
+            />
           )}
+          <Box
+            sx={{
+              position: "absolute",
+              top: "8px",
+              left: "8px",
+              zIndex: 10,
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Emoji
+              unified={remoteStream.streamState.reactionUnified}
+              size={30}
+            />
+          </Box>
         </Box>
       )}
     </Box>

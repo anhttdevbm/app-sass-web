@@ -1,4 +1,3 @@
-import { memo, useState, MouseEvent, useId, useRef, ChangeEvent, useMemo } from "react";
 import {
   ButtonBase,
   Divider,
@@ -6,21 +5,22 @@ import {
   popoverClasses,
   Stack,
 } from "@mui/material";
-import { Button, Text } from "components/shared";
-import ChevronIcon from "icons/ChevronIcon";
-import { useAuth } from "store/app/selectors";
-import Link from "components/Link";
-import { UPGRADE_ACCOUNT_PATH, ACCOUNT_INFO_PATH } from "constant/paths";
 import Avatar from "components/Avatar";
-import CrownIcon from "icons/CrownIcon";
-import { useAppDispatch } from "store/hooks";
-import { reset as appReset } from "store/app/reducer";
-import { reset as projectReset } from "store/project/reducer";
-import { reset as managerReset } from "store/manager/reducer";
-import { reset as companyReset } from "store/company/reducer";
-import { useTranslations } from "next-intl";
-import {  NS_ACCOUNT, NS_COMMON, NS_LAYOUT } from "constant/index";
+import Link from "components/Link";
+import { Button, Text } from "components/shared";
 import { Permission } from "constant/enums";
+import { NS_ACCOUNT, NS_COMMON, NS_LAYOUT } from "constant/index";
+import { ACCOUNT_INFO_PATH, UPGRADE_ACCOUNT_PATH } from "constant/paths";
+import ChevronIcon from "icons/ChevronIcon";
+import CrownIcon from "icons/CrownIcon";
+import { useTranslations } from "next-intl";
+import { memo, MouseEvent, useId, useState } from "react";
+import { reset as appReset } from "store/app/reducer";
+import { useAuth } from "store/app/selectors";
+import { reset as companyReset } from "store/company/reducer";
+import { useAppDispatch } from "store/hooks";
+import { reset as managerReset } from "store/manager/reducer";
+import { reset as projectReset } from "store/project/reducer";
 import UserActions from "./UserActions";
 
 const AccountInfo = () => {
@@ -67,7 +67,7 @@ const AccountInfo = () => {
         onClick={onOpen}
         display={{ xs: "none", sm: "flex" }}
       >
-        <Avatar size={32} alt={user.fullname} src={user?.avatar?.link} />
+        <Avatar size={32} alt={user.fullname} src={user.avatar} />
 
         <ChevronIcon fontSize="medium" sx={{ color: "grey.900" }} />
       </Stack>
@@ -116,7 +116,7 @@ const AccountInfo = () => {
             <Avatar
                 size={60}
                 alt={user.fullname}
-                src={user?.avatar?.link}
+                src={user.avatar}
               />
           </Link>
             

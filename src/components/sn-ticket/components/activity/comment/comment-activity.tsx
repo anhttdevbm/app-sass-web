@@ -2,12 +2,9 @@
 import { Stack, Typography } from "@mui/material";
 import { Button } from "components/shared";
 import {
-  ACCEPT_MEDIA,
-  IMAGES_ACCEPT,
   NS_COMMON,
   NS_TICKET,
 } from "constant/index";
-import useToggle from "hooks/useToggle";
 import { useTranslations } from "next-intl";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { UnprivilegedEditor } from "react-quill";
@@ -20,9 +17,6 @@ import useTicketAction from "queries/ticket/useTicketAction/useTicketAction";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "react-query";
 import { QUERY_TICKET_KEY } from "queries/ticket/keys";
-import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
-import { useSelector } from "react-redux";
-import { selectListAgent } from "store/ticket-agent/selectors";
 
 const tabComment = [
   {

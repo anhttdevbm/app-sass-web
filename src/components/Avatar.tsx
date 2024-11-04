@@ -10,7 +10,6 @@ type AvatarProps = Omit<ImageProps, "src" | "alt"> & {
 
 const Avatar = (props: AvatarProps) => {
   const { src, alt = "Avatar", size, ...rest } = props;
-
   return (
     <Image
       className="rounded"

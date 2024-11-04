@@ -1,28 +1,27 @@
-import { useChat } from "store/chat/selectors";
-import ProfileHeader from "../common/ProfileHeader";
+import { SxProps } from "@mui/material";
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
-import { SxProps } from "@mui/material";
-import ProfileCircleIcon from "icons/ProfileCircleIcon";
-import MediaFileIcon from "icons/MediaFileIcon";
-import LinkIcon from "icons/LinkIcon";
+import { AN_ERROR_TRY_AGAIN, NS_CHAT_BOX, NS_COMMON } from "constant/index";
+import useTheme from "hooks/useTheme";
 import FileBasicIcon from "icons/FileBasicIcon";
+import LinkIcon from "icons/LinkIcon";
+import MediaFileIcon from "icons/MediaFileIcon";
+import ProfileCircleIcon from "icons/ProfileCircleIcon";
+import { useTranslations } from "next-intl";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSnackbar } from "store/app/selectors";
+import { useChatHelpers, useWSChat } from "store/chat/helpers";
+import { useChat } from "store/chat/selectors";
 import {
   CHAT_EVENT_TYPE,
   MessageInfoV2,
-  MessageSearchInfo,
-  STEP_INFO,
+  STEP_INFO
 } from "store/chat/type";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import MessageListSearch from "../messages/MessageListSearch";
-import { useSnackbar } from "store/app/selectors";
-import { AN_ERROR_TRY_AGAIN, NS_CHAT_BOX, NS_COMMON } from "constant/index";
-import { useTranslations } from "next-intl";
-import UserInfo from "./UserInfo";
-import GroupMediaProfile from "./GroupMediaProfile";
 import ItemProfile from "../common/ItemProfile";
-import useTheme from "hooks/useTheme";
-import { useChatHelpers, useWSChat } from "store/chat/helpers";
+import ProfileHeader from "../common/ProfileHeader";
+import MessageListSearch from "../messages/MessageListSearch";
+import GroupMediaProfile from "./GroupMediaProfile";
+import UserInfo from "./UserInfo";
 
 interface UserLandingProps {
   displayUserInfo: boolean;
@@ -123,7 +122,7 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
         <Box textAlign="center" pt={2} pb={4} overflow="auto">
           <Avatar
             alt="Avatar"
-            src={avatar?.link || peer_detail?.avatar || undefined}
+            src={avatar || peer_detail?.avatar || undefined}
             size={120}
             style={{
               borderRadius: "50%",

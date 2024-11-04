@@ -5,7 +5,19 @@ import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 
 export default function SearchPackageManagement(props) {
-  const { placeholder, ...rest } = props;
+  const { placeholder, onSearch, ...rest } = props;
+  const [inputValue, setInputValue] = React.useState("");
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSearch = () => {
+    if (onSearch) {
+      onSearch(inputValue);
+    }
+  };
+
   return (
     <Paper
       //component="form"
@@ -26,9 +38,11 @@ export default function SearchPackageManagement(props) {
         sx={{ ml: 1, flex: 1 }}
         placeholder={placeholder}
         inputProps={{ "aria-label": "search google maps" }}
+        value={inputValue}
+        onChange={handleChange}
         {...rest}
       />
-      <IconButton aria-label="menu">
+      <IconButton aria-label="search" onClick={handleSearch}>
         <SearchIcon color="primary" />
       </IconButton>
     </Paper>

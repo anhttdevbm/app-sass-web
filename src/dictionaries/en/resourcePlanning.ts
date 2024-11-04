@@ -34,6 +34,7 @@ export const ResourcePlanningLang: ResourceDictionary = {
     time: {
       eventTime: "{allocation}{unit} for {day} days",
       thisWeek: "This week",
+      hourPerDay: "{total} h/day for",
     },
     resourceHeader: {
       available: "Available",
@@ -41,6 +42,8 @@ export const ResourcePlanningLang: ResourceDictionary = {
       service: "SERVICE",
       user: "USER",
       startDate: "START DATE",
+      Workload: "Workload",
+      chooseService: "Choose Service",
     },
     action: {
       addBooking: "Add booking",
@@ -113,5 +116,22 @@ export const ResourcePlanningLang: ResourceDictionary = {
     chooseBudgetPlacehodle: "Choose-budget",
     budget: "Budget",
     search: "Search",
+    servicePlaceholder: "Enter summary or service key",
+    dragText: "Drag service to the calendar",
+    date: "Date",
+  },
+  months: {
+    january: "January",
+    february: "February",
+    march: "March",
+    april: "April",
+    may: "May",
+    june: "June",
+    july: "July",
+    august: "August",
+    september: "September",
+    october: "October",
+    november: "November",
+    december: "December",
   },
 };

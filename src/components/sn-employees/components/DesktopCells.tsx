@@ -42,7 +42,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
     <>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={item?.avatar?.link} />
+          <Avatar size={32} src={item?.avatar} />
           <Link href={href}>
             <Text variant="h6">{item.fullname}</Text>
           </Link>
@@ -64,16 +64,17 @@ const DesktopCells = (props: DesktopCellsProps) => {
       </BodyCell>
       <BodyCell
         align="left"
-        tooltip={dayjs(item.date_end_using).format(DATE_FORMAT)}
+        tooltip={dayjs(item.expiration_date).format(DATE_FORMAT)}
       >
         {/* {formatDate(item.date_end_using)} */}
-        {dayjs(item.date_end_using).format(DATE_FORMAT)}
+        {dayjs(item.expiration_date).format(DATE_FORMAT)}
       </BodyCell>
       <StatusCell
         namespace={NS_COMPANY}
         text={TEXT_STATUS[item.status]}
         color={COLOR_STATUS[item.status]}
         width={93}
+        align="center"
       />
     </>
   );

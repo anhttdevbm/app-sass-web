@@ -1,15 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Box,
-  MenuList,
-  Popover,
-  Stack,
   SxProps,
-  popoverClasses,
 } from "@mui/material";
-import { Text } from "components/shared";
 import { NS_COMMON, NS_DOCS } from "constant/index";
-import ChevronIcon from "icons/ChevronIcon";
 import { useTranslations } from "next-intl";
 import React, { memo, useState } from "react";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -23,19 +16,6 @@ export interface FilterSearchDocsProps {
 }
 
 const FilterSearchDocs = ({ onChange, queries }: FilterSearchDocsProps) => {
-  const docsT = useTranslations(NS_DOCS);
-  const [anchorEl, setAnchorEl] = useState<any>(null);
-  const commonT = useTranslations(NS_COMMON);
-
-  const isHasValue =
-    queries?.user_id ||
-    queries?.project ||
-    queries?.lastEdit ||
-    queries?.project_status;
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <>

@@ -5,6 +5,7 @@ import React, { useEffect, useMemo } from "react";
 import SortByCategory, { SelectDataProps } from "../Search";
 import { useProjects } from "store/project/selectors";
 import { useEmployeeOptions } from "store/company/selectors";
+import useBreakpoint from "hooks/useBreakpoint";
 
 interface IProps {
   personVisibleFilter?: boolean;
@@ -26,6 +27,7 @@ const FilterCategory: React.FC<IProps> = ({
   periodVisibleFilter = true,
 }) => {
   const { items: projects } = useProjects();
+  const { isSmSmaller } = useBreakpoint();
   const { items: employees, onGetOptions: onGetEmployeeOptions } =
     useEmployeeOptions();
   useEffect(() => {
@@ -53,7 +55,9 @@ const FilterCategory: React.FC<IProps> = ({
         padding: "14px 1.5rem",
         background: "#F7F7FD",
         width: "100%",
-        height: " 60px",
+        height: isSmSmaller ? "auto" : "60px",
+        overflow: "auto hidden",
+        flexShrink: 0,
       }}
     >
       <p
@@ -62,12 +66,12 @@ const FilterCategory: React.FC<IProps> = ({
           fontSize: "13px",
           fontWeight: "bold",
           color: "neutral.700",
+          flexShrink: 0,
         }}
       >
         View by:{" "}
       </p>
       <SortByCategory title="Project" data={projectsSelectData} />
-      {periodVisibleFilter && <SortByCategory title="Period" data={null} />}
       {personVisibleFilter && (
         <SortByCategory title="Person" data={employeesSelectData} />
       )}

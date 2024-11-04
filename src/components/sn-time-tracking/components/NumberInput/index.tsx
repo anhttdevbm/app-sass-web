@@ -8,7 +8,6 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import CurrencyInput from "react-currency-input-field";
 import { Stack } from "@mui/system";
 import useTheme from "hooks/useTheme";
 import { Button, InputNumber } from "components/shared";
@@ -111,26 +110,6 @@ const NumberInput: React.FC<TextFieldInputProps> = (
               </Typography>
             )}
           </InputLabel>
-          {/* <CurrencyInput
-            placeholder={placeholder}
-            id={`input-field-${randomId}`}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            value={value}
-            onValueChange={(value) => {
-              if (onChange) onChange(value);
-            }}
-            style={{
-              fontSize: "14px",
-              lineHeight: "22px",
-              fontWeight: 400,
-              color: isDarkMode ? "#fff" : "common.black",
-              padding: 0,
-              backgroundColor: isDarkMode ? "#393939" : "#F7F7FD",
-              border: "none",
-              outline: "none",
-            }}
-          /> */}
           {/* <TextField
             {...rest}
             fullWidth
