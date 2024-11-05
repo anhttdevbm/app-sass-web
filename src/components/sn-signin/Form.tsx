@@ -6,14 +6,16 @@ import {
   FormControlLabel,
   Stack
 } from "@mui/material";
+import { Endpoint } from "api";
 import { formErrorCode } from "api/formErrorCode";
 import Link from "components/Link";
 import { Button, Input } from "components/shared";
-import { AN_ERROR_TRY_AGAIN, NS_AUTH, NS_COMMON } from "constant/index";
+import { AN_ERROR_TRY_AGAIN, NOTIFY_API_URL, NS_AUTH, NS_COMMON } from "constant/index";
 import { FORGOT_PASSWORD_PATH } from "constant/paths";
 import { EMAIL_REGEX } from "constant/regex";
 import { ErrorResponse } from "constant/types";
 import { FormikErrors, useFormik } from "formik";
+import useNotification from "hooks/useNotification/useNotification";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo, useState } from "react";
@@ -21,6 +23,7 @@ import { SigninData } from "store/app/actions";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
+
 
 const Form = () => {
   const { onSignin } = useAuth();
@@ -38,12 +41,28 @@ const Form = () => {
     }
   }, []);
 
+
+  const {fcmToken} = useNotification();
+  // console.log("🚀 ~ Form ~ fcmToken:", fcmToken)
   const onSubmit = async (values: SigninData) => {
+
     try {
       const newData = await onSignin(values);
 
       if (newData) {
         onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
+
+        await fetch(`${NOTIFY_API_URL}/notification/${Endpoint.NOTIFY_REGISTER_USER}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: newData?.id,
+            token: fcmToken,
+          }),
+        })
+
         if (rememberAccount) {
           localStorage.setItem("rememberedEmail", values.email);
         } else {

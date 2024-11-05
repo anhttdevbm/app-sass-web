@@ -1,40 +1,39 @@
 "use client";
 
-import {
-  memo,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  ChangeEvent,
-} from "react";
 import { Stack, TableRow } from "@mui/material";
-import {
-  TableLayout,
-  BodyCell,
-  CellProps,
-  ActionsCell,
-} from "components/Table";
-import { DEFAULT_PAGING, NS_COMMON, NS_MANAGER } from "constant/index";
-import useQueryParams from "hooks/useQueryParams";
+import FixedLayout from "components/FixedLayout";
 import Pagination from "components/Pagination";
+import {
+    ActionsCell,
+    BodyCell,
+    CellProps,
+    TableLayout,
+} from "components/Table";
+import { Checkbox, IconButton } from "components/shared";
+import { PayStatus } from "constant/enums";
+import { DEFAULT_PAGING, NS_COMMON, NS_MANAGER } from "constant/index";
+import useBreakpoint from "hooks/useBreakpoint";
+import useQueryParams from "hooks/useQueryParams";
+import CircleTickIcon from "icons/CircleTickIcon";
+import CloseSquareIcon from "icons/CloseSquareIcon";
+import { HEADER_HEIGHT } from "layouts/Header";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
-import { getPath } from "utils/index";
-import { IconButton, Checkbox } from "components/shared";
-import { useCompany, useEmployeesOfCompany } from "store/manager/selectors";
+import {
+    ChangeEvent,
+    memo,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { Employee } from "store/company/reducer";
+import { CompanyStatus } from "store/manager/actions";
+import { useCompany, useEmployeesOfCompany } from "store/manager/selectors";
+import { getPath } from "utils/index";
 import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 import { ApproveOrRejectConfirm } from "./components";
-import useBreakpoint from "hooks/useBreakpoint";
-import CircleTickIcon from "icons/CircleTickIcon";
-import CloseSquareIcon from "icons/CloseSquareIcon";
-import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { PayStatus } from "constant/enums";
-import { CompanyStatus } from "store/manager/actions";
-import FixedLayout from "components/FixedLayout";
-import { HEADER_HEIGHT } from "layouts/Header";
 
 const ItemList = () => {
   const {
@@ -67,7 +66,7 @@ const ItemList = () => {
   const nOfWaitings = useMemo(
     () =>
       items.filter(
-        (item) => item.approve === undefined && item.status === PayStatus.PAID,
+        (item) => item.approve === undefined && item.status === PayStatus.ACTIVE,
       ).length,
     [items],
   );
@@ -89,7 +88,7 @@ const ItemList = () => {
         setSelectedList(
           items.filter(
             (item) =>
-              item.approve === undefined && item.status === PayStatus.PAID,
+              item.approve === undefined && item.status === PayStatus.ACTIVE,
           ),
         );
       } else {
@@ -274,7 +273,7 @@ const ItemList = () => {
               <TableRow key={item.id}>
                 <BodyCell sx={{ px: { xs: 0.5, md: 2 } }}>
                   {item.approve === undefined &&
-                    item.status === PayStatus.PAID && (
+                    item.status === PayStatus.ACTIVE && (
                       <Checkbox
                         checked={indexSelected !== -1}
                         onChange={onToggleSelect(item, indexSelected)}
@@ -299,7 +298,7 @@ const ItemList = () => {
                     },
                   }}
                   options={
-                    item.approve === undefined && item.status === PayStatus.PAID
+                    item.approve === undefined && item.status === PayStatus.ACTIVE
                       ? [
                           {
                             content: managerT("approve"),
