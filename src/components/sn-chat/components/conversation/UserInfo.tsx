@@ -17,7 +17,11 @@ const UserInfo = ({ onPrevious }: UserInfoProps) => {
   const { user } = useAuth();
   const { conversationInfo, partnerInfoStatus, onGetUserInfo } = useChat();
   const { name, members } = conversationInfo || {};
-  const partnerInfo = members?.find((item): item is IMembersGroup => (item as IMembersGroup)?.id !== user?.id);
+  const typedMembers = members as IMembersGroup[] | undefined;
+  // const partnerInfo = members.find((item): item is IMembersGroup => (item as IMembersGroup)?.id !== user?.id);
+  // const partnerInfo = Array.isArray(members) ? members.find((item): item is IMembersGroup => (item as IMembersGroup)?.id !== user?.id) : undefined;
+  const partnerInfo = Array.isArray(typedMembers) ? typedMembers.find((item) => item.id !== user?.id) : undefined;
+
   const t = useTranslations(NS_AUTH);
 
   const styleFormItem: SxProps = {
