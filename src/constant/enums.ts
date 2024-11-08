@@ -48,6 +48,12 @@ export enum Status {
   CLOSE = "CLOSE",
 }
 
+export enum EmployeeStatus {
+  ACTIVE = "ACTIVE",
+  UNPAID = "UNPAID",
+  PENDING = "PENDING",
+}
+
 export enum EmployeeType {
   EMPLOYEE = "Employee",
   CLIENT = "Client",

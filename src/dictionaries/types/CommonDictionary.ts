@@ -92,6 +92,8 @@ export type CommonDictionary = {
     active: string;
     close: string;
     pause: string;
+    unpaid: string;
+    pending: string;
   };
   show: string;
   hide: string;
@@ -135,4 +137,10 @@ export type CommonDictionary = {
   };
   actions: string;
   learnMore: string;
+  employees: {
+    paid: string;
+    unPaid: string;
+    waiting: string;
+    expirationDate: string;
+  }
 };

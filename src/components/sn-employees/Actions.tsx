@@ -20,6 +20,7 @@ import { useAuth } from "store/app/selectors";
 import { useEmployees } from "store/company/selectors";
 import { usePositionOptions } from "store/global/selectors";
 import { getPath } from "utils/index";
+import StatusDropdown from "./components/StatusDropdown";
 import EmployeeCompanyForm from "./EmployeeCompanyForm";
 import EmployeeTypeForm from "./EmployeeTypeForm";
 import { TEXT_STATUS } from "./helpers";
@@ -170,13 +171,17 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
             pending={positionOptionsIsFetching}
             onEndReached={onEndReached}
           />
-          <Dropdown
+          {/* <Dropdown
             placeholder={commonT("status")}
             options={paymentOptions}
             name="status"
             onChange={onChangeQueries}
             value={Number(queries?.status)}
-          />
+          /> */}
+          <StatusDropdown
+              value={Number(queries?.status)}
+              onChange={(value) => onChangeQueries("status", value)}
+            />
           <Button size="small" onClick={onSearch} variant="secondaryOutlined">
             {commonT("search")}
           </Button>
@@ -247,7 +252,7 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
 
 export default memo(Actions);
 
-const PAYMENT_OPTIONS = [
+export const PAYMENT_OPTIONS = [
   { label: TEXT_STATUS[1], value: PayStatus.ACTIVE },
   { label: TEXT_STATUS[2], value: PayStatus.UNPAID },
   { label: TEXT_STATUS[3], value: PayStatus.PENDING },
