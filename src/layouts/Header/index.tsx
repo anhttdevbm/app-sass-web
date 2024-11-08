@@ -16,7 +16,7 @@ import { memo } from "react";
 import { useHeaderConfig } from "store/app/selectors";
 import { useProjects } from "store/project/selectors";
 import { getPath } from "utils/index";
-import { AccountInfo, Drawer } from "./components";
+import { AccountInfo, Drawer , NotificationList} from "./components";
 
 const Header = () => {
   const { title, searchPlaceholder, prevPath, key, imageUrl } =
@@ -133,6 +133,7 @@ const Header = () => {
           <SwitchLanguage />
           <SwitchTheme />
         </Stack>
+        <NotificationList/>
         <AccountInfo />
       </Stack>
       <Drawer />

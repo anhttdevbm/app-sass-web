@@ -21,13 +21,14 @@ import {
   TableLayout,
 } from "components/NewTable";
 import { Checkbox, IconButton } from "components/shared";
-import { DataAction, EmployeeType, PayStatus } from "constant/enums";
+import { DataAction, EmployeeType, PayStatus, Permission } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useQueryParams from "hooks/useQueryParams";
 // import useTheme from "hooks/useTheme";
 import EditUnderlineIcon from "icons/EditUnderlineAltIcon";
 import TrashIcon from "icons/TrashAltIcon";
+import { useAuth } from "store/app/selectors";
 import { Employee } from "store/company/reducer";
 import { useEmployees } from "store/company/selectors";
 import { getPath } from "utils/index";
@@ -60,6 +61,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
   const [item, setItem] = useState<Employee | undefined>();
   const [selectedList, setSelectedList] = useState<Employee[]>([]);
   const [action, setAction] = useState<DataAction | undefined>();
+  const { user } = useAuth();
 
   // const employees = useMemo(
   //   () => (employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees),
@@ -331,37 +333,40 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
                   <DesktopCells item={item} />
                 )}
 
-                <ActionsCell
-                  sx={{
-                    pl: { xs: 0.5, md: 0 },
-                    verticalAlign: { xs: "top", md: "middle" },
-                    pt: { xs: 2, md: 0 },
-                  }}
-                  iconProps={{
-                    sx: {
-                      p: { xs: "4px!important", lg: 1 },
-                    },
-                  }}
-                  onEdit={onActionToItem(DataAction.UPDATE, item)}
-                  onDelete={onActionToItem(DataAction.DELETE, item)}
-                  hasPopup={false}
-                  options={
-                    item.status === PayStatus.PENDING
-                      ? [
-                          {
-                            content: companyT("employees.pay"),
-                            onClick: onActionToItem(DataAction.OTHER, item),
-                            icon: (
-                              <EditUnderlineIcon
-                                sx={{ color: "grey.400" }}
-                                fontSize="medium"
-                              />
-                            ),
-                          },
-                        ]
-                      : undefined
-                  }
-                />
+                {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
+                  <ActionsCell
+                    sx={{
+                      pl: { xs: 0.5, md: 0 },
+                      verticalAlign: { xs: "top", md: "middle" },
+                      pt: { xs: 2, md: 0 },
+                    }}
+                    iconProps={{
+                      sx: {
+                        p: { xs: "4px!important", lg: 1 },
+                      },
+                    }}
+                    onEdit={onActionToItem(DataAction.UPDATE, item)}
+                    onDelete={onActionToItem(DataAction.DELETE, item)}
+                    hasPopup={false}
+                    options={
+                      item.status === PayStatus.PENDING
+                        ? [
+                            {
+                              content: companyT("employees.pay"),
+                              onClick: onActionToItem(DataAction.OTHER, item),
+                              icon: (
+                                <EditUnderlineIcon
+                                  sx={{ color: "grey.400" }}
+                                  fontSize="medium"
+                                />
+                              ),
+                            },
+                          ]
+                        : undefined
+                    }
+                  />
+                )}
+                
               </TableRow>
             );
           })}

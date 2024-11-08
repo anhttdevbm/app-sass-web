@@ -48,6 +48,7 @@ export const signin = createAsyncThunk(
       const response = await client.post(Endpoint.SIGNIN, data, {
         baseURL: AUTH_API_URL,
       });
+      
 
       if (response?.status === HttpStatusCode.OK) {
         return response.data as UserInfo & {
