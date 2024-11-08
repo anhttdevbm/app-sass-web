@@ -28,6 +28,7 @@ import ModalUpgradePackage from "./modals/index";
 type AccountBillOwnerType = {
   email: string;
   username: string;
+  fullName: string;
   avatar: string;
 };
 const Sumary = () => {
@@ -543,7 +544,7 @@ const Sumary = () => {
                     height={32}
                     layout="fixed"
                   />
-                  {accountBillOwner?.username} ({accountBillOwner?.email}){" "}
+                  {accountBillOwner?.fullName} ({accountBillOwner?.email}){" "}
                 </Box>
                 <ButtonCustom
                   onClick={onClickChange}

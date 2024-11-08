@@ -97,6 +97,8 @@ export const CommonLang: CommonDictionary = {
     active: "Hoạt động",
     close: "Hoàn thành",
     pause: "Tạm dừng",
+    unpaid: "Chưa thanh toán",
+    pending: "Chờ duyệt",
   },
   searchBy: "Tìm kiếm theo {name}",
   searchByLabel: "Tìm kiếm theo",
@@ -139,4 +141,10 @@ export const CommonLang: CommonDictionary = {
   },
   actions: "Hành động",
   learnMore: "Xem thêm",
+  employees: {
+    paid: "Hoạt động",
+    unPaid: "Chưa thanh toán",
+    waiting: "Chờ duyệt",
+    expirationDate: "Đã hết hạn",
+  }
 };

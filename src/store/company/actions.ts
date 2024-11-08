@@ -19,6 +19,13 @@ export enum CompanyStatus {
   WAITING,
 }
 
+export enum EmployeeStatus {
+  ACTIVE = "ACTIVE",
+  UNPAID = "UNPAID",
+  PENDING = "PENDING",
+  EXPIRED = "EXPIRED",
+}
+
 export type GetEmployeeListQueries = BaseQueries & {
   fullname?: string;
   email?: string;
