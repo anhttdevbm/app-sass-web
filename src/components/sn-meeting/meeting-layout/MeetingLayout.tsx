@@ -3,21 +3,48 @@
 import { Card, Stack } from "@mui/material";
 
 import useTheme from "hooks/useTheme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWSChatConnect } from "store/chat/ws";
 import VideoScreen from "../components/VideoScreen";
 import MeetingHeaderLayout from "./MeetingHeaderLayout";
 import OptionButtonsLayout from "./footer/OptionButtonLayout";
 import RightSidebar from "./right-sidebar/RightSidebar";
+import { useWSChat } from "store/chat/helpers";
+import { useChat } from "store/chat/selectors";
+import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { setGroupMeetName } from "store/meeting/reducer";
 
 export default function MeetingLayout() {
   useWSChatConnect();
   const { isDarkMode } = useTheme();
   const [toggleMinimize, setToggleMinimize] = useState(false);
+  const { meetInfo } = useAppSelector((state) => state.meeting);
+  const dispatch = useAppDispatch();
 
   const toggleMinimizeMeeting = () => {
     setToggleMinimize(!toggleMinimize);
   };
+
+  const { sendMessage } = useWSChat();
+  const { wsClient } = useChat();
+
+  useEffect(() => {
+    if (!wsClient) return;
+    wsClient.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.event === CHAT_EVENT_TYPE.DETAIL_ROOM) {
+        dispatch(setGroupMeetName(data?.data?.name));
+      }
+    };
+
+    if (meetInfo?.room) {
+      sendMessage({
+        event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+        roomId: meetInfo.room.id,
+      });
+    }
+  }, [meetInfo, wsClient]);
 
   return (
     <Card
