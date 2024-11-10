@@ -103,6 +103,7 @@ export const CommonLang: CommonDictionary = {
   searchBy: "Tìm kiếm theo {name}",
   searchByLabel: "Tìm kiếm theo",
   creationDate: "Ngày tạo",
+  requestJoinTime: "Thời gian yêu cầu",
   creator: "Người tạo",
   confirmDelete: {
     title: "Xác nhận xóa",

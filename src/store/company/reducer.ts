@@ -48,6 +48,7 @@ export interface Employee extends User {
   username?: string;
   id: string;
   client_company?: string;
+  requestJoinTime?: string;
 }
 
 export interface SearchChatText {

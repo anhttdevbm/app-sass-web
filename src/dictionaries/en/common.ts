@@ -102,6 +102,7 @@ export const CommonLang: CommonDictionary = {
   searchBy: "Search by {name}",
   searchByLabel: "Search by",
   creationDate: "Creation date",
+  requestJoinTime: "Request join time",
   creator: "Creator",
   confirmDelete: {
     title: "Confirm delete",

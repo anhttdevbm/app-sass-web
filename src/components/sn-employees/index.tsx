@@ -1,14 +1,15 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Tab from "@mui/material/Tab";
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { EmployeeType } from "constant/enums";
 import { NS_COMPANY } from "constant/index";
 import Actions from "./Actions";
 import ItemList from "./ItemList";
+import ItemListJoinRequest from "./join-request/ItemListJoinRequest";
 
 const EmployeesPage = () => {
   const companyT = useTranslations(NS_COMPANY);
@@ -78,6 +79,11 @@ const EmployeesPage = () => {
                 value={EmployeeType.CONTRACTOR}
                 sx={tabStyles}
               />
+              <Tab
+                label={companyT("employees.joinRequest")}
+                value={EmployeeType.JOIN_REQUEST}
+                sx={tabStyles}
+              />
             </TabList>
           }
         />
@@ -92,6 +98,12 @@ const EmployeesPage = () => {
           sx={tabPanelStyles}
         >
           <ItemList employeeType={EmployeeType.CONTRACTOR} />
+        </TabPanel>
+        <TabPanel
+          value={EmployeeType.JOIN_REQUEST.toString()}
+          sx={tabPanelStyles}
+        >
+          <ItemListJoinRequest employeeType={EmployeeType.JOIN_REQUEST}/>
         </TabPanel>
       </TabContext>
     </>
