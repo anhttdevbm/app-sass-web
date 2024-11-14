@@ -26,6 +26,8 @@ export enum DataAction {
   CREATE,
   UPDATE,
   DELETE,
+  APPROVE,
+  REJECT,
   OTHER,
 }
 
@@ -58,6 +60,7 @@ export enum EmployeeType {
   EMPLOYEE = "Employee",
   CLIENT = "Client",
   CONTRACTOR = "Contructor",
+  JOIN_REQUEST = "RequestJoin",
 }
 
 export enum CostRateType {

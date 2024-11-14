@@ -240,6 +240,10 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
                 label: companyT("employees.contractor"),
                 value: EmployeeType.CONTRACTOR,
               },
+              {
+                label: companyT("employees.joinRequest"),
+                value: EmployeeType.JOIN_REQUEST,
+              }
             ]}
           />
         )

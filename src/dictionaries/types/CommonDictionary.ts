@@ -100,6 +100,7 @@ export type CommonDictionary = {
   searchBy: string;
   searchByLabel: string;
   creationDate: string;
+  requestJoinTime: string;
   creator: string;
   confirmDelete: {
     title: string;

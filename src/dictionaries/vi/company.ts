@@ -17,6 +17,7 @@ export const CompanyLang: CompanyDictionary = {
     employee: "Nhân viên",
     client: "Nhân viên Khách hàng",
     contractor: "Cộng tác viên",
+    joinRequest: "Yêu cầu",
     form: {
       addNewEmployee: "Thêm Nhân viên",
       chooseCompanyType: "Chọn kiểu công ty",
