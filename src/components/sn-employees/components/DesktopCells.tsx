@@ -37,7 +37,6 @@ const DesktopCells = (props: DesktopCellsProps) => {
 
   const transformedRoles = item.roles.map((role: string) => roleMapping[role] || role);
 
-
   return (
     <>
       <BodyCell align="left">
