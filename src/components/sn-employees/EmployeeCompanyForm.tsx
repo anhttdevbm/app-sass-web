@@ -38,7 +38,6 @@ type UpdateProps = {
   initialValues: Omit<InviteEmployeeData, "roles" | "password" | "company"> & {
     id: string;
     permission: Permission;
-    roles: Permission[];
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmit: (id: string, position: string, roles: Permission[]) => Promise<any>;
@@ -120,8 +119,8 @@ const EmployeeCompanyForm = ({
               newItem = undefined;
           }
         } else {
-          const { id, position, roles } = values as typeof initialValues;
-          newItem = await onSubmitProps(id, position, roles);
+          const { id, position, permission } = values as typeof initialValues;
+          newItem = await onSubmitProps(id, position, [permission]);
         }
 
         if (newItem) {
