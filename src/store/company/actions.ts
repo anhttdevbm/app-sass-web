@@ -221,11 +221,11 @@ export const createEmployeeClient = createAsyncThunk(
 
 export const updateEmployee = createAsyncThunk(
   "company/updateEmployee",
-  async ({ id, position }: { id: string; position: string }) => {
+  async ({ id, position, roles }: { id: string; position: string; roles: Permission[] }) => {
     try {
       const response = await client.put(
         StringFormat(Endpoint.USER_ITEM, { id }),
-        { position },
+        { position, roles },
         {
           baseURL: AUTH_API_URL,
         },
