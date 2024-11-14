@@ -403,6 +403,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
             client: item.client_company,
             position: item.position?.id ?? "",
             permission: item.roles[0],
+            roles: item.roles,
           }}
           onSubmit={onUpdateEmployee}
         />
