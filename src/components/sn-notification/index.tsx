@@ -18,6 +18,8 @@ const ItemNotification = (props: PropsItemNotification) => {
             const _data = data?.data?.DT?.filter((item: ItemNotification) => item?.readSatus == false)
             return _data
         }
+
+        return data
     }
 
 
