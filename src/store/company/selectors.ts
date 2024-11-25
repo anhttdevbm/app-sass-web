@@ -1,5 +1,5 @@
 import { ClientCompany } from "components/sn-client-companies/type";
-import { DataStatus } from "constant/enums";
+import { DataStatus, Permission } from "constant/enums";
 import { BaseQueries, Option } from "constant/types";
 import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
@@ -85,9 +85,9 @@ export const useEmployees = () => {
   );
 
   const onUpdateEmployee = useCallback(
-    async (id: string, position: string) => {
+    async (id: string, position: string, roles: Permission[]) => {
       try {
-        return await dispatch(updateEmployee({ id, position })).unwrap();
+        return await dispatch(updateEmployee({ id, position, roles })).unwrap();
       } catch (error) {
         throw error;
       }

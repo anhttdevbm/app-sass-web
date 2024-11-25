@@ -1,4 +1,3 @@
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
 import { useTranslations } from "next-intl";
 import { memo, useCallback, useEffect, useMemo } from "react";
@@ -7,9 +6,8 @@ import * as Yup from "yup";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/NewFormLayout";
 import {
-  Checkbox,
   NewInput as Input,
-  NewSelect as Select,
+  NewSelect as Select
 } from "components/shared";
 import { DataAction, EmployeeType, Permission } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
@@ -42,7 +40,7 @@ type UpdateProps = {
     permission: Permission;
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (id: string, position: string) => Promise<any>;
+  onSubmit: (id: string, position: string, roles: Permission[]) => Promise<any>;
 } & CommonProps &
   Omit<DialogLayoutProps, "children" | "onSubmit">;
 
@@ -121,8 +119,8 @@ const EmployeeCompanyForm = ({
               newItem = undefined;
           }
         } else {
-          const { id, position } = values as typeof initialValues;
-          newItem = await onSubmitProps(id, position);
+          const { id, position, permission } = values as typeof initialValues;
+          newItem = await onSubmitProps(id, position, [permission]);
         }
 
         if (newItem) {
