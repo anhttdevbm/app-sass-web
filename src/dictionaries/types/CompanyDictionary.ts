@@ -15,6 +15,7 @@ export type CompanyDictionary = {
     employee: string;
     client: string;
     contractor: string;
+    joinRequest: string;
     form: {
       addNewEmployee: string;
       chooseCompanyType: string;

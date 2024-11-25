@@ -32,11 +32,13 @@ import { useAuth } from "store/app/selectors";
 import { Employee } from "store/company/reducer";
 import { useEmployees } from "store/company/selectors";
 import { getPath } from "utils/index";
-import EmployeeCompanyForm from "./EmployeeCompanyForm";
-import { DesktopCells, MobileContentCell } from "./components";
-import DeleteConfirm from "./components/DeleteConfirm";
+import DeleteConfirm from "../components/DeleteConfirm";
+import EmployeeCompanyForm from "../EmployeeCompanyForm";
+import DesktopCells from "./DesktopCells";
+import MobileContentCell from "./MobileContentCell";
+// import DeleteConfirm from "./components/DeleteConfirm";
 
-const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
+const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) => {
   const {
     items: employees,
     isFetching,
@@ -89,14 +91,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
     () => [
       { value: commonT("fullName"), width: "20%", align: "left" },
       { value: "Email", width: "15%", align: "left" },
-      { value: commonT("roles"), width: "10.5%", align: "left" },
-      { value: commonT("position"), width: "12%", align: "left" },
-      { value: commonT("creationDate"), width: "12%", align: "left" },
-      {
-        value: companyT("employees.expirationDate"),
-        width: "13%",
-        align: "left",
-      },
+      { value: commonT("requestJoinTime"), width: "12%", align: "left" },
       { value: commonT("status"), width: "17%" },
     ],
     [commonT, companyT],
@@ -109,15 +104,13 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
 
     return [
       {
-        value: user?.roles.includes(Permission.AM) ? (
-          <Checkbox checked={isCheckedAll} onChange={onChangeAll} />
-        ) : null,
+        value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} />,
         width: isMdSmaller ? "10%" : "3%",
       },
       ...additionalHeaderList,
       { value: "", width: isMdSmaller ? "20%" : "8%" },
     ] as CellProps[];
-  }, [isMdSmaller, desktopHeaderList, isCheckedAll, onChangeAll, user]);
+  }, [isMdSmaller, desktopHeaderList, isCheckedAll, onChangeAll]);
 
   const onToggleSelect = (item: Employee, indexSelected: number) => {
     return () => {
@@ -221,9 +214,6 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
           direction="row"
           alignItems="center"
           pb={0.25}
-          // border="1px solid"
-          // borderColor="grey.100"
-          // borderBottom="none"
           sx={{
             "& > *": {
               "--custom-border": "1px solid hsla(0, 0%, 59%, 70%)",
@@ -248,59 +238,44 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
           py={1.125}
           mx={{ xs: 0, md: 3 }}
         >
-          {isMdSmaller && user?.roles.includes(Permission.AM) && (
+          {isMdSmaller && (
             <Checkbox
               checked={isCheckedAll}
               onChange={onChangeAll}
-            // sx={{ mr: "auto" }}
+              // sx={{ mr: "auto" }}
             />
           )}
-          {user?.roles.includes(Permission.AM) && (
-            <>
-              <IconButton
-                size="small"
-                // onClick={onPay}
-                sx={{
-                  color: "#1A1A1A",
-                }}
-                tooltip={companyT(
-                  selectedList.length ? "employees.pay" : "employees.isNeedSelect",
-                )}
-                disabled={!selectedList.length}
-              >
-                <EditUnderlineIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                size="small"
-                onClick={onDelete}
-                sx={{
-                  color: "#FF4141",
-                }}
-                tooltip={
-                  selectedList.length
-                    ? commonT("delete")
-                    : companyT("employees.isNeedSelect")
-                }
-                disabled={!selectedList.length}
-              >
-                <TrashIcon fontSize="small" />
-              </IconButton>
-            </>
-          )}
+          <IconButton
+            size="small"
+            // onClick={onPay}
+            sx={{
+              color: "#1A1A1A",
+            }}
+            tooltip={companyT(
+              selectedList.length ? "employees.pay" : "employees.isNeedSelect",
+            )}
+            disabled={!selectedList.length}
+          >
+            <EditUnderlineIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={onDelete}
+            sx={{
+              color: "#FF4141",
+            }}
+            tooltip={
+              selectedList.length
+                ? commonT("delete")
+                : companyT("employees.isNeedSelect")
+            }
+            disabled={!selectedList.length}
+          >
+            <TrashIcon fontSize="small" />
+          </IconButton>
         </Stack>
         <TableLayout
-          // headerList={headerList}
-          // pending={isFetching}
-          // error={error as string}
-          // noData={!isIdle && totalItems === 0}
-          // px={{ xs: 0, md: 3 }}
-          // containerHeaderProps={{
-          //   sx: {
-          //     maxHeight: { xs: 0, md: undefined },
-          //     minHeight: { xs: 0, md: HEADER_HEIGHT },
-          //   },
-          // }}
-          // sx={{ bgcolor: { xs: "grey.50", md: "transparent" } }}
+          
           headerList={headerList}
           pending={isFetching}
           error={error as string}
@@ -317,7 +292,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
               verticalAlign: "middle",
               background: "#D9F0FD",
               color: "#999999",
-              h6: { fontSize: "13px" }
+              h6:{fontSize:"13px"}
             }
           }}
         >
@@ -328,12 +303,10 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
             return (
               <TableRow key={item.id}>
                 <BodyCell sx={{ pl: { xs: 0.5, md: 2 } }}>
-                  {user?.roles.includes(Permission.AM) && (
-                    <Checkbox
-                      checked={indexSelected !== -1}
-                      onChange={onToggleSelect(item, indexSelected)}
-                    />
-                  )}
+                  <Checkbox
+                    checked={indexSelected !== -1}
+                    onChange={onToggleSelect(item, indexSelected)}
+                  />
                 </BodyCell>
                 {isMdSmaller ? (
                   <MobileContentCell item={item} />
@@ -341,7 +314,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
                   <DesktopCells item={item} />
                 )}
 
-                {(user?.roles.includes(Permission.AM)) && (
+                {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
                   <ActionsCell
                     sx={{
                       pl: { xs: 0.5, md: 0 },
@@ -359,22 +332,22 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
                     options={
                       item.status === PayStatus.PENDING
                         ? [
-                          {
-                            content: companyT("employees.pay"),
-                            onClick: onActionToItem(DataAction.OTHER, item),
-                            icon: (
-                              <EditUnderlineIcon
-                                sx={{ color: "grey.400" }}
-                                fontSize="medium"
-                              />
-                            ),
-                          },
-                        ]
+                            {
+                              content: companyT("employees.pay"),
+                              onClick: onActionToItem(DataAction.OTHER, item),
+                              icon: (
+                                <EditUnderlineIcon
+                                  sx={{ color: "grey.400" }}
+                                  fontSize="medium"
+                                />
+                              ),
+                            },
+                          ]
                         : undefined
                     }
                   />
                 )}
-
+                
               </TableRow>
             );
           })}
@@ -430,6 +403,6 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
   );
 };
 
-export default memo(ItemList);
+export default memo(ItemListJoinRequest);
 
 const MOBILE_HEADER_LIST = [{ value: "#", width: "70%", align: "left" }];

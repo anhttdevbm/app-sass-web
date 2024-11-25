@@ -50,7 +50,7 @@ const MeetingHeaderLayout = (props: MeetingHeaderLayoutProps) => {
         >
           {meetInfo?.room?.type === "p"
             ? remoteStreams.length > 0 && remoteStreams[0].participant.fullname
-            : groupMeetName || "Group Meeting"}
+            : groupMeetName || ""}
         </Text>
         <Stack
           sx={{

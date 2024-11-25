@@ -26,6 +26,8 @@ export enum DataAction {
   CREATE,
   UPDATE,
   DELETE,
+  APPROVE,
+  REJECT,
   OTHER,
 }
 
@@ -48,10 +50,17 @@ export enum Status {
   CLOSE = "CLOSE",
 }
 
+export enum EmployeeStatus {
+  ACTIVE = "ACTIVE",
+  UNPAID = "UNPAID",
+  PENDING = "PENDING",
+}
+
 export enum EmployeeType {
   EMPLOYEE = "Employee",
   CLIENT = "Client",
   CONTRACTOR = "Contructor",
+  JOIN_REQUEST = "RequestJoin",
 }
 
 export enum CostRateType {

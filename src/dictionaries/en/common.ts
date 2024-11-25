@@ -96,10 +96,13 @@ export const CommonLang: CommonDictionary = {
     active: "Activated",
     close: "Completed",
     pause: "Paused",
+    unpaid: "Unpaid",
+    pending: "Pending",
   },
   searchBy: "Search by {name}",
   searchByLabel: "Search by",
   creationDate: "Creation date",
+  requestJoinTime: "Request join time",
   creator: "Creator",
   confirmDelete: {
     title: "Confirm delete",
@@ -140,4 +143,10 @@ export const CommonLang: CommonDictionary = {
   },
   actions: "Actions",
   learnMore: "Learn more",
+  employees: {
+    paid: "Active",
+    unPaid: "Unpaid",
+    waiting: "Pending",
+    expirationDate: "Expiration date",
+  }
 };
