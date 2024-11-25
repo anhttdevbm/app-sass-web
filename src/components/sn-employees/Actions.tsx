@@ -122,7 +122,7 @@ const Actions = ({ tabSwitcher }: { tabSwitcher: ReactNode }) => {
           spacing={{ xs: 2, md: 0 }}
         >
           {tabSwitcher}
-            {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
+            {(user?.roles.includes(Permission.AM)) && (
               <Button
                 onClick={onShow}
                 startIcon={<AddCircleIcon />}

@@ -105,7 +105,7 @@ const Actions = () => {
           overflow="hidden"
           width="100%"
         >
-          {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
+          {(user?.roles.includes(Permission.AM)) && (
             <Button
               onClick={onShow}
               size="small"

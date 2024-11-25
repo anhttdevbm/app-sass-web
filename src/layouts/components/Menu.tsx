@@ -332,7 +332,7 @@ const DATA: MenuItemProps[] = [
       {
         label: "menu.companyInformation",
         href: MY_COMPANY_PATH,
-        roles: [Permission.AM], 
+        roles: [Permission.AM, Permission.MN], 
       },
       {
         label: "menu.holidayCalendar",

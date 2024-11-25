@@ -109,13 +109,15 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
 
     return [
       {
-        value: <Checkbox checked={isCheckedAll} onChange={onChangeAll} />,
+        value: user?.roles.includes(Permission.AM) ? (
+          <Checkbox checked={isCheckedAll} onChange={onChangeAll} />
+        ) : null,
         width: isMdSmaller ? "10%" : "3%",
       },
       ...additionalHeaderList,
       { value: "", width: isMdSmaller ? "20%" : "8%" },
     ] as CellProps[];
-  }, [isMdSmaller, desktopHeaderList, isCheckedAll, onChangeAll]);
+  }, [isMdSmaller, desktopHeaderList, isCheckedAll, onChangeAll, user]);
 
   const onToggleSelect = (item: Employee, indexSelected: number) => {
     return () => {
@@ -246,41 +248,45 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
           py={1.125}
           mx={{ xs: 0, md: 3 }}
         >
-          {isMdSmaller && (
+          {isMdSmaller && user?.roles.includes(Permission.AM) && (
             <Checkbox
               checked={isCheckedAll}
               onChange={onChangeAll}
-              // sx={{ mr: "auto" }}
+            // sx={{ mr: "auto" }}
             />
           )}
-          <IconButton
-            size="small"
-            // onClick={onPay}
-            sx={{
-              color: "#1A1A1A",
-            }}
-            tooltip={companyT(
-              selectedList.length ? "employees.pay" : "employees.isNeedSelect",
-            )}
-            disabled={!selectedList.length}
-          >
-            <EditUnderlineIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            size="small"
-            onClick={onDelete}
-            sx={{
-              color: "#FF4141",
-            }}
-            tooltip={
-              selectedList.length
-                ? commonT("delete")
-                : companyT("employees.isNeedSelect")
-            }
-            disabled={!selectedList.length}
-          >
-            <TrashIcon fontSize="small" />
-          </IconButton>
+          {user?.roles.includes(Permission.AM) && (
+            <>
+              <IconButton
+                size="small"
+                // onClick={onPay}
+                sx={{
+                  color: "#1A1A1A",
+                }}
+                tooltip={companyT(
+                  selectedList.length ? "employees.pay" : "employees.isNeedSelect",
+                )}
+                disabled={!selectedList.length}
+              >
+                <EditUnderlineIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={onDelete}
+                sx={{
+                  color: "#FF4141",
+                }}
+                tooltip={
+                  selectedList.length
+                    ? commonT("delete")
+                    : companyT("employees.isNeedSelect")
+                }
+                disabled={!selectedList.length}
+              >
+                <TrashIcon fontSize="small" />
+              </IconButton>
+            </>
+          )}
         </Stack>
         <TableLayout
           // headerList={headerList}
@@ -311,7 +317,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
               verticalAlign: "middle",
               background: "#D9F0FD",
               color: "#999999",
-              h6:{fontSize:"13px"}
+              h6: { fontSize: "13px" }
             }
           }}
         >
@@ -322,10 +328,12 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
             return (
               <TableRow key={item.id}>
                 <BodyCell sx={{ pl: { xs: 0.5, md: 2 } }}>
-                  <Checkbox
-                    checked={indexSelected !== -1}
-                    onChange={onToggleSelect(item, indexSelected)}
-                  />
+                  {user?.roles.includes(Permission.AM) && (
+                    <Checkbox
+                      checked={indexSelected !== -1}
+                      onChange={onToggleSelect(item, indexSelected)}
+                    />
+                  )}
                 </BodyCell>
                 {isMdSmaller ? (
                   <MobileContentCell item={item} />
@@ -333,7 +341,7 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
                   <DesktopCells item={item} />
                 )}
 
-                {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
+                {(user?.roles.includes(Permission.AM)) && (
                   <ActionsCell
                     sx={{
                       pl: { xs: 0.5, md: 0 },
@@ -351,22 +359,22 @@ const ItemList = ({ employeeType }: { employeeType: EmployeeType }) => {
                     options={
                       item.status === PayStatus.PENDING
                         ? [
-                            {
-                              content: companyT("employees.pay"),
-                              onClick: onActionToItem(DataAction.OTHER, item),
-                              icon: (
-                                <EditUnderlineIcon
-                                  sx={{ color: "grey.400" }}
-                                  fontSize="medium"
-                                />
-                              ),
-                            },
-                          ]
+                          {
+                            content: companyT("employees.pay"),
+                            onClick: onActionToItem(DataAction.OTHER, item),
+                            icon: (
+                              <EditUnderlineIcon
+                                sx={{ color: "grey.400" }}
+                                fontSize="medium"
+                              />
+                            ),
+                          },
+                        ]
                         : undefined
                     }
                   />
                 )}
-                
+
               </TableRow>
             );
           })}
