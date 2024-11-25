@@ -1,5 +1,6 @@
 export type PropsItemNotification = {
     handleClose : () => void
+    activeTag : number
 }
 
 export type ItemNotification = {
