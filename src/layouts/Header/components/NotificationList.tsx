@@ -27,14 +27,14 @@ const NotificationList = () => {
                 id: 2,
                 tab: "Unread"
             },
-            {
-                id: 3,
-                tab: "I was mentioned"
-            },
-            {
-                id: 4,
-                tab: "Assigned to me"
-            },
+            // {
+            //     id: 3,
+            //     tab: "I was mentioned"
+            // },
+            // {
+            //     id: 4,
+            //     tab: "Assigned to me"
+            // },
         ], []
     )
 
@@ -145,7 +145,7 @@ const NotificationList = () => {
                     </Stack>
 
                     <Stack direction="row" mt={1} p={1} alignItems='center'>
-                        <ItemNotification handleClose={handleClose} />
+                        <ItemNotification activeTag={activeTag} handleClose={handleClose} />
                     </Stack>
 
                 </DialogContent>
