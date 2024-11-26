@@ -1,4 +1,5 @@
 export const QUERY_NOTIFY_KEY = {
   LIST_NOTIFY: "LIST_NOTIFY",
+  LIST_SETTING: "LIST_SETTING"
 
 };

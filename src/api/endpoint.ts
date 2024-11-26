@@ -271,5 +271,5 @@ export const Endpoint = {
   TICKET_DASHBOARD : "/ticket/dashboard",
 
   //Push Notification
-  NOTIFY_REGISTER_USER : "/addUser",
+  NOTIFY_REGISTER_USER : "addUser",
 };

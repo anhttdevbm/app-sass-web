@@ -21,3 +21,17 @@ export const updateReadStatusApi = (id) => {
         },
     });
 };
+
+
+export const settingNotificationApi = (payload) => {
+    return client.post(`/setting/apply-changes`, payload, {
+        baseURL: NOTIFY_API_URL,
+    });
+}
+
+
+export const getSettingNotificationApi = () => {
+    return client.get("setting/getSettings", {}, {
+        baseURL: NOTIFY_API_URL,
+    });
+}

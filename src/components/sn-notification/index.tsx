@@ -1,24 +1,31 @@
 "use client"
 
 
+import { Stack } from "@mui/material"
+import { useGetHistoryNotification } from "queries/notificaiton/useGetHistoryNotification"
 import { memo } from "react"
 import DetaiList from "./components/DetaiList"
-import { useGetHistoryNotification } from "queries/notificaiton/useGetHistoryNotification"
-import { Box, Stack } from "@mui/material"
-import { ItemNotification, PropsItemNotification } from "./type/type"
+import { ItemNotificationType, PropsItemNotification } from "./type/type"
 
 
 
 const ItemNotification = (props: PropsItemNotification) => {
     const { data } = useGetHistoryNotification()
-    console.log("🚀 ~ ItemNotification ~ data:", data)
+    const { handleClose, activeTag } = props
 
-    const { handleClose } = props
+    const filterData = (activeTag: number) => {
+        if (activeTag == 2) {
+            const _data = data?.data?.DT?.filter((item: ItemNotificationType) => item?.readSatus == false)
+            return _data
+        }
 
-    console.log("check data >>>", data)
+        return data?.data?.DT || []
+    }
+
+
     return (
         <Stack sx={{ width: "100%" }} gap={2} direction="column">
-            {data?.data?.DT?.map((item: ItemNotification, index: number) => (
+            {filterData(activeTag).map((item: ItemNotificationType, index: number) => (
                 <Stack key={index}>
                     <DetaiList item={item} handleClose={handleClose} />
                 </Stack>
