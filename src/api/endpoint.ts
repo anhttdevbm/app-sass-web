@@ -1,3 +1,4 @@
+
 export const Endpoint = {
   SIGNIN: "/auth/login",
   SIGNUP: "/auth/register",
@@ -272,4 +273,8 @@ export const Endpoint = {
 
   //Push Notification
   NOTIFY_REGISTER_USER : "addUser",
+  NOTIFY_GET_SETTING : "/setting/getSettings",
+  NOTIFY_APPLY_SETTING : "/setting/apply-changes",
+  NOTIFY_READ_STATUS : "/notification/readStatus/",
+  NOTIFY_GET_ALL : "/notification/history/",
 };
