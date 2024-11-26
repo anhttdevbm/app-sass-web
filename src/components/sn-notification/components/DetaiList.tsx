@@ -2,20 +2,16 @@
 
 
 import { Avatar, Box, Stack } from "@mui/material"
-import { client } from "api"
 import { Text } from "components/shared"
-import { NOTIFY_API_URL } from "constant/index"
-import { useRouter } from "next/navigation"
-import { useGetHistoryNotification } from "queries/notificaiton/useGetHistoryNotification"
-import { memo, useEffect } from "react"
-import { useAuth } from "store/app/selectors"
-import { ItemNotification, PropsDetaiList } from "../type/type"
+import BillingIcon from "icons/BillingIcon"
+import BudgetIcon from "icons/BudgetIcon"
 import MenuCompanyIcon from "icons/MenuCompanyIcon"
 import MenuProjectIcon from "icons/MenuProjectIcon"
-import BudgetIcon from "icons/BudgetIcon"
-import BillingIcon from "icons/BillingIcon"
-import { TYPE_NOTIFY } from "../type/type-icon-detail"
+import { useRouter } from "next/navigation"
 import { updateReadStatusApi } from "queries/notificaiton/api"
+import { memo } from "react"
+import { PropsDetaiList } from "../type/type"
+import { TYPE_NOTIFY } from "../type/type-icon-detail"
 
 
 
