@@ -3,7 +3,7 @@ export type PropsItemNotification = {
     activeTag : number
 }
 
-export type ItemNotification = {
+export type ItemNotificationType = {
     athor: string;            
     avatar: string;            
     createdAt: string;         
@@ -18,5 +18,5 @@ export type ItemNotification = {
 
 export type PropsDetaiList = {
     handleClose : () => void
-    item : ItemNotification
+    item : ItemNotificationType
 }
