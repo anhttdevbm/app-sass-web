@@ -3,7 +3,7 @@
 import { Stack } from "@mui/material";
 import AppLoading from "components/AppLoading";
 import { Permission } from "constant/enums";
-import { JOIN_WORKSPACE_PATH, WAITING_APPROVE_PATH } from "constant/paths";
+import { HOME_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
 import useWindowSize from "hooks/useWindowSize";
 import { useRouter } from "next-intl/client";
 import { memo, useEffect, useMemo } from "react";
@@ -29,7 +29,7 @@ const Wrapper = (props: WrapperProps) => {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    replace(isNotJoin ? JOIN_WORKSPACE_PATH : WAITING_APPROVE_PATH);
+    replace(isNotJoin ? JOIN_WORKSPACE_PATH : HOME_PATH);
   }, [isLoggedIn, isNotJoin, replace]);
 
   if (!appReady || isLoggedIn) return <AppLoading />;
