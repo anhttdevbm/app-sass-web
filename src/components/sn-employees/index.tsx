@@ -5,14 +5,16 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { client, Endpoint } from "api";
 import { EmployeeType } from "constant/enums";
-import { NS_COMPANY } from "constant/index";
+import { AUTH_API_URL, NS_COMPANY } from "constant/index";
 import Actions from "./Actions";
 import ItemList from "./ItemList";
 import ItemListJoinRequest from "./join-request/ItemListJoinRequest";
 
 const EmployeesPage = () => {
   const companyT = useTranslations(NS_COMPANY);
+  const [totalUserUnPaid, setTotalUserUnPaid] = useState(null);
 
   const [tab, setTab] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
   const searchParams = useSearchParams();
@@ -30,6 +32,20 @@ const EmployeesPage = () => {
     },
     [],
   );
+
+  useEffect(() => {
+    const fetchTotalUserUnPaid = async () => {
+      const response = await client.get(
+        Endpoint.TOTAL_USER_UNPAID,
+        {},
+        { baseURL: AUTH_API_URL },
+      );
+      setTotalUserUnPaid(response.data.total_user_un_paid);
+    };
+
+    fetchTotalUserUnPaid();
+  }, []);
+
 
   return (
     <>
@@ -79,8 +95,20 @@ const EmployeesPage = () => {
                 value={EmployeeType.CONTRACTOR}
                 sx={tabStyles}
               />
+              {/* <Tab
+                label={`${companyT("employees.joinRequest")} (${totalUserUnPaid})`}
+                value={EmployeeType.JOIN_REQUEST}
+                sx={tabStyles}
+              /> */}
               <Tab
-                label={companyT("employees.joinRequest")}
+                label={
+                  <span>
+                    {companyT("employees.joinRequest")}{' '}
+                    <button style={{ borderRadius: '50%', padding: '5px 10px', border: 'none', backgroundColor: '#045EB8', color: "#fff" }}>
+                      {totalUserUnPaid}
+                    </button>
+                  </span>
+                }
                 value={EmployeeType.JOIN_REQUEST}
                 sx={tabStyles}
               />
@@ -103,7 +131,7 @@ const EmployeesPage = () => {
           value={EmployeeType.JOIN_REQUEST.toString()}
           sx={tabPanelStyles}
         >
-          <ItemListJoinRequest employeeType={EmployeeType.JOIN_REQUEST}/>
+          <ItemListJoinRequest employeeType={EmployeeType.JOIN_REQUEST} />
         </TabPanel>
       </TabContext>
     </>
@@ -137,12 +165,7 @@ const tabStyles = {
     borderBottomLeftRadius: "9999px",
     borderLeftColor: "#EFEFEF",
   },
-  "&:last-of-type": {
-    borderTopRightRadius: "9999px",
-    borderBottomRightRadius: "9999px",
-    borderRightColor: "#EFEFEF",
-  },
-};
+}
 
 const tabPanelStyles = {
   px: 3,

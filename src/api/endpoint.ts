@@ -15,6 +15,7 @@ export const Endpoint = {
   USERS_REJECT: "/users/reject?company={company}",
   USER_ITEM: "/users/{id}",
   USERS_INACTIVE: "/users/inactive",
+  TOTAL_USER_UNPAID: "/users/total-unpaid",
   PROFILE: "/users/me",
   INVITE_USER_TO_COMPANY: "/users/inviteUserToCompany",
   COMPANIES: "/companies",
