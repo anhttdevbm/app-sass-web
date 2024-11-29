@@ -4,6 +4,7 @@ export const HOME_PATH = "/";
 export const SIGNIN_PATH = "/signin";
 export const SIGNUP_PATH = "/signup";
 export const JOIN_WORKSPACE_PATH = "/join-workspace";
+export const WAITING_APPROVE_PATH = "/waiting-approve";
 export const FORGOT_PASSWORD_PATH = "/forgot-password";
 export const RESET_PASSWORD_PATH = "/reset-password";
 export const CHANGE_PASSWORD_PATH = "/change-password";
@@ -110,6 +111,7 @@ const AUTHORIZED_LOGGED_IN_PATHS = [
   SIGNIN_PATH,
   SIGNUP_PATH,
   JOIN_WORKSPACE_PATH,
+  WAITING_APPROVE_PATH,
   FORGOT_PASSWORD_PATH,
   RESET_PASSWORD_PATH,
   CHANGE_PASSWORD_PATH,

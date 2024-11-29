@@ -1,13 +1,13 @@
 "use client";
 
-import { memo, useEffect, useMemo, useRef } from "react";
 import { Stack } from "@mui/material";
-import { useRouter } from "next-intl/client";
-import { HOME_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
-import { useAppReady, useAuth } from "store/app/selectors";
 import AppLoading from "components/AppLoading";
-import useWindowSize from "hooks/useWindowSize";
 import { Permission } from "constant/enums";
+import { HOME_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
+import useWindowSize from "hooks/useWindowSize";
+import { useRouter } from "next-intl/client";
+import { memo, useEffect, useMemo } from "react";
+import { useAppReady, useAuth } from "store/app/selectors";
 
 type WrapperProps = {
   children: React.ReactNode;
