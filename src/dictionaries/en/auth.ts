@@ -121,4 +121,17 @@ export const AuthLang: AuthDictionary = {
       success: "The request to join the workspace has been sent successfully!",
     },
   },
+  waitingApprove: {
+    head: {
+      title: "Waiting for approval | Taskcover",
+    },
+    title: "Waiting for approval of your request...",
+    description: "Your request has been sent to the company administrator. Once approved, you'll be added to your company's team.",
+    cancelRequest: "Cancel request",
+    notification: {
+      success: "Your request has been sent successfully!",
+      notFound: "The company does not exist or the email is incorrect.",
+    },
+    helpCenter: "Have a question? Contact us now",
+  }
 };

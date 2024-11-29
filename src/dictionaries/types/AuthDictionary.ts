@@ -113,4 +113,17 @@ export type AuthDictionary = {
       success: string;
     };
   };
+  waitingApprove: {
+    head: {
+      title: string;
+    };
+    title: string;
+    description: string;
+    cancelRequest: string;
+    notification: {
+      success: string;
+      notFound: string;
+    };
+    helpCenter: string;
+  }
 };

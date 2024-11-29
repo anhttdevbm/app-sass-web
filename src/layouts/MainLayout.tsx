@@ -2,12 +2,10 @@
 
 import { Box, Snackbar, Stack } from "@mui/material";
 import AppLoading from "components/AppLoading";
-import Header, { HEADER_HEIGHT } from "./Header";
-import { memo, useEffect, useMemo, useState } from "react";
-import { Sidebar } from "./components";
-import { useAppSelector } from "store/hooks";
-import { shallowEqual } from "react-redux";
-import { usePathname, useRouter } from "next-intl/client";
+import { Button } from "components/shared";
+import ChatListTemp from "components/sn-chat/ChatListTemp";
+import NotSupportBrowser from "components/sn-meeting/components/NotSupportBrowser";
+import { NS_COMMON } from "constant/index";
 import {
   AI_AGENT_CHAT,
   AI_CHAT_PATH,
@@ -16,24 +14,27 @@ import {
   JOIN_WORKSPACE_PATH,
   SIGNIN_PATH,
   SIGNUP_PATH,
+  WAITING_APPROVE_PATH,
 } from "constant/paths";
-import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { NS_COMMON } from "constant/index";
+import { usePathname, useRouter } from "next-intl/client";
+import { useParams } from "next/navigation";
+import { memo, useEffect, useMemo } from "react";
+import { shallowEqual } from "react-redux";
 import { useAuth } from "store/app/selectors";
-import ChatListTemp from "components/sn-chat/ChatListTemp";
+import { store } from "store/configureStore";
+import { useAppSelector } from "store/hooks";
+import { setIsBrowserSupported } from "store/meeting/reducer";
 import { useMeeting } from "store/meeting/selectors";
 import { CallStatus } from "store/meeting/types";
-import { Button } from "components/shared";
-import NotSupportBrowser from "components/sn-meeting/components/NotSupportBrowser";
-import { store } from "store/configureStore";
-import { setIsBrowserSupported } from "store/meeting/reducer";
+import { Sidebar } from "./components";
+import Header, { HEADER_HEIGHT } from "./Header";
 
 type MainLayoutProps = {
   children: React.ReactNode;
 };
 
-const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH];
+const AUTH_PATHS = [SIGNUP_PATH, FORGOT_PASSWORD_PATH, JOIN_WORKSPACE_PATH, WAITING_APPROVE_PATH];
 
 const IS_CHATTING_ROOM = [
   CHATTING_ROOM_PATH,

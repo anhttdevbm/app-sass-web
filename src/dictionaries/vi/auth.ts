@@ -121,4 +121,17 @@ export const AuthLang: AuthDictionary = {
       success: "Yêu cầu tham gia công ty được gửi đi thành công!",
     },
   },
+  waitingApprove: {
+    head: {
+      title: "Chờ phê duyệt | Taskcover",
+    },
+    title: "Đang chờ phê duyệt yêu cầu của bạn...",
+    description: "Yêu cầu của bạn đã được gửi tới quản trị viên của công ty. Sau khi được phê duyệt, bạn sẽ được thêm vào nhóm của công ty bạn.",
+    cancelRequest: "Hủy yêu cầu",
+    notification: {
+      success: "Yêu cầu của bạn đã được thu hồi thành công!",
+      notFound: "Không tìm thấy yêu cầu của bạn!",
+    },
+    helpCenter: "Bạn có câu hỏi? Liên hệ với chúng tôi ngay bây giờ",
+  }
 };

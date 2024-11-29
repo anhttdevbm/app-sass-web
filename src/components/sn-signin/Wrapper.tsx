@@ -1,13 +1,13 @@
 "use client";
 
-import { memo, useEffect, useMemo, useRef } from "react";
 import { Stack } from "@mui/material";
-import { useRouter } from "next-intl/client";
-import { HOME_PATH, JOIN_WORKSPACE_PATH } from "constant/paths";
-import { useAppReady, useAuth } from "store/app/selectors";
 import AppLoading from "components/AppLoading";
-import useWindowSize from "hooks/useWindowSize";
 import { Permission } from "constant/enums";
+import { JOIN_WORKSPACE_PATH, WAITING_APPROVE_PATH } from "constant/paths";
+import useWindowSize from "hooks/useWindowSize";
+import { useRouter } from "next-intl/client";
+import { memo, useEffect, useMemo } from "react";
+import { useAppReady, useAuth } from "store/app/selectors";
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -29,7 +29,7 @@ const Wrapper = (props: WrapperProps) => {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    replace(isNotJoin ? JOIN_WORKSPACE_PATH : HOME_PATH);
+    replace(isNotJoin ? JOIN_WORKSPACE_PATH : WAITING_APPROVE_PATH);
   }, [isLoggedIn, isNotJoin, replace]);
 
   if (!appReady || isLoggedIn) return <AppLoading />;
