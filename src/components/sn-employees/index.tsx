@@ -95,11 +95,6 @@ const EmployeesPage = () => {
                 value={EmployeeType.CONTRACTOR}
                 sx={tabStyles}
               />
-              {/* <Tab
-                label={`${companyT("employees.joinRequest")} (${totalUserUnPaid})`}
-                value={EmployeeType.JOIN_REQUEST}
-                sx={tabStyles}
-              /> */}
               <Tab
                 label={
                   <span>
