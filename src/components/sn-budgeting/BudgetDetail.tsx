@@ -288,7 +288,7 @@ export const BudgetDetail = () => {
       default:
         return <Box sx={{ width: 100 }} />;
     }
-  }, [activeTab, isEditService]);
+  }, [activeTab, budgetT, id, isEditService, onEditService, openModalExpense, openModalTime, push]);
 
   useImperativeHandle(budgetDetailRef, () => ({
     setSelectedServiceData: (service: TBudgetService | null) => {
