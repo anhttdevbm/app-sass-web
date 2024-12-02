@@ -5343,6 +5343,11 @@
   resolved "https://registry.npmjs.org/@types/semver/-/semver-7.5.0.tgz"
   integrity sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==
 
+"@types/string-format@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@types/string-format/-/string-format-2.0.3.tgz#7c9aa97a8dc5c1413e93768d9e899e9a6745567e"
+  integrity sha512-2BuDXYaQvSZR5XHlLJQ3KQ455NW+C1Mok0uOO6q8bnp97V/gtZbDEYy44kmu5Ng1U8wRtCSF/leREYVmH2vYmQ==
+
 "@types/stylis@^4.0.2":
   version "4.2.3"
   resolved "https://registry.npmjs.org/@types/stylis/-/stylis-4.2.3.tgz"
