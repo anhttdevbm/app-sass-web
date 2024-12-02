@@ -43,8 +43,8 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "103.250.79.80",
+        protocol: "https",
+        hostname: "app.taskcover.com",
       },
       {
         protocol: "http",
