@@ -1,6 +1,6 @@
 import { ResourceApi } from "@fullcalendar/resource";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
+import Avatar from "components/Avatar";
 import { useGetTimeOffOptions } from "components/sn-sales/hooks/useGetTimeOffOptions";
 import { RESOURCE_EVENT_TYPE } from "constant/enums";
 import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
@@ -12,6 +12,7 @@ import { IBookingItem, IBookingListItem } from "store/resourcePlanning/reducer";
 import { formatNumber } from "utils/index";
 import { useGetTotalScheduleTime } from "../hooks/useCalculateDetail";
 import { useFetchDetail } from "../hooks/useFetchDetail";
+
 interface IResourceLabelProps {
   resource: ResourceApi;
   resources: IBookingListItem[] | IBookingItem[];
@@ -24,6 +25,7 @@ interface IResourceLabelProps {
   handleCollapseToggle: (id: string) => void;
   isWorkload?: Boolean;
 }
+
 const ResourceLabel = ({
   resource,
   resources,
@@ -36,6 +38,12 @@ const ResourceLabel = ({
   selectedResource,
   isWorkload,
 }: IResourceLabelProps) => {
+   // Lấy thông tin avatar từ resources with id = user_id
+  const avatarFromResources = resources.find(
+    (item) => item.id === resource._resource.id,
+  )?.avatar;
+  
+
   const {
     name,
     company,
@@ -48,7 +56,10 @@ const ResourceLabel = ({
     user_id,
     bookings: parentBookings,
     role,
+    avatar = avatarFromResources, // Thêm avatar từ resources
   } = resource._resource.extendedProps;
+  // console.log("resource._resource.extendedProps", resource._resource.extendedProps);
+  
 
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
@@ -59,7 +70,7 @@ const ResourceLabel = ({
   const { projectDetail, userDetail } = useFetchDetail(project?.id, user_id);
   const isActive = useMemo(
     () => includes(selectedResource, resource._resource.id),
-    [selectedResource],
+    [resource._resource.id, selectedResource],
   );
   const handleOpenCreate = () => {
     setIsOpenCreate(true);
@@ -90,73 +101,12 @@ const ResourceLabel = ({
       return ownerAvatar;
     }
     return userDetail?.avatar;
-  }, [projectDetail, project?.id, user, userDetail]);
+  }, [eventType, user_id, user?.id, isMybooking, userDetail, projectDetail?.avatar, ownerAvatar]);
 
   const isAddbutton = useMemo(() => {
     return (isActive && parentBookings?.length === 0) || !isActive;
-  }, [isActive, parentBookings, isMybooking]);
+  }, [isActive, parentBookings]);
 
-  function getFirstAndSecondLetters(name) {
-    let parts = name.split(" ");
-    let firstLetter = parts[0][0];
-    let lastLetter = parts[parts.length - 1][0];
-    return firstLetter + lastLetter;
-  }
-
-  // if (type === "step") {
-  //   return (
-  //     <Grid
-  //       container
-  //       direction="column"
-  //       gap={1}
-  //       alignItems="flex-start"
-  //       sx={{
-  //         width: 1,
-  //         py: 2,
-  //         "&:hover": {
-  //           background: "#E1F0FFB2",
-  //         },
-  //       }}
-  //     >
-  //       <Grid
-  //         item
-  //         xs={2}
-  //         sx={{
-  //           px: 1,
-  //           display: "flex",
-  //           alignItems: "center",
-  //           columnGap: 1,
-  //         }}
-  //       >
-  //         <Avatar src={avatarUrl} size={36} />
-  //         <Stack direction={"column"}>
-  //           <Typography sx={{ fontSize: 14, lineBreak: "auto", width: 1 }}>
-  //             {eventType === RESOURCE_EVENT_TYPE.PROJECT_BOOKING
-  //               ? name
-  //               : timeOffType}
-  //           </Typography>
-  //           <Typography sx={{ fontSize: 12, lineBreak: "auto", width: 1 }}>
-  //             {position?.name}
-  //           </Typography>
-  //         </Stack>
-  //       </Grid>
-  //       {/* {isLastItem && (
-  //         <Button
-  //           variant="text"
-  //           startIcon={<PlusIcon />}
-  //           sx={{
-  //             color: "success.main",
-  //           }}
-  //           // startIcon={<AddIcon />}
-  //           onClick={() => handleOpenCreate()}
-  //         >
-  //           {resourceT("schedule.action.addBooking")}
-  //         </Button>
-  //       )} */}
-  //       <Grid item xs={5} />
-  //     </Grid>
-  //   );
-  // }
 
   return (
     <Grid
@@ -166,7 +116,6 @@ const ResourceLabel = ({
           background: "#E1F0FFB2",
         },
         overflowX: "auto",
-        // minWidth: 550,
       }}
     >
       <Grid
@@ -209,18 +158,7 @@ const ResourceLabel = ({
                 zIndex: "10",
               }}
             >
-              <Avatar
-                sx={{
-                  width: 32,
-                  height: 32,
-                  maxHeight: 32,
-                  fontSize: 14,
-                  fontWeight: 600,
-                }}
-                src={typeof avatarUrl === 'string' ? avatarUrl : undefined}
-              >
-                {getFirstAndSecondLetters(fullName)}
-              </Avatar>
+              <Avatar src={avatar} size={32} />
 
               <Box>
                 <Typography
@@ -291,23 +229,6 @@ const ResourceLabel = ({
             </Grid>
           </>
         )}
-
-        {/* {isAddbutton && (
-          <Button
-            variant="text"
-            sx={{
-              // display: isAddbutton ? "flex" : "none",
-              mt: 2,
-              color: "success.main",
-              px: 2,
-              py: 1,
-            }}
-            startIcon={<PlusIcon />}
-            onClick={() => handleOpenCreate()}
-          >
-            {resourceT("schedule.action.addBooking")}
-          </Button>
-        )} */}
       </Grid>
     </Grid>
   );

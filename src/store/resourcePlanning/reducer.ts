@@ -35,6 +35,7 @@ export interface IBookingItem {
   total_hour: number;
   note: string;
   user_id: string;
+  avatar: string;
   created_time: string;
   project?: Partial<Project>;
   _id: String;
@@ -44,6 +45,7 @@ export interface IBookingListItem {
   id: string;
   fullname: string;
   company: string;
+  avatar?: string;
   bookings: IBookingItem[];
   total_hour: number;
 }
