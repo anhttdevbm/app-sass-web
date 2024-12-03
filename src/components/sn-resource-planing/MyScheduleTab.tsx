@@ -225,6 +225,7 @@ const MyScheduleTab = ({
         type: "step",
         total_hour: 160,
         _id: "",
+        avatar: "",
       });
     }
     return [

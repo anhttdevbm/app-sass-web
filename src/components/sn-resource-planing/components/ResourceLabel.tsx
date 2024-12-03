@@ -26,6 +26,11 @@ interface IResourceLabelProps {
   isWorkload?: Boolean;
 }
 
+// Type guard to check if an item is of type IBookingItem
+function isIBookingItem(item: IBookingListItem | IBookingItem): item is IBookingItem {
+  return (item as IBookingItem).id !== undefined;
+}
+
 const ResourceLabel = ({
   resource,
   resources,
@@ -38,11 +43,13 @@ const ResourceLabel = ({
   selectedResource,
   isWorkload,
 }: IResourceLabelProps) => {
-   // Lấy thông tin avatar từ resources with id = user_id
-  const avatarFromResources = resources.find(
+  // Filter resources to ensure they are of type IBookingItem[]
+  const bookingItems = (resources as IBookingItem[]).filter(isIBookingItem);
+
+  // Use find on the filtered array
+  const avatarFromResources = bookingItems.find(
     (item) => item.id === resource._resource.id,
   )?.avatar;
-  
 
   const {
     name,
@@ -59,7 +66,6 @@ const ResourceLabel = ({
     avatar = avatarFromResources, // Thêm avatar từ resources
   } = resource._resource.extendedProps;
   // console.log("resource._resource.extendedProps", resource._resource.extendedProps);
-  
 
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
@@ -106,7 +112,6 @@ const ResourceLabel = ({
   const isAddbutton = useMemo(() => {
     return (isActive && parentBookings?.length === 0) || !isActive;
   }, [isActive, parentBookings]);
-
 
   return (
     <Grid
