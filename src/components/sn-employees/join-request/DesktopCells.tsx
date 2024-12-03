@@ -5,12 +5,10 @@ import StringFormat from "string-format";
 
 import Avatar from "components/Avatar";
 import Link from "components/Link";
-import { BodyCell, StatusCell } from "components/NewTable";
+import { BodyCell } from "components/NewTable";
 import { Text } from "components/shared";
-import { NS_COMPANY } from "constant/index";
 import { EMPLOYEES_DETAIL_PATH } from "constant/paths";
 import { Employee } from "store/company/reducer";
-import { COLOR_STATUS, TEXT_STATUS } from "../helpers";
 
 type DesktopCellsProps = {
   item: Employee;
@@ -58,13 +56,13 @@ const DesktopCells = (props: DesktopCellsProps) => {
       >
         {dayjs(item.requestJoinTime).format(DATE_FORMAT)}
       </BodyCell>
-      <StatusCell
+      {/* <StatusCell
         namespace={NS_COMPANY}
         text={TEXT_STATUS[item.status]}
         color={COLOR_STATUS[item.status]}
         width={93}
         align="center"
-      />
+      /> */}
     </>
   );
 };

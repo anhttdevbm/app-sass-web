@@ -15,13 +15,12 @@ import ConfirmDialog from "components/ConfirmDialog";
 import FixedLayout from "components/FixedLayout";
 import Pagination from "components/NewPagination";
 import {
-  ActionsCell,
   BodyCell,
   CellProps,
-  TableLayout,
+  TableLayout
 } from "components/NewTable";
-import { Checkbox, IconButton } from "components/shared";
-import { DataAction, EmployeeType, PayStatus, Permission } from "constant/enums";
+import { Button, Checkbox, IconButton } from "components/shared";
+import { DataAction, EmployeeType, Permission } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useQueryParams from "hooks/useQueryParams";
@@ -89,12 +88,12 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
 
   const desktopHeaderList: CellProps[] = useMemo(
     () => [
-      { value: commonT("fullName"), width: "20%", align: "left" },
-      { value: "Email", width: "15%", align: "left" },
+      { value: commonT("fullName"), width: "10%", align: "left" },
+      { value: "Email", width: "12%", align: "left" },
       { value: commonT("requestJoinTime"), width: "12%", align: "left" },
-      { value: commonT("status"), width: "17%" },
+      // { value: commonT("status"), width: "17%" },
     ],
-    [commonT, companyT],
+    [commonT],
   );
 
   const headerList = useMemo(() => {
@@ -108,7 +107,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
         width: isMdSmaller ? "10%" : "3%",
       },
       ...additionalHeaderList,
-      { value: "", width: isMdSmaller ? "20%" : "8%" },
+      { value: "", width: isMdSmaller ? "30%" : "8%" },
     ] as CellProps[];
   }, [isMdSmaller, desktopHeaderList, isCheckedAll, onChangeAll]);
 
@@ -315,37 +314,70 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
                 )}
 
                 {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
-                  <ActionsCell
-                    sx={{
-                      pl: { xs: 0.5, md: 0 },
-                      verticalAlign: { xs: "top", md: "middle" },
-                      pt: { xs: 2, md: 0 },
-                    }}
-                    iconProps={{
-                      sx: {
-                        p: { xs: "4px!important", lg: 1 },
-                      },
-                    }}
-                    onEdit={onActionToItem(DataAction.UPDATE, item)}
-                    onDelete={onActionToItem(DataAction.DELETE, item)}
-                    hasPopup={false}
-                    options={
-                      item.status === PayStatus.PENDING
-                        ? [
-                            {
-                              content: companyT("employees.pay"),
-                              onClick: onActionToItem(DataAction.OTHER, item),
-                              icon: (
-                                <EditUnderlineIcon
-                                  sx={{ color: "grey.400" }}
-                                  fontSize="medium"
-                                />
-                              ),
-                            },
-                          ]
-                        : undefined
-                    }
-                  />
+                  // <ActionsCell
+                  //   sx={{
+                  //     pl: { xs: 0.5, md: 0 },
+                  //     verticalAlign: { xs: "top", md: "middle" },
+                  //     pt: { xs: 2, md: 0 },
+                  //   }}
+                  //   iconProps={{
+                  //     sx: {
+                  //       p: { xs: "4px!important", lg: 1 },
+                  //     },
+                  //   }}
+                  //   onEdit={onActionToItem(DataAction.UPDATE, item)}
+                  //   onDelete={onActionToItem(DataAction.DELETE, item)}
+                  //   hasPopup={false}
+                  //   options={
+                  //     item.status === PayStatus.PENDING
+                  //       ? [
+                  //           {
+                  //             content: companyT("employees.pay"),
+                  //             onClick: onActionToItem(DataAction.OTHER, item),
+                  //             icon: (
+                  //               <EditUnderlineIcon
+                  //                 sx={{ color: "grey.400" }}
+                  //                 fontSize="medium"
+                  //               />
+                  //             ),
+                  //           },
+                  //         ]
+                  //       : undefined
+                  //   }
+                  // />
+                  <>
+                    <Button
+                      size="small"
+                      sx={{
+                        borderRadius: "12px",
+                        background: "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)",
+                        color: "white",
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                        padding: "0.6rem 1.5rem",
+                        margin: ".15rem",
+                      }}
+                      onClick={onActionToItem(DataAction.UPDATE, item)}
+                    >
+                      {commonT("edit")}
+                    </Button>
+                    <Button
+                      size="small"
+                      sx={{
+                        borderRadius: "12px",
+                        background: "white",
+                        border: "2px solid red",
+                        color: "red",
+                        fontSize: "13px",
+                        fontWeight: "bold",
+                        padding: "0.6rem 1.5rem",
+                        margin: ".15rem",
+                      }}
+                      onClick={onActionToItem(DataAction.DELETE, item)}
+                    >
+                      {commonT("delete")}
+                    </Button>
+                  </>
                 )}
                 
               </TableRow>
