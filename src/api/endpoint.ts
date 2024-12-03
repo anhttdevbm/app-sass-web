@@ -121,6 +121,7 @@ export const Endpoint = {
 
   UPLOAD: "/files/upload-avatar",
   UPLOAD_FILE: "/files/upload/",
+  UPLOAD_FILE_V2: "/uploadFile",
   SIGNUP_UPLOAD: "/avatar/upload/",
   UPLOAD_LINK: "/files/upload-link",
   DOWNLOAD_LINK: "/in/files/download-links",

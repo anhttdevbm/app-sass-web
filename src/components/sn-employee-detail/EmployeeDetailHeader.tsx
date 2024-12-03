@@ -78,7 +78,7 @@ const EmployeeDetailHeader = ({ isEdit }: { isEdit: boolean }) => {
       const file = new File([blob], "avatar.png", { type: blob.type });
       setAvatar(file);
 
-      const avatarUrl = await client.uploadFile(Endpoint.UPLOAD_FILE, file);      
+      const avatarUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, file);      
 
       const data = {
         avatar: avatarUrl,

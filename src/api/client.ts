@@ -249,6 +249,29 @@ const RequestClient = class {
     }
   }
 
+  async uploadFileV2(endpoint: string, file: File) {
+    try {
+      const formData = new FormData();
+      formData.append("type", file.type);
+      // formData.append("fileBuffer", file);
+      formData.append("anh 1.jpg", file, file.name);
+
+      const response = await this.post(endpoint, formData, {
+        baseURL: TICKET_API_URL,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response?.status === HttpStatusCode.OK) {
+        return response?.data?.data[0]?.link;
+      }
+
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getExport(endpoint: string, configs = {} as AxiosRequestConfig) {
     try {
       const response = await this.axios.get(endpoint, {
