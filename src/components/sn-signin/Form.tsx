@@ -45,28 +45,31 @@ const Form = () => {
   const {fcmToken} = useNotification();
   // console.log("🚀 ~ Form ~ fcmToken:", fcmToken)
   const onSubmit = async (values: SigninData) => {
-
     try {
       const newData = await onSignin(values);
 
       if (newData) {
-        onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
-
-        await fetch(`${NOTIFY_API_URL}/notification/${Endpoint.NOTIFY_REGISTER_USER}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: newData?.id,
-            token: fcmToken,
-          }),
-        })
-
-        if (rememberAccount) {
-          localStorage.setItem("rememberedEmail", values.email);
+        if (newData.status === 2 && newData.company !== null) {
+          push('/waiting-approve'); // Assuming '/waiting-approve' is the route for the WaitingApprove screen
         } else {
-          localStorage.removeItem("rememberedEmail");
+          onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
+
+          await fetch(`${NOTIFY_API_URL}/notification/${Endpoint.NOTIFY_REGISTER_USER}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: newData?.id,
+              token: fcmToken,
+            }),
+          });
+
+          if (rememberAccount) {
+            localStorage.setItem("rememberedEmail", values.email);
+          } else {
+            localStorage.removeItem("rememberedEmail");
+          }
         }
       } else {
         throw AN_ERROR_TRY_AGAIN;

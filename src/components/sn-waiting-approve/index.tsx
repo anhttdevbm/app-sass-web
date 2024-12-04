@@ -6,8 +6,6 @@ import { formErrorCode } from "api/formErrorCode";
 import Link from "components/Link";
 import { Text } from "components/shared";
 import { ButtonOutlineGradient } from "components/shared/ButtonOutlineGradient";
-import SwitchLanguage from "components/SwitchLanguage";
-import SwitchTheme from "components/SwitchTheme";
 import { HttpStatusCode } from "constant/enums";
 import {
     AN_ERROR_TRY_AGAIN,
@@ -65,10 +63,10 @@ const WaitingApprove = () => {
     return (
         <>
             <Stack
-                flex={1}
-                height="calc(var(--vh, 1vh) * 100)"
-                width="100vw"
-                justifyContent="center"
+                // flex={1}
+                // height="calc(var(--vh, 1vh) * 100)"
+                // width="100vw"
+                // justifyContent="center"
                 alignItems="center"
             >
                 <Stack
@@ -100,19 +98,6 @@ const WaitingApprove = () => {
                     overflow="auto"
                     position="relative"
                 >
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        position="absolute"
-                        top={16}
-                        right={16}
-                        spacing={{ xs: 1, sm: 2 }}
-                        zIndex={10}
-                    >
-                        <SwitchLanguage />
-                        <SwitchTheme />
-                    </Stack>
-
                     <Stack
                         minWidth={340}
                         maxWidth={340}
