@@ -75,7 +75,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
       updateTicket.mutate(payload, {
         onSuccess: (data) => {
           console.log("Success:", data);
-          onAddSnackbar(`${data?.data?.errorMessage ? data?.data?.errorMessage : "Update Success"}`);
+          onAddSnackbar(`${data?.data?.errorMessage ? data?.data?.errorMessage : "Update Success"}`, "success");
         },
         onError: (err) => {
           onAddSnackbar("Create ticket error!", "error");
