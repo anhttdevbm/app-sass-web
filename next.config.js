@@ -35,7 +35,8 @@ const nextConfig = {
     AI_DOCS_API_URL: process.env.AI_DOCS_API_URL,
     TICKET_API_URL: process.env.TICKET_API_URL,
     NEXT_APP_WS_URL_TICKET: process.env.NEXT_APP_WS_URL_TICKET,
-    NEXT_PUBLIC_NOTIFY_API_URL:process.env.NEXT_PUBLIC_NOTIFY_API_URL
+    NEXT_PUBLIC_NOTIFY_API_URL:process.env.NEXT_PUBLIC_NOTIFY_API_URL,
+    DASHBOARD_API_URL: process.env.DASHBOARD_API_URL,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",

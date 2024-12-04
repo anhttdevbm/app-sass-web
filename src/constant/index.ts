@@ -50,6 +50,9 @@ export const TICKET_API_URL = process.env.TICKET_API_URL as string;
 //Notificaiton
 export const NOTIFY_API_URL = process.env.NEXT_PUBLIC_NOTIFY_API_URL as string;
 
+// Dashboard
+export const DASHBOARD_API_URL = process.env.DASHBOARD_API_URL as string;
+
 export const DARK_THEME_MEDIA_SYSTEM = "(prefers-color-scheme: dark)";
 export const DOCS_API_URL = process.env.DOCS_API_URL as string;
 export const DATE_FORMAT_FORM = "yyyy-MM-dd";

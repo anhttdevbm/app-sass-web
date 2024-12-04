@@ -1,11 +1,10 @@
 "use client"
 
-import { Box, Button, Stack, Typography } from "@mui/material"
-import { Add as AddIcon } from "@mui/icons-material"
+import { Add as AddIcon } from "@mui/icons-material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import DragMatrixIcon from "icons/DagMatrixIcon";
 import StatOverview from "./StatOverview";
 import { StatAccordion } from "./components/StatAccordion";
-import LineChart from "./components/LineChart";
 import { ActiveProjectsTable, MyTaskTable, TimeOffTable } from "./components/Tables";
 
 
@@ -45,7 +44,7 @@ function Dashboard() {
       </Stack>
       <Stack direction='row' spacing={1.5} width='100%'>
         <Stack spacing={1.5} width='50%'>
-          <StatAccordion
+          {/* <StatAccordion
             summaryChild={
               <Stack direction='row' spacing={1} width='100%'>
                 <DragMatrixIcon />
@@ -56,7 +55,7 @@ function Dashboard() {
             <Stack direction='row' alignItems='center' justifyContent='center' padding={2}>
               <LineChart />
             </Stack>
-          </StatAccordion>
+          </StatAccordion> */}
           <StatAccordion
             summaryChild={
               <Stack direction='row' spacing={1} width='100%'>
@@ -67,14 +66,14 @@ function Dashboard() {
           >
             <MyTaskTable />
           </StatAccordion>
-          <StatAccordion
+          {/* <StatAccordion
             summaryChild={
               <Stack direction='row' spacing={1} width='100%'>
                 <DragMatrixIcon />
                 <Typography fontWeight={600}>Out of office today</Typography>
               </Stack>
             }
-          ></StatAccordion>
+          ></StatAccordion> */}
         </Stack>
         <Stack spacing={1.5} width='50%'>
           <StatAccordion
