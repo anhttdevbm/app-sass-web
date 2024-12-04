@@ -91,7 +91,7 @@ const DescriptionDetail = (props: any) => {
       >
         <Box display="flex" gap="10px" alignItems="center" py={2}>
           <Avatar
-            src={data?.creatorUser?.urlAvatar ? data?.creatorUser?.urlAvatar : "default"}
+            src={data?.creatorUser?.urlAvatar}
             alt="Image description"
             sx={{ borderRadius: "100%" , height : 30 , width: 30 }}
           />
