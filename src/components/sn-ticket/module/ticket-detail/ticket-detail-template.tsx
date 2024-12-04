@@ -146,9 +146,9 @@ const TicketDetail = () => {
           alignItems={{ xs: "start", sm: "start", md: "center" }}
         >
           <Box
-            onClick={() => {
-              push(TICKET_PATH);
-            }}
+            // onClick={() => {
+            //   push(TICKET_PATH);
+            // }}
             sx={{
               display: { xs: "block", sm: "flex", md: "flex" },
               gap: 1,
@@ -178,7 +178,7 @@ const TicketDetail = () => {
               {t("ticketDetail.question")}
             </Text>
 
-            <Button
+            {/* <Button
               onClick={handleClickOpen}
               size="small"
               variant="primary"
@@ -197,10 +197,10 @@ const TicketDetail = () => {
             >
               <ReplyIcon />
               <Text color="inherit" fontWeight="700">
-                {/* {billingT("list.button.invoice")} */}
                 {t("ticketDetail.reply")}
               </Text>
-            </Button>
+            </Button> */}
+
           </Box>
 
           <Box
@@ -213,6 +213,7 @@ const TicketDetail = () => {
               {t("ticketDetail.created")}{" "}
               {dataTicket?.createTime?.slice(11, 16)}
             </Text>
+            
             <Button
               onClick={handleClickOpen}
               size="small"
@@ -232,10 +233,10 @@ const TicketDetail = () => {
             >
               <ReplyIcon />
               <Text color="inherit" fontWeight="700" fontSize={12}>
-                {/* {billingT("list.button.invoice")} */}
                 {t("ticketDetail.reply")}
               </Text>
             </Button>
+
           </Box>
         </Stack>
 

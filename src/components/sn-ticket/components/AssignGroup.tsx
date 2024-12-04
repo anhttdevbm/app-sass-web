@@ -1,5 +1,5 @@
 "use client";
-import { Box, TextField } from "@mui/material";
+import { Avatar, Box, TextField } from "@mui/material";
 import { Text } from "components/shared";
 import EditIcon from "icons/EditIcon";
 import useGetListAgent from "queries/ticket-agent/useGetAgent/useGetListAgent";
@@ -29,7 +29,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
   const { data: listAgent } = useGetListAgent();
   const { item, style, type, styledDropdown, setAssign, mobile } = props || null;
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(item?.assignUser?.fullname || "nothing");
+  const [value, setValue] = useState(item?.assignUser?.fullname);
   const [urlAvatar, setUrlAvatar] = useState(item?.assignUser?.urlAvatar);
   const [keyword, setKeyword] = useState('');
   const { onAddSnackbar } = useSnackbar();
@@ -47,7 +47,7 @@ const AssignGroup = (props: PropsAssgiGroup) => {
 
 
   useEffect(() => {
-    keySearch();  
+    keySearch();
   }, [keyword]);
 
 
@@ -105,15 +105,14 @@ const AssignGroup = (props: PropsAssgiGroup) => {
       }}
     >
       <Box display="flex" alignItems="center" gap="5px" marginLeft="10px">
-        <Box
-          component="img"
-          height="30px"
-          width="30px"
-          src={urlAvatar?.length > 0 ? urlAvatar : "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__"}
-          alt="Image description"
-          sx={{ borderRadius: "100%" }}
-        />
-        <Text onClick={() => handleOpen()} sx={{ fontSize: 13 }}>{value}</Text>
+        {value &&
+          <Avatar
+            src={urlAvatar}
+            alt="Image description"
+            sx={{ borderRadius: "100%", height: 30, width: 30 }}
+          />
+        }
+        <Text onClick={() => handleOpen()} sx={{ fontSize: 13 }}>{value || "nothing"}</Text>
       </Box>
       {
         type !== "detail" &&
@@ -220,18 +219,10 @@ const AssignGroup = (props: PropsAssgiGroup) => {
                   },
                 }}
               >
-                <Box
-                  component="img"
-                  height="30px"
-                  width="30px"
-                  src=
-                  {
-                    item?.detail?.urlAvatar ?
-                      item?.detail?.urlAvatar :
-                      "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__"
-                  }
+                <Avatar
+                  src={item?.detail?.urlAvatar}
                   alt="Image description"
-                  sx={{ borderRadius: "100%" }}
+                  sx={{ borderRadius: "100%", height: 30, width: 30 }}
                 />
                 <Text sx={{ fontSize: 13 }}>{item?.detail?.fullname}</Text>
               </Box>
