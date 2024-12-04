@@ -61,7 +61,7 @@ function StatOverview() {
     },
     {
       title: "New Task",
-      data: `${data?.task.total_task ?? 0}`,
+      data: `${data?.project.total_new_task ?? 0}`,
       bgColor: "#E3F1FF",
       cornerIcon: <TasksDoc />,
     },
