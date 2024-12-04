@@ -49,28 +49,25 @@ const Form = () => {
       const newData = await onSignin(values);
 
       if (newData) {
-        if (newData.status === 2 && newData.company !== null) {
-          push('/waiting-approve'); // Assuming '/waiting-approve' is the route for the WaitingApprove screen
+        onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
+
+        await fetch(`${NOTIFY_API_URL}/notification/${Endpoint.NOTIFY_REGISTER_USER}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: newData?.id,
+            token: fcmToken,
+          }),
+        });
+
+        if (rememberAccount) {
+          localStorage.setItem("rememberedEmail", values.email);
         } else {
-          onAddSnackbar(authT("signin.notification.signinSuccess"), "success");
-
-          await fetch(`${NOTIFY_API_URL}/notification/${Endpoint.NOTIFY_REGISTER_USER}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId: newData?.id,
-              token: fcmToken,
-            }),
-          });
-
-          if (rememberAccount) {
-            localStorage.setItem("rememberedEmail", values.email);
-          } else {
-            localStorage.removeItem("rememberedEmail");
-          }
+          localStorage.removeItem("rememberedEmail");
         }
+        
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
