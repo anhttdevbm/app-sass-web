@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  Avatar,
   Box,
   ButtonBase,
   MenuItem,
@@ -51,7 +52,7 @@ const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
 
 
   useEffect(() => {
-    keySearch();  
+    keySearch();
   }, [keyword]);
 
   return (
@@ -174,17 +175,10 @@ const FilterAssign = ({ onChange, queries }: FilterSearchDocsProps) => {
                   },
                 }}
               >
-                <Box
-                  component="img"
-                  height="30px"
-                  width="30px"
-                  src={
-                    item?.detail?.urlAvatar
-                      ? item?.detail?.urlAvatar
-                      : "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__"
-                  }
+                <Avatar
+                  src={item?.detail?.urlAvatar}
                   alt="Image description"
-                  sx={{ borderRadius: "100%" }}
+                  sx={{ borderRadius: "100%", height: 30, width: 30 }}
                 />
                 <Text sx={{ fontSize: 13 }}>{item?.detail?.fullname}</Text>
               </Box>

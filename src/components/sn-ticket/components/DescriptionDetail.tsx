@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Stack, TextField} from "@mui/material";
+import { Avatar, Box, Stack, TextField} from "@mui/material";
 import { Button, Text } from "components/shared";
 import { NS_TICKET } from "constant/index";
 import { useTranslations } from "next-intl";
@@ -69,7 +69,7 @@ const DescriptionDetail = (props: any) => {
     updateTicket.mutate(payload, {
       onSuccess: (data) => {
         console.log("Success:", data);
-        onAddSnackbar(`${data?.data?.errorMessage ? data?.data?.errorMessage : "Update Success"}`);
+        onAddSnackbar(`${data?.data?.errorMessage ? data?.data?.errorMessage : "Update Success"}`, "success");
         setOpenEdit(false)
       },
       onError: (err) => {
@@ -78,6 +78,8 @@ const DescriptionDetail = (props: any) => {
     });
 
   }
+
+  console.log("check data", data)
   return (
     <>
       <Stack
@@ -88,13 +90,10 @@ const DescriptionDetail = (props: any) => {
         sx={{ backgroundColor: "#F2FAFF", width: "100%", padding: "0px 24px" }}
       >
         <Box display="flex" gap="10px" alignItems="center" py={2}>
-          <Box
-            component="img"
-            height="30px"
-            width="30px"
-            src="https://via.placeholder.com/150"
+          <Avatar
+            src={data?.creatorUser?.urlAvatar}
             alt="Image description"
-            sx={{ borderRadius: "100%" }}
+            sx={{ borderRadius: "100%" , height : 30 , width: 30 }}
           />
           <Text sx={{ fontSize: 13 }}>
             {data?.creatorUser?.fullname || "Nothing"}{" "}
