@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Stack } from "@mui/material";
+import { Avatar, Box, Stack } from "@mui/material";
 import { Text } from "components/shared";
 import { useGetListActivity } from "queries/ticket/useGetTicket/useGetListActivity";
 import dayjs from 'dayjs';
@@ -21,7 +21,7 @@ const HistoryActivity = () => {
     const hours = diffDuration.hours();
     const minutes = diffDuration.minutes();
     const seconds = diffDuration.seconds();
-    let timeString = ''; 
+    let timeString = '';
     if (hours > 0) {
       timeString += `${hours} ${t("ticketDetail.historyActivity.time")} `;
     }
@@ -31,10 +31,10 @@ const HistoryActivity = () => {
     // if (seconds > 0 || timeString === '') {
     //   timeString += `${seconds} giây`;
     // }
-  
+
     return timeString.trim();
   };
-  
+
 
   console.log("check data history", listHistory?.data)
   return (
@@ -42,16 +42,10 @@ const HistoryActivity = () => {
       {listHistory?.data.map((item, index) => {
         return (
           <Stack key={index} direction="row" gap={2} py={2}>
-            <Box
-              component="img"
-              height="30px"
-              width="30px"
-              src={
-                item?.creatorUser?.urlAvatar ?
-                  item?.creatorUser?.urlAvatar :
-                  "https://s3-alpha-sig.figma.com/img/5744/3623/4932c1bee1f2c0e5132cc2c2470cb1cc?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=C0jCodgq3p3A3XqZ~TCmk9AaesXKIcjVStRcPhjnk48fjZcX65G~CB7j6bllmcpti6fGBzy1NIJ3pRsZWi5L-qz4li1b7q3wkiwm15Mipfs~8SyUlHR6A3EbvZBVHSuSKS5niOgMD0x12RT7darl2PYfNrjePrhzeqmoKlni~pOB0zpQ14buGfT1iScCIbl-l0JhdGHm7eYIAH6n43PAtAFijpeZsSyeYAjAHfyoviM1OlT84jX0Uo2-OlZv45IyBtV8hEhDny2ndwep~wO2lkFLZc2BGnjFnAMpU4zePZ5yOxaZvqUKPrO4C9AzeKtPpl3dpZJEznRJVSDBOyQ6bA__"}
+            <Avatar
+              src={item?.creatorUser?.urlAvatar}
               alt="Image description"
-              sx={{ borderRadius: "100%" }}
+              sx={{ borderRadius: "100%", height: 30, width: 30 }}
             />
             <Box>
               <Box display="flex" gap={1} alignItems="center">

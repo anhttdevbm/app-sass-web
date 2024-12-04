@@ -33,6 +33,7 @@ import { useEmployees } from "store/company/selectors";
 import { getPath } from "utils/index";
 import DeleteConfirm from "../components/DeleteConfirm";
 import EmployeeCompanyForm from "../EmployeeCompanyForm";
+import EmployeeTypeForm from "../EmployeeTypeForm";
 import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 // import DeleteConfirm from "./components/DeleteConfirm";
@@ -62,12 +63,9 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
   const [item, setItem] = useState<Employee | undefined>();
   const [selectedList, setSelectedList] = useState<Employee[]>([]);
   const [action, setAction] = useState<DataAction | undefined>();
+  const [isEmployeeTypeFormOpen, setEmployeeTypeFormOpen] = useState(false);
+  const [selectedEmployeeType, setSelectedEmployeeType] = useState<EmployeeType | undefined>();
   const { user } = useAuth();
-
-  // const employees = useMemo(
-  //   () => (employeeType === EmployeeType.EMPLOYEE ? items : clientEmployees),
-  //   [employeeType, items, clientEmployees],
-  // );
 
   const isCheckedAll = useMemo(
     () =>
@@ -132,6 +130,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
       } else {
         item && setItem(item);
       }
+      setEmployeeTypeFormOpen(true);
       setAction(action);
     };
   };
@@ -139,6 +138,8 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
   const onResetAction = () => {
     setItem(undefined);
     setAction(undefined);
+    setEmployeeTypeFormOpen(false);
+    setSelectedEmployeeType(undefined);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -165,11 +166,6 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
   const onChangeSize = (newPageSize: number) => {
     onChangeQueries({ pageIndex: 1, pageSize: newPageSize });
   };
-
-  // const onUpdateEmployee = async (data: EmployeeData) => {
-  //   if (!item) return;
-  //   return await onUpdateEmployeeAction(item.id, data.position);
-  // };
 
   const onPay = () => {
     setAction(DataAction.OTHER);
@@ -314,37 +310,6 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
                 )}
 
                 {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
-                  // <ActionsCell
-                  //   sx={{
-                  //     pl: { xs: 0.5, md: 0 },
-                  //     verticalAlign: { xs: "top", md: "middle" },
-                  //     pt: { xs: 2, md: 0 },
-                  //   }}
-                  //   iconProps={{
-                  //     sx: {
-                  //       p: { xs: "4px!important", lg: 1 },
-                  //     },
-                  //   }}
-                  //   onEdit={onActionToItem(DataAction.UPDATE, item)}
-                  //   onDelete={onActionToItem(DataAction.DELETE, item)}
-                  //   hasPopup={false}
-                  //   options={
-                  //     item.status === PayStatus.PENDING
-                  //       ? [
-                  //           {
-                  //             content: companyT("employees.pay"),
-                  //             onClick: onActionToItem(DataAction.OTHER, item),
-                  //             icon: (
-                  //               <EditUnderlineIcon
-                  //                 sx={{ color: "grey.400" }}
-                  //                 fontSize="medium"
-                  //               />
-                  //             ),
-                  //           },
-                  //         ]
-                  //       : undefined
-                  //   }
-                  // />
                   <>
                     <Button
                       size="small"
@@ -359,7 +324,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
                       }}
                       onClick={onActionToItem(DataAction.UPDATE, item)}
                     >
-                      {commonT("edit")}
+                      {commonT("approve")}
                     </Button>
                     <Button
                       size="small"
@@ -375,7 +340,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
                       }}
                       onClick={onActionToItem(DataAction.DELETE, item)}
                     >
-                      {commonT("delete")}
+                      {commonT("reject")}
                     </Button>
                   </>
                 )}
@@ -404,12 +369,12 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
           content={companyT("employees.confirmPayment.content", { count: 1 })}
         />
       )}
-      {item && action === DataAction.UPDATE && (
+      {item && action === DataAction.UPDATE && selectedEmployeeType && (
         <EmployeeCompanyForm
           open
           onClose={onResetAction}
           type={DataAction.UPDATE}
-          typeEmployee={employeeType}
+          typeEmployee={selectedEmployeeType}
           initialValues={{
             id: item.id,
             email: item.email,
@@ -430,6 +395,25 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
         })}
         items={selectedList}
         onSubmit={onSubmitDelete}
+      />
+
+      <EmployeeTypeForm
+        open={isEmployeeTypeFormOpen}
+        onClose={onResetAction}
+        options={[
+          { label: "Employee", value: EmployeeType.EMPLOYEE },
+          { label: "Client", value: EmployeeType.CLIENT },
+          { label: "Contractor", value: EmployeeType.CONTRACTOR },
+        ]}
+        onSubmit={(type) => {
+          setSelectedEmployeeType(type);
+          setEmployeeTypeFormOpen(false);
+          // Open the corresponding form after selecting the employee type
+          if (action === DataAction.UPDATE && item) {
+            // Open EmployeeCompanyForm with the selected type
+            setAction(DataAction.UPDATE);
+          }
+        }}
       />
     </>
   );

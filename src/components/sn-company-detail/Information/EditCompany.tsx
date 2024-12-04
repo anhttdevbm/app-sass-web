@@ -51,7 +51,7 @@ const EditCompany = () => {
 
     // Upload avatar file and update payload.avatar with the returned URL
     if (data["avatar"] && data["avatar"] instanceof File) {
-      const logoUrl = await client.uploadFile(Endpoint.UPLOAD_FILE, data["avatar"]);
+      const logoUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, data["avatar"]);
       payload.avatar = logoUrl;
     } else {
       payload.avatar = data["avatar"];

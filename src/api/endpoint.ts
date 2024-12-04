@@ -280,4 +280,7 @@ export const Endpoint = {
   NOTIFY_APPLY_SETTING : "/setting/apply-changes",
   NOTIFY_READ_STATUS : "/notification/readStatus/",
   NOTIFY_GET_ALL : "/notification/history/",
+
+  //Dashboard
+  DASHBOARD_ALL: "/statistic",
 };

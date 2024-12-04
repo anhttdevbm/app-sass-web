@@ -87,7 +87,7 @@ const SalesPage = () => {
     if (!isReady) return;
     setShouldLoad(true);
     onGetSales(query);
-  }, [isReady, initQuery, onGetSales]);
+  }, [isReady, initQuery, onGetSales, query]);
 
   const itemList = useMemo(() => {
     return sortedRowInformation(sales, getComparator(orderDirection, orderBy));
@@ -150,48 +150,48 @@ const SalesPage = () => {
         minWidth: 100,
         width: "12%",
       },
-      {
-        name: "revenuePJ",
-        value: salesT("list.table.pjRevenue"),
-        align: "right",
-        sort: true,
-        component: (props) => {
-          return (
-            <Stack
-              {...props}
-              alignItems="flex-end"
-              sx={{
-                paddingTop: "4px",
-              }}
-            >
-              <Text
-                variant="h6"
-                color="grey.400"
-                sx={{
-                  textOverflow: "ellipsis",
-                  WebkitLineClamp: 1,
-                  width: "100%",
-                  overflow: "hidden",
-                }}
-                noWrap
-              >
-                {salesT("list.table.pjRevenue")}
-              </Text>
-              <Text
-                variant="h6"
-                color={totalRevenuePJ > 0 ? "success.main" : "error.main"}
-              >
-                {formatCurrency(totalRevenuePJ, {
-                  prefix: "$",
-                  numberOfFixed: 2,
-                })}
-              </Text>
-            </Stack>
-          );
-        },
-        minWidth: 70,
-        width: "13%",
-      },
+      // {
+      //   name: "revenuePJ",
+      //   value: salesT("list.table.pjRevenue"),
+      //   align: "right",
+      //   sort: true,
+      //   component: (props) => {
+      //     return (
+      //       <Stack
+      //         {...props}
+      //         alignItems="flex-end"
+      //         sx={{
+      //           paddingTop: "4px",
+      //         }}
+      //       >
+      //         <Text
+      //           variant="h6"
+      //           color="grey.400"
+      //           sx={{
+      //             textOverflow: "ellipsis",
+      //             WebkitLineClamp: 1,
+      //             width: "100%",
+      //             overflow: "hidden",
+      //           }}
+      //           noWrap
+      //         >
+      //           {salesT("list.table.pjRevenue")}
+      //         </Text>
+      //         <Text
+      //           variant="h6"
+      //           color={totalRevenuePJ > 0 ? "success.main" : "error.main"}
+      //         >
+      //           {formatCurrency(totalRevenuePJ, {
+      //             prefix: "$",
+      //             numberOfFixed: 2,
+      //           })}
+      //         </Text>
+      //       </Stack>
+      //     );
+      //   },
+      //   minWidth: 70,
+      //   width: "13%",
+      // },
       {
         name: "estimate",
         value: (
@@ -285,19 +285,20 @@ const SalesPage = () => {
         pending={isFetching && shouldLoad}
         headerProps={{
           sx: {
-            // px: { xs: 2, md: 2 },
+            px: { xs: 1, md: 1 },
             overflow: "auto",
             py: "4px",
-            height:"70px",
+            pb: "8px", 
+            height: "auto",
             verticalAlign: "middle",
             background: "#D9F0FD",
             color: "#999999",
-            h6:{fontSize:"13px"}
+            h6: { fontSize: "13px"}
           },
         }}
         containerHeaderProps={{
           sx: {
-            overflowX: "hidden",
+        overflowX: "hidden",
           },
         }}
         error={salesError as string}

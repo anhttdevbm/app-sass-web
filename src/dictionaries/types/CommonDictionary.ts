@@ -77,6 +77,8 @@ export type CommonDictionary = {
   createNew: string;
   update: string;
   edit: string;
+  approve: string;
+  reject: string;
   delete: string;
   chat: string;
   close: string;
