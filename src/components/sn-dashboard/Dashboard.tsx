@@ -1,7 +1,6 @@
 "use client"
 
-import { Add as AddIcon } from "@mui/icons-material";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import DragMatrixIcon from "icons/DagMatrixIcon";
 import StatOverview from "./StatOverview";
 import { StatAccordion } from "./components/StatAccordion";
@@ -19,7 +18,7 @@ function Dashboard() {
           summaryChild={
             <Stack justifyContent='space-between' direction='row' paddingRight={1.5} width='100%'>
               <Typography>Employee</Typography>
-              <Button
+              {/* <Button
                 sx={{
                   height: "24px",
                   width: "24px",
@@ -36,8 +35,8 @@ function Dashboard() {
                   sx={{
                     color: "white",
                   }}
-                />
-              </Button>
+                /> 
+              </Button>*/}
             </Stack>
           }
         />
