@@ -82,6 +82,8 @@ export const CommonLang: CommonDictionary = {
   createNew: "Thêm mới",
   update: "Cập nhật",
   edit: "Sửa",
+  approve: "Chấp nhận",
+  reject: "Từ chối",
   delete: "Xóa",
   chat: "Trò chuyện",
   close: "Đóng",

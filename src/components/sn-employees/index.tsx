@@ -6,14 +6,17 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { client, Endpoint } from "api";
-import { EmployeeType } from "constant/enums";
+import { EmployeeType, Permission } from "constant/enums";
 import { AUTH_API_URL, NS_COMPANY } from "constant/index";
+import { useAuth } from "store/app/selectors";
 import Actions from "./Actions";
 import ItemList from "./ItemList";
 import ItemListJoinRequest from "./join-request/ItemListJoinRequest";
 
 const EmployeesPage = () => {
   const companyT = useTranslations(NS_COMPANY);
+  const { user } = useAuth();
+
   const [totalUserUnPaid, setTotalUserUnPaid] = useState(null);
 
   const [tab, setTab] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
@@ -95,18 +98,20 @@ const EmployeesPage = () => {
                 value={EmployeeType.CONTRACTOR}
                 sx={tabStyles}
               />
-              <Tab
-                label={
-                  <span>
-                    {companyT("employees.joinRequest")}{' '}
-                    <button style={{ borderRadius: '50%', padding: '5px 10px', border: 'none', backgroundColor: '#045EB8', color: "#fff" }}>
-                      {totalUserUnPaid}
-                    </button>
-                  </span>
-                }
-                value={EmployeeType.JOIN_REQUEST}
-                sx={tabStyles}
-              />
+              {(user?.roles.includes(Permission.AM)) && (
+                <Tab
+                  label={
+                    <span>
+                      {companyT("employees.joinRequest")}{' '}
+                      <button style={{ borderRadius: '50%', padding: '5px 10px', border: 'none', backgroundColor: '#045EB8', color: "#fff" }}>
+                        {totalUserUnPaid}
+                      </button>
+                    </span>
+                  }
+                  value={EmployeeType.JOIN_REQUEST}
+                  sx={tabStyles}
+                />
+              )}
             </TabList>
           }
         />

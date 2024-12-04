@@ -303,54 +303,54 @@ const DATA: MenuItemProps[] = [
   {
     label: "menu.company",
     icon: <MenuCompanyIcon />,
-    subs: [
-      { 
-        label: "menu.employees", 
-        href: EMPLOYEES_PATH, 
-        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
-      },
-      // {
-      //   label: "menu.costHistory",
-      //   href: COST_HISTORY_PATH,
-      //   roles: [Permission.AM],
-      // },
-      {
-        label: "menu.listOfPositions",
-        href: POSITIONS_PATH,
-        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
-      },
-      {
-        label: "menu.projectTypeList",
-        href: PROJECT_TYPES_PATH,
-        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
-      },
-      {
-        label: "menu.clientCompanies",
-        href: CLIENT_COMPANIES_PATH,
-        roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
-      },
-      {
-        label: "menu.companyInformation",
-        href: MY_COMPANY_PATH,
-        roles: [Permission.AM, Permission.MN], 
-      },
-      {
-        label: "menu.holidayCalendar",
-        href: HOLIDAY_CALENDAR_PATH,
-        roles: [Permission.AM],
-      },
-      {
-        label: "menu.packageManager",
-        href: PACKAGE_MANAGERMENT_PATH,
-        roles: [Permission.AM], 
-      },
-    ],
     roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
-  },
-  {
-    label: "menu.manager",
-    icon: <MenuCompanyIcon />,
     subs: [
+          { 
+            label: "menu.employees", 
+            href: EMPLOYEES_PATH, 
+            roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
+          },
+          // {
+          //   label: "menu.costHistory",
+          //   href: COST_HISTORY_PATH,
+          //   roles: [Permission.AM],
+          // },
+          {
+            label: "menu.listOfPositions",
+            href: POSITIONS_PATH,
+            roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
+          },
+          {
+            label: "menu.projectTypeList",
+            href: PROJECT_TYPES_PATH,
+            roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
+          },
+          {
+            label: "menu.clientCompanies",
+            href: CLIENT_COMPANIES_PATH,
+            roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST], 
+          },
+          {
+            label: "menu.companyInformation",
+            href: MY_COMPANY_PATH,
+            roles: [Permission.AM, Permission.MN], 
+          },
+          {
+            label: "menu.holidayCalendar",
+            href: HOLIDAY_CALENDAR_PATH,
+            roles: [Permission.AM],
+          },
+          {
+            label: "menu.packageManager",
+            href: PACKAGE_MANAGERMENT_PATH,
+            roles: [Permission.AM], 
+          }
+        ]
+      },
+      {
+        label: "menu.manager",
+        icon: <MenuCompanyIcon />,
+        subs: [
       {
         label: "menu.companyList",
         href: COMPANIES_PATH,
