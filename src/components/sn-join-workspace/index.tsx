@@ -115,7 +115,7 @@ const JoinWorkspace = () => {
 
   useEffect(() => {
     if (!isJoined) return;
-    replace(WAITING_APPROVE_PATH);
+    replace(HOME_PATH);
   }, [isJoined, replace]);
 
   if (!appReady) return <AppLoading />;

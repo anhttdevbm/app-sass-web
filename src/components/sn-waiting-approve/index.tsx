@@ -5,7 +5,7 @@ import { client, Endpoint } from "api";
 import { formErrorCode } from "api/formErrorCode";
 import Link from "components/Link";
 import { Text } from "components/shared";
-import { ButtonOutlineGradient } from "components/shared/ButtonOutlineGradient";
+import { ButtonOutlineGradient } from "components/sn-ai-agent-detail/Knowledge/components/ButtonOutlineGradient";
 import { HttpStatusCode } from "constant/enums";
 import {
     AN_ERROR_TRY_AGAIN,
@@ -70,8 +70,8 @@ const WaitingApprove = () => {
                 alignItems="center"
             >
                 <Stack
-                    mx={{ xs: 2, sm: 8 }}
-                    my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
+                    // mx={{ xs: 2, sm: 8 }}
+                    // my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
                     justifyContent="center"
                     alignItems="center"
                     bgcolor="background.paper"
@@ -99,20 +99,20 @@ const WaitingApprove = () => {
                     position="relative"
                 >
                     <Stack
-                        minWidth={340}
-                        maxWidth={340}
+                        // minWidth={340}
+                        // maxWidth={340}
                         justifyContent="center"
                         alignItems="center"
                     >
                         <Text variant="h3" textAlign="center" mt={3} mb={2}>
-                            {authT("waitingApprove.title")}
+                            Waiting for <span style={{ color: "#045EB8" }}>@Taskcover.com</span> to approve your request...
                         </Text>
                         
                         <Image
                             src={TemplateTwoPng}
                             alt="Task cover working"
-                            width={200} // specify the width of the image
-                            height={200} // specify the height of the image
+                            width={400} // specify the width of the image
+                            height={400} // specify the height of the image
                         />
 
                         <Text
@@ -128,7 +128,8 @@ const WaitingApprove = () => {
 
                         <ButtonOutlineGradient
                             name={authT("waitingApprove.cancelRequest")}
-                            onClick={onSubmit}
+                            onClick={onSubmit} 
+                            icon={undefined}                        
                         />
 
                         {/* Add link text forward new page */}
