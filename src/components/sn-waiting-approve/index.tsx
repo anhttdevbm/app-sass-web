@@ -4,8 +4,7 @@ import { Stack } from "@mui/material";
 import { client, Endpoint } from "api";
 import { formErrorCode } from "api/formErrorCode";
 import Link from "components/Link";
-import { Text } from "components/shared";
-import { ButtonOutlineGradient } from "components/sn-ai-agent-detail/Knowledge/components/ButtonOutlineGradient";
+import { Button, Text } from "components/shared";
 import { HttpStatusCode } from "constant/enums";
 import {
     AN_ERROR_TRY_AGAIN,
@@ -126,11 +125,33 @@ const WaitingApprove = () => {
                             {authT("waitingApprove.description")}
                         </Text>
 
-                        <ButtonOutlineGradient
+                        {/* <ButtonOutlineGradient
                             name={authT("waitingApprove.cancelRequest")}
                             onClick={onSubmit} 
-                            icon={undefined}                        
-                        />
+                        /> */}
+                        <Button
+                            sx={{
+                                ...btnBuyNowSx,
+                                background: "white",
+                                border: "2px solid #009EFD !important",
+                                borderImageSource: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                                borderImageSlice: 1,
+                                color: "transparent",
+                                backgroundClip: "text",
+                                WebkitBackgroundClip: "text",
+                                borderRadius: "50px !important", // Ensure border radius is applied
+                                "&:hover": {
+                                    opacity: 0.8,
+                                    transition: "all 0.4s",
+                                    background: "white",
+                                },
+                            }}
+                            onClick={onSubmit}
+                        >
+                            <Text variant={"h6"} sx={{ background: "linear-gradient(90deg, #0575E6 5.8%, #38E27B 96.38%)", WebkitBackgroundClip: "text", color: "transparent" }}>
+                                {authT("waitingApprove.cancelRequest")}
+                            </Text>
+                        </Button>
 
                         {/* Add link text forward new page */}
                         <Link
@@ -172,4 +193,17 @@ const WaitingApprove = () => {
     );
 };
 
+const btnBuyNowSx = {
+    width: "100%",
+    maxWidth: "200px",
+    color: "#fff",
+    fontSize: { xs: "14px", md: "16px" },
+    borderRadius: "8px",
+    p: "16px 20px",
+    textTransform: "capitalize",
+    "&:hover": {
+      opacity: 0.8,
+      transition: "all 0.4s",
+    },
+  };
 export default memo(WaitingApprove);

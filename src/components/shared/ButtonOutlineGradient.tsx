@@ -1,87 +1,59 @@
-import { css, Global } from "@emotion/react";
-import { Button } from "@mui/material";
-import Text from "components/shared/Text";
-import { ReactNode } from "react";
+import { Stack } from "@mui/material";
+import { GradientBorderStack } from "components/sn-ai-agent-detail/Tools/components";
+import useTheme from "hooks/useTheme";
+import React from "react";
+import styled from "styled-components";
 
-const BLUE_COLOR = "#0575E6 5.8%";
-const GREEN_COLOR = "#38E27B 96.38%";
-
-interface AnimatedButtonProps {
+interface ButtonOutlineGradientProps {
   name: string;
   onClick?: () => void;
-  icon?: ReactNode;
-  sx?: any;
 }
 
-export const ButtonOutlineGradient: React.FC<AnimatedButtonProps> = ({ name, onClick, icon, sx }) => {
+const GradientText = styled.span`
+  background: linear-gradient(to right, #0575e6, #38e27b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: 6px;
+`;
+
+const Content = styled(Stack)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  zIndex: 2,
+  width: "100%",
+  borderRadius: "20px",
+}));
+
+export const ButtonOutlineGradient: React.FC<ButtonOutlineGradientProps> = ({
+  name,
+  onClick,
+}) => {
+  const theme = useTheme();
+
   return (
-    <>
-      <Global styles={css`
-          @property --rotate {
-              syntax: "<angle>";
-              initial-value: 132deg;
-              inherits: false;
-          }
-
-          @keyframes spin {
-              0% {
-                  --rotate: 0deg;
-              }
-              100% {
-                  --rotate: 360deg;
-              }
-          }
-
-          .animated-button {
-              &::before, &::after {
-                  position: absolute;
-                  content: "";
-                  inset: -.15rem;
-                  z-index: -1;
-                  background-image: linear-gradient(var(--rotate), ${BLUE_COLOR}, ${GREEN_COLOR});
-                  border-radius: 12px;
-              }
-
-              &:hover {
-                  &::before, &::after {
-                      animation: spin 1s linear infinite;
-                  }
-              }
-          }
-      `} />
-      <Button
-        className="animated-button"
-        sx={{
-          cursor: "pointer",
-          background: "white",
-          borderRadius: "9px",
-          position: "relative",
-          margin: ".15rem",
-          padding: "0.6rem 1.5rem",
-
-          "&:hover": {
-            background: "white",
-          },
-
-          ...sx,
-        }}
-        onClick={onClick}
+    <GradientBorderStack
+      borderRadius={"20px"} // Ensure border radius is applied
+      sx={{
+        cursor: "pointer",
+        border: "2px solid",
+        borderImageSlice: 1,
+        borderWidth: "2px",
+        borderImageSource: "linear-gradient(to right, #0575e6, #38e27b)", // Linear gradient border
+        padding: "12px 24px", // Add padding to ensure content is inside the border
+      }}
+      onClick={onClick}
+      flex={1}
+      justifyContent={"center"}
+      alignItems={"center"}
+    >
+      <Content
+        direction={"row"}
+        theme={theme}
+        flex={1}
+        justifyContent={"center"}
+        alignItems={"center"}
       >
-        {icon}
-        <Text
-          variant={"h6"}
-          sx={{
-            background: "linear-gradient(89.64deg, #0575E6 5.8%, #38E27B 96.38%)",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            textTransform: "capitalize",
-            marginLeft: "0.3rem",
-          }}
-        >
-          {name}
-        </Text>
-      </Button>
-    </>
+        <GradientText>{name}</GradientText>
+      </Content>
+    </GradientBorderStack>
   );
 };
