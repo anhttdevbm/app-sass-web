@@ -286,14 +286,14 @@ const DATA: MenuItemProps[] = [
     label: "menu.dashboard",
     href: HOME_PATH,
     icon: <MenuDashboardIcon />,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST],
   },
 
   {
     label: "menu.project",
     icon: <MenuProjectIcon />,
     href: PROJECTS_PATH,
-    roles: [Permission.AM, Permission.ST],
+    roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST],
   },
   // {
   //   label: "menu.task",
@@ -368,13 +368,13 @@ const DATA: MenuItemProps[] = [
     label: "menu.timeTracking",
     href: TIME_TRACKING_PATH,
     icon: <MenuTimeTrackingIcon />,
-    roles: [Permission.AM, Permission.ST, Permission.MN],
+    roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST],
   },
   {
     label: "menu.resourcePlaning",
     href: RESOURCE_PLANING_PATH,
     icon: <MenuResourcePlaningIcon />,
-    roles: [Permission.AM, Permission.MN],
+    roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST],
   },
   {
     label: "menu.budgeting",
