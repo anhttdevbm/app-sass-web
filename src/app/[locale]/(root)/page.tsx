@@ -11,7 +11,7 @@ export default function Page() {
   const { user } = useAuth();
 
   // Check the user's status, company, and roles
-  const shouldShowWaitingApprove = user?.status === 2 && user?.company !== null;
+  const shouldShowWaitingApprove = user?.status === 2 && user?.company === null;
   const shouldShowJoinWorkspace = user?.status === 1 && user?.company !== null && user?.roles?.includes(Permission.EU);
 
   return (
