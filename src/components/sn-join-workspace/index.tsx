@@ -17,8 +17,7 @@ import {
   NS_COMMON,
 } from "constant/index";
 import {
-  HOME_PATH,
-  WAITING_APPROVE_PATH
+  HOME_PATH
 } from "constant/paths";
 import { SUFFIX_EMAIL_REGEX } from "constant/regex";
 import { ErrorResponse } from "constant/types";
@@ -79,7 +78,7 @@ const JoinWorkspace = () => {
       if (response?.status === HttpStatusCode.OK) {
         onAddSnackbar(authT("joinWorkspace.notification.success"), "success");
         onGetProfile();
-        push(WAITING_APPROVE_PATH);
+        push(HOME_PATH);
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
