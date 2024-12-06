@@ -7,8 +7,6 @@ import AppLoading from "components/AppLoading";
 import AppLogo from "components/AppLogo";
 import ConfirmDialog from "components/ConfirmDialog";
 import { Button, Input, Text } from "components/shared";
-import SwitchLanguage from "components/SwitchLanguage";
-import SwitchTheme from "components/SwitchTheme";
 import { HttpStatusCode } from "constant/enums";
 import {
   AN_ERROR_TRY_AGAIN,
@@ -17,7 +15,8 @@ import {
   NS_COMMON,
 } from "constant/index";
 import {
-  HOME_PATH
+  HOME_PATH,
+  WAITING_APPROVE_PATH
 } from "constant/paths";
 import { SUFFIX_EMAIL_REGEX } from "constant/regex";
 import { ErrorResponse } from "constant/types";
@@ -103,7 +102,7 @@ const JoinWorkspace = () => {
       if (response?.status === HttpStatusCode.OK) {
         onAddSnackbar(authT("joinWorkspace.notification.success"), "success");
         onGetProfile();
-        push(HOME_PATH);
+        push(WAITING_APPROVE_PATH);
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }
@@ -122,15 +121,15 @@ const JoinWorkspace = () => {
   return (
     <>
       <Stack
-        flex={1}
-        height="calc(var(--vh, 1vh) * 100)"
-        width="100vw"
-        justifyContent="center"
+        // flex={1}
+        // height="calc(var(--vh, 1vh) * 100)"
+        // width="100vw"
+        // justifyContent="center"
         alignItems="center"
       >
         <Stack
-          mx={{ xs: 2, sm: 8 }}
-          my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
+          // mx={{ xs: 2, sm: 8 }}
+          // my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
           justifyContent="center"
           alignItems="center"
           bgcolor="background.paper"
@@ -157,7 +156,7 @@ const JoinWorkspace = () => {
           overflow="auto"
           position="relative"
         >
-          <Stack
+          {/* <Stack
             direction="row"
             alignItems="center"
             position="absolute"
@@ -168,7 +167,7 @@ const JoinWorkspace = () => {
           >
             <SwitchLanguage />
             <SwitchTheme />
-          </Stack>
+          </Stack> */}
 
           <Stack
             minWidth={340}
