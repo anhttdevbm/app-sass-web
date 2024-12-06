@@ -40,13 +40,12 @@ const WaitingApprove = () => {
 
 
     const onSubmit = async () => {
-        
         try {
-            const response = await client.get(Endpoint.CANCEL_REQUEST, {},{ baseURL: AUTH_API_URL });
+            const response = await client.get(Endpoint.CANCEL_REQUEST, {}, { baseURL: AUTH_API_URL });
             
             if (response?.status === HttpStatusCode.OK) {
                 onAddSnackbar(authT("waitingApprove.notification.success"), "success");
-                push(JOIN_WORKSPACE_PATH);
+                await push(JOIN_WORKSPACE_PATH);
                 onGetProfile();
             } else {
                 throw AN_ERROR_TRY_AGAIN;
