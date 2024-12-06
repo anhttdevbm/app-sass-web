@@ -46,7 +46,7 @@ const WaitingApprove = () => {
             
             if (response?.status === HttpStatusCode.OK) {
                 onAddSnackbar(authT("waitingApprove.notification.success"), "success");
-                push(JOIN_WORKSPACE_PATH);
+                replace(JOIN_WORKSPACE_PATH);
                 onGetProfile();
             } else {
                 throw AN_ERROR_TRY_AGAIN;
