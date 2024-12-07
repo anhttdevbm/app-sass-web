@@ -1,12 +1,9 @@
 import React, { useContext } from "react";
-import styles from "./upload.module.scss";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useDispatch } from "react-redux";
-import { ThemeContext } from "../context/ThemeContext";
-import { uuid } from "utils/index";
-import { storage } from "../config/firebase";
-import { PageState, setPage } from "store/docs/reducer";
 import { useAppSelector } from "store/hooks";
+import { uuid } from "utils/index";
+import { ThemeContext } from "../context/ThemeContext";
+import styles from "./upload.module.scss";
 
 const Upload = () => {
   const id = uuid();
@@ -19,26 +16,7 @@ const Upload = () => {
 
     if (selectedImage === null) return;
 
-    const imageRef = ref(storage, `images/${selectedImage?.name + id}`);
 
-    uploadBytes(imageRef, selectedImage!).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        const pageData = {
-          pageId: pageInfo!.id,
-          url,
-          verticalPosition: 0,
-        };
-        const updatedPage: PageState = {
-          ...pageInfo!,
-          coverPicture: {
-            ...pageInfo!.coverPicture,
-            url,
-          },
-        };
-
-        dispatch(setPage(updatedPage));
-      });
-    });
   };
 
   return (
