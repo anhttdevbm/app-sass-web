@@ -17,7 +17,7 @@ import FormLayout from "components/FormLayout";
 import { Button } from "components/shared";
 import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { DocAccessibility } from "constant/enums";
-import { DEFAULT_PAGING, DOCS_API_URL, NS_DOCS } from "constant/index";
+import { DOCS_API_URL, NS_DOCS } from "constant/index";
 import { useFormik } from "formik";
 import useQueryParams from "hooks/useQueryParams";
 import CloseIcon from "icons/CloseIcon";
@@ -92,7 +92,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
   const { handleGetDocDetail } = useDocs();
 
   const fetApi = () => {
-    onGetEmployees({ ...DEFAULT_PAGING, ...initQuery });
+    onGetEmployees({ pageIndex: 1, pageSize: 50, ...initQuery });
   };
 
   const onSelectMember = (_, value) => {
@@ -301,7 +301,13 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
         </Typography>
         <Box width="100%" pl="12px">
           {docInfo.member?.map((m) => {
+            console.log("m", m);
+            
             const user = items.find((e) => e.id === m.user);
+            console.log("items", items);
+            
+            console.log("user", user);
+            
             if (!user) return;
             return (
               <Box

@@ -43,7 +43,7 @@ function StatOverview() {
       .then(response => {
         setData(response.data);
       })
-  }, [data])
+  }, [])
 
   const fakeStatOverviewData = [
     {
