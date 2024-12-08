@@ -92,7 +92,7 @@ export const uploadFile = createAsyncThunk(
     "aiAgent/uploadAvatar",
   async (file: File) => {
       try {
-        return fileClient.upload(Endpoint.UPLOAD, file)
+        return fileClient.uploadFileV2(Endpoint.UPLOAD_FILE_V2, file)
       } catch (error) {
         throw error;
       }
