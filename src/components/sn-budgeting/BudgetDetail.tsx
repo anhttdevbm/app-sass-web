@@ -18,7 +18,7 @@ import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { NS_BUDGETING, NS_COMMON, NS_PROJECT } from "constant/index";
-import { BILLING_CREATE_PATH, BUDGETING_PATH } from "constant/paths";
+import { BUDGETING_PATH } from "constant/paths";
 import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
@@ -49,7 +49,6 @@ import { TBudget } from "store/project/budget/action";
 import { useProjects } from "store/project/selectors";
 import Swal from "sweetalert2";
 import { formatNumber, getMessageErrorByAPI } from "utils/index";
-import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Service } from "./TabDetail/Service";
@@ -61,7 +60,7 @@ enum TABS {
   SERVICES = "Services",
   TIME = "Time",
   EXPENSES = "Expenses",
-  INVOICES = "Invoices",
+  // INVOICES = "Invoices",
   // RECURRING = "Recurring",
 }
 
@@ -141,7 +140,7 @@ export const BudgetDetail = () => {
     [TABS.CLIENT]: budgetT("tab.client"),
     [TABS.TIME]: budgetT("tab.time"),
     [TABS.EXPENSES]: budgetT("tab.expenses"),
-    [TABS.INVOICES]: budgetT("tab.invoices"),
+    // [TABS.INVOICES]: budgetT("tab.invoices"),
     [TABS.SERVICES]: budgetT("tab.services"),
     // [TABS.RECURRING]: budgetT("tab.recurring"),
   };
@@ -244,21 +243,21 @@ export const BudgetDetail = () => {
             {budgetT("toolbar.addExpense")}
           </Button>
         );
-      case TABS.INVOICES:
-        return (
-          <Button
-            id="budget_add_new_invoice"
-            startIcon={<PlusIcon />}
-            variant="primary"
-            size="small"
-            sx={{ height: "40px", mx: "2px" }}
-            onClick={() => {
-              push(BILLING_CREATE_PATH + `?budget=${id}`);
-            }}
-          >
-            {budgetT("toolbar.addInvoice")}
-          </Button>
-        );
+      // case TABS.INVOICES:
+      //   return (
+      //     <Button
+      //       id="budget_add_new_invoice"
+      //       startIcon={<PlusIcon />}
+      //       variant="primary"
+      //       size="small"
+      //       sx={{ height: "40px", mx: "2px" }}
+      //       onClick={() => {
+      //         push(BILLING_CREATE_PATH + `?budget=${id}`);
+      //       }}
+      //     >
+      //       {budgetT("toolbar.addInvoice")}
+      //     </Button>
+      //   );
       case TABS.SERVICES:
         return !isEditService ? (
           <Button
@@ -288,7 +287,7 @@ export const BudgetDetail = () => {
       default:
         return <Box sx={{ width: 100 }} />;
     }
-  }, [activeTab, budgetT, id, isEditService, onEditService, openModalExpense, openModalTime, push]);
+  }, [activeTab, budgetT, isEditService, onEditService, openModalExpense, openModalTime]);
 
   useImperativeHandle(budgetDetailRef, () => ({
     setSelectedServiceData: (service: TBudgetService | null) => {
