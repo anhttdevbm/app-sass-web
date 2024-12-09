@@ -371,6 +371,7 @@ export const BudgetDetail = () => {
   };
 
   if (!budget) return <></>;
+  console.log("budget", budget);
 
   return (
     <Box ref={budgetDetailRef}>
@@ -486,7 +487,7 @@ export const BudgetDetail = () => {
                 fontWeight={600}
                 color="#03AE00"
               >
-                {formatNumber(109000567, {
+                {formatNumber(budget.totalRevenue, {
                   prefix: CURRENCY_SYMBOL["USD"],
                   numberOfFixed: 0,
                 })}
@@ -506,13 +507,13 @@ export const BudgetDetail = () => {
                 fontWeight={600}
                 color="#03AE00"
               >
-                {formatNumber(123, {
+                {formatNumber(budget.totalMargin, {
                   prefix: CURRENCY_SYMBOL["USD"],
                   numberOfFixed: 0,
                 })}
               </Text>
             </Stack>
-            <Stack direction="column" alignItems="center">
+            {/* <Stack direction="column" alignItems="center">
               <Text
                 sx={{ textWrap: "nowrap" }}
                 color={"#999999"}
@@ -528,7 +529,7 @@ export const BudgetDetail = () => {
               >
                 {formatNumber(123, {}) + " %"}
               </Text>
-            </Stack>
+            </Stack> */}
           </Stack>
         </Stack>
         <Stack

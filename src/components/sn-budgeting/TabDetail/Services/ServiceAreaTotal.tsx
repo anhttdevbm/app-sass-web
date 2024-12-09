@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, Typography } from "@mui/material";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import { styled } from "@mui/material/styles";
-import { NS_BUDGETING } from "constant/index";
+import { NS_BUDGETING, SALE_API_URL } from "constant/index";
 import useTheme from "hooks/useTheme";
 import _ from "lodash";
-import moment from "moment";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-intl/client";
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { H6, PTag, ServiceBox } from "./ServiceUtil";
 // import TimeIcon from "public/images/ic-time.svg";
 import Grid from "@mui/material/Unstable_Grid2";
+import { client, Endpoint } from "api";
+import { Progress } from "components/shared/Progress";
 import BudgetsIcon from "icons/BudgetsIcon";
 import BudgetTimeIcon from "icons/BudgetTimeIcon";
 import InvoicingIcon from "icons/InvoicingIcon";
@@ -24,11 +21,48 @@ interface Props {
   serviceData: any;
 }
 
+interface TimeData {
+  budgetedTime: number;
+  usedTime: number;
+  billableTime: number;
+  remainingTime: number;
+}
+
+interface BudgetData {
+  totalBudget: number;
+  budgetUsed: number;
+  budgetRemaining: number;
+  percentageUsed: number;
+}
+
+interface ProfitData {
+  totalRevenue: number;
+  cost: number;
+  profit: number;
+  percentageOfProfit: number;
+}
+
+interface InvoicingData {
+  totalInvoice: number;
+  invoiced: number;
+  forInvoicing: number;
+  percentageInvoiced: number;
+}
+
+interface BudgetStatistics {
+  time: TimeData;
+  budget: BudgetData;
+  profit: ProfitData;
+  invoicing: InvoicingData;
+}
+
 export const ServiceAreaTotal = ({ serviceData }: Props) => {
   const budgetT = useTranslations(NS_BUDGETING);
   const { push } = useRouter();
   const { id } = useParams();
   const { isDarkMode } = useTheme();
+  const [data, setBudgetStatistics] = useState<BudgetStatistics | null>(null);
+
 
   const remainingTimeRate = useMemo(() => {
     return (
@@ -38,50 +72,34 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
     );
   }, [serviceData]);
 
-  const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-    height: 22,
-    borderRadius: 5,
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-      backgroundColor:
-        theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-      borderRadius: 5,
-      backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
-    },
-  }));
-  const Progress = (value) => {
-    return (
-      <Box sx={{ position: "relative" }}>
-        <BorderLinearProgress
-          sx={{
-            width: `${value}%`,
-            ".MuiLinearProgress-bar": {
-              transform: "none!important",
-              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-              borderRadius: "100px",
-            },
-          }}
-          variant="determinate"
-          value={100}
-        />
-        <Box
-          sx={{
-            top: 0,
-            left: `${value - 15}%`,
-            bottom: 0,
-            right: 0,
-            position: "absolute",
-            display: "flex",
-            color: "white",
-            fontSize:"13px",
-            fontWeight:700
-          }}
-        >
-          {value}%
-        </Box>
-      </Box>
-    );
+ 
+
+  useEffect(() => {
+    const getBudgetStatistics = async () => {
+      if (typeof id === 'string') {
+        try {
+          const response = await client.get(
+            Endpoint.GET_BUDGET_STATISTICSBY_ID.replace("{id}", id),
+            {},
+            { baseURL: SALE_API_URL }
+          );
+          setBudgetStatistics(response.data);
+        } catch (error) {
+          console.error("Error fetching budget statistics:", error);
+        }
+      } else {
+        console.error("Invalid id:", id);
+      }
+    };
+
+    getBudgetStatistics();
+    
+  }, [id]);
+
+  
+
+  const formatCurrency = (value: number): string => {
+    return `$${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
   };
   return (
     <Box
@@ -124,25 +142,25 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                   <BudgetTimeIcon />
                   <H6 >{budgetT("tabService.totalArea.time.title")}</H6>
                 </Stack>
-                <PTag>{moment().format("D MMM, YYYY")}</PTag>
+                {/* <PTag>{moment().format("D MMM, YYYY")}</PTag> */}
               </Stack>
               <Stack gap={1} p={"10px"} pt={"0px"}>
 
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.time.budgetedTime")}</H6>
-                  <PTag fontSize="13px">00:00</PTag>
+                  <PTag fontSize="13px">{data?.time.budgetedTime}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.time.billableTime")}</H6>
-                  <PTag fontSize="13px">00:00</PTag>
+                  <PTag fontSize="13px">{data?.time.billableTime}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.time.estimatedTime")}</H6>
-                  <PTag fontSize="13px"> {_.get(serviceData, "allTime", "00:00")}</PTag>
+                  <PTag fontSize="13px">{data?.time.usedTime}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.time.workedTime")}</H6>
-                  <PTag fontSize="13px">{_.get(serviceData, "allTimeUsed", "00:00")}</PTag>
+                  <PTag fontSize="13px">{data?.time.usedTime}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">
@@ -154,7 +172,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                     background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
-                  }} component="p">{_.get(serviceData, "remainingTime", "00:00")}</Typography>
+                  }} component="p">{data?.time.remainingTime}</Typography>
                 </Stack>
               </Stack>
             </ServiceBox>
@@ -186,16 +204,15 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                   <ProfitIcon />
                   <H6 >{budgetT("tabService.totalArea.profit.title")}</H6>
                 </Stack>
-                <PTag>{moment().format("D MMM, YYYY")}</PTag>
+                {/* <PTag>{moment().format("D MMM, YYYY")}</PTag> */}
               </Stack>
               <Stack gap={1} p={"10px"} pt={"0px"}>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.profit.revenue")}</H6>
-                  <PTag fontSize="13px">$0,00</PTag>
-                </Stack>
+                  <PTag fontSize="13px">{formatCurrency(data?.profit?.totalRevenue ?? 0)}</PTag>                </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.profit.cost")}</H6>
-                  <PTag fontSize="13px">$0,00</PTag>
+                  <PTag fontSize="13px">{formatCurrency(data?.profit?.cost ?? 0)}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.profit.profit")}</H6>
@@ -203,9 +220,9 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                     background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
-                  }} component="p">$0,00</Typography>
+                  }} component="p">{formatCurrency(data?.profit?.profit ?? 0)}</Typography>
                 </Stack>
-                {Progress(50)}
+                {Progress(data?.profit?.percentageOfProfit)}
               </Stack>
             </ServiceBox>
           </Stack>
@@ -235,21 +252,17 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                   <BudgetsIcon />
                   <H6>{budgetT("tabService.totalArea.budget.title")}</H6>
                 </Stack>
-                <PTag>{moment().format("D MMM, YYYY")}</PTag>
+                {/* <PTag>{moment().format("D MMM, YYYY")}</PTag> */}
               </Stack>
 
               <Stack gap={1} p={"10px"} pt={"0px"}>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.budget.budgetTotal")}</H6>
-                  <PTag fontSize="13px">
-                    ${_.round(_.get(serviceData, "allBudgetTotal", 0), 2)}
-                  </PTag>
+                  <PTag fontSize="13px">{formatCurrency(data?.budget.totalBudget ?? 0)}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.budget.budgetUsed")}</H6>
-                  <PTag fontSize="13px">
-                    ${_.round(_.get(serviceData, "allBudgetUsed", 0))}
-                  </PTag>
+                  <PTag fontSize="13px">{formatCurrency(data?.budget.budgetUsed ?? 0)}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">
@@ -259,9 +272,9 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                     background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
-                  }} component="p">$0,00</Typography>
+                  }} component="p">{formatCurrency(data?.budget.budgetRemaining ?? 0)}</Typography>
                 </Stack>
-                {Progress(50)}
+                {Progress(data?.budget.percentageUsed)}
               </Stack>
             </ServiceBox>
           </Stack>
@@ -292,30 +305,31 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
 
                 <Stack flexDirection={"row"}>
                   <InvoicingIcon />
-                  <H6>{budgetT("tabService.totalArea.invoicing.title")}</H6>
+                  <H6> {budgetT("tabService.totalArea.invoicing.title")}</H6>
                 </Stack>
-                <PTag >{moment().format("D MMM, YYYY")}</PTag>
+                {/* <PTag >{moment().format("D MMM, YYYY")}</PTag> */}
               </Stack>
               <Stack gap={1} p={"10px"} pt={"0px"}>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.invoicing.total")}</H6>
-                  <PTag fontSize="13px">$5.880,00</PTag>
+                  <PTag fontSize="13px">{formatCurrency(data?.invoicing.totalInvoice ?? 0)}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">
-                    {budgetT("tabService.totalArea.invoicing.invoiced")} (0%)
+                    {budgetT("tabService.totalArea.invoicing.invoiced")} 
+                    {/* (0%) */}
                   </H6>
-                  <PTag fontSize="13px">$0.00</PTag>
+                  <PTag fontSize="13px">{formatCurrency(data?.invoicing.invoiced ?? 0)}</PTag>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">
                     {budgetT("tabService.totalArea.invoicing.forInvoicing")}
-                    (100%)
+                    {/* (100%) */}
                   </H6>
-                  <PTag fontSize="13px">$5.880,00</PTag>
+                  <PTag fontSize="13px">{formatCurrency(data?.invoicing.forInvoicing ?? 0)}</PTag>
                 </Stack>
 
-                {Progress(50)}
+                {Progress(data?.invoicing.percentageInvoiced)}
               </Stack>
             </ServiceBox>
           </Stack>
