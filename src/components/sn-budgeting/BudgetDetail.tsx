@@ -11,7 +11,6 @@ import { Button, IconButton, Text } from "components/shared";
 import { Client } from "components/sn-budgeting/TabDetail/Client";
 import { Expenses } from "components/sn-budgeting/TabDetail/Expenses";
 import { Feed } from "components/sn-budgeting/TabDetail/Feed";
-import { Invoice } from "components/sn-budgeting/TabDetail/Invoice";
 import { ModalAddTime } from "components/sn-budgeting/TabDetail/Modals/ModalAddTime";
 import { ModalExpense } from "components/sn-budgeting/TabDetail/Modals/ModalExpense";
 import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
@@ -627,7 +626,7 @@ export const BudgetDetail = () => {
                 expenseList={_.get(budgetGetExpenseQuery, "data.data.docs", [])}
               />
             )}
-            {activeTab === TABS.INVOICES && <Invoice />}
+            {/* {activeTab === TABS.INVOICES && <Invoice />} */}
             {/* {activeTab === TABS.RECURRING && <Recurring />} */}
             {activeTab === TABS.SERVICES && (
               <Service
