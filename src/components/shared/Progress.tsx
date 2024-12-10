@@ -16,15 +16,21 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
         backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
     },
 }));
+
 export const Progress = (value) => {
+    const displayValue = value > 100 ? 100 : value;
+    const background = value > 100 
+        ? "linear-gradient(90deg, #FF0000 0%, #FF8C00 50%, #FFD700 100%)"
+        : "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)";
+
     return (
         <Box sx={{ position: "relative" }}>
             <BorderLinearProgress
                 sx={{
-                    width: `${value}%`,
+                    width: `${displayValue}%`,
                     ".MuiLinearProgress-bar": {
                         transform: "none!important",
-                        background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                        background: background,
                         borderRadius: "100px",
                     },
                 }}
@@ -34,7 +40,7 @@ export const Progress = (value) => {
             <Box
                 sx={{
                     top: 0,
-                    left: `${value - 15}%`,
+                    left: `${displayValue - 15}%`,
                     bottom: 0,
                     right: 0,
                     position: "absolute",
@@ -44,7 +50,7 @@ export const Progress = (value) => {
                     fontWeight: 700
                 }}
             >
-                {value}%
+                {displayValue}%
             </Box>
         </Box>
     );

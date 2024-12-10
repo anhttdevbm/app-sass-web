@@ -217,12 +217,14 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                 <Stack direction="row" justifyContent="space-between">
                   <H6 fontSize="13px">{budgetT("tabService.totalArea.profit.profit")}</H6>
                   <Typography fontSize="13px" sx={{
-                    background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
+                      background: (data?.profit?.profit ?? -1) < 0 
+                      ? "red" 
+                      : "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
                   }} component="p">{formatCurrency(data?.profit?.profit ?? 0)}</Typography>
                 </Stack>
-                {Progress(data?.profit?.percentageOfProfit)}
+                {Progress(data?.profit?.percentageOfProfit ?? 0)}
               </Stack>
             </ServiceBox>
           </Stack>
@@ -268,13 +270,17 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                   <H6 fontSize="13px">
                     {budgetT("tabService.totalArea.budget.budgetRemaining")}
                   </H6>
-                  <Typography fontSize="13px" sx={{
-                    background: "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
+                    <Typography fontSize="13px" sx={{
+                    background: (data?.budget?.budgetRemaining ?? -1) < 0 
+                      ? "red" 
+                      : "-webkit-linear-gradient(0deg, #2AF598 0%, #009EFD 100%)",
                     "-webkit-background-clip": "text",
                     "-webkit-text-fill-color": "transparent",
-                  }} component="p">{formatCurrency(data?.budget.budgetRemaining ?? 0)}</Typography>
+                    }} component="p">
+                    {formatCurrency(data?.budget.budgetRemaining ?? 0)}
+                    </Typography>
                 </Stack>
-                {Progress(data?.budget.percentageUsed)}
+                {Progress(data?.budget.percentageUsed ?? 0)}
               </Stack>
             </ServiceBox>
           </Stack>
@@ -329,7 +335,7 @@ export const ServiceAreaTotal = ({ serviceData }: Props) => {
                   <PTag fontSize="13px">{formatCurrency(data?.invoicing.forInvoicing ?? 0)}</PTag>
                 </Stack>
 
-                {Progress(data?.invoicing.percentageInvoiced)}
+                {Progress(data?.invoicing.percentageInvoiced ?? 0)}
               </Stack>
             </ServiceBox>
           </Stack>
