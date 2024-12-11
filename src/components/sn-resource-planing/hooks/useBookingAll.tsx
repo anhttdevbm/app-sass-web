@@ -9,7 +9,7 @@ export const useFetchBookingAll = () => {
   const { bookingAllFilter, getBookingResource } = useBookingAll();
   useEffect(() => {
     getBookingResource(bookingAllFilter);
-  }, [bookingAllFilter]);
+  }, [bookingAllFilter, getBookingResource]);
 };
 
 export const useFetchMyBooking = () => {
@@ -17,7 +17,7 @@ export const useFetchMyBooking = () => {
 
   useEffect(() => {
     getMyBooking(myBookingFilter);
-  }, [myBookingFilter]);
+  }, [getMyBooking, myBookingFilter]);
 };
 
 export const useEditAction = () => {
