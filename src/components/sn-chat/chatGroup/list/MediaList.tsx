@@ -129,7 +129,7 @@ export const MediaClone = ({
         )}
       </Box>
     );
-  }, [isError, src]);
+  }, [attachment?.type, isError, src]);
 
   return (
     <>
