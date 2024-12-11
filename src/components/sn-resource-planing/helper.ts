@@ -1,4 +1,3 @@
-import { SORT_OPTIONS } from "constant/enums";
 import dayjs from "dayjs";
 import {
   IBookingAllFitler,
@@ -17,7 +16,7 @@ export enum SORT_RESROUCE_OPTIONS {
 
 export const today = dayjs().add(0, "day"); // Ngày hiện tại + 1 ngày (ngày mai)
 export const startOfWeek = today.startOf("week").add(0, "day"); // Ngày bắt đầu tuần (chủ nhật)
-export const endOfWeek = today.startOf("week").add(6, "day"); // Ngày kết thúc tuần (thứ 2)
+export const endOfWeek = today.startOf("week").add(14, "day"); // Ngày kết thúc tuần (thứ 2)
 
 const defaultStartDate = startOfWeek.format("YYYY-MM-DD");
 const defaultEndDate = endOfWeek.format("YYYY-MM-DD");
