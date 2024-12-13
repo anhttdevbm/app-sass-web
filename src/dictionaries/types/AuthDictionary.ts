@@ -118,12 +118,16 @@ export type AuthDictionary = {
       title: string;
     };
     title: string;
-    description: string;
+    description1: string;
+    description2: string;
     cancelRequest: string;
     notification: {
       success: string;
       notFound: string;
     };
     helpCenter: string;
+    subtext1: string;
+    subtext2: string;
+    footer: string;
   }
 };

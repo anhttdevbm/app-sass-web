@@ -77,7 +77,7 @@ const WaitingApprove = () => {
                     // my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
                     justifyContent="center"
                     alignItems="center"
-                    bgcolor="background.paper"
+                    // bgcolor="background.paper"
                     p={3}
                     flex={{ sm: 1 }}
                     width={({ spacing }) => ({
@@ -108,7 +108,9 @@ const WaitingApprove = () => {
                         alignItems="center"
                     >
                         <Text variant="h3" textAlign="center" mt={3} mb={2}>
-                            Waiting for <span style={{ color: "#045EB8" }}>@Taskcover.com</span> to approve your request...
+                            {authT("waitingApprove.subtext1")} 
+                            <span style={{ color: "#045EB8" }}> @Taskcover.com </span> 
+                            {authT("waitingApprove.subtext2")} 
                         </Text>
                         
                         <Image
@@ -121,12 +123,17 @@ const WaitingApprove = () => {
                         <Text
                             variant="body2"
                             textAlign="center"
-                            mt={{ xs: 3, sm: 10 }}
+                            // mt={{ xs: 3, sm: 10 }}
                             mb={2}
                             color="text.primary"
-                            maxWidth={280}
+                            maxWidth={580}
+                            fontWeight={400}
+                            fontSize={18}
+                            fontFamily="Inter"
                         >
-                            {authT("waitingApprove.description")}
+                            {authT("waitingApprove.description1")} 
+                            <span style={{ color: "#045EB8" }}> @Taskcover.com. </span> 
+                            {authT("waitingApprove.description2")} 
                         </Text>
 
                         {/* <ButtonOutlineGradient
@@ -152,7 +159,14 @@ const WaitingApprove = () => {
                             }}
                             onClick={onSubmit}
                         >
-                            <Text variant={"h6"} sx={{ background: "linear-gradient(90deg, #0575E6 5.8%, #38E27B 96.38%)", WebkitBackgroundClip: "text", color: "transparent" }}>
+                            <Text 
+                                variant={"h6"} 
+                                sx={{ 
+                                        background: "linear-gradient(90deg, #0575E6 5.8%, #38E27B 96.38%)",
+                                        WebkitBackgroundClip: "text", color: "transparent" 
+                                    }}
+                                
+                            >
                                 {authT("waitingApprove.cancelRequest")}
                             </Text>
                         </Button>
@@ -172,9 +186,6 @@ const WaitingApprove = () => {
                             >
                             <Text
                                 sx={{
-                                    fontFamily: "Inter",
-                                    fontSize: "12px",
-                                    fontWeight: 400,
                                     lineHeight: "28.29px",
                                     textAlign: "center",
                                     textDecorationLine: "underline",
@@ -183,6 +194,9 @@ const WaitingApprove = () => {
                                     textDecorationSkipInk: "none",
                                     color: "#0575E6",
                                 }}
+                                mt={2}
+                                fontSize={18}
+                                fontFamily="Inter"
                             >
                                 {authT("waitingApprove.helpCenter")}
                             </Text>

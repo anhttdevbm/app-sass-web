@@ -149,6 +149,7 @@ export const ServiceSection = ({
     sectionsRef.current = sectionList;
   }, [sectionsList, setValue]);
 
+
   useImperativeHandle(serviceSectionRef, () => ({
     setDeletedServices: (deletedService = "", sectionIndex: number) => {
       const deletedServiceList =
@@ -213,11 +214,13 @@ export const ServiceSection = ({
     });
   };
 
-
-
   const handleSectionNameChange = useCallback((index: number, newName: string) => {
-    sectionsRef.current[index].name = newName;
-    setValue("sections", sectionsRef.current, { shouldDirty: true });
+    const updatedSections = [...sectionsRef.current];
+    updatedSections[index] = {
+      ...updatedSections[index],
+      name: newName,
+    };
+    setValue("sections", updatedSections, { shouldDirty: true });
   }, [setValue]);
   
   const handleSectionClick = useCallback((index: number) => {
