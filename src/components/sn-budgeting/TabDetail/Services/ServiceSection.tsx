@@ -27,6 +27,7 @@ import {
 import { useBudgetServiceUpdate } from "queries/budgeting/service-update";
 import {
   createRef,
+  memo,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -70,7 +71,7 @@ const defaultValues: TSectionForm = {
 
 export const serviceSectionRef = createRef<any>();
 
-export const ServiceSection = ({
+export const ServiceSection = memo(({
   onCloseEdit = () => {},
   refetch = () => {},
   sectionsList = [],
@@ -149,7 +150,6 @@ export const ServiceSection = ({
     sectionsRef.current = sectionList;
   }, [sectionsList, setValue]);
 
-
   useImperativeHandle(serviceSectionRef, () => ({
     setDeletedServices: (deletedService = "", sectionIndex: number) => {
       const deletedServiceList =
@@ -214,22 +214,44 @@ export const ServiceSection = ({
     });
   };
 
-  const handleSectionNameChange = useCallback((index: number, newName: string) => {
-    const updatedSections = [...sectionsRef.current];
-    updatedSections[index] = {
-      ...updatedSections[index],
-      name: newName,
-    };
-    setValue("sections", updatedSections, { shouldDirty: true });
-  }, [setValue]);
+
+  const [tempSectionNames, setTempSectionNames] = useState(
+    sectionsRef.current.map((section) => section.name)
+  );
+
+  const handleSectionNameChange = useCallback((index, newName) => {
+    setTempSectionNames((prev) => {
+      const updated = [...prev];
+      updated[index] = newName;
+      return updated;
+    });
+  }, []);
+
+  const handleSectionNameBlur = useCallback(() => {
+    sectionsRef.current = sectionsRef.current.map((section, i) => ({
+      ...section,
+      name: tempSectionNames[i],
+    }));
+    setValue("sections", sectionsRef.current, { shouldDirty: true });
+    setEditingSectionIndex(null);
+
+  }, [setValue, tempSectionNames]);
+
+  // const handleSectionNameChange = useCallback((index: number, newName: string) => {
+  //   sectionsRef.current[index].name = newName;
+  //   setValue("sections", sectionsRef.current, { shouldDirty: true });
+  // }, [setValue]);
+
+
+
   
   const handleSectionClick = useCallback((index: number) => {
     setEditingSectionIndex(index);
   }, []);
   
-  const handleSectionNameBlur = useCallback(() => {
-    setEditingSectionIndex(null);
-  }, []);
+  // const handleSectionNameBlur = useCallback(() => {
+  //   setEditingSectionIndex(null);
+  // }, []);
 
   const handleChangeValue = (index: number, services: TBudgetService[]) => {
     setValue(`sections.${index}.services`, services);
@@ -651,7 +673,7 @@ export const ServiceSection = ({
                                     </Typography> */}
                                     {editingSectionIndex === index ? (
                                       <Input
-                                        value={section.name}
+                                        value={tempSectionNames[index] || ""}
                                         onChange={(e) => handleSectionNameChange(index, e.target.value)}
                                         onBlur={handleSectionNameBlur}
                                         variant="outlined"
@@ -740,7 +762,7 @@ export const ServiceSection = ({
       />
     </>
   );
-};
+})
 
 const defaultSx = {
   root: {
