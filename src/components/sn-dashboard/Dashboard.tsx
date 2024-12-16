@@ -3,8 +3,11 @@
 import { Box, Stack, Typography } from "@mui/material";
 import DragMatrixIcon from "icons/DagMatrixIcon";
 import StatOverview from "./StatOverview";
+import ActiveProjectsTable from "./components/ActiveProjectsTable";
+import EmployeeTable from "./components/EmployeeTable";
+import FeedLog from "./components/FeedLog";
 import { StatAccordion } from "./components/StatAccordion";
-import { ActiveProjectsTable, MyTaskTable, TimeOffTable } from "./components/Tables";
+import { MyTaskTable } from "./components/Tables";
 
 
 function Dashboard() {
@@ -13,33 +16,20 @@ function Dashboard() {
     <Stack padding={4} spacing={2} borderRadius={1.5} bgcolor={"white"} height='100%'>
       <StatOverview />
       <Stack spacing={1.5} direction='row'>
-        <StatAccordion summaryChild={"Feed"} />
+        <StatAccordion summaryChild={"Feed"} >
+          <FeedLog />
+        </StatAccordion>
+        
         <StatAccordion
-          summaryChild={
-            <Stack justifyContent='space-between' direction='row' paddingRight={1.5} width='100%'>
-              <Typography>Employee</Typography>
-              {/* <Button
-                sx={{
-                  height: "24px",
-                  width: "24px",
-                  minWidth: 0,
-                  borderRadius: "50%",
-                  background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  alert("yeah")
-                }}
-              >
-                <AddIcon
-                  sx={{
-                    color: "white",
-                  }}
-                /> 
-              </Button>*/}
-            </Stack>
-          }
-        />
+            summaryChild={
+              <Stack direction='row' spacing={1} width='100%'>
+                <DragMatrixIcon />
+                <Typography fontWeight={600}>Employee</Typography>
+              </Stack>
+            }
+          >
+            <EmployeeTable />
+          </StatAccordion>
       </Stack>
       <Stack direction='row' spacing={1.5} width='100%'>
         <Stack spacing={1.5} width='50%'>
@@ -85,7 +75,7 @@ function Dashboard() {
           >
             <ActiveProjectsTable />
           </StatAccordion>
-          <StatAccordion
+          {/* <StatAccordion
             summaryChild={
               <Stack direction='row' spacing={1} width='100%'>
                 <DragMatrixIcon />
@@ -94,7 +84,7 @@ function Dashboard() {
             }
           >
             <TimeOffTable />
-          </StatAccordion>
+          </StatAccordion> */}
         </Stack>
       </Stack>
     </Stack>

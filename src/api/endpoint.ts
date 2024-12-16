@@ -284,4 +284,5 @@ export const Endpoint = {
 
   //Dashboard
   DASHBOARD_ALL: "/statistic",
+  DASHBOARD_PROJECT_ALL_ACTIVE: "/projects/project-active",
 };

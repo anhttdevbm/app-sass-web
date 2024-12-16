@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Stack,
   Table,
@@ -11,9 +12,10 @@ import {
 import { BodyCell, StatusCell } from "components/Table"
 import Image from "next/image"
 import { formatDate } from "utils/index"
+import { DashboardTableCellHeader } from "./DashboardTableCellHeader"
 
 const iconUrl = "/images/beatAudio.png"
-function ProjectBadge({
+export function ProjectBadge({
   iconUrl,
   title,
   colAmounts,
@@ -45,122 +47,6 @@ function ProjectBadge({
   )
 }
 
-function DashboardTableCellHeader({
-  headerList,
-}: {
-  headerList: { value: string }[]
-}) {
-  return headerList.map((header, index) => {
-    const isStart = index === 0
-    const isEnd = index === headerList.length - 1
-    return (
-      <TableCell
-        key={header.value}
-        sx={{
-          border: 0,
-          backgroundColor: "#FAFAFA",
-          borderTopLeftRadius: isStart ? 12 : 0,
-          borderTopRightRadius: isEnd ? 12 : 0,
-        }}
-      >
-        <Typography
-          fontWeight={600}
-          fontSize={14}
-          color='#4D4D4D'
-          textAlign={
-            index > 0
-              ? index === headerList.length - 1
-                ? "right"
-                : "center"
-              : "left"
-          }
-        >
-          {header.value}
-        </Typography>
-      </TableCell>
-    )
-  })
-}
-
-function ActiveProjectsTable() {
-  const HEADER_LIST = [
-    { value: "name", width: "33%" },
-    { value: "Project Manager", width: "33%" },
-    { value: "Last activity", width: "33%" },
-  ]
-  const mockData = [
-    {
-      id: 1,
-      name: "Master Card",
-      project_manager: {
-        avatar: "/images/mockAvatar.png",
-        name: "Gary",
-      },
-      last_activity: "2023-06-01T16:53:39.685Z",
-    },
-    {
-      id: 2,
-      name: "Master Card",
-      project_manager: {
-        avatar:"/images/mockAvatar.png",
-        name: "Albert Flores",
-      },
-      last_activity: "2023-06-01T16:53:39.685Z",
-    },
-    {
-      id: 3,
-      name: "Master Card",
-      project_manager: {
-        avatar: "/images/mockAvatar.png",
-        name: "Gary",
-      },
-      last_activity: "2023-06-01T16:53:39.685Z",
-    },
-  ]
-
-  return (
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <DashboardTableCellHeader headerList={HEADER_LIST} />
-          </TableRow>
-          <ProjectBadge
-            iconUrl={iconUrl}
-            title='Project 1'
-            colAmounts={HEADER_LIST.length}
-          />
-        </TableHead>
-        <TableBody>
-          {mockData.map((row) => (
-            <TableRow key={row.id}>
-              <BodyCell>
-                <Typography textAlign='left' fontWeight={600} fontSize={14}>
-                  {row.name}
-                </Typography>
-              </BodyCell>
-              <BodyCell>
-                <Stack direction='row' spacing={1.5}>
-                  <Image
-                    src={row.project_manager.avatar}
-                    alt={row.project_manager.name}
-                    width={32}
-                    height={32}
-                    style={{ borderRadius: "50%" }}
-                  />
-                  <Typography>{row.project_manager.name}</Typography>
-                </Stack>
-              </BodyCell>
-              <BodyCell sx={{ textAlign: "right" }}>
-                {convertTimestamp(row.last_activity)}
-              </BodyCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  )
-}
 
 function MyTaskTable() {
   const HEADER_LIST = [
@@ -324,10 +210,13 @@ function TimeOffTable() {
   )
 }
 
-export { ActiveProjectsTable, MyTaskTable, TimeOffTable }
+export { MyTaskTable, TimeOffTable }
 
-function convertTimestamp(timestamp: string): string {
-  const date = new Date(timestamp)
+export function convertTimestamp(timestamp: string | null): string {
+  let date = timestamp ? new Date(timestamp) : new Date()
+  if (isNaN(date.getTime())) {
+    date = new Date()
+  }
   const day = date.getUTCDate().toString().padStart(2, "0")
   const month = (date.getUTCMonth() + 1).toString().padStart(2, "0")
   const year = date.getUTCFullYear()
