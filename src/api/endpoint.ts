@@ -140,7 +140,7 @@ export const Endpoint = {
 
   // Docs
   DOCS: "/docs/",
-  CREATE_DOCS: "/docs",
+  CREATE_DOCS: "/docs/",
   UPDATE_DOCS: "/docs/{id}",
   DETAIL_DOCS: "/docs/detail/",
   HISTORY_DOCS: "/docs/history/{id}",
