@@ -227,15 +227,37 @@ export const ServiceSection = memo(({
     });
   }, []);
 
+
+
+  // Hàm cũ em sửa 
+  // const handleSectionNameBlur = useCallback(() => {
+  //   sectionsRef.current = sectionsRef.current.map((section, i) => ({
+  //     ...section,
+  //     name: tempSectionNames[i],
+  //   }));
+    
+  //   setValue("sections", sectionsRef.current, { shouldDirty: true});
+  //   setEditingSectionIndex(null);
+
+  // }, [setValue, tempSectionNames]);
+
+
+  // Hàm mới đây (test xong ok hết hãng xoá hàm trên anh nhé)
   const handleSectionNameBlur = useCallback(() => {
-    sectionsRef.current = sectionsRef.current.map((section, i) => ({
+    const updatedSections = fields.map((section, i) => ({
       ...section,
       name: tempSectionNames[i],
     }));
-    setValue("sections", sectionsRef.current, { shouldDirty: true });
-    setEditingSectionIndex(null);
-
-  }, [setValue, tempSectionNames]);
+  
+    if (_.isEqual(fields, updatedSections)) {
+      return;
+    }
+  
+    updatedSections.forEach((section, i) => {
+      setValue(`sections.${i}`, section, { shouldDirty: true });
+    });
+  }, [setValue, fields, tempSectionNames]);
+  
 
   // const handleSectionNameChange = useCallback((index: number, newName: string) => {
   //   sectionsRef.current[index].name = newName;

@@ -38,7 +38,7 @@ import ChevronCircleIcon from "icons/ChevronCircleIcon";
 import PlusIcon from "icons/PlusIcon";
 import _ from "lodash";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { useFieldArray, useForm } from "react-hook-form";
 import { usePositions } from "store/company/selectors";
@@ -61,7 +61,7 @@ type Props = {
   sectionId: string;
 };
 
-const ServiceSectionRow = ({
+const ServiceSectionRow = memo(({
   fieldIndex,
   updateValue,
   errors,
@@ -739,7 +739,7 @@ const ServiceSectionRow = ({
                                           fontWeight: 800,
                                         },
                                         "& .MuiOutlinedInput-notchedOutline": {
-                                          border: "none" ,
+                                          border: "none",
                                           ...(hasError(errs, index, "estimate") && {
                                             borderColor: "error.main",
 
@@ -1082,7 +1082,7 @@ const ServiceSectionRow = ({
       />
     </>
   );
-};
+});
 
 export default ServiceSectionRow;
 
