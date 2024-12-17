@@ -109,7 +109,9 @@ const WaitingApprove = () => {
                     >
                         <Text variant="h3" textAlign="center" mt={3} mb={2}>
                             {authT("waitingApprove.subtext1")} 
-                            <span style={{ color: "#045EB8" }}> @Taskcover.com </span> 
+                            <span style={{ color: "#045EB8", fontStyle: "normal" }}> 
+                                {" "}@{user?.company?.toLowerCase()}.com{" "} 
+                            </span> 
                             {authT("waitingApprove.subtext2")} 
                         </Text>
                         
@@ -132,7 +134,7 @@ const WaitingApprove = () => {
                             fontFamily="Inter"
                         >
                             {authT("waitingApprove.description1")} 
-                            <span style={{ color: "#045EB8" }}> @Taskcover.com. </span> 
+                            <span style={{ color: "#045EB8" }}>  {" "}@{user?.company?.toLowerCase()}.com{" "} . </span> 
                             {authT("waitingApprove.description2")} 
                         </Text>
 

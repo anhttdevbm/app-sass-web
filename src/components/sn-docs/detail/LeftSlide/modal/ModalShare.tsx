@@ -14,7 +14,6 @@ import {
 import { Endpoint, client } from "api";
 import Avatar from "components/Avatar";
 import FormLayout from "components/FormLayout";
-import { Button } from "components/shared";
 import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { DocAccessibility } from "constant/enums";
 import { DOCS_API_URL, NS_DOCS } from "constant/index";
@@ -36,7 +35,7 @@ interface ModalShareProps {
 
 enum DocAccessibilityEnum {
   FULL_ACCESS = "Full access",
-  VIE = "Can view",
+  VIEW = "Can view",
   EDIT = "Can edit",
   COMMENT = "Can comment",
 }
@@ -86,17 +85,35 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
   const [generalSelectedOpt, setGeneralSelectedOpt] = useState<GeneralAccess>(
     docInfo?.isPublic ? GeneralAccess.PUBLIC : GeneralAccess.PRIVATE,
   );
+  const [members, setMembers] = useState(docInfo?.member || []);
 
   const docsT = useTranslations(NS_DOCS);
 
   const { handleGetDocDetail } = useDocs();
 
-  const fetApi = () => {
+  const fetApi = React.useCallback(() => {
     onGetEmployees({ pageIndex: 1, pageSize: 50, ...initQuery });
-  };
+  }, [initQuery, onGetEmployees]);
 
-  const onSelectMember = (_, value) => {
-    console.log(value);
+  const onSelectMember = async (_, value) => {
+    if (value && value.length > 0) {
+      const selectedUser = value[0]; // Extract the first element from the array
+      const payload = {
+        owner: selectedUser.value, // Use the user ID from the selected user
+        perm: "FULL_ACCESS", // Default permission
+      };
+
+      try {
+        await client.put(Endpoint.ADD_PERM_DOCS + id, payload, {
+          baseURL: DOCS_API_URL,
+        });
+        onAddSnackbar("Thành Công", "success");
+        handleGetDocDetail(id);
+        setMembers((prevMembers) => [...prevMembers, { user: selectedUser.value, perm: DocAccessibilityEnum.VIEW }]);
+      } catch (err) {
+        onAddSnackbar((err as any)?.message || "An error occurred", "error");
+      }
+    }
   };
 
   const { onAddSnackbar } = useSnackbar();
@@ -108,7 +125,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
             isPublic: true,
           }
         : {
-            owner: docInfo?.owner,
+            owner: docInfo?.owner?.id,
             perm: values?.perm,
             isPublic: false,
           };
@@ -123,7 +140,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
         setOpenShare(false);
       })
       .catch((err: any) => {
-        onAddSnackbar(err?.message, "error");
+        onAddSnackbar(err?.message || "An error occurred", "error");
       });
   };
 
@@ -148,7 +165,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
   useEffect(() => {
     if (!isReady) return;
     fetApi();
-  }, [initQuery, isReady, onGetEmployees]);
+  }, [fetApi, initQuery, isReady, onGetEmployees]);
 
   const onChangeSearch = (name: string, value?: string | number) => {
     onGetEmployees({ pageIndex: 1, pageSize: 20, [name]: value ?? "" });
@@ -276,7 +293,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
             ))
           }
         />
-        <Button
+        {/* <Button
           variant="primary"
           size="extraSmall"
           sx={{
@@ -287,7 +304,7 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
           }}
         >
           Add
-        </Button>
+        </Button> */}
       </Box>
       {/* People section */}
       <Stack
@@ -301,13 +318,8 @@ const ModalShare = ({ openShare, setOpenShare }: ModalShareProps) => {
         </Typography>
         <Box width="100%" pl="12px">
           {docInfo.member?.map((m) => {
-            console.log("m", m);
             
             const user = items.find((e) => e.id === m.user);
-            console.log("items", items);
-            
-            console.log("user", user);
-            
             if (!user) return;
             return (
               <Box
