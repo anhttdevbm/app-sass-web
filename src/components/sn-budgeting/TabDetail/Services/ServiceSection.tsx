@@ -786,7 +786,6 @@ const ServiceSection = memo(({
   );
 })
 
-ServiceSection.displayName = "ServiceSection";
 
 export default ServiceSection;
 const defaultSx = {

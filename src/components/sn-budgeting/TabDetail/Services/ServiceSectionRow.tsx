@@ -1084,7 +1084,6 @@ const ServiceSectionRow = memo(({
   );
 });
 
-ServiceSectionRow.displayName = "ServiceSectionRow";
 
 export default ServiceSectionRow;
 
