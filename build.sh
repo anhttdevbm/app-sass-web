@@ -10,4 +10,4 @@ yarn cache clean
 yarn install
 yarn build
 
-pm2 restart web-app
+pm2 restart web_app
