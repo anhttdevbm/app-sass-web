@@ -71,7 +71,7 @@ const defaultValues: TSectionForm = {
 
 export const serviceSectionRef = createRef<any>();
 
-export const ServiceSection = memo(({
+const ServiceSection = memo(({
   onCloseEdit = () => {},
   refetch = () => {},
   sectionsList = [],
@@ -786,6 +786,9 @@ export const ServiceSection = memo(({
   );
 })
 
+ServiceSection.displayName = "ServiceSection";
+
+export default ServiceSection;
 const defaultSx = {
   root: {
     minWidth: { xs: "calc(100vw - 24px)", sm: 850 },
