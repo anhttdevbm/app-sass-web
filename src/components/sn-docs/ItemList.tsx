@@ -176,12 +176,11 @@ const ItemList = ({ isGrouped }: TItemListParams) => {
                               <Avatar
                                 size={32}
                                 alt={item.groupInfo.name}
-                                src={item.groupInfo.avatar.link}
+                                src={item.groupInfo?.avatar?.link}
                                 style={{ marginRight: "8px" }}
                               />
-                              {`${item.groupInfo.name} #${
-                                item.groupInfo?.number || 0
-                              }`}
+                              {`${item.groupInfo.name} #${item.groupInfo?.number || 0
+                                }`}
                             </Stack>
                           </>
                         ) : (
