@@ -126,7 +126,7 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
           }),
         );
         console.log("resultMedias", resultMedias);
-        const listObjectId = resultMedias.map((item) => item?.payload?.object);
+        const listObjectId = resultMedias.map((item) => item?.payload);
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA,
           roomId: dataTransfer?.id,
