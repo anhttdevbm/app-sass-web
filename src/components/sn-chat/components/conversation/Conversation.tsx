@@ -1,4 +1,5 @@
 import { SxProps, Theme } from "@mui/material";
+import { Endpoint } from "api";
 import { DrawerChatIgnore } from "components/sn-chatting-room/components/RoomDetails";
 import { NS_COMMON } from "constant/index";
 import useGetScreenMode from "hooks/useGetScreenMode";
@@ -115,14 +116,16 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
       if (medias.length) {
         const resultMedias = await Promise.all(
           medias.map((media) => {
+            console.log("media", media);
             if (media) {
               return dispatch(
-                uploadFile({ endpoint: "files/upload-link", file: media }),
+                uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file: media }),
               );
             }
             return Promise.resolve(null);
           }),
         );
+        console.log("resultMedias", resultMedias);
         const listObjectId = resultMedias.map((item) => item?.payload?.object);
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA,
