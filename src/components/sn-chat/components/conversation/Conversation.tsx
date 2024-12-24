@@ -114,11 +114,14 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
 
       if (medias.length) {
         const resultMedias = await Promise.all(
-          medias.map((media) =>
-            dispatch(
-              uploadFile({ endpoint: "files/upload-link", file: media }),
-            ),
-          ),
+          medias.map((media) => {
+            if (media) {
+              return dispatch(
+                uploadFile({ endpoint: "files/upload-link", file: media }),
+              );
+            }
+            return Promise.resolve(null);
+          }),
         );
         const listObjectId = resultMedias.map((item) => item?.payload?.object);
         sendMessage({
@@ -153,8 +156,8 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
           wrapperMessageSx: {
             ...(isOpenInfoChat && !DrawerChatIgnore.includes(typeDrawerChat)
               ? {
-                  width: `calc(100% - ${extraDesktopMode ? "424px" : "272px"})`,
-                }
+                width: `calc(100% - ${extraDesktopMode ? "424px" : "272px"})`,
+              }
               : {}),
           },
         })}
