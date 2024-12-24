@@ -402,7 +402,7 @@ export const BudgetDetail = () => {
               <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}
               </Text>
-              <Text fontSize="16px" lineHeight={1.2}>
+              <Text fontSize="16px" lineHeight={1.2} sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {budget.name}
               </Text>
             </Stack>
