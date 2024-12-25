@@ -399,7 +399,7 @@ export const BudgetDetail = () => {
               </IconButton>
             </Link>
             <Avatar size={40} src={budget?.created_by?.avatar || ""} />
-            <Stack width={"150px"}>
+            <Stack>
               <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}
               </Text>
