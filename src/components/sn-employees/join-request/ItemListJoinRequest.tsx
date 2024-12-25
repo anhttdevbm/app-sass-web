@@ -124,7 +124,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
   };
 
   const onActionToItem = (action: DataAction, item?: Employee) => {
-    return () => {
+    return async () => {
       if (action === DataAction.DELETE) {
         item && setSelectedList([item]);
       } else {
@@ -132,6 +132,15 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
       }
       setEmployeeTypeFormOpen(true);
       setAction(action);
+
+      if (action === DataAction.UPDATE && item) {
+        try {
+          await onUpdateEmployee(item.id, item.position?.id ?? "", item.roles);
+          onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after approval
+        } catch (error) {
+          console.error("Failed to update employee:", error);
+        }
+      }
     };
   };
 
@@ -237,7 +246,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
             <Checkbox
               checked={isCheckedAll}
               onChange={onChangeAll}
-              // sx={{ mr: "auto" }}
+            // sx={{ mr: "auto" }}
             />
           )}
           <IconButton
@@ -270,7 +279,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
           </IconButton>
         </Stack>
         <TableLayout
-          
+
           headerList={headerList}
           pending={isFetching}
           error={error as string}
@@ -287,7 +296,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
               verticalAlign: "middle",
               background: "#D9F0FD",
               color: "#999999",
-              h6:{fontSize:"13px"}
+              h6: { fontSize: "13px" }
             }
           }}
         >
@@ -344,7 +353,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
                     </Button>
                   </>
                 )}
-                
+
               </TableRow>
             );
           })}

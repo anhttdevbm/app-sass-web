@@ -127,7 +127,6 @@ const AttachmentContent = ({
           {message?.type === MESSAGE_TYPE.MEDIA && message?.files?.length && (
             <>
               {message?.files?.map((file, index) => {
-                console.log(">>>> file 12", file);
                 // const fileExtension = file?.type?.split("/")[1];
                 const fileExtension = file?.split(".").pop();
                 if (IMAGES_EXTENSION.includes(fileExtension)) {
@@ -246,6 +245,8 @@ const AttachmentContent = ({
               alignItems={isCurrentUser ? "flex-end" : "flex-start"}
             >
               {files.map((file, index) => {
+                console.log(">>>> file 13", file);
+
                 const Icon = styleForFile(file?.title || "");
                 return (
                   <Box

@@ -102,10 +102,11 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
       if (files.length) {
         const resultFiles = await Promise.all(
           files.map((file) =>
-            dispatch(uploadFile({ endpoint: "files/upload-link", file })),
+            dispatch(uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file })),
           ),
         );
-        const listObjectId = resultFiles.map((item) => item?.payload?.object);
+        console.log("resultFiles", resultFiles);
+        const listObjectId = resultFiles.map((item) => item?.payload);
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEND_FILE,
           roomId: dataTransfer?.id,
@@ -116,7 +117,6 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
       if (medias.length) {
         const resultMedias = await Promise.all(
           medias.map((media) => {
-            console.log("media", media);
             if (media) {
               return dispatch(
                 uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file: media }),
@@ -125,7 +125,6 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
             return Promise.resolve(null);
           }),
         );
-        console.log("resultMedias", resultMedias);
         const listObjectId = resultMedias.map((item) => item?.payload);
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA,
