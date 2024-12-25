@@ -126,12 +126,16 @@ export const AuthLang: AuthDictionary = {
       title: "Waiting for approval | Taskcover",
     },
     title: "Waiting for approval of your request...",
-    description: "Your request has been sent to the company administrator. Once approved, you'll be added to your company's team.",
+    description1: "Your request has been sent to the admin of ",
+    description2: "Once approved, you will be added to your company's team.",
     cancelRequest: "Cancel request",
     notification: {
       success: "Your request has been sent successfully!",
       notFound: "The company does not exist or the email is incorrect.",
     },
     helpCenter: "Have a question? Contact us now",
+    subtext1: "Waiting for",
+    subtext2: "to approve your request...",
+    footer: "© 2023 Task Cover Company, Inc.",
   }
 };

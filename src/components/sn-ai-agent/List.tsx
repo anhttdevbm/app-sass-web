@@ -1,23 +1,22 @@
 "use client";
 
 import { Box, Stack, TableRow, Typography } from "@mui/material";
+import Avatar from "components/Avatar";
 import FixedLayout from "components/FixedLayout";
 import { BodyCell, CellProps, TableLayout } from "components/Table";
+import { NS_AI_AGENT } from "constant/index";
+import { AI_AGENT_CHAT, AI_AGENT_GENERAL_PATH } from "constant/paths";
 import useQueryParams from "hooks/useQueryParams";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next-intl/client";
+import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAIAgent } from "store/aiAgent/selectors";
+import { AIAgent, StatusAIAgent } from "store/aiAgent/types";
 import styled from "styled-components";
 import { getPath } from "utils/index";
 import ActionsCell, { PRIMARY_GRADIENT_COLOR } from "./components/ActionCell";
 import Pagination from "./components/Pagination";
-import { useTranslations } from "next-intl";
-import { DEFAULT_PAGING, NS_AI_AGENT } from "constant/index";
-import { AI_AGENT_CHAT, AI_AGENT_GENERAL_PATH } from "constant/paths";
-import Avatar from "components/Avatar";
-import ImgPlaceHolderAgent from "public/images/img-placeholder-agent.svg";
-import { AIAgent, StatusAIAgent } from "store/aiAgent/types";
-import avatar from "components/Avatar";
 
 const AgentList = () => {
   const {
@@ -40,6 +39,9 @@ const AgentList = () => {
   const t = useTranslations(NS_AI_AGENT);
 
   const [data, setData] = useState<AIAgent[]>([]);
+
+  console.log("data", data);
+  
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleQueryChange = useCallback((newQueries: { [key: string]: any }) => {
@@ -87,7 +89,7 @@ const AgentList = () => {
     if (!isCreatingAgent && !isDeletingAgent && !isUpdatingAgent) {
       onGetAgents({...query });
     }
-  }, [isCreatingAgent, isDeletingAgent, isUpdatingAgent]);
+  }, [isCreatingAgent, isDeletingAgent, isUpdatingAgent, onGetAgents, query]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -102,7 +104,7 @@ const AgentList = () => {
       { value: t("layout.table.status"), width: "25%", align: "center" },
       { value: "", width: "15%", align: "center" },
     ],
-    [],
+    [t],
   );
 
   return (

@@ -26,6 +26,7 @@ export type SnackbarItem = Snackbar & {
 };
 
 export interface UserInfo extends User {
+  status?: number;
   created_time: string;
   department: string;
   is_active: boolean;

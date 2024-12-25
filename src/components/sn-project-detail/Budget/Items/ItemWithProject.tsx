@@ -114,7 +114,7 @@ export const ItemWithProject = ({
         minwidth: "140px",
       },
     ];
-  }, [idSelecteds, budgets]);
+  }, [idSelecteds.length, budgets, projectT, setIdSelected]);
 
   const selectBudget = (id: string) => {
     const indexExist = idSelecteds.findIndex((idBudget) => idBudget === id);

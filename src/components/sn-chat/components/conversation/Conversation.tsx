@@ -1,4 +1,5 @@
 import { SxProps, Theme } from "@mui/material";
+import { Endpoint } from "api";
 import { DrawerChatIgnore } from "components/sn-chatting-room/components/RoomDetails";
 import { NS_COMMON } from "constant/index";
 import useGetScreenMode from "hooks/useGetScreenMode";
@@ -101,10 +102,11 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
       if (files.length) {
         const resultFiles = await Promise.all(
           files.map((file) =>
-            dispatch(uploadFile({ endpoint: "files/upload-link", file })),
+            dispatch(uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file })),
           ),
         );
-        const listObjectId = resultFiles.map((item) => item?.payload?.object);
+        console.log("resultFiles", resultFiles);
+        const listObjectId = resultFiles.map((item) => item?.payload);
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEND_FILE,
           roomId: dataTransfer?.id,
@@ -114,13 +116,16 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
 
       if (medias.length) {
         const resultMedias = await Promise.all(
-          medias.map((media) =>
-            dispatch(
-              uploadFile({ endpoint: "files/upload-link", file: media }),
-            ),
-          ),
+          medias.map((media) => {
+            if (media) {
+              return dispatch(
+                uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file: media }),
+              );
+            }
+            return Promise.resolve(null);
+          }),
         );
-        const listObjectId = resultMedias.map((item) => item?.payload?.object);
+        const listObjectId = resultMedias.map((item) => item?.payload);
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA,
           roomId: dataTransfer?.id,
@@ -153,8 +158,8 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
           wrapperMessageSx: {
             ...(isOpenInfoChat && !DrawerChatIgnore.includes(typeDrawerChat)
               ? {
-                  width: `calc(100% - ${extraDesktopMode ? "424px" : "272px"})`,
-                }
+                width: `calc(100% - ${extraDesktopMode ? "424px" : "272px"})`,
+              }
               : {}),
           },
         })}

@@ -1,20 +1,19 @@
 import {
-  IconButton,
-  MenuList,
   Box,
-  MenuItem,
   ButtonBase,
+  IconButton,
+  MenuItem,
+  MenuList,
   Stack,
 } from "@mui/material";
+import { Text } from "components/shared";
 import PopoverLayout from "components/sn-project-detail/Tasks/Detail/components/SubTasksOfTask/PopoverLayout";
 import { NS_COMMON, NS_SALES } from "constant/index";
-import MoreSquareIcon from "icons/MoreSquareIcon";
-import { useTranslations } from "next-intl";
-import React, { useMemo, useRef } from "react";
-import { Text } from "components/shared";
 import CopyIcon from "icons/CopyIcon";
+import MoreSquareIcon from "icons/MoreSquareIcon";
 import TrashIcon from "icons/TrashIcon";
-import useToggle from "hooks/useToggle";
+import { useTranslations } from "next-intl";
+import { useMemo, useRef } from "react";
 
 type ActionsProps = {
   serviceId: string;
@@ -55,7 +54,7 @@ const ServiceItemAction = (props: ActionsProps) => {
         color: "error.main",
       },
     ];
-  }, [commonT]);
+  }, [commonT, salesT]);
 
   const onAction = (action: Action) => {
     return () => onChangeAction(action, { index, serviceId });

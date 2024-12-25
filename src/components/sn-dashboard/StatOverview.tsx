@@ -43,31 +43,31 @@ function StatOverview() {
       .then(response => {
         setData(response.data);
       })
-  }, [data])
+  }, [])
 
   const fakeStatOverviewData = [
     {
       title: "Expected worked time this month",
-      data: `${data?.time?.total_time}h`,
+      data: `${data?.time?.total_time ?? 0}h`,
       bgColor: "#F7F3FF",
       cornerIcon: <Clock />,
     },
     {
       title: "Sales",
-      data: `$ ${data?.sale?.total_sale}`,
+      data: `$ ${data?.sale?.total_sale ?? 0}`,
       bgColor: "#E3FFFD",
       description: <Typography fontSize={10}>+23% since last month</Typography>,
       cornerIcon: <StatIncreaseHand />,
     },
     {
       title: "New Task",
-      data: `${data?.task.total_task}`,
+      data: `${data?.project.total_new_task ?? 0}`,
       bgColor: "#E3F1FF",
       cornerIcon: <TasksDoc />,
     },
     {
       title: "Total Projects",
-      data: `${data?.project.total_project}`,
+      data: `${data?.project.total_project ?? 0}`,
       bgColor: "#FFF6E5",
       cornerIcon: <ProjectsFolder />,
     },

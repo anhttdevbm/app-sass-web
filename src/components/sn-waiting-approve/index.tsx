@@ -4,10 +4,7 @@ import { Stack } from "@mui/material";
 import { client, Endpoint } from "api";
 import { formErrorCode } from "api/formErrorCode";
 import Link from "components/Link";
-import { Text } from "components/shared";
-import { ButtonOutlineGradient } from "components/shared/ButtonOutlineGradient";
-import SwitchLanguage from "components/SwitchLanguage";
-import SwitchTheme from "components/SwitchTheme";
+import { Button, Text } from "components/shared";
 import { HttpStatusCode } from "constant/enums";
 import {
     AN_ERROR_TRY_AGAIN,
@@ -43,14 +40,14 @@ const WaitingApprove = () => {
 
 
     const onSubmit = async () => {
-        
         try {
-            const response = await client.get(Endpoint.CANCEL_REQUEST, {},{ baseURL: AUTH_API_URL });
+            const response = await client.get(Endpoint.CANCEL_REQUEST, {}, { baseURL: AUTH_API_URL });
             
             if (response?.status === HttpStatusCode.OK) {
                 onAddSnackbar(authT("waitingApprove.notification.success"), "success");
+                await onGetProfile();
                 push(JOIN_WORKSPACE_PATH);
-                onGetProfile();
+                
             } else {
                 throw AN_ERROR_TRY_AGAIN;
             }
@@ -60,23 +57,27 @@ const WaitingApprove = () => {
             } else {
                 onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
             }
-        } 
+        } finally {
+            push(JOIN_WORKSPACE_PATH);
+        }
     };
+
+
     return (
         <>
             <Stack
-                flex={1}
-                height="calc(var(--vh, 1vh) * 100)"
-                width="100vw"
-                justifyContent="center"
+                // flex={1}
+                // height="calc(var(--vh, 1vh) * 100)"
+                // width="100vw"
+                // justifyContent="center"
                 alignItems="center"
             >
                 <Stack
-                    mx={{ xs: 2, sm: 8 }}
-                    my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
+                    // mx={{ xs: 2, sm: 8 }}
+                    // my={{ sm: isSmallHeight ? 3 : 6, lg: isSmallHeight ? 3 : 8 }}
                     justifyContent="center"
                     alignItems="center"
-                    bgcolor="background.paper"
+                    // bgcolor="background.paper"
                     p={3}
                     flex={{ sm: 1 }}
                     width={({ spacing }) => ({
@@ -101,50 +102,76 @@ const WaitingApprove = () => {
                     position="relative"
                 >
                     <Stack
-                        direction="row"
-                        alignItems="center"
-                        position="absolute"
-                        top={16}
-                        right={16}
-                        spacing={{ xs: 1, sm: 2 }}
-                        zIndex={10}
-                    >
-                        <SwitchLanguage />
-                        <SwitchTheme />
-                    </Stack>
-
-                    <Stack
-                        minWidth={340}
-                        maxWidth={340}
+                        // minWidth={340}
+                        // maxWidth={340}
                         justifyContent="center"
                         alignItems="center"
                     >
                         <Text variant="h3" textAlign="center" mt={3} mb={2}>
-                            {authT("waitingApprove.title")}
+                            {authT("waitingApprove.subtext1")} 
+                            <span style={{ color: "#045EB8", fontStyle: "normal" }}> 
+                                {" "}@{user?.company?.toLowerCase()}.com{" "} 
+                            </span> 
+                            {authT("waitingApprove.subtext2")} 
                         </Text>
                         
                         <Image
                             src={TemplateTwoPng}
                             alt="Task cover working"
-                            width={200} // specify the width of the image
-                            height={200} // specify the height of the image
+                            width={400} // specify the width of the image
+                            height={400} // specify the height of the image
                         />
 
                         <Text
                             variant="body2"
                             textAlign="center"
-                            mt={{ xs: 3, sm: 10 }}
+                            // mt={{ xs: 3, sm: 10 }}
                             mb={2}
                             color="text.primary"
-                            maxWidth={280}
+                            maxWidth={580}
+                            fontWeight={400}
+                            fontSize={18}
+                            fontFamily="Inter"
                         >
-                            {authT("waitingApprove.description")}
+                            {authT("waitingApprove.description1")} 
+                            <span style={{ color: "#045EB8" }}>  {" "}@{user?.company?.toLowerCase()}.com{" "} . </span> 
+                            {authT("waitingApprove.description2")} 
                         </Text>
 
-                        <ButtonOutlineGradient
+                        {/* <ButtonOutlineGradient
                             name={authT("waitingApprove.cancelRequest")}
+                            onClick={onSubmit} 
+                        /> */}
+                        <Button
+                            sx={{
+                                ...btnBuyNowSx,
+                                background: "white",
+                                border: "2px solid #009EFD !important",
+                                borderImageSource: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+                                borderImageSlice: 1,
+                                color: "transparent",
+                                backgroundClip: "text",
+                                WebkitBackgroundClip: "text",
+                                borderRadius: "50px !important", // Ensure border radius is applied
+                                "&:hover": {
+                                    opacity: 0.8,
+                                    transition: "all 0.4s",
+                                    background: "white",
+                                },
+                            }}
                             onClick={onSubmit}
-                        />
+                        >
+                            <Text 
+                                variant={"h6"} 
+                                sx={{ 
+                                        background: "linear-gradient(90deg, #0575E6 5.8%, #38E27B 96.38%)",
+                                        WebkitBackgroundClip: "text", color: "transparent" 
+                                    }}
+                                
+                            >
+                                {authT("waitingApprove.cancelRequest")}
+                            </Text>
+                        </Button>
 
                         {/* Add link text forward new page */}
                         <Link
@@ -161,9 +188,6 @@ const WaitingApprove = () => {
                             >
                             <Text
                                 sx={{
-                                    fontFamily: "Inter",
-                                    fontSize: "12px",
-                                    fontWeight: 400,
                                     lineHeight: "28.29px",
                                     textAlign: "center",
                                     textDecorationLine: "underline",
@@ -172,6 +196,9 @@ const WaitingApprove = () => {
                                     textDecorationSkipInk: "none",
                                     color: "#0575E6",
                                 }}
+                                mt={2}
+                                fontSize={18}
+                                fontFamily="Inter"
                             >
                                 {authT("waitingApprove.helpCenter")}
                             </Text>
@@ -186,4 +213,17 @@ const WaitingApprove = () => {
     );
 };
 
+const btnBuyNowSx = {
+    width: "100%",
+    maxWidth: "200px",
+    color: "#fff",
+    fontSize: { xs: "14px", md: "16px" },
+    borderRadius: "8px",
+    p: "16px 20px",
+    textTransform: "capitalize",
+    "&:hover": {
+      opacity: 0.8,
+      transition: "all 0.4s",
+    },
+  };
 export default memo(WaitingApprove);

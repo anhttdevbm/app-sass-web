@@ -45,7 +45,6 @@ const Form = () => {
   const {fcmToken} = useNotification();
   // console.log("🚀 ~ Form ~ fcmToken:", fcmToken)
   const onSubmit = async (values: SigninData) => {
-
     try {
       const newData = await onSignin(values);
 
@@ -61,13 +60,14 @@ const Form = () => {
             userId: newData?.id,
             token: fcmToken,
           }),
-        })
+        });
 
         if (rememberAccount) {
           localStorage.setItem("rememberedEmail", values.email);
         } else {
           localStorage.removeItem("rememberedEmail");
         }
+        
       } else {
         throw AN_ERROR_TRY_AGAIN;
       }

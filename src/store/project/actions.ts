@@ -61,7 +61,7 @@ export type ProjectData = {
   type_project: Option;
   status?: ProjectStatus;
   saved?: boolean;
-  avatar?: string[];
+  avatar?: string;
   currency?: string;
 };
 

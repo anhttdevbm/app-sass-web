@@ -122,7 +122,7 @@ export const Endpoint = {
   UPLOAD: "/files/upload-avatar",
   UPLOAD_FILE: "/files/upload/",
   UPLOAD_FILE_V2: "/uploadFile",
-  SIGNUP_UPLOAD: "/avatar/upload/",
+  SIGNUP_UPLOAD: "/avatar/upload-no-auth/",
   UPLOAD_LINK: "/files/upload-link",
   DOWNLOAD_LINK: "/in/files/download-links",
 
@@ -140,7 +140,7 @@ export const Endpoint = {
 
   // Docs
   DOCS: "/docs/",
-  CREATE_DOCS: "/docs",
+  CREATE_DOCS: "/docs/",
   UPDATE_DOCS: "/docs/{id}",
   DETAIL_DOCS: "/docs/detail/",
   HISTORY_DOCS: "/docs/history/{id}",
@@ -188,6 +188,7 @@ export const Endpoint = {
   SERVICE_BY_BUDGET: "/budgets/service/{id}",
   BUDGETS_BY_PROJECT_ID: "/budgets/getBudgetByProject/{id}",
   SERVICE_QUERIES_BY_BUDGET: "/budgets/getServiceByBudget/{id}",
+  GET_BUDGET_STATISTICSBY_ID: "/budgets/{id}/statistics",
 
   //Content
   CONTENT_HOME_BANNER: "/content/home/banner",
@@ -283,4 +284,5 @@ export const Endpoint = {
 
   //Dashboard
   DASHBOARD_ALL: "/statistic",
+  DASHBOARD_PROJECT_ALL_ACTIVE: "/projects/project-active",
 };

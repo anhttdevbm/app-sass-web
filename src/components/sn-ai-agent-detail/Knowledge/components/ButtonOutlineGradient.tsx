@@ -21,7 +21,7 @@ const Content = styled(Stack)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   zIndex: 2,
   width: "100%",
-  borderRadius: "2px",
+  borderRadius: "20px",
 }));
 
 export const ButtonOutlineGradient: React.FC<ButtonOutlineGradientProps> = ({

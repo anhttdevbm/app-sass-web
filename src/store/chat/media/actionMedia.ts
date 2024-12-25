@@ -1,14 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "api";
+import { AxiosError } from "axios";
 import { HttpStatusCode } from "constant/enums";
 import {
   AN_ERROR_TRY_AGAIN,
-  AUTH_API_URL,
   CHAT_API_URL,
-  UPLOAD_API_URL,
+  TICKET_API_URL
 } from "constant/index";
-import { UrlsQuery, MediaQuery } from "./typeMedia";
-import { AxiosError } from "axios";
+import { MediaQuery, UrlsQuery } from "./typeMedia";
 
 export const getChatUrls = createAsyncThunk(
   "chat/getChatUrls",
@@ -50,28 +49,55 @@ export const getChatRoomFile = createAsyncThunk(
   },
 );
 
+// export const uploadFile = createAsyncThunk(
+//   "chat/uploadFiles",
+//   async ({ endpoint, file }: { endpoint: string; file: File }) => {
+//     try {
+//       let response = await client.get(
+//         `${endpoint}/${file.name}`,
+//         { type: file.type },
+//         {
+//           baseURL: UPLOAD_API_URL,
+//         },
+//       );
+
+//       if (response?.status === HttpStatusCode.OK) {
+//         const fileUpload = response.data;
+//         response = await client.put(response.data.upload, file);
+//         if (response?.status === HttpStatusCode.OK) {
+//           return { ...fileUpload, type: file.type, title: file.name };
+//         }
+//         console.log("response", response);
+//         throw AN_ERROR_TRY_AGAIN;
+//       } else {
+//         throw AN_ERROR_TRY_AGAIN;
+//       }
+//     } catch (error) {
+//       throw error;
+//     }
+//   },
+// );
+
 export const uploadFile = createAsyncThunk(
   "chat/uploadFiles",
   async ({ endpoint, file }: { endpoint: string; file: File }) => {
     try {
-      let response = await client.get(
-        `${endpoint}/${file.name}`,
-        { type: file.type },
-        {
-          baseURL: UPLOAD_API_URL,
+      const formData = new FormData();
+      formData.append("type", file.type);
+      formData.append("anh 1.jpg", file, file.name);
+
+      const response = await client.post(endpoint, formData, {
+        baseURL: TICKET_API_URL,
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-      );
+      });
 
       if (response?.status === HttpStatusCode.OK) {
-        const fileUpload = response.data;
-        response = await client.put(response.data.upload, file);
-        if (response?.status === HttpStatusCode.OK) {
-          return { ...fileUpload, type: file.type, title: file.name };
-        }
-        throw AN_ERROR_TRY_AGAIN;
-      } else {
-        throw AN_ERROR_TRY_AGAIN;
+        return response?.data?.data[0]?.link;
       }
+
+      throw AN_ERROR_TRY_AGAIN;
     } catch (error) {
       throw error;
     }

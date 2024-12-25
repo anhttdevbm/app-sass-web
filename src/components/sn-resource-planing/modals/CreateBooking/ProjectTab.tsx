@@ -26,9 +26,8 @@ import ArrowDownIcon from "icons/ArrowDownIcon";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { Control, Controller, useForm } from "react-hook-form";
-import { usePositions } from "store/company/selectors";
+import { useEmployeeOptions, usePositions } from "store/company/selectors";
 import { TBudget } from "store/project/budget/action";
-import { useMembersOfProject } from "store/project/selectors";
 import { BookingData } from "store/resourcePlanning/action";
 import {
   useBookingAll,
@@ -87,6 +86,7 @@ const ProjectTab = ({
         startDate: selectedDateRange?.[0] || undefined,
         endDate: selectedDateRange?.[1] || undefined,
       },
+      user_id: userId || "", // Set userId as default value
       allocation: 1,
       allocation_type: RESOURCE_ALLOCATION_TYPE.HOUR,
       note: "",
@@ -112,8 +112,10 @@ const ProjectTab = ({
 
   const { items } = usePositions();
 
-  const { items: currListMember, onGetMembersOfProject } =
-    useMembersOfProject();
+  // const { items: currListMember, onGetMembersOfProject } =
+  //   useMembersOfProject();
+  const { items: currListMember, onGetOptions } = useEmployeeOptions(); // Updated usage
+
 
   const listRoles = useMemo(() => {
     return items?.map((item) => ({ value: item.id, label: item.name }));
@@ -144,12 +146,11 @@ const ProjectTab = ({
     if (!watchProject("service_id")) {
       setIsShowDetail(false);
     }
-  }, [watchProject("service_id"), isShowDetail]);
+  }, [isShowDetail, watchProject]);
 
   const handleChangeProjectId = async () => {
     if (watchProject("project_id")) {
       setProjectId(watchProject("project_id"));
-      onGetMembersOfProject(watchProject("project_id"), {});
       const res = await getBudgetsByIdProject(watchProject("project_id"));
 
       if (res.status === 200) {
@@ -160,6 +161,8 @@ const ProjectTab = ({
         setListBudgets(convertValue);
       }
     }
+    // Fetch all employees regardless of project selection
+    onGetOptions({ pageIndex: 0, pageSize: 50 });
   };
 
   const handleChangeBudget = async (value: string) => {
@@ -183,8 +186,8 @@ const ProjectTab = ({
     if (budgetSelected) handleChangeBudget(budgetSelected);
   }, [budgetSelected]);
 
-  const onScroll = debounce((e: any) => {
-    const { scrollTop, clientHeight, scrollHeight } = e.target;
+  const onScroll = debounce((e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
 
     if (scrollTop + clientHeight >= scrollHeight - 10) {
       setQueries({
@@ -601,7 +604,6 @@ const ProjectTab = ({
                 lineHeight: "22px",
                 fontWeight: 400,
                 color: "#666666",
-                display: "block",
               }}
             >
               {resourceT("form.schedule")}
@@ -612,7 +614,6 @@ const ProjectTab = ({
                 lineHeight: "18px",
                 fontWeight: 600,
                 color: "#212121",
-                display: "block",
               }}
             >
               {formatNumber(scheduledTime, { numberOfFixed: 0 })}h

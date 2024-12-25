@@ -1,61 +1,45 @@
 import {
-  Autocomplete,
   Box,
-  inputAdornmentClasses,
-  inputBaseClasses,
-  inputLabelClasses,
-  MenuItem,
-  selectClasses,
-  Stack,
-  TextField,
+  Stack
 } from "@mui/material";
+import { client, Endpoint } from "api";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import {
-  AN_ERROR_TRY_AGAIN,
-  DATE_FORMAT_FORM,
-  IMAGES_ACCEPT,
-  NS_COMMON,
-  NS_PROJECT,
-} from "constant/index";
-import { FormikErrors, useFormik } from "formik";
-import { memo, useEffect, useMemo, useState } from "react";
-import { useSnackbar } from "store/app/selectors";
-import * as Yup from "yup";
-import {
-  cleanObject,
-  formatDate,
-  getMessageErrorByAPI,
-  hasValue,
-  uuid,
-} from "utils/index";
-import { ProjectData } from "store/project/actions";
-import { DataAction } from "constant/enums";
-import {
-  Button,
   DatePicker,
   Input,
   InputNumber,
-  Select,
+  Select
 } from "components/shared";
-import { useEmployeeOptions } from "store/company/selectors";
-import { Assigner, SelectMembers, SelectTypeProject } from "./components";
-import { Member } from "./components/helpers";
+import Upload from "components/sn-projects/components/Upload";
+import { DataAction } from "constant/enums";
+import {
+  AN_ERROR_TRY_AGAIN,
+  DATE_FORMAT_FORM,
+  NS_COMMON,
+  NS_PROJECT
+} from "constant/index";
+import { FormikErrors, useFormik } from "formik";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
+import { useTranslations } from "next-intl";
+import { memo, useEffect, useMemo } from "react";
+import { useDispatch } from "react-redux";
+import { useSnackbar } from "store/app/selectors";
+import { useEmployeeOptions, useProjectTypes } from "store/company/selectors";
 import {
   useCurrencyOptions,
   usePositionOptions,
   useProjectTypeOptions,
 } from "store/global/selectors";
-import { Endpoint, client } from "api";
-import { useTranslations } from "next-intl";
-import { createProjectType } from "store/company/actions";
-import { useDispatch } from "react-redux";
-import { useProjectTypes } from "store/company/selectors";
-import { useProjects } from "store/project/selectors";
-import ChevronIcon from "icons/ChevronIcon";
-import { Option } from "constant/types";
-import Upload from "components/sn-projects/components/Upload";
-import ChevronCircleIcon from "icons/ChevronCircleIcon";
+import { ProjectData } from "store/project/actions";
+import {
+  formatDate,
+  getMessageErrorByAPI,
+  hasValue
+} from "utils/index";
+import * as Yup from "yup";
+import { SelectMembers, SelectTypeProject } from "./components";
+import { Member } from "./components/helpers";
 
 export type ProjectDataForm = Omit<ProjectData, "members" | "avatar"> & {
   members?: Member[];
@@ -148,9 +132,10 @@ const Form = (props: FormProps) => {
           ({ fullname, ...rest }) => rest,
         );
       }
-      if (typeof values["avatar"] === "object") {
-        const logoUrl = await client.upload(Endpoint.UPLOAD, values["avatar"]);
-        dataParsed["avatar"] = [logoUrl];
+      if (values["avatar"] && values["avatar"] instanceof File) {
+        const logoUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, values["avatar"]);
+        console.log(logoUrl);
+        dataParsed["avatar"] = logoUrl;
       } else {
         delete dataParsed["avatar"];
       }

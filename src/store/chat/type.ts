@@ -386,12 +386,12 @@ export interface ChangeRoleRequest extends AuthenRequestCommon {
   groupId: string;
   userIdToChange: string;
   newRole:
-    | "addOwner"
-    | "removeOwner"
-    | "addModerator"
-    | "removeModerator"
-    | "addLeader"
-    | "removeLeader";
+  | "addOwner"
+  | "removeOwner"
+  | "addModerator"
+  | "removeModerator"
+  | "addLeader"
+  | "removeLeader";
 }
 
 export interface RemoveMemberRequest extends AuthenRequestCommon {

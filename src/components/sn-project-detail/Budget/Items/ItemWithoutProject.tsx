@@ -75,8 +75,12 @@ export const ItemWithoutProject = ({
   };
 
   const desktopHeaderList: CellProps[] = useMemo(() => {
+    const _totalMargin = budgets.reduce(
+      (prev, curr) => prev + curr.totalMargin,
+      0,
+    );
     const _totalRevenue = budgets.reduce(
-      (prev, curr) => prev + curr.revenue,
+      (prev, curr) => prev + curr.totalRevenue,
       0,
     );
 
@@ -102,38 +106,43 @@ export const ItemWithoutProject = ({
         ),
         align: "center",
         minwidth: "56px",
-        width: "56px",
+        width: "5%",
       },
       {
         value: projectT("budget.table.budget"),
         align: "left",
-        width: "220px",
-        minwidth: "220px",
+        width: "20%",
+        // minwidth: "220px",
       },
       {
         value: projectT("budget.table.company"),
         align: "left",
-        width: "220px",
-        minwidth: "220px",
+        width: "25%",
+        // minwidth: "220px",
       },
       {
-        value: projectT("budget.table.project"),
-        align: "left",
-        width: "220px",
-        minwidth: "220px",
+        value: projectT("budget.table.margin"),
+        align: "center",
+        width: "20%",
+        // minwidth: "160px",
+        data: formatNumber(_totalMargin, {
+          prefix: CURRENCY_SYMBOL["USD"],
+          numberOfFixed: 0,
+        }),
+        color: "green",
       },
       {
         value: projectT("budget.table.revenue"),
         align: "center",
-        width: "160px",
-        minwidth: "160px",
+        width: "20%",
+        // minwidth: "160px",
         data: formatNumber(_totalRevenue, {
           prefix: CURRENCY_SYMBOL["USD"],
           numberOfFixed: 0,
         }),
         color: "green",
       },
-      { value: "", width: "15%", align: "center" },
+      { value: "", width: "10%", align: "center" },
     ];
   }, [budgets, idSelecteds.length, projectT, setIdSelected]);
 
@@ -218,7 +227,7 @@ export const ItemWithoutProject = ({
                 </Text>
               </Stack>
             </BodyCell>
-            <BodyCell sx={getXsCell(2)}>
+            {/* <BodyCell sx={getXsCell(2)}>
               {budget.project?.avatar &&
                 typeof budget.project.avatar[0] === "object" && (
                   <Stack direction="row" alignItems="center">
@@ -228,10 +237,18 @@ export const ItemWithoutProject = ({
                     </Text>
                   </Stack>
                 )}
+            </BodyCell> */}
+            <BodyCell sx={getXsCell(3)}>
+              <Text>
+                {formatNumber(budget.totalMargin, {
+                  prefix: CURRENCY_SYMBOL[_.get(budget, "currency", "USD")],
+                  numberOfFixed: 0,
+                })}
+              </Text>
             </BodyCell>
             <BodyCell sx={getXsCell(3)}>
               <Text>
-                {formatNumber(_.get(budget, "revenue"), {
+                {formatNumber(budget.totalRevenue, {
                   prefix: CURRENCY_SYMBOL[_.get(budget, "currency", "USD")],
                   numberOfFixed: 0,
                 })}

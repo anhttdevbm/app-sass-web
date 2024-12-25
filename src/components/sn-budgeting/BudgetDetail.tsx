@@ -11,14 +11,13 @@ import { Button, IconButton, Text } from "components/shared";
 import { Client } from "components/sn-budgeting/TabDetail/Client";
 import { Expenses } from "components/sn-budgeting/TabDetail/Expenses";
 import { Feed } from "components/sn-budgeting/TabDetail/Feed";
-import { Invoice } from "components/sn-budgeting/TabDetail/Invoice";
 import { ModalAddTime } from "components/sn-budgeting/TabDetail/Modals/ModalAddTime";
 import { ModalExpense } from "components/sn-budgeting/TabDetail/Modals/ModalExpense";
 import { TTimeRanges, Time } from "components/sn-budgeting/TabDetail/Time";
 import CustomDateRangePicker from "components/sn-resource-planing/components/CustomDateRangePicker";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { NS_BUDGETING, NS_COMMON, NS_PROJECT } from "constant/index";
-import { BILLING_CREATE_PATH, BUDGETING_PATH } from "constant/paths";
+import { BUDGETING_PATH } from "constant/paths";
 import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
@@ -49,7 +48,6 @@ import { TBudget } from "store/project/budget/action";
 import { useProjects } from "store/project/selectors";
 import Swal from "sweetalert2";
 import { formatNumber, getMessageErrorByAPI } from "utils/index";
-import PlusIcon from "../../icons/PlusIcon";
 import { useBudgetByIdQuery } from "../../queries/budgeting/get-by-id";
 import { BudgetRightSidebar } from "./BudgetRightSidebar";
 import { Service } from "./TabDetail/Service";
@@ -61,7 +59,7 @@ enum TABS {
   SERVICES = "Services",
   TIME = "Time",
   EXPENSES = "Expenses",
-  INVOICES = "Invoices",
+  // INVOICES = "Invoices",
   // RECURRING = "Recurring",
 }
 
@@ -141,7 +139,7 @@ export const BudgetDetail = () => {
     [TABS.CLIENT]: budgetT("tab.client"),
     [TABS.TIME]: budgetT("tab.time"),
     [TABS.EXPENSES]: budgetT("tab.expenses"),
-    [TABS.INVOICES]: budgetT("tab.invoices"),
+    // [TABS.INVOICES]: budgetT("tab.invoices"),
     [TABS.SERVICES]: budgetT("tab.services"),
     // [TABS.RECURRING]: budgetT("tab.recurring"),
   };
@@ -244,21 +242,21 @@ export const BudgetDetail = () => {
             {budgetT("toolbar.addExpense")}
           </Button>
         );
-      case TABS.INVOICES:
-        return (
-          <Button
-            id="budget_add_new_invoice"
-            startIcon={<PlusIcon />}
-            variant="primary"
-            size="small"
-            sx={{ height: "40px", mx: "2px" }}
-            onClick={() => {
-              push(BILLING_CREATE_PATH + `?budget=${id}`);
-            }}
-          >
-            {budgetT("toolbar.addInvoice")}
-          </Button>
-        );
+      // case TABS.INVOICES:
+      //   return (
+      //     <Button
+      //       id="budget_add_new_invoice"
+      //       startIcon={<PlusIcon />}
+      //       variant="primary"
+      //       size="small"
+      //       sx={{ height: "40px", mx: "2px" }}
+      //       onClick={() => {
+      //         push(BILLING_CREATE_PATH + `?budget=${id}`);
+      //       }}
+      //     >
+      //       {budgetT("toolbar.addInvoice")}
+      //     </Button>
+      //   );
       case TABS.SERVICES:
         return !isEditService ? (
           <Button
@@ -288,7 +286,7 @@ export const BudgetDetail = () => {
       default:
         return <Box sx={{ width: 100 }} />;
     }
-  }, [activeTab, budgetT, id, isEditService, onEditService, openModalExpense, openModalTime, push]);
+  }, [activeTab, budgetT, isEditService, onEditService, openModalExpense, openModalTime]);
 
   useImperativeHandle(budgetDetailRef, () => ({
     setSelectedServiceData: (service: TBudgetService | null) => {
@@ -403,7 +401,7 @@ export const BudgetDetail = () => {
               <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
                 {budget.project?.name}
               </Text>
-              <Text fontSize="16px" lineHeight={1.2}>
+              <Text fontSize="16px" lineHeight={1.2} sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {budget.name}
               </Text>
             </Stack>
@@ -486,7 +484,7 @@ export const BudgetDetail = () => {
                 fontWeight={600}
                 color="#03AE00"
               >
-                {formatNumber(109000567, {
+                {formatNumber(budget.totalRevenue, {
                   prefix: CURRENCY_SYMBOL["USD"],
                   numberOfFixed: 0,
                 })}
@@ -506,13 +504,13 @@ export const BudgetDetail = () => {
                 fontWeight={600}
                 color="#03AE00"
               >
-                {formatNumber(123, {
+                {formatNumber(budget.totalMargin, {
                   prefix: CURRENCY_SYMBOL["USD"],
                   numberOfFixed: 0,
                 })}
               </Text>
             </Stack>
-            <Stack direction="column" alignItems="center">
+            {/* <Stack direction="column" alignItems="center">
               <Text
                 sx={{ textWrap: "nowrap" }}
                 color={"#999999"}
@@ -528,7 +526,7 @@ export const BudgetDetail = () => {
               >
                 {formatNumber(123, {}) + " %"}
               </Text>
-            </Stack>
+            </Stack> */}
           </Stack>
         </Stack>
         <Stack
@@ -627,7 +625,7 @@ export const BudgetDetail = () => {
                 expenseList={_.get(budgetGetExpenseQuery, "data.data.docs", [])}
               />
             )}
-            {activeTab === TABS.INVOICES && <Invoice />}
+            {/* {activeTab === TABS.INVOICES && <Invoice />} */}
             {/* {activeTab === TABS.RECURRING && <Recurring />} */}
             {activeTab === TABS.SERVICES && (
               <Service

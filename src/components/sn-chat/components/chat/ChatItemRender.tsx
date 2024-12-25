@@ -207,7 +207,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
         />
       </>
     );
-  }, [isCurrentAccByLastMessage, isUnReadMessage, name, isDarkMode]);
+  }, [isUnReadMessage, isDarkMode, isGroup, name, peer_detail?.fullname, isCurrentAccByLastMessage]);
 
   return (
     <Box sx={{ display: "flex", gap: "1rem", alignItems: "center" }}>

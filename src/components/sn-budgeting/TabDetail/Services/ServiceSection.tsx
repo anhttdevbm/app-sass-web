@@ -795,6 +795,8 @@ export const ServiceSection = memo(({
   );
 })
 
+
+export default ServiceSection;
 const defaultSx = {
   root: {
     minWidth: { xs: "calc(100vw - 24px)", sm: 850 },

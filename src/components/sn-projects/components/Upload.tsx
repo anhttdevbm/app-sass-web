@@ -1,7 +1,6 @@
-import { Avatar, Box, DialogContent, Slider, Stack } from "@mui/material";
-import { Button, IconButton, Text } from "components/shared";
+import { Box, DialogContent, Slider, Stack } from "@mui/material";
+import { Button, IconButton } from "components/shared";
 import { IMAGES_ACCEPT, NS_COMMON } from "constant/index";
-import UploadIcon from "icons/UploadIcon";
 import UploadLogoRoundIcon from "icons/UploadLogoRoundIcon";
 import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { useTranslations } from "next-intl";
@@ -35,10 +34,10 @@ const Upload = (props: UploadProps) => {
   const [openImageEditor, setOpenImageEditor] = useState<string | null>(null);
 
   const previewImage = useMemo(() => {
-    if (typeof value === "object") {
+    if (value instanceof File) {
       return URL.createObjectURL(value);
     }
-    return (value as string | undefined) ?? placeholder;
+    return (value as string) ?? placeholder;
   }, [placeholder, value]);
 
   const onChooseFile = () => {

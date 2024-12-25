@@ -1,25 +1,29 @@
-import FixedLayout from "components/FixedLayout";
-import Wrapper from "components/Wrapper";
-import {
-  Statistics,
-  Transactions,
-  ChartStatistics,
-} from "components/sn-dashboard";
-import Dashboard from "components/sn-dashboard/Dashboard";
+"use client";
 
-export const metadata = {
-  title: "Dashboard | Taskcover",
-};
+import Wrapper from "components/Wrapper";
+import Dashboard from "components/sn-dashboard/Dashboard";
+import JoinWorkspacePage from "components/sn-join-workspace";
+import WaitingApprove from "components/sn-waiting-approve/index";
+import { Permission } from "constant/enums";
+import { useEffect } from "react";
+import { useAuth } from "store/app/selectors";
 
 export default function Page() {
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user?.company === "") {
+      // Redirect to join workspace page
+      window.location.href = "/join-workspace";
+    }
+  }
+  , [user]);
+
+  // Check the user's status, company, and roles
+  const shouldShowWaitingApprove = user?.status === 2 && user?.company !== null && user?.roles.includes(Permission.EU);
+  const shouldShowJoinWorkspace = user?.status === 1 && user?.company === null && user?.roles.includes(Permission.EU);
   return (
     <Wrapper overflow="auto" spacing={3} transparent>
-      {/* <FixedLayout flex={1} spacing={3} bgcolor="transparent"> */}
-        {/* <Statistics />
-        <ChartStatistics />
-        <Transactions /> */}
-        <Dashboard />
-      {/* </FixedLayout> */}
+      {  shouldShowWaitingApprove ? <WaitingApprove /> : shouldShowJoinWorkspace ?  <JoinWorkspacePage /> : <Dashboard />}
     </Wrapper>
-  ); 
+  );
 }

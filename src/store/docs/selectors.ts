@@ -46,7 +46,7 @@ const useDocs = () => {
     setLoading(true);
     try {
       const response = await client.post(
-        Endpoint.DOCS,
+        Endpoint.CREATE_DOCS,
         {
           name,
           description,
