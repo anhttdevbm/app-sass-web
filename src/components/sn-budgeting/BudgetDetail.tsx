@@ -369,7 +369,6 @@ export const BudgetDetail = () => {
   };
 
   if (!budget) return <></>;
-  console.log("budget", budget);
 
   return (
     <Box ref={budgetDetailRef}>

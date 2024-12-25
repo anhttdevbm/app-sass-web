@@ -5,6 +5,7 @@ import Link from "components/Link";
 import Preview, { TitlePreview } from "components/Preview";
 import { FILE_MAP } from "constant/enums";
 import { mapType } from "constant/index";
+import useTheme from "hooks/useTheme";
 import FileCsvIcon from "icons/FileCsvIcon";
 import FileDocIcon from "icons/FileDocIcon";
 import FileExcelIcon from "icons/FileExcelIcon";
@@ -13,9 +14,8 @@ import PlayIcon from "icons/PlayIcon";
 import { useMemo, useRef, useState } from "react";
 import { TypeMedia } from "store/chat/media/typeMedia";
 import { MediaPreviewItem, MESSAGE_TYPE, MessageInfoV2 } from "store/chat/type";
-import { TimeMessage } from "../messages/MessageContent";
-import useTheme from "hooks/useTheme";
 import { copyImage, downloadImage, formatDate } from "utils/index";
+import { TimeMessage } from "../messages/MessageContent";
 
 interface MediaPreview {
   isPreview;
@@ -61,9 +61,10 @@ const AttachmentContent = ({
   });
 
   const files = useMemo(() => {
+    console.log(">>>> message.file", message.files);
     return message?.files.map((item) => {
       return {
-        title: item.name,
+        title: "File name",
         title_link: item.url,
         title_link_download: item.url,
       };
@@ -94,6 +95,8 @@ const AttachmentContent = ({
 
   const handleChangeSlide = (url) => {
     const info = mediaListPreview.find((item) => item.link === url);
+    console.log(">>>> url", url);
+    console.log(">>>> info", info);
     forceUpdatePreview({
       src: info?.link as string,
       type: info?.type as TypeMedia,
@@ -124,13 +127,15 @@ const AttachmentContent = ({
           {message?.type === MESSAGE_TYPE.MEDIA && message?.files?.length && (
             <>
               {message?.files?.map((file, index) => {
-                const fileExtension = file?.type?.split("/")[1];
+                console.log(">>>> file 12", file);
+                // const fileExtension = file?.type?.split("/")[1];
+                const fileExtension = file?.split(".").pop();
                 if (IMAGES_EXTENSION.includes(fileExtension)) {
                   return (
                     <Box position="relative" key={index} height={112}>
                       <Avatar
                         size={112}
-                        src={file?.url}
+                        src={file}
                         style={{
                           borderRadius: "8px",
                           border: "1px solid #efefef",
@@ -140,9 +145,9 @@ const AttachmentContent = ({
                           forceUpdatePreview({
                             created_at: file?.created_at as string,
                             isPreview: true,
-                            src: file?.url || "",
+                            src: file || "",
                             type: "image_url",
-                            name: file?.name as string,
+                            name: "Image",
                           })
                         }
                       />
@@ -191,9 +196,9 @@ const AttachmentContent = ({
                           forceUpdatePreview({
                             created_at: file?.created_at as string,
                             isPreview: true,
-                            src: file?.url || "",
+                            src: file || "",
                             type: "video_url",
-                            name: file?.name as string,
+                            name: "Video",
                           })
                         }
                       />
