@@ -72,8 +72,8 @@ const defaultValues: TSectionForm = {
 export const serviceSectionRef = createRef<any>();
 
 export const ServiceSection = memo(({
-  onCloseEdit = () => {},
-  refetch = () => {},
+  onCloseEdit = () => { },
+  refetch = () => { },
   sectionsList = [],
 }: Props) => {
   const { id: budgetId } = useParams();
@@ -90,6 +90,8 @@ export const ServiceSection = memo(({
   const [isOpenConfirm, openConfirm, closeConfirm] = useToggle();
   const [errors, setErrors] = useState<TErrors>({});
   const [indexWaitDelete, setIndexWaitDelete] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
 
   const { control, setValue, handleSubmit, getValues, watch, reset } =
     useForm<TSectionForm>({
@@ -103,7 +105,7 @@ export const ServiceSection = memo(({
 
   const [editingSectionIndex, setEditingSectionIndex] = useState<number | null>(null);
   const sectionsRef = useRef(fields);
-  
+
   useEffect(() => {
     const sectionList = _.map(sectionsList, (section: any) => {
       return {
@@ -235,7 +237,7 @@ export const ServiceSection = memo(({
   //     ...section,
   //     name: tempSectionNames[i],
   //   }));
-    
+
   //   setValue("sections", sectionsRef.current, { shouldDirty: true});
   //   setEditingSectionIndex(null);
 
@@ -248,16 +250,16 @@ export const ServiceSection = memo(({
       ...section,
       name: tempSectionNames[i],
     }));
-  
+
     if (_.isEqual(fields, updatedSections)) {
       return;
     }
-  
+
     updatedSections.forEach((section, i) => {
       setValue(`sections.${i}`, section, { shouldDirty: true });
     });
   }, [setValue, fields, tempSectionNames]);
-  
+
 
   // const handleSectionNameChange = useCallback((index: number, newName: string) => {
   //   sectionsRef.current[index].name = newName;
@@ -266,11 +268,11 @@ export const ServiceSection = memo(({
 
 
 
-  
+
   const handleSectionClick = useCallback((index: number) => {
     setEditingSectionIndex(index);
   }, []);
-  
+
   // const handleSectionNameBlur = useCallback(() => {
   //   setEditingSectionIndex(null);
   // }, []);
@@ -280,9 +282,7 @@ export const ServiceSection = memo(({
     debounceValidation();
   };
 
-  const handleSaveAllService = () => {
-    handleSubmit(onSubmit)();
-  };
+
 
   const handleValidateServices = () => {
     const sections = getValues("sections");
@@ -333,12 +333,19 @@ export const ServiceSection = memo(({
     return !hasError;
   };
 
+  const handleSaveAllService = () => {
+    setIsSubmitting(true)
+    handleSubmit(onSubmit)();
+  };
+
   const onSubmit: SubmitHandler<TSectionForm> = async ({
     sections,
     deletedSections,
   }: TSectionForm) => {
+
     if (!handleValidateServices()) {
       onAddSnackbar("Please insert required field", "error");
+      setIsSubmitting(true)
       return;
     }
 
@@ -389,10 +396,11 @@ export const ServiceSection = memo(({
           });
         }
       })
-      .then(() => {})
+      .then(() => { })
       .catch((err) => {
         onAddSnackbar("Update services failed!", "error");
       });
+
   };
 
   const openConfirmDelete = (index: number) => {
@@ -607,6 +615,7 @@ export const ServiceSection = memo(({
             </Button>
             <Button
               variant="primary"
+              disabled={isSubmitting}
               onClick={handleSaveAllService}
               size="small"
               sx={{
@@ -679,7 +688,7 @@ export const ServiceSection = memo(({
                                       sm: "row",
                                     }}
                                     alignItems="center"
-                                    // py={1}
+                                  // py={1}
                                   >
                                     <IconButton noPadding>
                                       <MoveDotIcon />
@@ -714,7 +723,7 @@ export const ServiceSection = memo(({
                                       >
                                         {section.name || `Section ${index + 1}`}
                                       </Text>
-                                  )}
+                                    )}
 
                                     <IconButton
                                       onClick={() => openConfirmDelete(index)}
