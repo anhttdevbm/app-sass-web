@@ -125,3 +125,18 @@ export const deleteProjectBudget = createAsyncThunk(
     return response.data;
   },
 );
+
+// update budget by id
+export const updateProjectBudget = createAsyncThunk(
+  "project/updateProjectBudget",
+  async ({ budgetId, data }: { budgetId: string; data: Partial<TBudgetCreateParam> }) => {
+    const url = StringFormat(Endpoint.BUDGET_UPDATE, { budgetId });
+    const response = await budgetClient.put(url, data);
+
+    if (response?.status !== HttpStatusCode.OK) {
+      throw AN_ERROR_TRY_AGAIN;
+    }
+
+    return response.data;
+  }
+);

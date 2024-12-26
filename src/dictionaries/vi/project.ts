@@ -200,6 +200,7 @@ export const ProjectLang: ProjectDictionary = {
     action: {
       addBudget: "Thêm ngân sách",
       addBudgetTitleModal: "Thêm ngân sách mới",
+      editBudgetTitleModal: "Chỉnh sửa ngân sách",
     },
     form: {
       name: "Tên",

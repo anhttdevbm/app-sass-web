@@ -51,24 +51,6 @@ const ModalAddBudget = (props: Props) => {
   const { items: projects, onGetProjects } = useProjects();
   const { projectOptions } = useGetOptions();
 
-  useEffect(() => {
-    if (!rest.open) {
-      formik.resetForm();
-      return;
-    }
-    if (!projects || projects.length === 0) {
-      onGetProjects({});
-    }
-  }, [rest.open]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (!bodyModalRef.current) return;
-      const heightBodyModal = bodyModalRef.current?.offsetHeight ?? 0;
-      setDefaultHeightBodyModal(heightBodyModal);
-    }, 300);
-  }, [bodyModalRef.current, rest.open]);
-
   const onSubmit = async (param: TBudgetCreateParam) => {
     if (param.start_date) {
       param.start_date = formatDate(param.start_date, DATE_FORMAT_FORM);
@@ -86,8 +68,10 @@ const ModalAddBudget = (props: Props) => {
     }
 
     try {
-      if (param.id) {
-        await projectBudget.update(param.id, param);
+      if (budgetData?.id) {
+        console.log("update clicked!", budgetData?.id);
+
+        await projectBudget.update(budgetData?.id, param);
         onAddSnackbar(projectT("budget.updateBudgetSuccess"), "success");
       } else {
         console.log("add clicked!");
@@ -100,6 +84,55 @@ const ModalAddBudget = (props: Props) => {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
+
+
+  const initialValues: TBudgetCreateParam = budgetData || {
+    project_id: projectId,
+    name: "",
+    end_date: "",
+    owner: "",
+    client: "",
+    start_date: "",
+  };
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().trim().required("form.error.required"),
+    owner: Yup.string().trim().required("form.error.required"),
+    client: Yup.string().trim().required("form.error.required"),
+    project_id: Yup.string().required("form.error.required"),
+    start_date: Yup.number(),
+    end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+  });
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit,
+  });
+
+
+  useEffect(() => {
+    if (!rest.open) {
+      formik.resetForm();
+      return;
+    }
+    if (!projects || projects.length === 0) {
+      onGetProjects({});
+    }
+    if (rest.open) {
+      onGetClientCompanies({});
+    }
+  }, [onGetClientCompanies, onGetProjects, projects, rest.open]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (!bodyModalRef.current) return;
+      const heightBodyModal = bodyModalRef.current?.offsetHeight ?? 0;
+      setDefaultHeightBodyModal(heightBodyModal);
+    }, 300);
+  }, [bodyModalRef.current, rest.open]);
+
 
   const onChangeDate = (name: string, newDate?: Date) => {
     formik.setFieldValue(name, newDate ? newDate.getTime() : null);
@@ -154,30 +187,6 @@ const ModalAddBudget = (props: Props) => {
     }, timeWaitReadyElement);
   };
 
-  const initialValues: TBudgetCreateParam = budgetData || {
-    project_id: projectId,
-    name: "",
-    end_date: "",
-    owner: "",
-    client: "",
-    start_date: "",
-  };
-
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().trim().required("form.error.required"),
-    owner: Yup.string().trim().required("form.error.required"),
-    client: Yup.string().trim().required("form.error.required"),
-    project_id: Yup.string().required("form.error.required"),
-    start_date: Yup.number(),
-    end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
-  });
-
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    enableReinitialize: true,
-    onSubmit,
-  });
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
@@ -197,12 +206,7 @@ const ModalAddBudget = (props: Props) => {
       color: ({ palette }) => `${palette.grey[900]}!important`,
     },
   };
-  useEffect(() => {
-    onGetClientCompanies({});
-    if (rest.open) {
-      onGetClientCompanies({});
-    }
-  }, [onGetClientCompanies, rest.open]);
+
   const newInput = {
     // height: "65px",
     ".MuiInputBase-root": {
@@ -250,7 +254,11 @@ const ModalAddBudget = (props: Props) => {
 
   return (
     <FormLayout
-      label={projectT("budget.action.addBudgetTitleModal")}
+      label={
+        budgetData?.id
+          ? projectT("budget.action.editBudgetTitleModal")
+          : projectT("budget.action.addBudgetTitleModal")
+      }
       onSubmit={formik.handleSubmit}
       pending={false}
       submitWhenEnter={false}

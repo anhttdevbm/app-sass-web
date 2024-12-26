@@ -203,6 +203,7 @@ export const ProjectLang: ProjectDictionary = {
     action: {
       addBudget: "Add budget",
       addBudgetTitleModal: "New budget",
+      editBudgetTitleModal: "Edit budget",
     },
     form: {
       name: "Name",

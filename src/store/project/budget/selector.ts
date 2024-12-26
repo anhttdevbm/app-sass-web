@@ -1,14 +1,15 @@
-import { useAppDispatch, useAppSelector } from "store/hooks";
-import { shallowEqual } from "react-redux";
-import { useCallback, useMemo } from "react";
 import { DataStatus } from "constant/enums";
-import { ProjectData, updateProject } from "store/project/actions";
+import { useCallback, useMemo } from "react";
+import { shallowEqual } from "react-redux";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { ProjectData } from "store/project/actions";
 import {
   createProjectBudget,
   deleteProjectBudget,
   getProjectBudgetList,
   TBudgetCreateParam,
   TBudgetListQueries,
+  updateProjectBudget,
 } from "store/project/budget/action";
 
 export const useBudgets = () => {
@@ -47,14 +48,14 @@ export const useBudgets = () => {
   );
 
   const triggerDeleteProjectBudget = useCallback(
-    async (id:string) =>
+    async (id: string) =>
       await dispatch(deleteProjectBudget(id)).unwrap(),
     [dispatch],
   );
 
   const triggerUpdateProjectBudget = useCallback(
-    async (id: string, data: Partial<ProjectData>) =>
-      await dispatch(updateProject({ id, ...data })).unwrap(),
+    async (budgetId: string, data: Partial<ProjectData>) =>
+      await dispatch(updateProjectBudget({ budgetId, data })).unwrap(),
     [dispatch],
   );
 

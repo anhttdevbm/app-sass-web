@@ -1,13 +1,14 @@
-import { ActionReducerMapBuilder } from "@reduxjs/toolkit/src/mapBuilders";
-import { ProjectState } from "store/project/reducer";
-import { DataStatus } from "constant/enums";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { ItemListResponse } from "constant/types";
+import { ActionReducerMapBuilder } from "@reduxjs/toolkit/src/mapBuilders";
+import { DataStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN } from "constant/index";
+import { ItemListResponse } from "constant/types";
 import {
   createProjectBudget,
   getProjectBudgetList,
+  updateProjectBudget
 } from "store/project/budget/action";
+import { ProjectState } from "store/project/reducer";
 
 export const BudgetReducer = (
   builder: ActionReducerMapBuilder<ProjectState>,
@@ -33,6 +34,10 @@ export const BudgetReducer = (
 
   // add case for
   builder.addCase(createProjectBudget.pending, (state, { meta: { arg } }) => {
+    state.budgetStatus = DataStatus.LOADING;
+  });
+  // add case updateProjectBudget
+  builder.addCase(updateProjectBudget.pending, (state, { meta: { arg } }) => {
     state.budgetStatus = DataStatus.LOADING;
   });
   builder.addCase(

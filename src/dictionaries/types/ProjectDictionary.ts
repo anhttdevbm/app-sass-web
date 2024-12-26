@@ -197,6 +197,7 @@ export type ProjectDictionary = {
     action: {
       addBudget: string;
       addBudgetTitleModal: string;
+      editBudgetTitleModal: string;
     };
     form: {
       name: string;
