@@ -18,11 +18,13 @@ import { formatDate, getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
 
 type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
+  open: boolean;
   projectId?: string;
+  budgetData?: TBudgetCreateParam;
 };
 
 const ModalAddBudget = (props: Props) => {
-  const { ...rest } = props;
+  const { budgetData, ...rest } = props;
 
   const bodyModalRef = useRef<HTMLDivElement>(null);
   const [defaultHeightBodyModal, setDefaultHeightBodyModal] =
@@ -84,8 +86,14 @@ const ModalAddBudget = (props: Props) => {
     }
 
     try {
-      await projectBudget.create(param);
-      onAddSnackbar(projectT("budget.createBudgetSuccess"), "success");
+      if (param.id) {
+        await projectBudget.update(param.id, param);
+        onAddSnackbar(projectT("budget.updateBudgetSuccess"), "success");
+      } else {
+        console.log("add clicked!");
+        await projectBudget.create(param);
+        onAddSnackbar(projectT("budget.createBudgetSuccess"), "success");
+      }
       props.onClose();
       projectBudget.get();
     } catch (error) {
@@ -146,7 +154,7 @@ const ModalAddBudget = (props: Props) => {
     }, timeWaitReadyElement);
   };
 
-  const initialValues: TBudgetCreateParam = {
+  const initialValues: TBudgetCreateParam = budgetData || {
     project_id: projectId,
     name: "",
     end_date: "",
@@ -187,15 +195,18 @@ const ModalAddBudget = (props: Props) => {
     height: "auto",
     "& input": {
       color: ({ palette }) => `${palette.grey[900]}!important`,
-    },  
+    },
   };
   useEffect(() => {
     onGetClientCompanies({});
-  }, [onGetClientCompanies]);
+    if (rest.open) {
+      onGetClientCompanies({});
+    }
+  }, [onGetClientCompanies, rest.open]);
   const newInput = {
     // height: "65px",
     ".MuiInputBase-root": {
-      ".MuiAutocomplete-endAdornment":{right:"21px"},
+      ".MuiAutocomplete-endAdornment": { right: "21px" },
       background:
         " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
       padding: "9px!important",
@@ -206,7 +217,7 @@ const ModalAddBudget = (props: Props) => {
       fontSize: "16px!important",
       // height:"38px",
       ".MuiInputBase-input": { p: "0 10px!important" },
-    
+
       ".MuiChip-root": {
         color: "#0575e6",
         padding: "5px",
@@ -223,18 +234,20 @@ const ModalAddBudget = (props: Props) => {
       transform: "translate(0, 16px) scale(1)",
     },
   };
-  const newBorderSVG ={
-    ".MuiInputBase-root.MuiOutlinedInput-root":{svg: {
-      borderRadius: "50px",
-      border: "0.2px solid #5C5C5C",
-      fontSize: "16px",
-      color: "black",
-      "&:hover": { color: "black" },
-    },}
-      
+  const newBorderSVG = {
+    ".MuiInputBase-root.MuiOutlinedInput-root": {
+      svg: {
+        borderRadius: "50px",
+        border: "0.2px solid #5C5C5C",
+        fontSize: "16px",
+        color: "black",
+        "&:hover": { color: "black" },
+      },
+    }
+
   }
 
-  
+
   return (
     <FormLayout
       label={projectT("budget.action.addBudgetTitleModal")}
@@ -243,7 +256,7 @@ const ModalAddBudget = (props: Props) => {
       submitWhenEnter={false}
       bodyFlex={0}
       sx={{
-        borderRadius:"24px",
+        borderRadius: "24px",
         minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
@@ -277,7 +290,7 @@ const ModalAddBudget = (props: Props) => {
         <MenuList component={Stack} spacing={2} sx={{ overflow: "visible" }}>
           {!props.projectId && (
             <Select
-              sx={{...newBorderSVG,...newInput}}
+              sx={{ ...newBorderSVG, ...newInput }}
               options={projectOptions}
               title={projectT("budget.form.project_id")}
               name="project_id"
@@ -293,7 +306,7 @@ const ModalAddBudget = (props: Props) => {
             />
           )}
           <Input
-          sx={{...newBorderSVG,...newInput}}
+            sx={{ ...newBorderSVG, ...newInput }}
             rootSx={sxInput}
             title={projectT("budget.form.name")}
             fullWidth
@@ -308,38 +321,38 @@ const ModalAddBudget = (props: Props) => {
             autoComplete="off"
           />
           <Select
-              sx={{...newBorderSVG,...newInput}}
-              options={clientCompanies.map((c) => ({
-                label: c.name,
-                value: c.id!,
-              }))}
-              title={"Client"}
-              name="client"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values?.client}
-              error={commonT(touchedErrors?.client, {
-                name: projectT("budget.form.client"),
-              })}
-              onChangeSearch={(_, newValue) =>
-                onGetEmployeeOptions({
-                  pageIndex: 1,
-                  pageSize: 20,
-                  email: (newValue as string) || "",
-                })
-              }
-              rootSx={sxInput}
-              fullWidth
-              autoComplete="off"
-              hasAvatar
-            />
+            sx={{ ...newBorderSVG, ...newInput }}
+            options={clientCompanies.map((c) => ({
+              label: c.name,
+              value: c.id ?? "",
+            }))}
+            title={"Client"}
+            name="client"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values?.client}
+            error={commonT(touchedErrors?.client, {
+              name: projectT("budget.form.client"),
+            })}
+            onChangeSearch={(_, newValue) =>
+              onGetEmployeeOptions({
+                pageIndex: 1,
+                pageSize: 20,
+                email: (newValue as string) || "",
+              })
+            }
+            rootSx={sxInput}
+            fullWidth
+            autoComplete="off"
+            hasAvatar
+          />
           <Stack
             direction={{ sm: "row" }}
             spacing={2}
             sx={{ "& .react-datepicker-popper": { zIndex: 999 } }}
           >
             <DateTimePicker
-            sx={newInput}
+              sx={newInput}
               title={projectT("budget.form.start_date")}
               name="start_date"
               onChange={onChangeDate}
@@ -396,7 +409,7 @@ const ModalAddBudget = (props: Props) => {
             />
           </Stack>
           <Select
-            sx={{...newBorderSVG,...newInput}}
+            sx={{ ...newBorderSVG, ...newInput }}
             options={employeeOptions}
             title={projectT("budget.form.owner")}
             name="owner"

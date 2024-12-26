@@ -16,12 +16,13 @@ export type TBudget = any;
 export type TBudgets = TBudget[];
 
 export type TBudgetCreateParam = {
+  id?: string;
   project_id: string;
   name: string;
   start_date: string;
   end_date: string;
   owner: string;
-  client:string;
+  client: string;
 };
 
 export type RecurringData = {
@@ -113,7 +114,7 @@ export const createProjectBudget = createAsyncThunk(
 
 export const deleteProjectBudget = createAsyncThunk(
   "project/deleteProjectBudget",
-  async (budgetId:string) => {
+  async (budgetId: string) => {
     const url = StringFormat(Endpoint.BUDGET_DELETE_BY_ID, { budgetId });
     const response = await budgetClient.delete(url);
 

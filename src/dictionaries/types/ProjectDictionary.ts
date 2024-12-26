@@ -15,7 +15,7 @@ export type ProjectDictionary = {
         members: string;
         projectType: string;
         name: string;
-        
+
       };
     };
     title: string;
@@ -204,11 +204,12 @@ export type ProjectDictionary = {
       end_date: string;
       owner: string;
       project_id: string;
-      client:string;
+      client: string;
     };
     createBudgetSuccess: string;
     duplicateBudgetSuccess: string;
     deleteBudgetSuccess: string;
+    updateBudgetSuccess: string;
     table: {
       budget: string;
       owner: string;

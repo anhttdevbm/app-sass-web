@@ -212,6 +212,7 @@ export const ProjectLang: ProjectDictionary = {
     createBudgetSuccess: "Thêm ngân sách mới thành công",
     duplicateBudgetSuccess: "Nhân bản ngân sách thành công",
     deleteBudgetSuccess: "Xóa ngân sách thành công",
+    updateBudgetSuccess: "Cập nhật ngân sách thành công",
     table: {
       budget: "Trạng thái/Ngân sách",
       owner: "Người tạo",

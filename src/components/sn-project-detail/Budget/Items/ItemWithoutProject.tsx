@@ -11,11 +11,12 @@ import { BUDGET_DETAIL_PATH } from "constant/paths";
 import { HEADER_HEIGHT } from "layouts/Header";
 import _ from "lodash";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { TBudgetCreateParam, TBudgets } from "store/project/budget/action";
 import { useBudgets } from "store/project/budget/selector";
 import { formatDate, formatNumber, getPath } from "utils/index";
+import ModalAddBudget from "../Actions/ModalAddBudget";
 import ActionsCell from "./ActionsCell";
 import FilterWithIds from "./FilterWithIds";
 
@@ -33,6 +34,9 @@ export const ItemWithoutProject = ({
   const projectT = useTranslations(NS_PROJECT);
   const projectBudget = useBudgets();
   const { onAddSnackbar } = useSnackbar();
+
+  const [selectedBudget, setSelectedBudget] = useState<TBudgetCreateParam | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleDuplicate = async (budgetId: string) => {
     const budget = budgets.find(b => b.id === budgetId);
@@ -55,6 +59,24 @@ export const ItemWithoutProject = ({
     }
   };
 
+  // handle func update budget by id
+  const handleUpdate = async (budgetId: string) => {
+    const budget = budgets.find(b => b.id === budgetId);
+
+    if (!budget) return;
+
+    const param: TBudgetCreateParam = {
+      id: budgetId,
+      project_id: budget.project.id,
+      start_date: formatDate(budget.start_date, DATE_FORMAT_FORM),
+      end_date: formatDate(budget.end_date, DATE_FORMAT_FORM),
+      owner: budget.owner.id,
+      name: budget.name
+    } as TBudgetCreateParam;
+
+    setSelectedBudget(param);
+    setModalOpen(true);
+  };
   const handleDelete = async (budgetId: string) => {
     try {
       await projectBudget.delete(budgetId);
@@ -255,12 +277,20 @@ export const ItemWithoutProject = ({
               </Text>
             </BodyCell>
             <ActionsCell
+              onUpdate={() => handleUpdate(budget.id)}
               onDuplicate={() => handleDuplicate(budget.id)}
               onDelete={() => handleDelete(budget.id)}
             />
           </TableRow>
         );
       })}
+      {isModalOpen && selectedBudget && (
+        <ModalAddBudget
+          open={isModalOpen}
+          budgetData={selectedBudget}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </TableLayoutWithScroll>
   );
 };
