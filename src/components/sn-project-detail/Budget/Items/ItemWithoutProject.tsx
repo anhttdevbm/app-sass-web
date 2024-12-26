@@ -2,7 +2,7 @@
 import { Stack, TableRow } from "@mui/material";
 import Avatar from "components/Avatar";
 import Link from "components/Link";
-import { Checkbox, Text } from "components/shared";
+import { Checkbox, Text, Tooltip } from "components/shared";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { BodyCell, CellProps } from "components/Table";
 import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
@@ -236,7 +236,11 @@ export const ItemWithoutProject = ({
                 >
                   <Avatar src={budget?.created_by?.avatar} size={35} />
                   <Text paddingLeft="10px" align="left">
-                    {budget.name}
+                    <Tooltip title={budget.name} aria-label="Budget Name">
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {budget.name}
+                      </span>
+                    </Tooltip>
                   </Text>
                 </Link>
               )}
