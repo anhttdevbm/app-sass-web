@@ -335,8 +335,12 @@ export const ServiceSection = memo(({
 
   const handleSaveAllService = () => {
     setIsSubmitting(true)
-    handleSubmit(onSubmit)();
+    handleSubmit(onSubmit)()
+    // onCloseEdit();
+
   };
+
+  
 
   const onSubmit: SubmitHandler<TSectionForm> = async ({
     sections,
@@ -345,7 +349,7 @@ export const ServiceSection = memo(({
 
     if (!handleValidateServices()) {
       onAddSnackbar("Please insert required field", "error");
-      setIsSubmitting(true)
+      setIsSubmitting(prev => !prev)
       return;
     }
 
@@ -382,7 +386,6 @@ export const ServiceSection = memo(({
         if (newSections.length > 0) {
           new Promise((resolver) => {
             createSections(newSections);
-
             return resolver(true);
           });
         }
@@ -399,7 +402,7 @@ export const ServiceSection = memo(({
       .then(() => { })
       .catch((err) => {
         onAddSnackbar("Update services failed!", "error");
-      });
+      })
 
   };
 
@@ -462,6 +465,10 @@ export const ServiceSection = memo(({
     };
 
     budgetServiceAdd.mutateAsync(form, {
+      onSuccess: () => {
+        onAddSnackbar("create  successful!", "success");
+        onCloseEdit();
+      },
       onError(error) {
         onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
       },

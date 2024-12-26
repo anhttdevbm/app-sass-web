@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { Box, CircularProgress, Stack } from "@mui/material";
+import { Box, CircularProgress, Stack, Tooltip } from "@mui/material";
 import "@sweetalert2/theme-material-ui/material-ui.css";
 import Avatar from "components/Avatar";
 import ConfirmDialog from "components/ConfirmDialog";
@@ -114,6 +114,7 @@ export const BudgetDetail = () => {
   const [isOpenRightSidebar, showRightSidebar, hideRightSidebar] = useToggle();
   const [isOpenModalStatus, showModalStatus, hideModalStatus] = useToggle();
   const { onAddSnackbar } = useSnackbar();
+  const [isHovered, setIsHovered] = useState(false);
 
   const [budget, setBudget] = useState<TBudget | null>(null);
   const [activeTab, setActiveTab] = useState<string>(TABS.FEED);
@@ -397,13 +398,61 @@ export const BudgetDetail = () => {
               </IconButton>
             </Link>
             <Avatar size={40} src={budget?.created_by?.avatar || ""} />
-            <Stack>
-              <Text fontSize="16px" fontWeight="bold" lineHeight={1.2}>
-                {budget.project?.name}
-              </Text>
-              <Text fontSize="16px" lineHeight={1.2} sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {budget.name}
-              </Text>
+            <Stack sx={{ width: "200px" }}>
+              <Box sx={{ position: "relative", display: "inline-block" }}>
+                <Text
+                  fontSize="16px"
+                  fontWeight="bold"
+                  lineHeight={1.2}
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    cursor: "pointer",
+                  }}
+                >
+                  {budget.project?.name}
+                </Text>
+              </Box>
+
+              <Box sx={{ position: "relative", display: "inline-block", marginTop: "10px" }}>
+                <Text
+                  fontSize="16px"
+                  lineHeight={1.2}
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={() => setIsHovered(true)} 
+                  onMouseLeave={() => setIsHovered(false)} 
+                >
+                  {budget.name}
+                </Text>
+
+                {/* Tooltip box */}
+                {isHovered && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      backgroundColor: "rgba(0, 0, 0, 0.7)",
+                      color: "white",
+                      padding: "8px 12px",
+                      borderRadius: "4px",
+                      zIndex: 1500,
+                      maxWidth: "250px", 
+                      whiteSpace: "normal", 
+                      textOverflow: "unset",
+                      wordWrap: "break-word", 
+                    }}
+                  >
+                    {budget.name}
+                  </Box>
+                )}
+              </Box>
             </Stack>
             <Stack direction="row" gap={1} alignItems="center">
               <TextStatus
