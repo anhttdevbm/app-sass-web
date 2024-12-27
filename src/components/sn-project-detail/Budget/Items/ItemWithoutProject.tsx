@@ -236,8 +236,16 @@ export const ItemWithoutProject = ({
                 >
                   <Avatar src={budget?.created_by?.avatar} size={35} />
                   <Text paddingLeft="10px" align="left">
-                    <Tooltip title={budget.name} aria-label="Budget Name">
-                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <Tooltip title={budget.name} placement="bottom-start" aria-label="Budget Name">
+                      <span
+                        style={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: 'inline-block',
+                          maxWidth: '200px', 
+                        }}
+                      >
                         {budget.name}
                       </span>
                     </Tooltip>
