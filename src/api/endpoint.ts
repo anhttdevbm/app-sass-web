@@ -17,6 +17,7 @@ export const Endpoint = {
   USERS_INACTIVE: "/users/inactive",
   TOTAL_USER_UNPAID: "/users/total-unpaid",
   PROFILE: "/users/me",
+  DELETE_USER: "/users/delete",
   INVITE_USER_TO_COMPANY: "/users/inviteUserToCompany",
   COMPANIES: "/companies",
   COMPANY_ADD_MEMBER: "/companies/add-member",
@@ -273,14 +274,14 @@ export const Endpoint = {
 
   //Ticket-agent
   TICKET_AGENT: "/ticket/user",
-  TICKET_DASHBOARD : "/ticket/dashboard",
+  TICKET_DASHBOARD: "/ticket/dashboard",
 
   //Push Notification
-  NOTIFY_REGISTER_USER : "addUser",
-  NOTIFY_GET_SETTING : "/setting/getSettings",
-  NOTIFY_APPLY_SETTING : "/setting/apply-changes",
-  NOTIFY_READ_STATUS : "/notification/readStatus/",
-  NOTIFY_GET_ALL : "/notification/history/",
+  NOTIFY_REGISTER_USER: "addUser",
+  NOTIFY_GET_SETTING: "/setting/getSettings",
+  NOTIFY_APPLY_SETTING: "/setting/apply-changes",
+  NOTIFY_READ_STATUS: "/notification/readStatus/",
+  NOTIFY_GET_ALL: "/notification/history/",
 
   //Dashboard
   DASHBOARD_ALL: "/statistic",
