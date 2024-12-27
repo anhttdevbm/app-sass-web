@@ -217,9 +217,14 @@ export const ServiceSection = memo(({
   };
 
 
-  const [tempSectionNames, setTempSectionNames] = useState(
-    sectionsRef.current.map((section) => section.name)
-  );
+  const [tempSectionNames, setTempSectionNames] = useState<any>([]);
+
+
+  useEffect(() => {
+    if (sectionsRef.current) {
+      setTempSectionNames(sectionsRef.current.map((section) => section.name));
+    }
+  }, [sectionsRef.current]);
 
   const handleSectionNameChange = useCallback((index, newName) => {
     setTempSectionNames((prev) => {
@@ -258,6 +263,8 @@ export const ServiceSection = memo(({
     updatedSections.forEach((section, i) => {
       setValue(`sections.${i}`, section, { shouldDirty: true });
     });
+
+    setEditingSectionIndex(null)
   }, [setValue, fields, tempSectionNames]);
 
 
@@ -728,7 +735,7 @@ export const ServiceSection = memo(({
                                         sx={{ color: "grey.300", cursor: "pointer" }}
                                         onClick={() => handleSectionClick(index)}
                                       >
-                                        {section.name || `Section ${index + 1}`}
+                                        {tempSectionNames[index]  || `Section ${index + 1}`}
                                       </Text>
                                     )}
 
