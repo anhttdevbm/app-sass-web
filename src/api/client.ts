@@ -99,7 +99,7 @@ const createAxiosInstance = (baseUrl: string) => {
         (error as AxiosError)?.config &&
         ((error.code === requestAbortCode &&
           (error as AxiosError)?.response?.status ===
-            HttpStatusCode.TOO_MANY_REQUEST) ||
+          HttpStatusCode.TOO_MANY_REQUEST) ||
           ("response" in error && error.response === undefined))
       ) {
         sleep(1000);
@@ -254,7 +254,7 @@ const RequestClient = class {
       const formData = new FormData();
       formData.append("type", file.type);
       // formData.append("fileBuffer", file);
-      formData.append("anh 1.jpg", file, file.name);
+      formData.append(file.name, file, file.name);
 
       const response = await this.post(endpoint, formData, {
         baseURL: TICKET_API_URL,
