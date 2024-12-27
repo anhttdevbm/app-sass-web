@@ -52,12 +52,29 @@ const ModalAddBudget = (props: Props) => {
   const { projectOptions } = useGetOptions();
 
   const onSubmit = async (param: TBudgetCreateParam) => {
+    console.log("param", param);
+    console.log("budgetData", budgetData);
+
+
     if (param.start_date) {
+      if (isNaN(Date.parse(param.start_date))) {
+        console.error("Invalid start_date:", param.start_date);
+        formik.setFieldError("start_date", "Invalid start date");
+        return;
+      }
       param.start_date = formatDate(param.start_date, DATE_FORMAT_FORM);
     }
     if (param.end_date) {
+      if (isNaN(Date.parse(param.end_date))) {
+        console.error("Invalid end_date:", param.end_date);
+        formik.setFieldError("end_date", "Invalid end date");
+        return;
+      }
       param.end_date = formatDate(param.end_date, DATE_FORMAT_FORM);
     }
+
+    console.log("Formatted start_date:", param.start_date);
+    console.log("Formatted end_date:", param.end_date);
 
     if (moment(param.start_date).isAfter(param.end_date)) {
       formik.setFieldError(
@@ -131,7 +148,7 @@ const ModalAddBudget = (props: Props) => {
       const heightBodyModal = bodyModalRef.current?.offsetHeight ?? 0;
       setDefaultHeightBodyModal(heightBodyModal);
     }, 300);
-  }, [bodyModalRef.current, rest.open]);
+  }, [rest.open]);
 
 
   const onChangeDate = (name: string, newDate?: Date) => {
@@ -183,7 +200,9 @@ const ModalAddBudget = (props: Props) => {
         optAnimate,
       );
 
-      bodyModalRef.current!.style.height = toHeight;
+      if (bodyModalRef.current) {
+        bodyModalRef.current.style.height = toHeight;
+      }
     }, timeWaitReadyElement);
   };
 
