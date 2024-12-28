@@ -53,13 +53,13 @@ function ActiveProjectsTable() {
                             <BodyCell>
                                 <Stack direction='row' spacing={1.5}>
                                     <Image
-                                        src={row.owner.avatar}
-                                        alt={row.owner.fullname}
+                                        src={row.owner?.avatar}
+                                        alt={row.owner?.fullname}
                                         width={32}
                                         height={32}
                                         style={{ borderRadius: "50%" }}
                                     />
-                                    <Typography>{row.owner.fullname}</Typography>
+                                    <Typography>{row.owner?.fullname}</Typography>
                                 </Stack>
                             </BodyCell>
                             <BodyCell sx={{ textAlign: "right" }}>
