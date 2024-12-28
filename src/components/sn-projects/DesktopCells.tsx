@@ -29,24 +29,28 @@ const DesktopCells = (props: DesktopCellsProps) => {
       >
         <Stack direction="row" alignItems="center" spacing={1}>
           <Avatar size={32} src={item.avatar ?? ProjectPlaceholderImage} />
-          <Tooltip title={item.name} placement="bottom-start">
-            <Text
-              variant="body2"
-              color="text.primary"
-              fontWeight={600}
-              lineHeight={1.28}
-              sx={{
-                "&:hover": { color: "primary.main" },
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                maxWidth: 200, // Adjust the maxWidth as needed
-                display: 'inline-block',
-              }}
-            >
-              {item.name}
-            </Text>
-          </Tooltip>
+          <Text
+            paddingLeft="10px"
+            align="left"
+            variant="body2"
+            color="text.primary"
+            fontWeight={600}
+            lineHeight={1.28}
+          >
+            <Tooltip title={item.name} placement="bottom-start" aria-label="Project Name">
+              <span
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: 'inline-block',
+                  maxWidth: '200px',
+                }}
+              >
+                {item.name}
+              </span>
+            </Tooltip>
+          </Text>
         </Stack>
       </BodyCell>
       <BodyCell align="left" sx={{ paddingLeft: 0 }}>
