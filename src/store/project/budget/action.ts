@@ -25,6 +25,15 @@ export type TBudgetCreateParam = {
   client: string;
 };
 
+export type TBudgetUpdateParam = {
+  project_id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  owner: string;
+  client: string;
+};
+
 export type RecurringData = {
   interval: string;
   start_date: string;
@@ -129,7 +138,7 @@ export const deleteProjectBudget = createAsyncThunk(
 // update budget by id
 export const updateProjectBudget = createAsyncThunk(
   "project/updateProjectBudget",
-  async ({ budgetId, data }: { budgetId: string; data: Partial<TBudgetCreateParam> }) => {
+  async ({ budgetId, data }: { budgetId: string; data: Partial<TBudgetUpdateParam> }) => {
     const url = StringFormat(Endpoint.BUDGET_UPDATE, { budgetId });
     const response = await budgetClient.put(url, data);
 

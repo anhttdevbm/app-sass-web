@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MenuList, Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
@@ -11,7 +12,7 @@ import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { useClientCompanies, useEmployeeOptions } from "store/company/selectors";
-import { TBudgetCreateParam } from "store/project/budget/action";
+import { TBudgetCreateParam, TBudgetListQueries } from "store/project/budget/action";
 import { useBudgets } from "store/project/budget/selector";
 import { useProjects } from "store/project/selectors";
 import { formatDate, getMessageErrorByAPI } from "utils/index";
@@ -19,12 +20,23 @@ import * as Yup from "yup";
 
 type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
   open: boolean;
+
+  onClose: () => void;
+
+  onAddSnackbar: (message: string, severity?: "error" | "success" | "info" | "warning", expiredIn?: number) => void;
+
+  onGetBudget: (queries?: TBudgetListQueries) => Promise<void>;
+
   projectId?: string;
-  budgetData?: TBudgetCreateParam;
+
+  selectedBudget: TBudgetCreateParam;
 };
 
 const ModalAddBudget = (props: Props) => {
-  const { budgetData, ...rest } = props;
+  const { ...rest } = props;
+
+  //log selectedBudget
+  console.log("selectedBudget", props.selectedBudget);
 
   const bodyModalRef = useRef<HTMLDivElement>(null);
   const [defaultHeightBodyModal, setDefaultHeightBodyModal] =
@@ -51,30 +63,33 @@ const ModalAddBudget = (props: Props) => {
   const { items: projects, onGetProjects } = useProjects();
   const { projectOptions } = useGetOptions();
 
+  useEffect(() => {
+    if (!rest.open) {
+      formik.resetForm();
+      return;
+    }
+    onGetClientCompanies({});
+
+    if (!projects || projects.length === 0) {
+      onGetProjects({});
+    }
+  }, [onGetClientCompanies, onGetProjects, projects, rest.open]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (!bodyModalRef.current) return;
+      const heightBodyModal = bodyModalRef.current?.offsetHeight ?? 0;
+      setDefaultHeightBodyModal(heightBodyModal);
+    }, 300);
+  }, [bodyModalRef.current, rest.open]);
+
   const onSubmit = async (param: TBudgetCreateParam) => {
-    console.log("param", param);
-    console.log("budgetData", budgetData);
-
-
     if (param.start_date) {
-      if (isNaN(Date.parse(param.start_date))) {
-        console.error("Invalid start_date:", param.start_date);
-        formik.setFieldError("start_date", "Invalid start date");
-        return;
-      }
       param.start_date = formatDate(param.start_date, DATE_FORMAT_FORM);
     }
     if (param.end_date) {
-      if (isNaN(Date.parse(param.end_date))) {
-        console.error("Invalid end_date:", param.end_date);
-        formik.setFieldError("end_date", "Invalid end date");
-        return;
-      }
       param.end_date = formatDate(param.end_date, DATE_FORMAT_FORM);
     }
-
-    console.log("Formatted start_date:", param.start_date);
-    console.log("Formatted end_date:", param.end_date);
 
     if (moment(param.start_date).isAfter(param.end_date)) {
       formik.setFieldError(
@@ -85,71 +100,23 @@ const ModalAddBudget = (props: Props) => {
     }
 
     try {
-      if (budgetData?.id) {
-        console.log("update clicked!", budgetData?.id);
-
-        await projectBudget.update(budgetData?.id, param);
+      if (props.selectedBudget.id) {
+        await projectBudget.update(props.selectedBudget.id, param);
         onAddSnackbar(projectT("budget.updateBudgetSuccess"), "success");
+        props.onClose();
+        projectBudget.get();
+        return;
       } else {
-        console.log("add clicked!");
         await projectBudget.create(param);
         onAddSnackbar(projectT("budget.createBudgetSuccess"), "success");
+        props.onClose();
+        projectBudget.get();
       }
-      props.onClose();
       projectBudget.get();
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
-
-
-  const initialValues: TBudgetCreateParam = budgetData || {
-    project_id: projectId,
-    name: "",
-    end_date: "",
-    owner: "",
-    client: "",
-    start_date: "",
-  };
-
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().trim().required("form.error.required"),
-    owner: Yup.string().trim().required("form.error.required"),
-    client: Yup.string().trim().required("form.error.required"),
-    project_id: Yup.string().required("form.error.required"),
-    start_date: Yup.number(),
-    end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
-  });
-
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    enableReinitialize: true,
-    onSubmit,
-  });
-
-
-  useEffect(() => {
-    if (!rest.open) {
-      formik.resetForm();
-      return;
-    }
-    if (!projects || projects.length === 0) {
-      onGetProjects({});
-    }
-    if (rest.open) {
-      onGetClientCompanies({});
-    }
-  }, [onGetClientCompanies, onGetProjects, projects, rest.open]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (!bodyModalRef.current) return;
-      const heightBodyModal = bodyModalRef.current?.offsetHeight ?? 0;
-      setDefaultHeightBodyModal(heightBodyModal);
-    }, 300);
-  }, [rest.open]);
-
 
   const onChangeDate = (name: string, newDate?: Date) => {
     formik.setFieldValue(name, newDate ? newDate.getTime() : null);
@@ -200,12 +167,37 @@ const ModalAddBudget = (props: Props) => {
         optAnimate,
       );
 
-      if (bodyModalRef.current) {
-        bodyModalRef.current.style.height = toHeight;
-      }
+      bodyModalRef.current!.style.height = toHeight;
     }, timeWaitReadyElement);
   };
 
+
+  const initialValues: TBudgetCreateParam = {
+    project_id: props.selectedBudget?.project_id || "",
+    name: props.selectedBudget?.name || "",
+    owner: props.selectedBudget?.owner || "",
+    client: props.selectedBudget?.client || "",
+    start_date: "",
+
+    end_date: props.selectedBudget?.end_date || "",
+  };
+
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().trim().required("form.error.required"),
+    owner: Yup.string().trim().required("form.error.required"),
+    client: Yup.string().trim().required("form.error.required"),
+    project_id: Yup.string().required("form.error.required"),
+    // start_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+    // end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+  });
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit,
+  });
 
   const touchedErrors = useMemo(() => {
     return Object.entries(formik.errors).reduce(
@@ -274,7 +266,7 @@ const ModalAddBudget = (props: Props) => {
   return (
     <FormLayout
       label={
-        budgetData?.id
+        props.selectedBudget?.id
           ? projectT("budget.action.editBudgetTitleModal")
           : projectT("budget.action.addBudgetTitleModal")
       }
@@ -371,7 +363,6 @@ const ModalAddBudget = (props: Props) => {
             rootSx={sxInput}
             fullWidth
             autoComplete="off"
-            hasAvatar
           />
           <Stack
             direction={{ sm: "row" }}
@@ -412,7 +403,6 @@ const ModalAddBudget = (props: Props) => {
               value={formik.values?.end_date}
               error={commonT(touchedErrors?.end_date, {
                 name: projectT("budget.form.end_date"),
-                name2: projectT("budget.form.start_date"),
               })}
               rootSx={sxInput}
               fullWidth

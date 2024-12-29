@@ -243,7 +243,7 @@ export const ItemWithoutProject = ({
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           display: 'inline-block',
-                          maxWidth: '200px', 
+                          maxWidth: '200px',
                         }}
                       >
                         {budget.name}
@@ -299,8 +299,15 @@ export const ItemWithoutProject = ({
       {isModalOpen && selectedBudget && (
         <ModalAddBudget
           open={isModalOpen}
-          budgetData={selectedBudget}
-          onClose={() => setModalOpen(false)}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedBudget(null);
+          }}
+          selectedBudget={selectedBudget}
+          onAddSnackbar={onAddSnackbar}
+          onGetBudget={async (queries) => {
+            await projectBudget.get(queries);
+          }}
         />
       )}
     </TableLayoutWithScroll>

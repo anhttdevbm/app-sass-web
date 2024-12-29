@@ -2,13 +2,13 @@ import { DataStatus } from "constant/enums";
 import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
-import { ProjectData } from "store/project/actions";
 import {
   createProjectBudget,
   deleteProjectBudget,
   getProjectBudgetList,
   TBudgetCreateParam,
   TBudgetListQueries,
+  TBudgetUpdateParam,
   updateProjectBudget,
 } from "store/project/budget/action";
 
@@ -54,7 +54,7 @@ export const useBudgets = () => {
   );
 
   const triggerUpdateProjectBudget = useCallback(
-    async (budgetId: string, data: Partial<ProjectData>) =>
+    async (budgetId: string, data: Partial<TBudgetUpdateParam>) =>
       await dispatch(updateProjectBudget({ budgetId, data })).unwrap(),
     [dispatch],
   );
