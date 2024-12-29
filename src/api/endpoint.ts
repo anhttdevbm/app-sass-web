@@ -284,6 +284,7 @@ export const Endpoint = {
   NOTIFY_GET_ALL: "/notification/history/",
 
   //Dashboard
-  DASHBOARD_ALL: "/statistic",
+  DASHBOARD_ALL: "/statistic/",
   DASHBOARD_PROJECT_ALL_ACTIVE: "/projects/project-active",
+  DASHBOARD_MY_TASK_ALL_ACTIVE: "/statistic/all-my-task-active",
 };
