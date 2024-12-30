@@ -254,13 +254,13 @@ const SalesPage = () => {
       {
         name: "updated_time",
         value: salesT("list.table.lastActivity"),
-        align: "left",
-        width: "12%",
-        minWidth: 130,
+        align: "center",
+        width: "7%",
+        minWidth: 100,
         sort: true,
       },
     ],
-    [commonT, salesT, totalRevenue, totalRevenuePJ, totalTime],
+    [commonT, salesT, totalRevenue, totalTime],
   );
 
   useFetchEmployeeOptions();
@@ -288,17 +288,17 @@ const SalesPage = () => {
             px: { xs: 1, md: 1 },
             overflow: "auto",
             py: "4px",
-            pb: "8px", 
+            pb: "8px",
             height: "auto",
             verticalAlign: "middle",
             background: "#D9F0FD",
             color: "#999999",
-            h6: { fontSize: "13px"}
+            h6: { fontSize: "13px" }
           },
         }}
         containerHeaderProps={{
           sx: {
-        overflowX: "hidden",
+            overflowX: "hidden",
           },
         }}
         error={salesError as string}
@@ -331,7 +331,7 @@ const SalesPage = () => {
             color: "black",
             borderRadius: "12px",
           },
-          
+
         }}
         onChangePage={onChangePage}
         onChangeSize={onChangeSize}

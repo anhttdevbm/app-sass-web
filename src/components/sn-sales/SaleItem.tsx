@@ -362,7 +362,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
             zIndex: 99,
             pr: 0,
           }}
-          justifyContent={"end"}
+          justifyContent={"flex-start"}
           alignItems={"center"}
           gap="3px"
         >
