@@ -1,3 +1,6 @@
+import { DataStatus } from "constant/enums";
+import { useCallback, useMemo } from "react";
+import { shallowEqual } from "react-redux";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   BodyCreateTimeSheet,
@@ -8,17 +11,10 @@ import {
   deleteTimeSheet,
   getCompanyTimeSheet,
   getMyTimeSheet,
-  getSameWorker,
   getWorkLog,
   pinTimeSheet,
-  updateTimeSheet,
+  updateTimeSheet
 } from "./actions";
-import { DataStatus } from "constant/enums";
-import { useMemo, useCallback } from "react";
-import { shallowEqual } from "react-redux";
-import { BaseQueries, Option } from "constant/types";
-import { getFiltersIgnoreId } from "utils/index";
-import { DEFAULT_RANGE_ACTIVITIES } from "./reducer";
 
 export const useGetMyTimeSheet = () => {
   const dispatch = useAppDispatch();

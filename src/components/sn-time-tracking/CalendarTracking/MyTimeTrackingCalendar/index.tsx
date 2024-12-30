@@ -38,7 +38,6 @@ import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import TimeCreate, {
   TimeCreateValue,
 } from "../../TimeTrackingModal/TimeCreate";
-import TimeSheet from "./TimeSheet";
 
 import { DateSelectArg } from "@fullcalendar/core";
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
@@ -204,8 +203,9 @@ const TrackingCalendar = (props: IProps) => {
   const commonT = useTranslations(NS_COMMON);
 
   useEffect(() => {
+    const today = dayjs().format("YYYY-MM-DD");
+
     if (currentKindOfSheet === "timeSheet") {
-      const today = dayjs().format("YYYY-MM-DD");
       // If current my time sheet not include today -> get week data that include today data
       if (!(filters.start_date <= today && filters.end_date >= today)) {
         onGetMyTimeSheet({
@@ -214,6 +214,13 @@ const TrackingCalendar = (props: IProps) => {
           search_key: "",
         });
       }
+    } else if (currentKindOfSheet === "timeGridWeek") {
+      // Fetch data from Sunday to Saturday
+      onGetMyTimeSheet({
+        start_date: dayjs(today).startOf("week").format("YYYY-MM-DD"),
+        end_date: dayjs(today).endOf("week").format("YYYY-MM-DD"),
+        search_key: "",
+      });
     } else {
       onGetMyTimeSheet({
         start_date: dayjs(today).startOf("day").format("YYYY-MM-DD"),
@@ -726,14 +733,14 @@ const TrackingCalendar = (props: IProps) => {
                     display: "flex",
                   },
                   ".fc-day.fc-day-sun, .fc-day.fc-day-sat, .fc-timegrid-axis, colgroup":
-                    {
-                      backgroundColor: isDarkMode
-                        ? "rgb(86, 86, 86)"
-                        : "#FAFAFA",
-                      ...(isDarkMode && {
-                        color: "#fff",
-                      }),
-                    },
+                  {
+                    backgroundColor: isDarkMode
+                      ? "rgb(86, 86, 86)"
+                      : "#FAFAFA",
+                    ...(isDarkMode && {
+                      color: "#fff",
+                    }),
+                  },
                   ".fc-timegrid-axis .fc-timegrid-axis-frame": {
                     color: isDarkMode ? "#fff" : undefined,
                   },
@@ -850,10 +857,10 @@ const TrackingCalendar = (props: IProps) => {
                     return (
                       <Stack
                         direction="column"
-                        // sx={{ cursor: 'pointer' }}
-                        // onClick={() => {
-                        //   setSelectedDate(date);
-                        // }}
+                      // sx={{ cursor: 'pointer' }}
+                      // onClick={() => {
+                      //   setSelectedDate(date);
+                      // }}
                       >
                         <Typography
                           sx={{
@@ -902,7 +909,7 @@ const TrackingCalendar = (props: IProps) => {
                                 direction="column"
                                 sx={{ backgroundColor: "common.white" }}
                                 gap={2 / 8}
-                                // {...bindToggle(popupState)}
+                              // {...bindToggle(popupState)}
                               >
                                 <Stack direction="row" alignItems="center">
                                   <Avatar
@@ -935,14 +942,14 @@ const TrackingCalendar = (props: IProps) => {
 
                                 <Stack
                                   className="same-time-worker"
-                                  // sx={{
-                                  //   visibility: "hidden",
-                                  //   transition: "all .3s ease-in-out",
-                                  // }}
+                                // sx={{
+                                //   visibility: "hidden",
+                                //   transition: "all .3s ease-in-out",
+                                // }}
                                 >
                                   {!_.isEmpty(sameTime) &&
                                     sameTime[`${extendedProps?.id}`]?.length >
-                                      0 && (
+                                    0 && (
                                       <>
                                         <Typography
                                           sx={{
@@ -1002,7 +1009,7 @@ const TrackingCalendar = (props: IProps) => {
                           <Stack
                             direction="column"
                             sx={boxStyles}
-                            // {...bindToggle(popupState)}
+                          // {...bindToggle(popupState)}
                           >
                             {/* <Stack direction="row" alignItems="center">
                               <Avatar
@@ -1056,10 +1063,10 @@ const TrackingCalendar = (props: IProps) => {
 
                             <Stack
                               className="same-time-worker"
-                              // sx={{
-                              //   visibility: "hidden",
-                              //   transition: "all .3s ease-in-out",
-                              // }}
+                            // sx={{
+                            //   visibility: "hidden",
+                            //   transition: "all .3s ease-in-out",
+                            // }}
                             >
                               {!_.isEmpty(sameTime) &&
                                 sameTime[
@@ -1291,10 +1298,10 @@ const TrackingCalendar = (props: IProps) => {
 
                           <Stack
                             className="same-time-worker"
-                            // sx={{
-                            //   visibility: "hidden",
-                            //   transition: "all .3s ease-in-out",
-                            // }}
+                          // sx={{
+                          //   visibility: "hidden",
+                          //   transition: "all .3s ease-in-out",
+                          // }}
                           >
                             {!_.isEmpty(sameTime) &&
                               sameTime[`${extendedProps.id}`]?.length > 0 && (
