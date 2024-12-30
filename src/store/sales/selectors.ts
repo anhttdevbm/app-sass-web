@@ -1,19 +1,26 @@
-import { on } from "events";
-import { DataStatus, SORT_OPTIONS } from "constant/enums";
+import {
+  ServiceColumn,
+  defaultShowColumns
+} from "components/sn-sales-detail/hooks/useGetHeaderColumn";
+import { DataStatus } from "constant/enums";
+import { NS_COMMON, NS_SALES } from "constant/index";
+import moment from "moment";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo } from "react";
 import { shallowEqual } from "react-redux";
+import { useSnackbar } from "store/app/selectors";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import {
   CommentData,
   DealData,
   GetSalesListQueries,
   SectionData,
-  TodoData,
   TodoItemData,
   createComment,
   createDeal,
   createServiceSection,
   createTodo,
+  deleteDeal,
   deleteSection,
   deleteTodo,
   getDetailDeal,
@@ -22,19 +29,9 @@ import {
   updateDeal,
   updatePriority,
   updateServiceSection,
-  updateTodo,
+  updateTodo
 } from "./actions";
-import moment from "moment";
-import { useSnackbar } from "store/app/selectors";
-import { ServiceSection, Todo, reset, setColumn, setRevenue } from "./reducer";
-import Item from "components/sn-cost-history/Item";
-import {
-  ServiceColumn,
-  defaultShowColumns,
-  useGetHeaderColumn,
-} from "components/sn-sales-detail/hooks/useGetHeaderColumn";
-import { useTranslations } from "next-intl";
-import { NS_COMMON, NS_SALES } from "constant/index";
+import { reset, setColumn, setRevenue } from "./reducer";
 
 export const useSales = () => {
   const { onAddSnackbar } = useSnackbar();
@@ -143,6 +140,24 @@ export const useSales = () => {
     [dispatch, JSON.stringify(salesFilters)],
   );
 
+  // delete deal
+  const onDeleteDeal = useCallback(
+    async (id: string) => {
+      await dispatch(deleteDeal(id))
+        .unwrap()
+        .then(() => {
+          onGetSales(salesFilters);
+          onAddSnackbar(
+            commonT("notification.success", {
+              label: commonT("list.newDealForm.delete"),
+            }),
+            "success",
+          );
+        });
+    },
+    [dispatch, JSON.stringify(salesFilters)],
+  );
+
   useEffect(() => {
     if (salesError) {
       onAddSnackbar(salesError, "error");
@@ -166,6 +181,7 @@ export const useSales = () => {
     onGetSales,
     onUpdateDeal,
     onCreateDeal,
+    onDeleteDeal,
   };
 };
 

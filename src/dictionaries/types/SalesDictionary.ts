@@ -22,10 +22,11 @@ export type SalesDictionary = {
       tags: string;
       submit: string;
       update: string;
+      delete: string;
     };
     table: {
       stage: string;
-      filter:string;
+      filter: string;
       pjRevenue: string;
       revenue: string;
       time: string;

@@ -35,7 +35,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
   const commonT = useTranslations(NS_SALES);
   const { employeeOptions, onEndReachedEmployeeOptions, onSearchEmployee } =
     useGetEmployeeOptions();
-  const { onUpdateDeal, onCreateDeal } = useSales();
+  const { onUpdateDeal, onCreateDeal, onDeleteDeal } = useSales();
   const { onAddSnackbar } = useSnackbar();
   const [owner, setOwner] = useState<string>(item.owner?.id);
   const [stage, setStage] = useState<string>(item.status);
@@ -58,7 +58,6 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
         probability: data.probability,
       });
     } catch (error) {
-      console.log(error);
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
       throw error;
     }
@@ -205,7 +204,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           options={mappedOwners}
         /> */}
         {!isEditOwner ? (
-          <Stack direction="row" alignItems="center" spacing={1}>
+          <Stack direction="row" alignItems="left" spacing={1}>
             <Avatar size={32} src={mappedowner.avatar || ""}></Avatar>
             <Text
               fontSize={14}
@@ -260,45 +259,16 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
           />
         )}
       </BodyCell>
-      <BodyCell align="right">
+      <BodyCell align="center">
         {formatCurrency(item.revenue, {
           prefix: CURRENCY_SYMBOL[item.currency],
           numberOfFixed: 2,
         })}
       </BodyCell>
-      <BodyCell align="right">
-        {formatCurrency(item.revenuePJ, {
-          prefix: CURRENCY_SYMBOL[item.currency],
-          numberOfFixed: 2,
-        })}
-      </BodyCell>
-      <BodyCell size="small" align="right">
+      <BodyCell size="small" align="left">
         {`${time}h`}
       </BodyCell>
-      <BodyCell align="right">
-        {/* <Dropdown
-          name="probability"
-          rootSx={{
-            width: "100%",
-            px: "0!important",
-            [`& .MuiSelect-select`]: {
-              mr: "20px!important",
-            },
-            // [`& .MuiSelect-icon`]: {
-            //   right: "-5px!important",
-            // },
-          }}
-          onChange={async (name, value) => {
-            await onSubmit({ probability: value - 1 }).then(() => {
-              setProbability(value);
-            });
-          }}
-          size="small"
-          hasAll={false}
-          value={probability}
-          options={mappingProbabilityOptions}
-        />
-         */}
+      <BodyCell align="center">
         {!isEditProb ? (
           <Text
             fontSize={14}
@@ -381,11 +351,14 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
                   currency: item.currency,
                   dealName: item.name,
                   owner: item.owner?.id,
-                  members: item.members?.map((member) => ({ id: member.id })),
                   description: item.description,
                   tags: item.description?.split(","),
                 });
               }
+              if (action === Action.DELETE) {
+                onDeleteDeal(item.id);
+              }
+
               setIsFocused(false);
             }}
             onClose={() => setIsFocused(false)}
