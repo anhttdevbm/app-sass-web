@@ -81,13 +81,12 @@ const ModalDrop = ({
   const handleSearch = async () => {
     if (budgetSelected) {
       const res = await getServiceByBudgetQueries(budgetSelected, {
-        query: `or(like(name,"${searchValue}") ${
-          dateValue
+        query: `or(like(name,"${searchValue}") ${dateValue
             ? `, like( createdAt,"${dayjs(dateValue).format(
-                "YYYY-MM-DD:HH:mm",
-              )}")`
+              "YYYY-MM-DD:HH:mm",
+            )}")`
             : ""
-        })`,
+          })`,
       });
 
       if (res.status === 200) {
@@ -179,7 +178,7 @@ const ModalDrop = ({
             {t("popupService.budget")} <span style={{ color: "red" }}>*</span>
           </Typography>
           <Select
-            options={listBudgets}
+            options={listBudgets.map(budget => ({ value: budget.id, label: budget.name }))}
             fullWidth
             placeholder={t("popupService.chooseBudgetPlacehodle")}
             rootSx={{

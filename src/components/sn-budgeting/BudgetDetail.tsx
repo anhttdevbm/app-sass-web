@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { Box, CircularProgress, Stack, Tooltip } from "@mui/material";
+import { Box, CircularProgress, Stack } from "@mui/material";
 import "@sweetalert2/theme-material-ui/material-ui.css";
 import Avatar from "components/Avatar";
 import ConfirmDialog from "components/ConfirmDialog";
@@ -344,7 +344,7 @@ export const BudgetDetail = () => {
 
       budgetUpdate.mutateAsync(
         {
-          id: budget.id,
+          id: budget?.id || "",
           start_date: date.startDate,
           end_date: date.endDate,
         },
@@ -425,8 +425,8 @@ export const BudgetDetail = () => {
                     textOverflow: "ellipsis",
                     cursor: "pointer",
                   }}
-                  onMouseEnter={() => setIsHovered(true)} 
-                  onMouseLeave={() => setIsHovered(false)} 
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
                 >
                   {budget.name}
                 </Text>
@@ -443,10 +443,10 @@ export const BudgetDetail = () => {
                       padding: "8px 12px",
                       borderRadius: "4px",
                       zIndex: 1500,
-                      maxWidth: "250px", 
-                      whiteSpace: "normal", 
+                      maxWidth: "250px",
+                      whiteSpace: "normal",
                       textOverflow: "unset",
-                      wordWrap: "break-word", 
+                      wordWrap: "break-word",
                     }}
                   >
                     {budget.name}

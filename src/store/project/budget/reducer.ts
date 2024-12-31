@@ -3,9 +3,11 @@ import { ActionReducerMapBuilder } from "@reduxjs/toolkit/src/mapBuilders";
 import { DataStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN } from "constant/index";
 import { ItemListResponse } from "constant/types";
+import { WritableDraft } from "immer/dist/internal";
 import {
   createProjectBudget,
   getProjectBudgetList,
+  TBudget,
   updateProjectBudget
 } from "store/project/budget/action";
 import { ProjectState } from "store/project/reducer";
@@ -21,7 +23,7 @@ export const BudgetReducer = (
     getProjectBudgetList.fulfilled,
     (state, action: PayloadAction<ItemListResponse>) => {
       const { items, ...paging } = action.payload;
-      state.budgets = items;
+      state.budgets = items as WritableDraft<TBudget>[];
       state.budgetStatus = DataStatus.SUCCEEDED;
       state.budgetError = undefined;
       state.budgetPaging = Object.assign(state.budgetPaging, paging);
@@ -42,6 +44,7 @@ export const BudgetReducer = (
   });
   builder.addCase(
     createProjectBudget.fulfilled,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state, action: PayloadAction<any>) => {
       // const { items, ...paging } = action.payload;
       // state.budgets = items;

@@ -1,15 +1,15 @@
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Text } from "components/shared";
 import Link from "components/Link";
-import { BoxData, accordionSx } from "./Util";
-import { TBudget } from "store/project/budget/action";
+import { Text } from "components/shared";
 import moment from "moment";
+import { TBudget } from "store/project/budget/action";
+import { BoxData, accordionSx } from "./Util";
 
 interface HomeTabProps {
   budget: TBudget;
@@ -37,7 +37,7 @@ export const HomeTab = ({ budget }: HomeTabProps) => {
         <AccordionDetails>
           <BoxData title="Budget name">{name}</BoxData>
           <BoxData title="Owner">{fullname}</BoxData>
-          <BoxData title="Company">{company}</BoxData>
+          <BoxData title="Company">{company.name}</BoxData>
           <BoxData title="Subsidiary">{subsidiary}</BoxData>
           <Link href="#" underline="none">
             <Text sx={{ color: "secondary.main" }}>Edit</Text>

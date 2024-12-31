@@ -1,17 +1,16 @@
-import { memo, useEffect, useState } from "react";
-import { useBudgets } from "store/project/budget/selector";
-import { DATE_TIME_FORMAT_SLASH, DEFAULT_PAGING } from "constant/index";
-import { Box, Stack } from "@mui/material";
-import { formatDate } from "utils/index";
-import { useMembersOfProject } from "store/project/selectors";
-import { TBudgetListQueries, TBudgets } from "store/project/budget/action";
-import { IconButton, Text } from "components/shared";
-import useQueryParams from "hooks/useQueryParams";
-import CloseIcon from "icons/CloseIcon";
-import { PopperItem, PopperMenu } from "components/shared/PopperMenu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
+import { Box, Stack } from "@mui/material";
+import { IconButton, Text } from "components/shared";
+import { PopperItem, PopperMenu } from "components/shared/PopperMenu";
+import { DATE_TIME_FORMAT_SLASH, DEFAULT_PAGING } from "constant/index";
+import useQueryParams from "hooks/useQueryParams";
 import MoreDotIcon from "icons/MoreDotIcon";
+import { memo, useEffect, useState } from "react";
+import { TBudgetListQueries, TBudgets } from "store/project/budget/action";
+import { useBudgets } from "store/project/budget/selector";
+import { useMembersOfProject } from "store/project/selectors";
+import { formatDate } from "utils/index";
 import { ItemWithProject } from "./Items/ItemWithProject";
 import { ItemWithoutProject } from "./Items/ItemWithoutProject";
 
@@ -31,6 +30,8 @@ const Item = ({ projectId }: { projectId?: string }) => {
 
   useEffect(() => {
     if (!isReady) return;
+    console.log("budgets", budgets);
+
 
     const query: TBudgetListQueries = {
       ...DEFAULT_PAGING,

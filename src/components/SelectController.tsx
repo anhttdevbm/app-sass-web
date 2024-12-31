@@ -47,7 +47,7 @@ const SelectController: React.FC<TSelectProps> = ({
               {...field}
               onChange={(value) => {
                 field.onChange(value);
-                handleChange && handleChange(value);
+                handleChange && handleChange(value as SelectChangeEvent<string | number>);
               }}
               fullWidth
               sx={{
@@ -64,10 +64,10 @@ const SelectController: React.FC<TSelectProps> = ({
                 },
                 "& .MuiSelect-select .notranslate::after": placeholder
                   ? {
-                      fontWeight: 400,
-                      content: `"${placeholder}"`,
-                      color: "#B8B8BE",
-                    }
+                    fontWeight: 400,
+                    content: `"${placeholder}"`,
+                    color: "#B8B8BE",
+                  }
                   : {},
                 ...sx,
               }}
