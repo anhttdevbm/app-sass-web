@@ -4,7 +4,7 @@ import { TableRow } from "@mui/material";
 import FixedLayout from "components/FixedLayout";
 import Pagination from "components/Pagination";
 import { ActionsCell, CellProps, TableLayout } from "components/Table";
-import { DataAction } from "constant/enums";
+import { DataAction, Permission } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useQueryParams from "hooks/useQueryParams";
@@ -62,8 +62,8 @@ const ItemList = () => {
         align: "left",
         sort: true
       },
-        
-      { value: commonT("creationDate"), width: "20%", align: "center",  sort: true  },
+
+      { value: commonT("creationDate"), width: "20%", align: "center", sort: true },
       { value: companyT("positions.numberOfEmployees"), align: "center", width: "20%", sort: true },
       { value: "", width: "5%" },
     ],
@@ -163,11 +163,11 @@ const ItemList = () => {
               // px: { xs: 2, md: 2 },
               overflow: "auto",
               py: "2px",
-              height:"50px",
+              height: "50px",
               verticalAlign: "middle",
               background: "#D9F0FD",
               color: "#999999",
-              h6:{fontSize:"13px"}
+              h6: { fontSize: "13px" }
             },
           }}
         >
@@ -182,16 +182,18 @@ const ItemList = () => {
                     order={(pageIndex - 1) * pageSize + (index + 1)}
                   />
                 )}
-                <ActionsCell
-                  onEdit={onActionToItem(DataAction.UPDATE, item)}
-                  onDelete={onDelete(item.id)}
-                  sx={{ px: { xs: 0.5, md: 2 } }}
-                  iconProps={{
-                    sx: {
-                      p: { xs: "4px!important", md: 1 },
-                    },
-                  }}
-                />
+                {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
+                  <ActionsCell
+                    onEdit={onActionToItem(DataAction.UPDATE, item)}
+                    onDelete={onDelete(item.id)}
+                    sx={{ px: { xs: 0.5, md: 2 } }}
+                    iconProps={{
+                      sx: {
+                        p: { xs: "4px!important", md: 1 },
+                      },
+                    }}
+                  />
+                )}
               </TableRow>
             );
           })}
@@ -217,7 +219,7 @@ const ItemList = () => {
               color: "black",
               borderRadius: "12px",
             },
-            
+
           }}
           totalItems={totalItems}
           totalPages={totalPages}
