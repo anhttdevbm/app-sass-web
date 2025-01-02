@@ -229,7 +229,7 @@ export const ProjectLang: ProjectDictionary = {
       workedTime: "Thời gian làm việc",
       billableTime: "Thời gian tính phí",
       invoiced: "Đã lập hóa đơn",
-      company: "Công ty",
+      company: "Khách hàng",
       project: "Dự án",
     },
     groupBy: {

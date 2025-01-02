@@ -232,7 +232,7 @@ export const ProjectLang: ProjectDictionary = {
       workedTime: "Worked Time",
       billableTime: "Billabel Time",
       invoiced: "Invoiced",
-      company: "Company",
+      company: "Client",
       project: "Project",
     },
     groupBy: {
