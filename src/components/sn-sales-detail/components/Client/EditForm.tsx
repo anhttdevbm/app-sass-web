@@ -29,7 +29,7 @@ export const INITIAL_VALUES: ClientCompany = {
   address: "",
   phone: "",
   email: "",
-  avatar: [],
+  avatar: "",
   website: "",
   status: false,
   created_time: "",
@@ -117,7 +117,7 @@ const EditForm = (props: FormProps) => {
               value={
                 formik.values?.files ||
                 (Array.isArray(formik.values?.avatar) &&
-                !!formik.values?.avatar?.length
+                  !!formik.values?.avatar?.length
                   ? (formik.values?.avatar[0] as IAvatar)?.link
                   : "")
               }

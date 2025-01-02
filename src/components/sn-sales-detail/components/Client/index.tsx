@@ -81,8 +81,8 @@ const SalesClient = () => {
   const onUpdate = async (data: ClientCompany) => {
     const payload = { ...data };
     if (data.files) {
-      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
-      payload.avatar = [logoUrl];
+      const logoUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, data?.files);
+      payload.avatar = logoUrl;
     } else {
       delete payload["files"];
     }

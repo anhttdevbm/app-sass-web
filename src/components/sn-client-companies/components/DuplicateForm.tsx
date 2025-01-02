@@ -2,6 +2,7 @@ import { Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
 import { Input } from "components/shared";
+import { ClientCompany } from "components/sn-client-companies/type";
 import { DataAction } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
 import { FormikErrors, useFormik } from "formik";
@@ -10,7 +11,6 @@ import { memo, useEffect, useMemo, useRef } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
-import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 
 type FormProps = {
   initialValues: ClientCompany;
@@ -49,10 +49,7 @@ const DuplicateForm = (props: FormProps) => {
           position: values?.contact?.position,
           website: values?.contact?.website,
         },
-        avatar:
-          Array.isArray(values?.avatar) && !!values?.avatar?.length
-            ? [(values?.avatar[0] as IAvatar)?.object]
-            : undefined,
+        avatar: values?.avatar,
       };
       const newItem = await onSubmitProps(body);
       if (newItem) {

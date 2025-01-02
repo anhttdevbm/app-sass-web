@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
+import { ClientCompany } from "components/sn-client-companies/type";
 import { DataStatus, PayStatus } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, DEFAULT_PAGING } from "constant/index";
 import { ItemListResponse, Option, Paging, User } from "constant/types";
@@ -647,13 +647,10 @@ const companySlice = createSlice({
         createClientCompany.fulfilled,
         (state, action: PayloadAction<ClientCompany>) => {
           const avatar = action?.payload?.avatar;
-          const newAvatar: IAvatar[] = [];
-          if (!Array.isArray(avatar)) {
-            newAvatar.push(avatar as IAvatar);
-          }
+
           state.clientCompanies.unshift({
             ...action.payload,
-            avatar: newAvatar || avatar,
+            avatar: avatar,
           });
           if (
             state.clientCompanies.length > state.clientCompaniesPaging.pageSize
