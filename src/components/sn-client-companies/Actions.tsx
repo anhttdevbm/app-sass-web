@@ -78,7 +78,7 @@ const Actions = () => {
     const payload = { ...data };
     if (data.files) {
       const logoUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, data?.files);
-      payload.avatar = [logoUrl];
+      payload.avatar = logoUrl;
     } else {
       delete payload["files"];
     }

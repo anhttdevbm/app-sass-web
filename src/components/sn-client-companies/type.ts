@@ -7,7 +7,7 @@ export interface Contact {
   phone?: string;
   email?: string;
   created_time?: string;
-  avatar?: [];
+  avatar?: string;
   website?: string;
 }
 
@@ -43,7 +43,7 @@ export interface ClientCompany {
   created_time: string;
   status: boolean;
   zip_code?: string;
-  avatar?: string[] | IAvatar[] | IAvatar;
+  avatar?: string;
   website?: string;
   contact?: Contact;
   files?: File;
@@ -58,7 +58,7 @@ const INITIAL_VALUES: ClientCompany = {
   address: "",
   phone: "",
   email: "",
-  avatar: [],
+  avatar: "",
   website: "",
   status: false,
   created_time: "",
@@ -69,6 +69,6 @@ const INITIAL_VALUES: ClientCompany = {
     phone: "",
     email: "",
     website: "",
-    avatar: [],
+    avatar: "",
   },
 };
