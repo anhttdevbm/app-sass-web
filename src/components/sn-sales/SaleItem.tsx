@@ -349,7 +349,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
               if (action === Action.DUPLICATE) {
                 onCreateDeal({
                   currency: item.currency,
-                  dealName: item.name,
+                  dealName: "Duplicated deal " + item.name,
                   owner: item.owner?.id,
                   description: item.description,
                   tags: item.description?.split(","),

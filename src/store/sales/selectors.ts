@@ -65,7 +65,7 @@ export const useSales = () => {
 
   const onCreateDeal = useCallback(
     async (data) => {
-      const members = data.members.map((value) => ({ id: value }));
+      const members = data.members ? data.members.map((value) => ({ id: value })) : [];
       const description = data.tags?.join(",");
       const convertedBody: DealData = {
         currency: data.currency,
