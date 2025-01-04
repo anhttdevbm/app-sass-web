@@ -268,7 +268,7 @@ const SaleItem = ({ item, setShouldLoad }: IProps) => {
       <BodyCell size="small" align="left">
         {`${time}h`}
       </BodyCell>
-      <BodyCell align="center">
+      <BodyCell align="left" size="small">
         {!isEditProb ? (
           <Text
             fontSize={14}

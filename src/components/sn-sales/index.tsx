@@ -100,7 +100,7 @@ const SalesPage = () => {
         value: commonT("name"),
         align: "left",
         width: "14%",
-        // minWidth: 130,
+        minWidth: 130,
         sort: true,
       },
       {
@@ -108,14 +108,13 @@ const SalesPage = () => {
         value: salesT("list.table.stage"),
         align: "center",
         width: "20%",
-        // minWidth: 160,
+        minWidth: 160,
         sort: true,
       },
       {
         name: "owner.fullname",
         value: salesT("list.table.owner"),
         align: "right",
-
         width: "14%",
         sort: true,
         minWidth: 160,
@@ -205,8 +204,8 @@ const SalesPage = () => {
         name: "probability",
         value: salesT("list.table.probability"),
         align: "right",
-        width: "15%",
-        minWidth: 70,
+        width: "10%",
+        minWidth: 50,
         sort: true,
       },
       {
@@ -214,13 +213,13 @@ const SalesPage = () => {
         value: salesT("list.table.lastActivity"),
         align: "right",
         width: "10%",
-        minWidth: 100,
+        minWidth: 150,
         sort: true,
       },
       {
         name: "action",
         value: "",
-        align: "center",
+        align: "right",
         width: "5%",
         minWidth: 70,
       }
