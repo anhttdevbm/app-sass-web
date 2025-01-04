@@ -40,7 +40,7 @@ export const Endpoint = {
   SUB_TASK: "/tasks/sub-task",
   TASK_ITEM: "/tasks/task",
   TASKS_INACTIVE: "/tasks/task-inactive",
-  TASKS_LOG: "/tasks/logs",
+  TASKS_LOG: "/logs/task",
   SUB_TASKS_INACTIVE: "/tasks/sub-inactive",
   TASK_LIST_INACTIVE: "/tasks/task-list",
   CHANGE_PARENT_TASK: "/tasks/change-parent-task",

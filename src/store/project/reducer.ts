@@ -173,6 +173,20 @@ export interface ActivityTask {
   new?: string;
 }
 
+export interface ActivityTaskLog {
+  id: string;
+  created_time: string;
+  user: User;
+  action: string;
+  task: TaskLog;
+  new?: string;
+}
+export interface TaskLog {
+  task_id: string;
+  task_name: string;
+  task_number: string;
+}
+
 export type TaskDetail = Omit<Task, "task_list" | "task" | "sub_task"> & {
   taskListId: string;
   taskId: string;
@@ -524,7 +538,7 @@ const projectSlice = createSlice({
 
             const newPages = Math.ceil(
               (current(state).tasksPaging.totalItems as number) /
-                current(state).tasksPaging.pageSize,
+              current(state).tasksPaging.pageSize,
             );
             state.tasksPaging.totalPages = newPages;
           }
