@@ -178,8 +178,7 @@ const ModalAddBudget = (props: Props) => {
     owner: props.selectedBudget?.owner || "",
     client: props.selectedBudget?.client || "",
     start_date: "",
-
-    end_date: props.selectedBudget?.end_date || "",
+    end_date: "",
   };
 
 
@@ -188,8 +187,8 @@ const ModalAddBudget = (props: Props) => {
     owner: Yup.string().trim().required("form.error.required"),
     client: Yup.string().trim().required("form.error.required"),
     project_id: Yup.string().required("form.error.required"),
-    // start_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
-    // end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+    start_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+    end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
   });
 
   const formik = useFormik({
