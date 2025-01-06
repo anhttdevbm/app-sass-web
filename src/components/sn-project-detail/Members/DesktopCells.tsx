@@ -17,14 +17,13 @@ type DesktopCellsProps = {
 
 const DesktopCells = (props: DesktopCellsProps) => {
   const { item, order } = props;
-  const avatarSrc = typeof item.avatar === 'object' ? item.avatar.link : item.avatar;
 
   return (
     <>
       <BodyCell align="center">{order}</BodyCell>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={avatarSrc ?? ProjectPlaceholderImage} />
+          <Avatar size={32} src={item.avatar ?? ProjectPlaceholderImage} />
           <Text variant="h6">{item.fullname}</Text>
         </Stack>
       </BodyCell>
