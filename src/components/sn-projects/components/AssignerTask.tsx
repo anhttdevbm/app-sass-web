@@ -14,7 +14,6 @@ type AssignerTaskProps = Omit<
 
 const AssignerTask = ({ onHandler, ...props }: AssignerTaskProps) => {
   const { options: initialOptions } = useMemberOptions();
-  console.log("initialOptions", initialOptions);
 
   const commonT = useTranslations(NS_COMMON);
 
