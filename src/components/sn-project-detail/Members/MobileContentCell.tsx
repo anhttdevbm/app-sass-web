@@ -1,13 +1,13 @@
-import { memo } from "react";
 import { Stack, StackProps } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import { BodyCell } from "components/Table";
-import { Member } from "store/project/reducer";
-import { Collapse, DeleteUser } from "./components";
-import { formatDate } from "utils/index";
 import { NS_COMMON, NS_PROJECT } from "constant/index";
 import { useTranslations } from "next-intl";
+import { memo } from "react";
+import { Member } from "store/project/reducer";
+import { formatDate } from "utils/index";
+import { Collapse, DeleteUser } from "./components";
 
 type MobileContentCellProps = {
   item: Member;
@@ -59,7 +59,7 @@ const Label = ({ item }: { item: Member }) => {
       pr={3}
     >
       <Stack direction="row" py={1.5} alignItems="center" spacing={1}>
-        <Avatar size={32} src={item?.avatar?.link} />
+        <Avatar size={32} src={item?.avatar} />
         <Stack>
           <Text variant="h6">{item.fullname}</Text>
           <Text variant="caption"></Text>
