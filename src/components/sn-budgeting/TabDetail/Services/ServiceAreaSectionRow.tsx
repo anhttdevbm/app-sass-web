@@ -112,7 +112,7 @@ function ServiceAreaSectionRow({
               }}
             >
               <Text variant="caption" color="grey.300">
-                {budgetT("tabService.section.description")}
+                {/* {budgetT("tabService.section.description")} */}
               </Text>
               <Text
                 variant="body2"

@@ -347,7 +347,7 @@ export const ServiceSection = memo(({
 
   };
 
-  
+
 
   const onSubmit: SubmitHandler<TSectionForm> = async ({
     sections,
@@ -482,74 +482,189 @@ export const ServiceSection = memo(({
     });
   };
 
+  // const handleUpdateSections = async (
+  //   updateSections: (TBudgetSection & { sectionId: string })[],
+  // ) => {
+  //   try {
+  //     const sectionUpdateList: any[] = [];
+  //     const serviceUpdateList: any[] = [];
+
+  //     // console.log("check list", updateSections)
+
+
+  //     _.map(updateSections, (section) => {
+  //       console.log("check list0", section)
+
+  //       sectionUpdateList.push({
+  //         id: _.get(section, "sectionId", ""),
+  //         name: _.get(section, "name", ""),
+  //         start_date: _.get(section, "start_date", ""),
+  //       });
+  //       console.log("check list1", sectionUpdateList)
+
+  //       let serviceParams: any = {};
+
+  //       _.forEach(_.get(section, "services", []), (service) => {
+  //         console.log("check list2", section)
+
+  //         if (service?.isNewService) {
+  //           serviceParams = _.cloneDeep(service);
+  //           // console.log("check list", serviceParams)
+  //           delete serviceParams["id"];
+  //         } else {
+  //           serviceParams = {
+  //             ...service,
+  //             id: service?.serviceId,
+  //             sectionId: section?.sectionId,
+  //           };
+  //         }
+
+  //         delete serviceParams["estimateTime"];
+  //         delete serviceParams["isNewService"];
+  //         delete serviceParams["section"];
+  //         delete serviceParams["_id"];
+  //         delete serviceParams["__v"];
+
+  //         // console.log("check list", serviceParams)
+
+  //       });
+  //       serviceUpdateList.push(serviceParams);
+
+  //     });
+
+  //     budgetServiceUpdate.mutateAsync(
+  //       {
+  //         services: serviceUpdateList,
+  //         sections: sectionUpdateList,
+  //       },
+  //       {
+  //         onSuccess: () => {
+
+  //           // console.log("check payload", {
+  //           //   services: serviceUpdateList,
+  //           //   sections: sectionUpdateList,
+  //           // },)
+
+  //           onAddSnackbar("Update services successful!", "success");
+  //           reset(defaultValues);
+  //           onCloseEdit();
+  //         },
+  //       },
+  //     );
+  //   } catch (error) {
+  //     onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+  //   }
+  // };
+
+  // const deleteSection = async (sectionId: string) => {
+  //   budgetSectionDelete.mutateAsync({
+  //     budgetId: String(budgetId),
+  //     sectionId: sectionId,
+  //   });
+  // };
+
+  // const deleteService = async (serviceId: string) => {
+  //   budgetSectionDelete.mutateAsync({
+  //     budgetId: String(budgetId),
+  //     serviceId: serviceId,
+  //   });
+  // };
+
   const handleUpdateSections = async (
     updateSections: (TBudgetSection & { sectionId: string })[],
   ) => {
     try {
-      const sectionUpdateList: any[] = [];
-      const serviceUpdateList: any[] = [];
-
-      _.map(updateSections, (section) => {
-        sectionUpdateList.push({
-          id: _.get(section, "sectionId", ""),
-          name: _.get(section, "name", ""),
-          start_date: _.get(section, "start_date", ""),
-        });
-
-        _.forEach(_.get(section, "services", []), (service) => {
-          let serviceParams: any = {};
-
+      const sectionUpdateList = _.map(updateSections, (section) => ({
+        id: _.get(section, "sectionId", ""),
+        name: _.get(section, "name", ""),
+        start_date: _.get(section, "start_date", ""),
+      }));
+  
+      // Tạo danh sách các services cần cập nhật
+      const serviceUpdateList = _.flatMap(updateSections, (section) => 
+        _.map(_.get(section, "services", []), (service) => {
+          // Nếu dịch vụ mới
           if (service?.isNewService) {
-            serviceParams = _.cloneDeep(service);
-            delete serviceParams["id"];
+            return _.omit(_.cloneDeep(service), ["id", "estimateTime", "isNewService", "section", "_id", "__v"]);
           } else {
-            serviceParams = {
-              ...service,
-              id: service?.serviceId,
-              sectionId: section?.sectionId,
+            // Nếu dịch vụ đã có sẵn
+            return {
+              id: service.serviceId ?? "", // Nếu không có serviceId, tạo giá trị mặc định
+              name: service.name ?? "Unknown",
+              desc: service.desc ?? "",
+              serviceType: service.serviceType ?? "default",
+              billType: service.billType ?? "default",
+              unit: service.unit ?? "unit",
+              estimate: service.estimate ?? 0,
+              qty: service.qty ?? 0,
+              price: service.price ?? 0,
+              discount: service.discount ?? 0,
+              markUp: service.markUp ?? 0,
+              tolBudget: service.tolBudget ?? 0,
+              sectionId: section.sectionId ?? "", // Lấy sectionId từ section hiện tại
             };
           }
-
-          delete serviceParams["estimateTime"];
-          delete serviceParams["isNewService"];
-          delete serviceParams["section"];
-          delete serviceParams["_id"];
-          delete serviceParams["__v"];
-
-          serviceUpdateList.push(serviceParams);
-        });
-      });
-
-      budgetServiceUpdate.mutateAsync(
-        {
-          services: serviceUpdateList,
-          sections: sectionUpdateList,
-        },
-        {
-          onSuccess: () => {
-            onAddSnackbar("Update services successful!", "success");
-            reset(defaultValues);
-            onCloseEdit();
-          },
-        },
+        })
       );
+  
+      // Kiểm tra lại payload trước khi gửi đi
+      const payload = {
+        services: _.uniqBy(serviceUpdateList, "id"), // Loại bỏ các mục trùng lặp theo id
+        sections: sectionUpdateList,
+      };
+  
+      // Log dữ liệu để kiểm tra trước khi gửi
+      console.log("Payload:", payload);
+  
+      // Gọi API để cập nhật cả sections và services
+      await budgetServiceUpdate.mutateAsync(payload, {
+        onSuccess: () => {
+          onAddSnackbar("Update services and sections successful!", "success");
+          reset(defaultValues);
+          onCloseEdit();
+        },
+      });
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
-
-  const deleteSection = async (sectionId: string) => {
-    budgetSectionDelete.mutateAsync({
-      budgetId: String(budgetId),
-      sectionId: sectionId,
-    });
+  
+  const deleteService = async (serviceId: string) => {
+    try {
+      await budgetSectionDelete.mutateAsync(
+        {
+          budgetId: String(budgetId),
+          serviceId: serviceId,
+        },
+        {
+          onSuccess: (data) => {
+            onAddSnackbar("Service deleted successfully", "success");
+            onCloseEdit();
+          },
+        }
+      );
+    } catch (error) {
+      console.error('Error deleting service:', error);
+    }
   };
 
-  const deleteService = async (serviceId: string) => {
-    budgetSectionDelete.mutateAsync({
-      budgetId: String(budgetId),
-      serviceId: serviceId,
-    });
+  const deleteSection = async (sectionId: string) => {
+    try {
+      await budgetSectionDelete.mutateAsync(
+        {
+          budgetId: String(budgetId),
+          sectionId: sectionId,
+        },
+        {
+          onSuccess: (data) => {
+            onAddSnackbar("section deleted successfully", "success");
+            onCloseEdit();
+          },
+        }
+      );
+    } catch (error) {
+      console.error('Error deleting service:', error);
+    }
   };
 
   const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
@@ -735,7 +850,7 @@ export const ServiceSection = memo(({
                                         sx={{ color: "grey.300", cursor: "pointer" }}
                                         onClick={() => handleSectionClick(index)}
                                       >
-                                        {tempSectionNames[index]  || `Section ${index + 1}`}
+                                        {tempSectionNames[index] || `Section ${index + 1}`}
                                       </Text>
                                     )}
 
