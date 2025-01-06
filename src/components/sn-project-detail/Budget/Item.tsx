@@ -30,20 +30,20 @@ const Item = ({ projectId }: { projectId?: string }) => {
 
   useEffect(() => {
     if (!isReady) return;
-    console.log("budgets", budgets);
 
+    setBudgets([]); // Clear budgets when projectId changes
 
     const query: TBudgetListQueries = {
       ...DEFAULT_PAGING,
       ...queryParam,
+      project_id: projectId,
     };
 
-    if (projectId) {
-      query.project_id = projectId;
-    }
-
     getBudget(query);
-  }, [isReady, getBudget, queryParam]);
+    return () => {
+      setBudgets([]);
+    };
+  }, [isReady, getBudget, queryParam, projectId]);
 
   useEffect(() => {
     if (!budgetItems || !members || budgetItems.length == 0) return;

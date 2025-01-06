@@ -14,7 +14,7 @@ import { getPath } from "utils/index";
 
 type Props = {
   idSelecteds: string[];
-  setIdSelected: any;
+  setIdSelected: (ids: string[]) => void;
   budgets: TBudgets;
 };
 
@@ -69,7 +69,7 @@ export const ItemWithProject = ({
         align: "center",
         width: "160px",
         minwidth: "160px",
-        data: "$109,000,567",
+        // data: "$109,000,567",
       },
       {
         value: projectT("budget.table.margin"),
@@ -81,35 +81,35 @@ export const ItemWithProject = ({
       {
         value: projectT("budget.table.budgetUsed"),
         align: "center",
-        data: "$109,000,567",
+        // data: "$109,000,567",
         width: "150px",
         minwidth: "150px",
       },
       {
         value: projectT("budget.table.budgetTotal"),
         align: "center",
-        data: "$109,000,567",
+        // data: "$109,000,567",
         width: "150px",
         minwidth: "150px",
       },
       {
         value: projectT("budget.table.workedTime"),
         align: "right",
-        data: "105:00h",
+        // data: "105:00h",
         width: "140px",
         minwidth: "140px",
       },
       {
         value: projectT("budget.table.billabelTime"),
         align: "right",
-        data: "105:00h",
+        // data: "105:00h",
         width: "140px",
         minwidth: "140px",
       },
       {
         value: projectT("budget.table.invoiced"),
         align: "center",
-        data: "105:00h",
+        // data: "105:00h",
         width: "140px",
         minwidth: "140px",
       },
