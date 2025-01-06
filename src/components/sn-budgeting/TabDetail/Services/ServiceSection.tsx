@@ -579,43 +579,38 @@ export const ServiceSection = memo(({
         name: _.get(section, "name", ""),
         start_date: _.get(section, "start_date", ""),
       }));
-  
+
       // Tạo danh sách các services cần cập nhật
-      const serviceUpdateList = _.flatMap(updateSections, (section) => 
+      const serviceUpdateList = _.flatMap(updateSections, (section) =>
         _.map(_.get(section, "services", []), (service) => {
           // Nếu dịch vụ mới
-          if (service?.isNewService) {
-            return _.omit(_.cloneDeep(service), ["id", "estimateTime", "isNewService", "section", "_id", "__v"]);
-          } else {
-            // Nếu dịch vụ đã có sẵn
-            return {
-              id: service.serviceId ?? "", // Nếu không có serviceId, tạo giá trị mặc định
-              name: service.name ?? "Unknown",
-              desc: service.desc ?? "",
-              serviceType: service.serviceType ?? "default",
-              billType: service.billType ?? "default",
-              unit: service.unit ?? "unit",
-              estimate: service.estimate ?? 0,
-              qty: service.qty ?? 0,
-              price: service.price ?? 0,
-              discount: service.discount ?? 0,
-              markUp: service.markUp ?? 0,
-              tolBudget: service.tolBudget ?? 0,
-              sectionId: section.sectionId ?? "", // Lấy sectionId từ section hiện tại
-            };
-          }
+          return {
+            id: service.serviceId ?? service.id ?? "", // Ensure id is always a string
+            name: service.name ?? "",
+            desc: service.desc ?? "",
+            serviceType: service.serviceType ?? "",
+            billType: service.billType ?? "",
+            unit: service.unit ?? "",
+            estimate: service.estimate ?? 0,
+            qty: service.qty ?? 0,
+            price: service.price ?? 0,
+            discount: service.discount ?? 0,
+            markUp: service.markUp ?? 0,
+            tolBudget: service.tolBudget ?? 0,
+            sectionId: section.sectionId ?? "",
+          };
         })
       );
-  
+
       // Kiểm tra lại payload trước khi gửi đi
       const payload = {
         services: _.uniqBy(serviceUpdateList, "id"), // Loại bỏ các mục trùng lặp theo id
         sections: sectionUpdateList,
       };
-  
+
       // Log dữ liệu để kiểm tra trước khi gửi
       console.log("Payload:", payload);
-  
+
       // Gọi API để cập nhật cả sections và services
       await budgetServiceUpdate.mutateAsync(payload, {
         onSuccess: () => {
@@ -628,7 +623,7 @@ export const ServiceSection = memo(({
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
   };
-  
+
   const deleteService = async (serviceId: string) => {
     try {
       await budgetSectionDelete.mutateAsync(
@@ -924,7 +919,7 @@ export const ServiceSection = memo(({
   );
 })
 
-
+ServiceSection.displayName = "ServiceSection";
 export default ServiceSection;
 const defaultSx = {
   root: {
