@@ -84,7 +84,7 @@ export const uploadFile = createAsyncThunk(
     try {
       const formData = new FormData();
       formData.append("type", file.type);
-      formData.append("anh 1.jpg", file, file.name);
+      formData.append(file.name, file, file.name);
 
       const response = await client.post(endpoint, formData, {
         baseURL: TICKET_API_URL,

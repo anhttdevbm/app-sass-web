@@ -1,8 +1,8 @@
-import { memo, useState, useEffect } from "react";
+import { memo, useState } from "react";
 
+import { Dropdown, DropdownProps } from "components/Filters";
 import { NS_COMMON } from "constant/index";
 import { useTranslations } from "next-intl";
-import { Dropdown, DropdownProps } from "components/Filters";
 import { useMemberOptions } from "store/project/selectors";
 
 type AssignerTaskProps = Omit<
@@ -14,6 +14,7 @@ type AssignerTaskProps = Omit<
 
 const AssignerTask = ({ onHandler, ...props }: AssignerTaskProps) => {
   const { options: initialOptions } = useMemberOptions();
+
   const commonT = useTranslations(NS_COMMON);
 
   const [options, setOptions] = useState(initialOptions);

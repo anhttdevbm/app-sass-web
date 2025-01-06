@@ -1,7 +1,7 @@
 import { TableRow } from "@mui/material";
 import { Button } from "components/shared";
 import { BodyCell } from "components/Table";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { TBudgets } from "store/project/budget/action";
 
 enum STATUS {
@@ -41,8 +41,14 @@ function FilterWithIds({
     });
 
     idSelecteds.forEach((id) => {
-      const start = new Date(dataMapping[id]?.start_date).getTime();
-      const end = new Date(dataMapping[id]?.end_date).getTime();
+      const startDate = dataMapping[id]?.start_date;
+      const endDate = dataMapping[id]?.end_date;
+      const start = startDate ? new Date(startDate).getTime() : null;
+      const end = endDate ? new Date(endDate).getTime() : null;
+      if (start === null || end === null) {
+        console.error('Invalid date value for budget ID:', id);
+        return;
+      }
       const current = new Date().getTime();
       if (status === STATUS.OPEN) {
         if (current <= end && current >= start) {
@@ -76,7 +82,7 @@ function FilterWithIds({
   return (
     <TableRow>
       <BodyCell sx={{ pl: { xs: 0.5, md: 2 }, ...getXsCell(0) }} fallback=""></BodyCell>
-      <BodyCell sx={{...getXsCell(1), textAlign: 'left'}} fallback="">
+      <BodyCell sx={{ ...getXsCell(1), textAlign: 'left' }} fallback="">
         <Button variant={filterButtonVariant[status] || "secondary"} size="extraSmall" onClick={handleChangeStatus}>
           {status}
         </Button>

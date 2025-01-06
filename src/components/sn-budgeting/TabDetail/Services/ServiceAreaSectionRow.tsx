@@ -1,17 +1,15 @@
-import { Dispatch, SetStateAction } from "react";
-import { Stack, TableRow, TableCell, Collapse } from "@mui/material";
-import { BodyCell } from "components/Table";
-import { useState } from "react";
+import { Collapse, Stack, TableCell, TableRow } from "@mui/material";
 import { IconButton, Text } from "components/shared";
-import MoreDotIcon from "icons/MoreDotIcon";
 import {
   TBudgetService,
   budgetDetailRef,
 } from "components/sn-budgeting/BudgetDetail";
-import _ from "lodash";
+import { BodyCell } from "components/Table";
 import { NS_BUDGETING } from "constant/index";
+import MoreDotIcon from "icons/MoreDotIcon";
+import _ from "lodash";
 import { useTranslations } from "next-intl";
-import ChevronIcon from "icons/ChevronIcon";
+import { Dispatch, SetStateAction, useState } from "react";
 
 interface ServiceAreaSectionRowProps {
   service: TBudgetService;
@@ -31,7 +29,7 @@ function ServiceAreaSectionRow({
     <>
       <TableRow
         sx={{
-          td:{height:"40px"},
+          td: { height: "40px" },
           "& > *": { borderBottom: "none !important" },
           minHeight: 100,
           width: "100%",
@@ -58,7 +56,7 @@ function ServiceAreaSectionRow({
             >
               {service.name}
             </Text>
-            <ChevronIcon
+            {/* <ChevronIcon
               sx={{
                 color: "grey.300",
                 transition: "all 0.3s ease-in-out",
@@ -67,7 +65,7 @@ function ServiceAreaSectionRow({
                 transform: isCollapse ? "rotate(-180deg)" : "rotate(0deg)",
               }}
               fontSize="medium"
-            />
+            /> */}
           </Stack>
         </BodyCell>
         <BodyCell>{_.get(service, "estimate", 0)}</BodyCell>

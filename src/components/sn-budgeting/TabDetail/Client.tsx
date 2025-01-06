@@ -15,13 +15,12 @@ import {
   NS_SALES,
 } from "constant/index";
 import { Option } from "constant/types";
+import EditUnderlineIcon from "icons/EditUnderlineIcon";
 import { useTranslations } from "next-intl";
 import { useBudgetUpdate } from "queries/budgeting/budgeting-update";
 import { useEffect, useState } from "react";
-import { useClientCompanies } from "store/company/selectors";
 import { useSnackbar } from "store/app/selectors";
-import EditUnderlineIcon from "icons/EditUnderlineIcon";
-import { TBudget } from "store/project/budget/action";
+import { useClientCompanies } from "store/company/selectors";
 
 export const Client = (props: {
   bugetId: string;
@@ -101,8 +100,8 @@ export const Client = (props: {
   const onUpdate = async (data: ClientCompany) => {
     const payload = { ...data };
     if (data.files) {
-      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
-      payload.avatar = [logoUrl];
+      const logoUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, data?.files);
+      payload.avatar = logoUrl;
     } else {
       delete payload["files"];
     }

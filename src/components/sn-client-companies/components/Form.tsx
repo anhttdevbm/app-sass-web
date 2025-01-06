@@ -1,11 +1,9 @@
 import { Card, Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
-import FormLayout from "./FormLayout";
 import { Button, Input, Text } from "components/shared";
 import {
   ClientCompany,
-  Contact,
-  IAvatar,
+  Contact
 } from "components/sn-client-companies/type";
 import { DataAction } from "constant/enums";
 import { AN_ERROR_TRY_AGAIN, NS_COMMON, NS_COMPANY } from "constant/index";
@@ -18,6 +16,7 @@ import { useSnackbar } from "store/app/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as Yup from "yup";
 import AvatarUpload from "./AvatarUpload";
+import FormLayout from "./FormLayout";
 
 type FormProps = {
   initialValues?: ClientCompany;
@@ -34,7 +33,7 @@ export const INITIAL_VALUES: ClientCompany = {
   address: "",
   phone: "",
   email: "",
-  avatar: [],
+  avatar: "",
   website: "",
   status: false,
   created_time: "",
@@ -44,7 +43,7 @@ export const INITIAL_VALUES: ClientCompany = {
     address: "",
     phone: "",
     email: "",
-    avatar: undefined,
+    avatar: "",
     website: "",
   },
 };
@@ -164,11 +163,7 @@ const Form = (props: FormProps) => {
           <AvatarUpload
             name="files"
             value={
-              formik.values?.files ||
-              (Array.isArray(formik.values?.avatar) &&
-              !!formik.values?.avatar?.length
-                ? (formik.values?.avatar[0] as IAvatar)?.link
-                : "")
+              formik.values?.files || (formik.values?.avatar ? formik.values?.avatar : "")
             }
             onChange={onChangeField}
           />

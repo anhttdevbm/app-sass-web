@@ -36,6 +36,7 @@ type ActionOption = {
 };
 
 type ActionsCellProps = {
+    onUpdate?: () => void;
     onDuplicate?: () => void;
     onDelete?: () => Promise<unknown> | void;
     options?: ActionOption[];
@@ -47,6 +48,7 @@ type ActionsCellProps = {
 const ActionsCell = (props: ActionsCellProps) => {
     const {
         options = [],
+        onUpdate,
         onDuplicate,
         onDelete: onDeleteProps,
         hasPopup = true,
@@ -76,7 +78,10 @@ const ActionsCell = (props: ActionsCellProps) => {
     const onChatClicked = () => {
         onClose();
     };
-
+    const onUpdateClicked = () => {
+        onUpdate && onUpdate();
+        onClose();
+    }
     const onDuplicateClicked = () => {
         onDuplicate && onDuplicate();
         onClose();
@@ -201,8 +206,22 @@ const ActionsCell = (props: ActionsCellProps) => {
                                 </Text>
                             </MenuItem>
                         ))}
+                        {!!onUpdate && (
+                            <MenuItem
+                                component={ButtonBase}
+                                onClick={onUpdateClicked}
+                                sx={sxConfig.item}
+                            >
+                                <PencilUnderlineIcon
+                                    sx={{ color: "grey.400" }}
+                                    fontSize="medium"
+                                />
+                                <Text ml={2} variant="body2" color="grey.400">
+                                    {t("update")}
+                                </Text>
+                            </MenuItem>
+                        )}
 
-                        
                         {!!onDuplicate && (
                             <MenuItem
                                 component={ButtonBase}

@@ -1,16 +1,16 @@
-import { memo, Suspense, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useEmployeeOptions } from "store/company/selectors";
 
 import { NS_COMMON, NS_PROJECT } from "constant/index";
 import { useTranslations } from "next-intl";
 import { useSnackbar } from "store/app/selectors";
-import { getMessageErrorByAPI, getPath } from "utils/index";
+import { getMessageErrorByAPI } from "utils/index";
 
-import { useProjects } from "store/project/selectors";
-import useQueryParams from "hooks/useQueryParams";
+import { Typography } from "@mui/material";
 import { Dropdown } from "components/Filters";
 import fuzzysort from "fuzzysort";
-import { Typography } from "@mui/material";
+import useQueryParams from "hooks/useQueryParams";
+import { useProjects } from "store/project/selectors";
 
 type AssignerProps = {
   value?: string;

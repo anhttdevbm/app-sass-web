@@ -1,7 +1,8 @@
 "use client";
 
-import { Avatar, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
+import Avatar from "components/Avatar";
 import { Switch, Text } from "components/shared";
 import ConfirmToRequest from "components/sn-employee-detail/components/ConfirmToRequest";
 import { Permission } from "constant/enums";
@@ -123,9 +124,8 @@ const Sumary = () => {
       >
         {packageT("head.sumary")}
       </Text>
-      {(roleUser && roleUser.includes(Permission.SA)) ||
-      (roleUser?.includes(Permission.AM) &&
-        !roleUser?.includes(Permission.BO)) ? (
+
+      {(user?.roles.includes(Permission.AM) && !user?.roles.includes(Permission.BO)) ? (
         <Box
           sx={{
             display: "flex",
@@ -222,9 +222,14 @@ const Sumary = () => {
             onSubmit={onSubmitConfirmToRequest}
           />
         </Box>
-      ) : user && user?.email && isGmail(user.email) ? (
+      ) : user?.roles.includes(Permission.ST)
+        || user?.roles.includes(Permission.MN)
+        || user?.roles.includes(Permission.LE)
+        || user?.roles.includes(Permission.CL)
+        || user?.roles.includes(Permission.CT)
+        && user?.email || isGmail(user?.email) ? (
         <Box>
-          {/* Email cá nhân */}
+          {/* Email cá nhân  & nhân viên*/}
           <Box
             sx={{
               display: "flex",
@@ -317,10 +322,12 @@ const Sumary = () => {
               <Text color="#999999">
                 {dayjs(user?.expiration_date).format("D MMMM, YYYY HH:mm")}
               </Text>
+
               <ButtonCustom
                 onClick={() => onClickUpgradePackage(false)}
                 text={packageT("button.upgradePackage")}
               />
+
             </Box>
             {/* AUTO-RENEWAL */}
             {!isMobile ? (
@@ -595,11 +602,12 @@ const Sumary = () => {
                   />
                 </Box>
                 <Box display="flex" gap={2}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" size={0} />
                   {accountBillOwner?.username} ({accountBillOwner?.email}){" "}
                 </Box>
               </Box>
-            )}
+            )
+            }
             {/* AUTO-RENEWAL */}
             {!isMobile ? (
               <Box

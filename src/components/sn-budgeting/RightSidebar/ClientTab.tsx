@@ -1,3 +1,4 @@
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,
@@ -5,19 +6,18 @@ import {
   Box,
   Stack,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Switch, Text } from "components/shared";
 import Link from "components/Link";
-import { BoxData, accordionSx } from "./Util";
+import { Switch, Text } from "components/shared";
 import { TBudget } from "store/project/budget/action";
+import { BoxData, accordionSx } from "./Util";
 
 interface ClientTabProps {
   budget: TBudget;
 }
 
-export const ClientTab = ({budget}:ClientTabProps) => {
-  const {company, owner} = budget;
-  const {fullname,email,phone} = owner; 
+export const ClientTab = ({ budget }: ClientTabProps) => {
+  const { company, owner } = budget;
+  const { fullname, email, phone } = owner;
   return (
     <Box mt={2} sx={accordionSx}>
       <Accordion defaultExpanded={true}>
@@ -27,7 +27,7 @@ export const ClientTab = ({budget}:ClientTabProps) => {
           </Text>
         </AccordionSummary>
         <AccordionDetails>
-          <BoxData title="Organization">{company}</BoxData>
+          <BoxData title="Organization">{company.name}</BoxData>
           <Link href="#" underline="none">
             <Text sx={{ color: "secondary.main" }}>Edit company</Text>
           </Link>

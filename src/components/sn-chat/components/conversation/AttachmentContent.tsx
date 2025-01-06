@@ -50,9 +50,9 @@ const AttachmentContent = ({
   const { sx, ...props } = attachmentProps || {};
 
   const styleForFile = (title: string) => {
-    const type = title?.split("/")[1];
+    const type = title?.split(".").pop();
     for (const [key, value] of Object.entries(mapType)) {
-      if (value.includes(type)) return IconFile[key];
+      if (type && value.includes(type)) return IconFile[key];
     }
   };
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
@@ -61,12 +61,11 @@ const AttachmentContent = ({
   });
 
   const files = useMemo(() => {
-    console.log(">>>> message.file", message.files);
     return message?.files.map((item) => {
       return {
-        title: "File name",
-        title_link: item.url,
-        title_link_download: item.url,
+        title: item.split('/').pop(),
+        title_link: item,
+        title_link_download: item,
       };
     });
   }, [message]);
@@ -95,8 +94,6 @@ const AttachmentContent = ({
 
   const handleChangeSlide = (url) => {
     const info = mediaListPreview.find((item) => item.link === url);
-    console.log(">>>> url", url);
-    console.log(">>>> info", info);
     forceUpdatePreview({
       src: info?.link as string,
       type: info?.type as TypeMedia,

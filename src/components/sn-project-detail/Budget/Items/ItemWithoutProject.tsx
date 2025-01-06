@@ -2,7 +2,7 @@
 import { Stack, TableRow } from "@mui/material";
 import Avatar from "components/Avatar";
 import Link from "components/Link";
-import { Checkbox, Text } from "components/shared";
+import { Checkbox, Text, Tooltip } from "components/shared";
 import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { BodyCell, CellProps } from "components/Table";
 import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
@@ -11,11 +11,12 @@ import { BUDGET_DETAIL_PATH } from "constant/paths";
 import { HEADER_HEIGHT } from "layouts/Header";
 import _ from "lodash";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSnackbar } from "store/app/selectors";
 import { TBudgetCreateParam, TBudgets } from "store/project/budget/action";
 import { useBudgets } from "store/project/budget/selector";
 import { formatDate, formatNumber, getPath } from "utils/index";
+import ModalAddBudget from "../Actions/ModalAddBudget";
 import ActionsCell from "./ActionsCell";
 import FilterWithIds from "./FilterWithIds";
 
@@ -33,6 +34,9 @@ export const ItemWithoutProject = ({
   const projectT = useTranslations(NS_PROJECT);
   const projectBudget = useBudgets();
   const { onAddSnackbar } = useSnackbar();
+
+  const [selectedBudget, setSelectedBudget] = useState<TBudgetCreateParam | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleDuplicate = async (budgetId: string) => {
     const budget = budgets.find(b => b.id === budgetId);
@@ -55,6 +59,24 @@ export const ItemWithoutProject = ({
     }
   };
 
+  // handle func update budget by id
+  const handleUpdate = async (budgetId: string) => {
+    const budget = budgets.find(b => b.id === budgetId);
+
+    if (!budget) return;
+
+    const param: TBudgetCreateParam = {
+      id: budgetId,
+      project_id: budget.project.id,
+      start_date: formatDate(budget.start_date, DATE_FORMAT_FORM),
+      end_date: formatDate(budget.end_date, DATE_FORMAT_FORM),
+      owner: budget.owner.id,
+      name: budget.name
+    } as TBudgetCreateParam;
+
+    setSelectedBudget(param);
+    setModalOpen(true);
+  };
   const handleDelete = async (budgetId: string) => {
     try {
       await projectBudget.delete(budgetId);
@@ -212,18 +234,30 @@ export const ItemWithoutProject = ({
                     },
                   }}
                 >
-                  <Avatar src={budget?.created_by?.avatar} size={35} />
+                  <Avatar src={budget?.owner?.avatar} size={35} />
                   <Text paddingLeft="10px" align="left">
-                    {budget.name}
+                    <Tooltip title={budget.name} placement="bottom-start" aria-label="Budget Name">
+                      <span
+                        style={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: 'inline-block',
+                          maxWidth: '200px',
+                        }}
+                      >
+                        {budget.name}
+                      </span>
+                    </Tooltip>
                   </Text>
                 </Link>
               )}
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
               <Stack direction="row" alignItems="center">
-                <Avatar src={budget?.created_by?.avatar} size={35} />
+                <Avatar src={budget?.company?.avatar} size={35} />
                 <Text paddingLeft="10px" align="left">
-                  {budget.company}
+                  {budget.company.name}
                 </Text>
               </Stack>
             </BodyCell>
@@ -255,12 +289,27 @@ export const ItemWithoutProject = ({
               </Text>
             </BodyCell>
             <ActionsCell
+              onUpdate={() => handleUpdate(budget.id)}
               onDuplicate={() => handleDuplicate(budget.id)}
               onDelete={() => handleDelete(budget.id)}
             />
           </TableRow>
         );
       })}
+      {isModalOpen && selectedBudget && (
+        <ModalAddBudget
+          open={isModalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedBudget(null);
+          }}
+          selectedBudget={selectedBudget}
+          onAddSnackbar={onAddSnackbar}
+          onGetBudget={async (queries) => {
+            await projectBudget.get(queries);
+          }}
+        />
+      )}
     </TableLayoutWithScroll>
   );
 };

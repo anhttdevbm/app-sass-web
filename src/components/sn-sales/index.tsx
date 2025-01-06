@@ -99,7 +99,7 @@ const SalesPage = () => {
         name: "name",
         value: commonT("name"),
         align: "left",
-        width: "18%",
+        width: "14%",
         minWidth: 130,
         sort: true,
       },
@@ -107,16 +107,15 @@ const SalesPage = () => {
         name: "status",
         value: salesT("list.table.stage"),
         align: "center",
-        width: "10%",
+        width: "20%",
         minWidth: 160,
         sort: true,
       },
       {
         name: "owner.fullname",
         value: salesT("list.table.owner"),
-        align: "left",
-
-        width: "12%",
+        align: "right",
+        width: "14%",
         sort: true,
         minWidth: 160,
       },
@@ -150,48 +149,6 @@ const SalesPage = () => {
         minWidth: 100,
         width: "12%",
       },
-      // {
-      //   name: "revenuePJ",
-      //   value: salesT("list.table.pjRevenue"),
-      //   align: "right",
-      //   sort: true,
-      //   component: (props) => {
-      //     return (
-      //       <Stack
-      //         {...props}
-      //         alignItems="flex-end"
-      //         sx={{
-      //           paddingTop: "4px",
-      //         }}
-      //       >
-      //         <Text
-      //           variant="h6"
-      //           color="grey.400"
-      //           sx={{
-      //             textOverflow: "ellipsis",
-      //             WebkitLineClamp: 1,
-      //             width: "100%",
-      //             overflow: "hidden",
-      //           }}
-      //           noWrap
-      //         >
-      //           {salesT("list.table.pjRevenue")}
-      //         </Text>
-      //         <Text
-      //           variant="h6"
-      //           color={totalRevenuePJ > 0 ? "success.main" : "error.main"}
-      //         >
-      //           {formatCurrency(totalRevenuePJ, {
-      //             prefix: "$",
-      //             numberOfFixed: 2,
-      //           })}
-      //         </Text>
-      //       </Stack>
-      //     );
-      //   },
-      //   minWidth: 70,
-      //   width: "13%",
-      // },
       {
         name: "estimate",
         value: (
@@ -247,20 +204,27 @@ const SalesPage = () => {
         name: "probability",
         value: salesT("list.table.probability"),
         align: "right",
-        width: "5%",
-        minWidth: 70,
+        width: "10%",
+        minWidth: 50,
         sort: true,
       },
       {
         name: "updated_time",
         value: salesT("list.table.lastActivity"),
-        align: "left",
-        width: "12%",
-        minWidth: 130,
+        align: "right",
+        width: "10%",
+        minWidth: 150,
         sort: true,
       },
+      {
+        name: "action",
+        value: "",
+        align: "right",
+        width: "5%",
+        minWidth: 70,
+      }
     ],
-    [commonT, salesT, totalRevenue, totalRevenuePJ, totalTime],
+    [commonT, salesT, totalRevenue, totalTime],
   );
 
   useFetchEmployeeOptions();
@@ -288,17 +252,17 @@ const SalesPage = () => {
             px: { xs: 1, md: 1 },
             overflow: "auto",
             py: "4px",
-            pb: "8px", 
+            pb: "8px",
             height: "auto",
             verticalAlign: "middle",
             background: "#D9F0FD",
             color: "#999999",
-            h6: { fontSize: "13px"}
+            h6: { fontSize: "13px" }
           },
         }}
         containerHeaderProps={{
           sx: {
-        overflowX: "hidden",
+            overflowX: "hidden",
           },
         }}
         error={salesError as string}
@@ -331,7 +295,7 @@ const SalesPage = () => {
             color: "black",
             borderRadius: "12px",
           },
-          
+
         }}
         onChangePage={onChangePage}
         onChangeSize={onChangeSize}

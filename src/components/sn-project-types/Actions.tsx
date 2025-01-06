@@ -3,7 +3,7 @@
 import { Stack } from "@mui/material";
 import { Search } from "components/Filters";
 import { Button, IconButton, Text } from "components/shared";
-import { DataAction, Permission } from "constant/enums";
+import { DataAction } from "constant/enums";
 import { NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useToggle from "hooks/useToggle";
@@ -138,51 +138,50 @@ const Actions = () => {
           overflow="hidden"
           width="100%"
         >
-          {(user?.roles.includes(Permission.AM) || user?.roles.includes(Permission.MN)) && (
-            <Button
-              onClick={onShow}
-              size="small"
-              variant="contained"
-              sx={{
-                boxShadow: "none",
+          <Button
+            onClick={onShow}
+            size="small"
+            variant="contained"
+            sx={{
+              boxShadow: "none",
 
-                fontWeight: "700",
+              fontWeight: "700",
+              background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
+              "&:hover": {
                 background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                "&:hover": {
-                  background: "linear-gradient(90deg, #2AF598 0%, #009EFD 100%)",
-                },
-                borderRadius: "100px",
-                height: 40,
-                width: 129,
-                "p,svg": { fontWeight: "700" },
-                svg: {
-                  border: "1px solid white",
-                  borderRadius: "50px",
-                  color: "#2AF598",
-                  background: "white",
-                },
+              },
+              borderRadius: "100px",
+              height: 40,
+              width: 129,
+              "p,svg": { fontWeight: "700" },
+              svg: {
+                border: "1px solid white",
+                borderRadius: "50px",
+                color: "#2AF598",
+                background: "white",
+              },
+            }}
+          >
+            <AddSquareIcon
+              sx={{
+                display: { xs: "block", md: "none" },
+                width: 24,
+                height: 24,
               }}
-            >
-              <AddSquareIcon
-                sx={{
-                  display: { xs: "block", md: "none" },
-                  width: 24,
-                  height: 24,
-                }}
-              />
-              <PlusIcon
-                sx={{
-                  display: { xs: "none", md: "block" },
-                  mr: 1,
-                  width: 18,
-                  height: 18,
-                }}
-              />
-              <Text sx={{ fontSize: "16px", display: { xs: "none", md: "block" } }} color="inherit">
-                {commonT("createNew")}
-              </Text>
-            </Button>
-          )}
+            />
+            <PlusIcon
+              sx={{
+                display: { xs: "none", md: "block" },
+                mr: 1,
+                width: 18,
+                height: 18,
+              }}
+            />
+            <Text sx={{ fontSize: "16px", display: { xs: "none", md: "block" } }} color="inherit">
+              {commonT("createNew")}
+            </Text>
+          </Button>
+
 
           {/* <Search
             placeholder={commonT("searchBy", { name: "project type name" })}

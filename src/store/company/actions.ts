@@ -246,7 +246,7 @@ export const deleteEmployees = createAsyncThunk(
   async (ids: string[]) => {
     try {
       const response = await client.put(
-        Endpoint.USERS_INACTIVE,
+        Endpoint.DELETE_USER,
         { ids },
         {
           baseURL: AUTH_API_URL,
@@ -339,7 +339,7 @@ export const createProjectType = createAsyncThunk(
   "company/createProjectType",
   async (data: ProjectTypeData) => {
     try {
-      const response = await client.post(Endpoint.PROJECT_TYPES , data, {
+      const response = await client.post(Endpoint.PROJECT_TYPES, data, {
         baseURL: COMPANY_API_URL,
       });
 

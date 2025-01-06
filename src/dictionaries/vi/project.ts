@@ -200,6 +200,7 @@ export const ProjectLang: ProjectDictionary = {
     action: {
       addBudget: "Thêm ngân sách",
       addBudgetTitleModal: "Thêm ngân sách mới",
+      editBudgetTitleModal: "Chỉnh sửa ngân sách",
     },
     form: {
       name: "Tên",
@@ -212,6 +213,7 @@ export const ProjectLang: ProjectDictionary = {
     createBudgetSuccess: "Thêm ngân sách mới thành công",
     duplicateBudgetSuccess: "Nhân bản ngân sách thành công",
     deleteBudgetSuccess: "Xóa ngân sách thành công",
+    updateBudgetSuccess: "Cập nhật ngân sách thành công",
     table: {
       budget: "Trạng thái/Ngân sách",
       owner: "Người tạo",
@@ -227,7 +229,7 @@ export const ProjectLang: ProjectDictionary = {
       workedTime: "Thời gian làm việc",
       billableTime: "Thời gian tính phí",
       invoiced: "Đã lập hóa đơn",
-      company: "Công ty",
+      company: "Khách hàng",
       project: "Dự án",
     },
     groupBy: {

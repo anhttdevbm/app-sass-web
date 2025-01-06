@@ -27,7 +27,6 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { Control, Controller, useForm } from "react-hook-form";
 import { useEmployeeOptions, usePositions } from "store/company/selectors";
-import { TBudget } from "store/project/budget/action";
 import { BookingData } from "store/resourcePlanning/action";
 import {
   useBookingAll,
@@ -60,7 +59,7 @@ const ProjectTab = ({
   const [isShowDetail, setIsShowDetail] = useState(false);
   const [isFocusAllocation, setIsFocusAllocation] = useState(false);
   const [isShowTooltip, setIsShowTooltip] = useState(false);
-  const [listBudgets, setListBudgets] = useState<TBudget[] | []>([]);
+  const [listBudgets, setListBudgets] = useState<{ value: string; label: string }[]>([]);
   const [listServices, setListServices] = useState<
     { value: string; label: string }[] | []
   >([]);
@@ -360,9 +359,8 @@ const ProjectTab = ({
                 border: `1px solid transparent`,
                 transition: "border-color 0.3s ease",
               },
-              border: `1px solid ${
-                isFocusAllocation ? palette.primary.main : "#EFEFEF"
-              }`,
+              border: `1px solid ${isFocusAllocation ? palette.primary.main : "#EFEFEF"
+                }`,
               "&:focus-within": {
                 borderColor: palette.primary.main,
               },

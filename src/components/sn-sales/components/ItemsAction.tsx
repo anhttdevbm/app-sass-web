@@ -65,7 +65,7 @@ const ServiceItemAction = (props: ActionsProps) => {
         color: "error.main",
       },
     ];
-  }, [commonT]);
+  }, [commonT, salesT]);
 
   const onAction = (action: Action) => {
     if (action === Action.DELETE) {

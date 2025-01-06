@@ -9,7 +9,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material"
-import { BodyCell, StatusCell } from "components/Table"
+import { BodyCell } from "components/Table"
 import Image from "next/image"
 import { formatDate } from "utils/index"
 import { DashboardTableCellHeader } from "./DashboardTableCellHeader"
@@ -48,86 +48,6 @@ export function ProjectBadge({
 }
 
 
-function MyTaskTable() {
-  const HEADER_LIST = [
-    { value: "Project task", width: "33%" },
-    { value: "Status", width: "33%" },
-    { value: "Due date", width: "33%" },
-  ]
-  const mockData = [
-    {
-      id: 1,
-      projectTask: "Xây dựng chiến lược marketing",
-      status: {
-        label: "filter.status.active",
-        active: true,
-      },
-      dueDate: "2023-06-01T16:53:39.685Z",
-    },
-    {
-      id: 2,
-      projectTask: "Xây dựng chiến lược marketing",
-      status: {
-        label: "filter.status.active",
-        active: true,
-      },
-      dueDate: "2023-06-01T16:53:39.685Z",
-    },
-    {
-      id: 3,
-      projectTask: "Xây dựng chiến lược marketing",
-      status: {
-        label: "filter.status.active",
-        active: true,
-      },
-      dueDate: "2023-06-01T16:53:39.685Z",
-    },
-    {
-      id: 4,
-      projectTask: "Xây dựng chiến lược marketing",
-      status: {
-        label: "filter.status.close",
-        active: false,
-      },
-      dueDate: "2023-06-01T16:53:39.685Z",
-    },
-  ]
-
-  return (
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <DashboardTableCellHeader headerList={HEADER_LIST} />
-          </TableRow>
-          <ProjectBadge
-            iconUrl={iconUrl}
-            title='Project 1'
-            colAmounts={HEADER_LIST.length}
-          />
-        </TableHead>
-        <TableBody>
-          {mockData.map((row) => {
-            return             <TableRow key={row.id}>
-            <BodyCell>
-              <Typography textAlign='left' fontWeight={600} fontSize={14}>
-                {row.projectTask}
-              </Typography>
-            </BodyCell>
-            <StatusCell
-              color={row.status.active ? "success" : "error"}
-              text={row.status.label}
-            />
-            <BodyCell sx={{ textAlign: "right" }}>
-              {convertTimestamp(row.dueDate)}
-            </BodyCell>
-          </TableRow>
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  )
-}
 
 function TimeOffTable() {
   const HEADER_LIST = [
@@ -210,7 +130,7 @@ function TimeOffTable() {
   )
 }
 
-export { MyTaskTable, TimeOffTable }
+export { TimeOffTable }
 
 export function convertTimestamp(timestamp: string | null): string {
   let date = timestamp ? new Date(timestamp) : new Date()

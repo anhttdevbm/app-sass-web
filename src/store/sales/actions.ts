@@ -1,15 +1,14 @@
-import StringFormat from "string-format";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Endpoint, client } from "api";
-import { AN_ERROR_TRY_AGAIN, AUTH_API_URL, SALE_API_URL } from "constant/index";
-import {
-  refactorRawItemListResponse,
-  cleanObject,
-  serverQueries,
-} from "utils/index";
 import { HttpStatusCode } from "constant/enums";
+import { AN_ERROR_TRY_AGAIN, SALE_API_URL } from "constant/index";
 import { BaseQueries } from "constant/types";
 import { Employee } from "store/company/reducer";
+import StringFormat from "string-format";
+import {
+  cleanObject,
+  refactorRawItemListResponse
+} from "utils/index";
 import { Service } from "./reducer";
 
 export interface GetSalesListQueries extends BaseQueries {
@@ -149,6 +148,27 @@ export const getDetailDeal = createAsyncThunk(
         {
           baseURL: SALE_API_URL,
         },
+      );
+      if (response?.status === HttpStatusCode.OK) {
+        const { data } = response;
+        return data;
+      }
+      throw AN_ERROR_TRY_AGAIN;
+    } catch (error) {
+      throw error;
+    }
+  },
+);
+
+// delete deal
+export const deleteDeal = createAsyncThunk(
+  "sales/deleteDeal",
+  async (id: string) => {
+    try {
+      const response = await client.delete(
+        StringFormat(Endpoint.SALES_DEAL_DETAIL, { id }),
+        { baseURL: SALE_API_URL },
+
       );
       if (response?.status === HttpStatusCode.OK) {
         const { data } = response;

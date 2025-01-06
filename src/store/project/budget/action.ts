@@ -12,16 +12,65 @@ import {
 import { Endpoint } from "../../../api";
 import { budgetClient } from "../../../api/client";
 
-export type TBudget = any;
+export type Company = {
+  id: string;
+  name: string;
+  code: string;
+  avatar: string;
+};
+
+export type Owner = {
+  id: string;
+  fullname: string;
+  email: string;
+  phone: string;
+  avatar: string;
+}
+
+export type Project = {
+  id: string;
+  name: string;
+  status: string;
+}
+
+export type TBudget = {
+  company: Company;
+  created_time: string;
+  end_date: string;
+  id: string;
+  name: string;
+  owner: Owner;
+  project_id: string;
+  start_date: string;
+  updated_time: string;
+  client: string;
+  totalMargin: number;
+  totalRevenue: number;
+  created_by: Owner;
+  project: Project;
+  subsidiary: string;
+  currency: string;
+  budget_number: number;
+};
 export type TBudgets = TBudget[];
 
 export type TBudgetCreateParam = {
+  id?: string;
   project_id: string;
   name: string;
   start_date: string;
   end_date: string;
   owner: string;
-  client:string;
+  client: string;
+};
+
+export type TBudgetUpdateParam = {
+  project_id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  owner: string;
+  client: string;
 };
 
 export type RecurringData = {
@@ -113,7 +162,7 @@ export const createProjectBudget = createAsyncThunk(
 
 export const deleteProjectBudget = createAsyncThunk(
   "project/deleteProjectBudget",
-  async (budgetId:string) => {
+  async (budgetId: string) => {
     const url = StringFormat(Endpoint.BUDGET_DELETE_BY_ID, { budgetId });
     const response = await budgetClient.delete(url);
 
@@ -123,4 +172,19 @@ export const deleteProjectBudget = createAsyncThunk(
 
     return response.data;
   },
+);
+
+// update budget by id
+export const updateProjectBudget = createAsyncThunk(
+  "project/updateProjectBudget",
+  async ({ budgetId, data }: { budgetId: string; data: Partial<TBudgetUpdateParam> }) => {
+    const url = StringFormat(Endpoint.BUDGET_UPDATE, { budgetId });
+    const response = await budgetClient.put(url, data);
+
+    if (response?.status !== HttpStatusCode.OK) {
+      throw AN_ERROR_TRY_AGAIN;
+    }
+
+    return response.data;
+  }
 );

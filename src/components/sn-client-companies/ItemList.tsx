@@ -8,7 +8,7 @@ import {
   CellProps,
   TableLayout
 } from "components/Table";
-import { DataAction } from "constant/enums";
+import { DataAction, Permission } from "constant/enums";
 import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import useBreakpoint from "hooks/useBreakpoint";
 import useQueryParams from "hooks/useQueryParams";
@@ -25,6 +25,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useAuth } from "store/app/selectors";
 import { useClientCompanies } from "store/company/selectors";
 import { getPath } from "utils/index";
 import { client, Endpoint } from "../../api";
@@ -58,6 +59,8 @@ const ItemList = () => {
   const { initQuery, isReady, query } = useQueryParams();
   const pathname = usePathname();
   const { push } = useRouter();
+  const { user } = useAuth();
+
   const { isMdSmaller } = useBreakpoint();
   const actionCellRef = useRef<HTMLDivElement>(null);
 
@@ -152,30 +155,30 @@ const ItemList = () => {
     const list = [
       ...(isMdSmaller
         ? [
-            {
-              value: (
-                <MobileHeader
-                  checked={isCheckedAll}
-                  onChange={onChangeAll}
-                  setAction={setAction}
-                  setDeleteType={setDeleteType}
-                  disable={selectedList?.length === 0}
-                />
-              ),
-              width: "100%",
-              align: "left",
-            },
-          ]
+          {
+            value: (
+              <MobileHeader
+                checked={isCheckedAll}
+                onChange={onChangeAll}
+                setAction={setAction}
+                setDeleteType={setDeleteType}
+                disable={selectedList?.length === 0}
+              />
+            ),
+            width: "100%",
+            align: "left",
+          },
+        ]
         : []),
       ...additionalHeaderList,
       ...(isMdSmaller
         ? []
         : [
-            {
-              value: "",
-              width: "6%",
-            },
-          ]),
+          {
+            value: "",
+            width: "6%",
+          },
+        ]),
     ];
     return list as CellProps[];
   }, [
@@ -243,8 +246,8 @@ const ItemList = () => {
   const onUpdate = async (data: ClientCompany) => {
     const payload = { ...data };
     if (data.files) {
-      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
-      payload.avatar = [logoUrl];
+      const logoUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, data?.files);
+      payload.avatar = logoUrl;
     } else {
       delete payload["files"];
     }
@@ -272,11 +275,11 @@ const ItemList = () => {
               wordBreak: "break-all",
               overflow: "auto",
               py: "2px",
-              height:"50px",
+              height: "50px",
               verticalAlign: "middle",
               background: "#D9F0FD",
               color: "#999999",
-              h6:{fontSize:"13px"}
+              h6: { fontSize: "13px" }
             }
           }}
         >
@@ -304,7 +307,7 @@ const ItemList = () => {
                   />
                 )}
 
-                {!isMdSmaller && (
+                {!isMdSmaller && !user?.roles.includes(Permission.ST) && (
                   <ActionsCell
                     sx={{
                       verticalAlign: "middle",
@@ -362,7 +365,7 @@ const ItemList = () => {
               color: "black",
               borderRadius: "12px",
             },
-            
+
           }}
           totalItems={totalItems}
           totalPages={totalPages}

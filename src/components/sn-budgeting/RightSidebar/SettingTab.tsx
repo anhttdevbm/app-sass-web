@@ -1,19 +1,19 @@
 import { Box, InputAdornment, OutlinedInput, Stack } from "@mui/material";
+import ConfirmDialog from "components/ConfirmDialog";
 import { Text } from "components/shared";
 import { PopperItem, PopperMenu } from "components/shared/PopperMenu";
+import { DATE_FORMAT_FORM, NS_COMMON, NS_PROJECT } from "constant/index";
+import { BUDGETING_PATH } from "constant/paths";
 import DropDownIcon from "icons/DropDownIcon";
 import DuplicateIcon from "icons/DuplicateIcon";
 import TrashIcon from "icons/TrashIcon";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useSnackbar } from "store/app/selectors";
 import { TBudget, TBudgetCreateParam } from "store/project/budget/action";
 import { useBudgets } from "store/project/budget/selector";
-import { useSnackbar } from "store/app/selectors";
-import { useTranslations } from "next-intl";
-import { getMessageErrorByAPI, formatDate } from "utils/index";
-import { DATE_FORMAT_FORM, NS_COMMON, NS_PROJECT } from "constant/index";
-import ConfirmDialog from "components/ConfirmDialog";
-import { useRouter } from "next/navigation";
-import { BUDGETING_PATH } from "constant/paths";
+import { formatDate, getMessageErrorByAPI } from "utils/index";
 
 interface SettingTabProps {
   budget: TBudget;
@@ -28,7 +28,7 @@ export const SettingTab = ({ budget }: SettingTabProps) => {
   const projectBudget = useBudgets();
   const projectT = useTranslations(NS_PROJECT);
   const commonT = useTranslations(NS_COMMON);
-  
+
   const handleDuplicate = async () => {
     const param: TBudgetCreateParam = {
       project_id: project.id,
@@ -152,7 +152,7 @@ export const SettingTab = ({ budget }: SettingTabProps) => {
           anchorEl={restrictionEl}
           setAnchorEl={setRestrictionEl}
           placement="bottom"
-          
+
         >
           <PopperItem>No restriction</PopperItem>
           <PopperItem>Restricted by person</PopperItem>
@@ -161,12 +161,12 @@ export const SettingTab = ({ budget }: SettingTabProps) => {
       </Box>
 
       <ConfirmDialog
-          onSubmit={handleDelete}
-          open={isConfirmDelete}
-          onClose={() => setIsConfirmDelete(false)}
-          title={commonT("confirmDelete.title")}
-          content={commonT("confirmDelete.content")}
-        />
+        onSubmit={handleDelete}
+        open={isConfirmDelete}
+        onClose={() => setIsConfirmDelete(false)}
+        title={commonT("confirmDelete.title")}
+        content={commonT("confirmDelete.content")}
+      />
     </>
   );
 };

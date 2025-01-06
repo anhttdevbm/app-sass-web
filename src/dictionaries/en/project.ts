@@ -203,6 +203,7 @@ export const ProjectLang: ProjectDictionary = {
     action: {
       addBudget: "Add budget",
       addBudgetTitleModal: "New budget",
+      editBudgetTitleModal: "Edit budget",
     },
     form: {
       name: "Name",
@@ -210,11 +211,12 @@ export const ProjectLang: ProjectDictionary = {
       end_date: "Budget end date",
       owner: "Owner",
       project_id: "Project",
-      client:"Client"
+      client: "Client"
     },
     createBudgetSuccess: "Create new budget success!",
     duplicateBudgetSuccess: "Duplicate budget success!",
     deleteBudgetSuccess: "Delete budget success!",
+    updateBudgetSuccess: "Update budget success!",
     table: {
       budget: "Status / Budget",
       owner: "Owner",
@@ -230,7 +232,7 @@ export const ProjectLang: ProjectDictionary = {
       workedTime: "Worked Time",
       billableTime: "Billabel Time",
       invoiced: "Invoiced",
-      company: "Company",
+      company: "Client",
       project: "Project",
     },
     groupBy: {

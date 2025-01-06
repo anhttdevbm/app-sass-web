@@ -107,6 +107,8 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
         );
         console.log("resultFiles", resultFiles);
         const listObjectId = resultFiles.map((item) => item?.payload);
+        console.log("listObjectId", listObjectId);
+
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEND_FILE,
           roomId: dataTransfer?.id,

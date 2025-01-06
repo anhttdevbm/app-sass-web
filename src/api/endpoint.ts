@@ -17,6 +17,7 @@ export const Endpoint = {
   USERS_INACTIVE: "/users/inactive",
   TOTAL_USER_UNPAID: "/users/total-unpaid",
   PROFILE: "/users/me",
+  DELETE_USER: "/users/delete",
   INVITE_USER_TO_COMPANY: "/users/inviteUserToCompany",
   COMPANIES: "/companies",
   COMPANY_ADD_MEMBER: "/companies/add-member",
@@ -39,7 +40,7 @@ export const Endpoint = {
   SUB_TASK: "/tasks/sub-task",
   TASK_ITEM: "/tasks/task",
   TASKS_INACTIVE: "/tasks/task-inactive",
-  TASKS_LOG: "/tasks/logs",
+  TASKS_LOG: "/logs/task",
   SUB_TASKS_INACTIVE: "/tasks/sub-inactive",
   TASK_LIST_INACTIVE: "/tasks/task-list",
   CHANGE_PARENT_TASK: "/tasks/change-parent-task",
@@ -273,16 +274,17 @@ export const Endpoint = {
 
   //Ticket-agent
   TICKET_AGENT: "/ticket/user",
-  TICKET_DASHBOARD : "/ticket/dashboard",
+  TICKET_DASHBOARD: "/ticket/dashboard",
 
   //Push Notification
-  NOTIFY_REGISTER_USER : "addUser",
-  NOTIFY_GET_SETTING : "/setting/getSettings",
-  NOTIFY_APPLY_SETTING : "/setting/apply-changes",
-  NOTIFY_READ_STATUS : "/notification/readStatus/",
-  NOTIFY_GET_ALL : "/notification/history/",
+  NOTIFY_REGISTER_USER: "addUser",
+  NOTIFY_GET_SETTING: "/setting/getSettings",
+  NOTIFY_APPLY_SETTING: "/setting/apply-changes",
+  NOTIFY_READ_STATUS: "/notification/readStatus/",
+  NOTIFY_GET_ALL: "/notification/history/",
 
   //Dashboard
-  DASHBOARD_ALL: "/statistic",
+  DASHBOARD_ALL: "/statistic/",
   DASHBOARD_PROJECT_ALL_ACTIVE: "/projects/project-active",
+  DASHBOARD_MY_TASK_ALL_ACTIVE: "/statistic/all-my-task-active",
 };

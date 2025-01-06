@@ -1,13 +1,14 @@
-import { memo } from "react";
-import { BodyCell } from "components/Table";
-import { Member } from "store/project/reducer";
 import { Stack } from "@mui/material";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
-import { formatDate } from "utils/index";
-import { DATE_TIME_FORMAT_SLASH, DATE_LOCALE_FORMAT } from "constant/index";
-import { DeleteUser } from "./components";
+import { BodyCell } from "components/Table";
+import { DATE_LOCALE_FORMAT } from "constant/index";
 import dayjs from "dayjs";
+import ProjectPlaceholderImage from "public/images/img-logo-placeholder.webp";
+import { memo } from "react";
+import { Member } from "store/project/reducer";
+import { DeleteUser } from "./components";
+
 
 type DesktopCellsProps = {
   item: Member;
@@ -16,12 +17,13 @@ type DesktopCellsProps = {
 
 const DesktopCells = (props: DesktopCellsProps) => {
   const { item, order } = props;
+
   return (
     <>
       <BodyCell align="center">{order}</BodyCell>
       <BodyCell align="left">
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Avatar size={32} src={item?.avatar?.link} />
+          <Avatar size={32} src={item.avatar ?? ProjectPlaceholderImage} />
           <Text variant="h6">{item.fullname}</Text>
         </Stack>
       </BodyCell>

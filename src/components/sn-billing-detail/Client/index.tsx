@@ -8,17 +8,15 @@ import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
 import EditForm from "components/sn-sales-detail/components/Client/EditForm";
 import SelectClient from "components/sn-sales-detail/components/Client/SelectClient";
 import ViewDetail from "components/sn-sales-detail/components/Client/ViewDetail";
-import { DEFAULT_PAGING, NS_COMPANY, NS_COMMON } from "constant/index";
+import { DEFAULT_PAGING, NS_COMMON, NS_COMPANY } from "constant/index";
 import { Option } from "constant/types";
 import EditUnderlineIcon from "icons/EditUnderlineIcon";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import LogoPlaceholderImage from "public/images/img-logo-placeholder.webp";
 import { useEffect, useState } from "react";
-import { updateClientBill } from "store/billing/actions";
+import { useSnackbar } from "store/app/selectors";
 import { useBillings, useClientBill } from "store/billing/selectors";
 import { useClientCompanies } from "store/company/selectors";
-import { useSnackbar } from "store/app/selectors";
 
 const TabClient = () => {
   const { id } = useParams();
@@ -92,8 +90,8 @@ const TabClient = () => {
   const onUpdate = async (data: ClientCompany) => {
     const payload = { ...data };
     if (data.files) {
-      const logoUrl = await client.upload(Endpoint.UPLOAD, data?.files);
-      payload.avatar = [logoUrl];
+      const logoUrl = await client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, data?.files);
+      payload.avatar = logoUrl;
     } else {
       delete payload["files"];
     }

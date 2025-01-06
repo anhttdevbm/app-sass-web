@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-    Avatar, Box,
+    Box,
     CircularProgress,
     Divider,
     Link,
     Stack,
     Typography
 } from "@mui/material";
+import Avatar from "components/Avatar";
 import TASK_ACTION from "components/sn-time-tracking/components/Constants/Enums/TaskAction.enum";
 import { NS_TIME_TRACKING } from "constant/index";
 import dayjs from "dayjs";
@@ -126,10 +127,7 @@ const FeedLog: React.FC = ({ }) => {
                                 margin: "0 8px 0 15px",
                             }}
                         />
-                        <Avatar
-                            src={timeLog?.user?.avatar}
-                            sx={{ width: "32px", height: "32px", marginRight: "8px" }}
-                        />
+                        <Avatar src={timeLog?.user?.avatar} size={32} />
                         <Stack direction="column">
                             <Typography
                                 sx={{

@@ -5,7 +5,7 @@ import { Text } from "components/shared";
 import { API_URL, DATE_TIME_FORMAT_SLASH } from "constant/index";
 import { memo } from "react";
 import { useQuery } from "react-query";
-import { ActivityTask } from "store/project/reducer";
+import { ActivityTaskLog } from "store/project/reducer";
 import { formatDate } from "utils/index";
 
 type ActivitiesProps = {
@@ -22,17 +22,17 @@ const Activities = (props: ActivitiesProps) => {
     async () => {
       const params = subtask_id ? { subtask_id } : { task_id };
 
-      const { data } = await client.get(
+      const response = await client.get(
         Endpoint.TASKS_LOG,
         params,
         API_URL
       );
       console.log("this is id task", task_id);
       console.log("this is id subtask", subtask_id);
-      
-      console.log("data task log nè", data);
-      
-      return data;
+
+      console.log("data task log nè", response.data.data);
+
+      return response.data.data;
     },
     {
       enabled: !!task_id,
@@ -55,19 +55,12 @@ const Activities = (props: ActivitiesProps) => {
 };
 
 export default memo(Activities);
-const DATA = [
-  {
-    id: "1",
-    action: "create task",
-    user: { fullname: "Hheheh" },
-    task: { name: "Task 01" },
-    project: { name: "Project 01" },
-    time: "2023-05-27T16:46:06.705Z",
-  },
-] as ActivityTask[];
 
-const Item = (props: ActivityTask) => {
-  const { time, user, action, task, project } = props;
+
+
+const Item = (props: ActivityTaskLog) => {
+  const { created_time, user, action, task } = props;
+  console.log("this is item", props);
 
   return (
     <Stack
@@ -80,7 +73,7 @@ const Item = (props: ActivityTask) => {
       spacing={{ xs: 1.25, sm: 2 }}
     >
       <Text textAlign="center" variant="caption" color="grey.400" width={64}>
-        {formatDate(time, DATE_TIME_FORMAT_SLASH)}
+        {formatDate(created_time, DATE_TIME_FORMAT_SLASH)}
       </Text>
       <Box
         sx={{
@@ -109,12 +102,12 @@ const Item = (props: ActivityTask) => {
           color="primary.main"
           mx={0.75}
         >
-          {task.name}
+          {task?.task_name}
         </Text>
-        in
+        {/* in
         <Text noWrap component="span" variant="inherit" mx={0.75}>
           {project.name}
-        </Text>
+        </Text> */}
       </Text>
     </Stack>
   );

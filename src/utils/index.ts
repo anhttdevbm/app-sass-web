@@ -1,3 +1,4 @@
+import { client, Endpoint } from "api";
 import { HttpStatusCode, ThemeMode } from "constant/enums";
 import {
   AN_ERROR_TRY_AGAIN,
@@ -16,8 +17,6 @@ import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { ReadonlyURLSearchParams } from "next/navigation";
 import StringFormat from "string-format";
 import { clientStorage } from "./storage";
-import { i } from "@fullcalendar/resource/internal-common";
-import { client, Endpoint } from "api";
 
 export const parseHashURL = (value: string) => `#${value}`;
 
@@ -107,7 +106,7 @@ export const getMessageErrorByAPI = (
   return typeof error === "string"
     ? error
     : (isAnError ? t(error?.["message"]) : error?.["message"]) ??
-        t(AN_ERROR_TRY_AGAIN);
+    t(AN_ERROR_TRY_AGAIN);
 };
 
 export const getDataFromKeys = (data, keys: string[]) => {
@@ -634,7 +633,7 @@ export const toHoursAndMinutes = (totalMinutes: number) => {
   return { hours, minutes };
 };
 
-export const clearNullField = (obj: any) => {
+export const clearNullField = (obj: Record<string, unknown>) => {
   return _(obj)
     .omitBy(_.isUndefined)
     .omitBy(_.isNull)

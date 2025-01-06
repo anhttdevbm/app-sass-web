@@ -24,10 +24,11 @@ export const SalesLang: SalesDictionary = {
       tags: "Tags",
       submit: "Create Deal",
       update: "Update Deal",
+      delete: "Delete Deal",
     },
     table: {
       stage: "Stage",
-      filter:"Tìm kiếm dự án",
+      filter: "Tìm kiếm dự án",
       pjRevenue: "Project Revenue",
       revenue: "Revenue",
       time: "Time",

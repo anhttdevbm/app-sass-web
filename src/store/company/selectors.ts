@@ -430,9 +430,11 @@ export const useClientCompanies = () => {
 
   const onCreateClientCompany = useCallback(
     async (data: ClientCompany) => {
-      return await dispatch(createClientCompany(data)).unwrap();
+      const result = await dispatch(createClientCompany(data)).unwrap();
+      await onGetClientCompanies(filters); // Re-fetch the client companies list
+      return result;
     },
-    [dispatch],
+    [dispatch, onGetClientCompanies, filters],
   );
 
   const onDeleteClientCompany = useCallback(
@@ -466,9 +468,11 @@ export const useClientCompanies = () => {
 
   const onUpdateClientCompany = useCallback(
     async (data: ClientCompany) => {
-      return await dispatch(updateClientCompany(data)).unwrap();
+      const result = await dispatch(updateClientCompany(data)).unwrap();
+      await onGetClientCompanies(filters); // Re-fetch the client companies list
+      return result;
     },
-    [dispatch],
+    [dispatch, onGetClientCompanies, filters],
   );
 
   return {

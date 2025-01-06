@@ -67,7 +67,7 @@ export const budgetExpenseExport = (data: {
 }) => {
   const url: string = getPath(
     Endpoint.BUDGET_EXPENSE_DETAIL_EXPORT,
-    clearNullField(data.documentData),
+    clearNullField(data.documentData as unknown as Record<string, unknown>),
     {
       expenseId: _.get(data, "expenseId", ""),
     },
@@ -77,8 +77,8 @@ export const budgetExpenseExport = (data: {
     responseType: (data.documentData.format == DocumentFormat.XLSX
       ? "blob"
       : data.documentData.format == DocumentFormat.CSV
-      ? "text/csv"
-      : "arraybuffer") as any,
+        ? "text/csv"
+        : "arraybuffer") as any,
   });
 };
 

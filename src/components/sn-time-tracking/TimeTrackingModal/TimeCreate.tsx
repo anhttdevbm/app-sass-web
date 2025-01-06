@@ -11,17 +11,19 @@ import {
   Typography,
 } from "@mui/material";
 import TextFieldSelect from "components/shared/TextFieldSelect";
+import Textarea from "components/Textarea";
 import { NS_COMMON, NS_TIME_TRACKING } from "constant/index";
 import dayjs from "dayjs";
 import useTheme from "hooks/useTheme";
+import ChevronCircleIcon from "icons/ChevronCircleIcon";
 import _ from "lodash";
-import moment from "moment";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { usePositions } from "store/company/selectors";
 import { useProjects } from "store/project/selectors";
+import { WorkType } from "store/timeTracking/reducer";
 import { useGetMyTimeSheet } from "store/timeTracking/selectors";
 import { getMessageErrorByAPI } from "utils/index";
 import * as yup from "yup";
@@ -31,10 +33,6 @@ import NumberInput from "../components/NumberInput";
 import TimePicker from "../components/TimePicker";
 import DefaultPopupLayout from "./DefaultPopupLayout";
 import { timeCreateInputStyles } from "./timeTrackingModal.styles";
-import { WorkType } from "store/timeTracking/reducer";
-import Textarea from "components/Textarea";
-import ChevronIcon from "icons/ChevronIcon";
-import ChevronCircleIcon from "icons/ChevronCircleIcon";
 
 interface IProps {
   type?: string;
@@ -113,7 +111,11 @@ const TimeCreate = ({
 
   const schema = yup
     .object({
-      project_id: yup.string().trim().notRequired(),
+      project_id: yup.string().when('type', (type, schema) => {
+        return type[0] === 'Work time'
+          ? schema.trim().required("Project is a required field")
+          : schema.trim().notRequired();
+      }),
       position: yup.string().trim().required("Position is a required field"),
       start_time: yup
         .string()

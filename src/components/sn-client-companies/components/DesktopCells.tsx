@@ -3,7 +3,7 @@ import Avatar from "components/Avatar";
 import Link from "components/Link";
 import { BodyCell } from "components/Table";
 import { Text } from "components/shared";
-import { ClientCompany, IAvatar } from "components/sn-client-companies/type";
+import { ClientCompany } from "components/sn-client-companies/type";
 import { DATE_LOCALE_FORMAT } from "constant/index";
 import { CLIENT_COMPANIES_PATH } from "constant/paths";
 import dayjs from "dayjs";
@@ -24,11 +24,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
         <Stack direction="row" alignItems="center" spacing={1}>
           <Avatar
             size={32}
-            src={
-              Array.isArray(item?.avatar) && !!item?.avatar?.length
-                ? (item?.avatar[0] as IAvatar)?.link
-                : LogoPlaceholderImage
-            }
+            src={typeof item?.avatar === 'string' ? item.avatar : LogoPlaceholderImage}
           />
           <Link href={`${CLIENT_COMPANIES_PATH}/${item?.id}`} underline="none">
             <Text
