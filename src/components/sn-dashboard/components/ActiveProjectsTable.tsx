@@ -43,8 +43,8 @@ function ActiveProjectsTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data && data.map((row, index) => (
-                        <TableRow key={`${row.id}-${index}`}>
+                    {data && data.map((row) => (
+                        <TableRow key={row.id}>
                             <BodyCell>
                                 <Typography textAlign='left' fontWeight={600} fontSize={14}>
                                     {row.name}
