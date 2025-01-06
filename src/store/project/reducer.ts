@@ -65,9 +65,7 @@ export interface Member {
     id: string;
   };
   date_in: string;
-  avatar?: {
-    link: string;
-  };
+  avatar?: string;
 }
 export interface AttachmentOfProject {
   id?: string;
@@ -460,7 +458,7 @@ const projectSlice = createSlice({
             const newOptions: Option[] = (items as Member[]).map((item) => ({
               label: item.fullname,
               value: item.id,
-              avatar: item?.avatar?.link,
+              avatar: item?.avatar,
               subText: item.email,
             }));
             state.memberOptions = removeDuplicateItem(
