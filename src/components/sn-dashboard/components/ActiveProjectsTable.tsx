@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Stack, Table, TableBody, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { client, Endpoint } from "api";
+import Avatar from "components/Avatar";
 import { BodyCell } from "components/Table";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { DashboardTableCellHeader } from "./DashboardTableCellHeader";
 import { convertTimestamp } from "./Tables";
@@ -52,13 +52,7 @@ function ActiveProjectsTable() {
                             </BodyCell>
                             <BodyCell>
                                 <Stack direction='row' spacing={1.5}>
-                                    <Image
-                                        src={row.owner?.avatar}
-                                        alt={row.owner?.fullname}
-                                        width={32}
-                                        height={32}
-                                        style={{ borderRadius: "50%" }}
-                                    />
+                                    <Avatar size={32} src={row.owner?.avatar} />
                                     <Typography>{row.owner?.fullname}</Typography>
                                 </Stack>
                             </BodyCell>
