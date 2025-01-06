@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Stack, Table, TableBody, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { client, Endpoint } from "api";
+import Avatar from "components/Avatar";
 import { BodyCell } from "components/Table";
 import { AUTH_API_URL } from "constant/index";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { DashboardTableCellHeader } from "./DashboardTableCellHeader";
@@ -19,7 +19,7 @@ interface Employee {
 }
 
 function EmployeeTable() {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const [data, setData] = useState<Employee | null>(null);
 
     useEffect(() => {
@@ -56,13 +56,7 @@ function EmployeeTable() {
                         <TableRow key={row.id}>
                             <BodyCell>
                                 <Stack direction='row' spacing={1.5}>
-                                    <Image
-                                        src={row.avatar}
-                                        alt={row.fullname}
-                                        width={32}
-                                        height={32}
-                                        style={{ borderRadius: "50%" }}
-                                    />
+                                    <Avatar size={32} src={row.avatar} />
                                     <Typography>{row.fullname}</Typography>
                                 </Stack>
                             </BodyCell>
@@ -71,7 +65,7 @@ function EmployeeTable() {
                                     {row.email}
                                 </Typography>
                             </BodyCell>
-                            
+
                             <BodyCell sx={{ textAlign: "right" }}>
                                 {row.roles.map((role, index) => (
                                     <Typography key={index} textAlign='right' fontWeight={600} fontSize={14}>
