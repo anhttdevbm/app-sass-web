@@ -35,9 +35,6 @@ type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
 const ModalAddBudget = (props: Props) => {
   const { ...rest } = props;
 
-  //log selectedBudget
-  console.log("selectedBudget", props.selectedBudget);
-
   const bodyModalRef = useRef<HTMLDivElement>(null);
   const [defaultHeightBodyModal, setDefaultHeightBodyModal] =
     useState<number>(0);
@@ -177,8 +174,8 @@ const ModalAddBudget = (props: Props) => {
     name: props.selectedBudget?.name || "",
     owner: props.selectedBudget?.owner || "",
     client: props.selectedBudget?.client || "",
-    start_date: "",
-    end_date: "",
+    start_date: formatDate(props.selectedBudget?.start_date, DATE_FORMAT_FORM) || "",
+    end_date: formatDate(props.selectedBudget?.end_date, DATE_FORMAT_FORM) || "",
   };
 
 

@@ -68,10 +68,13 @@ export const ItemWithoutProject = ({
     const param: TBudgetCreateParam = {
       id: budgetId,
       project_id: budget.project.id,
-      start_date: formatDate(budget.start_date, DATE_FORMAT_FORM),
-      end_date: formatDate(budget.end_date, DATE_FORMAT_FORM),
+      // start_date: formatDate(budget.start_date, DATE_FORMAT_FORM),
+      // end_date: formatDate(budget.end_date, DATE_FORMAT_FORM),
       owner: budget.owner.id,
-      name: budget.name
+      name: budget.name,
+      client: budget.client,
+      start_date: budget.start_date,
+      end_date: budget.end_date
     } as TBudgetCreateParam;
 
     setSelectedBudget(param);
