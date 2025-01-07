@@ -49,10 +49,6 @@ const nextConfig = {
         hostname: "app.taskcover.com",
       },
       {
-        protocol: "http",
-        hostname: "app.taskcover.com",
-      },
-      {
         protocol: "https",
         hostname: "216.128.182.224",
       },
