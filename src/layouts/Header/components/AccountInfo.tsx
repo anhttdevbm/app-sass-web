@@ -14,6 +14,7 @@ import { ACCOUNT_INFO_PATH, UPGRADE_ACCOUNT_PATH } from "constant/paths";
 import ChevronIcon from "icons/ChevronIcon";
 import CrownIcon from "icons/CrownIcon";
 import { useTranslations } from "next-intl";
+import UserPlaceholderImage from "public/images/img-user-placeholder.webp";
 import { memo, MouseEvent, useId, useState } from "react";
 import { reset as appReset } from "store/app/reducer";
 import { useAuth } from "store/app/selectors";
@@ -50,7 +51,7 @@ const AccountInfo = () => {
   };
 
   if (!user) return null;
-  
+
   return (
     <>
       <Stack
@@ -67,7 +68,7 @@ const AccountInfo = () => {
         onClick={onOpen}
         display={{ xs: "none", sm: "flex" }}
       >
-        <Avatar size={32} alt={user.fullname} src={user.avatar} />
+        <Avatar size={32} alt={user.fullname} src={user.avatar ?? UserPlaceholderImage} />
 
         <ChevronIcon fontSize="medium" sx={{ color: "grey.900" }} />
       </Stack>
@@ -112,14 +113,14 @@ const AccountInfo = () => {
           }}
         >
           <Stack direction="row" alignItems="center" spacing={1.5} py={2}>
-          <Link href={ACCOUNT_INFO_PATH} underline="none" onClick={onClose}>
-            <Avatar
+            <Link href={ACCOUNT_INFO_PATH} underline="none" onClick={onClose}>
+              <Avatar
                 size={60}
                 alt={user.fullname}
                 src={user.avatar}
               />
-          </Link>
-            
+            </Link>
+
             <Stack flex={1} overflow="hidden">
               <Text
                 variant="h6"
