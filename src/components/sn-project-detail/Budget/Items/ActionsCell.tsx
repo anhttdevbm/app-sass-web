@@ -17,6 +17,7 @@ import { Dialog } from "components/sn-ai-agent/components/Dialog";
 import { NS_COMMON } from "constant/index";
 import useTheme from "hooks/useTheme";
 import useToggle from "hooks/useToggle";
+import DuplicateItemIcon from "icons/DuplicateItemIcon";
 import MoreSquareIcon from "icons/MoreSquareIcon";
 import PencilUnderlineIcon from "icons/PencilUnderlineIcon";
 import TrashIcon from "icons/TrashIcon";
@@ -228,7 +229,7 @@ const ActionsCell = (props: ActionsCellProps) => {
                                 onClick={onDuplicateClicked}
                                 sx={sxConfig.item}
                             >
-                                <PencilUnderlineIcon
+                                <DuplicateItemIcon
                                     sx={{ color: "grey.400" }}
                                     fontSize="medium"
                                 />
