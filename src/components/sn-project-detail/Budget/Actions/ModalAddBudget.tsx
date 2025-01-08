@@ -116,7 +116,11 @@ const ModalAddBudget = (props: Props) => {
   };
 
   const onChangeDate = (name: string, newDate?: Date) => {
-    formik.setFieldValue(name, newDate ? newDate.getTime() : null);
+    if (!newDate || isNaN(newDate.getTime())) {
+      formik.setFieldError(name, "Invalid date");
+      return;
+    }
+    formik.setFieldValue(name, newDate.getTime());
     formik.setFieldTouched(name, true);
     setTimeout(() => {
       formik.validateForm();
@@ -174,8 +178,10 @@ const ModalAddBudget = (props: Props) => {
     name: props.selectedBudget?.name || "",
     owner: props.selectedBudget?.owner || "",
     client: props.selectedBudget?.client || "",
-    start_date: formatDate(props.selectedBudget?.start_date, DATE_FORMAT_FORM) || "",
-    end_date: formatDate(props.selectedBudget?.end_date, DATE_FORMAT_FORM) || "",
+    start_date: "",
+    end_date: "",
+    // start_date: formatDate(props.selectedBudget?.start_date, DATE_FORMAT_FORM) || "",
+    // end_date: formatDate(props.selectedBudget?.end_date, DATE_FORMAT_FORM) || "",
   };
 
 
@@ -184,8 +190,8 @@ const ModalAddBudget = (props: Props) => {
     owner: Yup.string().trim().required("form.error.required"),
     client: Yup.string().trim().required("form.error.required"),
     project_id: Yup.string().required("form.error.required"),
-    start_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
-    end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+    start_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte").required("form.error.required"),
+    end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte").required("form.error.required"),
   });
 
   const formik = useFormik({
@@ -436,18 +442,18 @@ const ModalAddBudget = (props: Props) => {
             rootSx={sxInput}
             fullWidth
             onEndReached={onEndReached}
-            onChangeSearch={(name: string, newValue?: string | number) =>
+            onChangeSearch={(_, newValue) =>
               onGetEmployeeOptions({
                 pageIndex: 1,
                 pageSize: 20,
-                [name]: newValue,
+                email: (newValue as string) || "",
               })
             }
             searchProps={{
               value: filters?.email,
               placeholder: commonT("searchBy", { name: "email" }),
             }}
-            onOpen={() => onGetEmployeeOptions({ pageIndex: 1, pageSize: 20 })}
+            // onOpen={() => onGetEmployeeOptions({ pageIndex: 1, pageSize: 20 })}
             autoComplete="off"
           />
         </MenuList>
