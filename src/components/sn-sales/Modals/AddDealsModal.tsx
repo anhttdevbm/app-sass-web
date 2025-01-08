@@ -1,21 +1,20 @@
-import { Stack, Grid } from "@mui/material";
-import React, { memo, useEffect } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Grid, Stack } from "@mui/material";
 import FormLayout from "components/FormLayout";
-import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
+import { Input, Select } from "components/shared";
 import { NS_COMMON, NS_SALES } from "constant/index";
 import { useTranslations } from "next-intl";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Input, Select } from "components/shared";
+import { memo, useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useClientCompanies } from "store/company/selectors";
+import { useSales } from "store/sales/selectors";
+import { TagData } from "store/tags/actions";
+import { useTagOptions, useTags } from "store/tags/selector";
+import * as yup from "yup";
 import SelectMultiple from "../components/SelectMultiple";
 import { CURRENCY_SYMBOL } from "../helpers";
 import useGetEmployeeOptions from "../hooks/useGetEmployeeOptions";
-import { useSales } from "store/sales/selectors";
 import useGetProjectTypeOptions from "../hooks/useGetProjectTypeOptions";
-import { useTagOptions, useTags } from "store/tags/selector";
-import { Tag } from "store/tags/reducer";
-import { TagData } from "store/tags/actions";
-import { useClientCompanies } from "store/company/selectors";
 
 interface IProps {
   open: boolean;
@@ -80,13 +79,13 @@ const AddDealModal = ({ open, onClose }: IProps) => {
     ),
     members: yup
       .array()
-      .of(yup.string())
-      .min(
-        1,
-        commonT("form.error.required", {
-          name: salesT(`${salesFormTranslatePrefix}.dealMember`),
-        }),
-      ),
+      .of(yup.string()),
+    // .min(
+    //   1,
+    //   commonT("form.error.required", {
+    //     name: salesT(`${salesFormTranslatePrefix}.dealMember`),
+    //   }),
+    // ),
     tags: yup.array().of(yup.string()),
   });
 
@@ -120,7 +119,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
   const newInput = {
     // height: "65px",
     ".MuiInputBase-root": {
-      ".MuiAutocomplete-endAdornment":{right:"21px"},
+      ".MuiAutocomplete-endAdornment": { right: "21px" },
       background:
         " linear-gradient(122.36deg, rgba(249, 241, 241, 0.41) -10.79%, #D8E4E4 222.02%)!important",
       padding: "9px!important",
@@ -130,7 +129,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
       mt: "35px",
       fontSize: "16px!important",
       // height:"38px",
-      ".MuiInputBase-input": { p: "0 10px!important",margin:"0!important" },
+      ".MuiInputBase-input": { p: "0 10px!important", margin: "0!important" },
       svg: {
         borderRadius: "50px",
         border: "0.2px solid #5C5C5C",
@@ -157,7 +156,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
   return (
     <FormLayout
       sx={{
-        borderRadius:"24px",
+        borderRadius: "24px",
         minWidth: { xs: "calc(100vw - 24px)", lg: 500 },
         maxWidth: { xs: "calc(100vw - 24px)", sm: 500 },
         minHeight: "auto",
@@ -252,7 +251,7 @@ const AddDealModal = ({ open, onClose }: IProps) => {
               onChangeSearch={(_, newValue) =>
                 onSearchMember(field.name, newValue as string)
               }
-              sx={{...newInput,".MuiInputBase-input":{m:0}}}
+              sx={{ ...newInput, ".MuiInputBase-input": { m: 0 } }}
               error={error?.message}
               fullWidth
               onEndReached={onEndReachedEmployeeOptions}
