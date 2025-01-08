@@ -656,7 +656,7 @@ export const BudgetDetail = () => {
             {activeTab === TABS.CLIENT && (
               <Client
                 bugetId={budget.id}
-                clientId={budget?.client}
+                clientId={budget?.client.id}
                 update={updateBuggeting}
               />
             )}
