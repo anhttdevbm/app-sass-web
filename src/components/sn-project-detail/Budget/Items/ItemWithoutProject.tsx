@@ -72,7 +72,7 @@ export const ItemWithoutProject = ({
       // end_date: formatDate(budget.end_date, DATE_FORMAT_FORM),
       owner: budget.owner.id,
       name: budget.name,
-      client: budget.client,
+      client: budget.client.id,
       start_date: budget.start_date,
       end_date: budget.end_date
     } as TBudgetCreateParam;
@@ -258,9 +258,9 @@ export const ItemWithoutProject = ({
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
               <Stack direction="row" alignItems="center">
-                <Avatar src={budget?.company?.avatar} size={35} />
+                <Avatar src={budget?.client?.avatar} size={35} />
                 <Text paddingLeft="10px" align="left">
-                  {budget.company.name}
+                  {budget.client.name}
                 </Text>
               </Stack>
             </BodyCell>

@@ -33,6 +33,13 @@ export type Project = {
   status: string;
 }
 
+export type Client = {
+  id: string;
+  name: string;
+  code: string;
+  avatar: string;
+}
+
 export type TBudget = {
   company: Company;
   created_time: string;
@@ -43,7 +50,7 @@ export type TBudget = {
   project_id: string;
   start_date: string;
   updated_time: string;
-  client: string;
+  client: Client;
   totalMargin: number;
   totalRevenue: number;
   created_by: Owner;
