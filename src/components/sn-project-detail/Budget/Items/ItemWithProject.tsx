@@ -1,16 +1,18 @@
-import { TableRow } from "@mui/material";
+import { Stack, TableRow } from "@mui/material";
 import Avatar from "components/Avatar";
 import Link from "components/Link";
 import { Checkbox, Text } from "components/shared";
+import { CURRENCY_SYMBOL } from "components/sn-sales/helpers";
 import { BodyCell, CellProps } from "components/Table";
 import { TableLayoutWithScroll } from "components/Table/TableLayoutWithScroll";
 import { NS_PROJECT } from "constant/index";
 import { BUDGET_DETAIL_PATH } from "constant/paths";
 import { HEADER_HEIGHT } from "layouts/Header";
+import _ from "lodash";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { TBudgets } from "store/project/budget/action";
-import { getPath } from "utils/index";
+import { formatNumber, getPath } from "utils/index";
 
 type Props = {
   idSelecteds: string[];
@@ -65,7 +67,7 @@ export const ItemWithProject = ({
         minwidth: "220px",
       },
       {
-        value: projectT("budget.table.revenue"),
+        value: projectT("budget.table.company"),
         align: "center",
         width: "160px",
         minwidth: "160px",
@@ -74,45 +76,17 @@ export const ItemWithProject = ({
       {
         value: projectT("budget.table.margin"),
         align: "center",
-        data: "69.04%",
+        // data: "69.04%",
         width: "100px",
         minwidth: "100px",
       },
       {
-        value: projectT("budget.table.budgetUsed"),
+        value: projectT("budget.table.revenue"),
         align: "center",
         // data: "$109,000,567",
         width: "150px",
         minwidth: "150px",
-      },
-      {
-        value: projectT("budget.table.budgetTotal"),
-        align: "center",
-        // data: "$109,000,567",
-        width: "150px",
-        minwidth: "150px",
-      },
-      {
-        value: projectT("budget.table.workedTime"),
-        align: "right",
-        // data: "105:00h",
-        width: "140px",
-        minwidth: "140px",
-      },
-      {
-        value: projectT("budget.table.billabelTime"),
-        align: "right",
-        // data: "105:00h",
-        width: "140px",
-        minwidth: "140px",
-      },
-      {
-        value: projectT("budget.table.invoiced"),
-        align: "center",
-        // data: "105:00h",
-        width: "140px",
-        minwidth: "140px",
-      },
+      }
     ];
   }, [idSelecteds.length, budgets, projectT, setIdSelected]);
 
@@ -177,26 +151,30 @@ export const ItemWithProject = ({
               )}
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
-              <Text>$109,000,567</Text>
+              <Stack direction="row" alignItems="center">
+                <Avatar src={budget?.client?.avatar} size={35} />
+                <Text paddingLeft="10px" align="left">
+                  {budget.client.name}
+                </Text>
+              </Stack>
             </BodyCell>
             <BodyCell sx={getXsCell(3)}>
-              <Text>69.04%</Text>
+              <Text>
+                {formatNumber(budget.totalMargin, {
+                  prefix: CURRENCY_SYMBOL[_.get(budget, "currency", "USD")],
+                  numberOfFixed: 0,
+                })}
+              </Text>
             </BodyCell>
-            <BodyCell sx={getXsCell(4)}>
-              <Text>$109,000,567</Text>
+            <BodyCell sx={getXsCell(3)}>
+              <Text>
+                {formatNumber(budget.totalRevenue, {
+                  prefix: CURRENCY_SYMBOL[_.get(budget, "currency", "USD")],
+                  numberOfFixed: 0,
+                })}
+              </Text>
             </BodyCell>
-            <BodyCell sx={getXsCell(5)}>
-              <Text>$109,000,567</Text>
-            </BodyCell>
-            <BodyCell sx={getXsCell(6)} align="right">
-              <Text>105:00h</Text>
-            </BodyCell>
-            <BodyCell sx={getXsCell(7)} align="right">
-              <Text>105:00h</Text>
-            </BodyCell>
-            <BodyCell sx={getXsCell(8)}>
-              <Text>$14.000,00</Text>
-            </BodyCell>
+
           </TableRow>
         );
       })}
