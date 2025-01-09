@@ -12,8 +12,8 @@ const Avatar = (props: AvatarProps) => {
   const { src, alt = "Avatar", size, ...rest } = props;
   return (
     <Image
-      className="rounded"
-      src={src ? src : UserPlaceholderImage}
+      className="rounded" 
+      src={src ?? UserPlaceholderImage}
       alt={alt}
       width={size}
       height={size}

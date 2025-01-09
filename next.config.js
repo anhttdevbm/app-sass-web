@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withNextIntl = require("next-intl/plugin")(
   // This is the default (also the `src` folder is supported out of the box)
   "./src/utils/i18n.ts",
 );
 
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   swcMinify: false,
   env: {
     API_URL: process.env.API_URL,
@@ -42,16 +42,16 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   images: {
-    domain: ["app.taskcover.com"],
-    dangerouslyAllowSVG: true,
+    // dangerouslyAllowSVG: true,
+    domains: ['app.taskcover.com'],
     remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: '**',
-                port: '',
-                pathname: '**',
-            },
-        ],
+      {
+          protocol: 'https',
+          hostname: 'app.taskcover.com',
+          port: '',
+          pathname: '/api/getFile/**',
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,
