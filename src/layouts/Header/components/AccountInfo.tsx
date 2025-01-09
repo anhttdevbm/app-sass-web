@@ -68,7 +68,7 @@ const AccountInfo = () => {
         onClick={onOpen}
         display={{ xs: "none", sm: "flex" }}
       >
-        <Avatar size={32} alt={user.fullname} src={user.avatar ?? UserPlaceholderImage} />
+        <Avatar size={32} alt={user.fullname} src={user.avatar} />
 
         <ChevronIcon fontSize="medium" sx={{ color: "grey.900" }} />
       </Stack>

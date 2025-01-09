@@ -42,21 +42,16 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   images: {
+    domain: ["app.taskcover.com"],
     dangerouslyAllowSVG: true,
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "app.taskcover.com",
-      },
-      {
-        protocol: "https",
-        hostname: "216.128.182.224",
-      },
-      {
-        protocol: "http",
-        hostname: "216.128.182.224",
-      }
-    ],
+            {
+                protocol: 'https',
+                hostname: '**',
+                port: '',
+                pathname: '**',
+            },
+        ],
   },
   eslint: {
     ignoreDuringBuilds: true,
