@@ -1,4 +1,5 @@
 import { Stack, StackProps, Theme, selectClasses } from "@mui/material";
+import Avatar from "components/Avatar";
 import { Dropdown, DropdownProps } from "components/Filters";
 import { Text } from "components/shared";
 import { Option } from "constant/types";
@@ -76,7 +77,7 @@ const SelectValue = (props: SelectValueProps) => {
   return (
     <Stack direction="row" gap={1} minHeight={42}>
       <Stack sx={{ marginBottom: "auto", marginTop: "auto" }}>
-        {!!item?.avatar?.length && (
+        {/* {!!item?.avatar?.length && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item?.avatar}
@@ -92,7 +93,8 @@ const SelectValue = (props: SelectValueProps) => {
             style={{ width: 32, height: 32 }}
             className="rounded"
           ></Image>
-        )}
+        )} */}
+        <Avatar src={item?.avatar} alt={item?.label ?? ""} size={32} />
       </Stack>
       <Stack>
         <Text

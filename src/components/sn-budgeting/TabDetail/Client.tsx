@@ -57,10 +57,7 @@ export const Client = (props: {
     const opts = (items as ClientCompany[]).map((item) => ({
       label: item.name,
       value: item.id || 0,
-      avatar:
-        Array.isArray(item?.avatar) && !!item?.avatar?.length
-          ? (item?.avatar[0] as IAvatar)?.link
-          : "",
+      avatar: item.avatar,
       subText: `${companyT("clientCompany.taxCode")}: ${item.tax_code ?? "--"}`,
     }));
     setOptions(opts);
