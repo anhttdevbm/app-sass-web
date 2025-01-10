@@ -63,6 +63,7 @@ const AddBudget = ({ projectId }: { projectId?: string }) => {
         }}
       >
         {projectT("budget.action.addBudget")}
+
       </Button>
       <ModalAddBudget
         open={isOpenModalAddBudget}

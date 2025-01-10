@@ -2,11 +2,12 @@
 import { MenuList, Stack } from "@mui/material";
 import { DialogLayoutProps } from "components/DialogLayout";
 import FormLayout from "components/FormLayout";
-import { Input, Select } from "components/shared";
+import { Button, Input, Select } from "components/shared";
 import { DateTimePicker } from "components/shared/DatePicker";
 import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import { DATE_FORMAT_FORM, NS_COMMON, NS_PROJECT } from "constant/index";
 import { FormikErrors, useFormik } from "formik";
+import useQueryParams from "hooks/useQueryParams";
 import moment from "moment";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -16,6 +17,7 @@ import { TBudgetCreateParam, TBudgetListQueries } from "store/project/budget/act
 import { useBudgets } from "store/project/budget/selector";
 import { useProjects } from "store/project/selectors";
 import { formatDate, getMessageErrorByAPI } from "utils/index";
+import { DEFAULT_PAGING } from "constant/index";
 import * as Yup from "yup";
 
 type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
@@ -47,6 +49,8 @@ const ModalAddBudget = (props: Props) => {
   const projectBudget = useBudgets();
   const { items: clientCompanies, onGetClientCompanies } = useClientCompanies();
 
+  const { isReady, query: queryParam } = useQueryParams();
+
   const {
     options: employeeOptions,
     onGetOptions: onGetEmployeeOptions,
@@ -59,6 +63,9 @@ const ModalAddBudget = (props: Props) => {
 
   const { items: projects, onGetProjects } = useProjects();
   const { projectOptions } = useGetOptions();
+
+
+
 
   useEffect(() => {
     if (!rest.open) {
@@ -81,6 +88,12 @@ const ModalAddBudget = (props: Props) => {
   }, [bodyModalRef.current, rest.open]);
 
   const onSubmit = async (param: TBudgetCreateParam) => {
+
+    const query: TBudgetListQueries = {
+      ...DEFAULT_PAGING,
+      ...queryParam,
+      project_id: props?.projectId,
+    };
     if (param.start_date) {
       param.start_date = formatDate(param.start_date, DATE_FORMAT_FORM);
     }
@@ -101,15 +114,15 @@ const ModalAddBudget = (props: Props) => {
         await projectBudget.update(props.selectedBudget.id, param);
         onAddSnackbar(projectT("budget.updateBudgetSuccess"), "success");
         props.onClose();
-        projectBudget.get();
+        projectBudget.get(query);
         return;
       } else {
         await projectBudget.create(param);
         onAddSnackbar(projectT("budget.createBudgetSuccess"), "success");
         props.onClose();
-        projectBudget.get();
+        projectBudget.get(query);
       }
-      projectBudget.get();
+      projectBudget.get(query);
     } catch (error) {
       onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
     }
@@ -170,7 +183,7 @@ const ModalAddBudget = (props: Props) => {
 
 
   const initialValues: TBudgetCreateParam = {
-    project_id: props.selectedBudget?.project_id || "",
+    project_id: props?.projectId || "",
     name: props.selectedBudget?.name || "",
     owner: props.selectedBudget?.owner || "",
     client: props.selectedBudget?.client || "",
