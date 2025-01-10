@@ -415,7 +415,7 @@ const DATA: MenuItemProps[] = [
     label: "menu.sales",
     href: SALES_LIST_PATH,
     icon: <CardReceive />,
-    roles: [Permission.AM, Permission.MN],
+    roles: [Permission.AM, Permission.MN, Permission.LE, Permission.ST],
   },
   {
     label: "menu.docs",
