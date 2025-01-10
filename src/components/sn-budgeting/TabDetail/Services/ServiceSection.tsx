@@ -482,79 +482,108 @@ export const ServiceSection = memo(({
     });
   };
 
-  // const handleUpdateSections = async (
-  //   updateSections: (TBudgetSection & { sectionId: string })[],
-  // ) => {
-  //   try {
-  //     const sectionUpdateList: any[] = [];
-  //     const serviceUpdateList: any[] = [];
+  const handleUpdateSections = async (
+    updateSections: (TBudgetSection & { sectionId: string })[],
+  ) => {
+    try {
+      const sectionUpdateList: any[] = [];
+      const serviceUpdateList: any[] = [];
 
-  //     // console.log("check list", updateSections)
+      // console.log("check list", updateSections)
 
 
-  //     _.map(updateSections, (section) => {
-  //       console.log("check list0", section)
+      _.map(updateSections, (section) => {
 
-  //       sectionUpdateList.push({
-  //         id: _.get(section, "sectionId", ""),
-  //         name: _.get(section, "name", ""),
-  //         start_date: _.get(section, "start_date", ""),
-  //       });
-  //       console.log("check list1", sectionUpdateList)
+        sectionUpdateList.push({
+          id: _.get(section, "sectionId", ""),
+          name: _.get(section, "name", ""),
+          start_date: _.get(section, "start_date", ""),
+        });
 
-  //       let serviceParams: any = {};
+        // let serviceParams: any = {};
 
-  //       _.forEach(_.get(section, "services", []), (service) => {
-  //         console.log("check list2", section)
+        // _.forEach(_.get(section, "services", []), (service) => {
 
-  //         if (service?.isNewService) {
-  //           serviceParams = _.cloneDeep(service);
-  //           // console.log("check list", serviceParams)
-  //           delete serviceParams["id"];
-  //         } else {
-  //           serviceParams = {
-  //             ...service,
-  //             id: service?.serviceId,
-  //             sectionId: section?.sectionId,
-  //           };
-  //         }
+        //   if (service?.isNewService) {
+        //     serviceParams = _.cloneDeep(service);
+        //     // console.log("check list", serviceParams)
+        //     delete serviceParams["id"];
+        //   } else {
+        //     serviceParams = {
+        //       ...service,
+        //       id: service?.serviceId,
+        //       sectionId: section?.sectionId,
+        //     };
+        //   }
 
-  //         delete serviceParams["estimateTime"];
-  //         delete serviceParams["isNewService"];
-  //         delete serviceParams["section"];
-  //         delete serviceParams["_id"];
-  //         delete serviceParams["__v"];
+        //   delete serviceParams["estimateTime"];
+        //   delete serviceParams["isNewService"];
+        //   delete serviceParams["section"];
+        //   delete serviceParams["_id"];
+        //   delete serviceParams["__v"];
 
-  //         // console.log("check list", serviceParams)
+        //   // console.log("check list", serviceParams)
 
-  //       });
-  //       serviceUpdateList.push(serviceParams);
+        // });
+        // serviceUpdateList.push(serviceParams);
 
-  //     });
+        _.forEach(_.get(section, "services", []), (service) => {
+          let serviceParams;
+        
+          if (service?.isNewService) {
+            serviceParams = _.cloneDeep(service);
+            delete serviceParams["id"];
+          } else {
+            serviceParams = {
+              ...service,
+              id: service?.serviceId,
+              sectionId: section?.sectionId,
+            };
+          }
+        
+          delete serviceParams["estimateTime"];
+          delete serviceParams["isNewService"];
+          delete serviceParams["section"];
+          delete serviceParams["_id"];
+          delete serviceParams["__v"];
+        
+   
+          const isDuplicate = serviceUpdateList.some(
+            (item) =>
+              item.name === serviceParams.name &&
+              item.sectionId === serviceParams.sectionId
+          );
+        
+          if (!isDuplicate) {
+            serviceUpdateList.push(_.cloneDeep(serviceParams));
+          }
+        });
 
-  //     budgetServiceUpdate.mutateAsync(
-  //       {
-  //         services: serviceUpdateList,
-  //         sections: sectionUpdateList,
-  //       },
-  //       {
-  //         onSuccess: () => {
+      });
 
-  //           // console.log("check payload", {
-  //           //   services: serviceUpdateList,
-  //           //   sections: sectionUpdateList,
-  //           // },)
+      budgetServiceUpdate.mutateAsync(
+        {
+          services: serviceUpdateList,
+          sections: sectionUpdateList,
+        },
+        {
+          onSuccess: () => {
 
-  //           onAddSnackbar("Update services successful!", "success");
-  //           reset(defaultValues);
-  //           onCloseEdit();
-  //         },
-  //       },
-  //     );
-  //   } catch (error) {
-  //     onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-  //   }
-  // };
+            // console.log("check payload", {
+            //   services: serviceUpdateList,
+            //   sections: sectionUpdateList,
+            // },)
+
+            onAddSnackbar("Update services successful!", "success");
+            reset(defaultValues);
+            onCloseEdit();
+          },
+        },
+      );
+    } catch (error) {
+      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+    }
+  };
 
   // const deleteSection = async (sectionId: string) => {
   //   budgetSectionDelete.mutateAsync({
@@ -569,60 +598,6 @@ export const ServiceSection = memo(({
   //     serviceId: serviceId,
   //   });
   // };
-
-  const handleUpdateSections = async (
-    updateSections: (TBudgetSection & { sectionId: string })[],
-  ) => {
-    try {
-      const sectionUpdateList = _.map(updateSections, (section) => ({
-        id: _.get(section, "sectionId", ""),
-        name: _.get(section, "name", ""),
-        start_date: _.get(section, "start_date", ""),
-      }));
-
-      // Tạo danh sách các services cần cập nhật
-      const serviceUpdateList = _.flatMap(updateSections, (section) =>
-        _.map(_.get(section, "services", []), (service) => {
-          // Nếu dịch vụ mới
-          return {
-            id: service.serviceId ?? service.id ?? "", // Ensure id is always a string
-            name: service.name ?? "",
-            desc: service.desc ?? "",
-            serviceType: service.serviceType ?? "",
-            billType: service.billType ?? "",
-            unit: service.unit ?? "",
-            estimate: service.estimate ?? 0,
-            qty: service.qty ?? 0,
-            price: service.price ?? 0,
-            discount: service.discount ?? 0,
-            markUp: service.markUp ?? 0,
-            tolBudget: service.tolBudget ?? 0,
-            sectionId: section.sectionId ?? "",
-          };
-        })
-      );
-
-      // Kiểm tra lại payload trước khi gửi đi
-      const payload = {
-        services: _.uniqBy(serviceUpdateList, "id"), // Loại bỏ các mục trùng lặp theo id
-        sections: sectionUpdateList,
-      };
-
-      // Log dữ liệu để kiểm tra trước khi gửi
-      console.log("Payload:", payload);
-
-      // Gọi API để cập nhật cả sections và services
-      await budgetServiceUpdate.mutateAsync(payload, {
-        onSuccess: () => {
-          onAddSnackbar("Update services and sections successful!", "success");
-          reset(defaultValues);
-          onCloseEdit();
-        },
-      });
-    } catch (error) {
-      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
-    }
-  };
 
   const deleteService = async (serviceId: string) => {
     try {
