@@ -1,25 +1,25 @@
-name: deploy project nextjs on staging server
+# name: deploy project nextjs on staging server
 
-on:
-  push:
-    branches:
-      - dev
+# on:
+#   push:
+#     branches:
+#       - dev
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: deploy project nextjs on staging server
-        env:
-          SERVERID: ${{ vars.SERVERID }}
-          PASS: ${{vars.PASS}}
-          GIT_PASS: ${{vars.GIT_PASS}}
-        run: |
-          sudo apt-get install -y openssh-client
-          sudo apt-get install sshpass
-          echo "Deploying ..."
-          sshpass -p $PASS ssh -o StrictHostKeyChecking=no root@$SERVERID "cd ./u01/saas-web-app/ && git checkout . &&  git pull && sh build.sh"
-          echo "All Done !!!"
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+#       - name: deploy project nextjs on staging server
+#         env:
+#           SERVERID: ${{ vars.SERVERID }}
+#           PASS: ${{vars.PASS}}
+#           GIT_PASS: ${{vars.GIT_PASS}}
+#         run: |
+#           sudo apt-get install -y openssh-client
+#           sudo apt-get install sshpass
+#           echo "Deploying ..."
+#           sshpass -p $PASS ssh -o StrictHostKeyChecking=no root@$SERVERID "cd ./u01/saas-web-app/ && git checkout . &&  git pull && sh build.sh"
+#           echo "All Done !!!"
