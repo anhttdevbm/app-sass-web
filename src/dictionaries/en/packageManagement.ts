@@ -84,4 +84,13 @@ export const PackageManagementLang: PackageManagementDictionary = {
     renewAutomatically: "renew automatically",
     byCharging: "by charging your payment method on file until you cancel.",
   },
+  popup: {
+    title: "Confirm to Request Upgrade",
+    subtitle: "Are you sure to request upgrade?",
+    content: "By sending upgrade request, the billing owner will receive notification",
+  },
+  notification: {
+    upgradeRequestSuccessful: "Upgrade request successful!",
+    upgradeRequestFail: "Upgrade request failed!",
+  },
 };

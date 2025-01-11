@@ -3,7 +3,7 @@
 import { useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Avatar from "components/Avatar";
-import { Switch, Text } from "components/shared";
+import { NewButton, Switch, Text } from "components/shared";
 import ConfirmToRequest from "components/sn-employee-detail/components/ConfirmToRequest";
 import { Permission } from "constant/enums";
 import { NS_PACKAGE_MANAGERMENT } from "constant/index";
@@ -98,15 +98,22 @@ const Sumary = () => {
     const gmailPattern = /^[^\s@]+@gmail\.com$/;
     return gmailPattern.test(email);
   };
+
+  //handle function check date expiration <= 3 days
+  const isExpirationDate = () => {
+    if (user?.expiration_date && new Date(user.expiration_date).getTime() - new Date().getTime() <= 3 * 24 * 60 * 60 * 1000) {
+      return true;
+    }
+    return false;
+  }
   const onSubmitConfirmToRequest = async () => {
     try {
       const result = await dispatch(getRequestUpgradePayment());
-
-      if (result?.payload?.success) {
-        onAddSnackbar("Request Success", "success");
-      } else {
-        onAddSnackbar("Already sent a payment request!", "error");
+      // handle result log
+      if (result ) {
+        onAddSnackbar(packageT("notification.upgradeRequestSuccessful"), "success");
       }
+
       setOpenModalConfirm(false);
     } catch (error) {
       onAddSnackbar("Request Error", "error");
@@ -184,11 +191,20 @@ const Sumary = () => {
                 <Text>{user?.packageName ?? ""}</Text>
               </Box>
             </Box>
-            <ButtonCustom
-              buttonDefault
-              onClick={() => setOpenModalConfirm(true)}
-              text={packageT("button.requestUpgrade")}
+            {(isExpirationDate()) ? (
+              <ButtonCustom
+                buttonDefault
+                onClick={() => setOpenModalConfirm(true)}
+                text={packageT("button.requestUpgrade")}
             />
+            ) : (
+              <ButtonCustom
+                buttonDefault
+                disabled
+                text={packageT("button.requestUpgrade")}
+              />
+            )}
+            
           </Box>
           {/* EXPIRATION DATE */}
           <Box
@@ -216,8 +232,8 @@ const Sumary = () => {
           </Box>
           <ConfirmToRequest
             open={openModalConfirm}
-            title="Confirm to Request Upgrade"
-            question="Are you sure to request upgrade?"
+            title={packageT("popup.title")}
+            question={packageT("popup.subtitle")}
             onClose={() => setOpenModalConfirm(false)}
             onSubmit={onSubmitConfirmToRequest}
           />
@@ -284,7 +300,7 @@ const Sumary = () => {
                     width: 118,
                   }}
                 >
-                  <Text>{user?.packageName ?? ""}</Text>
+                  <Text>{user?.packageName}</Text>
                 </Box>
               </Box>
               <ButtonCustom
@@ -544,13 +560,11 @@ const Sumary = () => {
                   {packageT("title.billingOwner")}
                 </Text>
                 <Box display="flex" gap={2}>
-                  <Image
-                    alt={accountBillOwner?.avatar || "Default alt text"}
+                  <Avatar 
+                    alt={accountBillOwner?.fullName}
                     src={accountBillOwner?.avatar ?? UserPlaceholderImage}
-                    width={32}
-                    height={32}
-                    layout="fixed"
-                  />
+                    size={32} 
+                    />
                   {accountBillOwner?.fullName} ({accountBillOwner?.email}){" "}
                 </Box>
                 <ButtonCustom

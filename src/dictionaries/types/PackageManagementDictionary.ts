@@ -1,3 +1,4 @@
+import { title } from 'process';
 export type PackageManagementDictionary = {
   head: {
     title: string;
@@ -77,5 +78,14 @@ export type PackageManagementDictionary = {
     yourSubscription: string;
     renewAutomatically: string;
     byCharging: string;
+  };
+  popup: {
+    title: string;
+    subtitle: string;
+    content: string;
+  };
+  notification: {
+    upgradeRequestSuccessful: string;
+    upgradeRequestFail: string;
   };
 };

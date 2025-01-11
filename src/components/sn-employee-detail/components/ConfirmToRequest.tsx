@@ -95,8 +95,7 @@ const ConfirmToRequest = (props: Props) => {
               textAlign: "center",
             }}
           >
-            By sending upgrade request, the billing owner will receive
-            notification
+            {packageT("popup.content")}
           </Text>
         </Box>
         <Box display="flex" justifyContent={"center"} mt={5} gap={"10px"}>
@@ -119,7 +118,7 @@ const ConfirmToRequest = (props: Props) => {
               display: { xs: "none", sm: "block" },
             }}
           >
-            Cancel
+            {packageT("button.cancel")}
           </Button>
           <Button
             onClick={onSubmit}
@@ -139,7 +138,7 @@ const ConfirmToRequest = (props: Props) => {
               textTransform: "none",
             }}
           >
-            Confirm
+            {packageT("button.confirm")}
           </Button>
         </Box>
       </Paper>

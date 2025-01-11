@@ -84,4 +84,14 @@ export const PackageManagementLang: PackageManagementDictionary = {
     byCharging:
       "bằng cách tính phí phương thức thanh toán đã lưu của bạn cho đến khi bạn hủy.",
   },
+  popup: {
+    title: "Xác nhận yêu cầu nâng cấp",
+    subtitle: "Bạn có chắc chắn yêu cầu nâng cấp không?",
+    content:
+      "Bằng cách gửi yêu cầu nâng cấp, chủ sở hữu thanh toán sẽ nhận được thông báo",
+  },
+  notification: {
+    upgradeRequestSuccessful: "Yêu cầu nâng cấp thành công!",
+    upgradeRequestFail: "Yêu cầu nâng cấp thất bại!",
+  },
 };

@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from "store/configureStore";
 import { changeBillOwner, getAllAccountAdmin } from "store/payment/actions";
 import ButtonCustom from "../components/Button";
 import SearchPackageManagement from "../components/Search";
+import Avatar from "components/Avatar";
 
 type Props = {
   open: boolean;
@@ -159,15 +160,13 @@ const Change = (props: Props) => {
                         cursor: "pointer",
                       }}
                     >
-                      <Image
-                        alt={item?.avatar?.name || "Default alt text"}
-                        src={typeof item?.avatar === "string" ? item.avatar : UserPlaceholderImage}
-                        width={32}
-                        height={32}
-                        layout="fixed"
+                      <Avatar
+                        alt={item.fullname}
+                        src={item.avatar as unknown as string ?? UserPlaceholderImage}
+                        size={32}
                       />
                       <Box>
-                        {item?.fullname ?? ""} ({item?.email ?? ""}) <br />{" "}
+                        {item?.fullname ?? "No name"} ({item?.email ?? ""}) <br />{" "}
                         {item?.roles ?? ""}
                       </Box>
                     </Box>

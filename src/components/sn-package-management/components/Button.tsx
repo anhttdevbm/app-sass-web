@@ -9,10 +9,11 @@ type Props = {
   buttonDefault?: boolean;
   type?: string;
   sx?: SxProps<Theme>;
+  disabled?: boolean;
 };
 
 const ButtonCustom = (props: Props) => {
-  const { onClick, height, width, text, buttonDefault, type, sx } = props;
+  const { onClick, height, width, text, buttonDefault, type, sx, disabled } = props;
 
   const sxStyle: SxProps<Theme> | undefined = {
     boxShadow: "none",
@@ -35,7 +36,7 @@ const ButtonCustom = (props: Props) => {
   };
 
   return (
-    <Button onClick={onClick} size="extraSmall" variant="primary" sx={sxStyle}>
+    <Button onClick={onClick} size="extraSmall" variant="primary" sx={sxStyle} disabled={disabled}>
       {text || ""}
     </Button>
   );
