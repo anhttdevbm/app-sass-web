@@ -87,7 +87,7 @@ const Comments = (props: CommentsProps) => {
           key={comment.invoice_id}
           type={comentType || "Comment"}
           {...comment}
-          file={comment.attachments ?? []}
+          // file={comment.attachments ?? []}
         />
       ))}
     </Stack>
@@ -113,17 +113,17 @@ function CommentItem(props: CommentItemProps) {
     callData();
   }, [creator]);
 
-  const [attachments_down, setAttachment] = useState<Attachment[]>([]);
+  const [attachments_down, setAttachment] = useState<string[]>([]);
 
-  useEffect(() => {
-    const newList = (file ?? []).map((e) => ({
-      link: e,
-      name: "image.png",
-      object: "e4a2d270-7c18-11ef-b62f-4b6fa1ded3d8-540a7dbc74402284",
-    }));
+  // useEffect(() => {
+  //   const newList = (file ?? []).map((e) => ({
+  //     link: e,
+  //     name: "image.png",
+  //     object: "e4a2d270-7c18-11ef-b62f-4b6fa1ded3d8-540a7dbc74402284",
+  //   }));
 
-    setAttachment(newList);
-  }, [file]);
+  //   setAttachment(newList);
+  // }, [file]);
   return (
     <Stack flex={1} spacing={1} bgcolor="grey.50" p={2} borderRadius={1}>
       <Stack direction="row" justifyContent="space-between" spacing={1}>
@@ -164,9 +164,9 @@ function CommentItem(props: CommentItemProps) {
       <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
         {attachments_down.map((attachment) => (
           <AttachmentPreview
-            key={attachment.link}
-            src={attachment.link}
-            name={attachment.name}
+            key={attachment}
+            src={attachment}
+            name={attachment}
             listData={attachments_down}
             listAttachmentsDown={attachments_down}
           />

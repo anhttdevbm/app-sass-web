@@ -311,7 +311,7 @@ export interface BillingCommentData {
   comment?: string;
   created_at?: string;
   creator?: string;
-  attachments?: [];
+  attachments?: string[];
 }
 
 export interface BillingComment extends Omit<Comment, "creator"> {

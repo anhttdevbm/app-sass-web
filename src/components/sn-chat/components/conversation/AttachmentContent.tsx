@@ -304,7 +304,7 @@ const AttachmentContent = ({
           open={true}
           type={mediaPreview.type as string}
           src={mediaPreview.src as string}
-          listAttachmentsDown={mediaListPreview}
+          listAttachmentsDown={mediaListPreview.map(item => item.link)}
           onClose={() =>
             setMediaPreview((state) => ({ ...state, isPreview: false }))
           }

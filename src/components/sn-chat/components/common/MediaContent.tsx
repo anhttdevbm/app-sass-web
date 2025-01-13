@@ -23,6 +23,7 @@ export const MediaClone = ({
   const commonT = useTranslations(NS_COMMON);
   const ref = useRef<HTMLVideoElement | HTMLImageElement | null>(null);
   const [isError, setError] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [mediaPreview, setMediaPreview] = useState<any>({
     isPreview: false,
     url: "",
@@ -32,11 +33,7 @@ export const MediaClone = ({
   const { url, type } = media;
   const listMediaClone = useMemo(() => {
     return listMedia.map((item) => {
-      return {
-        link: item.url || "",
-        name: item.name || "",
-        object: item.object,
-      } as { link: string; name: string; object: string };
+      return item;
     });
   }, [listMedia]);
 
@@ -151,7 +148,7 @@ export const MediaClone = ({
         <Preview
           open={true}
           type={mediaPreview.type || ""}
-          listAttachmentsDown={listMediaClone}
+          listAttachmentsDown={listMediaClone.map((item) => item.url)}
           src={mediaPreview.url as string}
           titleProps={{
             children: (

@@ -30,11 +30,7 @@ export const MediaClone = ({
   }>({ isPreview: false, src: "", type: "image_url" });
   const listMediaClone = useMemo(() => {
     return listMedia.map((item) => {
-      return {
-        link: item.url || "",
-        name: item.name || "",
-        object: item.object,
-      } as { link: string; name: string; object: string };
+      return item;
     });
   }, [listMedia]);
 
@@ -140,7 +136,7 @@ export const MediaClone = ({
         <Preview
           open={true}
           type={mediaPreview.type || ""}
-          listAttachmentsDown={listMediaClone}
+          listAttachmentsDown={listMediaClone.map((item) => item.url)}
           onClose={() =>
             setMediaPreview((state) => ({ ...state, isPreview: false }))
           }
