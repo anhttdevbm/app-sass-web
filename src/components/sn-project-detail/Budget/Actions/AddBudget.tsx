@@ -5,10 +5,10 @@ import ModalAddBudget from "components/sn-project-detail/Budget/Actions/ModalAdd
 import { NS_PROJECT } from "constant/index";
 import useToggle from "hooks/useToggle";
 import AddSquareIcon from "icons/AddSquareIcon";
+import PlusIcon from "icons/PlusIcon";
 import { useTranslations } from "next-intl";
 import { memo } from "react";
 import { TBudgetListQueries } from "store/project/budget/action";
-import PlusIcon from "../../../../icons/PlusIcon";
 
 const AddBudget = ({ projectId }: { projectId?: string }) => {
   const projectT = useTranslations(NS_PROJECT);
