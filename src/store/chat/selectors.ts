@@ -93,6 +93,7 @@ import { Attachment, UrlsQuery } from "./media/typeMedia";
 import { getChatUrls, uploadFile } from "./media/actionMedia";
 import { FILE_ACCEPT, IMAGES_ACCEPT } from "constant/index";
 import { setEndMeeting } from "store/meeting/reducer";
+import { Endpoint } from "api";
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
@@ -632,7 +633,7 @@ export const useChat = () => {
   const onChangeGroupAvatar = useCallback(
     async (file: File, roomId: string) => {
       const result = await dispatch(
-        uploadFile({ endpoint: "files/upload-link", file }),
+        uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file }),
       );
       const authToken = user?.["authToken"] ?? "";
       const userId = user?.["id"] ?? "";
