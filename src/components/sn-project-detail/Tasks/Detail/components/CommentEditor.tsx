@@ -69,7 +69,7 @@ const CommentEditor = forwardRef(
         if (files.length) {
           data.attachments = [];
           const promises = files.map((file) => {
-            return client.upload(Endpoint.UPLOAD_LINK, file);
+            return client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, file);
           });
 
           const results = await Promise.allSettled(promises);
