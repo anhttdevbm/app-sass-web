@@ -26,8 +26,8 @@ type AttachmentPreviewProps = {
   src: string;
   size?: number;
   showName?: boolean;
-  listData?: AttachmentList[];
-  listAttachmentsDown?: AttachmentList[];
+  listData?: string[];
+  listAttachmentsDown?: string[];
 };
 
 const AttachmentPreview = (props: AttachmentPreviewProps) => {
