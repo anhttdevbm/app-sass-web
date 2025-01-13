@@ -29,8 +29,8 @@ interface Attachment {
 type PreviewProps = {
   type: string;
   src: string;
-  listData?: Attachment[];
-  listAttachmentsDown?: Attachment[];
+  listData?: string[];
+  listAttachmentsDown?: string[];
   titleProps?: DialogTitleProps;
   onStartChangeSlide?: (id: string | undefined) => void;
 } & Omit<DialogProps, "children">;
@@ -139,12 +139,12 @@ const Preview = (props: PreviewProps) => {
     });
   };
 
-  const indexSlide = filterAttachment(listAttachmentsDown)?.findIndex(
-    (el) => el.link == src,
+  const indexSlide = listAttachmentsDown?.findIndex(
+    (link) => link == src,
   );
 
   const handleChangeSlide = (_, to) => {
-    const idAsUrl = listAttachmentsDown?.[to].link;
+    const idAsUrl = listAttachmentsDown?.[to];
     onStartChangeSlide?.(idAsUrl);
   };
 
@@ -209,31 +209,14 @@ const Preview = (props: PreviewProps) => {
             transitionDuration={500}
             easing="ease"
           >
-            {filterAttachment(listAttachmentsDown)?.map((data, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {getExtension(data?.name)?.startsWith("video") ? (
+            {listAttachmentsDown?.map((link, index) => (
+              <div key={index} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {getExtension(link)?.startsWith("video") ? (
                   <Box component="video" height="100%" width="100%" controls>
-                    <source src={data.link} />
+                    <source src={link} />
                   </Box>
                 ) : (
-                  <Box
-                    component="img"
-                    src={data.link}
-                    height="auto"
-                    width="auto"
-                    alt="Image"
-                    sx={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                    }}
-                  />
+                  <Box component="img" src={link} height="auto" width="auto" alt="Image" sx={{ maxWidth: "100%", maxHeight: "100%" }} />
                 )}
               </div>
             ))}

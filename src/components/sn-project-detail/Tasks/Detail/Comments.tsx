@@ -3,7 +3,6 @@ import AttachmentPreview from "components/AttachmentPreview";
 import Avatar from "components/Avatar";
 import { Text } from "components/shared";
 import { NS_PROJECT } from "constant/index";
-import { Attachment } from "constant/types";
 import { useTranslations } from "next-intl";
 import { memo, useEffect, useState } from "react";
 import { Comment } from "store/project/reducer";
@@ -18,14 +17,14 @@ type CommentItemProps = {} & Comment;
 const Comments = (props: CommentsProps) => {
   const { comments = [] } = props;
   const projectT = useTranslations(NS_PROJECT);
-  const [listAttachmentsDown, setListAttachmentsDown] = useState<Attachment[]>(
+  const [listAttachmentsDown, setListAttachmentsDown] = useState<string[]>(
     [],
   );
   useEffect(() => {
     comments.map((comment) => {
       if (comment.attachments_down) {
         comment.attachments_down.map((item) => {
-          setListAttachmentsDown((current) => [...current, item]);
+          setListAttachmentsDown((current) => [...current, item[0]]);
         });
       }
     });
@@ -92,9 +91,9 @@ const CommentItem = (props: CommentItemProps) => {
       <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
         {attachments_down.map((attachment) => (
           <AttachmentPreview
-            key={attachment.link}
-            src={attachment.link}
-            name={attachment.name}
+            key={attachment}
+            src={attachment}
+            name={attachment}
             listData={attachments_down}
             listAttachmentsDown={listAttachmentsDown}
           />

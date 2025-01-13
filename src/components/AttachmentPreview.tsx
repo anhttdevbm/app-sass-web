@@ -10,20 +10,14 @@ import Link from "./Link";
 import Preview from "./Preview";
 import useToggle from "hooks/useToggle";
 
-interface AttachmentList {
-  link: string;
-  name: string;
-  object: string;
-}
-
 type AttachmentPreviewProps = {
   name: string;
   onRemove?: () => void;
   src: string;
   size?: number;
   showName?: boolean;
-  listData?: AttachmentList[];
-  listAttachmentsDown?: AttachmentList[];
+  listData?: string[];
+  listAttachmentsDown?: string[];
 };
 
 const AttachmentPreview = (props: AttachmentPreviewProps) => {

@@ -158,8 +158,8 @@ export interface Comment {
   created_time: string;
   creator: User;
   activities: ActivityTask[];
-  attachments_down: Attachment[];
-  listAttachmentsDown?: Attachment[];
+  attachments_down: string[];
+  listAttachmentsDown?: string[];
 }
 export interface ActivityTask {
   id: string;
