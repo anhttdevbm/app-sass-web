@@ -9,6 +9,7 @@ import { uploadFile } from "store/chat/media/actionMedia";
 import { CHAT_EVENT_TYPE } from "store/chat/type";
 import { useAppDispatch } from "store/hooks";
 import { useWSChat } from "store/chat/helpers";
+import { Endpoint } from "api";
 
 export const UploadAvatarGroup = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ export const UploadAvatarGroup = () => {
   const handleUpdateAvatarGroup = async (event: BaseSyntheticEvent) => {
     if (event.currentTarget.files?.length) {
       const result = await dispatch(
-        uploadFile({ endpoint: "files/upload-link", file: event.currentTarget.files[0] }),
+        uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file: event.currentTarget.files[0] }),
       );
       sendMessage({
         event: CHAT_EVENT_TYPE.GROUP_UPDATE_AVATAR,
