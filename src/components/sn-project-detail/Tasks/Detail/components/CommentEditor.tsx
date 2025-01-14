@@ -73,13 +73,14 @@ const CommentEditor = forwardRef(
           });
 
           const results = await Promise.allSettled(promises);
-          results.forEach((result) => {
+          results.forEach((result) => {            
             if (result.status === "fulfilled" && result.value) {
               (data.attachments as string[]).push(result.value);
             }
           });
         }
         const newData = await onCommentTask(data);
+        onAddSnackbar("Upload file successfully!", "success");
         if (newData) {
           onGetTaskList(taskListId);
           setContent("");

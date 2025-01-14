@@ -90,6 +90,8 @@ const CommentItem = (props: CommentItemProps) => {
       )}
       <Stack direction="row" gap={1.5} flex={1} flexWrap="wrap">
         {attachments_down.map((attachment) => (
+          console.log("attachment11", attachment),
+          
           <AttachmentPreview
             key={attachment}
             src={attachment}
