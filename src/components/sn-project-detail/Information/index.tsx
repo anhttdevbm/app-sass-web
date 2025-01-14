@@ -132,7 +132,8 @@ const DesktopInformation = (props) => {
     gap: "15px",
   }));
 
-  const fileIcon = (extension, url) => {
+  const fileIcon = (url) => {
+  const extension = url.split('.').pop().toLowerCase();
     if (
       extension.indexOf(".jpeg") !== -1 ||
       extension.indexOf(".jpg") !== -1 ||
@@ -365,7 +366,7 @@ const DesktopInformation = (props) => {
                 }}
               >
                 <Item sx={{ height: "100%" }}>
-                  {fileIcon(data.extension, data.link)}
+                  {fileIcon(data.link)}
                   <Stack className="description-file">
                     <Text
                       sx={{
@@ -400,7 +401,7 @@ const DesktopInformation = (props) => {
             ) : (
               <Link href={data.link} style={{ textDecoration: "none" }}>
                 <Item sx={{ height: "100%" }}>
-                  {fileIcon(data.extension, data.link)}
+                  {fileIcon(data.link)}
                   <Stack className="description-file">
                     <Text
                       sx={{
@@ -505,7 +506,8 @@ const MobileInformation = (props) => {
     gap: "15px",
   }));
 
-  const fileIcon = (extension, url) => {
+  const fileIcon = (url) => {
+    const extension = url.split('.').pop().toLowerCase();
     if (
       extension.indexOf(".jpeg") !== -1 ||
       extension.indexOf(".jpg") !== -1 ||
@@ -689,7 +691,7 @@ const MobileInformation = (props) => {
           >
             <Link href={data.link} style={{ textDecoration: "none" }}>
               <Item>
-                {fileIcon(data.extension, data.link)}
+                {fileIcon(data.link)}
                 <Stack className="description-file">
                   <Text
                     sx={{
