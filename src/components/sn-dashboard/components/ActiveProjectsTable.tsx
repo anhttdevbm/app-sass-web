@@ -6,6 +6,7 @@ import { BodyCell } from "components/Table";
 import { useEffect, useState } from "react";
 import { DashboardTableCellHeader } from "./DashboardTableCellHeader";
 import { convertTimestamp } from "./Tables";
+import { Tooltip, Text } from "components/shared";
 
 interface Project {
     length: number;
@@ -46,9 +47,21 @@ function ActiveProjectsTable() {
                     {data && data.map((row) => (
                         <TableRow key={row.id}>
                             <BodyCell>
-                                <Typography textAlign='left' fontWeight={600} fontSize={14}>
-                                    {row.name}
-                                </Typography>
+                                <Text paddingLeft="10px" align="left">
+                                    <Tooltip title={row.name} placement="bottom-start" aria-label="Budget Name">
+                                        <Typography 
+                                            style={
+                                                { 
+                                                    whiteSpace: 'nowrap', 
+                                                    overflow: 'hidden', 
+                                                    textOverflow: 'ellipsis' 
+                                                }
+                                            }
+                                        >
+                                            {row.name}
+                                        </Typography>
+                                    </Tooltip>
+                                </Text>
                             </BodyCell>
                             <BodyCell>
                                 <Stack direction='row' spacing={1.5}>

@@ -7,7 +7,7 @@ import { AUTH_API_URL } from "constant/index";
 import { useEffect, useState } from "react";
 import { useAuth } from "store/app/selectors";
 import { DashboardTableCellHeader } from "./DashboardTableCellHeader";
-
+import { Text, Tooltip } from "components/shared";
 
 interface Employee {
     length: number;
@@ -57,7 +57,21 @@ function EmployeeTable() {
                             <BodyCell>
                                 <Stack direction='row' spacing={1.5}>
                                     <Avatar size={32} src={row.avatar} />
-                                    <Typography>{row.fullname}</Typography>
+                                    <Text paddingLeft="10px" align="left">
+                                        <Tooltip title={row.name} placement="bottom-start" aria-label="Budget Name">
+                                            <Typography 
+                                                style={
+                                                    { 
+                                                        whiteSpace: 'nowrap', 
+                                                        overflow: 'hidden', 
+                                                        textOverflow: 'ellipsis' 
+                                                    }
+                                                }
+                                            >
+                                                {row.fullname}
+                                            </Typography>
+                                        </Tooltip>
+                                    </Text>
                                 </Stack>
                             </BodyCell>
                             <BodyCell>
