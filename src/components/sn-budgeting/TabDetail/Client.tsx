@@ -70,7 +70,7 @@ export const Client = (props: {
     } else if (!!options.length) {
       setOptionSelected(options[0]?.value);
     }
-  }, [options, setOptionSelected, clientId]);
+  }, [options, setOptionSelected, clientId, isUpdated]);
 
   useEffect(() => {
     if (optionSelected) {
