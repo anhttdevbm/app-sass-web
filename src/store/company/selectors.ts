@@ -87,12 +87,14 @@ export const useEmployees = () => {
   const onUpdateEmployee = useCallback(
     async (id: string, position: string, roles: Permission[]) => {
       try {
-        return await dispatch(updateEmployee({ id, position, roles })).unwrap();
+        const result = await dispatch(updateEmployee({ id, position, roles })).unwrap();
+        await dispatch(getEmployees(filters)); 
+        return result;
       } catch (error) {
         throw error;
       }
     },
-    [dispatch],
+    [dispatch, filters],
   );
 
   const onDeleteEmployees = useCallback(

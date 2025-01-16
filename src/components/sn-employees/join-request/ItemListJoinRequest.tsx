@@ -389,7 +389,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
             email: item.email,
             client: item.client_company,
             position: item.position?.id ?? "",
-            permission: item.roles[0],
+            permission: item.roles?.[0] ?? "",
           }}
           onSubmit={onUpdateEmployee}
         />
