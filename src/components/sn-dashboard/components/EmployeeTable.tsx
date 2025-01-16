@@ -44,53 +44,50 @@ function EmployeeTable() {
     ]
 
     return (
-        <TableContainer sx={{ maxHeight: data && data.length > 10 ? 400 : 'auto', overflowY: 'auto' }}>
-            <Table stickyHeader>
-                <TableHead>
-                    <TableRow>
-                        <DashboardTableCellHeader headerList={HEADER_LIST} />
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {data && data.map((row) => (
-                        <TableRow key={row.id}>
-                            <BodyCell>
-                                <Stack direction='row' spacing={1.5}>
-                                    <Avatar size={32} src={row.avatar} />
-                                    <Text paddingLeft="10px" align="left">
-                                        <Tooltip title={row.name} placement="bottom-start" aria-label="Budget Name">
-                                            <Typography 
-                                                style={
-                                                    { 
-                                                        whiteSpace: 'nowrap', 
-                                                        overflow: 'hidden', 
-                                                        textOverflow: 'ellipsis' 
-                                                    }
-                                                }
-                                            >
-                                                {row.fullname}
-                                            </Typography>
-                                        </Tooltip>
-                                    </Text>
-                                </Stack>
-                            </BodyCell>
-                            <BodyCell>
-                                <Typography textAlign='left' fontWeight={600} fontSize={14}>
-                                    {row.email}
+        <TableContainer sx={{ maxHeight: 300, overflowY: "hidden",overflowX: "hidden", '&:hover': { overflowY: "auto" } }}>
+        <Table stickyHeader>
+            <TableHead>
+                <TableRow>
+                    <DashboardTableCellHeader headerList={HEADER_LIST} />
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {data && data.map((row) => (
+                    <TableRow key={row.id}>
+                        <BodyCell>
+                            <Stack direction='row' spacing={1.5}>
+                                <Avatar size={32} src={row.avatar} />
+                                <Text paddingLeft="10px" align="left">
+                                    <Tooltip title={row.name} placement="bottom-start" aria-label="Budget Name">
+                                        <Typography 
+                                            style={{ 
+                                                whiteSpace: 'nowrap', 
+                                                overflow: 'hidden', 
+                                                textOverflow: 'ellipsis' 
+                                            }}
+                                        >
+                                            {row.fullname}
+                                        </Typography>
+                                    </Tooltip>
+                                </Text>
+                            </Stack>
+                        </BodyCell>
+                        <BodyCell>
+                            <Typography textAlign='left' fontWeight={600} fontSize={14}>
+                                {row.email}
+                            </Typography>
+                        </BodyCell>
+                        <BodyCell sx={{ textAlign: "right" }}>
+                            {row.roles.map((role, index) => (
+                                <Typography key={index} textAlign='right' fontWeight={600} fontSize={14}>
+                                    {role === "AM" ? "Admin" : role === "MN" ? "Manager" : role === "LE" ? "Leader" : "Staff"}
                                 </Typography>
-                            </BodyCell>
-
-                            <BodyCell sx={{ textAlign: "right" }}>
-                                {row.roles.map((role, index) => (
-                                    <Typography key={index} textAlign='right' fontWeight={600} fontSize={14}>
-                                        {role === "AM" ? "Admin" : role === "MN" ? "Manager" : role === "LE" ? "Leader" : "Staff"}
-                                    </Typography>
-                                ))}
-                            </BodyCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                            ))}
+                        </BodyCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
         </TableContainer>
     )
 }
