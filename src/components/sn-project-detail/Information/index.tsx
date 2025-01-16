@@ -71,11 +71,9 @@ const DesktopInformation = (props) => {
   const { attachments } = props;
   const { item } = useProject();
 
-  const filtered_images = attachments.filter((attachment) => {
+  const filtered_images = attachments?.filter((attachment) => {    
     return attachment.type === "image/jpeg" || attachment.type === "image/png";
   });
-
-  console.log("filtered_images", filtered_images);
 
   const [openPreview, setOpenPreview] = useState(false);
   const [selectedImageData, setSelectedImageData] = useState({

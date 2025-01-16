@@ -50,8 +50,8 @@ const AttachmentsTask = (props: AttachmentsTaskProps) => {
       isSubmittingRef.current = true;
       const fileExtensions = Array.from(files).map((file) =>
         getExtension(file.name),
-      );
-      const hasValid = fileExtensions.some((extension) =>
+      );      
+      const hasValid = fileExtensions.some((extension) =>        
         SUPPORTS.includes(extension),
       );
 
@@ -63,7 +63,7 @@ const AttachmentsTask = (props: AttachmentsTaskProps) => {
         setMsg(commonT("processingUpload"));
         const attachments: string[] = [];
         const promises = Array.from(files).map((file) => {
-          return client.upload(Endpoint.UPLOAD_LINK, file);
+          return client.uploadFileV2(Endpoint.UPLOAD_FILE_V2, file);
         });
 
         const results = await Promise.allSettled(promises);
@@ -159,11 +159,11 @@ const AttachmentsTask = (props: AttachmentsTaskProps) => {
           }
         >
           <Stack mt={2} flex={1} direction="row" gap={1.5} flexWrap="wrap">
-            {task?.attachments_down.map((attachment, index) => (
+            {task?.attachments_down.map((attachment, index) => (              
               <AttachmentPreview
-                key={attachment?.link}
-                src={attachment?.link}
-                name={attachment?.name}
+                key={index}
+                src={attachment as unknown as string}
+                name={attachment as unknown as string}
                 onRemove={onRemove(index)}
                 size={40}
                 showName
