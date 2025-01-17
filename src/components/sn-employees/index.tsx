@@ -26,7 +26,7 @@ const EmployeesPage = () => {
   const companyT = useTranslations(NS_COMPANY);
   const { user } = useAuth();
 
-  const [totalUserUnPaid, setTotalUserUnPaid] = useState(null);
+  const [totalUserUnPaid, setTotalUserUnPaid] = useState<number | null>(null);
 
   const [tab, setTab] = useState<EmployeeType>(EmployeeType.EMPLOYEE);
   const searchParams = useSearchParams();
@@ -140,7 +140,7 @@ const EmployeesPage = () => {
           value={EmployeeType.JOIN_REQUEST.toString()}
           sx={tabPanelStyles}
         >
-          <ItemListJoinRequest employeeType={EmployeeType.JOIN_REQUEST} onUpdateTotalUserUnPaid={fetchTotalUserUnPaid} />
+          <ItemListJoinRequest employeeType={EmployeeType.JOIN_REQUEST} onUpdateTotalUserUnPaid={setTotalUserUnPaid} />
         </TabPanel>
       </TabContext>
     </>
@@ -154,7 +154,6 @@ const tabStyles = {
   width: "auto",
   px: 3,
   py: 0,
-  border: "1px solid",
   borderStyle: "solid",
   borderColor: "transparent",
   borderTopColor: "#EFEFEF",

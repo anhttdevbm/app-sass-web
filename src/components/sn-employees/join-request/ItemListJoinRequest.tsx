@@ -31,6 +31,7 @@ import { useAuth } from "store/app/selectors";
 import { Employee } from "store/company/reducer";
 import { useEmployees } from "store/company/selectors";
 import { getPath } from "utils/index";
+import { fetchTotalUserUnPaid } from "../index";
 import DeleteConfirm from "../components/DeleteConfirm";
 import EmployeeCompanyForm from "../EmployeeCompanyForm";
 import EmployeeTypeForm from "../EmployeeTypeForm";
@@ -38,7 +39,7 @@ import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 // import DeleteConfirm from "./components/DeleteConfirm";
 
-const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employeeType: EmployeeType, onUpdateTotalUserUnPaid: () => void }) => {
+const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employeeType: EmployeeType, onUpdateTotalUserUnPaid: (total: number) => void }) => {
   const {
     items: employees,
     isFetching,
@@ -72,17 +73,18 @@ const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employ
       Boolean(selectedList.length && selectedList.length === employees.length),
     [selectedList.length, employees.length],
   );
-  const onChangeAll = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
+  const onChangeAll = useCallback( 
+    async (event: ChangeEvent<HTMLInputElement>) => {
       const isChecked = event.target.checked;
       if (isChecked) {
         setSelectedList(employees);
       } else {
         setSelectedList([]);
-        onUpdateTotalUserUnPaid(); // Update totalUserUnPaid after deletion
+        const total = fetchTotalUserUnPaid();
+        onUpdateTotalUserUnPaid(await total); // Update totalUserUnPaid after deletion
       }
     },
-    [employees],
+    [employees, onUpdateTotalUserUnPaid],
   );
 
   const desktopHeaderList: CellProps[] = useMemo(
@@ -138,6 +140,8 @@ const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employ
         try {
           await onUpdateEmployee(item.id, item.position?.id ?? "", item.roles);
           onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after approval
+          const total = await fetchTotalUserUnPaid();
+        onUpdateTotalUserUnPaid(total); // Update totalUserUnPaid after approval
         } catch (error) {
           console.error("Failed to update employee:", error);
         }
