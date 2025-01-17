@@ -36,7 +36,9 @@ import {
   updateMyCompany,
   updatePosition,
   updateProjectType,
+  fetchTotalUserUnPaid,
 } from "./actions";
+import { di } from "@fullcalendar/core/internal-common";
 
 export const useEmployees = () => {
   const dispatch = useAppDispatch();
@@ -89,6 +91,7 @@ export const useEmployees = () => {
       try {
         const result = await dispatch(updateEmployee({ id, position, roles })).unwrap();
         await dispatch(getEmployees(filters)); 
+        await dispatch(fetchTotalUserUnPaid()); // Reload the total user unpaid
         return result;
       } catch (error) {
         throw error;
@@ -97,16 +100,19 @@ export const useEmployees = () => {
     [dispatch, filters],
   );
 
-  const onDeleteEmployees = useCallback(
-    async (ids: string[]) => {
-      try {
-        return await dispatch(deleteEmployees(ids)).unwrap();
-      } catch (error) {
-        throw error;
-      }
-    },
-    [dispatch],
-  );
+const onDeleteEmployees = useCallback(
+  async (ids: string[]) => {
+    try {
+      const result = await dispatch(deleteEmployees(ids)).unwrap();
+      await dispatch(getEmployees(filters)); // Reload the employee list
+      await dispatch(fetchTotalUserUnPaid()); // Reload the total user unpaid
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  [dispatch, filters],
+);
 
   const clientEmployees = useMemo(
     () => items.filter((e) => !!e.client_company),

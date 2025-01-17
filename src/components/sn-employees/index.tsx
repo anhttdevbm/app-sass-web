@@ -13,6 +13,15 @@ import Actions from "./Actions";
 import ItemList from "./ItemList";
 import ItemListJoinRequest from "./join-request/ItemListJoinRequest";
 
+export const fetchTotalUserUnPaid = async () => {
+  const response = await client.get(
+    Endpoint.TOTAL_USER_UNPAID,
+    {},
+    { baseURL: AUTH_API_URL },
+  );
+  return response.data.total_user_un_paid;
+};
+
 const EmployeesPage = () => {
   const companyT = useTranslations(NS_COMPANY);
   const { user } = useAuth();
@@ -37,16 +46,16 @@ const EmployeesPage = () => {
   );
 
   useEffect(() => {
-    const fetchTotalUserUnPaid = async () => {
-      const response = await client.get(
-        Endpoint.TOTAL_USER_UNPAID,
-        {},
-        { baseURL: AUTH_API_URL },
-      );
-      setTotalUserUnPaid(response.data.total_user_un_paid);
+    const fetchData = async () => {
+      const total = await fetchTotalUserUnPaid();
+      setTotalUserUnPaid(total);
     };
 
-    fetchTotalUserUnPaid();
+    fetchData();
+
+    const intervalId = setInterval(fetchData, 60000); // Poll every 60 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
 
 
@@ -131,7 +140,7 @@ const EmployeesPage = () => {
           value={EmployeeType.JOIN_REQUEST.toString()}
           sx={tabPanelStyles}
         >
-          <ItemListJoinRequest employeeType={EmployeeType.JOIN_REQUEST} />
+          <ItemListJoinRequest employeeType={EmployeeType.JOIN_REQUEST} onUpdateTotalUserUnPaid={fetchTotalUserUnPaid} />
         </TabPanel>
       </TabContext>
     </>

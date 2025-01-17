@@ -115,6 +115,23 @@ export const getEmployees = createAsyncThunk(
   },
 );
 
+//handle fetch Total User UnPaid ,return total_user_un_paid
+export const fetchTotalUserUnPaid = createAsyncThunk(
+  "company/fetchTotalUserUnPaid",
+  async () => {
+    try {
+      const response = await client.get(
+        Endpoint.TOTAL_USER_UNPAID,
+        {},
+        { baseURL: AUTH_API_URL },
+      );
+      return response.data.total_user_un_paid;
+    } catch (error) {
+      throw error;
+    }
+  },
+)
+
 export const getEmployeeOptions = createAsyncThunk(
   "company/getEmployeeOptions",
   async (queries: BaseQueries & { email?: string; fullname?: string }) => {

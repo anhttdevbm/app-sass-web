@@ -38,7 +38,7 @@ import DesktopCells from "./DesktopCells";
 import MobileContentCell from "./MobileContentCell";
 // import DeleteConfirm from "./components/DeleteConfirm";
 
-const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) => {
+const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employeeType: EmployeeType, onUpdateTotalUserUnPaid: () => void }) => {
   const {
     items: employees,
     isFetching,
@@ -79,6 +79,7 @@ const ItemListJoinRequest = ({ employeeType }: { employeeType: EmployeeType }) =
         setSelectedList(employees);
       } else {
         setSelectedList([]);
+        onUpdateTotalUserUnPaid(); // Update totalUserUnPaid after deletion
       }
     },
     [employees],
