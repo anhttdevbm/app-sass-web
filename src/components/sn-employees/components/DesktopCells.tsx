@@ -35,7 +35,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
     CT: 'Contractor',
   };
 
-  const transformedRoles = item.roles.map((role: string) => roleMapping[role] || role);
+  const transformedRoles = item.roles?.map((role: string) => roleMapping[role] || role);
 
   return (
     <>
@@ -51,7 +51,7 @@ const DesktopCells = (props: DesktopCellsProps) => {
         {item.email}
       </BodyCell>
       <BodyCell align="left" noWrap>
-      {transformedRoles.join(', ')}
+      {transformedRoles?.join(', ')}
       </BodyCell>
       <BodyCell align="left">{item.position?.name}</BodyCell>
       <BodyCell
