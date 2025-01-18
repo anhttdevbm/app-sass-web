@@ -560,7 +560,7 @@ const validationSchema = Yup.object().shape({
   // working_hours: Yup.number().min(0, "form.error.nonNegative"),
 });
 
-const sxConfig = {
+export const sxConfig = {
   input: {
     height: 56,
   },

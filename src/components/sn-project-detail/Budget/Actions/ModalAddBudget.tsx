@@ -77,6 +77,9 @@ const ModalAddBudget = (props: Props) => {
     if (!projects || projects.length === 0) {
       onGetProjects({});
     }
+    if (rest.open) {
+      onGetEmployeeOptions({ pageIndex: 1, pageSize: 20 });
+    }
   }, [onGetClientCompanies, onGetProjects, projects, rest.open]);
 
   useEffect(() => {
@@ -192,9 +195,9 @@ const ModalAddBudget = (props: Props) => {
     owner: props.selectedBudget?.owner || "",
     client: props.selectedBudget?.client || "",
     start_date: "",
-    end_date: props.selectedBudget?.end_date|| "",
+    end_date: "",
     // start_date: formatDate(props.selectedBudget?.start_date, DATE_FORMAT_FORM) || "",
-    // end_date: formatDate(props.selectedBudget?.end_date, DATE_FORMAT_FORM) || "",
+    // end_date: props.selectedBudget.end_date || "",
   };
 
 
@@ -462,14 +465,14 @@ const ModalAddBudget = (props: Props) => {
               onGetEmployeeOptions({
                 pageIndex: 1,
                 pageSize: 20,
-                email: (newValue as string) || "",
+                email: (newValue as string),
               })
             }
             searchProps={{
               value: filters?.email,
               placeholder: commonT("searchBy", { name: "email" }),
             }}
-            // onOpen={() => onGetEmployeeOptions({ pageIndex: 1, pageSize: 20 })}
+            onOpen={() => onGetEmployeeOptions({ pageIndex: 1, pageSize: 20 })}
             autoComplete="off"
           />
         </MenuList>
