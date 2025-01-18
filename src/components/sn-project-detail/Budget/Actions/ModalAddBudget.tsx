@@ -92,7 +92,7 @@ const ModalAddBudget = (props: Props) => {
     const query: TBudgetListQueries = {
       ...DEFAULT_PAGING,
       ...queryParam,
-      project_id: props?.projectId,
+      project_id: props?.projectId || props.selectedBudget.project_id,
     };
     if (param.start_date) {
       param.start_date = formatDate(param.start_date, DATE_FORMAT_FORM);
@@ -187,12 +187,12 @@ const ModalAddBudget = (props: Props) => {
 
 
   const initialValues: TBudgetCreateParam = {
-    project_id: props?.projectId || "",
+    project_id: projectId || props.selectedBudget?.project_id || "",
     name: props.selectedBudget?.name || "",
     owner: props.selectedBudget?.owner || "",
     client: props.selectedBudget?.client || "",
     start_date: "",
-    end_date: "",
+    end_date: props.selectedBudget?.end_date|| "",
     // start_date: formatDate(props.selectedBudget?.start_date, DATE_FORMAT_FORM) || "",
     // end_date: formatDate(props.selectedBudget?.end_date, DATE_FORMAT_FORM) || "",
   };
@@ -385,7 +385,6 @@ const ModalAddBudget = (props: Props) => {
             sx={{ "& .react-datepicker-popper": { zIndex: 999 } }}
           >
             <DateTimePicker
-              sx={newInput}
               title={projectT("budget.form.start_date")}
               name="start_date"
               onChange={onChangeDate}
@@ -394,9 +393,13 @@ const ModalAddBudget = (props: Props) => {
               error={commonT(touchedErrors?.start_date, {
                 name: projectT("budget.form.start_date"),
               })}
-              onClickEndNode={() => toggleFocusInputDate(true)}
               rootSx={sxInput}
               fullWidth
+              onClickEndNode={() => toggleFocusInputDate(true)}
+              sx={{
+                mt: { xs: 2, sm: 0 },
+                ...newInput,
+              }}
               pickerProps={{
                 onFocus() {
                   toggleFocusInputDate(true);

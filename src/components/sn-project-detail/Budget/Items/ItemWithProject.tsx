@@ -67,7 +67,7 @@ export const ItemWithProject = ({
         minwidth: "220px",
       },
       {
-        value: projectT("budget.table.company"),
+        value: projectT("budget.table.owner"),
         align: "center",
         width: "160px",
         minwidth: "160px",
@@ -152,9 +152,9 @@ export const ItemWithProject = ({
             </BodyCell>
             <BodyCell sx={getXsCell(2)}>
               <Stack direction="row" alignItems="center">
-                <Avatar src={budget?.client?.avatar} size={35} />
+                <Avatar src={budget?.owner?.avatar} size={35} />
                 <Text paddingLeft="10px" align="left">
-                  {budget.client.name}
+                  {budget.owner.fullname}
                 </Text>
               </Stack>
             </BodyCell>

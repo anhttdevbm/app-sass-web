@@ -216,7 +216,7 @@ export const ProjectLang: ProjectDictionary = {
     updateBudgetSuccess: "Cập nhật ngân sách thành công",
     table: {
       budget: "Trạng thái/Ngân sách",
-      owner: "Người tạo",
+      owner: "Chủ sở hữu",
       cost: "Chi phí",
       budgetTimeUsed: "Thời gian đã dùng",
       budgetedTimeUse: "Thời gian ngân sách sử dụng",

@@ -19,6 +19,7 @@ import { formatDate, formatNumber, getPath } from "utils/index";
 import ModalAddBudget from "../Actions/ModalAddBudget";
 import ActionsCell from "./ActionsCell";
 import FilterWithIds from "./FilterWithIds";
+import { client } from "api";
 
 type Props = {
   idSelecteds: string[];
@@ -44,10 +45,11 @@ export const ItemWithoutProject = ({
 
     const param: TBudgetCreateParam = {
       project_id: budget.project.id,
-      start_date: formatDate(budget.start_date, DATE_FORMAT_FORM),
-      end_date: formatDate(budget.end_date, DATE_FORMAT_FORM),
+      start_date: budget.start_date ? formatDate(budget.start_date, DATE_FORMAT_FORM) : '',
+      end_date: budget.end_date ? formatDate(budget.end_date, DATE_FORMAT_FORM) : '',
       owner: budget.owner.id,
-      name: budget.name
+      name: budget.name,
+      client: budget.client.id,
     } as TBudgetCreateParam;
 
     try {
