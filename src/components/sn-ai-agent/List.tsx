@@ -39,8 +39,6 @@ const AgentList = () => {
   const t = useTranslations(NS_AI_AGENT);
 
   const [data, setData] = useState<AIAgent[]>([]);
-
-  console.log("data", data);
   
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -25,8 +25,6 @@ export function MyTaskTable() {
         client.get(Endpoint.DASHBOARD_MY_TASK_ALL_ACTIVE, {}, { baseURL: DASHBOARD_API_URL })
             .then(response => {
                 setData(response.data.tasks);
-                console.log(data);
-
             })
     }, [])
 

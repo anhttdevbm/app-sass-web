@@ -61,12 +61,7 @@ const LinkBudgetPopup = (props: IProps) => {
       [name]: value,
     }));
 
-    // console.log(
-    //   arrBudgets?.map((data) =>
-    //     data?.id != findData?.id ? { ...findData } : { ...data },
-    //   ),
-    // );
-    // );
+
   };
 
   useEffect(() => {
