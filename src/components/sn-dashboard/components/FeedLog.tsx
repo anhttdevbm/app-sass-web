@@ -182,7 +182,6 @@ const FeedLog: React.FC = ({ }) => {
             <Stack
                 sx={{
                     width: 1,
-                    height: `calc(100vh - 300px)`,
                     overflow: "auto",
                     position: "relative",
                 }}
