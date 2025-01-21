@@ -16,9 +16,10 @@ import { useClientCompanies, useEmployeeOptions } from "store/company/selectors"
 import { TBudgetCreateParam, TBudgetListQueries } from "store/project/budget/action";
 import { useBudgets } from "store/project/budget/selector";
 import { useProjects } from "store/project/selectors";
-import { formatDate, getMessageErrorByAPI } from "utils/index";
+import { getMessageErrorByAPI } from "utils/index";
 import { DEFAULT_PAGING } from "constant/index";
 import * as Yup from "yup";
+import { format, parseISO } from 'date-fns' 
 
 type Props = Omit<DialogLayoutProps, "children" | "onSubmit"> & {
   open: boolean;
@@ -91,27 +92,33 @@ const ModalAddBudget = (props: Props) => {
   }, [bodyModalRef.current, rest.open]);
 
   const onSubmit = async (param: TBudgetCreateParam) => {
-
     const query: TBudgetListQueries = {
       ...DEFAULT_PAGING,
       ...queryParam,
       project_id: props?.projectId || props.selectedBudget.project_id,
     };
-    if (param.start_date) {
-      param.start_date = formatDate(param.start_date, DATE_FORMAT_FORM);
+  
+    const isValidDate = (dateString: string) => {
+      const date = new Date(dateString);
+      return !isNaN(date.getTime());
+    };
+  
+    if (param.start_date && !isValidDate(param.start_date)) {
+      param.start_date = formatDate1(param.start_date);
     }
-    if (param.end_date) {
-      param.end_date = formatDate(param.end_date, DATE_FORMAT_FORM);
+  
+    if (param.end_date && !isValidDate(param.end_date)) {
+      param.end_date = formatDate1(param.end_date);
     }
 
     if (moment(param.start_date).isAfter(param.end_date)) {
       formik.setFieldError(
         "start_date",
-        "The start date must be after the end date",
+        "The start date must be before the end date",
       );
       return;
     }
-
+  
     try {
       if (props.selectedBudget.id) {
         await projectBudget.update(props.selectedBudget.id, param);
@@ -125,9 +132,8 @@ const ModalAddBudget = (props: Props) => {
         props.onClose();
         projectBudget.get(query);
       }
-      projectBudget.get(query);
     } catch (error) {
-      onAddSnackbar(getMessageErrorByAPI(error, commonT), "error");
+      onAddSnackbar(projectT("budget.updateBudgetError"), "error");
     }
   };
 
@@ -189,15 +195,22 @@ const ModalAddBudget = (props: Props) => {
   };
 
 
+  const formatDate1 = (dateString: string) => {
+    if (!dateString) return "";
+    const [time, date] = dateString.split(' ');
+    const [day, month, year] = date.split('/');
+    const formattedDateString = `${year}-${month}-${day}T${time}:00`;
+    const dateObj = new Date(formattedDateString);
+    return isNaN(dateObj.getTime()) ? "" : dateObj.toISOString().split('T')[0];
+  };
+
   const initialValues: TBudgetCreateParam = {
     project_id: projectId || props.selectedBudget?.project_id || "",
     name: props.selectedBudget?.name || "",
     owner: props.selectedBudget?.owner || "",
     client: props.selectedBudget?.client || "",
-    start_date: "",
-    end_date: "",
-    // start_date: formatDate(props.selectedBudget?.start_date, DATE_FORMAT_FORM) || "",
-    // end_date: props.selectedBudget.end_date || "",
+    start_date: formatDate1(props.selectedBudget?.start_date) || "",
+    end_date: formatDate1(props.selectedBudget?.end_date) || ""
   };
 
 
@@ -206,8 +219,8 @@ const ModalAddBudget = (props: Props) => {
     owner: Yup.string().trim().required("form.error.required"),
     client: Yup.string().trim().required("form.error.required"),
     project_id: Yup.string().required("form.error.required"),
-    start_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
-    end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+    // start_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
+    // end_date: Yup.number().min(Yup.ref("start_date"), "form.error.gte"),
   });
 
   const formik = useFormik({
