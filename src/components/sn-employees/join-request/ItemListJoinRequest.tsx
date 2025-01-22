@@ -80,11 +80,10 @@ const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employ
         setSelectedList(employees);
       } else {
         setSelectedList([]);
-        const total = fetchTotalUserUnPaid();
-        onUpdateTotalUserUnPaid(await total); // Update totalUserUnPaid after deletion
+        
       }
     },
-    [employees, onUpdateTotalUserUnPaid],
+    [employees],
   );
 
   const desktopHeaderList: CellProps[] = useMemo(
@@ -139,9 +138,6 @@ const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employ
       if (action === DataAction.UPDATE && item) {
         try {
           await onUpdateEmployee(item.id, item.position?.id ?? "", item.roles);
-          onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after approval
-          const total = await fetchTotalUserUnPaid();
-          onUpdateTotalUserUnPaid(total); // Update totalUserUnPaid after approval
         } catch (error) {
           console.error("Failed to update employee:", error);
         }
@@ -192,13 +188,13 @@ const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employ
     const ids = selectedList.map((item) => item.id);
     try {
       const idsResponse = await onDeleteEmployees(ids);
-if (idsResponse.length) {
-  setAction(undefined);
-  setSelectedList([]);
-  onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after deletion
-  const total = await fetchTotalUserUnPaid();
-  onUpdateTotalUserUnPaid(total); // Update totalUserUnPaid after deletion
-}
+      if (idsResponse.length) {
+        setAction(undefined);
+        setSelectedList([]);
+        onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after deletion
+        const total = await fetchTotalUserUnPaid();
+        onUpdateTotalUserUnPaid(total); // Update totalUserUnPaid after deletion
+      }
       return idsResponse;
     } catch (error) {
       throw error;
@@ -254,7 +250,7 @@ if (idsResponse.length) {
               checked={isCheckedAll}
               onChange={onChangeAll}
             // sx={{ mr: "auto" }}
-            />
+        />
           )}
           <IconButton
             size="small"
@@ -421,13 +417,19 @@ if (idsResponse.length) {
           { label: "Client", value: EmployeeType.CLIENT },
           { label: "Contractor", value: EmployeeType.CONTRACTOR },
         ]}
-        onSubmit={(type) => {
+        onSubmit={async (type) => {
           setSelectedEmployeeType(type);
           setEmployeeTypeFormOpen(false);
           // Open the corresponding form after selecting the employee type
           if (action === DataAction.UPDATE && item) {
             // Open EmployeeCompanyForm with the selected type
             setAction(DataAction.UPDATE);
+
+            // call update onUpdateTotalUserUnPaid
+            const total = await fetchTotalUserUnPaid();
+            onUpdateTotalUserUnPaid(total);
+            onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after approval
+
           }
         }}
       />
@@ -436,5 +438,4 @@ if (idsResponse.length) {
 };
 
 export default memo(ItemListJoinRequest);
-
 const MOBILE_HEADER_LIST = [{ value: "#", width: "70%", align: "left" }];
