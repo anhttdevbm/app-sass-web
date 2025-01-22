@@ -81,10 +81,6 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
 
 
   const bookingEvent: IBookingItem = useMemo(() => {
-    console.log(bookingAll, "bookingAll");
-    console.log("serviceBudgetOptions", serviceBudgetOptions);
-    
-    
     const booking =
       bookingAll
         .find((item) => item.bookings.find((i) => i.id === bookingId))
