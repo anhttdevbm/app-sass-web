@@ -55,7 +55,7 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
   const [companyMembers, setCompanyMembers] = useState<CompanyMember[]>([]);
   const [chatMembers, setChatMembers] = useState<MemberGroupChat[]>([]);
   const participantIds = chatMembers.map((member) => member.id);
-  const [countdown, setCountdown] = useState<number | null>(null);
+  const [countdowns, setCountdowns] = useState<Map<string, number>>(new Map());
   const [disabledButtons, setDisabledButtons] = useState<Set<string>>(new Set());
   const { user } = useAuth();
   const { handleCreateGroupWS, handleAddMemberToGroup } = useChatHelpers();
@@ -64,15 +64,19 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
   const onAddParticipant = useCallback((participantId: string) => {
     if (disabledButtons.has(participantId) || participantIds.includes(participantId)) return;
 
-    setCountdown(3);
+    setCountdowns((prev) => new Map(prev).set(participantId, 3));
     const intervalId = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev === 1) {
+      setCountdowns((prev) => {
+        const newCountdowns = new Map(prev);
+        const currentCountdown = newCountdowns.get(participantId) || 0;
+        if (currentCountdown === 1) {
           clearInterval(intervalId);
           setDisabledButtons((prev) => new Set(prev).add(participantId));
-          return null;
+          newCountdowns.delete(participantId);
+        } else {
+          newCountdowns.set(participantId, currentCountdown - 1);
         }
-        return prev! - 1;
+        return newCountdowns;
       });
     }, 1000);
 
@@ -169,7 +173,7 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
                   <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <Button
                       onClick={() => onAddParticipant(member.id)}
-                      disabled={disabledButtons.has(member.id) || countdown !== null}
+                      disabled={disabledButtons.has(member.id) || countdowns.has(member.id)}
                       sx={{
                         minWidth: "120px",
                         backgroundColor: "#E1F0FF",
@@ -182,11 +186,11 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
                     >
                       {disabledButtons.has(member.id) ? "Called" : "Call"}
                     </Button>
-                    {countdown !== null && countdown > 0 && (
-                        <Typography variant="body2" sx={{ fontFamily: inter.style.fontFamily }}>
-                          {countdown}s
-                        </Typography>
-                      )}
+                    {countdowns.has(member.id) && (
+                      <Typography variant="body2" sx={{ fontFamily: inter.style.fontFamily }}>
+                        {countdowns.get(member.id)}s
+                      </Typography>
+                    )}
                   </Box>
                 )}
             </Box>
