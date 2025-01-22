@@ -141,7 +141,7 @@ const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employ
           await onUpdateEmployee(item.id, item.position?.id ?? "", item.roles);
           onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after approval
           const total = await fetchTotalUserUnPaid();
-        onUpdateTotalUserUnPaid(total); // Update totalUserUnPaid after approval
+          onUpdateTotalUserUnPaid(total); // Update totalUserUnPaid after approval
         } catch (error) {
           console.error("Failed to update employee:", error);
         }
@@ -192,11 +192,13 @@ const ItemListJoinRequest = ({ employeeType, onUpdateTotalUserUnPaid }: { employ
     const ids = selectedList.map((item) => item.id);
     try {
       const idsResponse = await onDeleteEmployees(ids);
-      if (idsResponse.length) {
-        setAction(undefined);
-        setSelectedList([]);
-        // setId(undefined);
-      }
+if (idsResponse.length) {
+  setAction(undefined);
+  setSelectedList([]);
+  onGetEmployees({ ...DEFAULT_PAGING, typeEmployee: employeeType.toString() }); // Refresh the list after deletion
+  const total = await fetchTotalUserUnPaid();
+  onUpdateTotalUserUnPaid(total); // Update totalUserUnPaid after deletion
+}
       return idsResponse;
     } catch (error) {
       throw error;
