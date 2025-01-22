@@ -615,7 +615,8 @@ const ItemList = () => {
   const onDragEnd = async (result: DropResult) => {
     onDraggingFalse();
     const { source, destination, type, draggableId } = result;
-    if (!destination || source.droppableId == destination.droppableId) return;
+    // if (!destination || source.droppableId == destination.droppableId) return;
+    if (!destination) return;
 
     if (type !== "TASK_LIST") {
       // move sub task
