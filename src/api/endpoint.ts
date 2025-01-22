@@ -190,6 +190,7 @@ export const Endpoint = {
   BUDGETS_BY_PROJECT_ID: "/budgets/getBudgetByProject/{id}",
   SERVICE_QUERIES_BY_BUDGET: "/budgets/getServiceByBudget/{id}",
   GET_BUDGET_STATISTICSBY_ID: "/budgets/{id}/statistics",
+  GET_ALL_SERVICES_BUDGET: "/budgets/getAllServices",
 
   //Content
   CONTENT_HOME_BANNER: "/content/home/banner",

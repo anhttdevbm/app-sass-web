@@ -21,11 +21,11 @@ import useGetOptions from "components/sn-resource-planing/hooks/useGetOptions";
 import Textarea from "components/Textarea";
 import TextStatus from "components/TextStatus";
 import { RESOURCE_ALLOCATION_TYPE, RESOURCE_EVENT_TYPE } from "constant/enums";
-import { NS_COMMON, NS_RESOURCE_PLANNING } from "constant/index";
+import { NS_COMMON, NS_RESOURCE_PLANNING, SALE_API_URL } from "constant/index";
 import dayjs from "dayjs";
 import ArrowDownIcon from "icons/ArrowDownIcon";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Control, Controller, useForm } from "react-hook-form";
 import { BookingData } from "store/resourcePlanning/action";
 import { IBookingItem } from "store/resourcePlanning/reducer";
@@ -35,6 +35,8 @@ import {
 } from "store/resourcePlanning/selector";
 import { formatNumber } from "utils/index";
 import { useGetSchemas } from "../Schemas";
+import { client } from "api/client";
+import { Endpoint } from "api/endpoint";
 
 interface IProps {
   open: boolean;
@@ -50,12 +52,39 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
   const { timeOptions } = useGetOptions();
   const { bookingAll, updateBooking, loading } = useBookingAll();
   const { schemaProject } = useGetSchemas();
-  const { serviceBudgetOptions } = useGetServiceBudget();
 
   const commonT = useTranslations(NS_COMMON);
   const resourceT = useTranslations(NS_RESOURCE_PLANNING);
+  const [serviceBudgetOptions, setServiceBudgetOptions] = useState<IOptionStructure[]>([]);
+
+  // call api get all service
+  useEffect(() => {
+    const getBudgetServiceBudget = async () => {
+        try {
+          const response = await client.get(Endpoint.GET_ALL_SERVICES_BUDGET,
+            {},
+            { baseURL: SALE_API_URL }
+          );
+          const mappedData = response.data.data.map((item) => ({
+            value: item.id,
+            label: item.name,
+          }));          
+          setServiceBudgetOptions(mappedData);
+        } catch (error) {
+          console.error("Error fetching budget statistics:", error);
+        }
+
+    };
+    getBudgetServiceBudget();
+    
+  }, [serviceBudgetOptions]);
+
 
   const bookingEvent: IBookingItem = useMemo(() => {
+    console.log(bookingAll, "bookingAll");
+    console.log("serviceBudgetOptions", serviceBudgetOptions);
+    
+    
     const booking =
       bookingAll
         .find((item) => item.bookings.find((i) => i.id === bookingId))
@@ -125,7 +154,7 @@ const ProjectTab = ({ open, onClose, bookingId }: IProps) => {
           <SelectController
             name="service_id"
             control={controlProject as unknown as Control}
-            listOptions={serviceBudgetOptions as IOptionStructure[]}
+            listOptions={serviceBudgetOptions}
             disabled={!watchProject("project_id")}
             label={resourceT("form.services")}
             required
