@@ -137,7 +137,7 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
                   gap: "12px",
                 }}
               >
-                <Avatar src="" alt="" size={44} />
+                <Avatar src={member?.avatar} alt={member.fullname} size={44} />
                 <Typography
                   sx={{
                     fontFamily: inter.style.fontFamily,
