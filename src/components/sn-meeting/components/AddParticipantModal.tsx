@@ -64,7 +64,7 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
   const onAddParticipant = useCallback((participantId: string) => {
     if (disabledButtons.has(participantId)) return;
 
-    setCountdown(5);
+    setCountdown(3);
     const intervalId = setInterval(() => {
       setCountdown((prev) => {
         if (prev === 1) {
@@ -169,7 +169,7 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
                   <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <Button
                       onClick={() => onAddParticipant(member.id)}
-                      disabled={disabledButtons.has(member.id)}
+                      disabled={disabledButtons.has(member.id) || countdown !== null}
                       sx={{
                         minWidth: "120px",
                         backgroundColor: "#E1F0FF",
@@ -180,13 +180,13 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
                         },
                       }}
                     >
-                      Call
+                      {disabledButtons.has(member.id) ? "Called" : "Call"}
                     </Button>
-                    {countdown !== null && (
-                      <Typography variant="body2" sx={{ fontFamily: inter.style.fontFamily }}>
-                        {countdown}s
-                      </Typography>
-                    )}
+                    {countdown !== null && countdown > 0 && (
+                        <Typography variant="body2" sx={{ fontFamily: inter.style.fontFamily }}>
+                          {countdown}s
+                        </Typography>
+                      )}
                   </Box>
                 )}
             </Box>
