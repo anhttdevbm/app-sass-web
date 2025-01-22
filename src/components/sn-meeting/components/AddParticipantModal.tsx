@@ -3,7 +3,7 @@ import { Box, Button, Modal, Typography } from "@mui/material";
 import Avatar from "components/Avatar";
 import { inter } from "components/sn-time-tracking/CalendarTracking/CalendarTracking.styles";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "store/app/selectors";
 import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import { useChat } from "store/chat/selectors";
@@ -55,17 +55,33 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
   const [companyMembers, setCompanyMembers] = useState<CompanyMember[]>([]);
   const [chatMembers, setChatMembers] = useState<MemberGroupChat[]>([]);
   const participantIds = chatMembers.map((member) => member.id);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [disabledButtons, setDisabledButtons] = useState<Set<string>>(new Set());
   const { user } = useAuth();
   const { handleCreateGroupWS, handleAddMemberToGroup } = useChatHelpers();
 
   // Onclick call button
-  const onAddParticipant = (participantId: string) => {
+  const onAddParticipant = useCallback((participantId: string) => {
+    if (disabledButtons.has(participantId)) return;
+
+    setCountdown(5);
+    const intervalId = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === 1) {
+          clearInterval(intervalId);
+          setDisabledButtons((prev) => new Set(prev).add(participantId));
+          return null;
+        }
+        return prev! - 1;
+      });
+    }, 1000);
+
     if (chatMembers.length === 2) {
       handleCreateGroupWS([...participantIds, participantId]);
     } else {
       handleAddMemberToGroup([participantId]);
     }
-  };
+  }, [chatMembers.length, handleAddMemberToGroup, handleCreateGroupWS, participantIds, disabledButtons]);
 
   useEffect(() => {
     if (!id) return;
@@ -150,20 +166,28 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
               </Box>
               {!participantIds.includes(member.id) &&
                 user?.id !== member.id && (
-                  <Button
-                    onClick={() => onAddParticipant(member.id)}
-                    sx={{
-                      minWidth: "120px",
-                      backgroundColor: "#E1F0FF",
-                      textTransform: "capitalize",
-                      "&:hover": {
+                  <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Button
+                      onClick={() => onAddParticipant(member.id)}
+                      disabled={disabledButtons.has(member.id)}
+                      sx={{
+                        minWidth: "120px",
                         backgroundColor: "#E1F0FF",
-                        opacity: 0.8,
-                      },
-                    }}
-                  >
-                    Call
-                  </Button>
+                        textTransform: "capitalize",
+                        "&:hover": {
+                          backgroundColor: "#E1F0FF",
+                          opacity: 0.8,
+                        },
+                      }}
+                    >
+                      Call
+                    </Button>
+                    {countdown !== null && (
+                      <Typography variant="body2" sx={{ fontFamily: inter.style.fontFamily }}>
+                        {countdown}s
+                      </Typography>
+                    )}
+                  </Box>
                 )}
             </Box>
           ))}
