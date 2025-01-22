@@ -62,7 +62,7 @@ export default function AddParticipantModal({ open, handleClose }: IProps) {
 
   // Onclick call button
   const onAddParticipant = useCallback((participantId: string) => {
-    if (disabledButtons.has(participantId)) return;
+    if (disabledButtons.has(participantId) || participantIds.includes(participantId)) return;
 
     setCountdown(3);
     const intervalId = setInterval(() => {
