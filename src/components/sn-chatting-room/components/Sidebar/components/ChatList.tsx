@@ -1,10 +1,11 @@
 import NoData from "components/NoData";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, LinearProgress } from "@mui/material";
 import { useAuth } from "store/app/selectors";
 import ChatItemLayout from "components/sn-chat/components/chat/ChatItemLayout";
 import {
   CHAT_EVENT_TYPE,
+  CHAT_EVENT_TYPE_V2,
   CHAT_ROOM_TYPE,
   IChatItemInfo,
   STEP,
@@ -12,19 +13,25 @@ import {
 import { useDeepCompareMemo } from "hooks/useDeepCompare";
 import useTheme from "hooks/useTheme";
 import { useChat } from "store/chat/selectors";
-import { useChatHelpers, useWSChat } from "store/chat/helpers";
+import { PAGE_INITIAL, useChatHelpers, useWSChat } from "store/chat/helpers";
+import { send } from "process";
+import { initPagingV2 } from "store/chat/reducer";
 
 const ChatList = () => {
   const {
     dataTransfer: currentConversation,
     convention: conversations,
     conversationPagingV2: paging,
-    isFetching,
-    isSearchConversation,
+    isFetching, onSetRoomId,
+    onSetDataTransfer,
+    onSetConversationInfo,
+    onSetStep,
+    isSearchConversation, onSetMessagePaging,
+    onSetMembers
   } = useChat();
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
-  const { sendMessage } = useWSChat();
+  const { sendMessage, resetData, resetDataRoom} = useWSChat();
   const { loadMoreConversation, isGroup } = useChatHelpers();
   const [lastElement, setLastElement] = useState(null);
   const chatListRef = useRef<HTMLDivElement>(null);
@@ -59,47 +66,106 @@ const ChatList = () => {
   }, [lastElement, observer]);
 
   const _conversations = useDeepCompareMemo(() => {
-    return conversations;
+    return  conversations.map((item)=>{
+      let roomDetail = item
+      // if (item?.type === CHAT_ROOM_TYPE.PERSONAL) {
+        roomDetail = {
+          ...roomDetail,
+          peer_detail: roomDetail?.lstMember?.find(
+            (item) => item?.id != user?.id,
+          ),
+        // };
+      }
+      return roomDetail
+    })
   }, [conversations, user]);
 
-  const handleClickConversation = (chatInfo: IChatItemInfo) => {
+  const handleClickConversation = async (chatInfo: IChatItemInfo) => {
     try {
       if (!chatInfo.id) return;
+
       if (isSearchConversation && !isGroup(chatInfo?.type)) {
+        sendMessage({
+
+          "code": "message.getListMessage",
+          "data": {
+            "id": chatInfo.id
+          }
+
+        })
+
         sendMessage({
           event: CHAT_EVENT_TYPE.PERSONAL_ROOM,
           userId: chatInfo.id,
         });
       } else {
         sendMessage({
-          event: CHAT_EVENT_TYPE.DETAIL_ROOM,
-          roomId: chatInfo.id,
-        });
-      }
 
+          "code": "message.getListMessage",
+          "data": {
+            "id": chatInfo.id
+          }
+
+        })
+        // sendMessage({
+        //   event: CHAT_EVENT_TYPE.DETAIL_ROOM,
+        //   roomId: chatInfo.id,
+        // });
+      }
+      await onSetMessagePaging(initPagingV2);
+      // if (roomId === roomDetail?.id) return;
+      let roomDetail = chatInfo
+      
+      // if (chatInfo?.type === CHAT_ROOM_TYPE.PERSONAL) {
+      //   roomDetail = {
+      //     ...roomDetail,
+      //     peer_detail: roomDetail?.lstMember?.find(
+      //       (item) => item?.id != user?.id,
+      //     ),
+      //   };
+      // }
+      onSetRoomId(roomDetail?.id);
+      onSetDataTransfer(roomDetail);
+      onSetConversationInfo(roomDetail);
+      resetData();
+      onSetMembers(roomDetail?.lstMember);
+
+      if (roomDetail?.type === CHAT_ROOM_TYPE.GROUP) {
+        onSetStep(STEP.CHAT_GROUP, roomDetail);
+      } else {
+        onSetStep(STEP.CHAT_ONE, roomDetail);
+      }
+      sendMessage({
+        event: CHAT_EVENT_TYPE.MESSAGE_LIST,
+        roomId: roomDetail?.id,
+        page: PAGE_INITIAL,
+      });
       if (chatInfo?.unseen_message_count > 0) {
         sendMessage({
           event: CHAT_EVENT_TYPE.MESSAGE_SEEN,
           messageId: chatInfo?.lastmsg?.id,
         });
       }
-    } catch (error) {}
+
+
+    } catch (error) { }
   };
 
   const renderConversation = (idActive: string) => {
     return _conversations.map((conversation, index) => (
-      <ChatItemLayout
-        chatInfo={conversation}
-        sessionId={user?.["id"]}
-        key={conversation.id}
-        onClickConvention={handleClickConversation}
-        isActive={idActive === conversation.id || false}
-        chatItemProps={{
-          ...(index === _conversations?.length - 1 && {
-            ref: setLastElement,
-          }),
-        }}
-      />
+      <>
+        <ChatItemLayout
+          chatInfo={conversation}
+          sessionId={user?.["id"]}
+          key={conversation.id}
+          onClickConvention={handleClickConversation}
+          isActive={idActive === conversation.id || false}
+          chatItemProps={{
+            ...(index === _conversations?.length - 1 && {
+              ref: setLastElement,
+            }),
+          }}
+        /></>
     ));
   };
 

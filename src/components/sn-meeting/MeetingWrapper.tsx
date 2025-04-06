@@ -68,7 +68,7 @@ export default function MeetingWrapper() {
         baseURL: process.env.MEETING_API_URL,
       },
     );
-
+    console.log(response)
     const cp = response.data.participants.map((p) => p.id);
     const sender = response.data.participants.filter(
       (p: MeetUser) => p.id === user?.id,
@@ -80,11 +80,14 @@ export default function MeetingWrapper() {
       const peer = newPeerConnection(true);
       store.dispatch(setPeer(peer));
       peer.on("signal", (signal: any) => {
+        console.log("signal ?? ", signal)
         const wsPayload: WSPayload = {
-          event: "signal",
-          receive: meetData.user,
-          send: sender,
-          signal,
+          // event: "signal",
+          // receive: meetData.user,
+          // send: sender,
+          // signal,
+
+
         };
         ws?.send(JSON.stringify(wsPayload));
       });
@@ -184,12 +187,64 @@ export default function MeetingWrapper() {
 
   const handleConnectToWebSocket = (meetId: string) => {
     const ws = new WebSocket(
-      `${process.env.NEXT_APP_MEETING_WS_URL}/${meetId}?token=${aT}`,
+      `wss://app.taskcover.com:6830/api/v2/meeting/${meetId}?language=vi&token=${aT}`,
     );
+    // const ws = new WebSocket(
+    //   `${process.env.NEXT_APP_MEETING_WS_URL}/${meetId}?token=${aT}`,
+    // );
+
 
     if (meetingWsClient) return;
     store.dispatch(setMeetingWsClient(ws));
+    ws.onopen = () => {
+      // Tạo peer connection cho người mới kết nối
+      const peer = newPeerConnection(true);  // Đánh dấu đây là người mới kết nối
+      store.dispatch(setPeer(peer));
 
+      // store.dispatch(setCurrentParticipants(cp));
+
+      const peerConnection = () => {
+        const peer = newPeerConnection(true);
+        store.dispatch(setPeer(peer));
+        peer.on("signal", (signal: any) => {
+          console.log("signal ?? ", signal)
+          console.log("signal json string >> ", JSON.stringify(signal))
+          const wsPayload: WSPayload = {
+
+            code: "offer",
+            data: {
+              offer:signal
+            }
+          }
+
+
+
+          ws?.send(JSON.stringify(wsPayload));
+        });
+
+        peer.on("stream", (stream: MediaStream) => {
+          const isCameraOn = stream.getVideoTracks()[0].enabled;
+          const isMicOn = stream.getAudioTracks()[0].enabled;
+          // const remoteStream: RemoteStream = {
+          //   participant: meetData.user,
+          //   stream,
+          //   streamState: {
+          //     isCameraOn,
+          //     isMicOn,
+          //     isRaiseHand: localStreamState.isRaiseHand,
+          //     reactionUnified: "",
+          //   },
+          // };
+          store.dispatch(setRemoteStreams(remoteStream ?? nul));
+        });
+      };
+
+      getLocalStream(() => {
+        peerConnection();
+      });
+
+
+    };
     ws.onmessage = (event) => {
       const resp = JSON.parse(event.data);
       const meetData = resp.data;
@@ -260,6 +315,7 @@ export default function MeetingWrapper() {
       if (!id) return;
       await onStartMeeting(id as string)
         .then(async (res) => {
+          console.log(res)
           onSetMeetInfo(res.payload);
           handleConnectToWebSocket(res.payload.id);
         })

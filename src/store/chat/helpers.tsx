@@ -15,13 +15,14 @@ import { clientStorage } from "utils/storage";
 import { useChat } from "./selectors";
 import {
   CHAT_EVENT_TYPE,
+  CHAT_EVENT_TYPE_V2,
   CHAT_ROOM_TYPE,
   IWsChatRespMessage,
   MESSAGE_TYPE,
   STEP,
 } from "./type";
 
-const PAGE_INITIAL = 1;
+export const PAGE_INITIAL = 1;
 
 const isRelatedGroup = (members: string[], userId = "") => {
   return members?.find((memberId) => memberId === userId);
@@ -36,7 +37,7 @@ export const isOwnerGroup = (groupCreatorId = "", userId = "") => {
 };
 
 export const isAdminGroup = (admins, userId) => {
-  return admins?.find((item) => item === userId);
+  return admins?.find((item) => item === userId && item.isAdmin);
 };
 
 const sortASCArray = (list: any[], sortBy: string) => {
@@ -96,6 +97,7 @@ export const useWSChat = () => {
     onSetChatFiles([]);
     onSetChatLinks([]);
     onSetChatMedias([]);
+    onSetMessages([])
   };
 
   const resetDataRoom = () => {
@@ -111,7 +113,6 @@ export const useWSChat = () => {
       ws.send(JSON.stringify(message));
     }
   };
-
   const handleMessageSystem = (resp) => {
     const senderId =
       resp?.data?.detailMember?.id || resp?.data?.detailAdmin?.id;
@@ -140,24 +141,28 @@ export const useWSChat = () => {
   };
 
   const handleReceiveMsg = async (resp) => {
-    const msg = resp?.data?.message;
+    const msg = resp?.data;
     const newMsg = {
       ...msg,
-      seen_by: isCurrentUserInRoom(resp?.data?.room?.id, msg?.sender)
+      seen_by: isCurrentUserInRoom(resp?.data?.idRoom, msg?.userCreate?.id)
         ? [user?.id]
         : [],
     };
     await handleDisplayNewMessage(resp);
-    if (newMsg?.room !== roomId) return;
+
+    if (newMsg?.idRoom != roomId) return;
+
     if (!isExitsInList(messages, newMsg)) {
       await onSetListMessages([...messages, newMsg]);
     }
   };
 
   const handleDisplayNewMessage = async (resp) => {
-    const newMsg = resp?.data?.message;
+    const newMsg = resp?.data;
     const sysMsg = resp?.data?.systemMessage;
-    const newRoomMsg = resp?.data?.room;
+    // const newRoomMsg = resp?.data?.room;
+    const newRoomMsg = { id: resp?.data?.idRoom };
+
     if (isExitsInList(convention, newRoomMsg)) {
       const conversationUpdate = convention.map((item) => {
         if (item?.id === newRoomMsg?.id) {
@@ -167,13 +172,14 @@ export const useWSChat = () => {
             unseen_message_count:
               user?.id === newMsg?.sender ? 0 : item?.unseen_message_count + 1,
             lastmsg: {
-              id: newRoomMsg?.lastmsg,
+              // id: newRoomMsg?.lastmsg,
+              id: newMsg?.id,
               type: sysMsg ? MESSAGE_TYPE.SYSTEM : newMsg?.type,
               content: sysMsg ? sysMsg?.type : newMsg?.content,
               seen_user_count: 0,
               sender: sysMsg
                 ? resp?.data?.detailMember
-                : resp?.data?.detailSenderMember,
+                : resp?.data?.userCreate,
             },
           };
         }
@@ -232,13 +238,22 @@ export const useWSChat = () => {
             updateCallStatus(CallStatus.left);
           }
 
-          switch (resp.event) {
-            case CHAT_EVENT_TYPE.ROOM_LIST:
+          if (resp?.errorMessage) {
+            return onAddSnackbar(
+              resp?.errorMessage || commonT(AN_ERROR_TRY_AGAIN),
+              "error",
+            );
+          }
+          switch (resp.code) {
+            // case CHAT_EVENT_TYPE.ROOM_LIST:
+            case "room.getList":
+              console.log(resp?.data)
               onSetConversationPaging({
-                current: resp?.data?.prev + 1,
+                // current: resp?.data?.prev + 1,
+                current: 1,
                 ...resp?.data,
               });
-              onSetConvention(resp?.data?.result || []);
+              onSetConvention(resp?.data || []);
               break;
 
             case CHAT_EVENT_TYPE.GROUP_SEARCH:
@@ -309,7 +324,7 @@ export const useWSChat = () => {
               });
               return;
 
-            case CHAT_EVENT_TYPE.GROUP_UPDATE_NAME:
+            case CHAT_EVENT_TYPE_V2.GROUP_UPDATE_NAME:
               if (roomId === resp?.data?.id) {
                 const newInfoRoomName = {
                   ...conversationInfo,
@@ -481,9 +496,10 @@ export const useWSChat = () => {
               onSetChatMedias(resp?.data?.result || []);
               return;
 
-            case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
-            case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
-            case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
+            // case CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT:
+            case CHAT_EVENT_TYPE_V2.MESSAGE_SEND:
+              // case CHAT_EVENT_TYPE.MESSAGE_SEND_FILE:
+              // case CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA:
               handleReceiveMsg(resp);
               handleNotiMsg(resp);
               return;
@@ -498,8 +514,9 @@ export const useWSChat = () => {
               }
               return;
 
-            case CHAT_EVENT_TYPE.MESSAGE_SEARCH:
-              onSetMessageSearch(resp.data?.result || []);
+            case CHAT_EVENT_TYPE_V2.MESSAGE_SEARCH:
+              // onSetMessageSearch(resp.data?.result || []);
+              onSetMessageSearch(resp?.data || []);
               return;
 
             case CHAT_EVENT_TYPE.MESSAGE_SEEN:
@@ -573,7 +590,7 @@ export const useWSChat = () => {
   return {
     connectMessage,
     sendMessage,
-    forceCloseSocket,
+    forceCloseSocket, resetData, resetDataRoom
   };
 };
 
@@ -590,8 +607,11 @@ export const useChatHelpers = () => {
 
   const handleCreateGroupWS = (members: string[]) => {
     sendMessage({
-      event: CHAT_EVENT_TYPE.GROUP_CREATE,
-      members: members,
+      code: CHAT_EVENT_TYPE_V2.GROUP_CREATE,
+      data: {
+        type: "group",
+        lstMemberId: members
+      }
     });
   };
 
@@ -607,25 +627,29 @@ export const useChatHelpers = () => {
 
   const handleGetChatMedias = (currentPage: number) => {
     sendMessage({
-      event: CHAT_EVENT_TYPE.MESSAGE_LIST_MEDIA,
-      roomId: roomId,
-      page: currentPage,
+      code: CHAT_EVENT_TYPE_V2.MESSAGE_LIST_MEDIA,
+      data: {
+        id: roomId
+      }
+
     });
   };
 
   const handleGetChatLinks = (currentPage: number) => {
     sendMessage({
-      event: CHAT_EVENT_TYPE.MESSAGE_LIST_LINK,
-      roomId: roomId,
-      page: currentPage,
+      code: CHAT_EVENT_TYPE_V2.MESSAGE_LIST_LINK,
+      data: {
+        id: roomId
+      }
     });
   };
 
   const handleGetChatFiles = (currentPage: number) => {
     sendMessage({
-      event: CHAT_EVENT_TYPE.MESSAGE_LIST_FILE,
-      roomId: roomId,
-      page: currentPage,
+      code: CHAT_EVENT_TYPE_V2.MESSAGE_LIST_FILE,
+      data: {
+        id: roomId
+      }
     });
   };
 
@@ -673,9 +697,12 @@ export const useChatHelpers = () => {
 
   const groupUpdateName = (renameGroup = "") => {
     sendMessage({
-      event: CHAT_EVENT_TYPE.GROUP_UPDATE_NAME,
-      roomId: roomId,
-      roomName: renameGroup,
+
+      code: CHAT_EVENT_TYPE_V2.GROUP_UPDATE_NAME,
+      data: {
+        id: roomId,
+        name: renameGroup,
+      }
     });
   };
 
@@ -688,18 +715,30 @@ export const useChatHelpers = () => {
   };
 
   const addNewAdmin = (id = "") => {
+    // sendMessage({
+    //   event: CHAT_EVENT_TYPE.GROUP_ADD_ADMIN,
+    //   roomId: roomId,
+    //   userId: id,
+    // });
     sendMessage({
-      event: CHAT_EVENT_TYPE.GROUP_ADD_ADMIN,
-      roomId: roomId,
-      userId: id,
+      code: CHAT_EVENT_TYPE_V2.GROUP_ADD_ADMIN,
+      data:{
+        id: roomId,
+        isRemove: false,
+        lstMemberId: [id],
+      }
+      
     });
   };
 
   const memberLeftGroup = (userIdLeft = "") => {
     sendMessage({
-      event: CHAT_EVENT_TYPE.GROUP_REMOVE_MEMBER,
-      roomId: roomId,
-      userId: userIdLeft,
+      code: CHAT_EVENT_TYPE_V2.GROUP_REMOVE_MEMBER,
+      data: {
+        id: roomId,
+        lstMemberId: [userIdLeft],
+      }
+
     });
   };
 
@@ -713,8 +752,11 @@ export const useChatHelpers = () => {
 
   const deleteGroup = () => {
     sendMessage({
-      event: CHAT_EVENT_TYPE.GROUP_REMOVE,
-      roomId: roomId,
+      code: CHAT_EVENT_TYPE_V2.GROUP_REMOVE,
+      data: {
+        id: roomId,
+
+      }
     });
   };
 

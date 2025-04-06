@@ -9,7 +9,7 @@ import { useAuth } from "store/app/selectors";
 import { useWSChat } from "store/chat/helpers";
 import { uploadFile } from "store/chat/media/actionMedia";
 import { useChat } from "store/chat/selectors";
-import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { CHAT_EVENT_TYPE, CHAT_EVENT_TYPE_V2 } from "store/chat/type";
 import { useAppDispatch } from "store/hooks";
 import ChatInput from "../chat/ChatInput";
 import Messages from "../messages/Messages";
@@ -20,7 +20,21 @@ interface Props {
   wrapperMessageSx?: SxProps<Theme>;
   wrapperInputSx?: SxProps<Theme>;
 }
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
+    reader.onload = () => {
+      resolve(reader.result); // Chuỗi base64 bao gồm cả prefix data:image/jpeg;base64,...
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file); // Đọc file dạng base64
+  });
+}
 const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
   const {
     roomId,
@@ -91,49 +105,24 @@ const Conversation: FC<Props> = ({ wrapperMessageSx, wrapperInputSx }) => {
 
   const handleSendMessage = useCallback(
     async (message: string) => {
+      
+
+      const base64List = await Promise.all(
+        [...files,...medias].map(file => fileToBase64(file))
+      );
+     
       if (message) {
         sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_SEND_TEXT,
-          roomId: dataTransfer?.id,
-          message: message,
+          code: CHAT_EVENT_TYPE_V2.MESSAGE_SEND,
+          data: {
+            id: dataTransfer?.id,
+            content: message
+            // lstFile: base64List
+          }
         });
       }
       inputRef?.current?.clearScrollContentMessage();
-      if (files.length) {
-        const resultFiles = await Promise.all(
-          files.map((file) =>
-            dispatch(uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file })),
-          ),
-        );
-        console.log("resultFiles", resultFiles);
-        const listObjectId = resultFiles.map((item) => item?.payload);
-        console.log("listObjectId", listObjectId);
-
-        sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_SEND_FILE,
-          roomId: dataTransfer?.id,
-          files: listObjectId,
-        });
-      }
-
-      if (medias.length) {
-        const resultMedias = await Promise.all(
-          medias.map((media) => {
-            if (media) {
-              return dispatch(
-                uploadFile({ endpoint: Endpoint.UPLOAD_FILE_V2, file: media }),
-              );
-            }
-            return Promise.resolve(null);
-          }),
-        );
-        const listObjectId = resultMedias.map((item) => item?.payload);
-        sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_SEND_MEDIA,
-          roomId: dataTransfer?.id,
-          files: listObjectId,
-        });
-      }
+  
 
       setFiles([]);
       setMedias([]);

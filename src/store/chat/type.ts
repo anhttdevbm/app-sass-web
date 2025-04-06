@@ -565,10 +565,35 @@ export const CHAT_EVENT_TYPE = {
   // meeting
   INCOMING_CALL: "start_meet",
 };
+export const CHAT_EVENT_TYPE_V2 = {
+  // room list
+  ROOM_LIST: "room.getList",
+  MESSAGE_SEND: "message.sendMessage",
+  GROUP_UPDATE_NAME: "room.updateRoom",
+  GROUP_CREATE: "room.createRoom",
+  GROUP_REMOVE: "room.deleteRoom",
+  MESSAGE_LIST: "message.getListMessage",
+  MESSAGE_LIST_MEDIA: "message.getImages",
+  MESSAGE_LIST_LINK: "message.getLinks",
+  MESSAGE_LIST_FILE: "message.getFiles",
+  MESSAGE_SEARCH: "message.searchMessage",
 
+  MESSAGE_FORWARD: "message.forwardMessage",
+
+  GROUP_ADD_ADMIN: "member.updateRole",
+
+  GROUP_REMOVE_MEMBER: "member.removeMember",
+  // meeting
+  INCOMING_CALL: "start_meet",
+};
+
+// export const CHAT_ROOM_TYPE = {
+//   GROUP: "g",
+//   PERSONAL: "p",
+// };
 export const CHAT_ROOM_TYPE = {
-  GROUP: "g",
-  PERSONAL: "p",
+  GROUP: "group",
+  PERSONAL: "person",
 };
 
 export const MESSAGE_TYPE = {

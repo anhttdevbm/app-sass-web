@@ -1,0 +1,187 @@
+wss://app.taskcover.com:6830/api/v2/chat/ws?language=vi&token={{token}}
+
+==============================================
+
+ * lấy danh sách cuộc trò chuyện
+ - Mẫu data gửi lên:
+ {
+   "code": "room.getList",
+   "data": {
+     "size": 20,
+     "page": 1
+   }
+ }
+
+
+
+ * tạo cuộc trò chuyện
+ - Mẫu data gửi lên:
+ {
+   "code": "room.createRoom",
+   "data": {
+     "type": "person", <--loại nhóm cá nhân(person) hoặc nhóm(group)-->
+     "lstMemberId": [<--danh sách id thành viên nhóm trừ id của bản thân-->]
+   }
+ }
+
+ - Mẫu data nhận được:
+ {
+   "statusCode": 200,
+   "errorMessage": null,
+   "code": "action",
+   "data": {
+     "id": <--id của room chat-->,
+     "type": <--loại nhóm person/group-->,
+     "name": <--tên nhóm-->,
+     "userCreate": <--thông tin người tạo nhóm-->,
+     "lstMember": <--danh sách thành viên, nếu isAdmin = true thì là có quyền admin-->,
+     "createTime": <--thời gian tạo nhóm-->,
+   }
+ }
+
+ * xóa cuộc trò chuyện
+ - Mẫu data gửi lên:
+ {
+   "code": "room.deleteRoom",
+   "data": {
+     "id": <--id room-->
+   }
+ }
+
+ * cập nhật thông tin cuộc trò chuyện
+ - Mẫu data gửi lên:
+ {
+   "code": "room.updateRoom",
+   "data": {
+     "id": <--id room-->,
+     "name": <--tên room mới-->,
+   }
+ }
+
+*  thêm thành viên vào nhóm
+ - Mẫu data gửi lên:
+ {
+   "code": "member.addMember",
+   "data": {
+     "id": <--id room-->,
+     "lstMemberId": <--danh sách id member thêm-->,
+   }
+ }
+  
+*  xóa thành viên
+ - Mẫu data gửi lên:
+ {
+   "code": "member.removeMember",
+   "data": {
+     "id": <--id room-->,
+     "lstMemberId": <--danh sách id member xóa-->,
+   }
+ }
+
+*  thêm thành viên vào nhóm
+ - Mẫu data gửi lên:
+ {
+   "code": "member.updateRole",
+   "data": {
+     "id": <--id room-->,
+     "isRemove": false,
+     "lstMemberId": <--danh sách id member thêm-->,
+   }
+ }
+
+* thông báo người dùng online
+  static const listUserOnline = 'user.onlineUsers';
+
+* thông báo người dùng online
+  static const online = 'user.online';
+
+ * thông báo người dùng offline
+  static const offline = 'user.offline';
+
+ * gửi tin nhắn
+ - Mẫu data gửi lên:
+ {
+   "code": "message.sendMessage",
+   "data": {
+     "id": <--id room-->,
+     "content": <--nội dung tin nhắn-->,
+     "lstFile": <--danh sách file ở dạng base64-->,
+   }
+ }
+
+* xóa tin nhắn
+ - Mẫu data gửi lên:
+ {
+   "code": "message.deleteMessage",
+   "data": {
+     "id": <--id room-->,
+     "idMessage": <--id tin nhắn-->,
+   }
+ }
+
+* forward tin nhắn
+ - Mẫu data gửi lên:
+ {
+   "code": "message.forwardMessage",
+   "data": {
+     "id": <--id room-->,
+     "idMessage": <--id tin nhắn-->,
+     "idRoomFw": <--id nhóm fw-->,
+   }
+ }
+
+* tìm kiếm tin nhắn
+ - Mẫu data gửi lên:
+ {
+   "code": "message.searchMessage",
+   "data": {
+     "id": <--id room-->,
+     "key": <--nội dung tìm kiếm-->,
+   }
+ }
+
+* tìm kiếm tin nhắn theo vị trí
+ - Mẫu data gửi lên:
+ {
+   "code": "message.searchMessageWithIndex",
+   "data": {
+     "id": <--id room-->,
+     "idMessage": <--id tin nhắn nhảy đến-->,
+   }
+ }
+
+* lấy danh sách tin nhắn
+ - Mẫu data gửi lên:
+ {
+   "code": "message.getListMessage",
+   "data": {
+     "id": <--id room-->
+   }
+ }
+
+* lấy danh sách ảnh
+ - Mẫu data gửi lên:
+ {
+   "code": "message.getImages",
+   "data": {
+     "id": <--id room-->,
+   }
+ }
+
+* lấy danh sách link
+ - Mẫu data gửi lên:
+ {
+   "code": "message.getLinks",
+   "data": {
+     "id": <--id room-->,
+   }
+ }
+
+* lấy danh sách file
+ - Mẫu data gửi lên:
+ {
+   "code": "message.getFiles",
+   "data": {
+     "id": <--id room-->,
+   }
+ }

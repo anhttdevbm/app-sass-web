@@ -102,6 +102,7 @@ export const handleSignalingData = (meetData: {
   signal: Peer.SignalData;
 }) => {
   const { connUserId, signal } = meetData;
+  console.log(meetData)
   if (peers[connUserId]) {
     peers[connUserId].signal(signal);
   }

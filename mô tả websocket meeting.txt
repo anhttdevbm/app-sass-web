@@ -1,0 +1,123 @@
+wss://app.taskcover.com:6830/api/v2/meeting/ws/{{id room}}?language=vi&token={{token}}
+
+================================================
+
+ Người mới connect sẽ gửi lệnh offer kèm [offer], [iceCandidates] của người đó
+ - Mẫu data gửi lên:
+ {
+   "code": "offer",
+   "data": {
+     "offer": {
+       <--offer của người mới connect-->
+      },
+     "iceCandidates": {
+       <--ICE Candidates của người mới connect-->
+      }
+   }
+ }
+
+ Những người đã kết nối trước đó sẽ nhận lệnh offer với data như trên và thực hiện công việc:
+   - Kết nối ice candidates
+   - Kết nối với offer sau đó sẽ gửi lệnh answer
+ - Mẫu data nhận được:
+ {
+   "statusCode": 200,
+   "errorMessage": null,
+   "code": "offer",
+   "data": {
+     "userInfo": <--thông tin của người gửi-->,
+     "offer": {
+       <--offer của người mới connect-->
+      },
+     "iceCandidates": {
+       <--ICE Candidates của người mới connect-->
+      }
+   }
+ }
+  offer,
+
+ Những người vừa nhận lệnh offer sẽ gửi lệnh answer kèm [answer] của mình
+ - Mẫu data gửi lên:
+ {
+   "code": "answer",
+   "data": {
+     "answer": {
+       <--answer của mình-->
+     }
+   }
+ }
+
+ Những người nhận lệnh answer sẽ kết nối với [answer] đã nhận và xác minh [iceCandidates] đó
+ - Mẫu data nhận được:
+ {
+   "statusCode": 200,
+   "errorMessage": null,
+   "code": "answer",
+   "data": {
+     "userInfo": <--thông tin của người kia-->,
+     "answer": {
+       <--answer của người vừa nhận offer-->
+     },
+     "iceCandidates": {
+       <--ICE Candidates của người vừa nhận offer-->
+      }
+   }
+ }
+  answer,
+
+ Gửi id của người đã rời cuộc trò chuyện
+ - Mẫu data nhận được:
+ {
+   "statusCode": 200,
+   "errorMessage": null,
+   "code": "leave",
+   "data": {
+     "userId": <--id của người rời khỏi-->
+   }
+ }
+  leave,
+
+ Gửi tin nhắn trong cuộc trò chuyện
+ - Mẫu data gửi lên:
+ {
+   "code": "chat",
+   "data": "<--nội dung tin nhắn-->"
+ }
+
+ - Mẫu data nhận được:
+ {
+   "statusCode": 200,
+   "errorMessage": null,
+   "code": "chat",
+   "data": {
+     "userInfo": <--thông tin của người gửi-->,
+     "createDate": <--thời gian gửi tin nhắn-->,
+     "message": "<--nội dung tin nhắn-->"
+   }
+ }
+  chat,
+
+ Gửi hoạt động hoặc nhận hoạt động
+ - Các loại hoạt động:
+   + [mute] bật âm thanh
+   + [unmute] tăt âm thanh
+   + [pauseVideo] tắt video
+   + [resumeVideo] bật video
+   + [hand] giơ tay
+ - Mẫu data gửi lên:
+ {
+   "code": "action",
+   "data": "<--mã code các hành động mô tả ở trên-->"
+ }
+
+ - Mẫu data nhận được:
+ {
+   "statusCode": 200,
+   "errorMessage": null,
+   "code": "action",
+   "data": {
+     "userId": <--id của người gửi hành động-->,
+     "action": "<--mã code các hành động mô tả ở trên-->"
+   }
+ }
+  action,

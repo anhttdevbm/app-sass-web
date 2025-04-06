@@ -107,7 +107,7 @@ const MessageContent = ({
     }
   }, [isDarkMode, listSearchMessage, message.id, selectSearchIndex]);
 
-  if ([MESSAGE_TYPE.LINK, MESSAGE_TYPE.TEXT].includes(message?.type)) {
+  // if ([MESSAGE_TYPE.LINK, MESSAGE_TYPE.TEXT].includes(message?.type)) {
     return (
       <Box
         sx={{
@@ -158,11 +158,13 @@ const MessageContent = ({
         <TimeMessage
           isCurrentUser={isCurrentUser}
           isRead={message?.seen_by?.length > 0}
-          time={message.created_at}
+          time={message?.createTime}
         />
       </Box>
     );
-  } else if (
+  // } 
+  
+   if (
     message?.type === MESSAGE_TYPE.FILE ||
     message?.type === MESSAGE_TYPE.MEDIA
   ) {

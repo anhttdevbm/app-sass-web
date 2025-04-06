@@ -24,7 +24,8 @@ const ChatItemLayout = ({
 }: ChatItemProp) => {
   const { user } = useAuth();
   const { sx, ...props } = chatItemProps || {};
-  const { lastmsg_at, unseen_message_count, owner, lastmsg } = chatInfo || {};
+  // const { lastmsg_at, unseen_message_count, owner, lastmsg } = chatInfo || {};
+  const { lastUpdateTime: lastmsg_at, numUnRead: unseen_message_count, userCreate:owner, lastMessage:lastmsg } = chatInfo || {};
   const { isDarkMode } = useTheme();
 
   const renderColorByType = useMemo(() => {

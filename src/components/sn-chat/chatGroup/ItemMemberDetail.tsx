@@ -152,8 +152,8 @@ const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
         </Box>
       </Box>
       <Box>
-        {data?.id === dataTransfer?.owner ||
-        isAdminGroup(dataTransfer?.admins, data?.id) ? (
+        {data?.id === dataTransfer?.userCreate?.id ||
+          isAdminGroup(dataTransfer?.lstMember, data?.id) ? (
           <Button
             variant="primary"
             sx={{
@@ -195,8 +195,8 @@ const ItemMemberDetail = ({ admin, data }: ItemMemberDetailProp) => {
             zIndex: "1301",
           }}
         >
-          {data?.id !== dataTransfer?.owner &&
-            !isAdminGroup(dataTransfer?.admins, data?.id) && (
+          {data?.id !== dataTransfer?.userCreate?.id &&
+            !isAdminGroup(dataTransfer?.lstMember, data?.id) && (
               <MenuItem
                 onClick={() => {
                   setShowPopup((pre) => ({

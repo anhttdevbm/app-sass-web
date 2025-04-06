@@ -15,7 +15,7 @@ import DefaultPopupLayout from "layouts/DefaultPopupLayout";
 import { useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
-import { isAdminGroup, isOwnerGroup, useChatHelpers } from "store/chat/helpers";
+import {  isOwnerGroup, useChatHelpers } from "store/chat/helpers";
 import { useChat } from "store/chat/selectors";
 import { STEP, TYPE_LIST } from "store/chat/type";
 import ItemDetail from "../components/ItemDetail";
@@ -50,9 +50,9 @@ const ChatDetailGroup = (props) => {
     adminLeftGroup,
   } = useChatHelpers();
   //check owner
-  const owner = isOwnerGroup(dataTransfer?.owner, user?.id);
-  const admin = isAdminGroup(dataTransfer?.admins, user?.id);
-  const isOwnerOrAdmin = owner || admin; // current user
+  const owner = isOwnerGroup(dataTransfer?.userCreate?.id, user?.id);
+  const admin = dataTransfer?.lstMember?.find((item) => item === user?.id);
+  const isOwnerOrAdmin = owner || admin;
 
   const commonT = useTranslations(NS_COMMON);
   const commonChatBox = useTranslations(NS_CHAT_BOX);
@@ -235,6 +235,8 @@ const ChatDetailGroup = (props) => {
   };
 
   const handlePopup = async () => {
+    
+  
     const renameGroupApi = async () => {
       if (!renameGroup.trim()) {
         return onAddSnackbar("Invalid group name!", "error");

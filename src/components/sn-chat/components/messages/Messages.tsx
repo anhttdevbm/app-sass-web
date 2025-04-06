@@ -222,7 +222,7 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
   }, [firstElement, isChatDesktop, messagesContentRef, messagePaging]);
 
   const renderMessage = (message: MessageInfoV2) => {
-    const senderInfo = members?.find((item) => item?.id === message?.sender);
+    const senderInfo = members?.find((item) => item?.id === message.userCreate?.id);
     const user = { user: senderInfo?.fullname || message?.sender };
     return commonChatBox(`chatBox.group.${message?.content}`, user);
   };
@@ -258,14 +258,14 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
         {messages.length < 15 && <Box height={"400px"} />}
         {messages.map((message, index) => {
           // Need to separate this cluster into a separate component
-          const isCurrentUser = message?.sender === sessionId;
+          const isCurrentUser = message?.userCreate?.id === sessionId;
           const hasNextMessageFromSameUser =
-            messages[index + 1]?.sender === messages[index]?.sender;
+            messages[index + 1]?.userCreate?.id === messages[index]?.userCreate?.id;
           const currentTimeMessage = new Date(
-            formatDate(messages[index]?.created_at, "MM/dd/yyyy"),
+            formatDate(messages[index]?.createTime, "MM/dd/yyyy"),
           );
           const nextTimeMessage = new Date(
-            formatDate(messages[index + 1]?.created_at, "MM/dd/yyyy"),
+            formatDate(messages[index + 1]?.createTime, "MM/dd/yyyy"),
           );
           const hasNextDay =
             index !== messages.length - 1
@@ -280,7 +280,8 @@ const Messages: React.ForwardRefRenderFunction<MessageHandle, MessagesProps> = (
 
           return (
             <React.Fragment key={index}>
-              {["text", "file", "media", "link"].includes(message?.type) ? (
+              {/* {["text", "file", "media", "link"].includes(message?.type) ? ( */}
+              {message ? (
                 <MessageLayout
                   sessionId={sessionId}
                   message={message}

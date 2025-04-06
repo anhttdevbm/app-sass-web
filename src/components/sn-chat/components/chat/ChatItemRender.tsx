@@ -14,7 +14,6 @@ interface ChatItemRenderProps {
 
 const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const {
-    lastMessage,
     name,
     avatar,
     t,
@@ -23,8 +22,8 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
     members,
     status: statusPartner,
     peer_detail,
-    unseen_message_count,
-    lastmsg,
+    numUnRead:unseen_message_count,
+    lastMessage:lastmsg,
   } = chatInfo || {};
   const commonChatBox = useTranslations(NS_CHAT_BOX);
   const { isDarkMode } = useTheme();
@@ -37,7 +36,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
   const isMessageNotConnect = useMemo(() => lastmsg == null, [lastmsg]);
   const isGroup = useMemo(() => type === CHAT_ROOM_TYPE.GROUP, [type]);
   const isCurrentAccByLastMessage = useMemo(
-    () => sessionId === lastmsg?.sender?.id,
+    () => sessionId === lastmsg?.idUserCreate,
     [lastmsg, sessionId],
   );
 
@@ -52,12 +51,12 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
         });
       }
       return commonChatBox("chatBox.group.sendFile", {
-        user: lastmsg?.sender?.fullname,
+        user: lastmsg?.userCreate?.fullname,
       });
     } else {
       if (lastmsg?.type === MESSAGE_TYPE.SYSTEM) {
         return commonChatBox(`chatBox.group.${lastmsg?.content}`, {
-          user: lastmsg?.sender?.fullname,
+          user: lastmsg?.userCreate?.fullname,
         });
       }
       return `<div style="display: flex; max-width: 170px; white-space: nowrap; overflow: hidden;"}>
@@ -65,7 +64,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
             isCurrentAccByLastMessage
               ? `${commonChatBox("chatBox.you")}: <p>${lastmsg?.content}</p>`
               : isGroup
-              ? `${lastmsg?.sender?.fullname}: <p style="margin-left: 3px;">${lastmsg?.content}</p>`
+          ? `${lastmsg?.userCreate?.fullname}: <p style="margin-left: 3px;">${lastmsg?.content}</p>`
               : lastmsg?.content
           }
         </div>`;
@@ -153,6 +152,7 @@ const ChatItemRender = ({ sessionId, chatInfo }: ChatItemRenderProps) => {
           lineHeight="18px"
           color={isDarkMode ? "white" : "black"}
         >
+          {/* {isGroup.toString()} - {name} - {peer_detail} */}
           {isGroup ? name : peer_detail?.fullname}
         </Typography>
         <Typography

@@ -34,8 +34,8 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
   const { dataTransfer: currentConversation } = useChat();
 
   //check owner
-  const owner = isOwnerGroup(currentConversation?.owner, user?.id);
-  const admin = currentConversation?.admins?.find((item) => item === user?.id);
+  const owner = isOwnerGroup(currentConversation?.userCreate?.id, user?.id);
+  const admin = currentConversation?.lstMember?.find((item) => item === user?.id);
   const isOwnerOrAdmin = owner || admin;
 
   return (
@@ -94,7 +94,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
               fontWeight={600}
             >
               {`${commonChatBox("chatBox.members")} (${
-                currentConversation?.members?.length || 0
+                currentConversation?.lstMember?.length || 0
               })`}
             </Typography>
           </Box>
@@ -105,7 +105,7 @@ const ChatDetailGroup: FC<ChatDetailGroupProps> = (props) => {
             height: "80%",
           }}
         >
-          {currentConversation?.members?.map((member, index) => (
+          {currentConversation?.lstMember?.map((member, index) => (
             <ItemMemberDetail
               key={index}
               data={member}

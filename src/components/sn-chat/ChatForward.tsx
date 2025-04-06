@@ -10,7 +10,7 @@ import { useEmployeesOfCompany } from "store/manager/selectors";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { Employee } from "store/company/reducer";
-import { CHAT_EVENT_TYPE, CHAT_ROOM_TYPE, STEP } from "store/chat/type";
+import { CHAT_EVENT_TYPE_V2, CHAT_ROOM_TYPE, STEP } from "store/chat/type";
 import useTheme from "hooks/useTheme";
 import AttachmentContent from "./components/conversation/AttachmentContent";
 import { useWSChat } from "store/chat/helpers";
@@ -60,9 +60,13 @@ const ChatForward: FC<Props> = (props) => {
       .filter((item) => employeeIdSelected[item])
       .map(async (item) => {
         sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_FORWARD,
-          forwardMessageId: dataTransfer?.message?.id,
-          forwardRoomId: item,
+          code: CHAT_EVENT_TYPE_V2.MESSAGE_FORWARD,
+          data:{
+            id: dataTransfer.id,
+            idMessage: dataTransfer?.message?.id,
+            idRoomFw: item,
+          }
+       
         });
       });
     onCloseDrawer("info");

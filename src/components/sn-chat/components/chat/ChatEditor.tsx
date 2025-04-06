@@ -108,6 +108,7 @@ const ChatEditor = (props: EditorProps) => {
   const inputMediaRef = useRef<HTMLInputElement | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [value, setValue] = useState("");
+  
   const urlFiles = useMemo(
     () => files.map((file) => URL.createObjectURL(file)),
     [files],

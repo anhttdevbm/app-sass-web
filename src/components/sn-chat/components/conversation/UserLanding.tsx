@@ -13,7 +13,7 @@ import { useSnackbar } from "store/app/selectors";
 import { useChatHelpers, useWSChat } from "store/chat/helpers";
 import { useChat } from "store/chat/selectors";
 import {
-  CHAT_EVENT_TYPE,
+  CHAT_EVENT_TYPE, CHAT_EVENT_TYPE_V2,
   MessageInfoV2,
   STEP_INFO
 } from "store/chat/type";
@@ -59,10 +59,11 @@ const UserLanding = ({ displayUserInfo, onPrevious }: UserLandingProps) => {
     try {
       if (text && isSearch) {
         sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_SEARCH,
-          roomId: roomId,
-          content: text,
-          page: 1,
+          code: CHAT_EVENT_TYPE_V2.MESSAGE_SEARCH,
+          data:{
+            id: roomId,
+            key:text
+          }
         });
       }
     } catch (error) {

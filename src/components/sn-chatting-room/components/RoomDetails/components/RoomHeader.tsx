@@ -24,7 +24,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth, useSnackbar } from "store/app/selectors";
 import { isOwnerGroup, useChatHelpers, useWSChat } from "store/chat/helpers";
 import { useChat } from "store/chat/selectors";
-import { CHAT_EVENT_TYPE } from "store/chat/type";
+import { CHAT_EVENT_TYPE, CHAT_EVENT_TYPE_V2 } from "store/chat/type";
 import colorSchemes from "utils/colorSchemes";
 import { debounce } from "utils/index";
 import ChatDetailInfo from "./ChatDetailInfo";
@@ -80,10 +80,11 @@ const RoomHeader = () => {
     try {
       if (search.isOpen && search.text) {
         sendMessage({
-          event: CHAT_EVENT_TYPE.MESSAGE_SEARCH,
-          roomId: roomId,
-          content: search?.text,
-          page: 1,
+          code: CHAT_EVENT_TYPE_V2.MESSAGE_SEARCH,
+          data: {
+            id: roomId,
+            key: search.text
+          }
         });
       }
     } catch (error) {

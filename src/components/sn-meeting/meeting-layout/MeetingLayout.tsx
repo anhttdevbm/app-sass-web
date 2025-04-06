@@ -30,6 +30,7 @@ export default function MeetingLayout() {
   const { wsClient } = useChat();
 
   useEffect(() => {
+    console.log(meetInfo)
     if (!wsClient) return;
     wsClient.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -81,7 +82,6 @@ export default function MeetingLayout() {
             toggleMinimizeMeeting={toggleMinimizeMeeting}
           />
           <VideoScreen sx={{ flex: 1, px: 3 }} />
-
           <OptionButtonsLayout
             sx={{
               width: "100%",

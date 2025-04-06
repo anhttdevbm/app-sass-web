@@ -42,7 +42,10 @@ const MenuInfo = () => {
   const propsActionGroupDetail = useActionGroupDetails();
 
   //check owner
-  const owner = isOwnerGroup(currentConversation?.owner, user?.id);
+  // const owner = isOwnerGroup(currentConversation?.owner, user?.id);
+    const owner = isOwnerGroup(currentConversation?.userCreate?.id, user?.id);
+    // const admin = currentConversation?.lstMember?.find((item) => item === user?.id);
+    // const isOwnerOrAdmin = owner || admin;
   const commonChatBox = useTranslations(NS_CHAT_BOX);
 
   return (
